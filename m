@@ -2,86 +2,255 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2664ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5983BC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:41:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B39F02084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B39F02084C
+	by mail.kernel.org (Postfix) with ESMTP id 05E0420671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:41:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E0420671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731251AbeGSMOB (ORCPT
+        id S1730996AbeGSMYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 08:14:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:48110 "EHLO foss.arm.com"
+        Thu, 19 Jul 2018 08:24:15 -0400
+Received: from foss.arm.com ([217.140.101.70]:48206 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730053AbeGSMOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:14:00 -0400
+        id S1727584AbeGSMYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 08:24:15 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBCF97A9;
-        Thu, 19 Jul 2018 04:31:16 -0700 (PDT)
-Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 050CE3F246;
-        Thu, 19 Jul 2018 04:31:14 -0700 (PDT)
-Subject: Re: [PATCH] arm64, kaslr: export offset in VMCOREINFO ELF notes
-To:     Bhupesh Sharma <bhsharma@redhat.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, bhupesh.linux@gmail.com,
-        takahiro.akashi@linaro.org,
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2880918A;
+        Thu, 19 Jul 2018 04:41:29 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8229F3F246;
+        Thu, 19 Jul 2018 04:41:27 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 12:41:25 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Alexander Popov <alex.popov@linux.com>,
+        Kees Cook <keescook@chromium.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>
-References: <1531949864-27447-1-git-send-email-bhsharma@redhat.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <d8959ca1-65a1-f59c-bfc4-b048c75add26@arm.com>
-Date:   Thu, 19 Jul 2018 12:31:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+Message-ID: <20180719114124.fzjkqtpqnhhtxexy@lakrids.cambridge.arm.com>
+References: <20180718211013.14512-1-labbott@redhat.com>
+ <20180718211013.14512-3-labbott@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1531949864-27447-1-git-send-email-bhsharma@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718211013.14512-3-labbott@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bhupesh,
-
-On 18/07/18 22:37, Bhupesh Sharma wrote:
-> Include KASLR offset in VMCOREINFO ELF notes to assist in debugging.
+On Wed, Jul 18, 2018 at 02:10:13PM -0700, Laura Abbott wrote:
 > 
-> makedumpfile user-space utility will need fixup to use this KASLR offset
-> to work with cases where we need to find a way to translate symbol
-> address from vmlinux to kernel run time address in case of KASLR boot on
-> arm64.
+> Implementation of stackleak based heavily on the x86 version
+> 
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> Since last time: Minor style cleanups. Re-wrote check_alloca to
+> correctly handle all stack types. While doing that, I also realized
+> current_top_of_stack was incorrect so I fixed that as well.
+> ---
+>  arch/arm64/Kconfig                    |  1 +
+>  arch/arm64/include/asm/processor.h    | 17 ++++++++++++++
+>  arch/arm64/kernel/entry.S             |  7 ++++++
+>  arch/arm64/kernel/process.c           | 32 +++++++++++++++++++++++++++
+>  arch/arm64/kvm/hyp/Makefile           |  3 ++-
+>  drivers/firmware/efi/libstub/Makefile |  3 ++-
+>  include/linux/stackleak.h             |  1 +
+>  7 files changed, 62 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 42c090cf0292..216d36a49ab5 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -96,6 +96,7 @@ config ARM64
+>  	select HAVE_ARCH_MMAP_RND_BITS
+>  	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+>  	select HAVE_ARCH_SECCOMP_FILTER
+> +	select HAVE_ARCH_STACKLEAK
+>  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+>  	select HAVE_ARCH_TRACEHOOK
+>  	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
+> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+> index a73ae1e49200..4f3062ee22c6 100644
+> --- a/arch/arm64/include/asm/processor.h
+> +++ b/arch/arm64/include/asm/processor.h
+> @@ -266,5 +266,22 @@ extern void __init minsigstksz_setup(void);
+>  #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
+>  #define SVE_GET_VL()	sve_get_current_vl()
+>  
+> +/*
+> + * For CONFIG_STACKLEAK
+> + *
+> + * These need to be macros because otherwise we get stuck in a nightmare
+> + * of header definitions for the use of task_stack_page.
+> + */
+> +
+> +#define current_top_of_stack()		\
+> +({					\
+> +	unsigned long _low = 0;		\
+> +	unsigned long _high = 0;	\
+> +					\
+> +	current_stack_type(current, current_stack_pointer, &_low, &_high); \
+> +	_high;	\
+> +})
 
-You need the kernel VA for a symbol. Isn't this what kallsyms is for?
-| root@frikadeller:~# cat /proc/kallsyms | grep swapper_pg_dir
-| ffff5404610d0000 B swapper_pg_dir
+... with the info changes, this could be:
 
-This is the KASLR address, the vmlinux has:
-| root@frikadeller:~/linux/build_arm64# nm -s vmlinux | grep swapper_pg_dir
-| ffff0000096d0000 B swapper_pg_dir
+#define current_top_of_stack()						\
+({									\
+	struct stack_info _info;					\
+	BUG_ON(!on_accessible_stack(current_stack_pinter, &_info));	\
+	_info->high;							\
+})
 
+> +#define on_thread_stack()	(on_task_stack(current, current_stack_pointer, NULL, NULL))
 
-This is in the vmcoreinfo too, so you can work if out from the vmcore too:
-| root@frikadeller:~# dd if=/proc/kcore bs=8K count=1 2>/dev/null | strings |
-| grep swapper_pg_dir
-| SYMBOL(swapper_pg_dir)=ffff5404610d0000
+... and one fewer NULL here.
 
+> +
+>  #endif /* __ASSEMBLY__ */
+>  #endif /* __ASM_PROCESSOR_H */
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index 28ad8799406f..67d12016063d 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -431,6 +431,11 @@ tsk	.req	x28		// current thread_info
+>  
+>  	.text
+>  
+> +	.macro	stackleak_erase
+> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+> +	bl	stackleak_erase
+> +#endif
+> +	.endm
+>  /*
+>   * Exception vectors.
+>   */
+> @@ -910,6 +915,7 @@ ret_fast_syscall:
+>  	and	x2, x1, #_TIF_WORK_MASK
+>  	cbnz	x2, work_pending
+>  	enable_step_tsk x1, x2
+> +	stackleak_erase
+>  	kernel_exit 0
+>  ret_fast_syscall_trace:
+>  	enable_daif
+> @@ -936,6 +942,7 @@ ret_to_user:
+>  	cbnz	x2, work_pending
+>  finish_ret_to_user:
+>  	enable_step_tsk x1, x2
+> +	stackleak_erase
+>  	kernel_exit 0
+>  ENDPROC(ret_to_user)
+>  
+> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> index e10bc363f533..904defa36689 100644
+> --- a/arch/arm64/kernel/process.c
+> +++ b/arch/arm64/kernel/process.c
+> @@ -493,3 +493,35 @@ void arch_setup_new_exec(void)
+>  {
+>  	current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
+>  }
+> +
+> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+> +void __used stackleak_check_alloca(unsigned long size)
+> +{
+> +	unsigned long stack_left;
+> +	enum stack_type type;
+> +	unsigned long current_sp = current_stack_pointer;
+> +	unsigned long low, high;
+> +
+> +	type = current_stack_type(current, current_sp, &low, &high);
+> +	BUG_ON(type == STACK_TYPE_UNKNOWN);
+> +
+> +	stack_left = current_sp - low;
 
-I picked swapper_pg_dir, but you could use any of the vmcore:SYMBOL() addresses
-to work out this offset. (you should expect the kernel to rename these symbols
-at a whim).
+... similarly with the info changes, this could be:
 
+	unsigned long current_sp = current_stack_pointer;
+	unsigned long stack_left;
+	struct stack_info info;
+
+	BUG_ON(!on_accessible_stack(current, current_sp, &info));
+
+	stack_lead = current_sp - info->low;
+
+Otherwise, this looks good to me.
 
 Thanks,
+Mark.
 
-James
+> +
+> +	if (size >= stack_left) {
+> +		/*
+> +		 * Kernel stack depth overflow is detected, let's report that.
+> +		 * If CONFIG_VMAP_STACK is enabled, we can safely use BUG().
+> +		 * If CONFIG_VMAP_STACK is disabled, BUG() handling can corrupt
+> +		 * the neighbour memory. CONFIG_SCHED_STACK_END_CHECK calls
+> +		 * panic() in a similar situation, so let's do the same if that
+> +		 * option is on. Otherwise just use BUG() and hope for the best.
+> +		 */
+> +#if !defined(CONFIG_VMAP_STACK) && defined(CONFIG_SCHED_STACK_END_CHECK)
+> +		panic("alloca() over the kernel stack boundary\n");
+> +#else
+> +		BUG();
+> +#endif
+> +	}
+> +}
+> +EXPORT_SYMBOL(stackleak_check_alloca);
+> +#endif
+> diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
+> index 4313f7475333..2fabc2dc1966 100644
+> --- a/arch/arm64/kvm/hyp/Makefile
+> +++ b/arch/arm64/kvm/hyp/Makefile
+> @@ -3,7 +3,8 @@
+>  # Makefile for Kernel-based Virtual Machine module, HYP part
+>  #
+>  
+> -ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING
+> +ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING \
+> +		$(DISABLE_STACKLEAK_PLUGIN)
+>  
+>  KVM=../../../../virt/kvm
+>  
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index a34e9290a699..25dd2a14560d 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
+>  KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+>  				   -D__NO_FORTIFY \
+>  				   $(call cc-option,-ffreestanding) \
+> -				   $(call cc-option,-fno-stack-protector)
+> +				   $(call cc-option,-fno-stack-protector) \
+> +				   $(DISABLE_STACKLEAK_PLUGIN)
+>  
+>  GCOV_PROFILE			:= n
+>  KASAN_SANITIZE			:= n
+> diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
+> index b911b973d328..08420ec6b7c3 100644
+> --- a/include/linux/stackleak.h
+> +++ b/include/linux/stackleak.h
+> @@ -5,6 +5,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/sched/task_stack.h>
+>  
+> +#include <asm/stacktrace.h>
+>  /*
+>   * Check that the poison value points to the unused hole in the
+>   * virtual memory map for your platform.
+> -- 
+> 2.17.1
+> 
