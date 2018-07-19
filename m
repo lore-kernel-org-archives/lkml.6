@@ -2,74 +2,193 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAD9ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B072ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 202442084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:31:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 202442084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id C30F02084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:31:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C30F02084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732559AbeGSQOq (ORCPT
+        id S1732138AbeGSQOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:14:46 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:5136 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730899AbeGSQOd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:14:33 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b50aea30000>; Thu, 19 Jul 2018 08:30:43 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 19 Jul 2018 08:30:51 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 19 Jul 2018 08:30:51 -0700
-Received: from [10.21.132.122] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 19 Jul
- 2018 15:30:50 +0000
-Subject: Re: [PATCH v1] memory: tegra: Don't invoke Tegra30+ specific memory
- timing setup on Tegra20
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180719132453.16860-1-digetx@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <39607791-3e71-7784-37db-4e05a316d7a8@nvidia.com>
-Date:   Thu, 19 Jul 2018 16:30:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180719132453.16860-1-digetx@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 19 Jul 2018 12:14:30 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43189 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731636AbeGSQNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:13:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8AF2620893; Thu, 19 Jul 2018 17:29:35 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E6AC620717;
+        Thu, 19 Jul 2018 17:29:34 +0200 (CEST)
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH v6 03/10] i3c: Add sysfs ABI spec
+Date:   Thu, 19 Jul 2018 17:29:23 +0200
+Message-Id: <20180719152930.3715-4-boris.brezillon@bootlin.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Document sysfs files/directories/symlinks exposed by the I3C subsystem.
 
-On 19/07/18 14:24, Dmitry Osipenko wrote:
-> This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
-> timings for RAM code 0 registered" warning message during of kernels
-> boot-up on Tegra20.
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+---
+Changes in v5:
+- Fix the kernel version
+- Rename address into dynamic_address to match changes done in the code
 
-Looking at the tegra20-emc.txt bindings doc [0], the 'nvidia,ram-code'
-property is also valid for Tegra20. In fact, I see this warning on the
-Tegra30 Cardhu because this property is not populated. So I think that
-this warning is valid and harmless.
+Changes in v4:
+- none
 
-Cheers
-Jon
+Changes in v3:
+- none
 
-[0] Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+Changes in v2:
+- new patch
+---
+ Documentation/ABI/testing/sysfs-bus-i3c | 95 +++++++++++++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-i3c b/Documentation/ABI/testing/sysfs-bus-i3c
+new file mode 100644
+index 000000000000..068fd1e97c01
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-i3c
+@@ -0,0 +1,95 @@
++What:		/sys/bus/i3c/devices/i3c-<bus-id>
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		An I3C bus. This directory will contain one sub-directory per
++		I3C device present on the bus.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/current_master
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		Expose the master that owns the bus (<bus-id>-<master-pid>) at
++		the time this file is read. Note that bus ownership can change
++		overtime, so there's no guarantee that when the read() call
++		returns, the value returned is still valid.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/mode
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		I3C bus mode. Can be "pure", "mixed-fast" or "mixed-slow". See
++		the I3C specification for a detailed description of what each
++		of these modes implies.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/i3c_scl_frequency
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		The frequency (expressed in Hz) of the SCL signal when
++		operating in I3C SDR mode.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/i2c_scl_frequency
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		The frequency (expressed in Hz) of the SCL signal when
++		operating in I2C mode.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		An I3C device present on I3C bus identified by <bus-id>. Note
++		that all devices are represented including the master driving
++		the bus.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/dynamic_address
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		Dynamic address assigned to device <bus-id>-<device-pid>. This
++		address may change if the bus is re-initialized.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/bcr
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		BCR stands for Bus Characteristics Register and express the
++		device capabilities in term of speed, maximum read/write
++		length, etc. See the I3C specification for more details.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/dcr
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		DCR stands for Device Characteristics Register and express the
++		device capabilities in term of exposed features. See the I3C
++		specification for more details.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/pid
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		PID stands for Provisional ID and is used to uniquely identify
++		a device on a bus. This PID contains information about the
++		vendor, the part and an instance ID so that several devices of
++		the same type can be connected on the same bus.
++		See the I3C specification for more details.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/hdrcap
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		Expose the HDR (High Data Rate) capabilities of a device.
++		Returns a list of supported HDR mode, each element is separated
++		by space. Modes can be "hdr-ddr", "hdr-tsp" and "hdr-tsl".
++		See the I3C specification for more details about these HDR
++		modes.
++
++What:		/sys/bus/i3c/devices/<bus-id>-<device-pid>
++KernelVersion:  4.19
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		These directories are just symbolic links to
++		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>.
 -- 
-nvpublic
+2.14.1
+
