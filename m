@@ -2,118 +2,109 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 323D4ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B58ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E664B2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:03:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E664B2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E3EE2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:04:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="O0MZ0ALl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E3EE2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731739AbeGSPrW (ORCPT
+        id S1731874AbeGSPrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:47:22 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:38273 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727584AbeGSPrW (ORCPT
+        Thu, 19 Jul 2018 11:47:46 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39027 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727584AbeGSPrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:47:22 -0400
-Received: by mail-vk0-f65.google.com with SMTP id b77-v6so4533779vkb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:03:46 -0700 (PDT)
+        Thu, 19 Jul 2018 11:47:46 -0400
+Received: by mail-pg1-f195.google.com with SMTP id g2-v6so4021331pgs.6
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=JBN3PsRzLt9lMYD1XC9ypqtI2ead7/taMEtzNrmMDlE=;
+        b=O0MZ0ALlKXWBLfGunJHBEvLOf0NXCgp5yyskyR236Cd3sZjvkJrxBA3X3P/ERTCFy4
+         m3q8JNGh0fAb0DCCF0wUGgCLM9fJwwDF3R1lwEVs54x170KOKjcvnjdji0AA5+A5+kb3
+         6TSFD/ylOIzDc/JjeVgrGDyVftRTWhOFdqQxM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9eGgboGyndLCLMaknkrN5sWw1Ff4hPy5x5eRlVHDl9k=;
-        b=tXEu0snf/0zlbiFWxFmaVsGWis1twLrUzvcvRhUbbJkcGZCxtRjl45JsUQ71sNsXvU
-         YkBBp+QzY4/2DKDiB/zfdqUAaC158LNftZpVm0A0aYSkWQDmmRXx2cg1Mev+fVXoGWsD
-         R9Hnkrxlgwy7wj/qtYVwV7wV2aqUvb3/BZADVGzWQvicQfKu/bVLmwRmgpq8KWkuAPCH
-         O4f1DPYnnANwGWW603oLRdukzdIz4ea1f3R4jQUOzch/Pqg3pBBUpDvvP+iWIShaN2j3
-         YNIiwCKeYwfBf8vuxMpm4rMGl3sf8EtOInzEINGWyFtHYzyYatOzGCkWKIPyBNpzs6gO
-         Rw3g==
-X-Gm-Message-State: AOUpUlE4VDl2jyiICLmn8dAl6KWAq1mRarHbAPdibZgdwJYlXwSi2kD4
-        CBRP7eRVbSVr0faFCJIRgX04mMaN4hdWt/1gdE4=
-X-Google-Smtp-Source: AAOMgpe88/v6IkJA3f0VzQg25pT+E2qkrCU/zWcdQ7oHtslza0JFza+XhX9CJsc4gU5sFChNCuOiOJ0OHYRFpdMMoA0=
-X-Received: by 2002:a1f:6b11:: with SMTP id g17-v6mr6069718vkc.82.1532012626364;
- Thu, 19 Jul 2018 08:03:46 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=JBN3PsRzLt9lMYD1XC9ypqtI2ead7/taMEtzNrmMDlE=;
+        b=b0ycqHyXKj7QRoCBwS9+ST9CD4e6NUB5fswoU5mj+YcrMQ2tNJhkq8qE244b4ym8Zy
+         ABnGyOANyD79gCFnd/xb28dqdRM79H7NjHC8W4O4WOjJL+2CRtokT03Od+YLyfPtm5Qt
+         x3vWrwAY9I5HBe79vkB98/1vHN6zr+Hg/uaMuif5gntdkVqEIUw0fBxkXT3haph6CcJW
+         50HXbK3xQszWC5T2uTv1VVxwGi0VL3/7Wch/PtHhfSh48pqyPmIZsTPYe5Wh2LXAQNPR
+         hyl6aEf6aOln2BxRbFXpzlOPGkpSZocpbBOOu5x0fRkA36szlGEFdXEZNVrO1Zzu81ft
+         syCA==
+X-Gm-Message-State: AOUpUlFz7jbU3OilLe1iMY+49pepmN4Apqh1CrK+rrNg0HVmEhUGV9Nr
+        rr1m20bkoxMQ/oRx1D1YFQP/nG0luyQ=
+X-Google-Smtp-Source: AAOMgpeoJraMtA6p94e+FppTM/Zdw5/Y/xRdBCDpzmfnqH3HxiEHUaaHaPQhxhrh0n6f3lpZQ/BVvw==
+X-Received: by 2002:a62:3b03:: with SMTP id i3-v6mr9923219pfa.197.1532012650836;
+        Thu, 19 Jul 2018 08:04:10 -0700 (PDT)
+Received: from [192.168.1.180] (ip68-5-145-143.oc.oc.cox.net. [68.5.145.143])
+        by smtp.gmail.com with ESMTPSA id p66-v6sm18943599pfd.65.2018.07.19.08.04.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 08:04:10 -0700 (PDT)
+Subject: Re: [PATCH 0/4] Rework NVMe abort handling
+To:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <keith.busch@intel.com>,
+        Hannes Reinecke <hare@suse.de>, Ewan Milne <emilne@redhat.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>
+References: <20180719132838.15556-1-jthumshirn@suse.de>
+ <20180719134203.GA15212@lst.de>
+ <20180719141025.yveza2svhvc2r4lw@linux-x5ow.site>
+ <20180719142355.GA18800@lst.de>
+ <20180719143534.i36vo45lhz24xbrg@linux-x5ow.site>
+ <20180719145005.GA21000@lst.de>
+ <20180719145422.2tdrbwa34gheuam3@linux-x5ow.site>
+From:   James Smart <james.smart@broadcom.com>
+Message-ID: <8d1ad465-c6b2-b67d-39f5-c88d849a89dd@broadcom.com>
+Date:   Thu, 19 Jul 2018 08:04:09 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180718145254.4770-1-geert+renesas@glider.be> <CAK8P3a19tFrP7ymiMHcmQ9Jah4_zTwuoM3=KN+WQROiZ36ArPA@mail.gmail.com>
-In-Reply-To: <CAK8P3a19tFrP7ymiMHcmQ9Jah4_zTwuoM3=KN+WQROiZ36ArPA@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 19 Jul 2018 17:03:34 +0200
-Message-ID: <CAMuHMdWCjr__9QB-wSiuo7ZZnOc9PuCRLJU=cVTrfvywJh5eBg@mail.gmail.com>
-Subject: Re: [PATCH v2] checkpatch: Only encode UTF-8 quoted printable mail headers
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Whitcroft <apw@canonical.com>,
-        Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180719145422.2tdrbwa34gheuam3@linux-x5ow.site>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
-
-On Thu, Jul 19, 2018 at 4:50 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> On a related note, I've looked through all files in the kernel, and found
-> that very file files in there are something other than 7-bit ASCII, UTF-8
-> or non-text files (according to /usr/bin/file). These are the only ones I found:
+On 7/19/2018 7:54 AM, Johannes Thumshirn wrote:
+> On Thu, Jul 19, 2018 at 04:50:05PM +0200, Christoph Hellwig wrote:
+>> The upper layer is only going to retry after tearing down the transport
+>> connection.  And a tear down of the connection MUST clear all pending
+>> commands on the way.  If it doesn't we are in deep, deep trouble.
+>>
+>> A NVMe abort has no chance of clearing things at the transport layer.
+> OK so all I can do in my case (if I want soft error recovery) is send
+> out a transport abort in the timeout handler and then rearm the timer
+> and requeue the command.
 >
-> Documentation/devicetree/bindings/net/nfc/pn544.txt: ISO-8859 text
-> arch/arm/boot/dts/sun4i-a10-inet97fv2.dts:           C source, ISO-8859 text
-> arch/arm/crypto/sha256_glue.c:                       C source, ISO-8859 text
-> arch/arm/crypto/sha256_neon_glue.c:                  C source, ISO-8859 text
-> arch/m68k/hp300/hp300map.map:                        ISO-8859 text
-> arch/s390/kernel/ebcdic.c:                           C source, Non-ISO
-> extended-ASCII text
-> drivers/crypto/vmx/ghashp8-ppc.pl:                   a /usr/bin/env
-> perl script, ISO-8859 text executable
-> drivers/iio/dac/ltc2632.c:                           C source, ISO-8859 text
-> drivers/power/reset/ltc2952-poweroff.c:              C source, ISO-8859 text
-> drivers/staging/rtl8188eu/include/odm.h:             C source, ISO-8859 text
-> drivers/tty/vt/defkeymap.map:                        ISO-8859 text
-> kernel/events/callchain.c:                           C source, ISO-8859 text
-> lib/fonts/font_7x14.c:                               data
-> lib/fonts/font_8x16.c:                               data
-> lib/fonts/font_8x8.c:                                data
-> lib/fonts/font_pearl_8x8.c:                          data
-> net/netfilter/ipvs/Kconfig:                          ISO-8859 text
-> net/netfilter/ipvs/ip_vs_mh.c:                       C source, ISO-8859 text
-> tools/power/cpupower/po/de.po:                       GNU gettext
-> message catalogue, ISO-8859 text
-> tools/power/cpupower/po/fr.po:                       GNU gettext
-> message catalogue, ISO-8859 text
+> Which leaves us to the FC patch only, modified of cause.
 >
-> Almost all of those can be trivially converted using 'recode ISO-8859-1..UTF-8',
-> which we should probably do. The four font files contain comments for each
-> of the 256 characters, so that recode turns e.g. the <FF> character
-> into <U+00FF>,
-> which is probably still what we want here.
->
-> The one exception seems to be arch/s390/kernel/ebcdic.c, which apparently
-> uses 0x81 bytes as an excape before characters ISO-8859-1 characters with
-> the high bit set. I don't know what that encoding is called, but I managed
-> to manually convert it into something useful.
 
-Yes, we should convert everything to UTF-8.
+Which I'm going to say no on. I originally did the abort before the 
+reset and it brought out some confusion in the reset code. Thus the 
+existing flow which just resets the controller which has to be done 
+after the abort anyway.
 
-Gr{oetje,eeting}s,
+-- james
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
