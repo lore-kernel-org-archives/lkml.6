@@ -5,28 +5,28 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DC4C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE178C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB2A2086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB2A2086A
+	by mail.kernel.org (Postfix) with ESMTP id 7235820854
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:17:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7235820854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeGSG4i (ORCPT
+        id S1727499AbeGSG67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 02:56:38 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50506 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 02:58:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50633 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726468AbeGSG4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 02:56:38 -0400
+        id S1725934AbeGSG67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 02:58:59 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 652A920766; Thu, 19 Jul 2018 08:15:09 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EE7EB2069C;
-        Thu, 19 Jul 2018 08:15:08 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 08:15:08 +0200
+        id B627D20766; Thu, 19 Jul 2018 08:17:29 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4C6C32069C;
+        Thu, 19 Jul 2018 08:17:29 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 08:17:28 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
 Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -44,11 +44,11 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Subject: Re: [RFC PATCH 0/8] mtd: rawnand: ams-delta: Use gpio-omap
- accessors for data I/O
-Message-ID: <20180719081508.5dafebde@bbrezillon>
-In-Reply-To: <20180718235710.18242-1-jmkrzyszt@gmail.com>
+Subject: Re: [RFC PATCH 1/8] mtd: rawnand: ams-delta: Use private structure
+Message-ID: <20180719081728.46eb7ab5@bbrezillon>
+In-Reply-To: <20180718235710.18242-2-jmkrzyszt@gmail.com>
 References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
+        <20180718235710.18242-2-jmkrzyszt@gmail.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -58,28 +58,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Janusz,
-
-On Thu, 19 Jul 2018 01:57:02 +0200
+On Thu, 19 Jul 2018 01:57:03 +0200
 Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-> Implement the idea suggested by Artem Bityutskiy and Tony Lindgren
-> described in commit b027274d2e3a ("mtd: ams-delta: fix
-> request_mem_region() failure").
+> Introduce a driver private structure and allocate it on device probe.
+> Use it for storing nand_chip structure, GPIO descriptors prevoiusly
+> stored in static variables as well as io_base pointer previously passed
+> as nand controller data or platform driver data.
 
-Thanks for doing that. I'll review the patches, but I already have a
-extra request: can you convert this driver to ->exec_op()? It does not
-necessarily have to be done in this patchset, but, that'd be great to
-have one more driver converted to the new interface.
+That's a good thing. Thanks for doing that.
 
-BTW, there seems to be a nand_gpio driver, maybe we should merge
-ams-delta code into nand_gpio after it's been patched to use the GPIO
-consumer API.
-
+> Subsequent patches
+> may populate the structure with more members as needed.
 > 
->  arch/arm/mach-omap1/board-ams-delta.c |   22 -
->  drivers/gpio/gpio-omap.c              |   88 ++++++
->  drivers/mtd/nand/raw/ams-delta.c      |  436 +++++++++++++++++++++-------------
->  3 files changed, 376 insertions(+), 170 deletions(-)
-> 
+> While at it, fix missing mtd->dev.parent and drop useless mtd->owner.
 
+I'd prefer to have it done in a separate patch if you don't mind.
