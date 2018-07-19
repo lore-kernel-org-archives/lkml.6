@@ -2,83 +2,94 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BC5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C34ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 642B12084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:40:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642B12084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D2822084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:43:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=markrailton-com.20150623.gappssmtp.com header.i=@markrailton-com.20150623.gappssmtp.com header.b="oOSh0bMM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D2822084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=markrailton.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730598AbeGSWZF (ORCPT
+        id S1730638AbeGSW2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 18:25:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47986 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727721AbeGSWZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 18:25:04 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BBAAA738E9;
-        Thu, 19 Jul 2018 21:40:05 +0000 (UTC)
-Received: from llong.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E02D2026D6B;
-        Thu, 19 Jul 2018 21:40:05 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v2] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
-Date:   Thu, 19 Jul 2018 17:39:57 -0400
-Message-Id: <1532036397-19449-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 19 Jul 2018 21:40:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 19 Jul 2018 21:40:05 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        Thu, 19 Jul 2018 18:28:32 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42765 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727721AbeGSW2c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 18:28:32 -0400
+Received: by mail-ed1-f67.google.com with SMTP id r4-v6so8156071edp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 14:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=markrailton-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=j9/NgnJurYhC8x1tbKIpTDEsFlweodzOak91LVYg41k=;
+        b=oOSh0bMMky4d/3crJFIpZpHLljJ0P46SYQ+3dcTYkmOumiRnd+mG7O9K9rB0vr6PIu
+         Jax6SjlwdO8V89l5mevdpywdv2eNFvbyeKoi3Sukbth3HMO/Ygkg4VXUJlsxuZAqYb13
+         aqHOBRlvmmBPuY8cmiBOxlo8xWMH0x+1klJv0lKLMSwtEPhi4NCKSU8XQw2GhJCMw1uP
+         3tSFTDTZzhyFsd8AvykYV7qQQuTC/Wl4GEU3Aa1ZXJqxS6tFuedpkNqWUsNkwzQLwDyg
+         V76a1QdWzF30etvvzYkU1NdEktNX0Nby05leb3l28ux65GOenYQEq3C6JMx65sje6rv2
+         N39Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=j9/NgnJurYhC8x1tbKIpTDEsFlweodzOak91LVYg41k=;
+        b=MaVx0FQxXrsYOxVLdXnUA9SoY2wuVS+1s2myHGqlBFxSizRzkNVD4UcZt+fA9m1QyU
+         YaSkaA9/ICAuWdvsJSKU2xldjBq5tFJkp+jkS8bRup4kFQJBKF6EutM4Nxn1CHtGdOEB
+         r7XbCcYJSZxp5N89JdoGdbkymjGwHzikNixAyB/cSdUyYvDaCWJRVthD35UYL5ZKo2ze
+         Vz97W6MqS0AbvNmEPeGaxvLNpJEPkRSFMsqsNSW8x3V4+mlLQVH512j9guRuFnKYY8Dk
+         216/vp1Begh05E4+Q+ze15KobL7o2bc9odDhd8eZw45hiQ/nIJR5t51odUHix8Xz/k0L
+         QmHQ==
+X-Gm-Message-State: AOUpUlG9f2wf3Z/UmRq6MoSTL4kJ3w48AiNQGxnNZ/gTmxwtnyP3jlAQ
+        pNUjLKf+Uq2Oi9+amPX8R/xwFGZoCgLIheI/BzQ=
+X-Google-Smtp-Source: AAOMgpfuzAtCUdpZpr2/WnR7EC7Jgl5lycHEyvvIesHxp+bEWAKzH06rtSARxfL05zWWzDg5jpDSwQ==
+X-Received: by 2002:aa7:db09:: with SMTP id t9-v6mr12219130eds.277.1532036611481;
+        Thu, 19 Jul 2018 14:43:31 -0700 (PDT)
+Received: from localhost.localdomain ([109.255.141.80])
+        by smtp.gmail.com with ESMTPSA id o34-v6sm364867edd.58.2018.07.19.14.43.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 14:43:30 -0700 (PDT)
+From:   Mark Railton <mark@markrailton.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Mark Railton <mark@markrailton.com>
+Subject: [PATCH] Staging: pi433: rf69: fixed a multi line comment issue
+Date:   Thu, 19 Jul 2018 22:43:18 +0100
+Message-Id: <20180719214318.388-1-mark@markrailton.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On a VM with only 1 vCPU, the locking fast paths will always be
-successful. In this case, there is no need to use the the PV qspinlock
-code which has higher overhead on the unlock side than the native
-qspinlock code.
+Fixed a coding style issue
 
-The xen_pvspin veriable is also turned off in this 1 vCPU case to
-eliminate unneeded pvqspinlock initialization in xen_init_lock_cpu()
-which is run after xen_init_spinlocks().
-
-Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Mark Railton <mark@markrailton.com>
 ---
- arch/x86/xen/spinlock.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/staging/pi433/rf69.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
-index cd97a62..973f10e 100644
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -130,6 +130,10 @@ void xen_uninit_lock_cpu(int cpu)
- void __init xen_init_spinlocks(void)
- {
- 
-+	/*  Don't need to use pvqspinlock code if there is only 1 vCPU. */
-+	if (num_possible_cpus() == 1)
-+		xen_pvspin = false;
-+
- 	if (!xen_pvspin) {
- 		printk(KERN_DEBUG "xen: PV spinlocks disabled\n");
- 		return;
+diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
+index 90280e9b006d..14826fb505dd 100644
+--- a/drivers/staging/pi433/rf69.c
++++ b/drivers/staging/pi433/rf69.c
+@@ -618,7 +618,8 @@ bool rf69_get_flag(struct spi_device *spi, enum flag flag)
+ 	case fifo_full:
+ 		return (rf69_read_reg(spi, REG_IRQFLAGS2) & MASK_IRQFLAGS2_FIFO_FULL);
+ /*	case fifo_not_empty:
+- *		return (rf69_read_reg(spi, REG_IRQFLAGS2) & MASK_IRQFLAGS2_FIFO_NOT_EMPTY); */
++ *		return (rf69_read_reg(spi, REG_IRQFLAGS2) & MASK_IRQFLAGS2_FIFO_NOT_EMPTY);
++ */
+ 	case fifo_empty:
+ 		return !(rf69_read_reg(spi, REG_IRQFLAGS2) & MASK_IRQFLAGS2_FIFO_NOT_EMPTY);
+ 	case fifo_level_below_threshold:
 -- 
-1.8.3.1
+2.17.1
 
