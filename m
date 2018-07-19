@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B42ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAFBCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF38120684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF38120684
+	by mail.kernel.org (Postfix) with ESMTP id 8C5BF20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C5BF20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731001AbeGSXpu (ORCPT
+        id S1731166AbeGSXpx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:45:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53977 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:45:53 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54002 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728087AbeGSXpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:45:50 -0400
+        id S1728087AbeGSXpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:45:52 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BB6212072F; Fri, 20 Jul 2018 01:00:32 +0200 (CEST)
+        id 4F1A4207B4; Fri, 20 Jul 2018 01:00:35 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 10960206F6;
-        Fri, 20 Jul 2018 01:00:31 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id BDDBA206F6;
+        Fri, 20 Jul 2018 01:00:32 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,163 +55,106 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 00/33] Allow dynamic allocations during NAND chip identification phase
-Date:   Fri, 20 Jul 2018 00:59:53 +0200
-Message-Id: <20180719230026.8741-1-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 01/33] mtd: rawnand: brcmnand: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 00:59:54 +0200
+Message-Id: <20180719230026.8741-2-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
+References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Two helpers have been added to the core to make ECC-related
+configuration between the detection phase and the final NAND scan. Use
+these hooks and convert the driver to just use nand_scan() instead of
+both nand_scan_ident() and nand_scan_tail().
 
-This series make a quite deep change in the NAND framework. Until now,
-the NAND chip identification phase could be done in two manners from the
-controller driver perspective:
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ drivers/mtd/nand/raw/brcmnand/brcmnand.c | 47 +++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 19 deletions(-)
 
-1/ Call nand_scan()
-
-  or
-
-1/ Call nand_scan_ident()
-2/ Do some controller-dependent configuration
-3/ Call nand_scan_tail().
-
-The fact that the identifaction could be split in two operations
-involved that in the NAND framework, it was not possible to do any
-dynamic allocation without risking a memory leak. What if the core
-allocates a structure, then the driver between nand_scan_ident() and
-nand_scan_tail() decides it cannot handle the chip and errors out?
-The structure allocated by the core is lost: it is a memory leak. One
-solution could have been to add a nand_scan_ident_cleanup() function,
-but that would mean patching all the drivers anyway to make them call
-this function when something fails between nand_scan_ident() and
-nand_scan_tail().
-
-To avoid this situation, we migrate all drivers to use nand_scan() in
-conjuction with the recently added hooks ->attach_chip() and
-->detach_chip() that are part of the nand_controller structure
-operations. Drivers that need to tweak their configuration after
-nand_scan_ident() should implement it. Any dynamically allocated space
-in ->attach_chip() must be freed in the second hook: ->detach_chip().
-
-The ->detach_chip() does not have to be called upon error in the
-controller driver probe function. The nand_cleanup() helper already
-exists for that and will do the call if needed. Of course, this helper
-must be called on error after a successful nand_scan(), just like
-before.
-
-Once all drivers not using nand_scan() are migrated, nand_scan_ident()
-and nand_scan_tail() are unexported and only available internally.
-
-A previous work [1] removed the ONFI/JEDEC parameter pages and instead
-allocated a nand_parameters structure in nand_chip, embedding both
-generic entries and ONFI-related ones. The deal was, once dynamic
-allocation possible, allocate in nand_scan_ident() the ONFI strcuture
-only if actually needed. This is done in the last patches.
-
-This series applies on top of nand/next.
-
-Thank you,
-Miquèl
-
-[1] http://lists.infradead.org/pipermail/linux-mtd/2018-March/079456.html
-
-Changes since v2:
-=================
-* Rebased on top of nand/next.
-* Adapted all drivers to declare statically a nand_controller_ops
-  structure and assign it in the probe().
-* Added the migration of the tegra_nand.c driver.
-* Moved brcmnand controller ops affectation in the probe().
-
-Changes since v1:
-=================
-* Rebased on top of nand/next.
-* Light rewording of the cover letter about the possibility to have a
-  nand_scan_ident_cleanup() function (just as example of how this series
-  could have been done differently).
-* Changed the hooks to reside in the nand_hw_ctrl structure instead of
-  being part of nand_ecc_ctrl as these hooks are more
-  controller-related.
-
-
-Miquel Raynal (33):
-  mtd: rawnand: brcmnand: convert driver to nand_scan()
-  mtd: rawnand: cafe: convert driver to nand_scan()
-  mtd: rawnand: davinci: convert driver to nand_scan()
-  mtd: rawnand: denali: convert to nand_scan()
-  mtd: rawnand: fsl_elbc: convert driver to nand_scan()
-  mtd: rawnand: fsl_ifc: convert driver to nand_scan()
-  mtd: rawnand: fsmc: convert driver to nand_scan()
-  mtd: rawnand: gpmi: convert driver to nand_scan()
-  mtd: rawnand: hisi504: convert driver to nand_scan()
-  mtd: rawnand: jz4780: convert driver to nand_scan()
-  mtd: rawnand: lpc32xx_mlc: convert driver to nand_scan()
-  mtd: rawnand: lpc32xx_slc: convert driver to nand_scan()
-  mtd: rawnand: marvell: convert driver to nand_scan()
-  mtd: rawnand: mtk: convert driver to nand_scan()
-  mtd: rawnand: mxc: convert driver to nand_scan()
-  mtd: rawnand: nandsim: convert driver to nand_scan()
-  mtd: rawnand: omap2: convert driver to nand_scan()
-  mtd: rawnand: s3c2410: convert driver to nand_scan()
-  mtd: rawnand: sh_flctl: move all NAND chip related setup in one
-    function
-  mtd: rawnand: sh_flctl: convert driver to nand_scan()
-  mtd: rawnand: sunxi: convert driver to nand_scan()
-  mtd: rawnand: tango: convert driver to nand_scan()
-  mtd: rawnand: txx9ndfmc: rename nand controller internal structure
-  mtd: rawnand: txx9ndfmc: convert driver to nand_scan()
-  mtd: rawnand: vf610: convert driver to nand_scan()
-  mtd: rawnand: atmel: convert driver to nand_scan()
-  mtd: rawnand: sm_common: convert driver to nand_scan_with_ids()
-  mtd: rawnand: docg4: convert driver to nand_scan()
-  mtd: rawnand: qcom: convert driver to nand_scan()
-  mtd: rawnand: jz4740: convert driver to nand_scan()
-  mtd: rawnand: tegra: convert driver to nand_scan()
-  mtd: rawnand: do not export nand_scan_[ident|tail]() anymore
-  mtd: rawnand: allocate dynamically ONFI parameters during detection
-
- drivers/mtd/nand/raw/atmel/nand-controller.c |  83 ++---
- drivers/mtd/nand/raw/brcmnand/brcmnand.c     |  47 ++-
- drivers/mtd/nand/raw/cafe_nand.c             | 130 ++++---
- drivers/mtd/nand/raw/davinci_nand.c          | 195 +++++-----
- drivers/mtd/nand/raw/denali.c                | 138 +++----
- drivers/mtd/nand/raw/docg4.c                 |  55 +--
- drivers/mtd/nand/raw/fsl_elbc_nand.c         |  19 +-
- drivers/mtd/nand/raw/fsl_ifc_nand.c          |  19 +-
- drivers/mtd/nand/raw/fsmc_nand.c             | 148 ++++----
- drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c   |  56 +--
- drivers/mtd/nand/raw/hisi504_nand.c          |  78 ++--
- drivers/mtd/nand/raw/jz4740_nand.c           |  46 ++-
- drivers/mtd/nand/raw/jz4780_nand.c           |  34 +-
- drivers/mtd/nand/raw/lpc32xx_mlc.c           | 109 +++---
- drivers/mtd/nand/raw/lpc32xx_slc.c           |  77 ++--
- drivers/mtd/nand/raw/marvell_nand.c          | 206 ++++++-----
- drivers/mtd/nand/raw/mtk_nand.c              |  75 ++--
- drivers/mtd/nand/raw/mxc_nand.c              | 136 +++----
- drivers/mtd/nand/raw/nand_base.c             | 121 +++++--
- drivers/mtd/nand/raw/nand_micron.c           |   6 +-
- drivers/mtd/nand/raw/nand_timings.c          |  12 +-
- drivers/mtd/nand/raw/nandsim.c               |  82 +++--
- drivers/mtd/nand/raw/omap2.c                 | 521 +++++++++++++--------------
- drivers/mtd/nand/raw/qcom_nandc.c            |  71 ++--
- drivers/mtd/nand/raw/s3c2410.c               |  30 +-
- drivers/mtd/nand/raw/sh_flctl.c              |  57 ++-
- drivers/mtd/nand/raw/sm_common.c             |  39 +-
- drivers/mtd/nand/raw/sunxi_nand.c            |  43 +--
- drivers/mtd/nand/raw/tango_nand.c            |  40 +-
- drivers/mtd/nand/raw/tegra_nand.c            | 162 +++++----
- drivers/mtd/nand/raw/txx9ndfmc.c             |  35 +-
- drivers/mtd/nand/raw/vf610_nfc.c             | 127 +++----
- include/linux/mtd/rawnand.h                  |  17 +-
- include/linux/mtd/sh_flctl.h                 |   1 +
- 34 files changed, 1603 insertions(+), 1412 deletions(-)
-
+diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+index 2e5efa0f9ea2..4a69c13c83f4 100644
+--- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
++++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+@@ -2208,6 +2208,32 @@ static int brcmnand_setup_dev(struct brcmnand_host *host)
+ 	return 0;
+ }
+ 
++static int brcmnand_attach_chip(struct nand_chip *chip)
++{
++	struct mtd_info *mtd = nand_to_mtd(chip);
++	struct brcmnand_host *host = nand_get_controller_data(chip);
++	int ret;
++
++	if (chip->bbt_options & NAND_BBT_USE_FLASH)
++		chip->bbt_options |= NAND_BBT_NO_OOB;
++
++	if (brcmnand_setup_dev(host))
++		return -ENXIO;
++
++	chip->ecc.size = host->hwcfg.sector_size_1k ? 1024 : 512;
++
++	/* only use our internal HW threshold */
++	mtd->bitflip_threshold = 1;
++
++	ret = brcmstb_choose_ecc_layout(host);
++
++	return ret;
++}
++
++static struct nand_controller_ops brcmnand_controller_ops = {
++	.attach_chip = brcmnand_attach_chip,
++};
++
+ static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
+ {
+ 	struct brcmnand_controller *ctrl = host->ctrl;
+@@ -2267,10 +2293,6 @@ static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
+ 	nand_writereg(ctrl, cfg_offs,
+ 		      nand_readreg(ctrl, cfg_offs) & ~CFG_BUS_WIDTH);
+ 
+-	ret = nand_scan_ident(mtd, 1, NULL);
+-	if (ret)
+-		return ret;
+-
+ 	chip->options |= NAND_NO_SUBPAGE_WRITE;
+ 	/*
+ 	 * Avoid (for instance) kmap()'d buffers from JFFS2, which we can't DMA
+@@ -2279,21 +2301,7 @@ static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
+ 	 */
+ 	chip->options |= NAND_USE_BOUNCE_BUFFER;
+ 
+-	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+-		chip->bbt_options |= NAND_BBT_NO_OOB;
+-
+-	if (brcmnand_setup_dev(host))
+-		return -ENXIO;
+-
+-	chip->ecc.size = host->hwcfg.sector_size_1k ? 1024 : 512;
+-	/* only use our internal HW threshold */
+-	mtd->bitflip_threshold = 1;
+-
+-	ret = brcmstb_choose_ecc_layout(host);
+-	if (ret)
+-		return ret;
+-
+-	ret = nand_scan_tail(mtd);
++	ret = nand_scan(mtd, 1);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2434,6 +2442,7 @@ int brcmnand_probe(struct platform_device *pdev, struct brcmnand_soc *soc)
+ 	init_completion(&ctrl->done);
+ 	init_completion(&ctrl->dma_done);
+ 	nand_controller_init(&ctrl->controller);
++	ctrl->controller.ops = &brcmnand_controller_ops;
+ 	INIT_LIST_HEAD(&ctrl->host_list);
+ 
+ 	/* NAND register range */
 -- 
 2.14.1
 
