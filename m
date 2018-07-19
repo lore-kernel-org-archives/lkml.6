@@ -6,91 +6,144 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7350CC468C6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A93FECDFB8
 	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C58F2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:22:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C58F2084C
+	by mail.kernel.org (Postfix) with ESMTP id 5A1FE2084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:22:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A1FE2084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730456AbeGSMFD (ORCPT
+        id S1731191AbeGSMFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 08:05:03 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:59734 "EHLO
+        Thu, 19 Jul 2018 08:05:04 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:59736 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeGSMFD (ORCPT
+        with ESMTP id S1727702AbeGSMFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:05:03 -0400
+        Thu, 19 Jul 2018 08:05:04 -0400
 Received: from [148.252.241.226] (helo=ct-lt-1121.office.codethink.co.uk)
         by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fg70k-0004fU-IF; Thu, 19 Jul 2018 12:22:18 +0100
+        id 1fg70l-0004fU-Jk; Thu, 19 Jul 2018 12:22:19 +0100
 From:   Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
 To:     tiwai@suse.de
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] usb-audio: Add UAC3 Power Domains
-Date:   Thu, 19 Jul 2018 12:22:11 +0100
-Message-Id: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
+Subject: [PATCH 4/4] ALSA: usb-audio: Add UAC3 Power Domains to suspend/resume
+Date:   Thu, 19 Jul 2018 12:22:15 +0100
+Message-Id: <20180719112215.4219-5-jorge.sanjuan@codethink.co.uk>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
+References: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset add support for UAC3 Power Domains. This feature
-of the USB audio class 3 allows the host to notify the device 
-what it is making use of so power comsumption can be optimized.
+Set the UAC3 Power Domain state for an Audio Streaming interface
+to D2 state before suspending the device (usb_driver callback).
+This lets the device know there is no intention to use any of the
+Units in the Audio Function and that the host is not going to
+even listen for wake-up events (interrupts) on the units.
 
-This proposal implements this feature for Power Domains
-that include an Input/Output Terminal associated to an
-audio Streaming interface. This is the main usage of this
-feature according to the spec. For that reason, the logic
-for the Power Domain state change has been implemented
-within the ALSA PCMs logic and the suspend/resume callbacks
-of the usb_driver. The behaviour would be as follows:
+If the usb_driver gets resumed, the state D1 (idle) will be
+set.
 
-* Power Domain State D0: A Power Domain will reach this state
-  only when the audio substream associated to that domain is
-  being used (i,e. Audio playback/capture is happening).
-* Power Domain State D1: This is the Idle state where the driver
-  is going to always want to be in order to reduce power
-  consumption.
-* Power Domain State D2: This state is only set when the usb driver
-  asumes the device is not going to be used anymore and hence, it
-  wont care about getting any interrupts from the device. This
-  will only happen when power level is set to "auto" in sysfs
-  so the usb driver gets suspended when the interfaces are not in use.
+Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+---
+ sound/usb/card.c |  9 +++++++++
+ sound/usb/pcm.c  | 30 ++++++++++++++++++++++++++++++
+ sound/usb/pcm.h  |  2 ++
+ 3 files changed, 41 insertions(+)
+
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index a1ed798a1c6b..9c2a15b805c3 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -808,6 +808,7 @@ static int usb_audio_suspend(struct usb_interface *intf, pm_message_t message)
+ 		snd_power_change_state(chip->card, SNDRV_CTL_POWER_D3hot);
+ 	if (!chip->num_suspended_intf++) {
+ 		list_for_each_entry(as, &chip->pcm_list, list) {
++			snd_usb_pcm_suspend(as);
+ 			snd_pcm_suspend_all(as->pcm);
+ 			as->substream[0].need_setup_ep =
+ 				as->substream[1].need_setup_ep = true;
+@@ -824,6 +825,7 @@ static int usb_audio_suspend(struct usb_interface *intf, pm_message_t message)
+ static int __usb_audio_resume(struct usb_interface *intf, bool reset_resume)
+ {
+ 	struct snd_usb_audio *chip = usb_get_intfdata(intf);
++	struct snd_usb_stream *as;
+ 	struct usb_mixer_interface *mixer;
+ 	struct list_head *p;
+ 	int err = 0;
+@@ -834,6 +836,13 @@ static int __usb_audio_resume(struct usb_interface *intf, bool reset_resume)
+ 		return 0;
  
-NOTE: The way this has been implemented will always try to put the 
-Power Domain in state D1 if the Power Domain exists so there is not a 
-way a user could disable this feature. It may be worth getting a control
-exposed to userland that enables/disables this feature (?).
-
-Power Domains affecting other units independently are required to be 
-bypassed via a Selector Unit first before the host can change the 
-power state. This sceneario is not covered in this patchset.
-
-based on next-20180719
-
-Jorge Sanjuan (4):
-  ALSA: usb-audio: Initial Power Domain support
-  ALSA: usb-audio: AudioStreaming Power Domain parsing
-  ALSA: usb-audio: Operate UAC3 Power Domains in PCM callbacks
-  ALSA: usb-audio: Add UAC3 Power Domains to suspend/resume
-
- include/linux/usb/audio-v3.h |   4 ++
- sound/usb/Makefile           |   1 +
- sound/usb/card.c             |   9 ++++
- sound/usb/card.h             |   2 +
- sound/usb/pcm.c              |  64 +++++++++++++++++++++--
- sound/usb/pcm.h              |   2 +
- sound/usb/power.c            | 117 +++++++++++++++++++++++++++++++++++++++++++
- sound/usb/power.h            |  19 +++++++
- sound/usb/stream.c           |  70 +++++++++++++++++++++++---
- 9 files changed, 277 insertions(+), 11 deletions(-)
- create mode 100644 sound/usb/power.c
-
+ 	atomic_inc(&chip->active); /* avoid autopm */
++
++	list_for_each_entry(as, &chip->pcm_list, list) {
++		err = snd_usb_pcm_resume(as);
++		if (err < 0)
++			goto err_out;
++	}
++
+ 	/*
+ 	 * ALSA leaves material resumption to user space
+ 	 * we just notify and restart the mixers
+diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
+index 0ae5f539706d..266f7028d01b 100644
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -729,6 +729,36 @@ static int snd_usb_pcm_change_state(struct snd_usb_substream *subs, int state)
+ 	return 0;
+ }
+ 
++int snd_usb_pcm_suspend(struct snd_usb_stream *as)
++{
++	int ret;
++
++	ret = snd_usb_pcm_change_state(&as->substream[0], UAC3_PD_STATE_D2);
++	if (ret < 0)
++		return ret;
++
++	ret = snd_usb_pcm_change_state(&as->substream[1], UAC3_PD_STATE_D2);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++int snd_usb_pcm_resume(struct snd_usb_stream *as)
++{
++	int ret;
++
++	ret = snd_usb_pcm_change_state(&as->substream[0], UAC3_PD_STATE_D1);
++	if (ret < 0)
++		return ret;
++
++	ret = snd_usb_pcm_change_state(&as->substream[1], UAC3_PD_STATE_D1);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
+ /*
+  * hw_params callback
+  *
+diff --git a/sound/usb/pcm.h b/sound/usb/pcm.h
+index f77ec58bf1a1..9833627c1eca 100644
+--- a/sound/usb/pcm.h
++++ b/sound/usb/pcm.h
+@@ -6,6 +6,8 @@ snd_pcm_uframes_t snd_usb_pcm_delay(struct snd_usb_substream *subs,
+ 				    unsigned int rate);
+ 
+ void snd_usb_set_pcm_ops(struct snd_pcm *pcm, int stream);
++int snd_usb_pcm_suspend(struct snd_usb_stream *as);
++int snd_usb_pcm_resume(struct snd_usb_stream *as);
+ 
+ int snd_usb_init_pitch(struct snd_usb_audio *chip, int iface,
+ 		       struct usb_host_interface *alts,
 -- 
 2.11.0
 
