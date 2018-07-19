@@ -2,172 +2,145 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCED8ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A56ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E5E2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C293E20856
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:01:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Rt00k9Kw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E5E2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZH56gFI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C293E20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbeGSQnc (ORCPT
+        id S1731913AbeGSQpL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:43:32 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:36378 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731839AbeGSQnc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:43:32 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JFsHil127388;
-        Thu, 19 Jul 2018 15:58:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=sHXO+eiLtn+rzspQduVDWvXcu5kSWyuk5LS1+cPO4rs=;
- b=Rt00k9KwHS7MmwGh5m7Njw4G+UkIUcnZXeruYavX9ksh/S2a5DFF7KZlKuvWI4KFG2f+
- VQaE5tdYSXrD5LmuU7OCaU9CbObub1JWMxSnVUNC0I8A2RAXH3FnQbuDe4kCEMnCu6yw
- 2mJriYs4PF9IIO7VORi0wy3Hbf3Do2whM85GRissM7VaDPuLsrEVzU7ULPOpXuQDna9t
- BWwEjazbJuz3eEdJ1omsnkOmHhb72hcrHn6KOX+fDgZaE+ci8rlMD8CVJns0eQVhwjDf
- 3x5+3oBJfKtPFrY0JuLa66JhIxn5+F4S9m2G/HexceJEHII3cPJqqluw8ZwRIThtDYLZ HA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2k9ykc7suq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 15:58:48 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6JFwl1X014122
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 15:58:48 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JFwiQt004431;
-        Thu, 19 Jul 2018 15:58:44 GMT
-Received: from [192.168.1.10] (/73.69.118.222)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Jul 2018 15:58:43 +0000
-Subject: Re: [PATCH v14 20/25] x86/tsc: calibrate tsc only once
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        prarit@redhat.com, feng.tang@intel.com, pmladek@suse.com,
-        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com
-References: <20180718022211.6259-1-pasha.tatashin@oracle.com>
- <20180718022211.6259-21-pasha.tatashin@oracle.com>
- <20180719103340.GA2494@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1807191300150.1602@nanos.tec.linutronix.de>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Message-ID: <4295075b-8a0f-1723-2e80-1bbd2f038846@oracle.com>
-Date:   Thu, 19 Jul 2018 11:58:41 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1807191300150.1602@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8958 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807190168
+        Thu, 19 Jul 2018 12:45:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59390 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731524AbeGSQpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:45:10 -0400
+Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B6622084E;
+        Thu, 19 Jul 2018 16:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532016081;
+        bh=W0S0JzDjUzFUb+4ZJU+qpI3XbI7YB9UgK5LgII43hgs=;
+        h=From:To:Subject:Date:From;
+        b=RZH56gFIUzCuMFKinu8XHNy+QsTHisc6bkVejjXXzVxPtRh6akC5Gdy25+1PNf64Q
+         MYJv4X7diNdFeMgw+PO2+MpzdsfJ8+vM1Xvp4vROzMGWTopi6b7wAFGt9rRYl/QBOk
+         QXQRkG+0cXN5J6HXHrPFnEDEUlDWYJ+KJJQwbpSM=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFT 00/10] pinctrl: samsung: Remove ugly hack for sharing eint_wakeup_mask
+Date:   Thu, 19 Jul 2018 18:00:40 +0200
+Message-Id: <20180719160050.22566-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi All,
+
+Tests
+=====
+This is both request for comments and requests for tests. Only basic
+tests were done, including suspend to RAM on Odroid U3 (Exynos4412)
+with max7768 RTC wakeup. Please kindly test it with devices capable of
+suspending and resuming. I am mostly thinking about S5Pv210-based (Aria),
+Trats, Trats2 and TM2 (Exynos5433). Existing platforms should not be
+broken however changing external interrupt wakeup mask was not done
+on Exynos5433.
 
 
-On 07/19/2018 07:01 AM, Thomas Gleixner wrote:
-> On Thu, 19 Jul 2018, Peter Zijlstra wrote:
->> On Tue, Jul 17, 2018 at 10:22:06PM -0400, Pavel Tatashin wrote:
->>> During boot tsc is calibrated twice: once in tsc_early_delay_calibrate(),
->>> and the second time in tsc_init().
->>>
->>> Rename tsc_early_delay_calibrate() to tsc_early_init(), and rework it so
->>> the calibration is done only early, and make tsc_init() to use the values
->>> already determined in tsc_early_init().
->>>
->>> Sometimes it is not possible to determine tsc early, as the subsystem that
->>> is required is not yet initialized, in such case try again later in
->>> tsc_init().
->>
->> It might be nice to preserve some of the information tglx dug out during
->> review of all this. Like the various methods of calibrate_*() and their
->> dependencies.
->>
->> And I note that this patch relies on the magic of native_calibrate_cpu()
->> working really early and not exploding in the quick calibration run.
->> This either wants fixing or documenting.
->>
->> I think the initial idea was to only do the fast_calibrate (cpuid, msr
->> and possibly the quick_pit) things early and delay the HPET/PMTIMER
->> magic until later.
-> 
-> Yes. I really would prefer to have this as an explicit expressed mechanism
-> rather than relying on magic variables not being initialized.
+Description
+===========
+The Exynos/S5Pv210 machine suspend code needs to write the external
+interrupt mask during suspend.  The mask is controlled by pin controller
+driver: the exynos_wkup_irq_set_wake() in IRQ chip for these wakeup
+interrupts.
 
-What is the best way to achieve this?
+Therefore pinctrl driver code exposed an exynos_get_eint_wake_mask()
+function which was later used as an extern in machine code.
 
-I did the following:
-
-1367 static bool __init determine_cpu_tsc_frequencies(bool early)
-1368 {
-1369         /* Make sure that cpu and tsc are not already calibrated */
-1370         WARN_ON(cpu_khz || tsc_khz);
-1371                    
-1372         if (early) {
-1373                 cpu_khz = x86_platform.calibrate_cpu();
-1374                 tsc_khz = x86_platform.calibrate_tsc();
-1375         } else {
-1376                 cpu_khz = hpet_pmtime_calibrate_cpu();
-1377         }
-
- 833 /**
- 834  * native_calibrate_cpu - calibrate the cpu on boot
- 835  */
- 836 unsigned long native_calibrate_cpu(void)
- 837 {
- 838         unsigned long flags, fast_calibrate;
- 839 
- 840         fast_calibrate = cpu_khz_from_cpuid();
- 841         if (fast_calibrate)
- 842                 return fast_calibrate;
- 843 
- 844         fast_calibrate = cpu_khz_from_msr();
- 845         if (fast_calibrate)
- 846                 return fast_calibrate;
- 847 
- 848         local_irq_save(flags);
- 849         fast_calibrate = quick_pit_calibrate();
- 850         local_irq_restore(flags);
- 851         if (fast_calibrate)
- 852                 return fast_calibrate;
- 853 
- 854         return hpet_pmtime_calibrate_cpu();
- 855 }
+This is quite ugly way of combining driver and machine code,
+not portable triggering Sparse and GCC warnings.
 
 
-And hpet_pmtime_calibrate_cpu() contains all the hpet/pmtime stuff.
+This might break suspend capability S5Pv210 on with older DTBs (thus
+breaks DTB compatibility), however:
+1. just "might" because in case of using older DTB, the wakeup mask
+   will not be changed during suspend and default reset value (all
+   interrupts non-masked) should work,
+2. mainline support for S5Pv210 with DTB is limited and suspend
+   to RAM already might be broken.
 
-However, when cpu_khz = x86_platform.calibrate_cpu() is called the first time, we still call hpet_pmtime_calibrate_cpu() from native_calibrate_cpu(). We cannot simply split native_calibrate_cpu() into two independent functions because it is also called from recalibrate_cpu_khz().
 
-So, the question is how to enforce that the first time we do not call hpet/pmtime?
+Dependencies
+============
+1. The first seven patches should be taken through one tree,
+   preferably samsung-pinctrl,
+2. The DTS patch (7/10) for S5Pv210 should go into next cycle,
+3. The remaining patches (8-10) should go after all previous,
+   so probably another release cycle.
 
-1. Use a new global variable? Kind of ugly.
-2. Use system_state == SYSTEM_BOOTING ? Ugly, and probably not very safe.
 
-Any other suggestion?
+Best regards,
+Krzysztof
 
-Thank you,
-Pavel
+
+Krzysztof Kozlowski (10):
+  pinctrl: samsung: Define suspend and resume callbacks for all banks
+    and SoCs
+  pinctrl: samsung: Document suspend and resume members
+  pinctrl: samsung: Document hidden requirement about one external
+    wakeup
+  pinctrl: samsung: Add dedicated compatible for S5Pv210 wakeup
+    interrupts
+  ARM: exynos: Define EINT_WAKEUP_MASK registers for S5Pv210 and
+    Exynos5433
+  pinctrl: samsung: Write external interrupt mask
+  ARM: dts: s5pv210: Switch to S5Pv210 specific pinctrl wakeup
+    compatible
+  ARM: s5pv210: Remove legacy setting of external wakeup interrupts
+  ARM: exynos: Remove legacy setting of external wakeup interrupts
+  pinctrl: samsung: Remove legacy API for handling external wakeup
+    interrupts mask
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           | 11 ++-
+ arch/arm/boot/dts/s5pv210.dtsi                     |  2 +-
+ arch/arm/mach-exynos/common.h                      |  2 -
+ arch/arm/mach-exynos/suspend.c                     | 16 +++--
+ arch/arm/mach-s5pv210/common.h                     |  1 -
+ arch/arm/mach-s5pv210/pm.c                         | 16 +++--
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c       | 16 +++++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 78 +++++++++++++++++++---
+ drivers/pinctrl/samsung/pinctrl-samsung.h          | 11 +++
+ include/linux/soc/samsung/exynos-regs-pmu.h        |  8 ++-
+ 10 files changed, 136 insertions(+), 25 deletions(-)
+
+-- 
+2.14.1
+
