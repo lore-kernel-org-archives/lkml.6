@@ -5,37 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A53C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F49ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B83E820671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:47:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B83E820671
+	by mail.kernel.org (Postfix) with ESMTP id DCD1920671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:47:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCD1920671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732077AbeGSRbF (ORCPT
+        id S1732100AbeGSRbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 13:31:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53818 "EHLO mx1.redhat.com"
+        Thu, 19 Jul 2018 13:31:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35960 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731661AbeGSRbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 13:31:05 -0400
+        id S1731732AbeGSRbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 13:31:52 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F164F401DE68;
-        Thu, 19 Jul 2018 16:47:03 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id ADD994070496;
+        Thu, 19 Jul 2018 16:47:50 +0000 (UTC)
 Received: from [10.36.117.183] (ovpn-117-183.ams2.redhat.com [10.36.117.183])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CC9D0111C481;
-        Thu, 19 Jul 2018 16:47:02 +0000 (UTC)
-Subject: Re: [PATCH v3 4/6] KVM: X86: Implement PV IPIs send hypercall
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8972B111DCE5;
+        Thu, 19 Jul 2018 16:47:49 +0000 (UTC)
+Subject: Re: [PATCH v3 2/6] KVM: X86: Implement PV IPIs in linux guest
+To:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         Vitaly Kuznetsov <vkuznets@redhat.com>
 References: <1530598891-21370-1-git-send-email-wanpengli@tencent.com>
- <1530598891-21370-5-git-send-email-wanpengli@tencent.com>
+ <1530598891-21370-3-git-send-email-wanpengli@tencent.com>
+ <20180719162826.GB11749@flask>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -73,44 +74,84 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <a4f281c2-f189-ae23-bf86-2ea009b38357@redhat.com>
-Date:   Thu, 19 Jul 2018 18:47:01 +0200
+Message-ID: <1357a0b5-0cd8-8cb5-6c61-c9662219bed0@redhat.com>
+Date:   Thu, 19 Jul 2018 18:47:48 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1530598891-21370-5-git-send-email-wanpengli@tencent.com>
+In-Reply-To: <20180719162826.GB11749@flask>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 19 Jul 2018 16:47:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 19 Jul 2018 16:47:04 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 16:47:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 16:47:50 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/07/2018 08:21, Wanpeng Li wrote:
-> +
-> +	rcu_read_lock();
-> +	map = rcu_dereference(kvm->arch.apic_map);
-> +
-> +	for_each_set_bit(i, &ipi_bitmap_low, BITS_PER_LONG) {
-> +		vcpu = map->phys_map[i]->vcpu;
-> +		if (!kvm_apic_set_irq(vcpu, &irq, NULL))
-> +			return 1;
-> +	}
-> +
-> +	for_each_set_bit(i, &ipi_bitmap_high, BITS_PER_LONG) {
-> +		vcpu = map->phys_map[i + BITS_PER_LONG]->vcpu;
-> +		if (!kvm_apic_set_irq(vcpu, &irq, NULL))
-> +			return 1;
-> +	}
-> +
+On 19/07/2018 18:28, Radim Krčmář wrote:
+>> +
+>> +	kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitmap_high, vector);
+> and
+> 
+> 	kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap[0], ipi_bitmap[1], vector);
+> 
+> Still, the main problem is that we can only address 128 APICs.
+> 
+> A simple improvement would reuse the vector field (as we need only 8
+> bits) and put a 'offset' in the rest.  The offset would say which
+> cluster of 128 are we addressing.  24 bits of offset results in 2^31
+> total addressable CPUs (we probably should even use that many bits).
+> The downside of this is that we can only address 128 at a time.
+> 
+> It's basically the same as x2apic cluster mode, only with 128 cluster
+> size instead of 16, so the code should be a straightforward port.
+> And because x2apic code doesn't seem to use any division by the cluster
+> size, we could even try to use kvm_hypercall4, add ipi_bitmap[2], and
+> make the cluster size 192. :)
 
-This should be the guest's BITS_PER_LONG, not the host's (i.e. you need
-to pass op_64_bit from kvm_emulate_hypercall).
+I did suggest an offset earlier in the discussion.
 
-Thanks,
+The main problem is that consecutive CPU ids do not map to consecutive
+APIC ids.  But still, we could do an hypercall whenever the total range
+exceeds 64.  Something like
+
+u64 ipi_bitmap = 0;
+for_each_cpu(cpu, mask)
+	if (!ipi_bitmap) {
+		min = max = cpu;
+	} else if (cpu < min && max - cpu < 64) {
+		ipi_bitmap <<= min - cpu;
+		min = cpu;
+	} else if (id < min + 64) {
+		max = cpu < max ? max : cpu;
+	} else {
+		/* ... send hypercall... */
+		min = max = cpu;
+		ipi_bitmap = 0;
+	}
+	__set_bit(ipi_bitmap, cpu - min);
+}
+if (ipi_bitmap) {
+	/* ... send hypercall... */
+}
+
+We could keep the cluster size of 128, but it would be more complicated
+to do the left shift in the first "else if".  If the limit is 64, you
+can keep the two arguments in the hypercall, and just pass 0 as the
+"high" bitmap on 64-bit kernels.
 
 Paolo
+
+> But because it is very similar to x2apic, I'd really need some real
+> performance data to see if this benefits a real workload.
+> Hardware could further optimize LAPIC (apicv, vapic) in the future,
+> which we'd lose by using paravirt.
+>
+> e.g. AMD's acceleration should be superior to this when using < 8 VCPUs
+> as they can use logical xAPIC and send without VM exits (when all VCPUs
+> are running).
+> 
+
