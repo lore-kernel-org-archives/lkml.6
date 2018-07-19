@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DAEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BBBECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2E6120684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2E6120684
+	by mail.kernel.org (Postfix) with ESMTP id A964220684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A964220684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732024AbeGSXrb (ORCPT
+        id S1732037AbeGSXrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:47:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54580 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:47:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54531 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730556AbeGSXrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730687AbeGSXrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Jul 2018 19:47:10 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B142520908; Fri, 20 Jul 2018 01:01:53 +0200 (CEST)
+        id BC9112093C; Fri, 20 Jul 2018 01:01:52 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 44BC9209C2;
-        Fri, 20 Jul 2018 01:01:22 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id CE550209BC;
+        Fri, 20 Jul 2018 01:01:18 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 29/33] mtd: rawnand: qcom: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 01:00:22 +0200
-Message-Id: <20180719230026.8741-30-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 27/33] mtd: rawnand: sm_common: convert driver to nand_scan_with_ids()
+Date:   Fri, 20 Jul 2018 01:00:20 +0200
+Message-Id: <20180719230026.8741-28-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -68,152 +68,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Two helpers have been added to the core to make ECC-related
 configuration between the detection phase and the final NAND scan. Use
-these hooks and convert the driver to just use nand_scan() instead of
+these hooks and convert the driver to just use nand_scan_with_ids()
+(alternative to nand_scan() for passing a flash IDs table) instead of
 both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/qcom_nandc.c | 71 +++++++++++++--------------------------
- 1 file changed, 24 insertions(+), 47 deletions(-)
+ drivers/mtd/nand/raw/sm_common.c | 39 +++++++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index aa6c3e026ef1..aa66e51afdb8 100644
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -2475,10 +2475,10 @@ qcom_nandc_calc_ecc_bytes(int step_size, int strength)
- NAND_ECC_CAPS_SINGLE(qcom_nandc_ecc_caps, qcom_nandc_calc_ecc_bytes,
- 		     NANDC_STEP_SIZE, 4, 8);
+diff --git a/drivers/mtd/nand/raw/sm_common.c b/drivers/mtd/nand/raw/sm_common.c
+index 7f5044a79f01..92e04acfea3b 100644
+--- a/drivers/mtd/nand/raw/sm_common.c
++++ b/drivers/mtd/nand/raw/sm_common.c
+@@ -160,19 +160,9 @@ static struct nand_flash_dev nand_xd_flash_ids[] = {
+ 	{NULL}
+ };
  
--static int qcom_nand_host_setup(struct qcom_nand_host *host)
-+static int qcom_nand_attach_chip(struct nand_chip *chip)
+-int sm_register_device(struct mtd_info *mtd, int smartmedia)
++static int sm_attach_chip(struct nand_chip *chip)
  {
--	struct nand_chip *chip = &host->chip;
- 	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct qcom_nand_host *host = to_qcom_nand_host(chip);
- 	struct nand_ecc_ctrl *ecc = &chip->ecc;
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
- 	int cwperpage, bad_block_byte, ret;
-@@ -2640,6 +2640,10 @@ static int qcom_nand_host_setup(struct qcom_nand_host *host)
- 	return 0;
- }
- 
-+static struct nand_controller_ops qcom_nandc_ops = {
-+	.attach_chip = qcom_nand_attach_chip,
-+};
-+
- static int qcom_nandc_alloc(struct qcom_nand_controller *nandc)
- {
- 	int ret;
-@@ -2781,9 +2785,9 @@ static int qcom_nandc_setup(struct qcom_nand_controller *nandc)
- 	return 0;
- }
- 
--static int qcom_nand_host_init(struct qcom_nand_controller *nandc,
--			       struct qcom_nand_host *host,
--			       struct device_node *dn)
-+static int qcom_nand_host_init_and_register(struct qcom_nand_controller *nandc,
-+					    struct qcom_nand_host *host,
-+					    struct device_node *dn)
- {
- 	struct nand_chip *chip = &host->chip;
- 	struct mtd_info *mtd = nand_to_mtd(chip);
-@@ -2824,36 +2828,20 @@ static int qcom_nand_host_init(struct qcom_nand_controller *nandc,
- 	chip->block_markbad	= qcom_nandc_block_markbad;
- 
- 	chip->controller = &nandc->controller;
-+	chip->controller->ops = &qcom_nandc_ops;
- 	chip->options |= NAND_NO_SUBPAGE_WRITE | NAND_USE_BOUNCE_BUFFER |
- 			 NAND_SKIP_BBTSCAN;
- 
- 	/* set up initial status value */
- 	host->status = NAND_STATUS_READY | NAND_STATUS_WP;
- 
--	ret = nand_scan_ident(mtd, 1, NULL);
--	if (ret)
--		return ret;
--
--	ret = qcom_nand_host_setup(host);
--
--	return ret;
--}
--
--static int qcom_nand_mtd_register(struct qcom_nand_controller *nandc,
--				  struct qcom_nand_host *host,
--				  struct device_node *dn)
--{
--	struct nand_chip *chip = &host->chip;
--	struct mtd_info *mtd = nand_to_mtd(chip);
+-	struct nand_chip *chip = mtd_to_nand(mtd);
 -	int ret;
 -
+-	chip->options |= NAND_SKIP_BBTSCAN;
+-
+-	/* Scan for card properties */
+-	ret = nand_scan_ident(mtd, 1, smartmedia ?
+-		nand_smartmedia_flash_ids : nand_xd_flash_ids);
+-
+-	if (ret)
+-		return ret;
++	struct mtd_info *mtd = nand_to_mtd(chip);
+ 
+ 	/* Bad block marker position */
+ 	chip->badblockpos = 0x05;
+@@ -187,12 +177,33 @@ int sm_register_device(struct mtd_info *mtd, int smartmedia)
+ 	else
+ 		return -ENODEV;
+ 
 -	ret = nand_scan_tail(mtd);
-+	ret = nand_scan(mtd, 1);
++	return 0;
++}
+ 
++static struct nand_controller_ops sm_controller_ops = {
++	.attach_chip = sm_attach_chip,
++};
++
++int sm_register_device(struct mtd_info *mtd, int smartmedia)
++{
++	struct nand_chip *chip = mtd_to_nand(mtd);
++	struct nand_flash_dev *flash_ids;
++	int ret;
++
++	chip->options |= NAND_SKIP_BBTSCAN;
++
++	/* Scan for card properties */
++	chip->dummy_controller.ops = &sm_controller_ops;
++	flash_ids = smartmedia ? nand_smartmedia_flash_ids : nand_xd_flash_ids;
++	ret = nand_scan_with_ids(mtd, 1, flash_ids);
  	if (ret)
  		return ret;
  
- 	ret = mtd_device_register(mtd, NULL, 0);
- 	if (ret)
--		nand_cleanup(mtd_to_nand(mtd));
-+		nand_cleanup(chip);
- 
- 	return ret;
- }
-@@ -2862,9 +2850,19 @@ static int qcom_probe_nand_devices(struct qcom_nand_controller *nandc)
- {
- 	struct device *dev = nandc->dev;
- 	struct device_node *dn = dev->of_node, *child;
--	struct qcom_nand_host *host, *tmp;
-+	struct qcom_nand_host *host;
- 	int ret;
- 
-+	if (nandc->props->is_bam) {
-+		free_bam_transaction(nandc);
-+		nandc->bam_txn = alloc_bam_transaction(nandc);
-+		if (!nandc->bam_txn) {
-+			dev_err(nandc->dev,
-+				"failed to allocate bam transaction\n");
-+			return -ENOMEM;
-+		}
-+	}
+-	return mtd_device_register(mtd, NULL, 0);
++	ret = mtd_device_register(mtd, NULL, 0);
++	if (ret)
++		nand_release(mtd);
 +
- 	for_each_available_child_of_node(dn, child) {
- 		host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
- 		if (!host) {
-@@ -2872,7 +2870,7 @@ static int qcom_probe_nand_devices(struct qcom_nand_controller *nandc)
- 			return -ENOMEM;
- 		}
- 
--		ret = qcom_nand_host_init(nandc, host, child);
-+		ret = qcom_nand_host_init_and_register(nandc, host, child);
- 		if (ret) {
- 			devm_kfree(dev, host);
- 			continue;
-@@ -2881,27 +2879,6 @@ static int qcom_probe_nand_devices(struct qcom_nand_controller *nandc)
- 		list_add_tail(&host->node, &nandc->host_list);
- 	}
- 
--	if (list_empty(&nandc->host_list))
--		return -ENODEV;
--
--	if (nandc->props->is_bam) {
--		free_bam_transaction(nandc);
--		nandc->bam_txn = alloc_bam_transaction(nandc);
--		if (!nandc->bam_txn) {
--			dev_err(nandc->dev,
--				"failed to allocate bam transaction\n");
--			return -ENOMEM;
--		}
--	}
--
--	list_for_each_entry_safe(host, tmp, &nandc->host_list, node) {
--		ret = qcom_nand_mtd_register(nandc, host, child);
--		if (ret) {
--			list_del(&host->node);
--			devm_kfree(dev, host);
--		}
--	}
--
- 	if (list_empty(&nandc->host_list))
- 		return -ENODEV;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(sm_register_device);
  
 -- 
 2.14.1
