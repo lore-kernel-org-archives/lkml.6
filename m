@@ -4,191 +4,242 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 945B7ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BF3C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3565820856
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:59:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 447A620856
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:59:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="MFJYFeAK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3565820856
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="hTHinaKq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 447A620856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733009AbeGSSnl (ORCPT
+        id S2387828AbeGSSnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 14:43:41 -0400
-Received: from mail-cys01nam02on0045.outbound.protection.outlook.com ([104.47.37.45]:12061
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Thu, 19 Jul 2018 14:43:47 -0400
+Received: from mail-eopbgr700040.outbound.protection.outlook.com ([40.107.70.40]:62787
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732031AbeGSSni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 14:43:38 -0400
+        id S1731661AbeGSSno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 14:43:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M0rbzHUL+cL9PdBL0ZE2NASXqqiZ3aqVnXquqvf6ep4=;
- b=MFJYFeAKnckaKEmiKESlc84cL899Co5hLrMZM2Ecfoy+mr4cNGsizSZS3ZfzdXqmVINcdkZCaOdZM7qyX2NTCxUMo8M08HP2E3nAJ++jtMaH9MXi9J8iE7Er5twQI47C3rNDvN9RsWtxqw5n/9noeaadBY1jnBiwysKYlUAHQxk=
-Received: from DM6PR07CA0027.namprd07.prod.outlook.com (2603:10b6:5:94::40) by
- SN6PR07MB4717.namprd07.prod.outlook.com (2603:10b6:805:3b::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.952.21; Thu, 19 Jul 2018 17:59:19 +0000
-Received: from DM3NAM05FT025.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::200) by DM6PR07CA0027.outlook.office365.com
- (2603:10b6:5:94::40) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.973.21 via Frontend
- Transport; Thu, 19 Jul 2018 17:59:18 +0000
-Authentication-Results: spf=softfail (sender IP is 158.140.1.28)
+ bh=XOWNYt19usNdRNt7xv++3EV5KuQU11vNVAbn4o+Gkhc=;
+ b=hTHinaKq6FvkzgQRw+fwrOZH42kiU4UlIM5CU9DDVIpdb+IJhj9PUiGGWvf2Sl2eQly/0RttriZbYhtLI8iMabkfw5Dqp7v7aX4ZYo/flPXONqxQpiN1jJ3sOEygZDlUvAU0bbbZwWCxYC09DYUw3q+SqQmz2Cm2Nuxupbsyb0c=
+Received: from DM5PR07CA0104.namprd07.prod.outlook.com (2603:10b6:4:ae::33) by
+ CY1PR0701MB1340.namprd07.prod.outlook.com (2a01:111:e400:4c1b::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.952.20; Thu, 19 Jul
+ 2018 17:59:06 +0000
+Received: from DM3NAM05FT010.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::209) by DM5PR07CA0104.outlook.office365.com
+ (2603:10b6:4:ae::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.973.16 via Frontend
+ Transport; Thu, 19 Jul 2018 17:59:06 +0000
+Authentication-Results: spf=softfail (sender IP is 199.43.4.28)
  smtp.mailfrom=cadence.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none
  header.from=cadence.com;
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx1.cadence.com (158.140.1.28) by
- DM3NAM05FT025.mail.protection.outlook.com (10.152.98.135) with Microsoft SMTP
+ cadence.com discourages use of 199.43.4.28 as permitted sender)
+Received: from rmmaillnx1.cadence.com (199.43.4.28) by
+ DM3NAM05FT010.mail.protection.outlook.com (10.152.98.117) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.20.995.0 via Frontend Transport; Thu, 19 Jul 2018 17:59:18 +0000
+ 15.20.995.0 via Frontend Transport; Thu, 19 Jul 2018 17:59:05 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w6JHxAS1019643
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w6JHx1Bg004988
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 19 Jul 2018 10:59:17 -0700
+        Thu, 19 Jul 2018 13:59:03 -0400
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Thu, 19 Jul 2018 19:59:27 +0200
+ 15.0.1367.3; Thu, 19 Jul 2018 19:59:16 +0200
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 19 Jul 2018 19:59:27 +0200
+ 15.0.1367.3 via Frontend Transport; Thu, 19 Jul 2018 19:59:16 +0200
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w6JHxCFY005781;
-        Thu, 19 Jul 2018 18:59:12 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w6JHx109004971;
+        Thu, 19 Jul 2018 18:59:01 +0100
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w6JHxCwL005770;
-        Thu, 19 Jul 2018 18:59:12 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w6JHx0K3004929;
+        Thu, 19 Jul 2018 18:59:00 +0100
 From:   Pawel Laszczak <pawell@cadence.com>
 CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
         <linux-kernel@vger.kernel.org>, <ltyrala@cadence.com>,
         <adouglas@cadence.com>, <pawell@cadence.com>
-Subject: [PATCH 11/31] usb: usbssp: added function for stopping driver.
-Date:   Thu, 19 Jul 2018 18:57:44 +0100
-Message-ID: <1532023084-28083-12-git-send-email-pawell@cadence.com>
+Subject: [PATCH 00/31] Introduced new Cadence USBSSP DRD Driver
+Date:   Thu, 19 Jul 2018 18:57:33 +0100
+Message-ID: <1532023084-28083-1-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
-In-Reply-To: <1532023084-28083-1-git-send-email-pawell@cadence.com>
-References: <1532023084-28083-1-git-send-email-pawell@cadence.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(346002)(39860400002)(2980300002)(36092001)(189003)(199004)(486006)(4720700003)(5660300001)(14444005)(246002)(6666003)(476003)(2906002)(48376002)(11346002)(478600001)(50466002)(1671002)(2616005)(126002)(305945005)(87636003)(8936002)(36756003)(26826003)(8676002)(4326008)(316002)(356003)(446003)(426003)(54906003)(42186006)(16586007)(109986005)(86362001)(50226002)(186003)(336012)(106466001)(51416003)(107886003)(105596002)(47776003)(7636002)(76176011)(26005)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4717;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT025;1:q/GdbBoOxEhjOUyrwHOBR7IQtkBhcBYWk8ZZrKadZILugZjulTS7oxRSy6jRmdTkh60tCO6l/X9A0rqQYZxb1S+j62MRlXpyPy/uXIqMMxUj6/qVOzsz4uhc2HU9gvvy
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(39860400002)(376002)(2980300002)(189003)(199004)(36092001)(54906003)(356003)(2870700001)(478600001)(105596002)(4326008)(47776003)(316002)(97736004)(8936002)(305945005)(106466001)(5820100001)(87636003)(42186006)(109986005)(53936002)(26826003)(2906002)(217873002)(107886003)(36756003)(6666003)(86362001)(68736007)(50466002)(69596002)(2616005)(50226002)(486006)(1671002)(81166006)(126002)(26005)(426003)(186003)(8676002)(23676004)(81156014)(5660300001)(476003)(14444005)(336012)(4720700003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0701MB1340;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT010;1:vwjirNWIlGP8qCzHPObzyBg5q+fhiRwt0Mj/FjlckNo7cqaR5+wxEf9bu6XZD6Q6ZFLrYRs9CIcM0q0Da30hwKQec832QbNGMkyU1Wduk4j84Dha0erOVY86eRPwLtGk
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9cec676b-adf2-44d4-47bc-08d5eda15935
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:SN6PR07MB4717;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4717;3:IJB7Oqaox37AHD8LtTN+D39/blVxI12G8K0yoKUQn6l62mj7j2uJfaDoLzsyZs6rHxdvFp9jSKLUTgLk6nUvuIDHoHxTJCeHKT5A3lD6ViPKquNx4+SJGXHlaSyWi126NJcxJswzEB7otqRfN1Zd1E1b57/58+nefKQ9z1rtAF/+c9r+LOGXzC/1SkJcxUIsRFmtRkY6WFun4uwIYK95LHK2r8bOOaMZ4zypGowj+Ydd+QLOiqGtYrGy4Q4km36qluTv5Mb5RVoI8grM51CxFoxHHUduaW56akHrAeuyL8/Q+RIF36/2KFsPKMOvmuh/66OR3aLmA+URfYYdwrQiOhdsR+ANtFfJ3iHtyJfr95k=;25:PFIsw4l3aAuZIbKAlzc/Kr02lOYRO7wapXnzO6K+JPk17vJ8B3IfEoy+XWct8hJP+qiT5/cb+ztS+kvsCbpjLQGfu5GwYX6ejMQSJxo8gd+lNmLqCh6vnfmFKOEvPMn98wdGWZmB0bxx2h0blyGQ6D6rD+IZIP8drx4ZdWxamvQx1Zl/+MOSIOn7FuDH3/kEmn7fsLE0fcobPSGoBSrLbMJEpWzeXXX+dQYjbp9MuNW1X1Go+9lz+nRaqg4mPT6Wm0BvHnQ6XeJ+7whV+37hOkjlXU7/NYWYHS7iiS0Bx03dW8l3mWcuRGz68EURosdlD31yyQGtCih8zvq+Ng+yGQ==
-X-MS-TrafficTypeDiagnostic: SN6PR07MB4717:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4717;31:LfYhC3n0loHSPdYVJ5pDjlv5XASUrISw02Y3fxFpbkDdQCDSih4N9YXr4MDZKzsnMSsdwIpMinIll/anZeVdGomCYOhGNiuzah/sPTa00G0DHoS4aHE5dfJC9qxLWofj58Bw32Mx20DZTCizcBjDIJlAH9U+qM48RfutxhHKzuK0tnGgT9poG0qJUhl+CofAfc4wz4DISUiQi+wECZu0IAgueMnhRyS2sLGNIqC/tX8=;20:pcRlkio+6fB/7HTCeMriBv0dVggU0NGnPNv8jDVYtF6W+jiZJb3b69P2wz8Yr5ghcCHVP8qFERYCUbKOqK+yRS2BcYeUXWSmXU13myk3sW50LvqGqQhP/jIzE+WxTQKAYBkpQdbnCee/WtEr21lxOUOGpll4JvEthc8f31ShTZcG5RV9KOdBKA18MbQFFBlBD7mqrHCpzwIufJtmYitPKUNP+1vv44y7MBd6JSKczuyaoUGt2VtDaDRpYGJANK23QJ/+pKOIV8ZH0KbreE2srFAvzWxpQ+0lFjc2NZ5y0JYeOyvvHyf6J6lhouGDhoKWqNO7G1LXwhotyJXvWK4aPTAck79ptN69GHa8TT1yuML/PGtmx1/MxWk5WmOmEVmmvgB9jh/1wR69EiZEcpp3rPan8BZqiDQC8m2Hy9v7pbpsnNwWbpSTcPwJIEmnPHfzae5jxYGizJxpeEMhq23APWGbL45LEqmuq0oGuPld4liIxe+Dmt48GqKnzs0BfTob
-X-Microsoft-Antispam-PRVS: <SN6PR07MB471791F85614EE5F1909D600DD520@SN6PR07MB4717.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
+X-MS-Office365-Filtering-Correlation-Id: f71bf9e9-76e0-4166-6f58-08d5eda151bb
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600067)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:CY1PR0701MB1340;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1340;3:Xr5lAU6JxjOnm9JfVuoU2qOKI3ZCbVnZWDnRz1ghs1ishxd/MrYtZKzWfgRWIPKMv8FcBy9S9F71uR9g1YKaoVq+PB1UX+hPQMXZZT8YJ0pms7u3y55w6Y2dAup3iBIo8tL6YDV+FgUtlZmhx5Ke1dxcwUgO+0ibZfqqmn2Xlptn8yvhM9woxWgN/HTwL/tZAJMRlXIvWVQLRDrZoLaau5o64Q4iyqHTEBrHIDeN/blxlL3MvFijR7PNP0zlUmZaZeQd3NQTtNxit26YYtoNbtTxPSSDst9ZUo+WtJF9eAf03rSkZMhC3Loo48HnRWZrC2Z7oNXCuDvCuQ/hPfgsBQ==;25:2Be6esYM3w+myaNPanz1xvWGNyARtROOblu7VwWbh8tlxQqPu/OgB44da1AIQsvmo0mdN1b8C0ufgpj3wKgAPd4LCK1F+TjWN+WFR+SqW2lVOW80UnIYbZXxpVTWqMcvatVXJRlSMFWMaEBpT2eZYU4ftlmtEfTBmKHe2q76rah0oD/dja4Qmxy9IGTWqT/yzgA3PYZAcsu1omMcpZAmDKMgb1Xw5g8Ef3sNKXvhqyB/gnSMOoaqthFbHLlvtDcr3t+h5T+FDE7hrr3/1n9FmwUJ4habPfQTAr5KxAw7Wxl6efjUE+g1a8OekWBXloocVBHJvUKmB/umtRt2yUHxIA==;31:AFkpwNZLMxEN5yxv9edXePN6sISH1FWwtkLynmUDoIo7AK4XzsnX48pZzfJaV/asXReEa7sA0dXa6+Szc1TfELLnje4eX3ZFHHF+G34JV0IxNjgqAQ3ONeTniaqPmenmYplTMEgSN08+0pgAlYwK0nCg+ULKnhUdiePN30NBeknE1PUJha5lhi0yPSTw3ksaZX4SzIUbNJi1cx4iiw1JjBv7rSxhcHxk+OB8pmJb9sQ=
+X-MS-TrafficTypeDiagnostic: CY1PR0701MB1340:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1340;20:ctVW6b8MwvjYsA/SN0nemHAaYHiPiBnz/32OOJnu7L+O+HSevFMo249s5DtduP4qdLGtSmfAkSGMzqEbbatvmLG7lu89+M1abWDFlwa4BDFXf26SEnhgf+BHUDXXPeI+4a9huQ3emClwPv6LH/JC9YgVeQ74au5VBZauFMGdPIKMGJaAC4ZdCpKQewtA2+NGC3DlFjs/4jTIA91r9PmAOoLp0owBHBUx/YJd7CmnV7GKmN3OnYTNjmsVD/KFexlzXp0UKaSiHfT1T8zNOqyUVJEH1G85TnXv22spuOcSicfoYlyiEGWOyqof+bIPRKTcjy3iJNTtkQtQ63oSk6eiLJJ/XHE2cXZLbZFXN5yrOzkdFHcwrLoSlx9ueFZyb0kxITmrjPqkYhv8V08svplQOASPcSTmI00dJyT78INhTYNAUvmAYlbpvCTmW/C+KS2qbhwrIpOMG6P4B5bz4XpqXN2JpfBZD0Qz9jAHLz/G0x3TpxGRiSR5iaNtZfE8FDqS;4:WsEop3gIqOjVzHYgpQveGPeiZ9M6Lw+BR9/EbbjkP7SDvHuJBnMBVG2+HsYDYcp6T0SELhTtrtNEMc3CkJVEAeziXaSvVDMSrqOCtxq5lfMRMVFXVRuoP+O8ieRvOiEmSfSc19X4hqd+ZJSTbRWKT/DMap/vMs2HcfClfj0kArBeT2j3FwlxZHIJAJYO4Ez30Saql34DivJzdKtcbZJbb6RBMg4iRw2eie4h89wZ7xGksjEOoPFLJ6WIZTCWgxHIEUoGFURFWSIAaTRG3Qz4EqkwfdoCcpkgEKucvdmDJl2zN0hKxw+ILSopNMQdm0dW
+X-Microsoft-Antispam-PRVS: <CY1PR0701MB1340E381C94B30CD43276A25DD520@CY1PR0701MB1340.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(21532816269658);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93003095)(3002001)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:SN6PR07MB4717;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4717;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4717;4:VqUVraPqCRO3WOywvgHQukRUP+FgCpqIXPwpjYcBHjqFtKy0idDb7Rs7SQ+9eKbOVlL5ItkxCGTco20pIR9prsiMTLNivGRErKcFw4y+M1hhd4KTWH8Nu6/cx181GHtTMbtWQGmY1iPBksKUx91D37pLfs+XobdqJvRckijR+5bLlhWWavhyQ1au5kv3rre9bHd+dhmQeRuQxh/83cO9pHRyu5I8zSk2YyXHsQP94vmpcPc1RQQxxDfuXT8W4OvVZaeoIQ33/xkN2HNu3dM6zxHhqlTrznxPpBFHlFZ4NbdKKEHmjpQBJkpvXB47pWgs
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93003095)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:CY1PR0701MB1340;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0701MB1340;
 X-Forefront-PRVS: 0738AF4208
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR07MB4717;23:uuKq1wzsaOpAW088uX2JAkmnsN5BvFnSVDHfhap1L?=
- =?us-ascii?Q?cE/oP2LVpzPg/5eGJeEQswKRmyZS2e8yx7LcAvQetoBpr/zaXJpJeVU1YFB2?=
- =?us-ascii?Q?1xKl2MnYOGR5F/cfxKjsZ40zHbcp/C6N7WOY68IFRDbRHFwLkvmjGqwLKXRO?=
- =?us-ascii?Q?ZeauPZQoh2qeOHKazhgxGcM+E5sAKYq5LnX10eFVPmv9ZHraU4OqjoZuZMCw?=
- =?us-ascii?Q?x5ypeLk3Dajjk7eSh36MWiv7zBAJyd5ozeqzPCWGj4DzT42NQdIk7UGhAwbn?=
- =?us-ascii?Q?MnyJZTkegiFoES+2J6IN9yxFNqoGhzdgJpYKaqEcp6AfHJua+1ZS6yvCN+TT?=
- =?us-ascii?Q?mw7v/ppetVt/20d46wBoXxbZb5VwZDqDNJdzl4PGAbR6tOD1fDO0B1fTHHbh?=
- =?us-ascii?Q?UJnGJ6zkqe5XxL8Zvmmx14ewzRqNPY1g5XvZBEetThiIyCrvGO16cwiHUJ+8?=
- =?us-ascii?Q?HCkm5HCkE+sc1BLaicbmdb98m/nL6gEq4j5PSyruF1DUkGs0WuYLH3rfCPgO?=
- =?us-ascii?Q?8wwrdKqK9QWkZTItUQw/4DYtGLCiGW32rj05tEs+q3cHRCWt5I71x+RWnOrf?=
- =?us-ascii?Q?itKC+f3+viRF2q9tnQyH10+LSUwKnW+BnS8kQcym7Wgr523JGbT1QkPcpL6J?=
- =?us-ascii?Q?uNgkqh4asi3WtdpnyOHO6fbz43yXr7NNIH7UddgG9+w//q1p15ydfNW7HYNZ?=
- =?us-ascii?Q?Fyrsq/5Eqc8rpS8IOxT9GhwDXZR7jKocDGZogRouv7WC8Xw+OBk/O/SFuCB+?=
- =?us-ascii?Q?WfSYzEbNLq69P2DqL0t9yv5fcIVA39O33DwJOCIyP9fen+pXUM/VPCpNrZTU?=
- =?us-ascii?Q?psxcwohlSsWYxsmIwKPUQcIO2eCVCopxh4usGZHEi4tiPFqx4YoFWC9BzaGS?=
- =?us-ascii?Q?rHYJQMljag9ikPuCZquJIzZm1OMonpdOIfFq6AEJcjnlLkTWpwoZcnt3gd/a?=
- =?us-ascii?Q?NUEsrYced1u/YYWDM0aN3/XNRzlLIR73nsfILqWc50/lFUYOT37dspDWM7Cy?=
- =?us-ascii?Q?gmg8ftS2m9ZhkZDj7weioyN3KB5HQBtfdrjllrl63q6li4vy2qFWZNkqwJKA?=
- =?us-ascii?Q?Mn6U+0aV44yIwFt30bwj/FONzVkCv8dJwtPS7hKLnYtUtCMQxNEchnZGsf5d?=
- =?us-ascii?Q?NBM2RAt4jx/wuAzgzdT2FpxnKYoUT2VSJKkHpctRnKtPhMMAJgXjA=3D=3D?=
-X-Microsoft-Antispam-Message-Info: eWnad0RiEGNsbTI/IU9GYByRDXVflVCR84Ogw+1V+ARWZ67lTGNiptr6t/Met53+k50+zURDxMS0lduGfDVmwkgnFcZw/oivt+ofd6kikA7Qj/xBlMVdEOSsYtcCoGWJ5maBtT2zm9fgvCMlQMlfzspg69RqO4eTRjdvstlVhyT3wsRtGu9CNlcA+EUcYm1VykPLRTkLEVYUOQD9cb71FnKy/aBLagvu/VldgeWwJXbGspI8tt97BmXkHNERGecsdIeIgLWFvjFIKxS3z3zSkeTx47IxsA3/Y3nkFvJa4BCZTqIEXTVqBdnfmFenDiZGF2O8DXZzvQJUfVo8JaxQgwO6ZVFmofQ2O3F9q119GhhV5kn/P3gc3M7MTD/QEDXerhlfrd9cvljYTZdOMpJRvA==
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4717;6:6tMEx7AQGWeColjinWxR0GhyeRQr9j4OEUYouCAHbC2ThFuVIUWZVJOgr+PS6vzmzVczjerGcW2atu4bOSGnGlX6zF4Hum+C6uAwAxdGSfWGCVY4cglFK0lwGOUtQfJu3/eA2exvcmgy/WXpf1cb5KQeXjf2ER7W8zYrvclFMATZhv2r2nv6t34+5M0hsBaPJsDuKyeeokx5k0Uiu59j118tL0TNzww2cw1eoWC3rHDqMHrsIBYnqb71hhHnqULwkB7XClMiyg6t3yU+JZe1fyxrB61LhCkrQnJrM55hMUuPYXS8PVGBPG7dTkwe/T/snCVvnPWNHHL1XhbFSCn5d8jdFBTSuJr5WnXX98X0hapAP8HD213DMsvIj5V3AIyaH9bPq2RfBGgnY34GvTRVRt59ok4MEguXQahiELWWPkANIbIrZV6z6JPUiuHiiWWsxRpXekVXEW+KbU4vtmBM5A==;5:8YoVh/CQKNhpUlAOlWv6vuhMonxKkHqOAmgHTlmt4YrwxlRY0kxSQQr2AHLEnDXVNPAp73QUjiCCJQ7jc9ajHg2nGfKAcqRbKroqnxQzold8xa+8rdnwjHD0m8ylu4aJDk+aJCn5P1iAbQ8MYktnR/ORu+O/G9Eu8OE8j4NdN4Y=;24:Lbj/Q3N+KfWLn8LHoTu0qogO//lEpPPyyJMp/rgGgHtpbAxq+PyKvcrsgOF6aQC1T9mgyStLVzyXDad3lRTxoWaa+9+BCEvaXqWfRKUs9pU=
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTFQUjA3MDFNQjEzNDA7MjM6cWJEMFlGNFJBWWdPNVMraGR6NXFvWXJX?=
+ =?utf-8?B?b0RSUVFLWk1ucVpNbjI4TVFYWHhSRk5FT0RoVGgzamR0bGdPYTZVS3lSOU1Z?=
+ =?utf-8?B?ZVl4dURCS2JFQXF0K0l2Z1FqSDZMSjY3a1NYWjYyLzJ3Tk5Zbjh5Nklib215?=
+ =?utf-8?B?OEN2OTlMcTM5M0hsVXdxbUw4b0I1RTdaU1ZNUTdxSjRUN3dvSE5UV3NZTXR5?=
+ =?utf-8?B?V2lRRHFWK1kzZUpldG5XYzRkVDQ2SE9IbHllQUJZRUtUNS9IQVBaY2FZWjkv?=
+ =?utf-8?B?Tkh2Mk1DTVJ4c0ZJRDIvQjlabnFvQ3lhTndkSm8zUDBYZElMb1NsRnZXUWNm?=
+ =?utf-8?B?MEYrYUhwNjVDUGNpMW4xaVoxSmRtS0JROWVKd1ZlREZsZEh5WG91YjNOWG9G?=
+ =?utf-8?B?VEFTbmJYcU94QTFpL3p2MG1CQ1IwSTNlZmZNSHFSbi9rUGxCZ2VFM3U1Ulcz?=
+ =?utf-8?B?cnZ0U24xSllmdTZvSi9idExXeWRnOTdKRTRwZWFHcEtDbXpOcC9RZWN5cTdW?=
+ =?utf-8?B?V25NUHZsazNzRkI0NTM5MnZjYXJ6MUJoZ1hkRmxVUE90L0lxcXBKaC9HblYz?=
+ =?utf-8?B?bTNOZUN3QmhZSWx1SDVoelhma3BaTlpRV1NiZUdUdXZRemZKQUE4Z3lCVjIr?=
+ =?utf-8?B?QjBvcWs4K0xqYjZwcW5sWWRRSDhxWlFXOXlCM1FZS3kyclU5L1Y4NmgybEky?=
+ =?utf-8?B?T25jZVFnT2p0RG04bmRkNGFOdWhubWNrcVJyc1VPdjhDOGdiUFVMc2JBaGJs?=
+ =?utf-8?B?S1ZMMHZTSVA5ZUVxaTJhSVJBT2RCUlVPbzVSQ1Fub0g3c0Mwb0duR3lIbGd2?=
+ =?utf-8?B?SjBPeTNFMzVBbXpYMWQwcFlNa0pCcythZlM2VFFkZWRGdDZCZUYyWGtRMVlT?=
+ =?utf-8?B?Ylp4aDlRY3UrQUZRSnNBN3lLRUNmbm0xMmVObEtnc3Y2KzIwMHRrNzl3YVIy?=
+ =?utf-8?B?U2hHVUFFd3hHbi9kQjJTYmJGdXB5M2VYQkJTV1ZjeXBaZWVZYldCWHBmL0Np?=
+ =?utf-8?B?UEYyTzV3dWZ0WnJINGVLTE1nZnpac3lOZUl1Vkp6TS9vWTkvbkIva0tyTXRM?=
+ =?utf-8?B?LzZnN0VlZ21ldGFuSFl4NUdpaGVkcVBPY1NzcHZhK2JpTUZvRURRem1IVm4r?=
+ =?utf-8?B?dkRoNFFpMys2b0F4TXh1Nm1zYTVxWjFqWUJxZ2hmOGRlbGU3OER0UmZDS0NU?=
+ =?utf-8?B?WnRVbmQrMFJ2TW1vSkVkdkR2eG9TTnEvUHZqNEJ4TmZyN0pESGQvWTB0VFNu?=
+ =?utf-8?B?dWtHNWc3VnRBeDRPN1ZyTTUzRmErQzJRMUJYTk0waW1uMEtuZVo5OEp2Zk84?=
+ =?utf-8?B?UnNmMUEyTy94KzdmRERINGsrKzJPaHpVMUtJUWVSL1JMY0xlVXpIVUdUb3lN?=
+ =?utf-8?B?UGloMWJUZEhSZTZLbzJIbzE2Vnc4dE1tcWUra3c4eG1XSDJDUmFsSWtYNkgv?=
+ =?utf-8?B?aFBHVzh3UVJrSEhGUnhRZm9vQWJSTCtUUXhidjFWc25CL0U1Y2hSWmdJVlNK?=
+ =?utf-8?B?NzlKZzBXVlJtOFE2UkdWcnlHQnZES1ZqUWZQTStvcmFONS9CbUJ5bWpmV1Ru?=
+ =?utf-8?B?UURLNWxHRm9hUDdaeHNoeWlCanhBV0VOL25xZTIySWxnS2FYZmlONjFNNG5i?=
+ =?utf-8?B?V3EwZDRSd2MybzNONE9TWWVmQVE5OWxraThOaFd6aFkvS3IvQWRhOWQxQXc9?=
+ =?utf-8?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: laPPdufflb3LcEZZ3zdbNLUOGBY7QZaQHdEOuWBiolm5+LybGEk/o+ENK1oyKkoEqLUEjM7XtbmFomiVRdr4+PkC5l4OTnXDyEXnSjoTBdxjzNKwGDp+M7rQL8s5u2yQuYd3ArJIrXb95kGtZjDu/kBMruMVIDza/zNiQBts3+ByG/L78CS1SauBqgi50D2yX14C6kxV3C77BPFpZaQ4e2lsvtTCdS0fyJhpY4ED1kPZdRRsUoiF5ueZW7gZGDwltzlhoIIjvl6CblF3wnLphUxwYtw/cxaAA49+ReaLiBtG8JeCtLqhZ2KHV8f2IC983bjRcggcw/xbAyIEWuZp45Q8BidMS0XshEBJhJnfh2SAuUfF9Q0/CR3Tco+sGdTJmNp8sTVS+uCssqWcJTI+cA==
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1340;6:EgM1S8NV8RiI5DlnAidybPfkpHU4Cz/JTjR/guIKuz+7tYbNEmOnBWxsZB4oR1pOKs1JnRmQ+tUkL53PToS/jLoZUioJ9zWscy1STOnMfpORfzGy+Z+dqVhGvv3iWiw3N07AjLgDBsFuQP5KzHcT9H4ZkTCcpsL6Fm29S1qbrU6tdDakU0UmnKJUS2Cw7nEwC/udvkVDs6QxplmTRniyCQ/PtX59rWIiRRTPjVQkMGfGDsk5c3Ifva6C5X1r9iVavANqD/OuHnvo2GGtnRSobRkrAayrx7aa6+0e8/OdHZ8nNvbFxx2jxbzwoHnRzT9lcMwiZPwiy6WFktcoz1bNq4Tjp+0tdXkfcx05m0g6rCgwJOF1dcPQNoT2de0tFM91V37nJwKGLlDBSf2q9e4dg5IrJGiX/vWTvvf+lBn0yglQghO85x5vo6QADpZd8INw9OM8B9w1kvld9GuYRJVgLw==;5:zkidH4RpFRFBBi8RIGd/ZBmlFaoAgjvyUMP7G3RLR7hmPEkOTMZmNIfPGlAyKMmRUY3qkN1B/tgetOh8+Pt7H3d2UFNoV065Ow5aKW4Knq6LqLrSa8hMUgzaPFTTJU8S272j66xUmiwupcdFSBPMqYT4eU/KwMJmYMyN3pmvQWs=;24:MxYWVXHH2SUk/jwkbUqqn7LQtYPkWN+a91EI3fsx4dZd28NzW03U4EV/RpUjpfniMEbKRsJJOxa3p1Ja7wPX0/F6EqWGRrfIyV1XEn38Pck=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4717;7:9iAjfUs2bZ1gRUKkTApYwsNnV4swAIhKIpJc2g1DHkdpr0wUNJYsH1VgEk2q8BtGQvjbfuy1A9SOFzzSxdLEKxsR5LTNAzw7XX+QgwzfSo0/mhzsS5qJ1lMO7d0gEoUsYZpkJbiJzylmeOlbGHJQ/TnwqbgUH45EQU5RgsYW0pLkLgQj+YjzWEHRG3JdgnwY/ITUDk63wuU2aF5BmvXWA8DsilO6vihEdRQX+DiWY0efMopJ2Ra0tCUMtE2ra7lS;20:XiIz5qtNvdgxJAlMTs9QMf1Cxh/jFdYynfQksk2pkgxhCPdILoRmFWlI0ZM+/WJS61Ydxd2Co7/4UIA2D8rQ3c62cpcwmpWAqGoeIyE9PlxJF+86z+i0XGomGX2QH5WLAkzaSxPnFlPPk8hLEC1WbEjo/QgFEoVgBdYh8z0gh7MLPZQnLtmDC8N7agvL0UBENl4jU4bJFq/66wP6LdYd9Tsyj8s7q7HKcOqdUuuBDAyyJJ25Uthwudm+dLkV+qOz
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1340;7:SnweCHPSJWhzdszlAz/QzqRUQaw/mobhLoadclZMjr3X0sP6rJIBMt+CWjWh/rveYMdPPgj55/BZL66cleHuciDjYaaqaZ0AOjxBwMDmSvI8yF7x6KwoFY/8FtdNJZLKyRfWVXzU3r83SJz0lgk/ACPzkK+DoDvQ674lm4u9PuzWZ5Q8SajCuGM+12++ZRVRxfIp1bCoxPBUizLuxAPfjbPx7+xLyhCUUAejTJZAFW0LVk1uRhyvhjRBVW1d13S2;20:ZCl/p4wskZoqQwciK3e7ESB0SPjfq9Q86IO9SXvmAQKnmm2G0kyFP2M6vbmjQRx2uhiuc721wrGzJgAQn3cLdRt70wNxlHDGXpQFafy66p1QltW3gqDHtX0FFKuTVH9MEyCxtjYHc5/PuqMGzWsKZ/rVcflp7nL1LAB9TK23BEBhep9XSNJ+hZWvIUNOcuIL2BK009tAYAbQ8KlTrPEOqot7KlEAbWw6bgWcNyGmqsDYz7JiTh8po4z/s8QYzbqV
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2018 17:59:18.2005
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2018 17:59:05.6736
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cec676b-adf2-44d4-47bc-08d5eda15935
+X-MS-Exchange-CrossTenant-Network-Message-Id: f71bf9e9-76e0-4166-6f58-08d5eda151bb
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4717
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0701MB1340
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function is called by the gadget core when the USBSSP driver
-is removed. Disable device contexts, disable IRQs, and quiesce the DC.
-Reset the DC, finish any completed transactions, and cleanup memory.
+This patch set introduce new Cadence USBSSP DRD driver
+to linux kernel.
 
-Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+The Cadence USBSSP DRD Driver s a highly
+configurable IP Core which can be
+instantiated as Dual-Role Device (DRD),
+Peripheral Only and Host Only (XHCI)
+configurations.
+
+The current driver has been validated with
+FPGA burned. We have support for PCIe
+bus, which is used on FPGA prototyping.
+
+The host site of USBSSP controller is compliance
+with XHCI specification, so it works with
+standard XHCI linux driver.
+
+Also, device side of USBSSP controller was designed
+in such way to looks like XHCI. It means that
+most of logic of USBSSP controller is also compliance
+with XHCI specification.
+
+Consequently, the USBSSP driver for peripheral mode
+is very similar to XHCI driver.
+
+This version of driver supports only Device mode but
+DRD and Host mode will be added in the future.
+
 ---
- drivers/usb/usbssp/gadget.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/usb/usbssp/gadget.c b/drivers/usb/usbssp/gadget.c
-index 915983bc400f..2996b1d3baf7 100644
---- a/drivers/usb/usbssp/gadget.c
-+++ b/drivers/usb/usbssp/gadget.c
-@@ -200,6 +200,41 @@ int usbssp_init(struct usbssp_udc *usbssp_data)
- 	return retval;
- }
- 
-+/*
-+ * Stop USBSSP controller.
-+ *
-+ * This function is called by the gadget core when the USBSSP driver is removed.
-+ * Its opposite is usbssp_run().
-+ *
-+ * Disable device contexts, disable IRQs, and quiesce the DC.
-+ * Reset the DC, finish any completed transactions, and cleanup memory.
-+ */
-+void usbssp_stop(struct usbssp_udc *usbssp_data)
-+{
-+	u32 temp;
-+
-+	spin_lock_irq(&usbssp_data->lock);
-+	usbssp_data->usbssp_state |= USBSSP_STATE_HALTED;
-+	usbssp_data->cmd_ring_state = CMD_RING_STATE_STOPPED;
-+	usbssp_halt(usbssp_data);
-+	usbssp_reset(usbssp_data);
-+	spin_unlock_irq(&usbssp_data->lock);
-+
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// Disabling event ring interrupts");
-+	temp = readl(&usbssp_data->op_regs->status);
-+	writel((temp & ~0x1fff) | STS_EINT, &usbssp_data->op_regs->status);
-+	temp = readl(&usbssp_data->ir_set->irq_pending);
-+	writel(ER_IRQ_DISABLE(temp), &usbssp_data->ir_set->irq_pending);
-+
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"cleaning up memory");
-+	usbssp_mem_cleanup(usbssp_data);
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"usbssp_stop completed - status = %x",
-+			readl(&usbssp_data->op_regs->status));
-+}
-+
- #ifdef CONFIG_PM
- /*
-  * Stop DC (not bus-specific)
+Pawel Laszczak (31):
+  usb: usbssp: Defined register maps and other useful structures.
+  usb: usbssp: Added some decoding functions.
+  usb: usbssp: Add trace events used in driver
+  usb: usbssp: Added USBSSP platform driver
+  usb: usbssp: Added first part of initialization sequence.
+  usb: usbssp: added template functions used by upper layer.
+  usb: usbssp: Initialization - added usbssp_mem_init
+  usb: usbssp: Added ring and segment handling functions.
+  usb: usbssp: add implementation of usbssp_mem_cleanup
+  usb: usbssp: added usbssp_trb_in_td function.
+  usb: usbssp: added function for stopping driver.
+  usb: usbssp: added functions for queuing commands.
+  usb: usbssp: addec procedure for handlin Port Status Change events.
+  usb: usbssp: added procedure handling command completion events.
+  usb: usbssp: added device controller error, transfer and SETUP
+    completion event.
+  usb: usbssp: added connect/disconnect procedures.
+  usb: usbssp: added implementation of usbssp_halt_endpoint function.
+  usb: usbssp: added handling of Port Reset event.
+  usb: usbssp: added support for USB enumeration process.
+  usb: usbssp: added queuing procedure for control transfer.
+  usb: usbssp: added queuing procedure for BULK and INT transfer.
+  usb: usbssp: added procedure removing request from transfer ring
+  usb: usbssp: added implementation of transfer events.
+  usb: usbssp: added detecting command timeout.
+  usb: usbssp: added implementation of usbssp interface.
+  usb: usbssp: added endpoint configuration functionality.
+  usb: usbssp: implements usbssp_gadget_ep_enable function
+  usb: usbssp: implemented usbssp_gadget_ep_disable function.
+  usb: usbssp: added support for LPM.
+  usb: usbssp: added support for TEST_MODE.
+  usb: usbssp: add pci to platform driver wrapper.
+
+ drivers/usb/Kconfig                  |    2 +
+ drivers/usb/Makefile                 |    2 +
+ drivers/usb/usbssp/Kconfig           |   29 +
+ drivers/usb/usbssp/Makefile          |   15 +
+ drivers/usb/usbssp/gadget-dbg.c      |   39 +
+ drivers/usb/usbssp/gadget-ep0.c      |  571 +++++
+ drivers/usb/usbssp/gadget-ext-caps.h |  102 +
+ drivers/usb/usbssp/gadget-if.c       |  569 +++++
+ drivers/usb/usbssp/gadget-mem.c      | 1938 +++++++++++++++
+ drivers/usb/usbssp/gadget-port.c     |  287 +++
+ drivers/usb/usbssp/gadget-ring.c     | 3452 ++++++++++++++++++++++++++
+ drivers/usb/usbssp/gadget-trace.c    |   13 +
+ drivers/usb/usbssp/gadget-trace.h    |  482 ++++
+ drivers/usb/usbssp/gadget.c          | 1909 ++++++++++++++
+ drivers/usb/usbssp/gadget.h          | 2373 ++++++++++++++++++
+ drivers/usb/usbssp/usbssp-pci-wrap.c |  226 ++
+ drivers/usb/usbssp/usbssp-plat.c     |  186 ++
+ 17 files changed, 12195 insertions(+)
+ create mode 100644 drivers/usb/usbssp/Kconfig
+ create mode 100644 drivers/usb/usbssp/Makefile
+ create mode 100644 drivers/usb/usbssp/gadget-dbg.c
+ create mode 100644 drivers/usb/usbssp/gadget-ep0.c
+ create mode 100644 drivers/usb/usbssp/gadget-ext-caps.h
+ create mode 100644 drivers/usb/usbssp/gadget-if.c
+ create mode 100644 drivers/usb/usbssp/gadget-mem.c
+ create mode 100644 drivers/usb/usbssp/gadget-port.c
+ create mode 100644 drivers/usb/usbssp/gadget-ring.c
+ create mode 100644 drivers/usb/usbssp/gadget-trace.c
+ create mode 100644 drivers/usb/usbssp/gadget-trace.h
+ create mode 100644 drivers/usb/usbssp/gadget.c
+ create mode 100644 drivers/usb/usbssp/gadget.h
+ create mode 100644 drivers/usb/usbssp/usbssp-pci-wrap.c
+ create mode 100644 drivers/usb/usbssp/usbssp-plat.c
+
 -- 
 2.17.1
 
