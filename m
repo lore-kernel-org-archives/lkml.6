@@ -2,119 +2,129 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B10ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1EBC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F97320673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:05:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F97320673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A32DB20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:06:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="XiFxWPje"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A32DB20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731758AbeGSOtE (ORCPT
+        id S1731760AbeGSOuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:49:04 -0400
-Received: from mga14.intel.com ([192.55.52.115]:3064 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730220AbeGSOtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:49:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 07:05:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,374,1526367600"; 
-   d="scan'208";a="58134107"
-Received: from heli-mobl.ccr.corp.intel.com (HELO [10.252.187.17]) ([10.252.187.17])
-  by orsmga008.jf.intel.com with ESMTP; 19 Jul 2018 07:05:37 -0700
-Subject: Re: [PATCHv5 05/19] mm/page_alloc: Handle allocation for encrypted
- memory
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>
-References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
- <20180717112029.42378-6-kirill.shutemov@linux.intel.com>
- <95ce19cb-332c-44f5-b3a1-6cfebd870127@intel.com>
- <20180719082724.4qvfdp6q4kuhxskn@kshutemo-mobl1>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <b0a92a2f-cf14-c976-9fbd-fd9aa4ebcf96@intel.com>
-Date:   Thu, 19 Jul 2018 07:05:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 10:50:02 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33428 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731471AbeGSOuC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 10:50:02 -0400
+Received: by mail-io0-f193.google.com with SMTP id z20-v6so7180203iol.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 07:06:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:organization:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=qhk7DcdRiJwPLhrUv1W8bD542RILzdVdXn5/MdJu0x0=;
+        b=XiFxWPjeloioH/KeeIqsQ+oY3wjRtNDbmfXYLRSjbVNJwCnl7sXoGq/btaqZNp7AR5
+         LvjlXcPoNB/A5Tx/JS9Zxt1pPX5s/aBGjVS1kvFbrfqr0RyrWOX20IZ6tkS6mDxgoD0C
+         EuHFt9uLFWMm3t4XWvSwxBBqapC5zauqOc6EYEKmlu+CM/guo3YrKZSYkONPA3Ris5HT
+         I8QuCWPGFDDE8k2DUAehVeRq6C3ZRUYxQNkvxkNrmVyAxOT08uiEA5jDKToCo2I1yQb1
+         eaFuD0V8R6ZJWYIQVpCk6U1kW3xkUAJFspW6sFVgfoyfYOUig9TLHCWpPsWUBT6yvmav
+         nhNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:organization:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=qhk7DcdRiJwPLhrUv1W8bD542RILzdVdXn5/MdJu0x0=;
+        b=oTeV/0ZdmL3FsHhedvm+xWebS/6EOK0E8S+I3sALDIBRPK3wLIxW8TvNbCtcJRzO9s
+         qcpD71t2RGA4yQgNazPxC5m9KA/O48ZW/dXfRuEuor5yE+/A0rHgjnqcBX+afax+i9EX
+         nKklxLR82n/UUNbalHlLTUWT+CSb4XUvwVvbOiZkPX8QZEYOeF/48dNaKk1rzzYDVxY8
+         XuOb5x6TfcdUTscZq+SPmaMMc4u2rwJSs+da9mdlylji2nSKOrG42FYgx9K3cmJ1huhs
+         qDquXey9BJiUs3bEEkdb4OAuexa4/GgGma1Ia+c1UhkIaeF9FH1ckfkWk5k6e7P5iLY4
+         hy5w==
+X-Gm-Message-State: AOUpUlGgwYuGkGsTTHhEX5lYUnOdYR1XQ09Bm+D9QaoSy30w91Do6q2v
+        RurReEBo8mZtyZQcY4IOfNIb0Q==
+X-Google-Smtp-Source: AAOMgpfBeOcWpbAXhinFHg73RvZSCTJXEb66vSw86NtYVf3G1WNKwpjuFe8CS/MK+S8pMdXRMZgdTA==
+X-Received: by 2002:a6b:19c4:: with SMTP id 187-v6mr8668977ioz.244.1532009201519;
+        Thu, 19 Jul 2018 07:06:41 -0700 (PDT)
+Received: from localhost ([2604:2d80:4413:8125:59cb:8e52:e49b:158f])
+        by smtp.googlemail.com with ESMTPSA id n195-v6sm1759756itg.16.2018.07.19.07.06.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Jul 2018 07:06:40 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Yixun Lan <yixun.lan@amlogic.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, <qianggui.song@amlogic.com>,
+        Rob Herring <robh@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <bo.yang@amlogic.com>,
+        <sboyd@kernel.org>, <jian.hu@amlogic.com>,
+        <xingyu.chen@amlogic.com>, <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <sunny.luo@amlogic.com>,
+        <carlo@caione.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+Organization: BayLibre
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+        <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+        <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
+        <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
+        <1531216472.2708.71.camel@baylibre.com> <7hfu0jmhbe.fsf@baylibre.com>
+        <7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com>
+Date:   Thu, 19 Jul 2018 09:06:39 -0500
+In-Reply-To: <7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com> (Yixun Lan's
+        message of "Tue, 17 Jul 2018 09:24:02 +0800")
+Message-ID: <7h601be2vk.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180719082724.4qvfdp6q4kuhxskn@kshutemo-mobl1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 01:27 AM, Kirill A. Shutemov wrote:
->> What other code might need prep_encrypted_page()?
-> 
-> Custom pages allocators if these pages can end up in encrypted VMAs.
-> 
-> It this case compaction creates own pool of pages to be used for
-> allocation during page migration.
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-OK, that makes sense.  It also sounds like some great information to add
-near prep_encrypted_page().
+[...]
 
-Do we have any ability to catch cases like this if we get them wrong, or
-will we just silently corrupt data?
+>> 
+>> As Jerome said, I think consistency is an important goal, so leaving off
+>> the "meson-" for drivers/clk is fine with me.
+>> 
+> ok
+>
+>> Also for consistency, for the rest of the drivers, keeping "meson-" is
+>> probably the right thing to do.
+>> 
+> ok, for the above, you are talking about the already exist compatible
+> names? or the patches we will push in the future?
+
+I'm talking about future patches.
+
+>> However, patches would be welcome to add compatibles without the "meson"
+>> for the rest of the drivers & documentation as well, but please do not
+>> remove any compatibles.
+>> 
+> I assume you are talking about the patches in the future we will push?
+> to drop the "meson".
+>
+> I'm confused here, as the above two paragraphs conflict with each other
+
+Yeah, what I wrote is confusing, sorry about that.
+
+What I mean is that new patches should stay consistent with compatibles
+in their existing drivers/subsystems.  That means keeping the "meson-"
+prefix for everything except drivers/clk.
+
+In addition to that, patches would be welcome for *adding* compatibles
+without "meson" to all the current drivers.
+
+Kevin
+
