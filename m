@@ -2,195 +2,183 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB1DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8737CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2184A20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:36:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2184A20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CC092084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:37:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnzBvR9I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC092084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731479AbeGTAWP (ORCPT
+        id S1731545AbeGTAWi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:22:15 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:39636 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728018AbeGTAWP (ORCPT
+        Thu, 19 Jul 2018 20:22:38 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35572 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727650AbeGTAWi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:22:15 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 74C29263BE7
-Message-ID: <31826cf1b99fa2372cd4cf0b6cee8ba0ba4288f1.camel@collabora.com>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Hans de Goede <hdegoede@redhat.com>, hverkuil@xs4all.nl,
-        mchehab@kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        linux-media@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Thu, 19 Jul 2018 20:36:40 -0300
-In-Reply-To: <CAJs94EZjTLLCN=oy3aapMsbLEHU69iO9yq=hXdm4_G1H2UMcyQ@mail.gmail.com>
-References: <20180617143625.32133-1-matwey@sai.msu.ru>
-         <20180617143625.32133-2-matwey@sai.msu.ru>
-         <c02f92a8998fc62d3e3d48aa154fbaa7e223dd10.camel@collabora.com>
-         <CAJs94EavBDcFHpd0KcCZJTgWf0JC=AEDY=X8b3P2nZvt8mBCPA@mail.gmail.com>
-         <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com>
-         <CAJs94EZjTLLCN=oy3aapMsbLEHU69iO9yq=hXdm4_G1H2UMcyQ@mail.gmail.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 19 Jul 2018 20:22:38 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e6-v6so5133234pgv.2;
+        Thu, 19 Jul 2018 16:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+L9gMdNbHGfB8zV/i3/n1R5LeLVaOKBd6qj/wQoTdOk=;
+        b=GnzBvR9IjfrcQ2zLhT8O/UguHSrX5Z/g1vFeLAlrBHU1QLNzf3E6DdA3Iac6kJt/kw
+         ST7kwrnOEhzT1RDSLYCH4nK239YQ9uJeMLaCvTxHonB65C1NNW33LqXoyB5gEGo75Z51
+         dYBsp5Dgng23uW7PSyxeXbst8D3u5h0icmY/zUgQfhSUdEF2CeIzjKMVEiKMOEBlWQwi
+         0ZQbimTbUfbhbsalSWF8WWsBkmWOFShCsZZCTJhd6wpJ+v1nQmr6qlcYBslPaYmHKnsJ
+         pVx7pO8nt9T6h/cS3W04fcfz/Aaml3iibkEkHMMsNR5QQOWyLzpSBca5PrhGJnO6g5az
+         eRTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+L9gMdNbHGfB8zV/i3/n1R5LeLVaOKBd6qj/wQoTdOk=;
+        b=Xp2AeLersGCGiIjyzoSboUbd9X1yXXPCbH7gOmOqh6xRYnzaVcvUxI6ilrMs7w850y
+         vO4LIqQ066fi1raOoH0zwf3UUk+Cpu+VrOVZJ5tMy49aJ3XNSfRo/odRR0x9FCtjKOHK
+         XMZfVjQUlwHDtA3xc1LNLXYf7x9jNaiTUg4GL1hgR4iXSoxMpsm7l6/39tpd937u1IrQ
+         7m+feanUh4Aue0bkcF5FwkZAv0o1NjrAPP4oYlsB8mk5CLy5ozdXPtf46tkQjFlZ3Y40
+         DbhK4iHbYN14wgLM3XM44Pz88HtuZJf+HTvO4IFekutCozLIuMUPPdOSxHh5UsI/1orr
+         2glQ==
+X-Gm-Message-State: AOUpUlEce3tIlG+Lys7spZsttavcBU2O0j6EfWsw7M3V00/Xzywlpmye
+        Ot52M6Tc0eMa5hseeDdHSGbB+jBh
+X-Google-Smtp-Source: AAOMgpdU251u+890BX6b3uE8f+EWf5BJzGgWnfn8IFjoAfpF23yqPCZHds4DTQGdQf41ifjYZW84gA==
+X-Received: by 2002:a65:4249:: with SMTP id d9-v6mr11846208pgq.362.1532043432383;
+        Thu, 19 Jul 2018 16:37:12 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id e7-v6sm311770pgc.55.2018.07.19.16.37.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 16:37:11 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 16:37:10 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Message-ID: <20180719233710.GA340@roeck-us.net>
+References: <20180719120447.6e7ba23d@canb.auug.org.au>
+ <cbc20089-6847-c0eb-5b5a-735245986be1@roeck-us.net>
+ <20180719152940.0720e9c1@canb.auug.org.au>
+ <6dabf12b-e3db-dfe8-101c-02772039e21a@roeck-us.net>
+ <20180720080906.7a30c573@canb.auug.org.au>
+ <20180719223521.GA30287@roeck-us.net>
+ <CAK7LNARfZH=ZEdFuRq_g1HsJ+Pv1m=v343JLyE-6+uM_d+3eWA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARfZH=ZEdFuRq_g1HsJ+Pv1m=v343JLyE-6+uM_d+3eWA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-18 at 15:10 +0300, Matwey V. Kornilov wrote:
-> 2018-07-17 23:10 GMT+03:00 Ezequiel Garcia <ezequiel@collabora.com>:
-> > Hi Matwey,
-> > 
-> > First of all, sorry for the delay.
-> > 
-> > Adding Alan and Hans. Guys, do you have any feedback here?
-> > 
-> > See below for some feedback on my side.
-> > 
-> > On Mon, 2018-06-18 at 10:10 +0300, Matwey V. Kornilov wrote:
-> > > Hi Ezequiel,
-> > > 
-> > > 2018-06-18 8:11 GMT+03:00 Ezequiel Garcia <ezequiel@collabora.com>:
-> > > > + Laurent
-> > > > 
-> > > > On Sun, 2018-06-17 at 17:36 +0300, Matwey V. Kornilov wrote:
-> > > > > DMA cocherency slows the transfer down on systems without hardware
-> > > > > coherent DMA.
-> > > > > 
-> > > > > Based on previous commit the following performance benchmarks have been
-> > > > > carried out. Average memcpy() data transfer rate (rate) and handler
-> > > > > completion time (time) have been measured when running video stream at
-> > > > > 640x480 resolution at 10fps.
-> > > > > 
-> > > > > x86_64 based system (Intel Core i5-3470). This platform has hardware
-> > > > > coherent DMA support and proposed change doesn't make big difference here.
-> > > > > 
-> > > > >  * kmalloc:            rate = (4.4 +- 1.0) GBps
-> > > > >                        time = (2.4 +- 1.2) usec
-> > > > >  * usb_alloc_coherent: rate = (4.1 +- 0.9) GBps
-> > > > >                        time = (2.5 +- 1.0) usec
-> > > > > 
-> > > > > We see that the measurements agree well within error ranges in this case.
-> > > > > So no performance downgrade is introduced.
-> > > > > 
-> > > > > armv7l based system (TI AM335x BeagleBone Black). This platform has no
-> > > > > hardware coherent DMA support. DMA coherence is implemented via disabled
-> > > > > page caching that slows down memcpy() due to memory controller behaviour.
-> > > > > 
-> > > > >  * kmalloc:            rate =  (190 +-  30) MBps
-> > > > >                        time =   (50 +-  10) usec
-> > > > >  * usb_alloc_coherent: rate =   (33 +-   4) MBps
-> > > > >                        time = (3000 +- 400) usec
-> > > > > 
-> > > > > Note, that quantative difference leads (this commit leads to 5 times
-> > > > > acceleration) to qualitative behavior change in this case. As it was
-> > > > > stated before, the video stream can not be successfully received at AM335x
-> > > > > platforms with MUSB based USB host controller due to performance issues
-> > > > > [1].
-> > > > > 
-> > > > > [1] https://www.spinics.net/lists/linux-usb/msg165735.html
-> > > > > 
-> > > > 
-> > > > This is quite interesting! I have receive similar complaints
-> > > > from users wanting to use stk1160 on BBB and Raspberrys,
-> > > > without much luck on either, due to insufficient isoc bandwidth.
-> > > > 
-> > > > I'm guessing other ARM platforms could be suffering
-> > > > from the same issue.
-> > > > 
-> > > > Note that stk1160 and uvcvideo drivers use kmalloc on platforms
-> > > > where DMA_NONCOHERENT is defined, but this is not the case
-> > > > on ARM platforms.
-> > > 
-> > > There are some ARMv7 platforms that have coherent DMA (for instance
-> > > Broadcome Horthstar Plus series), but the most of them don't have. It
-> > > is defined in device tree file, and there is no way to recover this
-> > > information at runtime in USB perepherial driver.
-> > > 
-> > > > 
-> > > > So, what is the benefit of using consistent
-> > > > for these URBs, as opposed to streaming?
-> > > 
-> > > I don't know, I think there is no real benefit and all we see is a
-> > > consequence of copy-pasta when some webcam drivers were inspired by
-> > > others and development priparily was going at x86 platforms.
-> > 
-> > You are probably right about the copy-pasta.
-> > 
-> > >  It would
-> > > be great if somebody corrected me here. DMA Coherence is quite strong
-> > > property and I cannot figure out how can it help when streaming video.
-> > > The CPU host always reads from the buffer and never writes to.
-> > > Hardware perepherial always writes to and never reads from. Moreover,
-> > > buffer access is mutually exclusive and separated in time by Interrupt
-> > > fireing and URB starting (when we reuse existing URB for new request).
-> > > Only single one memory barrier is really required here.
-> > > 
-> > 
-> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
-> > create DMA mappings and use the streaming API. Which makes more
-> > sense in hardware without hardware coherency.
-> > 
-> > The only thing that bothers me with this patch is that it's not
-> > really something specific to this driver. If this fix is valid
-> > for pwc, then it's valid for all the drivers allocating coherent
-> > memory.
-> > 
-> > And also, this path won't prevent further copy-paste spread
-> > of the coherent allocation.
-> > 
-> > Is there any chance we can introduce a helper to allocate
-> > isoc URBs, and then change all drivers to use it? No need
-> > to do all of them now, but it would be good to at least have
-> > a plan for it.
+On Fri, Jul 20, 2018 at 08:19:34AM +0900, Masahiro Yamada wrote:
+> 2018-07-20 7:35 GMT+09:00 Guenter Roeck <linux@roeck-us.net>:
+> > On Fri, Jul 20, 2018 at 08:09:06AM +1000, Stephen Rothwell wrote:
+> >> Hi Guenter,
+> >>
+> >> On Thu, 19 Jul 2018 06:49:01 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> >> >
+> >> > On 07/18/2018 10:29 PM, Stephen Rothwell wrote:
+> >> > >
+> >> > > On Wed, 18 Jul 2018 20:52:56 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> >> > >>
+> >> > >> On 07/18/2018 07:04 PM, Stephen Rothwell wrote:
+> >> > >>>
+> >> > >>> After merging the net-next tree, today's linux-next build (x86_64
+> >> > >>> allmodconfig) produced this warning:
+> >> > >>>
+> >> > >>> *
+> >> > >>> * Restart config...
+> >> > >>> *
+> >> > >>> ....
+> >> > >>>
+> >> > >>> This is output by my "make allmodconfig" and only started after merging
+> >> > >>> the net-next tree today.  It has continued for further merges/builds.
+> >> > >>>
+> >> > >>> I suspect commit
+> >> > >>>
+> >> > >>>     1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
+> >> > >>>
+> >> > >>> which added an "imply" clause.
+> >> > >>>
+> >> > >> I thought "imply" was better than "depends on HWMON || HWMON=n", but maybe
+> >> > >> not. Is that a caveat when using "imply", and does it mean that "imply"
+> >> > >> should better not be used ?
+> >> > >
+> >> > > I don't know, sorry.  It was just my best guess from what I could see
+> >> > > had changed.
+> >> > >
+> >> > > I wonder if it makes a difference that I am doing my "make
+> >> > > allmodconfig" on top of a previous "make allmodconfig" and some symbols
+> >> > > are marked as "NEW" (though they are not symbols related to the changes
+> >> > > that happened during the net-next tree merge)?
+> >> > >
+> >> >
+> >> > I tried to reproduce the problem, but I don't see the message.
+> >> >
+> >> > What I do see, though, is that "make allmodconfig" on a clean tree,
+> >> > followed by "make menuconfig", results in configuration changes.
+> >> > Specifically,
+> >> >
+> >> >  > CONFIG_ARC_EMAC_CORE=m
+> >> >  > CONFIG_ARC_EMAC=m
+> >> >  > CONFIG_EMAC_ROCKCHIP=m
+> >> >
+> >> > is removed by menuconfig, and a large number of "# ... is not set"
+> >> > configuration lines are added. Weird and bad, since several of the
+> >> > disabled configurations _should_ be enabled by "make allmodconfig",
+> >> > and a large number of hwmon drivers are affected. Bisect does point
+> >> > to "net: phy: sfp: Add HWMON support for module sensors", meaning
+> >> > "imply hwmon" does have severe side effects and can not be used.
+> >> >
+> >> > I'll try to find a fix.
+> >>
+> >> OK, my mistake, the "make allmodconfig" works, the following "make"
+> >> causes the config restart.  (I am actually doing cross builds and using
+> >> an external object directory, in case that matters.)
+> >>
+> >> I removed the "imply HWMON" line added by the above commit and the
+> >> problem went away.  Also, using "depends on HWMON || HWMON=n" instead
+> >> of the imply fixes it.
+> >
+> > Yes, replacing imply with the dependency is what I did in the fixup patch.
+> > Sorry, I should have copied you: https://patchwork.kernel.org/patch/10534925/
+> >
+> > It is a bit different - imply was supposed to enforce HWMON={y,n} if SFP=y,
+> > and the depends line enforces SFP={n,m} if HWMON=m. I have no idea why
+> > imply doesn't work, but I think I'll stay away from it in the future.
+> >
+> > Guenter
 > 
-> Well, basically I am agree with you.
-> However, I don't have all possible hardware to test, so I can't fix
-> all possible drivers.
-
-Sure. And keep in mind this is more about the USB host controller,
-than about this specific driver. So it's the controller what we
-would have to test!
-
-> Also I can not figure out how could the helper looked like. What do
-> you think about usb_alloc() (c.f. usb_alloc_coherent()) ?
+> 
+> Hmm, this could be a Kconfig bug.
+> 
+> I will take a look.
+> 
+> 
+> BTW,
+> 'depends on HWMON || HWMON=n' is pointless
+> because it is always true.
 > 
 
-I do not know that either. But it's something we can think about.
+I disagree. Its purpose is to enforce SFP=m if HWMON=m while still
+permitting HWMON=n.
 
-Meanwhile, it would be a shame to loose or stall this excellent
-effort (which is effectively enabling a cameras on a bunch of devices).
+Guenter
 
-How about you introduce a driver parameter (or device attribute),
-to avoid changing the behavior for USB host controllers we don't know
-about?
-
-Something like 'alloc_coherent_urbs=y/n'. Perhaps set that
-to 'yes' by default in x86, and 'no' by default in the rest?
-
-We can think about a generic solution later.
-
-Thanks,
-Eze
