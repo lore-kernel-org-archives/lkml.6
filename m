@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C9DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF63ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 222D12084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 222D12084E
+	by mail.kernel.org (Postfix) with ESMTP id CC07520684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC07520684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731398AbeGSXqB (ORCPT
+        id S1731445AbeGSXqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:46:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54068 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:46:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54088 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731246AbeGSXqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:46:01 -0400
+        id S1731246AbeGSXqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:46:03 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 64F4F2093A; Fri, 20 Jul 2018 01:00:44 +0200 (CEST)
+        id 1A29C20943; Fri, 20 Jul 2018 01:00:46 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B80342091A;
-        Fri, 20 Jul 2018 01:00:42 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id A7ECD2091A;
+        Fri, 20 Jul 2018 01:00:44 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 05/33] mtd: rawnand: fsl_elbc: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 00:59:58 +0200
-Message-Id: <20180719230026.8741-6-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 06/33] mtd: rawnand: fsl_ifc: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 00:59:59 +0200
+Message-Id: <20180719230026.8741-7-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -73,37 +73,37 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/fsl_elbc_nand.c | 19 ++++++++-----------
+ drivers/mtd/nand/raw/fsl_ifc_nand.c | 19 ++++++++-----------
  1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/fsl_elbc_nand.c b/drivers/mtd/nand/raw/fsl_elbc_nand.c
-index 0aa54a949653..11dfe9002454 100644
---- a/drivers/mtd/nand/raw/fsl_elbc_nand.c
-+++ b/drivers/mtd/nand/raw/fsl_elbc_nand.c
-@@ -637,9 +637,9 @@ static int fsl_elbc_wait(struct mtd_info *mtd, struct nand_chip *chip)
- 	return (elbc_fcm_ctrl->mdr & 0xff) | NAND_STATUS_WP;
+diff --git a/drivers/mtd/nand/raw/fsl_ifc_nand.c b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+index 96130d91e32c..4434a0e8ba48 100644
+--- a/drivers/mtd/nand/raw/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+@@ -714,9 +714,9 @@ static int fsl_ifc_write_page(struct mtd_info *mtd, struct nand_chip *chip,
+ 	return nand_prog_page_end_op(chip);
  }
  
--static int fsl_elbc_chip_init_tail(struct mtd_info *mtd)
-+static int fsl_elbc_attach_chip(struct nand_chip *chip)
+-static int fsl_ifc_chip_init_tail(struct mtd_info *mtd)
++static int fsl_ifc_attach_chip(struct nand_chip *chip)
  {
 -	struct nand_chip *chip = mtd_to_nand(mtd);
 +	struct mtd_info *mtd = nand_to_mtd(chip);
- 	struct fsl_elbc_mtd *priv = nand_get_controller_data(chip);
- 	struct fsl_lbc_ctrl *ctrl = priv->ctrl;
- 	struct fsl_lbc_regs __iomem *lbc = ctrl->regs;
-@@ -706,6 +706,10 @@ static int fsl_elbc_chip_init_tail(struct mtd_info *mtd)
+ 	struct fsl_ifc_mtd *priv = nand_get_controller_data(chip);
+ 
+ 	dev_dbg(priv->dev, "%s: nand->numchips = %d\n", __func__,
+@@ -757,6 +757,10 @@ static int fsl_ifc_chip_init_tail(struct mtd_info *mtd)
  	return 0;
  }
  
-+static struct nand_controller_ops fsl_elbc_controller_ops = {
-+	.attach_chip = fsl_elbc_attach_chip,
++static struct nand_controller_ops fsl_ifc_controller_ops = {
++	.attach_chip = fsl_ifc_attach_chip,
 +};
 +
- static int fsl_elbc_read_page(struct mtd_info *mtd, struct nand_chip *chip,
- 			      uint8_t *buf, int oob_required, int page)
+ static void fsl_ifc_sram_init(struct fsl_ifc_mtd *priv)
  {
-@@ -910,15 +914,8 @@ static int fsl_elbc_nand_probe(struct platform_device *pdev)
+ 	struct fsl_ifc_ctrl *ctrl = priv->ctrl;
+@@ -1046,15 +1050,8 @@ static int fsl_ifc_nand_probe(struct platform_device *dev)
  	if (ret)
  		goto err;
  
@@ -111,12 +111,12 @@ index 0aa54a949653..11dfe9002454 100644
 -	if (ret)
 -		goto err;
 -
--	ret = fsl_elbc_chip_init_tail(mtd);
+-	ret = fsl_ifc_chip_init_tail(mtd);
 -	if (ret)
 -		goto err;
 -
 -	ret = nand_scan_tail(mtd);
-+	priv->chip->controller.ops = &fsl_elbc_controller_ops;
++	priv->chip.controller->ops = &fsl_ifc_controller_ops;
 +	ret = nand_scan(mtd, 1);
  	if (ret)
  		goto err;
