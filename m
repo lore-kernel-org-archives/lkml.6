@@ -2,130 +2,124 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA066C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D705AC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 873AF20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 765FA2084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:47:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="v9mfReIw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 873AF20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="blFIzjLL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765FA2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731556AbeGSNa2 (ORCPT
+        id S1731596AbeGSNaw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 09:30:28 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:44522 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbeGSNa1 (ORCPT
+        Thu, 19 Jul 2018 09:30:52 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:42210 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730053AbeGSNaw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 09:30:27 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6JCkxqn077989;
-        Thu, 19 Jul 2018 07:46:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1532004419;
-        bh=xWWB8MFZbYdEyaPgMlWj3nDM3Qjwd6YFZKx72XoeV38=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=v9mfReIwejI764+qOyNm6OBPEAfFLHtlPAB+k5YFUXcfoE9urRkyh0ITtE+74lpjo
-         njcZMMgAV1vkMKvjGr3VYUO+ug9uAKnBuP52j2OEr9llMPV8j1NjnYpl0S6ORBcqTx
-         9BDJ4J/2V1hDKjolFvSpKSnJ8FyEW7TNkxLlUgks=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JCkxtC024468;
-        Thu, 19 Jul 2018 07:46:59 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 19
- Jul 2018 07:46:59 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 19 Jul 2018 07:46:59 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JCkuXe012240;
-        Thu, 19 Jul 2018 07:46:57 -0500
-Subject: Re: [PATCH v4 1/4] rtc: omap: Cut down the shutdown time from 2
- seconds to 1 sec
-To:     Johan Hovold <johan@kernel.org>
-CC:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
-        <t-kristo@ti.com>, <linux-rtc@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1531372060-10532-1-git-send-email-j-keerthy@ti.com>
- <1531372060-10532-2-git-send-email-j-keerthy@ti.com>
- <20180719100229.GQ10204@localhost>
- <ed335c7a-f079-082d-d572-93632087fd8f@ti.com>
- <a6930aca-f475-5b53-ce9d-d45fbc75d69c@ti.com>
- <20180719123617.GV10204@localhost>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <e3841afa-fe18-84c0-e5b6-520365c5e4a1@ti.com>
-Date:   Thu, 19 Jul 2018 18:16:56 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 19 Jul 2018 09:30:52 -0400
+Received: by mail-qt0-f195.google.com with SMTP id z8-v6so7005432qto.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 05:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9EV0y4Jq/QZWXMWnQmu4hP1A9LHDHt4yfnVQqzpTXvI=;
+        b=blFIzjLLctoonekQuJXp2TJgQC+b+PNfwwsKVsSmYRf3xi1PPOUWe+zKGiZ+8DaCdV
+         tARumXHM4rnwZi0vepiQPLT1YLOXYMQAYuqcN6G4x7pP/KmYPjzwHVdp39v/OCAPcel3
+         qXCgOqfvpW8BEHKFRD1ld9nQhQun6PR1/GpTnDySObdAsJ8ApSEDAG2uivEi3wm+/+O+
+         WUnOufedvOB0rAxpEBGTHn15qo+8QMxNAL4+PwWVQtD/RQrJBvu6TPIGTjo77mD7ZTJq
+         qmy4p9BIg0EhR3puAUKDDns+NR9M3qM4V0XUFWcncKoicbhU+mVqZUJxz/nko+SXN5QZ
+         0V9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9EV0y4Jq/QZWXMWnQmu4hP1A9LHDHt4yfnVQqzpTXvI=;
+        b=rj27CwtmTma4e50JkOU8edpJEK580k2HWvxIVSgymEsA+MuAffhXT/XH9yuJZ0SYVK
+         gcnB5y+I0FKhITnH/fOL4Qi0gVSRGeqsWsQVdRJ40TxJNnYmn9awNobuquyeN9GJr4hE
+         WScN8y8UMMmJTIYg7/2lCeDzR8ZXaXLbBPMvtMT9MiD3nchI5PU2oY3JA+m8dD0HdKNN
+         4pUROhb5EZGkrEfh3i3jnEdbt50cN4qr8Qn1BlBOciKEzitsCmBjFDooDKh9ZkTOGt8S
+         WTuKbyuWWheT8nQ5i9JZXaovWP6G0YlODpTZyrKAJhWpWvOR8vQd+fErW1ZOBJeIMLcp
+         7q/Q==
+X-Gm-Message-State: AOUpUlE5r35fyPTkD3c4JMkhlU7teQ7lHBZ569ZFmMpDor3fVpEG4JUj
+        AvNLndiRA368HUQue5e5A1wz7A==
+X-Google-Smtp-Source: AAOMgpefWKHFdu3CVa5JjNNTvP0FXBnKfOklLvDZ7rySgg2dcRIoNu+qOQV93bZfXKqGtP9sypIz3w==
+X-Received: by 2002:a0c:d683:: with SMTP id k3-v6mr10534516qvi.154.1532004472024;
+        Thu, 19 Jul 2018 05:47:52 -0700 (PDT)
+Received: from localhost (pool-96-246-38-36.nycmny.fios.verizon.net. [96.246.38.36])
+        by smtp.gmail.com with ESMTPSA id w79-v6sm5798205qkw.35.2018.07.19.05.47.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Jul 2018 05:47:50 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 08:50:38 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
+ and IO
+Message-ID: <20180719125038.GB13799@cmpxchg.org>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180712172942.10094-9-hannes@cmpxchg.org>
+ <20180718120318.GC2476@hirez.programming.kicks-ass.net>
+ <20180719092614.GY2512@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180719123617.GV10204@localhost>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719092614.GY2512@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 19, 2018 at 11:26:14AM +0200, Peter Zijlstra wrote:
+> On Wed, Jul 18, 2018 at 02:03:18PM +0200, Peter Zijlstra wrote:
+> 
+> > Leaving us just 5 bytes short of needing a single cacheline :/
+> > 
+> > struct ponies {
+> >         unsigned int               tasks[3];                                             /*     0    12 */
+> >         unsigned int               cpu_state:2;                                          /*    12:30  4 */
+> >         unsigned int               io_state:2;                                           /*    12:28  4 */
+> >         unsigned int               mem_state:2;                                          /*    12:26  4 */
+> > 
+> >         /* XXX 26 bits hole, try to pack */
+> > 
+> >         /* typedef u64 */ long long unsigned int     last_time;                          /*    16     8 */
+> >         /* typedef u64 */ long long unsigned int     some_time[3];                       /*    24    24 */
+> >         /* typedef u64 */ long long unsigned int     full_time[2];                       /*    48    16 */
+> >         /* --- cacheline 1 boundary (64 bytes) --- */
+> >         /* typedef u64 */ long long unsigned int     nonidle_time;                       /*    64     8 */
+> > 
+> >         /* size: 72, cachelines: 2, members: 8 */
+> >         /* bit holes: 1, sum bit holes: 26 bits */
+> >         /* last cacheline: 8 bytes */
+> > };
+> > 
+> > ARGGH!
+> 
+> It _might_ be possible to use curr->se.exec_start for last_time if you
+> very carefully audit and place the hooks. I've not gone through it in
+> detail, but it might just work.
 
+Hnngg, and chop off an entire cacheline...
 
-On Thursday 19 July 2018 06:06 PM, Johan Hovold wrote:
-> On Thu, Jul 19, 2018 at 05:52:17PM +0530, Keerthy wrote:
->> On Thursday 19 July 2018 05:23 PM, Keerthy wrote:
->>> On Thursday 19 July 2018 03:32 PM, Johan Hovold wrote:
->>>> On Thu, Jul 12, 2018 at 10:37:37AM +0530, Keerthy wrote:
-> 
->>>>> @@ -470,6 +476,9 @@ static void omap_rtc_power_off(void)
->>>>>  	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
->>>>>  	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
->>>>>  			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
-> 
->>>>> +	/* Our calculations started right before the rollover, try again */
-> 
->>>>> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
->>>>> +		goto again;
->>>>
->>>> Here the alarm may have gone off as part of the roll over, in which case
->>>> you shouldn't retry.
->>>
->>> Ex: We programmed at Sec = 2 and we expect ALARM2 to fire at sec = 3.
->>>
->>> In the event of Roll over before setting the
->>> OMAP_RTC_INTERRUPTS_IT_ALARM2 bit in the OMAP_RTC_INTERRUPTS_REG will we
->>> not miss the ALARM2 event? Then poweroff would fail right?
-> 
-> Right, that would fail.
-> 
->>> Hence the attempt to retry the next second. This sequence would begin
->>> right at the beginning of a new second and we expect the full sequence
->>> to get over without having to retry again.
->>>
->>> Hope i am clear.
-> 
-> Yes, sure, but my point is that could end up retrying also after the
-> alarm has fired correctly (e.g. due to latencies in turning of the
-> power)>
-> It may be enough to check OMAP_RTC_STATUS_REG before retrying.
-
-Ah okay. Yes this makes sense. I will use the status to retry.
-
-> 
->> I tried to program the interrupt for the same second on the hardware and
->> it does not fire. So to take care of roll over corner case one attempt
->> to retry is needed.
-> 
-> Yes, that's expected.
-> 
-> Thanks,
-> Johan
-> 
+But don't we flush that delta out and update the timestamp on every
+tick? entity_tick() does update_curr(). That might be too expensive :(
