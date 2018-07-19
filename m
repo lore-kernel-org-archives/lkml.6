@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C85ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E256EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 862362084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862362084C
+	by mail.kernel.org (Postfix) with ESMTP id 930F92084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930F92084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731886AbeGSXrE (ORCPT
+        id S1731905AbeGSXrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:47:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54469 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:47:09 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54489 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730811AbeGSXrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:47:02 -0400
+        id S1730678AbeGSXrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:47:08 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 82C3E2098C; Fri, 20 Jul 2018 01:01:45 +0200 (CEST)
+        id B6FEE209BD; Fri, 20 Jul 2018 01:01:50 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id ED85A20717;
-        Fri, 20 Jul 2018 01:01:13 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6711E209B7;
+        Fri, 20 Jul 2018 01:01:15 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 24/33] mtd: rawnand: txx9ndfmc: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 01:00:17 +0200
-Message-Id: <20180719230026.8741-25-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 25/33] mtd: rawnand: vf610: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 01:00:18 +0200
+Message-Id: <20180719230026.8741-26-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -73,75 +73,154 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/txx9ndfmc.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ drivers/mtd/nand/raw/vf610_nfc.c | 127 ++++++++++++++++++++-------------------
+ 1 file changed, 66 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/txx9ndfmc.c b/drivers/mtd/nand/raw/txx9ndfmc.c
-index 9019022774f7..4b2d9418d14a 100644
---- a/drivers/mtd/nand/raw/txx9ndfmc.c
-+++ b/drivers/mtd/nand/raw/txx9ndfmc.c
-@@ -254,23 +254,23 @@ static void txx9ndfmc_initialize(struct platform_device *dev)
- #define TXX9NDFMC_NS_TO_CYC(gbusclk, ns) \
- 	DIV_ROUND_UP((ns) * DIV_ROUND_UP(gbusclk, 1000), 1000000)
- 
--static int txx9ndfmc_nand_scan(struct mtd_info *mtd)
-+static int txx9ndfmc_attach_chip(struct nand_chip *chip)
- {
--	struct nand_chip *chip = mtd_to_nand(mtd);
--	int ret;
-+	struct mtd_info *mtd = nand_to_mtd(chip);
- 
--	ret = nand_scan_ident(mtd, 1, NULL);
--	if (!ret) {
--		if (mtd->writesize >= 512) {
--			/* Hardware ECC 6 byte ECC per 512 Byte data */
--			chip->ecc.size = 512;
--			chip->ecc.bytes = 6;
--		}
--		ret = nand_scan_tail(mtd);
-+	if (mtd->writesize >= 512) {
-+		/* Hardware ECC 6 byte ECC per 512 Byte data */
-+		chip->ecc.size = 512;
-+		chip->ecc.bytes = 6;
+diff --git a/drivers/mtd/nand/raw/vf610_nfc.c b/drivers/mtd/nand/raw/vf610_nfc.c
+index d5a22fc96878..61c5e353ff93 100644
+--- a/drivers/mtd/nand/raw/vf610_nfc.c
++++ b/drivers/mtd/nand/raw/vf610_nfc.c
+@@ -747,6 +747,69 @@ static void vf610_nfc_init_controller(struct vf610_nfc *nfc)
  	}
--	return ret;
-+
-+	return 0;
  }
  
-+static struct nand_controller_ops txx9ndfmc_controller_ops = {
-+	.attach_chip = txx9ndfmc_attach_chip,
++static int vf610_nfc_attach_chip(struct nand_chip *chip)
++{
++	struct mtd_info *mtd = nand_to_mtd(chip);
++	struct vf610_nfc *nfc = mtd_to_nfc(mtd);
++
++	vf610_nfc_init_controller(nfc);
++
++	/* Bad block options. */
++	if (chip->bbt_options & NAND_BBT_USE_FLASH)
++		chip->bbt_options |= NAND_BBT_NO_OOB;
++
++	/* Single buffer only, max 256 OOB minus ECC status */
++	if (mtd->writesize + mtd->oobsize > PAGE_2K + OOB_MAX - 8) {
++		dev_err(nfc->dev, "Unsupported flash page size\n");
++		return -ENXIO;
++	}
++
++	if (chip->ecc.mode != NAND_ECC_HW)
++		return 0;
++
++	if (mtd->writesize != PAGE_2K && mtd->oobsize < 64) {
++		dev_err(nfc->dev, "Unsupported flash with hwecc\n");
++		return -ENXIO;
++	}
++
++	if (chip->ecc.size != mtd->writesize) {
++		dev_err(nfc->dev, "Step size needs to be page size\n");
++		return -ENXIO;
++	}
++
++	/* Only 64 byte ECC layouts known */
++	if (mtd->oobsize > 64)
++		mtd->oobsize = 64;
++
++	/* Use default large page ECC layout defined in NAND core */
++	mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
++	if (chip->ecc.strength == 32) {
++		nfc->ecc_mode = ECC_60_BYTE;
++		chip->ecc.bytes = 60;
++	} else if (chip->ecc.strength == 24) {
++		nfc->ecc_mode = ECC_45_BYTE;
++		chip->ecc.bytes = 45;
++	} else {
++		dev_err(nfc->dev, "Unsupported ECC strength\n");
++		return -ENXIO;
++	}
++
++	chip->ecc.read_page = vf610_nfc_read_page;
++	chip->ecc.write_page = vf610_nfc_write_page;
++	chip->ecc.read_page_raw = vf610_nfc_read_page_raw;
++	chip->ecc.write_page_raw = vf610_nfc_write_page_raw;
++	chip->ecc.read_oob = vf610_nfc_read_oob;
++	chip->ecc.write_oob = vf610_nfc_write_oob;
++
++	chip->ecc.size = PAGE_2K;
++
++	return 0;
++}
++
++static struct nand_controller_ops vf610_nfc_controller_ops = {
++	.attach_chip = vf610_nfc_attach_chip,
 +};
 +
- static int __init txx9ndfmc_probe(struct platform_device *dev)
+ static int vf610_nfc_probe(struct platform_device *pdev)
  {
- 	struct txx9ndfmc_platform_data *plat = dev_get_platdata(&dev->dev);
-@@ -304,6 +304,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
- 		 (gbusclk + 500000) / 1000000, hold, spw);
+ 	struct vf610_nfc *nfc;
+@@ -827,67 +890,9 @@ static int vf610_nfc_probe(struct platform_device *pdev)
  
- 	nand_controller_init(&drvdata->controller);
-+	drvdata->controller.ops = &txx9ndfmc_controller_ops;
+ 	vf610_nfc_preinit_controller(nfc);
  
- 	platform_set_drvdata(dev, drvdata);
- 	txx9ndfmc_initialize(dev);
-@@ -332,7 +333,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
- 		chip->ecc.correct = txx9ndfmc_correct_data;
- 		chip->ecc.hwctl = txx9ndfmc_enable_hwecc;
- 		chip->ecc.mode = NAND_ECC_HW;
--		/* txx9ndfmc_nand_scan will overwrite ecc.size and ecc.bytes */
-+		/* nand_scan() will overwrite ecc.size and ecc.bytes */
- 		chip->ecc.size = 256;
- 		chip->ecc.bytes = 3;
- 		chip->ecc.strength = 1;
-@@ -359,7 +360,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
- 		if (plat->wide_mask & (1 << i))
- 			chip->options |= NAND_BUSWIDTH_16;
+-	/* first scan to find the device and get the page size */
+-	err = nand_scan_ident(mtd, 1, NULL);
+-	if (err)
+-		goto err_disable_clk;
+-
+-	vf610_nfc_init_controller(nfc);
+-
+-	/* Bad block options. */
+-	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+-		chip->bbt_options |= NAND_BBT_NO_OOB;
+-
+-	/* Single buffer only, max 256 OOB minus ECC status */
+-	if (mtd->writesize + mtd->oobsize > PAGE_2K + OOB_MAX - 8) {
+-		dev_err(nfc->dev, "Unsupported flash page size\n");
+-		err = -ENXIO;
+-		goto err_disable_clk;
+-	}
+-
+-	if (chip->ecc.mode == NAND_ECC_HW) {
+-		if (mtd->writesize != PAGE_2K && mtd->oobsize < 64) {
+-			dev_err(nfc->dev, "Unsupported flash with hwecc\n");
+-			err = -ENXIO;
+-			goto err_disable_clk;
+-		}
+-
+-		if (chip->ecc.size != mtd->writesize) {
+-			dev_err(nfc->dev, "Step size needs to be page size\n");
+-			err = -ENXIO;
+-			goto err_disable_clk;
+-		}
+-
+-		/* Only 64 byte ECC layouts known */
+-		if (mtd->oobsize > 64)
+-			mtd->oobsize = 64;
+-
+-		/* Use default large page ECC layout defined in NAND core */
+-		mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
+-		if (chip->ecc.strength == 32) {
+-			nfc->ecc_mode = ECC_60_BYTE;
+-			chip->ecc.bytes = 60;
+-		} else if (chip->ecc.strength == 24) {
+-			nfc->ecc_mode = ECC_45_BYTE;
+-			chip->ecc.bytes = 45;
+-		} else {
+-			dev_err(nfc->dev, "Unsupported ECC strength\n");
+-			err = -ENXIO;
+-			goto err_disable_clk;
+-		}
+-
+-		chip->ecc.read_page = vf610_nfc_read_page;
+-		chip->ecc.write_page = vf610_nfc_write_page;
+-		chip->ecc.read_page_raw = vf610_nfc_read_page_raw;
+-		chip->ecc.write_page_raw = vf610_nfc_write_page_raw;
+-		chip->ecc.read_oob = vf610_nfc_read_oob;
+-		chip->ecc.write_oob = vf610_nfc_write_oob;
+-
+-		chip->ecc.size = PAGE_2K;
+-	}
+-
+-	/* second phase scan */
+-	err = nand_scan_tail(mtd);
++	/* Scan the NAND chip */
++	chip->dummy_controller.ops = &vf610_nfc_controller_ops;
++	err = nand_scan(mtd, 1);
+ 	if (err)
+ 		goto err_disable_clk;
  
--		if (txx9ndfmc_nand_scan(mtd)) {
-+		if (nand_scan(mtd, 1)) {
- 			kfree(txx9_priv->mtdname);
- 			kfree(txx9_priv);
- 			continue;
 -- 
 2.14.1
 
