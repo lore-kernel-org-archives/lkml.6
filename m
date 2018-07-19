@@ -2,180 +2,84 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD3EC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA6CC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA1FF20856
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:41:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA1FF20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 4BC402084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:41:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC402084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731213AbeGSLYE (ORCPT
+        id S1731289AbeGSLYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 07:24:04 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:52603 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbeGSLYE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 07:24:04 -0400
-Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id ecdca475272b9dce; Thu, 19 Jul 2018 12:41:28 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 09/26] kernel/cpu_pm: Manage runtime PM in the idle path for CPUs
-Date:   Thu, 19 Jul 2018 12:39:49 +0200
-Message-ID: <1726374.375PCQfjLZ@aspire.rjw.lan>
-In-Reply-To: <2205807.cU2puvubpP@aspire.rjw.lan>
-References: <20180620172226.15012-1-ulf.hansson@linaro.org> <2056372.NMt4aPaF4h@aspire.rjw.lan> <2205807.cU2puvubpP@aspire.rjw.lan>
+        Thu, 19 Jul 2018 07:24:07 -0400
+Received: from foss.arm.com ([217.140.101.70]:47068 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726531AbeGSLYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 07:24:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE42780D;
+        Thu, 19 Jul 2018 03:41:34 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FD353F246;
+        Thu, 19 Jul 2018 03:41:32 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 11:41:30 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     will.deacon@arm.com, catalin.marinas@arm.com, alex.popov@linux.com,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        james.morse@arm.com
+Subject: Re: [PATCH] arm64: Clear the stack
+Message-ID: <20180719104130.egfevpo3ie4azaq6@lakrids.cambridge.arm.com>
+References: <20180629190553.7282-1-labbott@redhat.com>
+ <9733d929-3c6a-40e1-6110-8f79975323d3@linux.com>
+ <1b97aa7d-2b6c-a5df-0caa-1cd16e18a816@redhat.com>
+ <20180703121440.v4olvwqb3ykgt5fm@lakrids.cambridge.arm.com>
+ <06dd55e6-d39e-7617-b644-bdd04fa3c030@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06dd55e6-d39e-7617-b644-bdd04fa3c030@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, July 19, 2018 12:12:55 PM CEST Rafael J. Wysocki wrote:
-> On Wednesday, July 18, 2018 12:11:06 PM CEST Rafael J. Wysocki wrote:
-> > On Wednesday, June 20, 2018 7:22:09 PM CEST Ulf Hansson wrote:
-> > > To allow CPUs being power managed by PM domains, let's deploy support for
-> > > runtime PM for the CPU's corresponding struct device.
-> > > 
-> > > More precisely, at the point when the CPU is about to enter an idle state,
-> > > decrease the runtime PM usage count for its corresponding struct device,
-> > > via calling pm_runtime_put_sync_suspend(). Then, at the point when the CPU
-> > > resumes from idle, let's increase the runtime PM usage count, via calling
-> > > pm_runtime_get_sync().
-> > > 
-> > > Cc: Lina Iyer <ilina@codeaurora.org>
-> > > Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Hi,
+
+On Tue, Jul 17, 2018 at 03:58:19PM -0700, Laura Abbott wrote:
+> On 07/03/2018 05:14 AM, Mark Rutland wrote:
+> > > It might be cleaner just to use on_accessible_stack and then another
+> > > function to get the top of stack. This also might just be
+> > > reimplementing what x86 already has? (Mark, Ard?)
+> > It looks like we could build a get_stack_info() as they have.
 > > 
-> > I finally got to this one, sorry for the huge delay.
-> > 
-> > Let me confirm that I understand the code flow correctly.
-> > 
-> > > ---
-> > >  kernel/cpu_pm.c | 11 +++++++++++
-> > >  1 file changed, 11 insertions(+)
-> > > 
-> > > diff --git a/kernel/cpu_pm.c b/kernel/cpu_pm.c
-> > > index 67b02e138a47..492d4a83dca0 100644
-> > > --- a/kernel/cpu_pm.c
-> > > +++ b/kernel/cpu_pm.c
-> > > @@ -16,9 +16,11 @@
-> > >   */
-> > >  
-> > >  #include <linux/kernel.h>
-> > > +#include <linux/cpu.h>
-> > >  #include <linux/cpu_pm.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/notifier.h>
-> > > +#include <linux/pm_runtime.h>
-> > >  #include <linux/spinlock.h>
-> > >  #include <linux/syscore_ops.h>
-> > >  
-> > > @@ -91,6 +93,7 @@ int cpu_pm_enter(void)
-> > 
-> > This is called from a cpuidle driver's ->enter callback for the target state
-> > selected by the idle governor ->
-> > 
-> > >  {
-> > >  	int nr_calls;
-> > >  	int ret = 0;
-> > > +	struct device *dev = get_cpu_device(smp_processor_id());
-> > >  
-> > >  	ret = cpu_pm_notify(CPU_PM_ENTER, -1, &nr_calls);
-> > >  	if (ret)
-> > > @@ -100,6 +103,9 @@ int cpu_pm_enter(void)
-> > >  		 */
-> > >  		cpu_pm_notify(CPU_PM_ENTER_FAILED, nr_calls - 1, NULL);
-> > >  
-> > > +	if (!ret && dev && dev->pm_domain)
-> > > +		pm_runtime_put_sync_suspend(dev);
-> > 
-> > -> so this is going to invoke genpd_runtime_suspend() if the usage
-> > counter of dev is 0.
-> > 
-> > That will cause cpu_power_down_ok() to be called (because this is
-> > a CPU domain) and that will walk the domain cpumask and compute the
-> > estimated idle duration as the minimum of tick_nohz_get_next_wakeup()
-> > values over the CPUs in that cpumask.  [Note that the weight of the
-> > cpumask must be seriously limited for that to actually work, as this
-> > happens in the idle path.]  Next, it will return "true" if it can
-> > find a domain state with residency within the estimated idle
-> > duration.  [Note that this sort of overlaps with the idle governor's
-> > job.]
-> > 
-> > Next, __genpd_runtime_suspend() will be invoked to run the device-specific
-> > callback if any [Note that this has to be suitable for the idle path if
-> > present.] and genpd_stop_dev() runs (which, again, may invoke a callback)
-> > and genpd_power_off() runs under the domain lock (which must be a spinlock
-> > then).
-> > 
-> > > +
-> > >  	return ret;
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(cpu_pm_enter);
-> > > @@ -118,6 +124,11 @@ EXPORT_SYMBOL_GPL(cpu_pm_enter);
-> > >   */
-> > >  int cpu_pm_exit(void)
-> > >  {
-> > > +	struct device *dev = get_cpu_device(smp_processor_id());
-> > > +
-> > > +	if (dev && dev->pm_domain)
-> > > +		pm_runtime_get_sync(dev);
-> > > +
-> > >  	return cpu_pm_notify(CPU_PM_EXIT, -1, NULL);
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(cpu_pm_exit);
-> > > 
-> > 
-> > And this is called on wakeup when the cpuidle driver's ->enter callback
-> > is about to return and it reverses the suspend flow (except that the
-> > governor doesn't need to be called now).
-> > 
-> > Have I got that right?
+> > We could probably clean up our stack traced atop of that, too.
 > 
-> Assuming that I have got that right, there are concerns, mostly regarding
-> patch [07/26], but I will reply to that directly.
+> So I spent some time looking at this and I'm not 100% clear
+> if there would actually be much benefit to re-writing with
+> get_stack_info. Most of that design seems to come from x86
+> needing to handle multiple unwind options which arm64 doesn't
+> need to worry about. Any rework ended up with roughly
+> the same code without any notable benefit that I could see.
+> It's possible I'm missing what kind of cleanup you're suggesting
+> but I think just going with a tweaked version of on_accessible_stack
+> would be fine.
 
-Well, I haven't got that right, so never mind.
+I was mostly thinking that a struct stack_info with stack type
+enumeration would also be helpful for ensuring that we terminated stack
+traces when we had a loop.
 
-There are a few minor things to address, but apart from that the general
-genpd patches look ready.
-
-> The $subject patch is fine by me by itself, but it obviously depends on the
-> previous ones.  Patches [01-02/26] are fine too, but they don't seem to be
-> particularly useful without the rest of the series.
-> 
-> As far as patches [10-26/26] go, I'd like to see some review comments and/or
-> tags from the people with vested interest in there, in particular from Daniel
-> on patch [12/26] and from Sudeep on the PSCI ones.
-
-But this still holds.
+I'll reply on your new thread.
 
 Thanks,
-Rafael
-
+Mark.
