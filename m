@@ -2,209 +2,183 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B00ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8AEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B71F2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B71F2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B5BCA20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BCA20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731505AbeGTANm (ORCPT
+        id S1731558AbeGTANo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:13:42 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:38843 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731398AbeGTANl (ORCPT
+        Thu, 19 Jul 2018 20:13:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47795 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731462AbeGTANn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:13:41 -0400
-Received: by mail-qt0-f194.google.com with SMTP id y19-v6so8796441qto.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 16:28:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gN8QL/Y11A7E6FhcHbLbCidBJaN3nqe2yD2uQB8Up3Q=;
-        b=rEwunnlTBAOB1IRIUrhbgKkxwPw+rOTTxqpx76dLYyP5DRnf9bKME2Sld+aYOdvDar
-         OP+7P584r4+v7JjHl22JSZPTL62aZS2RSkbX6rkje/yDcrvdGREzx7kzuPGLY1N0AtcI
-         70JPEx1IDEKg9y0SUt+Ss/xDRYmHW3YyoF5UNwhrgxMRD5hsDwbz/ASgh3fPr5C8jO8S
-         +9qvfT1GaPfEXIGir+lXEqiilCN0VDWHIKf4pEvSObTRwGjOkpPHdzgHxA/k3ypwzHGF
-         VTo8K8EJS9NifmQ80APRu/XaC7lJnvg77Vj6EODXo8igebGuBCqGA/IpAyBuZov/ouuq
-         WFzQ==
-X-Gm-Message-State: AOUpUlE2ZY1lt54OmhOyGdnyGqS956RwpIRCcnM4n6fuMkQkAytS04jj
-        7QnhSDHly4SJHEvG6Y4Iynm6Gw==
-X-Google-Smtp-Source: AAOMgpeENeJlWCbP9LStrn6WbJsxLuOQmabTiD2Wpd5UEKVOSqTSuEMDpYJcOE6qksHsR0zQRWMRbg==
-X-Received: by 2002:a0c:d8d8:: with SMTP id w24-v6mr7599521qvj.49.1532042898149;
-        Thu, 19 Jul 2018 16:28:18 -0700 (PDT)
-Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc:4eb2:6dae:ab32:e5b0])
-        by smtp.gmail.com with ESMTPSA id f70-v6sm258205qke.77.2018.07.19.16.28.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Jul 2018 16:28:17 -0700 (PDT)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCHv2 2/2] arm64: Clear the stack
-Date:   Thu, 19 Jul 2018 16:28:06 -0700
-Message-Id: <20180719232806.3397-3-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180719232806.3397-1-labbott@redhat.com>
-References: <20180719232806.3397-1-labbott@redhat.com>
+        Thu, 19 Jul 2018 20:13:43 -0400
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1fgILJ-0004mr-Dv; Thu, 19 Jul 2018 23:28:17 +0000
+Subject: Re: [PATCH 1/2] apparmor: Check buffer bounds when mapping
+ permissions mask
+To:     Tyler Hicks <tyhicks@canonical.com>
+Cc:     James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>,
+        Seth Arnold <seth.arnold@canonical.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1530854701-7348-1-git-send-email-tyhicks@canonical.com>
+ <1530854701-7348-2-git-send-email-tyhicks@canonical.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <b8a0764f-e705-763c-e0a6-a855c359bd75@canonical.com>
+Date:   Thu, 19 Jul 2018 16:28:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1530854701-7348-2-git-send-email-tyhicks@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/05/2018 10:25 PM, Tyler Hicks wrote:
+> Don't read past the end of the buffer containing permissions
+> characters or write past the end of the destination string.
+> 
+> Detected by CoverityScan CID#1415361, 1415376 ("Out-of-bounds access")
+> 
+> Fixes: e53cfe6c7caa ("apparmor: rework perm mapping to a slightly broader set")
+> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 
-Implementation of stackleak based heavily on the x86 version
+I've pulled this into apparmor-next with a minor modification noted below
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-v2: Convert to adjusted on_acessible_stack APIs. Fixed alloca check to
-just panic. Dropped the extra include per Kees. I also didn't add the
-Reviewed-by since the APIs did change and I wanted another pass.
----
- arch/arm64/Kconfig                    |  1 +
- arch/arm64/include/asm/processor.h    | 15 +++++++++++++++
- arch/arm64/kernel/entry.S             |  7 +++++++
- arch/arm64/kernel/process.c           | 17 +++++++++++++++++
- arch/arm64/kvm/hyp/Makefile           |  3 ++-
- drivers/firmware/efi/libstub/Makefile |  3 ++-
- 6 files changed, 44 insertions(+), 2 deletions(-)
+>  security/apparmor/file.c          |  3 ++-
+>  security/apparmor/include/perms.h |  3 ++-
+>  security/apparmor/lib.c           | 17 +++++++++++++----
+>  3 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+> index 224b2fef93ca..4285943f7260 100644
+> --- a/security/apparmor/file.c
+> +++ b/security/apparmor/file.c
+> @@ -47,7 +47,8 @@ static void audit_file_mask(struct audit_buffer *ab, u32 mask)
+>  {
+>  	char str[10];
+>  
+> -	aa_perm_mask_to_str(str, aa_file_perm_chrs, map_mask_to_chr_mask(mask));
+> +	aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
+> +			    map_mask_to_chr_mask(mask));
+>  	audit_log_string(ab, str);
+>  }
+>  
+> diff --git a/security/apparmor/include/perms.h b/security/apparmor/include/perms.h
+> index 38aa6247d00f..b94ec114d1a4 100644
+> --- a/security/apparmor/include/perms.h
+> +++ b/security/apparmor/include/perms.h
+> @@ -137,7 +137,8 @@ extern struct aa_perms allperms;
+>  	xcheck(fn_for_each((L1), (P), (FN1)), fn_for_each((L2), (P), (FN2)))
+>  
+>  
+> -void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask);
+> +void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs,
+> +			 u32 mask);
+>  void aa_audit_perm_names(struct audit_buffer *ab, const char * const *names,
+>  			 u32 mask);
+>  void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
+> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+> index a7b3f681b80e..7ab368c3789b 100644
+> --- a/security/apparmor/lib.c
+> +++ b/security/apparmor/lib.c
+> @@ -198,15 +198,24 @@ const char *aa_file_perm_names[] = {
+>  /**
+>   * aa_perm_mask_to_str - convert a perm mask to its short string
+>   * @str: character buffer to store string in (at least 10 characters)
+> + * @str_size: size of the @str buffer
+> + * @chrs: NUL-terminated character buffer of permission characters
+>   * @mask: permission mask to convert
+>   */
+> -void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask)
+> +void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs, u32 mask)
+>  {
+>  	unsigned int i, perm = 1;
+> +	size_t num_chrs = strlen(chrs);
+> +
+> +	for (i = 0; i < num_chrs; perm <<= 1, i++> +		if (mask & perm) {
+> +			/* Ensure that one byte is left for NUL-termination */
+> +			if (WARN_ON_ONCE(str_size <= 1))
+> +				continue;
+might as well break here
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 42c090cf0292..216d36a49ab5 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -96,6 +96,7 @@ config ARM64
- 	select HAVE_ARCH_MMAP_RND_BITS
- 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
- 	select HAVE_ARCH_SECCOMP_FILTER
-+	select HAVE_ARCH_STACKLEAK
- 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index a73ae1e49200..0061450a793b 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -266,5 +266,20 @@ extern void __init minsigstksz_setup(void);
- #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
- #define SVE_GET_VL()	sve_get_current_vl()
- 
-+/*
-+ * For CONFIG_GCC_PLUGIN_STACKLEAK
-+ *
-+ * These need to be macros because otherwise we get stuck in a nightmare
-+ * of header definitions for the use of task_stack_page.
-+ */
-+
-+#define current_top_of_stack()							\
-+({										\
-+	struct stack_info _info;						\
-+	BUG_ON(!on_accessible_stack(current, current_stack_pointer, &_info));	\
-+	_info.high;								\
-+})
-+#define on_thread_stack()	(on_task_stack(current, current_stack_pointer, NULL))
-+
- #endif /* __ASSEMBLY__ */
- #endif /* __ASM_PROCESSOR_H */
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 28ad8799406f..67d12016063d 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -431,6 +431,11 @@ tsk	.req	x28		// current thread_info
- 
- 	.text
- 
-+	.macro	stackleak_erase
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	bl	stackleak_erase
-+#endif
-+	.endm
- /*
-  * Exception vectors.
-  */
-@@ -910,6 +915,7 @@ ret_fast_syscall:
- 	and	x2, x1, #_TIF_WORK_MASK
- 	cbnz	x2, work_pending
- 	enable_step_tsk x1, x2
-+	stackleak_erase
- 	kernel_exit 0
- ret_fast_syscall_trace:
- 	enable_daif
-@@ -936,6 +942,7 @@ ret_to_user:
- 	cbnz	x2, work_pending
- finish_ret_to_user:
- 	enable_step_tsk x1, x2
-+	stackleak_erase
- 	kernel_exit 0
- ENDPROC(ret_to_user)
- 
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index e10bc363f533..2724e4d31b16 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -493,3 +493,20 @@ void arch_setup_new_exec(void)
- {
- 	current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
- }
-+
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+void __used stackleak_check_alloca(unsigned long size)
-+{
-+	unsigned long stack_left;
-+	unsigned long current_sp = current_stack_pointer;
-+	struct stack_info info;
-+
-+	BUG_ON(!on_accessible_stack(current, current_sp, &info));
-+
-+	stack_left = current_sp - info.low;
-+
-+	if (size >= stack_left)
-+		panic("alloca() over the kernel stack boundary\n");
-+}
-+EXPORT_SYMBOL(stackleak_check_alloca);
-+#endif
-diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-index 4313f7475333..2fabc2dc1966 100644
---- a/arch/arm64/kvm/hyp/Makefile
-+++ b/arch/arm64/kvm/hyp/Makefile
-@@ -3,7 +3,8 @@
- # Makefile for Kernel-based Virtual Machine module, HYP part
- #
- 
--ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING
-+ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING \
-+		$(DISABLE_STACKLEAK_PLUGIN)
- 
- KVM=../../../../virt/kvm
- 
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index a34e9290a699..25dd2a14560d 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
- KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
- 				   -D__NO_FORTIFY \
- 				   $(call cc-option,-ffreestanding) \
--				   $(call cc-option,-fno-stack-protector)
-+				   $(call cc-option,-fno-stack-protector) \
-+				   $(DISABLE_STACKLEAK_PLUGIN)
- 
- GCOV_PROFILE			:= n
- KASAN_SANITIZE			:= n
--- 
-2.17.1
+>  
+> -	for (i = 0; i < 32; perm <<= 1, i++) {
+> -		if (mask & perm)
+>  			*str++ = chrs[i];
+> +			str_size--;
+> +		}
+>  	}
+>  	*str = '\0';
+>  }
+> @@ -236,7 +245,7 @@ void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
+>  
+>  	audit_log_format(ab, "\"");
+>  	if ((mask & chrsmask) && chrs) {
+> -		aa_perm_mask_to_str(str, chrs, mask & chrsmask);
+> +		aa_perm_mask_to_str(str, sizeof(str), chrs, mask & chrsmask);
+>  		mask &= ~chrsmask;
+>  		audit_log_format(ab, "%s", str);
+>  		if (mask & namesmask)
+> 
 
