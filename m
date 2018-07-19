@@ -2,240 +2,451 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DC1ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DF4ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78D7720671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:21:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D7720671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id CAFEE20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:21:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAFEE20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbeGSHCw convert rfc822-to-8bit (ORCPT
+        id S1729914AbeGSHDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 03:02:52 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:42873 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727336AbeGSHCw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 03:02:52 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w6J6LC8t011911
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 15:21:12 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6J6LCso015786;
-        Thu, 19 Jul 2018 15:21:12 +0900
-Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6J6LCeX030019;
-        Thu, 19 Jul 2018 15:21:12 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-2103309; Thu, 19 Jul 2018 15:19:47 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0319.002; Thu,
- 19 Jul 2018 15:19:46 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] mm: fix race on soft-offlining free huge pages
-Thread-Topic: [PATCH v2 1/2] mm: fix race on soft-offlining free huge pages
-Thread-Index: AQHUHY+ZfA+YF2+Ff02zwneBkDT4a6SS4qaAgACvZYCAAIS7AIABaDSA
-Date:   Thu, 19 Jul 2018 06:19:45 +0000
-Message-ID: <20180719061945.GB22154@hori1.linux.bs1.fc.nec.co.jp>
-References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <1531805552-19547-2-git-send-email-n-horiguchi@ah.jp.nec.com>
- <20180717142743.GJ7193@dhcp22.suse.cz>
- <20180718005528.GA12184@hori1.linux.bs1.fc.nec.co.jp>
- <20180718085032.GS7193@dhcp22.suse.cz>
-In-Reply-To: <20180718085032.GS7193@dhcp22.suse.cz>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.80]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <FB5EB1D2E8136747813E9060FC5E5350@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-TM-AS-MML: disable
+        Thu, 19 Jul 2018 03:03:02 -0400
+Received: from mx.socionext.com ([202.248.49.38]:35921 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727336AbeGSHDC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 03:03:02 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 19 Jul 2018 15:21:30 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id D519F60034;
+        Thu, 19 Jul 2018 15:21:30 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 19 Jul 2018 15:21:30 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 16E1F1A11BB;
+        Thu, 19 Jul 2018 15:21:30 +0900 (JST)
+From:   Keiji Hayashibara <hayashibara.keiji@socionext.com>
+To:     linus.walleij@linaro.org, yamada.masahiro@socionext.com,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     masami.hiramatsu@linaro.org, jaswinder.singh@linaro.org,
+        linux-kernel@vger.kernel.org, hayashibara.keiji@socionext.com,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH] pinctrl: uniphier: add spi pin-mux settings
+Date:   Thu, 19 Jul 2018 15:20:49 +0900
+Message-Id: <1531981249-26329-1-git-send-email-hayashibara.keiji@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 10:50:32AM +0200, Michal Hocko wrote:
-> On Wed 18-07-18 00:55:29, Naoya Horiguchi wrote:
-> > On Tue, Jul 17, 2018 at 04:27:43PM +0200, Michal Hocko wrote:
-> > > On Tue 17-07-18 14:32:31, Naoya Horiguchi wrote:
-> > > > There's a race condition between soft offline and hugetlb_fault which
-> > > > causes unexpected process killing and/or hugetlb allocation failure.
-> > > >
-> > > > The process killing is caused by the following flow:
-> > > >
-> > > >   CPU 0               CPU 1              CPU 2
-> > > >
-> > > >   soft offline
-> > > >     get_any_page
-> > > >     // find the hugetlb is free
-> > > >                       mmap a hugetlb file
-> > > >                       page fault
-> > > >                         ...
-> > > >                           hugetlb_fault
-> > > >                             hugetlb_no_page
-> > > >                               alloc_huge_page
-> > > >                               // succeed
-> > > >       soft_offline_free_page
-> > > >       // set hwpoison flag
-> > > >                                          mmap the hugetlb file
-> > > >                                          page fault
-> > > >                                            ...
-> > > >                                              hugetlb_fault
-> > > >                                                hugetlb_no_page
-> > > >                                                  find_lock_page
-> > > >                                                    return VM_FAULT_HWPOISON
-> > > >                                            mm_fault_error
-> > > >                                              do_sigbus
-> > > >                                              // kill the process
-> > > >
-> > > >
-> > > > The hugetlb allocation failure comes from the following flow:
-> > > >
-> > > >   CPU 0                          CPU 1
-> > > >
-> > > >                                  mmap a hugetlb file
-> > > >                                  // reserve all free page but don't fault-in
-> > > >   soft offline
-> > > >     get_any_page
-> > > >     // find the hugetlb is free
-> > > >       soft_offline_free_page
-> > > >       // set hwpoison flag
-> > > >         dissolve_free_huge_page
-> > > >         // fail because all free hugepages are reserved
-> > > >                                  page fault
-> > > >                                    ...
-> > > >                                      hugetlb_fault
-> > > >                                        hugetlb_no_page
-> > > >                                          alloc_huge_page
-> > > >                                            ...
-> > > >                                              dequeue_huge_page_node_exact
-> > > >                                              // ignore hwpoisoned hugepage
-> > > >                                              // and finally fail due to no-mem
-> > > >
-> > > > The root cause of this is that current soft-offline code is written
-> > > > based on an assumption that PageHWPoison flag should beset at first to
-> > > > avoid accessing the corrupted data.  This makes sense for memory_failure()
-> > > > or hard offline, but does not for soft offline because soft offline is
-> > > > about corrected (not uncorrected) error and is safe from data lost.
-> > > > This patch changes soft offline semantics where it sets PageHWPoison flag
-> > > > only after containment of the error page completes successfully.
-> > >
-> > > Could you please expand on the worklow here please? The code is really
-> > > hard to grasp. I must be missing something because the thing shouldn't
-> > > be really complicated. Either the page is in the free pool and you just
-> > > remove it from the allocator (with hugetlb asking for a new hugeltb page
-> > > to guaratee reserves) or it is used and you just migrate the content to
-> > > a new page (again with the hugetlb reserves consideration). Why should
-> > > PageHWPoison flag ordering make any relevance?
-> >
-> > (Considering soft offlining free hugepage,)
-> > PageHWPoison is set at first before this patch, which is racy with
-> > hugetlb fault code because it's not protected by hugetlb_lock.
-> >
-> > Originally this was written in the similar manner as hard-offline, where
-> > the race is accepted and a PageHWPoison flag is set as soon as possible.
-> > But actually that's found not necessary/correct because soft offline is
-> > supposed to be less aggressive and failure is OK.
->
-> OK
->
-> > So this patch is suggesting to make soft-offline less aggressive by
-> > moving SetPageHWPoison into the lock.
->
-> I guess I still do not understand why we should even care about the
-> ordering of the HWPoison flag setting. Why cannot we simply have the
-> following code flow? Or maybe we are doing that already I just do not
-> follow the code
->
-> 	soft_offline
-> 	  check page_count
-> 	    - free - normal page - remove from the allocator
-> 	           - hugetlb - allocate a new hugetlb page && remove from the pool
-> 	    - used - migrate to a new page && never release the old one
->
-> Why do we even need HWPoison flag here? Everything can be completely
-> transparent to the application. It shouldn't fail from what I
-> understood.
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-PageHWPoison flag is used to the 'remove from the allocator' part
-which is like below:
+Add pin-mux settings for spi controller.
 
-  static inline
-  struct page *rmqueue(
-          ...
-          do {
-                  page = NULL;
-                  if (alloc_flags & ALLOC_HARDER) {
-                          page = __rmqueue_smallest(zone, order, MIGRATE_HIGHATOMIC);
-                          if (page)
-                                  trace_mm_page_alloc_zone_locked(page, order, migratetype);
-                  }
-                  if (!page)
-                          page = __rmqueue(zone, order, migratetype);
-          } while (page && check_new_pages(page, order));
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 10 ++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 20 ++++++++++++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  |  5 +++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c | 10 ++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 10 ++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 15 +++++++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c | 10 ++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c | 10 ++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c |  5 +++++
+ 9 files changed, 95 insertions(+)
 
-check_new_pages() returns true if the page taken from free list has
-a hwpoison page so that the allocator iterates another round to get
-another page.
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+index 58825f6..bce533f 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+@@ -517,6 +517,10 @@ static const int i2c4_muxvals[] = {1, 1};
+ static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+ 				     15, 16, 17};
+ static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned spi0_pins[] = {56, 57, 58, 59};
++static const int spi0_muxvals[] = {0, 0, 0, 0};
++static const unsigned spi1_pins[] = {169, 170, 171, 172};
++static const int spi1_muxvals[] = {1, 1, 1, 1};
+ static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
+ 					   14, 15, 16, 17};
+ static const int system_bus_muxvals[] = {0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+@@ -596,6 +600,8 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(i2c3),
+ 	UNIPHIER_PINCTRL_GROUP(i2c4),
+ 	UNIPHIER_PINCTRL_GROUP(nand),
++	UNIPHIER_PINCTRL_GROUP(spi0),
++	UNIPHIER_PINCTRL_GROUP(spi1),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(uart0),
+@@ -632,6 +638,8 @@ static const char * const i2c1_groups[] = {"i2c1"};
+ static const char * const i2c3_groups[] = {"i2c3"};
+ static const char * const i2c4_groups[] = {"i2c4"};
+ static const char * const nand_groups[] = {"nand"};
++static const char * const spi0_groups[] = {"spi0"};
++static const char * const spi1_groups[] = {"spi1"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs1"};
+ static const char * const uart0_groups[] = {"uart0"};
+@@ -657,6 +665,8 @@ static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c3),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c4),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
++	UNIPHIER_PINMUX_FUNCTION(spi0),
++	UNIPHIER_PINMUX_FUNCTION(spi1),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+index 9f449b3..99f06fe 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+@@ -606,6 +606,14 @@ static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+ static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+ static const unsigned sd_pins[] = {10, 11, 12, 13, 14, 15, 16, 17};
+ static const int sd_muxvals[] = {3, 3, 3, 3, 3, 3, 3, 3};  /* No SDVOLC */
++static const unsigned spi0_pins[] = {56, 57, 58, 59};
++static const int spi0_muxvals[] = {0, 0, 0, 0};
++static const unsigned spi1_pins[] = {169, 170, 171, 172};
++static const int spi1_muxvals[] = {1, 1, 1, 1};
++static const unsigned spi2_pins[] = {86, 87, 88, 89};
++static const int spi2_muxvals[] = {1, 1, 1, 1};
++static const unsigned spi3_pins[] = {74, 75, 76, 77};
++static const int spi3_muxvals[] = {1, 1, 1, 1};
+ static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
+ 					   14, 15, 16, 17};
+ static const int system_bus_muxvals[] = {0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+@@ -685,6 +693,10 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(i2c4),
+ 	UNIPHIER_PINCTRL_GROUP(nand),
+ 	UNIPHIER_PINCTRL_GROUP(sd),
++	UNIPHIER_PINCTRL_GROUP(spi0),
++	UNIPHIER_PINCTRL_GROUP(spi1),
++	UNIPHIER_PINCTRL_GROUP(spi2),
++	UNIPHIER_PINCTRL_GROUP(spi3),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(uart0),
+@@ -722,6 +734,10 @@ static const char * const i2c3_groups[] = {"i2c3"};
+ static const char * const i2c4_groups[] = {"i2c4"};
+ static const char * const nand_groups[] = {"nand"};
+ static const char * const sd_groups[] = {"sd"};
++static const char * const spi0_groups[] = {"spi0"};
++static const char * const spi1_groups[] = {"spi1"};
++static const char * const spi2_groups[] = {"spi2"};
++static const char * const spi3_groups[] = {"spi3"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs1"};
+ static const char * const uart0_groups[] = {"uart0"};
+@@ -751,6 +767,10 @@ static const struct uniphier_pinmux_function uniphier_ld20_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c4),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+ 	UNIPHIER_PINMUX_FUNCTION(sd),
++	UNIPHIER_PINMUX_FUNCTION(spi0),
++	UNIPHIER_PINMUX_FUNCTION(spi1),
++	UNIPHIER_PINMUX_FUNCTION(spi2),
++	UNIPHIER_PINMUX_FUNCTION(spi3),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+index 0b10ebc..b247011 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+@@ -576,6 +576,8 @@ static const unsigned nand_cs1_pins[] = {22, 23};
+ static const int nand_cs1_muxvals[] = {0, 0};
+ static const unsigned sd_pins[] = {44, 45, 46, 47, 48, 49, 50, 51, 52};
+ static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned spi0_pins[] = {135, 136, 137, 138};
++static const int spi0_muxvals[] = {12, 12, 12, 12};
+ static const unsigned system_bus_pins[] = {16, 17, 18, 19, 20, 165, 166, 167,
+ 					   168, 169, 170, 171, 172, 173};
+ static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1,
+@@ -640,6 +642,7 @@ static const struct uniphier_pinctrl_group uniphier_ld4_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(nand),
+ 	UNIPHIER_PINCTRL_GROUP(nand_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(sd),
++	UNIPHIER_PINCTRL_GROUP(spi0),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs0),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+@@ -667,6 +670,7 @@ static const char * const i2c2_groups[] = {"i2c2"};
+ static const char * const i2c3_groups[] = {"i2c3"};
+ static const char * const nand_groups[] = {"nand", "nand_cs1"};
+ static const char * const sd_groups[] = {"sd"};
++static const char * const spi0_groups[] = {"spi0"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs0",
+ 						 "system_bus_cs1",
+@@ -690,6 +694,7 @@ static const struct uniphier_pinmux_function uniphier_ld4_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c3),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+ 	UNIPHIER_PINMUX_FUNCTION(sd),
++	UNIPHIER_PINMUX_FUNCTION(spi0),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+index 8e4d45fe..cb58797 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+@@ -769,6 +769,10 @@ static const unsigned nand_cs1_pins[] = {37, 38};
+ static const int nand_cs1_muxvals[] = {0, 0};
+ static const unsigned sd_pins[] = {47, 48, 49, 50, 51, 52, 53, 54, 55};
+ static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned spi0_pins[] = {199, 200, 201, 202};
++static const int spi0_muxvals[] = {8, 8, 8, 8};
++static const unsigned spi1_pins[] = {93, 94, 95, 96};
++static const int spi1_muxvals[] = {1, 1, 1, 1};
+ static const unsigned system_bus_pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+ 					   11, 12, 13};
+ static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -851,6 +855,8 @@ static const struct uniphier_pinctrl_group uniphier_ld6b_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(nand),
+ 	UNIPHIER_PINCTRL_GROUP(nand_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(sd),
++	UNIPHIER_PINCTRL_GROUP(spi0),
++	UNIPHIER_PINCTRL_GROUP(spi1),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs2),
+@@ -882,6 +888,8 @@ static const char * const i2c2_groups[] = {"i2c2"};
+ static const char * const i2c3_groups[] = {"i2c3"};
+ static const char * const nand_groups[] = {"nand", "nand_cs1"};
+ static const char * const sd_groups[] = {"sd"};
++static const char * const spi0_groups[] = {"spi0"};
++static const char * const spi1_groups[] = {"spi1"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs1",
+ 						 "system_bus_cs2",
+@@ -907,6 +915,8 @@ static const struct uniphier_pinmux_function uniphier_ld6b_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c3),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+ 	UNIPHIER_PINMUX_FUNCTION(sd),
++	UNIPHIER_PINMUX_FUNCTION(spi0),
++	UNIPHIER_PINMUX_FUNCTION(spi1),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+index 24788a7..89148f8 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+@@ -1050,6 +1050,10 @@ static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+ static const unsigned sd1_pins[] = {319, 320, 321, 322, 323, 324, 325, 326,
+ 				    327};
+ static const int sd1_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned spi0_pins[] = {199, 200, 201, 202};
++static const int spi0_muxvals[] = {11, 11, 11, 11};
++static const unsigned spi1_pins[] = {195, 196, 197, 198, 235, 238, 239};
++static const int spi1_muxvals[] = {11, 11, 11, 11, 11, 11, 11};
+ static const unsigned system_bus_pins[] = {25, 26, 27, 28, 29, 30, 31, 32, 33,
+ 					   34, 35, 36, 37, 38};
+ static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -1138,6 +1142,8 @@ static const struct uniphier_pinctrl_group uniphier_pro4_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(nand_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(sd),
+ 	UNIPHIER_PINCTRL_GROUP(sd1),
++	UNIPHIER_PINCTRL_GROUP(spi0),
++	UNIPHIER_PINCTRL_GROUP(spi1),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs0),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+@@ -1171,6 +1177,8 @@ static const char * const i2c6_groups[] = {"i2c6"};
+ static const char * const nand_groups[] = {"nand", "nand_cs1"};
+ static const char * const sd_groups[] = {"sd"};
+ static const char * const sd1_groups[] = {"sd1"};
++static const char * const spi0_groups[] = {"spi0"};
++static const char * const spi1_groups[] = {"spi1"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs0",
+ 						 "system_bus_cs1",
+@@ -1202,6 +1210,8 @@ static const struct uniphier_pinmux_function uniphier_pro4_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+ 	UNIPHIER_PINMUX_FUNCTION(sd),
+ 	UNIPHIER_PINMUX_FUNCTION(sd1),
++	UNIPHIER_PINMUX_FUNCTION(spi0),
++	UNIPHIER_PINMUX_FUNCTION(spi1),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+index d5d5e57..d77d6b37 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+@@ -818,6 +818,12 @@ static const unsigned nand_cs1_pins[] = {26, 27};
+ static const int nand_cs1_muxvals[] = {0, 0};
+ static const unsigned sd_pins[] = {250, 251, 252, 253, 254, 255, 256, 257, 258};
+ static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned spi0_pins[] = {120, 121, 122, 123};
++static const int spi0_muxvals[] = {0, 0, 0, 0};
++static const unsigned spi1_pins[] = {134, 139, 85, 86};
++static const int spi1_muxvals[] = {1, 1, 1, 1};
++static const unsigned spi2_pins[] = {55, 56, 57, 58, 82, 83, 84};
++static const int spi2_muxvals[] = {0, 0, 0, 0, 1, 1, 1};
+ static const unsigned system_bus_pins[] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+ 					   14, 15, 16, 17};
+ static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -904,6 +910,9 @@ static const struct uniphier_pinctrl_group uniphier_pro5_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(i2c5c),
+ 	UNIPHIER_PINCTRL_GROUP(i2c6),
+ 	UNIPHIER_PINCTRL_GROUP(sd),
++	UNIPHIER_PINCTRL_GROUP(spi0),
++	UNIPHIER_PINCTRL_GROUP(spi1),
++	UNIPHIER_PINCTRL_GROUP(spi2),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs0),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+@@ -934,6 +943,9 @@ static const char * const i2c5_groups[] = {"i2c5", "i2c5b", "i2c5c"};
+ static const char * const i2c6_groups[] = {"i2c6"};
+ static const char * const nand_groups[] = {"nand", "nand_cs1"};
+ static const char * const sd_groups[] = {"sd"};
++static const char * const spi0_groups[] = {"spi0"};
++static const char * const spi1_groups[] = {"spi1"};
++static const char * const spi2_groups[] = {"spi2"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs0",
+ 						 "system_bus_cs1",
+@@ -961,6 +973,9 @@ static const struct uniphier_pinmux_function uniphier_pro5_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c6),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+ 	UNIPHIER_PINMUX_FUNCTION(sd),
++	UNIPHIER_PINMUX_FUNCTION(spi0),
++	UNIPHIER_PINMUX_FUNCTION(spi1),
++	UNIPHIER_PINMUX_FUNCTION(spi2),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+index 032619a..90199da 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+@@ -778,6 +778,10 @@ static const unsigned nand_cs1_pins[] = {37, 38};
+ static const int nand_cs1_muxvals[] = {8, 8};
+ static const unsigned sd_pins[] = {47, 48, 49, 50, 51, 52, 53, 54, 55};
+ static const int sd_muxvals[] = {8, 8, 8, 8, 8, 8, 8, 8, 8};
++static const unsigned spi0_pins[] = {199, 200, 201, 202};
++static const int spi0_muxvals[] = {8, 8, 8, 8};
++static const unsigned spi1_pins[] = {93, 94, 95, 96};
++static const int spi1_muxvals[] = {1, 1, 1, 1};
+ static const unsigned system_bus_pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+ 					   11, 12, 13};
+ static const int system_bus_muxvals[] = {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+@@ -861,6 +865,8 @@ static const struct uniphier_pinctrl_group uniphier_pxs2_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(nand),
+ 	UNIPHIER_PINCTRL_GROUP(nand_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(sd),
++	UNIPHIER_PINCTRL_GROUP(spi0),
++	UNIPHIER_PINCTRL_GROUP(spi1),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(uart0),
+@@ -897,6 +903,8 @@ static const char * const i2c5_groups[] = {"i2c5"};
+ static const char * const i2c6_groups[] = {"i2c6"};
+ static const char * const nand_groups[] = {"nand", "nand_cs1"};
+ static const char * const sd_groups[] = {"sd"};
++static const char * const spi0_groups[] = {"spi0"};
++static const char * const spi1_groups[] = {"spi1"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs1"};
+ static const char * const uart0_groups[] = {"uart0", "uart0b", "uart0b_ctsrts"};
+@@ -928,6 +936,8 @@ static const struct uniphier_pinmux_function uniphier_pxs2_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c6),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+ 	UNIPHIER_PINMUX_FUNCTION(sd),
++	UNIPHIER_PINMUX_FUNCTION(spi0),
++	UNIPHIER_PINMUX_FUNCTION(spi1),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+index 535bb2e..3b860da 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+@@ -808,6 +808,10 @@ static const unsigned int nand_pins[] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+ static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+ static const unsigned int sd_pins[] = {43, 44, 45, 46, 47, 48, 49, 50, 51};
+ static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned spi0_pins[] = {100, 101, 102, 103};
++static const int spi0_muxvals[] = {0, 0, 0, 0};
++static const unsigned spi1_pins[] = {112, 113, 114, 115};
++static const int spi1_muxvals[] = {2, 2, 2, 2};
+ static const unsigned int system_bus_pins[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+ 					       11, 12, 13, 14};
+ static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -886,6 +890,8 @@ static const struct uniphier_pinctrl_group uniphier_pxs3_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(i2c3),
+ 	UNIPHIER_PINCTRL_GROUP(nand),
+ 	UNIPHIER_PINCTRL_GROUP(sd),
++	UNIPHIER_PINCTRL_GROUP(spi0),
++	UNIPHIER_PINCTRL_GROUP(spi1),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(uart0),
+@@ -913,6 +919,8 @@ static const char * const i2c2_groups[] = {"i2c2"};
+ static const char * const i2c3_groups[] = {"i2c3"};
+ static const char * const nand_groups[] = {"nand"};
+ static const char * const sd_groups[] = {"sd"};
++static const char * const spi0_groups[] = {"spi0"};
++static const char * const spi1_groups[] = {"spi1"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs1"};
+ static const char * const uart0_groups[] = {"uart0", "uart0_ctsrts"};
+@@ -936,6 +944,8 @@ static const struct uniphier_pinmux_function uniphier_pxs3_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c3),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+ 	UNIPHIER_PINMUX_FUNCTION(sd),
++	UNIPHIER_PINMUX_FUNCTION(spi0),
++	UNIPHIER_PINMUX_FUNCTION(spi1),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+index 0f921a6..f912999 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+@@ -504,6 +504,8 @@ static const unsigned nand_cs1_pins[] = {22, 23};
+ static const int nand_cs1_muxvals[] = {0, 0};
+ static const unsigned sd_pins[] = {32, 33, 34, 35, 36, 37, 38, 39, 40};
+ static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned spi0_pins[] = {118, 119, 120, 121};
++static const int spi0_muxvals[] = {3, 3, 3, 3};
+ static const unsigned system_bus_pins[] = {136, 137, 138, 139, 140, 141, 142,
+ 					   143, 144, 145, 146, 147, 148, 149};
+ static const int system_bus_muxvals[] = {-1, -1, -1, -1, -1, -1, -1, -1, -1,
+@@ -570,6 +572,7 @@ static const struct uniphier_pinctrl_group uniphier_sld8_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(nand),
+ 	UNIPHIER_PINCTRL_GROUP(nand_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(sd),
++	UNIPHIER_PINCTRL_GROUP(spi0),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs2),
+@@ -598,6 +601,7 @@ static const char * const i2c2_groups[] = {"i2c2"};
+ static const char * const i2c3_groups[] = {"i2c3"};
+ static const char * const nand_groups[] = {"nand", "nand_cs1"};
+ static const char * const sd_groups[] = {"sd"};
++static const char * const spi_groups[] = {"spi0"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs1",
+ 						 "system_bus_cs2",
+@@ -622,6 +626,7 @@ static const struct uniphier_pinmux_function uniphier_sld8_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c3),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+ 	UNIPHIER_PINMUX_FUNCTION(sd),
++	UNIPHIER_PINMUX_FUNCTION(spi0),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+-- 
+2.7.4
 
-There's no function that can be called from outside allocator to remove
-a page in allocator.  So actual page removal is done at allocation time,
-not at error handling time. That's the reason why we need PageHWPoison.
-
-Thanks,
-Naoya Horiguchi
-
-
-> > > Do I get it right that the only difference between the hard and soft
-> > > offlining is that hugetlb reserves might break for the former while not
-> > > for the latter
-> >
-> > Correct.
-> >
-> > > and that the failed migration kills all owners for the
-> > > former while not for latter?
-> >
-> > Hard-offline doesn't cause any page migration because the data is already
-> > lost, but yes it can kill the owners.
-> > Soft-offline never kills processes even if it fails (due to migration failrue
-> > or some other reasons.)
-> >
-> > I listed below some common points and differences between hard-offline
-> > and soft-offline.
-> >
-> >   common points
-> >     - they are both contained by PageHWPoison flag,
-> >     - error is injected via simliar interfaces.
-> >
-> >   differences
-> >     - the data on the page is considered lost in hard offline, but is not
-> >       in soft offline,
-> >     - hard offline likely kills the affected processes, but soft offline
-> >       never kills processes,
-> >     - soft offline causes page migration, but hard offline does not,
-> >     - hard offline prioritizes to prevent consumption of broken data with
-> >       accepting some race, and soft offline prioritizes not to impact
-> >       userspace with accepting failure.
-> >
-> > Looks to me that there're more differences rather than commont points.
->
-> Thanks for the summary. It certainly helped me
-> --
-> Michal Hocko
-> SUSE Labs
->
