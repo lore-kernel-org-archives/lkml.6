@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007D6ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4F8ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB7D220684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB7D220684
+	by mail.kernel.org (Postfix) with ESMTP id 2A2362084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2362084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731587AbeGSXqI (ORCPT
+        id S1731635AbeGSXqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:46:08 -0400
+        Thu, 19 Jul 2018 19:46:11 -0400
 Received: from mail.bootlin.com ([62.4.15.54]:54130 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731404AbeGSXqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:46:07 -0400
+        id S1731404AbeGSXqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:46:10 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B202920893; Fri, 20 Jul 2018 01:00:50 +0200 (CEST)
+        id 9CEC62093C; Fri, 20 Jul 2018 01:00:53 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 08DFB2072F;
-        Fri, 20 Jul 2018 01:00:48 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2C0F420908;
+        Fri, 20 Jul 2018 01:00:52 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 09/33] mtd: rawnand: hisi504: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 01:00:02 +0200
-Message-Id: <20180719230026.8741-10-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 11/33] mtd: rawnand: lpc32xx_mlc: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 01:00:04 +0200
+Message-Id: <20180719230026.8741-12-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -73,110 +73,161 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/hisi504_nand.c | 78 +++++++++++++++++++++----------------
- 1 file changed, 44 insertions(+), 34 deletions(-)
+ drivers/mtd/nand/raw/lpc32xx_mlc.c | 109 ++++++++++++++++++++-----------------
+ 1 file changed, 59 insertions(+), 50 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/hisi504_nand.c b/drivers/mtd/nand/raw/hisi504_nand.c
-index a1e009c8e556..34867e91df84 100644
---- a/drivers/mtd/nand/raw/hisi504_nand.c
-+++ b/drivers/mtd/nand/raw/hisi504_nand.c
-@@ -709,9 +709,50 @@ static int hisi_nfc_ecc_probe(struct hinfc_host *host)
- 	return 0;
+diff --git a/drivers/mtd/nand/raw/lpc32xx_mlc.c b/drivers/mtd/nand/raw/lpc32xx_mlc.c
+index 052d123a8304..099f1dd308c6 100644
+--- a/drivers/mtd/nand/raw/lpc32xx_mlc.c
++++ b/drivers/mtd/nand/raw/lpc32xx_mlc.c
+@@ -184,6 +184,7 @@ static struct nand_bbt_descr lpc32xx_nand_bbt_mirror = {
+ };
+ 
+ struct lpc32xx_nand_host {
++	struct platform_device	*pdev;
+ 	struct nand_chip	nand_chip;
+ 	struct lpc32xx_mlc_platform_data *pdata;
+ 	struct clk		*clk;
+@@ -653,6 +654,58 @@ static struct lpc32xx_nand_cfg_mlc *lpc32xx_parse_dt(struct device *dev)
+ 	return ncfg;
  }
  
-+static int hisi_nfc_attach_chip(struct nand_chip *chip)
++static int lpc32xx_nand_attach_chip(struct nand_chip *chip)
 +{
 +	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct hinfc_host *host = nand_get_controller_data(chip);
-+	int flag;
++	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
++	struct device *dev = &host->pdev->dev;
 +
-+	host->buffer = dmam_alloc_coherent(host->dev,
-+					   mtd->writesize + mtd->oobsize,
-+					   &host->dma_buffer, GFP_KERNEL);
-+	if (!host->buffer)
++	host->dma_buf = devm_kzalloc(dev, mtd->writesize, GFP_KERNEL);
++	if (!host->dma_buf)
 +		return -ENOMEM;
 +
-+	host->dma_oob = host->dma_buffer + mtd->writesize;
-+	memset(host->buffer, 0xff, mtd->writesize + mtd->oobsize);
++	host->dummy_buf = devm_kzalloc(dev, mtd->writesize, GFP_KERNEL);
++	if (!host->dummy_buf)
++		return -ENOMEM;
 +
-+	flag = hinfc_read(host, HINFC504_CON);
-+	flag &= ~(HINFC504_CON_PAGESIZE_MASK << HINFC504_CON_PAGEISZE_SHIFT);
-+	switch (mtd->writesize) {
-+	case 2048:
-+		flag |= (0x001 << HINFC504_CON_PAGEISZE_SHIFT);
-+		break;
-+	/*
-+	 * TODO: add more pagesize support,
-+	 * default pagesize has been set in hisi_nfc_host_init
-+	 */
-+	default:
-+		dev_err(host->dev, "NON-2KB page size nand flash\n");
++	chip->ecc.mode = NAND_ECC_HW;
++	chip->ecc.size = 512;
++	mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
++	host->mlcsubpages = mtd->writesize / 512;
++
++	/* initially clear interrupt status */
++	readb(MLC_IRQ_SR(host->io_base));
++
++	init_completion(&host->comp_nand);
++	init_completion(&host->comp_controller);
++
++	host->irq = platform_get_irq(host->pdev, 0);
++	if (host->irq < 0) {
++		dev_err(dev, "failed to get platform irq\n");
 +		return -EINVAL;
 +	}
-+	hinfc_write(host, flag, HINFC504_CON);
 +
-+	if (chip->ecc.mode == NAND_ECC_HW)
-+		hisi_nfc_ecc_probe(host);
++	if (request_irq(host->irq, (irq_handler_t)&lpc3xxx_nand_irq,
++			IRQF_TRIGGER_HIGH, DRV_NAME, host)) {
++		dev_err(dev, "Error requesting NAND IRQ\n");
++		return -ENXIO;
++	}
 +
 +	return 0;
 +}
 +
-+static struct nand_controller_ops hisi_nfc_controller_ops = {
-+	.attach_chip = hisi_nfc_attach_chip,
++static void lpc32xx_nand_detach_chip(struct nand_chip *chip)
++{
++	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
++
++	free_irq(host->irq, host);
++}
++
++static struct nand_controller_ops lpc32xx_nand_controller_ops = {
++	.attach_chip = lpc32xx_nand_attach_chip,
++	.detach_chip = lpc32xx_nand_detach_chip,
 +};
 +
- static int hisi_nfc_probe(struct platform_device *pdev)
- {
--	int ret = 0, irq, flag, max_chips = HINFC504_MAX_CHIP;
-+	int ret = 0, irq, max_chips = HINFC504_MAX_CHIP;
- 	struct device *dev = &pdev->dev;
- 	struct hinfc_host *host;
- 	struct nand_chip  *chip;
-@@ -769,42 +810,11 @@ static int hisi_nfc_probe(struct platform_device *pdev)
- 		return ret;
+ /*
+  * Probe for NAND controller
+  */
+@@ -669,6 +722,8 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
+ 	if (!host)
+ 		return -ENOMEM;
+ 
++	host->pdev = pdev;
++
+ 	rc = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	host->io_base = devm_ioremap_resource(&pdev->dev, rc);
+ 	if (IS_ERR(host->io_base))
+@@ -749,58 +804,14 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
  	}
  
--	ret = nand_scan_ident(mtd, max_chips, NULL);
-+	chip->dummy_controller.ops = &hisi_nfc_controller_ops;
-+	ret = nand_scan(mtd, max_chips);
- 	if (ret)
- 		return ret;
+ 	/*
+-	 * Scan to find existance of the device and
+-	 * Get the type of NAND device SMALL block or LARGE block
++	 * Scan to find existence of the device and get the type of NAND device:
++	 * SMALL block or LARGE block.
+ 	 */
+-	res = nand_scan_ident(mtd, 1, NULL);
++	nand_chip->dummy_controller.ops = &lpc32xx_nand_controller_ops;
++	res = nand_scan(mtd, 1);
+ 	if (res)
+ 		goto release_dma_chan;
  
--	host->buffer = dmam_alloc_coherent(dev, mtd->writesize + mtd->oobsize,
--		&host->dma_buffer, GFP_KERNEL);
--	if (!host->buffer)
--		return -ENOMEM;
+-	host->dma_buf = devm_kzalloc(&pdev->dev, mtd->writesize, GFP_KERNEL);
+-	if (!host->dma_buf) {
+-		res = -ENOMEM;
+-		goto release_dma_chan;
+-	}
 -
--	host->dma_oob = host->dma_buffer + mtd->writesize;
--	memset(host->buffer, 0xff, mtd->writesize + mtd->oobsize);
+-	host->dummy_buf = devm_kzalloc(&pdev->dev, mtd->writesize, GFP_KERNEL);
+-	if (!host->dummy_buf) {
+-		res = -ENOMEM;
+-		goto release_dma_chan;
+-	}
 -
--	flag = hinfc_read(host, HINFC504_CON);
--	flag &= ~(HINFC504_CON_PAGESIZE_MASK << HINFC504_CON_PAGEISZE_SHIFT);
--	switch (mtd->writesize) {
--	case 2048:
--		flag |= (0x001 << HINFC504_CON_PAGEISZE_SHIFT); break;
+-	nand_chip->ecc.mode = NAND_ECC_HW;
+-	nand_chip->ecc.size = 512;
+-	mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
+-	host->mlcsubpages = mtd->writesize / 512;
+-
+-	/* initially clear interrupt status */
+-	readb(MLC_IRQ_SR(host->io_base));
+-
+-	init_completion(&host->comp_nand);
+-	init_completion(&host->comp_controller);
+-
+-	host->irq = platform_get_irq(pdev, 0);
+-	if (host->irq < 0) {
+-		dev_err(&pdev->dev, "failed to get platform irq\n");
+-		res = -EINVAL;
+-		goto release_dma_chan;
+-	}
+-
+-	if (request_irq(host->irq, (irq_handler_t)&lpc3xxx_nand_irq,
+-			IRQF_TRIGGER_HIGH, DRV_NAME, host)) {
+-		dev_err(&pdev->dev, "Error requesting NAND IRQ\n");
+-		res = -ENXIO;
+-		goto release_dma_chan;
+-	}
+-
 -	/*
--	 * TODO: add more pagesize support,
--	 * default pagesize has been set in hisi_nfc_host_init
+-	 * Fills out all the uninitialized function pointers with the defaults
+-	 * And scans for a bad block table if appropriate.
 -	 */
--	default:
--		dev_err(dev, "NON-2KB page size nand flash\n");
--		return -EINVAL;
--	}
--	hinfc_write(host, flag, HINFC504_CON);
+-	res = nand_scan_tail(mtd);
+-	if (res)
+-		goto free_irq;
 -
--	if (chip->ecc.mode == NAND_ECC_HW)
--		hisi_nfc_ecc_probe(host);
--
--	ret = nand_scan_tail(mtd);
--	if (ret) {
--		dev_err(dev, "nand_scan_tail failed: %d\n", ret);
--		return ret;
--	}
--
- 	ret = mtd_device_register(mtd, NULL, 0);
- 	if (ret) {
- 		dev_err(dev, "Err MTD partition=%d\n", ret);
+ 	mtd->name = DRV_NAME;
+ 
+ 	res = mtd_device_register(mtd, host->ncfg->parts,
+@@ -812,8 +823,6 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
+ 
+ cleanup_nand:
+ 	nand_cleanup(nand_chip);
+-free_irq:
+-	free_irq(host->irq, host);
+ release_dma_chan:
+ 	if (use_dma)
+ 		dma_release_channel(host->dma_chan);
 -- 
 2.14.1
 
