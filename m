@@ -2,111 +2,90 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DD3C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61ABDC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F116B2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:12:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F116B2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B1FF2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:16:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TG5gl7K/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1FF2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729215AbeGSU5N (ORCPT
+        id S1729692AbeGSVAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 16:57:13 -0400
-Received: from mga01.intel.com ([192.55.52.88]:20659 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727555AbeGSU5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 16:57:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 13:12:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,375,1526367600"; 
-   d="scan'208";a="241675193"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.153])
-  by orsmga005.jf.intel.com with ESMTP; 19 Jul 2018 13:12:19 -0700
-Subject: Re: [PATCH] tpm: add support for partial reads
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        jarkko.sakkinen@linux.intel.com
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
- <1532020750.5396.4.camel@HansenPartnership.com>
- <421c4b75-9e9d-7045-adad-797fd112898a@intel.com>
- <1532026030.3198.2.camel@HansenPartnership.com>
- <e8c17a40-7e5e-61e9-7088-32817766b614@intel.com>
- <1532029979.3198.4.camel@HansenPartnership.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <0b9f0bb5-6620-0499-6680-5ec595167f23@intel.com>
-Date:   Thu, 19 Jul 2018 13:12:19 -0700
+        Thu, 19 Jul 2018 17:00:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44528 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727527AbeGSVAj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 17:00:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=syFHJI6ZbBPHcIUcx9AUPpSlHcQ/GEwJN8Eins1w9KY=; b=TG5gl7K/ogk7Icg5eKETf7bLY
+        0z1TBOP0OXsw6KCiekI7VMkCo+IsQQ4O4pqt1wyi4l/IqDvCVA9De4xtB1e7I6kNjnYBw1hhkrhKT
+        JkW+v1Ej7BGpohlHJJYBqxzye3o/lzyYEnXyvhic+Q6qkhBWayFl9ZY19Jg/fdEoj9fr/OpEjw4XZ
+        WitXJQnF3S3WcjulN9XBsjxLLMXWm/ABYhOvqppSz+/SmPSdKyRU59fy7xqhvIthpN2gV3K0HZ3L/
+        0bkcUzFUdtpOLoHUFrIiFUd9/lKHRZ17NNd+FYT6tBpLCqN+EBZRdT1B9mTE4bRpb/pZop7BUD2RS
+        ctoxFOfVA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fgFL8-00058I-O6; Thu, 19 Jul 2018 20:15:54 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] security: export security_kernel_load_data to fix
+ firmware_loader build
+Message-ID: <7a8dd892-39ec-3973-5f41-5ec23f1feb3f@infradead.org>
+Date:   Thu, 19 Jul 2018 13:15:52 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1532029979.3198.4.camel@HansenPartnership.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 12:52 PM, James Bottomley wrote:
-> The ABI break is the error case as I outlined above.  We can't assume
-> everyone uses the current interface without getting an error and one
-> error and your hosed is a nasty failure case to change the interface
-> to. 
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Well, if there is a broken application out there that doesn't work today
-it will not work after this change neither.
+Fix build error when CONFIG_FW_LOADER=m, CONFIG_FW_LOADER_USER_HELPER=y,
+CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y, and CONFIG_SECURITY=y:
 
-> Plus, if you assume everyone is passing 4k buffers, why would you
-> even need the fragmentation case?
+ERROR: "security_kernel_load_data" [drivers/base/firmware_loader/firmware_class.ko] undefined!
 
-So that people don't need to do this anymore and we can run a
-spec compliant TCTI on top of /dev/tpm<N>.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ security/security.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-> 
->>> It might be possible to layer the behaviour you want compatibly
->>> into the current device structure (say an ioctl to switch to the
->>> fragment behaviour) but I've got to ask why we'd go to the
->>> complexity without a use case?
->> New IOCTL would add extra complexity, which isn't necessary.
-> So what's wrong with fragmenting in the layer above the device driver
-> (in userspace) and not actually changing the kernel?
+--- linux-next-20180717.orig/security/security.c
++++ linux-next-20180717/security/security.c
+@@ -1121,6 +1121,7 @@ int security_kernel_load_data(enum kerne
+ 		return ret;
+ 	return ima_load_data(id);
+ }
++EXPORT_SYMBOL_GPL(security_kernel_load_data);
+ 
+ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+ 			     int flags)
 
-Because it is much easier to implement in the driver, and
-we can run a spec compliant TCTI on top of /dev/tpm<N>.
-
-Thanks,
--- 
-Tadeusz
