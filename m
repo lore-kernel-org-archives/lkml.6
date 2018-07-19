@@ -2,321 +2,159 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E25FC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3FEC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACF2520684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:13:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38F852084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:19:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AW51IzMX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACF2520684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Y0r0KyMa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F852084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387712AbeGST5n (ORCPT
+        id S1732180AbeGSUDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 15:57:43 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35542 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732746AbeGST5m (ORCPT
+        Thu, 19 Jul 2018 16:03:35 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50826 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731442AbeGSUDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 15:57:42 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e6-v6so4612991pgv.2;
-        Thu, 19 Jul 2018 12:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=g3/xKXqLInvNCzXmb/llZ8VVNlajgzwddRZa7znaoBg=;
-        b=AW51IzMXpZSj2t7/RLiqDlVfxUUW9IREcGW0SAMEtKhkRGX755aaHBicKhr/jaCKzH
-         Mw/m1wfeGKwP5FWGHdRrzm0dbphIrB1sBfdFr6yGx8QY52BSosD9iV4S/e/z38UdZCn3
-         xVil+BkCr28F+glYfZxyKS6NOQmtZo3r4K9eJgrtbCqx1UWhONNSk5F71xpoKVFX5ka8
-         FhL62BEeo/qgaU9xBQwCVB6Hkm7IBlGr/eUKfK6hPxB9QmMstBkJFefzmoMvodFm4xOB
-         OeaF69Oe2UlTHIOJ6J0MfJSfuVyak36fJrYCxGeQs1vJZm3IaqDZZnHDZfwA3k39JO/N
-         HAAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=g3/xKXqLInvNCzXmb/llZ8VVNlajgzwddRZa7znaoBg=;
-        b=oVFHRmB8iT/GXbRxqirFV3AKH5TbX2X1a231bObpaxwEbKwnbSQHLl5KQ1fTCHxH5Q
-         WvCPu0sfqCrAFPgaL364ul9lIBWzPZZCJ94PcHQG91g8iWDG2z/bnfK7fRxkXhm201cM
-         8XbAH5sQLH353A//2es8mOMd7rqwql1aVw2WasInm9ZbkefObs04WPBtbjKy0loeOcCU
-         edtqs9xJREbGqlTZI79JkfVShwyhmlCMY/tNS2NErjU9HSuJA85tdGot0R8VvRux7LZA
-         9Z2A8e79MA2NhiBNUPTh9t+fW/YJVt4OwVMFSn11SnXGwKmoAWXPgHj6i0swKG1+RN/i
-         jWWQ==
-X-Gm-Message-State: AOUpUlEbxpRys4Cjpwk8jsMZ+kwWXkcyzPb4vIouPUfUjcbRrcXjMxxD
-        qxjKaXV9dvuQXpEoVw8lchK93HsXy/w=
-X-Google-Smtp-Source: AAOMgpf1Ygp6FLqKGaq2fo/x+buo88G/bmfMzqTif+ZY5TywWISClr4V08+jQp0iKHt5VJB8jm6hSw==
-X-Received: by 2002:a62:ccd0:: with SMTP id j77-v6mr10719832pfk.22.1532027591185;
-        Thu, 19 Jul 2018 12:13:11 -0700 (PDT)
-Received: from tw-172-25-29-199.office.twttr.net ([8.25.197.27])
-        by smtp.gmail.com with ESMTPSA id t69-v6sm2656912pfj.7.2018.07.19.12.13.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Jul 2018 12:13:10 -0700 (PDT)
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Thu, 19 Jul 2018 16:03:35 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JJEMjD114134;
+        Thu, 19 Jul 2018 19:18:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=5EV4D0wtpefNpwqWT/wtx9dXjo49SDc11WB+S5Go60w=;
+ b=Y0r0KyMacj+HYywk2foCkplWl3ywqarbNrgRsrMDhKu3DDzf9/fJ2xbCEIVnDWQLCr7y
+ C/CRdBtd0luQE5F9NlUzKWTtnuB/dCidyIz6N9WpimeVGzZYQgQ7sMGuigoui1J9PHo/
+ qVM1BgEz/kXZYLsV9Rp1L2n4g5JBO3KSt+MJNJcYF8/S2+XCOjVr5i3OXE/SOt+aYkQ1
+ 41gw2znA8f3geII9ikKabdAvjru/CLtLd8UrDbEUuMPA5Syb3YVFw20YwT85KVtbXz36
+ nyUkT/1Ik0YJZkQNUtL1DpbIEFcyAgHZpPbkS0DAsWChkmpZuY0WSyUsGs05X90jfTy/ uQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2k9yjgrgn0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Jul 2018 19:18:38 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6JJIas2001844
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Jul 2018 19:18:37 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JJIZgN007960;
+        Thu, 19 Jul 2018 19:18:36 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Jul 2018 12:18:35 -0700
+Subject: Re: [PATCH] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
+To:     Waiman Long <longman@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH v2] perf/core: fix a possible deadlock scenario
-Date:   Thu, 19 Jul 2018 12:12:53 -0700
-Message-Id: <20180719191253.3843-1-xiyou.wangcong@gmail.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180719132834.GF18667@krava>
-References: <20180719132834.GF18667@krava>
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <1532008100-26922-1-git-send-email-longman@redhat.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <22f2465a-128e-730f-bc51-5a55ef16a039@oracle.com>
+Date:   Thu, 19 Jul 2018 15:18:58 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1532008100-26922-1-git-send-email-longman@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8959 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=764
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807190201
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hrtimer_cancel() busy-waits for the hrtimer callback to stop,
-pretty much like del_timer_sync(). This creates a possible deadlock
-scenario where we hold a spinlock before calling hrtimer_cancel()
-while in trying to acquire the same spinlock in the callback.
+On 07/19/2018 09:48 AM, Waiman Long wrote:
+> On a VM with only 1 vCPU, the locking fast paths will always be
+> successful. In this case, there is no need to use the the PV qspinlock
+> code which has higher overhead on the unlock side than the native
+> qspinlock code.
+>
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  arch/x86/xen/spinlock.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
+> index cd97a62..38f47ae 100644
+> --- a/arch/x86/xen/spinlock.c
+> +++ b/arch/x86/xen/spinlock.c
+> @@ -130,7 +130,8 @@ void xen_uninit_lock_cpu(int cpu)
+>  void __init xen_init_spinlocks(void)
+>  {
+>  
+> -	if (!xen_pvspin) {
+> +	/*  Don't need to use pvqspinlock code if there is only 1 vCPU. */
+> +	if (!xen_pvspin || num_possible_cpus() == 1) {
+>  		printk(KERN_DEBUG "xen: PV spinlocks disabled\n");
+>  		return;
+>  	}
 
-This kind of deadlock is already known and is catchable by lockdep,
-like for del_timer_sync(), we can add lockdep annotations. However,
-it is still missing for hrtimer_cancel(). (I have a WIP patch to make
-it complete for hrtimer_cancel() but it breaks booting.)
 
-And there is such a deadlock scenario in kernel/events/core.c too,
-well actually, it is a simpler version: the hrtimer callback waits
-for itself to finish on the same CPU! It sounds stupid but it is
-not obvious at all, it hides very deeply in the perf event code:
+I think we need to set xen_pvspin to false for such configurations.
+Notice that xen_init_lock_cpu() will try to perform some additional
+pvspinlock initializations.
 
-cpu_clock_event_init():
-  perf_swevent_init_hrtimer():
-    hwc->hrtimer.function = perf_swevent_hrtimer;
 
-perf_swevent_hrtimer():
-  __perf_event_overflow():
-    __perf_event_account_interrupt():
-      perf_adjust_period():
-        pmu->stop():
-        cpu_clock_event_stop():
-          perf_swevent_cancel():
-            hrtimer_cancel()
-
-Getting stuck in an hrtimer is a disaster:
-
-Interrupts are disabled for hrtimer_interrupt(), this means other
-interrupt handling is blocked too, notably the IPI handler, especially
-when smp_call_function_*() waits for their callbacks synchronously.
-This is probably why we saw hundreds of soft lockup's inside
-smp_call_function_single(), given how widely they are used in kernel.
-Ironically, perf event code uses synchronous smp_call_function_single()
-heavily too.
-
-The fix is not easy. To minimize the impact, ideally we should just
-avoid busy waiting when it is called within the hrtimer callback on
-the same CPU, there is no reason to wait for itself to finish anyway.
-Probably it doesn't even need to cancel itself either since it will
-restart by pmu->start() later. There are two possible fixes here:
-
-1. Modify hrtimer API to detect if a hrtimer callback is running
-on the same CPU now. It does not look pretty to adjust it only
-for this special case though.
-
-2. Passing some information from perf_swevent_hrtimer() down to
-perf_swevent_cancel().
-
-So I pick the latter approach, it is nicer and straightforward.
-
-Note, Jiri pointed out that the swevent pmu does not triger NMI and
-this timer will never be touched in NMI context, so we don't race
-with NMI handler here.
-
-Fixes: abd50713944c ("perf: Reimplement frequency driven sampling")
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
----
- include/linux/perf_event.h |  3 +++
- kernel/events/core.c       | 43 +++++++++++++++++++++++++++----------------
- 2 files changed, 30 insertions(+), 16 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1fa12887ec02..aab39b8aa720 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -310,6 +310,9 @@ struct pmu {
- #define PERF_EF_START	0x01		/* start the counter when adding    */
- #define PERF_EF_RELOAD	0x02		/* reload the counter when starting */
- #define PERF_EF_UPDATE	0x04		/* update the counter when stopping */
-+#define PERF_EF_NO_WAIT	0x08		/* do not wait when stopping, for
-+					 * example, waiting for a timer
-+					 */
- 
- 	/*
- 	 * Adds/Removes a counter to/from the PMU, can be done inside a
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 8f0434a9951a..f15832346b35 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3555,7 +3555,8 @@ do {					\
- static DEFINE_PER_CPU(int, perf_throttled_count);
- static DEFINE_PER_CPU(u64, perf_throttled_seq);
- 
--static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count, bool disable)
-+static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count,
-+			       bool disable, bool nowait)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	s64 period, sample_period;
-@@ -3574,8 +3575,13 @@ static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count, bo
- 	hwc->sample_period = sample_period;
- 
- 	if (local64_read(&hwc->period_left) > 8*sample_period) {
--		if (disable)
--			event->pmu->stop(event, PERF_EF_UPDATE);
-+		if (disable) {
-+			int flags = PERF_EF_UPDATE;
-+
-+			if (nowait)
-+				flags |= PERF_EF_NO_WAIT;
-+			event->pmu->stop(event, flags);
-+		}
- 
- 		local64_set(&hwc->period_left, 0);
- 
-@@ -3645,7 +3651,7 @@ static void perf_adjust_freq_unthr_context(struct perf_event_context *ctx,
- 		 * twice.
- 		 */
- 		if (delta > 0)
--			perf_adjust_period(event, period, delta, false);
-+			perf_adjust_period(event, period, delta, false, false);
- 
- 		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
- 	next:
-@@ -7681,7 +7687,8 @@ static void perf_log_itrace_start(struct perf_event *event)
- }
- 
- static int
--__perf_event_account_interrupt(struct perf_event *event, int throttle)
-+__perf_event_account_interrupt(struct perf_event *event, int throttle,
-+			       bool nowait)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int ret = 0;
-@@ -7710,7 +7717,8 @@ __perf_event_account_interrupt(struct perf_event *event, int throttle)
- 		hwc->freq_time_stamp = now;
- 
- 		if (delta > 0 && delta < 2*TICK_NSEC)
--			perf_adjust_period(event, delta, hwc->last_period, true);
-+			perf_adjust_period(event, delta, hwc->last_period, true,
-+					   nowait);
- 	}
- 
- 	return ret;
-@@ -7718,7 +7726,7 @@ __perf_event_account_interrupt(struct perf_event *event, int throttle)
- 
- int perf_event_account_interrupt(struct perf_event *event)
- {
--	return __perf_event_account_interrupt(event, 1);
-+	return __perf_event_account_interrupt(event, 1, false);
- }
- 
- /*
-@@ -7727,7 +7735,7 @@ int perf_event_account_interrupt(struct perf_event *event)
- 
- static int __perf_event_overflow(struct perf_event *event,
- 				   int throttle, struct perf_sample_data *data,
--				   struct pt_regs *regs)
-+				   struct pt_regs *regs, bool nowait)
- {
- 	int events = atomic_read(&event->event_limit);
- 	int ret = 0;
-@@ -7739,7 +7747,7 @@ static int __perf_event_overflow(struct perf_event *event,
- 	if (unlikely(!is_sampling_event(event)))
- 		return 0;
- 
--	ret = __perf_event_account_interrupt(event, throttle);
-+	ret = __perf_event_account_interrupt(event, throttle, nowait);
- 
- 	/*
- 	 * XXX event_limit might not quite work as expected on inherited
-@@ -7768,7 +7776,7 @@ int perf_event_overflow(struct perf_event *event,
- 			  struct perf_sample_data *data,
- 			  struct pt_regs *regs)
- {
--	return __perf_event_overflow(event, 1, data, regs);
-+	return __perf_event_overflow(event, 1, data, regs, true);
- }
- 
- /*
-@@ -7831,7 +7839,7 @@ static void perf_swevent_overflow(struct perf_event *event, u64 overflow,
- 
- 	for (; overflow; overflow--) {
- 		if (__perf_event_overflow(event, throttle,
--					    data, regs)) {
-+					    data, regs, false)) {
- 			/*
- 			 * We inhibit the overflow from happening when
- 			 * hwc->interrupts == MAX_INTERRUPTS.
-@@ -9110,7 +9118,7 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
- 
- 	if (regs && !perf_exclude_event(event, regs)) {
- 		if (!(event->attr.exclude_idle && is_idle_task(current)))
--			if (__perf_event_overflow(event, 1, &data, regs))
-+			if (__perf_event_overflow(event, 1, &data, regs, true))
- 				ret = HRTIMER_NORESTART;
- 	}
- 
-@@ -9141,7 +9149,7 @@ static void perf_swevent_start_hrtimer(struct perf_event *event)
- 		      HRTIMER_MODE_REL_PINNED);
- }
- 
--static void perf_swevent_cancel_hrtimer(struct perf_event *event)
-+static void perf_swevent_cancel_hrtimer(struct perf_event *event, bool sync)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 
-@@ -9149,7 +9157,10 @@ static void perf_swevent_cancel_hrtimer(struct perf_event *event)
- 		ktime_t remaining = hrtimer_get_remaining(&hwc->hrtimer);
- 		local64_set(&hwc->period_left, ktime_to_ns(remaining));
- 
--		hrtimer_cancel(&hwc->hrtimer);
-+		if (sync)
-+			hrtimer_cancel(&hwc->hrtimer);
-+		else
-+			hrtimer_try_to_cancel(&hwc->hrtimer);
- 	}
- }
- 
-@@ -9200,7 +9211,7 @@ static void cpu_clock_event_start(struct perf_event *event, int flags)
- 
- static void cpu_clock_event_stop(struct perf_event *event, int flags)
- {
--	perf_swevent_cancel_hrtimer(event);
-+	perf_swevent_cancel_hrtimer(event, flags & PERF_EF_NO_WAIT);
- 	cpu_clock_event_update(event);
- }
- 
-@@ -9277,7 +9288,7 @@ static void task_clock_event_start(struct perf_event *event, int flags)
- 
- static void task_clock_event_stop(struct perf_event *event, int flags)
- {
--	perf_swevent_cancel_hrtimer(event);
-+	perf_swevent_cancel_hrtimer(event, flags & PERF_EF_NO_WAIT);
- 	task_clock_event_update(event, event->ctx->time);
- }
- 
--- 
-2.14.4
-
+-boris
