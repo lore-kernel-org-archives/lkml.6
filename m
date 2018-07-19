@@ -2,230 +2,729 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8663ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79632ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78B49206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1012F206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:47:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="ayaa5o4L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B49206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=impinj.com
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="svw5DND7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1012F206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730021AbeGSUak (ORCPT
+        id S1730058AbeGSUbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 16:30:40 -0400
-Received: from mail-by2nam01on0129.outbound.protection.outlook.com ([104.47.34.129]:45030
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Thu, 19 Jul 2018 16:31:52 -0400
+Received: from mail-db5eur01on0132.outbound.protection.outlook.com ([104.47.2.132]:35808
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727492AbeGSUaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 16:30:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+        id S1727534AbeGSUbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 16:31:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OEaIIS5Ivp4/3v8nVtmgJBgLKc3jJF7s92w6CqGWpA4=;
- b=ayaa5o4LEs0gdBlPuLgO14TRjcx79RzAskCzhq1g8ly035866aKXtU/1GLt5JafR8z6BffAK7Sgptt0y+KZf+4XouNme8QSMgvVnY0J2jowRIWLtEl2c42OJAwwQ1WGK7ZBbMP2EtupWfTBzpGHyAFQ9gbTYp6EzNA3+l+YaUpQ=
-Received: from CY4PR0601MB3697.namprd06.prod.outlook.com (52.132.101.36) by
- CY4PR0601MB3713.namprd06.prod.outlook.com (52.132.101.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.16; Thu, 19 Jul 2018 19:45:43 +0000
-Received: from CY4PR0601MB3697.namprd06.prod.outlook.com
- ([fe80::b436:7c9e:779e:6289]) by CY4PR0601MB3697.namprd06.prod.outlook.com
- ([fe80::b436:7c9e:779e:6289%4]) with mapi id 15.20.0952.021; Thu, 19 Jul 2018
- 19:45:43 +0000
-From:   Trent Piepho <tpiepho@impinj.com>
-To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "hayashibara.keiji@socionext.com" <hayashibara.keiji@socionext.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "masami.hiramatsu@linaro.org" <masami.hiramatsu@linaro.org>,
-        "jaswinder.singh@linaro.org" <jaswinder.singh@linaro.org>,
-        "hayashi.kunihiko@socionext.com" <hayashi.kunihiko@socionext.com>
-Subject: Re: [PATCH 2/2] spi: add SPI controller driver for UniPhier SoC
-Thread-Topic: [PATCH 2/2] spi: add SPI controller driver for UniPhier SoC
-Thread-Index: AQHUHy08NRz2JFv0PES+aYnH5dMTwqSW88wA
-Date:   Thu, 19 Jul 2018 19:45:43 +0000
-Message-ID: <1532029542.2283.157.camel@impinj.com>
-References: <1531983117-9443-1-git-send-email-hayashibara.keiji@socionext.com>
-         <1531983117-9443-3-git-send-email-hayashibara.keiji@socionext.com>
-In-Reply-To: <1531983117-9443-3-git-send-email-hayashibara.keiji@socionext.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tpiepho@impinj.com; 
-x-originating-ip: [216.207.205.253]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR0601MB3713;6:XiH3ILKRfP6vf1L5zMZzpsnySb+4lM7KnHl0BTDrXu0kX7ilKLr1tK6BZaEPOHhsT1C8rOzvtfEGrxJ/Dygwq1KCTcxARJLOX6tqR8r3HCnacF7IIBo/eMtuWhqhYKsASs18MWHUXNwaWJHocAkQLw3dEA3VrjyVkgKjLLPy78Nb55Mdl8j6dld1gAnGduABetk3MX+IYTiaF9DQfA3GgXkPQp/n6dT/Pg777bhvKqzeerc53+Sal3BTFBCrVYP4kdGMwwAz1PciKJn/q7ABUSSyjcK9/+5yRVpKCVyex5+/UMdBY3J1bDritai53ziV7ek3acF5rE6KDWuN3klw9S0cTvoQ7ZiAXruZwPp4I1mnNgY2D11kLsTe74Z8o9DMvj2QFJ99Y9+hVYS8DROezsKXhjSy6nPz5ZacFZkNyqZ6mNB/SDMXLcg6HTzUeQxePACIXcM0K7h18xo0QERVMg==;5:z77gGcLZeKUnUItQ/PYCx2exV2skj+1P8yLmwSkix3W/Fywgwlr5k+ZB8FHG2eUhl5Q8dBVtZzJEyg0sw4qA+S5Cm6QDFvV0t/YBHoXm/yu8ppeS/Wop7qIMw8CRozwqJsMjyDmcjgcKT6oc8e/7Q/fliWPAamOHWvyfr/5xdGo=;7:XiKP4zphEQTFTEBLvAsQ0ZMcqfKgl/F20HycYB663onz9Thg205+3zb9kqWM5UJ8OAy/dLUApgc6EDTGTe/2/SlA5R+t8cKja6EwaMn3gXiophk8XV+sgHbpNH+ZA4iixIqeWPzT/QuTb6AJqDxRpmmfzdP92Ya2AZwnb05lvIXI8iGPltJGFYEJ590q1Rfw8onm2LbM3OTpAKDFvEDbIrZIu+aypMcNJ3eolTzL4XFiVMLhhuBkRZq8mrva9Ip9
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 29cccb32-3520-450c-bf4f-08d5edb036eb
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600067)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:CY4PR0601MB3713;
-x-ms-traffictypediagnostic: CY4PR0601MB3713:
-x-microsoft-antispam-prvs: <CY4PR0601MB37131C160C865EAD6A3BB3EAD3520@CY4PR0601MB3713.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CY4PR0601MB3713;BCL:0;PCL:0;RULEID:;SRVR:CY4PR0601MB3713;
-x-forefront-prvs: 0738AF4208
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(39850400004)(396003)(376002)(366004)(189003)(199004)(316002)(14454004)(110136005)(99286004)(5250100002)(54906003)(2501003)(478600001)(106356001)(105586002)(36756003)(7416002)(2906002)(5660300001)(68736007)(26005)(2900100001)(102836004)(6506007)(11346002)(86362001)(8936002)(81156014)(3846002)(81166006)(8676002)(2201001)(76176011)(97736004)(6486002)(53936002)(6116002)(476003)(446003)(7736002)(486006)(305945005)(256004)(229853002)(103116003)(6436002)(4326008)(6246003)(25786009)(6512007)(66066001)(186003)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR0601MB3713;H:CY4PR0601MB3697.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: impinj.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: dbPqydEv3tZFqnupFnSb7jv+bUOoQnRDddT85Q7IOJ23DhTFxw3LXt1H/z0gj54TGOrHpDdrg3zYknHSOTEEbwhcAKngkc7Y6+fTmvAFL2ge8dYBPil3U1kwGY8wkoIhlYcUb2B9JPqJa491/jf4R+7WPWM76krrnav6w2nalS5le/leq0nKwYLv5P9EczMWP3+clD0HiZRoeYDf9+90wQp+wgywQA0rXxzxzCb7SCJnVm8a4KaaePQtlzX40thknTV4pMwtl1/RxUork3M/CAsXfX5DThq/XpuAOmWzBsIHx9hkU43T9MPJODqYcQl8M20V+13AnBzXJZAjVoOAPZQ1E7VH8qMMMR4ZWyF4VAw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6FCCB6CBC67CC84FAF8320B6962F4146@namprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ bh=IN6xXo96TSY2QVPeTGDEWagjUglU8kLktRwmNrfXiYY=;
+ b=svw5DND7a4hirylTCwXNuLpJ0meNNd2hNZCSOCpkbnwpBAJUclZk9k1banusEtBNIR9gkY3MQ2MkSmJM/h7/R8jo/JG888KtihQytHAPaKA0qT/m7mUupNDM7192AgcP1tbCSIJbKuCwhHBPXm3xFBSeBd8aqst4niiI3Gs/lN8=
+Received: from [192.168.13.3] (85.226.244.23) by
+ AM5PR0201MB2452.eurprd02.prod.outlook.com (2603:10a6:203:35::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.952.18; Thu, 19 Jul
+ 2018 19:47:05 +0000
+Subject: Re: [PATCH v5 5/6] i2c: Add Actions Semiconductor Owl family S900 I2C
+ driver
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
+Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
+        jeff.chen@actions-semi.com
+References: <20180719174405.7210-1-manivannan.sadhasivam@linaro.org>
+ <20180719174405.7210-6-manivannan.sadhasivam@linaro.org>
+From:   Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <d945bfe1-5f6c-4949-5098-4861f9664d02@axentia.se>
+Date:   Thu, 19 Jul 2018 21:47:01 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: impinj.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29cccb32-3520-450c-bf4f-08d5edb036eb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2018 19:45:43.3219
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0601MB3713
+In-Reply-To: <20180719174405.7210-6-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1PR05CA0172.eurprd05.prod.outlook.com
+ (2603:10a6:3:f8::20) To AM5PR0201MB2452.eurprd02.prod.outlook.com
+ (2603:10a6:203:35::9)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 91fc865c-851b-4925-bebe-08d5edb0688e
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(5600067)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR0201MB2452;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;3:0sxkme58j5QRXG7SFhEblaqg9ZxHIOwpF/Konrg+Qc1vy4LRPDLn2DAQCnuWQdRhcEQ61a01OdSL+gJ/kLWgKrFeJbcvLfIN4brunnTq++FgoUR9VYwBxTNsQ5SJvzvDMp8bI1taXucO4GmQazeNj6acXTkHikzK7xIByzXpusQhCNnm4skNohd+mD4d6Lyp8OQiwB+BfW8CjzUJfTkq9rzJUyfjyoGBK3VmgGlmq4/N0shj3E4c/k4jTysLvp3/;25:nWBPBn857I51AhERETg4JfN6ANcj9Kj9osQ6ilKtbMF7v4q2AD1RWqBHCg2RGL8cj02X9qqRWWubNRUlZC+DLvNFOUEl4O24mhbBn1v1+WLJkAfARxFZfiuBragQwdAYKA3n7Z+EgN6BpHvekOA6xX4+o0zfWaRJn/beeQUrmsHTzx/ee/aPU+pA6w9j7FhYiZ5t2Q7jaCumHwnAKqYRc1FQ85M+0v/wW/zMK39b+m1Ht0H354DIub5ZfcdUyZ99awmviWz+x0Iu2GShp3/kdBie2uK2EA6WtSZimX5GjKyf8fodTmQHdstToSA9t8ZXCBItNjRgGBiZqsLd+1PxUw==;31:bIFrxyuHQMlPQxPmwWwOIcpPvwqauzXnjFVgQQyGJAqUjW2TJFTVRb8ReciMBgGGd7hKmt2ntqP4kju+EyGbXlDSNcNaAAHU5nv7r0a3vNYLXggd5uK5l0CnfpjPPJY6ETZ061bDASk0Z78lQEnGtjDg/jfHakj/5j+WdepOZs6DErWdLGzo64cvx0DRkVFtQFKJiJ7GdQmv/Wwvo0BXcJngOeK/r2SUwzKxGelPl1A=
+X-MS-TrafficTypeDiagnostic: AM5PR0201MB2452:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+X-Microsoft-Antispam-PRVS: <AM5PR0201MB2452EF31680A56785967F685BC520@AM5PR0201MB2452.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(31051911155226)(106291317490208);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(2016111802025)(6072148)(6043046)(201708071742011)(7699016);SRVR:AM5PR0201MB2452;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0201MB2452;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;4:cgDBlJuYb0cpbKlb+PhI4kykRR2Kgu3GzcjlqLjn1keO3p+Qqjz3K+uStJcS3Z8pGTfvp28UX2G4m95msnRWnMTBVnOyyacJ9sAK6uF8POXlYvsh/zX8tQESv3bg9sscTV3DCh4TErTfF3PwacllkGz/Yj8sCtccOGwWyU2WLGTaZV+SiEloK794KjUCC8MU9VuPGgs40ZDfRKCrKNLqQ91Z1y5tXwhsdLL6muuoZh+3uiz7ypjLjGUtc/umLCkRQaA02CQHbuAScJzbgiax0WFZvFkfpV1ex30+ccbSaxgNswGX5NMppeLggQJR3CrRaIJ08wV4MJctUxSz/70JrSo7BKjLQF2m/BfHhpP9CJg=
+X-Forefront-PRVS: 0738AF4208
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(979002)(6049001)(376002)(346002)(136003)(366004)(39830400003)(396003)(189003)(199004)(966005)(6486002)(26005)(386003)(551934003)(3260700006)(25786009)(65806001)(65956001)(66066001)(117156002)(64126003)(97736004)(229853002)(2616005)(4326008)(956004)(50466002)(16526019)(77096007)(74482002)(53936002)(476003)(486006)(47776003)(68736007)(186003)(53546011)(446003)(6306002)(11346002)(36756003)(105586002)(31686004)(14444005)(52116002)(8936002)(5660300001)(6116002)(58126008)(81166006)(76176011)(230700001)(2906002)(16576012)(81156014)(6246003)(478600001)(3846002)(31696002)(305945005)(65826007)(7736002)(6666003)(39060400002)(575784001)(23676004)(52146003)(316002)(2486003)(86362001)(36916002)(8676002)(7416002)(106356001)(42262002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0201MB2452;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjAyMDFNQjI0NTI7MjM6bjF1aWJkVVJhNWY2djZmSlJ6TEZhSEJM?=
+ =?utf-8?B?YWMyT3M2NGNqOTMwOFFUVWw0dGdKSnF1Tnhzd3ZMb0U4b3QrY29rdmpXOGhV?=
+ =?utf-8?B?Q01PbzBGVDZlZnFEUTlOcXFraW93Wm1mVGlKVUJNRTlranJmOVJtbWlaU1My?=
+ =?utf-8?B?Yjh2eWNTVGw2UDJpT1lIUmdwWGVCbjhtRm5BVEV4aHF4SjcwOCtwQmNwa1Ni?=
+ =?utf-8?B?TFBiRHZqRkVYbmZ0TjRyU2RIanpoUnd0TWV0bHpucVNwVnNPUUxvZzFaREd1?=
+ =?utf-8?B?ZXhzekd3OVVuQU5KaWt3cXV2bXVBMWV1b20zbzRsNGpaSHZaNWlMd0dVYm5x?=
+ =?utf-8?B?bERXeC9pd2VvOU90NDg4SXI2OE11QjNFZ0JmaHhaaHdsYWhHV2VEM0xpUlA4?=
+ =?utf-8?B?ZnltVVRUdGhVMktQa1hGaXF3QWJmYnpWS3BkMnZtUWVCV2l3ZEQybG5zbHk0?=
+ =?utf-8?B?TEFhdHNMN1REclMrSS9sWmNCaE00UHVIZU8zZlV0dVA5OUZPbERGNnpjcVZa?=
+ =?utf-8?B?QWRLVjJjb09neERpTFJKNUtSOTBjNWZubXVtbG9jQTBsZjFmVmRMVUFKaTdx?=
+ =?utf-8?B?aVJ4K2lQMndXYkI5N09vTFNSR1RmNXJMZ0dhTGdsSlVVNzZLZGNTL3N0MElL?=
+ =?utf-8?B?eERidURzWko2ZXVBS3g0dEphZXZKOEtFNnJYMjhMcHhyRThyU2Y0TUhFeE5P?=
+ =?utf-8?B?czBNZDM2bzlyQ0NTTzN2RWMvZUpia1owcyttVHVZOGRlK0RnZGI0K2xKUG90?=
+ =?utf-8?B?aXU2R1JHMzRReUhjZUFmb0o0YlJiOTVFTGxBK1NqZm4wRlc3RHFIelltNWNw?=
+ =?utf-8?B?d0g0RjBSOEE3TWN4cFdhZTlOcjI3R1hpa2xUcGFGYkU5azZFZ0NDZ2llbHdl?=
+ =?utf-8?B?akhDcjJhcVYzQUI2K00vdmtSOFAxc1Y3RjYyaklkN1Bic2Z4enNGS1NMUW4v?=
+ =?utf-8?B?bmxHd2xpOWRlQlZwdFp1WXRuWlRlTzlKT3BzT0dOcDJzaDFnNDJqUzc1RmZa?=
+ =?utf-8?B?RlI0ejVMK3RZaGhjWHNkWEFOblFhS25kelpOb2VhbTU0bkRERjVDVmZ4N3hj?=
+ =?utf-8?B?QnF5SUhPUkdQNDAwdkQ2T1B5dVBJZi94TGZZYzVPd2JGQTZWU3pGK2lBUnF2?=
+ =?utf-8?B?MUNsTk00RjlmTWx6b1NhQlZDSHd3RHd5QWYrVTgzM0RjbE8vWjlDTko4NUtH?=
+ =?utf-8?B?S3JJR1FNRFUxSWtVOFdkQ0ZwVnNDOXRsUklqZWFzRi8rd3VYYjRseERWZGV1?=
+ =?utf-8?B?c3paYnFJY21TNkUxeERMMGpsUkNsL3pscHpvWm9Cc0RKdW5BdlJwalFDQ1A5?=
+ =?utf-8?B?S3NEcWp1aVpQRVBGS2E1aGpWaTcrdnd4YnpMS3BXRjdxcXVNN1I1c1lINmhB?=
+ =?utf-8?B?T1BTclJtYjJ0dTJ0WXlndDhUMkxzRXFEN0hOcnpOcnd0cmtxVjdoL2pEQlkz?=
+ =?utf-8?B?Sm1OT0ZMMXFBdUloM1U1NzRKMXpoVmlvVUhsdEIwamdmMXRwSFVxRGNRbmRo?=
+ =?utf-8?B?Mm5EaHVrcmwxM2ZCK1d6d0w4LzRXeHdXZGIrTVl1SWJnb2ZTTWVSUFcrTk5m?=
+ =?utf-8?B?UkJjRGphcVU4WnJoMGVJVnpBVmMrS3oxaGdZR0tXQnR2WHJoMkR3bUZONjVy?=
+ =?utf-8?B?UHJUWk1sT1A4cG5QN3k0cDdrR1ZsNzdkSHVoQkpZdEIwRURqRVBLQ0hJWGlI?=
+ =?utf-8?B?STFvMzk0SExDTmx1OG9QdXQ4RU94djJkazdTVDB6TFZET2lHUHBBQWFoSS9u?=
+ =?utf-8?B?aGRSb2VrY3FOcHdWN1NxaGk0bkNKemVoREZhdEpvUVVtcENDQ0dFYVVOdVZR?=
+ =?utf-8?B?RzFaWDVuMjJNVlRmNkhGTEpZQWhiTGZMNmhzQXVkbGdDWE5VNHZSMUNJdkRH?=
+ =?utf-8?B?MW9MR2xXazVXY25BUnFsQ3hqUkV5NEpseVc3U3hxajRqSllwWUJLSHdvZVNy?=
+ =?utf-8?B?dEgwRXJ6UzNDelk0MmhqZTkzSjhpUVYvNjNxeFBuUUs1UkN4SThNa1gwcFBX?=
+ =?utf-8?B?bmo3VkJHenFvL1A4OEJsNmZrcDV1anBrNFBmaTRacEVaUVdwaDNsemRQZFFm?=
+ =?utf-8?B?RWYrQnQ2YWZ6TGtrSFM0dCtYMGtTTU9pM1J4NzVZRXlXVi95MjJQcnFGdDZ3?=
+ =?utf-8?B?Z2k0UTNoeG54RVdacWhWY2hPV1pHd2JlYTlrOGRTRUMxQ2FHRGpjeGNCN1Ux?=
+ =?utf-8?B?VkRhb2dPdnBuY01HeFNHTVUySGJ1WHJiQ0dPaktXdExHcVFoWUgvcEZHSCtl?=
+ =?utf-8?B?dW8vWnh5UjVuT0oybjIyTUJueDVxRlZhWWpYODNJakRaNkdjbHlQRGtoS0RB?=
+ =?utf-8?B?SUFTSllzajBhSi9kQmczTVAzc3JjNmlaVFJBb3NvRzhMVU9DNk9GbmtMRmR4?=
+ =?utf-8?B?K2liTnoydUpmcHFYOFJXdz09?=
+X-Microsoft-Antispam-Message-Info: p03ukXC9lZO9va4AEOPY8yRS3ldea5uJ9ZAmldJzoTqY+FyXCrCB/dpWJMbaAYGXjO8mhcmNbMtvqMDlHHZCziLIacFJivtZmNIh9SUTzFAjNfmU0WTh7JwbKhVmuEVsY5eG2cjPgUeAAZd0XXjJ2whgOrBllQ6chNtuwpnVPG/uoJRaHm56HIHMlonEtuRPpDD/a3gkwkix96Bt1McMqp9aZemqEtGeqyKdK9ZuHUV5Jhr6IsY3Fh5g2OoTdD0TYM6ERc8TzOm5u8/7yhpJbTzR/jhXYD8PSDeWlDvMDONlw++TzjMcrWCVqaDecctQVAxkpNHk2iC9X1+QIQE+Kz8WUoMmYhz7oxOjjwAcnJQ=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;6:jFqCGqbEj1j1hGuCRFWwVt1XWVpLzJyAMb4foFsfWx4RPVHbLWQvPx4mmJu8icSJUJBxEqO+EjcZEvELjQkvzVJkV0VBQFiU7TCJTJXSDQ/r8DtR28QO4c92I0NAxQhJENDsEmkMEvDPdJEjcB/hopuHE/VCAiCyjpf2bphcp/g/Fs5aOtGSY7XL58ovCrDvGyu2iiJ8WHdA5U3U0dTwzgyGS67P/CUh5JT3D3yyZt1yPRdSmyREeUxn4M6wTD60+0hw2MFi0R3GOzS5DCOE+NNR5wX2Rl35c9DkSV/7Ru4H/u2Ffzw3zcjpeClEjAg7sxGNKUbdDwg8Q0+xZvoqwkWO9oOKhLCOU7AsE67OOmq0dJ501IEycB8LI+0hJmImOoWRm0WS7yOymC8hqOQX79x8B9HfalSr4lzzwV0Rd2R6sNr5PDmB3VLRQdpv/jsUJwmqz8sQdbpMSahfV7dRQw==;5:gKtdInGpY5eJmPmdSZ8n/fAOt9CIlHlzcU3rIoQ5dDkedCAOwpEynYis3wrR13670UTo6tIJY3lc+yRca31Ep//4j1xEgKGqUSB5ci89eLonpiYFiISpO+1QEUpvWQs9m6GW9aglOQR6ZGcnFSCiUTDpWdeAqOMz1z879qyDhL0=;24:SPYaulsKvZzNGUTDER4F82xCfeeM6emnl6JPMFlZN4bOgnbfw/zlRJ2+UIjVcJFu1LNja7OOTRjJV3z8H/DAgqu4L4XmLidfPsO8kpL3+44=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;7:l1TnZv22oa5IFTqBckzfmJDgaOE7BzKDkwXdG3ZObirV1gN2y/niNX4h4AcxHRIrzLhqV4cG7yvN1quhcHSQcTm+SD71M9zEwRZ9NFgZBAlkicRfoxr6MNcGuVOasHPINLG+8rkg8t/tgnvzyIAY8/Wr4/r31SXqwWSqb9bLyaxusqk34i7x6SgYV2u3zx7BxzVrUASGnGo6BuWKrK4acP5jQ/QHeq5mMdobFbnmpqiNpjrh9BjRZxM2sxb/xr3f
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2018 19:47:05.1224 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91fc865c-851b-4925-bebe-08d5edb0688e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0201MB2452
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTA3LTE5IGF0IDE1OjUxICswOTAwLCBLZWlqaSBIYXlhc2hpYmFyYSB3cm90
-ZToNCj4gDQo+ICtjb25maWcgU1BJX1VOSVBISUVSDQo+ICsJdHJpc3RhdGUgIlNvY2lvbmV4dCBV
-bmlQaGllciBTUEkgQ29udHJvbGxlciINCj4gKwlkZXBlbmRzIG9uIChBUkNIX1VOSVBISUVSIHx8
-IENPTVBJTEVfVEVTVCkgJiYgT0YNCj4gKwloZWxwDQo+ICsJICBUaGlzIGRyaXZlciBzdXBwb3J0
-cyB0aGUgU1BJIGNvbnRyb2xsZXIgb24gU29jaW9uZXh0DQo+ICsJICBVbmlQaGllciBTb0NzLg0K
-DQpQZXJoYXBzIGFkZCB0aGUgYml0IHRoYXQgdGhpcyBpcyBmb3IgdGhlIFNDU1NJIGFuZCBub3Qg
-TUNTU0kgaGVyZT8NCg0KPiANCj4gKw0KPiArI2RlZmluZSBCWVRFU19QRVJfV09SRCh4KQkJCVwN
-Cj4gKyh7CQkJCQkJXA0KPiArCWludCBfX3g7CQkJCVwNCj4gKwlfX3ggPSAoeCA8PSA4KSAgPyAx
-IDoJCQlcDQo+ICsJICAgICAgKHggPD0gMTYpID8gMiA6IDQ7CQlcDQo+ICsJX194OwkJCQkJXA0K
-PiArfSkNCg0KT3I6DQoNCnN0YXRpYyBpbmxpbmUgYnl0ZXNfcGVyX3dvcmQodW5zaWduZWQgaW50
-IGJpdHMpIHsNCiAgIHJldHVybiBiaXRzIDw9IDggPyAxIDogKGJpdHMgPD0gMTYgPyAyIDogNCk7
-DQp9DQoNCg0KDQo+ICsNCj4gK3N0YXRpYyBpbmxpbmUgdm9pZCB1bmlwaGllcl9zcGlfaXJxX2Vu
-YWJsZShzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpLCB1MzIgbWFzaykNCj4gK3sNCj4gKwlzdHJ1Y3Qg
-dW5pcGhpZXJfc3BpX3ByaXYgKnByaXYgPSBzcGlfbWFzdGVyX2dldF9kZXZkYXRhKHNwaS0+bWFz
-dGVyKTsNCj4gKwl1MzIgdmFsOw0KPiArDQo+ICsJdmFsID0gcmVhZGwocHJpdi0+YmFzZSArIFNT
-SV9JRSk7DQo+ICsJdmFsIHw9IG1hc2s7DQo+ICsJd3JpdGVsKHZhbCwgcHJpdi0+YmFzZSArIFNT
-SV9JRSk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbmxpbmUgdm9pZCB1bmlwaGllcl9zcGlfaXJx
-X2Rpc2FibGUoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwgdTMyIG1hc2spDQo+ICt7DQo+ICsJc3Ry
-dWN0IHVuaXBoaWVyX3NwaV9wcml2ICpwcml2ID0gc3BpX21hc3Rlcl9nZXRfZGV2ZGF0YShzcGkt
-Pm1hc3Rlcik7DQo+ICsJdTMyIHZhbDsNCj4gKw0KPiArCXZhbCA9IHJlYWRsKHByaXYtPmJhc2Ug
-KyBTU0lfSUUpOw0KPiArCXZhbCAmPSB+bWFzazsNCj4gKwl3cml0ZWwodmFsLCBwcml2LT5iYXNl
-ICsgU1NJX0lFKTsNCj4gK30NCj4gKw0KPiArc3RhdGljIHZvaWQgdW5pcGhpZXJfc3BpX3NldF90
-cmFuc2Zlcl9zaXplKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIGludCBzaXplKQ0KPiArew0KPiAr
-CXN0cnVjdCB1bmlwaGllcl9zcGlfcHJpdiAqcHJpdiA9IHNwaV9tYXN0ZXJfZ2V0X2RldmRhdGEo
-c3BpLT5tYXN0ZXIpOw0KPiArCXUzMiB2YWw7DQo+ICsNCj4gKwl2YWwgPSByZWFkbChwcml2LT5i
-YXNlICsgU1NJX1RYV0RTKTsNCj4gKwl2YWwgJj0gfihTU0lfVFhXRFNfV0RMRU5fTUFTSyB8IFNT
-SV9UWFdEU19EVExFTl9NQVNLKTsNCj4gKwl2YWwgfD0gRklFTERfUFJFUChTU0lfVFhXRFNfV0RM
-RU5fTUFTSywgc2l6ZSk7DQo+ICsJdmFsIHw9IEZJRUxEX1BSRVAoU1NJX1RYV0RTX0RUTEVOX01B
-U0ssIHNpemUpOw0KPiArCXdyaXRlbCh2YWwsIHByaXYtPmJhc2UgKyBTU0lfVFhXRFMpOw0KPiAr
-DQo+ICsJdmFsID0gcmVhZGwocHJpdi0+YmFzZSArIFNTSV9SWFdEUyk7DQo+ICsJdmFsICY9IH5T
-U0lfUlhXRFNfRFRMRU5fTUFTSzsNCj4gKwl2YWwgfD0gRklFTERfUFJFUChTU0lfUlhXRFNfRFRM
-RU5fTUFTSywgc2l6ZSk7DQo+ICsJd3JpdGVsKHZhbCwgcHJpdi0+YmFzZSArIFNTSV9SWFdEUyk7
-DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgdW5pcGhpZXJfc3BpX3NldF9iYXVkcmF0ZShzdHJ1
-Y3Qgc3BpX2RldmljZSAqc3BpLCB1bnNpZ25lZCBpbnQgc3BlZWQpDQo+ICt7DQo+ICsJc3RydWN0
-IHVuaXBoaWVyX3NwaV9wcml2ICpwcml2ID0gc3BpX21hc3Rlcl9nZXRfZGV2ZGF0YShzcGktPm1h
-c3Rlcik7DQo+ICsJdTMyIHZhbCwgY2tyYXQ7DQo+ICsNCj4gKwkvKg0KPiArCSAqIHRoZSBzdXBw
-b3J0ZWQgcmF0ZXMgYXJlIGV2ZW4gbnVtYmVycyBmcm9tIDQgdG8gMjU0LiAoNCw2LDguLi4yNTQp
-DQo+ICsJICogcm91bmQgdXAgYXMgd2UgbG9vayBmb3IgZXF1YWwgb3IgbGVzcyBzcGVlZA0KPiAr
-CSAqLw0KPiArCWNrcmF0ID0gRElWX1JPVU5EX1VQKGNsa19nZXRfcmF0ZShwcml2LT5jbGspLCBz
-cGVlZCk7DQo+ICsJY2tyYXQgPSByb3VuZHVwKGNrcmF0LCAyKTsNCj4gKw0KPiArCS8qIGNoZWNr
-IGlmIHJlcXVlc3RlZCBzcGVlZCBpcyB0b28gc21hbGwgKi8NCj4gKwlpZiAoY2tyYXQgPiBTU0lf
-TUFYX0NMS19ESVZJREVSKQ0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKw0KPiArCWlmIChja3Jh
-dCA8IFNTSV9NSU5fQ0xLX0RJVklERVIpDQo+ICsJCWNrcmF0ID0gU1NJX01JTl9DTEtfRElWSURF
-UjsNCj4gKw0KPiArCXZhbCA9IHJlYWRsKHByaXYtPmJhc2UgKyBTU0lfQ0tTKTsNCj4gKwl2YWwg
-Jj0gflNTSV9DS1NfQ0tSQVRfTUFTSzsNCj4gKwl2YWwgfD0gY2tyYXQgJiBTU0lfQ0tTX0NLUkFU
-X01BU0s7DQo+ICsJd3JpdGVsKHZhbCwgcHJpdi0+YmFzZSArIFNTSV9DS1MpOw0KPiArDQo+ICsJ
-cmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgdW5pcGhpZXJfc3BpX3NldHVwX3Ry
-YW5zZmVyKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksDQo+ICsJCQkJICAgICAgIHN0cnVjdCBzcGlf
-dHJhbnNmZXIgKnQpDQo+ICt7DQo+ICsJc3RydWN0IHVuaXBoaWVyX3NwaV9wcml2ICpwcml2ID0g
-c3BpX21hc3Rlcl9nZXRfZGV2ZGF0YShzcGktPm1hc3Rlcik7DQo+ICsJdTMyIHZhbDsNCj4gKwlp
-bnQgcmV0Ow0KPiArDQo+ICsJcHJpdi0+ZXJyb3IgPSAwOw0KPiArCXByaXYtPnR4X2J1ZiA9IHQt
-PnR4X2J1ZjsNCj4gKwlwcml2LT5yeF9idWYgPSB0LT5yeF9idWY7DQo+ICsJcHJpdi0+dHhfYnl0
-ZXMgPSBwcml2LT5yeF9ieXRlcyA9IHQtPmxlbjsNCj4gKw0KPiArCWlmIChwcml2LT5iaXRzX3Bl
-cl93b3JkICE9IHQtPmJpdHNfcGVyX3dvcmQpIHsNCj4gKwkJdW5pcGhpZXJfc3BpX3NldF90cmFu
-c2Zlcl9zaXplKHNwaSwgdC0+Yml0c19wZXJfd29yZCk7DQo+ICsJCXByaXYtPmJpdHNfcGVyX3dv
-cmQgPSB0LT5iaXRzX3Blcl93b3JkOw0KPiArCX0NCj4gKw0KPiArCWlmIChwcml2LT5zcGVlZF9o
-eiAhPSB0LT5zcGVlZF9oeikgew0KPiArCQlyZXQgPSB1bmlwaGllcl9zcGlfc2V0X2JhdWRyYXRl
-KHNwaSwgdC0+c3BlZWRfaHopOw0KPiArCQlpZiAocmV0KQ0KPiArCQkJcmV0dXJuIHJldDsNCj4g
-KwkJcHJpdi0+c3BlZWRfaHogPSB0LT5zcGVlZF9oejsNCj4gKwl9DQo+ICsNCj4gKwkvKiByZXNl
-dCBGSUZPcyAqLw0KPiArCXZhbCA9IFNTSV9GQ19UWEZGTCB8IFNTSV9GQ19SWEZGTDsNCj4gKwl3
-cml0ZWwodmFsLCBwcml2LT5iYXNlICsgU1NJX0ZDKTsNCj4gKw0KPiArCXJldHVybiAwOw0KPiAr
-fQ0KPiArDQo+ICtzdGF0aWMgdm9pZCB1bmlwaGllcl9zcGlfc2VuZChzdHJ1Y3QgdW5pcGhpZXJf
-c3BpX3ByaXYgKnByaXYpDQo+ICt7DQo+ICsJaW50IGksIGxvb3A7DQo+ICsJdTMyIHZhbCA9IDA7
-DQo+ICsNCj4gKwlsb29wID0gQllURVNfUEVSX1dPUkQocHJpdi0+Yml0c19wZXJfd29yZCk7DQo+
-ICsJaWYgKHByaXYtPnR4X2J5dGVzIDwgbG9vcCkNCj4gKwkJbG9vcCA9IHByaXYtPnR4X2J5dGVz
-Ow0KPiArDQo+ICsJcHJpdi0+dHhfYnl0ZXMgLT0gbG9vcDsNCj4gKw0KPiArCWlmIChwcml2LT50
-eF9idWYpDQo+ICsJCWZvciAoaSA9IDA7IGkgPCBsb29wOyBpKyspIHsNCj4gKwkJCXZhbCB8PSAo
-Kihjb25zdCB1OCAqKXByaXYtPnR4X2J1ZikNCj4gKwkJCQkJCTw8IChCSVRTX1BFUl9CWVRFICog
-aSk7DQoNCnByaXYtPnR4X2J1ZiBpcyBhbHJlYWR5IGEgY29uc3QgdTgqLCBubyBuZWVkIHRvIGNh
-c3QgaXQuICBBbHNvIGluIHJlY3YsDQpubyBuZWVkIHRvIGNhc3QgdGhlIHBvaW50ZXIuICBJdCds
-bCBqdXN0IGhpZGUgZXJyb3JzIGlmIHNvbWVvbmUgY2hhbmdlcw0KdGhlIHR5cGUgb2YgdGhlIGZp
-ZWxkLg0KDQo+ICsJCQkoY29uc3QgdTggKilwcml2LT50eF9idWYrKzsNCj4gKwkJfQ0KPiArDQo+
-ICsJd3JpdGVsKHZhbCwgcHJpdi0+YmFzZSArIFNTSV9UWERSKTsNCj4gK30NCg0KVGhlIGxvb3Ag
-dG8gcmVhZCB0aGUgZGF0YSB3aWxsIGxpa2VseSBiZSBzb21ld2hhdCBzbG93LiAgSXQgbWlnaHQg
-YmUNCmZhc3RlciB0byB1c2U6DQoNCiAgICB2YWwgPSBnZXRfdW5hbGlnbmVkX2xlMzIocHJpdi0+
-dHhfYnVmKTsNCg0KVG8gc3VwcG9ydCBkaWZmZXJlbnQgc2l6ZXMgYSBzd2l0Y2ggY2FuIGJlIHVz
-ZWQ6DQoNCiAgICBzd2l0Y2ggKE1JTihCWVRFU19QRVJfV09SRChwcml2LT5iaXRzX3Blcl93b3Jk
-KSwgcHJpdi0+dHhfYnl0ZXMpKSB7DQogICAgY2FzZSAxOg0KICAgICAgICAgdmFsID0gKnByaXYt
-PnR4X2J1ZjsgYnJlYWs7DQogICAgY2FzZSAyOg0KICAgICAgICAgdmFsID0gZ2V0X3VuYWxpZ25l
-ZF9sZTE2KHByaXYtPnR4X2J1Zik7IGJyZWFrOw0KICAgIGNhc2UgNDoNCiAgICAgICAgIHZhbCA9
-IGdldF91bmFsaWduZWRfbGUzMihwcml2LT50eF9idWYpOyBicmVhazsNCiAgICB9DQoNCkhvd2V2
-ZXIsIEkgZG9uJ3QgdGhpbmsgZWl0aGVyIHRoZSBleGlzdGluZyBjb2RlIG9yIHRoaXMgY29kZSBp
-cw0KY29ycmVjdGx5IGhhbmRsaW5nIHdvcmQgc2l6ZXMgdGhhdCBhcmUgbm90IGFuIGV2ZW4gbnVt
-YmVyIG9mIGJ5dGVzLiAgSQ0KdGhpbmsgaXQgbmVlZHMgdG8gbGVmdCBzaGlmdCB0aGUgZGF0YSwg
-YnV0IG9mIGNvdXJzZSBpdCBhbHNvIGRlcGVuZHMgb24NCndoYXQgdGhlIHVuaXBoaWVyIGhhcmR3
-YXJlIGV4cGVjdGVkIGluIHRoZSBUWERSIHJlZ2lzdGVyLg0KDQoNCj4gK3N0YXRpYyB2b2lkIHVu
-aXBoaWVyX3NwaV9yZWN2KHN0cnVjdCB1bmlwaGllcl9zcGlfcHJpdiAqcHJpdikNCj4gK3sNCj4g
-KwlpbnQgaSwgbG9vcDsNCj4gKwl1MzIgdmFsOw0KPiArDQo+ICsJbG9vcCA9IEJZVEVTX1BFUl9X
-T1JEKHByaXYtPmJpdHNfcGVyX3dvcmQpOw0KPiArCWlmIChwcml2LT5yeF9ieXRlcyA8IGxvb3Ap
-DQo+ICsJCWxvb3AgPSBwcml2LT5yeF9ieXRlczsNCj4gKw0KPiArCXByaXYtPnJ4X2J5dGVzIC09
-IGxvb3A7DQo+ICsNCj4gKwl2YWwgPSByZWFkbChwcml2LT5iYXNlICsgU1NJX1JYRFIpOw0KPiAr
-DQo+ICsJaWYgKHByaXYtPnJ4X2J1ZikNCj4gKwkJZm9yIChpID0gMDsgaSA8IGxvb3A7IGkrKykg
-ew0KPiArCQkJdmFsID0gdmFsID4+IChCSVRTX1BFUl9CWVRFICogaSk7DQo+ICsJCQkqKHU4ICop
-cHJpdi0+cnhfYnVmID0gdmFsICYgR0VOTUFTSyg3LCAwKTsNCj4gKwkJCSh1OCAqKXByaXYtPnJ4
-X2J1ZisrOw0KPiArCQl9DQoNCg0KDQo+ICt9K3N0YXRpYyB2b2lkIHVuaXBoaWVyX3NwaV9maWxs
-X3R4X2ZpZm8oc3RydWN0IHVuaXBoaWVyX3NwaV9wcml2ICpwcml2KQ0KPiArew0KPiArCXVuc2ln
-bmVkIGludCB0eF9jb3VudDsNCj4gKwlpbnQgYnl0ZXNfcGVyX3dvcmQgPSBCWVRFU19QRVJfV09S
-RChwcml2LT5iaXRzX3Blcl93b3JkKTsNCj4gKwl1MzIgdmFsOw0KPiArDQo+ICsJdHhfY291bnQg
-PSBwcml2LT50eF9ieXRlcyAvIGJ5dGVzX3Blcl93b3JkOw0KPiArCWlmICh0eF9jb3VudCA+IFNT
-SV9GSUZPX0RFUFRIKQ0KPiArCQl0eF9jb3VudCA9IFNTSV9GSUZPX0RFUFRIOw0KPiArDQo+ICsJ
-Lyogc2V0IGZpZm8gdGhyZXRob2xkICovDQo+ICsJdmFsID0gcmVhZGwocHJpdi0+YmFzZSArIFNT
-SV9GQyk7DQo+ICsJdmFsICY9IH4oU1NJX0ZDX1RYRlRIX01BU0sgfCBTU0lfRkNfUlhGVEhfTUFT
-Syk7DQo+ICsJdmFsIHw9IEZJRUxEX1BSRVAoU1NJX0ZDX1RYRlRIX01BU0ssIHR4X2NvdW50KTsN
-Cj4gKwl2YWwgfD0gRklFTERfUFJFUChTU0lfRkNfUlhGVEhfTUFTSywgdHhfY291bnQpOw0KPiAr
-CXdyaXRlbCh2YWwsIHByaXYtPmJhc2UgKyBTU0lfRkMpOw0KPiArDQo+ICsJd2hpbGUgKHR4X2Nv
-dW50LS0pDQo+ICsJCXVuaXBoaWVyX3NwaV9zZW5kKHByaXYpOw0KPiArfQ0KDQpJZiB5b3UgaGF2
-ZSAyNCBiaXRzIHBlciB3b3JkLCAzIHdvcmRzLCB0aGF0J3MgOSBieXRlcy4gDQpCWVRFU19QRVJf
-V09SRCgyNCkgaXMgNC4gIHR4X2NvdW50ID0gOS80ID0gMi4gIExvb2tzIGxpa2UgeW91ciB0eF9j
-b3VudA0Kcm91bmRzIGluY29ycmVjdGx5LCBhcyBpdCB3aWxsIG9ubHkgc2VuZCA4IG9mIHRoZSA5
-IGJ5dGVzLg0KDQo+ICtzdGF0aWMgaW50IHVuaXBoaWVyX3NwaV9zZXR1cChzdHJ1Y3Qgc3BpX2Rl
-dmljZSAqc3BpKQ0KPiArew0KDQo+ICsNCj4gKwl3cml0ZWwodmFsMSwgcHJpdi0+YmFzZSArIFNT
-SV9DS1MpOw0KPiArCXdyaXRlbCh2YWwyLCBwcml2LT5iYXNlICsgU1NJX0ZQUyk7DQo+ICsNCj4g
-Kwl2YWwxID0gMDsNCj4gKwlpZiAoc3BpLT5tb2RlICYgU1BJX0xTQl9GSVJTVCkNCj4gKwkJdmFs
-MSB8PSBGSUVMRF9QUkVQKFNTSV9UWFdEU19URFRGX01BU0ssIDEpOw0KPiArCXdyaXRlbCh2YWwx
-LCBwcml2LT5iYXNlICsgU1NJX1RYV0RTKTsNCj4gKwl3cml0ZWwodmFsMSwgcHJpdi0+YmFzZSAr
-IFNTSV9SWFdEUyk7DQoNCkRpZCB5b3Ugc2VlIHRoaXMgaW4gdGhlIHNwaSBkb2NzPw0KDQogICAg
-ICAgIFVubGVzcyBlYWNoIFNQSSBzbGF2ZSBoYXMgaXRzIG93biBjb25maWd1cmF0aW9uIHJlZ2lz
-dGVycywgZG9uJ3QNCiAgICAgICAgY2hhbmdlIHRoZW0gcmlnaHQgYXdheSAuLi4gb3RoZXJ3aXNl
-IGRyaXZlcnMgY291bGQgY29ycnVwdCBJL08NCiAgICAgICAgdGhhdCdzIGluIHByb2dyZXNzIGZv
-ciBvdGhlciBTUEkgZGV2aWNlcy4NCg0KICAgICAgICAgICAgICAgICoqIEJVRyBBTEVSVDogIGZv
-ciBzb21lIHJlYXNvbiB0aGUgZmlyc3QgdmVyc2lvbiBvZg0KICAgICAgICAgICAgICAgICoqIG1h
-bnkgc3BpX21hc3RlciBkcml2ZXJzIHNlZW1zIHRvIGdldCB0aGlzIHdyb25nLg0KICAgICAgICAg
-ICAgICAgICoqIFdoZW4geW91IGNvZGUgc2V0dXAoKSwgQVNTVU1FIHRoYXQgdGhlIGNvbnRyb2xs
-ZXINCiAgICAgICAgICAgICAgICAqKiBpcyBhY3RpdmVseSBwcm9jZXNzaW5nIHRyYW5zZmVycyBm
-b3IgYW5vdGhlciBkZXZpY2UuDQoNCllvdSBoYXZlIG9uZSBjaGlwc2VsZWN0LCBzbyBtYXliZSB0
-aGlzIGlzIG9rLiAgVW50aWwgeW91IHdhbnQgdG8NCnN1cHBvcnQgbW9yZSB0aGFuIG9uZSBjaGlw
-c2VsZWN0Lg0KDQpXaXRoIGdwaW8gbGluZXMgYXMgY2hpcCBzZWxlY3RzLCB0aGVyZSdzIHJlYWxs
-eSBubyByZWFzb24gYW55IHNwaQ0KbWFzdGVyIGNhbid0IHN1cHBvcnQgbXVsdGlwbGUgc2xhdmVz
-Lg==
+On 2018-07-19 19:44, Manivannan Sadhasivam wrote:
+> Add Actions Semiconductor Owl family S900 I2C driver.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Acked-by: Peter Rosin <peda@axentia.se>
+
+Ooops, now I noticed some missing newlines in your dbg_* prints. That
+may produce garbled output, which is unnecessary. While at it, I also
+spotted a few more white-space nits...
+
+Have you tried the --strict option to checkpatch?
+
+Cheers,
+Peter
+
+> ---
+>  drivers/i2c/busses/Kconfig   |   7 +
+>  drivers/i2c/busses/Makefile  |   1 +
+>  drivers/i2c/busses/i2c-owl.c | 495 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 503 insertions(+)
+>  create mode 100644 drivers/i2c/busses/i2c-owl.c
+> 
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index 4f8df2ec87b1..8c8025f87ce4 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -762,6 +762,13 @@ config I2C_OMAP
+>  	  Like OMAP1510/1610/1710/5912 and OMAP242x.
+>  	  For details see http://www.ti.com/omap.
+>  
+> +config I2C_OWL
+> +	tristate "Actions Semiconductor Owl I2C Controller"
+> +	depends on ARCH_ACTIONS || COMPILE_TEST
+> +	help
+> +	  Say Y here if you want to use the I2C bus controller on
+> +	  the Actions Semiconductor Owl SoC's.
+> +
+>  config I2C_PASEMI
+>  	tristate "PA Semi SMBus interface"
+>  	depends on PPC_PASEMI && PCI
+> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+> index 5a869144a0c5..b71618f77880 100644
+> --- a/drivers/i2c/busses/Makefile
+> +++ b/drivers/i2c/busses/Makefile
+> @@ -76,6 +76,7 @@ obj-$(CONFIG_I2C_MXS)		+= i2c-mxs.o
+>  obj-$(CONFIG_I2C_NOMADIK)	+= i2c-nomadik.o
+>  obj-$(CONFIG_I2C_OCORES)	+= i2c-ocores.o
+>  obj-$(CONFIG_I2C_OMAP)		+= i2c-omap.o
+> +obj-$(CONFIG_I2C_OWL)		+= i2c-owl.o
+>  obj-$(CONFIG_I2C_PASEMI)	+= i2c-pasemi.o
+>  obj-$(CONFIG_I2C_PCA_PLATFORM)	+= i2c-pca-platform.o
+>  obj-$(CONFIG_I2C_PMCMSP)	+= i2c-pmcmsp.o
+> diff --git a/drivers/i2c/busses/i2c-owl.c b/drivers/i2c/busses/i2c-owl.c
+> new file mode 100644
+> index 000000000000..4f5836fa5022
+> --- /dev/null
+> +++ b/drivers/i2c/busses/i2c-owl.c
+> @@ -0,0 +1,495 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Actions Semiconductor Owl SoC's I2C driver
+> + *
+> + * Copyright (c) 2014 Actions Semi Inc.
+> + * Author: David Liu <liuwei@actions-semi.com>
+> + *
+> + * Copyright (c) 2018 Linaro Ltd.
+> + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +
+> +/* I2C registers */
+> +#define OWL_I2C_REG_CTL		0x0000
+> +#define OWL_I2C_REG_CLKDIV	0x0004
+> +#define OWL_I2C_REG_STAT	0x0008
+> +#define OWL_I2C_REG_ADDR	0x000C
+> +#define OWL_I2C_REG_TXDAT	0x0010
+> +#define OWL_I2C_REG_RXDAT	0x0014
+> +#define OWL_I2C_REG_CMD		0x0018
+> +#define OWL_I2C_REG_FIFOCTL	0x001C
+> +#define OWL_I2C_REG_FIFOSTAT	0x0020
+> +#define OWL_I2C_REG_DATCNT	0x0024
+> +#define OWL_I2C_REG_RCNT	0x0028
+> +
+> +/* I2Cx_CTL Bit Mask */
+> +#define OWL_I2C_CTL_RB		BIT(1)
+> +#define OWL_I2C_CTL_GBCC(x)	(((x) & 0x3) << 2)
+> +#define	OWL_I2C_CTL_GBCC_NONE	OWL_I2C_CTL_GBCC(0)
+> +#define	OWL_I2C_CTL_GBCC_START	OWL_I2C_CTL_GBCC(1)
+> +#define	OWL_I2C_CTL_GBCC_STOP	OWL_I2C_CTL_GBCC(2)
+> +#define	OWL_I2C_CTL_GBCC_RSTART	OWL_I2C_CTL_GBCC(3)
+> +#define OWL_I2C_CTL_IRQE	BIT(5)
+> +#define OWL_I2C_CTL_EN		BIT(7)
+> +#define OWL_I2C_CTL_AE		BIT(8)
+> +#define OWL_I2C_CTL_SHSM	BIT(10)
+> +
+> +#define OWL_I2C_DIV_FACTOR(x)	((x) & 0xff)
+> +
+> +/* I2Cx_STAT Bit Mask */
+> +#define OWL_I2C_STAT_RACK	BIT(0)
+> +#define OWL_I2C_STAT_BEB	BIT(1)
+> +#define OWL_I2C_STAT_IRQP	BIT(2)
+> +#define OWL_I2C_STAT_LAB	BIT(3)
+> +#define OWL_I2C_STAT_STPD	BIT(4)
+> +#define OWL_I2C_STAT_STAD	BIT(5)
+> +#define OWL_I2C_STAT_BBB	BIT(6)
+> +#define OWL_I2C_STAT_TCB	BIT(7)
+> +#define OWL_I2C_STAT_LBST	BIT(8)
+> +#define OWL_I2C_STAT_SAMB	BIT(9)
+> +#define OWL_I2C_STAT_SRGC	BIT(10)
+> +
+> +/* I2Cx_CMD Bit Mask */
+> +#define OWL_I2C_CMD_SBE		BIT(0)
+> +#define OWL_I2C_CMD_RBE		BIT(4)
+> +#define OWL_I2C_CMD_DE		BIT(8)
+> +#define OWL_I2C_CMD_NS		BIT(9)
+> +#define OWL_I2C_CMD_SE		BIT(10)
+> +#define OWL_I2C_CMD_MSS		BIT(11)
+> +#define OWL_I2C_CMD_WRS		BIT(12)
+> +#define OWL_I2C_CMD_SECL	BIT(15)
+> +
+> +#define OWL_I2C_CMD_AS(x)	(((x) & 0x7) << 1)
+> +#define OWL_I2C_CMD_SAS(x)	(((x) & 0x7) << 5)
+> +
+> +/* I2Cx_FIFOCTL Bit Mask */
+> +#define OWL_I2C_FIFOCTL_NIB	BIT(0)
+> +#define OWL_I2C_FIFOCTL_RFR	BIT(1)
+> +#define OWL_I2C_FIFOCTL_TFR	BIT(2)
+> +
+> +/* I2Cc_FIFOSTAT Bit Mask */
+> +#define OWL_I2C_FIFOSTAT_RNB	BIT(1)
+> +#define OWL_I2C_FIFOSTAT_RFE	BIT(2)
+> +#define OWL_I2C_FIFOSTAT_TFF	BIT(5)
+> +#define OWL_I2C_FIFOSTAT_TFD	GENMASK(23, 16)
+> +#define OWL_I2C_FIFOSTAT_RFD	GENMASK(15, 8)
+> +
+> +/* I2C bus timeout */
+> +#define OWL_I2C_TIMEOUT		msecs_to_jiffies(4 * 1000)
+> +
+> +#define OWL_I2C_MAX_RETRIES	50
+> +
+> +#define OWL_I2C_DEF_SPEED_HZ	100000
+> +#define OWL_I2C_MAX_SPEED_HZ	400000
+> +
+> +struct owl_i2c_dev {
+> +	struct i2c_adapter	adap;
+> +	struct i2c_msg		*msg;
+> +	struct completion	msg_complete;
+> +	struct clk		*clk;
+> +	spinlock_t		lock;
+> +	void __iomem		*base;
+> +	unsigned long		clk_rate;
+> +	u32			bus_freq;
+> +	u32			msg_ptr;
+> +};
+> +
+> +static void owl_i2c_update_reg(void __iomem *reg, unsigned int val, bool state)
+> +{
+> +	unsigned int regval;
+> +
+> +	regval = readl(reg);
+> +
+> +	if (state)
+> +		regval |= val;
+> +	else
+> +		regval &= ~val;
+> +
+> +	writel(regval, reg);
+> +}
+> +
+> +static void owl_i2c_reset(struct owl_i2c_dev *i2c_dev)
+> +{
+> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> +			   OWL_I2C_CTL_EN, false);
+> +	mdelay(1);
+> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> +			   OWL_I2C_CTL_EN, true);
+> +
+> +	/* Clear status registers */
+> +	writel(0, i2c_dev->base + OWL_I2C_REG_STAT);
+> +}
+> +
+> +static int owl_i2c_reset_fifo(struct owl_i2c_dev *i2c_dev)
+> +{
+> +	unsigned int val, timeout = 0;
+> +
+> +	/* Reset FIFO */
+> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
+> +			   OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR,
+> +			   true);
+> +
+> +	/* Wait 50ms for FIFO reset complete */
+> +	do {
+> +		val = readl(i2c_dev->base + OWL_I2C_REG_FIFOCTL);
+> +		if (!(val & (OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR)))
+> +			break;
+> +		usleep_range(500, 1000);
+> +	} while (timeout++ < OWL_I2C_MAX_RETRIES);
+> +
+> +	if (timeout > OWL_I2C_MAX_RETRIES) {
+> +		dev_err(&i2c_dev->adap.dev, "FIFO reset timeout");
+
+End with a newline.
+
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void owl_i2c_set_freq(struct owl_i2c_dev *i2c_dev)
+> +{
+> +	unsigned int val;
+> +
+> +	val = DIV_ROUND_UP(i2c_dev->clk_rate, i2c_dev->bus_freq * 16);
+> +
+> +	/* Set clock divider factor */
+> +	writel(OWL_I2C_DIV_FACTOR(val), i2c_dev->base + OWL_I2C_REG_CLKDIV);
+> +}
+> +
+> +static irqreturn_t owl_i2c_interrupt(int irq, void *_dev)
+> +{
+> +	struct owl_i2c_dev *i2c_dev = _dev;
+> +	struct i2c_msg *msg = i2c_dev->msg;
+> +	unsigned long flags;
+> +	unsigned int stat, fifostat;
+> +
+> +	spin_lock_irqsave(&i2c_dev->lock, flags);
+> +
+> +	fifostat = readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT);
+> +	if (fifostat & OWL_I2C_FIFOSTAT_RNB) {
+> +		dev_dbg(&i2c_dev->adap.dev, "received NACK from device");
+
+End with a newline.
+
+> +		goto stop;
+> +	}
+> +
+> +	stat = readl(i2c_dev->base + OWL_I2C_REG_STAT);
+> +	if (stat & OWL_I2C_STAT_BEB) {
+> +		dev_dbg(&i2c_dev->adap.dev, "bus error");
+
+End with a newline.
+
+> +		goto stop;
+> +	}
+> +
+> +	/* Handle FIFO read */
+> +	if (msg->flags & I2C_M_RD) {
+> +		while ((readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
+> +			OWL_I2C_FIFOSTAT_RFE) && i2c_dev->msg_ptr < msg->len) {
+> +			msg->buf[i2c_dev->msg_ptr++] = readl(i2c_dev->base +
+> +							     OWL_I2C_REG_RXDAT);
+> +		}
+> +	} else {
+> +		/* Handle the remaining bytes which were not sent */
+> +		while (!(readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
+> +			OWL_I2C_FIFOSTAT_TFF) && i2c_dev->msg_ptr < msg->len) {
+
+Misaligned.
+
+> +			writel(msg->buf[i2c_dev->msg_ptr++],
+> +			       i2c_dev->base + OWL_I2C_REG_TXDAT);
+> +		}
+> +	}
+> +
+> +stop:
+> +	/* Clear pending interrupts */
+> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_STAT,
+> +			   OWL_I2C_STAT_IRQP, true);
+> +
+> +	complete_all(&i2c_dev->msg_complete);
+> +	spin_unlock_irqrestore(&i2c_dev->lock, flags);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static u32 owl_i2c_func(struct i2c_adapter *adap)
+> +{
+> +	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+> +}
+> +
+> +static int owl_i2c_check_bus_busy(struct i2c_adapter *adap)
+> +{
+> +	struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
+> +	unsigned long timeout;
+> +
+> +	/* Check for Bus busy */
+> +	timeout = jiffies + OWL_I2C_TIMEOUT;
+> +	while (readl(i2c_dev->base + OWL_I2C_REG_STAT) & OWL_I2C_STAT_BBB) {
+> +		if (time_after(jiffies, timeout)) {
+> +			dev_err(&adap->dev, "Bus busy timeout");
+
+End with a newline.
+
+> +			return -ETIMEDOUT;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int owl_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+> +				int num)
+> +{
+> +	struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
+> +	struct i2c_msg *msg;
+> +	unsigned long time_left, flags;
+> +	unsigned int i2c_cmd, val;
+> +	unsigned int addr;
+> +	int ret, idx;
+> +
+> +	spin_lock_irqsave(&i2c_dev->lock, flags);
+> +
+> +	/* Reset I2C controller */
+> +	owl_i2c_reset(i2c_dev);
+> +
+> +	/* Set bus frequency */
+> +	owl_i2c_set_freq(i2c_dev);
+> +
+> +	/*
+> +	 * Spinlock should be released before calling reset FIFO and
+> +	 * bus busy check since those functions may sleep
+> +	 */
+> +	spin_unlock_irqrestore(&i2c_dev->lock, flags);
+> +
+> +	/* Reset FIFO */
+> +	ret = owl_i2c_reset_fifo(i2c_dev);
+> +	if (ret)
+> +		goto unlocked_err_exit;
+> +
+> +	/* Check for bus busy */
+> +	ret = owl_i2c_check_bus_busy(adap);
+> +	if (ret)
+> +		goto unlocked_err_exit;
+> +
+> +	spin_lock_irqsave(&i2c_dev->lock, flags);
+> +
+> +	/* Check for Arbitration lost */
+> +	val = readl(i2c_dev->base + OWL_I2C_REG_STAT);
+> +	if (val & OWL_I2C_STAT_LAB) {
+> +		val &= ~OWL_I2C_STAT_LAB;
+> +		writel(val, i2c_dev->base + OWL_I2C_REG_STAT);
+> +		ret = -EAGAIN;
+> +		goto err_exit;
+> +	}
+> +
+> +	reinit_completion(&i2c_dev->msg_complete);
+> +
+> +	/* Enable I2C controller interrupt */
+> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> +			   OWL_I2C_CTL_IRQE, true);
+> +
+> +	/*
+> +	 * Select: FIFO enable, Master mode, Stop enable, Data count enable,
+> +	 * Send start bit
+> +	 */
+> +	i2c_cmd = OWL_I2C_CMD_SECL | OWL_I2C_CMD_MSS | OWL_I2C_CMD_SE |
+> +		  OWL_I2C_CMD_NS | OWL_I2C_CMD_DE | OWL_I2C_CMD_SBE;
+> +
+> +	/* Handle repeated start condition */
+> +	if (num > 1) {
+> +		/* Set internal address length and enable repeated start */
+> +		i2c_cmd |= OWL_I2C_CMD_AS(msgs[0].len + 1) |
+> +			   OWL_I2C_CMD_SAS(1) | OWL_I2C_CMD_RBE;
+> +
+> +		/* Write slave address */
+> +		addr = i2c_8bit_addr_from_msg(&msgs[0]);
+> +		writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
+> +
+> +		/* Write internal register address */
+> +		for (idx = 0; idx < msgs[0].len; idx++)
+> +			writel(msgs[0].buf[idx], i2c_dev->base +
+> +			       OWL_I2C_REG_TXDAT);
+
+It's better to split bwtween arguments than in the middle of one.
+
+> +
+> +		msg = &msgs[1];
+> +	} else {
+> +		/* Set address length */
+> +		i2c_cmd |= OWL_I2C_CMD_AS(1);
+> +		msg = &msgs[0];
+> +	}
+> +
+> +	i2c_dev->msg = msg;
+> +	i2c_dev->msg_ptr = 0;
+> +
+> +	/* Set data count for the message */
+> +	writel(msg->len, i2c_dev->base + OWL_I2C_REG_DATCNT);
+> +
+> +	addr = i2c_8bit_addr_from_msg(msg);
+> +	writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
+> +
+> +	if (!(msg->flags & I2C_M_RD)) {
+> +		/* Write data to FIFO */
+> +		for (idx = 0; idx < msg->len; idx++) {
+> +			/* Check for FIFO full */
+> +			if (readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
+> +				  OWL_I2C_FIFOSTAT_TFF)
+
+Misaligned.
+
+> +				break;
+> +
+> +			writel(msg->buf[idx], i2c_dev->base +
+> +			       OWL_I2C_REG_TXDAT);
+
+Prefer splitting between arguments.
+
+> +		}
+> +
+> +		i2c_dev->msg_ptr = idx;
+> +	}
+> +
+> +	/* Ignore the NACK if needed */
+> +	if (msg->flags & I2C_M_IGNORE_NAK)
+> +		owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
+> +				   OWL_I2C_FIFOCTL_NIB, true);
+> +	else
+> +		owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
+> +				   OWL_I2C_FIFOCTL_NIB, false);
+> +
+> +	/* Start the transfer */
+> +	writel(i2c_cmd, i2c_dev->base + OWL_I2C_REG_CMD);
+> +
+> +	spin_unlock_irqrestore(&i2c_dev->lock, flags);
+> +
+> +	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+> +						adap->timeout);
+> +
+> +	spin_lock_irqsave(&i2c_dev->lock, flags);
+> +	if (time_left == 0) {
+> +		dev_err(&adap->dev, "Transaction timed out");
+
+End with a newline.
+
+> +		/* Send stop condition and release the bus */
+> +		owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> +				   OWL_I2C_CTL_GBCC_STOP |
+> +				   OWL_I2C_CTL_RB, true);
+
+Prefer splitting between arguments.
+
+> +		ret = -ETIMEDOUT;
+> +		goto err_exit;
+> +	}
+> +
+> +	/*
+> +	 * Here, -ENXIO will be returned if interrupt occurred but no
+> +	 * read or write happened. Else if msg_ptr equals to message length,
+> +	 * message count will be returned.
+> +	 */
+> +	ret = i2c_dev->msg_ptr == msg->len ? num : -ENXIO;
+> +
+> +err_exit:
+> +	spin_unlock_irqrestore(&i2c_dev->lock, flags);
+> +
+> +unlocked_err_exit:
+> +	/* Disable I2C controller */
+> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> +			   OWL_I2C_CTL_EN, false);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct i2c_algorithm owl_i2c_algorithm = {
+> +	.master_xfer    = owl_i2c_master_xfer,
+> +	.functionality  = owl_i2c_func,
+> +};
+> +
+> +static const struct i2c_adapter_quirks owl_i2c_quirks = {
+> +	.flags		= I2C_AQ_COMB | I2C_AQ_COMB_WRITE_FIRST,
+> +	.max_read_len   = 240,
+> +	.max_write_len  = 240,
+> +	.max_comb_1st_msg_len = 6,
+> +	.max_comb_2nd_msg_len = 240,
+> +};
+> +
+> +static int owl_i2c_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct owl_i2c_dev *i2c_dev;
+> +	struct resource *res;
+> +	int ret, irq;
+> +
+> +	i2c_dev = devm_kzalloc(dev, sizeof(*i2c_dev), GFP_KERNEL);
+> +	if (!i2c_dev)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	i2c_dev->base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(i2c_dev->base))
+> +		return PTR_ERR(i2c_dev->base);
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0) {
+> +		dev_err(dev, "failed to get IRQ number\n");
+> +		return irq;
+> +	}
+> +
+> +	if (of_property_read_u32(dev->of_node, "clock-frequency",
+> +				 &i2c_dev->bus_freq))
+> +		i2c_dev->bus_freq = OWL_I2C_DEF_SPEED_HZ;
+> +
+> +	/* We support only frequencies of 100k and 400k for now */
+> +	if (i2c_dev->bus_freq != OWL_I2C_DEF_SPEED_HZ &&
+> +			i2c_dev->bus_freq != OWL_I2C_MAX_SPEED_HZ) {
+
+Misaligned.
+
+> +		dev_err(dev, "invalid clock-frequency %d\n", i2c_dev->bus_freq);
+> +		return -EINVAL;
+> +	}
+> +
+> +	i2c_dev->clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(i2c_dev->clk)) {
+> +		dev_err(dev, "failed to get clock\n");
+> +		return PTR_ERR(i2c_dev->clk);
+> +	}
+> +
+> +	ret = clk_prepare_enable(i2c_dev->clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	i2c_dev->clk_rate = clk_get_rate(i2c_dev->clk);
+> +	if (!i2c_dev->clk_rate) {
+> +		dev_err(dev, "input clock rate should not be zero\n");
+> +		ret = -EINVAL;
+> +		goto disable_clk;
+> +	}
+> +
+> +	init_completion(&i2c_dev->msg_complete);
+> +	spin_lock_init(&i2c_dev->lock);
+> +	i2c_dev->adap.owner = THIS_MODULE;
+> +	i2c_dev->adap.algo = &owl_i2c_algorithm;
+> +	i2c_dev->adap.timeout = OWL_I2C_TIMEOUT;
+> +	i2c_dev->adap.quirks = &owl_i2c_quirks;
+> +	i2c_dev->adap.dev.parent = dev;
+> +	i2c_dev->adap.dev.of_node = dev->of_node;
+> +	snprintf(i2c_dev->adap.name, sizeof(i2c_dev->adap.name),
+> +			"%s", "OWL I2C adapter");
+
+Misaligned.
+
+> +	i2c_set_adapdata(&i2c_dev->adap, i2c_dev);
+> +
+> +	platform_set_drvdata(pdev, i2c_dev);
+> +
+> +	ret = devm_request_irq(dev, irq, owl_i2c_interrupt, 0, pdev->name,
+> +			       i2c_dev);
+> +	if (ret) {
+> +		dev_err(dev, "failed to request irq %d\n", irq);
+> +		goto disable_clk;
+> +	}
+> +
+> +	return i2c_add_adapter(&i2c_dev->adap);
+> +
+> +disable_clk:
+> +	clk_disable_unprepare(i2c_dev->clk);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id owl_i2c_of_match[] = {
+> +	{.compatible = "actions,s900-i2c"},
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, owl_i2c_of_match);
+> +
+> +static struct platform_driver owl_i2c_driver = {
+> +	.probe		= owl_i2c_probe,
+> +	.driver		= {
+> +		.name	= "owl-i2c",
+> +		.of_match_table = of_match_ptr(owl_i2c_of_match),
+> +	},
+> +};
+> +module_platform_driver(owl_i2c_driver);
+> +
+> +MODULE_AUTHOR("David Liu <liuwei@actions-semi.com>");
+> +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
+> +MODULE_DESCRIPTION("Actions Semiconductor Owl SoC's I2C driver");
+> +MODULE_LICENSE("GPL");
+> 
+
