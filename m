@@ -2,247 +2,130 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9A3C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 435A3C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD09206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:59:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KB8vgRGz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cV3ZK+26"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD09206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 05D7C206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:59:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05D7C206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbeGSHlC (ORCPT
+        id S1730679AbeGSHlK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 03:41:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37758 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbeGSHlB (ORCPT
+        Thu, 19 Jul 2018 03:41:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56032 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730195AbeGSHlK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 03:41:01 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 04EB16063A; Thu, 19 Jul 2018 06:59:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531983565;
-        bh=GFO/Vh8lryF2YWJ0pMwp472hwnydseYdCxkB0FLqQJM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KB8vgRGzNZ9To0hQS+naj9EKHHtvfrcphu7M3WeP5AZ7j3AyCbrYP6cBi6MHYkW6x
-         k2r6/3Sc5UHACGSk1Bi3QFwNppEGd1quUPBj0pBz7xlgA+oh/bDy7vMZUMhNchci92
-         fMb4hgNFQP/a+KSXElh92wDOSFfp2tNZoQwTviV4=
-Received: from [10.79.128.25] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E3A646060A;
-        Thu, 19 Jul 2018 06:59:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531983564;
-        bh=GFO/Vh8lryF2YWJ0pMwp472hwnydseYdCxkB0FLqQJM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cV3ZK+26YAmNXbY9sgaCc4Z2D4ew0JdHerMStRHDFlcgq6ZuMfiUulUDTA+EFcP3d
-         Zb2nzcBFvanYlViIZOBPmaWU7ui9xxKkFbaaFhi8z70iW9BesDIk9dahLrlWZEzJ/K
-         d0/ljKyg+aFBrvEwxAmpm+NSgdFEVtksk3jPmN5Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E3A646060A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH] power: reset: msm: Add support for download-mode control
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     sre@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <1531977529-23304-1-git-send-email-rnayak@codeaurora.org>
- <20180719054200.GB30024@minitux>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <ca74b7f4-3e60-2f3b-3d66-ac167c913c0e@codeaurora.org>
-Date:   Thu, 19 Jul 2018 12:29:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 03:41:10 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6J6rxta035052
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 02:59:33 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kahqsrqj8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 02:59:32 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stewart@linux.ibm.com>;
+        Thu, 19 Jul 2018 00:59:31 -0600
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 19 Jul 2018 00:59:28 -0600
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6J6xRWM8061370
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Jul 2018 23:59:27 -0700
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 143966E050;
+        Thu, 19 Jul 2018 00:59:27 -0600 (MDT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A03B6E04C;
+        Thu, 19 Jul 2018 00:59:25 -0600 (MDT)
+Received: from birb.localdomain (unknown [9.102.57.239])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with SMTP;
+        Thu, 19 Jul 2018 00:59:25 -0600 (MDT)
+Received: by birb.localdomain (Postfix, from userid 1000)
+        id 175824EC69D; Thu, 19 Jul 2018 16:59:21 +1000 (AEST)
+From:   Stewart Smith <stewart@linux.ibm.com>
+To:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        mpe@ellerman.id.au, linux@roeck-us.net
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Subject: Re: [PATCH v6 2/2] hwmon: ibmpowernv: Add attributes to enable/disable sensor groups
+In-Reply-To: <1531937610-6454-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+References: <1531937610-6454-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com> <1531937610-6454-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+Date:   Thu, 19 Jul 2018 16:59:21 +1000
 MIME-Version: 1.0
-In-Reply-To: <20180719054200.GB30024@minitux>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18071906-8235-0000-0000-00000DD48F21
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009390; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01062932; UDB=6.00545790; IPR=6.00840784;
+ MB=3.00022198; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-19 06:59:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071906-8236-0000-0000-000041EF2904
+Message-Id: <87lga7r9rq.fsf@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-19_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807190076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
+> On-Chip-Controller(OCC) is an embedded micro-processor in POWER9 chip
+> which measures various system and chip level sensors. These sensors
+> comprises of environmental sensors (like power, temperature, current
+> and voltage) and performance sensors (like utilization, frequency).
+> All these sensors are copied to main memory at a regular interval of
+> 100ms. OCC provides a way to select a group of sensors that is copied
+> to the main memory to increase the update frequency of selected sensor
+> groups. When a sensor-group is disabled, OCC will not copy it to main
+> memory and those sensors read 0 values.
+
+OCC is an implementation detail rather than a core part of this firmware
+API.
+
+Why not something like this:
+
+OPAL firmware provides the facility for some groups of sensors to be
+enabled/disabled at runtime to give the user the option of using the
+system resources for collecting these sensors or not.
+
+For example, on POWER9 systems, the On Chip Controller (OCC) gathers
+various system and chip level sensors and maintains their values in main
+memory.
 
 
-On 7/19/2018 11:12 AM, Bjorn Andersson wrote:
-> On Wed 18 Jul 22:18 PDT 2018, Rajendra Nayak wrote:
-> 
->> commit '8c1b7dc9b: firmware: qcom: scm: Expose download-mode control'
->> added support for download-mode control using the scm firmware
->> driver for platforms which require a secure call to write the magic
->> cookie into the tcsr location.
->>
->> For platforms which *do not* need an scm call and where the kernel can
->> write the cookie by a direct read/write, add similar support in the
->> msm-poweroff driver.
->> Similar to the scm driver, the msm-poweroff driver clears the cookie
->> during a clean reboot.
->>
->> Download mode using msm-poweroff driver can be enabled by including
->> msm-poweroff.download_mode=1 on the command line.
->>
-> 
-> Should have thought about this when I wrote the scm code...
-> 
-> I would prefer if we could find a way to consolidate the two
-> implementations behind the same Kconfig and command line parameters.
+> +static int init_sensor_group_data(struct platform_device *pdev,
+> +				  struct platform_data *pdata)
+> +{
+> +	struct sensor_group_data *sgrp_data;
+> +	struct device_node *groups, *sgrp;
+> +	enum sensors type;
+> +	int count = 0, ret = 0;
+> +
+> +	groups = of_find_node_by_path("/ibm,opal/sensor-groups");
+> +	if (!groups)
+> +		return ret;
 
-The only problem I saw with this was that *both* drivers would think
-its enabled and try their own ways to enable it, and one of it would
-always fail. We could fail silently, which would mean we will miss
-cases when its a genuine failure but that should be fine?
+Why not look for the compatible property?
 
->> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->> ---
->>   .../bindings/power/reset/msm-poweroff.txt          |  3 ++
->>   drivers/power/reset/Kconfig                        | 11 +++++++
->>   drivers/power/reset/msm-poweroff.c                 | 38 ++++++++++++++++++++++
->>   3 files changed, 52 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt b/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt
->> index ce44ad3..9dd489f 100644
->> --- a/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt
->> +++ b/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt
->> @@ -8,6 +8,9 @@ settings.
->>   Required Properties:
->>   -compatible: "qcom,pshold"
->>   -reg: Specifies the physical address of the ps-hold register
->> +Optional Properties:
->> +-qcom,dload-mode: phandle to the TCSR hardware block and offset of the
->> +		 download mode control register
->>   
->>   Example:
->>   
->> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
->> index df58fc8..0c97e34 100644
->> --- a/drivers/power/reset/Kconfig
->> +++ b/drivers/power/reset/Kconfig
->> @@ -104,6 +104,17 @@ config POWER_RESET_MSM
->>   	help
->>   	  Power off and restart support for Qualcomm boards.
->>   
->> +config POWER_RESET_MSM_DOWNLOAD_MODE
-> 
-> How about moving QCOM_SCM_DOWNLOAD_MODE_DEFAULT to
-> drivers/soc/qcom/Kconfig (and removing "SCM") and referencing this in
-> both drivers?
 
-yes, thats possible, but I am not sure how to make the command line
-option common for both. One other option I thought was if we could handle it
-within the scm driver itself with an additional
-binding to specify the non-secure download mode address.
-something like qcom,dload-mode-ns?
+-- 
+Stewart Smith
+OPAL Architect, IBM.
 
-regards,
-Rajendra
-
-> 
->> +	bool "Qualcomm download mode enabled by default"
->> +	depends on POWER_RESET_MSM
->> +	help
->> +	  A device with "download mode" enabled will upon an unexpected
->> +	  warm-restart enter a special debug mode that allows the user to
->> +	  "download" memory content over USB for offline postmortem analysis.
->> +	  The feature can be enabled/disabled on the kernel command line.
->> +
->> +	  Say Y here to enable "download mode" by default.
->> +
->>   config POWER_RESET_OCELOT_RESET
->>   	bool "Microsemi Ocelot reset driver"
->>   	depends on MSCC_OCELOT || COMPILE_TEST
->> diff --git a/drivers/power/reset/msm-poweroff.c b/drivers/power/reset/msm-poweroff.c
->> index 01b8c71..c33eac5 100644
->> --- a/drivers/power/reset/msm-poweroff.c
->> +++ b/drivers/power/reset/msm-poweroff.c
->> @@ -18,11 +18,20 @@
->>   #include <linux/io.h>
->>   #include <linux/of.h>
->>   #include <linux/platform_device.h>
->> +#include <linux/mfd/syscon.h>
->>   #include <linux/module.h>
->>   #include <linux/reboot.h>
->> +#include <linux/regmap.h>
->>   #include <linux/pm.h>
->>   
->> +static bool download_mode = IS_ENABLED(CONFIG_POWER_RESET_MSM_DOWNLOAD_MODE);
->> +module_param(download_mode, bool, 0);
-> 
-> Iirc it's possible to have multiple implementations of __setup() for the
-> same string. I'm uncertain if this would be considered okay though.
-> 
->> +
->> +#define QCOM_SET_DLOAD_MODE 0x10
->>   static void __iomem *msm_ps_hold;
->> +static struct regmap *tcsr_regmap;
->> +static unsigned int dload_mode_offset;
->> +
->>   static int deassert_pshold(struct notifier_block *nb, unsigned long action,
->>   			   void *data)
->>   {
->> @@ -44,9 +53,30 @@ static void do_msm_poweroff(void)
->>   
->>   static int msm_restart_probe(struct platform_device *pdev)
->>   {
->> +	int ret;
->> +	struct of_phandle_args args;
->>   	struct device *dev = &pdev->dev;
->>   	struct resource *mem;
->>   
->> +	if (download_mode) {
->> +		ret = of_parse_phandle_with_fixed_args(dev->of_node,
->> +						       "qcom,dload-mode", 1, 0,
->> +						       &args);
->> +		if (ret < 0)
->> +			return ret;
->> +
->> +		tcsr_regmap = syscon_node_to_regmap(args.np);
->> +		of_node_put(args.np);
->> +		if (IS_ERR(tcsr_regmap))
->> +			return PTR_ERR(tcsr_regmap);
->> +
->> +		dload_mode_offset = args.args[0];
->> +
->> +		/* Enable download mode by writing the cookie */
->> +		regmap_write(tcsr_regmap, dload_mode_offset,
->> +			     QCOM_SET_DLOAD_MODE);
->> +	}
->> +
->>   	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>   	msm_ps_hold = devm_ioremap_resource(dev, mem);
->>   	if (IS_ERR(msm_ps_hold))
->> @@ -59,6 +89,13 @@ static int msm_restart_probe(struct platform_device *pdev)
->>   	return 0;
->>   }
->>   
->> +static void msm_restart_shutdown(struct platform_device *pdev)
->> +{
->> +	/* Clean shutdown, disable download mode to allow normal restart */
->> +	if (download_mode)
->> +		regmap_write(tcsr_regmap, dload_mode_offset, 0x0);
->> +}
->> +
->>   static const struct of_device_id of_msm_restart_match[] = {
->>   	{ .compatible = "qcom,pshold", },
->>   	{},
->> @@ -71,6 +108,7 @@ static int msm_restart_probe(struct platform_device *pdev)
->>   		.name = "msm-restart",
->>   		.of_match_table = of_match_ptr(of_msm_restart_match),
->>   	},
->> +	.shutdown = msm_restart_shutdown,
->>   };
-> 
-> Implementation looks good.
-> 
-> Regards,
-> Bjorn
-> 
