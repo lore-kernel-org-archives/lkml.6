@@ -2,95 +2,100 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4177ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 01:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6FCECDFBB
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 01:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C2BF2084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 01:40:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DZN70Nol"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C2BF2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 8370820693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 01:46:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8370820693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731103AbeGSCVH (ORCPT
+        id S1731075AbeGSC1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 22:21:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:38881 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730811AbeGSCVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 22:21:07 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41WGtM5R7Fz9s21;
-        Thu, 19 Jul 2018 11:40:27 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531964427;
-        bh=QWO24GSzbEHCzkzdMgELi6qkRihzb6OL5vIYUR70+sk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=DZN70NolwHEANR1gQWc2Q1srQTBHLpAPNk4tsirzwtNRLqKPp3qUTXI11YqRoFHMt
-         TX29Eq6Sfq6YS2tBZvDY5CE0C9prN/TINLSibbKJv9dPPM5mNrfn+/zofjCqAxh27D
-         x4+czTvgHdpOXRsrAWPEB+YRELkUd8bU8a+mQuD6/tSNnGH6818gJwF3dMvuIZ4/Ra
-         sw1yQ90AYYGT5cDEEgdwae2ZIgrExmc8XTQoVkeP7fSYrVVgPg9EBL+d5CX6EH6Ejj
-         hDSeEKfJtB7VAQdZcFHQjESqWvpEQWS+FO7EXZHw3HJJ0T2vCavNR/RE6uJovSAkRg
-         449XLZf5hZ6XA==
-Date:   Thu, 19 Jul 2018 11:40:27 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: linux-next: build warning after merge of the net-next tree
-Message-ID: <20180719114027.2722d075@canb.auug.org.au>
+        Wed, 18 Jul 2018 22:27:07 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9651 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729230AbeGSC1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 22:27:07 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 15512BDCD52B6;
+        Thu, 19 Jul 2018 09:46:14 +0800 (CST)
+Received: from [127.0.0.1] (10.184.52.56) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.382.0; Thu, 19 Jul 2018
+ 09:46:06 +0800
+Subject: Re: [PATCH 4/5] crypto: Add IV generation templates
+To:     Milan Broz <gmazyland@gmail.com>, Mark Brown <broonie@kernel.org>
+CC:     <agk@redhat.com>, <snitzer@redhat.com>,
+        <herbert@gondor.apana.org.au>, <dm-devel@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
+        <jonathan.cameron@huawei.com>
+References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
+ <1531899055-29362-5-git-send-email-wangxiongfeng2@huawei.com>
+ <b6eaf471-7279-ca4f-bb7c-d25df8db2419@gmail.com>
+ <20180718164625.GA20360@sirena.org.uk>
+ <82248c13-42fe-b598-0cd7-68e5db0b51be@gmail.com>
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Message-ID: <cda1d3de-3f21-2dfc-0423-c1cf456838b4@huawei.com>
+Date:   Thu, 19 Jul 2018 09:46:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6IWCp4mbw_59ajOlpprefbY"; protocol="application/pgp-signature"
+In-Reply-To: <82248c13-42fe-b598-0cd7-68e5db0b51be@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.52.56]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/6IWCp4mbw_59ajOlpprefbY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+On 2018/7/19 1:17, Milan Broz wrote:
+> On 18/07/18 18:46, Mark Brown wrote:
+>> On Wed, Jul 18, 2018 at 10:16:05AM +0200, Milan Broz wrote:
+>>
+>>> So we are here again and moving INTERNAL dm-crypt functionality into
+>>> cryptoapi.
 
-After merging the net-next tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+> (namely TCW and LMK) do much more that IV - they modify encryption mode.
+> This was a hack to support some FDE encryption modes (old Truecrypt and loopAES)
+> and that should not spread outside dm-crypt (and blame me for this code hacks :).
+> 
+> 2) If the reason is performance, please provide numbers with the patch.
+> What I see now is that the performance is almost the same. So why you are doing it?
+> Any real hw that benefits from it?
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/net/dsa/realtek.o
-see include/linux/module.h for more information
+I add IV templates, such as 'plain()',  'benbi()'
+When applying it to the existing algorithm, such as 'aes-cbc', and so on,
+it generates new algorithm 'aes-cbc-plain', 'aes-cbc-benbi.
+This patch modify the dm-crypt to rely on the new algorithm 'aes-cbc-benbi'.
+Dm-crypt passes the whole 'bio' to 'aes-cbc-benbi', rather than divide
+the bio into sectors, and alternatively pass each sector to 'aes-cbc'.
 
-Introduced by commit
+Because the internal implementation of the IV template 'benbi()' is still
+dividing the whole bio into sectors, so the performance is almost the same.
+The purpose of this patch is to let dm-crypt rely on the new algorithm 'aes-cbc-benbi'
+and pass the whole bio to the new algorithm.
+And then if the hardware driver implements this new algorithm, it can get the data of
+the bio at one time, and return the processed data at one time.
+I think it will decrease the overhead of passing each sector alternatively.
+But the hardware need to implement the new algorithm if it want to benefit from this.
 
-  d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
+Thanks,
+Xiongfeng
+> 
+> I added 4k sector support in dmcrypt and IMO this helps much more
+> than some hw IV accelerations (AFAIK is is already used in some mainframe
+> accelerators this way because of performance).
+> 
+> Milan
+> 
+> 
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6IWCp4mbw_59ajOlpprefbY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltP7AsACgkQAVBC80lX
-0GxLKAf/SDcgIqF9K5hvpclc5LhLwbX09L7bVB3iDeq3p1lmlHaA0DU4UU6iqBoO
-gmJ3KJXbsnYtDNkS6dyMuP+oPVRJXSLSEhdCnA9vTDNQCqHyMTVca8+IE2UuQobQ
-Ei7Pw8BmmR+j5k3AGZiowh6evvUW+G79k+ItP6lrj/w5aPVtlTcTgVbxK1ciMCjJ
-qflstXxDbOcd8v2vxsQFK2LQizyAhknnooY+zE6cG2LAKBlkK2AiYj+xygtXxDk8
-ZWzTsDKt26yF62/gecMZuZk1KTVBbMAbomueT2tsG4Y8uCeOKWr4lanDHIT5FL9f
-2h0yV2L3GHFkP3M8neNoOjE3FPoVIg==
-=ajjv
------END PGP SIGNATURE-----
-
---Sig_/6IWCp4mbw_59ajOlpprefbY--
