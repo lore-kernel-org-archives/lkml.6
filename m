@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2D4ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79874ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1189D20671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:25:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1189D20671
+	by mail.kernel.org (Postfix) with ESMTP id 22F0C20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:26:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22F0C20671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731340AbeGSXK4 (ORCPT
+        id S1731246AbeGSXLs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:10:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44681 "EHLO
+        Thu, 19 Jul 2018 19:11:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40935 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731147AbeGSXK4 (ORCPT
+        with ESMTP id S1730469AbeGSXLs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:10:56 -0400
+        Thu, 19 Jul 2018 19:11:48 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMPfxp2438831
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMQEjo2438874
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 15:25:42 -0700
+        Thu, 19 Jul 2018 15:26:14 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMPffq2438828;
-        Thu, 19 Jul 2018 15:25:41 -0700
-Date:   Thu, 19 Jul 2018 15:25:41 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMQCSC2438871;
+        Thu, 19 Jul 2018 15:26:12 -0700
+Date:   Thu, 19 Jul 2018 15:26:12 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Pavel Tatashin <tipbot@zytor.com>
-Message-ID: <tip-6fffacb30349e0903602d664f7ab6fc87e85162e@git.kernel.org>
-Cc:     pasha.tatashin@oracle.com, mingo@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          pasha.tatashin@oracle.com, mingo@kernel.org, hpa@zytor.com
-In-Reply-To: <20180719205545.16512-9-pasha.tatashin@oracle.com>
-References: <20180719205545.16512-9-pasha.tatashin@oracle.com>
+Message-ID: <tip-8990cac6e5ea7fa57607736019fe8dca961b998f@git.kernel.org>
+Cc:     bp@suse.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
+        pasha.tatashin@oracle.com
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@suse.de,
+          hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
+          pasha.tatashin@oracle.com
+In-Reply-To: <20180719205545.16512-10-pasha.tatashin@oracle.com>
+References: <20180719205545.16512-10-pasha.tatashin@oracle.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/alternatives, jumplabel: Use text_poke_early()
- before mm_init()
-Git-Commit-ID: 6fffacb30349e0903602d664f7ab6fc87e85162e
+Subject: [tip:x86/timers] x86/jump_label: Initialize static branching early
+Git-Commit-ID: 8990cac6e5ea7fa57607736019fe8dca961b998f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,59 +58,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6fffacb30349e0903602d664f7ab6fc87e85162e
-Gitweb:     https://git.kernel.org/tip/6fffacb30349e0903602d664f7ab6fc87e85162e
+Commit-ID:  8990cac6e5ea7fa57607736019fe8dca961b998f
+Gitweb:     https://git.kernel.org/tip/8990cac6e5ea7fa57607736019fe8dca961b998f
 Author:     Pavel Tatashin <pasha.tatashin@oracle.com>
-AuthorDate: Thu, 19 Jul 2018 16:55:27 -0400
+AuthorDate: Thu, 19 Jul 2018 16:55:28 -0400
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 20 Jul 2018 00:02:38 +0200
 
-x86/alternatives, jumplabel: Use text_poke_early() before mm_init()
+x86/jump_label: Initialize static branching early
 
-It supposed to be safe to modify static branches after jump_label_init().
-But, because static key modifying code eventually calls text_poke() it can
-end up accessing a struct page which has not been initialized yet.
+Static branching is useful to runtime patch branches that are used in hot
+path, but are infrequently changed.
 
-Here is how to quickly reproduce the problem. Insert code like this
-into init/main.c:
+The x86 clock framework is one example that uses static branches to setup
+the best clock during boot and never changes it again.
 
-| +static DEFINE_STATIC_KEY_FALSE(__test);
-| asmlinkage __visible void __init start_kernel(void)
-| {
-|        char *command_line;
-|@@ -587,6 +609,10 @@ asmlinkage __visible void __init start_kernel(void)
-|        vfs_caches_init_early();
-|        sort_main_extable();
-|        trap_init();
-|+       {
-|+       static_branch_enable(&__test);
-|+       WARN_ON(!static_branch_likely(&__test));
-|+       }
-|        mm_init();
+It is desired to enable the TSC based sched clock early to allow fine
+grained boot time analysis early on. That requires the static branching
+functionality to be functional early as well.
 
-The following warnings show-up:
-WARNING: CPU: 0 PID: 0 at arch/x86/kernel/alternative.c:701 text_poke+0x20d/0x230
-RIP: 0010:text_poke+0x20d/0x230
-Call Trace:
- ? text_poke_bp+0x50/0xda
- ? arch_jump_label_transform+0x89/0xe0
- ? __jump_label_update+0x78/0xb0
- ? static_key_enable_cpuslocked+0x4d/0x80
- ? static_key_enable+0x11/0x20
- ? start_kernel+0x23e/0x4c8
- ? secondary_startup_64+0xa5/0xb0
+Static branching requires patching nop instructions, thus,
+arch_init_ideal_nops() must be called prior to jump_label_init().
 
----[ end trace abdc99c031b8a90a ]---
+Do all the necessary steps to call arch_init_ideal_nops() right after
+early_cpu_init(), which also allows to insert a call to jump_label_init()
+right after that. jump_label_init() will be called again from the generic
+init code, but the code is protected against reinitialization already.
 
-If the code above is moved after mm_init(), no warning is shown, as struct
-pages are initialized during handover from memblock.
+[ tglx: Massaged changelog ]
 
-Use text_poke_early() in static branching until early boot IRQs are enabled
-and from there switch to text_poke. Also, ensure text_poke() is never
-invoked when unitialized memory access may happen by using adding a
-!after_bootmem assertion.
-
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 Cc: steven.sistare@oracle.com
 Cc: daniel.m.jordan@oracle.com
 Cc: linux@armlinux.org.uk
@@ -119,7 +100,6 @@ Cc: john.stultz@linaro.org
 Cc: sboyd@codeaurora.org
 Cc: hpa@zytor.com
 Cc: douly.fnst@cn.fujitsu.com
-Cc: peterz@infradead.org
 Cc: prarit@redhat.com
 Cc: feng.tang@intel.com
 Cc: pmladek@suse.com
@@ -128,73 +108,134 @@ Cc: linux-s390@vger.kernel.org
 Cc: boris.ostrovsky@oracle.com
 Cc: jgross@suse.com
 Cc: pbonzini@redhat.com
-Link: https://lkml.kernel.org/r/20180719205545.16512-9-pasha.tatashin@oracle.com
----
- arch/x86/include/asm/text-patching.h |  1 +
- arch/x86/kernel/alternative.c        |  7 +++++++
- arch/x86/kernel/jump_label.c         | 11 +++++++----
- 3 files changed, 15 insertions(+), 4 deletions(-)
+Link: https://lkml.kernel.org/r/20180719205545.16512-10-pasha.tatashin@oracle.com
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index 2ecd34e2d46c..e85ff65c43c3 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -37,5 +37,6 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
- extern void *text_poke(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
-+extern int after_bootmem;
+---
+ arch/x86/kernel/cpu/amd.c    | 13 ++++++++-----
+ arch/x86/kernel/cpu/common.c | 38 ++++++++++++++++++++------------------
+ arch/x86/kernel/setup.c      |  4 ++--
+ 3 files changed, 30 insertions(+), 25 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 38915fbfae73..b732438c1a1e 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -232,8 +232,6 @@ static void init_amd_k7(struct cpuinfo_x86 *c)
+ 		}
+ 	}
  
- #endif /* _ASM_X86_TEXT_PATCHING_H */
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index a481763a3776..014f214da581 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -668,6 +668,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
- 	local_irq_save(flags);
- 	memcpy(addr, opcode, len);
- 	local_irq_restore(flags);
-+	sync_core();
- 	/* Could also do a CLFLUSH here to speed up CPU recovery; but
- 	   that causes hangs on some VIA CPUs. */
- 	return addr;
-@@ -693,6 +694,12 @@ void *text_poke(void *addr, const void *opcode, size_t len)
- 	struct page *pages[2];
- 	int i;
+-	set_cpu_cap(c, X86_FEATURE_K7);
+-
+ 	/* calling is from identify_secondary_cpu() ? */
+ 	if (!c->cpu_index)
+ 		return;
+@@ -617,6 +615,14 @@ static void early_init_amd(struct cpuinfo_x86 *c)
  
-+	/*
-+	 * While boot memory allocator is runnig we cannot use struct
-+	 * pages as they are not yet initialized.
-+	 */
-+	BUG_ON(!after_bootmem);
+ 	early_init_amd_mc(c);
+ 
++#ifdef CONFIG_X86_32
++	if (c->x86 == 6)
++		set_cpu_cap(c, X86_FEATURE_K7);
++#endif
 +
- 	if (!core_kernel_text((unsigned long)addr)) {
- 		pages[0] = vmalloc_to_page(addr);
- 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index e56c95be2808..eeea935e9bb5 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -37,15 +37,18 @@ static void bug_at(unsigned char *ip, int line)
- 	BUG();
++	if (c->x86 >= 0xf)
++		set_cpu_cap(c, X86_FEATURE_K8);
++
+ 	rdmsr_safe(MSR_AMD64_PATCH_LEVEL, &c->microcode, &dummy);
+ 
+ 	/*
+@@ -863,9 +869,6 @@ static void init_amd(struct cpuinfo_x86 *c)
+ 
+ 	init_amd_cacheinfo(c);
+ 
+-	if (c->x86 >= 0xf)
+-		set_cpu_cap(c, X86_FEATURE_K8);
+-
+ 	if (cpu_has(c, X86_FEATURE_XMM2)) {
+ 		unsigned long long val;
+ 		int ret;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index eb4cb3efd20e..71281ac43b15 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1015,6 +1015,24 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ 	setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
  }
  
--static void __jump_label_transform(struct jump_entry *entry,
--				   enum jump_label_type type,
--				   void *(*poker)(void *, const void *, size_t),
--				   int init)
-+static void __ref __jump_label_transform(struct jump_entry *entry,
-+					 enum jump_label_type type,
-+					 void *(*poker)(void *, const void *, size_t),
-+					 int init)
- {
- 	union jump_code_union code;
- 	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
- 	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
- 
-+	if (early_boot_irqs_disabled)
-+		poker = text_poke_early;
++/*
++ * The NOPL instruction is supposed to exist on all CPUs of family >= 6;
++ * unfortunately, that's not true in practice because of early VIA
++ * chips and (more importantly) broken virtualizers that are not easy
++ * to detect. In the latter case it doesn't even *fail* reliably, so
++ * probing for it doesn't even work. Disable it completely on 32-bit
++ * unless we can find a reliable way to detect all the broken cases.
++ * Enable it explicitly on 64-bit for non-constant inputs of cpu_has().
++ */
++static void detect_nopl(struct cpuinfo_x86 *c)
++{
++#ifdef CONFIG_X86_32
++	clear_cpu_cap(c, X86_FEATURE_NOPL);
++#else
++	set_cpu_cap(c, X86_FEATURE_NOPL);
++#endif
++}
 +
- 	if (type == JUMP_LABEL_JMP) {
- 		if (init) {
- 			/*
+ /*
+  * Do minimum CPU detection early.
+  * Fields really needed: vendor, cpuid_level, family, model, mask,
+@@ -1089,6 +1107,8 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 	 */
+ 	if (!pgtable_l5_enabled())
+ 		setup_clear_cpu_cap(X86_FEATURE_LA57);
++
++	detect_nopl(c);
+ }
+ 
+ void __init early_cpu_init(void)
+@@ -1124,24 +1144,6 @@ void __init early_cpu_init(void)
+ 	early_identify_cpu(&boot_cpu_data);
+ }
+ 
+-/*
+- * The NOPL instruction is supposed to exist on all CPUs of family >= 6;
+- * unfortunately, that's not true in practice because of early VIA
+- * chips and (more importantly) broken virtualizers that are not easy
+- * to detect. In the latter case it doesn't even *fail* reliably, so
+- * probing for it doesn't even work. Disable it completely on 32-bit
+- * unless we can find a reliable way to detect all the broken cases.
+- * Enable it explicitly on 64-bit for non-constant inputs of cpu_has().
+- */
+-static void detect_nopl(struct cpuinfo_x86 *c)
+-{
+-#ifdef CONFIG_X86_32
+-	clear_cpu_cap(c, X86_FEATURE_NOPL);
+-#else
+-	set_cpu_cap(c, X86_FEATURE_NOPL);
+-#endif
+-}
+-
+ static void detect_null_seg_behavior(struct cpuinfo_x86 *c)
+ {
+ #ifdef CONFIG_X86_64
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index da1dbd99cb6e..7490de925a81 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -866,6 +866,8 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	idt_setup_early_traps();
+ 	early_cpu_init();
++	arch_init_ideal_nops();
++	jump_label_init();
+ 	early_ioremap_init();
+ 
+ 	setup_olpc_ofw_pgd();
+@@ -1268,8 +1270,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	mcheck_init();
+ 
+-	arch_init_ideal_nops();
+-
+ 	register_refined_jiffies(CLOCK_TICK_RATE);
+ 
+ #ifdef CONFIG_EFI
