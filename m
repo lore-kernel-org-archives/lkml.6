@@ -2,122 +2,232 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B096CC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1602FECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6976C20862
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:07:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LGi5d0Bh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6976C20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C7EA820671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:08:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7EA820671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731186AbeGSKtc (ORCPT
+        id S1730798AbeGSKu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 06:49:32 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42693 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbeGSKtb (ORCPT
+        Thu, 19 Jul 2018 06:50:26 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:26022 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbeGSKu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 06:49:31 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y4-v6so3414637pgp.9;
-        Thu, 19 Jul 2018 03:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=RJhJrPg5vB3sWmzaN5lFkpQiPrD9UBbb70hv06tTUJ4=;
-        b=LGi5d0BhcB4tPQcG26h5D5OhpGUIlojIG4lB+mcxmmVOvO9fCPITFBLoriP8vcRM7W
-         SsWSt7yC/SnEFr/o6aB/TXMiOQmREPLLkqVa5BQFvTDvHSqGJWKSHaGIIoOkVWSwLQe1
-         KrU0wVvvDtdKlLueIiTTlwC8f9qMVPrqUMQjeYLuW5iTo4fpjHZNHexVbV+EM0LVpTOq
-         uIMpyC1AYUc5TB2AyPETwm+MSx45Xw6DmgVOf4eeZ0KblVQ0eJ01Cl3zaeH6bgLE6HIA
-         JN//NmrgXYw978tqx4SOoLj6fblWI+Afadq0lwGc9HEvu2zDHC5F0Xe7PUecthW5qKvg
-         GJgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RJhJrPg5vB3sWmzaN5lFkpQiPrD9UBbb70hv06tTUJ4=;
-        b=tZ8dL0VZfLfoRpl+prX/jMiA3X/TxJlw/thXiMSZ5TzGV57vww4TTV+gWl2Fhlc9Da
-         PI05jVFZjcxbc0rdMRBVz3Xa/bnhtjfaRzADuJOWR9K0WEbhcGk97VBDErCLF5fk0Lfu
-         jzFXS5hsFWG27YWtgvlKZS4dv+vP150s60EmrBJPtUmIXMRqmr/DsgrB715cVsaT2VpG
-         5Cq6T6u10OAzzIzVrk2U029rq1A4HdJiR/mSdBKLYS2BTPQiCv4Y5pwuQ9F33SDdhFCb
-         3e3QspPBe5oFY7RkeyhkYpfqAi3149ZE4ykwk3BIzZEhOV0WDfuo7yn+G8aGdsombYyf
-         BceQ==
-X-Gm-Message-State: AOUpUlFpoeMDzNo1adzU6kJWGeC9oHNlxAv/HtUKKEWoWGrWWaS0oYyN
-        JsPro3Eduqzh5m0AEtHqpXE=
-X-Google-Smtp-Source: AAOMgpf58Ur/K54N5Jqcv1LqCmzf7A84ZeXpRjad39H0B7floe29T/MppWrhK10Q4OePYHd223IhSA==
-X-Received: by 2002:a65:62d8:: with SMTP id m24-v6mr9447904pgv.307.1531994827602;
-        Thu, 19 Jul 2018 03:07:07 -0700 (PDT)
-Received: from localhost ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id r25-v6sm19077908pfj.42.2018.07.19.03.07.06
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 19 Jul 2018 03:07:07 -0700 (PDT)
-From:   Jing Xia <jing.xia.mail@gmail.com>
-X-Google-Original-From: Jing Xia <jing.xia@unisoc.com>
-To:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com
-Cc:     chunyan.zhang@unisoc.com, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: memcg: fix use after free in mem_cgroup_iter()
-Date:   Thu, 19 Jul 2018 18:06:47 +0800
-Message-Id: <1531994807-25639-1-git-send-email-jing.xia@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 19 Jul 2018 06:50:26 -0400
+Received: from [192.168.90.200] (10.18.20.235) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 19 Jul
+ 2018 18:07:17 +0800
+Subject: Re: [RFC PATCH v2 1/2] dt-bindings: nand: meson: add Amlogic NAND
+ controller driver
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+References: <20180719094612.5833-1-yixun.lan@amlogic.com>
+ <20180719094612.5833-2-yixun.lan@amlogic.com>
+ <20180719115751.34ff1a51@bbrezillon>
+CC:     <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
+        Liang Yang <liang.yang@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+From:   Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <63bb7f53-81d2-fe98-9ae3-37aae7d8647c@amlogic.com>
+Date:   Thu, 19 Jul 2018 18:07:25 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180719115751.34ff1a51@bbrezillon>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.20.235]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It was reported that a kernel crash happened in mem_cgroup_iter(),
-which can be triggered if the legacy cgroup-v1 non-hierarchical
-mode is used.
+Hi Boris:
+ see my comments, thanks for the quick response
 
-Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b8f
-......
-Call trace:
-  mem_cgroup_iter+0x2e0/0x6d4
-  shrink_zone+0x8c/0x324
-  balance_pgdat+0x450/0x640
-  kswapd+0x130/0x4b8
-  kthread+0xe8/0xfc
-  ret_from_fork+0x10/0x20
+On 07/19/18 17:57, Boris Brezillon wrote:
+> On Thu, 19 Jul 2018 17:46:11 +0800
+> Yixun Lan <yixun.lan@amlogic.com> wrote:
+> 
+>> From: Liang Yang <liang.yang@amlogic.com>
+>>
+>> Add Amlogic NAND controller dt-bindings for Meson SoC,
+>> Current this driver support GXBB/GXL/AXG platform.
+>>
+>> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  .../bindings/mtd/amlogic,meson-nand.txt       | 95 +++++++++++++++++++
+>>  1 file changed, 95 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+>> new file mode 100644
+>> index 000000000000..31f910dcd27a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+>> @@ -0,0 +1,95 @@
+>> +Amlogic NAND Flash Controller (NFC) for GXBB/GXL/AXG family SoCs
+>> +
+>> +This file documents the properties in addition to those available in
+>> +the MTD NAND bindings.
+>> +
+>> +Required properties:
+>> +- compatible : contains one of:
+>> +  - "amlogic,meson-gxl-nfc"
+>> +  - "amlogic,meson-axg-nfc"
+>> +- clocks     :
+>> +	A list of phandle + clock-specifier pairs for the clocks listed
+>> +	in clock-names.
+>> +
+>> +- clock-names: Should contain the following:
+>> +	"core" - NFC module gate clock
+>> +	"device" - device clock from eMMC sub clock controller
+>> +
+>> +- pins     : Select pins which NFC need.
+>> +- nand_pins: Detail NAND pins information.
+> 
+> You should document pinctrl-0 and pinctrl-names, not pins and nand_pins.
+> 
+Ok, will fix this
 
-  mem_cgroup_iter():
-      ......
-      if (css_tryget(css))    <-- crash here
-	    break;
-      ......
+>> +- amlogic,mmc-syscon	: Required for NAND clocks, it's shared with SD/eMMC
+>> +				controller port C
+> 
+> Are you sure this is still needed, even after exposing MMC/NAND clks
+> through the CCF?
+> 
+yes, the SD_EMMC_CLOCK register from eMMC space explore a few other bit
+that not fit well into clock model, thus we still need to access them
+from NAND driver, we know it's kind of ugly..
 
-The crashing reason is that mem_cgroup_iter() uses the memcg object
-whose pointer is stored in iter->position, which has been freed before
-and filled with POISON_FREE(0x6b).
+#define SD_EMMC_CLOCK                   0x00
+#define   CLK_ALWAYS_ON                 BIT(28)
+#define   CLK_SELECT_NAND BIT(31)
+#define   CLK_DIV_MASK                  GENMASK(5, 0)
 
-And the root cause of the use-after-free issue is that
-invalidate_reclaim_iterators() fails to reset the value of
-iter->position to NULL when the css of the memcg is released in non-
-hierarchical mode.
+we probably could get rid of CLK_DIV_MASK, but need to keep other two
 
-Signed-off-by: Jing Xia <jing.xia.mail@gmail.com>
----
- mm/memcontrol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e6f0d5e..8c0280b 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -850,7 +850,7 @@ static void invalidate_reclaim_iterators(struct mem_cgroup *dead_memcg)
- 	int nid;
- 	int i;
- 
--	while ((memcg = parent_mem_cgroup(memcg))) {
-+	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
- 		for_each_node(nid) {
- 			mz = mem_cgroup_nodeinfo(memcg, nid);
- 			for (i = 0; i <= DEF_PRIORITY; i++) {
--- 
-1.9.1
+> You forgot
+> - #address-cells
+> - #size-cells
+> - reg
+> - interrupts
+> - 
+> 
+will fix these
+>> +
+>> +Optional children nodes:
+>> +Children nodes represent the available nand chips.
+>> +
+>> +Optional properties:
+>> +- amlogic,nand-enable-scrambler: enable the NAND scrambler feature.
+>> +	- (absent) = scrambler is disabled
+>> +	- (present) = scrambler is enabled
+> 
+> I keep thinking this is not needed if you have the NAND chip properly
+> defined (NAND_NEED_SCRAMBLING flag set in chip->options).
+> 
+Ok, we will try this flag
+>> +
+>> +
+>> +Other properties:
+>> +see Documentation/devicetree/bindings/mtd/nand.txt for generic bindings.
+>> +
+>> +Example demonstrate on AXG SoC:
+>> +
+>> +	sd_emmc_c_clkc: mmc@7000 {
+>> +		compatible = "amlogic,meson-axg-mmc-clkc", "syscon";
+>> +		reg = <0x0 0x7000 0x0 0x800>;
+>> +		status = "okay";
+>> +	};
+>> +
+>> +	nand: nfc@7800 {
+>> +		compatible = "amlogic,meson-axg-nfc";
+>> +		reg = <0x0 0x7800 0x0 0x100>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
+>> +		status = "disabled";
+>> +
+>> +		clocks = <&clkc CLKID_SD_EMMC_C>,
+>> +			<&sd_emmc_c_clkc CLKID_MMC_DIV>;
+>> +		clock-names = "core", "device";
+>> +		amlogic,mmc-syscon = <&sd_emmc_c_clkc>;
+>> +
+>> +		status = "okay";
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&nand_pins>;
+>> +
+>> +		nand@0 {
+>> +			reg = <0>;
+>> +			#address-cells = <1>;
+>> +			#size-cells = <1>;
+>> +
+>> +			nand-on-flash-bbt;
+>> +			nand-ecc-mode = "hw";
+>> +			nand-ecc-strength = <8>;
+>> +			nand-ecc-step-size = <1024>;
+> 
+> I'd recommend not forcing a specific ECC config in the example.
+> 
+Ok, will fix
+
+>> +
+>> +			amlogic,nand-enable-scrambler;
+>> +
+>> +			partition@0 {
+>> +				label = "boot";
+>> +				reg = <0x00000000 0x00200000>;
+>> +				read-only;
+>> +			};
+> 
+> Blank line here.
+will fix
+> 
+>> +			partition@200000 {
+>> +				label = "env";
+>> +				reg = <0x00200000 0x00400000>;
+>> +			};
+>> +			partition@600000 {
+>> +				label = "system";
+>> +				reg = <0x00600000 0x00a00000>;
+>> +			};
+>> +			partition@1000000 {
+>> +				label = "rootfs";
+>> +				reg = <0x01000000 0x03000000>;
+>> +			};
+>> +			partition@4000000 {
+>> +				label = "media";
+>> +				reg = <0x04000000 0x8000000>;
+>> +			};
+>> +		};
+>> +	};
+> 
+> .
+> 
 
