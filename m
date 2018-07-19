@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66618ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EC0ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 155822084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C36892084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:58:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="duNDKALw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 155822084C
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Qqx61FeD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C36892084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731661AbeGSVmu (ORCPT
+        id S1731637AbeGSVnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 17:42:50 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45792 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730328AbeGSVmt (ORCPT
+        Thu, 19 Jul 2018 17:43:25 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50460 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729209AbeGSVml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 17:42:49 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JKsYjV191975;
-        Thu, 19 Jul 2018 20:56:58 GMT
+        Thu, 19 Jul 2018 17:42:41 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JKsMxq160616;
+        Thu, 19 Jul 2018 20:56:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=wIs5U4QfuxCg8kxQ0vkl/1AhFbu2WaGzBHCKQ/01X6E=;
- b=duNDKALwR0ddX41KV9e4YO6MyGS0U1gT6Jr9YqeU/7ASwbJaSQqkoPIR4i53tY1KWwWG
- wLqsbqc69PL8hNOLUmgPalOESUrj1PcRCZ+JEorrNHKtqY0x7X1WmxxGGq8No86I8AKu
- pu3cz5qD2BQxIAr4toZIPf3pQYtgf5aMicrMykDGsIysbXHryrLbzzVUDoAWS+rii9W9
- hx+IMCoqY7v24XdtA5WR31QayPy2ljJkrghsaZL12tWsCzLwn3G0QNtC6OkssxodaxJl
- mPr6O5l3QhGuDF/jNbU67KrvkxrB9Xx0JSlry26brLIFzBgVkJJ2IoG2RbZWU78xgjNv 5A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2k9yjgruhd-1
+ bh=+qBN847RUz4t4WKnPh63Gr9PZBAyMdChoQFt7aSxb7Y=;
+ b=Qqx61FeDGRRRtSSYEAl0oUgN9YEHoXHdBWYd6EmttwkAXqLPPdc2RttVjB8ZnAr8q6RO
+ VF1t8o8aCaOkqgZhuzyjmhbs/XrAeShGMDi3vDfJ69ACZ4jvFEAFw9pkm9JJ7+G89Swm
+ d9A9OPZaJRZQry/JTQX6jGE30cU4oU45Gwn0PM4FC+NZBzKrbaI8XPvJOs65VPBle0cq
+ vx23PdCwIGTFuUXCyYYRayi6xuM0R9E9cG6obJ171QRmFutTBaWKy8RTezIpFjgwK9fx
+ o5k24bL4Tv0AyL5QEPXDcV6AbIPIcZXmm0ypbETX1iCaZ/XwjRw3K/5Wr2I1PfW2JX6x XQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2k9ykc8v7d-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 20:56:58 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuvmR002519
+        Thu, 19 Jul 2018 20:56:51 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuoKq023346
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 20:56:57 GMT
+        Thu, 19 Jul 2018 20:56:50 GMT
 Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6JKut7u027014;
-        Thu, 19 Jul 2018 20:56:55 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKunxp003807;
+        Thu, 19 Jul 2018 20:56:49 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Jul 2018 20:56:54 +0000
+        with ESMTP ; Thu, 19 Jul 2018 20:56:49 +0000
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -61,9 +61,9 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
         boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com
-Subject: [PATCH v15 23/26] sched: early boot clock
-Date:   Thu, 19 Jul 2018 16:55:42 -0400
-Message-Id: <20180719205545.16512-24-pasha.tatashin@oracle.com>
+Subject: [PATCH v15 20/26] x86/tsc: initialize cyc2ns when tsc freq. is determined
+Date:   Thu, 19 Jul 2018 16:55:39 -0400
+Message-Id: <20180719205545.16512-21-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180719205545.16512-1-pasha.tatashin@oracle.com>
 References: <20180719205545.16512-1-pasha.tatashin@oracle.com>
@@ -77,75 +77,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow sched_clock() to be used before schec_clock_init() is called.
-This provides with a way to get early boot timestamps on machines with
-unstable clocks.
+cyc2ns converts tsc to nanoseconds, and it is handled in a per-cpu data
+structure.
 
+Currently, the setup code for c2ns data for every possible CPU goes through
+the same sequence of calculations as for the boot CPU, but is based on the
+same tsc frequency as the boot CPU, and thus this is not necessary.
+
+Initialize the boot cpu when tsc frequency is determined. Copy the
+calculated data from the boot CPU to the other CPUs in tsc_init().
+
+In addition do the following:
+
+- Remove unnecessary zeroing of c2ns data by removing cyc2ns_data_init()
+- Split set_cyc2ns_scale() into two functions, so set_cyc2ns_scale() can be
+  called when system is up, and wraps around __set_cyc2ns_scale() that can
+  be called directly when system is booting but avoids saving restoring
+  IRQs and going and waking up from idle.
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- init/main.c          |  2 +-
- kernel/sched/clock.c | 20 +++++++++++++++++++-
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ arch/x86/kernel/tsc.c | 94 ++++++++++++++++++++++++-------------------
+ 1 file changed, 53 insertions(+), 41 deletions(-)
 
-diff --git a/init/main.c b/init/main.c
-index 162d931c9511..ff0a24170b95 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -642,7 +642,6 @@ asmlinkage __visible void __init start_kernel(void)
- 	softirq_init();
- 	timekeeping_init();
- 	time_init();
--	sched_clock_init();
- 	printk_safe_init();
- 	perf_event_init();
- 	profile_init();
-@@ -697,6 +696,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	acpi_early_init();
- 	if (late_time_init)
- 		late_time_init();
-+	sched_clock_init();
- 	calibrate_delay();
- 	pid_idr_init();
- 	anon_vma_init();
-diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
-index 0e9dbb2d9aea..422cd63f8f17 100644
---- a/kernel/sched/clock.c
-+++ b/kernel/sched/clock.c
-@@ -202,7 +202,25 @@ static void __sched_clock_gtod_offset(void)
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 4cab2236169e..7ea0718a4c75 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -103,23 +103,6 @@ void cyc2ns_read_end(void)
+  *                      -johnstul@us.ibm.com "math is hard, lets go shopping!"
+  */
  
- void __init sched_clock_init(void)
+-static void cyc2ns_data_init(struct cyc2ns_data *data)
+-{
+-	data->cyc2ns_mul = 0;
+-	data->cyc2ns_shift = 0;
+-	data->cyc2ns_offset = 0;
+-}
+-
+-static void __init cyc2ns_init(int cpu)
+-{
+-	struct cyc2ns *c2n = &per_cpu(cyc2ns, cpu);
+-
+-	cyc2ns_data_init(&c2n->data[0]);
+-	cyc2ns_data_init(&c2n->data[1]);
+-
+-	seqcount_init(&c2n->seq);
+-}
+-
+ static inline unsigned long long cycles_2_ns(unsigned long long cyc)
  {
+ 	struct cyc2ns_data data;
+@@ -135,18 +118,11 @@ static inline unsigned long long cycles_2_ns(unsigned long long cyc)
+ 	return ns;
+ }
+ 
+-static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
++static void __set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
+ {
+ 	unsigned long long ns_now;
+ 	struct cyc2ns_data data;
+ 	struct cyc2ns *c2n;
+-	unsigned long flags;
+-
+-	local_irq_save(flags);
+-	sched_clock_idle_sleep_event();
+-
+-	if (!khz)
+-		goto done;
+ 
+ 	ns_now = cycles_2_ns(tsc_now);
+ 
+@@ -178,12 +154,55 @@ static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_
+ 	c2n->data[0] = data;
+ 	raw_write_seqcount_latch(&c2n->seq);
+ 	c2n->data[1] = data;
++}
++
++static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
++{
 +	unsigned long flags;
 +
-+	/*
-+	 * Set __gtod_offset such that once we mark sched_clock_running,
-+	 * sched_clock_tick() continues where sched_clock() left off.
-+	 *
-+	 * Even if TSC is buggered, we're still UP at this point so it
-+	 * can't really be out of sync.
-+	 */
 +	local_irq_save(flags);
-+	__sched_clock_gtod_offset();
-+	local_irq_restore(flags);
++	sched_clock_idle_sleep_event();
 +
- 	sched_clock_running = 1;
-+
-+	/* Now that sched_clock_running is set adjust scd */
-+	local_irq_save(flags);
-+	sched_clock_tick();
-+	local_irq_restore(flags);
++	if (khz)
++		__set_cyc2ns_scale(khz, cpu, tsc_now);
+ 
+-done:
+ 	sched_clock_idle_wakeup_event();
+ 	local_irq_restore(flags);
  }
+ 
++/*
++ * Initialize cyc2ns for boot cpu
++ */
++static void __init cyc2ns_init_boot_cpu(void)
++{
++	struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
++
++	seqcount_init(&c2n->seq);
++	__set_cyc2ns_scale(tsc_khz, smp_processor_id(), rdtsc());
++}
++
++/*
++ * Secondary CPUs do not run through cyc2ns_init(), so set up
++ * all the scale factors for all CPUs, assuming the same
++ * speed as the bootup CPU. (cpufreq notifiers will fix this
++ * up if their speed diverges)
++ */
++static void __init cyc2ns_init_secondary_cpus(void)
++{
++	unsigned int cpu, this_cpu = smp_processor_id();
++	struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
++	struct cyc2ns_data *data = c2n->data;
++
++	for_each_possible_cpu(cpu) {
++		if (cpu != this_cpu) {
++			seqcount_init(&c2n->seq);
++			c2n = per_cpu_ptr(&cyc2ns, cpu);
++			c2n->data[0] = data[0];
++			c2n->data[1] = data[1];
++		}
++	}
++}
++
  /*
-  * We run this as late_initcall() such that it runs after all built-in drivers,
-@@ -356,7 +374,7 @@ u64 sched_clock_cpu(int cpu)
- 		return sched_clock() + __sched_clock_offset;
+  * Scheduler clock - returns current time in nanosec units.
+  */
+@@ -1385,6 +1404,10 @@ void __init tsc_early_init(void)
+ 	if (!determine_cpu_tsc_frequencies())
+ 		return;
+ 	loops_per_jiffy = get_loops_per_jiffy();
++
++	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
++	tsc_store_and_check_tsc_adjust(true);
++	cyc2ns_init_boot_cpu();
+ }
  
- 	if (unlikely(!sched_clock_running))
--		return 0ull;
-+		return sched_clock();
+ void __init tsc_init(void)
+@@ -1401,23 +1424,12 @@ void __init tsc_init(void)
+ 			setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
+ 			return;
+ 		}
++		/* Sanitize TSC ADJUST before cyc2ns gets initialized */
++		tsc_store_and_check_tsc_adjust(true);
++		cyc2ns_init_boot_cpu();
+ 	}
  
- 	preempt_disable_notrace();
- 	scd = cpu_sdc(cpu);
+-	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
+-	tsc_store_and_check_tsc_adjust(true);
+-
+-	/*
+-	 * Secondary CPUs do not run through tsc_init(), so set up
+-	 * all the scale factors for all CPUs, assuming the same
+-	 * speed as the bootup CPU. (cpufreq notifiers will fix this
+-	 * up if their speed diverges)
+-	 */
+-	cyc = rdtsc();
+-	for_each_possible_cpu(cpu) {
+-		cyc2ns_init(cpu);
+-		set_cyc2ns_scale(tsc_khz, cpu, cyc);
+-	}
+-
++	cyc2ns_init_secondary_cpus();
+ 	static_branch_enable(&__use_tsc);
+ 
+ 	if (!no_sched_irq_time)
 -- 
 2.18.0
 
