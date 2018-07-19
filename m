@@ -6,176 +6,120 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8661ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A63AECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7284620671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:53:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E81EE20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:53:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTVFGAJk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7284620671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fP3VG+zn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E81EE20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730961AbeGSLfy (ORCPT
+        id S1731336AbeGSLgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 07:35:54 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35538 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729884AbeGSLfx (ORCPT
+        Thu, 19 Jul 2018 07:36:24 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:39336 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbeGSLgY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 07:35:53 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p10-v6so6821090ljg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 03:53:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PRJIM0Db/GgQraXIfw2OSSAkep6fOSus85X/PLZoQto=;
-        b=kTVFGAJka9sI8/3x+jK/GsEuSGbs7lhFuxqd4rKafCkB0mQEQmq17O7/xl/Ds1VdPd
-         i/SnoU7uAkGisrqYc3HRe+s5vVMDla/YNHqpz+HU64h9jpP1zQirg89fbMqq+2exBinX
-         UtK6A2qOZyrn8nVKSNTnX3NGnN8aFZOzNvE/o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PRJIM0Db/GgQraXIfw2OSSAkep6fOSus85X/PLZoQto=;
-        b=gfziBhCHjRKnuFQl+5tKDYH2zfy8hbzz1U4zqNVf+vBj5pWAgFjjrrPIfJVDNkMAQl
-         Mqzjv7eqSxIGTPrYZb67VibaNA0U447JcQv1CSjR9kgGTwpWsUpM5COiB4ZD56PNr5Mk
-         iBAKpfNppDSptwKXyENVbcqf3rZHxG11A92zCmW8HY8CxmJY6yFxbyremuBTffBeQ8Fe
-         gEqY3z23nOPw4xamKNPMyY084fcrbOfIKQT9GjbKDvcnmLMnTTp4IYw3hKNlFExF2Hh2
-         7WNUZBCPODU9lttJXVKhziKv7Rzq+ls+7VRaCOGLTEWP6VBpQAHg2tdDFElkdYFSoow2
-         ZToA==
-X-Gm-Message-State: AOUpUlHDgtU8UW/qAZwl6gMJVAuw7seZP19/rJb2G85g80R4U7rHVxqD
-        ibRL/u82GcJRljhSaSxwUzHxc6blveSuWIXcAiLRtg==
-X-Google-Smtp-Source: AAOMgpfstuO9bIqj6wfiZNhX8g0dLCl7b83VMGWAPaJ73+3bm7uJzrE4WMS1O88hvJ3nABTEFajM3pBpknNssydYeds=
-X-Received: by 2002:a2e:47c8:: with SMTP id u191-v6mr7166725lja.58.1531997595815;
- Thu, 19 Jul 2018 03:53:15 -0700 (PDT)
+        Thu, 19 Jul 2018 07:36:24 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6JArdjg081251;
+        Thu, 19 Jul 2018 05:53:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531997619;
+        bh=spoir6AF+heVpcM9wftUZcCN9UZRXMJgzVgdnvQx5lo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=fP3VG+znUajAW4ZKBldipg5gAQ5Bm4RLbbqQ+AmephZ9I/cuQGS4ocCRI2/HCf718
+         I2RBqnz0Lkru7wElzOTcPOt/YCYYHmMgHmi37HBsbBavBDF1q7rHa8v755437oNHoN
+         xELP+LT0z6b0p/i/ZSL9jV/TX2Kz/oWwwtn3ANw8=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JArdwE005862;
+        Thu, 19 Jul 2018 05:53:39 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 19
+ Jul 2018 05:53:39 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 19 Jul 2018 05:53:39 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JArZli007468;
+        Thu, 19 Jul 2018 05:53:36 -0500
+Subject: Re: [PATCH v2 4/4] ARM: dts: dra7: Fix up unaligned access setting
+ for PCIe EP
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Bjorn Helgaas <bhelgaas@google.com>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>
+References: <20180627122919.23926-1-vigneshr@ti.com>
+ <20180627122919.23926-5-vigneshr@ti.com>
+ <92691b59-1952-b00f-da5b-f308f94aa2b7@ti.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <9bdf39d4-d9db-b80f-e3f4-88c3e068c306@ti.com>
+Date:   Thu, 19 Jul 2018 16:24:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180718145258.15254-1-niklas.cassel@linaro.org>
-In-Reply-To: <20180718145258.15254-1-niklas.cassel@linaro.org>
-From:   Nicolas Dechesne <nicolas.dechesne@linaro.org>
-Date:   Thu, 19 Jul 2018 12:53:04 +0200
-Message-ID: <CAP71WjzPxxwNp-FkUsRAP4e_+Z_q12wcLeXryk-eYdLi-WJexg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: msm8916: drop legacy suffix for clocks used
- by MSM DRM driver
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <92691b59-1952-b00f-da5b-f308f94aa2b7@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi Niklas,
+Hi Tony,
 
-On Wed, Jul 18, 2018 at 4:53 PM Niklas Cassel <niklas.cassel@linaro.org> wrote:
->
-> Drop legacy suffix for clocks used by MSM DRM driver.
+On Tuesday 17 July 2018 03:25 PM, Kishon Vijay Abraham I wrote:
+> 
+> 
+> On Wednesday 27 June 2018 05:59 PM, Vignesh R wrote:
+>> Bit positions of PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE and
+>> PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE in CTRL_CORE_SMA_SW_7 are
+>> incorrectly documented in the TRM. In fact, the bit positions are
+>> swapped. Update the DT bindings for PCIe EP to reflect the same.
+>>
+>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> 
+> Shouldn't this be sent to stable fixes?
 
-I had the same patch locally, which I forgot to send.. so thanks for
-sending it ;)
+This patch fixes:
 
-you might want to add in the commit log:
+Fixes: d23f3839fe97 ("ARM: dts: DRA7: Add pcie1 dt node for EP mode")
+Cc: stable@vger.kernel.org
 
-    Since "720c3bb80235 (drm/msm: drop _clk suffix from clk names)",
-we can see such
-    messages when booting:
+let me know if this needs to be resent with Fixes tag.
 
-> Fixes the following warnings:
->
-> msm_dsi_phy 1a98300.dsi-phy: Using legacy clk name binding.  Use "iface" instead of "iface_clk"
-> msm 1a00000.mdss: Using legacy clk name binding.  Use "iface" instead of "iface_clk"
-> msm 1a00000.mdss: Using legacy clk name binding.  Use "bus" instead of "bus_clk"
-> msm 1a00000.mdss: Using legacy clk name binding.  Use "vsync" instead of "vsync_clk"
-> msm_mdp 1a01000.mdp: Using legacy clk name binding.  Use "bus" instead of "bus_clk"
-> msm_mdp 1a01000.mdp: Using legacy clk name binding.  Use "iface" instead of "iface_clk"
-> msm_mdp 1a01000.mdp: Using legacy clk name binding.  Use "core" instead of "core_clk"
-> msm_mdp 1a01000.mdp: Using legacy clk name binding.  Use "vsync" instead of "vsync_clk"
-> msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "mdp_core" instead of "mdp_core_clk"
-> msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "iface" instead of "iface_clk"
-> msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "bus" instead of "bus_clk"
-> msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "byte" instead of "byte_clk"
-> msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "pixel" instead of "pixel_clk"
-> msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "core" instead of "core_clk"
->
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Regards
+Vignesh
 
-Reviewed-by: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-
-> ---
->  arch/arm64/boot/dts/qcom/msm8916.dtsi | 28 +++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> index c2625d15a8c0..7b32b8990d62 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> @@ -858,9 +858,9 @@
->                         clocks = <&gcc GCC_MDSS_AHB_CLK>,
->                                  <&gcc GCC_MDSS_AXI_CLK>,
->                                  <&gcc GCC_MDSS_VSYNC_CLK>;
-> -                       clock-names = "iface_clk",
-> -                                     "bus_clk",
-> -                                     "vsync_clk";
-> +                       clock-names = "iface",
-> +                                     "bus",
-> +                                     "vsync";
->
->                         interrupts = <0 72 IRQ_TYPE_LEVEL_HIGH>;
->
-> @@ -883,10 +883,10 @@
->                                          <&gcc GCC_MDSS_AXI_CLK>,
->                                          <&gcc GCC_MDSS_MDP_CLK>,
->                                          <&gcc GCC_MDSS_VSYNC_CLK>;
-> -                               clock-names = "iface_clk",
-> -                                             "bus_clk",
-> -                                             "core_clk",
-> -                                             "vsync_clk";
-> +                               clock-names = "iface",
-> +                                             "bus",
-> +                                             "core",
-> +                                             "vsync";
->
->                                 iommus = <&apps_iommu 4>;
->
-> @@ -922,12 +922,12 @@
->                                          <&gcc GCC_MDSS_BYTE0_CLK>,
->                                          <&gcc GCC_MDSS_PCLK0_CLK>,
->                                          <&gcc GCC_MDSS_ESC0_CLK>;
-> -                               clock-names = "mdp_core_clk",
-> -                                             "iface_clk",
-> -                                             "bus_clk",
-> -                                             "byte_clk",
-> -                                             "pixel_clk",
-> -                                             "core_clk";
-> +                               clock-names = "mdp_core",
-> +                                             "iface",
-> +                                             "bus",
-> +                                             "byte",
-> +                                             "pixel",
-> +                                             "core";
->                                 phys = <&dsi_phy0>;
->                                 phy-names = "dsi-phy";
->
-> @@ -963,7 +963,7 @@
->                                 #phy-cells = <0>;
->
->                                 clocks = <&gcc GCC_MDSS_AHB_CLK>;
-> -                               clock-names = "iface_clk";
-> +                               clock-names = "iface";
->                         };
->                 };
->
-> --
-> 2.17.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Thanks
+> Kishon
+>> ---
+>>  arch/arm/boot/dts/dra7.dtsi | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
+>> index 7bfe7f28e3bd..27ad193e1a87 100644
+>> --- a/arch/arm/boot/dts/dra7.dtsi
+>> +++ b/arch/arm/boot/dts/dra7.dtsi
+>> @@ -355,7 +355,7 @@
+>>  				ti,hwmods = "pcie1";
+>>  				phys = <&pcie1_phy>;
+>>  				phy-names = "pcie-phy0";
+>> -				ti,syscon-unaligned-access = <&scm_conf1 0x14 2>;
+>> +				ti,syscon-unaligned-access = <&scm_conf1 0x14 1>;
+>>  				status = "disabled";
+>>  			};
+>>  		};
+>>
