@@ -2,292 +2,130 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD00EECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B71C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F8120693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:37:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F8120693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8340620693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:40:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8340620693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbeGSKUF (ORCPT
+        id S1727516AbeGSKWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 06:20:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60058 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbeGSKUF (ORCPT
+        Thu, 19 Jul 2018 06:22:22 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:46938 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbeGSKWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 06:20:05 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2131BD1;
-        Thu, 19 Jul 2018 09:37:45 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 11:37:43 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Todd Poynor <toddpoynor@gmail.com>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
-        Zhongze Hu <frankhu@chromium.org>,
-        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH 17/32] staging: gasket: annotate ioctl arg with __user
-Message-ID: <20180719093743.GC14301@kroah.com>
-References: <20180717205712.29495-1-toddpoynor@gmail.com>
- <20180717205712.29495-18-toddpoynor@gmail.com>
+        Thu, 19 Jul 2018 06:22:22 -0400
+Received: by mail-qt0-f195.google.com with SMTP id d4-v6so6583744qtn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 02:40:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZhIsIdKkP1k30p/ir9RcxBY1puJ714y6M0HqZoDwsoc=;
+        b=ae1MtNcYfCXApZfa4SDdpEA6tvoG2uk29/RUZxFGrV/twkxMOmy34u+L8vbPUzfUS0
+         TJDh/It5dkNrINBBVPqBfUCWSSKb1Kp7N5ARt+/mcKnP4zcx477aptLVBPFgDgzw+z0q
+         SHe/t0FowpXlccSXKKMfM0J4LlWw1qqJkxpzSeKEUooF9tyVM0TG8FLa7tA9nalGeI7u
+         HtKXcanDMCUH1huEN2XvsNLwXAM9KaX9U9inRuVjlAUxm+OD2PS3h0pir2MnlZhA1CEd
+         GII9USXsjzzotk+VxLioVU4Q9bUDOlej3C/97+e7Q6XWEGfYc5s75MsjyCwMnjM0p06I
+         h3bQ==
+X-Gm-Message-State: AOUpUlH6/j7e+wZYHCirZ4qgmGwbjJxnFl11srv1L/lhCILl7okZXFtX
+        wJei7teRg/WszU0Zl6lmBy08GyF5et392b3TDdF0dw==
+X-Google-Smtp-Source: AAOMgpeqbmQU5hecpYcGAZHJM22aZzAZXdZ7hL5t1dgMGHbucXapdFaM7gYyV+ocQbx9+qhbDWWQ/oM3HOtLdugkEF8=
+X-Received: by 2002:ac8:34d3:: with SMTP id x19-v6mr8460592qtb.81.1531993203187;
+ Thu, 19 Jul 2018 02:40:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717205712.29495-18-toddpoynor@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180718193200.17944-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20180718193200.17944-1-srinivas.pandruvada@linux.intel.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 19 Jul 2018 11:39:51 +0200
+Message-ID: <CAO-hwJJ=hsdu7AapAaWbB-JQUk9+24Lcx6i31bF5xaVwXdNQpQ@mail.gmail.com>
+Subject: Re: [PATCH v2] HID: intel-ish-hid: Prevent loading of driver on Mehlow
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 01:56:57PM -0700, Todd Poynor wrote:
-> From: Todd Poynor <toddpoynor@google.com>
-> 
-> For sparse checking.
-
-Close, but you can do better :)
-
-> 
-> Reported-by: Dmitry Torokhov <dtor@chromium.org>
-> Signed-off-by: Zhongze Hu <frankhu@chromium.org>
-> Signed-off-by: Todd Poynor <toddpoynor@google.com>
-> Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+On Wed, Jul 18, 2018 at 9:32 PM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> On Mehlow Xeon-E workstation, ISH PCI device is enabled but without ISH
+> firmware. Here the ISH device PCI device id was reused for some non Linux
+> storage drivers. So this was not done for enabling ISH. But this has a
+> undesirable side effect for Linux.
+>
+> Here the ISH driver will be loaded via PCI enumeration and will try to do
+> reset sequence. But reset sequence will wait till timeout as there is no
+> real ISH firmware is present to take action. This delay will add to boot
+> time of Linux (This platform will still continue to boot after this
+> timeout).
+>
+> To avoid this boot delay we need to prevent loading of ISH drivers on
+> this platform. So we need to have hack to avoid treating this device as
+> ISH on this platform. To identify this workstation, we need some runtime
+> method. Luckily there are special PCI id on this workstation to
+> distinguish from the client version of this platform. On client version,
+> the ISH is supported using same PCI device id. So this change look for
+> the presence of PCI device IDs A309 and A30A and exit.
+>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 > ---
->  drivers/staging/gasket/apex_driver.c  | 11 ++--
->  drivers/staging/gasket/gasket_core.c  |  6 ++-
->  drivers/staging/gasket/gasket_core.h  |  4 +-
->  drivers/staging/gasket/gasket_ioctl.c | 72 ++++++++++++++-------------
->  drivers/staging/gasket/gasket_ioctl.h |  4 +-
->  5 files changed, 52 insertions(+), 45 deletions(-)
-> 
-> diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-> index 612b3ab803196..c91c5aff5ab9c 100644
-> --- a/drivers/staging/gasket/apex_driver.c
-> +++ b/drivers/staging/gasket/apex_driver.c
-> @@ -5,6 +5,7 @@
->   * Copyright (C) 2018 Google, Inc.
->   */
->  
-> +#include <linux/compiler.h>
->  #include <linux/delay.h>
->  #include <linux/fs.h>
->  #include <linux/init.h>
-> @@ -142,9 +143,9 @@ static int apex_get_status(struct gasket_dev *gasket_dev);
->  
->  static uint apex_ioctl_check_permissions(struct file *file, uint cmd);
->  
-> -static long apex_ioctl(struct file *file, uint cmd, ulong arg);
-> +static long apex_ioctl(struct file *file, uint cmd, void __user *arg);
-> 
-> -static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg);
-> +static long apex_clock_gating(struct gasket_dev *gasket_dev, void __user *arg);
+> v2
+>  Replaced pci_get_device with pci_dev_present to check in a loop as
+> suggested by Benjamin.
 
-Make this a __user pointer to the correct struct type you are handling
-here.  You know what the type is, use it.
+That's even better than what I suggested :)
 
->  static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type);
->  
-> @@ -635,7 +636,7 @@ static uint apex_ioctl_check_permissions(struct file *filp, uint cmd)
->  /*
->   * Apex-specific ioctl handler.
->   */
-> -static long apex_ioctl(struct file *filp, uint cmd, ulong arg)
-> +static long apex_ioctl(struct file *filp, uint cmd, void __user *arg)
->  {
->  	struct gasket_dev *gasket_dev = filp->private_data;
->  
-> @@ -655,7 +656,7 @@ static long apex_ioctl(struct file *filp, uint cmd, ulong arg)
->   * @gasket_dev: Gasket device pointer.
->   * @arg: User ioctl arg, in this case to a apex_gate_clock_ioctl struct.
->   */
-> -static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg)
-> +static long apex_clock_gating(struct gasket_dev *gasket_dev, void __user *arg)
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-As above, this should be a different type.
+Cheers,
+Benjamin
 
->  {
->  	struct apex_gate_clock_ioctl ibuf;
->  
-> @@ -663,7 +664,7 @@ static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg)
->  		return 0;
->  
->  	if (allow_sw_clock_gating) {
-> -		if (copy_from_user(&ibuf, (void __user *)arg, sizeof(ibuf)))
-> +		if (copy_from_user(&ibuf, arg, sizeof(ibuf)))
->  			return -EFAULT;
->  
->  		gasket_log_error(
-> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-> index 947b4fcc76970..ff34af42bbe7c 100644
-> --- a/drivers/staging/gasket/gasket_core.c
-> +++ b/drivers/staging/gasket/gasket_core.c
-> @@ -14,6 +14,7 @@
->  #include "gasket_page_table.h"
->  #include "gasket_sysfs.h"
->  
-> +#include <linux/compiler.h>
->  #include <linux/delay.h>
->  #include <linux/fs.h>
->  #include <linux/init.h>
-> @@ -1823,14 +1824,15 @@ static long gasket_ioctl(struct file *filp, uint cmd, ulong arg)
->  		 * check_and_invoke_callback.
->  		 */
->  		if (driver_desc->ioctl_handler_cb)
-> -			return driver_desc->ioctl_handler_cb(filp, cmd, arg);
-> +			return driver_desc->ioctl_handler_cb(
-> +			    filp, cmd, (void __user *)arg);
-
-You can use a temp variable and then only have to cast things once then,
-instead of twice, if you care.  Not a big deal.
-
->  
->  		gasket_log_error(
->  			gasket_dev, "Received unknown ioctl 0x%x", cmd);
-
-This is a fun way to cause a DoS on your system, you should fix this up
-in later changes.
-
->  		return -EINVAL;
->  	}
->  
-> -	return gasket_handle_ioctl(filp, cmd, arg);
-> +	return gasket_handle_ioctl(filp, cmd, (void __user *)arg);
+>
+>  drivers/hid/intel-ish-hid/ipc/pci-ish.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/hid/intel-ish-hid/ipc/pci-ish.c b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
+> index a2c53ea3b5ed..4a55eab39b88 100644
+> --- a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
+> +++ b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
+> @@ -95,6 +95,13 @@ static int ish_init(struct ishtp_device *dev)
+>         return 0;
 >  }
->  
->  int gasket_reset(struct gasket_dev *gasket_dev, uint reset_type)
-> diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
-> index 50ad0c8853183..68b4d2ac9fd6c 100644
-> --- a/drivers/staging/gasket/gasket_core.h
-> +++ b/drivers/staging/gasket/gasket_core.h
-> @@ -315,7 +315,7 @@ struct gasket_dev {
->  
->  /* Type of the ioctl permissions check callback. See below. */
->  typedef int (*gasket_ioctl_permissions_cb_t)(
-> -	struct file *filp, uint cmd, ulong arg);
-> +	struct file *filp, uint cmd, void __user *arg);
->  
->  /*
->   * Device type descriptor.
-> @@ -549,7 +549,7 @@ struct gasket_driver_desc {
->  	 * return -EINVAL. Should return an error status (either -EINVAL or
->  	 * the error result of the ioctl being handled).
->  	 */
-> -	long (*ioctl_handler_cb)(struct file *filp, uint cmd, ulong arg);
-> +	long (*ioctl_handler_cb)(struct file *filp, uint cmd, void __user *arg);
-
-Why are you not using the typedef above?
-
->  
->  	/*
->  	 * device_status_cb: Callback to determine device health.
-> diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
-> index d0fa05b8bf1d3..ab2376c32c00b 100644
-> --- a/drivers/staging/gasket/gasket_ioctl.c
-> +++ b/drivers/staging/gasket/gasket_ioctl.c
-> @@ -7,6 +7,7 @@
->  #include "gasket_interrupt.h"
->  #include "gasket_logging.h"
->  #include "gasket_page_table.h"
-> +#include <linux/compiler.h>
->  #include <linux/fs.h>
->  #include <linux/uaccess.h>
->  
-> @@ -23,17 +24,18 @@
->  #endif
->  
->  static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd);
-> -static int gasket_set_event_fd(struct gasket_dev *dev, ulong arg);
-> +static int gasket_set_event_fd(struct gasket_dev *dev, void __user *arg);
->  static int gasket_read_page_table_size(
-> -	struct gasket_dev *gasket_dev, ulong arg);
-> +	struct gasket_dev *gasket_dev, void __user *arg);
->  static int gasket_read_simple_page_table_size(
-> -	struct gasket_dev *gasket_dev, ulong arg);
-> +	struct gasket_dev *gasket_dev, void __user *arg);
->  static int gasket_partition_page_table(
-> -	struct gasket_dev *gasket_dev, ulong arg);
-> -static int gasket_map_buffers(struct gasket_dev *gasket_dev, ulong arg);
-> -static int gasket_unmap_buffers(struct gasket_dev *gasket_dev, ulong arg);
-> +	struct gasket_dev *gasket_dev, void __user *arg);
-> +static int gasket_map_buffers(struct gasket_dev *gasket_dev, void __user *arg);
-> +static int gasket_unmap_buffers(struct gasket_dev *gasket_dev,
-> +				void __user *arg);
->  static int gasket_config_coherent_allocator(
-> -	struct gasket_dev *gasket_dev, ulong arg);
-> +	struct gasket_dev *gasket_dev, void __user *arg);
-
-
-For most of these you know the real type, please just use it.
-
->  /*
->   * standard ioctl dispatch function.
-> @@ -43,9 +45,10 @@ static int gasket_config_coherent_allocator(
->   *
->   * Standard ioctl dispatcher; forwards operations to individual handlers.
->   */
-> -long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
-> +long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *arg)
->  {
->  	struct gasket_dev *gasket_dev;
-> +	ulong intarg = (ulong)arg;
-
-Ick, really?  That's a horrible name for a variable, especially as it
-doesn't describe what it is...
-
-and "unsigned long" please, ulong is not a "real" kernel type.
-
->  	int retval;
->  
->  	gasket_dev = (struct gasket_dev *)filp->private_data;
-> @@ -74,16 +77,16 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
->  	 */
->  	switch (cmd) {
->  	case GASKET_IOCTL_RESET:
-> -		trace_gasket_ioctl_integer_data(arg);
-> -		retval = gasket_reset(gasket_dev, arg);
-> +		trace_gasket_ioctl_integer_data(intarg);
-> +		retval = gasket_reset(gasket_dev, intarg);
->  		break;
->  	case GASKET_IOCTL_SET_EVENTFD:
->  		retval = gasket_set_event_fd(gasket_dev, arg);
->  		break;
->  	case GASKET_IOCTL_CLEAR_EVENTFD:
-> -		trace_gasket_ioctl_integer_data(arg);
-> +		trace_gasket_ioctl_integer_data(intarg);
->  		retval = gasket_interrupt_clear_eventfd(
-> -			gasket_dev->interrupt_data, (int)arg);
-> +			gasket_dev->interrupt_data, (int)intarg);
-
-See, look at that cast, why would you ever think to cast a variabled
-with "int" in the name of it, to an int?  Naming is hard :(
-
-
->  		break;
->  	case GASKET_IOCTL_PARTITION_PAGE_TABLE:
->  		trace_gasket_ioctl_integer_data(arg);
-> @@ -91,7 +94,7 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
->  		break;
->  	case GASKET_IOCTL_NUMBER_PAGE_TABLES:
->  		trace_gasket_ioctl_integer_data(gasket_dev->num_page_tables);
-> -		if (copy_to_user((void __user *)arg,
-> +		if (copy_to_user(arg,
->  				 &gasket_dev->num_page_tables,
-
-Nit, you can move this line up one now.
-
-I'll stop now, you get the idea.  This should be broken up a lot.
-
-thanks,
-
-greg k-h
+>
+> +static const struct pci_device_id ish_invalid_pci_ids[] = {
+> +       /* Mehlow platform special pci ids */
+> +       {PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xA309)},
+> +       {PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xA30A)},
+> +       {}
+> +};
+> +
+>  /**
+>   * ish_probe() - PCI driver probe callback
+>   * @pdev:      pci device
+> @@ -110,6 +117,10 @@ static int ish_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>         struct ish_hw *hw;
+>         int     ret;
+>
+> +       /* Check for invalid platforms for ISH support */
+> +       if (pci_dev_present(ish_invalid_pci_ids))
+> +               return -ENODEV;
+> +
+>         /* enable pci dev */
+>         ret = pci_enable_device(pdev);
+>         if (ret) {
+> --
+> 2.17.1
+>
