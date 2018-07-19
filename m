@@ -5,74 +5,140 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDDAECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45682C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EB4220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:26:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EB4220854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id F1F0020671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:28:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F0020671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731269AbeGSHHl (ORCPT
+        id S1729807AbeGSHKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 03:07:41 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:60210 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbeGSHHl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 03:07:41 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fg2NT-0001oZ-Dc; Thu, 19 Jul 2018 08:25:27 +0200
-Date:   Thu, 19 Jul 2018 08:25:26 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dou Liyang <douly.fnst@cn.fujitsu.com>
-cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, peterz@infradead.org,
-        prarit@redhat.com, feng.tang@intel.com, pmladek@suse.com,
-        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com
-Subject: Re: [PATCH v14 20/25] x86/tsc: calibrate tsc only once
-In-Reply-To: <4f0933a3-27b4-5468-83f5-af9b90842812@cn.fujitsu.com>
-Message-ID: <alpine.DEB.2.21.1807190818110.1689@nanos.tec.linutronix.de>
-References: <20180718022211.6259-1-pasha.tatashin@oracle.com> <20180718022211.6259-21-pasha.tatashin@oracle.com> <4f0933a3-27b4-5468-83f5-af9b90842812@cn.fujitsu.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 19 Jul 2018 03:10:10 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51404 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726931AbeGSHKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 03:10:09 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D5D0120766; Thu, 19 Jul 2018 08:28:37 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7F0DB206F3;
+        Thu, 19 Jul 2018 08:28:36 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 08:28:34 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Subject: Re: [RFC PATCH 5/8] mtd: rawnand: ams-delta: Request data port GPIO
+ resource
+Message-ID: <20180719082834.32827212@bbrezillon>
+In-Reply-To: <20180718235710.18242-6-jmkrzyszt@gmail.com>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
+        <20180718235710.18242-6-jmkrzyszt@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018, Dou Liyang wrote:
-> At 07/18/2018 10:22 AM, Pavel Tatashin wrote:
-> > +		(unsigned long)cpu_khz % KHZ);
-> >     	if (cpu_khz != tsc_khz) {
-> >   		pr_info("Detected %lu.%03lu MHz TSC",
-> > -			(unsigned long)tsc_khz / 1000,
-> > -			(unsigned long)tsc_khz % 1000);
-> > +			(unsigned long)tsc_khz / KHZ,
-> > +			(unsigned long)tsc_khz % KHZ);
-> > +	}
+On Thu, 19 Jul 2018 01:57:07 +0200
+Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+
+> Data port used by the driver is actually an OMAP MPUIO device, already
+> under control of gpio-omap driver.  For that reason we used to not
+> request the memory region of the port as that would fail because the
+> region is already busy.  Despite that, we are still accessing the port
+> by just ioremapping it and performing read/write operations.  Moreover,
+> we are doing that without any proteciton from other users legally
+> manipulating the port pins over GPIO API.
 > 
-> this curly brackets can be removed
+> The plan is to convert the driver to access the port over functions
+> exposed by the gpio-omap driver.  Before that happens, we can already
+> obtain exclusive access to the port by requesting an array of its GPIO
+> descriptors.  For that to work on Amstrad Delta, respective GPIO lookup
+> table entries are added to the board init file.
+> 
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> ---
+>  arch/arm/mach-omap1/board-ams-delta.c | 11 ++++++++++-
+>  drivers/mtd/nand/raw/ams-delta.c      |  8 ++++++++
 
-No. They want to stay, really.
+Can we split that in 2 patches: one adding data entries to the lookup
+table, and another one patching the driver to request the gpiod array.
 
-    https://lkml.kernel.org/r/alpine.DEB.2.20.1701171956290.3645@nanos
+>  2 files changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+> index eedacdfe9725..16f7bbe47607 100644
+> --- a/arch/arm/mach-omap1/board-ams-delta.c
+> +++ b/arch/arm/mach-omap1/board-ams-delta.c
+> @@ -337,7 +337,8 @@ static struct platform_device ams_delta_nand_device = {
+>  	.resource	= ams_delta_nand_resources,
+>  };
+>  
+> -#define OMAP_GPIO_LABEL	"gpio-0-15"
+> +#define OMAP_GPIO_LABEL		"gpio-0-15"
+> +#define OMAP_MPUIO_LABEL	"mpuio"
+>  
+>  static struct gpiod_lookup_table ams_delta_nand_gpio_table = {
+>  	.table = {
+> @@ -349,6 +350,14 @@ static struct gpiod_lookup_table ams_delta_nand_gpio_table = {
+>  		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_NWE, "nwe", 0),
+>  		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_ALE, "ale", 0),
+>  		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_CLE, "cle", 0),
+> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 0, "data", 0, 0),
+> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 1, "data", 1, 0),
+> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 2, "data", 2, 0),
+> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 3, "data", 3, 0),
+> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 4, "data", 4, 0),
+> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 5, "data", 5, 0),
+> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 6, "data", 6, 0),
+> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 7, "data", 7, 0),
+>  		{ },
+>  	},
+>  };
+> diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+> index d7e4c9dbef67..ad62c0245458 100644
+> --- a/drivers/mtd/nand/raw/ams-delta.c
+> +++ b/drivers/mtd/nand/raw/ams-delta.c
+> @@ -189,6 +189,7 @@ static int ams_delta_init(struct platform_device *pdev)
+>  	struct mtd_info *mtd;
+>  	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	void __iomem *io_base;
+> +	struct gpio_descs *data_gpiods;
+>  	int err = 0;
+>  
+>  	if (!res)
+> @@ -289,6 +290,13 @@ static int ams_delta_init(struct platform_device *pdev)
+>  		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
+>  		goto out_mtd;
+>  	}
+> +	/* Request array of data pins, initialize them as output and set low */
+> +	data_gpiods = devm_gpiod_get_array(&pdev->dev, "data", GPIOD_OUT_LOW);
+> +	if (IS_ERR(data_gpiods)) {
+> +		err = PTR_ERR(data_gpiods);
+> +		dev_err(&pdev->dev, "data GPIO request failed: %d\n", err);
+> +		goto out_mtd;
+> +	}
+>  
+>  	/* Scan to find existence of the device */
+>  	err = nand_scan(mtd, 1);
 
-The pr_info() is a multiline statement due to the line breaks.
-
-Thanks,
-
-	tglx
