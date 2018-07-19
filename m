@@ -2,97 +2,105 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAEEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D93C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:25:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C8E20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C126620684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:25:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="F7Jxu/VO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C8E20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIx7horZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C126620684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731824AbeGSOI0 (ORCPT
+        id S1731835AbeGSOIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:08:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46720 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731595AbeGSOI0 (ORCPT
+        Thu, 19 Jul 2018 10:08:37 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35424 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731587AbeGSOIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:08:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7bLfIv1sJgapZFHwlAUg57gjgu5+MH5l7pE/lELuBZg=; b=F7Jxu/VO91ZVE+kgnR+8euzcT
-        e1HrtFVNf6K2OrxyGNR+YfyYkKRF/iNIZmRLbG8J9R0kEooA8pDM/6CXNvEKUMGaHPultS3A0ltg7
-        kVvQq6sglLP2BJu4l/hA95pESwhzr6hETRhrgTv4kgg7MGOacR307ujj6ngwstD1GHZPg=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fg8vh-0006zg-60; Thu, 19 Jul 2018 13:25:13 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fg8vg-0007Jm-Cn; Thu, 19 Jul 2018 14:25:12 +0100
-Date:   Thu, 19 Jul 2018 14:25:12 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Lars-Peter Clausen <lars@metafoo.de>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [DISCUSSION] spi multi chipselect support
-Message-ID: <20180719132512.GA27938@sirena.org.uk>
-References: <20180718163530.zsa5md3huz3dnotb@earth.universe>
- <c497b0e2-c663-fa29-dabc-6dd5ca26e0a4@metafoo.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
-Content-Disposition: inline
-In-Reply-To: <c497b0e2-c663-fa29-dabc-6dd5ca26e0a4@metafoo.de>
-X-Cookie: I'm having an emotional outburst!!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 19 Jul 2018 10:08:37 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p10-v6so7482449ljg.2;
+        Thu, 19 Jul 2018 06:25:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xHxrh6ocbuK0A9VCmu0L0DMXQrYzN5Yuo2qXyBA7P58=;
+        b=KIx7horZxdyujZS+Q4FSpIXPJWPMq8Z5LG24q8CRuVtOtmuYRY6ta954hHDiNasphi
+         KtEweUmdFudTg5Lgl0XGBry8543+Ly0buDkGfdWYBIvbuuqC2nuUxekl89q99uWJU1Cc
+         D3yEw0BBYjHLIj2+nnqGfcuchQNfjuv+SEMh2U10g8tH7eYHYs/42pf1WadqkrQ2I12M
+         JPm4mVn6iUfgwSrgOzroFKwgEwO2nxai8SR6qvQfVrA7rvAA/xefjK0pnBylk3P7qLaL
+         Je7dvosEOxQ2TQrRf0h/7WMyqD65haEGmV/d8d5iHEHI09JKY1k+ycPVNn0Zrcgs2JVP
+         DO3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xHxrh6ocbuK0A9VCmu0L0DMXQrYzN5Yuo2qXyBA7P58=;
+        b=L0Gr9sK6T/LW0HeOtFE6jDhnZbl2ZOu5A1e0jPD0BKU/yrQZm6RMpD8P+dpzV+hrBa
+         o89XIxCEeVdXOeSNWWKRqO3XTpwOmVscq8c5qkY/KnObMkAYNkBXYId3xbQT26AmBt4G
+         D6MD8dHbiJlONotvAPHYZMT9fBpY0S/D9RlgDMB4PEkZR086kWOr/HBo+kPmYPxGCvTU
+         NNQgtzerCwizcsQqKo3aWjdMs9Bcmp0Wm//0M9Dz7h2AkoFFHD7ofJYKGFhWJK3PYCyF
+         QDr/J0dZ/bJej7Te9qMD108gJ79Vg3jkP4JV4v9JbkAZefzbZiQwYvF72nLI6ebYqVaL
+         cnrQ==
+X-Gm-Message-State: AOUpUlEe3N/lutKuL9SJfyvdQClmI8bIUj6utyBaBltUYKrT1jIG7/Ym
+        u9ik4BK/WhIIVSG7fmPgDrw=
+X-Google-Smtp-Source: AAOMgpfF5Jrh9pVoA2L4bffB2jrusMdmz/WluSZLeEXTLQKXLrL2P+EW1MU3QlYVZrS+ya45YMZxtQ==
+X-Received: by 2002:a19:b2c7:: with SMTP id t68-v6mr6420826lfk.132.1532006726107;
+        Thu, 19 Jul 2018 06:25:26 -0700 (PDT)
+Received: from localhost.localdomain ([109.252.91.91])
+        by smtp.gmail.com with ESMTPSA id 93-v6sm960114lfy.64.2018.07.19.06.25.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 06:25:25 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] memory: tegra: Don't invoke Tegra30+ specific memory timing setup on Tegra20
+Date:   Thu, 19 Jul 2018 16:24:53 +0300
+Message-Id: <20180719132453.16860-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
+timings for RAM code 0 registered" warning message during of kernels
+boot-up on Tegra20.
 
---liOOAslEiF7prFVr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/memory/tegra/mc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-On Wed, Jul 18, 2018 at 07:19:19PM +0200, Lars-Peter Clausen wrote:
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index bd25faf6d13d..e56862495f36 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -664,12 +664,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		isr = tegra_mc_irq;
+-	}
+ 
+-	err = tegra_mc_setup_timings(mc);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to setup timings: %d\n", err);
+-		return err;
++		err = tegra_mc_setup_timings(mc);
++		if (err < 0) {
++			dev_err(&pdev->dev, "failed to setup timings: %d\n",
++				err);
++			return err;
++		}
+ 	}
+ 
+ 	mc->irq = platform_get_irq(pdev, 0);
+-- 
+2.18.0
 
-> My preferred solution would to have something like
-> i2c_new_secondary_device(), but for SPI. This way the driver that binds to
-> the compatible string can allocate devices for additional chip selects as
-> necessary. Also make use of the reg-names property the same way as in I2C.
-
-Yes, that's at least the most consistent way forwards if nothing else.
-I don't really have any more appealing ideas anyway.
-
---liOOAslEiF7prFVr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltQkTUACgkQJNaLcl1U
-h9BUkAf/YnEw9f7VUM63wKafD/gmY55xm7M0gWEZi4Mm18LD1AfLpyNVO3YWB1Vq
-G+GPeacLi0g6Mb1Vu7kkAV67Ox3IjATYxADuxhGksQvSTszyCV8v0DY2nTlozSb+
-Z20YGSnh8zjFCPENA3tBAsj56HghEumfXlWmFL06/XNpmxcG7UrVMtkLmeglavNf
-GZh+sNKlC363Obm8eOWVkXLuSB+JeHHexyN6q40tvT1BrFbDkYktGNJJ93F7cM07
-nq5uluV/EhPnJCcSo0zoqj3gtwpDGfJpYEe9b4t63qoMaB6wAhG+dR3mYmm2fZd8
-IONpmBEc0tP8PQHrh9jTQwy59lRDAQ==
-=YmQv
------END PGP SIGNATURE-----
-
---liOOAslEiF7prFVr--
