@@ -6,337 +6,210 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD17C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D78AEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AAAF20693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:51:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AAAF20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 98A8F20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:51:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98A8F20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731599AbeGSJdb (ORCPT
+        id S1731412AbeGSJdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 05:33:31 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:63265 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbeGSJdb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 05:33:31 -0400
+        Thu, 19 Jul 2018 05:33:53 -0400
+Received: from mga17.intel.com ([192.55.52.151]:2621 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727975AbeGSJdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 05:33:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 01:51:46 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,374,1526367600"; 
-   d="scan'208";a="14347209"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Jul 2018 01:51:24 -0700
-Received: from ibiza.rfo.atmel.com (10.10.76.4) by chn-sv-exch03.mchp-main.com
- (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Thu, 19 Jul 2018
- 01:51:22 -0700
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     <linux-serial@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <gregkh@linuxfoundation.org>, <jslaby@suse.com>, <arnd@arndb.de>,
-        <richard.genoud@gmail.com>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [PATCH v2 2/2] tty/serial: atmel: add ISO7816 support
-Date:   Thu, 19 Jul 2018 10:47:37 +0200
-Message-ID: <20180719084737.1490-3-ludovic.desroches@microchip.com>
-X-Mailer: git-send-email 2.12.2
-In-Reply-To: <20180719084737.1490-1-ludovic.desroches@microchip.com>
-References: <20180719084737.1490-1-ludovic.desroches@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+   d="scan'208";a="65829590"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by FMSMGA003.fm.intel.com with ESMTP; 19 Jul 2018 01:51:25 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 8F9D436B; Thu, 19 Jul 2018 11:51:32 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Coly Li <colyli@suse.de>
+Subject: [PATCH v1] lib: Remove 'default n' in Kconfig for tests
+Date:   Thu, 19 Jul 2018 11:51:31 +0300
+Message-Id: <20180719085131.79541-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+It seems contributors follow the style of Kconfig entries where explicit
+'default n' is present. The default 'default' is 'n' already, thus, drop
+these lines from Kconfig to make it more clear.
 
-When mode is set in atmel_config_iso7816() we backup last RS232 mode
-for coming back to this mode if requested.
-Also allow setup of T=0 and T=1 parameter and basic support in set_termios
-function as well.
-Report NACK and ITER errors in irq handler.
-
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: Coly Li <colyli@suse.de>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/tty/serial/atmel_serial.c | 170 +++++++++++++++++++++++++++++++++++---
- drivers/tty/serial/atmel_serial.h |   3 +-
- 2 files changed, 162 insertions(+), 11 deletions(-)
+ lib/Kconfig       |  1 -
+ lib/Kconfig.debug | 17 -----------------
+ 2 files changed, 18 deletions(-)
 
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 8e4428725848..cec958f1e7d4 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -34,6 +34,7 @@
- #include <linux/suspend.h>
- #include <linux/mm.h>
+diff --git a/lib/Kconfig b/lib/Kconfig
+index 031655d26dce..40bfa6ccd294 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -231,7 +231,6 @@ config AUDIT_COMPAT_GENERIC
  
-+#include <asm/div64.h>
- #include <asm/io.h>
- #include <asm/ioctls.h>
+ config RANDOM32_SELFTEST
+ 	bool "PRNG perform self test on init"
+-	default n
+ 	help
+ 	  This option enables the 32 bit PRNG library functions to perform a
+ 	  self test on initialization.
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index c731ff97500c..244c08055d8e 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1225,7 +1225,6 @@ config LOCK_TORTURE_TEST
+ 	tristate "torture tests for locking"
+ 	depends on DEBUG_KERNEL
+ 	select TORTURE_TEST
+-	default n
+ 	help
+ 	  This option provides a kernel module that runs torture tests
+ 	  on kernel locking primitives.  The kernel module may be built
+@@ -1692,7 +1691,6 @@ config LKDTM
+ 	tristate "Linux Kernel Dump Test Tool Module"
+ 	depends on DEBUG_FS
+ 	depends on BLOCK
+-	default n
+ 	help
+ 	This module enables testing of the different dumping mechanisms by
+ 	inducing system failures at predefined crash points.
+@@ -1726,7 +1724,6 @@ config KPROBES_SANITY_TEST
+ 	bool "Kprobes sanity tests"
+ 	depends on DEBUG_KERNEL
+ 	depends on KPROBES
+-	default n
+ 	help
+ 	  This option provides for testing basic kprobes functionality on
+ 	  boot. Samples of kprobe and kretprobe are inserted and
+@@ -1737,7 +1734,6 @@ config KPROBES_SANITY_TEST
+ config BACKTRACE_SELF_TEST
+ 	tristate "Self test for the backtrace code"
+ 	depends on DEBUG_KERNEL
+-	default n
+ 	help
+ 	  This option provides a kernel module that can be used to test
+ 	  the kernel stack backtrace code. This option is not useful
+@@ -1807,7 +1803,6 @@ config TEST_PRINTF
  
-@@ -147,6 +148,8 @@ struct atmel_uart_port {
- 	struct circ_buf		rx_ring;
+ config TEST_BITMAP
+ 	tristate "Test bitmap_*() family of functions at runtime"
+-	default n
+ 	help
+ 	  Enable this option to test the bitmap functions at boot.
  
- 	struct mctrl_gpios	*gpios;
-+	u32			backup_mode;	/* MR saved during iso7816 operations */
-+	u32			backup_brgr;	/* BRGR saved during iso7816 operations */
- 	unsigned int		tx_done_mask;
- 	u32			fifo_size;
- 	u32			rts_high;
-@@ -362,6 +365,132 @@ static int atmel_config_rs485(struct uart_port *port,
- 	return 0;
- }
+@@ -1831,7 +1826,6 @@ config TEST_OVERFLOW
  
-+static unsigned int atmel_calc_cd(struct uart_port *port,
-+				  struct serial_iso7816 *iso7816conf)
-+{
-+	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	unsigned int cd;
-+	u64 mck_rate;
-+
-+	mck_rate = (u64)clk_get_rate(atmel_port->clk);
-+	do_div(mck_rate, iso7816conf->clk);
-+	cd = mck_rate;
-+	return cd;
-+}
-+
-+static unsigned int atmel_calc_fidi(struct uart_port *port,
-+				    struct serial_iso7816 *iso7816conf)
-+{
-+	u64 fidi = 0;
-+
-+	if (iso7816conf->sc_fi && iso7816conf->sc_di) {
-+		fidi = (u64)iso7816conf->sc_fi;
-+		do_div(fidi, iso7816conf->sc_di);
-+	}
-+	return (u32)fidi;
-+}
-+
-+/* Enable or disable the iso7816 support */
-+/* Called with interrupts disabled */
-+static int atmel_config_iso7816(struct uart_port *port,
-+				struct serial_iso7816 *iso7816conf)
-+{
-+	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	unsigned int mode, t;
-+	unsigned int cd, fidi;
-+	int ret = 0;
-+
-+	/* Disable RX and TX */
-+	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RXDIS | ATMEL_US_TXDIS);
-+	/* Disable interrupts */
-+	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
-+
-+	mode = atmel_uart_readl(port, ATMEL_US_MR);
-+
-+	if (iso7816conf->flags & SER_ISO7816_ENABLED) {
-+		mode &= ~ATMEL_US_USMODE;
-+
-+		if ((iso7816conf->flags & SER_ISO7816_T_PARAM)
-+					== SER_ISO7816_T(0)) {
-+			mode |= ATMEL_US_USMODE_ISO7816_T0;
-+			t = 0;
-+		} else if ((iso7816conf->flags & SER_ISO7816_T_PARAM)
-+					== SER_ISO7816_T(1)) {
-+			mode |= ATMEL_US_USMODE_ISO7816_T1;
-+			t = 1;
-+		} else {
-+			dev_warn(port->dev, "ISO7816 Type not supported. Resetting\n");
-+			memset(iso7816conf, 0, sizeof(struct serial_iso7816));
-+			goto err_out;
-+		}
-+
-+		dev_dbg(port->dev, "Setting USART to ISO7816 mode T%d\n", t);
-+
-+		mode &= ~(ATMEL_US_USCLKS | ATMEL_US_CHRL
-+			| ATMEL_US_NBSTOP | ATMEL_US_PAR);
-+
-+		/* NACK configuration */
-+		if ((iso7816conf->flags & SER_ISO7816_T_PARAM)
-+					== SER_ISO7816_T(0))
-+			mode |= ATMEL_US_DSNACK;
-+		else
-+			mode |= ATMEL_US_INACK;
-+		/* select mck clock, and output  */
-+		mode |= ATMEL_US_USCLKS_MCK | ATMEL_US_CLKO;
-+		/* set parity for normal/inverse mode + max iterations */
-+		mode |= ATMEL_US_PAR_EVEN | ATMEL_US_NBSTOP_1 | (3 << 24);
-+
-+		cd = atmel_calc_cd(port, iso7816conf);
-+		fidi = atmel_calc_fidi(port, iso7816conf);
-+		if (fidi < 0) {
-+			dev_warn(port->dev, "ISO7816 fidi = 0, Generator generates no signal\n");
-+		} else if (fidi == 1 || fidi == 2) {
-+			dev_err(port->dev, "ISO7816 fidi = %u, value not supported\n", fidi);
-+			ret = -EINVAL;
-+			goto err_out;
-+		}
-+
-+		if (!(port->iso7816.flags & SER_ISO7816_ENABLED)) {
-+			/* port not yet in iso7816 mode: store configuration */
-+			atmel_port->backup_mode = atmel_uart_readl(port, ATMEL_US_MR);
-+			atmel_port->backup_brgr = atmel_uart_readl(port, ATMEL_US_BRGR);
-+		}
-+
-+		/* Actually set ISO7816 mode */
-+		atmel_uart_writel(port, ATMEL_US_TTGR, iso7816conf->tg);
-+		atmel_uart_writel(port, ATMEL_US_BRGR, cd);
-+		atmel_uart_writel(port, ATMEL_US_FIDIR, fidi);
-+
-+		atmel_port->tx_done_mask = ATMEL_US_TXEMPTY | ATMEL_US_NACK | ATMEL_US_ITERATION;
-+	} else {
-+		dev_dbg(port->dev, "Setting UART to RS232\n");
-+		/* back to last RS232 settings */
-+		mode = atmel_port->backup_mode;
-+		memset(iso7816conf, 0, sizeof(struct serial_iso7816));
-+		atmel_uart_writel(port, ATMEL_US_TTGR, 0);
-+		atmel_uart_writel(port, ATMEL_US_BRGR, atmel_port->backup_brgr);
-+		atmel_uart_writel(port, ATMEL_US_FIDIR, 0x174);
-+
-+		if (atmel_use_pdc_tx(port))
-+			atmel_port->tx_done_mask = ATMEL_US_ENDTX |
-+						   ATMEL_US_TXBUFE;
-+		else
-+			atmel_port->tx_done_mask = ATMEL_US_TXRDY;
-+	}
-+
-+	port->iso7816 = *iso7816conf;
-+
-+	atmel_uart_writel(port, ATMEL_US_MR, mode);
-+
-+err_out:
-+	/* Enable interrupts */
-+	atmel_uart_writel(port, ATMEL_US_IER, atmel_port->tx_done_mask);
-+	/* Enable RX and TX */
-+	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RXEN | ATMEL_US_TXEN);
-+
-+	return ret;
-+}
-+
- /*
-  * Return TIOCSER_TEMT when transmitter FIFO and Shift register is empty.
-  */
-@@ -481,8 +610,9 @@ static void atmel_stop_tx(struct uart_port *port)
- 	/* Disable interrupts */
- 	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
+ config TEST_RHASHTABLE
+ 	tristate "Perform selftest on resizable hash table"
+-	default n
+ 	help
+ 	  Enable this option to test the rhashtable functions at boot.
  
--	if ((port->rs485.flags & SER_RS485_ENABLED) &&
--	    !(port->rs485.flags & SER_RS485_RX_DURING_TX))
-+	if (((port->rs485.flags & SER_RS485_ENABLED) &&
-+	     !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
-+	    port->iso7816.flags & SER_ISO7816_ENABLED)
- 		atmel_start_rx(port);
- }
+@@ -1839,7 +1833,6 @@ config TEST_RHASHTABLE
  
-@@ -500,8 +630,9 @@ static void atmel_start_tx(struct uart_port *port)
- 		return;
+ config TEST_HASH
+ 	tristate "Perform selftest on hash functions"
+-	default n
+ 	help
+ 	  Enable this option to test the kernel's integer (<linux/hash.h>),
+ 	  string (<linux/stringhash.h>), and siphash (<linux/siphash.h>)
+@@ -1853,7 +1846,6 @@ config TEST_IDA
  
- 	if (atmel_use_pdc_tx(port) || atmel_use_dma_tx(port))
--		if ((port->rs485.flags & SER_RS485_ENABLED) &&
--		    !(port->rs485.flags & SER_RS485_RX_DURING_TX))
-+		if (((port->rs485.flags & SER_RS485_ENABLED) &&
-+		     !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
-+		    port->iso7816.flags & SER_ISO7816_ENABLED)
- 			atmel_stop_rx(port);
+ config TEST_PARMAN
+ 	tristate "Perform selftest on priority array manager"
+-	default n
+ 	depends on PARMAN
+ 	help
+ 	  Enable this option to test priority array manager on boot
+@@ -1863,7 +1855,6 @@ config TEST_PARMAN
  
- 	if (atmel_use_pdc_tx(port))
-@@ -799,8 +930,9 @@ static void atmel_complete_tx_dma(void *arg)
- 	 */
- 	if (!uart_circ_empty(xmit))
- 		atmel_tasklet_schedule(atmel_port, &atmel_port->tasklet_tx);
--	else if ((port->rs485.flags & SER_RS485_ENABLED) &&
--		 !(port->rs485.flags & SER_RS485_RX_DURING_TX)) {
-+	else if (((port->rs485.flags & SER_RS485_ENABLED) &&
-+		  !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
-+		 port->iso7816.flags & SER_ISO7816_ENABLED) {
- 		/* DMA done, stop TX, start RX for RS485 */
- 		atmel_start_rx(port);
- 	}
-@@ -1281,6 +1413,9 @@ atmel_handle_status(struct uart_port *port, unsigned int pending,
- 			wake_up_interruptible(&port->state->port.delta_msr_wait);
- 		}
- 	}
-+
-+	if (pending & (ATMEL_US_NACK | ATMEL_US_ITERATION))
-+		dev_dbg(port->dev, "ISO7816 ERROR (0x%08x)\n", pending);
- }
+ config TEST_LKM
+ 	tristate "Test module loading with 'hello world' module"
+-	default n
+ 	depends on m
+ 	help
+ 	  This builds the "test_module" module that emits "Hello, world"
+@@ -1877,7 +1868,6 @@ config TEST_LKM
  
- /*
-@@ -1373,8 +1508,9 @@ static void atmel_tx_pdc(struct uart_port *port)
- 		atmel_uart_writel(port, ATMEL_US_IER,
- 				  atmel_port->tx_done_mask);
- 	} else {
--		if ((port->rs485.flags & SER_RS485_ENABLED) &&
--		    !(port->rs485.flags & SER_RS485_RX_DURING_TX)) {
-+		if (((port->rs485.flags & SER_RS485_ENABLED) &&
-+		     !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
-+		    port->iso7816.flags & SER_ISO7816_ENABLED) {
- 			/* DMA done, stop TX, start RX for RS485 */
- 			atmel_start_rx(port);
- 		}
-@@ -2099,6 +2235,17 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
- 		atmel_uart_writel(port, ATMEL_US_TTGR,
- 				  port->rs485.delay_rts_after_send);
- 		mode |= ATMEL_US_USMODE_RS485;
-+	} else if (port->iso7816.flags & SER_ISO7816_ENABLED) {
-+		atmel_uart_writel(port, ATMEL_US_TTGR, port->iso7816.tg);
-+		/* select mck clock, and output  */
-+		mode |= ATMEL_US_USCLKS_MCK | ATMEL_US_CLKO;
-+		/* set max iterations */
-+		mode |= (3 << 24);
-+		if ((port->iso7816.flags & SER_ISO7816_T_PARAM)
-+				== SER_ISO7816_T(0))
-+			mode |= ATMEL_US_USMODE_ISO7816_T0;
-+		else
-+			mode |= ATMEL_US_USMODE_ISO7816_T1;
- 	} else if (termios->c_cflag & CRTSCTS) {
- 		/* RS232 with hardware handshake (RTS/CTS) */
- 		if (atmel_use_fifo(port) &&
-@@ -2175,7 +2322,8 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
- 	}
- 	quot = cd | fp << ATMEL_US_FP_OFFSET;
+ config TEST_USER_COPY
+ 	tristate "Test user/kernel boundary protections"
+-	default n
+ 	depends on m
+ 	help
+ 	  This builds the "test_user_copy" module that runs sanity checks
+@@ -1890,7 +1880,6 @@ config TEST_USER_COPY
  
--	atmel_uart_writel(port, ATMEL_US_BRGR, quot);
-+	if (!(port->iso7816.flags & SER_ISO7816_ENABLED))
-+		atmel_uart_writel(port, ATMEL_US_BRGR, quot);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
- 	atmel_port->tx_stopped = false;
-@@ -2355,6 +2503,7 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- 	port->mapbase	= pdev->resource[0].start;
- 	port->irq	= pdev->resource[1].start;
- 	port->rs485_config	= atmel_config_rs485;
-+	port->iso7816_config	= atmel_config_iso7816;
- 	port->membase	= NULL;
+ config TEST_BPF
+ 	tristate "Test BPF filter functionality"
+-	default n
+ 	depends on m && NET
+ 	help
+ 	  This builds the "test_bpf" module that runs various test vectors
+@@ -1904,7 +1893,6 @@ config TEST_BPF
  
- 	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
-@@ -2379,7 +2528,8 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- 	}
+ config FIND_BIT_BENCHMARK
+ 	tristate "Test find_bit functions"
+-	default n
+ 	help
+ 	  This builds the "test_find_bit" module that measure find_*_bit()
+ 	  functions performance.
+@@ -1913,7 +1901,6 @@ config FIND_BIT_BENCHMARK
  
- 	/* Use TXEMPTY for interrupt when rs485 else TXRDY or ENDTX|TXBUFE */
--	if (port->rs485.flags & SER_RS485_ENABLED)
-+	if (port->rs485.flags & SER_RS485_ENABLED ||
-+	    port->iso7816.flags & SER_ISO7816_ENABLED)
- 		atmel_port->tx_done_mask = ATMEL_US_TXEMPTY;
- 	else if (atmel_use_pdc_tx(port)) {
- 		port->fifosize = PDC_BUFFER_SIZE;
-diff --git a/drivers/tty/serial/atmel_serial.h b/drivers/tty/serial/atmel_serial.h
-index ba3a2437cde4..fff51f5fe8bc 100644
---- a/drivers/tty/serial/atmel_serial.h
-+++ b/drivers/tty/serial/atmel_serial.h
-@@ -124,7 +124,8 @@
- #define ATMEL_US_TTGR		0x28	/* Transmitter Timeguard Register */
- #define	ATMEL_US_TG		GENMASK(7, 0)	/* Timeguard Value */
+ config TEST_FIRMWARE
+ 	tristate "Test firmware loading via userspace interface"
+-	default n
+ 	depends on FW_LOADER
+ 	help
+ 	  This builds the "test_firmware" module that creates a userspace
+@@ -1926,7 +1913,6 @@ config TEST_FIRMWARE
  
--#define ATMEL_US_FIDI		0x40	/* FI DI Ratio Register */
-+#define ATMEL_US_FIDIR		0x40	/* FI DI Ratio Register */
-+#define ATMEL_US_FIDI		GENMASK(15, 0)	/* FIDI ratio */
- #define ATMEL_US_NER		0x44	/* Number of Errors Register */
- #define ATMEL_US_IF		0x4c	/* IrDA Filter Register */
+ config TEST_SYSCTL
+ 	tristate "sysctl test driver"
+-	default n
+ 	depends on PROC_SYSCTL
+ 	help
+ 	  This builds the "test_sysctl" module. This driver enables to test the
+@@ -1937,7 +1923,6 @@ config TEST_SYSCTL
  
+ config TEST_UDELAY
+ 	tristate "udelay test driver"
+-	default n
+ 	help
+ 	  This builds the "udelay_test" module that helps to make sure
+ 	  that udelay() is working properly.
+@@ -1946,7 +1931,6 @@ config TEST_UDELAY
+ 
+ config TEST_STATIC_KEYS
+ 	tristate "Test static keys"
+-	default n
+ 	depends on m
+ 	help
+ 	  Test the static key interfaces.
+@@ -1955,7 +1939,6 @@ config TEST_STATIC_KEYS
+ 
+ config TEST_KMOD
+ 	tristate "kmod stress tester"
+-	default n
+ 	depends on m
+ 	depends on BLOCK && (64BIT || LBDAF)	  # for XFS, BTRFS
+ 	depends on NETDEVICES && NET_CORE && INET # for TUN
 -- 
-2.12.2
+2.18.0
 
