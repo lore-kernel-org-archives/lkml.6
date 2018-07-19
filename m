@@ -2,129 +2,198 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BDFECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3196CC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 160F920693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:08:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 160F920693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E03A120693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:08:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E03A120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbeGSIuE (ORCPT
+        id S1731492AbeGSIuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 04:50:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56794 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730565AbeGSIuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 04:50:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ADD0BADB9;
-        Thu, 19 Jul 2018 08:08:06 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 10:08:05 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mahesh Jagannath Salgaonkar <mahesh@linux.vnet.ibm.com>
-Cc:     linuxppc-dev <linuxppc-dev@ozlabs.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Ananth Narayan <ananth@in.ibm.com>, kernelfans@gmail.com
-Subject: Re: [RFC PATCH v6 0/4] powerpc/fadump: Improvements and fixes for
- firmware-assisted dump.
-Message-ID: <20180719080805.GM7193@dhcp22.suse.cz>
-References: <153172096333.29252.4376707071382727345.stgit@jupiter.in.ibm.com>
- <20180716082646.GF17280@dhcp22.suse.cz>
- <cb5fc554-7fa3-1356-c304-ae8c27a0c70c@linux.vnet.ibm.com>
- <20180717115232.GF7193@dhcp22.suse.cz>
- <b2c316b9-520e-0a31-3ebd-d3ade50c3783@linux.vnet.ibm.com>
+        Thu, 19 Jul 2018 04:50:11 -0400
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:47693 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731456AbeGSIuL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 04:50:11 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 3DF1010195452;
+        Thu, 19 Jul 2018 10:08:13 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id D7FEB2165F4; Thu, 19 Jul 2018 10:08:12 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 10:08:12 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     nouveau@lists.freedesktop.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/probe_helper: Add
+ drm_helper_probe_single_connector_modes_with_rpm()
+Message-ID: <20180719080812.GA14235@wunner.de>
+References: <20180718205645.25924-1-lyude@redhat.com>
+ <20180718205645.25924-3-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b2c316b9-520e-0a31-3ebd-d3ade50c3783@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180718205645.25924-3-lyude@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18-07-18 21:52:17, Mahesh Jagannath Salgaonkar wrote:
-> On 07/17/2018 05:22 PM, Michal Hocko wrote:
-> > On Tue 17-07-18 16:58:10, Mahesh Jagannath Salgaonkar wrote:
-> >> On 07/16/2018 01:56 PM, Michal Hocko wrote:
-> >>> On Mon 16-07-18 11:32:56, Mahesh J Salgaonkar wrote:
-> >>>> One of the primary issues with Firmware Assisted Dump (fadump) on Power
-> >>>> is that it needs a large amount of memory to be reserved. This reserved
-> >>>> memory is used for saving the contents of old crashed kernel's memory before
-> >>>> fadump capture kernel uses old kernel's memory area to boot. However, This
-> >>>> reserved memory area stays unused until system crash and isn't available
-> >>>> for production kernel to use.
-> >>>
-> >>> How much memory are we talking about. Regular kernel dump process needs
-> >>> some reserved memory as well. Why that is not a big problem?
-> >>
-> >> We reserve around 5% of total system RAM. On large systems with
-> >> TeraBytes of memory, this reservation can be quite significant.
-> >>
-> >> The regular kernel dump uses the kexec method to boot into capture
-> >> kernel and it can control the parameters that are being passed to
-> >> capture kernel. This allows a capability to strip down the parameters
-> >> that can help lowering down the memory requirement for capture kernel to
-> >> boot. This allows regular kdump to reserve less memory to start with.
-> >>
-> >> Where as fadump depends on power firmware (pHyp) to load the capture
-> >> kernel after full reset and boots like a regular kernel. It needs same
-> >> amount of memory to boot as the production kernel. On large systems
-> >> production kernel needs significant amount of memory to boot. Hence
-> >> fadump needs to reserve enough memory for capture kernel to boot
-> >> successfully and execute dump capturing operations. By default fadump
-> >> reserves 5% of total system RAM and in most cases this has worked
-> >> flawlessly on variety of system configurations. Optionally,
-> >> 'crashkernel=X' can also be used to specify more fine-tuned memory size
-> >> for reservation.
-> > 
-> > So why do we even care about fadump when regular kexec provides
-> > (presumably) same functionality with a smaller memory footprint? Or is
-> > there any reason why kexec doesn't work well on ppc?
+On Wed, Jul 18, 2018 at 04:56:40PM -0400, Lyude Paul wrote:
+> For nouveau, while the GPU is guaranteed to be on when a hotplug has
+> been received, the same assertion does not hold true if a connector
+> probe has been started by userspace without having had received a sysfs
+> event.
 > 
-> Kexec based kdump is loaded by crashing kernel. When OS crashes, the
-> system is in an inconsistent state, especially the devices. In some
-> cases, a rogue DMA or ill-behaving device drivers can cause the kdump
-> capture to fail.
+> So ensure that any connector probing keeps the GPU alive for the
+> duration of the probe by introducing
+> drm_helper_probe_single_connector_modes_with_rpm(). It's the same as
+> drm_helper_probe_single_connector_modes, but it handles holding a power
+> reference to the device for the duration of the connector probe.
+
+Hm, a runtime PM ref is already acquired in nouveau_connector_detect().
+I'm wondering why that's not sufficient?
+
+Thanks,
+
+Lukas
+
 > 
-> On power platform, fadump solves these issues by taking help from power
-> firmware, to fully-reset the system, load the fresh copy of same kernel
-> to capture the dump with PCI and I/O devices reinitialized, making it
-> more reliable.
-
-Thanks for the clarification.
-
-> Fadump does full system reset, booting system through the regular boot
-> options i.e the dump capture kernel is booted in the same fashion and
-> doesn't have specialized kernel command line option. This implies, we
-> need to give more memory for the system boot. Since the new kernel boots
-> from the same memory location as crashed kernel, we reserve 5% of memory
-> where power firmware moves the crashed kernel's memory content. This
-> reserved memory is completely removed from the available memory. For
-> large memory systems like 64TB systems, this account to ~ 3TB, which is
-> a significant chunk of memory production kernel is deprived of. Hence,
-> this patch adds an improvement to exiting fadump feature to make the
-> reserved memory available to system for use, using zone movable.
-
-Is the 5% a reasonable estimate or more a ballpark number? I find it a
-bit strange to require 3TB of memory to boot a kernel just to dump the
-crashed kernel image. Shouldn't you rather look into this estimate than
-spreading ZONE_MOVABLE abuse? Larger systems need more memory to dump
-even with the regular kexec kdump but I have never seen any to use more
-than 1G or something like that.
--- 
-Michal Hocko
-SUSE Labs
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Karol Herbst <karolherbst@gmail.com>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: stable@vger.kernel.org
+> ---
+> Changes since v1:
+>  - Add a generic helper to DRM to handle this
+> 
+>  drivers/gpu/drm/drm_probe_helper.c          | 31 +++++++++++++++++++++
+>  drivers/gpu/drm/nouveau/dispnv50/disp.c     |  2 +-
+>  drivers/gpu/drm/nouveau/nouveau_connector.c |  4 +--
+>  include/drm/drm_crtc_helper.h               |  7 +++--
+>  4 files changed, 38 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
+> index 527743394150..0a9d6748b854 100644
+> --- a/drivers/gpu/drm/drm_probe_helper.c
+> +++ b/drivers/gpu/drm/drm_probe_helper.c
+> @@ -31,6 +31,7 @@
+>  
+>  #include <linux/export.h>
+>  #include <linux/moduleparam.h>
+> +#include <linux/pm_runtime.h>
+>  
+>  #include <drm/drmP.h>
+>  #include <drm/drm_crtc.h>
+> @@ -541,6 +542,36 @@ int drm_helper_probe_single_connector_modes(struct drm_connector *connector,
+>  }
+>  EXPORT_SYMBOL(drm_helper_probe_single_connector_modes);
+>  
+> +/**
+> + * drm_helper_probe_single_connector_modes_with_rpm - get complete set of
+> + *                                                    display modes
+> + * @connector: connector to probe
+> + * @maxX: max width for modes
+> + * @maxY: max height for modes
+> + *
+> + * Same as drm_helper_probe_single_connector_modes, except that it makes sure
+> + * that the device is active by synchronously grabbing a runtime power
+> + * reference while probing.
+> + *
+> + * Returns:
+> + * The number of modes found on @connector.
+> + */
+> +int drm_helper_probe_single_connector_modes_with_rpm(struct drm_connector *connector,
+> +						     uint32_t maxX, uint32_t maxY)
+> +{
+> +	int ret;
+> +
+> +	ret = pm_runtime_get_sync(connector->dev->dev);
+> +	if (ret < 0 && ret != -EACCES)
+> +		return ret;
+> +
+> +	ret = drm_helper_probe_single_connector_modes(connector, maxX, maxY);
+> +
+> +	pm_runtime_put(connector->dev->dev);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(drm_helper_probe_single_connector_modes_with_rpm);
+> +
+>  /**
+>   * drm_kms_helper_hotplug_event - fire off KMS hotplug events
+>   * @dev: drm_device whose connector state changed
+> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> index fa3ab618a0f9..c54767b50fd8 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> @@ -858,7 +858,7 @@ static const struct drm_connector_funcs
+>  nv50_mstc = {
+>  	.reset = nouveau_conn_reset,
+>  	.detect = nv50_mstc_detect,
+> -	.fill_modes = drm_helper_probe_single_connector_modes,
+> +	.fill_modes = drm_helper_probe_single_connector_modes_with_rpm,
+>  	.destroy = nv50_mstc_destroy,
+>  	.atomic_duplicate_state = nouveau_conn_atomic_duplicate_state,
+>  	.atomic_destroy_state = nouveau_conn_atomic_destroy_state,
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
+> index 2a45b4c2ceb0..8d9070779261 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_connector.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+> @@ -1088,7 +1088,7 @@ nouveau_connector_funcs = {
+>  	.reset = nouveau_conn_reset,
+>  	.detect = nouveau_connector_detect,
+>  	.force = nouveau_connector_force,
+> -	.fill_modes = drm_helper_probe_single_connector_modes,
+> +	.fill_modes = drm_helper_probe_single_connector_modes_with_rpm,
+>  	.set_property = nouveau_connector_set_property,
+>  	.destroy = nouveau_connector_destroy,
+>  	.atomic_duplicate_state = nouveau_conn_atomic_duplicate_state,
+> @@ -1103,7 +1103,7 @@ nouveau_connector_funcs_lvds = {
+>  	.reset = nouveau_conn_reset,
+>  	.detect = nouveau_connector_detect_lvds,
+>  	.force = nouveau_connector_force,
+> -	.fill_modes = drm_helper_probe_single_connector_modes,
+> +	.fill_modes = drm_helper_probe_single_connector_modes_with_rpm,
+>  	.set_property = nouveau_connector_set_property,
+>  	.destroy = nouveau_connector_destroy,
+>  	.atomic_duplicate_state = nouveau_conn_atomic_duplicate_state,
+> diff --git a/include/drm/drm_crtc_helper.h b/include/drm/drm_crtc_helper.h
+> index 6914633037a5..8f3f6d6fcc8c 100644
+> --- a/include/drm/drm_crtc_helper.h
+> +++ b/include/drm/drm_crtc_helper.h
+> @@ -64,9 +64,10 @@ int drm_helper_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+>  				  struct drm_framebuffer *old_fb);
+>  
+>  /* drm_probe_helper.c */
+> -int drm_helper_probe_single_connector_modes(struct drm_connector
+> -					    *connector, uint32_t maxX,
+> -					    uint32_t maxY);
+> +int drm_helper_probe_single_connector_modes(struct drm_connector *connector,
+> +					    uint32_t maxX, uint32_t maxY);
+> +int drm_helper_probe_single_connector_modes_with_rpm(struct drm_connector *connector,
+> +						     uint32_t maxX, uint32_t maxY);
+>  int drm_helper_probe_detect(struct drm_connector *connector,
+>  			    struct drm_modeset_acquire_ctx *ctx,
+>  			    bool force);
+> -- 
+> 2.17.1
+> 
