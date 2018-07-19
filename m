@@ -2,103 +2,201 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AA8ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3135FC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF8120671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:19:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF8120671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id C5B1420671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:22:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eJ/KKwIW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B1420671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731356AbeGSNB6 (ORCPT
+        id S1730831AbeGSNFm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 09:01:58 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51935 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730096AbeGSNB6 (ORCPT
+        Thu, 19 Jul 2018 09:05:42 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52604 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726475AbeGSNFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 09:01:58 -0400
-Received: by mail-wm0-f67.google.com with SMTP id h3-v6so5563302wmb.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 05:19:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IvnmnPXJlQ0Um8Q0bTBreV7ZaIgy5mO3yM9Z9xMGshE=;
-        b=hq/aQ3rH4gaa08eIDul7MxF+ue0McWRatn620/8TFInP/dFzEGAKBnJxKfjopqkB9e
-         BTqJojd5vUzm4KXUPzy/XOgiSvNtdwSBQ3w8i4xzSZgtxncUIBBbxVxNr0LyuSIzS3JW
-         nckW/6ttvTdybG38MWMi6isR0gI9vTo8Xck4qN0xcgrNqt88Jb8gkc44YHY0bpic839Y
-         D+94QTCgEZZ7zgNyJVWOsr1oiDJ8vvC75ap+Lwemppprip36jA2G81rpwoqcI/FjHJxT
-         i5aakKZPTbpUYNWFmhUeLxTphTCHHWQ5fmvWk6fZVGx2lrkSuK3k1TOiUlYrpz26wmtT
-         mrJA==
-X-Gm-Message-State: AOUpUlGkXTe9ipJNGvk54KVsJlfTVwUDOCa8bXEAv+X0JmAFOTfTcFBW
-        kT3+tLwn7sdyvNEwEfg11BM=
-X-Google-Smtp-Source: AAOMgpfsx+1jN0Q5bR798wblOm+s8S4WAwCeCpMvKAwcXz9siRSVuiIDlTsq0ZUcDN2X6koFTlf72Q==
-X-Received: by 2002:a1c:dacb:: with SMTP id r194-v6mr4080780wmg.56.1532002743433;
-        Thu, 19 Jul 2018 05:19:03 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id g204-v6sm3352700wmd.26.2018.07.19.05.19.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 05:19:02 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 285F1124167; Thu, 19 Jul 2018 14:19:02 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 14:19:02 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
-        iamjoonsoo.kim@lge.com, aaron.lu@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH 1/3] mm/page_alloc: Move ifdefery out of
- free_area_init_core
-Message-ID: <20180719121902.GB8750@techadventures.net>
-References: <20180718124722.9872-1-osalvador@techadventures.net>
- <20180718124722.9872-2-osalvador@techadventures.net>
- <20180718141150.imiyuust5txfmfvw@xakep.localdomain>
+        Thu, 19 Jul 2018 09:05:42 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6JCML0W006355;
+        Thu, 19 Jul 2018 07:22:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1532002941;
+        bh=cinzrYqbk/kXfUzHer3YzyiDrWVqeI1ETc/ZwqVMgik=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=eJ/KKwIW0Ibl6KbwPyK181zH1/JOY0mR1hPmvz5XDBp2clZDWBL6bZmBxn0nSztY0
+         aW+8qYEv3pRtFGg4hH+aJSshLYEG/kQjkQHdfLQUn6xI/bQOYkpCR9NXTgBtwb0D2P
+         A4jdHa7NPm+i5tSiwJ/jEZY03t7UJXfLFe4Dw5co=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JCMLiF013290;
+        Thu, 19 Jul 2018 07:22:21 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 19
+ Jul 2018 07:22:20 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 19 Jul 2018 07:22:20 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JCMImL016316;
+        Thu, 19 Jul 2018 07:22:18 -0500
+Subject: Re: [PATCH v4 1/4] rtc: omap: Cut down the shutdown time from 2
+ seconds to 1 sec
+From:   Keerthy <j-keerthy@ti.com>
+To:     Johan Hovold <johan@kernel.org>
+CC:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
+        <t-kristo@ti.com>, <linux-rtc@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1531372060-10532-1-git-send-email-j-keerthy@ti.com>
+ <1531372060-10532-2-git-send-email-j-keerthy@ti.com>
+ <20180719100229.GQ10204@localhost>
+ <ed335c7a-f079-082d-d572-93632087fd8f@ti.com>
+Message-ID: <a6930aca-f475-5b53-ce9d-d45fbc75d69c@ti.com>
+Date:   Thu, 19 Jul 2018 17:52:17 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718141150.imiyuust5txfmfvw@xakep.localdomain>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <ed335c7a-f079-082d-d572-93632087fd8f@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 10:11:50AM -0400, Pavel Tatashin wrote:
-> On 18-07-18 14:47:20, osalvador@techadventures.net wrote:
-> > From: Oscar Salvador <osalvador@suse.de>
-> > 
-> > Moving the #ifdefs out of the function makes it easier to follow.
-> > 
-> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
+
+
+On Thursday 19 July 2018 05:23 PM, Keerthy wrote:
 > 
-> Hi Oscar,
 > 
-> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> On Thursday 19 July 2018 03:32 PM, Johan Hovold wrote:
+>> On Thu, Jul 12, 2018 at 10:37:37AM +0530, Keerthy wrote:
+>>> Cut down the shutdown time from 2 seconds to 1 sec. In case of roll
+>>> over try again.
+>>>
+>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>> ---
+>>>
+>>> Changes in v4:
+>>>
+>>>   * Fixed a compilation issue.
+>>>   * Extended the roll over check post interrupt programming.
+>>>
+>>>  drivers/rtc/rtc-omap.c | 13 +++++++++++--
+>>>  1 file changed, 11 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+>>> index 323ff55..88da927 100644
+>>> --- a/drivers/rtc/rtc-omap.c
+>>> +++ b/drivers/rtc/rtc-omap.c
+>>
+>> First, the comment above this function would need to be updated as part
+>> of this patch as it refers to the two-second alarm offset.
 > 
-> Please include the following patch in your series, to get rid of the last
-> ifdef in this function.
+> Yes, will change that.
+> 
+>>
+>>> @@ -435,17 +435,23 @@ static void omap_rtc_power_off(void)
+>>>  	struct rtc_time tm;
+>>>  	unsigned long now;
+>>>  	u32 val;
+>>> +	int seconds;
+>>>  
+>>>  	rtc->type->unlock(rtc);
+>>>  	/* enable pmic_power_en control */
+>>>  	val = rtc_readl(rtc, OMAP_RTC_PMIC_REG);
+>>>  	rtc_writel(rtc, OMAP_RTC_PMIC_REG, val | OMAP_RTC_PMIC_POWER_EN_EN);
+>>>  
+>>> -	/* set alarm two seconds from now */
+>>> +again:
+>>> +	/* Clear any existing ALARM2 event */
+>>> +	rtc_writel(rtc, OMAP_RTC_STATUS_REG, OMAP_RTC_STATUS_ALARM2);
+>>
+>> Why is this needed? Any pending interrupt is cleared at probe, and a
+>> previous attempt to set the alarm really led to the alarm going off, why
+>> would we retry?
+> 
+> Yes this is not needed.
+> 
+>>
+>>> +
+>>> +	/* set alarm one second from now */
+>>>  	omap_rtc_read_time_raw(rtc, &tm);
+>>> +	seconds = tm.tm_sec;
+>>>  	bcd2tm(&tm);
+>>>  	rtc_tm_to_time(&tm, &now);
+>>> -	rtc_time_to_tm(now + 2, &tm);
+>>> +	rtc_time_to_tm(now + 1, &tm);
+>>>  
+>>>  	if (tm2bcd(&tm) < 0) {
+>>>  		dev_err(&rtc->rtc->dev, "power off failed\n");
+>>> @@ -470,6 +476,9 @@ static void omap_rtc_power_off(void)
+>>>  	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+>>>  	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
+>>>  			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
+>>
+>> Add a newline here.
+> 
+> Okay
+> 
+>>
+>>> +	/* Our calculations started right before the rollover, try again */
+>>
+>> Nit: use all lower case unless writing full sentences, which also
+>> matches most of the other comments in this file.
+> 
+> okay
+> 
+>>
+>>> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
+>>> +		goto again;
+>>
+>> Here the alarm may have gone off as part of the roll over, in which case
+>> you shouldn't retry.
+> 
+> Ex: We programmed at Sec = 2 and we expect ALARM2 to fire at sec = 3.
+> 
+> In the event of Roll over before setting the
+> OMAP_RTC_INTERRUPTS_IT_ALARM2 bit in the OMAP_RTC_INTERRUPTS_REG will we
+> not miss the ALARM2 event? Then poweroff would fail right?
+> 
+> Hence the attempt to retry the next second. This sequence would begin
+> right at the beginning of a new second and we expect the full sequence
+> to get over without having to retry again.
+> 
+> Hope i am clear.
 
-Hi Pavel,
+I tried to program the interrupt for the same second on the hardware and
+it does not fire. So to take care of roll over corner case one attempt
+to retry is needed.
 
-I am about to send v2 with this patch included, but I just wanted to let you know
-this:
-
-> +		zone_set_nid(nid);
-
-This should be:
-
-zone_set_nid(zone, nid);
-
-I fixed it up in your patch, I hope that is ok.
-
-Thanks 
--- 
-Oscar Salvador
-SUSE L3
+> 
+>>
+>> Add a newline here too.
+> 
+> Okay
+> 
+>>
+>>>  	rtc->type->lock(rtc);
+>>>  
+>>>  	/*
+>>
+>> Thanks,
+>> Johan
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
