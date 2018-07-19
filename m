@@ -2,113 +2,109 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 961FEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18448C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CABC2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:44:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF8ED2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:44:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFyGh3xc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CABC2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="qSyLwTef"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF8ED2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732983AbeGST2v (ORCPT
+        id S1733110AbeGST3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 15:28:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33424 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727401AbeGST2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 15:28:51 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 132AA2084E;
-        Thu, 19 Jul 2018 18:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532025866;
-        bh=hEo2jnPNpBojS/b9OEOEAUXHJ8CG8uaZVHJKVGaLBpY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YFyGh3xc+c/PMc8CuRoMtcSFU9OXHeDDlaKLK1niXScHQCe0gScKAzsJt4fMhPDyf
-         RrN0reeisXamsfULoFpTsAmusXchK5IM3Z03UGua0QNUhhWlH9TWBh40qHmmFEgi5O
-         gkI6hgl3JIVfrqow69z7gDjBeIXKWEXQyxA1IUKo=
-Date:   Thu, 19 Jul 2018 13:44:24 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [GIT PULL] PCI fixes for v4.18
-Message-ID: <20180719184424.GA228321@bhelgaas-glaptop.roam.corp.google.com>
+        Thu, 19 Jul 2018 15:29:18 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:33216 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbeGST3S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 15:29:18 -0400
+Received: by mail-yb0-f196.google.com with SMTP id e84-v6so3672048ybb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 11:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KT+qQrhkPOdj9KSwdKORNY3MjeHa+bwmY9V62UKACe4=;
+        b=qSyLwTefz1F9TPIo0gk+DUZXG4yRjqXcQZsvLgEKB+sNMIr5swUVfQ7adGSohUr8vp
+         KZmO+M123GTQ/EkbtgtPJB7lxuPiMt8t/5XzWrBi33+7gqvPtrAYf3tdQ718nSjj8WPD
+         i51upaQ/EQYRix520UiB8CSUMwv+85YBF+D/k2rkuUM/+rj7Z06WDvrPe7H4aWiUYj+e
+         NZ/xSqe0h+aPLr/52Fv3Cyq4nuTkVNqSglK/FBoPPMBUMlUT/myRJ2UN8cKsv9QJ6g1j
+         nSE0jo4ufIALI3oF+iYhTht4YMH9tecf59oZlZu35arj4AmZZqkYwop1csWp+wjOz+e+
+         ySoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KT+qQrhkPOdj9KSwdKORNY3MjeHa+bwmY9V62UKACe4=;
+        b=biMb7GyDvQQuoisWk5hCogkrm/5eXljl6hqAOkVR/P/BN+lgzl26VxqRq18BOytnC5
+         TKgibRRxzum6DdzFsb5z2uJIWXqw1s8PtSi1guVoPf9SrSKcJbaFKwLLMB5nmGxG+7Eh
+         Kvy/8Y0IxQCogPFYNFDfqCbKqMH1hU6iglb7ovz+X27CcjdTUxePjOlCZJZ/iDRR4CYQ
+         4MiRASATWMPcJf/9IzJecmm21Pi5l/rQUDQ6OX5aiIl8xSjfnghiAJMssKe6C9I2fHJ1
+         DBzXde4PedDcjGBzvRphRENZNHAaLyVoMA5ytiiP9fTF7M3f0EG81KomicKQNT1I0iCR
+         Ia7Q==
+X-Gm-Message-State: AOUpUlEDwEBaK2UiOKB/HliLdX/teSN9+WRbjTK9l5cZlajSZ7w8EKfz
+        0JMrHuEy5Wnr8AEwu7Bv4jy/+g==
+X-Google-Smtp-Source: AAOMgpcU8WfabDS3CWKBM4oiIbdqs5UCg5TSmTi90D+8RfHGFRCBkYiQD2RrhSoU1PM/ag6X8T05Wg==
+X-Received: by 2002:a25:19c3:: with SMTP id 186-v6mr6310111ybz.410.1532025892747;
+        Thu, 19 Jul 2018 11:44:52 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::2:3a18])
+        by smtp.gmail.com with ESMTPSA id b135-v6sm5813939ywh.24.2018.07.19.11.44.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Jul 2018 11:44:51 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 14:47:40 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
+ and IO
+Message-ID: <20180719184740.GA26291@cmpxchg.org>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180712172942.10094-9-hannes@cmpxchg.org>
+ <20180718120318.GC2476@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180718120318.GC2476@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI fixes:
+On Wed, Jul 18, 2018 at 02:03:18PM +0200, Peter Zijlstra wrote:
+> On Thu, Jul 12, 2018 at 01:29:40PM -0400, Johannes Weiner wrote:
+> > +	/* Update task counts according to the set/clear bitmasks */
+> > +	for (to = 0; (bo = ffs(clear)); to += bo, clear >>= bo) {
+> > +		int idx = to + (bo - 1);
+> > +
+> > +		if (tasks[idx] == 0 && !psi_bug) {
+> > +			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d idx=%d tasks=[%u %u %u] clear=%x set=%x\n",
+> > +					cpu, idx, tasks[0], tasks[1], tasks[2],
+> > +					clear, set);
+> > +			psi_bug = 1;
+> > +		}
+> 
+> 		WARN_ONCE(!tasks[idx], ...);
 
-  - Fix crashes that happen when PHY drivers are left disabled in the V3
-    Semiconductor, MediaTek, Faraday, Aardvark, DesignWare, Versatile,
-    and X-Gene host controller drivers (Sergei Shtylyov)
+It's just open-coded because of the printk_deferred, since this is
+inside the scheduler.
 
-  - Fix a NULL pointer dereference in the endpoint library configfs support
-    (Kishon Vijay Abraham I)
-
-  - Fix a race condition in Hyper-V IRQ handling (Dexuan Cui)
-
-
-The following changes since commit 83235822b8b4fe47ecbd6b6bcbcc902860ac00fc:
-
-  nfp: stop limiting VFs to 0 (2018-06-29 15:09:00 -0500)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.18-fixes-3
-
-for you to fetch changes up to 270ed733e68955049b693bea8f4a1efb293a96ae:
-
-  PCI: v3-semi: Fix I/O space page leak (2018-07-18 17:02:13 -0500)
-
-----------------------------------------------------------------
-pci-v4.18-fixes-3
-
-----------------------------------------------------------------
-Dexuan Cui (1):
-      PCI: hv: Disable/enable IRQs rather than BH in hv_compose_msi_msg()
-
-Kishon Vijay Abraham I (1):
-      PCI: endpoint: Fix NULL pointer dereference error when CONFIGFS is disabled
-
-Sergei Shtylyov (8):
-      PCI: OF: Fix I/O space page leak
-      PCI: xgene: Fix I/O space page leak
-      PCI: versatile: Fix I/O space page leak
-      PCI: designware: Fix I/O space page leak
-      PCI: aardvark: Fix I/O space page leak
-      PCI: faraday: Fix I/O space page leak
-      PCI: mediatek: Fix I/O space page leak
-      PCI: v3-semi: Fix I/O space page leak
-
- drivers/pci/controller/dwc/pcie-designware-host.c |  3 +-
- drivers/pci/controller/pci-aardvark.c             |  2 +-
- drivers/pci/controller/pci-ftpci100.c             |  2 +-
- drivers/pci/controller/pci-hyperv.c               |  8 +--
- drivers/pci/controller/pci-v3-semi.c              |  2 +-
- drivers/pci/controller/pci-versatile.c            |  2 +-
- drivers/pci/controller/pci-xgene.c                |  2 +-
- drivers/pci/controller/pcie-mediatek.c            |  2 +-
- drivers/pci/endpoint/pci-epf-core.c               | 62 ++++++++++++++++-------
- drivers/pci/of.c                                  |  2 +-
- drivers/pci/pci.c                                 | 38 ++++++++++++++
- include/linux/pci.h                               |  2 +
- 12 files changed, 97 insertions(+), 30 deletions(-)
+It actually used to be a straight-up WARN_ONCE() in older
+versions. Recursive scheduling bugs are no fun to debug ;)
