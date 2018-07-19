@@ -5,180 +5,195 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8AEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5E6ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5BCA20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BCA20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id BB30520673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB30520673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731558AbeGTANo (ORCPT
+        id S1731455AbeGTANl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:13:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47795 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731462AbeGTANn (ORCPT
+        Thu, 19 Jul 2018 20:13:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38337 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730266AbeGTANk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:13:43 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1fgILJ-0004mr-Dv; Thu, 19 Jul 2018 23:28:17 +0000
-Subject: Re: [PATCH 1/2] apparmor: Check buffer bounds when mapping
- permissions mask
-To:     Tyler Hicks <tyhicks@canonical.com>
-Cc:     James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>,
-        Seth Arnold <seth.arnold@canonical.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1530854701-7348-1-git-send-email-tyhicks@canonical.com>
- <1530854701-7348-2-git-send-email-tyhicks@canonical.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <b8a0764f-e705-763c-e0a6-a855c359bd75@canonical.com>
-Date:   Thu, 19 Jul 2018 16:28:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 20:13:40 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNRIFm2453388
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 19 Jul 2018 16:27:18 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNRIPS2453382;
+        Thu, 19 Jul 2018 16:27:18 -0700
+Date:   Thu, 19 Jul 2018 16:27:18 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
+Message-ID: <tip-e3238faf20fb1b51a814497751398ab525a2c884@git.kernel.org>
+Cc:     dhgutteridge@sympatico.ca, will.deacon@arm.com,
+        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
+        torvalds@linux-foundation.org, jgross@suse.com,
+        dave.hansen@intel.com, linux-kernel@vger.kernel.org, pavel@ucw.cz,
+        jroedel@suse.de, jkosina@suse.cz, gregkh@linuxfoundation.org,
+        tglx@linutronix.de, llong@redhat.com, eduval@amazon.com,
+        aarcange@redhat.com, luto@kernel.org, jpoimboe@redhat.com,
+        dvlasenk@redhat.com, boris.ostrovsky@oracle.com,
+        David.Laight@aculab.com, bp@alien8.de, brgerst@gmail.com
+Reply-To: jpoimboe@redhat.com, luto@kernel.org, David.Laight@aculab.com,
+          dvlasenk@redhat.com, boris.ostrovsky@oracle.com,
+          brgerst@gmail.com, bp@alien8.de, jroedel@suse.de,
+          jkosina@suse.cz, pavel@ucw.cz, tglx@linutronix.de,
+          gregkh@linuxfoundation.org, llong@redhat.com, eduval@amazon.com,
+          aarcange@redhat.com, torvalds@linux-foundation.org,
+          jgross@suse.com, linux-kernel@vger.kernel.org,
+          dave.hansen@intel.com, dhgutteridge@sympatico.ca,
+          will.deacon@arm.com, peterz@infradead.org, hpa@zytor.com,
+          mingo@kernel.org
+In-Reply-To: <1531906876-13451-18-git-send-email-joro@8bytes.org>
+References: <1531906876-13451-18-git-send-email-joro@8bytes.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/pgtable/32: Allocate 8k page-tables when PTI is
+ enabled
+Git-Commit-ID: e3238faf20fb1b51a814497751398ab525a2c884
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <1530854701-7348-2-git-send-email-tyhicks@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/05/2018 10:25 PM, Tyler Hicks wrote:
-> Don't read past the end of the buffer containing permissions
-> characters or write past the end of the destination string.
-> 
-> Detected by CoverityScan CID#1415361, 1415376 ("Out-of-bounds access")
-> 
-> Fixes: e53cfe6c7caa ("apparmor: rework perm mapping to a slightly broader set")
-> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+Commit-ID:  e3238faf20fb1b51a814497751398ab525a2c884
+Gitweb:     https://git.kernel.org/tip/e3238faf20fb1b51a814497751398ab525a2c884
+Author:     Joerg Roedel <jroedel@suse.de>
+AuthorDate: Wed, 18 Jul 2018 11:40:54 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 20 Jul 2018 01:11:41 +0200
 
-I've pulled this into apparmor-next with a minor modification noted below
+x86/pgtable/32: Allocate 8k page-tables when PTI is enabled
 
->  security/apparmor/file.c          |  3 ++-
->  security/apparmor/include/perms.h |  3 ++-
->  security/apparmor/lib.c           | 17 +++++++++++++----
->  3 files changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-> index 224b2fef93ca..4285943f7260 100644
-> --- a/security/apparmor/file.c
-> +++ b/security/apparmor/file.c
-> @@ -47,7 +47,8 @@ static void audit_file_mask(struct audit_buffer *ab, u32 mask)
->  {
->  	char str[10];
->  
-> -	aa_perm_mask_to_str(str, aa_file_perm_chrs, map_mask_to_chr_mask(mask));
-> +	aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
-> +			    map_mask_to_chr_mask(mask));
->  	audit_log_string(ab, str);
->  }
->  
-> diff --git a/security/apparmor/include/perms.h b/security/apparmor/include/perms.h
-> index 38aa6247d00f..b94ec114d1a4 100644
-> --- a/security/apparmor/include/perms.h
-> +++ b/security/apparmor/include/perms.h
-> @@ -137,7 +137,8 @@ extern struct aa_perms allperms;
->  	xcheck(fn_for_each((L1), (P), (FN1)), fn_for_each((L2), (P), (FN2)))
->  
->  
-> -void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask);
-> +void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs,
-> +			 u32 mask);
->  void aa_audit_perm_names(struct audit_buffer *ab, const char * const *names,
->  			 u32 mask);
->  void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
-> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-> index a7b3f681b80e..7ab368c3789b 100644
-> --- a/security/apparmor/lib.c
-> +++ b/security/apparmor/lib.c
-> @@ -198,15 +198,24 @@ const char *aa_file_perm_names[] = {
->  /**
->   * aa_perm_mask_to_str - convert a perm mask to its short string
->   * @str: character buffer to store string in (at least 10 characters)
-> + * @str_size: size of the @str buffer
-> + * @chrs: NUL-terminated character buffer of permission characters
->   * @mask: permission mask to convert
->   */
-> -void aa_perm_mask_to_str(char *str, const char *chrs, u32 mask)
-> +void aa_perm_mask_to_str(char *str, size_t str_size, const char *chrs, u32 mask)
->  {
->  	unsigned int i, perm = 1;
-> +	size_t num_chrs = strlen(chrs);
-> +
-> +	for (i = 0; i < num_chrs; perm <<= 1, i++> +		if (mask & perm) {
-> +			/* Ensure that one byte is left for NUL-termination */
-> +			if (WARN_ON_ONCE(str_size <= 1))
-> +				continue;
-might as well break here
+Allocate a kernel and a user page-table root when PTI is enabled. Also
+allocate a full page per root for PAE because otherwise the bit to flip in
+CR3 to switch between them would be non-constant, which creates a lot of
+hassle.  Keep that for a later optimization.
 
->  
-> -	for (i = 0; i < 32; perm <<= 1, i++) {
-> -		if (mask & perm)
->  			*str++ = chrs[i];
-> +			str_size--;
-> +		}
->  	}
->  	*str = '\0';
->  }
-> @@ -236,7 +245,7 @@ void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
->  
->  	audit_log_format(ab, "\"");
->  	if ((mask & chrsmask) && chrs) {
-> -		aa_perm_mask_to_str(str, chrs, mask & chrsmask);
-> +		aa_perm_mask_to_str(str, sizeof(str), chrs, mask & chrsmask);
->  		mask &= ~chrsmask;
->  		audit_log_format(ab, "%s", str);
->  		if (mask & namesmask)
-> 
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Pavel Machek <pavel@ucw.cz>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: linux-mm@kvack.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Waiman Long <llong@redhat.com>
+Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
+Cc: joro@8bytes.org
+Link: https://lkml.kernel.org/r/1531906876-13451-18-git-send-email-joro@8bytes.org
 
+---
+ arch/x86/kernel/head_32.S | 20 +++++++++++++++-----
+ arch/x86/mm/pgtable.c     |  5 +++--
+ 2 files changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
+index abe6df15a8fb..30f9cb2c0b55 100644
+--- a/arch/x86/kernel/head_32.S
++++ b/arch/x86/kernel/head_32.S
+@@ -512,11 +512,18 @@ ENTRY(initial_code)
+ ENTRY(setup_once_ref)
+ 	.long setup_once
+ 
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++#define	PGD_ALIGN	(2 * PAGE_SIZE)
++#define PTI_USER_PGD_FILL	1024
++#else
++#define	PGD_ALIGN	(PAGE_SIZE)
++#define PTI_USER_PGD_FILL	0
++#endif
+ /*
+  * BSS section
+  */
+ __PAGE_ALIGNED_BSS
+-	.align PAGE_SIZE
++	.align PGD_ALIGN
+ #ifdef CONFIG_X86_PAE
+ .globl initial_pg_pmd
+ initial_pg_pmd:
+@@ -526,14 +533,17 @@ initial_pg_pmd:
+ initial_page_table:
+ 	.fill 1024,4,0
+ #endif
++	.align PGD_ALIGN
+ initial_pg_fixmap:
+ 	.fill 1024,4,0
+-.globl empty_zero_page
+-empty_zero_page:
+-	.fill 4096,1,0
+ .globl swapper_pg_dir
++	.align PGD_ALIGN
+ swapper_pg_dir:
+ 	.fill 1024,4,0
++	.fill PTI_USER_PGD_FILL,4,0
++.globl empty_zero_page
++empty_zero_page:
++	.fill 4096,1,0
+ EXPORT_SYMBOL(empty_zero_page)
+ 
+ /*
+@@ -542,7 +552,7 @@ EXPORT_SYMBOL(empty_zero_page)
+ #ifdef CONFIG_X86_PAE
+ __PAGE_ALIGNED_DATA
+ 	/* Page-aligned for the benefit of paravirt? */
+-	.align PAGE_SIZE
++	.align PGD_ALIGN
+ ENTRY(initial_page_table)
+ 	.long	pa(initial_pg_pmd+PGD_IDENT_ATTR),0	/* low identity map */
+ # if KPMDS == 3
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 47b5951e592b..db6fb7740bf7 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -343,7 +343,8 @@ static inline pgd_t *_pgd_alloc(void)
+ 	 * We allocate one page for pgd.
+ 	 */
+ 	if (!SHARED_KERNEL_PMD)
+-		return (pgd_t *)__get_free_page(PGALLOC_GFP);
++		return (pgd_t *)__get_free_pages(PGALLOC_GFP,
++						 PGD_ALLOCATION_ORDER);
+ 
+ 	/*
+ 	 * Now PAE kernel is not running as a Xen domain. We can allocate
+@@ -355,7 +356,7 @@ static inline pgd_t *_pgd_alloc(void)
+ static inline void _pgd_free(pgd_t *pgd)
+ {
+ 	if (!SHARED_KERNEL_PMD)
+-		free_page((unsigned long)pgd);
++		free_pages((unsigned long)pgd, PGD_ALLOCATION_ORDER);
+ 	else
+ 		kmem_cache_free(pgd_cache, pgd);
+ }
