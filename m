@@ -2,180 +2,90 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DED1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F868ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EBCB20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EBCB20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id BA65220673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA65220673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731304AbeGTANW (ORCPT
+        id S1731334AbeGTANg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:13:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57197 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730266AbeGTANV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:13:21 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 66AC520717; Fri, 20 Jul 2018 01:27:57 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2196D20732;
-        Fri, 20 Jul 2018 01:27:33 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 01:27:32 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Han Xu <han.xu@nxp.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Xiaolei Li <xiaolei.li@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
-        linux-mtd@lists.infradead.org,
+        Thu, 19 Jul 2018 20:13:36 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34403 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730266AbeGTANf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 20:13:35 -0400
+Received: by mail-qk0-f196.google.com with SMTP id b66-v6so5297694qkj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 16:28:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to;
+        bh=3Ta8HfVaVdUyz8rp0Om7TCjbPU+w+eHP2E4BeB+nmVI=;
+        b=Uu3jViEBo//IqJchUIrOGIoG0aRgmDoQ3KvDtJ7eBxJ0wv3sdr5Z6+W3ckaHATNxoc
+         PZACurdajguwj/u4ch0J90UiajUAm5vDE6qQMkcRVNLGNu0Fh38TwPlVvIoaF4jkbjhO
+         06nfbf2ZDhZg6sKKDXU8d/82Dhv3Gd2dEnJ3xZKhPsxzBUTNzmJHF9yV3I0NSSoOeDL7
+         rtvWnF8dEHjXHc2CPo7FjVJ6Y0EfdtyCXhx+rSAXd3GoAzlDAWtFcD71VAnpdTRvgRb/
+         MqhTBPrC4C4KmlWlto++0Jl6rdYCHDvEgiOgzd8hxppNCmKCy2F7QHguTZ2Iq1k3gDUi
+         xuBQ==
+X-Gm-Message-State: AOUpUlH6pMGi9DMNVNX8W8E3t1sTC1jpBQvk++zQqGTjEbIvGaxf/6eO
+        vl47XcpXevA7J0m83eIdv1+Lmw==
+X-Google-Smtp-Source: AAOMgpeWD1c4O6Ci5BImtwQ0dTtBcc9kC84f7Amc3AWoq1d377ByryxYknNt399NGy0Q+nJw82jgbQ==
+X-Received: by 2002:a37:b286:: with SMTP id b128-v6mr10961797qkf.158.1532042892953;
+        Thu, 19 Jul 2018 16:28:12 -0700 (PDT)
+Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc:4eb2:6dae:ab32:e5b0])
+        by smtp.gmail.com with ESMTPSA id f70-v6sm258205qke.77.2018.07.19.16.28.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Jul 2018 16:28:11 -0700 (PDT)
+From:   Laura Abbott <labbott@redhat.com>
+To:     Alexander Popov <alex.popov@linux.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        kernel-hardening@lists.openwall.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 28/33] mtd: rawnand: docg4: convert driver to
- nand_scan()
-Message-ID: <20180720012732.3753e0ef@bbrezillon>
-In-Reply-To: <20180719230026.8741-29-miquel.raynal@bootlin.com>
-References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
-        <20180719230026.8741-29-miquel.raynal@bootlin.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCHv2 0/2] Stackleak for arm64
+Date:   Thu, 19 Jul 2018 16:28:04 -0700
+Message-Id: <20180719232806.3397-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <1531341400-12077-1-git-send-email-alex.popov@linux.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 01:00:21 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+Hi,
 
-> Two helpers have been added to the core to make ECC-related
-> configuration between the detection phase and the final NAND scan. Use
-> these hooks and convert the driver to just use nand_scan() instead of
-> both nand_scan_ident() and nand_scan_tail().
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/mtd/nand/raw/docg4.c | 55 ++++++++++++++++++++++++++------------------
->  1 file changed, 32 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/docg4.c b/drivers/mtd/nand/raw/docg4.c
-> index 4dccdfba6140..2f6fcd4efab2 100644
-> --- a/drivers/mtd/nand/raw/docg4.c
-> +++ b/drivers/mtd/nand/raw/docg4.c
-> @@ -1227,10 +1227,9 @@ static void __init init_mtd_structs(struct mtd_info *mtd)
->  	 * required within a nand driver because they are performed by the nand
->  	 * infrastructure code as part of nand_scan().  In this case they need
->  	 * to be initialized here because we skip call to nand_scan_ident() (the
-> -	 * first half of nand_scan()).  The call to nand_scan_ident() is skipped
-> -	 * because for this device the chip id is not read in the manner of a
-> -	 * standard nand device.  Unfortunately, nand_scan_ident() does other
-> -	 * things as well, such as call nand_set_defaults().
-> +	 * first half of nand_scan()).  The call to nand_scan_ident() could be
-> +	 * skipped because for this device the chip id is not read in the manner
-> +	 * of a standard nand device.
->  	 */
->  
->  	struct nand_chip *nand = mtd_to_nand(mtd);
-> @@ -1315,6 +1314,27 @@ static int __init read_id_reg(struct mtd_info *mtd)
->  
->  static char const *part_probes[] = { "cmdlinepart", "saftlpart", NULL };
->  
-> +static int docg4_attach_chip(struct nand_chip *chip)
-> +{
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	struct docg4_priv *doc = (struct docg4_priv *)(chip + 1);
-> +
-> +	init_mtd_structs(mtd);
-> +
-> +	/* Initialize kernel BCH algorithm */
-> +	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
-> +	if (!doc->bch)
-> +		return -EINVAL;
-> +
-> +	reset(mtd);
-> +
-> +	return read_id_reg(mtd);
-> +}
-> +
-> +static struct nand_controller_ops docg4_controller_ops = {
-> +	.attach_chip = docg4_attach_chip,
-> +};
-> +
->  static int __init probe_docg4(struct platform_device *pdev)
->  {
->  	struct mtd_info *mtd;
-> @@ -1350,26 +1370,16 @@ static int __init probe_docg4(struct platform_device *pdev)
->  	mtd->dev.parent = &pdev->dev;
->  	doc->virtadr = virtadr;
->  	doc->dev = dev;
-> -
-> -	init_mtd_structs(mtd);
-> -
-> -	/* initialize kernel bch algorithm */
-> -	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
-> -	if (doc->bch == NULL) {
-> -		retval = -EINVAL;
-> -		goto free_nand;
-> -	}
-> -
->  	platform_set_drvdata(pdev, doc);
->  
-> -	reset(mtd);
-> -	retval = read_id_reg(mtd);
-> -	if (retval == -ENODEV) {
-> -		dev_warn(dev, "No diskonchip G4 device found.\n");
-> -		goto free_bch;
-> -	}
-> -
-> -	retval = nand_scan_tail(mtd);
-> +	/*
-> +	 * Asking for 0 chips is useless here but it warns the user that the use
-> +	 * of the nand_scan() function is a bit abused here because the
-> +	 * initialization is actually a bit specific and re-handled again in the
-> +	 * ->attach_chip() hook. It will probably leak some memory though.
-> +	 */
-> +	nand->dummy_controller.ops = &docg4_controller_ops;
-> +	retval = nand_scan(mtd, 0);
->  	if (retval)
->  		goto free_bch;
+This is hopefully the final version of the stackleak plugin for arm64.
+Acks are appreciated!
 
-Hm, not sure this works. The driver only calls nand_scan_tail(), but
-you replace that by a call to nand_scan(), which will call both
-nand_scan_ident() and nand_scan_tail(), and I'm pretty sure
-nand_scan_ident() will fail here.
+Laura Abbott (2):
+  arm64: Add stack information to on_accessible_stack
+  arm64: Clear the stack
 
->  
-> @@ -1389,7 +1399,6 @@ static int __init probe_docg4(struct platform_device *pdev)
->  	nand_cleanup(nand);
->  free_bch:
->  	free_bch(doc->bch);
-> -free_nand:
->  	kfree(nand);
->  unmap:
->  	iounmap(virtadr);
+ arch/arm64/Kconfig                    |  1 +
+ arch/arm64/include/asm/processor.h    | 15 ++++++
+ arch/arm64/include/asm/sdei.h         |  9 ++--
+ arch/arm64/include/asm/stacktrace.h   | 73 ++++++++++++++++++++++-----
+ arch/arm64/kernel/entry.S             |  7 +++
+ arch/arm64/kernel/process.c           | 17 +++++++
+ arch/arm64/kernel/ptrace.c            |  2 +-
+ arch/arm64/kernel/sdei.c              | 51 ++++++++++++++++---
+ arch/arm64/kernel/stacktrace.c        |  2 +-
+ arch/arm64/kvm/hyp/Makefile           |  3 +-
+ drivers/firmware/efi/libstub/Makefile |  3 +-
+ 11 files changed, 156 insertions(+), 27 deletions(-)
+
+-- 
+2.17.1
 
