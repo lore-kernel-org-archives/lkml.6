@@ -2,125 +2,238 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC562ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4735ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 796E720671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:55:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796E720671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 888BE20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:55:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 888BE20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbeGSLiI (ORCPT
+        id S1731578AbeGSLiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 07:38:08 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9655 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727489AbeGSLiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 07:38:08 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 298BEFA72419A;
-        Thu, 19 Jul 2018 18:55:17 +0800 (CST)
-Received: from [127.0.0.1] (10.184.52.56) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Thu, 19 Jul 2018
- 18:55:11 +0800
-Subject: Re: [PATCH 0/5] crypto: add IV generation templates
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        <dm-devel@redhat.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>
-References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
- <CAK8P3a0T0Ku-2GOY8fT38LVy4GpvVSsx=szi0ZNEUq8Z_hZweQ@mail.gmail.com>
- <CAKv+Gu8uD4NNS9SaWdSST7n+984ybTBLhGDpq3k5GG4o1+PMWA@mail.gmail.com>
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Message-ID: <5d0bb72c-862e-63be-3cc5-83ed02b9a575@huawei.com>
-Date:   Thu, 19 Jul 2018 18:55:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8uD4NNS9SaWdSST7n+984ybTBLhGDpq3k5GG4o1+PMWA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.52.56]
-X-CFilter-Loop: Reflected
+        Thu, 19 Jul 2018 07:38:15 -0400
+Received: from foss.arm.com ([217.140.101.70]:47314 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727489AbeGSLiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 07:38:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA3957A9;
+        Thu, 19 Jul 2018 03:55:38 -0700 (PDT)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 725B43F246;
+        Thu, 19 Jul 2018 03:55:36 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, robh@kernel.org,
+        mathieu.poirier@linaro.org, sudeep.holla@arm.com,
+        frowand.list@gmail.com, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, matt.sealey@arm.com,
+        charles.garcia-tobin@arm.com, coresight@lists.linaro.org,
+        john.horley@arm.com, mike.leach@linaro.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v2 00/10] coresight: Update device tree bindings
+Date:   Thu, 19 Jul 2018 11:55:04 +0100
+Message-Id: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Coresight uses DT graph bindings to describe the connections of the
+components. However we have some undocumented usage of the bindings
+to describe some of the properties of the connections.
 
-On 2018/7/18 23:34, Ard Biesheuvel wrote:
-> On 18 July 2018 at 19:59, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Wed, Jul 18, 2018 at 9:30 AM, Xiongfeng Wang
->> <wangxiongfeng2@huawei.com> wrote:
->>>
->>> I tested the performance of software implemented ciphers before and after
->>> applying this patchset. The performance didn't change much except for
->>> slight regression when writting. The detail information is as follows.
->>>
->>> The command I used:
->>> cryptsetup -y -c aes-xts-plain -s 256 --hash sha256 luksFormat /dev/sdd1
->>> cryptsetup -y -c aes-cbc-essiv:sha256 -s 256 --hash sha256 luksFormat /dev/sdd1
->>> cryptsetup -y -c aes-cbc-benbi -s 256 --hash sha256 luksFormat /dev/sdd1
->>>
->>> cryptsetup luksOpen /dev/sdd1 crypt_fun
->>> time dd if=/dev/mapper/crypt_fun of=/dev/null bs=1M count=500 iflag=direct
->>> time dd if=/dev/zero of=/dev/mapper/crypt_fun bs=1M count=500 oflag=direct
->>>
->>> Performance comparision:
->>> --------------------------------------------------------
->>> algorithms      | before applying   |   after applying
->>> --------------------------------------------------------
->>>                 |  read  | write    |  read  | write
->>> --------------------------------------------------------
->>> aes-xts-plain   | 145.34 | 145.09   | 145.89 | 144.2
->>> --------------------------------------------------------
->>> aes-cbc-essiv   | 146.87 | 144.62   | 146.74 | 143.41
->>> --------------------------------------------------------
->>> aes-cbc-benbi   | 146.03 | 144.74   | 146.77 | 144.46
->>> --------------------------------------------------------
->>
->> Do you have any estimate of the expected gains for hardware
->> implementations?
->>
->> Would it make sense to try out implementing aes-cbc-essiv
->> on the ARMv8 crypto extensions? I see that Ard has done
->> some prior work on aes-ccm in arch/arm64/crypto/aes-ce-ccm-*
->> that (AFAICT) has a similar goal of avoiding overhead by
->> combining the usual operations, so maybe the same can
->> be done here.
->>
-> 
-> I am having trouble understanding what exactly this series aims to achieve.
-> 
-> Calling into the crypto layer fewer times is a nice goal, but a disk
-> sector seems like a reasonable granularity for the dm layer to operate
-> on, and I don't think any hardware exists that operates on multi
-> sector sequences, where it would pay off to amortize the latency of
-> invoking the hardware over an entire bio.
+The coresight driver needs to know the hardware ports invovled
+in the connection and the direction of data flow to effectively
+manage the trace sessions. So far we have relied on the "port"
+address (as described by the generic graph bindings) to represent
+the hardware port of the component for a connection.
 
-I don't know much about crypto hardware, but I think a crypto hardware can handle
-data more than one sector at one time. So I think passing the whole bio to the hardware
-at one time will decrease the overhead in passing each sector alternatively.
+The hardware uses separate numbering scheme for input and output
+ports, which implies, we could have two different (input and output)
+ports with the same port number. This could create problems in the
+graph bindings where the label of the port wouldn't match the address.
 
-Thanks,
-Xiongfeng
-> 
-> So in summary, you need to explain to us why we need this. It is
-> really very easy to convince people if your changes make things go
-> faster.
-> 
-> .
-> 
+e.g, with the existing bindings we get :
+
+	port@0{				// Output port 0
+		reg = <0>;
+		...
+	};
+
+	port@1{
+		reg = <0>;		// Input port 0
+		endpoint {
+			slave-mode;
+			...
+		};
+	};
+
+With the new enforcement in the DT rules, mismatches in label and address
+are not allowed (as see in the case for port@1). So, we need a new mechanism
+to describe the hardware port number reliably.
+
+Also, we relied on an undocumented "slave-mode" property (see the above
+example) to indicate if the port is an input port. Let us formalise and
+switch to a new property to describe the direction of data flow.
+
+There were three options considered for the hardware port number scheme:
+
+ 1) Use natural ordering in the DT to infer the hardware port number.
+  i.e, Mandate that the all ports are listed in the DT and in the ascending
+  order for each class (input and output respectively).
+   Pros :
+      - We don't need new properties and if the existing DTS list them in
+        order (which most of them do), they work out of the box.
+   Cons :
+      - We must list all the ports even if the system cannot/shouldn't use
+        it.
+      - It is prone to human errors (if the order is not kept).
+
+ 2) Use an explicit property to list both the direction and the hw port
+    number and direction. Define "coresight,hwid" as 2 member array of u32,
+    where the members are port number and the direction respectively.
+	e.g
+
+	port@0{
+		reg = <0>;
+		endpoint {
+			coresight,hwid = <0 1>;	// Port # 0, Output
+		}
+	};
+
+	port@1{
+		reg = <1>;
+		endpoint {
+			coresight,hwid = <0 0>;	// Port # 0, Input
+		};
+	};
+
+	Pros:
+	  - The bindings are formal but not so reader friendly and could
+	    potentially lead to human errors.
+	Cons:
+	  - Backward compatiblity is lost.
+ 3) Use explicit properties (implemented in the series) for the hardware
+    port id and direction. We define a new property "coresight,hwid" for
+    each endpoint in coresight devices to specify the hardware port number
+    explicitly. Also use a separate property "direction" to specify the
+    direction of the data flow.
+
+	e.g,
+
+	port@0{
+		reg = <0>;
+		endpoint {
+			direction = <1>;	// Output
+			coresight,hwid = <0>;	// Port # 0
+		}
+	};
+
+	port@1{
+		reg = <1>;
+		endpoint {
+			direction = <0>;	// Input
+			coresight,hwid = <0>;	// Port # 0
+		};
+	};
+
+    Pros:
+       - The bindings are formal and reader friendly, and less prone to errors.
+    Cons:
+       - Backward compatibility is lost.
+
+After a round of discussions [1], the following option (4) is adopted :
+
+ 4) Group ports based on the directions under a dedicated node. This has been
+    checked with the upstream DTC tool to resolve the "address mismatch" issue.
+
+	e.g,
+
+	out-ports {				// Output ports for this component
+
+		port@0 {			// Outport 0
+		  reg = 0;
+		  endpoint { ... };
+		};
+
+		port@1 {			// Outport 1
+		  reg = 1;
+		  endpoint { ... };
+		};
+
+	};
+
+	in-ports {				// Input ports for this component
+		port@0 {			// Inport 0
+		  reg = 0;
+		  endpoint { ... };
+		};
+
+		port@1 {			// Inport 1
+		  reg = 1;
+		  endpoint { ... };
+		};
+
+	};
+
+
+This series implements Option (4) listed above and falls back to the old
+bindings if the new bindings are not available. This allows the systems
+with old bindings work with the new driver. The driver now issues a warning
+(once) when it encounters the old bindings. The series contains DT update
+for Juno platform. The remaining in-kernel sources could be updated once
+we are fine with the proposal.
+
+It also cleans up the platform parsing code to reduce the memory usage by
+reusing the platform description.
+
+Applies on coresight/next
+
+Changes since V1:
+  - Implement the proposal by Rob.
+  - Drop the DTS updates for all platforms except Juno
+  - Drop the incorrect fix in coresight_register. Instead document the code
+    to prevent people trying to un-fix it again.
+  - Add a patch to drop remote device references in DT graph parsing
+  - Split of_node refcount fixing patch, fix a typo in the comment.
+  - Add Reviewed-by tags from Mathieu.
+  - Drop patches picked up for 4.18-rc series
+
+Changes since RFC:
+ - Fixed style issues
+ - Fix an existing memory leak coresight_register (Found in code update)
+ - Fix missing of_node_put() in the existing driver (Reported-by Mathieu)
+ - Update the existing dts in kernel tree.
+
+Suzuki K Poulose (10):
+  coresight: Document error handling in coresight_register
+  coresight: platform: Refactor graph endpoint parsing
+  coresight: platform: Fix refcounting for graph nodes
+  coresight: platform: Fix leaking device reference
+  coresight: Fix remote endpoint parsing
+  coresight: Add helper to check if the endpoint is input
+  coresight: platform: Cleanup coresight connection handling
+  coresight: dts: Document usage of graph bindings
+  coresight: Cleanup coresight DT bindings
+  dts: juno: Update coresight bindings for hw port
+
+ .../devicetree/bindings/arm/coresight.txt          |  95 ++++----
+ arch/arm64/boot/dts/arm/juno-base.dtsi             | 161 ++++++-------
+ arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi          |  52 ++--
+ arch/arm64/boot/dts/arm/juno.dts                   |  13 +-
+ drivers/hwtracing/coresight/coresight.c            |  35 +--
+ drivers/hwtracing/coresight/of_coresight.c         | 262 ++++++++++++++-------
+ include/linux/coresight.h                          |   9 +-
+ 7 files changed, 353 insertions(+), 274 deletions(-)
+
+-- 
+2.7.4
 
