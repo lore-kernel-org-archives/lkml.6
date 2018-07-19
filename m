@@ -2,124 +2,127 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 345AAC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FB6C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E47782084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:28:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47782084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id B7AC92086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:28:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PRxscx2A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7AC92086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731538AbeGSPLZ (ORCPT
+        id S1731670AbeGSPLu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:11:25 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:17350 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727487AbeGSPLY (ORCPT
+        Thu, 19 Jul 2018 11:11:50 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:46554 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731113AbeGSPLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:11:24 -0400
-Received: from [192.168.90.65] (61.173.0.103) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 19 Jul
- 2018 22:27:15 +0800
-From:   Yixun Lan <yixun.lan@amlogic.com>
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-To:     Kevin Hilman <khilman@baylibre.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
- <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
- <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
- <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
- <1531216472.2708.71.camel@baylibre.com> <7hfu0jmhbe.fsf@baylibre.com>
- <7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com>
- <7h601be2vk.fsf@baylibre.com>
-CC:     <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
-        <qianggui.song@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <bo.yang@amlogic.com>,
-        <sboyd@kernel.org>, <jian.hu@amlogic.com>,
-        <xingyu.chen@amlogic.com>, <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <sunny.luo@amlogic.com>,
-        <carlo@caione.org>, <linux-arm-kernel@lists.infradead.org>
-Message-ID: <e1f0b672-65de-6afa-cec4-e2d910c58b7c@amlogic.com>
-Date:   Thu, 19 Jul 2018 22:27:55 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Thu, 19 Jul 2018 11:11:49 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JENmv9078558
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 14:28:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=EaN9yF9FxgA2LxvWt5nh9cj9OblEct0qTSJ6jqk0Z3Q=;
+ b=PRxscx2APrLNgNLbiv+xRS3PIpzTz2RkHfxhcyZnStlHtZ/iDJlzx/zGUxbavHbyYCxf
+ cxgGeCAZs7BhwiEKNwlW1EXIZVoY22AhR0fovzZLqSNcjLTviYvdNmHoj4yNtIuZAr59
+ qkn+kz6IVkwIfJwq19SFYwwSMBWFSjfXINWI77vK+nN13mNLDlrsQoJvNa2BhwTeV0iT
+ OYWVtfKXf/oemRnqEcbws3N1Pz1DicyTxWYsWR42fmlcXmvN2P1qmnZg69ye37m4eTqs
+ E8C+HGa/e1uHgB045v381kcfi1Ubllvnjd1l+xjo66QapZWuxgYVzGWCkhkJk+xb7vHk Vw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2k7a3tatbj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 14:28:23 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6JESLuK030901
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 14:28:22 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JESLxc024642
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 14:28:21 GMT
+Received: from mail-it0-f41.google.com (/209.85.214.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Jul 2018 07:28:21 -0700
+Received: by mail-it0-f41.google.com with SMTP id v71-v6so9946954itb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 07:28:21 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFPWfvgZd4nP46fvu1ytabVwl6uM/5zlsS9hikPIE2DYrhfOeA8
+        b7C3HNalwmHuUynGBKJ/2ep04Jo7twGNfNnhgEY=
+X-Google-Smtp-Source: AAOMgpfuFHbmyyOs847QVLt6VLsd1m5G7K5SewB8pxZiLJcSv7e1O9bQgls2uC2N/NmWqNyM3cVAjgBShBbadUTgDBQ=
+X-Received: by 2002:aca:e089:: with SMTP id x131-v6mr10315727oig.221.1532010500763;
+ Thu, 19 Jul 2018 07:28:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7h601be2vk.fsf@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [61.173.0.103]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+References: <20180719132740.32743-1-osalvador@techadventures.net>
+ <20180719132740.32743-6-osalvador@techadventures.net> <20180719134622.GE7193@dhcp22.suse.cz>
+ <20180719135859.GA10988@techadventures.net> <20180719140308.GG7193@dhcp22.suse.cz>
+In-Reply-To: <20180719140308.GG7193@dhcp22.suse.cz>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 19 Jul 2018 10:27:44 -0400
+X-Gmail-Original-Message-ID: <CAGM2reZ-+njLtZSnNpry11frg85KmMk4WWxGdaqk1o4BUJVO1w@mail.gmail.com>
+Message-ID: <CAGM2reZ-+njLtZSnNpry11frg85KmMk4WWxGdaqk1o4BUJVO1w@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] mm/page_alloc: Only call pgdat_set_deferred_range
+ when the system boots
+To:     mhocko@kernel.org
+Cc:     osalvador@techadventures.net,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, aaron.lu@intel.com,
+        iamjoonsoo.kim@lge.com, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        osalvador@suse.de
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8958 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=10 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807190155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 10:06 PM, Kevin Hilman wrote:
-> Yixun Lan <yixun.lan@amlogic.com> writes:
-> 
-> [...]
-> 
->>>
->>> As Jerome said, I think consistency is an important goal, so leaving off
->>> the "meson-" for drivers/clk is fine with me.
->>>
->> ok
->>
->>> Also for consistency, for the rest of the drivers, keeping "meson-" is
->>> probably the right thing to do.
->>>
->> ok, for the above, you are talking about the already exist compatible
->> names? or the patches we will push in the future?
-> 
-> I'm talking about future patches.
-> 
-ok
+On Thu, Jul 19, 2018 at 10:03 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Thu 19-07-18 15:58:59, Oscar Salvador wrote:
+> > On Thu, Jul 19, 2018 at 03:46:22PM +0200, Michal Hocko wrote:
+> > > On Thu 19-07-18 15:27:40, osalvador@techadventures.net wrote:
+> > > > From: Oscar Salvador <osalvador@suse.de>
+> > > >
+> > > > We should only care about deferred initialization when booting.
+> > >
+> > > Again why is this worth doing?
+> >
+> > Well, it is not a big win if that is what you meant.
+> >
+> > Those two fields are only being used when dealing with deferred pages,
+> > which only happens at boot time.
+> >
+> > If later on, free_area_init_node gets called from memhotplug code,
+> > we will also set the fields, although they will not be used.
+> >
+> > Is this a problem? No, but I think it is more clear from the code if we
+> > see when this is called.
+> > So I would say it was only for code consistency.
+>
+> Then put it to the changelog.
+>
+> > If you think this this is not worth, I am ok with dropping it.
+>
+> I am not really sure. I am not a big fan of SYSTEM_BOOTING global
+> thingy so I would rather not spread its usage.
 
->>> However, patches would be welcome to add compatibles without the "meson"
->>> for the rest of the drivers & documentation as well, but please do not
->>> remove any compatibles.
->>>
->> I assume you are talking about the patches in the future we will push?
->> to drop the "meson".
->>
->> I'm confused here, as the above two paragraphs conflict with each other
-> 
-> Yeah, what I wrote is confusing, sorry about that.
-> 
-> What I mean is that new patches should stay consistent with compatibles
-> in their existing drivers/subsystems.  That means keeping the "meson-"
-> prefix for everything except drivers/clk.
-> 
-sounds good to me.
+I agree, I do not think this patch is necessary. Calling
+pgdat_set_deferred_range() does not hurt in hotplug context, and it is
+cheap too. SYSTEM_BOOTING sometimes useful, but it is better to use it
+only where necessary, where without this "if" we will encounter some
+bugs.
 
-> In addition to that, patches would be welcome for *adding* compatibles
-> without "meson" to all the current drivers.
-> 
-not sure if I parse above correctly, so let me rephrase..
-
-for "all the current drivers", do you mean all the drivers which already
-accepted at mainline kernel, which are mmc, uart, spi, i2c ..
-
-all of them follow "amlogic,meson-${SOC}-${FUNCTION}", so do you propose
-to add compatbiles like "amlogic,${SOC}-${FUNCTION}" ?
-
-take i2c for example, there is "amlogic,meson-axg-i2c" already, do you
-want to add another "amlogic,axg-i2c" ? I feel this will adding more
-confusion..
-
-How about only following the "amlogic,${SOC}-${FUNCTION}" syntax in the
-new added drivers in the future, for example NAND, PCIE driver which we
-want to push (those drivers doesn't exist in current mainline kernel).
-
-
-Yixun
-
-
-
+Thank you,
+Pavel
