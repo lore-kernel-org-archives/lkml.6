@@ -2,225 +2,139 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD6FECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C438ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 108FF20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F065220684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:24:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kmGup0ba"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108FF20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BaxLCmgP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BaxLCmgP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F065220684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730684AbeGSWEy (ORCPT
+        id S1730383AbeGSWJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 18:04:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45682 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbeGSWEx (ORCPT
+        Thu, 19 Jul 2018 18:09:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55734 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727609AbeGSWJU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 18:04:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sOz92gF7dNoBX5WZPZGeDbOYpt12Sa53dEyw+gFHB5M=; b=kmGup0bak7zt5M8pW6bbToMdw
-        92JOYt//b9zEp85fwt53Nu5HPBxUXBKII0D669xszNPlhY9tb7vX4vHoBkRI5wUBfY/OBYK6k1mj7
-        RFmkVo6CtXhjJnzA7EoHoOV38JlK0pbCIYqyMLkfaLXaXbmr0i1TrmcGRSVbISoOfp3Z9tg5Ttef9
-        nU1/dRBPKxL0Rhuw/J8PSN75kcrGv9AEx9DiochYJdnfneOOxf/F4bFnJea6kmjYTyMbh4Wre7m0H
-        CWAVibzUHmvdNEIMUfHkNcAFmNm8ai4R9iSkHDTFEGqBI6ngJTKvzeAOH3udFmLF71k3cunrdxPM+
-        a29H9kjJQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fgGL6-0005up-05; Thu, 19 Jul 2018 21:19:56 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7DC2320275F38; Thu, 19 Jul 2018 23:19:54 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 23:19:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf/x86/intel: Fix unwind errors from PEBS entries (mk-II)
-Message-ID: <20180719211954.GZ2512@hirez.programming.kicks-ass.net>
-References: <60466ab6-311b-ad8d-2f79-32702174cb95@lab.ntt.co.jp>
- <20180719153347.buoe6pavpqc75zbb@treble>
- <20180719174311.GK2494@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180719174311.GK2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 19 Jul 2018 18:09:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9B4016063A; Thu, 19 Jul 2018 21:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532035463;
+        bh=NFCryJhGa2jS+bKL5haq/pgyhmkalyDxt7yIxo5HYvw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BaxLCmgPkYpOO2KTZxTPk0LlotrxUwFl2+zVxn6A2KQDztD14mGonIY/AJ9qdQn9E
+         GzeML5x4ah2K7tZXinYCQzgCB8M81E+6oMIVi4Z1rSgBIU771E7NyQ1Jg9i9TLrz6O
+         4/dA4GT/VlpRGr99pI5ZIN9CV5NdW/UAzl0iM4cc=
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BDDD660481;
+        Thu, 19 Jul 2018 21:24:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532035463;
+        bh=NFCryJhGa2jS+bKL5haq/pgyhmkalyDxt7yIxo5HYvw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BaxLCmgPkYpOO2KTZxTPk0LlotrxUwFl2+zVxn6A2KQDztD14mGonIY/AJ9qdQn9E
+         GzeML5x4ah2K7tZXinYCQzgCB8M81E+6oMIVi4Z1rSgBIU771E7NyQ1Jg9i9TLrz6O
+         4/dA4GT/VlpRGr99pI5ZIN9CV5NdW/UAzl0iM4cc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDDD660481
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
+        tsoni@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Vikram Mulukutla <markivx@codeaurora.org>
+Subject: [PATCH] dd: Invoke one probe retry cycle after every initcall level
+Date:   Thu, 19 Jul 2018 14:24:00 -0700
+Message-Id: <1532035440-7860-1-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 07:43:11PM +0200, Peter Zijlstra wrote:
-> On Thu, Jul 19, 2018 at 10:33:47AM -0500, Josh Poimboeuf wrote:
-> > On Thu, Jul 19, 2018 at 01:33:54PM +0900, Prashant Bhole wrote:
-> > > Hi Peter, Josh,
-> > > 
-> > > Found following bug. This bug can not be seen with this fix:
-> > > https://lkml.org/lkml/2018/5/10/280.
-> > 
-> > Peter, care to clean that up and submit it?
-> 
-> Ah, thanks for the prod. Yes I'll go clean that up.
+Drivers that are registered at an initcall level may have to
+wait until late_init before the probe deferral mechanism can
+retry their probe functions. It is possible that their
+dependencies were resolved much earlier, in some cases even
+before the next initcall level. Invoke one probe retry cycle
+at every _sync initcall level, allowing these drivers to be
+probed earlier.
 
-Here goes; Ingo could you stuff in perf/urgent ?
-
+Signed-off-by: Vikram Mulukutla <markivx@codeaurora.org>
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 ---
-Subject: perf/x86/intel: Fix unwind errors from PEBS entries (mk-II)
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Thu, 10 May 2018 15:48:41 +0200
+ drivers/base/dd.c | 33 +++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-Vince reported the perf_fuzzer giving various unwinder warnings and
-Josh reported:
-
-On Sun, May 06, 2018 at 06:49:35PM -0500, Josh Poimboeuf wrote:
-
-> Deja vu.  Most of these are related to perf PEBS, similar to the
-> following issue:
->
->   b8000586c90b ("perf/x86/intel: Cure bogus unwind from PEBS entries")
->
-> This is basically the ORC version of that.  setup_pebs_sample_data() is
-> assembling a franken-pt_regs which ORC isn't happy about.  RIP is
-> inconsistent with some of the other registers (like RSP and RBP).
-
-And where the previous unwinder only needed BP,SP ORC also requires
-IP. But we cannot spoof IP because then the sample will get displaced,
-entirely negating the point of PEBS.
-
-So cure the whole thing differently by doing the unwind early; this
-does however require a means to communicate we did the unwind early.
-We (ab)use an unused sample_type bit for this, which we set on events
-that fill out the data->callchain before the normal
-perf_prepare_sample().
-
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Debugged-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Tested-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/events/intel/core.c    |    3 +++
- arch/x86/events/intel/ds.c      |   25 +++++++++++--------------
- include/linux/perf_event.h      |    1 +
- include/uapi/linux/perf_event.h |    2 ++
- kernel/events/core.c            |    6 ++++--
- 5 files changed, 21 insertions(+), 16 deletions(-)
-
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2997,6 +2997,9 @@ static int intel_pmu_hw_config(struct pe
- 		}
- 		if (x86_pmu.pebs_aliases)
- 			x86_pmu.pebs_aliases(event);
-+
-+		if (event->attr.sample_type & PERF_SAMPLE_CALLCHAIN)
-+			event->attr.sample_type |= __PERF_SAMPLE_CALLCHAIN_EARLY;
- 	}
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 1435d72..e6a6821 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -224,23 +224,44 @@ void device_unblock_probing(void)
+ 	driver_deferred_probe_trigger();
+ }
  
- 	if (needs_branch_stack(event)) {
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1186,16 +1186,20 @@ static void setup_pebs_sample_data(struc
- 	}
- 
- 	/*
-+	 * We must however always use iregs for the unwinder to stay sane; the
-+	 * record BP,SP,IP can point into thin air when the record is from a
-+	 * previous PMI context or an (I)RET happend between the record and
-+	 * PMI.
-+	 */
-+	if (sample_type & PERF_SAMPLE_CALLCHAIN)
-+		data->callchain = perf_callchain(event, iregs);
-+
++static void enable_trigger_defer_cycle(void)
++{
++	driver_deferred_probe_enable = true;
++	driver_deferred_probe_trigger();
 +	/*
- 	 * We use the interrupt regs as a base because the PEBS record does not
- 	 * contain a full regs set, specifically it seems to lack segment
- 	 * descriptors, which get used by things like user_mode().
- 	 *
- 	 * In the simple case fix up only the IP for PERF_SAMPLE_IP.
--	 *
--	 * We must however always use BP,SP from iregs for the unwinder to stay
--	 * sane; the record BP,SP can point into thin air when the record is
--	 * from a previous PMI context or an (I)RET happend between the record
--	 * and PMI.
- 	 */
- 	*regs = *iregs;
- 
-@@ -1214,15 +1218,8 @@ static void setup_pebs_sample_data(struc
- 		regs->si = pebs->si;
- 		regs->di = pebs->di;
- 
--		/*
--		 * Per the above; only set BP,SP if we don't need callchains.
--		 *
--		 * XXX: does this make sense?
--		 */
--		if (!(sample_type & PERF_SAMPLE_CALLCHAIN)) {
--			regs->bp = pebs->bp;
--			regs->sp = pebs->sp;
--		}
-+		regs->bp = pebs->bp;
-+		regs->sp = pebs->sp;
- 
- #ifndef CONFIG_X86_32
- 		regs->r8 = pebs->r8;
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1130,6 +1130,7 @@ extern void perf_callchain_kernel(struct
- extern struct perf_callchain_entry *
- get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
- 		   u32 max_stack, bool crosstask, bool add_mark);
-+extern struct perf_callchain_entry *perf_callchain(struct perf_event *event, struct pt_regs *regs);
- extern int get_callchain_buffers(int max_stack);
- extern void put_callchain_buffers(void);
- 
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -143,6 +143,8 @@ enum perf_event_sample_format {
- 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
- 
- 	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
++	 * Sort as many dependencies as possible before the next initcall
++	 * level
++	 */
++	flush_work(&deferred_probe_work);
++}
 +
-+	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1UL << 63,
- };
- 
- /*
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6343,7 +6343,7 @@ static u64 perf_virt_to_phys(u64 virt)
- 
- static struct perf_callchain_entry __empty_callchain = { .nr = 0, };
- 
--static struct perf_callchain_entry *
-+struct perf_callchain_entry *
- perf_callchain(struct perf_event *event, struct pt_regs *regs)
+ /**
+  * deferred_probe_initcall() - Enable probing of deferred devices
+  *
+  * We don't want to get in the way when the bulk of drivers are getting probed.
+  * Instead, this initcall makes sure that deferred probing is delayed until
+- * late_initcall time.
++ * all the registered initcall functions at a particular level are completed.
++ * This function is invoked at every *_initcall_sync level.
+  */
+ static int deferred_probe_initcall(void)
  {
- 	bool kernel = !event->attr.exclude_callchain_kernel;
-@@ -6382,7 +6382,9 @@ void perf_prepare_sample(struct perf_eve
- 	if (sample_type & PERF_SAMPLE_CALLCHAIN) {
- 		int size = 1;
- 
--		data->callchain = perf_callchain(event, regs);
-+		if (!(sample_type & __PERF_SAMPLE_CALLCHAIN_EARLY))
-+			data->callchain = perf_callchain(event, regs);
+-	driver_deferred_probe_enable = true;
+-	driver_deferred_probe_trigger();
+-	/* Sort as many dependencies as possible before exiting initcalls */
+-	flush_work(&deferred_probe_work);
++	enable_trigger_defer_cycle();
++	driver_deferred_probe_enable = false;
++	return 0;
++}
++arch_initcall_sync(deferred_probe_initcall);
++subsys_initcall_sync(deferred_probe_initcall);
++fs_initcall_sync(deferred_probe_initcall);
++device_initcall_sync(deferred_probe_initcall);
 +
- 		size += data->callchain->nr;
++static int deferred_probe_enable_fn(void)
++{
++	/* Enable deferred probing for all time */
++	enable_trigger_defer_cycle();
+ 	initcalls_done = true;
+ 	return 0;
+ }
+-late_initcall(deferred_probe_initcall);
++late_initcall(deferred_probe_enable_fn);
  
- 		header->size += size * sizeof(u64);
+ /**
+  * device_is_bound() - Check if device is bound to a driver
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
