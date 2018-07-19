@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C56EECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69DAECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11B5720693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:49:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B5720693
+	by mail.kernel.org (Postfix) with ESMTP id 5CE662084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:49:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE662084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731203AbeGSJbE (ORCPT
+        id S1731351AbeGSJbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 05:31:04 -0400
+        Thu, 19 Jul 2018 05:31:06 -0400
 Received: from mga04.intel.com ([192.55.52.120]:10712 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727470AbeGSJbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 05:31:04 -0400
+        id S1727470AbeGSJbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 05:31:06 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 01:48:57 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 01:49:00 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,374,1526367600"; 
-   d="scan'208";a="76038280"
+   d="scan'208";a="76038288"
 Received: from yhuang6-ux31a.sh.intel.com ([10.239.195.246])
-  by orsmga002.jf.intel.com with ESMTP; 19 Jul 2018 01:48:55 -0700
+  by orsmga002.jf.intel.com with ESMTP; 19 Jul 2018 01:48:57 -0700
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
         Michal Hocko <mhocko@suse.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
         Minchan Kim <minchan@kernel.org>,
         Rik van Riel <riel@redhat.com>,
         Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH v3 3/8] swap: Use swap_count() in swap_page_trans_huge_swapped()
-Date:   Thu, 19 Jul 2018 16:48:37 +0800
-Message-Id: <20180719084842.11385-4-ying.huang@intel.com>
+Subject: [PATCH v3 4/8] swap: Unify normal/huge code path in swap_page_trans_huge_swapped()
+Date:   Thu, 19 Jul 2018 16:48:38 +0800
+Message-Id: <20180719084842.11385-5-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180719084842.11385-1-ying.huang@intel.com>
 References: <20180719084842.11385-1-ying.huang@intel.com>
@@ -54,19 +54,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In swap_page_trans_huge_swapped(), to identify whether there's any
-page table mapping for a 4k sized swap entry, "si->swap_map[i] !=
-SWAP_HAS_CACHE" is used.  This works correctly now, because all users
-of the function will only call it after checking SWAP_HAS_CACHE.  But
-as pointed out by Daniel, it is better to use "swap_count(map[i])"
-here, because it works for "map[i] == 0" case too.
+As suggested by Dave, we should unify the code path for normal and
+huge swap support if possible to avoid duplicated code, bugs, etc. and
+make it easier to review code.
 
-And this makes the implementation more consistent between normal and
-huge swap entry.
+In this patch, the normal/huge code path in swap_page_trans_huge_swapped()
+is unified, the added and removed lines are same.  And the binary size
+is kept almost same when CONFIG_TRANSPARENT_HUGEPAGE=n.
+
+		 text	   data	    bss	    dec	    hex	filename
+base:		24179	   2028	    340	  26547	   67b3	mm/swapfile.o
+unified:	24215	   2028	    340	  26583	   67d7	mm/swapfile.o
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Suggested-and-reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 Cc: Michal Hocko <mhocko@suse.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: Shaohua Li <shli@kernel.org>
@@ -75,28 +77,35 @@ Cc: Minchan Kim <minchan@kernel.org>
 Cc: Rik van Riel <riel@redhat.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 ---
- mm/swapfile.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/swapfile.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 87c4c3446aed..cb0bc54e99c0 100644
+index cb0bc54e99c0..96018207b582 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -1498,12 +1498,12 @@ static bool swap_page_trans_huge_swapped(struct swap_info_struct *si,
+@@ -270,7 +270,10 @@ static inline void cluster_set_null(struct swap_cluster_info *info)
  
+ static inline bool cluster_is_huge(struct swap_cluster_info *info)
+ {
+-	return info->flags & CLUSTER_FLAG_HUGE;
++	if (IS_ENABLED(CONFIG_THP_SWAP))
++		return info->flags & CLUSTER_FLAG_HUGE;
++	else
++		return false;
+ }
+ 
+ static inline void cluster_clear_huge(struct swap_cluster_info *info)
+@@ -1493,9 +1496,6 @@ static bool swap_page_trans_huge_swapped(struct swap_info_struct *si,
+ 	int i;
+ 	bool ret = false;
+ 
+-	if (!IS_ENABLED(CONFIG_THP_SWAP))
+-		return swap_swapcount(si, entry) != 0;
+-
  	ci = lock_cluster_or_swap_info(si, offset);
  	if (!ci || !cluster_is_huge(ci)) {
--		if (map[roffset] != SWAP_HAS_CACHE)
-+		if (swap_count(map[roffset]))
- 			ret = true;
- 		goto unlock_out;
- 	}
- 	for (i = 0; i < SWAPFILE_CLUSTER; i++) {
--		if (map[offset + i] != SWAP_HAS_CACHE) {
-+		if (swap_count(map[offset + i])) {
- 			ret = true;
- 			break;
- 		}
+ 		if (swap_count(map[roffset]))
 -- 
 2.16.4
 
