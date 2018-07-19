@@ -2,210 +2,76 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89252ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E03ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 310D820661
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:19:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FiSfpFkb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 310D820661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 4412120661
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:19:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4412120661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732035AbeGSRDo (ORCPT
+        id S1732052AbeGSRDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 13:03:44 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41432 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731690AbeGSRDo (ORCPT
+        Thu, 19 Jul 2018 13:03:49 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([207.82.80.211]:43889 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731625AbeGSRDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 13:03:44 -0400
-Received: by mail-oi0-f68.google.com with SMTP id k12-v6so16003702oiw.8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 09:19:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=uWluWMvWr1gp/AO0Mg0mnAxw3w5Mzu50tuFhE10BQAE=;
-        b=FiSfpFkbXopLsR+pM077wm3OZSZPXF99oxtezyIFKfJHrc/D2pJmUbbJ3Yh99pCICx
-         IsETK9HwUNq+9qYsb0hZLWo9uCxfe8Gzl/DQdWswyymY3gqcredxtg5NvbuRG8Uw4v8B
-         ciAGM/e1XFyeL8xceKQ2YzmnvCqW5qkOoE5Nk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=uWluWMvWr1gp/AO0Mg0mnAxw3w5Mzu50tuFhE10BQAE=;
-        b=FpYuMxIs7hugCgmo9hhQM7mp2TOWFeB457BSjtK9U+k1RCG6wxSo6VKJA+H1/4bbD1
-         DbFOgQWhRJT3D5UCLd9XTPaYAfm8dAey2B3mXjuXDwPPNqsCNulr46v/p2ep/ooFI6Fo
-         RcVM+GH05frzU1uGmab8nAp13C2gDKI0xlJgYOLsm/+UfLg16MNLvtvhrBaLjw0sjMlA
-         bwOG9VvRZ+BtfzebVdivG+ZeCknakCmkXUGpZtTaIqYagd+m8hW8Rh7E1mxzHT7gQ/UK
-         L15vJmSUwlV57MqFANUyQsTl6Xc1Up9yjA+jkP2Lprtred6gfHh95dK0+S/rDypKjaAv
-         1Kzg==
-X-Gm-Message-State: AOUpUlFoQBeeYmRMFuy3uis6DWuji3A65ixgvmiIfBb88MGBIbrmVl9g
-        urxpJmqfVIX8rLLzY75IACpaG7pPi1yMLBznq3E67Q==
-X-Google-Smtp-Source: AAOMgpcAaQ12S5jAjwo0S6AJTz171cDfGKI+0LKXUZyMXDegy/ShZ7sKjRgdi62ESlnOptZg9DpDFwHxTMShIp4M6OQ=
-X-Received: by 2002:aca:d986:: with SMTP id q128-v6mr10911205oig.349.1532017189655;
- Thu, 19 Jul 2018 09:19:49 -0700 (PDT)
+        Thu, 19 Jul 2018 13:03:49 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-12-2UeKkl4QMDOpZE6OtNdLjw-1; Thu, 19 Jul 2018 17:19:53 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
+ 19 Jul 2018 17:21:32 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 19 Jul 2018 17:21:32 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Kirill Tkhai' <ktkhai@virtuozzo.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "penguin-kernel@I-love.SAKURA.ne.jp" 
+        <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "shakeelb@google.com" <shakeelb@google.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] mm: Cleanup in do_shrink_slab()
+Thread-Topic: [PATCH] mm: Cleanup in do_shrink_slab()
+Thread-Index: AQHUH3p9jXsb1mwn8kyuT9a/BX6Xv6SWuXKQ
+Date:   Thu, 19 Jul 2018 16:21:32 +0000
+Message-ID: <0f98d9b38be1466b8608d5c071aa52ed@AcuMS.aculab.com>
+References: <153201627722.12295.11034132843390627757.stgit@localhost.localdomain>
+In-Reply-To: <153201627722.12295.11034132843390627757.stgit@localhost.localdomain>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
 MIME-Version: 1.0
-Received: by 2002:a9d:6043:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 09:19:48
- -0700 (PDT)
-In-Reply-To: <20180719091252.749f2433@t450s.home>
-References: <1531457777-11825-1-git-send-email-srinath.mannam@broadcom.com>
- <20180717092207.775e381c@t450s.home> <CABe79T7eVS5Z5+CkNRfWik=jFeejq54xheUOS=Jc9oU6qX8=kA@mail.gmail.com>
- <20180718152531.60f7df6b@t450s.home> <CABe79T6G2_eegbQ_SOy4W38xXngQE3b4RBPys-tO+yBd2jq_fQ@mail.gmail.com>
- <20180719091252.749f2433@t450s.home>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Thu, 19 Jul 2018 21:49:48 +0530
-Message-ID: <CABe79T7A2ud3jbm9B43S9RQvOdJ0b29NUb3s9yKNTv257sfEMw@mail.gmail.com>
-Subject: Re: [RFC PATCH] vfio/pci: map prefetchble bars as writecombine
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     Ray Jui <ray.jui@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        kvm@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        aik@ozlabs.ru, David Gibson <david@gibson.dropbear.id.au>,
-        benh@kernel.crashing.org
-Content-Type: text/plain; charset="UTF-8"
+X-MC-Unique: 2UeKkl4QMDOpZE6OtNdLjw-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Alex,
+RnJvbTogS2lyaWxsIFRraGFpDQo+IFNlbnQ6IDE5IEp1bHkgMjAxOCAxNzowNQ0KPiANCj4gR3Jv
+dXAgbG9uZyB2YXJpYWJsZXMgdG9nZXRoZXIgdG8gbWluaW1pemUgbnVtYmVyIG9mIG9jY3VwaWVk
+IGxpbmVzDQo+IGFuZCBwbGFjZSBhbGwgZGVmaW5pdGlvbnMgaW4gYmFjayBDaHJpc3RtYXMgdHJl
+ZSBvcmRlci4NCg0KR3JvdXBpbmcgdG9nZXRoZXIgdW5yZWxhdGVkIHZhcmlhYmxlcyBkb2Vzbid0
+IHJlYWxseSBtYWtlIHRoZSBjb2RlDQphbnkgbW9yZSByZWFkYWJsZS4NCklNSE8gT25lIHZhcmlh
+YmxlIHBlciBsaW5lIGlzIHVzdWFsbHkgYmVzdC4NCg0KPiBBbHNvLCBzaW1wbGlmeSBleHByZXNz
+aW9uIGFyb3VuZCBiYXRjaF9zaXplOiB1c2UgYWxsIHBvd2VyIG9mIEMgbGFuZ3VhZ2UhDQoNCiAg
+IGZvbyA9IGJhciA/IDogYmF6Ow0KSXMgbm90IHBhcnQgb2YgQywgaXQgaXMgYSBnY2MgZXh0ZW5z
+aW9uLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5
+IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRp
+b24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-On Thu, Jul 19, 2018 at 8:42 PM, Alex Williamson
-<alex.williamson@redhat.com> wrote:
-> On Thu, 19 Jul 2018 20:17:11 +0530
-> Srinath Mannam <srinath.mannam@broadcom.com> wrote:
->
->> HI Alex,
->>
->> On Thu, Jul 19, 2018 at 2:55 AM, Alex Williamson
->> <alex.williamson@redhat.com> wrote:
->> > On Thu, 19 Jul 2018 00:05:18 +0530
->> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
->> >
->> >> Hi Alex,
->> >>
->> >> On Tue, Jul 17, 2018 at 8:52 PM, Alex Williamson
->> >> <alex.williamson@redhat.com> wrote:
->> >> > On Fri, 13 Jul 2018 10:26:17 +0530
->> >> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
->> >> >
->> >> >> By default all BARs map with VMA access permissions
->> >> >> as pgprot_noncached.
->> >> >>
->> >> >> In ARM64 pgprot_noncached is MT_DEVICE_nGnRnE which
->> >> >> is strongly ordered and allows aligned access.
->> >> >> This type of mapping works for NON-PREFETCHABLE bars
->> >> >> containing EP controller registers.
->> >> >> But it restricts PREFETCHABLE bars from doing
->> >> >> unaligned access.
->> >> >>
->> >> >> In CMB NVMe drives PREFETCHABLE bars are required to
->> >> >> map as MT_NORMAL_NC to do unaligned access.
->> >> >>
->> >> >> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
->> >> >> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->> >> >> Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
->> >> >> ---
->> >> >
->> >> > This has been discussed before:
->> >> >
->> >> > https://www.spinics.net/lists/kvm/msg156548.html
->> >> Thank you for inputs.. I have gone through the long list of mail chain
->> >> discussion.
->> >> >
->> >> > CC'ing the usual suspects from the previous thread.  I'm not convinced
->> >> > that the patch here has considered anything other than the ARM64
->> >> > implications and it's not clear that it considers compatibility with
->> >> > existing users or devices at all.  Can we guarantee for all devices and
->> >> > use cases that WC is semantically equivalent and preferable to UC?  If
->> >> > not then we need to device an extension to the interface that allows
->> >> > the user to specify WC.  Thanks,
->> >> >
->> >> To implement with user specified WC flags, many changes need to be done.
->> >> Suppose In DPDK, prefetcable BARs map using WC flag, then also same
->> >> question comes
->> >> that WC may be different for different CPUs.
->> >> As per functionality, both WC and PREFETCHABLE are same, like merging writes and
->> >> typically WC is uncached.
->> >> So, based on prefetchable BARs behavior and usage we need to map bar memory.
->> >> Is it right to map prefetchable BARs as strongly ordered, aligned
->> >> access and uncached?
->> >
->> > Is it possible to answer that question generically?  Whether to map a
->> > BAR as UC or WC is generally a question for the driver.  Does the
->> > device handle unaligned accesses?  Does the device need strong memory
->> > ordering?  If this is a driver level question then the driver that
->> > needs to make that decision is the userspace driver.  VFIO is just a
->> > pass-through here and since we don't offer the user a choice of
->> > mappings, we take the safer and more conservative mapping, ie. UC.
->> >
->> Yes, you are right, driver should make the decision based on its requirement.
->> In my case, user space driver is part of SPDK, so SPDK should request DPDK
->> and DPDK should request VFIO to map BAR for its choice of mapping.
->> So to implement this we need code changes in VFIO, DPDK and SPDK.
->>
->> > You're suggesting that there are many changes to be done if we modify
->> > the vfio interface to expose WC under the user's control rather than
->> > simply transparently impose WC for all mappings, but is that really the
->> > case?  Most devices on most platforms seem to work fine now.  Perhaps WC
->> > is a performance optimization, but this is the first instance I've seen
->> > of it as a functional issue.  Does that suggest that the imposed
->> > alignment on your platform is perhaps unique and the relaxed alignment
->> > should be implemented at the architecture specific memory flags for UC
->> > mappings?  For instance, does x86 require this change for the same
->> > device?  The chance for regressions of other devices on other platforms
->> > seems rather high as proposed. Thanks,
->> This issue is not specific to platform or device. this is the requirement of
->> CMB enabled NVMe cards.
->> NVMe kernel driver already has support to map CMB bar as WC using
->> ioremap_wc function.
->> File: drivers/nvme/host/pci.c
->> Function: nvme_map_cmb
->> code: dev->cmb = ioremap_wc(pci_resource_start(pdev, bar) + offset, size);
->> It means ioremap_wc is working with all platforms and WC map of
->> perfetchable BARs does not harm.
->> Same is required in SPDK NVMe driver also, without WC map it may work
->> in x86 platform, but it does not work in ARM platforms.
->
-> Doesn't this contradict your assertion that it's not specific to
-> platform or device?  The device requires support for unaligned
-> accesses.  The platform chooses to restrict unaligned accesses for
-> non-WC mappings while other platforms do not.  The native driver can
-> still clearly have performance considerations for choosing to use WC
-> mappings, but it's still not clear to me that the functionality issue
-> isn't self inflicted by the platform definition of UC vs WC.  Thanks,
->
-Device allows both aligned and unaligned access.. so software have
-flexibility can do unaligned access.
-As per ARM64 platform, with UC map, memory access should be un-cached,
-aligned access and strongly order mapping.
-with WC map, memory access can be aligned/unaligned and un-cached. I
-thought this is the property of platform not issue.
-To allow software to do unaligned access of device memory, we need to
-use WC map of ARM64 platform case.
-In ARM platforms UC mapping is used to map controller registers which
-are 4 byte aligned exposed by non-prefetchable bars.
-Also prefetchable BARs allows write merging so I thought using WC map
-fulfills both write merging (add performance) and unaligned
-access.
-Can I modify the code as below to enable only for ARM platforms.
-        vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-+#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-+       if (pci_resource_flags(pdev, index) & IORESOURCE_PREFETCH)
-+               vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
-+#endif
-        vma->vm_pgoff = (pci_resource_start(pdev, index) >> PAGE_SHIFT) + pgoff;
-Regards,
-Srinath.
-
-> Alex
