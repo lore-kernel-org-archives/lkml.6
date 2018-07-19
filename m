@@ -3,75 +3,162 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5165AC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E10CECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0768220671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:35:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0768220671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id EEC3E20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:36:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEC3E20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730638AbeGSJRg (ORCPT
+        id S1730902AbeGSJSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 05:17:36 -0400
-Received: from outbound-smtp27.blacknight.com ([81.17.249.195]:52442 "EHLO
-        outbound-smtp27.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727706AbeGSJRg (ORCPT
+        Thu, 19 Jul 2018 05:18:52 -0400
+Received: from mo-csw-fb1115.securemx.jp ([210.130.202.174]:49514 "EHLO
+        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbeGSJSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 05:17:36 -0400
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp27.blacknight.com (Postfix) with ESMTPS id BD51FB8760
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 09:35:31 +0100 (IST)
-Received: (qmail 22801 invoked from network); 19 Jul 2018 08:35:31 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.66])
-  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 19 Jul 2018 08:35:31 -0000
-Date:   Thu, 19 Jul 2018 09:35:30 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 3/7] mm, slab: allocate off-slab freelists as
- reclaimable when appropriate
-Message-ID: <20180719083530.jhugqzkvjnbrddim@techsingularity.net>
-References: <20180718133620.6205-1-vbabka@suse.cz>
- <20180718133620.6205-4-vbabka@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20180718133620.6205-4-vbabka@suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        Thu, 19 Jul 2018 05:18:51 -0400
+Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1115) id w6J7ssqT030202; Thu, 19 Jul 2018 16:54:54 +0900
+Received: by mo-csw.securemx.jp (mx-mo-csw1114) id w6J7s1dh008596; Thu, 19 Jul 2018 16:54:01 +0900
+X-Iguazu-Qid: 2wGr4XsOpocR8ov1OL
+X-Iguazu-QSIG: v=1; s=0; t=1531986841; q=2wGr4XsOpocR8ov1OL; m=/g3rU7TXdO+dfxS7wdS8GI7jugW0ermTbPf+dQMKbZw=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1112) id w6J7rx5X001124;
+        Thu, 19 Jul 2018 16:53:59 +0900
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by imx2.toshiba.co.jp  with ESMTP id w6J7rx9v020903;
+        Thu, 19 Jul 2018 16:53:59 +0900 (JST)
+Content-Transfer-Encoding: 7bit
+From:   KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+To:     boris.brezillon@bootlin.com, miquel.raynal@bootlin.com,
+        richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+Subject: [RFC PATCH] mtd: nand: toshiba: Add support for ->exec_op()
+Date:   Thu, 19 Jul 2018 16:53:47 +0900
+X-TSB-HOP: ON
+Message-Id: <1531986827-18743-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 03:36:16PM +0200, Vlastimil Babka wrote:
-> In SLAB, OFF_SLAB caches allocate management structures (currently just the
-> freelist) from kmalloc caches when placement in a slab page together with
-> objects would lead to suboptimal memory usage. For SLAB_RECLAIM_ACCOUNT caches,
-> we can allocate the freelists from the newly introduced reclaimable kmalloc
-> caches, because shrinking the OFF_SLAB cache will in general result to freeing
-> of the freelists as well. This should improve accounting and anti-fragmentation
-> a bit.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+This patch is a patch to support TOSHIBA MEMORY CORPORATION BENAND
+memory devices.  This use vendor specific command
+(TOSHIBA_NAND_CMD_ECC_STATUS) to know the exact bitflips.  However, I
+could not test this patch because I do not have a platform that
+supports chip-> exec_op.  Therefore, I post this patch as RFC.
 
-I'm not quite convinced by this one. The freelist cache is tied to the
-lifetime of the slab and not the objects. A single freelist can be reclaimed
-eventually but for caches with many objects per slab, it could take a lot
-of shrinking random objects to reclaim one freelist. Functionally the
-patch appears to be fine.
+As soon as I get a platform that supports chip-> exec_op, I would like
+to test and re-post.
 
+Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+---
+ drivers/mtd/nand/raw/nand_toshiba.c | 76 +++++++++++++++++++++++++++++--------
+ 1 file changed, 61 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/nand_toshiba.c b/drivers/mtd/nand/raw/nand_toshiba.c
+index 6cec923..12218cd 100644
+--- a/drivers/mtd/nand/raw/nand_toshiba.c
++++ b/drivers/mtd/nand/raw/nand_toshiba.c
+@@ -17,28 +17,74 @@
+ 
+ #include <linux/mtd/rawnand.h>
+ 
++/* ECC Status Read Command for BENAND */
++#define TOSHIBA_NAND_CMD_ECC_STATUS_READ	0x7A
++
++/* ECC Status Mask for BENAND */
++#define TOSHIBA_NAND_ECC_STATUS_MASK	0x0F
++
+ /* Recommended to rewrite for BENAND */
+ #define TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED	BIT(3)
+ 
++static int toshiba_nand_benand_read_eccstatus_op(struct nand_chip *chip,
++						 u8 *buf)
++{
++	u8 *ecc_status = buf;
++
++	const struct nand_sdr_timings *sdr =
++		nand_get_sdr_timings(&chip->data_interface);
++	struct nand_op_instr instrs[] = {
++		NAND_OP_CMD(TOSHIBA_NAND_CMD_ECC_STATUS_READ,
++			    PSEC_TO_NSEC(sdr->tADL_min)),
++		NAND_OP_8BIT_DATA_IN(chip->ecc.steps, ecc_status, 0),
++	};
++	struct nand_operation op = NAND_OPERATION(instrs);
++
++	/* Drop the DATA_IN instruction if chip->ecc.steps is set to 0. */
++	if (!chip->ecc.steps)
++		op.ninstrs--;
++
++	return nand_exec_op(chip, &op);
++}
++
+ static int toshiba_nand_benand_eccstatus(struct mtd_info *mtd,
+ 					 struct nand_chip *chip)
+ {
+-	int ret;
++	int ret, i;
+ 	unsigned int max_bitflips = 0;
+-	u8 status;
+-
+-	/* Check Status */
+-	ret = nand_status_op(chip, &status);
+-	if (ret)
+-		return ret;
+-
+-	if (status & NAND_STATUS_FAIL) {
+-		/* uncorrected */
+-		mtd->ecc_stats.failed++;
+-	} else if (status & TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED) {
+-		/* corrected */
+-		max_bitflips = mtd->bitflip_threshold;
+-		mtd->ecc_stats.corrected += max_bitflips;
++	u8 status, bitflips, ecc_status[8];
++
++	if (chip->exec_op) {
++		/* Check ECC Status */
++		ret = toshiba_nand_benand_read_eccstatus_op(chip, ecc_status);
++		if (ret)
++			return ret;
++
++		for (i = 0; i < chip->ecc.steps; i++) {
++			bitflips = (ecc_status[i] &
++				    TOSHIBA_NAND_ECC_STATUS_MASK);
++			if (bitflips == 0x0F) {
++				mtd->ecc_stats.failed++;
++			} else {
++				mtd->ecc_stats.corrected += bitflips;
++				max_bitflips = max_t(unsigned int,
++						     max_bitflips, bitflips);
++			}
++		}
++	} else {
++		/* Check Status */
++		ret = nand_status_op(chip, &status);
++		if (ret)
++			return ret;
++
++		if (status & NAND_STATUS_FAIL) {
++			/* uncorrected */
++			mtd->ecc_stats.failed++;
++		} else if (status & TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED) {
++			/* corrected */
++			max_bitflips = mtd->bitflip_threshold;
++			mtd->ecc_stats.corrected += max_bitflips;
++		}
+ 	}
+ 
+ 	return max_bitflips;
 -- 
-Mel Gorman
-SUSE Labs
+2.7.4
+
+
