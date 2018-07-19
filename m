@@ -2,266 +2,140 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F37C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC1AC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3966920673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:13:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3966920673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EDCDD20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:14:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDCDD20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731757AbeGSN4u (ORCPT
+        id S1731771AbeGSN5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 09:56:50 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35240 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731600AbeGSN4u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 09:56:50 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a3-v6so8046338wrt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 06:13:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iZzoATpF89omNctTKdoshGmOMWLpa9IGu8U9CQYJWwk=;
-        b=c/vZlBCzd0aN0quua7asz/bzgatmgQgSEcf2qi/dqWJOAJB1QRrnVbj8/Uql+JglYw
-         27P4/d3IoaTS9Cz4WnuyjlQe2u7mYzolU091XxKc7JQsRUS/oO30xc1ZgXxvwO/HijMj
-         pDoahBSYvEp+md8avxH0v+knXCvb1D2k38PS7S9EHci8iJ8bcRErbWo7rr4AChrJlrWg
-         rqXKQXhcxtA30xwIMMqGK4uHT69O7N9V/Jddipod08qnBky8EdjdPtK0AamGRQ2CVZum
-         wdnIHyeDKVw15npvSdpXwi8okB3RxfioIEsc6ixtZiHYojir/xZwC5Qr6TQv0pkbxY5O
-         21nQ==
-X-Gm-Message-State: AOUpUlGJ2dYQ1V3k8vszIJXrS03KGDOlsjw8UBDBIPA/C5hyg2Akexzr
-        F0LCKFMoSrI4HQZnE/oz3K484g==
-X-Google-Smtp-Source: AAOMgpcWx4d9itXwtPX5ciRPlHnC2b4JPTzKmpC7ouuQQl1o2BUP290t1tzbRSSBy6FVKMpMWsK4jw==
-X-Received: by 2002:adf:f50e:: with SMTP id q14-v6mr7052086wro.241.1532006021806;
-        Thu, 19 Jul 2018 06:13:41 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id c7-v6sm6365629wma.26.2018.07.19.06.13.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 06:13:41 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 1/2] ata: ahci: Support state with min power and
- Partial low power state
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        tj@kernel.org
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alan.cox@intel.com, Mario.Limonciello@dell.com, rjw@rjwysocki.net
-References: <20180712222712.65310-1-srinivas.pandruvada@linux.intel.com>
- <20180712222712.65310-2-srinivas.pandruvada@linux.intel.com>
- <fa324b27-4424-afa2-9723-10437ca29801@redhat.com>
- <78b1a67902c44d3de3f5de87708993547c4a3f30.camel@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <ca1a7c99-e579-d314-0f09-ceca1b560d4a@redhat.com>
-Date:   Thu, 19 Jul 2018 15:13:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 09:57:20 -0400
+Received: from mga01.intel.com ([192.55.52.88]:63075 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731532AbeGSN5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 09:57:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 06:14:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,374,1526367600"; 
+   d="scan'208";a="76092498"
+Received: from sandybridge-desktop.sh.intel.com (HELO sandybridge-desktop) ([10.239.160.116])
+  by orsmga002.jf.intel.com with ESMTP; 19 Jul 2018 06:14:10 -0700
+Date:   Thu, 19 Jul 2018 21:20:03 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>,
+        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gu, Kookoo" <kookoo.gu@intel.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180719132003.GA30981@sandybridge-desktop>
+References: <cover.1531924968.git.yu.c.chen@intel.com>
+ <20180718202235.GA4132@amd>
+ <20180718235851.GA22170@sandybridge-desktop>
+ <20180719110149.GA4679@amd>
 MIME-Version: 1.0
-In-Reply-To: <78b1a67902c44d3de3f5de87708993547c4a3f30.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719110149.GA4679@amd>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Jul 19, 2018 at 01:01:49PM +0200, Pavel Machek wrote:
+> On Thu 2018-07-19 07:58:51, Yu Chen wrote:
+> > Hi,
+> > On Wed, Jul 18, 2018 at 10:22:35PM +0200, Pavel Machek wrote:
+> > > On Thu 2018-07-19 00:38:06, Chen Yu wrote:
+> > > > As security becomes more and more important, we add the in-kernel
+> > > > encryption support for hibernation.
+> > > 
+> > > Sorry, this does not really explain what security benefit it is
+> > > supposed have to against what attack scenarios.
+> > > 
+> > > Which unfortunately means it can not reviewed.
+> > > 
+> > > Note that uswsusp already provides encryption. If this is supposed to
+> > > have advantages over it, please say so.
+> > > 
+> > The advantages are described in detail in 
+> > [PATCH 1/4]'s log, please refer to that.
+> 
+> Are you refering to this?
+>
+Not this one. I've sent v2 of this patch set which
+explain more on this:
+https://patchwork.kernel.org/patch/10532935/
+Let me paste the log here:
 
-On 13-07-18 17:06, Srinivas Pandruvada wrote:
-> Hi Hans,
-> On Fri, 2018-07-13 at 11:08 +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 13-07-18 00:27, Srinivas Pandruvada wrote:
->>> Currently when min_power policy is selected, the partial low power
->>> state
->>> is not entered and link will try aggressively enter to only slumber
->>> state.
->>> Add a new policy which still enable DEVSLP but also try to enter
->>> partial
->>> low power state.
->>>
->>> For information the difference between partial and slumber
->>> Partial – PHY logic is powered up, and in a reduced power state.
->>> The link
->>> PM exit latency to active state maximum is 10 ns.
->>> Slumber – PHY logic is powered up, and in a reduced power state.
->>> The link
->>> PM exit latency to active state maximum is 10 ms.
->>> Devslp – PHY logic is powered down. The link PM exit latency from
->>> this
->>> state to active state maximum is 20 ms, unless otherwise specified
->>> by
->>> DETO.
->>>
->>> Suggested-by: Hans de Goede <hdegoede@redhat.com>
->>> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel
->>> .com>
->>
->> You got this the wrong way around, when ALP
-> You mean ASP, as per spec in section 3.3.7 of the spec.
-> 
->>   is not set you only get
->> partial,
-> Not exactly.
-> It means that the system will try to enter aggressively  partial . I
-> have seen slumber residency also when this is reset. When "set" you
-> don't see any any partial. But when you reset you see both. So based on
-> idle duration link will transition from partial to slumber even if "not
-> set".
-> 
->> the ALP bit is active high, not active low as your commit
->> suggests.  So the name of the new policy should be
->> min_power_without_asp.
-> 
-> 
-> The policy name I am suggesting is not the actual bit value of ASP (I
-> interpreted ASP as name for partial), but whether you will get to
-> partial or not. So I think it is better to rename to
-> "min_power_with_partial". User should not have to worry about the bit
-> value.
-> 
-> 
-> So user will see with the rename from "min_power_with_asp" to
-> "min_power_with_partial":
-> 
-> #cat /sys/class/scsi_host/host*/link_power_management_policy
-> min_power_with_partial
-> min_power_with_partial
-> min_power_with_partial
-> 
-> Output of test (You will see both partial and slumber)
-> 
-> SATA LPM Summary - Sampled: Residency (Percentage)
-> Disk Name          , Off (%), Active (%), Partial (%), Slumber (%), Devsleep (%), Other (%), Uninitialized (%)
-> ---------          , -------, ----------, -----------, -----------, ------------, ---------, -----------------
-> INTEL SSDSCKJF180A5, 0.0    , 4.6       , 13.1       , 30.3       , 52.0        , 0.0      , 0.0
-> 
-> SATA LPM Summary - Sampled: Counts
-> Disk Name          , Off, Active, Partial, Slumber, Devsleep, Other, Uninitialized
-> ---------          , ---, ------, -------, -------, --------, -----, -------------
-> INTEL SSDSCKJF180A5, 0  , 9     , 27     , 60     , 103     , 0    , 0
-> 
-> 
-> # cat /sys/class/scsi_host/host*/link_power_management_policy
-> min_power
-> min_power
-> min_power
-> 
-> Output of test (You will see only slumber)
-> 
-> SATA LPM Summary - Sampled: Residency (Percentage)
-> Disk Name          , Off (%), Active (%), Partial (%), Slumber (%), Devsleep (%), Other (%), Uninitialized (%)
-> ---------          , -------, ----------, -----------, -----------, ------------, ---------, -----------------
-> INTEL SSDSCKJF180A5, 0.0    , 6.8       , 0.0        , 53.8       , 39.3        , 0.0      , 0.0
-> 
-> SATA LPM Summary - Sampled: Counts
-> Disk Name          , Off, Active, Partial, Slumber, Devsleep, Other, Uninitialized
-> ---------          , ---, ------, -------, -------, --------, -----, -------------
-> INTEL SSDSCKJF180A5, 0  , 11    , 0      , 107    , 76      , 0    , 0
+1. (This is not to compare with uswsusp but other
+    tools) One advantage is: Users do not have to
+    encrypt the whole swap partition as other tools.
 
-Ah, I see thank you for clarifying that. Yes I agree that
-min_power_with_partial is the best name for the new policy.
+2. Ideally kernel memory should be encrypted by the
+   kernel itself. We have uswsusp to support user
+   space hibernation, however doing the encryption
+   in kernel space has more advantages:
+   2.1 Not having to transfer plain text kernel memory to
+       user space. Per Lee, Chun-Yi, uswsusp is disabled
+       when the kernel is locked down:
+       https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/
+       linux-fs.git/commit/?h=lockdown-20180410&
+       id=8732c1663d7c0305ae01ba5a1ee4d2299b7b4612
+       due to:
+       "There have some functions be locked-down because
+       there have no appropriate mechanisms to check the
+       integrity of writing data."
+       https://patchwork.kernel.org/patch/10476751/
+ 
+   2.2 Not having to copy each page to user space
+       one by one not in parallel, which might introduce
+       significant amount of copy_to_user() and it might
+       not be efficient on servers having large amount of DRAM.
+   2.3 Distribution has requirement to do snapshot
+       signature for verification, which can be built
+       by leveraging this patch set.
+   2.4 The encryption is in the kernel, so it doesn't
+       have to worry too much about bugs in user space
+       utilities and similar, for example.
+> # Generally the advantage is: Users do not have to
+> # encrypt the whole swap partition as other tools.
+> # After all, ideally kernel memory should be encrypted
+> # by the kernel itself.
+> 
+> Sorry, this does not really explain what security benefit it is
+> supposed have to against what attack scenarios.
+> 
+> Note that uswsusp already provides encryption. If this is supposed to
+> have advantages over it, please say so.
+> 
+> Also note that joeyli <jlee@suse.com> has patch series which encrypts
+> both in-kernel and uswsusp hibernation methods. His motivation is
+> secure boot. How does this compare to his work?
+>
+Joey Lee and I had a discussion on his previous work at
+https://patchwork.kernel.org/patch/10476751
+We collaborate on this task and his snapshot signature
+feature can be based on this patch set.
 
-For the next version do not forget to make the overriding of the
-lpm policy a per host thing, rather then directly overriding the
-global value as I mentioned in a previous mail.
+Thanks,
+Yu
 
-One other thing is to NOT override the policy if it is set on
-the kernel-commandline, which I believe will require setting the
-global value to -1 and only set another value if the global value
-is not -1 (using you settings where applicable and falling back
-to CONFIG_SATA_MOBILE_LPM_POLICY where not applicable).
-
-Regards,
-
-Hans
-
-
->>> ---
->>>    drivers/ata/libahci.c     | 6 +++++-
->>>    drivers/ata/libata-core.c | 1 +
->>>    drivers/ata/libata-scsi.c | 1 +
->>>    include/linux/libata.h    | 3 ++-
->>>    4 files changed, 9 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
->>> index 511fb67f363d..8cf2cf49537d 100644
->>> --- a/drivers/ata/libahci.c
->>> +++ b/drivers/ata/libahci.c
->>> @@ -799,8 +799,11 @@ static int ahci_set_lpm(struct ata_link *link,
->>> enum ata_lpm_policy policy,
->>>    				return 0;
->>>    		} else {
->>>    			cmd |= PORT_CMD_ALPE;
->>> +
->>>    			if (policy == ATA_LPM_MIN_POWER)
->>>    				cmd |= PORT_CMD_ASP;
->>> +			else if (policy ==
->>> ATA_LPM_MIN_POWER_WITH_ASP)
->>> +				cmd &= ~PORT_CMD_ASP;
->>>    
->>>    			/* write out new cmd value */
->>>    			writel(cmd, port_mmio + PORT_CMD);
->>> @@ -811,7 +814,8 @@ static int ahci_set_lpm(struct ata_link *link,
->>> enum ata_lpm_policy policy,
->>>    	if ((hpriv->cap2 & HOST_CAP2_SDS) &&
->>>    	    (hpriv->cap2 & HOST_CAP2_SADM) &&
->>>    	    (link->device->flags & ATA_DFLAG_DEVSLP)) {
->>> -		if (policy == ATA_LPM_MIN_POWER)
->>> +		if (policy == ATA_LPM_MIN_POWER ||
->>> +		    policy == ATA_LPM_MIN_POWER_WITH_ASP)
->>>    			ahci_set_aggressive_devslp(ap, true);
->>>    		else
->>>    			ahci_set_aggressive_devslp(ap, false);
->>> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
->>> index cc71c63df381..245a59e6cb18 100644
->>> --- a/drivers/ata/libata-core.c
->>> +++ b/drivers/ata/libata-core.c
->>> @@ -3970,6 +3970,7 @@ int sata_link_scr_lpm(struct ata_link *link,
->>> enum ata_lpm_policy policy,
->>>    		scontrol |= (0x6 << 8);
->>>    		break;
->>>    	case ATA_LPM_MED_POWER_WITH_DIPM:
->>> +	case ATA_LPM_MIN_POWER_WITH_ASP:
->>>    	case ATA_LPM_MIN_POWER:
->>>    		if (ata_link_nr_enabled(link) > 0)
->>>    			/* no restrictions on LPM transitions */
->>> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
->>> index aad1b01447de..2d683db50ceb 100644
->>> --- a/drivers/ata/libata-scsi.c
->>> +++ b/drivers/ata/libata-scsi.c
->>> @@ -110,6 +110,7 @@ static const char *ata_lpm_policy_names[] = {
->>>    	[ATA_LPM_MAX_POWER]		= "max_performance",
->>>    	[ATA_LPM_MED_POWER]		= "medium_power",
->>>    	[ATA_LPM_MED_POWER_WITH_DIPM]	=
->>> "med_power_with_dipm",
->>> +	[ATA_LPM_MIN_POWER_WITH_ASP]	=
->>> "min_power_with_asp",
->>>    	[ATA_LPM_MIN_POWER]		= "min_power",
->>>    };
->>>    
->>> diff --git a/include/linux/libata.h b/include/linux/libata.h
->>> index 32f247cb5e9e..1e154f1f7e8f 100644
->>> --- a/include/linux/libata.h
->>> +++ b/include/linux/libata.h
->>> @@ -523,7 +523,8 @@ enum ata_lpm_policy {
->>>    	ATA_LPM_MAX_POWER,
->>>    	ATA_LPM_MED_POWER,
->>>    	ATA_LPM_MED_POWER_WITH_DIPM, /* Med power + DIPM as win
->>> IRST does */
->>> -	ATA_LPM_MIN_POWER,
->>> +	ATA_LPM_MIN_POWER_WITH_ASP, /* Min Power + partial and
->>> slumber */
->>> +	ATA_LPM_MIN_POWER, /* Min power + no partial (slumber
->>> only) */
->>>    };
->>>    
->>>    enum ata_lpm_hints {
->>>
