@@ -2,72 +2,111 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6872ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D85B6C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD53C2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:24:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD53C2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 8C2952084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:25:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0Zg6tgOF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2952084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731729AbeGSPHg (ORCPT
+        id S1731698AbeGSPIp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:07:36 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:24850 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbeGSPHg (ORCPT
+        Thu, 19 Jul 2018 11:08:45 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37762 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727441AbeGSPIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:07:36 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6JENpeD029079;
-        Thu, 19 Jul 2018 23:23:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Thu, 19 Jul 2018 23:23:51 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6JENpBk029076
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 19 Jul 2018 23:23:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [patch v3] mm, oom: fix unnecessary killing of additional
- processes
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Roman Gushchin <guro@fb.com>
-References: <alpine.DEB.2.21.1806211434420.51095@chino.kir.corp.google.com>
- <d19d44c3-c8cf-70a1-9b15-c98df233d5f0@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1807181317540.49359@chino.kir.corp.google.com>
- <a78fb992-ad59-0cdb-3c38-8284b2245f21@i-love.sakura.ne.jp>
-Message-ID: <9eaea8ee-08e3-2188-a852-60bfaf3693e1@i-love.sakura.ne.jp>
-Date:   Thu, 19 Jul 2018 23:23:51 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 11:08:45 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JEO1JD084642;
+        Thu, 19 Jul 2018 14:25:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=cHUg93UkF+c/u+TRPTi00fBOys5t6igZEdD8xX1CLxk=;
+ b=0Zg6tgOF9OaT+EKX6kXR7ede+UTXWzq0iqnOQv9svwLWqxs1Uxr3wsyDpaICh161+ZbA
+ gStoC58U1L0HtyFo/sN8rKuWMgb1TD96DDPjukZH4M6m/51FEgbVeAYNN6RcsWe+gQ7b
+ 1Dg2JYCyyvqzzgYZtZa2AMMFG6ap/sofJa452iTKtRp93SwVlag+rjDfenTcC0OLuJPw
+ sbI3iz61lufW0l+2kjzdVisSFRpCVZU/FX7ipX6L8SBi1qdo9UMDzbJVcSV8S3aMGTRM
+ 7ZJE+G+yXPQiEZhP4FUW+lImDAJLThvX8J9zGnpLcggwD9IEFS9qdegzUuGREdWIlsIc /Q== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2k9yjgqb82-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Jul 2018 14:25:18 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6JEPHYL012528
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Jul 2018 14:25:17 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6JEPHpa026618;
+        Thu, 19 Jul 2018 14:25:17 GMT
+Received: from mail-it0-f47.google.com (/209.85.214.47)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Jul 2018 07:25:17 -0700
+Received: by mail-it0-f47.google.com with SMTP id g141-v6so7555194ita.4;
+        Thu, 19 Jul 2018 07:25:16 -0700 (PDT)
+X-Gm-Message-State: AOUpUlH4RtQcnchyc5AT7qJXDh3uaERbjkdRpH3ro4uCmV7P2QyRO57m
+        CJrjZwJ13kImm09ZIXTORhDmyG+pjEhXTm2ESGU=
+X-Google-Smtp-Source: AAOMgpfwvJOPSJ8IBIS/lBwzpRKAbUBIW4L+KyLpT5Oxc5Y3cMfLRMvs2xOH5baZZNV047JbF8EvK+cPpcOpX0nCklg=
+X-Received: by 2002:aca:db09:: with SMTP id s9-v6mr11712772oig.339.1532010316272;
+ Thu, 19 Jul 2018 07:25:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <a78fb992-ad59-0cdb-3c38-8284b2245f21@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180718022211.6259-1-pasha.tatashin@oracle.com>
+ <20180718022211.6259-26-pasha.tatashin@oracle.com> <20180719104838.GC2494@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180719104838.GC2494@hirez.programming.kicks-ass.net>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 19 Jul 2018 10:24:40 -0400
+X-Gmail-Original-Message-ID: <CAGM2reZYcKqoSBZQmUP-CMO=2bLznahLjzp=t0xiTxGsAMsEng@mail.gmail.com>
+Message-ID: <CAGM2reZYcKqoSBZQmUP-CMO=2bLznahLjzp=t0xiTxGsAMsEng@mail.gmail.com>
+Subject: Re: [PATCH v14 25/25] sched: use static key for sched_clock_running
+To:     peterz@infradead.org
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, prarit@redhat.com, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, pbonzini@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8958 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807190155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David,
+On Thu, Jul 19, 2018 at 6:49 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Jul 17, 2018 at 10:22:11PM -0400, Pavel Tatashin wrote:
+> > sched_clock_running may be read every time sched_clock_cpu() is called.
+> > Yet, this variable is updated only twice during boot, and never changes
+> > again, therefore it is better to make it a static key.
+>
+> Right, so the focus was always on making the sane TSC case fast, and if
+> TSC isn't stable we'd just make do and not care too much.
+>
 
-Now that your patches are about to be dropped from linux-next.git , please try OOM lockup
-(CVE-2016-10723) mitigation patch ( https://marc.info/?l=linux-mm&m=153112243424285&w=4 )
-and my cleanup patch ( [PATCH 1/2] at https://marc.info/?l=linux-mm&m=153119509215026&w=4 )
-on top of linux.git . And please reply how was the result, for I'm currently asking
-Roman whether we can apply these patches before applying the cgroup-aware OOM killer.
+True for CONFIG_HAVE_UNSTABLE_SCHED_CLOCK, but for other systems like
+SPARC, it hurts to have this variable accessed every time, even though
+they have a sane sched_clock().
 
+> But this certainly isn't wrong, so ACK.
+
+Thank you,
+Pave
