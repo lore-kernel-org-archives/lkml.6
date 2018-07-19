@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6384C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4A7ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91ACE2084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:56:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91ACE2084E
+	by mail.kernel.org (Postfix) with ESMTP id 518042084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:56:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 518042084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731783AbeGSLim (ORCPT
+        id S1731799AbeGSLip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 07:38:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47480 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730845AbeGSLil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 07:38:41 -0400
+        Thu, 19 Jul 2018 07:38:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:47498 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730845AbeGSLio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 07:38:44 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 644A5ED1;
-        Thu, 19 Jul 2018 03:56:05 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2882515A2;
+        Thu, 19 Jul 2018 03:56:08 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DE5DD3F246;
-        Thu, 19 Jul 2018 03:56:02 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A209B3F246;
+        Thu, 19 Jul 2018 03:56:05 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, robh@kernel.org,
@@ -38,9 +38,9 @@ Cc:     linux-kernel@vger.kernel.org, robh@kernel.org,
         john.horley@arm.com, mike.leach@linaro.org,
         Suzuki K Poulose <suzuki.poulose@arm.com>,
         Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH v2 10/10] dts: juno: Update coresight bindings for hw port
-Date:   Thu, 19 Jul 2018 11:55:14 +0100
-Message-Id: <1531997715-6767-11-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 10/10] dts: juno: Update coresight bindings
+Date:   Thu, 19 Jul 2018 11:55:15 +0100
+Message-Id: <1531997715-6767-12-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
 References: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
@@ -49,7 +49,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to updated coresight bindings for hw ports.
+Switch to updated coresight bindings for Juno platforms.
 
 Cc: Sudeep Holla <sudeep.holla@arm.com>
 Cc: Liviu Dudau <liviu.dudau@arm.com>
