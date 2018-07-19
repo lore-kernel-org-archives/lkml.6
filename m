@@ -2,115 +2,141 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E1DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEEFC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 306A220673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:11:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8D2020673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:16:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="apdEpXc1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 306A220673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vZgkReBf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8D2020673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731986AbeGSQz3 (ORCPT
+        id S1731969AbeGSRAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:55:29 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55729 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731690AbeGSQz2 (ORCPT
+        Thu, 19 Jul 2018 13:00:33 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:43868 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeGSRAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:55:28 -0400
-Received: by mail-wm0-f68.google.com with SMTP id f21-v6so6784805wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 09:11:35 -0700 (PDT)
+        Thu, 19 Jul 2018 13:00:33 -0400
+Received: by mail-pl0-f68.google.com with SMTP id o7-v6so3869853plk.10;
+        Thu, 19 Jul 2018 09:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nxcq7V7YY1KojCBc91j6YRIDuQ5vl3QYk8lS9naGGfA=;
-        b=apdEpXc1HWd2acc3UwzM+Y1Us90wD1b8rZMy71pw/Eee4thsMI4o1UC7plZ1y1zFjj
-         0PVJBYXCz3npFvURrGVla+fMaobC/whB9So7VC7C4otp4GuOia+/YgmQ7ayH1lILWToy
-         MVIfqE3anJvHSnJx/hDX+gAptzZwS0C4E6wu5kohmsrXlW4gq+ZjI4w9f/pfOxZ/kFlp
-         hyUU9cvr04qrGslb26MuE9dBnNCU6igGuYS4VMrdlfUwGXwn++ND8v+2+A6IU6HA/nZa
-         J3IadiuZhxd0md3LteyjX9bX2B0tcjHLQ19gLjfFDHs5D/7FO5/Gl3HYXHLHKnYQ673R
-         zNeQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RlcZD3q5eY/o8SO2Atokt+Ioz76TKgEq98TgZrjQpIg=;
+        b=vZgkReBflDFl5cw0iZtgNHOtVyj5ByxZbhJ48d5/E22KwXvGenn3kzEZLL6dxdkF/q
+         Fzvs8STWrytkutBflgJDAfvjLJhRpcA2tzUZIYd5MzdkWU2OkRuRY8Sp8Y+3TwDwIWqJ
+         lXD3CXjdDzeXuwSX48ZnlRefkWGoQDTG/rEGn5ErpDAehp3kSWWtrvoypPJ9QjhodKZt
+         koeou36GawBWqrwgpa9uhlYeqjRNo/gZGsWjaDyTIr06AYWuuz0UjsbnJYMQAofD1uXB
+         jvHB0cH5gUP38nzJ3TUTDGQ7ZKFlaICI6eZ1pdeZychzIo9KdyC3sONsM57/qHrRCm3P
+         az6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nxcq7V7YY1KojCBc91j6YRIDuQ5vl3QYk8lS9naGGfA=;
-        b=ISYdlKHFntbgBPMh+znLc+V+Z/bzGZJ4PcfDTuVBWThpX0cxiBa0Qv7AZSY7x/xQk4
-         CjFZ7uayRxAhCu1jN70IC87G+9EBSyK+TF899HXcSfY5ZI95x1DpjSlrP8CXroJ/m+lv
-         aEf4AF1OsNlRsAfE5iVYcz7ysvTycUBGbMr3dvnHZtsGu+JW1gyzB8y++vzXtecHiJW9
-         dP5eMwWzuw/qoUtdZCwTsA96XG1g44JEh3FaUR+ZyFdmas1AhAU08khVmKbDe4YZSBqN
-         IDTc0tgdtgJMnaz4ICO1T7Rf5iwO0kNWtWtaq2siR+c2bMkTRU58Y1AgQZrb6z7LvLHh
-         wAZw==
-X-Gm-Message-State: AOUpUlFs9v+WP6rLYjbUkgd0jBY9uZVqdRvF5gWVthhBCHPCxk4wO3hR
-        oFY4UONiVoKwE+4QJOKT/j0TQtU1yKxUb5l76X2cxA==
-X-Google-Smtp-Source: AAOMgpcnYqAJe5ky7yiRNqzCneLvhDWXOThTEPorzU68Eo3IFg+b4eoeuBCw/JsZ/EVaeFUsqI4qH2wYkj0ms0yXF0E=
-X-Received: by 2002:a1c:91c7:: with SMTP id t190-v6mr4855133wmd.2.1532016694624;
- Thu, 19 Jul 2018 09:11:34 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RlcZD3q5eY/o8SO2Atokt+Ioz76TKgEq98TgZrjQpIg=;
+        b=Obb2RFbmXrvE7piMShodgJoe4fK5sifKmOQxSbHRZ0kSnu5mtxITI9pQ9i7FLr8ICu
+         6G6L1Veg8K6GPOvzckaZcJ2kfBlTm4jQgF85vUsbaweFSs2gvMq9Pm9FyKM08HV9Q40i
+         7qfBqL1tfFTezQADXGaTl4EXzrNMru7tz8y94CZNLmrUrn47c8J6KcD9HibhBeje0/1J
+         N8DOg385FgIajSYEo7YIeSHIHvXLaneYZp7KTTntmI0N81OeK0gti1+JXT343lHuRwPX
+         Zxw3pJV13HOW8xLOxn2GSH+3oeezsrA0C1TvgRwyn/yVCXKndrrrQFA6WHQh8iz/f2D8
+         b3NA==
+X-Gm-Message-State: AOUpUlGwLqh23cd7oi8QPoD1GeIHW/kI7OJGFiMuUxZovj1XZ7CQZ57U
+        zqj1kP3B5zZI4lDtnpjjc2DhLf6/
+X-Google-Smtp-Source: AAOMgpdlr6q7iH23KRD74OimywlIZAuo5KsIC4ERq0TkjBpG3AYeAcgOHNdu12l7ui9I0z9mMgb/jQ==
+X-Received: by 2002:a17:902:301:: with SMTP id 1-v6mr10618464pld.127.1532016999279;
+        Thu, 19 Jul 2018 09:16:39 -0700 (PDT)
+Received: from dsa-mb.local ([2601:282:800:fd80:41e6:c9c0:c223:a927])
+        by smtp.googlemail.com with ESMTPSA id s1-v6sm16342366pfj.53.2018.07.19.09.16.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 09:16:38 -0700 (PDT)
+Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to
+ per-namespace
+To:     David Miller <davem@davemloft.net>
+Cc:     xiyou.wangcong@gmail.com, netdev@vger.kernel.org,
+        nikita.leshchenko@oracle.com, roopa@cumulusnetworks.com,
+        stephen@networkplumber.org, idosch@mellanox.com, jiri@mellanox.com,
+        saeedm@mellanox.com, alex.aring@gmail.com,
+        linux-wpan@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
+ <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
+ <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
+ <20180718.125938.2271502580775162784.davem@davemloft.net>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
+Date:   Thu, 19 Jul 2018 10:16:36 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <153201627722.12295.11034132843390627757.stgit@localhost.localdomain>
-In-Reply-To: <153201627722.12295.11034132843390627757.stgit@localhost.localdomain>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 19 Jul 2018 09:11:22 -0700
-Message-ID: <CALvZod6iCE8W51m2N704GQ_ML==J76SU6e9w7RCFE2+Vd+Vjaw@mail.gmail.com>
-Subject: Re: [PATCH] mm: Cleanup in do_shrink_slab()
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180718.125938.2271502580775162784.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 9:04 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> Group long variables together to minimize number of occupied lines
-> and place all definitions in back Christmas tree order. Also,
-> simplify expression around batch_size: use all power of C language!
->
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+On 7/17/18 9:59 PM, David Miller wrote:
+> From: David Ahern <dsahern@gmail.com>
+> Date: Tue, 17 Jul 2018 13:02:18 -0600
+> 
+>> I understand the concern about global resource and limits: as it stands
+>> you have to increase the limits in init_net to the max expected and hope
+>> for the best. With per namespace limits you can lower the limits of each
+>> namespace better control the total impact on the total memory used.
+>> Perhaps the defaults for namespaces after init_net could have really low
+>> defaults (e.g., 16 / 32 / 64 for gc_thresh 1/2/3) requiring admin
+>> intervention.
+> 
+> How does this work when a namespace creates another namespace?
+> 
+> Changing the defaults for non-init_net namespaces could work, but that
+> could be a surprise to some people.
+> 
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Patches 14 (ipv4) and 15 (ipv6) currently use the existing hardcoded
+values - not based on current init_net or anything else. This could be
+changed to:
 
-> ---
->  mm/vmscan.c |   11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 9918bfc1d2f9..636657213b9b 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -445,16 +445,11 @@ EXPORT_SYMBOL(unregister_shrinker);
->  static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
->                                     struct shrinker *shrinker, int priority)
->  {
-> -       unsigned long freed = 0;
-> +       long total_scan, freeable, nr, new_nr, next_deferred, scanned = 0;
-> +       long batch_size = shrinker->batch ? : SHRINK_BATCH;
->         unsigned long long delta;
-> -       long total_scan;
-> -       long freeable;
-> -       long nr;
-> -       long new_nr;
->         int nid = shrinkctl->nid;
-> -       long batch_size = shrinker->batch ? shrinker->batch
-> -                                         : SHRINK_BATCH;
-> -       long scanned = 0, next_deferred;
-> +       unsigned long freed = 0;
->
->         freeable = shrinker->count_objects(shrinker, shrinkctl);
->         if (freeable == 0 || freeable == SHRINK_EMPTY)
->
++	if (net_eq(net, &init_net)) {
++		arp_tbl->gc_thresh1	= 128;
++		arp_tbl->gc_thresh2	= 512;
++		arp_tbl->gc_thresh3	= 1024;
++	} else {
++		arp_tbl->gc_thresh1	= 16;
++		arp_tbl->gc_thresh2	= 32;
++		arp_tbl->gc_thresh3	= 64;
++	}
+
+and update the documentation that any new network namespaces have lower
+defaults.
+
+As for any change in behavior: today neighbor entries from one namespace
+can be removed due to actions in another so no obvious correlation. With
+lower settings then gc could kick in and remove entries that otherwise
+would not have been. The big hit would be to a new namespace where an
+app inserts a lot of PERMANENT entries.
+
+Chatting with Nikolay about this and he brought up a good corollary - ip
+fragmentation. It really is a similar problem in that memory is consumed
+as a result of packets received from an external entity. The ipfrag
+sysctls are per namespace with a limit that non-init_net namespaces can
+not set high_thresh > the current value of init_net. Potential memory
+consumed by fragments scales with the number of namespaces which is the
+primary concern with making neighbor tables per namespace.
+
+If we kept the current default settings (128/512/1024) per namespace we
+still have capped memory use, and the one user visible hit that comes to
+mind is the namespace with a lot of PERM entries.
