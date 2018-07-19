@@ -2,156 +2,103 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F49ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9BAC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCD1920671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:47:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCD1920671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DCA2C20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:50:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XnqB5Z5/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA2C20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732100AbeGSRbw (ORCPT
+        id S1731851AbeGSReT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 13:31:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731732AbeGSRbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 13:31:52 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ADD994070496;
-        Thu, 19 Jul 2018 16:47:50 +0000 (UTC)
-Received: from [10.36.117.183] (ovpn-117-183.ams2.redhat.com [10.36.117.183])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8972B111DCE5;
-        Thu, 19 Jul 2018 16:47:49 +0000 (UTC)
-Subject: Re: [PATCH v3 2/6] KVM: X86: Implement PV IPIs in linux guest
-To:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <1530598891-21370-1-git-send-email-wanpengli@tencent.com>
- <1530598891-21370-3-git-send-email-wanpengli@tencent.com>
- <20180719162826.GB11749@flask>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <1357a0b5-0cd8-8cb5-6c61-c9662219bed0@redhat.com>
-Date:   Thu, 19 Jul 2018 18:47:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 19 Jul 2018 13:34:19 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48756 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731105AbeGSReT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 13:34:19 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JGdL3V159007;
+        Thu, 19 Jul 2018 16:50:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=QgWD6uaBfqchZxuaYHJUzK/cVDuKIOiMNXckq5gSxQY=;
+ b=XnqB5Z5/jqvKLc8AkVKm/bRjR0MPtrzuDoe2VkZKXPRShqsdsfiWyYz8fKqf6PP5yEsK
+ RV1rEqTBHTe93Tm7Wgs6ckeUYZ8iEeQCRlfonMkO8zfFrSllb44CNgwx62nzKFXjD9Fd
+ sV1ZhC1DTzxdPG8lw3mOIgj5Yh09LODX9sjZ2hoJ7I9lPocfiTUdBiMn+VKPUFsx3yCH
+ 8wzTNKzGiHWe217QRDwux3KOpwmc10Nnig27PEuXJJdfA9bA7LFxJsoFb32H5GpSUTwH
+ 44EBG9TC4WgJij3GLj67SjDvhbRe2GoGAgfmFNiz4qqJCMF7P82ACSV8um4MQ2OlUggs 4A== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2k9yjx80fd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Jul 2018 16:50:17 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6JGoESY028075
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Jul 2018 16:50:14 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JGoEbH009169;
+        Thu, 19 Jul 2018 16:50:14 GMT
+Received: from mail-oi0-f50.google.com (/209.85.218.50)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Jul 2018 16:50:14 +0000
+Received: by mail-oi0-f50.google.com with SMTP id n84-v6so16177145oib.9;
+        Thu, 19 Jul 2018 09:50:14 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGRoAga3pGP0gzV/OpScYvKubtAXSMKnbcNE3Fwu8qXL1/DMVcs
+        0w99xJO4e6pCMSe1RPchYRWfcxY0Xhni97TDqlE=
+X-Google-Smtp-Source: AAOMgpfMKi9AT8f54p77uyFGupQtNPM60mryif0SmfBpgO+DpPaTRvGFp3Y6nDgn7hpUCgbRx0rdoIOgbiPra6CQwv4=
+X-Received: by 2002:aca:3bc2:: with SMTP id i185-v6mr12408933oia.156.1532019013951;
+ Thu, 19 Jul 2018 09:50:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180719162826.GB11749@flask>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 16:47:50 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 16:47:50 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+References: <20180718022211.6259-1-pasha.tatashin@oracle.com>
+ <20180718022211.6259-21-pasha.tatashin@oracle.com> <20180719103340.GA2494@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1807191300150.1602@nanos.tec.linutronix.de>
+ <4295075b-8a0f-1723-2e80-1bbd2f038846@oracle.com> <alpine.DEB.2.21.1807191817080.1693@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1807191817080.1693@nanos.tec.linutronix.de>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 19 Jul 2018 12:49:37 -0400
+X-Gmail-Original-Message-ID: <CAGM2reYpApca9v-2qpVbTGXGVWiEEL5mkEWzTAvXFiztmtkh1Q@mail.gmail.com>
+Message-ID: <CAGM2reYpApca9v-2qpVbTGXGVWiEEL5mkEWzTAvXFiztmtkh1Q@mail.gmail.com>
+Subject: Re: [PATCH v14 20/25] x86/tsc: calibrate tsc only once
+To:     tglx@linutronix.de
+Cc:     peterz@infradead.org, Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        prarit@redhat.com, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, pbonzini@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8958 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=419
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807190176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/07/2018 18:28, Radim Krčmář wrote:
->> +
->> +	kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitmap_high, vector);
-> and
-> 
-> 	kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap[0], ipi_bitmap[1], vector);
-> 
-> Still, the main problem is that we can only address 128 APICs.
-> 
-> A simple improvement would reuse the vector field (as we need only 8
-> bits) and put a 'offset' in the rest.  The offset would say which
-> cluster of 128 are we addressing.  24 bits of offset results in 2^31
-> total addressable CPUs (we probably should even use that many bits).
-> The downside of this is that we can only address 128 at a time.
-> 
-> It's basically the same as x2apic cluster mode, only with 128 cluster
-> size instead of 16, so the code should be a straightforward port.
-> And because x2apic code doesn't seem to use any division by the cluster
-> size, we could even try to use kvm_hypercall4, add ipi_bitmap[2], and
-> make the cluster size 192. :)
+> So create two functions. native_...early..() and native....(). The early
+> one does not contain the hpet/pmtimer stuff and it replaces the ops.pointer
+> with the late one which contains all of it.
 
-I did suggest an offset earlier in the discussion.
+Good idea. Actually, the late one will contain only hpet/pmtimer and I
+will set it only if tsc frequency was not determined only.
 
-The main problem is that consecutive CPU ids do not map to consecutive
-APIC ids.  But still, we could do an hypercall whenever the total range
-exceeds 64.  Something like
-
-u64 ipi_bitmap = 0;
-for_each_cpu(cpu, mask)
-	if (!ipi_bitmap) {
-		min = max = cpu;
-	} else if (cpu < min && max - cpu < 64) {
-		ipi_bitmap <<= min - cpu;
-		min = cpu;
-	} else if (id < min + 64) {
-		max = cpu < max ? max : cpu;
-	} else {
-		/* ... send hypercall... */
-		min = max = cpu;
-		ipi_bitmap = 0;
-	}
-	__set_bit(ipi_bitmap, cpu - min);
-}
-if (ipi_bitmap) {
-	/* ... send hypercall... */
-}
-
-We could keep the cluster size of 128, but it would be more complicated
-to do the left shift in the first "else if".  If the limit is 64, you
-can keep the two arguments in the hypercall, and just pass 0 as the
-"high" bitmap on 64-bit kernels.
-
-Paolo
-
-> But because it is very similar to x2apic, I'd really need some real
-> performance data to see if this benefits a real workload.
-> Hardware could further optimize LAPIC (apicv, vapic) in the future,
-> which we'd lose by using paravirt.
->
-> e.g. AMD's acceleration should be superior to this when using < 8 VCPUs
-> as they can use logical xAPIC and send without VM exits (when all VCPUs
-> are running).
-> 
-
+Thank you,
+Pavel
