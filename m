@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7DEC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E44ADECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D9B720673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:48:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9B720673
+	by mail.kernel.org (Postfix) with ESMTP id A9E2520673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:48:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E2520673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731947AbeGSPbt (ORCPT
+        id S1732004AbeGSPbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:31:49 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9702 "EHLO huawei.com"
+        Thu, 19 Jul 2018 11:31:51 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54326 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731847AbeGSPbs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:31:48 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4CF49F04FAFC1;
-        Thu, 19 Jul 2018 22:47:59 +0800 (CST)
+        id S1730521AbeGSPbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 11:31:50 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7E4D2A1DF6FE;
+        Thu, 19 Jul 2018 22:48:15 +0800 (CST)
 Received: from S00293818-DELL1.huawei.com (10.202.226.54) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.382.0; Thu, 19 Jul 2018 22:47:54 +0800
+ 14.3.382.0; Thu, 19 Jul 2018 22:48:06 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
-Subject: [PATCH net-next 3/9] net: hns3: Remove extra space and brackets
-Date:   Thu, 19 Jul 2018 15:47:00 +0100
-Message-ID: <20180719144706.644-4-salil.mehta@huawei.com>
+Subject: [PATCH net-next 7/9] net: hns3: Fix misleading parameter name
+Date:   Thu, 19 Jul 2018 15:47:04 +0100
+Message-ID: <20180719144706.644-8-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180719144706.644-1-salil.mehta@huawei.com>
 References: <20180719144706.644-1-salil.mehta@huawei.com>
@@ -51,62 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jian Shen <shenjian15@huawei.com>
 
-Remove extra space and brackets.
+The input parameter "dev" of hns3_irq_handle() is indeed
+used as a tqp vector, it is misleadin.
+
+The struct member "flag" is used to indicate ring type,
+so rename it.
 
 Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h  | 2 +-
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h | 6 +++---
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c        | 4 ++--
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c | 4 ++--
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h | 2 +-
  3 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 29be96e..ba2797e 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -62,9 +62,9 @@ static const struct pci_device_id hns3_pci_tbl[] = {
+ };
+ MODULE_DEVICE_TABLE(pci, hns3_pci_tbl);
+ 
+-static irqreturn_t hns3_irq_handle(int irq, void *dev)
++static irqreturn_t hns3_irq_handle(int irq, void *vector)
+ {
+-	struct hns3_enet_tqp_vector *tqp_vector = dev;
++	struct hns3_enet_tqp_vector *tqp_vector = vector;
+ 
+ 	napi_schedule(&tqp_vector->napi);
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+index cf40afc..68356da 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+@@ -72,7 +72,7 @@ static int hclge_alloc_cmd_queue(struct hclge_dev *hdev, int ring_type)
+ 		(ring_type == HCLGE_TYPE_CSQ) ? &hw->cmq.csq : &hw->cmq.crq;
+ 	int ret;
+ 
+-	ring->flag = ring_type;
++	ring->ring_type = ring_type;
+ 	ring->dev = hdev;
+ 
+ 	ret = hclge_alloc_cmd_desc(ring);
+@@ -111,7 +111,7 @@ static void hclge_cmd_config_regs(struct hclge_cmq_ring *ring)
+ 	struct hclge_dev *hdev = ring->dev;
+ 	struct hclge_hw *hw = &hdev->hw;
+ 
+-	if (ring->flag == HCLGE_TYPE_CSQ) {
++	if (ring->ring_type == HCLGE_TYPE_CSQ) {
+ 		hclge_write_dev(hw, HCLGE_NIC_CSQ_BASEADDR_L_REG,
+ 				lower_32_bits(dma));
+ 		hclge_write_dev(hw, HCLGE_NIC_CSQ_BASEADDR_H_REG,
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index 656c3e6..e66a762 100644
+index ec7b8d7..54e199d 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -37,7 +37,7 @@ struct hclge_cmq_ring {
- 	dma_addr_t desc_dma_addr;
- 	struct hclge_desc *desc;
- 	struct hclge_desc_cb *desc_cb;
--	struct hclge_dev  *dev;
-+	struct hclge_dev *dev;
- 	u32 head;
- 	u32 tail;
+@@ -45,7 +45,7 @@ struct hclge_cmq_ring {
+ 	u16 desc_num;
+ 	int next_to_use;
+ 	int next_to_clean;
+-	u8 flag;
++	u8 ring_type; /* cmq ring type */
+ 	spinlock_t lock; /* Command queue lock */
+ };
  
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index cca5b2f..b097988 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -4288,7 +4288,7 @@ static int hclge_add_mc_addr(struct hnae3_handle *handle,
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 
--	return	hclge_add_mc_addr_common(vport, addr);
-+	return hclge_add_mc_addr_common(vport, addr);
- }
- 
- int hclge_add_mc_addr_common(struct hclge_vport *vport,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index a5abf8e..b01a51d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -77,11 +77,11 @@
- /* Copper Specific Status Register */
- #define HCLGE_PHY_CSS_REG		17
- 
--#define HCLGE_PHY_MDIX_CTRL_S		(5)
-+#define HCLGE_PHY_MDIX_CTRL_S		5
- #define HCLGE_PHY_MDIX_CTRL_M		GENMASK(6, 5)
- 
--#define HCLGE_PHY_MDIX_STATUS_B	(6)
--#define HCLGE_PHY_SPEED_DUP_RESOLVE_B	(11)
-+#define HCLGE_PHY_MDIX_STATUS_B		6
-+#define HCLGE_PHY_SPEED_DUP_RESOLVE_B	11
- 
- /* Factor used to calculate offset and bitmap of VF num */
- #define HCLGE_VF_NUM_PER_CMD           64
 -- 
 2.7.4
 
