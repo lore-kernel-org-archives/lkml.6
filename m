@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4F8ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078E5ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A2362084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2362084C
+	by mail.kernel.org (Postfix) with ESMTP id B543220684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B543220684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731635AbeGSXqL (ORCPT
+        id S1731661AbeGSXqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:46:11 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54130 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:46:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54183 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731404AbeGSXqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:46:10 -0400
+        id S1731404AbeGSXqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:46:12 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9CEC62093C; Fri, 20 Jul 2018 01:00:53 +0200 (CEST)
+        id 6A4452098C; Fri, 20 Jul 2018 01:00:55 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2C0F420908;
-        Fri, 20 Jul 2018 01:00:52 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9C62320935;
+        Fri, 20 Jul 2018 01:00:53 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 11/33] mtd: rawnand: lpc32xx_mlc: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 01:00:04 +0200
-Message-Id: <20180719230026.8741-12-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 12/33] mtd: rawnand: lpc32xx_slc: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 01:00:05 +0200
+Message-Id: <20180719230026.8741-13-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -73,22 +73,14 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/lpc32xx_mlc.c | 109 ++++++++++++++++++++-----------------
- 1 file changed, 59 insertions(+), 50 deletions(-)
+ drivers/mtd/nand/raw/lpc32xx_slc.c | 77 +++++++++++++++++++++-----------------
+ 1 file changed, 42 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/lpc32xx_mlc.c b/drivers/mtd/nand/raw/lpc32xx_mlc.c
-index 052d123a8304..099f1dd308c6 100644
---- a/drivers/mtd/nand/raw/lpc32xx_mlc.c
-+++ b/drivers/mtd/nand/raw/lpc32xx_mlc.c
-@@ -184,6 +184,7 @@ static struct nand_bbt_descr lpc32xx_nand_bbt_mirror = {
- };
- 
- struct lpc32xx_nand_host {
-+	struct platform_device	*pdev;
- 	struct nand_chip	nand_chip;
- 	struct lpc32xx_mlc_platform_data *pdata;
- 	struct clk		*clk;
-@@ -653,6 +654,58 @@ static struct lpc32xx_nand_cfg_mlc *lpc32xx_parse_dt(struct device *dev)
+diff --git a/drivers/mtd/nand/raw/lpc32xx_slc.c b/drivers/mtd/nand/raw/lpc32xx_slc.c
+index 42820aa1abab..41c135567e8c 100644
+--- a/drivers/mtd/nand/raw/lpc32xx_slc.c
++++ b/drivers/mtd/nand/raw/lpc32xx_slc.c
+@@ -779,6 +779,46 @@ static struct lpc32xx_nand_cfg_slc *lpc32xx_parse_dt(struct device *dev)
  	return ncfg;
  }
  
@@ -96,138 +88,89 @@ index 052d123a8304..099f1dd308c6 100644
 +{
 +	struct mtd_info *mtd = nand_to_mtd(chip);
 +	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
-+	struct device *dev = &host->pdev->dev;
 +
-+	host->dma_buf = devm_kzalloc(dev, mtd->writesize, GFP_KERNEL);
-+	if (!host->dma_buf)
-+		return -ENOMEM;
++	/* OOB and ECC CPU and DMA work areas */
++	host->ecc_buf = (uint32_t *)(host->data_buf + LPC32XX_DMA_DATA_SIZE);
 +
-+	host->dummy_buf = devm_kzalloc(dev, mtd->writesize, GFP_KERNEL);
-+	if (!host->dummy_buf)
-+		return -ENOMEM;
++	/*
++	 * Small page FLASH has a unique OOB layout, but large and huge
++	 * page FLASH use the standard layout. Small page FLASH uses a
++	 * custom BBT marker layout.
++	 */
++	if (mtd->writesize <= 512)
++		mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
 +
-+	chip->ecc.mode = NAND_ECC_HW;
-+	chip->ecc.size = 512;
-+	mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
-+	host->mlcsubpages = mtd->writesize / 512;
++	/* These sizes remain the same regardless of page size */
++	chip->ecc.size = 256;
++	chip->ecc.bytes = LPC32XX_SLC_DEV_ECC_BYTES;
++	chip->ecc.prepad = 0;
++	chip->ecc.postpad = 0;
 +
-+	/* initially clear interrupt status */
-+	readb(MLC_IRQ_SR(host->io_base));
-+
-+	init_completion(&host->comp_nand);
-+	init_completion(&host->comp_controller);
-+
-+	host->irq = platform_get_irq(host->pdev, 0);
-+	if (host->irq < 0) {
-+		dev_err(dev, "failed to get platform irq\n");
-+		return -EINVAL;
-+	}
-+
-+	if (request_irq(host->irq, (irq_handler_t)&lpc3xxx_nand_irq,
-+			IRQF_TRIGGER_HIGH, DRV_NAME, host)) {
-+		dev_err(dev, "Error requesting NAND IRQ\n");
-+		return -ENXIO;
++	/*
++	 * Use a custom BBT marker setup for small page FLASH that
++	 * won't interfere with the ECC layout. Large and huge page
++	 * FLASH use the standard layout.
++	 */
++	if ((chip->bbt_options & NAND_BBT_USE_FLASH) &&
++	    mtd->writesize <= 512) {
++		chip->bbt_td = &bbt_smallpage_main_descr;
++		chip->bbt_md = &bbt_smallpage_mirror_descr;
 +	}
 +
 +	return 0;
 +}
 +
-+static void lpc32xx_nand_detach_chip(struct nand_chip *chip)
-+{
-+	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
-+
-+	free_irq(host->irq, host);
-+}
-+
 +static struct nand_controller_ops lpc32xx_nand_controller_ops = {
 +	.attach_chip = lpc32xx_nand_attach_chip,
-+	.detach_chip = lpc32xx_nand_detach_chip,
 +};
 +
  /*
   * Probe for NAND controller
   */
-@@ -669,6 +722,8 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
- 	if (!host)
- 		return -ENOMEM;
- 
-+	host->pdev = pdev;
-+
- 	rc = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	host->io_base = devm_ioremap_resource(&pdev->dev, rc);
- 	if (IS_ERR(host->io_base))
-@@ -749,58 +804,14 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
+@@ -884,41 +924,8 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
  	}
  
- 	/*
--	 * Scan to find existance of the device and
--	 * Get the type of NAND device SMALL block or LARGE block
-+	 * Scan to find existence of the device and get the type of NAND device:
-+	 * SMALL block or LARGE block.
- 	 */
+ 	/* Find NAND device */
 -	res = nand_scan_ident(mtd, 1, NULL);
-+	nand_chip->dummy_controller.ops = &lpc32xx_nand_controller_ops;
-+	res = nand_scan(mtd, 1);
- 	if (res)
- 		goto release_dma_chan;
- 
--	host->dma_buf = devm_kzalloc(&pdev->dev, mtd->writesize, GFP_KERNEL);
--	if (!host->dma_buf) {
--		res = -ENOMEM;
--		goto release_dma_chan;
--	}
+-	if (res)
+-		goto release_dma;
 -
--	host->dummy_buf = devm_kzalloc(&pdev->dev, mtd->writesize, GFP_KERNEL);
--	if (!host->dummy_buf) {
--		res = -ENOMEM;
--		goto release_dma_chan;
--	}
+-	/* OOB and ECC CPU and DMA work areas */
+-	host->ecc_buf = (uint32_t *)(host->data_buf + LPC32XX_DMA_DATA_SIZE);
 -
--	nand_chip->ecc.mode = NAND_ECC_HW;
--	nand_chip->ecc.size = 512;
--	mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
--	host->mlcsubpages = mtd->writesize / 512;
+-	/*
+-	 * Small page FLASH has a unique OOB layout, but large and huge
+-	 * page FLASH use the standard layout. Small page FLASH uses a
+-	 * custom BBT marker layout.
+-	 */
+-	if (mtd->writesize <= 512)
+-		mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
 -
--	/* initially clear interrupt status */
--	readb(MLC_IRQ_SR(host->io_base));
+-	/* These sizes remain the same regardless of page size */
+-	chip->ecc.size = 256;
+-	chip->ecc.bytes = LPC32XX_SLC_DEV_ECC_BYTES;
+-	chip->ecc.prepad = chip->ecc.postpad = 0;
 -
--	init_completion(&host->comp_nand);
--	init_completion(&host->comp_controller);
--
--	host->irq = platform_get_irq(pdev, 0);
--	if (host->irq < 0) {
--		dev_err(&pdev->dev, "failed to get platform irq\n");
--		res = -EINVAL;
--		goto release_dma_chan;
--	}
--
--	if (request_irq(host->irq, (irq_handler_t)&lpc3xxx_nand_irq,
--			IRQF_TRIGGER_HIGH, DRV_NAME, host)) {
--		dev_err(&pdev->dev, "Error requesting NAND IRQ\n");
--		res = -ENXIO;
--		goto release_dma_chan;
+-	/*
+-	 * Use a custom BBT marker setup for small page FLASH that
+-	 * won't interfere with the ECC layout. Large and huge page
+-	 * FLASH use the standard layout.
+-	 */
+-	if ((chip->bbt_options & NAND_BBT_USE_FLASH) &&
+-	    mtd->writesize <= 512) {
+-		chip->bbt_td = &bbt_smallpage_main_descr;
+-		chip->bbt_md = &bbt_smallpage_mirror_descr;
 -	}
 -
 -	/*
 -	 * Fills out all the uninitialized function pointers with the defaults
--	 * And scans for a bad block table if appropriate.
 -	 */
 -	res = nand_scan_tail(mtd);
--	if (res)
--		goto free_irq;
--
- 	mtd->name = DRV_NAME;
++	chip->dummy_controller.ops = &lpc32xx_nand_controller_ops;
++	res = nand_scan(mtd, 1);
+ 	if (res)
+ 		goto release_dma;
  
- 	res = mtd_device_register(mtd, host->ncfg->parts,
-@@ -812,8 +823,6 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
- 
- cleanup_nand:
- 	nand_cleanup(nand_chip);
--free_irq:
--	free_irq(host->irq, host);
- release_dma_chan:
- 	if (use_dma)
- 		dma_release_channel(host->dma_chan);
 -- 
 2.14.1
 
