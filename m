@@ -2,106 +2,93 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5014DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFD8ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0DDD206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:57:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="IjBKN7sP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0DDD206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 6BAD7206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:02:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BAD7206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731019AbeGSWmZ (ORCPT
+        id S1730902AbeGSWr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 18:42:25 -0400
-Received: from mail-lj1-f171.google.com ([209.85.208.171]:42526 "EHLO
-        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727609AbeGSWmY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 18:42:24 -0400
-Received: by mail-lj1-f171.google.com with SMTP id f1-v6so7805718ljc.9
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 14:57:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=XkN7ESwEnYNQ3tt7T3y9pSDFDcyA5U1z4laOwHrdsEk=;
-        b=IjBKN7sPk81jZYnXU/VPrQ2Wwwhw8VPMPslfz32G2N/3ldGf6qMddE2cL9cvL6/M/8
-         juHeFcGfq2+pBhnICqnVEKDu50v8ZcZrjpJemeJGSMGvpHfqvN+uCDr6Ax8KSBqs6PEa
-         B8TwUyakmMoQ+R/YxXBAN7wBfQuJ+0suS+vNbQGdPb8yZvAJt1JvcxIHGis62wdh8bAr
-         cimzANgM6iSLMYNcXtLmdf+1YloGBX95VG9V5shQnF3T1fkcBCA6SS0+St/CtCIexKNl
-         kk8EWmNbdpuOAz3JPGmc3cG9pKqWvQNGhRP3XBDiy/uYCbbn9uuxdsuxpJUkQ7h3SiBn
-         CVJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XkN7ESwEnYNQ3tt7T3y9pSDFDcyA5U1z4laOwHrdsEk=;
-        b=K+/41uz562LKjrAf2VUfFGjSUfbsdpYUU0xDvoeXuyRy4dZABJcQCTcBByMyQi0olY
-         8qvFy7TD7uHwGF3nwRAYYNqpSabfk3r3wAEtyYk0NsfNTMj7xYBjf009tkAZvbOuiJSL
-         LVjTzXmQSd0TVB76uxawPED12zSLwWONqxAScgENrDA8gGKkNIZCNUbSalwhNmpgQeBw
-         pFk6avbiXY8w4cy6uPHUfKmtSn+mElxShRl9jtxRI9w7qC2awC3keNqZBoVpXkFkiy15
-         3DmfDsQq1J5zdz+j+xOx5BPPxsoWGF6fmXwCbO7/IpGZKC1XO6azLWgdCewm94RBjZE4
-         UlTw==
-X-Gm-Message-State: AOUpUlHSyX2YCBvG6YT7XqDrhLK8kM7ZSnAUd9JbIJ014YPmU/MamSxH
-        b3iIm9i6xGwej1wIpz9MoIJ7pATS2H/e5bhnZbJa0Ge5Bw4=
-X-Google-Smtp-Source: AAOMgpeBrXwIXdGYVbeCFavN2oUuqqvveHmaN72A84YoKcCo3MgqKtfG2XpPgmgUvRDaQF95kSgSaa5PVDtgqDG7Feg=
-X-Received: by 2002:a2e:195c:: with SMTP id p89-v6mr8564284lje.138.1532037440779;
- Thu, 19 Jul 2018 14:57:20 -0700 (PDT)
+        Thu, 19 Jul 2018 18:47:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44912 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727772AbeGSWr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 18:47:26 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 136DB4070497;
+        Thu, 19 Jul 2018 22:02:23 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AA2092026D6B;
+        Thu, 19 Jul 2018 22:02:22 +0000 (UTC)
+Subject: Re: [PATCH v2] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <1532036397-19449-1-git-send-email-longman@redhat.com>
+ <20180719215456.5ho3udhfoqlkh75a@linux-r8p5>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <00e98205-606a-a121-36c2-dedaeae1d0bb@redhat.com>
+Date:   Thu, 19 Jul 2018 18:02:22 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Received: by 2002:a19:fc1c:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 14:57:19
- -0700 (PDT)
-X-Originating-IP: [2620:10d:c090:200::6:14c8]
-In-Reply-To: <7h4lgvm3go.fsf@baylibre.com>
-References: <20180716080014.75c9016b@canb.auug.org.au> <7h4lgvm3go.fsf@baylibre.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Thu, 19 Jul 2018 14:57:19 -0700
-Message-ID: <CAOesGMghENGioK2o_dZKGPJYT01yoP9Fks1k-i1SUXZFENu3Lg@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the amlogic tree
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     ARM-SoC Maintainers <arm@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180719215456.5ho3udhfoqlkh75a@linux-r8p5>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 22:02:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 22:02:23 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 12:26 PM, Kevin Hilman <khilman@baylibre.com> wrote:
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On 07/19/2018 05:54 PM, Davidlohr Bueso wrote:
+> On Thu, 19 Jul 2018, Waiman Long wrote:
 >
->> Commits
+>> On a VM with only 1 vCPU, the locking fast paths will always be
+>> successful. In this case, there is no need to use the the PV qspinlock
+>> code which has higher overhead on the unlock side than the native
+>> qspinlock code.
 >>
->>   3f1ad8c53b29 ("ARM64: dts: meson: enable the saradc node in meson-gx-p23x-q20x.dtsi")
->>   4dabd157d48e ("ARM64: dts: meson-gx-p23x-q20x: move the wifi node to each board's .dts")
->>
->> are missing a Signed-off-by from their committer.
+>> The xen_pvspin veriable is also turned off in this 1 vCPU case to
+>> eliminate unneeded pvqspinlock initialization in xen_init_lock_cpu()
+>> which is run after xen_init_spinlocks().
 >
-> Oops.  I missed these.
+> Wouldn't kvm also want this?
 >
-> Olof, these were just merged by you in my PR[1].  How do you want me to
-> handle this?
->
-> I could respin the PR, or just send another with them reverted then
-> re-applied with signoff?
->
-> Or, since these branches don't need to be static (yet), I suppose you
-> could just edit the commits and add my signoff.
->
-> I'm OK with any of the above, let me know your preferene.
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index a37bda38d205..95aceb692010 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -457,7 +457,8 @@ static void __init sev_map_percpu_data(void)
+> static void __init kvm_smp_prepare_cpus(unsigned int max_cpus)
+> {
+>     native_smp_prepare_cpus(max_cpus);
+> -    if (kvm_para_has_hint(KVM_HINTS_REALTIME))
+> +    if (num_possible_cpus() == 1 ||
+> +        kvm_para_has_hint(KVM_HINTS_REALTIME))
+>         static_branch_disable(&virt_spin_lock_key);
+> }
 
-Hi,
+That doesn't really matter as the slowpath will never get executed in
+the 1 vCPU case.
 
-Fresh pull requests is probably easiest for all. I'll drop the one I brought in.
+-Longman
 
-
--Olof
