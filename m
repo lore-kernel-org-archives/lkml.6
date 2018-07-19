@@ -2,135 +2,292 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F81DC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD00EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 484F420693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:37:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndnyjpt5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 484F420693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 98F8120693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F8120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbeGSKTm (ORCPT
+        id S1727551AbeGSKUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 06:19:42 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41905 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbeGSKTm (ORCPT
+        Thu, 19 Jul 2018 06:20:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60058 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbeGSKUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 06:19:42 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y17-v6so6633167ljy.8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 02:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=kCYBh9I1ONQDTb/ucIUlDVT05KGAwtDynvydBai6V/Q=;
-        b=ndnyjpt5O9SwFP0nffgPAjk3t6Aue3Fc3+4x11rges5JktEVVDExNNJeH5wRsvWFHY
-         zJzY0Ewuhy8RRgC9qRy7zobujk2ie0bGoplQl4O1mPHXyQap8FBfrh89ADeKwmD2g0Pw
-         gSL4UdzdfTIr0O6Dl+N3PXHN+c6LM8IyUZGpdlt/AJBbxd4GBap/jSrjWnpP3kCYIxeT
-         vi0mvl7wYFGsu7Xh5vEa3VTk3WCV9PHaM9VoN+5sLYHsJOPnc637Rd/YQBKeoWpUvLqc
-         wGP2n8qyQ8ZG6vshJmP6+XpsfzJbcnZI0BL6D2d+9bMDGskyQ3M5rULEBOwJ+EgBvYN/
-         Ch2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kCYBh9I1ONQDTb/ucIUlDVT05KGAwtDynvydBai6V/Q=;
-        b=Kx14qO4o+NklDHpgmEeCbuTjPqpL7DUH09Ii/vCnkxyqwakDKK7nz+HNEXONehcZiR
-         SVbRqrwmmi4hpQFl2IkPM9b0xU6Koe+Rr6oAA+iP0+QQBMTbq89n6Pv+F7IH7MbYPwhV
-         +nOgp8iT7w7a6SdvJ8pzYcMWYzK8XfKcogRGa3CstugHPM1CrpO46ctPLQnSAVu82vYY
-         p8u2YM0CWiMBh3tvTF1rXGb37mCt3Nk1IZIgqwlZmQDZytEoDtdPt1iuH3uyPPIISzdS
-         ky6sbOFT3dWK+PqXdowCzoRFAJlMJqfKuSKMu0AgJDN7U/40hH6JddbQ52JJiMBz+8Qw
-         IXgQ==
-X-Gm-Message-State: AOUpUlETpplXGC48B1gzK3IuutSbA+C81D4jofhlZ7vl01tgX6nfPV6H
-        MAHKmAPA3U3rjNPMQPxtbkg=
-X-Google-Smtp-Source: AAOMgpdT19xTUvAXvZVd6ouPLJcWorMln56JwUyJju4VYDp5XuysmwaPIbFWlcJVsYqBi9cUZ8H1pg==
-X-Received: by 2002:a2e:9c82:: with SMTP id x2-v6mr7513756lji.131.1531993042902;
-        Thu, 19 Jul 2018 02:37:22 -0700 (PDT)
-Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id q72-v6sm1011863lja.6.2018.07.19.02.37.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 19 Jul 2018 02:37:21 -0700 (PDT)
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org,
-        gustavo@padovan.org, jgross@suse.com, boris.ostrovsky@oracle.com,
-        dan.carpenter@oracle.com
-Cc:     andr2000@gmail.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v3] drm: Replace NULL with error value in drm_prime_pages_to_sg
-Date:   Thu, 19 Jul 2018 12:37:13 +0300
-Message-Id: <20180719093713.3643-1-andr2000@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Thu, 19 Jul 2018 06:20:05 -0400
+Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2131BD1;
+        Thu, 19 Jul 2018 09:37:45 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 11:37:43 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Todd Poynor <toddpoynor@gmail.com>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        Zhongze Hu <frankhu@chromium.org>,
+        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Todd Poynor <toddpoynor@google.com>,
+        Dmitry Torokhov <dtor@chromium.org>
+Subject: Re: [PATCH 17/32] staging: gasket: annotate ioctl arg with __user
+Message-ID: <20180719093743.GC14301@kroah.com>
+References: <20180717205712.29495-1-toddpoynor@gmail.com>
+ <20180717205712.29495-18-toddpoynor@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717205712.29495-18-toddpoynor@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+On Tue, Jul 17, 2018 at 01:56:57PM -0700, Todd Poynor wrote:
+> From: Todd Poynor <toddpoynor@google.com>
+> 
+> For sparse checking.
 
-Dan Carpenter has reported that there is the following static checker
-warning:
-	drivers/gpu/drm/drm_prime.c:317 drm_gem_map_dma_buf()
-	warn: 'sgt' can also be NULL
+Close, but you can do better :)
 
-314	sgt = obj->dev->driver->gem_prime_get_sg_table(obj);
-315
-316	if (!IS_ERR(sgt)) {
-317		if (!dma_map_sg_attrs(attach->dev, sgt->sgl, sgt->nents, dir,
+> 
+> Reported-by: Dmitry Torokhov <dtor@chromium.org>
+> Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+> Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+> ---
+>  drivers/staging/gasket/apex_driver.c  | 11 ++--
+>  drivers/staging/gasket/gasket_core.c  |  6 ++-
+>  drivers/staging/gasket/gasket_core.h  |  4 +-
+>  drivers/staging/gasket/gasket_ioctl.c | 72 ++++++++++++++-------------
+>  drivers/staging/gasket/gasket_ioctl.h |  4 +-
+>  5 files changed, 52 insertions(+), 45 deletions(-)
+> 
+> diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+> index 612b3ab803196..c91c5aff5ab9c 100644
+> --- a/drivers/staging/gasket/apex_driver.c
+> +++ b/drivers/staging/gasket/apex_driver.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2018 Google, Inc.
+>   */
+>  
+> +#include <linux/compiler.h>
+>  #include <linux/delay.h>
+>  #include <linux/fs.h>
+>  #include <linux/init.h>
+> @@ -142,9 +143,9 @@ static int apex_get_status(struct gasket_dev *gasket_dev);
+>  
+>  static uint apex_ioctl_check_permissions(struct file *file, uint cmd);
+>  
+> -static long apex_ioctl(struct file *file, uint cmd, ulong arg);
+> +static long apex_ioctl(struct file *file, uint cmd, void __user *arg);
+> 
+> -static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg);
+> +static long apex_clock_gating(struct gasket_dev *gasket_dev, void __user *arg);
 
-Problematic functions are xen_drm_front_gem_get_sg_table and
-drm_gem_cma_prime_get_sg_table. Fix those by replacing NULL with error value.
+Make this a __user pointer to the correct struct type you are handling
+here.  You know what the type is, use it.
 
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/drm_gem_cma_helper.c    | 4 ++--
- drivers/gpu/drm/xen/xen_drm_front_gem.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+>  static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type);
+>  
+> @@ -635,7 +636,7 @@ static uint apex_ioctl_check_permissions(struct file *filp, uint cmd)
+>  /*
+>   * Apex-specific ioctl handler.
+>   */
+> -static long apex_ioctl(struct file *filp, uint cmd, ulong arg)
+> +static long apex_ioctl(struct file *filp, uint cmd, void __user *arg)
+>  {
+>  	struct gasket_dev *gasket_dev = filp->private_data;
+>  
+> @@ -655,7 +656,7 @@ static long apex_ioctl(struct file *filp, uint cmd, ulong arg)
+>   * @gasket_dev: Gasket device pointer.
+>   * @arg: User ioctl arg, in this case to a apex_gate_clock_ioctl struct.
+>   */
+> -static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg)
+> +static long apex_clock_gating(struct gasket_dev *gasket_dev, void __user *arg)
 
-diff --git a/drivers/gpu/drm/drm_gem_cma_helper.c b/drivers/gpu/drm/drm_gem_cma_helper.c
-index 80a5115c3846..1d2ced882b66 100644
---- a/drivers/gpu/drm/drm_gem_cma_helper.c
-+++ b/drivers/gpu/drm/drm_gem_cma_helper.c
-@@ -436,7 +436,7 @@ struct sg_table *drm_gem_cma_prime_get_sg_table(struct drm_gem_object *obj)
- 
- 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
- 	if (!sgt)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	ret = dma_get_sgtable(obj->dev->dev, sgt, cma_obj->vaddr,
- 			      cma_obj->paddr, obj->size);
-@@ -447,7 +447,7 @@ struct sg_table *drm_gem_cma_prime_get_sg_table(struct drm_gem_object *obj)
- 
- out:
- 	kfree(sgt);
--	return NULL;
-+	return ERR_PTR(ret);
- }
- EXPORT_SYMBOL_GPL(drm_gem_cma_prime_get_sg_table);
- 
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-index c85bfe7571cb..47ff019d3aef 100644
---- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-@@ -179,7 +179,7 @@ struct sg_table *xen_drm_front_gem_get_sg_table(struct drm_gem_object *gem_obj)
- 	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
- 
- 	if (!xen_obj->pages)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
- }
--- 
-2.18.0
+As above, this should be a different type.
 
+>  {
+>  	struct apex_gate_clock_ioctl ibuf;
+>  
+> @@ -663,7 +664,7 @@ static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg)
+>  		return 0;
+>  
+>  	if (allow_sw_clock_gating) {
+> -		if (copy_from_user(&ibuf, (void __user *)arg, sizeof(ibuf)))
+> +		if (copy_from_user(&ibuf, arg, sizeof(ibuf)))
+>  			return -EFAULT;
+>  
+>  		gasket_log_error(
+> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+> index 947b4fcc76970..ff34af42bbe7c 100644
+> --- a/drivers/staging/gasket/gasket_core.c
+> +++ b/drivers/staging/gasket/gasket_core.c
+> @@ -14,6 +14,7 @@
+>  #include "gasket_page_table.h"
+>  #include "gasket_sysfs.h"
+>  
+> +#include <linux/compiler.h>
+>  #include <linux/delay.h>
+>  #include <linux/fs.h>
+>  #include <linux/init.h>
+> @@ -1823,14 +1824,15 @@ static long gasket_ioctl(struct file *filp, uint cmd, ulong arg)
+>  		 * check_and_invoke_callback.
+>  		 */
+>  		if (driver_desc->ioctl_handler_cb)
+> -			return driver_desc->ioctl_handler_cb(filp, cmd, arg);
+> +			return driver_desc->ioctl_handler_cb(
+> +			    filp, cmd, (void __user *)arg);
+
+You can use a temp variable and then only have to cast things once then,
+instead of twice, if you care.  Not a big deal.
+
+>  
+>  		gasket_log_error(
+>  			gasket_dev, "Received unknown ioctl 0x%x", cmd);
+
+This is a fun way to cause a DoS on your system, you should fix this up
+in later changes.
+
+>  		return -EINVAL;
+>  	}
+>  
+> -	return gasket_handle_ioctl(filp, cmd, arg);
+> +	return gasket_handle_ioctl(filp, cmd, (void __user *)arg);
+>  }
+>  
+>  int gasket_reset(struct gasket_dev *gasket_dev, uint reset_type)
+> diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+> index 50ad0c8853183..68b4d2ac9fd6c 100644
+> --- a/drivers/staging/gasket/gasket_core.h
+> +++ b/drivers/staging/gasket/gasket_core.h
+> @@ -315,7 +315,7 @@ struct gasket_dev {
+>  
+>  /* Type of the ioctl permissions check callback. See below. */
+>  typedef int (*gasket_ioctl_permissions_cb_t)(
+> -	struct file *filp, uint cmd, ulong arg);
+> +	struct file *filp, uint cmd, void __user *arg);
+>  
+>  /*
+>   * Device type descriptor.
+> @@ -549,7 +549,7 @@ struct gasket_driver_desc {
+>  	 * return -EINVAL. Should return an error status (either -EINVAL or
+>  	 * the error result of the ioctl being handled).
+>  	 */
+> -	long (*ioctl_handler_cb)(struct file *filp, uint cmd, ulong arg);
+> +	long (*ioctl_handler_cb)(struct file *filp, uint cmd, void __user *arg);
+
+Why are you not using the typedef above?
+
+>  
+>  	/*
+>  	 * device_status_cb: Callback to determine device health.
+> diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+> index d0fa05b8bf1d3..ab2376c32c00b 100644
+> --- a/drivers/staging/gasket/gasket_ioctl.c
+> +++ b/drivers/staging/gasket/gasket_ioctl.c
+> @@ -7,6 +7,7 @@
+>  #include "gasket_interrupt.h"
+>  #include "gasket_logging.h"
+>  #include "gasket_page_table.h"
+> +#include <linux/compiler.h>
+>  #include <linux/fs.h>
+>  #include <linux/uaccess.h>
+>  
+> @@ -23,17 +24,18 @@
+>  #endif
+>  
+>  static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd);
+> -static int gasket_set_event_fd(struct gasket_dev *dev, ulong arg);
+> +static int gasket_set_event_fd(struct gasket_dev *dev, void __user *arg);
+>  static int gasket_read_page_table_size(
+> -	struct gasket_dev *gasket_dev, ulong arg);
+> +	struct gasket_dev *gasket_dev, void __user *arg);
+>  static int gasket_read_simple_page_table_size(
+> -	struct gasket_dev *gasket_dev, ulong arg);
+> +	struct gasket_dev *gasket_dev, void __user *arg);
+>  static int gasket_partition_page_table(
+> -	struct gasket_dev *gasket_dev, ulong arg);
+> -static int gasket_map_buffers(struct gasket_dev *gasket_dev, ulong arg);
+> -static int gasket_unmap_buffers(struct gasket_dev *gasket_dev, ulong arg);
+> +	struct gasket_dev *gasket_dev, void __user *arg);
+> +static int gasket_map_buffers(struct gasket_dev *gasket_dev, void __user *arg);
+> +static int gasket_unmap_buffers(struct gasket_dev *gasket_dev,
+> +				void __user *arg);
+>  static int gasket_config_coherent_allocator(
+> -	struct gasket_dev *gasket_dev, ulong arg);
+> +	struct gasket_dev *gasket_dev, void __user *arg);
+
+
+For most of these you know the real type, please just use it.
+
+>  /*
+>   * standard ioctl dispatch function.
+> @@ -43,9 +45,10 @@ static int gasket_config_coherent_allocator(
+>   *
+>   * Standard ioctl dispatcher; forwards operations to individual handlers.
+>   */
+> -long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
+> +long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *arg)
+>  {
+>  	struct gasket_dev *gasket_dev;
+> +	ulong intarg = (ulong)arg;
+
+Ick, really?  That's a horrible name for a variable, especially as it
+doesn't describe what it is...
+
+and "unsigned long" please, ulong is not a "real" kernel type.
+
+>  	int retval;
+>  
+>  	gasket_dev = (struct gasket_dev *)filp->private_data;
+> @@ -74,16 +77,16 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
+>  	 */
+>  	switch (cmd) {
+>  	case GASKET_IOCTL_RESET:
+> -		trace_gasket_ioctl_integer_data(arg);
+> -		retval = gasket_reset(gasket_dev, arg);
+> +		trace_gasket_ioctl_integer_data(intarg);
+> +		retval = gasket_reset(gasket_dev, intarg);
+>  		break;
+>  	case GASKET_IOCTL_SET_EVENTFD:
+>  		retval = gasket_set_event_fd(gasket_dev, arg);
+>  		break;
+>  	case GASKET_IOCTL_CLEAR_EVENTFD:
+> -		trace_gasket_ioctl_integer_data(arg);
+> +		trace_gasket_ioctl_integer_data(intarg);
+>  		retval = gasket_interrupt_clear_eventfd(
+> -			gasket_dev->interrupt_data, (int)arg);
+> +			gasket_dev->interrupt_data, (int)intarg);
+
+See, look at that cast, why would you ever think to cast a variabled
+with "int" in the name of it, to an int?  Naming is hard :(
+
+
+>  		break;
+>  	case GASKET_IOCTL_PARTITION_PAGE_TABLE:
+>  		trace_gasket_ioctl_integer_data(arg);
+> @@ -91,7 +94,7 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
+>  		break;
+>  	case GASKET_IOCTL_NUMBER_PAGE_TABLES:
+>  		trace_gasket_ioctl_integer_data(gasket_dev->num_page_tables);
+> -		if (copy_to_user((void __user *)arg,
+> +		if (copy_to_user(arg,
+>  				 &gasket_dev->num_page_tables,
+
+Nit, you can move this line up one now.
+
+I'll stop now, you get the idea.  This should be broken up a lot.
+
+thanks,
+
+greg k-h
