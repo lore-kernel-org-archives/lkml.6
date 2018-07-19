@@ -6,118 +6,119 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6707BC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADAFECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27EAF20856
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:41:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27EAF20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C419420684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:41:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C419420684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731890AbeGSPYo (ORCPT
+        id S1731859AbeGSPZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:24:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38300 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731847AbeGSPYo (ORCPT
+        Thu, 19 Jul 2018 11:25:17 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:17209 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727441AbeGSPZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:24:44 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6JEd5NO039812
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 10:41:15 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kavat90cq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 10:41:14 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Thu, 19 Jul 2018 15:41:12 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 19 Jul 2018 15:41:09 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6JEf8ld39387374
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Jul 2018 14:41:08 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 821FD11C04A;
-        Thu, 19 Jul 2018 17:41:25 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4969311C052;
-        Thu, 19 Jul 2018 17:41:25 +0100 (BST)
-Received: from mschwideX1 (unknown [9.152.212.148])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 19 Jul 2018 17:41:25 +0100 (BST)
-Date:   Thu, 19 Jul 2018 16:41:07 +0200
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/hypfs: Replace PTR_RET with PTR_ERR_OR_ZERO
-In-Reply-To: <20180719050830.GA26688@embeddedor.com>
-References: <20180719050830.GA26688@embeddedor.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Thu, 19 Jul 2018 11:25:17 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b50a3340000>; Thu, 19 Jul 2018 07:41:56 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 19 Jul 2018 07:41:48 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 19 Jul 2018 07:41:48 -0700
+Received: from [10.21.132.122] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 19 Jul
+ 2018 14:41:46 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] gpio: tegra: Fix tegra_gpio_irq_set_type()
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180717161038.21500-1-digetx@gmail.com>
+Message-ID: <2384dc28-52ba-a415-9787-6ba985f767c2@nvidia.com>
+Date:   Thu, 19 Jul 2018 15:41:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18071914-0012-0000-0000-0000028C2C7E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071914-0013-0000-0000-000020BDF630
-Message-Id: <20180719164107.3c2a2385@mschwideX1>
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-19_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807190157
+In-Reply-To: <20180717161038.21500-1-digetx@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 00:08:30 -0500
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+Hi Dmitry
 
-> PTR_RET is deprecated, use PTR_ERR_OR_ZERO instead.
+On 17/07/18 17:10, Dmitry Osipenko wrote:
+> Commit 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
+> broke tegra_gpio_irq_set_type() because requesting of GPIO direction must
+> be done after enabling GPIO function for a pin.
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> This patch fixes drivers probe failure like this:
+> 
+>  gpio gpiochip0: (tegra-gpio): gpiochip_lock_as_irq: cannot get GPIO direction
+>  tegra-gpio 6000d000.gpio: unable to lock Tegra GPIO 144 as IRQ
+> 
+> Fixes: 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  arch/s390/hypfs/hypfs_diag.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/gpio/gpio-tegra.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 > 
-> diff --git a/arch/s390/hypfs/hypfs_diag.c b/arch/s390/hypfs/hypfs_diag.c
-> index a2945b2..3452e18 100644
-> --- a/arch/s390/hypfs/hypfs_diag.c
-> +++ b/arch/s390/hypfs/hypfs_diag.c
-> @@ -497,7 +497,7 @@ static int hypfs_create_cpu_files(struct dentry *cpus_dir, void *cpu_info)
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index 94396caaca75..22e7c99ed69e 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -323,13 +323,6 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>  		return -EINVAL;
 >  	}
->  	diag224_idx2name(cpu_info__ctidx(diag204_info_type, cpu_info), buffer);
->  	rc = hypfs_create_str(cpu_dir, "type", buffer);
-> -	return PTR_RET(rc);
-> +	return PTR_ERR_OR_ZERO(rc);
->  }
-> 
->  static void *hypfs_create_lpar_files(struct dentry *systems_dir, void *part_hdr)
-> @@ -544,7 +544,7 @@ static int hypfs_create_phys_cpu_files(struct dentry *cpus_dir, void *cpu_info)
->  		return PTR_ERR(rc);
->  	diag224_idx2name(phys_cpu__ctidx(diag204_info_type, cpu_info), buffer);
->  	rc = hypfs_create_str(cpu_dir, "type", buffer);
-> -	return PTR_RET(rc);
-> +	return PTR_ERR_OR_ZERO(rc);
->  }
-> 
->  static void *hypfs_create_phys_files(struct dentry *parent_dir, void *phys_hdr)
+>  
+> -	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
+> -	if (ret) {
+> -		dev_err(tgi->dev,
+> -			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
+> -		return ret;
+> -	}
+> -
+>  	spin_lock_irqsave(&bank->lvl_lock[port], flags);
+>  
+>  	val = tegra_gpio_readl(tgi, GPIO_INT_LVL(tgi, gpio));
+> @@ -342,6 +335,14 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>  	tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, gpio), gpio, 0);
+>  	tegra_gpio_enable(tgi, gpio);
+>  
+> +	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
+> +	if (ret) {
+> +		dev_err(tgi->dev,
+> +			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
+> +		tegra_gpio_disable(tgi, gpio);
+> +		return ret;
+> +	}
+> +
+>  	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+>  		irq_set_handler_locked(d, handle_level_irq);
+>  	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
 
-Applied to the s390/linux tree for the next merge window. Thanks.
+Thanks for reporting this. I am seeing this as well on Tegra20 Ventana
+and Tegra30 Cardhu looking at the boot log. Given that gpiochip_lock_as_irq
+is checking the direction, the above fix looks good to me. So ...
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
 
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+nvpublic
