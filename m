@@ -2,92 +2,105 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31923C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3F2ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E301620684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:01:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E301620684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 1603E20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:02:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rdr1NXBn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1603E20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731790AbeGSPov (ORCPT
+        id S1731881AbeGSPpm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:44:51 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35584 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730919AbeGSPov (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:44:51 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a3-v6so8413731wrt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:01:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YHEix/TOjRxv70x/ZYn60PvTTg0MhwaXbEte3Ahg3KY=;
-        b=ZBYKzzYoFPFTfMzeMM8raRppDFdzTNW6B0WnaSDqPL0LKigjTC/O+K7vfTDpgaZ2qY
-         tOsDc10Ra93dC0k0j0STtOuELIfoatJwzvdHtNogBo4srBVI+4jUPMoHT/54vh3pEgkK
-         TIsJRb5jv3eNRE18KI9HOR+mRDbgNQMwhwCUCY8RftLEjpR5yVYmQ24Pp0xaQLP6EeCe
-         R9/BLq6Y90DYPcX0PrrrSq3Sgs6J1i1IFqnEWILiILTtq38XNOAfJUldOMFZeZsedI5W
-         3/4coYJPSmSgDXuivRatGdVu+bMYDMRebMj4VYxyqdV74mnFTqr3TXccQ9xWaOkNeqme
-         Lt2Q==
-X-Gm-Message-State: AOUpUlHGFZHA6NWlb9qk8G7KrzgbDbL3mm5sLfo0N4nJ1r+M8SVdaVj4
-        PzEOUXA74HOwFdLUsOAb4DU=
-X-Google-Smtp-Source: AAOMgpej4slr11aX7wqDBvIpkuUrNFY3WazNXL+fzEIB5+z3w6J2ggkmMofX+DGtt51jw9uG3KBEMA==
-X-Received: by 2002:adf:8466:: with SMTP id 93-v6mr7397000wrf.274.1532012475985;
-        Thu, 19 Jul 2018 08:01:15 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id x184-v6sm5503289wmg.24.2018.07.19.08.01.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 08:01:15 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 68E69124196; Thu, 19 Jul 2018 17:01:14 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 17:01:14 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     mhocko@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, aaron.lu@intel.com,
-        iamjoonsoo.kim@lge.com, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        osalvador@suse.de
-Subject: Re: [PATCH v2 5/5] mm/page_alloc: Only call pgdat_set_deferred_range
- when the system boots
-Message-ID: <20180719150114.GC10988@techadventures.net>
-References: <20180719132740.32743-1-osalvador@techadventures.net>
- <20180719132740.32743-6-osalvador@techadventures.net>
- <20180719134622.GE7193@dhcp22.suse.cz>
- <20180719135859.GA10988@techadventures.net>
- <20180719140308.GG7193@dhcp22.suse.cz>
- <CAGM2reZ-+njLtZSnNpry11frg85KmMk4WWxGdaqk1o4BUJVO1w@mail.gmail.com>
+        Thu, 19 Jul 2018 11:45:42 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:40156 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731661AbeGSPpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 11:45:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=zc5MRzgkTrbEzeRcts0ir+Ak8KNE8+R3EyOn5XYnUbM=;
+        b=Rdr1NXBnSFbfXz5/HjcM1yOKO5cfMuXUcb7WNstmclmKQ5FsYqxFJaPx1/XArYDhvZkbP3wr3u8Lq70ASINvz5XIVeNyAm9L1MXlG/oncuTtxv1fShTy4ghk1LbeGzTB5AQxND6jXjhPXr2VQ0+EIbOId8bWwfPhUGxdoC0myz0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fgAR0-0002fE-C6; Thu, 19 Jul 2018 17:01:38 +0200
+Date:   Thu, 19 Jul 2018 17:01:38 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 5/5] net: add MTD support to
+ eth_platform_get_mac_address()
+Message-ID: <20180719150138.GC9119@lunn.ch>
+References: <20180718161035.7005-1-brgl@bgdev.pl>
+ <20180718161035.7005-6-brgl@bgdev.pl>
+ <20180718164737.GE12477@lunn.ch>
+ <CAMRc=MeRv3_C8_R-Awfr1zjLa3G_CVAACc-2t_ihB+1v+BCTGw@mail.gmail.com>
+ <20180718170352.GF12477@lunn.ch>
+ <CAMRc=Md3oeEktzrA9UZyNPX6pB4bG+Gv0o6cjbs0UUKb3sYTsA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGM2reZ-+njLtZSnNpry11frg85KmMk4WWxGdaqk1o4BUJVO1w@mail.gmail.com>
+In-Reply-To: <CAMRc=Md3oeEktzrA9UZyNPX6pB4bG+Gv0o6cjbs0UUKb3sYTsA@mail.gmail.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 10:27:44AM -0400, Pavel Tatashin wrote:
-> On Thu, Jul 19, 2018 at 10:03 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > I am not really sure. I am not a big fan of SYSTEM_BOOTING global
-> > thingy so I would rather not spread its usage.
+On Thu, Jul 19, 2018 at 10:14:29AM +0200, Bartosz Golaszewski wrote:
+> 2018-07-18 19:03 GMT+02:00 Andrew Lunn <andrew@lunn.ch>:
+> >> >> +#ifdef CONFIG_MTD
+> >> >> +     /* NOTE: this should go away as soon as MTD gets nvmem support. */
+> >> >> +     if (!addr) {
+> >> >> +             struct mtd_info *mtd;
+> >> >> +             int rv;
+> >> >> +
+> >> >> +             mtd = get_mtd_device_nm("MAC-Address");
+> >> >
+> >> > In order for this to go away, you need to keep backwards
+> >> > compatibility. When using nvmem, you look for a cell called
+> >> > "mac-address". Here you are looking for "MAC-Address". That is going
+> >> > to make backwards compatibility harder. How do you plan to do it?
+> >> >
+> >> >    Andrew
+> >>
+> >> I'm trying to adjust to already existing users. The only user of
+> >> get_mtd_device_nm() who calls it to read the MAC address registers a
+> >> partition called "MAC-Address". We can't change it since it's visible
+> >> from user space. In the future we'd just have to have a list of
+> >> supported string that we'd use to do the nvmem lookup.
+> >
+> > Why not have the nvmem cell called "MAC-Address"? When you add nvmem
+> > support to MTD, i assume you are going to map each MTD partition to an
+> > nvmem cell?
 > 
-> I agree, I do not think this patch is necessary. Calling
-> pgdat_set_deferred_range() does not hurt in hotplug context, and it is
-> cheap too. SYSTEM_BOOTING sometimes useful, but it is better to use it
-> only where necessary, where without this "if" we will encounter some
-> bugs.
+> Because all existing users of nvmem use "mac-address" as the name of
+> this cell already. I guess we will need to live with both in this
+> particular function.
 
-Ok, let us drop it then ;-).
+So i'm not convinced this last patch is making things better. I would
+prefer if it was dropped for the moment. Wait until MTD via nvmem is
+actually implemented and there is a concrete concept of how a MAC
+address would be looked up without having lots of ugly code.
 
-Thanks
--- 
-Oscar Salvador
-SUSE L3
+	Andrew
