@@ -1,126 +1,125 @@
 Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.4 required=3.0 tests=FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B294ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20D2ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D11852084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D11852084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 976512084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:30:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWMBkxfe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976512084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732124AbeGSQON (ORCPT
+        id S1732154AbeGSQOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:14:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40488 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731570AbeGSQOM (ORCPT
+        Thu, 19 Jul 2018 12:14:31 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:35648 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730899AbeGSQOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:14:12 -0400
-Received: from mail-wm0-f69.google.com ([74.125.82.69])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@canonical.com>)
-        id 1fgAsv-0004oD-U3
-        for linux-kernel@vger.kernel.org; Thu, 19 Jul 2018 15:30:29 +0000
-Received: by mail-wm0-f69.google.com with SMTP id v25-v6so2561119wmc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:30:29 -0700 (PDT)
+        Thu, 19 Jul 2018 12:14:31 -0400
+Received: by mail-yb0-f196.google.com with SMTP id x15-v6so3420405ybm.2;
+        Thu, 19 Jul 2018 08:30:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=g4Zr28DVOj84QY7szq3yRIAxlimqHglCuCxjWlH9YW0=;
+        b=YWMBkxfelbOQ+qIePoSMIS0ClcZXhErnpXQJcKCxs+GJ3zKUkIaFrP+OkGff2hF+yV
+         DhLkJCLXllK4yRhyKJ8i0zyzYgmm56r9gYQezioRNuhqwr7zYAjCfhV0iwYPL/MLXDAx
+         6epXNN2p5sZrnKS2wt1SU83Mp6jpuYNyaqcmv+shflalBkRaCU0PMInb9ffeXRbBiHYp
+         7cvhH+ccy1PxpKAhmyKdEijC/X01jn3NfBJBilXjrypKN5SmyURb2o4Qa05Itj3K0qIf
+         u4IqgBHCsCXLHA0QCQ1fIrE9MwZXS0J192mG1RbGTfgbvXppttUtdHkxFrtdfUi3gvXj
+         zZug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a8fSan+O4lEPAdgDPjChNqfahywNONez8+cWRiDNkgo=;
-        b=BEkQ7NBvdWJld0lFfIP7H8Gm3mYpK08dg0p84kSQbBTy67wkpQP6EHUSDWesxLIr03
-         PHR5JVboTxp8Ab0VuwsXrvBgEg8M6xRgfMKy8qPnV9RcfRKfSWzYJfJ581pi3ViQI09l
-         z5PzEoUBfWJ9S0UfSOC1FoKdGRO56B8WphaniUboBYo8ImkqPqqxzIhZVEDclN9Y1uSN
-         Xw9P+WjfYuHITahKrrQLO87j27IZBNSk8AU2ydiLcK6miAID27natv6D+Kf5MK8DfWRW
-         KZ7d8gdafdpL6XKIba/M6KhSj28aVpd6CCGVJMOxrZoZp/RtWAVPJM29i4ciesmuynFj
-         8Ofg==
-X-Gm-Message-State: AOUpUlE9yXn4Rvqqi9ZR4MreZioUun8M3Mj6pXv6r68zPVtGvUbWLGN5
-        e1K2mQYRKdqqVWxX73ZPRT4eLpDultsSIog0LGWx311fET/YWFw1d94QBoydjCX45xXzfmbRWnf
-        YZgiNoI7+bJ9JujA0ERsgb/9rVyRF8k9ExCPcgeWD0g==
-X-Received: by 2002:a1c:3e92:: with SMTP id l140-v6mr4478088wma.134.1532014229639;
-        Thu, 19 Jul 2018 08:30:29 -0700 (PDT)
-X-Google-Smtp-Source: AAOMgpf517+CuwKYIFpcN10DqvT70FXYZkJBZJn63SinjbtEqX8+I7yIJ7ANYwQ0bE85o/u/rgeLhA==
-X-Received: by 2002:a1c:3e92:: with SMTP id l140-v6mr4478068wma.134.1532014229403;
-        Thu, 19 Jul 2018 08:30:29 -0700 (PDT)
-Received: from gmail.com (eap108016.extern.uni-tuebingen.de. [134.2.108.16])
-        by smtp.gmail.com with ESMTPSA id s5-v6sm7426162wro.33.2018.07.19.08.30.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Jul 2018 08:30:28 -0700 (PDT)
-From:   Christian Brauner <christian.brauner@canonical.com>
-X-Google-Original-From: Christian Brauner <christian@brauner.io>
-Date:   Thu, 19 Jul 2018 17:30:28 +0200
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        kstewart@linuxfoundation.org, pombredanne@nexb.com,
-        linux-api@vger.kernel.org, ebiederm@xmission.com,
-        seth.forshee@canonical.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 0/6 v1 resend] statfs: handle mount propagation
-Message-ID: <20180719153027.GA21410@gmail.com>
-References: <20180525124825.23875-1-christian@brauner.io>
- <20180613140625.GA31082@mailbox.org>
- <20180613142454.GA1845@kroah.com>
- <20180613150702.GA5403@mailbox.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=g4Zr28DVOj84QY7szq3yRIAxlimqHglCuCxjWlH9YW0=;
+        b=o/284FQOhoceNP7XUgDSy0VDlfRAjHKK/Hgu4HHq+IFDCuTlLkd1qAvKRIC6D/+0Zh
+         RLHoCTrvM83jFpfAd569ev14W+5LkDzYSfcgGVnd/pYb+CAKAk0hy7aD1+3RiNJag8VQ
+         gPzbwhr6BNS8mjS4iVcc/eWivA3/i5IlnWqBVSiYuRXCIbAEFnLTRXcKuSdQeEY02/WH
+         S+Zyw8LWzu5a8voVPr/PTz1MqjaBc4Exu3VXSeDUZuiq0ZSJ+6sFCiuvr7ksW9lO9gam
+         wpP7u6fBbb4oBHsYzmsXbImn7fw7o9LOsxHIu5VwuQTtpf53oHy/0GtBU3AVV9m3J3E4
+         PD4g==
+X-Gm-Message-State: AOUpUlFKUtz8RTu8ETnVw/ODlqkRfla5yUo9hOrk1A/56T/5Um3jW1cb
+        /xltazwpn+Nq7aBoWK1/PrUO62kF
+X-Google-Smtp-Source: AAOMgpfGd3vnL8EMa50fxU3v1fnmLQ71jzSE4a8nWuFZOXWBtcO9DVyFsEdD1dBXvT/jec4T/KEj7g==
+X-Received: by 2002:a25:3604:: with SMTP id d4-v6mr5719007yba.106.1532014248517;
+        Thu, 19 Jul 2018 08:30:48 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::1:7eec])
+        by smtp.gmail.com with ESMTPSA id f137-v6sm7781895ywb.52.2018.07.19.08.30.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 08:30:47 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 08:30:45 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+Message-ID: <20180719153045.GT72677@devbig577.frc2.facebook.com>
+References: <1529825440-9574-1-git-send-email-longman@redhat.com>
+ <1529825440-9574-8-git-send-email-longman@redhat.com>
+ <20180702165322.GI533219@devbig577.frc2.facebook.com>
+ <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
+ <20180703155823.GS533219@devbig577.frc2.facebook.com>
+ <20180719135224.GE2494@hirez.programming.kicks-ass.net>
+ <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180613150702.GA5403@mailbox.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 05:07:02PM +0200, Christian Brauner wrote:
-> On Wed, Jun 13, 2018 at 04:24:54PM +0200, Greg KH wrote:
-> > On Wed, Jun 13, 2018 at 04:06:25PM +0200, Christian Brauner wrote:
-> > > On Fri, May 25, 2018 at 02:48:19PM +0200, Christian Brauner wrote:
-> > > > From: Christian Brauner <christian.brauner@ubuntu.com>
-> > > > 
-> > > > Hey,
-> > > > 
-> > > > This is v1 of this patchset. All changes from v0 to v1 are non-functional.
-> > > > Specifically, the commit messages and justification have been extended as
-> > > > requested by Linus and Al.
-> > > 
-> > > Hey everyone,
-> > > 
-> > > Just a ping whether the requested changes have made this series suitable
-> > > for inclusion. Would be excellent if someone could do another review. :)
-> > 
-> > It's the middle of the merge window, no new code gets accepted right
-> > now, so just wait until next week at the _earliest_ before worrying
+Hello,
+
+On Thu, Jul 19, 2018 at 10:04:54AM -0400, Waiman Long wrote:
+> > Why would a container not be allowed to create partitions for its
+> > various RT workloads?
 > 
-> Ok, sorry. It was just that this was sent out before well over a month
-> ago and I was just worried that it had been overlooked.
-
-Hey everyone,
-
-It's been a few weeks. I just wanted to check whether the changes made
-to the series would make it suitable for inclusion. I checked against
-current master and it should still apply cleanly.
-
-Thanks!
-Christian
-
+> As far as I understand, Tejun has some concern about the way that
+> partitioning works is inconsistent with how other resources are being
+> managed by cgroup v2 controllers. I adds an incremental patch to
+> temporarily disable the creation of partition below the first level
+> children to buy us time so that we can reach a compromise later on what
+> to do. We can always add features, but taking away features after they
+> are made available will be hard.
 > 
-> Thanks!
-> Christian
-> 
-> > about someone reviewing this.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-api" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I am fine either way. It is up to you and Tejun to figure out what
+> should be made available to the users.
+
+So, the main thing is that putting a cpu into a partition locks away
+the cpu from its ancestors.  That's a system level operation which
+isn't delegatable.  If we want to allow partitioning in subtrees, the
+parent still be able to take away partitioned cpus too even if that
+means ignoring descendants' configurations, which btw is exactly what
+cpuset does for non-partition configs.
+
+I don't think this would be technically too challenging to implement,
+but unless there are immediate use cases for it, we can start simpler
+& restricted.
+
+Thanks.
+
+-- 
+tejun
