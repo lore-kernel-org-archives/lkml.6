@@ -2,138 +2,91 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 981EAECDFB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F514ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA2C2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1424520854
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:57:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qwvf5Rzj";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SspuwOKY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA2C2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LC/YVAk3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1424520854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbeGSEeu (ORCPT
+        id S1727242AbeGSEiA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 00:34:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58712 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbeGSEeu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 00:34:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4448D60481; Thu, 19 Jul 2018 03:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531972428;
-        bh=z3B8kmwzoEPkyawhET2X0o8s6vlc60hReJBzgB6qZKU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Qwvf5Rzjig1aPz8w3KyNH5WuQ6alfjcLIL0h6hveM1i48mIrpZVtqpNHyr4fSaxni
-         Cfg8R5spQwkNeZ/Jb/KRichcakHf5pE20176sW31N0vmN36HKBBvmi8aVG77lcN3Mc
-         NSuH6LAIlQ+ICoWhdsW4HG2K/RP67OOb7dNLc2Bw=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 592E260481;
-        Thu, 19 Jul 2018 03:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531972427;
-        bh=z3B8kmwzoEPkyawhET2X0o8s6vlc60hReJBzgB6qZKU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SspuwOKYc2wNbj+1DbzaRo1oQiy3yplhSTTrStURyR13rxzxBP++U+X5RnUl8oyFD
-         npTnV568qAiuCzQBSnry4s1eLuFStI12+ZZyj0lg+ry1oMl4I9fVGcZfvj1xapKP4T
-         HBrfIPAW0AmM+CQfGhMIc9/0XJEOx7zg6k3oTW0k=
+        Thu, 19 Jul 2018 00:38:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726554AbeGSEh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 00:37:59 -0400
+Received: from localhost (unknown [106.201.102.32])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8DE92084C;
+        Thu, 19 Jul 2018 03:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531972617;
+        bh=I6Glwk2YbAnTo9IMLqE86xgDfEa2NcFxsAv2v3GiuaQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LC/YVAk3IoSqb4KxRqS3Rukihq8/Gu5VbNRxdiHhzuzWnG5ctOSvBofDxGSOjfJgJ
+         uDRzYk37+8wqOnJUgUUf2zEQkj3395gUTR34VHHPHE236l382VAX8KaUMgGlEFh4n+
+         hQzXf+Q53X4s2xbKyTRE4RKkJ4VsVMQr0SggvI1U=
+Date:   Thu, 19 Jul 2018 09:26:49 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Daniel Silsby <dansilsby@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH v2 00/17] JZ4780 DMA patchset v2
+Message-ID: <20180719035649.GI3219@vkoul-mobl>
+References: <20180718182023.8182-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 19 Jul 2018 09:23:47 +0530
-From:   poza@codeaurora.org
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Timur Tabi <timur@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] Fix issues and cleanup for ERR_FATAL and
- ERR_NONFATAL
-In-Reply-To: <153194245964.191586.14782253252654776509.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <153194245964.191586.14782253252654776509.stgit@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <35f60c57a8e8fe9503d63a62fd4776bf@codeaurora.org>
-X-Sender: poza@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718182023.8182-1-paul@crapouillou.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-19 01:14, Bjorn Helgaas wrote:
-> This is a v3 of Oza's patches [1].  It's available at [2] if you prefer
-> git.
+On 18-07-18, 20:20, Paul Cercueil wrote:
+> Hi,
 > 
-> v3 changes:
->   - Add pci_aer_clear_fatal_status() to clear ERR_FATAL bits, only 
-> called
->     from pcie_do_fatal_recovery().  Moved to first in series to avoid a
->     window where ERR_FATAL recovery only clears ERR_NONFATAL bits.  
-> Visible
->     only inside the PCI core.
->   - Instead of having pci_cleanup_aer_uncorrect_error_status() do 
-> different
->     things based on dev->error_state, use this only for ERR_NONFATAL 
-> bits.
->     I didn't change the name because it's used by many drivers.
->   - Rename pci_cleanup_aer_error_device_status() to
->     pci_aer_clear_device_status(), make it void, and make it visible 
-> only
->     inside the PCI core.
->   - Remove pcie_portdrv_err_handler.slot_reset altogether instead of 
-> making
->     it a stub function.  Possibly pcie_portdrv_err_handler could be 
-> removed
->     completely?
+> This is the version 2 of my jz4780-dma driver update patchset.
+
+why is this not send to dmaengine mailing list? Please post on that as
+well
+
 > 
-> [1]
-> https://lkml.kernel.org/r/1529661494-20936-1-git-send-email-poza@codeaurora.org
-> [2]
-> https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/?h=pci/06-22-oza-aer
+> Changelog:
 > 
-> ---
+> - All documentation changes have been moved to one single patch [01/17].
 > 
-> Bjorn Helgaas (1):
->       PCI/AER: Clear only ERR_FATAL status bits during fatal recovery
+> - The new patch [02/17] enforces that we're probed from devicetree.
 > 
-> Oza Pawandeep (6):
->       PCI/AER: Clear only ERR_NONFATAL bits during non-fatal recovery
->       PCI/AER: Factor out ERR_NONFATAL status bit clearing
->       PCI/AER: Remove ERR_FATAL code from ERR_NONFATAL path
->       PCI/AER: Clear device status bits during ERR_FATAL and 
-> ERR_NONFATAL
->       PCI/AER: Clear device status bits during ERR_COR handling
->       PCI/portdrv: Remove pcie_portdrv_err_handler.slot_reset
+> - The driver will not fail if only one memory resource has been supplied
+>   in the devicetree, to keep compatibility with old devicetree files.
 > 
+> - A new patch [17/17] adds a devicetree node for the DMA driver in the
+>   JZ4740 DTS file.
 > 
->  drivers/pci/pci.h              |    5 ++++
->  drivers/pci/pcie/aer.c         |   47 
-> +++++++++++++++++++++++++++-------------
->  drivers/pci/pcie/err.c         |   15 +++++--------
->  drivers/pci/pcie/portdrv_pci.c |   25 ---------------------
->  4 files changed, 43 insertions(+), 49 deletions(-)
+> - Some other small changes; see per-file changelog.
+> 
+> Regards,
+> -Paul
 
-looks good to me.
-Thanks for the corrections.
-some x86 compilation errors, you want me to to fix it and push v4 ?
-
-Regards,
-Oza.
-
-
-
-
-
+-- 
+~Vinod
