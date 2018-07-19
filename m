@@ -2,145 +2,162 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F13B3ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EBAECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5C4020673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:52:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C4020673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D70B20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:53:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="R4qh4GxC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D70B20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731837AbeGSPgU (ORCPT
+        id S1731911AbeGSPgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:36:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51263 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeGSPgU (ORCPT
+        Thu, 19 Jul 2018 11:36:38 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33392 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731110AbeGSPgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:36:20 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JEpqg62318915
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 07:51:52 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JEppS12318909;
-        Thu, 19 Jul 2018 07:51:51 -0700
-Date:   Thu, 19 Jul 2018 07:51:51 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Rasmus Villemoes <tipbot@zytor.com>
-Message-ID: <tip-8e974b3b8eddd42a8c43a18e8ea66a3e7b803a0d@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, jpoimboe@redhat.com,
-        mingo@kernel.org, hpa@zytor.com, linux@rasmusvillemoes.dk,
-        penguin-kernel@I-love.SAKURA.ne.jp, luto@amacapital.net,
-        peterz@infradead.org, linux-kernel@vger.kernel.org, bp@suse.de,
-        tglx@linutronix.de
-Reply-To: torvalds@linux-foundation.org, mingo@kernel.org,
-          jpoimboe@redhat.com, linux@rasmusvillemoes.dk, hpa@zytor.com,
-          luto@amacapital.net, penguin-kernel@I-love.SAKURA.ne.jp,
-          peterz@infradead.org, linux-kernel@vger.kernel.org, bp@suse.de,
-          tglx@linutronix.de
-In-Reply-To: <1532009278-5953-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1532009278-5953-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/debug] x86: Avoid pr_cont() in show_opcodes()
-Git-Commit-ID: 8e974b3b8eddd42a8c43a18e8ea66a3e7b803a0d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 19 Jul 2018 11:36:37 -0400
+Received: by mail-it0-f67.google.com with SMTP id y124-v6so2507349itc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 07:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:organization:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=ITu2WOnlCFrr/u5dwJQohcStZxJypdiEUIhd4p8u90w=;
+        b=R4qh4GxC9t5uQJp5XvVDJcPSExIjwj0cMqM8s4QrSS/c8/g79ZTtGTlNdzJXCnEjDg
+         R3e+8v23uNNd64fjRr/W71IA9dYTpuEgxcxuDpHrgEqpOijL8puDxg00s0JTiAptQfYL
+         pX5P+nWHWLSKNnUpAEAWkq6HNpE/SU2I9ULRAxrGS8qZrNqPPMmqV2e1rlahMX+BVY77
+         loYai3AFpyP8i0Gmy7CI5fpNfw5s1YdF0A+YmXKdkmHmsU+mc5qEWDEIyfogIsQ6sYDP
+         1vntO/s95/javR3Fnj+qg3DLiUc/eWwKYBMJbILuHXz8MYnnC0U4hcWbD7miVriGrDCy
+         8JRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:organization:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=ITu2WOnlCFrr/u5dwJQohcStZxJypdiEUIhd4p8u90w=;
+        b=h0xUOorJXi00EKkWKQd52fY793WsTnW2HO4E0mGn/vjGE/PoEdeolEQj3rY+hJk9aD
+         j6wst3JgioZYUFYL1diaRWnG7C/uJquDfF52VyKQCJPb9nruWXQ9oeZ4sCS+8zJnMAjq
+         aGRHZU9/N508Xh831R1mmbO5GPUuvcU5iGL5ArAqGFXXN9ZPMeX/LUtRBhMt4ObJm4rh
+         IU4suqEh2UZW+fLhrXUgpiXEA691ehIS1ivusbx9QhzQUpG5qa8EVzK/h8/Bz+UHM106
+         JE9prNqM+j1Ypal9FhSFDm+EDkWCh8fkFPagV8sCoB+RxWra7Kd+4us42u0ngkmWhu5a
+         D4JA==
+X-Gm-Message-State: AOUpUlEgqyBm4A8nxnhdLNnJUJ2h4eNoRWQa70bQWDY33HTWvUPAV84V
+        YvAV93XSj2y/Ktv92bk993mrEg==
+X-Google-Smtp-Source: AAOMgpfJTAfkFo97gCREwOCTmIZ9n++akTRsqp4HNMcqimD3IFiZNRmpFc7f4Xn/M4VvzBGs9vHPog==
+X-Received: by 2002:a02:2b12:: with SMTP id h18-v6mr9879790jaa.10.1532011984985;
+        Thu, 19 Jul 2018 07:53:04 -0700 (PDT)
+Received: from localhost ([2604:2d80:4413:8125:59cb:8e52:e49b:158f])
+        by smtp.googlemail.com with ESMTPSA id i74-v6sm3151531itb.21.2018.07.19.07.53.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Jul 2018 07:53:04 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Yixun Lan <yixun.lan@amlogic.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, <qianggui.song@amlogic.com>,
+        Rob Herring <robh@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <bo.yang@amlogic.com>,
+        <sboyd@kernel.org>, <jian.hu@amlogic.com>,
+        <xingyu.chen@amlogic.com>, <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <sunny.luo@amlogic.com>,
+        <carlo@caione.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+Organization: BayLibre
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+        <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+        <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
+        <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
+        <1531216472.2708.71.camel@baylibre.com> <7hfu0jmhbe.fsf@baylibre.com>
+        <7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com>
+        <7h601be2vk.fsf@baylibre.com>
+        <e1f0b672-65de-6afa-cec4-e2d910c58b7c@amlogic.com>
+Date:   Thu, 19 Jul 2018 09:53:03 -0500
+In-Reply-To: <e1f0b672-65de-6afa-cec4-e2d910c58b7c@amlogic.com> (Yixun Lan's
+        message of "Thu, 19 Jul 2018 22:27:55 +0800")
+Message-ID: <7hk1prmg4w.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8e974b3b8eddd42a8c43a18e8ea66a3e7b803a0d
-Gitweb:     https://git.kernel.org/tip/8e974b3b8eddd42a8c43a18e8ea66a3e7b803a0d
-Author:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-AuthorDate: Thu, 19 Jul 2018 23:07:58 +0900
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 19 Jul 2018 16:46:23 +0200
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-x86: Avoid pr_cont() in show_opcodes()
+> On 07/19/2018 10:06 PM, Kevin Hilman wrote:
+>> Yixun Lan <yixun.lan@amlogic.com> writes:
+>> 
+>> [...]
+>> 
+>>>>
+>>>> As Jerome said, I think consistency is an important goal, so leaving off
+>>>> the "meson-" for drivers/clk is fine with me.
+>>>>
+>>> ok
+>>>
+>>>> Also for consistency, for the rest of the drivers, keeping "meson-" is
+>>>> probably the right thing to do.
+>>>>
+>>> ok, for the above, you are talking about the already exist compatible
+>>> names? or the patches we will push in the future?
+>> 
+>> I'm talking about future patches.
+>> 
+> ok
+>
+>>>> However, patches would be welcome to add compatibles without the "meson"
+>>>> for the rest of the drivers & documentation as well, but please do not
+>>>> remove any compatibles.
+>>>>
+>>> I assume you are talking about the patches in the future we will push?
+>>> to drop the "meson".
+>>>
+>>> I'm confused here, as the above two paragraphs conflict with each other
+>> 
+>> Yeah, what I wrote is confusing, sorry about that.
+>> 
+>> What I mean is that new patches should stay consistent with compatibles
+>> in their existing drivers/subsystems.  That means keeping the "meson-"
+>> prefix for everything except drivers/clk.
+>> 
+> sounds good to me.
+>
+>> In addition to that, patches would be welcome for *adding* compatibles
+>> without "meson" to all the current drivers.
+>> 
+> not sure if I parse above correctly, so let me rephrase..
+>
+> for "all the current drivers", do you mean all the drivers which already
+> accepted at mainline kernel, which are mmc, uart, spi, i2c ..
 
-If concurrent printk() messages are emitted, then pr_cont() is making it
-extremly hard to decode which part of the output belongs to what. See the
-convoluted example at:
+Yes.
 
-  https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
+> all of them follow "amlogic,meson-${SOC}-${FUNCTION}", so do you propose
+> to add compatbiles like "amlogic,${SOC}-${FUNCTION}" ?
 
-Avoid this by using a proper prefix for each line and by using %ph format
-in show_opcodes() which emits the 'Code:' line in one go.
+Yes, but that's an optional future cleanup.
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: joe@perches.com
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lkml.kernel.org/r/1532009278-5953-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+> take i2c for example, there is "amlogic,meson-axg-i2c" already, do you
+> want to add another "amlogic,axg-i2c" ? I feel this will adding more
+> confusion..
 
----
- arch/x86/kernel/dumpstack.c | 28 +++++++++-------------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+Possibly, but it will provide a path to remove the "meson-" prefix in
+the future if we would like.
 
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 666a284116ac..9c8652974f8e 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -22,8 +22,6 @@
- #include <asm/stacktrace.h>
- #include <asm/unwind.h>
- 
--#define OPCODE_BUFSIZE 64
--
- int panic_on_unrecovered_nmi;
- int panic_on_io_nmi;
- static int die_counter;
-@@ -93,26 +91,18 @@ static void printk_stack_address(unsigned long address, int reliable,
-  */
- void show_opcodes(u8 *rip, const char *loglvl)
- {
--	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
-+#define PROLOGUE_SIZE 42
-+#define EPILOGUE_SIZE 21
-+#define OPCODE_BUFSIZE (PROLOGUE_SIZE + 1 + EPILOGUE_SIZE)
- 	u8 opcodes[OPCODE_BUFSIZE];
--	u8 *ip;
--	int i;
--
--	printk("%sCode: ", loglvl);
--
--	ip = (u8 *)rip - code_prologue;
--	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
--		pr_cont("Bad RIP value.\n");
--		return;
--	}
- 
--	for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
--		if (ip == rip)
--			pr_cont("<%02x> ", opcodes[i]);
--		else
--			pr_cont("%02x ", opcodes[i]);
-+	if (probe_kernel_read(opcodes, rip - PROLOGUE_SIZE, OPCODE_BUFSIZE)) {
-+		printk("%sCode: Bad RIP value.\n", loglvl);
-+	} else {
-+		printk("%sCode: %" __stringify(PROLOGUE_SIZE) "ph <%02x> %"
-+		       __stringify(EPILOGUE_SIZE) "ph\n", loglvl, opcodes,
-+		       opcodes[PROLOGUE_SIZE], opcodes + PROLOGUE_SIZE + 1);
- 	}
--	pr_cont("\n");
- }
- 
- void show_ip(struct pt_regs *regs, const char *loglvl)
+> How about only following the "amlogic,${SOC}-${FUNCTION}" syntax in the
+> new added drivers in the future, for example NAND, PCIE driver which we
+> want to push (those drivers doesn't exist in current mainline kernel).
+
+For new drivers, it's fine to not use the "meson-" prefix at all.
+
+Kevin
