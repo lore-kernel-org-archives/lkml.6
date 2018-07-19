@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60515ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316D0ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DFDC20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:45:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E34DE206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:46:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FpkRgRu4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DFDC20684
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h4vZuKRN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34DE206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732155AbeGSSaH (ORCPT
+        id S1732173AbeGSSaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 14:30:07 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35736 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731979AbeGSSaH (ORCPT
+        Thu, 19 Jul 2018 14:30:17 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35772 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732158AbeGSSaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 14:30:07 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e6-v6so4421430pgv.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 10:45:54 -0700 (PDT)
+        Thu, 19 Jul 2018 14:30:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e6-v6so4421918pgv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 10:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Bcvpf2JwZdjv59xkZ4zzQ6yiuLiqFtQKkQsfAovx0i4=;
-        b=FpkRgRu4dZleXRYQhUHMPXQ3tgX+QkA1HLbi1Opbp7v/6nxT4vkJadaVL0yMYCO4ew
-         YR/DxkQ71DKCwjncumnjEA/Fjj1v1a4o8nfniQBK7GSlsrd48GVwdYwCN7fwxM67zCAV
-         g49q0LYpVGbGS4G/CVrpfITQ6EAb62JdtM6kk=
+        bh=G9Pra/HIrTIdZzogTmPr0pWDqZgp6mkljxVwg8UNDhk=;
+        b=h4vZuKRNXdW3oOo8fZ2we6a4IvDeeDeY55HLfiry6cXfCm21I7Lm1zc0hnQ3Hj5uiI
+         cXs6VHxIbd2cCHRcYZ6X1M7qxgi7PzGhLSdw/rRUqabR6Y27pfJEppX7uwOserLUZZVf
+         vCbqyh+o2YJ7NJkf4usBtIuiMsP6hpARmBlts=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Bcvpf2JwZdjv59xkZ4zzQ6yiuLiqFtQKkQsfAovx0i4=;
-        b=Sbz2WP/88wfrF0Hr4tZWF17iAk2KzL4ol/MGFRW2VBYV6vnLppOcjH+/8uMdX8A/sP
-         zT4eAs2Bd7PyZq82qy134bvlhFpPlZCGuwyKh5VaWHTk7IUQ/TMVBDSZZ605u+4+wXBX
-         n5kApKkbmfwtqF+32OGQ1CiXbFD+9QsHDrpszigGnryVbxnsMCikRIqL5/MiTm5sdbHX
-         ZCBXk2fEouKTcBKld/AYoBZcFhWt9D0FIFmsJud/Sb76MO62qJa83JweEa7+dyQ+U9hL
-         tbDu6mCXBWyyRBUf0CVy5f1Aok3/5ePp6h5n137Ca4rkcTTGec+spDBp5iqeRm8YzkXG
-         MCQg==
-X-Gm-Message-State: AOUpUlGABjEFrnLpj+ny1CsZKv0f5e/Ksa47y+MpAtwelRAL2JtKM8BQ
-        rLMmdBcAQ9XElwO0C4IHZ709
-X-Google-Smtp-Source: AAOMgpcHavmKsGP3XLtSMtxmmVq8QuURM4nOgCeqxFk9mBNAMogh7FDBKM5afHsxw92sQvmu+bAx8w==
-X-Received: by 2002:a62:843:: with SMTP id c64-v6mr10540670pfd.14.1532022354235;
-        Thu, 19 Jul 2018 10:45:54 -0700 (PDT)
+        bh=G9Pra/HIrTIdZzogTmPr0pWDqZgp6mkljxVwg8UNDhk=;
+        b=Td2btsXQ1KV9YU5i8EQ/vxnU0wn5s1K3bgGg5x8soa22yrOEUh+2+xamlFJ6UE9bKc
+         7LyLGaxz46SDo3L0s4MnTaC19gf+XsWugEkwL80fwh4k3J00Vdz+KjbIB5wLV9QcfGp+
+         U/hRNmgeh6lCJWTQnb2Dbg1FVQoMBQF7vHBO1srwpYHZ5S5UFLsrTY/F32HLXKRAK0L8
+         3PnRh9Lhh4+Zbq85Jq/xCai1IVLT9QB/w2XDKiJvNp0ijt3CMR64mb7b5doXa4XO6yrW
+         V3etjmfZXrn2dx9K7gWsT0PcZ5LtNH/HS5L/+/Y3oxjxMWnrP1SIZNsc90a6WvAr92wj
+         MnqQ==
+X-Gm-Message-State: AOUpUlHrKDBWntbgufcXJoi9LyfS7mvWuQq+8UuV2IezO+ySQxLqD2BQ
+        yAkjy+u20oPZ3MzekKSn43EC
+X-Google-Smtp-Source: AAOMgpdJhG+CUAOR0ssMUjsRa6qUqQnZnIkq2eOHkPFxF7l8OoDcfXf7qWwO9ozrJxvX07GVLvBPyQ==
+X-Received: by 2002:a63:5c10:: with SMTP id q16-v6mr10896378pgb.452.1532022364509;
+        Thu, 19 Jul 2018 10:46:04 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4072:6081:b056:55fa:fd42:61de:739])
-        by smtp.gmail.com with ESMTPSA id h2-v6sm10114639pgc.90.2018.07.19.10.45.43
+        by smtp.gmail.com with ESMTPSA id h2-v6sm10114639pgc.90.2018.07.19.10.45.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 10:45:53 -0700 (PDT)
+        Thu, 19 Jul 2018 10:46:03 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
 Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
@@ -66,9 +66,9 @@ Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
         manivannanece23@gmail.com, thomas.liau@actions-semi.com,
         jeff.chen@actions-semi.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v5 1/6] dt-bindings: i2c: Add binding for Actions Semiconductor Owl I2C controller
-Date:   Thu, 19 Jul 2018 23:14:00 +0530
-Message-Id: <20180719174405.7210-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v5 2/6] arm64: dts: actions: Add pinctrl definition for S900 I2C controller
+Date:   Thu, 19 Jul 2018 23:14:01 +0530
+Message-Id: <20180719174405.7210-3-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180719174405.7210-1-manivannan.sadhasivam@linaro.org>
 References: <20180719174405.7210-1-manivannan.sadhasivam@linaro.org>
@@ -77,48 +77,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devicetree binding for Actions Semiconductor Owl I2C controller
+Add pinctrl definition for Actions Semiconductor S900 I2C controller.
+Pinctrl definitions are only available for I2C0, I2C1, and I2C2.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/i2c/i2c-owl.txt       | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+ .../dts/actions/s900-bubblegum-96-pins.dtsi   | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-owl.txt b/Documentation/devicetree/bindings/i2c/i2c-owl.txt
+diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi b/arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
 new file mode 100644
-index 000000000000..b743fe444e9f
+index 000000000000..95e8b31071f9
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/i2c-owl.txt
-@@ -0,0 +1,27 @@
-+Actions Semiconductor Owl I2C controller
++++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
+@@ -0,0 +1,29 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
-+Required properties:
++&pinctrl {
 +
-+- compatible        : Should be "actions,s900-i2c".
-+- reg               : Offset and length of the register set for the device.
-+- #address-cells    : Should be 1.
-+- #size-cells       : Should be 0.
-+- interrupts        : A single interrupt specifier.
-+- clocks            : Phandle of the clock feeding the I2C controller.
++	i2c0_default: i2c0_default {
++		pinmux {
++			groups = "i2c0_mfp";
++			function = "i2c0";
++		};
++		pinconf {
++			pins = "i2c0_sclk", "i2c0_sdata";
++			bias-pull-up;
++		};
++	};
 +
-+Optional properties:
++	i2c1_default: i2c1_default {
++		pinconf {
++			pins = "i2c1_sclk", "i2c1_sdata";
++			bias-pull-up;
++		};
++	};
 +
-+- clock-frequency   : Desired I2C bus clock frequency in Hz. As only Normal and
-+                      Fast modes are supported, possible values are 100000 and
-+                      400000.
-+Examples:
-+
-+        i2c0: i2c@e0170000 {
-+                compatible = "actions,s900-i2c";
-+                reg = <0 0xe0170000 0 0x1000>;
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+                interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+                clocks = <&clock CLK_I2C0>;
-+                clock-frequency = <100000>;
-+        };
++	i2c2_default: i2c2_default {
++		pinconf {
++			pins = "i2c2_sclk", "i2c2_sdata";
++			bias-pull-up;
++		};
++	};
++};
 -- 
 2.17.1
 
