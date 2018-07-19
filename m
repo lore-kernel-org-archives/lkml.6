@@ -2,278 +2,205 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E238ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B0EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EA6B2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:45:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA6B2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B5972084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:47:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2pKqgjv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5972084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbeGTAbV (ORCPT
+        id S1730565AbeGTAcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:31:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57930 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727743AbeGTAbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:31:21 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 66D8420739; Fri, 20 Jul 2018 01:45:51 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AF3C22069C;
-        Fri, 20 Jul 2018 01:45:40 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 01:45:40 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Han Xu <han.xu@nxp.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Xiaolei Li <xiaolei.li@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 32/33] mtd: rawnand: do not export
- nand_scan_[ident|tail]() anymore
-Message-ID: <20180720014540.4600c87d@bbrezillon>
-In-Reply-To: <20180719230026.8741-33-miquel.raynal@bootlin.com>
-References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
-        <20180719230026.8741-33-miquel.raynal@bootlin.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 19 Jul 2018 20:32:47 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:38323 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727743AbeGTAcq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 20:32:46 -0400
+Received: by mail-yb0-f194.google.com with SMTP id i9-v6so3978436ybo.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 16:47:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=lHoXsuv8lFp0q5YmO0RkRLhIog8Cm0pOg5mv2JiPR5c=;
+        b=l2pKqgjvnClZMbd+PF6gZN1jsHEz3YkmoMzfKMp8v52CuVMPWpbMMyq0PEwbOMMF1d
+         0dAb7sDuXoqhlu3q1+t3XpjcDdeDXPXG5GBEBpCx+x75KlHw+pY479W622vE8M4gKSjJ
+         w3ZOnP0MdXN6xOGL32+wuBLbEKUm8wDtVFQMrGg/kzYjYdXIYg9GEPalsxxgG816mCG6
+         a6rGoyjAHq7RYhy4d6ZdVnQrUKylHqEPmFkkkHZZV+lU8fJ8vE3aR4KstKMdDUaflzPM
+         WMMu7ItTTDI2flwAOKNg2sYmN8DdPkDXmYtwXGKIcouPPDm01XvmUWGX1NGqsDsGf+A2
+         o6Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=lHoXsuv8lFp0q5YmO0RkRLhIog8Cm0pOg5mv2JiPR5c=;
+        b=kavBl2EZU5GQGAULnxaD6yKqjaLRplEx6KW/wWjJ9MDUeEwUO9lCxitjoiOdMkja09
+         3r9B9TPHr9udpqP3LdbYudEarPyXo7uA14EBFrkwemoLG7oh65aq+vCdYGwNhd86qp52
+         Pb3QBgyqebjkajDg8TlwLkuzBDzaS/Urp9tmuncFzaojnAKFTndtUBpTV9tSHzcPPeR5
+         P5o0lAv18KmwpzP/lja9/D8wxX0kA5ZPSERuZBm0WeQzT3XqUbR5by7Gdhhge98t1BVN
+         ONbZ4zloXd2Q5JKb3USik0M6KIOulCsu+x6k1fgLWbyHKr2RVg5+Az0T2PvtYqfThUiK
+         ntoQ==
+X-Gm-Message-State: AOUpUlGiLTTVFwRV5gL7Koiht3iMCdp+YodPk1DK/cGp5w6Itfz8rT2S
+        yCg5yfOu+UUw5PcaxkWN4lxjIcdNIh+rd1fkG/Q=
+X-Google-Smtp-Source: AAOMgpcvw7CdsFiAAT/TuBaRPjJ75pKpZK5NIIUIzKHheAWQDNt4zJZTZRav8KdEFiSLmif/4JuArdvShETrEjHbkPU=
+X-Received: by 2002:a25:9c44:: with SMTP id x4-v6mr3062557ybo.230.1532044038114;
+ Thu, 19 Jul 2018 16:47:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 16:47:17
+ -0700 (PDT)
+In-Reply-To: <20180719092930.GB14301@kroah.com>
+References: <20180717205712.29495-1-toddpoynor@gmail.com> <20180717205712.29495-17-toddpoynor@gmail.com>
+ <20180719092930.GB14301@kroah.com>
+From:   Todd Poynor <toddpoynor@gmail.com>
+Date:   Thu, 19 Jul 2018 16:47:17 -0700
+Message-ID: <CAO3upoYkfoxu7xas24Mc14fCLJRjL9ZRwURF1kh-=rTgbDdA3A@mail.gmail.com>
+Subject: Re: [PATCH 16/32] staging: gasket: always allow root open for write
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Zhongze Hu <frankhu@chromium.org>,
+        Simon Que <sque@chromium.org>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        devel@driverdev.osuosl.org, lkml <linux-kernel@vger.kernel.org>,
+        Todd Poynor <toddpoynor@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 01:00:25 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+On Thu, Jul 19, 2018 at 2:29 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Tue, Jul 17, 2018 at 01:56:56PM -0700, Todd Poynor wrote:
+>> From: Todd Poynor <toddpoynor@google.com>
+>>
+>> Always allow root to open device for writing.
+>>
+>> Drop special-casing of ioctl permissions for root vs. owner.
+>>
+>> Reported-by: Dmitry Torokhov <dtor@chromium.org>
+>> Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+>> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+>> ---
+>>  drivers/staging/gasket/apex_driver.c  |  9 +--------
+>>  drivers/staging/gasket/gasket_core.c  |  8 +++++---
+>>  drivers/staging/gasket/gasket_ioctl.c | 19 ++++++++-----------
+>>  3 files changed, 14 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+>> index 3a83c3d4d5561..612b3ab803196 100644
+>> --- a/drivers/staging/gasket/apex_driver.c
+>> +++ b/drivers/staging/gasket/apex_driver.c
+>> @@ -629,14 +629,7 @@ static bool is_gcb_in_reset(struct gasket_dev *gasket_dev)
+>>   */
+>>  static uint apex_ioctl_check_permissions(struct file *filp, uint cmd)
+>>  {
+>> -     struct gasket_dev *gasket_dev = filp->private_data;
+>> -     int root = capable(CAP_SYS_ADMIN);
+>> -     int is_owner = gasket_dev->dev_info.ownership.is_owned &&
+>> -                    current->tgid == gasket_dev->dev_info.ownership.owner;
+>> -
+>> -     if (root || is_owner)
+>> -             return 1;
+>> -     return 0;
+>> +     return !!(filp->f_mode & FMODE_WRITE);
+>
+> Shouldn't this return a boolean instead of uint?
 
-> Both nand_scan_ident() and nand_scan_tail() helpers used to be called
-> directly from controller drivers that needed to tweak some ECC-related
-> parameters before nand_scan_tail(). This separation prevented dynamic
-> allocations during the phase of NAND identification, which was
-> inconvenient.
-> 
-> All controller drivers have been moved to use nand_scan(), in
-> conjunction with the chip->ecc.[attach|detach]_chip() hooks that
-> actually do the required tweaking sequence between both ident/tail
-> calls, allowing programmers to use dynamic allocation as they need all
-> across the scanning sequence.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/mtd/nand/raw/nand_base.c | 60 +++++++++++++++++++++++++++++++---------
->  include/linux/mtd/rawnand.h      | 11 ++------
->  2 files changed, 50 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index dea41fa25be1..dfee2556a8a8 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5151,6 +5151,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  {
->  	struct mtd_info *mtd = nand_to_mtd(chip);
->  	struct nand_onfi_params *p;
-> +	char *model;
->  	char id[4];
->  	int i, ret, val;
->  
-> @@ -5225,8 +5226,15 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  
->  	sanitize_string(p->manufacturer, sizeof(p->manufacturer));
->  	sanitize_string(p->model, sizeof(p->model));
-> -	strncpy(chip->parameters.model, p->model,
-> -		sizeof(chip->parameters.model) - 1);
-> +	model = kmemdup(p->model, sizeof(p->model), GFP_KERNEL);
-> +	if (!model) {
-> +		ret = -ENOMEM;
-> +		goto free_onfi_param_page;
-> +	}
-> +
-> +	chip->parameters.model = model;
-> +	if (!mtd->name)
-> +		mtd->name = chip->parameters.model;
->  
->  	mtd->writesize = le32_to_cpu(p->byte_per_page);
->  
-> @@ -5306,6 +5314,7 @@ static int nand_flash_detect_jedec(struct nand_chip *chip)
->  	struct nand_jedec_params *p;
->  	struct jedec_ecc_info *ecc;
->  	int jedec_version = 0;
-> +	char *model;
->  	char id[5];
->  	int i, val, ret;
->  
-> @@ -5356,8 +5365,16 @@ static int nand_flash_detect_jedec(struct nand_chip *chip)
->  
->  	sanitize_string(p->manufacturer, sizeof(p->manufacturer));
->  	sanitize_string(p->model, sizeof(p->model));
-> -	strncpy(chip->parameters.model, p->model,
-> -		sizeof(chip->parameters.model) - 1);
-> +	model = kzalloc(sizeof(p->model), GFP_KERNEL);
-> +	if (!p) {
-> +		ret = -ENOMEM;
-> +		goto free_jedec_param_page;
-> +	}
-> +
-> +	strncpy(model, p->model, sizeof(model) - 1);
-> +	chip->parameters.model = model;
-> +	if (!mtd->name)
-> +		mtd->name = chip->parameters.model;
+There's a patch farther down in the stack that does that, I wasn't
+sure if I should collapse the two things together into a single patch,
+will fold that patch into this one.
 
-All changes related to the the char model[] -> const char *mode
-transition should be done in a separate commit. Plus, as pointed in
-patch 33, you have a regression here.
+>
+>>  }
+>>
+>>  /*
+>> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+>> index 0d5ba7359af73..947b4fcc76970 100644
+>> --- a/drivers/staging/gasket/gasket_core.c
+>> +++ b/drivers/staging/gasket/gasket_core.c
+>> @@ -1085,6 +1085,7 @@ static int gasket_open(struct inode *inode, struct file *filp)
+>>       char task_name[TASK_COMM_LEN];
+>>       struct gasket_cdev_info *dev_info =
+>>           container_of(inode->i_cdev, struct gasket_cdev_info, cdev);
+>> +     int is_root = capable(CAP_SYS_ADMIN);
+>>
+>>       gasket_dev = dev_info->gasket_dev_ptr;
+>>       driver_desc = gasket_dev->internal_desc->driver_desc;
+>> @@ -1098,7 +1099,7 @@ static int gasket_open(struct inode *inode, struct file *filp)
+>>               "Attempting to open with tgid %u (%s) (f_mode: 0%03o, "
+>>               "fmode_write: %d is_root: %u)",
+>>               current->tgid, task_name, filp->f_mode,
+>> -             (filp->f_mode & FMODE_WRITE), capable(CAP_SYS_ADMIN));
+>> +             (filp->f_mode & FMODE_WRITE), is_root);
+>>
+>>       /* Always allow non-writing accesses. */
+>>       if (!(filp->f_mode & FMODE_WRITE)) {
+>> @@ -1112,8 +1113,9 @@ static int gasket_open(struct inode *inode, struct file *filp)
+>>               gasket_dev, "Current owner open count (owning tgid %u): %d.",
+>>               ownership->owner, ownership->write_open_count);
+>>
+>> -     /* Opening a node owned by another TGID is an error (even root.) */
+>> -     if (ownership->is_owned && ownership->owner != current->tgid) {
+>> +     /* Opening a node owned by another TGID is an error (unless root) */
+>> +     if (ownership->is_owned && ownership->owner != current->tgid &&
+>> +         !is_root) {
+>>               gasket_log_error(
+>>                       gasket_dev,
+>>                       "Process %u is opening a node held by %u.",
+>> diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+>> index 0c2f85cf54480..d0fa05b8bf1d3 100644
+>> --- a/drivers/staging/gasket/gasket_ioctl.c
+>> +++ b/drivers/staging/gasket/gasket_ioctl.c
+>> @@ -171,7 +171,7 @@ long gasket_is_supported_ioctl(uint cmd)
+>>   */
+>>  static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd)
+>>  {
+>
+> Also return bool?
 
->  
->  	mtd->writesize = le32_to_cpu(p->byte_per_page);
->  
-> @@ -5924,7 +5941,7 @@ static int nand_dt_init(struct nand_chip *chip)
->  }
->  
->  /**
-> - * nand_scan_ident - [NAND Interface] Scan for the NAND device
-> + * nand_scan_ident - Scan for the NAND device
->   * @mtd: MTD device structure
->   * @maxchips: number of chips to scan for
->   * @table: alternative NAND ID table
-> @@ -5932,9 +5949,13 @@ static int nand_dt_init(struct nand_chip *chip)
->   * This is the first phase of the normal nand_scan() function. It reads the
->   * flash ID and sets up MTD fields accordingly.
->   *
-> + * This helper used to be called directly from controller drivers that needed
-> + * to tweak some ECC-related parameters before nand_scan_tail(). This separation
-> + * prevented dynamic allocations during this phase which was unconvenient and
-> + * as been banned for the benefit of the ->init_ecc()/cleanup_ecc() hooks.
->   */
-> -int nand_scan_ident(struct mtd_info *mtd, int maxchips,
-> -		    struct nand_flash_dev *table)
-> +static int nand_scan_ident(struct mtd_info *mtd, int maxchips,
-> +			   struct nand_flash_dev *table)
->  {
->  	int i, nand_maf_id, nand_dev_id;
->  	struct nand_chip *chip = mtd_to_nand(mtd);
-> @@ -6008,7 +6029,11 @@ int nand_scan_ident(struct mtd_info *mtd, int maxchips,
->  
->  	return 0;
->  }
-> -EXPORT_SYMBOL(nand_scan_ident);
-> +
-> +static void nand_scan_ident_cleanup(struct nand_chip *chip)
-> +{
-> +	kfree(chip->parameters.model);
-> +}
->  
->  static int nand_set_ecc_soft_ops(struct mtd_info *mtd)
->  {
-> @@ -6385,14 +6410,14 @@ static bool nand_ecc_strength_good(struct mtd_info *mtd)
->  }
->  
->  /**
-> - * nand_scan_tail - [NAND Interface] Scan for the NAND device
-> + * nand_scan_tail - Scan for the NAND device
->   * @mtd: MTD device structure
->   *
->   * This is the second phase of the normal nand_scan() function. It fills out
->   * all the uninitialized function pointers with the defaults and scans for a
->   * bad block table if appropriate.
->   */
-> -int nand_scan_tail(struct mtd_info *mtd)
-> +static int nand_scan_tail(struct mtd_info *mtd)
->  {
->  	struct nand_chip *chip = mtd_to_nand(mtd);
->  	struct nand_ecc_ctrl *ecc = &chip->ecc;
-> @@ -6716,7 +6741,6 @@ int nand_scan_tail(struct mtd_info *mtd)
->  
->  	return ret;
->  }
-> -EXPORT_SYMBOL(nand_scan_tail);
->  
->  static int nand_attach(struct nand_chip *chip)
->  {
-> @@ -6754,11 +6778,18 @@ int nand_scan_with_ids(struct mtd_info *mtd, int maxchips,
->  
->  	ret = nand_attach(chip);
->  	if (ret)
-> -		return ret;
-> +		goto cleanup_ident;
->  
->  	ret = nand_scan_tail(mtd);
->  	if (ret)
-> -		nand_detach(chip);
-> +		goto detach_chip;
-> +
-> +	return 0;
-> +
-> +detach_chip:
-> +	nand_detach(chip);
-> +cleanup_ident:
-> +	nand_scan_ident_cleanup(chip);
->  
->  	return ret;
->  }
-> @@ -6790,6 +6821,9 @@ void nand_cleanup(struct nand_chip *chip)
->  
->  	/* Free controller specific allocations after chip identification */
->  	nand_detach(chip);
-> +
-> +	/* Free identification phase allocations */
-> +	nand_scan_ident_cleanup(chip);
->  }
->  
->  EXPORT_SYMBOL_GPL(nand_cleanup);
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index a20c78e25878..5723d940a47d 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -36,14 +36,9 @@ static inline int nand_scan(struct mtd_info *mtd, int max_chips)
->  }
->  
->  /*
-> - * Separate phases of nand_scan(), allowing board driver to intervene
-> - * and override command or ECC setup according to flash type.
-> + * Unregister the MTD device and free resources held by the NAND device, must be
-> + * called on error after a successful nand_scan().
->   */
-> -int nand_scan_ident(struct mtd_info *mtd, int max_chips,
-> -			   struct nand_flash_dev *table);
-> -int nand_scan_tail(struct mtd_info *mtd);
-> -
-> -/* Unregister the MTD device and free resources held by the NAND device */
->  void nand_release(struct mtd_info *mtd);
->  
->  /* Internal helper for board drivers which need to override command function */
-> @@ -487,7 +482,7 @@ struct onfi_params {
->   */
->  struct nand_parameters {
->  	/* Generic parameters */
-> -	char model[100];
-> +	const char *model;
->  	bool supports_set_get_features;
->  	DECLARE_BITMAP(set_feature_list, ONFI_FEATURE_NUMBER);
->  	DECLARE_BITMAP(get_feature_list, ONFI_FEATURE_NUMBER);
+Will fix, I had meant to send a patch for this, will just do that here.
 
+>
+>> -     uint alive, root, device_owner;
+>> +     uint alive;
+>>       fmode_t read, write;
+>>       struct gasket_dev *gasket_dev = (struct gasket_dev *)filp->private_data;
+>>
+>> @@ -183,33 +183,30 @@ static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd)
+>>                       alive, gasket_dev->status);
+>>       }
+>>
+>> -     root = capable(CAP_SYS_ADMIN);
+>> -     read = filp->f_mode & FMODE_READ;
+>> -     write = filp->f_mode & FMODE_WRITE;
+>> -     device_owner = (gasket_dev->dev_info.ownership.is_owned &&
+>> -                     current->tgid == gasket_dev->dev_info.ownership.owner);
+>> +     read = !!(filp->f_mode & FMODE_READ);
+>> +     write = !!(filp->f_mode & FMODE_WRITE);
+>
+> These should be bool as well, right?
+
+Right.
+
+>
+> I'll drop this patch, thanks.
+>
+> greg k-h
+
+
+
+-- 
+Todd
