@@ -2,384 +2,145 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87A3ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18791ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D2D22084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:54:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="agU2fMof"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D2D22084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id CDBD72084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:55:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDBD72084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731679AbeGSNh4 (ORCPT
+        id S1731697AbeGSNiY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 09:37:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34338 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731524AbeGSNhn (ORCPT
+        Thu, 19 Jul 2018 09:38:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50804 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730845AbeGSNiY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 09:37:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EDnpXDsIYSyRZbNkMCKmotPy1NWXecIeEfEK0u+Blrk=; b=agU2fMofDDYPASKSlFoY+EzKH
-        YTcztjdg5BQMjTb9xo7KJsOIfssWeK1ixmbyyWJ4fxry9cI9fclVOYrbGHIshPPgsWuisSXyih7jN
-        i9HmJJnD0EKHo75pAV3+QVbG09R4xwxcwGzO4rMQVmy9iUylLtwvt3CR0v/4R3yDnf951L5TmqKKs
-        BHtwePB3OUjbL1xKS9AtXgiWUjT/CVcJoPDR8+4AZowrmv+9zs9aQE41nGgyH1A6XJfA7AJqvCG7N
-        PWJrIw5kIMZQ/5SViXb61y5i3vLKGWpzEENhiOp7td6HrnRDiDMIoPa4wx+MAIpdEQhGKkn8Fpyqn
-        O5JbJhZZA==;
-Received: from [96.72.186.57] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fg8S8-0004tO-SN; Thu, 19 Jul 2018 12:54:40 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Michal Simek <monstr@monstr.eu>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] microblaze: use generic dma_noncoherent_ops
-Date:   Thu, 19 Jul 2018 05:54:39 -0700
-Message-Id: <20180719125440.424-2-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180719125440.424-1-hch@lst.de>
-References: <20180719125440.424-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 19 Jul 2018 09:38:24 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6JCoV2R077919
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:55:21 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2katuh0trv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:55:21 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 19 Jul 2018 08:55:20 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 19 Jul 2018 08:55:16 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6JCtFL010420600
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 19 Jul 2018 12:55:15 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 697C4B205F;
+        Thu, 19 Jul 2018 08:55:05 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 48351B2065;
+        Thu, 19 Jul 2018 08:55:05 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.233.56])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 19 Jul 2018 08:55:05 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 02CD716C2169; Thu, 19 Jul 2018 05:55:15 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 05:55:15 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1531815548.19223.23.camel@infradead.org>
+ <20180717125653.GH12945@linux.vnet.ibm.com>
+ <20180718153628.GA24359@linux.vnet.ibm.com>
+ <1531929711.3414.29.camel@infradead.org>
+ <20180718163712.GB12945@linux.vnet.ibm.com>
+ <1531942865.3414.35.camel@infradead.org>
+ <20180718201700.GN12945@linux.vnet.ibm.com>
+ <86d12d1a-46dd-d82a-96c2-e842ac5a2a6c@de.ibm.com>
+ <1531984833.12620.16.camel@infradead.org>
+ <a2626528-1819-07f2-24f2-ded6437cca5d@de.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a2626528-1819-07f2-24f2-ded6437cca5d@de.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071912-0060-0000-0000-0000028E9DD9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009391; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01063051; UDB=6.00545862; IPR=6.00840902;
+ MB=3.00022202; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-19 12:55:19
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071912-0061-0000-0000-000045DA818F
+Message-Id: <20180719125515.GS12945@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-19_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=955 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807190138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the generic noncoherent direct mapping implementation.
+On Thu, Jul 19, 2018 at 12:23:34PM +0200, Christian Borntraeger wrote:
+> 
+> 
+> On 07/19/2018 09:20 AM, David Woodhouse wrote:
+> > On Thu, 2018-07-19 at 08:45 +0200, Christian Borntraeger wrote:
+> >>
+> >>> My thought would be something like this:
+> >>>  
+> >>>        if (context_tracking_cpu_is_enabled())
+> >>>                rcu_kvm_enter();
+> >>>        else
+> >>>                rcu_virt_note_context_switch(smp_processor_id());
+> >>
+> >> In the past we needed that (when we introduced that). At least with every
+> >> host interrupt we called this making an rcu event at least every HZ.
+> >> Will the changes in need_resched make this part unnecessary?
+> > 
+> > Yes, the change in need_resched() should make this part unnecessary.
+> > Unless your architecture's version of the vcpu_run() loop just loops
+> > forever even when TIF_NEED_RESCHED is set? :)
+> 
+> Very early versions did that. The SIE instruction is interruptible
+> so you can continue to run the guest by simply returning from an host
+> interrupt. All sane versions of KVM on s390 now make sure to make a
+> short trip into C after a host interrupt. There we check for
+> need_resched signals and machine checks so we are good.
 
-This removes the direction-based optimizations in
-sync_{single,sg}_for_{cpu,device} which were marked untestested and
-do not match the usually very well tested {un,}map_{single,sg}
-implementations.
+OK, thank you all!  I will drop the two patches that add the
+rcu_kvm_enter() and rcu_kvm_exit() calls.  Two less things to
+worry about!  ;-)
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/microblaze/Kconfig                   |   4 +
- arch/microblaze/include/asm/Kbuild        |   1 +
- arch/microblaze/include/asm/dma-mapping.h |  28 -----
- arch/microblaze/include/asm/pgtable.h     |   2 -
- arch/microblaze/kernel/dma.c              | 144 ++--------------------
- arch/microblaze/mm/consistent.c           |   9 +-
- 6 files changed, 22 insertions(+), 166 deletions(-)
- delete mode 100644 arch/microblaze/include/asm/dma-mapping.h
+							Thanx, Paul
 
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index d14782100088..848e31a86ba5 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -1,6 +1,8 @@
- config MICROBLAZE
- 	def_bool y
- 	select ARCH_HAS_GCOV_PROFILE_ALL
-+	select ARCH_HAS_SYNC_DMA_FOR_CPU
-+	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select ARCH_WANT_IPC_PARSE_VERSION
-@@ -8,6 +10,8 @@ config MICROBLAZE
- 	select TIMER_OF
- 	select CLONE_BACKWARDS3
- 	select COMMON_CLK
-+	select DMA_NONCOHERENT_OPS
-+	select DMA_NONCOHERENT_MMAP
- 	select GENERIC_ATOMIC64
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_CPU_DEVICES
-diff --git a/arch/microblaze/include/asm/Kbuild b/arch/microblaze/include/asm/Kbuild
-index fe6a6c6e5003..569ba9e670c1 100644
---- a/arch/microblaze/include/asm/Kbuild
-+++ b/arch/microblaze/include/asm/Kbuild
-@@ -5,6 +5,7 @@ generic-y += bugs.h
- generic-y += compat.h
- generic-y += device.h
- generic-y += div64.h
-+generic-y += dma-mapping.h
- generic-y += emergency-restart.h
- generic-y += exec.h
- generic-y += extable.h
-diff --git a/arch/microblaze/include/asm/dma-mapping.h b/arch/microblaze/include/asm/dma-mapping.h
-deleted file mode 100644
-index add50c1373bf..000000000000
---- a/arch/microblaze/include/asm/dma-mapping.h
-+++ /dev/null
-@@ -1,28 +0,0 @@
--/*
-- * Implements the generic device dma API for microblaze and the pci
-- *
-- * Copyright (C) 2009-2010 Michal Simek <monstr@monstr.eu>
-- * Copyright (C) 2009-2010 PetaLogix
-- *
-- * This file is subject to the terms and conditions of the GNU General
-- * Public License. See the file COPYING in the main directory of this
-- * archive for more details.
-- *
-- * This file is base on powerpc and x86 dma-mapping.h versions
-- * Copyright (C) 2004 IBM
-- */
--
--#ifndef _ASM_MICROBLAZE_DMA_MAPPING_H
--#define _ASM_MICROBLAZE_DMA_MAPPING_H
--
--/*
-- * Available generic sets of operations
-- */
--extern const struct dma_map_ops dma_nommu_ops;
--
--static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
--{
--	return &dma_nommu_ops;
--}
--
--#endif	/* _ASM_MICROBLAZE_DMA_MAPPING_H */
-diff --git a/arch/microblaze/include/asm/pgtable.h b/arch/microblaze/include/asm/pgtable.h
-index db8b1fa83452..8a2e654b709f 100644
---- a/arch/microblaze/include/asm/pgtable.h
-+++ b/arch/microblaze/include/asm/pgtable.h
-@@ -553,8 +553,6 @@ void __init *early_get_page(void);
- 
- extern unsigned long ioremap_bot, ioremap_base;
- 
--void *consistent_alloc(gfp_t gfp, size_t size, dma_addr_t *dma_handle);
--void consistent_free(size_t size, void *vaddr);
- void consistent_sync(void *vaddr, size_t size, int direction);
- void consistent_sync_page(struct page *page, unsigned long offset,
- 	size_t size, int direction);
-diff --git a/arch/microblaze/kernel/dma.c b/arch/microblaze/kernel/dma.c
-index 3145e7dc8ab1..71032cf64669 100644
---- a/arch/microblaze/kernel/dma.c
-+++ b/arch/microblaze/kernel/dma.c
-@@ -8,29 +8,15 @@
-  */
- 
- #include <linux/device.h>
--#include <linux/dma-mapping.h>
-+#include <linux/dma-noncoherent.h>
- #include <linux/gfp.h>
- #include <linux/dma-debug.h>
- #include <linux/export.h>
- #include <linux/bug.h>
- #include <asm/cacheflush.h>
- 
--static void *dma_nommu_alloc_coherent(struct device *dev, size_t size,
--				       dma_addr_t *dma_handle, gfp_t flag,
--				       unsigned long attrs)
--{
--	return consistent_alloc(flag, size, dma_handle);
--}
--
--static void dma_nommu_free_coherent(struct device *dev, size_t size,
--				     void *vaddr, dma_addr_t dma_handle,
--				     unsigned long attrs)
--{
--	consistent_free(size, vaddr);
--}
--
--static inline void __dma_sync(unsigned long paddr,
--			      size_t size, enum dma_data_direction direction)
-+static void __dma_sync(struct device *dev, phys_addr_t paddr, size_t size,
-+		enum dma_data_direction direction)
- {
- 	switch (direction) {
- 	case DMA_TO_DEVICE:
-@@ -45,113 +31,21 @@ static inline void __dma_sync(unsigned long paddr,
- 	}
- }
- 
--static int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
--			     int nents, enum dma_data_direction direction,
--			     unsigned long attrs)
-+void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
- {
--	struct scatterlist *sg;
--	int i;
--
--	/* FIXME this part of code is untested */
--	for_each_sg(sgl, sg, nents, i) {
--		sg->dma_address = sg_phys(sg);
--
--		if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
--			continue;
--
--		__dma_sync(sg_phys(sg), sg->length, direction);
--	}
--
--	return nents;
--}
--
--static inline dma_addr_t dma_nommu_map_page(struct device *dev,
--					     struct page *page,
--					     unsigned long offset,
--					     size_t size,
--					     enum dma_data_direction direction,
--					     unsigned long attrs)
--{
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		__dma_sync(page_to_phys(page) + offset, size, direction);
--	return page_to_phys(page) + offset;
-+	__dma_sync(dev, paddr, size, dir);
- }
- 
--static inline void dma_nommu_unmap_page(struct device *dev,
--					 dma_addr_t dma_address,
--					 size_t size,
--					 enum dma_data_direction direction,
--					 unsigned long attrs)
-+void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
- {
--/* There is not necessary to do cache cleanup
-- *
-- * phys_to_virt is here because in __dma_sync_page is __virt_to_phys and
-- * dma_address is physical address
-- */
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		__dma_sync(dma_address, size, direction);
-+	__dma_sync(dev, paddr, size, dir);
- }
- 
--static inline void
--dma_nommu_sync_single_for_cpu(struct device *dev,
--			       dma_addr_t dma_handle, size_t size,
--			       enum dma_data_direction direction)
--{
--	/*
--	 * It's pointless to flush the cache as the memory segment
--	 * is given to the CPU
--	 */
--
--	if (direction == DMA_FROM_DEVICE)
--		__dma_sync(dma_handle, size, direction);
--}
--
--static inline void
--dma_nommu_sync_single_for_device(struct device *dev,
--				  dma_addr_t dma_handle, size_t size,
--				  enum dma_data_direction direction)
--{
--	/*
--	 * It's pointless to invalidate the cache if the device isn't
--	 * supposed to write to the relevant region
--	 */
--
--	if (direction == DMA_TO_DEVICE)
--		__dma_sync(dma_handle, size, direction);
--}
--
--static inline void
--dma_nommu_sync_sg_for_cpu(struct device *dev,
--			   struct scatterlist *sgl, int nents,
--			   enum dma_data_direction direction)
--{
--	struct scatterlist *sg;
--	int i;
--
--	/* FIXME this part of code is untested */
--	if (direction == DMA_FROM_DEVICE)
--		for_each_sg(sgl, sg, nents, i)
--			__dma_sync(sg->dma_address, sg->length, direction);
--}
--
--static inline void
--dma_nommu_sync_sg_for_device(struct device *dev,
--			      struct scatterlist *sgl, int nents,
--			      enum dma_data_direction direction)
--{
--	struct scatterlist *sg;
--	int i;
--
--	/* FIXME this part of code is untested */
--	if (direction == DMA_TO_DEVICE)
--		for_each_sg(sgl, sg, nents, i)
--			__dma_sync(sg->dma_address, sg->length, direction);
--}
--
--static
--int dma_nommu_mmap_coherent(struct device *dev, struct vm_area_struct *vma,
--			     void *cpu_addr, dma_addr_t handle, size_t size,
--			     unsigned long attrs)
-+int arch_dma_mmap(struct device *dev, struct vm_area_struct *vma,
-+		void *cpu_addr, dma_addr_t handle, size_t size,
-+		unsigned long attrs)
- {
- #ifdef CONFIG_MMU
- 	unsigned long user_count = vma_pages(vma);
-@@ -170,17 +64,3 @@ int dma_nommu_mmap_coherent(struct device *dev, struct vm_area_struct *vma,
- 	return -ENXIO;
- #endif
- }
--
--const struct dma_map_ops dma_nommu_ops = {
--	.alloc			= dma_nommu_alloc_coherent,
--	.free			= dma_nommu_free_coherent,
--	.mmap			= dma_nommu_mmap_coherent,
--	.map_sg			= dma_nommu_map_sg,
--	.map_page		= dma_nommu_map_page,
--	.unmap_page		= dma_nommu_unmap_page,
--	.sync_single_for_cpu	= dma_nommu_sync_single_for_cpu,
--	.sync_single_for_device	= dma_nommu_sync_single_for_device,
--	.sync_sg_for_cpu	= dma_nommu_sync_sg_for_cpu,
--	.sync_sg_for_device	= dma_nommu_sync_sg_for_device,
--};
--EXPORT_SYMBOL(dma_nommu_ops);
-diff --git a/arch/microblaze/mm/consistent.c b/arch/microblaze/mm/consistent.c
-index b06c3a7faf20..b9a9c8c3397b 100644
---- a/arch/microblaze/mm/consistent.c
-+++ b/arch/microblaze/mm/consistent.c
-@@ -33,6 +33,7 @@
- #include <linux/pci.h>
- #include <linux/interrupt.h>
- #include <linux/gfp.h>
-+#include <linux/dma-noncoherent.h>
- 
- #include <asm/pgalloc.h>
- #include <linux/io.h>
-@@ -59,7 +60,8 @@
-  * uncached region.  This will no doubt cause big problems if memory allocated
-  * here is not also freed properly. -- JW
-  */
--void *consistent_alloc(gfp_t gfp, size_t size, dma_addr_t *dma_handle)
-+void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
-+		gfp_t gfp, unsigned long attrs)
- {
- 	unsigned long order, vaddr;
- 	void *ret;
-@@ -154,7 +156,6 @@ void *consistent_alloc(gfp_t gfp, size_t size, dma_addr_t *dma_handle)
- 
- 	return ret;
- }
--EXPORT_SYMBOL(consistent_alloc);
- 
- #ifdef CONFIG_MMU
- static pte_t *consistent_virt_to_pte(void *vaddr)
-@@ -178,7 +179,8 @@ unsigned long consistent_virt_to_pfn(void *vaddr)
- /*
-  * free page(s) as defined by the above mapping.
-  */
--void consistent_free(size_t size, void *vaddr)
-+void arch_dma_free(struct device *dev, size_t size, void *vaddr,
-+		dma_addr_t dma_addr, unsigned long attrs)
- {
- 	struct page *page;
- 
-@@ -218,7 +220,6 @@ void consistent_free(size_t size, void *vaddr)
- 	flush_tlb_all();
- #endif
- }
--EXPORT_SYMBOL(consistent_free);
- 
- /*
-  * make an area consistent.
--- 
-2.18.0
+> > I'm not sure about the context tracking condition in the code snippet
+> > cited above, though. I think that's what caused my problem in the first
+> > place — I have CONTEXT_TRACKING_FORCE && !NO_HZ_FULL. So in 4.15, that
+> > means rcu_user_enter() did nothing and rcu_virt_note_context_switch()
+> > wasn't called. Hence the observed stalls.
+> > 
+> > Should rcu_user_enter() itself be conditional on CONTEXT_TRACKING not
+> > NO_HZ_FULL? 
+> > 
 
