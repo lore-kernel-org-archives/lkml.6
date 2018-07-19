@@ -2,107 +2,106 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1216ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4632ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E88C20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2A2120684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:47:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DdJEiruK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E88C20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WkcfxOJY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2A2120684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733104AbeGSSa6 (ORCPT
+        id S1732145AbeGSScH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 14:30:58 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34068 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732080AbeGSSa6 (ORCPT
+        Thu, 19 Jul 2018 14:32:07 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:60182 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731733AbeGSScH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 14:30:58 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y5-v6so4423878pgv.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 10:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/b+N2DvOUUyA2A2wTJ+2C32b3lKHmvgv0TH8hNrLKeQ=;
-        b=DdJEiruKOu80IBaZY5v8UzN+G4Kho2QABVzOkkCT/VTlCIU4Q7/BDlXzmP9Q45enoY
-         SUaY69iSCa3kwQmA/qhUVtdsIdvGP5fKSqECM6+N/uczla2ocxsMhyyiSfA9z8pusQ84
-         QHmmX1Dh1TAirWY9QCss/DsFVgxKmILaqaTE8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/b+N2DvOUUyA2A2wTJ+2C32b3lKHmvgv0TH8hNrLKeQ=;
-        b=g+Guh0+KtvInheIDP31ZGsVFd469SFkxJdaHPgTUU2Ptqh74+K1SCvs/Q6ohz+El7M
-         xbcYbl3Nuh6Y1iPRrkYQpGViLzZrSTeevJPLHEOuAP8Enqe1ux+VAamiTKWSu1YkBp5B
-         wELbFCkcNeXbW0HB/Vsta/EUTUR5nPNcwg9LSih2Mdw+t6JrBl4PgFH16sVipKVKglWi
-         1nzJXRVKfQzlo5bxcluos7I0Sb9/dBmuhF6oGOlZyoQ5237EWN3/ZUX26BEtzEnpiRB/
-         jftSmjLU0BhWokXzJj1FzOFnazH//dyicHnIpvIQkawZWqLlqa4ty5fGvf6mu3OoI84X
-         4TJQ==
-X-Gm-Message-State: AOUpUlFt4PRNpdY3eguznRy39RTeE6H6X8zQVpUp6imgI5QTwhyNcNp6
-        NyUqN0jikClsVFEAbo5Qqr19
-X-Google-Smtp-Source: AAOMgpf6AItT0q4OHzpx/3jGjevpj6eAMqc/hvDAXJ+bxHWSVhidb4UeR06/c+UTROVdor9WMH3GLw==
-X-Received: by 2002:a63:5e45:: with SMTP id s66-v6mr10902714pgb.151.1532022405832;
-        Thu, 19 Jul 2018 10:46:45 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:6081:b056:55fa:fd42:61de:739])
-        by smtp.gmail.com with ESMTPSA id h2-v6sm10114639pgc.90.2018.07.19.10.46.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 10:46:45 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
-Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v5 6/6] MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
-Date:   Thu, 19 Jul 2018 23:14:05 +0530
-Message-Id: <20180719174405.7210-7-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180719174405.7210-1-manivannan.sadhasivam@linaro.org>
-References: <20180719174405.7210-1-manivannan.sadhasivam@linaro.org>
+        Thu, 19 Jul 2018 14:32:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EO2Hbi1vBfGjI0LENgkjLqcytzhUgqwUuAObJ8ngMv8=; b=WkcfxOJYw/7/U/yheJJx6DqPt
+        guZ0vBnggDejpgyVyIxYzAvSYt/5ZJrcHU+6bph7d4hXu58ev16tdWfRQpLkydmuFovRqN1OiGqd8
+        heyf9eObRnHVVgepNJSgoHjQ63ZeU8UqNet0K4CoYCFnb6oGz9cI+Q19KeUBG1Gl8UQMU=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:37521)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1fgD1Z-00070e-0P; Thu, 19 Jul 2018 18:47:33 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1fgD1V-00069y-Vl; Thu, 19 Jul 2018 18:47:30 +0100
+Date:   Thu, 19 Jul 2018 18:47:28 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 4/5] net: add support for nvmem to
+ eth_platform_get_mac_address()
+Message-ID: <20180719174728.GK6920@n2100.armlinux.org.uk>
+References: <20180718161035.7005-1-brgl@bgdev.pl>
+ <20180718161035.7005-5-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718161035.7005-5-brgl@bgdev.pl>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for Actions Semiconductor Owl I2C driver under ARM/ACTIONS
+On Wed, Jul 18, 2018 at 06:10:34PM +0200, Bartosz Golaszewski wrote:
+> @@ -544,6 +548,31 @@ int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+>  			from = "arch callback";
+>  	}
+>  
+> +	if (!addr) {
+> +		nvmem = nvmem_cell_get(dev, "mac-address");
+> +		if (IS_ERR(nvmem) && PTR_ERR(nvmem) == -EPROBE_DEFER)
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+This is way too verbose.  To quote Al Viro from earlier today:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09b54e9ebc6f..5084c62712fa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1145,12 +1145,14 @@ F:	arch/arm/boot/dts/owl-*
- F:	arch/arm64/boot/dts/actions/
- F:	drivers/clk/actions/
- F:	drivers/clocksource/owl-*
-+F:	drivers/i2c/busses/i2c-owl.c
- F:	drivers/pinctrl/actions/*
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
- F:	include/linux/soc/actions/
- F:	Documentation/devicetree/bindings/arm/actions.txt
- F:	Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-+F:	Documentation/devicetree/bindings/i2c/i2c-owl.txt
- F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
+<viro> sigh...
+<viro>         if (IS_ERR(link) && PTR_ERR(link) == -EEXIST)
+<viro> what the hell is wrong with if (link == ERR_PTR(-EEXIST))?
+
+I wonder why so many people haven't heard of pointer comparison... ;)
+
+IS_ERR(ERR_PTR(-EPROBE_DEFER)) is always true - if it wasn't, then
+we'd be in for problems.
+
+So, if you're asserting that nvmem is ERR_PTR(-EPROBE_DEFER) then
+there's no need to do the IS_ERR(nvmem) must also be true.  Hence, a
+simple pointer comparison is sufficient:
+
+		if (nvmem == ERR_PTR(-EPROBE_DEFER))
+			return -EPROBE_DEFER;
+
 -- 
-2.17.1
-
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
+According to speedtest.net: 13Mbps down 490kbps up
