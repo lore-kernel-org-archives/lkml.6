@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2ECEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A524FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B83920673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:22:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B83920673
+	by mail.kernel.org (Postfix) with ESMTP id 4D6BD20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:23:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6BD20673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731282AbeGTAHv (ORCPT
+        id S1731074AbeGTAIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:07:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34099 "EHLO
+        Thu, 19 Jul 2018 20:08:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58839 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727743AbeGTAHv (ORCPT
+        with ESMTP id S1730659AbeGTAIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:07:51 -0400
+        Thu, 19 Jul 2018 20:08:23 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNLULn2451213
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNM1KE2451265
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 16:21:30 -0700
+        Thu, 19 Jul 2018 16:22:01 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNLUiN2451210;
-        Thu, 19 Jul 2018 16:21:30 -0700
-Date:   Thu, 19 Jul 2018 16:21:30 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNM1r52451262;
+        Thu, 19 Jul 2018 16:22:01 -0700
+Date:   Thu, 19 Jul 2018 16:22:01 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-0d2eb73b29996684d5bbb72f85c74b47b4c359f7@git.kernel.org>
-Cc:     dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, eduval@amazon.com, bp@alien8.de,
-        mingo@kernel.org, tglx@linutronix.de, dvlasenk@redhat.com,
-        jpoimboe@redhat.com, torvalds@linux-foundation.org, hpa@zytor.com,
-        will.deacon@arm.com, aarcange@redhat.com, llong@redhat.com,
-        jgross@suse.com, David.Laight@aculab.com,
-        dhgutteridge@sympatico.ca, jroedel@suse.de,
-        gregkh@linuxfoundation.org, brgerst@gmail.com, jkosina@suse.cz,
-        luto@kernel.org, pavel@ucw.cz, boris.ostrovsky@oracle.com
-Reply-To: brgerst@gmail.com, jroedel@suse.de, gregkh@linuxfoundation.org,
-          luto@kernel.org, pavel@ucw.cz, boris.ostrovsky@oracle.com,
-          jkosina@suse.cz, llong@redhat.com, jgross@suse.com,
-          dhgutteridge@sympatico.ca, David.Laight@aculab.com,
-          dvlasenk@redhat.com, mingo@kernel.org, tglx@linutronix.de,
-          will.deacon@arm.com, aarcange@redhat.com,
-          torvalds@linux-foundation.org, hpa@zytor.com,
-          jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, dave.hansen@intel.com, bp@alien8.de,
-          eduval@amazon.com
-In-Reply-To: <1531906876-13451-7-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-7-git-send-email-joro@8bytes.org>
+Message-ID: <tip-45d7b255747c21fc4b1f5043bee0754d39c3bdbf@git.kernel.org>
+Cc:     dave.hansen@intel.com, brgerst@gmail.com, bp@alien8.de,
+        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+        pavel@ucw.cz, jpoimboe@redhat.com, jkosina@suse.cz,
+        will.deacon@arm.com, dhgutteridge@sympatico.ca, luto@kernel.org,
+        eduval@amazon.com, llong@redhat.com, peterz@infradead.org,
+        boris.ostrovsky@oracle.com, linux-kernel@vger.kernel.org,
+        David.Laight@aculab.com, hpa@zytor.com, tglx@linutronix.de,
+        jroedel@suse.de, jgross@suse.com, aarcange@redhat.com,
+        mingo@kernel.org, dvlasenk@redhat.com
+Reply-To: hpa@zytor.com, jroedel@suse.de, jgross@suse.com,
+          tglx@linutronix.de, boris.ostrovsky@oracle.com,
+          peterz@infradead.org, llong@redhat.com, David.Laight@aculab.com,
+          linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
+          mingo@kernel.org, aarcange@redhat.com, brgerst@gmail.com,
+          bp@alien8.de, dave.hansen@intel.com, luto@kernel.org,
+          eduval@amazon.com, dhgutteridge@sympatico.ca,
+          gregkh@linuxfoundation.org, pavel@ucw.cz,
+          torvalds@linux-foundation.org, will.deacon@arm.com,
+          jpoimboe@redhat.com, jkosina@suse.cz
+In-Reply-To: <1531906876-13451-8-git-send-email-joro@8bytes.org>
+References: <1531906876-13451-8-git-send-email-joro@8bytes.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/32: Split off return-to-kernel path
-Git-Commit-ID: 0d2eb73b29996684d5bbb72f85c74b47b4c359f7
+Subject: [tip:x86/pti] x86/entry/32: Enter the kernel via trampoline stack
+Git-Commit-ID: 45d7b255747c21fc4b1f5043bee0754d39c3bdbf
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -71,19 +71,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0d2eb73b29996684d5bbb72f85c74b47b4c359f7
-Gitweb:     https://git.kernel.org/tip/0d2eb73b29996684d5bbb72f85c74b47b4c359f7
+Commit-ID:  45d7b255747c21fc4b1f5043bee0754d39c3bdbf
+Gitweb:     https://git.kernel.org/tip/45d7b255747c21fc4b1f5043bee0754d39c3bdbf
 Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 18 Jul 2018 11:40:43 +0200
+AuthorDate: Wed, 18 Jul 2018 11:40:44 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 20 Jul 2018 01:11:37 +0200
 
-x86/entry/32: Split off return-to-kernel path
+x86/entry/32: Enter the kernel via trampoline stack
 
-Use a separate return path when returning to the kernel.
-
-This allows to put the PTI cr3-switch and the switch to the entry-stack
-into the return-to-user path without further checking.
+Use the entry-stack as a trampoline to enter the kernel. The entry-stack is
+already in the cpu_entry_area and will be mapped to userspace when PTI is
+enabled.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -113,46 +112,322 @@ Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Waiman Long <llong@redhat.com>
 Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
 Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-7-git-send-email-joro@8bytes.org
+Link: https://lkml.kernel.org/r/1531906876-13451-8-git-send-email-joro@8bytes.org
 
 ---
- arch/x86/entry/entry_32.S | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/x86/entry/entry_32.S        | 119 ++++++++++++++++++++++++++++++++-------
+ arch/x86/include/asm/switch_to.h |  14 ++++-
+ arch/x86/kernel/asm-offsets.c    |   1 +
+ arch/x86/kernel/cpu/common.c     |   5 +-
+ arch/x86/kernel/process.c        |   2 -
+ arch/x86/kernel/process_32.c     |   2 -
+ 6 files changed, 115 insertions(+), 28 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 43641310b6e3..7251c4f3e99e 100644
+index 7251c4f3e99e..fea49ec345ba 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -65,7 +65,7 @@
- # define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
- #else
- # define preempt_stop(clobbers)
--# define resume_kernel		restore_all
-+# define resume_kernel		restore_all_kernel
- #endif
+@@ -154,7 +154,7 @@
  
- .macro TRACE_IRQS_IRET
-@@ -399,9 +399,9 @@ ENTRY(resume_kernel)
- 	DISABLE_INTERRUPTS(CLBR_ANY)
- .Lneed_resched:
- 	cmpl	$0, PER_CPU_VAR(__preempt_count)
--	jnz	restore_all
-+	jnz	restore_all_kernel
- 	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
--	jz	restore_all
-+	jz	restore_all_kernel
- 	call	preempt_schedule_irq
- 	jmp	.Lneed_resched
- END(resume_kernel)
-@@ -606,6 +606,11 @@ restore_all:
- 	 */
- 	INTERRUPT_RETURN
+ #endif /* CONFIG_X86_32_LAZY_GS */
  
-+restore_all_kernel:
-+	TRACE_IRQS_IRET
-+	RESTORE_REGS 4
-+	jmp	.Lirq_return
+-.macro SAVE_ALL pt_regs_ax=%eax
++.macro SAVE_ALL pt_regs_ax=%eax switch_stacks=0
+ 	cld
+ 	PUSH_GS
+ 	pushl	%fs
+@@ -173,6 +173,12 @@
+ 	movl	$(__KERNEL_PERCPU), %edx
+ 	movl	%edx, %fs
+ 	SET_KERNEL_GS %edx
 +
- .section .fixup, "ax"
- ENTRY(iret_exc	)
- 	pushl	$0				# no error code
++	/* Switch to kernel stack if necessary */
++.if \switch_stacks > 0
++	SWITCH_TO_KERNEL_STACK
++.endif
++
+ .endm
+ 
+ /*
+@@ -269,6 +275,73 @@
+ .Lend_\@:
+ #endif /* CONFIG_X86_ESPFIX32 */
+ .endm
++
++
++/*
++ * Called with pt_regs fully populated and kernel segments loaded,
++ * so we can access PER_CPU and use the integer registers.
++ *
++ * We need to be very careful here with the %esp switch, because an NMI
++ * can happen everywhere. If the NMI handler finds itself on the
++ * entry-stack, it will overwrite the task-stack and everything we
++ * copied there. So allocate the stack-frame on the task-stack and
++ * switch to it before we do any copying.
++ */
++.macro SWITCH_TO_KERNEL_STACK
++
++	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
++
++	/* Are we on the entry stack? Bail out if not! */
++	movl	PER_CPU_VAR(cpu_entry_area), %ecx
++	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
++	subl	%esp, %ecx	/* ecx = (end of entry_stack) - esp */
++	cmpl	$SIZEOF_entry_stack, %ecx
++	jae	.Lend_\@
++
++	/* Load stack pointer into %esi and %edi */
++	movl	%esp, %esi
++	movl	%esi, %edi
++
++	/* Move %edi to the top of the entry stack */
++	andl	$(MASK_entry_stack), %edi
++	addl	$(SIZEOF_entry_stack), %edi
++
++	/* Load top of task-stack into %edi */
++	movl	TSS_entry2task_stack(%edi), %edi
++
++	/* Bytes to copy */
++	movl	$PTREGS_SIZE, %ecx
++
++#ifdef CONFIG_VM86
++	testl	$X86_EFLAGS_VM, PT_EFLAGS(%esi)
++	jz	.Lcopy_pt_regs_\@
++
++	/*
++	 * Stack-frame contains 4 additional segment registers when
++	 * coming from VM86 mode
++	 */
++	addl	$(4 * 4), %ecx
++
++.Lcopy_pt_regs_\@:
++#endif
++
++	/* Allocate frame on task-stack */
++	subl	%ecx, %edi
++
++	/* Switch to task-stack */
++	movl	%edi, %esp
++
++	/*
++	 * We are now on the task-stack and can safely copy over the
++	 * stack-frame
++	 */
++	shrl	$2, %ecx
++	cld
++	rep movsl
++
++.Lend_\@:
++.endm
++
+ /*
+  * %eax: prev task
+  * %edx: next task
+@@ -469,7 +542,7 @@ ENTRY(entry_SYSENTER_32)
+ 	pushl	$__USER_CS		/* pt_regs->cs */
+ 	pushl	$0			/* pt_regs->ip = 0 (placeholder) */
+ 	pushl	%eax			/* pt_regs->orig_ax */
+-	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest */
++	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest, stack already switched */
+ 
+ 	/*
+ 	 * SYSENTER doesn't filter flags, so we need to clear NT, AC
+@@ -580,7 +653,8 @@ ENDPROC(entry_SYSENTER_32)
+ ENTRY(entry_INT80_32)
+ 	ASM_CLAC
+ 	pushl	%eax			/* pt_regs->orig_ax */
+-	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest */
++
++	SAVE_ALL pt_regs_ax=$-ENOSYS switch_stacks=1	/* save rest */
+ 
+ 	/*
+ 	 * User mode is traced as though IRQs are on, and the interrupt gate
+@@ -677,7 +751,8 @@ END(irq_entries_start)
+ common_interrupt:
+ 	ASM_CLAC
+ 	addl	$-0x80, (%esp)			/* Adjust vector into the [-256, -1] range */
+-	SAVE_ALL
++
++	SAVE_ALL switch_stacks=1
+ 	ENCODE_FRAME_POINTER
+ 	TRACE_IRQS_OFF
+ 	movl	%esp, %eax
+@@ -685,16 +760,16 @@ common_interrupt:
+ 	jmp	ret_from_intr
+ ENDPROC(common_interrupt)
+ 
+-#define BUILD_INTERRUPT3(name, nr, fn)	\
+-ENTRY(name)				\
+-	ASM_CLAC;			\
+-	pushl	$~(nr);			\
+-	SAVE_ALL;			\
+-	ENCODE_FRAME_POINTER;		\
+-	TRACE_IRQS_OFF			\
+-	movl	%esp, %eax;		\
+-	call	fn;			\
+-	jmp	ret_from_intr;		\
++#define BUILD_INTERRUPT3(name, nr, fn)			\
++ENTRY(name)						\
++	ASM_CLAC;					\
++	pushl	$~(nr);					\
++	SAVE_ALL switch_stacks=1;			\
++	ENCODE_FRAME_POINTER;				\
++	TRACE_IRQS_OFF					\
++	movl	%esp, %eax;				\
++	call	fn;					\
++	jmp	ret_from_intr;				\
+ ENDPROC(name)
+ 
+ #define BUILD_INTERRUPT(name, nr)		\
+@@ -926,16 +1001,20 @@ common_exception:
+ 	pushl	%es
+ 	pushl	%ds
+ 	pushl	%eax
++	movl	$(__USER_DS), %eax
++	movl	%eax, %ds
++	movl	%eax, %es
++	movl	$(__KERNEL_PERCPU), %eax
++	movl	%eax, %fs
+ 	pushl	%ebp
+ 	pushl	%edi
+ 	pushl	%esi
+ 	pushl	%edx
+ 	pushl	%ecx
+ 	pushl	%ebx
++	SWITCH_TO_KERNEL_STACK
+ 	ENCODE_FRAME_POINTER
+ 	cld
+-	movl	$(__KERNEL_PERCPU), %ecx
+-	movl	%ecx, %fs
+ 	UNWIND_ESPFIX_STACK
+ 	GS_TO_REG %ecx
+ 	movl	PT_GS(%esp), %edi		# get the function address
+@@ -943,9 +1022,6 @@ common_exception:
+ 	movl	$-1, PT_ORIG_EAX(%esp)		# no syscall to restart
+ 	REG_TO_PTGS %ecx
+ 	SET_KERNEL_GS %ecx
+-	movl	$(__USER_DS), %ecx
+-	movl	%ecx, %ds
+-	movl	%ecx, %es
+ 	TRACE_IRQS_OFF
+ 	movl	%esp, %eax			# pt_regs pointer
+ 	CALL_NOSPEC %edi
+@@ -964,6 +1040,7 @@ ENTRY(debug)
+ 	 */
+ 	ASM_CLAC
+ 	pushl	$-1				# mark this as an int
++
+ 	SAVE_ALL
+ 	ENCODE_FRAME_POINTER
+ 	xorl	%edx, %edx			# error code 0
+@@ -999,6 +1076,7 @@ END(debug)
+  */
+ ENTRY(nmi)
+ 	ASM_CLAC
++
+ #ifdef CONFIG_X86_ESPFIX32
+ 	pushl	%eax
+ 	movl	%ss, %eax
+@@ -1066,7 +1144,8 @@ END(nmi)
+ ENTRY(int3)
+ 	ASM_CLAC
+ 	pushl	$-1				# mark this as an int
+-	SAVE_ALL
++
++	SAVE_ALL switch_stacks=1
+ 	ENCODE_FRAME_POINTER
+ 	TRACE_IRQS_OFF
+ 	xorl	%edx, %edx			# zero error code
+diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
+index eb5f7999a893..8bc2f70b452e 100644
+--- a/arch/x86/include/asm/switch_to.h
++++ b/arch/x86/include/asm/switch_to.h
+@@ -89,13 +89,23 @@ static inline void refresh_sysenter_cs(struct thread_struct *thread)
+ /* This is used when switching tasks or entering/exiting vm86 mode. */
+ static inline void update_sp0(struct task_struct *task)
+ {
+-	/* On x86_64, sp0 always points to the entry trampoline stack, which is constant: */
++	/* sp0 always points to the entry trampoline stack, which is constant: */
+ #ifdef CONFIG_X86_32
+-	load_sp0(task->thread.sp0);
++	if (static_cpu_has(X86_FEATURE_XENPV))
++		load_sp0(task->thread.sp0);
++	else
++		this_cpu_write(cpu_tss_rw.x86_tss.sp1, task->thread.sp0);
+ #else
++	/*
++	 * x86-64 updates x86_tss.sp1 via cpu_current_top_of_stack. That
++	 * doesn't work on x86-32 because sp1 and
++	 * cpu_current_top_of_stack have different values (because of
++	 * the non-zero stack-padding on 32bit).
++	 */
+ 	if (static_cpu_has(X86_FEATURE_XENPV))
+ 		load_sp0(task_top_of_stack(task));
+ #endif
++
+ }
+ 
+ #endif /* _ASM_X86_SWITCH_TO_H */
+diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+index a1e16286a832..01de31db300d 100644
+--- a/arch/x86/kernel/asm-offsets.c
++++ b/arch/x86/kernel/asm-offsets.c
+@@ -103,6 +103,7 @@ void common(void) {
+ 	OFFSET(CPU_ENTRY_AREA_entry_trampoline, cpu_entry_area, entry_trampoline);
+ 	OFFSET(CPU_ENTRY_AREA_entry_stack, cpu_entry_area, entry_stack_page);
+ 	DEFINE(SIZEOF_entry_stack, sizeof(struct entry_stack));
++	DEFINE(MASK_entry_stack, (~(sizeof(struct entry_stack) - 1)));
+ 
+ 	/* Offset for sp0 and sp1 into the tss_struct */
+ 	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index eb4cb3efd20e..43a927eb9c09 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1804,11 +1804,12 @@ void cpu_init(void)
+ 	enter_lazy_tlb(&init_mm, curr);
+ 
+ 	/*
+-	 * Initialize the TSS.  Don't bother initializing sp0, as the initial
+-	 * task never enters user mode.
++	 * Initialize the TSS.  sp0 points to the entry trampoline stack
++	 * regardless of what task is running.
+ 	 */
+ 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
+ 	load_TR_desc();
++	load_sp0((unsigned long)(cpu_entry_stack(cpu) + 1));
+ 
+ 	load_mm_ldt(&init_mm);
+ 
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 30ca2d1a9231..c93fcfdf1673 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -57,14 +57,12 @@ __visible DEFINE_PER_CPU_PAGE_ALIGNED(struct tss_struct, cpu_tss_rw) = {
+ 		 */
+ 		.sp0 = (1UL << (BITS_PER_LONG-1)) + 1,
+ 
+-#ifdef CONFIG_X86_64
+ 		/*
+ 		 * .sp1 is cpu_current_top_of_stack.  The init task never
+ 		 * runs user code, but cpu_current_top_of_stack should still
+ 		 * be well defined before the first context switch.
+ 		 */
+ 		.sp1 = TOP_OF_INIT_STACK,
+-#endif
+ 
+ #ifdef CONFIG_X86_32
+ 		.ss0 = __KERNEL_DS,
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index ec62cc77388d..0ae659de21eb 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -290,8 +290,6 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	this_cpu_write(cpu_current_top_of_stack,
+ 		       (unsigned long)task_stack_page(next_p) +
+ 		       THREAD_SIZE);
+-	/* SYSENTER reads the task-stack from tss.sp1 */
+-	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
+ 
+ 	/*
+ 	 * Restore %gs if needed (which is common)
