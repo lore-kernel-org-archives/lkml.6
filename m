@@ -5,75 +5,76 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 167EFC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7727ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C385B20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:48:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C385B20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 740B420673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:48:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740B420673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731632AbeGSObp (ORCPT
+        id S1731707AbeGSObv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:31:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32906 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730433AbeGSObo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:31:44 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 39AED401CE8B;
-        Thu, 19 Jul 2018 13:48:29 +0000 (UTC)
-Received: from llong.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CD3F62026E0E;
-        Thu, 19 Jul 2018 13:48:28 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
-Date:   Thu, 19 Jul 2018 09:48:20 -0400
-Message-Id: <1532008100-26922-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 19 Jul 2018 13:48:29 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 19 Jul 2018 13:48:29 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        Thu, 19 Jul 2018 10:31:51 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33147 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730433AbeGSObv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 10:31:51 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fg9IG-0000CX-0p; Thu, 19 Jul 2018 15:48:32 +0200
+Date:   Thu, 19 Jul 2018 15:48:31 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: NULL pointer dereference in msi_set_mask_bit
+In-Reply-To: <ed32c159-1629-68e5-26e2-b1770a43acc3@molgen.mpg.de>
+Message-ID: <alpine.DEB.2.21.1807191541130.1602@nanos.tec.linutronix.de>
+References: <b9bd8405-64b6-2bea-f5ce-d3ab4d82452a@molgen.mpg.de> <20180718140636.GD128988@bhelgaas-glaptop.roam.corp.google.com> <alpine.DEB.2.21.1807181646280.1568@nanos.tec.linutronix.de> <6339fdef-a335-b833-4022-23725fd86d9e@molgen.mpg.de>
+ <alpine.DEB.2.21.1807181722020.1568@nanos.tec.linutronix.de> <178bb701-56af-06cf-4836-1a26e74f2b07@molgen.mpg.de> <alpine.DEB.2.21.1807182058110.1689@nanos.tec.linutronix.de> <7660f2f2-0c37-a617-ecdc-949cd4ecc060@molgen.mpg.de>
+ <ed32c159-1629-68e5-26e2-b1770a43acc3@molgen.mpg.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On a VM with only 1 vCPU, the locking fast paths will always be
-successful. In this case, there is no need to use the the PV qspinlock
-code which has higher overhead on the unlock side than the native
-qspinlock code.
+Paul,
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- arch/x86/xen/spinlock.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Thu, 19 Jul 2018, Paul Menzel wrote:
 
-diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
-index cd97a62..38f47ae 100644
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -130,7 +130,8 @@ void xen_uninit_lock_cpu(int cpu)
- void __init xen_init_spinlocks(void)
- {
- 
--	if (!xen_pvspin) {
-+	/*  Don't need to use pvqspinlock code if there is only 1 vCPU. */
-+	if (!xen_pvspin || num_possible_cpus() == 1) {
- 		printk(KERN_DEBUG "xen: PV spinlocks disabled\n");
- 		return;
- 	}
--- 
-1.8.3.1
+> I had to copy the files, and then was able to create an archive with
+> non-zero files. Please find the tar archive attached.
+
+Thanks for providing the data. All looks normal there.
+
+Just for clarification. Did this happen exactly once, or did it just not
+happen again after you plugged in a serial cable?
+
+One thing you might try is to disable irqbalanced when the machine is up
+and then stress the affinity setter mechanism with scripting.
+
+Something like
+
+while true; do
+ for I in {0..3}; do echo $I > /proc/irq/$IRQ/smp_affinity_list; done
+done
+
+might be able to trigger it. But don't ask me which interrupt was involved,
+so you have to iterate through the ones which are MSI based.
+
+'cat /proc/interrupt | grep MSI' will tell you.
+
+Thanks,
+
+	tglx
+
 
