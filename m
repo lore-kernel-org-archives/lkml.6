@@ -2,120 +2,167 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC29C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B90C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6F620671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:25:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29A67206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 17:33:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMxux7mt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6F620671
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXQ0b5Ck"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29A67206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732093AbeGSSKD (ORCPT
+        id S1732122AbeGSSRH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 14:10:03 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:43857 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731751AbeGSSKD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 14:10:03 -0400
-Received: by mail-yw0-f194.google.com with SMTP id l189-v6so3354756ywb.10;
-        Thu, 19 Jul 2018 10:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hkpwUBwM3Y5AyhzYYuS8+vNKG4CoFqS7MqCRsCqif6A=;
-        b=dMxux7mtw7eZXdGQRMepih1kYfgQuOlxDNm+/j62pQ1/WfoQjkEsOlhiMAox/kNEnQ
-         359CsA8FfwlyNzP70XKopSkIo2sbxY1+OZyzN3nwa65DKtUiE5qDA6cxGSNWWIW9WTN3
-         Qu8DyEL8d1ibyvAOytf/29zvoasZkTmm0EIdH4CddXPXq7WfOGQVKWG1VKQpFtHNivmk
-         AFCezOkeZscvCvcwQShkSko4x0CovKFvCDA+K4+JYz7tsS2Fo9PYQHtv9KXBk1t/uNko
-         yiYwcqjVa3qm48Ijt8nFrhE2ey4Hhqn/Tn0dSHDGvTFcc4I6deLPl7hJEHifW2ywxKL1
-         spEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hkpwUBwM3Y5AyhzYYuS8+vNKG4CoFqS7MqCRsCqif6A=;
-        b=fZFfjMRPpbGtwM1UZBN8kancIgAJ6bsOd0jo8zck09SRY73vY810yreUyu3t1otL9P
-         qsom7C0GxS75ixYkVu5khtrIQi/cza9nn+/AVedEuZP708qSsXrDtSn+PQbiAsT/Acah
-         hNGsGFZVJvAf3Vu/EZV9QL8jmzBCmCAu06EbfpAxTFZ+xZU2cGKHCiHp5k5IESsu+bWI
-         qrAkgMhaeBULrUJF+oU67pU2WKfGIxX5YKYQWlolPbjAF+yDM3KbT29V0HRvJueQHQEe
-         Euf5DBYMuU6yDttWDskV9OF7uCPZ8V+CR2uDX0I7kz1aB4JzNHMfo3Zcn19DUzf6OM2o
-         8qFg==
-X-Gm-Message-State: AOUpUlHeToS+k34hBazTnwAEo99e0h/dynCbnvHa5BfVL6dU69wZtBm8
-        tx3kqFa2oxQ0qwt26JtvAP+TCX2u
-X-Google-Smtp-Source: AAOMgpdxgR2MadYgS35cwg8g1GGCqkYMsqUxMjeUfWzP7pxPMMXXbvJwJ17U0+Y2k0xDZRDsMVexbw==
-X-Received: by 2002:a81:3b0d:: with SMTP id i13-v6mr5769654ywa.465.1532021153660;
-        Thu, 19 Jul 2018 10:25:53 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::1d36])
-        by smtp.gmail.com with ESMTPSA id j4-v6sm2788130ywe.36.2018.07.19.10.25.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 10:25:52 -0700 (PDT)
-Date:   Thu, 19 Jul 2018 10:25:51 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-Message-ID: <20180719172551.GW72677@devbig577.frc2.facebook.com>
-References: <1529825440-9574-8-git-send-email-longman@redhat.com>
- <20180702165322.GI533219@devbig577.frc2.facebook.com>
- <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
- <20180703155823.GS533219@devbig577.frc2.facebook.com>
- <20180719135224.GE2494@hirez.programming.kicks-ass.net>
- <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
- <20180719153045.GT72677@devbig577.frc2.facebook.com>
- <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
- <20180719165201.GU72677@devbig577.frc2.facebook.com>
- <69903192-8711-6a1e-0cd0-fbb249a4204b@redhat.com>
+        Thu, 19 Jul 2018 14:17:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34614 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731832AbeGSSRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 14:17:07 -0400
+Received: from mail-wm0-f44.google.com (mail-wm0-f44.google.com [74.125.82.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24C582086D;
+        Thu, 19 Jul 2018 17:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532021576;
+        bh=GbffjDWP2HB/Y1stXFjJ3ln6fEQMXRPv+ESx3mFpHxo=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=jXQ0b5CkEk+LChpwxz4GoE6duxiGTFKO21TKbeZ1aNrPgBLn5DO53lecF63lsrqTE
+         kDerkHA0WgB6yKRx8XFv0egUCzXHautX5J1eI+t93h3dqqROnajxKoNOfYeITuvZr+
+         PMIk/RKjPMnaEm27KbH3oh7xNys80Maq9pUsvpsg=
+Received: by mail-wm0-f44.google.com with SMTP id a19-v6so7195158wmb.2;
+        Thu, 19 Jul 2018 10:32:56 -0700 (PDT)
+X-Gm-Message-State: AOUpUlElo7jGgNgm3ek5QYFBp/Nqv0Ftio2ePRfvttfC1MxrZrnB6ta6
+        /VREjlzDkngxDrKxXNLgvd9WP+PtkHmHYOAgatM=
+X-Google-Smtp-Source: AAOMgpch/elP+ww+UvhPCvXDfTLsus67T62XyCxbYOKDa/wssItfAU0uX8bTxIVlT7DOetp2xbNGmLfGFP0cxlJSE2o=
+X-Received: by 2002:a1c:3a8f:: with SMTP id h137-v6mr4930416wma.72.1532021574533;
+ Thu, 19 Jul 2018 10:32:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <69903192-8711-6a1e-0cd0-fbb249a4204b@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 10:32:54
+ -0700 (PDT)
+In-Reply-To: <CAOFm3uFPGDKBjr2TKmsqZKdCLSU8YY+mprNe0ozGzkORXbHYSg@mail.gmail.com>
+References: <20180718194824.3704-1-krzk@kernel.org> <20180718194824.3704-2-krzk@kernel.org>
+ <CAOFm3uFPGDKBjr2TKmsqZKdCLSU8YY+mprNe0ozGzkORXbHYSg@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 19 Jul 2018 19:32:54 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcT1r5FOo-q-ye8R1tvJfYsCkkUr8XYwEi=NFJdcptrDw@mail.gmail.com>
+Message-ID: <CAJKOXPcT1r5FOo-q-ye8R1tvJfYsCkkUr8XYwEi=NFJdcptrDw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: tegra: apalis-tk1: Add SPDX license (GPL-2.0 OR
+ X11) identifiers
+To:     Philippe Ombredanne <pombredanne@nexb.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Waiman.
+On 19 July 2018 at 18:44, Philippe Ombredanne <pombredanne@nexb.com> wrote:
+> Hi Krzysztof,
+>
+> On Wed, Jul 18, 2018 at 9:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> Three files dual-licensed were missing the SPDX license identifiers.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> ---
+>>  arch/arm/boot/dts/tegra124-apalis-emc.dtsi | 38 +-----------------------------
+>>  arch/arm/boot/dts/tegra124-apalis-eval.dts | 38 +-----------------------------
+>>  arch/arm/boot/dts/tegra124-apalis.dtsi     | 38 +-----------------------------
+>>  3 files changed, 3 insertions(+), 111 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/tegra124-apalis-emc.dtsi b/arch/arm/boot/dts/tegra124-apalis-emc.dtsi
+>> index ca2c3a557895..cdbbb3562fb9 100644
+>> --- a/arch/arm/boot/dts/tegra124-apalis-emc.dtsi
+>> +++ b/arch/arm/boot/dts/tegra124-apalis-emc.dtsi
+>> @@ -1,42 +1,6 @@
+>> +// SPDX-License-Identifier: GPL-2.0 OR X11
+>>  /*
+>>   * Copyright 2016 Toradex AG
+>> - *
+>> - * This file is dual-licensed: you can use it either under the terms
+>> - * of the GPL or the X11 license, at your option. Note that this dual
+>> - * licensing only applies to this file, and not this project as a
+>> - * whole.
+>
+> This is weirdly enough not what is called an X11 license [1] even
+> though it is named this way here... but this is an  MIT license [2]
+> with a small variation. (See below)
 
-On Thu, Jul 19, 2018 at 01:22:36PM -0400, Waiman Long wrote:
-...
-> Do you want a way at the parent level to take CPUs away from child
-> partitions? The "cpus.subpart" file can probably be used also for this
-> purpose, but we have to decide what taking CPUs away from child
-> partition means. Does that mean automatically turn off the partition
-> flag in the children if there is no CPU left in the partition? There are
+Indeed... I checked the text just briefly and in 90% these licenses
+are the same.
 
-Yeah, I think so.  That's what we do when cpuset.cpus or mems go empty
-- ignoring the config.
+>> - *
+>> - *  a) This file is free software; you can redistribute it and/or
+>> - *     modify it under the terms of the GNU General Public License
+>> - *     version 2 as published by the Free Software Foundation.
+>> - *
+>> - *     This file is distributed in the hope that it will be useful
+>> - *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> - *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> - *     GNU General Public License for more details.
+>> - *
+>> - * Or, alternatively
+>> - *
+>> - *  b) Permission is hereby granted, free of charge, to any person
+>> - *     obtaining a copy of this software and associated documentation
+>> - *     files (the "Software"), to deal in the Software without
+>> - *     restriction, including without limitation the rights to use
+>> - *     copy, modify, merge, publish, distribute, sublicense, and/or
+>> - *     sell copies of the Software, and to permit persons to whom the
+>> - *     Software is furnished to do so, subject to the following
+>> - *     conditions:
+>> - *
+>> - *     The above copyright notice and this permission notice shall be
+>> - *     included in all copies or substantial portions of the Software.
+>> - *
+>> - *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
+>
+> The MIT standard text [2] has a few extra commas and states instead:
+>
+> THE SOFTWARE IS PROVIDED "AS IS",
+>
+> Here "AS IS" is omitted. I am not sure this is material but IMHO it
+> would be good to get Toradex signoff on this.
+>
+>> - *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>> - *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>> - *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+>> - *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+>> - *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>> - *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>> - *     OTHER DEALINGS IN THE SOFTWARE.
+>>   */
+>
+> <snip>
+>
+>
+> With all this said, I think that your expression should be this
+> instead (and this applies to other places too):
+>
+> SPDX-License-Identifier: GPL-2.0 OR MIT
 
-> some implementation details that need to be fleshed out. I would prefer
-> not doing this as this will complicate the code without too much benefit
-> that I can see.
+Right, Marcel from Toradex already replied that he tries to switch to
+MIT license. Since this is already MIT-like license then maybe
+relicensing will not be needed and could be done fast (e.g. without
+signs of all involved people).
 
-So, given how long this has been dragging along and it isn't yet super
-clear to me why this needs to be fully hierarchical, I'd actually
-prefer just restricting it to the first level children.
+In such case let's skip this patch.
 
-Thanks.
-
--- 
-tejun
+Best regards,
+Krzysztof
