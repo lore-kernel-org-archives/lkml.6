@@ -2,516 +2,84 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4A7ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A97DECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 518042084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:56:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 518042084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 25EFC20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:56:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25EFC20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731799AbeGSLip (ORCPT
+        id S1731537AbeGSLj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 07:38:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:47498 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730845AbeGSLio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 07:38:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2882515A2;
-        Thu, 19 Jul 2018 03:56:08 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A209B3F246;
-        Thu, 19 Jul 2018 03:56:05 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, robh@kernel.org,
-        mathieu.poirier@linaro.org, sudeep.holla@arm.com,
-        frowand.list@gmail.com, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, matt.sealey@arm.com,
-        charles.garcia-tobin@arm.com, coresight@lists.linaro.org,
-        john.horley@arm.com, mike.leach@linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH v2 10/10] dts: juno: Update coresight bindings
-Date:   Thu, 19 Jul 2018 11:55:15 +0100
-Message-Id: <1531997715-6767-12-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
-References: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
+        Thu, 19 Jul 2018 07:39:26 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:64794 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730433AbeGSLjZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 07:39:25 -0400
+Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 5ea6e0ac09da68a2; Thu, 19 Jul 2018 12:56:47 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Lucas Magasweran <lucas.magasweran@ieee.org>
+Cc:     linux-acpi@vger.kernel.org,
+        Vladimir Lebedev <vladimir.p.lebedev@intel.com>,
+        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ACPI: battery: use cache_time as cache "enabled"
+Date:   Thu, 19 Jul 2018 12:55:08 +0200
+Message-ID: <10585866.b9VflrVt2K@aspire.rjw.lan>
+In-Reply-To: <1531607910-4975-1-git-send-email-lucas.magasweran@ieee.org>
+References: <1531607910-4975-1-git-send-email-lucas.magasweran@ieee.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to updated coresight bindings for Juno platforms.
+On Sunday, July 15, 2018 12:38:29 AM CEST Lucas Magasweran wrote:
+> From: Lucas Rangit Magasweran <lucas.magasweran@ieee.org>
+> 
+> When battery state is not cached the module parameter cache_time is 0
+> and battery->update_time starts at 0. However, it set to jiffies in
+> each call to acpi_battery_get_state() and should not be used to
+> determine if a cache time is used.
+> 
+> Using battery->update_time causes the evaluation of time_before()
+> even though cache_time is 0.
+> 
+> This is a minor issue as the behavior is still as expected.
+> Even if kernel HZ was very slow and jiffies remained equal, the
+> expected branch (false) would be taken because time_before() is
+> used instead of time_before_eq().
+> 
+> Signed-off-by: Lucas Rangit Magasweran <lucas.magasweran@ieee.org>
+> ---
+>  drivers/acpi/battery.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+> index d79ad84..f88bc9f 100644
+> --- a/drivers/acpi/battery.c
+> +++ b/drivers/acpi/battery.c
+> @@ -549,7 +549,7 @@ static int acpi_battery_get_state(struct acpi_battery *battery)
+>  	if (!acpi_battery_present(battery))
+>  		return 0;
+>  
+> -	if (battery->update_time &&
+> +	if (cache_time &&
+>  	    time_before(jiffies, battery->update_time +
+>  			msecs_to_jiffies(cache_time)))
+>  		return 0;
+> 
 
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Liviu Dudau <liviu.dudau@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
-Changes since V2:
-  - Update to new format.
----
- arch/arm64/boot/dts/arm/juno-base.dtsi    | 161 +++++++++++++++---------------
- arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi |  52 ++++------
- arch/arm64/boot/dts/arm/juno.dts          |  13 +--
- 3 files changed, 105 insertions(+), 121 deletions(-)
+Applied, thanks!
 
-diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
-index ce56a4a..a418193 100644
---- a/arch/arm64/boot/dts/arm/juno-base.dtsi
-+++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
-@@ -115,22 +115,17 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
- 
--			/* input port */
--			port@0 {
--				reg = <0>;
-+		in-ports {
-+			port {
- 				etf0_in_port: endpoint {
--					slave-mode;
- 					remote-endpoint = <&main_funnel_out_port>;
- 				};
- 			};
-+		};
- 
--			/* output port */
--			port@1 {
--				reg = <0>;
-+		out-ports {
-+			port {
- 				etf0_out_port: endpoint {
- 				};
- 			};
-@@ -144,10 +139,11 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		port {
--			tpiu_in_port: endpoint {
--				slave-mode;
--				remote-endpoint = <&replicator_out_port0>;
-+		in-ports {
-+			port {
-+				tpiu_in_port: endpoint {
-+					remote-endpoint = <&replicator_out_port0>;
-+				};
- 			};
- 		};
- 	};
-@@ -160,31 +156,29 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
- 
--			/* output port */
--			port@0 {
--				reg = <0>;
-+		out-ports {
-+			port {
- 				main_funnel_out_port: endpoint {
- 					remote-endpoint = <&etf0_in_port>;
- 				};
- 			};
-+		};
- 
--			/* input ports */
--			port@1 {
-+		main_funnel_in_ports: in-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
- 				reg = <0>;
- 				main_funnel_in_port0: endpoint {
--					slave-mode;
- 					remote-endpoint = <&cluster0_funnel_out_port>;
- 				};
- 			};
- 
--			port@2 {
-+			port@1 {
- 				reg = <1>;
- 				main_funnel_in_port1: endpoint {
--					slave-mode;
- 					remote-endpoint = <&cluster1_funnel_out_port>;
- 				};
- 			};
-@@ -199,10 +193,11 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		port {
--			etr_in_port: endpoint {
--				slave-mode;
--				remote-endpoint = <&replicator_out_port1>;
-+		in-ports {
-+			port {
-+				etr_in_port: endpoint {
-+					remote-endpoint = <&replicator_out_port1>;
-+				};
- 			};
- 		};
- 	};
-@@ -216,8 +211,10 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		port {
--			stm_out_port: endpoint {
-+		out-ports {
-+			port {
-+				stm_out_port: endpoint {
-+				};
- 			};
- 		};
- 	};
-@@ -238,9 +235,11 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		port {
--			cluster0_etm0_out_port: endpoint {
--				remote-endpoint = <&cluster0_funnel_in_port0>;
-+		out-ports {
-+			port {
-+				cluster0_etm0_out_port: endpoint {
-+					remote-endpoint = <&cluster0_funnel_in_port0>;
-+				};
- 			};
- 		};
- 	};
-@@ -252,29 +251,28 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
-+		out-ports {
-+			port {
- 				cluster0_funnel_out_port: endpoint {
- 					remote-endpoint = <&main_funnel_in_port0>;
- 				};
- 			};
-+		};
- 
--			port@1 {
-+		in-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
- 				reg = <0>;
- 				cluster0_funnel_in_port0: endpoint {
--					slave-mode;
- 					remote-endpoint = <&cluster0_etm0_out_port>;
- 				};
- 			};
- 
--			port@2 {
-+			port@1 {
- 				reg = <1>;
- 				cluster0_funnel_in_port1: endpoint {
--					slave-mode;
- 					remote-endpoint = <&cluster0_etm1_out_port>;
- 				};
- 			};
-@@ -297,9 +295,11 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		port {
--			cluster0_etm1_out_port: endpoint {
--				remote-endpoint = <&cluster0_funnel_in_port1>;
-+		out-ports {
-+			port {
-+				cluster0_etm1_out_port: endpoint {
-+					remote-endpoint = <&cluster0_funnel_in_port1>;
-+				};
- 			};
- 		};
- 	};
-@@ -320,9 +320,11 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		port {
--			cluster1_etm0_out_port: endpoint {
--				remote-endpoint = <&cluster1_funnel_in_port0>;
-+		out-ports {
-+			port {
-+				cluster1_etm0_out_port: endpoint {
-+					remote-endpoint = <&cluster1_funnel_in_port0>;
-+				};
- 			};
- 		};
- 	};
-@@ -334,43 +336,40 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
-+		out-ports {
-+			port {
- 				cluster1_funnel_out_port: endpoint {
- 					remote-endpoint = <&main_funnel_in_port1>;
- 				};
- 			};
-+		};
- 
--			port@1 {
-+		in-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
- 				reg = <0>;
- 				cluster1_funnel_in_port0: endpoint {
--					slave-mode;
- 					remote-endpoint = <&cluster1_etm0_out_port>;
- 				};
- 			};
- 
--			port@2 {
-+			port@1 {
- 				reg = <1>;
- 				cluster1_funnel_in_port1: endpoint {
--					slave-mode;
- 					remote-endpoint = <&cluster1_etm1_out_port>;
- 				};
- 			};
--			port@3 {
-+			port@2 {
- 				reg = <2>;
- 				cluster1_funnel_in_port2: endpoint {
--					slave-mode;
- 					remote-endpoint = <&cluster1_etm2_out_port>;
- 				};
- 			};
--			port@4 {
-+			port@3 {
- 				reg = <3>;
- 				cluster1_funnel_in_port3: endpoint {
--					slave-mode;
- 					remote-endpoint = <&cluster1_etm3_out_port>;
- 				};
- 			};
-@@ -393,9 +392,11 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		port {
--			cluster1_etm1_out_port: endpoint {
--				remote-endpoint = <&cluster1_funnel_in_port1>;
-+		out-ports {
-+			port {
-+				cluster1_etm1_out_port: endpoint {
-+					remote-endpoint = <&cluster1_funnel_in_port1>;
-+				};
- 			};
- 		};
- 	};
-@@ -416,9 +417,11 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		port {
--			cluster1_etm2_out_port: endpoint {
--				remote-endpoint = <&cluster1_funnel_in_port2>;
-+		out-ports {
-+			port {
-+				cluster1_etm2_out_port: endpoint {
-+					remote-endpoint = <&cluster1_funnel_in_port2>;
-+				};
- 			};
- 		};
- 	};
-@@ -439,9 +442,11 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		port {
--			cluster1_etm3_out_port: endpoint {
--				remote-endpoint = <&cluster1_funnel_in_port3>;
-+		out-ports {
-+			port {
-+				cluster1_etm3_out_port: endpoint {
-+					remote-endpoint = <&cluster1_funnel_in_port3>;
-+				};
- 			};
- 		};
- 	};
-@@ -454,7 +459,7 @@
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
- 
--		ports {
-+		out-ports {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 
-@@ -472,12 +477,10 @@
- 					remote-endpoint = <&etr_in_port>;
- 				};
- 			};
--
--			/* replicator input port */
--			port@2 {
--				reg = <0>;
-+		};
-+		in-ports {
-+			port {
- 				replicator_in_port0: endpoint {
--					slave-mode;
- 				};
- 			};
- 		};
-diff --git a/arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi b/arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi
-index 0c43fb3..cf28515 100644
---- a/arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi
-+++ b/arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi
-@@ -7,23 +7,16 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			/* output port */
--			port@0 {
--				reg = <0>;
-+		out-ports {
-+			port {
- 				csys1_funnel_out_port: endpoint {
- 					remote-endpoint = <&etf1_in_port>;
- 				};
- 			};
--
--			/* input port */
--			port@1 {
--				reg = <0>;
-+		};
-+		in-ports {
-+			port {
- 				csys1_funnel_in_port0: endpoint {
--					slave-mode;
- 				};
- 			};
- 
-@@ -37,22 +30,15 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			/* input port */
--			port@0 {
--				reg = <0>;
-+		in-ports {
-+			port {
- 				etf1_in_port: endpoint {
--					slave-mode;
- 					remote-endpoint = <&csys1_funnel_out_port>;
- 				};
- 			};
--
--			/* output port */
--			port@1 {
--				reg = <0>;
-+		};
-+		out-ports {
-+			port {
- 				etf1_out_port: endpoint {
- 					remote-endpoint = <&csys2_funnel_in_port1>;
- 				};
-@@ -67,20 +53,18 @@
- 		clocks = <&soc_smc50mhz>;
- 		clock-names = "apb_pclk";
- 		power-domains = <&scpi_devpd 0>;
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			/* output port */
--			port@0 {
--				reg = <0>;
-+		out-ports {
-+			port {
- 				csys2_funnel_out_port: endpoint {
- 					remote-endpoint = <&replicator_in_port0>;
- 				};
- 			};
-+		};
- 
--			/* input ports */
--			port@1 {
-+		in-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			port@0 {
- 				reg = <0>;
- 				csys2_funnel_in_port0: endpoint {
- 					slave-mode;
-@@ -88,7 +72,7 @@
- 				};
- 			};
- 
--			port@2 {
-+			port@1 {
- 				reg = <1>;
- 				csys2_funnel_in_port1: endpoint {
- 					slave-mode;
-diff --git a/arch/arm64/boot/dts/arm/juno.dts b/arch/arm64/boot/dts/arm/juno.dts
-index 2b2bf39..eb55c2f 100644
---- a/arch/arm64/boot/dts/arm/juno.dts
-+++ b/arch/arm64/boot/dts/arm/juno.dts
-@@ -257,14 +257,11 @@
- 	remote-endpoint = <&main_funnel_in_port2>;
- };
- 
--&main_funnel {
--	ports {
--		port@3 {
--			reg = <2>;
--			main_funnel_in_port2: endpoint {
--				slave-mode;
--				remote-endpoint = <&stm_out_port>;
--			};
-+&main_funnel_in_ports {
-+	port@2 {
-+		reg = <2>;
-+		main_funnel_in_port2: endpoint {
-+			remote-endpoint = <&stm_out_port>;
- 		};
- 	};
- };
--- 
-2.7.4
 
