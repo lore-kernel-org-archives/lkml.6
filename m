@@ -2,269 +2,235 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D54C3C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 05:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E6BECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 05:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C312206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 05:33:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C312206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E7E0206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 05:35:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mWEdekJ8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E7E0206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbeGSGPA (ORCPT
+        id S1727721AbeGSGQs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 02:15:00 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:55348 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726303AbeGSGPA (ORCPT
+        Thu, 19 Jul 2018 02:16:48 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44819 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeGSGQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 02:15:00 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="42404836"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 19 Jul 2018 13:33:33 +0800
-Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
-        by cn.fujitsu.com (Postfix) with ESMTP id 5EF804B625E5;
-        Thu, 19 Jul 2018 13:33:30 +0800 (CST)
-Received: from localhost.localdomain (10.167.226.106) by
- G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Thu, 19 Jul 2018 13:33:30 +0800
-From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v14 20/25] x86/tsc: calibrate tsc only once
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        <steven.sistare@oracle.com>, <daniel.m.jordan@oracle.com>,
-        <linux@armlinux.org.uk>, <schwidefsky@de.ibm.com>,
-        <heiko.carstens@de.ibm.com>, <john.stultz@linaro.org>,
-        <sboyd@codeaurora.org>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
-        <tglx@linutronix.de>, <hpa@zytor.com>, <peterz@infradead.org>,
-        <prarit@redhat.com>, <feng.tang@intel.com>, <pmladek@suse.com>,
-        <gnomes@lxorguk.ukuu.org.uk>, <linux-s390@vger.kernel.org>,
-        <boris.ostrovsky@oracle.com>, <jgross@suse.com>,
-        <pbonzini@redhat.com>
-References: <20180718022211.6259-1-pasha.tatashin@oracle.com>
- <20180718022211.6259-21-pasha.tatashin@oracle.com>
-Message-ID: <4f0933a3-27b4-5468-83f5-af9b90842812@cn.fujitsu.com>
-Date:   Thu, 19 Jul 2018 13:33:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Thu, 19 Jul 2018 02:16:47 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180719053526euoutp02c2ef51d9081a7f8952288f5759a79eca~Crlpyphm03040430404euoutp028
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 05:35:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180719053526euoutp02c2ef51d9081a7f8952288f5759a79eca~Crlpyphm03040430404euoutp028
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1531978526;
+        bh=b6skn4A3sgM1PISM05txzhxdy//QwMDvAQTHtqLL/hE=;
+        h=Subject:To:From:Date:In-Reply-To:References:From;
+        b=mWEdekJ81xWq0bsTOj+F3iSf27ifPwpNEVIBGEuepPCJ8+OtJ25EDEZ/SBAckdf8A
+         fYIUDUwYcv634GNPSB5BKrzTlo1O85mcV6hPHQObhRUF/r//ch/3CgZhsEZAIOaxxU
+         j1301Dxh3KtxUrvlb5icS47fbNEWztI4C0UBvr5g=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180719053525eucas1p2e95ad3327a0fd97e2e52e5995dd405c4~Crloa-d9W1529415294eucas1p2x;
+        Thu, 19 Jul 2018 05:35:25 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id B8.D7.05751.C13205B5; Thu, 19
+        Jul 2018 06:35:24 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180719053524eucas1p255845c6da0e22ce8916f5855904655db~CrlnlC3eH2515425154eucas1p2a;
+        Thu, 19 Jul 2018 05:35:24 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180719053524eusmtrp26a0e330eee98bf38df8e3bfb74128c51~CrlnWTQ2S1932719327eusmtrp2n;
+        Thu, 19 Jul 2018 05:35:24 +0000 (GMT)
+X-AuditID: cbfec7f4-c47ff70000001677-58-5b50231c071e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E3.54.04183.B13205B5; Thu, 19
+        Jul 2018 06:35:24 +0100 (BST)
+Received: from [180.236.133.244] (unknown [180.236.133.244]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20180719053520eusmtip126acd89003f17184303b88b234320529~CrlkXIRCC1607516075eusmtip1Q;
+        Thu, 19 Jul 2018 05:35:20 +0000 (GMT)
+Subject: Re: [PATCH] i2c: exynos5: Describe the hardware variant for
+ readability
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Andi Shyti <andi@etezian.org>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Date:   Thu, 19 Jul 2018 14:35:18 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180718022211.6259-21-pasha.tatashin@oracle.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180718195404.5095-1-krzk@kernel.org>
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 5EF804B625E5.ACF2F
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djP87oyygHRBjcfW1gs/vGcyaL/8Wtm
+        i/PnN7BbbHp8jdWi4+8XRovLu+awWcw4v4/JYuWJWcwOHB7Xl3xi9ti0qpPNY/OSeo+Tp56w
+        eHzeJBfAGsVlk5Kak1mWWqRvl8CVMWHBU/aCDvmK/Y8qGhjXSXQxcnJICJhIdF76ywxiCwms
+        YJS4tMCgi5ELyP7CKLF31mNGCOczo8S1+/tZYTp2PP4IlVjOKPF8331WCOcjo8S0C1sZQaqE
+        BYIkTjRMZQFJiAhMZJK4/PcuWIJNQFPi7+abbCA2i4CqxNWbq4DiHByiAjESv3dZg4R5BQQl
+        Ts58wgJicwJtm7vtE9hmZgF5ie1v5zBD2OISt57MZwKZLyGwil1iSt9pVojmMonnt48xQ5zq
+        InGmvR3qbGGJV8e3sEPYMhL/d4I0g9j1Ek0zrzBDDOpglDixeDkbRMJa4vDxi6wgxzEDHb1+
+        lz5E2FGia8ciFpCwhACfxI23ghD38ElM2jadGSLMK9HRJgRRrShx/+xWqGvEJZZe+Ao13EPi
+        9I8upgmMirOQfDwLyZezkHw5C+GGBYwsqxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS83M3MQIT
+        0el/x7/sYNz1J+kQowAHoxIP74H/vtFCrIllxZW5hxglOJiVRHj3nvSPFuJNSaysSi3Kjy8q
+        zUktPsQozcGiJM4bp1EXJSSQnliSmp2aWpBaBJNl4uCUamDkqvvotKLkhfBprqI/LFMlQip7
+        Gr1d/H3MNQ6uTl49YxUrQ8i5gtyVumzfJP7MYOhSvP2ieQ6zzafvOp/nr823KDAqX7vzaMnW
+        I40P5mp6tnqYvWdoM3sarVczv2hCoOKx2UySwbMdDKadeZfwXzTbSDY5ZI3fa473Ooc/T9L1
+        CZfNi7jm76HEUpyRaKjFXFScCAACHR53QAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsVy+t/xu7oyygHRBvvPMFks/vGcyaL/8Wtm
+        i/PnN7BbbHp8jdWi4+8XRovLu+awWcw4v4/JYuWJWcwOHB7Xl3xi9ti0qpPNY/OSeo+Tp56w
+        eHzeJBfAGqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRv
+        l6CXMWHBU/aCDvmK/Y8qGhjXSXQxcnJICJhI7Hj8kbGLkYtDSGApo0TLm4fsEAlxid3z3zJD
+        2MISf651sUEUvWeUmHNlOiNIQlggSOJEw1QWkISIwEQmidUXJ4IlhATaGSXuPS8AsdkENCX+
+        br7JBmLzCthJrF66H2wqi4CqxNWbq8DqRQViJI5OboGqEZQ4OfMJC4jNCXTe3G2fWEFsZgEz
+        iXmbHzJD2PIS29/OgbLFJW49mc80gVFwFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GIjveLE
+        3OLSvHS95PzcTYzAKNt27OeWHYxd74IPMQpwMCrx8B747xstxJpYVlyZe4hRgoNZSYR370n/
+        aCHelMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OByaAvJJ4Q1NDcwtLQ3Njc2MzCyVx3vMGlVFC
+        AumJJanZqakFqUUwfUwcnFINjAvd990XKF5uwJH01O/o6kShmNzGs/WyC4NVrpp6vJHLubw3
+        p6TipM2FdMcHyzTdRfK2pRQk7zT4u8ZJ+oEm4+u59vKb2nmc3rRsu/LQPWXPDinOeWezllkr
+        MPxirFntV3Pto6TU7K+uv7q/mvP518tVr35QUf1hxyv+cvZZ6X0S7f++11/bqsRSnJFoqMVc
+        VJwIAN+i9ZHIAgAA
+Message-Id: <20180719053524eucas1p255845c6da0e22ce8916f5855904655db~CrlnlC3eH2515425154eucas1p2a@eucas1p2.samsung.com>
+X-CMS-MailID: 20180719053524eucas1p255845c6da0e22ce8916f5855904655db
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180718195434epcas1p1bdabd6d634861e862ef035c57bf32122
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180718195434epcas1p1bdabd6d634861e862ef035c57bf32122
+References: <CGME20180718195434epcas1p1bdabd6d634861e862ef035c57bf32122@epcas1p1.samsung.com>
+        <20180718195404.5095-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Pavel
+On 19-Jul-18 04:54, Krzysztof Kozlowski wrote:
 
-I am sorry, I didn't point out typo clearly in the previous version.
-Please see the concerns below. ;-)
+> The driver supports multiple hardware variants of Exynos I2C controller
+> which differ in FIFO depth, handling of interrupts and bus recovery in
+> HSI2C_MASTER_ST_LOSE state.
+>
+> The difference in variant was a single bit set for Exynos7 variants and
+> implicit lack of this bit for other variants.
+>
+> Make each variant explicit which also fixes the GCC warning about
+> documentation:
+>
+>      drivers/i2c/busses/i2c-exynos5.c:223: warning: Function parameter or member 'hw' not described in 'exynos_hsi2c_variant'
+>
+> No change in functionality.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-At 07/18/2018 10:22 AM, Pavel Tatashin wrote:
-> During boot tsc is calibrated twice: once in tsc_early_delay_calibrate(),
-> and the second time in tsc_init().
-> 
-> Rename tsc_early_delay_calibrate() to tsc_early_init(), and rework it so
-> the calibration is done only early, and make tsc_init() to use the values
-> already determined in tsc_early_init().
-> 
-> Sometimes it is not possible to determine tsc early, as the subsystem that
-> is required is not yet initialized, in such case try again later in
-> tsc_init().
-> 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Maybe changing it to "bool is_exynos7" or sth like that would make it 
+little more readable, matter of taste. Anyway:
+
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+
+Regards
+Andrzej
 > ---
->   arch/x86/include/asm/tsc.h |  2 +-
->   arch/x86/kernel/setup.c    |  2 +-
->   arch/x86/kernel/tsc.c      | 86 ++++++++++++++++++++------------------
->   3 files changed, 48 insertions(+), 42 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
-> index 2701d221583a..c4368ff73652 100644
-> --- a/arch/x86/include/asm/tsc.h
-> +++ b/arch/x86/include/asm/tsc.h
-> @@ -33,7 +33,7 @@ static inline cycles_t get_cycles(void)
->   extern struct system_counterval_t convert_art_to_tsc(u64 art);
->   extern struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns);
+>   drivers/i2c/busses/i2c-exynos5.c | 22 ++++++++++++++--------
+>   1 file changed, 14 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index de82ad8ff534..c1ce2299a76e 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -176,7 +176,10 @@
 >   
-> -extern void tsc_early_delay_calibrate(void);
-> +extern void tsc_early_init(void);
->   extern void tsc_init(void);
->   extern void mark_tsc_unstable(char *reason);
->   extern int unsynchronized_tsc(void);
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 7490de925a81..5d32c55aeb8b 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -1014,6 +1014,7 @@ void __init setup_arch(char **cmdline_p)
+>   #define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(100))
+>   
+> -#define HSI2C_EXYNOS7	BIT(0)
+> +enum i2c_type_exynos {
+> +	I2C_TYPE_EXYNOS5,
+> +	I2C_TYPE_EXYNOS7,
+> +};
+>   
+>   struct exynos5_i2c {
+>   	struct i2c_adapter	adap;
+> @@ -212,27 +215,30 @@ struct exynos5_i2c {
+>   /**
+>    * struct exynos_hsi2c_variant - platform specific HSI2C driver data
+>    * @fifo_depth: the fifo depth supported by the HSI2C module
+> + * @hw: the hardware variant of Exynos I2C controller
+>    *
+>    * Specifies platform specific configuration of HSI2C module.
+>    * Note: A structure for driver specific platform data is used for future
+>    * expansion of its usage.
+>    */
+>   struct exynos_hsi2c_variant {
+> -	unsigned int	fifo_depth;
+> -	unsigned int	hw;
+> +	unsigned int		fifo_depth;
+> +	enum i2c_type_exynos	hw;
+>   };
+>   
+>   static const struct exynos_hsi2c_variant exynos5250_hsi2c_data = {
+>   	.fifo_depth	= 64,
+> +	.hw		= I2C_TYPE_EXYNOS5,
+>   };
+>   
+>   static const struct exynos_hsi2c_variant exynos5260_hsi2c_data = {
+>   	.fifo_depth	= 16,
+> +	.hw		= I2C_TYPE_EXYNOS5,
+>   };
+>   
+>   static const struct exynos_hsi2c_variant exynos7_hsi2c_data = {
+>   	.fifo_depth	= 16,
+> -	.hw		= HSI2C_EXYNOS7,
+> +	.hw		= I2C_TYPE_EXYNOS7,
+>   };
+>   
+>   static const struct of_device_id exynos5_i2c_match[] = {
+> @@ -300,7 +306,7 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
 >   	 */
->   	init_hypervisor_platform();
+>   	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
+>   	temp = clkin / op_clk - 8 - t_ftl_cycle;
+> -	if (i2c->variant->hw != HSI2C_EXYNOS7)
+> +	if (i2c->variant->hw != I2C_TYPE_EXYNOS7)
+>   		temp -= t_ftl_cycle;
+>   	div = temp / 512;
+>   	clk_cycle = temp / (div + 1) - 2;
+> @@ -424,7 +430,7 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+>   	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
 >   
-> +	tsc_early_init();
->   	x86_init.resources.probe_roms();
->   
->   	/* after parse_early_param, so could debug it */
-> @@ -1199,7 +1200,6 @@ void __init setup_arch(char **cmdline_p)
->   
->   	memblock_find_dma_reserve();
->   
-> -	tsc_early_delay_calibrate();
->   	if (!early_xdbc_setup_hardware())
->   		early_xdbc_register_console();
->   
-> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-> index 186395041725..bc8eb82050a3 100644
-> --- a/arch/x86/kernel/tsc.c
-> +++ b/arch/x86/kernel/tsc.c
-> @@ -33,6 +33,8 @@ EXPORT_SYMBOL(cpu_khz);
->   unsigned int __read_mostly tsc_khz;
->   EXPORT_SYMBOL(tsc_khz);
->   
-> +#define KHZ	1000
-> +
->   /*
->    * TSC can be unstable due to cpufreq or due to unsynced TSCs
->    */
-> @@ -1335,34 +1337,10 @@ static int __init init_tsc_clocksource(void)
->    */
->   device_initcall(init_tsc_clocksource);
->   
-> -void __init tsc_early_delay_calibrate(void)
-> -{
-> -	unsigned long lpj;
-> -
-> -	if (!boot_cpu_has(X86_FEATURE_TSC))
-> -		return;
-> -
-> -	cpu_khz = x86_platform.calibrate_cpu();
-> -	tsc_khz = x86_platform.calibrate_tsc();
-> -
-> -	tsc_khz = tsc_khz ? : cpu_khz;
-> -	if (!tsc_khz)
-> -		return;
-> -
-> -	lpj = tsc_khz * 1000;
-> -	do_div(lpj, HZ);
-> -	loops_per_jiffy = lpj;
-> -}
-> -
-> -void __init tsc_init(void)
-> +static bool determine_cpu_tsc_frequncies(void)
-
-this function need to be mark as __init.
-
-And a typo here: frequency, s/frequncies/frequencies
-
+>   	/* handle interrupt related to the transfer status */
+> -	if (i2c->variant->hw == HSI2C_EXYNOS7) {
+> +	if (i2c->variant->hw == I2C_TYPE_EXYNOS7) {
+>   		if (int_status & HSI2C_INT_TRANS_DONE) {
+>   			i2c->trans_done = 1;
+>   			i2c->state = 0;
+> @@ -571,7 +577,7 @@ static void exynos5_i2c_bus_check(struct exynos5_i2c *i2c)
 >   {
-> -	u64 lpj, cyc;
-> -	int cpu;
-> -
-> -	if (!boot_cpu_has(X86_FEATURE_TSC)) {
-> -		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
-> -		return;
-> -	}
-> +	/* Make sure that cpu and tsc are not already calibrated */
-> +	WARN_ON(cpu_khz || tsc_khz);
+>   	unsigned long timeout;
 >   
->   	cpu_khz = x86_platform.calibrate_cpu();
->   	tsc_khz = x86_platform.calibrate_tsc();
-> @@ -1377,20 +1355,51 @@ void __init tsc_init(void)
->   	else if (abs(cpu_khz - tsc_khz) * 10 > tsc_khz)
->   		cpu_khz = tsc_khz;
+> -	if (i2c->variant->hw != HSI2C_EXYNOS7)
+> +	if (i2c->variant->hw != I2C_TYPE_EXYNOS7)
+>   		return;
 >   
-> -	if (!tsc_khz) {
-> -		mark_tsc_unstable("could not calculate TSC khz");
-> -		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
-> -		return;
-> -	}
-> +	if (tsc_khz == 0)
-> +		return false;
+>   	/*
+> @@ -612,7 +618,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+>   	unsigned long flags;
+>   	unsigned short trig_lvl;
 >   
->   	pr_info("Detected %lu.%03lu MHz processor\n",
-> -		(unsigned long)cpu_khz / 1000,
-> -		(unsigned long)cpu_khz % 1000);
-> +		(unsigned long)cpu_khz / KHZ,
-> +		(unsigned long)cpu_khz % KHZ);
->   
->   	if (cpu_khz != tsc_khz) {
->   		pr_info("Detected %lu.%03lu MHz TSC",
-> -			(unsigned long)tsc_khz / 1000,
-> -			(unsigned long)tsc_khz % 1000);
-> +			(unsigned long)tsc_khz / KHZ,
-> +			(unsigned long)tsc_khz % KHZ);
-> +	}
-
-this curly brackets can be removed
-
-> +	return true;
-> +}
-> +
-> +static unsigned long get_loops_per_jiffy(void)
-
-mark as __init as well.
-
-> +{
-> +	unsigned long lpj = tsc_khz * KHZ;
-> +
-> +	do_div(lpj, HZ);
-> +	return lpj;
-> +}
-> +
-> +void __init tsc_early_init(void)
-> +{
-> +	if (!boot_cpu_has(X86_FEATURE_TSC))
-> +		return;
-> +	if (!determine_cpu_tsc_frequncies())
-> +		return;
-> +	loops_per_jiffy = get_loops_per_jiffy();
-> +}
-> +
-> +void __init tsc_init(void)
-> +{
-> +	if (!boot_cpu_has(X86_FEATURE_TSC)) {
-> +		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
-> +		return;
-> +	}
-> +
-> +	if (!tsc_khz) {
-> +		/* We failed to determine frequencies earlier, try again */
-> +		if (!determine_cpu_tsc_frequncies()) {
-
-Missing "setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER)" for local
-APIC;
-
-Thanks,	
-	dou
-> +			mark_tsc_unstable("could not calculate TSC khz");
-> +			return;
-> +		}
->   	}
->   
->   	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
-> @@ -1413,10 +1422,7 @@ void __init tsc_init(void)
->   	if (!no_sched_irq_time)
->   		enable_sched_clock_irqtime();
->   
-> -	lpj = ((u64)tsc_khz * 1000);
-> -	do_div(lpj, HZ);
-> -	lpj_fine = lpj;
-> -
-> +	lpj_fine = get_loops_per_jiffy();
->   	use_tsc_delay();
->   
->   	check_system_tsc_reliable();
-> 
-
+> -	if (i2c->variant->hw == HSI2C_EXYNOS7)
+> +	if (i2c->variant->hw == I2C_TYPE_EXYNOS7)
+>   		int_en |= HSI2C_INT_I2C_TRANS;
+>   	else
+>   		int_en |= HSI2C_INT_I2C;
 
