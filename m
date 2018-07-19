@@ -2,85 +2,76 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3450ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261FBECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5676B206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:50:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRJgrI+k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5676B206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C803A206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C803A206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731034AbeGSWfI (ORCPT
+        id S1730926AbeGSWkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 18:35:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39912 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730262AbeGSWfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 18:35:07 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 795BB206B7;
-        Thu, 19 Jul 2018 21:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532037006;
-        bh=GuT73mncBLgKm5wnlSmqZirw5gqwoyiomCEYS9hY7Dc=;
-        h=Subject:From:To:Cc:Date:From;
-        b=hRJgrI+kPygZNv/g4HYg/scNAb9u8vVYI9cOHkx1r00Vq+pxL0rluQ9ngV5E9j/dM
-         w5fHD2cUB7zW7g5BcKSL4iofvdQkaFbDwZZVoK1r2gDLfPcu3hmKRfnuVrx0PvOjT0
-         1GXKcT9J73qKjvUMe9xs7WbxRkJlfCqgxC8bbrio=
-Subject: [PATCH v1] PCI/IOV: Tidy pci_sriov_set_totalvfs()
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     linux-pci@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Thu, 19 Jul 2018 16:50:05 -0500
-Message-ID: <153203700547.38654.5004300385518326333.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        Thu, 19 Jul 2018 18:40:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52834 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727401AbeGSWkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 18:40:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4B686ACD0;
+        Thu, 19 Jul 2018 21:55:05 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 14:54:56 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH v2] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
+Message-ID: <20180719215456.5ho3udhfoqlkh75a@linux-r8p5>
+References: <1532036397-19449-1-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1532036397-19449-1-git-send-email-longman@redhat.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Thu, 19 Jul 2018, Waiman Long wrote:
 
-Fix minor style issues in pci_sriov_set_totalvfs().  No functional change
-intended.
+>On a VM with only 1 vCPU, the locking fast paths will always be
+>successful. In this case, there is no need to use the the PV qspinlock
+>code which has higher overhead on the unlock side than the native
+>qspinlock code.
+>
+>The xen_pvspin veriable is also turned off in this 1 vCPU case to
+>eliminate unneeded pvqspinlock initialization in xen_init_lock_cpu()
+>which is run after xen_init_spinlocks().
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/iov.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Wouldn't kvm also want this?
 
-diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-index d0d73dbbd5ca..aee859971ba1 100644
---- a/drivers/pci/iov.c
-+++ b/drivers/pci/iov.c
-@@ -802,15 +802,15 @@ int pci_sriov_set_totalvfs(struct pci_dev *dev, u16 numvfs)
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index a37bda38d205..95aceb692010 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -457,7 +457,8 @@ static void __init sev_map_percpu_data(void)
+ static void __init kvm_smp_prepare_cpus(unsigned int max_cpus)
  {
- 	if (!dev->is_physfn)
- 		return -ENOSYS;
-+
- 	if (numvfs > dev->sriov->total_VFs)
- 		return -EINVAL;
- 
- 	/* Shouldn't change if VFs already enabled */
- 	if (dev->sriov->ctrl & PCI_SRIOV_CTRL_VFE)
- 		return -EBUSY;
--	else
--		dev->sriov->driver_max_VFs = numvfs;
- 
-+	dev->sriov->driver_max_VFs = numvfs;
- 	return 0;
+ 	native_smp_prepare_cpus(max_cpus);
+-	if (kvm_para_has_hint(KVM_HINTS_REALTIME))
++	if (num_possible_cpus() == 1 ||
++	    kvm_para_has_hint(KVM_HINTS_REALTIME))
+ 		static_branch_disable(&virt_spin_lock_key);
  }
- EXPORT_SYMBOL_GPL(pci_sriov_set_totalvfs);
-
