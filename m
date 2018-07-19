@@ -2,161 +2,127 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C579ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4A2ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00CC820684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:18:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00CC820684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A75B20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:19:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A75B20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731892AbeGSQBl (ORCPT
+        id S1731852AbeGSQD0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:01:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33438 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730899AbeGSQBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:01:40 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B3D9587AC4;
-        Thu, 19 Jul 2018 15:18:00 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 92F1A2026D6B;
-        Thu, 19 Jul 2018 15:17:57 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 23:17:53 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        dan.j.williams@intel.com, nicolas.pitre@linaro.org,
-        josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de,
-        andy.shevchenko@gmail.com, patrik.r.jakobsson@gmail.com,
-        airlied@linux.ie, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, dmitry.torokhov@gmail.com,
-        frowand.list@gmail.com, keith.busch@intel.com,
-        jonathan.derrick@intel.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, tglx@linutronix.de, brijesh.singh@amd.com,
-        jglisse@redhat.com, thomas.lendacky@amd.com,
-        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
-        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
-        yinghai@kernel.org, monstr@monstr.eu, davem@davemloft.net,
-        chris@zankel.net, jcmvbkbc@gmail.com, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH v7 4/4] kexec_file: Load kernel at top of system RAM if
- required
-Message-ID: <20180719151753.GB7147@localhost.localdomain>
-References: <20180718024944.577-1-bhe@redhat.com>
- <20180718024944.577-5-bhe@redhat.com>
- <20180718153326.b795e9ea7835432a56cd7011@linux-foundation.org>
+        Thu, 19 Jul 2018 12:03:26 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33377 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731567AbeGSQD0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:03:26 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fgAiW-0001oW-9I; Thu, 19 Jul 2018 17:19:44 +0200
+Date:   Thu, 19 Jul 2018 17:19:43 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        mingo@redhat.com, bhe@redhat.com, keescook@chromium.org,
+        yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com,
+        lcapitulino@redhat.com, caoj.fnst@cn.fujitsu.com,
+        douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v3 1/4] x86/boot: Add acpitb.h to help parse acpi
+ tables
+In-Reply-To: <20180717100409.10547-2-fanc.fnst@cn.fujitsu.com>
+Message-ID: <alpine.DEB.2.21.1807191717330.1693@nanos.tec.linutronix.de>
+References: <20180717100409.10547-1-fanc.fnst@cn.fujitsu.com> <20180717100409.10547-2-fanc.fnst@cn.fujitsu.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718153326.b795e9ea7835432a56cd7011@linux-foundation.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 19 Jul 2018 15:18:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 19 Jul 2018 15:18:01 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Tue, 17 Jul 2018, Chao Fan wrote:
 
-On 07/18/18 at 03:33pm, Andrew Morton wrote:
-> On Wed, 18 Jul 2018 10:49:44 +0800 Baoquan He <bhe@redhat.com> wrote:
+> In order to parse ACPI tables, reuse the head file linux/acpi.h,
+> so that the files in 'compressed' directory can read ACPI table
+> by including this head file.
 > 
-> > For kexec_file loading, if kexec_buf.top_down is 'true', the memory which
-> > is used to load kernel/initrd/purgatory is supposed to be allocated from
-> > top to down. This is what we have been doing all along in the old kexec
-> > loading interface and the kexec loading is still default setting in some
-> > distributions. However, the current kexec_file loading interface doesn't
-> > do like this. The function arch_kexec_walk_mem() it calls ignores checking
-> > kexec_buf.top_down, but calls walk_system_ram_res() directly to go through
-> > all resources of System RAM from bottom to up, to try to find memory region
-> > which can contain the specific kexec buffer, then call locate_mem_hole_callback()
-> > to allocate memory in that found memory region from top to down. This brings
-> > confusion especially when KASLR is widely supported , users have to make clear
-> > why kexec/kdump kernel loading position is different between these two
-> > interfaces in order to exclude unnecessary noises. Hence these two interfaces
-> > need be unified on behaviour.
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/acpitb.h | 50 +++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 arch/x86/boot/compressed/acpitb.h
 > 
-> As far as I can tell, the above is the whole reason for the patchset,
-> yes?  To avoid confusing users.
+> diff --git a/arch/x86/boot/compressed/acpitb.h b/arch/x86/boot/compressed/acpitb.h
+> new file mode 100644
+> index 000000000000..fd2bba23f447
+> --- /dev/null
+> +++ b/arch/x86/boot/compressed/acpitb.h
+> @@ -0,0 +1,50 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#include <linux/acpi.h>
+> +
+> +#define ACPI_MAX_TABLES                128
+> +
+> +/* Function to get ACPI SRAT table pointer. */
+> +struct acpi_table_header *get_acpi_srat_table(void);
+> +
+> +#ifdef ACPI_BIG_ENDIAN
+> +
+> +#define ACPI_MOVE_64_TO_64(d, s) \
+> +{((u8 *)(void *)(d))[0] = ((u8 *)(void *)(s))[7]; \
+> +((u8 *)(void *)(d))[1] = ((u8 *)(void *)(s))[6]; \
+> +((u8 *)(void *)(d))[2] = ((u8 *)(void *)(s))[5]; \
+> +((u8 *)(void *)(d))[3] = ((u8 *)(void *)(s))[4]; \
+> +((u8 *)(void *)(d))[4] = ((u8 *)(void *)(s))[3]; \
+> +((u8 *)(void *)(d))[5] = ((u8 *)(void *)(s))[2]; \
+> +((u8 *)(void *)(d))[6] = ((u8 *)(void *)(s))[1]; \
+> +((u8 *)(void *)(d))[7] = ((u8 *)(void *)(s))[0]; }
 
+Whats wrong with be64_to_cpu() ?
 
-In fact, it's not just trying to avoid confusing users. Kexec loading
-and kexec_file loading are just do the same thing in essence. Just we
-need do kernel image verification on uefi system, have to port kexec
-loading code to kernel. 
+> +
+> +#define ACPI_MOVE_16_TO_32(d, s) \
+> +{(*(u32 *)(void *)(d)) = 0; \
+> +((u8 *)(void *)(d))[2] = ((u8 *)(void *)(s))[1]; \
+> +((u8 *)(void *)(d))[3] = ((u8 *)(void *)(s))[0]; }
 
-Kexec has been a formal feature in our distro, and customers owning
-those kind of very large machine can make use of this feature to speed
-up the reboot process. On uefi machine, the kexec_file loading will
-search place to put kernel under 4G from top to down. As we know, the
-1st 4G space is DMA32 ZONE, dma, pci mmcfg, bios etc all try to consume
-it. It may have possibility to not be able to find a usable space for
-kernel/initrd. From the top down of the whole memory space, we don't
-have this worry. 
+Huch? 
 
-And at the first post, I just posted below with AKASHI's
-walk_system_ram_res_rev() version. Later you suggested to use
-list_head to link child sibling of resource, see what the code change
-looks like.
-http://lkml.kernel.org/r/20180322033722.9279-1-bhe@redhat.com
+> +
+> +#else
+> +#ifndef ACPI_MISALIGNMENT_NOT_SUPPORTED
+> +
+> +#define ACPI_MOVE_64_TO_64(d, s) \
+> +{*(u64 *)(void *)(d) = *(u64 *)(void *)(s); }
+> +
+> +#define ACPI_MOVE_16_TO_32(d, s) \
+> +{*(u32 *)(void *)(d) = *(u16 *)(void *)(s); }
+> +
+> +#else
+> +#define ACPI_MOVE_64_TO_64(d, s) \
+> +{((u8 *)(void *)(d))[0] = ((u8 *)(void *)(s))[0]; \
+> +((u8 *)(void *)(d))[1] = ((u8 *)(void *)(s))[1]; \
+> +((u8 *)(void *)(d))[2] = ((u8 *)(void *)(s))[2]; \
+> +((u8 *)(void *)(d))[3] = ((u8 *)(void *)(s))[3]; \
+> +((u8 *)(void *)(d))[4] = ((u8 *)(void *)(s))[4]; \
+> +((u8 *)(void *)(d))[5] = ((u8 *)(void *)(s))[5]; \
+> +((u8 *)(void *)(d))[6] = ((u8 *)(void *)(s))[6]; \
+> +((u8 *)(void *)(d))[7] = ((u8 *)(void *)(s))[7]; }
 
-Then I posted v2
-http://lkml.kernel.org/r/20180408024724.16812-1-bhe@redhat.com
-Rob Herring mentioned that other components which has this tree struct
-have planned to do the same thing, replacing the singly linked list with
-list_head to link resource child sibling. Just quote Rob's words as
-below. I think this could be another reason.
+And why doees this have to be done bytewise? Some comments would be
+helpful.
 
-~~~~~ From Rob
-The DT struct device_node also has the same tree structure with
-parent, child, sibling pointers and converting to list_head had been
-on the todo list for a while. ACPI also has some tree walking
-functions (drivers/acpi/acpica/pstree.c). Perhaps there should be a
-common tree struct and helpers defined either on top of list_head or a
-~~~~~
-new struct if that saves some size.
+Thanks,
 
-> 
-> Is that sufficient?  Can we instead simplify their lives by providing
-> better documentation or informative printks or better Kconfig text,
-> etc?
-> 
-> And who *are* the people who are performing this configuration?  Random
-> system administrators?  Linux distro engineers?  If the latter then
-> they presumably aren't easily confused!
-
-Kexec was invented for kernel developer to speed up their kernel
-rebooting. Now high end sever admin, kernel developer and QE are also
-keen to use it to reboot large box for faster feature testing, bug
-debugging. Kernel dev could know this well, about kernel loading
-position, admin or QE might not be aware of it very well. 
-
-> 
-> In other words, I'm trying to understand how much benefit this patchset
-> will provide to our users as a whole.
-
-Understood. The list_head replacing patch truly involes too many code
-changes, it's risky. I am willing to try any idea from reviewers, won't
-persuit they have to be accepted finally. If don't have a try, we don't
-know what it looks like, and what impact it may have. I am fine to take
-AKASHI's simple version of walk_system_ram_res_rev() to lower risk, even
-though it could be a little bit low efficient.
-
-Thanks
-Baoquan
+	tglx
