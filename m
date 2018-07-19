@@ -2,157 +2,230 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2164C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8663ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 781F1206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:44:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781F1206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 78B49206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:46:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="ayaa5o4L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B49206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=impinj.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbeGSU3Z (ORCPT
+        id S1730021AbeGSUak (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 16:29:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51396 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbeGSU3Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 16:29:24 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88114A73;
-        Thu, 19 Jul 2018 19:44:45 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 12:44:44 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        dan.j.williams@intel.com, nicolas.pitre@linaro.org,
-        josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de,
-        andy.shevchenko@gmail.com, patrik.r.jakobsson@gmail.com,
-        airlied@linux.ie, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, dmitry.torokhov@gmail.com,
-        frowand.list@gmail.com, keith.busch@intel.com,
-        jonathan.derrick@intel.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, tglx@linutronix.de, brijesh.singh@amd.com,
-        jglisse@redhat.com, thomas.lendacky@amd.com,
-        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
-        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
-        yinghai@kernel.org, monstr@monstr.eu, davem@davemloft.net,
-        chris@zankel.net, jcmvbkbc@gmail.com, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH v7 4/4] kexec_file: Load kernel at top of system RAM if
- required
-Message-Id: <20180719124444.c893712cca2e6f2649d1bc0d@linux-foundation.org>
-In-Reply-To: <20180719151753.GB7147@localhost.localdomain>
-References: <20180718024944.577-1-bhe@redhat.com>
-        <20180718024944.577-5-bhe@redhat.com>
-        <20180718153326.b795e9ea7835432a56cd7011@linux-foundation.org>
-        <20180719151753.GB7147@localhost.localdomain>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 19 Jul 2018 16:30:40 -0400
+Received: from mail-by2nam01on0129.outbound.protection.outlook.com ([104.47.34.129]:45030
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727492AbeGSUaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 16:30:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OEaIIS5Ivp4/3v8nVtmgJBgLKc3jJF7s92w6CqGWpA4=;
+ b=ayaa5o4LEs0gdBlPuLgO14TRjcx79RzAskCzhq1g8ly035866aKXtU/1GLt5JafR8z6BffAK7Sgptt0y+KZf+4XouNme8QSMgvVnY0J2jowRIWLtEl2c42OJAwwQ1WGK7ZBbMP2EtupWfTBzpGHyAFQ9gbTYp6EzNA3+l+YaUpQ=
+Received: from CY4PR0601MB3697.namprd06.prod.outlook.com (52.132.101.36) by
+ CY4PR0601MB3713.namprd06.prod.outlook.com (52.132.101.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.16; Thu, 19 Jul 2018 19:45:43 +0000
+Received: from CY4PR0601MB3697.namprd06.prod.outlook.com
+ ([fe80::b436:7c9e:779e:6289]) by CY4PR0601MB3697.namprd06.prod.outlook.com
+ ([fe80::b436:7c9e:779e:6289%4]) with mapi id 15.20.0952.021; Thu, 19 Jul 2018
+ 19:45:43 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "hayashibara.keiji@socionext.com" <hayashibara.keiji@socionext.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "masami.hiramatsu@linaro.org" <masami.hiramatsu@linaro.org>,
+        "jaswinder.singh@linaro.org" <jaswinder.singh@linaro.org>,
+        "hayashi.kunihiko@socionext.com" <hayashi.kunihiko@socionext.com>
+Subject: Re: [PATCH 2/2] spi: add SPI controller driver for UniPhier SoC
+Thread-Topic: [PATCH 2/2] spi: add SPI controller driver for UniPhier SoC
+Thread-Index: AQHUHy08NRz2JFv0PES+aYnH5dMTwqSW88wA
+Date:   Thu, 19 Jul 2018 19:45:43 +0000
+Message-ID: <1532029542.2283.157.camel@impinj.com>
+References: <1531983117-9443-1-git-send-email-hayashibara.keiji@socionext.com>
+         <1531983117-9443-3-git-send-email-hayashibara.keiji@socionext.com>
+In-Reply-To: <1531983117-9443-3-git-send-email-hayashibara.keiji@socionext.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR0601MB3713;6:XiH3ILKRfP6vf1L5zMZzpsnySb+4lM7KnHl0BTDrXu0kX7ilKLr1tK6BZaEPOHhsT1C8rOzvtfEGrxJ/Dygwq1KCTcxARJLOX6tqR8r3HCnacF7IIBo/eMtuWhqhYKsASs18MWHUXNwaWJHocAkQLw3dEA3VrjyVkgKjLLPy78Nb55Mdl8j6dld1gAnGduABetk3MX+IYTiaF9DQfA3GgXkPQp/n6dT/Pg777bhvKqzeerc53+Sal3BTFBCrVYP4kdGMwwAz1PciKJn/q7ABUSSyjcK9/+5yRVpKCVyex5+/UMdBY3J1bDritai53ziV7ek3acF5rE6KDWuN3klw9S0cTvoQ7ZiAXruZwPp4I1mnNgY2D11kLsTe74Z8o9DMvj2QFJ99Y9+hVYS8DROezsKXhjSy6nPz5ZacFZkNyqZ6mNB/SDMXLcg6HTzUeQxePACIXcM0K7h18xo0QERVMg==;5:z77gGcLZeKUnUItQ/PYCx2exV2skj+1P8yLmwSkix3W/Fywgwlr5k+ZB8FHG2eUhl5Q8dBVtZzJEyg0sw4qA+S5Cm6QDFvV0t/YBHoXm/yu8ppeS/Wop7qIMw8CRozwqJsMjyDmcjgcKT6oc8e/7Q/fliWPAamOHWvyfr/5xdGo=;7:XiKP4zphEQTFTEBLvAsQ0ZMcqfKgl/F20HycYB663onz9Thg205+3zb9kqWM5UJ8OAy/dLUApgc6EDTGTe/2/SlA5R+t8cKja6EwaMn3gXiophk8XV+sgHbpNH+ZA4iixIqeWPzT/QuTb6AJqDxRpmmfzdP92Ya2AZwnb05lvIXI8iGPltJGFYEJ590q1Rfw8onm2LbM3OTpAKDFvEDbIrZIu+aypMcNJ3eolTzL4XFiVMLhhuBkRZq8mrva9Ip9
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 29cccb32-3520-450c-bf4f-08d5edb036eb
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600067)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:CY4PR0601MB3713;
+x-ms-traffictypediagnostic: CY4PR0601MB3713:
+x-microsoft-antispam-prvs: <CY4PR0601MB37131C160C865EAD6A3BB3EAD3520@CY4PR0601MB3713.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CY4PR0601MB3713;BCL:0;PCL:0;RULEID:;SRVR:CY4PR0601MB3713;
+x-forefront-prvs: 0738AF4208
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(39850400004)(396003)(376002)(366004)(189003)(199004)(316002)(14454004)(110136005)(99286004)(5250100002)(54906003)(2501003)(478600001)(106356001)(105586002)(36756003)(7416002)(2906002)(5660300001)(68736007)(26005)(2900100001)(102836004)(6506007)(11346002)(86362001)(8936002)(81156014)(3846002)(81166006)(8676002)(2201001)(76176011)(97736004)(6486002)(53936002)(6116002)(476003)(446003)(7736002)(486006)(305945005)(256004)(229853002)(103116003)(6436002)(4326008)(6246003)(25786009)(6512007)(66066001)(186003)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR0601MB3713;H:CY4PR0601MB3697.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: dbPqydEv3tZFqnupFnSb7jv+bUOoQnRDddT85Q7IOJ23DhTFxw3LXt1H/z0gj54TGOrHpDdrg3zYknHSOTEEbwhcAKngkc7Y6+fTmvAFL2ge8dYBPil3U1kwGY8wkoIhlYcUb2B9JPqJa491/jf4R+7WPWM76krrnav6w2nalS5le/leq0nKwYLv5P9EczMWP3+clD0HiZRoeYDf9+90wQp+wgywQA0rXxzxzCb7SCJnVm8a4KaaePQtlzX40thknTV4pMwtl1/RxUork3M/CAsXfX5DThq/XpuAOmWzBsIHx9hkU43T9MPJODqYcQl8M20V+13AnBzXJZAjVoOAPZQ1E7VH8qMMMR4ZWyF4VAw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6FCCB6CBC67CC84FAF8320B6962F4146@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29cccb32-3520-450c-bf4f-08d5edb036eb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2018 19:45:43.3219
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0601MB3713
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 23:17:53 +0800 Baoquan He <bhe@redhat.com> wrote:
-
-> Hi Andrew,
-> 
-> On 07/18/18 at 03:33pm, Andrew Morton wrote:
-> > On Wed, 18 Jul 2018 10:49:44 +0800 Baoquan He <bhe@redhat.com> wrote:
-> > 
-> > > For kexec_file loading, if kexec_buf.top_down is 'true', the memory which
-> > > is used to load kernel/initrd/purgatory is supposed to be allocated from
-> > > top to down. This is what we have been doing all along in the old kexec
-> > > loading interface and the kexec loading is still default setting in some
-> > > distributions. However, the current kexec_file loading interface doesn't
-> > > do like this. The function arch_kexec_walk_mem() it calls ignores checking
-> > > kexec_buf.top_down, but calls walk_system_ram_res() directly to go through
-> > > all resources of System RAM from bottom to up, to try to find memory region
-> > > which can contain the specific kexec buffer, then call locate_mem_hole_callback()
-> > > to allocate memory in that found memory region from top to down. This brings
-> > > confusion especially when KASLR is widely supported , users have to make clear
-> > > why kexec/kdump kernel loading position is different between these two
-> > > interfaces in order to exclude unnecessary noises. Hence these two interfaces
-> > > need be unified on behaviour.
-> > 
-> > As far as I can tell, the above is the whole reason for the patchset,
-> > yes?  To avoid confusing users.
-> 
-> 
-> In fact, it's not just trying to avoid confusing users. Kexec loading
-> and kexec_file loading are just do the same thing in essence. Just we
-> need do kernel image verification on uefi system, have to port kexec
-> loading code to kernel. 
-> 
-> Kexec has been a formal feature in our distro, and customers owning
-> those kind of very large machine can make use of this feature to speed
-> up the reboot process. On uefi machine, the kexec_file loading will
-> search place to put kernel under 4G from top to down. As we know, the
-> 1st 4G space is DMA32 ZONE, dma, pci mmcfg, bios etc all try to consume
-> it. It may have possibility to not be able to find a usable space for
-> kernel/initrd. From the top down of the whole memory space, we don't
-> have this worry. 
-> 
-> And at the first post, I just posted below with AKASHI's
-> walk_system_ram_res_rev() version. Later you suggested to use
-> list_head to link child sibling of resource, see what the code change
-> looks like.
-> http://lkml.kernel.org/r/20180322033722.9279-1-bhe@redhat.com
-> 
-> Then I posted v2
-> http://lkml.kernel.org/r/20180408024724.16812-1-bhe@redhat.com
-> Rob Herring mentioned that other components which has this tree struct
-> have planned to do the same thing, replacing the singly linked list with
-> list_head to link resource child sibling. Just quote Rob's words as
-> below. I think this could be another reason.
-> 
-> ~~~~~ From Rob
-> The DT struct device_node also has the same tree structure with
-> parent, child, sibling pointers and converting to list_head had been
-> on the todo list for a while. ACPI also has some tree walking
-> functions (drivers/acpi/acpica/pstree.c). Perhaps there should be a
-> common tree struct and helpers defined either on top of list_head or a
-> ~~~~~
-> new struct if that saves some size.
-
-Please let's get all this into the changelogs?
-
-> > 
-> > Is that sufficient?  Can we instead simplify their lives by providing
-> > better documentation or informative printks or better Kconfig text,
-> > etc?
-> > 
-> > And who *are* the people who are performing this configuration?  Random
-> > system administrators?  Linux distro engineers?  If the latter then
-> > they presumably aren't easily confused!
-> 
-> Kexec was invented for kernel developer to speed up their kernel
-> rebooting. Now high end sever admin, kernel developer and QE are also
-> keen to use it to reboot large box for faster feature testing, bug
-> debugging. Kernel dev could know this well, about kernel loading
-> position, admin or QE might not be aware of it very well. 
-> 
-> > 
-> > In other words, I'm trying to understand how much benefit this patchset
-> > will provide to our users as a whole.
-> 
-> Understood. The list_head replacing patch truly involes too many code
-> changes, it's risky. I am willing to try any idea from reviewers, won't
-> persuit they have to be accepted finally. If don't have a try, we don't
-> know what it looks like, and what impact it may have. I am fine to take
-> AKASHI's simple version of walk_system_ram_res_rev() to lower risk, even
-> though it could be a little bit low efficient.
-
-The larger patch produces a better result.  We can handle it ;)
+T24gVGh1LCAyMDE4LTA3LTE5IGF0IDE1OjUxICswOTAwLCBLZWlqaSBIYXlhc2hpYmFyYSB3cm90
+ZToNCj4gDQo+ICtjb25maWcgU1BJX1VOSVBISUVSDQo+ICsJdHJpc3RhdGUgIlNvY2lvbmV4dCBV
+bmlQaGllciBTUEkgQ29udHJvbGxlciINCj4gKwlkZXBlbmRzIG9uIChBUkNIX1VOSVBISUVSIHx8
+IENPTVBJTEVfVEVTVCkgJiYgT0YNCj4gKwloZWxwDQo+ICsJICBUaGlzIGRyaXZlciBzdXBwb3J0
+cyB0aGUgU1BJIGNvbnRyb2xsZXIgb24gU29jaW9uZXh0DQo+ICsJICBVbmlQaGllciBTb0NzLg0K
+DQpQZXJoYXBzIGFkZCB0aGUgYml0IHRoYXQgdGhpcyBpcyBmb3IgdGhlIFNDU1NJIGFuZCBub3Qg
+TUNTU0kgaGVyZT8NCg0KPiANCj4gKw0KPiArI2RlZmluZSBCWVRFU19QRVJfV09SRCh4KQkJCVwN
+Cj4gKyh7CQkJCQkJXA0KPiArCWludCBfX3g7CQkJCVwNCj4gKwlfX3ggPSAoeCA8PSA4KSAgPyAx
+IDoJCQlcDQo+ICsJICAgICAgKHggPD0gMTYpID8gMiA6IDQ7CQlcDQo+ICsJX194OwkJCQkJXA0K
+PiArfSkNCg0KT3I6DQoNCnN0YXRpYyBpbmxpbmUgYnl0ZXNfcGVyX3dvcmQodW5zaWduZWQgaW50
+IGJpdHMpIHsNCiAgIHJldHVybiBiaXRzIDw9IDggPyAxIDogKGJpdHMgPD0gMTYgPyAyIDogNCk7
+DQp9DQoNCg0KDQo+ICsNCj4gK3N0YXRpYyBpbmxpbmUgdm9pZCB1bmlwaGllcl9zcGlfaXJxX2Vu
+YWJsZShzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpLCB1MzIgbWFzaykNCj4gK3sNCj4gKwlzdHJ1Y3Qg
+dW5pcGhpZXJfc3BpX3ByaXYgKnByaXYgPSBzcGlfbWFzdGVyX2dldF9kZXZkYXRhKHNwaS0+bWFz
+dGVyKTsNCj4gKwl1MzIgdmFsOw0KPiArDQo+ICsJdmFsID0gcmVhZGwocHJpdi0+YmFzZSArIFNT
+SV9JRSk7DQo+ICsJdmFsIHw9IG1hc2s7DQo+ICsJd3JpdGVsKHZhbCwgcHJpdi0+YmFzZSArIFNT
+SV9JRSk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbmxpbmUgdm9pZCB1bmlwaGllcl9zcGlfaXJx
+X2Rpc2FibGUoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwgdTMyIG1hc2spDQo+ICt7DQo+ICsJc3Ry
+dWN0IHVuaXBoaWVyX3NwaV9wcml2ICpwcml2ID0gc3BpX21hc3Rlcl9nZXRfZGV2ZGF0YShzcGkt
+Pm1hc3Rlcik7DQo+ICsJdTMyIHZhbDsNCj4gKw0KPiArCXZhbCA9IHJlYWRsKHByaXYtPmJhc2Ug
+KyBTU0lfSUUpOw0KPiArCXZhbCAmPSB+bWFzazsNCj4gKwl3cml0ZWwodmFsLCBwcml2LT5iYXNl
+ICsgU1NJX0lFKTsNCj4gK30NCj4gKw0KPiArc3RhdGljIHZvaWQgdW5pcGhpZXJfc3BpX3NldF90
+cmFuc2Zlcl9zaXplKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIGludCBzaXplKQ0KPiArew0KPiAr
+CXN0cnVjdCB1bmlwaGllcl9zcGlfcHJpdiAqcHJpdiA9IHNwaV9tYXN0ZXJfZ2V0X2RldmRhdGEo
+c3BpLT5tYXN0ZXIpOw0KPiArCXUzMiB2YWw7DQo+ICsNCj4gKwl2YWwgPSByZWFkbChwcml2LT5i
+YXNlICsgU1NJX1RYV0RTKTsNCj4gKwl2YWwgJj0gfihTU0lfVFhXRFNfV0RMRU5fTUFTSyB8IFNT
+SV9UWFdEU19EVExFTl9NQVNLKTsNCj4gKwl2YWwgfD0gRklFTERfUFJFUChTU0lfVFhXRFNfV0RM
+RU5fTUFTSywgc2l6ZSk7DQo+ICsJdmFsIHw9IEZJRUxEX1BSRVAoU1NJX1RYV0RTX0RUTEVOX01B
+U0ssIHNpemUpOw0KPiArCXdyaXRlbCh2YWwsIHByaXYtPmJhc2UgKyBTU0lfVFhXRFMpOw0KPiAr
+DQo+ICsJdmFsID0gcmVhZGwocHJpdi0+YmFzZSArIFNTSV9SWFdEUyk7DQo+ICsJdmFsICY9IH5T
+U0lfUlhXRFNfRFRMRU5fTUFTSzsNCj4gKwl2YWwgfD0gRklFTERfUFJFUChTU0lfUlhXRFNfRFRM
+RU5fTUFTSywgc2l6ZSk7DQo+ICsJd3JpdGVsKHZhbCwgcHJpdi0+YmFzZSArIFNTSV9SWFdEUyk7
+DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgdW5pcGhpZXJfc3BpX3NldF9iYXVkcmF0ZShzdHJ1
+Y3Qgc3BpX2RldmljZSAqc3BpLCB1bnNpZ25lZCBpbnQgc3BlZWQpDQo+ICt7DQo+ICsJc3RydWN0
+IHVuaXBoaWVyX3NwaV9wcml2ICpwcml2ID0gc3BpX21hc3Rlcl9nZXRfZGV2ZGF0YShzcGktPm1h
+c3Rlcik7DQo+ICsJdTMyIHZhbCwgY2tyYXQ7DQo+ICsNCj4gKwkvKg0KPiArCSAqIHRoZSBzdXBw
+b3J0ZWQgcmF0ZXMgYXJlIGV2ZW4gbnVtYmVycyBmcm9tIDQgdG8gMjU0LiAoNCw2LDguLi4yNTQp
+DQo+ICsJICogcm91bmQgdXAgYXMgd2UgbG9vayBmb3IgZXF1YWwgb3IgbGVzcyBzcGVlZA0KPiAr
+CSAqLw0KPiArCWNrcmF0ID0gRElWX1JPVU5EX1VQKGNsa19nZXRfcmF0ZShwcml2LT5jbGspLCBz
+cGVlZCk7DQo+ICsJY2tyYXQgPSByb3VuZHVwKGNrcmF0LCAyKTsNCj4gKw0KPiArCS8qIGNoZWNr
+IGlmIHJlcXVlc3RlZCBzcGVlZCBpcyB0b28gc21hbGwgKi8NCj4gKwlpZiAoY2tyYXQgPiBTU0lf
+TUFYX0NMS19ESVZJREVSKQ0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKw0KPiArCWlmIChja3Jh
+dCA8IFNTSV9NSU5fQ0xLX0RJVklERVIpDQo+ICsJCWNrcmF0ID0gU1NJX01JTl9DTEtfRElWSURF
+UjsNCj4gKw0KPiArCXZhbCA9IHJlYWRsKHByaXYtPmJhc2UgKyBTU0lfQ0tTKTsNCj4gKwl2YWwg
+Jj0gflNTSV9DS1NfQ0tSQVRfTUFTSzsNCj4gKwl2YWwgfD0gY2tyYXQgJiBTU0lfQ0tTX0NLUkFU
+X01BU0s7DQo+ICsJd3JpdGVsKHZhbCwgcHJpdi0+YmFzZSArIFNTSV9DS1MpOw0KPiArDQo+ICsJ
+cmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgdW5pcGhpZXJfc3BpX3NldHVwX3Ry
+YW5zZmVyKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksDQo+ICsJCQkJICAgICAgIHN0cnVjdCBzcGlf
+dHJhbnNmZXIgKnQpDQo+ICt7DQo+ICsJc3RydWN0IHVuaXBoaWVyX3NwaV9wcml2ICpwcml2ID0g
+c3BpX21hc3Rlcl9nZXRfZGV2ZGF0YShzcGktPm1hc3Rlcik7DQo+ICsJdTMyIHZhbDsNCj4gKwlp
+bnQgcmV0Ow0KPiArDQo+ICsJcHJpdi0+ZXJyb3IgPSAwOw0KPiArCXByaXYtPnR4X2J1ZiA9IHQt
+PnR4X2J1ZjsNCj4gKwlwcml2LT5yeF9idWYgPSB0LT5yeF9idWY7DQo+ICsJcHJpdi0+dHhfYnl0
+ZXMgPSBwcml2LT5yeF9ieXRlcyA9IHQtPmxlbjsNCj4gKw0KPiArCWlmIChwcml2LT5iaXRzX3Bl
+cl93b3JkICE9IHQtPmJpdHNfcGVyX3dvcmQpIHsNCj4gKwkJdW5pcGhpZXJfc3BpX3NldF90cmFu
+c2Zlcl9zaXplKHNwaSwgdC0+Yml0c19wZXJfd29yZCk7DQo+ICsJCXByaXYtPmJpdHNfcGVyX3dv
+cmQgPSB0LT5iaXRzX3Blcl93b3JkOw0KPiArCX0NCj4gKw0KPiArCWlmIChwcml2LT5zcGVlZF9o
+eiAhPSB0LT5zcGVlZF9oeikgew0KPiArCQlyZXQgPSB1bmlwaGllcl9zcGlfc2V0X2JhdWRyYXRl
+KHNwaSwgdC0+c3BlZWRfaHopOw0KPiArCQlpZiAocmV0KQ0KPiArCQkJcmV0dXJuIHJldDsNCj4g
+KwkJcHJpdi0+c3BlZWRfaHogPSB0LT5zcGVlZF9oejsNCj4gKwl9DQo+ICsNCj4gKwkvKiByZXNl
+dCBGSUZPcyAqLw0KPiArCXZhbCA9IFNTSV9GQ19UWEZGTCB8IFNTSV9GQ19SWEZGTDsNCj4gKwl3
+cml0ZWwodmFsLCBwcml2LT5iYXNlICsgU1NJX0ZDKTsNCj4gKw0KPiArCXJldHVybiAwOw0KPiAr
+fQ0KPiArDQo+ICtzdGF0aWMgdm9pZCB1bmlwaGllcl9zcGlfc2VuZChzdHJ1Y3QgdW5pcGhpZXJf
+c3BpX3ByaXYgKnByaXYpDQo+ICt7DQo+ICsJaW50IGksIGxvb3A7DQo+ICsJdTMyIHZhbCA9IDA7
+DQo+ICsNCj4gKwlsb29wID0gQllURVNfUEVSX1dPUkQocHJpdi0+Yml0c19wZXJfd29yZCk7DQo+
+ICsJaWYgKHByaXYtPnR4X2J5dGVzIDwgbG9vcCkNCj4gKwkJbG9vcCA9IHByaXYtPnR4X2J5dGVz
+Ow0KPiArDQo+ICsJcHJpdi0+dHhfYnl0ZXMgLT0gbG9vcDsNCj4gKw0KPiArCWlmIChwcml2LT50
+eF9idWYpDQo+ICsJCWZvciAoaSA9IDA7IGkgPCBsb29wOyBpKyspIHsNCj4gKwkJCXZhbCB8PSAo
+Kihjb25zdCB1OCAqKXByaXYtPnR4X2J1ZikNCj4gKwkJCQkJCTw8IChCSVRTX1BFUl9CWVRFICog
+aSk7DQoNCnByaXYtPnR4X2J1ZiBpcyBhbHJlYWR5IGEgY29uc3QgdTgqLCBubyBuZWVkIHRvIGNh
+c3QgaXQuICBBbHNvIGluIHJlY3YsDQpubyBuZWVkIHRvIGNhc3QgdGhlIHBvaW50ZXIuICBJdCds
+bCBqdXN0IGhpZGUgZXJyb3JzIGlmIHNvbWVvbmUgY2hhbmdlcw0KdGhlIHR5cGUgb2YgdGhlIGZp
+ZWxkLg0KDQo+ICsJCQkoY29uc3QgdTggKilwcml2LT50eF9idWYrKzsNCj4gKwkJfQ0KPiArDQo+
+ICsJd3JpdGVsKHZhbCwgcHJpdi0+YmFzZSArIFNTSV9UWERSKTsNCj4gK30NCg0KVGhlIGxvb3Ag
+dG8gcmVhZCB0aGUgZGF0YSB3aWxsIGxpa2VseSBiZSBzb21ld2hhdCBzbG93LiAgSXQgbWlnaHQg
+YmUNCmZhc3RlciB0byB1c2U6DQoNCiAgICB2YWwgPSBnZXRfdW5hbGlnbmVkX2xlMzIocHJpdi0+
+dHhfYnVmKTsNCg0KVG8gc3VwcG9ydCBkaWZmZXJlbnQgc2l6ZXMgYSBzd2l0Y2ggY2FuIGJlIHVz
+ZWQ6DQoNCiAgICBzd2l0Y2ggKE1JTihCWVRFU19QRVJfV09SRChwcml2LT5iaXRzX3Blcl93b3Jk
+KSwgcHJpdi0+dHhfYnl0ZXMpKSB7DQogICAgY2FzZSAxOg0KICAgICAgICAgdmFsID0gKnByaXYt
+PnR4X2J1ZjsgYnJlYWs7DQogICAgY2FzZSAyOg0KICAgICAgICAgdmFsID0gZ2V0X3VuYWxpZ25l
+ZF9sZTE2KHByaXYtPnR4X2J1Zik7IGJyZWFrOw0KICAgIGNhc2UgNDoNCiAgICAgICAgIHZhbCA9
+IGdldF91bmFsaWduZWRfbGUzMihwcml2LT50eF9idWYpOyBicmVhazsNCiAgICB9DQoNCkhvd2V2
+ZXIsIEkgZG9uJ3QgdGhpbmsgZWl0aGVyIHRoZSBleGlzdGluZyBjb2RlIG9yIHRoaXMgY29kZSBp
+cw0KY29ycmVjdGx5IGhhbmRsaW5nIHdvcmQgc2l6ZXMgdGhhdCBhcmUgbm90IGFuIGV2ZW4gbnVt
+YmVyIG9mIGJ5dGVzLiAgSQ0KdGhpbmsgaXQgbmVlZHMgdG8gbGVmdCBzaGlmdCB0aGUgZGF0YSwg
+YnV0IG9mIGNvdXJzZSBpdCBhbHNvIGRlcGVuZHMgb24NCndoYXQgdGhlIHVuaXBoaWVyIGhhcmR3
+YXJlIGV4cGVjdGVkIGluIHRoZSBUWERSIHJlZ2lzdGVyLg0KDQoNCj4gK3N0YXRpYyB2b2lkIHVu
+aXBoaWVyX3NwaV9yZWN2KHN0cnVjdCB1bmlwaGllcl9zcGlfcHJpdiAqcHJpdikNCj4gK3sNCj4g
+KwlpbnQgaSwgbG9vcDsNCj4gKwl1MzIgdmFsOw0KPiArDQo+ICsJbG9vcCA9IEJZVEVTX1BFUl9X
+T1JEKHByaXYtPmJpdHNfcGVyX3dvcmQpOw0KPiArCWlmIChwcml2LT5yeF9ieXRlcyA8IGxvb3Ap
+DQo+ICsJCWxvb3AgPSBwcml2LT5yeF9ieXRlczsNCj4gKw0KPiArCXByaXYtPnJ4X2J5dGVzIC09
+IGxvb3A7DQo+ICsNCj4gKwl2YWwgPSByZWFkbChwcml2LT5iYXNlICsgU1NJX1JYRFIpOw0KPiAr
+DQo+ICsJaWYgKHByaXYtPnJ4X2J1ZikNCj4gKwkJZm9yIChpID0gMDsgaSA8IGxvb3A7IGkrKykg
+ew0KPiArCQkJdmFsID0gdmFsID4+IChCSVRTX1BFUl9CWVRFICogaSk7DQo+ICsJCQkqKHU4ICop
+cHJpdi0+cnhfYnVmID0gdmFsICYgR0VOTUFTSyg3LCAwKTsNCj4gKwkJCSh1OCAqKXByaXYtPnJ4
+X2J1ZisrOw0KPiArCQl9DQoNCg0KDQo+ICt9K3N0YXRpYyB2b2lkIHVuaXBoaWVyX3NwaV9maWxs
+X3R4X2ZpZm8oc3RydWN0IHVuaXBoaWVyX3NwaV9wcml2ICpwcml2KQ0KPiArew0KPiArCXVuc2ln
+bmVkIGludCB0eF9jb3VudDsNCj4gKwlpbnQgYnl0ZXNfcGVyX3dvcmQgPSBCWVRFU19QRVJfV09S
+RChwcml2LT5iaXRzX3Blcl93b3JkKTsNCj4gKwl1MzIgdmFsOw0KPiArDQo+ICsJdHhfY291bnQg
+PSBwcml2LT50eF9ieXRlcyAvIGJ5dGVzX3Blcl93b3JkOw0KPiArCWlmICh0eF9jb3VudCA+IFNT
+SV9GSUZPX0RFUFRIKQ0KPiArCQl0eF9jb3VudCA9IFNTSV9GSUZPX0RFUFRIOw0KPiArDQo+ICsJ
+Lyogc2V0IGZpZm8gdGhyZXRob2xkICovDQo+ICsJdmFsID0gcmVhZGwocHJpdi0+YmFzZSArIFNT
+SV9GQyk7DQo+ICsJdmFsICY9IH4oU1NJX0ZDX1RYRlRIX01BU0sgfCBTU0lfRkNfUlhGVEhfTUFT
+Syk7DQo+ICsJdmFsIHw9IEZJRUxEX1BSRVAoU1NJX0ZDX1RYRlRIX01BU0ssIHR4X2NvdW50KTsN
+Cj4gKwl2YWwgfD0gRklFTERfUFJFUChTU0lfRkNfUlhGVEhfTUFTSywgdHhfY291bnQpOw0KPiAr
+CXdyaXRlbCh2YWwsIHByaXYtPmJhc2UgKyBTU0lfRkMpOw0KPiArDQo+ICsJd2hpbGUgKHR4X2Nv
+dW50LS0pDQo+ICsJCXVuaXBoaWVyX3NwaV9zZW5kKHByaXYpOw0KPiArfQ0KDQpJZiB5b3UgaGF2
+ZSAyNCBiaXRzIHBlciB3b3JkLCAzIHdvcmRzLCB0aGF0J3MgOSBieXRlcy4gDQpCWVRFU19QRVJf
+V09SRCgyNCkgaXMgNC4gIHR4X2NvdW50ID0gOS80ID0gMi4gIExvb2tzIGxpa2UgeW91ciB0eF9j
+b3VudA0Kcm91bmRzIGluY29ycmVjdGx5LCBhcyBpdCB3aWxsIG9ubHkgc2VuZCA4IG9mIHRoZSA5
+IGJ5dGVzLg0KDQo+ICtzdGF0aWMgaW50IHVuaXBoaWVyX3NwaV9zZXR1cChzdHJ1Y3Qgc3BpX2Rl
+dmljZSAqc3BpKQ0KPiArew0KDQo+ICsNCj4gKwl3cml0ZWwodmFsMSwgcHJpdi0+YmFzZSArIFNT
+SV9DS1MpOw0KPiArCXdyaXRlbCh2YWwyLCBwcml2LT5iYXNlICsgU1NJX0ZQUyk7DQo+ICsNCj4g
+Kwl2YWwxID0gMDsNCj4gKwlpZiAoc3BpLT5tb2RlICYgU1BJX0xTQl9GSVJTVCkNCj4gKwkJdmFs
+MSB8PSBGSUVMRF9QUkVQKFNTSV9UWFdEU19URFRGX01BU0ssIDEpOw0KPiArCXdyaXRlbCh2YWwx
+LCBwcml2LT5iYXNlICsgU1NJX1RYV0RTKTsNCj4gKwl3cml0ZWwodmFsMSwgcHJpdi0+YmFzZSAr
+IFNTSV9SWFdEUyk7DQoNCkRpZCB5b3Ugc2VlIHRoaXMgaW4gdGhlIHNwaSBkb2NzPw0KDQogICAg
+ICAgIFVubGVzcyBlYWNoIFNQSSBzbGF2ZSBoYXMgaXRzIG93biBjb25maWd1cmF0aW9uIHJlZ2lz
+dGVycywgZG9uJ3QNCiAgICAgICAgY2hhbmdlIHRoZW0gcmlnaHQgYXdheSAuLi4gb3RoZXJ3aXNl
+IGRyaXZlcnMgY291bGQgY29ycnVwdCBJL08NCiAgICAgICAgdGhhdCdzIGluIHByb2dyZXNzIGZv
+ciBvdGhlciBTUEkgZGV2aWNlcy4NCg0KICAgICAgICAgICAgICAgICoqIEJVRyBBTEVSVDogIGZv
+ciBzb21lIHJlYXNvbiB0aGUgZmlyc3QgdmVyc2lvbiBvZg0KICAgICAgICAgICAgICAgICoqIG1h
+bnkgc3BpX21hc3RlciBkcml2ZXJzIHNlZW1zIHRvIGdldCB0aGlzIHdyb25nLg0KICAgICAgICAg
+ICAgICAgICoqIFdoZW4geW91IGNvZGUgc2V0dXAoKSwgQVNTVU1FIHRoYXQgdGhlIGNvbnRyb2xs
+ZXINCiAgICAgICAgICAgICAgICAqKiBpcyBhY3RpdmVseSBwcm9jZXNzaW5nIHRyYW5zZmVycyBm
+b3IgYW5vdGhlciBkZXZpY2UuDQoNCllvdSBoYXZlIG9uZSBjaGlwc2VsZWN0LCBzbyBtYXliZSB0
+aGlzIGlzIG9rLiAgVW50aWwgeW91IHdhbnQgdG8NCnN1cHBvcnQgbW9yZSB0aGFuIG9uZSBjaGlw
+c2VsZWN0Lg0KDQpXaXRoIGdwaW8gbGluZXMgYXMgY2hpcCBzZWxlY3RzLCB0aGVyZSdzIHJlYWxs
+eSBubyByZWFzb24gYW55IHNwaQ0KbWFzdGVyIGNhbid0IHN1cHBvcnQgbXVsdGlwbGUgc2xhdmVz
+Lg==
