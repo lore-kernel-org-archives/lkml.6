@@ -1,159 +1,118 @@
 Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2B8C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77C9C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88CC22084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:09:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88CC22084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0662D2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:09:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxWtBSNR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0662D2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730813AbeGSMvy (ORCPT
+        id S1731235AbeGSMwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 08:51:54 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:34006 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbeGSMvx (ORCPT
+        Thu, 19 Jul 2018 08:52:23 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42213 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727489AbeGSMwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:51:53 -0400
-Received: by mail-io0-f197.google.com with SMTP id f9-v6so5697011ioh.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 05:09:02 -0700 (PDT)
+        Thu, 19 Jul 2018 08:52:22 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y4-v6so3567317pgp.9;
+        Thu, 19 Jul 2018 05:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bMu8Fi3pHigZInUUMKFPEkET+QY2hckCoVBrP3Yv/7g=;
+        b=cxWtBSNRlvv1l7kSHc0KeFWACgY5fcQ5oMW9AMkLSLh7KrZ0meyBuNFjpCppwbIZGS
+         D0UuXkF/+4dzkduhQJNNmKp4llHvtB7Prfk192I9uwgxaJR3IFgQ2VB8kE6Nvp5rgnHv
+         M+pDYGm18sLNM9NuZz89Ds6jzlCaSN004Uw9TRNhIJ+seCYHLJ7XsjcFaWpTpj9Pbxa8
+         CQFB3pd4F06c96RWr2k0lDWLydwa2f4WvtnIXHearL3uIhVELDWiVlfs1YN8jczRnZic
+         w7JIiT/6J2u8MjBYMB8EyLB0n85V046The9SMH3+ZvYxNXuuEbWNHZw9g90QyH/fDEwA
+         lTtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=KAHSHIi6ftWCMp6Q/gXGW4Vi3ATYtKuhra/Yctil4+c=;
-        b=e/VH5gEmTjPoMLDhY0F15tr1BILg/Gk7hLjlR6WNl+w7JliGtjp1gTaIQoDFHMStcV
-         pd/MPJNXVdNXQW8xLbgACrcFx/ZRJuCIW8v6z4xaOXoQdlfFIK1eg+ShbdNCea+vov5n
-         I9sAGGPxQxUtmp6spHo/+Wg5KA63ARn1+XlRMoJjoH1H/bZZfFz4AO0yQj/xo5XyLYTn
-         GkzhyIAhcRxWoKa1XTaOapBcu+OYfmxBH9T+Yj60oyBhOT+tpmDCIZx3bSapdACimPBU
-         48oYGIrN1L65Is2UzLTL5aJWnZL78nfrk18JcQ93y1CJBTjFCMv+oKo9XjLv8lWti04F
-         q/8w==
-X-Gm-Message-State: AOUpUlG05lZ3wHXddZEGei3YuQP+FBixzqWZ17kR8VbO7Pp9M7Wc0+rj
-        bXGu7Jhj6SOuZJdsAjGQRlsBOiscnyeQ9OGdjtcc8qjeNo0M
-X-Google-Smtp-Source: AAOMgpewAErVUDzDBJj2G6BCN0AHSYynVOoLiBsoKpnrpU4WhGHIa/sH5xW/04gwXUfQclmlY/nUesTiu3A1dECrj+Q4m8wsj5Bn
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bMu8Fi3pHigZInUUMKFPEkET+QY2hckCoVBrP3Yv/7g=;
+        b=R6hqjBoAHBzqho023QaerXVFk5gpi0F92turuHqgqB42rYfuOJ+8OhNbKhhzY6SHep
+         D5z1mfsjQdgz878x5M7VMhMSngpguOCLq4P9scrxiTpo3Lb6mrizkyP3pmLa/wJ5eseS
+         GErEGiDTml408rfHORAV24ePX2MQ7dtrUmXWlhjJMHQAmsMDRlW1CHl/5ObUscv8IE30
+         qP2+5S4gFgC2CWA39cwUPED065p0QzFtfX5/UmWOXkRi1luKzmX77HkifmMKM5Bm6u2w
+         uAi5U2d50ZQUDLA8nOCURuYezIKmvIIITst4yHxJtXmc7rC94z5ZE6m0XoXrgVlvGAqo
+         +XYQ==
+X-Gm-Message-State: AOUpUlGGwDY8glVOr42jGmNrTtcugb3yGA8yUaJwgb7WQAhwSB4VIEWA
+        xM40fnrCY/WdK/w3k0d9fXCMlW92
+X-Google-Smtp-Source: AAOMgpddp0JDvqngK9FzDUNIvPlAlOVV1x7fvZTUrm3bDn89tJouy4eH7aoHk/L7Bez4XNbKT44RAw==
+X-Received: by 2002:a62:5f82:: with SMTP id t124-v6mr9329142pfb.223.1532002171047;
+        Thu, 19 Jul 2018 05:09:31 -0700 (PDT)
+Received: from [192.168.0.77] ([211.196.191.92])
+        by smtp.gmail.com with ESMTPSA id 21-v6sm17624849pgx.20.2018.07.19.05.09.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 05:09:29 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] tools/bpftool: ignore build products
+From:   Taeung Song <treeze.taeung@gmail.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180719024515.6659-1-treeze.taeung@gmail.com>
+Message-ID: <262e416e-d712-c850-4126-6a45632da4eb@gmail.com>
+Date:   Thu, 19 Jul 2018 21:09:26 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a24:160f:: with SMTP id a15-v6mr2770834ita.7.1532002142021;
- Thu, 19 Jul 2018 05:09:02 -0700 (PDT)
-Date:   Thu, 19 Jul 2018 05:09:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007870ef0571590bb2@google.com>
-Subject: general protection fault in p9_client_prepare_req
-From:   syzbot <syzbot+77a28a63a0ece0fbba97@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, ericvh@gmail.com,
-        linux-kernel@vger.kernel.org, lucho@ionkov.net,
-        netdev@vger.kernel.org, rminnich@sandia.gov,
-        syzkaller-bugs@googlegroups.com,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180719024515.6659-1-treeze.taeung@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+I'll resend v3 because it is better to add "bpftool*.8"
+to tools/bpf/bpftool/.gitignore.
 
-syzbot found the following crash on:
+   Untracked files:
+     (use "git add <file>..." to include in what will be committed)
 
-HEAD commit:    1c34981993da Add linux-next specific files for 20180719
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=160ec658400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7002497517b09aec
-dashboard link: https://syzkaller.appspot.com/bug?extid=77a28a63a0ece0fbba97
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17317a58400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1135e1c2400000
+           tools/bpf/bpftool/Documentation/bpftool-cgroup.8
+           tools/bpf/bpftool/Documentation/bpftool-map.8
+           tools/bpf/bpftool/Documentation/bpftool-perf.8
+           tools/bpf/bpftool/Documentation/bpftool-prog.8
+           tools/bpf/bpftool/Documentation/bpftool.8
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+77a28a63a0ece0fbba97@syzkaller.appspotmail.com
+Thanks,
+Taeung
 
-RBP: 0000000000000000 R08: 0000000020000840 R09: 0000000000003831
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc432a9cd0
-R13: 0030656c69662f2e R14: 64663d736e617274 R15: 0000000000000006
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 1 PID: 4386 Comm: syz-executor227 Not tainted  
-4.18.0-rc5-next-20180719+ #11
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:p9_client_prepare_req.part.8+0x392/0xa00 net/9p/client.c:645
-Code: ff 0f 87 6a 02 00 00 e8 bc 39 0c fa 0f be 85 f4 fe ff ff 4c 89 f2 48  
-c1 ea 03 89 85 f4 fe ff ff 48 b8 00 00 00 00 00 fc ff df <80> 3c 02 00 0f  
-85 89 05 00 00 48 b8 00 00 00 00 00 fc ff df 4c 8b
-RSP: 0018:ffff8801bd8c7250 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000600040
-RDX: 000000000000000a RSI: ffffffff87706d04 RDI: ffff8801b9efa378
-RBP: ffff8801bd8c7380 R08: ffff8801b9f24080 R09: ffffed0037b18de4
-R10: ffffed0037b18de4 R11: 0000000000000003 R12: ffff8801b9efa340
-R13: 0000000000002000 R14: 0000000000000050 R15: ffff8801b9efa37c
-FS:  0000000001ba1880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000200 CR3: 00000001b994e000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  p9_client_prepare_req net/9p/client.c:675 [inline]
-  p9_client_rpc+0x242/0x1330 net/9p/client.c:675
-  p9_client_version net/9p/client.c:890 [inline]
-  p9_client_create+0xca4/0x1537 net/9p/client.c:974
-  v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
-  v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
-  legacy_get_tree+0x131/0x460 fs/fs_context.c:674
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
-  do_new_mount fs/namespace.c:2603 [inline]
-  do_mount+0x6f2/0x1e20 fs/namespace.c:2927
-  ksys_mount+0x12d/0x140 fs/namespace.c:3143
-  __do_sys_mount fs/namespace.c:3157 [inline]
-  __se_sys_mount fs/namespace.c:3154 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3154
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440719
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc432a9cc8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 0000000000440719
-RDX: 0000000020000900 RSI: 0000000020000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000020000840 R09: 0000000000003831
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc432a9cd0
-R13: 0030656c69662f2e R14: 64663d736e617274 R15: 0000000000000006
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace bae3d5802518770f ]---
-RIP: 0010:p9_client_prepare_req.part.8+0x392/0xa00 net/9p/client.c:645
-Code: ff 0f 87 6a 02 00 00 e8 bc 39 0c fa 0f be 85 f4 fe ff ff 4c 89 f2 48  
-c1 ea 03 89 85 f4 fe ff ff 48 b8 00 00 00 00 00 fc ff df <80> 3c 02 00 0f  
-85 89 05 00 00 48 b8 00 00 00 00 00 fc ff df 4c 8b
-RSP: 0018:ffff8801bd8c7250 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000600040
-RDX: 000000000000000a RSI: ffffffff87706d04 RDI: ffff8801b9efa378
-RBP: ffff8801bd8c7380 R08: ffff8801b9f24080 R09: ffffed0037b18de4
-R10: ffffed0037b18de4 R11: 0000000000000003 R12: ffff8801b9efa340
-R13: 0000000000002000 R14: 0000000000000050 R15: ffff8801b9efa37c
-FS:  0000000001ba1880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000200 CR3: 00000001b994e000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+On 07/19/2018 11:45 AM, Taeung Song wrote:
+> For untracked things of tools/bpf, add this.
+> 
+> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
+> ---
+>   tools/bpf/.gitignore | 5 +++++
+>   1 file changed, 5 insertions(+)
+>   create mode 100644 tools/bpf/.gitignore
+> 
+> diff --git a/tools/bpf/.gitignore b/tools/bpf/.gitignore
+> new file mode 100644
+> index 000000000000..dfe2bd5a4b95
+> --- /dev/null
+> +++ b/tools/bpf/.gitignore
+> @@ -0,0 +1,5 @@
+> +FEATURE-DUMP.bpf
+> +bpf_asm
+> +bpf_dbg
+> +bpf_exp.yacc.*
+> +bpf_jit_disasm
+> 
