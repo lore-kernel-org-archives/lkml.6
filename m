@@ -2,106 +2,109 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F16C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F219CC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40660206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:54:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="pO5hrHTl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40660206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id B7168206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:54:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7168206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730058AbeGSKgd (ORCPT
+        id S1730384AbeGSKhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 06:36:33 -0400
-Received: from mail-pg1-f169.google.com ([209.85.215.169]:38624 "EHLO
-        mail-pg1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbeGSKgd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 06:36:33 -0400
-Received: by mail-pg1-f169.google.com with SMTP id k3-v6so3401951pgq.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 02:54:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qS7gVBJZFb0U6Rd7OVAeKI2cpci8pr6CYvypNRs+wC8=;
-        b=pO5hrHTlBr02vsWynDuOelDHcloMoU5ipBV4zRiu/xEtL8BzX/wvFhGhyTJVt6aEfO
-         q75fGDytai98fBgPy6RO/H06XYv/gL9etZlXNrwk5f4RGJpH3263rvPgB0T0o6Wd9NRd
-         CSMcXafO1oIbMi/fZli2ozKdZ5RtjIAvtY1miPVME+swr+kTkS+JHgPk62HWAxZlKuo4
-         ouVeMlzLNQW6b++CLGwLLIwLI0MR3FmrNTS9RD+R6msNwGdl1X666D3Wumor7TrbVxW3
-         gzcqE038eXv7Il8UUoCK9cS8+SfraeZ7H/8am+ilhm0m1CY3KD0KgWNgAmh0+1b4xgD6
-         pxRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qS7gVBJZFb0U6Rd7OVAeKI2cpci8pr6CYvypNRs+wC8=;
-        b=YAS9M3t4CjnEgG2oC2nzCVukm9u3Yu8y0VKBVmCFVHWA5rKIFl6aUSTFDY+8F5c9Fb
-         W4/NBM8ufLr0XDSW1I/b46r1E6o4Xw//jqUsSh3jLDBdT8fhPZVGDbvFOaXxWoAE8uJm
-         sBEypN3rmWkY3PA6Ieb8S2exn39ml5e5EhKFqZRTos116LAa8TwcL4zo/rlAEGQ2L/zF
-         0itd7Bq5cm3CkiCG1Vh02OkazIJA7ys7zuWYIxnGW1byJhsSf1eWSsFn3dh5IeqkKk/4
-         j+ul9Kh8SAHIYFX1mClr2RNpbiMpymAIfiGEg95Dkb+OLCd6DL9jqoazG03As+k7nCm1
-         apbw==
-X-Gm-Message-State: AOUpUlF3RFTx8ld3vUAF1Ib9AVKcR4frroISseMy5ulFoAUT4Z3f9s9S
-        vM5P3EGre8d7ON044W2MTjGd3A==
-X-Google-Smtp-Source: AAOMgpdTX6JW8/I450KbgM/mLMEeGTEyEG1HKPa7L5rRqsIRRB5kAchCDlYAKw22v8yRuyIBVAWiag==
-X-Received: by 2002:a62:225d:: with SMTP id i90-v6mr8753931pfi.246.1531994050972;
-        Thu, 19 Jul 2018 02:54:10 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm2359502pgf.52.2018.07.19.02.54.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 02:54:10 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 1D272300251; Thu, 19 Jul 2018 12:54:05 +0300 (+03)
-Date:   Thu, 19 Jul 2018 12:54:05 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv5 07/19] x86/mm: Mask out KeyID bits from page table
- entry pfn
-Message-ID: <20180719095404.pkm72iyhhc6v5tth@kshutemo-mobl1>
-References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
- <20180717112029.42378-8-kirill.shutemov@linux.intel.com>
- <9922042b-f130-a87c-8239-9b852e335f26@intel.com>
+        Thu, 19 Jul 2018 06:37:17 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9701 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726475AbeGSKhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 06:37:16 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 83073F75E6D04;
+        Thu, 19 Jul 2018 17:54:40 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.42) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.382.0; Thu, 19 Jul 2018
+ 17:54:40 +0800
+Subject: Re: [PATCH 0/2] dt: thermal: Fix broken cooling-maps
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+References: <cover.1530766981.git.viresh.kumar@linaro.org>
+ <5B4F5E00.5050800@hisilicon.com> <20180719024028.vudrlpgxiz6accky@vireshk-i7>
+CC:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>, <robh@kernel.org>,
+        <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        <devicetree@vger.kernel.org>, <olof@lixom.net>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5B505FD9.8040609@hisilicon.com>
+Date:   Thu, 19 Jul 2018 10:54:33 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9922042b-f130-a87c-8239-9b852e335f26@intel.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <20180719024028.vudrlpgxiz6accky@vireshk-i7>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.42]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 04:13:20PM -0700, Dave Hansen wrote:
-> On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
-> > +	} else {
-> > +		/*
-> > +		 * Reset __PHYSICAL_MASK.
-> > +		 * Maybe needed if there's inconsistent configuation
-> > +		 * between CPUs.
-> > +		 */
-> > +		physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
-> > +	}
+Hi Viresh,
+
+On 2018/7/19 3:40, Viresh Kumar wrote:
+> On 18-07-18, 16:34, Wei Xu wrote:
+>> Hi Viresh,
+>>
+>> On 2018/7/5 6:09, Viresh Kumar wrote:
+>>> Hi,
+>>>
+>>> This is an attempt to fix the broken or partially defined DT bindings
+>>> for cooling-maps. We should list every device that participates in
+>>> cooling down at a certain trip point, instead of just the first in the
+>>> list as that depends on certain ordering of events to work properly.
+>>>
+>>> The first patch extends the binding to allow a list of phandles in
+>>> "cooling-device" property and the second patch fixes one of the
+>>> platform's DT.
+>>>
+>>> This will be followed up by fixing all platform DT bindings that have
+>>> these issues after this set is accepted.
+>>>
+>>> The kernel also requires some changes to handle the phandle list, but
+>>> wouldn't break with these changes as it reads the first phandle in the
+>>> list for now. We can update that separately.
+>>>
+>>> --
+>>> viresh
+>>>
+>>> Viresh Kumar (2):
+>>>   dt-bindings: thermal: Allow multiple devices to share cooling map
+>>>   arm64: dts: hi6220: Add all CPUs in cooling maps
+>>>
+>>>  Documentation/devicetree/bindings/thermal/thermal.txt | 11 +++--------
+>>>  arch/arm64/boot/dts/hisilicon/hi6220.dtsi             |  9 ++++++++-
+>>>  2 files changed, 11 insertions(+), 9 deletions(-)
+>>>
+>>
+>> Thanks!
+>> Applied both to the hisilicon dt tree.
 > 
-> This seems like an appropriate place for a WARN_ON().  Either that, or
-> axe this code.
+> Hi Wei,
+> 
+> I expected the first patch to go via the thermal tree as it is for the
+> thermal core maintainers. Second patch can very well go from your
+> tree, but only after the 1st one is applied by thermal maintainers.
+> 
 
-There's pr_err_once() above in the function.
+OK. I will drop them in the pull request and apply the dts patch later.
 
--- 
- Kirill A. Shutemov
+Best Regards,
+Wei
+
+
