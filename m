@@ -2,203 +2,540 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URG_BIZ autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB65EC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C97ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66AAC2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:36:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R9CSFrlF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66AAC2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E9BC2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9BC2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731589AbeGSOUE (ORCPT
+        id S1731642AbeGSOU7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:20:04 -0400
-Received: from twosheds.infradead.org ([90.155.92.209]:49028 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbeGSOUE (ORCPT
+        Thu, 19 Jul 2018 10:20:59 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:48774 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730528AbeGSOU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:20:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
-        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tmG0snqJihD9hdt9ec2fpQHtIVm9DX8cQcza7jJF7Es=; b=R9CSFrlF0hC3kmhGY0CCz3p04
-        UUWRLj2DA/pqtZhyNzCZ7p4XkNSH6Zq5PPNRvd509cwkZvA6NYejh+a/RrAwhIQo8d8T4JaNdQacu
-        +xdr7ZauzhP4DYJBBLtXNujbla/ZZabwcY5RGnCICqKcbzY4KMIt3UfyaY6dxNqagfrCdCtSugl02
-        0Gh9jbtKlggPtjQpRSJ31BYVkWTnzCJfexma7RAkHZ7E8ATYAwskmRMRO5hlb5iDGo2BlwfZqkwwm
-        wxKDUWjgFW54xU9KmJ6inQHMh22CeEbzqcxOjWNnbSzXBIaXlC+EDkLCsvTPtmKuhyBzqYfAljsY7
-        C3YX12y0w==;
-Received: from [54.239.6.185] (helo=uc8d3ff76b9bc5848a9cc.ant.amazon.com)
-        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fg96s-0026s9-CY; Thu, 19 Jul 2018 13:36:46 +0000
-Message-ID: <1532007405.2632.29.camel@infradead.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        paulmck@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
-        mhillenb@amazon.de, linux-kernel <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>
-In-Reply-To: <20180719131422.GC5595@lerouge>
-References: <20180716154015.GA21419@linux.vnet.ibm.com>
-         <1531815548.19223.23.camel@infradead.org>
-         <20180717125653.GH12945@linux.vnet.ibm.com>
-         <20180718153628.GA24359@linux.vnet.ibm.com>
-         <1531929711.3414.29.camel@infradead.org>
-         <20180718163712.GB12945@linux.vnet.ibm.com>
-         <1531942865.3414.35.camel@infradead.org>
-         <20180718201700.GN12945@linux.vnet.ibm.com>
-         <86d12d1a-46dd-d82a-96c2-e842ac5a2a6c@de.ibm.com>
-         <1531984833.12620.16.camel@infradead.org> <20180719131422.GC5595@lerouge>
-Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-ryO4ISeoX2yFZ0GBMI/Z"
-Date:   Thu, 19 Jul 2018 15:36:45 +0200
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 19 Jul 2018 10:20:58 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6JDbfVr006537;
+        Thu, 19 Jul 2018 22:37:42 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Thu, 19 Jul 2018 22:37:41 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6JDbbho006468
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 19 Jul 2018 22:37:41 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>, linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [RFC PATCH] sched/debug: Use terse backtrace for idly sleeping threads.
+Date:   Thu, 19 Jul 2018 22:37:23 +0900
+Message-Id: <1532007443-3538-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since syzbot is hitting crashes too frequently to capture vmcore for later
+analysis, currently we need to rely on printk()-based analysis. And I'm
+planning to add a kernel config option for additional printk() etc. for
+testing under syzbot environment.
 
---=-ryO4ISeoX2yFZ0GBMI/Z
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+One of missing printk() is in khungtaskd. When khungtaskd fires, it is not
+rare that someone who was not reported by khungtaskd is relevant to the
+hung up. To help analyze such case, I'm planning to allow khungtaskd to
+dump all threads like SysRq-t using abovementioned kernel config option.
 
+This patch can be applied before proposing abovementioned changes.
+Since there are many kernel threads whose backtrace is boring due to idly
+waiting for an event inside the main loop, this patch introduces a kernel
+config option (which allows SysRq-t to use one-liner backtrace for threads
+idly waiting for an event) and simple helpers (which allow current thread
+to declare that current thread is about to start/end idly waiting).
 
+Before:
+----------
+sysrq: SysRq : Show State
+  task                        PC stack   pid father
+systemd         S12192     1      0 0x00000000
+Call Trace:
+ ? __schedule+0x24e/0x810
+ schedule+0x2a/0x80
+ schedule_hrtimeout_range_clock+0x13e/0x150
+ ep_poll+0x2c8/0x3f0
+ ? wake_up_q+0x60/0x60
+ do_epoll_wait+0xb5/0xd0
+ __x64_sys_epoll_wait+0x15/0x20
+ do_syscall_64+0x55/0x250
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7efdb8555183
+Code: Bad RIP value.
+RSP: 002b:00007ffc0a69c4c0 EFLAGS: 00000293 ORIG_RAX: 00000000000000e8
+RAX: ffffffffffffffda RBX: 00007ffc0a69c4d0 RCX: 00007efdb8555183
+RDX: 0000000000000028 RSI: 00007ffc0a69c4d0 RDI: 0000000000000004
+RBP: 00007ffc0a69c7a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000293 R12: 0000000000000001
+R13: ffffffffffffffff R14: 00000000000008bc R15: 000055970cacb3a0
+kthreadd        S13976     2      0 0x80000000
+Call Trace:
+ ? __schedule+0x24e/0x810
+ ? kthreadd+0x2a4/0x370
+ ? kthreadd+0x268/0x370
+ schedule+0x2a/0x80
+ kthreadd+0x357/0x370
+ ? kthread_create_on_cpu+0xa0/0xa0
+ ret_from_fork+0x24/0x30
+rcu_gp          I15064     3      2 0x80000000
+Call Trace:
+ ? __schedule+0x24e/0x810
+ schedule+0x2a/0x80
+ rescuer_thread+0x30c/0x360
+ ? cancel_delayed_work+0xc0/0xc0
+ kthread+0x115/0x130
+ ? kthread_create_worker_on_cpu+0x70/0x70
+ ret_from_fork+0x24/0x30
+rcu_par_gp      I15064     4      2 0x80000000
+Call Trace:
+ ? __schedule+0x24e/0x810
+ schedule+0x2a/0x80
+ rescuer_thread+0x30c/0x360
+ ? cancel_delayed_work+0xc0/0xc0
+ kthread+0x115/0x130
+ ? kthread_create_worker_on_cpu+0x70/0x70
+ ret_from_fork+0x24/0x30
+kworker/0:0     I14528     5      2 0x80000000
+Workqueue:            (null) (rcu_gp)
+Call Trace:
+ ? __schedule+0x24e/0x810
+ schedule+0x2a/0x80
+ worker_thread+0xbe/0x3f0
+ ? process_one_work+0x4c0/0x4c0
+ kthread+0x115/0x130
+ ? kthread_create_worker_on_cpu+0x70/0x70
+ ret_from_fork+0x24/0x30
+----------
 
-On Thu, 2018-07-19 at 15:14 +0200, Frederic Weisbecker wrote:
-> > I'm not sure about the context tracking condition in the code snippet
-> > cited above, though. I think that's what caused my problem in the first
-> > place =E2=80=94 I have CONTEXT_TRACKING_FORCE && !NO_HZ_FULL. So in 4.1=
-5, that
-> > means rcu_user_enter() did nothing and rcu_virt_note_context_switch()
-> > wasn't called. Hence the observed stalls.
-> >=C2=A0
-> > Should rcu_user_enter() itself be conditional on CONTEXT_TRACKING not
-> > NO_HZ_FULL?=C2=A0
->=20
-> Ah, CONTEXT_TRACKING_FORCE is only for testing purpose, you should not se=
-lect
-> it, it's going to introduce overhead. Actually I should remove that. Alth=
-ough
-> since we have removed CONFIG_NOHZ_FULL_ALL it's the last way we have to t=
-est
-> NOHZ_FULL from config alone.
+After:
+----------
+sysrq: SysRq : Show State
+  task                        PC stack   pid father
+systemd         S12192     1      0 0x00000000
+Call Trace:
+ ? __schedule+0x24e/0x810
+ schedule+0x2a/0x80
+ schedule_hrtimeout_range_clock+0x13e/0x150
+ ep_poll+0x2c8/0x3f0
+ ? wake_up_q+0x60/0x60
+ do_epoll_wait+0xb5/0xd0
+ __x64_sys_epoll_wait+0x15/0x20
+ do_syscall_64+0x55/0x250
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f96c3fd6163
+Code: Bad RIP value.
+RSP: 002b:00007ffd1df96ca8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e8
+RAX: ffffffffffffffda RBX: 00007ffd1df96cb0 RCX: 00007f96c3fd6163
+RDX: 000000000000002a RSI: 00007ffd1df96cb0 RDI: 0000000000000004
+RBP: 00007ffd1df96fa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000000001
+R13: ffffffffffffffff R14: 000000000000085c R15: 0000564757cd03a0
+kthreadd        S13976     2      0 0x80000000
+ Idle at kthreadd+0x360/0x3a0
+rcu_gp          I15064     3      2 0x80000000
+ Idle at rescuer_thread+0x307/0x380
+rcu_par_gp      I15064     4      2 0x80000000
+ Idle at rescuer_thread+0x307/0x380
+kworker/0:0     I14544     5      2 0x80000000
+Workqueue:            (null) (rcu_gp)
+ Idle at worker_thread+0x85/0x3e0
+kworker/0:0H    I14568     6      2 0x80000000
+ Idle at worker_thread+0x85/0x3e0
+kworker/u256:0  I13616     7      2 0x80000000
+Workqueue:            (null) (scsi_tmf_1)
+ Idle at worker_thread+0x85/0x3e0
+mm_percpu_wq    I15064     8      2 0x80000000
+ Idle at rescuer_thread+0x307/0x380
+ksoftirqd/0     S14584     9      2 0x80000000
+ Idle at smpboot_thread_fn+0x1bd/0x1f0
+rcu_sched       I14296    10      2 0x80000000
+ Idle at rcu_gp_kthread+0x49c/0x930
+----------
 
-I didn't select it. It defaults to y if !NO_HZ_FULL.
-I'm turning it off now...
+Since there is no need to insert start_idle_sleeping()/end_idle_sleeping()
+into all such callers at once, this patch modifies only functions which
+helped reducing the output in my environment.
 
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ drivers/base/devtmpfs.c   |  2 ++
+ drivers/scsi/scsi_error.c |  2 ++
+ include/linux/sched.h     | 17 +++++++++++++++++
+ kernel/audit.c            |  2 ++
+ kernel/hung_task.c        |  2 ++
+ kernel/irq/manage.c       |  2 ++
+ kernel/kthread.c          | 10 ++++++++--
+ kernel/rcu/tree.c         |  4 ++++
+ kernel/sched/core.c       |  8 +++++++-
+ kernel/smpboot.c          |  2 ++
+ kernel/workqueue.c        |  4 ++++
+ lib/Kconfig.debug         | 11 +++++++++++
+ mm/compaction.c           |  2 ++
+ mm/khugepaged.c           |  7 ++++++-
+ mm/ksm.c                  |  4 ++++
+ mm/oom_kill.c             |  2 ++
+ mm/vmscan.c               |  5 ++++-
+ 17 files changed, 81 insertions(+), 5 deletions(-)
 
---=-ryO4ISeoX2yFZ0GBMI/Z
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MTkxMzM2NDVaMC8GCSqG
-SIb3DQEJBDEiBCCGsPrv6Cl9DN/zYilqdR/EEjqMvP00rr/z8if0jCZPbjCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAFkMQ96R/u0V
-A1x3iStCbYck3LNkES7v6apTMhR43mwEBehYTjQtgfP9XlWLN5mmz0R67U+Q3r17rGqzIB89KRrB
-pivF4qIn4KkR0gjtoDkZUZIyxLq6rkpgPtB/J0IO2dolyctG+I/FeiZTz9uCedXSp9lVlgmZSVjg
-KCiHSqeIcJodMISP6ufIDZaN8rM3XfQRlGtTVIOXSV07d0FL8WEKF6TEmZ4Wz57iaoYKiE30W2+X
-5jMxBiqANBRcs/W4ejC0xD8x4zTm1dolhA+up1VFfO2bZYOLdNeUdppGiZESXsJyJQDU4sF5Ou1Z
-o96B4cOnRc6xXXC8qNHfRtrluU0AAAAAAAA=
-
-
---=-ryO4ISeoX2yFZ0GBMI/Z--
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index f776807..6b8c8bd 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -406,7 +406,9 @@ static int devtmpfsd(void *p)
+ 		}
+ 		__set_current_state(TASK_INTERRUPTIBLE);
+ 		spin_unlock(&req_lock);
++		start_idle_sleeping();
+ 		schedule();
++		end_idle_sleeping();
+ 	}
+ 	return 0;
+ out:
+diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
+index 8932ae8..b709599 100644
+--- a/drivers/scsi/scsi_error.c
++++ b/drivers/scsi/scsi_error.c
+@@ -2160,7 +2160,9 @@ int scsi_error_handler(void *data)
+ 				shost_printk(KERN_INFO, shost,
+ 					     "scsi_eh_%d: sleeping\n",
+ 					     shost->host_no));
++			start_idle_sleeping();
+ 			schedule();
++			end_idle_sleeping();
+ 			continue;
+ 		}
+ 
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 43731fe..737fd3c 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1179,6 +1179,9 @@ struct task_struct {
+ 	/* Used by LSM modules for access restriction: */
+ 	void				*security;
+ #endif
++#ifdef CONFIG_DEBUG_USE_TERSE_TRACE_FOR_IDLE_THREADS
++	unsigned long			idle_sleeping_at;
++#endif
+ 
+ 	/*
+ 	 * New fields for task_struct should be added above here, so that
+@@ -1898,4 +1901,18 @@ static inline void rseq_syscall(struct pt_regs *regs)
+ 
+ #endif
+ 
++static inline void start_idle_sleeping(void)
++{
++#ifdef CONFIG_DEBUG_USE_TERSE_TRACE_FOR_IDLE_THREADS
++	current->idle_sleeping_at = _THIS_IP_;
++#endif
++}
++
++static inline void end_idle_sleeping(void)
++{
++#ifdef CONFIG_DEBUG_USE_TERSE_TRACE_FOR_IDLE_THREADS
++	current->idle_sleeping_at = 0;
++#endif
++}
++
+ #endif
+diff --git a/kernel/audit.c b/kernel/audit.c
+index e7478cb..f593ed3 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -889,8 +889,10 @@ static int kauditd_thread(void *dummy)
+ 		 *       regardless of if an auditd is connected, as we need to
+ 		 *       do the multicast send and rotate records from the
+ 		 *       main queue to the retry/hold queues */
++		start_idle_sleeping();
+ 		wait_event_freezable(kauditd_wait,
+ 				     (skb_queue_len(&audit_queue) ? 1 : 0));
++		end_idle_sleeping();
+ 	}
+ 
+ 	return 0;
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 32b4794..3665e5d 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -253,7 +253,9 @@ static int watchdog(void *dummy)
+ 			hung_last_checked = jiffies;
+ 			continue;
+ 		}
++		start_idle_sleeping();
+ 		schedule_timeout_interruptible(t);
++		end_idle_sleeping();
+ 	}
+ 
+ 	return 0;
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index daeabd7..3fa6535 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -799,7 +799,9 @@ static int irq_wait_for_interrupt(struct irqaction *action)
+ 			__set_current_state(TASK_RUNNING);
+ 			return 0;
+ 		}
++		start_idle_sleeping();
+ 		schedule();
++		end_idle_sleeping();
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 	}
+ 	__set_current_state(TASK_RUNNING);
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index 750cb80..c4827f0 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -563,8 +563,11 @@ int kthreadd(void *unused)
+ 
+ 	for (;;) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
+-		if (list_empty(&kthread_create_list))
++		if (list_empty(&kthread_create_list)) {
++			start_idle_sleeping();
+ 			schedule();
++			end_idle_sleeping();
++		}
+ 		__set_current_state(TASK_RUNNING);
+ 
+ 		spin_lock(&kthread_create_lock);
+@@ -652,8 +655,11 @@ int kthread_worker_fn(void *worker_ptr)
+ 	if (work) {
+ 		__set_current_state(TASK_RUNNING);
+ 		work->func(work);
+-	} else if (!freezing(current))
++	} else if (!freezing(current)) {
++		start_idle_sleeping();
+ 		schedule();
++		end_idle_sleeping();
++	}
+ 
+ 	try_to_freeze();
+ 	cond_resched();
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index aa7cade..773fc03 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2144,8 +2144,10 @@ static int __noreturn rcu_gp_kthread(void *arg)
+ 					       READ_ONCE(rsp->gpnum),
+ 					       TPS("reqwait"));
+ 			rsp->gp_state = RCU_GP_WAIT_GPS;
++			start_idle_sleeping();
+ 			swait_event_idle(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
+ 						     RCU_GP_FLAG_INIT);
++			end_idle_sleeping();
+ 			rsp->gp_state = RCU_GP_DONE_GPS;
+ 			/* Locking provides needed memory barrier. */
+ 			if (rcu_gp_init(rsp))
+@@ -2176,8 +2178,10 @@ static int __noreturn rcu_gp_kthread(void *arg)
+ 					       READ_ONCE(rsp->gpnum),
+ 					       TPS("fqswait"));
+ 			rsp->gp_state = RCU_GP_WAIT_FQS;
++			start_idle_sleeping();
+ 			ret = swait_event_idle_timeout(rsp->gp_wq,
+ 					rcu_gp_fqs_check_wake(rsp, &gf), j);
++			end_idle_sleeping();
+ 			rsp->gp_state = RCU_GP_DOING_FQS;
+ 			/* Locking provides needed memory barriers. */
+ 			/* If grace period done, leave loop. */
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index fe365c9..5f7e40f 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5321,7 +5321,13 @@ void sched_show_task(struct task_struct *p)
+ 		(unsigned long)task_thread_info(p)->flags);
+ 
+ 	print_worker_info(KERN_INFO, p);
+-	show_stack(p, NULL);
++#ifdef CONFIG_DEBUG_USE_TERSE_TRACE_FOR_IDLE_THREADS
++	free = p->idle_sleeping_at;
++	if (free)
++		printk(KERN_DEFAULT " Idle at %pS\n", (void *) free);
++	else
++#endif
++		show_stack(p, NULL);
+ 	put_task_stack(p);
+ }
+ EXPORT_SYMBOL_GPL(sched_show_task);
+diff --git a/kernel/smpboot.c b/kernel/smpboot.c
+index 5043e74..13a5f36 100644
+--- a/kernel/smpboot.c
++++ b/kernel/smpboot.c
+@@ -157,7 +157,9 @@ static int smpboot_thread_fn(void *data)
+ 
+ 		if (!ht->thread_should_run(td->cpu)) {
+ 			preempt_enable_no_resched();
++			start_idle_sleeping();
+ 			schedule();
++			end_idle_sleeping();
+ 		} else {
+ 			__set_current_state(TASK_RUNNING);
+ 			preempt_enable();
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 78b1920..1270203 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -2314,7 +2314,9 @@ static int worker_thread(void *__worker)
+ 	worker_enter_idle(worker);
+ 	__set_current_state(TASK_IDLE);
+ 	spin_unlock_irq(&pool->lock);
++	start_idle_sleeping();
+ 	schedule();
++	end_idle_sleeping();
+ 	goto woke_up;
+ }
+ 
+@@ -2450,7 +2452,9 @@ static int rescuer_thread(void *__rescuer)
+ 
+ 	/* rescuers should never participate in concurrency management */
+ 	WARN_ON_ONCE(!(rescuer->flags & WORKER_NOT_RUNNING));
++	start_idle_sleeping();
+ 	schedule();
++	end_idle_sleeping();
+ 	goto repeat;
+ }
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 8838d11..87f0fd5 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -426,6 +426,17 @@ config MAGIC_SYSRQ_SERIAL
+ 	  This option allows you to decide whether you want to enable the
+ 	  magic SysRq key.
+ 
++config DEBUG_USE_TERSE_TRACE_FOR_IDLE_THREADS
++	bool "Use terse backtrace for idly sleeping threads"
++	depends on PRINTK
++	default n
++	help
++	  When dumping backtrace of all threads (e.g. via SysRq-t), you will
++	  notice that there are many threads with boring backtrace which is
++	  idly waiting. This option reduces amount of messages by using
++	  one-liner format for idly waiting threads (by allowing threads to
++	  declare that they are idly waiting).
++
+ config DEBUG_KERNEL
+ 	bool "Kernel debugging"
+ 	help
+diff --git a/mm/compaction.c b/mm/compaction.c
+index faca45e..1d40e84 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2069,8 +2069,10 @@ static int kcompactd(void *p)
+ 
+ 	while (!kthread_should_stop()) {
+ 		trace_mm_compaction_kcompactd_sleep(pgdat->node_id);
++		start_idle_sleeping();
+ 		wait_event_freezable(pgdat->kcompactd_wait,
+ 				kcompactd_work_requested(pgdat));
++		end_idle_sleeping();
+ 
+ 		kcompactd_do_work(pgdat);
+ 	}
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index d7b2a4b..ed28ab3 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1839,14 +1839,19 @@ static void khugepaged_wait_work(void)
+ 			return;
+ 
+ 		khugepaged_sleep_expire = jiffies + scan_sleep_jiffies;
++		start_idle_sleeping();
+ 		wait_event_freezable_timeout(khugepaged_wait,
+ 					     khugepaged_should_wakeup(),
+ 					     scan_sleep_jiffies);
++		end_idle_sleeping();
+ 		return;
+ 	}
+ 
+-	if (khugepaged_enabled())
++	if (khugepaged_enabled()) {
++		start_idle_sleeping();
+ 		wait_event_freezable(khugepaged_wait, khugepaged_wait_event());
++		end_idle_sleeping();
++	}
+ }
+ 
+ static int khugepaged(void *none)
+diff --git a/mm/ksm.c b/mm/ksm.c
+index a6d43cf..5a15172 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -2404,11 +2404,15 @@ static int ksm_scan_thread(void *nothing)
+ 		try_to_freeze();
+ 
+ 		if (ksmd_should_run()) {
++			start_idle_sleeping();
+ 			schedule_timeout_interruptible(
+ 				msecs_to_jiffies(ksm_thread_sleep_millisecs));
++			end_idle_sleeping();
+ 		} else {
++			start_idle_sleeping();
+ 			wait_event_freezable(ksm_thread_wait,
+ 				ksmd_should_run() || kthread_should_stop());
++			end_idle_sleeping();
+ 		}
+ 	}
+ 	return 0;
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 84081e7..c3f106e 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -622,7 +622,9 @@ static int oom_reaper(void *unused)
+ 	while (true) {
+ 		struct task_struct *tsk = NULL;
+ 
++		start_idle_sleeping();
+ 		wait_event_freezable(oom_reaper_wait, oom_reaper_list != NULL);
++		end_idle_sleeping();
+ 		spin_lock(&oom_reaper_lock);
+ 		if (oom_reaper_list != NULL) {
+ 			tsk = oom_reaper_list;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 03822f8..e9b7e20 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3528,8 +3528,11 @@ static void kswapd_try_to_sleep(pg_data_t *pgdat, int alloc_order, int reclaim_o
+ 		 */
+ 		set_pgdat_percpu_threshold(pgdat, calculate_normal_threshold);
+ 
+-		if (!kthread_should_stop())
++		if (!kthread_should_stop()) {
++			start_idle_sleeping();
+ 			schedule();
++			end_idle_sleeping();
++		}
+ 
+ 		set_pgdat_percpu_threshold(pgdat, calculate_pressure_threshold);
+ 	} else {
+-- 
+1.8.3.1
 
