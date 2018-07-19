@@ -2,140 +2,116 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF12BC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 394B5ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B03B2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:11:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B03B2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E51642084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:12:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKqmMcFR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51642084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731822AbeGSPzC (ORCPT
+        id S1731872AbeGSP4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:55:02 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33356 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731645AbeGSPzC (ORCPT
+        Thu, 19 Jul 2018 11:56:24 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:38018 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731008AbeGSP4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:55:02 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fgAaG-0001gR-AG; Thu, 19 Jul 2018 17:11:12 +0200
-Date:   Thu, 19 Jul 2018 17:11:11 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Tian, Baofeng" <baofeng.tian@intel.com>
-cc:     "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Debug: Add cpu registers dump in case of kernel panic
-In-Reply-To: <EEBA739CCF11FE49B73E1FB4690F5EE649E2A6D0@SHSMSX101.ccr.corp.intel.com>
-Message-ID: <alpine.DEB.2.21.1807191703390.1693@nanos.tec.linutronix.de>
-References: <0038B620BAC72941BCBF48AEB892976C02CBD787@SHSMSX101.ccr.corp.intel.com> <EEBA739CCF11FE49B73E1FB4690F5EE649E2A6D0@SHSMSX101.ccr.corp.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 19 Jul 2018 11:56:24 -0400
+Received: by mail-oi0-f65.google.com with SMTP id v8-v6so15591207oie.5;
+        Thu, 19 Jul 2018 08:12:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=4jNIFrG3VcyqV/YSOtZeJPoomFc64au5p9xTOZCJpYI=;
+        b=dKqmMcFR+w4Ihzd+Z/IfeylyGG8FUJwxXbWPnXh/JezXedow0qNxvytF3BDJN2MrJB
+         WbU89PIKTxpX+91MSgDH2wrjMfwFm2aOSB4EZgJzHiGg87bMYMG40xJuWXAbw+udUrSq
+         Y+gg495D4jDX1rfSWF+wxGZ35TCtTUK/ZQbVy2e0DL2YLUcybMLRVeCNKw+6gQUUp4bv
+         VWqtAy7iY1teKBKYHpEuZoehFaPzMCwtCPHNCD8H2cKeEi51/5uJemafHyKyfuGmdUHS
+         UXdTZo+TzXIxulyxYUgY8i8fOagi8FdwO6SsqyDLWnreIoHk/NdyezcFRMaajutekwK0
+         ugkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=4jNIFrG3VcyqV/YSOtZeJPoomFc64au5p9xTOZCJpYI=;
+        b=igCLQVy3rXMdjKa/DVxUeZ9Rgr141aQrChZTwhc4hNnOVAfbyRfo/skaNhX2mREc4L
+         15gjFwXA/1QkuDEJnkMi4+yUDJGTqu/mTfMbpxIdc8+qrJMemFPw0JPr8q++GOdaOLvU
+         aDpr1TH7kf5v79wXHIIUs3oJV3WJITNVyjbuLlbj/zOKEo0QF1m/FBX2qHG6Jw0vNcEG
+         M5jr3OiTRWlkQuPWqCKlLC4rYD1VskfEOmfkzOL7I0i3u4uizAubfmOZpmaasUcvxfnw
+         Jr9O6ng0eTD5IhMrQ08r3I4A1Rglgr1qwZ+qv6e+9HC4BkN5mQeBRRZBLOt/Bc7seCyu
+         gnNg==
+X-Gm-Message-State: AOUpUlGFw9n+izuR/AnhTBC+6XRnLlSjRj05iUGxwm76BP/gs4WhNNkb
+        l1riyxREYq2HjLzOW7QjtIHyeFSSnBzrUgdQLFk=
+X-Google-Smtp-Source: AAOMgpd+KOhZ1xS7CGCRt7NiLATfYm1gWdRGTk1UQR0HX5bQEH+6mHe+7ehPlTZ5ZRXzyahoqossu2vaF/9anbxHzbE=
+X-Received: by 2002:aca:a69b:: with SMTP id t27-v6mr11926560oij.261.1532013166454;
+ Thu, 19 Jul 2018 08:12:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:ac9:42c1:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 08:12:45
+ -0700 (PDT)
+In-Reply-To: <CA+sq2CdDuimDCYK+9arO7-oRpNxdynX+rqYwpeBi9C_R+4pQNw@mail.gmail.com>
+References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
+ <20180420163109.46077.60334.stgit@ahduyck-green-test.jf.intel.com> <CA+sq2CdDuimDCYK+9arO7-oRpNxdynX+rqYwpeBi9C_R+4pQNw@mail.gmail.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Thu, 19 Jul 2018 08:12:45 -0700
+Message-ID: <CAKgT0UcTn=fxhrTvAaJNbGFiKPyZ-MaK0T6+AJewFs6YzDvT0Q@mail.gmail.com>
+Subject: Re: [pci PATCH v8 4/4] pci-pf-stub: Add PF driver stub for PFs that
+ function only to enable VFs
+To:     Sunil Kovvuri <sunil.kovvuri@gmail.com>
+Cc:     Alexander Duyck <alexander.h.duyck@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018, Tian, Baofeng wrote:
-
-> From: "Tian, Baofeng" <baofeng.tian@intel.com>
-> Subject: [PATCH] Debug: Add cpu registers dump in case of kernel panic
-> 
-> When kernel panic, the value of cpu registers are needed for analyzing, through whole ramdump to restore the crash point.
+On Thu, Jul 19, 2018 at 3:52 AM, Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> Hi,
 >
-
-Please use proper line breaks at around 78 characters.
-
-> We store CPU registers to RAM before cpu stopped, then get them with whole ram dump after warm reset.Those registers are used in analysis of dumped RAM image.
+>> +static struct pci_driver pf_stub_driver = {
+>> +       .name                   = "pci-pf-stub",
+>> +       .id_table               = pci_pf_stub_white_list,
+>> +       .probe                  = pci_pf_stub_probe,
+>> +       .sriov_configure        = pci_sriov_configure_simple,
+>> +};
+>> +
 >
+> Is there any specific reason for not disabling SRIOV upon driver unload/remove ?
+>
+> i.e if a user sets numVFs to a non-zero value and unloads this driver
+> then we have a
+> situation where there is no PF driver in kernel but VFs still exist.
+>
+> Thanks,
+> Sunil.
 
-This is explaining what the patch does but not really why. And it does not
-explain the scope of what is stored and why that would be helpful.
+I think it was probably just an oversight on my part. Feel free to
+submit a patch to disable SR-IOV on remove and I will give it a quick
+review/ack assuming the code itself is fine.
 
-> Signed-off-by: Baofeng, Tian <baofeng.tian@intel.com>
-> Signed-off-by: Emmanuel Berthier <emmanuel.berthier@intel.com>
+Thanks.
 
-This SOB chain is wrong. How is Emmmanuel involved here? He's even cc'ed on this.
-
-> ---
->  arch/x86/kernel/smp.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c index 5c574df..484831d 100644
-> --- a/arch/x86/kernel/smp.c
-> +++ b/arch/x86/kernel/smp.c
-> @@ -117,6 +117,20 @@
->  static atomic_t stopping_cpu = ATOMIC_INIT(-1);  static bool smp_no_nmi_ipi = false;
->  
-> +static DEFINE_PER_CPU(struct pt_regs, cpu_regs);
-> +
-> +/* Store regs of this CPU for RAM dump decoding help */ static inline 
-> +void store_regs(struct pt_regs *regs) {
-
-That's surely not kernel coding style.
-
-> +	struct pt_regs *print_regs;
-
-print_regs ? There is nothing printed here.
-
-> +
-> +	print_regs = &get_cpu_var(cpu_regs);
-> +	crash_setup_regs(print_regs, regs);
-> +
-> +	/* Flush CPU cache */
-> +	wbinvd();
-> +}
-> +
->  /*
->   * this function sends a 'reschedule' IPI to another CPU.
->   * it goes straight through and wastes no time serializing @@ -163,6 +177,7 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
->  	if (raw_smp_processor_id() == atomic_read(&stopping_cpu))
->  		return NMI_HANDLED;
->  
-> +	store_regs(regs);
->  	cpu_emergency_vmxoff();
->  	stop_this_cpu(NULL);
->  
-> @@ -173,9 +188,10 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
->   * this function calls the 'stop' function on all other CPUs in the system.
->   */
->  
-> -asmlinkage __visible void smp_reboot_interrupt(void)
-> +__visible void smp_reboot_interrupt(struct pt_regs *regs)
->  {
->  	ipi_entering_ack_irq();
-> +	store_regs(regs);
->  	cpu_emergency_vmxoff();
->  	stop_this_cpu(NULL);
->  	irq_exit();
-> @@ -247,6 +263,7 @@ static void native_stop_other_cpus(int wait)
->  	}
->  
->  finish:
-> +	store_regs(NULL);
-
-How is storing regs _AFTER_ doing a lots of work helpful?
-
->  	local_irq_save(flags);
->  	disable_local_APIC();
->  	mcheck_cpu_clear(this_cpu_ptr(&cpu_info));
-
-I'm still not seeing how all that is helpful, so I'm waiting for a new
-version with proper explanations.
-
-Thanks,
-
-	tglx
+- Alex
