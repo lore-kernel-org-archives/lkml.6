@@ -2,126 +2,157 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37777ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B566BECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E378B20693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:59:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65C8A20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:59:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="z3W4dQU2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E378B20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yX4+RKFS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65C8A20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbeGSJlR (ORCPT
+        id S1731001AbeGSJmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 05:41:17 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43642 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726975AbeGSJlR (ORCPT
+        Thu, 19 Jul 2018 05:42:01 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40116 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbeGSJmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 05:41:17 -0400
-Received: by mail-pl0-f67.google.com with SMTP id o7-v6so3337933plk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 01:59:08 -0700 (PDT)
+        Thu, 19 Jul 2018 05:42:01 -0400
+Received: by mail-wm0-f67.google.com with SMTP id z13-v6so5541396wma.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 01:59:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=h5ISeWJc/srOmvhxo0cGjvHRvpk3elP4jyhkDgdH15U=;
-        b=z3W4dQU2i2xzfSiTY1e2bS+gyKQGTxCISODetkJJP4vIQa9nI66XlfMp3WEwAsQNhu
-         TRyOHAK23yhhTfbK/P8gSyZrf106ZgzPolV6+PdoSuwtmX0bYgMS8GUuAF9VGh2Ivt0K
-         FaEsq3EAuijGRVzfEFbI9MhdShpWirdElMFRjmoqgdVCcsJykDojDABy7ze1xRnIhfMW
-         S3e6OzxtgRc6fii7GjvwVLMSqBjf/2cAgxdwmGBzXUfCPH2Q+CHLvs6Ej0Yru37K6iYN
-         NiRutIBNRzKD1dpkDFRXE5Xlf38VvGxErnqqVZxG8FOVnMYs1jKymFE7qpVOvWORf4mn
-         MQHA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=edg1qusFaU7MKZa2yFfG+ND35bMVk8XL9ewZZAHhujY=;
+        b=yX4+RKFSFwqlvhrjANiItWQ92Sl8+egOjTVs75VzL1X+5GqxgY7r93lpLHIT3+8vRV
+         55LrSfgbPp+Nw7LEamzFvybsN8tTwX/2tia6lxVeVYFZ2g8XhtN5RgN4wq7vyUwV9Iv1
+         RQMsEWaS1/2W0LIs/PqvYhX6ZSO7POUOkt+QJ0EzkWSMOC8ZlxBjmGi9ccOH+8cNAPqp
+         rAX8DhODaMPCvZhE6ziEMziAIFY0AXJD6elTX2flHIAUW5JUZMFse4ZveSTk6JKBIOIl
+         zoCQzdD2LPd3Mf3j6u6T69B4PV3GOFyWCwWwPc28QkfXvxSgc2s/CSBKXFp5Wo6ps40p
+         uiFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h5ISeWJc/srOmvhxo0cGjvHRvpk3elP4jyhkDgdH15U=;
-        b=sn30nqAIV+sXzaODI3Nq/TLz7Mv3ju8Dzv92xM3fhACDV0eRM4sSV+fv+UmMcGEPlQ
-         5gETO1jxoiBZkbKcPbXgoSnM9EWrVLYTJvZOUAU5feNMZYc/twAiJ9OEhLEecDi1RO15
-         eZSkIw2jaXn9/308Ex6S83ihNipZfkeOjcjh/5kGOu/1oXKfURhUzHRDi58puGLLgGbW
-         jkTe1y06Y4fcz+9SFeLxbguF0ficemleKMVt6deuvWO0ODIg2PFgKxwgyVm7zGq5BjSG
-         G2Fc7TjQeZs5uTZVEhRcT8yByMt+t+BS8boy4ZOa74Y1PmGbmTvvUDLTfzw4SZLqOT/I
-         h8bQ==
-X-Gm-Message-State: AOUpUlHVBexN22t8bKbzNop9Z/RKDiUSuR2KQc1T9Dsx8vMFpxEO2aj3
-        TE/TzqdoprN4+6rlYFs55oRfZw==
-X-Google-Smtp-Source: AAOMgpcLPFtBpRTb6fpKJYjIIMTIXI9Wv9A+CaEMYzGwp0cN4ZvOfF/CAGz8ueAmuvM5QGMoZdiq5g==
-X-Received: by 2002:a17:902:6b84:: with SMTP id p4-v6mr9301075plk.272.1531990747870;
-        Thu, 19 Jul 2018 01:59:07 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain (fmdmzpr03-ext.fm.intel.com. [192.55.54.38])
-        by smtp.gmail.com with ESMTPSA id z20-v6sm12086517pfd.99.2018.07.19.01.59.06
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=edg1qusFaU7MKZa2yFfG+ND35bMVk8XL9ewZZAHhujY=;
+        b=F34tmTYpXCIWExlaeIxneAuBnvQ1a1zVbTb3mpnqm7sixvJ8Pvqupq0pcf+0MJ4q8S
+         je/zlEnCioSupEMIC4GPNcmBELhBz1qNh8uDeq0DrHpbBs60213Q5uUibGv7Lu7PMomR
+         wJEDlaUG6+QHx4CqGZ/6YdkTl78e6Fo+nNxw285kgExwuEqYgPL2/6F3x6KIiC1VgBAO
+         WuTCJ5/+xsdzX9GfQBHQP94s+x1MGS+f3R3ddFsLLh2AGvmvqhHsH+ojLK9OXu1gh0iH
+         rKKifwxOHv7M3iF81c90AgppzKQyrA7RIImx88qXNPAvBesKuG0J0dxqnB08tKfX7YbE
+         SS+A==
+X-Gm-Message-State: AOUpUlG9C3rprTqv4PAmGDMwjJR5CoBu4NS1ad6xH8kl/iWnVqMMR2AY
+        eIPdC8i0tdFk8wcSRgPTmGYBw/ukE36iqg==
+X-Google-Smtp-Source: AAOMgpe9gY3jHKV2euBXznviUroTAderxNVq3+hYvhagsAtKLBSNVBy8BMWH7xEgxjBQGsPp059kfg==
+X-Received: by 2002:a1c:a8d6:: with SMTP id r205-v6mr3561883wme.6.1531990789799;
+        Thu, 19 Jul 2018 01:59:49 -0700 (PDT)
+Received: from [192.168.1.24] (LFbn-MAR-1-570-38.w90-118.abo.wanadoo.fr. [90.118.15.38])
+        by smtp.gmail.com with ESMTPSA id t6-v6sm3556087wrn.97.2018.07.19.01.59.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 01:59:07 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 10457300251; Thu, 19 Jul 2018 11:59:02 +0300 (+03)
-Date:   Thu, 19 Jul 2018 11:59:01 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv5 06/19] mm/khugepaged: Handle encrypted pages
-Message-ID: <20180719085901.ebdciqkjpx6hy4xt@kshutemo-mobl1>
-References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
- <20180717112029.42378-7-kirill.shutemov@linux.intel.com>
- <ad4c704f-fdda-7e75-60ec-3fbc8a4bb0ba@intel.com>
+        Thu, 19 Jul 2018 01:59:49 -0700 (PDT)
+Subject: Re: [PATCH v2 0/2] add ISO7816 support
+To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-serial@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     alexandre.belloni@bootlin.com, arnd@arndb.de,
+        richard.genoud@gmail.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, jslaby@suse.com
+References: <20180719084737.1490-1-ludovic.desroches@microchip.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <034fe4ed-979b-51ee-db7c-5dc7137b98e5@baylibre.com>
+Date:   Thu, 19 Jul 2018 10:59:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad4c704f-fdda-7e75-60ec-3fbc8a4bb0ba@intel.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <20180719084737.1490-1-ludovic.desroches@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 04:11:57PM -0700, Dave Hansen wrote:
-> On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
-> > khugepaged allocates page in advance, before we found a VMA for
-> > collapse. We don't yet know which KeyID to use for the allocation.
-> 
-> That's not really true.  We have the VMA and the address in the caller
-> (khugepaged_scan_pmd()), but we drop the lock and have to revalidate the
-> VMA.
+Hi Ludovic,
 
-For !NUMA we allocate the page in khugepaged_do_scan(), well before we
-know VMA.
+On 19/07/2018 10:47, Ludovic Desroches wrote:
+> Hi,
+> 
+> This patchset adds support for the ISO7816 standard. The USART devices in
+> Microchip SoCs have an ISO7816 mode. It allows to let the USART managing
+> the CLK and I/O signals of a smart card.
+
+Wow, I would have loved to have this at the time...
+I'm curious, do you have an example of userspace code using this ?
+The ATR rx needs a very weird handling, I'm curious how you managed it.
+
+Thanks,
+Neil
 
 > 
+> Changes:
+> - v2
+>   - uart_get_iso7816_config: check there is an iso7816_config function
+>   - use IOCTL macros to generate the IOCTL number
+>   - check that reserved field is not used
+>   - remove debug logs
+>   - check that the iso7816_config is right before doing any action
+>   - change the error from nack and max iteration status to a debug message
+>   - remove patch 3 as it concerns both rs485 and iso7816 to think more
+>   about the need of adding a lock or not
 > 
-> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > index 5ae34097aed1..d116f4ebb622 100644
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -1056,6 +1056,16 @@ static void collapse_huge_page(struct mm_struct *mm,
-> >  	 */
-> >  	anon_vma_unlock_write(vma->anon_vma);
-> >  
-> > +	/*
-> > +	 * At this point new_page is allocated as non-encrypted.
-> > +	 * If VMA's KeyID is non-zero, we need to prepare it to be encrypted
-> > +	 * before coping data.
-> > +	 */
-> > +	if (vma_keyid(vma)) {
-> > +		prep_encrypted_page(new_page, HPAGE_PMD_ORDER,
-> > +				vma_keyid(vma), false);
-> > +	}
+> Nicolas Ferre (2):
+>   tty/serial_core: add ISO7816 infrastructure
+>   tty/serial: atmel: add ISO7816 support
 > 
-> I guess this isn't horribly problematic now, but if we ever keep pools
-> of preassigned-keyids, this won't work any more.
+>  arch/alpha/include/uapi/asm/ioctls.h   |   2 +
+>  arch/mips/include/uapi/asm/ioctls.h    |   2 +
+>  arch/powerpc/include/uapi/asm/ioctls.h |   2 +
+>  arch/sh/include/uapi/asm/ioctls.h      |   2 +
+>  arch/sparc/include/uapi/asm/ioctls.h   |   2 +
+>  arch/xtensa/include/uapi/asm/ioctls.h  |   2 +
+>  drivers/tty/serial/atmel_serial.c      | 170 +++++++++++++++++++++++++++++++--
+>  drivers/tty/serial/atmel_serial.h      |   3 +-
+>  drivers/tty/serial/serial_core.c       |  60 ++++++++++++
+>  include/linux/serial_core.h            |   3 +
+>  include/uapi/asm-generic/ioctls.h      |   2 +
+>  include/uapi/linux/serial.h            |  17 ++++
+>  12 files changed, 256 insertions(+), 11 deletions(-)
+> 
 
-I don't get this. What pools of preassigned-keyids are you talking about?
-
--- 
- Kirill A. Shutemov
