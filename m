@@ -5,67 +5,220 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B591CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53390C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AFCC20693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:09:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AFCC20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B44820693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:10:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B44820693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731581AbeGSIvR (ORCPT
+        id S1731422AbeGSIwL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 04:51:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38442 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731391AbeGSIvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 04:51:16 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4F13440201CA;
-        Thu, 19 Jul 2018 08:09:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A2D72026D6B;
-        Thu, 19 Jul 2018 08:09:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180718154637.31878-1-mszeredi@redhat.com>
-References: <20180718154637.31878-1-mszeredi@redhat.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: make open_with_fake_path() not contribute to nr_files
+        Thu, 19 Jul 2018 04:52:11 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:35879 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727553AbeGSIwK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 04:52:10 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w6J8A4LZ011101
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 19 Jul 2018 17:10:04 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6J8A3xM020636;
+        Thu, 19 Jul 2018 17:10:04 +0900
+Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6J893Ef020552;
+        Thu, 19 Jul 2018 17:10:03 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.147] [10.38.151.147]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-2122084; Thu, 19 Jul 2018 17:08:08 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC19GP.gisp.nec.co.jp ([10.38.151.147]) with mapi id 14.03.0319.002; Thu,
+ 19 Jul 2018 17:08:06 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
+        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] mm: fix race on soft-offlining free huge pages
+Thread-Topic: [PATCH v2 1/2] mm: fix race on soft-offlining free huge pages
+Thread-Index: AQHUHY+ZfA+YF2+Ff02zwneBkDT4a6SS4qaAgACvZYCAAIS7AIABaDSAgAAPgwCAAA7BgA==
+Date:   Thu, 19 Jul 2018 08:08:05 +0000
+Message-ID: <20180719080804.GA32756@hori1.linux.bs1.fc.nec.co.jp>
+References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <1531805552-19547-2-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20180717142743.GJ7193@dhcp22.suse.cz>
+ <20180718005528.GA12184@hori1.linux.bs1.fc.nec.co.jp>
+ <20180718085032.GS7193@dhcp22.suse.cz>
+ <20180719061945.GB22154@hori1.linux.bs1.fc.nec.co.jp>
+ <20180719071516.GK7193@dhcp22.suse.cz>
+In-Reply-To: <20180719071516.GK7193@dhcp22.suse.cz>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.81]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <05B4D8597F8D454BABD4853CF7549D4D@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <18288.1531987758.1@warthog.procyon.org.uk>
-Date:   Thu, 19 Jul 2018 09:09:18 +0100
-Message-ID: <18289.1531987758@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 19 Jul 2018 08:09:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 19 Jul 2018 08:09:20 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <mszeredi@redhat.com> wrote:
-
-> Stacking file operations in overlay will store an extra open file for each
-> overlay file opened.
+On Thu, Jul 19, 2018 at 09:15:16AM +0200, Michal Hocko wrote:
+> On Thu 19-07-18 06:19:45, Naoya Horiguchi wrote:
+> > On Wed, Jul 18, 2018 at 10:50:32AM +0200, Michal Hocko wrote:
+> > > On Wed 18-07-18 00:55:29, Naoya Horiguchi wrote:
+> > > > On Tue, Jul 17, 2018 at 04:27:43PM +0200, Michal Hocko wrote:
+> > > > > On Tue 17-07-18 14:32:31, Naoya Horiguchi wrote:
+> > > > > > There's a race condition between soft offline and hugetlb_fault which
+> > > > > > causes unexpected process killing and/or hugetlb allocation failure.
+> > > > > >
+> > > > > > The process killing is caused by the following flow:
+> > > > > >
+> > > > > >   CPU 0               CPU 1              CPU 2
+> > > > > >
+> > > > > >   soft offline
+> > > > > >     get_any_page
+> > > > > >     // find the hugetlb is free
+> > > > > >                       mmap a hugetlb file
+> > > > > >                       page fault
+> > > > > >                         ...
+> > > > > >                           hugetlb_fault
+> > > > > >                             hugetlb_no_page
+> > > > > >                               alloc_huge_page
+> > > > > >                               // succeed
+> > > > > >       soft_offline_free_page
+> > > > > >       // set hwpoison flag
+> > > > > >                                          mmap the hugetlb file
+> > > > > >                                          page fault
+> > > > > >                                            ...
+> > > > > >                                              hugetlb_fault
+> > > > > >                                                hugetlb_no_page
+> > > > > >                                                  find_lock_page
+> > > > > >                                                    return VM_FAULT_HWPOISON
+> > > > > >                                            mm_fault_error
+> > > > > >                                              do_sigbus
+> > > > > >                                              // kill the process
+> > > > > >
+> > > > > >
+> > > > > > The hugetlb allocation failure comes from the following flow:
+> > > > > >
+> > > > > >   CPU 0                          CPU 1
+> > > > > >
+> > > > > >                                  mmap a hugetlb file
+> > > > > >                                  // reserve all free page but don't fault-in
+> > > > > >   soft offline
+> > > > > >     get_any_page
+> > > > > >     // find the hugetlb is free
+> > > > > >       soft_offline_free_page
+> > > > > >       // set hwpoison flag
+> > > > > >         dissolve_free_huge_page
+> > > > > >         // fail because all free hugepages are reserved
+> > > > > >                                  page fault
+> > > > > >                                    ...
+> > > > > >                                      hugetlb_fault
+> > > > > >                                        hugetlb_no_page
+> > > > > >                                          alloc_huge_page
+> > > > > >                                            ...
+> > > > > >                                              dequeue_huge_page_node_exact
+> > > > > >                                              // ignore hwpoisoned hugepage
+> > > > > >                                              // and finally fail due to no-mem
+> > > > > >
+> > > > > > The root cause of this is that current soft-offline code is written
+> > > > > > based on an assumption that PageHWPoison flag should beset at first to
+> > > > > > avoid accessing the corrupted data.  This makes sense for memory_failure()
+> > > > > > or hard offline, but does not for soft offline because soft offline is
+> > > > > > about corrected (not uncorrected) error and is safe from data lost.
+> > > > > > This patch changes soft offline semantics where it sets PageHWPoison flag
+> > > > > > only after containment of the error page completes successfully.
+> > > > >
+> > > > > Could you please expand on the worklow here please? The code is really
+> > > > > hard to grasp. I must be missing something because the thing shouldn't
+> > > > > be really complicated. Either the page is in the free pool and you just
+> > > > > remove it from the allocator (with hugetlb asking for a new hugeltb page
+> > > > > to guaratee reserves) or it is used and you just migrate the content to
+> > > > > a new page (again with the hugetlb reserves consideration). Why should
+> > > > > PageHWPoison flag ordering make any relevance?
+> > > >
+> > > > (Considering soft offlining free hugepage,)
+> > > > PageHWPoison is set at first before this patch, which is racy with
+> > > > hugetlb fault code because it's not protected by hugetlb_lock.
+> > > >
+> > > > Originally this was written in the similar manner as hard-offline, where
+> > > > the race is accepted and a PageHWPoison flag is set as soon as possible.
+> > > > But actually that's found not necessary/correct because soft offline is
+> > > > supposed to be less aggressive and failure is OK.
+> > >
+> > > OK
+> > >
+> > > > So this patch is suggesting to make soft-offline less aggressive by
+> > > > moving SetPageHWPoison into the lock.
+> > >
+> > > I guess I still do not understand why we should even care about the
+> > > ordering of the HWPoison flag setting. Why cannot we simply have the
+> > > following code flow? Or maybe we are doing that already I just do not
+> > > follow the code
+> > >
+> > > 	soft_offline
+> > > 	  check page_count
+> > > 	    - free - normal page - remove from the allocator
+> > > 	           - hugetlb - allocate a new hugetlb page && remove from the pool
+> > > 	    - used - migrate to a new page && never release the old one
+> > >
+> > > Why do we even need HWPoison flag here? Everything can be completely
+> > > transparent to the application. It shouldn't fail from what I
+> > > understood.
+> > 
+> > PageHWPoison flag is used to the 'remove from the allocator' part
+> > which is like below:
+> > 
+> >   static inline
+> >   struct page *rmqueue(
+> >           ...
+> >           do {
+> >                   page = NULL;
+> >                   if (alloc_flags & ALLOC_HARDER) {
+> >                           page = __rmqueue_smallest(zone, order, MIGRATE_HIGHATOMIC);
+> >                           if (page)
+> >                                   trace_mm_page_alloc_zone_locked(page, order, migratetype);
+> >                   }
+> >                   if (!page)
+> >                           page = __rmqueue(zone, order, migratetype);
+> >           } while (page && check_new_pages(page, order));
+> > 
+> > check_new_pages() returns true if the page taken from free list has
+> > a hwpoison page so that the allocator iterates another round to get
+> > another page.
+> > 
+> > There's no function that can be called from outside allocator to remove
+> > a page in allocator.  So actual page removal is done at allocation time,
+> > not at error handling time. That's the reason why we need PageHWPoison.
 > 
-> The overhead is just that of "struct file" which is about 256bytes, because
-> overlay already pins an extra dentry and inode when the file is open, which
-> add up to a much larger overhead.
-> 
-> For fear of breaking working setups, don't start accounting the extra file.
+> hwpoison is an internal mm functionality so why cannot we simply add a
+> function that would do that?
 
-Sounds useful for cachefiles too, though Christoph Hellwig objected strongly
-last time I tried this, so you might want to check with him directly.
+That's one possible solution.
 
-David
+I know about another downside in current implementation.
+If a hwpoison page is found during high order page allocation,
+all 2^order pages (not only hwpoison page) are removed from
+buddy because of the above quoted code. And these leaked pages
+are never returned to freelist even with unpoison_memory().
+If we have a page removal function which properly splits high order
+free pages into lower order pages, this problem is avoided.
+
+OTOH PageHWPoison still has a role to report error to userspace.
+Without it unpoison_memory() doesn't work.
+
+Thanks,
+Naoya Horiguchi
+
+> I find the PageHWPoison usage here doing
+> more complications than real good. Or am I missing something?
