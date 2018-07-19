@@ -6,75 +6,76 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD92ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97331ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF7D420684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B67320684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:01:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="fqSdJ8Xj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF7D420684
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="i8N7ssyf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B67320684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387891AbeGSSnv (ORCPT
+        id S2388007AbeGSSpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 14:43:51 -0400
-Received: from mail-eopbgr720044.outbound.protection.outlook.com ([40.107.72.44]:31566
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        Thu, 19 Jul 2018 14:45:46 -0400
+Received: from mail-sn1nam02on0081.outbound.protection.outlook.com ([104.47.36.81]:15781
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731732AbeGSSnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387831AbeGSSnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Jul 2018 14:43:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WLy+qirH91cpp6DZ+/iPeCDQSBqNUfs/LfU1qkbsIeY=;
- b=fqSdJ8XjqZpPVtEMU+KlvpYi6o1ERLXOpuayQ24TDGWrlxBBblwlVvjY2iOXMkb2sypWpf02vkhbrHMbA57mI+vsqLP5xPzpInMhzIBVkbGDegEqlQVxt0n8ATX+TE0fWKQfL8oMmUgL9rJrNDFKUumHDW/1rtn/9vJDjwyHlQ8=
-Received: from SN4PR0701CA0006.namprd07.prod.outlook.com
- (2603:10b6:803:28::16) by BN7PR07MB4707.namprd07.prod.outlook.com
- (2603:10b6:406:f0::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.952.18; Thu, 19 Jul
- 2018 17:59:14 +0000
-Received: from DM3NAM05FT021.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::201) by SN4PR0701CA0006.outlook.office365.com
- (2603:10b6:803:28::16) with Microsoft SMTP Server (version=TLS1_2,
+ bh=c/i50cBDA0wgaqtN216ewcaG5wgqsO7/JRT7n9RtrEs=;
+ b=i8N7ssyfjZ4CDgc+IJ8OmO1uLvMfZENLy0sV6r95UiaVnQ4NcDBY1TYnnE/9ZABrZ5UaGWUk5IdhzvamGOpVbkl3C6gmDc3JYAFIK3DIqsO4nShmVZtWWG6hALIo3WdLeOqAuHIUlHKc8gc2b4dCxMHQYJWmxsYKCZGrAWu+030=
+Received: from BYAPR07CA0003.namprd07.prod.outlook.com (2603:10b6:a02:bc::16)
+ by DM6PR07MB4713.namprd07.prod.outlook.com (2603:10b6:5:a1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.973.16; Thu, 19 Jul
+ 2018 17:59:30 +0000
+Received: from BY2NAM05FT045.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e52::205) by BYAPR07CA0003.outlook.office365.com
+ (2603:10b6:a02:bc::16) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.973.16 via Frontend
- Transport; Thu, 19 Jul 2018 17:59:14 +0000
+ Transport; Thu, 19 Jul 2018 17:59:30 +0000
 Authentication-Results: spf=softfail (sender IP is 158.140.1.28)
  smtp.mailfrom=cadence.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none
  header.from=cadence.com;
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx1.cadence.com (158.140.1.28) by
- DM3NAM05FT021.mail.protection.outlook.com (10.152.98.130) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.20.995.0 via Frontend Transport; Thu, 19 Jul 2018 17:59:14 +0000
+Received: from sjmaillnx2.cadence.com (158.140.1.28) by
+ BY2NAM05FT045.mail.protection.outlook.com (10.152.100.182) with Microsoft
+ SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.20.995.0 via
+ Frontend Transport; Thu, 19 Jul 2018 17:59:29 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w6JHxARr019643
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id w6JHxNgH025447
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 19 Jul 2018 10:59:13 -0700
+        Thu, 19 Jul 2018 10:59:29 -0700
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Thu, 19 Jul 2018 19:59:25 +0200
+ 15.0.1367.3; Thu, 19 Jul 2018 19:59:32 +0200
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 19 Jul 2018 19:59:25 +0200
+ 15.0.1367.3 via Frontend Transport; Thu, 19 Jul 2018 19:59:32 +0200
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w6JHx97e005647;
-        Thu, 19 Jul 2018 18:59:09 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w6JHxGto006060;
+        Thu, 19 Jul 2018 18:59:16 +0100
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w6JHx9DU005646;
-        Thu, 19 Jul 2018 18:59:09 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w6JHxGoS006059;
+        Thu, 19 Jul 2018 18:59:16 +0100
 From:   Pawel Laszczak <pawell@cadence.com>
 CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
         <linux-kernel@vger.kernel.org>, <ltyrala@cadence.com>,
         <adouglas@cadence.com>, <pawell@cadence.com>
-Subject: [PATCH 03/31] usb: usbssp: Add trace events used in driver
-Date:   Thu, 19 Jul 2018 18:57:36 +0100
-Message-ID: <1532023084-28083-4-git-send-email-pawell@cadence.com>
+Subject: [PATCH 27/31] usb: usbssp: implements usbssp_gadget_ep_enable function
+Date:   Thu, 19 Jul 2018 18:58:00 +0100
+Message-ID: <1532023084-28083-28-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1532023084-28083-1-git-send-email-pawell@cadence.com>
 References: <1532023084-28083-1-git-send-email-pawell@cadence.com>
@@ -82,690 +83,767 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(39860400002)(2980300002)(199004)(189003)(36092001)(316002)(16586007)(54906003)(87636003)(42186006)(50466002)(48376002)(86362001)(50226002)(1671002)(2906002)(478600001)(26826003)(8676002)(126002)(305945005)(446003)(6666003)(356003)(11346002)(336012)(14444005)(26005)(47776003)(107886003)(5660300001)(109986005)(4326008)(7636002)(486006)(4720700003)(186003)(51416003)(106466001)(76176011)(36756003)(426003)(105596002)(8936002)(246002)(2616005)(476003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4707;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT021;1:TxvypHp16aYf7rJyVBCV5ulUotUnkMzd06aCw4EayIanUNHUh+zAgbEuzhDHmXwlvHS6YZ1FaIjRSJcO7TYBu6c9KyeFUDP5dqcNCwV55oE/yseY2pm92dZMKgjd1opp
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(396003)(39860400002)(2980300002)(189003)(36092001)(199004)(336012)(14444005)(8936002)(105596002)(4720700003)(426003)(6666003)(446003)(5660300001)(106466001)(86362001)(356003)(2906002)(7636002)(476003)(1671002)(2616005)(76176011)(551934003)(50226002)(109986005)(107886003)(26005)(87636003)(26826003)(54906003)(478600001)(305945005)(50466002)(47776003)(126002)(246002)(4326008)(8676002)(11346002)(486006)(51416003)(42186006)(48376002)(16586007)(316002)(186003)(36756003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB4713;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT045;1:yiJH18AUsVoAiGajZHf7HKgNReJW9XFdBvdnt7m2MNXDl2H9f4oHm+s7T5UN5F/TMw1gaNgjhOk9O2l/q15RQLr+oX/nBLJ7bHry7l+WHt+M3l+mgWlhHuIfEjfeEds7
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: eb7be1f8-3cf6-44ac-7ae4-08d5eda156c9
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:BN7PR07MB4707;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4707;3:di8fZ5x7tziWU5cog7akSn41gUSCL8N4vOcERtR6osCg5YGw1Z2mKHMRw1qElXYqJh2WMmZZCWmdNy22kRxDBIHHUdjy2FEpN/gBO4i2/hZvNLNeqGATtEAngYpM0XXXsQIDN7wSeQWQMXDtO6SwK+PscqE6fhqPwKsEYc4JH6hYJgDP0wdbpk/T9hfC7w719PW9mUF7i/LSUbEf7RKQebJgkcgYXmzxzazUUnhalqGQ99GK3J0AmbyzuDLILVw9S+ht/S7rBgYn6eOtiYS8cJqHlP2XPRRNuDKnmKKl7Xq1a2g6p14BdljLV970n5MHzze+/zBDaPWimCT5m612kbS2DObVe5bvyCDBAoNa2f4=;25:rwwORfL4foOxz5RRYr+UiDxxmNG0sXuyz04J6w8Y1Dzf1QED1AiDyLvcbucMcnnb6WdRVqcL+loPV3DLj18qV0ZadSk85uG8SLgOJj7I3/YkTFHBq2FAGdByirb9YRg3KUDjNp/Ixf6aB+rFwcxHHWcLwpC05TT0yjKFSWEM75UnXTtCxaX69kQK9xhaIdgS72ZILBVLrDMY6seTEnOVJCQZxYxaIwUKkTjJXTZWisUHA6gIB03wCEU/I7efP1m6GryxyZc/6coElrJjN80MAdjnIz4fDOqgHBekG70pxzmqVgtjomv9lBuIUvQNn/6Nbjscd/5fii+aXS8cl6dodQ==
-X-MS-TrafficTypeDiagnostic: BN7PR07MB4707:
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4707;31:k/CrQzjyhTGbg54lFC0prXf3xGRaHRK1IQq8jzDpgEi9TwEXVUqTU1q6xmA90hP9P15tliHUtndQJv2S5+vSTetX244vkbpN3wHTYyX+iEQPicfiLaOVyq/gZeWJV3a2V22XoQHnhdGQ/+w2r3BJJP4ey7DJlBOYhhG4rhPYKsD1+Wt+9IKDLcYYPp5ZJTC0IY+ujGw37jUN7sKq188GdGt5gZohXm0fNzDu9cPJi6c=;20:kmoSPxIe5LYwqbfPP2CRJc6C8gil/lxtShppGySNFYX7jSPok8kf1H1TNdS0aPVDrsMZ1mQwlVfPEQVp5dfyWE71OGfGH4Y0SO42ncc8lf1uHrvwB/moRkcHWt8BjpNViBRJJ4OPEbMBzba202WNpVLCDc8CT7B+1kq7iokTnlPKStkraRCWlFhoWNDsMKIwbZlUwOgKT0ZIMRLBw9MDRptrWiaIbXtPmUUh5nc/xAZobDq5fDAw9dNZlU+L92kRtUfuh31s1yWipBA0UOAZCJm45ZSTmTL64cVq31Qmk4mXVAaK1GKRkwXvCYGeH07wOXaU0gCmrRkUSLigggJGF6scpf9ZiT8sj1Fvi/J8hA7La80tYOhq/EAG9EPu++YHnaxLwSCdX/q0Q3tpzhPjoRXKDvKtplRW8/7xqobr7AZlddnjS98l95ZEIiGopDJynwWKznupkofysP2qneSwDpXSMIuwbByIHVYO9n+uMtWVTBS7C+fLuw1lOIZqFnrl
-X-Microsoft-Antispam-PRVS: <BN7PR07MB470758BD787284D7D127FF03DD520@BN7PR07MB4707.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(155532106045638)(72806322054110);
+X-MS-Office365-Filtering-Correlation-Id: d40879ea-d236-4425-73dc-08d5eda15fea
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:DM6PR07MB4713;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4713;3:Y2jsVdiaQS49+PwAXfY+UohH70LUF2DYMK2zvuM8z8qlBWITma8d4xZgQfXD1jaXegl5zt3F7FEj88Dne7YE/weKDhvT+G7NwPpFWyv4XsKFqlGI/1plmzAalmnz1QNI7mViK6NAYXy9WBM1cptAFy5OdQlQ8/BfNat4oAycaohMyzEHXo1g8KPiPPQHRTXDW1qmtrc5rdn7UswnuJfV22sK/y/osn3gPxgMAdpsd8dcKysnQxK3g95Ur7TzckAiv10lgXGTWff6NrCIUj7vHSorPeW/WRXaGh2OfIc2j7V1crsJPwouwDLanUzKnsX3PHEUGgOym3banDFmbFrD+XO38UrhVFUcgQa1wTYa8NA=;25:CfYVwQdV4Akm9hg9OFPxRCkvPnzkkQUxBZXG2JBwq0TwpA/myPcVfIDXRrd3I3J8J/IPlurbfmKgTudUbTerioUXP/xle0YDWVzQiKEmP/P6x9Yy6sECx/ekmHZitHzOFeIDGH+yKl8ekCJwiJKUY2rAeV4BVrfNbBKXmu8aBlTKYkYTNRdQwXQkR7pkcj6xHxng3NCVSqcsZSMNI4C18qHd8krQlvIwFIO+jc5inTzzpd2yCPlBw0C1xIR8/QwCPbWRxb+N9KajzJOF6CMVgJY0RrFNUEe7ieGIOhvPF8lASdbEzkidPLqLwqD0/W2/rNlaea++C4ArzKn+sgR9VQ==
+X-MS-TrafficTypeDiagnostic: DM6PR07MB4713:
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4713;31:VaFx4RWLVmSrJfuAXgilUj8j9rXKJwua1Xl0QfCsp9IaU2LhOYm+rsDKNKmC1XR2t7gg24Zb88+5NdNqcIZUUQQyU10xlzPLScyTv22fE8eQ6pMHop/OXWzQWkYRNF8tC87ZtQo1VWD2gFQ/ofpKOKkOtnDVzvbS97/CrlXnjL5sxyVuzI0ytsx/QFsreDs/Jcdq0BjAzvLVvlA5F4MLeDukKhzU8QRtaqCFD2TVqh0=;20:nWL+nhG40Q7/fNNZeMMlaDnRUvcczrYgDZ2P1/Lc67HPWVmzMXOYvneEI1Mx5gwEtYZdxi3A1m4zyjFXcDJxcutgKswextFW+P0yzUDennoenu3D3cHzYpUxA0uYZZIY3RyvC9ufcAxykg6XtUhXbNv6q9HFfK3S3X/V3dR/e6mmK58h2aSXCCBzXSVmzTAitqGChyF0quZrLu2L6PeM8883c42fuKdhbQNOUZBVrRb8WUEX3llPEKVbRXdAh46GXI1Qli97JT7ilHgu9bxokIFEZnbPZ2Ocz7dInBQIeGbZibF4LogoSmyyZl94KW+5GmzpLmf2VlAU65NqWxVSo3fl6r6LYXZqpnbKURZuUOH4BT3BC3bRifSX5jNdcwxuxz1KsY8erFGIcXfej/3VPtN70fGVGRaJR4mF2j6vSf5CW+HxWUf1jLUqYgCRVNaMaJ4/kABAQgk2sEMEcNsIqED2PLTsUXIFrzbx+NbrdDlc6wvw0TGNEq05jxrnfk0v
+X-Microsoft-Antispam-PRVS: <DM6PR07MB4713DB97FCC04C957A85094BDD520@DM6PR07MB4713.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93003095)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BN7PR07MB4707;BCL:0;PCL:0;RULEID:;SRVR:BN7PR07MB4707;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4707;4:tEdaUvLGm6lTWXodgb4/131GPARLDbKb6wJ0GKbVyWWgPgBBM50u8l2c2eUe2DBl1OqmiSlMKlE9Bfs7GasPKmXB26Ru4hAigz01mJajshVI2qAcC0Cpq+KXd+6nbOTBwSX9d3GvxFSQtRXZrg9IBXZwaG/30pSC5Kp8EMq6/bs59wgi8HhhBKL5VqSoR09veGqcTM33Kn4viB4IXS39uxv9RSzZM8d/I7MWLJFCMUcEVz22sibHxBUYb1Sq+7yBUo4uOE/XmSnEecRM0A3pNPg0/97xhX6SglAXA0wgN9vxeizGlzoLEfC38EMAlBenIcgHeUm9f2PKQunMyD4dxaIT2n0wbydgU3URwQgPLAU=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93003095)(3231311)(944501410)(52105095)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM6PR07MB4713;BCL:0;PCL:0;RULEID:;SRVR:DM6PR07MB4713;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4713;4:U9jSkeFM+t/dj6vfipF8Os8lNRfDKqhYEWnsNl1xwSneQT97REWvh6HWdsO59DTnmPcWJQuu1CvX52cS36ycblVgAAjBY2vvofcH+CpAPAXJeBtD+lv4qOGpBNXjU0HRfuc6xnoRhJgvuH66pxGYaNVwnkC7yPLSEwSj3pRS8zvjb4UvRpnv9PEZvtn2+udOCbLdqwxUmI18mO9T5b22VPrusSYk6VQf4lTKguA2XeeqssKSkVvjWCLp9gZ18jEBlfJpfCnVTOnGI5YmpPuC3MwI4xJHdHc9LpKJlUKq15pAtAw63tWEB2MQUtQZND7Y
 X-Forefront-PRVS: 0738AF4208
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR07MB4707;23:LTNVASR+XHZet8uFMvcmod/CtPvqE91vSfosi/Ym5?=
- =?us-ascii?Q?TXXJ2Rvf5vr87oEKHhLHO95UglNOfnkOqRcFoytyFvYRC0KvNcp4DlGpT+ds?=
- =?us-ascii?Q?aClvu0dfoYmojldYp5XC5cBCyDWdMu75+kOhPOoFbnE3ftSmeiRz0PYm4lwT?=
- =?us-ascii?Q?wOG/A5Wa9baaI1mPv63J6icleSHk2uUFDgx6veAaZr4y8K+dXF57UlrlcoHL?=
- =?us-ascii?Q?Ji5hTvS7mx0xdoo5KCwTTBFkP7L/FQ7bPVK+kRrTtD7ebNBHnCL+0ZI7EFTV?=
- =?us-ascii?Q?cZsYh7+j9LERIIU8OGD8JJJSKANS4R9ee+tZs3ccDI2knj3Ty9oI5ZOXB/ip?=
- =?us-ascii?Q?Id7irSTjFJd/swLGyo3kLbMeOvtSNr8qFPrYN4shcd36eTv0L6PHwro5ChU1?=
- =?us-ascii?Q?LR6kcXlkKf1AEcNRmMgLjvFO6z4Xv2tnbiYSA0TivwtgHmLzXUZdNpHtzUB2?=
- =?us-ascii?Q?ygBcv8bCNHcf88R9Cc4uJO8lrL94S3qxK6QVx4dLolGGCFIUG4sgtNptmXO9?=
- =?us-ascii?Q?1g9L1xm3wPMJTbriUE+i2LOrVxLpY1KRxlfK7FpLiwqTkSZ2EHtunIRcYoD1?=
- =?us-ascii?Q?oaPBYGRLNLVomvnRoIQJoqJ9BhBL+gaX68Z5AW8QH77QWePVV36lDb3ekVoK?=
- =?us-ascii?Q?wslaMaY+HH4/pOR0i2Pr5bobh0jVzEhxrmOdwHaJcZDjVpi3BmgWgpwaZrL3?=
- =?us-ascii?Q?RnLaOT7b4Us9cTeqOTkJ9oYBR3DVDcqLM/2j26osCwxeLjluqFkSpXOyrqvp?=
- =?us-ascii?Q?3qnYCSNxuMdjDtn4UsNK5z61wrs0tQ/BuTnbVfAm61iGplyRI0/kpVFxKRcB?=
- =?us-ascii?Q?yy0gs+f0E2RANsIn1vfQt//hpNWtUoa6mTW1LW4aanppRFk4Q6nyZVl2XrQ0?=
- =?us-ascii?Q?SkMvPv4bnQ4eBDfc654O2cvHj8YKT1Dd/Nfai6zkrOzGVGwCAHpie1hV75ZG?=
- =?us-ascii?Q?PFJmvjPfuGdqNGakjDJsYK9kSUc5k+Kq1CwUjUOj89v/Jwhw/zHumVgUm6n7?=
- =?us-ascii?Q?Ry9Eu4wrTFafHBP8Gh7hdt9GkzuD5/qtKvv0qQV7fxSjNM50+y7+oLsG/0lK?=
- =?us-ascii?Q?B7/ApQvhzncKCmcusLvJc8oGeVkrzCaFfkEmZDjpy+OxIdOh7dch7Tk+nedg?=
- =?us-ascii?Q?9LVfARRBjXrJR/XheaNfZXuojdHKp5Yzgll6V/7gGZR7SwMBIGG0Q=3D=3D?=
-X-Microsoft-Antispam-Message-Info: sZRZdpkZhbWX29+WWNndP/PcIHK2E5ArNHUEyarVsSXRcrr/FgE6coNWcQerUMpVeqadH8/lKv+mkpgC0lUUIv+fLdK5Z95y50ikgui3RMkr2qOX+MQMk1WpvRiLNE2oKMn/IuxaWkZ4xvSU6Im0Wpm8cLtFcZCinmbMAG5RchhLtck7nRO/EDXoSP7ldwOFoUxCXEAqLHVqYLj0irn5hA7eXXCDKsTXEjHlgT/v5zusz6HPthKTCikgAeo8PDG01CetHxngv0xjX88vERQyJPvpMXgKWW0ceQUrfLIWi0ENa9aCWHpsmGKKCAngZllOf3Tf9ckV0Lb7fpW/4mFO035EtQ5Nv2R8xuNPnvgf1PgsCcnPutKzVho1Ngj6xzw+j3hQPUuQXgGMWx1UUh1rdg==
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4707;6:trvph5ofU32DAuPa2NsISFEImINuRrllNZvi7LUj3wc6aNoxEiBMFX8dnoagBkZs0184fFKvh4MCkauSwgBIK2g91c9b0oRGoRohXjAeLDTQc3Rolaxo1wp/ScjmdCn+25iajUeLZ+nVdwSDe72Ew6Py+ZT7b/uVkNddOl/7OH92dVdpkvZIs2i8iDLGDJsmIXybSJqVNCekNmzPkbd8VT+3uC3taALSay1EfP5SMwGTHch8YMNRpVa9+vvlXf00VKeQZNeQ7RJdD0zDTZET4jQuPMKp3/2aNJtAep+7gX0hbh7o2+KPku2TO+ylQ3Ech9LxQ+glMTflECmPE6IA+PQocpjVF2HGd76HJemNe/bNFE//RiSzasDlWKcMsLtt6PnKkruwcv1teBPRF79Tb3jQntg+pSXLy3jQ7mqAqic9FYoUVKBcQCML3kFEMougId1AFHIC/Do890K1FMlcUA==;5:T2T8lRxhciba/Z7gXxL59tOhiATM33gzqggNLOkXyQLN3VX8V0NOwMT6TZqu4t8Wden1WhXnecA050EVRM8HNeEg4PY3HQLXY/If+13A9/IsljhWcwm6GYMymq0B32No1lsSiR//uNcS7envEdpU2VtX48cAdU6k4Yo8VG+S0w0=;24:Lmyq7TMHxHtgRlEZ56nexLbjU9Q04N726dms99eOIbL0NIzJtVgjKRQhrHotKX5YUGKsK5WBBXJmUFb2mN8brnKYTijDGHAP2+LPxBqjqGc=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR07MB4713;23:i2vCUBMzXvWwkIZO8QQD14+pNcxYn2oba1WlY91Qf?=
+ =?us-ascii?Q?T6eZcbQqPr+qawIpAhuVz63KDXOOKPG8LtUc7yf7R+NbbWJM852qJHYuLb3Q?=
+ =?us-ascii?Q?ClKhj4tgXPr14MednIvO9kogIHTOqLiGZSxg41KyfuK8xDVRen9GHnz+zbqd?=
+ =?us-ascii?Q?Rp7mN+xv/9o083y76eO8C9+GvjSRsR5UYTdBupLW7PVuQQcvnFFtO5S2hvox?=
+ =?us-ascii?Q?uNKCJRmXXeWc3XB6v5Dai22I+Og0+7nwZbFjjPOUnVdgfm7CGts7btaETmjq?=
+ =?us-ascii?Q?mq12Sso8ebyOCCCGpdnqiwsTodkv2PwrofHjTRRLt9+uFl/Zzc94zKKpCKTV?=
+ =?us-ascii?Q?90Kxw8avvFBbijXejhvwUl7sc6FD/hrP15miWDSXSDbyVw+6FrBUvIsc+NRP?=
+ =?us-ascii?Q?1See73pv5BVq0wzyC9PDlHJd0GVIeQCQChTEJABdA8gVEJK6imww9ezLs0Og?=
+ =?us-ascii?Q?Mu3IoxS9T3TNvXih36tGsv15K/4NqH3bsvt/2L7nlAc87rw6Sp+TrVoIWryf?=
+ =?us-ascii?Q?s/UwC/2Cs8df4J6efLjxT5v+6l/Mxf15RER8Cra9+n8RyFBNgNIZvpRfNEDZ?=
+ =?us-ascii?Q?qRvgSn2NYTS4eSku4I8+c268SqLXHFhjDdrbNE2+ocH4a5phIbfRVUHCY174?=
+ =?us-ascii?Q?60KebR3AEIfbrpOi1PMv9Fn7sVlA0M/ZhCdUcYAWfG0KKJ6+TcehGcXZIqU4?=
+ =?us-ascii?Q?UPHv4lGGdKq/UOCDzqwZZc9kPrcrWXPV11lM1tZw1W7sbwBEJU4BWMkJrNse?=
+ =?us-ascii?Q?LKC0uCaBpZPjRcQafdybHS65HwQQ4wsMzobw40BZa3BrZFeZPYqd9t61T22d?=
+ =?us-ascii?Q?M2/TfBVTKkDZ9tDV5sVjKYR5EgAufZ7JBpO9yOP8zC2HihJ9Ehw3rE6kfSGH?=
+ =?us-ascii?Q?tVNI/PMoezqrd9beqiXs9BP0spcUoNIj3YJmXFAXX9i6z7BKGD1xNjVBGoDL?=
+ =?us-ascii?Q?vuy9HaHi5g1t1ju+7mVE+C7Fn9PnKSVDWz14I31shITLfoFzxD4dbeQ4vHUB?=
+ =?us-ascii?Q?qTKU+hxIXYpDR5egQCzg59xLl05U8VwllLubG4Cra8NMwZLZ0bvHYObp1Tt3?=
+ =?us-ascii?Q?Bm62PyiRAtJYqJuJ0oLipSi2iUAd8vP+pkTvJ+CgVq5SlYZvQ0HvcjD1egz/?=
+ =?us-ascii?Q?SVnFVfIPCQPfgh9ws62LEsxpBL5AfooEahW2a3DVRIMAwu2A0Y++5MrKs/zZ?=
+ =?us-ascii?Q?qEwroOmvcle514=3D?=
+X-Microsoft-Antispam-Message-Info: DulpKvBmq1s8WVXOr8IfXEvGCa1GRV8q/cPHjr7LpLs+d+/lIJgNf6PnOaqqOtT9nWbfEvf/cgXPJyAnhlwH0AMJh2CBllZE6zp7Ek68XY0aQSDZ5uWc2bs0JEs20TM8QQKt43vBKqJg4Z9f7ktS7sMdow31Zxn/DvQtmYQ5s3eWKFT2Jd3bZgOWA4xsLm+9LDjOezOkj/3EtDU+iRzhinZ/oEsd3nTPhjvKm1fUUJERii4PiLK6I8Lt9iPGv/+mTAZpcKFd1CHMyW678QhdR+nhvibb+Qd6GCNWMDZPqGlT8m5+nDDk4m1s8SVynOfxqhajKD43ofG8BFBY1cAFLAkIw8rAiM1JgcIW3VeHtzW8Fg2Eg2URi7t9V5MoiP5io4HP0Q5C5HcRYOoDcc62bQ==
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4713;6:XOsNmQ0Sbnaabjd+Zl8BQq7m0CFZiU71SscPKqWw5BHYmfz3MoD1mpspDDlEybaxx8oF9r47JqVHckqHAnLhgM3vKwhkBkzokk0jaw7sCs6eEMOIBWWRhdUAfBhZnELq3xue2K8V6NMZnHkuqXv7rCMItTPP71/tnQlqWJn6R65syjDo4LhmVqVBHWVPFwVM+D17t4gRAASwPofmjnYMQO4XLKwc05qaU7Pe14tB9PwXBsZL3BQPUXLls49l9ShlXHrv7FMaEzy41ZQ4gfdgfW0otWxB+Z4IQguc9Fi5svUBno9gvdggUwQyP8vqck7ZgsjBFL3KAcRMy+zrDjF9Kv0R06xZFiKIz843CdRRXjnLsw063cvEr+ohRruSw90lIPywN1KjJl/6rJtZM0ziBaH956s8YdCrJFz2WhVXqSgyOtVMRvV82oxVcMbNd7aws2Uc7oFwl/5byIJ7xIobcg==;5:imWnHjw4+BcjDO+nXD2HQ3EKWXXTItnBSk6vZBB2ouUjgL+zve0N4ENOz/Gb/q5AkCMsc00rOT+v3aVqGIZgkB+SmJIBVHOfJcssRAIPzEd7juB4mrnz/hg9+j5LXbIQLL9F4iTkRyY3hjpY1vwgPw+gfWS7Gk2ojQcpzEdeAE0=;7:+Ag3pPdyZ7LKEEZdcJSArWIIY2XcEPU5LIC6S2XhqJA/o77nBROOelgf4qA43FG5ERHqlOBo9LWUbEbHH7Oyo1+/QrRIcKepwvZuNG2Vc/vQfkYzgN3kuJfBn9uWD/UFuAd+MDM5w/Wzxm7nyfu/DEN8cnXQmle3EFENEQ6Lj9Nhe2beNKDZrk1DGqe3lCWKzULqsnWJmN9V4FVzk1cIY7QatnmcPLyy/BtTmW6KfY9YJLRU5HF7jC7FGjCFZMIm
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4707;7:e2pkS+icU10HJcWi6oeQXAjcogIYE9yRPqwYd/1qUn7RFlE2GhfllWMV9BBT7PcSkbI6EgbKQbr3W/4YTpJjIM9UopeDfyKVmpeGJ98fAL8vClTCX8WZyuqDkhxzx4vafS17IdcQafiSd0Mvq4eYhYO+VeyPclmIMb4w5naJS+00nWerkRNbXkAjkGSe24BI4PQP6SqO4aadXr68V/Ru1hL2NWTPWkdXLrQwKokgK/CHJbbGHryioJw8KborCQkP;20:Hbqm20YycSZtYXLI4X0745aEht8DaWGWeg8JWWSRGqUi+xHpD3+flKJiPA8YcFnCWKRv1FplXFS7BDKA9MChkIiTB13F1qyOcvL06AKl58qizykPEH35lk6BUWdat26pvnJyHd6X6isyKqb5thA1PVXWJjqJKKBqnSohhjh8nC1D9loUGiVBOhZLetzmsNBYmLXT2aIbG6u4ubKiWFCLG76FhqQhPBOj0r0fapzRKVIk3n6+lo4hcl51NO4mNy9O
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4713;20:MPWIK9WhksSGRFYi8V59nOLZw4t7aoAVdBN1Ba2l3bhv5cyPVLdAu1OAqqLmMaD0TQ6snnOKB10PFTc4mzYE89eWw44uTHqXMBF777hK4101MOvvR9X36x3Pj4cQ7JWoVus7E3LqIV2mfyWOAM16E44WL1Pya2fTq/NOaxVCfv3WQycuRBHHnl/cSamlfBJAxmjxpi5mxK5PytXLG/XK8UP9oCZBRakYgHG4GSXSuORPblCPV2iJ1SYCiqT3L+lk
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2018 17:59:14.0761
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2018 17:59:29.6730
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb7be1f8-3cf6-44ac-7ae4-08d5eda156c9
+X-MS-Exchange-CrossTenant-Network-Message-Id: d40879ea-d236-4425-73dc-08d5eda15fea
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4707
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB4713
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch creates a set of event class. For each event class this patch
-defines some trace events.
-
-1. event class: usbssp_log_msg
-    - usbssp_dbg_address - debug message used in function handling
-	Address Device Command.
-    - usbssp_dbg_context_change - debug messages related to contexti
-	 updates performed with Configure Endpoint and Evaluate Contexti
-	 command.
-    - usbssp_dbg_reset_ep - debug messages associated with resetting i
-	an endpoint.
-    - usbssp_dbg_cancel_request - debug messages related to the removal
-	 of a cancelled Request.
-    - usbssp_dbg_init - debug messages related to the initialization
-	and unload.
-    - usbssp_dbg_ring_expansion - debug messages related to ring
-	expansion.
-
-2. event class: usbssp_log_ctx
-    usbssp_address_ctx - debug message related to address Device command,
-    that can be used to display the context data filed.
-
-3. event class: usbssp_log_trb
-    - usbssp_handle_event - debug message related to handling Events TRB.
-    - usbssp_handle_command - debug message related to handling C
-	ommand TRB.
-    - usbssp_handle_transfer - debug message related to handling
-	Transfer TRB.
-    - usbssp_queue_trb - debug message related to queuing TRB.
-
-4. event class: usbssp_log_priv_dev
-    This class event  tracing at least part of an usbssp_device lifetime,
-    and for now it already exposes quite a bit of valuable information.
-
-    - usbssp_alloc_priv_device - debug message related to allocating
-	 device.
-    - usbssp_free_priv_device - debug message related to the freeing
-	 device.
-    - usbssp_setup_addressable_priv_device - debug message related to the
-    	initialization of usbssp_device object.
-    - usbssp_setup_device - debug message related to Address Device
-	command.
-    - usbssp_stop_device - debug message related to stooping device.
-
-5. event class: usbssp_log_request
-    This will help us figuring out information related to usb_request
-    object.
-
-    - usbssp_request_enqueue - debug message used during enqueuing new
-	request.
-    - usbssp_request_giveback -  debug message related to
-	usbssp_request_giveback function
-    - usbssp_request_dequeue - debug message related to dequeuing request.
-    - usbssp_alloc_request - debug message related to allocation
-	new request.
-    - usbssp_free_request - debug message related to freeing request.
-
-6. event class: usbssp_log_ep_ctx
-    With these event class, we can track what's happening with the
-    HW while executing each and every command. It will give us visibility
-    into how the endpoint contexts are being modified by controller
-    which can bring insight into problems while debugging.
-
-    - usbssp_remove_request - debug message related to removing request.
-    - usbssp_handle_cmd_stop_ep - debug message related to Stop Endpointi
-	command.
-    - usbssp_handle_cmd_set_deq_ep - debug message releted to Set Dequeue
-	 Endpoint command,
-    - usbssp_handle_cmd_reset_ep - debug message related to Reset Endpoint
-	 command.
-    - usbssp_handle_cmd_config_ep - debug message related to Endpoint
-	Configure command.
-
-7. event class: usbssp_log_slot_ctx
-    With these event class, we can track what's happening with the HW
-    while executing each and every command. It will give us visibility
-    into how the slot contexts are being modified by controller which
-    can bring insight into problems while debugging.
-
-    - usbssp_alloc_dev - debug message related to allocating device.
-    - usbssp_free_dev - debug message related to freeing device.
-    - usbssp_handle_cmd_disable_slot - debug message related to
-	Disable Slot command.
-    - usbssp_reset_device - debug message related to resetting device.
-    - usbssp_setup_device_slot - debug message related to c
-	onfiguring slot.
-    - usbssp_handle_cmd_addr_dev - debug message related to Address Device
-	command.
-    - usbssp_handle_cmd_reset_dev - debug message related to Reset Device
-	command.
-    - usbssp_handle_cmd_set_deq - debug message related to
-	Set Dequeue command.
-    - usbssp_configure_endpoint - debug message used during configuring
-	endpoints.
-
-8. event class: usbssp_log_ring
-    This event class defines the events used for tracing the change
-    of all kinds of rings used by an usbssp device. An usbssp ring
-    is basically a memory block shared between software and hardware.
-    By tracing changes of rings, it makes the life easier for.
-
-    - debugging hardware or software problems.
-    - usbssp_ring_alloc - debug message related to allocation ring.
-    - usbssp_ring_free - debug message related to freeing ring.
-    - usbssp_ring_expansion - debug message related with expansion ring.
-    - usbssp_inc_enq - debug message related with incrementing
-	dequeue pointer.
-    - usbssp_inc_deq - debug message related with decrementing
-	dequeue pointer.
-
-9. event class: usbssp_log_portsc
-    Track the port status each time we get a port status change event.
-
-     - usbssp_handle_port_status - debug message used in
-	handle_port_status function.
+Patch implements function responsible for enabling
+and configuring USB endpoint. This function is called
+from USB core gadget during handling SET_CONFIGURATION
+and SET_INTERFACE request.
 
 Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 ---
- drivers/usb/usbssp/gadget-trace.c |  13 +
- drivers/usb/usbssp/gadget-trace.h | 482 ++++++++++++++++++++++++++++++
- 2 files changed, 495 insertions(+)
- create mode 100644 drivers/usb/usbssp/gadget-trace.c
- create mode 100644 drivers/usb/usbssp/gadget-trace.h
+ drivers/usb/usbssp/gadget-if.c  |  41 ++++-
+ drivers/usb/usbssp/gadget-mem.c | 286 ++++++++++++++++++++++++++++++++
+ drivers/usb/usbssp/gadget.c     | 271 +++++++++++++++++++++++++++++-
+ drivers/usb/usbssp/gadget.h     |  10 ++
+ 4 files changed, 604 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/usbssp/gadget-trace.c b/drivers/usb/usbssp/gadget-trace.c
-new file mode 100644
-index 000000000000..9994ad09eb4d
---- /dev/null
-+++ b/drivers/usb/usbssp/gadget-trace.c
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/usb/usbssp/gadget-if.c b/drivers/usb/usbssp/gadget-if.c
+index 376e03b7ef1f..afc4f32ec8af 100644
+--- a/drivers/usb/usbssp/gadget-if.c
++++ b/drivers/usb/usbssp/gadget-if.c
+@@ -39,13 +39,48 @@
+ static int usbssp_gadget_ep_enable(struct usb_ep *ep,
+ 				   const struct usb_endpoint_descriptor *desc)
+ {
+-	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
++	struct usbssp_ep *ep_priv;
++	struct usbssp_udc *usbssp_data;
+ 	int ret = 0;
++	int irq_disabled_locally = 0;
++	unsigned long flags = 0;
+ 
+-	if (!ep_priv)
++	if (!ep || !desc || desc->bDescriptorType != USB_DT_ENDPOINT) {
++		pr_err("invalid parameters\n");
+ 		return -EINVAL;
++	}
+ 
+-	/*TODO: implements this function*/
++	ep_priv = to_usbssp_ep(ep);
++	usbssp_data = ep_priv->usbssp_data;
++
++	if (!desc->wMaxPacketSize) {
++		dev_dbg(usbssp_data->dev, "missing wMaxPacketSize\n");
++		return -EINVAL;
++	}
++
++	if (ep_priv->ep_state & USBSSP_EP_ENABLED) {
++		dev_dbg(usbssp_data->dev, "%s is already enabled\n",
++			ep_priv->name);
++		return -EINVAL;
++	}
++
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ret = usbssp_add_endpoint(usbssp_data, ep_priv);
++	if (ret < 0)
++		goto finish;
++
++	ep_priv->ep_state |= USBSSP_EP_ENABLED;
++
++	/*Update bandwidth information*/
++	ret = usbssp_check_bandwidth(usbssp_data, &usbssp_data->gadget);
++
++	if (ret < 0)
++		ep_priv->ep_state &= ~USBSSP_EP_ENABLED;
++
++finish:
++	dev_dbg(usbssp_data->dev, "%s enable endpoint %s\n", ep_priv->name,
++		(ret == 0) ? "success" : "failed");
++	usbssp_g_unlock(irq_disabled_locally, flags);
+ 	return ret;
+ }
+ 
+diff --git a/drivers/usb/usbssp/gadget-mem.c b/drivers/usb/usbssp/gadget-mem.c
+index d5d732b94454..8438596ecf48 100644
+--- a/drivers/usb/usbssp/gadget-mem.c
++++ b/drivers/usb/usbssp/gadget-mem.c
+@@ -817,6 +817,292 @@ int usbssp_setup_addressable_priv_dev(struct usbssp_udc *usbssp_data)
+ 	return 0;
+ }
+ 
 +/*
-+ * USBSSP device controller driver
++ * Convert interval expressed as 2^(bInterval - 1) == interval into
++ * straight exponent value 2^n == interval.
 + *
-+ * Copyright (C) 2018 Cadence.
-+ *
-+ * Author: Pawel Laszczak
-+ * A lot of code based on Linux XHCI driver.
-+ * Origin: Copyright (C) 2008 Intel Corp.
 + */
++static unsigned int usbssp_parse_exponent_interval(struct usb_gadget *g,
++						   struct usbssp_ep *dep)
++{
++	unsigned int interval;
 +
-+#define CREATE_TRACE_POINTS
-+#include "gadget-trace.h"
-diff --git a/drivers/usb/usbssp/gadget-trace.h b/drivers/usb/usbssp/gadget-trace.h
-new file mode 100644
-index 000000000000..667246c344ba
---- /dev/null
-+++ b/drivers/usb/usbssp/gadget-trace.h
-@@ -0,0 +1,482 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * USBSSP device controller driver
-+ *
-+ * Copyright (C) 2018 Cadence.
-+ *
-+ * Author: Pawel Laszczak
-+ *
-+ * A lot of code based on Linux XHCI driver.
-+ * Origin: Copyright (C) 2008 Intel Corp.
-+ */
++	interval = clamp_val(dep->endpoint.desc->bInterval, 1, 16) - 1;
++	if (interval != dep->endpoint.desc->bInterval - 1)
++		dev_warn(&g->dev,
++			"ep %#x - rounding interval to %d %sframes\n",
++			dep->endpoint.desc->bEndpointAddress,
++			1 << interval,
++			g->speed == USB_SPEED_FULL ? "" : "micro");
 +
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM usbssp-dev
++	if (g->speed == USB_SPEED_FULL) {
++		/*
++		 * Full speed isoc endpoints specify interval in frames,
++		 * not microframes. We are using microframes everywhere,
++		 * so adjust accordingly.
++		 */
++		interval += 3;	/* 1 frame = 2^3 uframes */
++	}
++
++	return interval;
++}
 +
 +/*
-+ * The TRACE_SYSTEM_VAR defaults to TRACE_SYSTEM, but must be a
-+ * legitimate C variable. It is not exported to user space.
++ * Convert bInterval expressed in microframes (in 1-255 range) to exponent of
++ * microframes, rounded down to nearest power of 2.
 + */
-+#undef TRACE_SYSTEM_VAR
-+#define TRACE_SYSTEM_VAR usbssp_dev
++static unsigned int usbssp_microframes_to_exponent(struct usb_gadget *g,
++						   struct usbssp_ep *dep,
++						   unsigned int desc_interval,
++						   unsigned int min_exponent,
++						   unsigned int max_exponent)
++{
++	unsigned int interval;
 +
-+#if !defined(__USBSSP_DEV_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define __USBSSP_DEV_TRACE_H
++	interval = fls(desc_interval) - 1;
++	interval = clamp_val(interval, min_exponent, max_exponent);
++	if ((1 << interval) != desc_interval)
++		dev_dbg(&g->dev,
++			"ep %#x - rounding interval to %d microframes,"
++			"ep desc says %d microframes\n",
++			dep->endpoint.desc->bEndpointAddress,
++			1 << interval,
++			desc_interval);
 +
-+#include <linux/tracepoint.h>
-+#include "gadget.h"
++	return interval;
++}
 +
-+#define USBSSP_DEV_MSG_MAX	500
-+
-+DECLARE_EVENT_CLASS(usbssp_log_msg,
-+	TP_PROTO(struct va_format *vaf),
-+	TP_ARGS(vaf),
-+	TP_STRUCT__entry(__dynamic_array(char, msg, USBSSP_DEV_MSG_MAX)),
-+	TP_fast_assign(
-+		vsnprintf(__get_str(msg), USBSSP_DEV_MSG_MAX, vaf->fmt, *vaf->va);
-+	),
-+	TP_printk("%s", __get_str(msg))
-+);
-+
-+DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_address,
-+	TP_PROTO(struct va_format *vaf),
-+	TP_ARGS(vaf)
-+);
-+
-+DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_context_change,
-+	TP_PROTO(struct va_format *vaf),
-+	TP_ARGS(vaf)
-+);
-+
-+DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_reset_ep,
-+	TP_PROTO(struct va_format *vaf),
-+	TP_ARGS(vaf)
-+);
-+
-+DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_cancel_request,
-+	TP_PROTO(struct va_format *vaf),
-+	TP_ARGS(vaf)
-+);
-+
-+DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_init,
-+	TP_PROTO(struct va_format *vaf),
-+	TP_ARGS(vaf)
-+);
-+
-+DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_ring_expansion,
-+	TP_PROTO(struct va_format *vaf),
-+	TP_ARGS(vaf)
-+);
-+
-+DECLARE_EVENT_CLASS(usbssp_log_ctx,
-+	TP_PROTO(struct usbssp_udc *usbssp_data, struct usbssp_container_ctx *ctx,
-+		 unsigned int ep_num),
-+	TP_ARGS(usbssp_data, ctx, ep_num),
-+	TP_STRUCT__entry(
-+		__field(int, ctx_64)
-+		__field(unsigned int, ctx_type)
-+		__field(dma_addr_t, ctx_dma)
-+		__field(u8 *, ctx_va)
-+		__field(unsigned int, ctx_ep_num)
-+		__field(int, slot_id)
-+		__dynamic_array(u32, ctx_data,
-+			((HCC_64BYTE_CONTEXT(usbssp_data->hcc_params) + 1) * 8) *
-+			((ctx->type == USBSSP_CTX_TYPE_INPUT) + ep_num + 1))
-+	),
-+	TP_fast_assign(
-+		__entry->ctx_64 = HCC_64BYTE_CONTEXT(usbssp_data->hcc_params);
-+		__entry->ctx_type = ctx->type;
-+		__entry->ctx_dma = ctx->dma;
-+		__entry->ctx_va = ctx->bytes;
-+		__entry->slot_id = usbssp_data->slot_id;
-+		__entry->ctx_ep_num = ep_num;
-+		memcpy(__get_dynamic_array(ctx_data), ctx->bytes,
-+			((HCC_64BYTE_CONTEXT(usbssp_data->hcc_params) + 1) * 32) *
-+			((ctx->type == USBSSP_CTX_TYPE_INPUT) + ep_num + 1));
-+	),
-+	TP_printk("\nctx_64=%d, ctx_type=%u, ctx_dma=@%llx, ctx_va=@%p",
-+			__entry->ctx_64, __entry->ctx_type,
-+			(unsigned long long) __entry->ctx_dma, __entry->ctx_va
-+	)
-+);
-+
-+DEFINE_EVENT(usbssp_log_ctx, usbssp_address_ctx,
-+	TP_PROTO(struct usbssp_udc *usbssp_data, struct usbssp_container_ctx *ctx,
-+		 unsigned int ep_num),
-+	TP_ARGS(usbssp_data, ctx, ep_num)
-+);
++static unsigned int usbssp_parse_microframe_interval(struct usb_gadget *g,
++		struct usbssp_ep *dep)
++{
++	if (dep->endpoint.desc->bInterval == 0)
++		return 0;
++	return usbssp_microframes_to_exponent(g, dep,
++					dep->endpoint.desc->bInterval, 0, 15);
++}
 +
 +
-+DECLARE_EVENT_CLASS(usbssp_log_trb,
-+	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
-+	TP_ARGS(ring, trb),
-+	TP_STRUCT__entry(
-+		__field(u32, type)
-+		__field(u32, field0)
-+		__field(u32, field1)
-+		__field(u32, field2)
-+		__field(u32, field3)
-+	),
-+	TP_fast_assign(
-+		__entry->type = ring->type;
-+		__entry->field0 = le32_to_cpu(trb->field[0]);
-+		__entry->field1 = le32_to_cpu(trb->field[1]);
-+		__entry->field2 = le32_to_cpu(trb->field[2]);
-+		__entry->field3 = le32_to_cpu(trb->field[3]);
-+	),
-+	TP_printk("%s: %s", usbssp_ring_type_string(__entry->type),
-+			usbssp_decode_trb(__entry->field0, __entry->field1,
-+					__entry->field2, __entry->field3)
-+	)
-+);
++static unsigned int usbssp_parse_frame_interval(struct usb_gadget *g,
++						struct usbssp_ep *dep)
++{
 +
-+DEFINE_EVENT(usbssp_log_trb, usbssp_handle_event,
-+	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
-+	TP_ARGS(ring, trb)
-+);
++	return usbssp_microframes_to_exponent(g, dep,
++					dep->endpoint.desc->bInterval * 8,
++					3, 10);
++}
 +
-+DEFINE_EVENT(usbssp_log_trb, usbssp_handle_command,
-+	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
-+	TP_ARGS(ring, trb)
-+);
++/*
++ * Return the polling or NAK interval.
++ *
++ * The polling interval is expressed in "microframes". If DC's Interval field
++ * is set to N, it will service the endpoint every 2^(Interval)*125us.
++ *
++ * The NAK interval is one NAK per 1 to 255 microframes, or no NAKs if interval
++ * is set to 0.
++ */
++static unsigned int usbssp_get_endpoint_interval(struct usb_gadget *g,
++						 struct usbssp_ep *dep)
++{
++	unsigned int interval = 0;
 +
-+DEFINE_EVENT(usbssp_log_trb, usbssp_handle_transfer,
-+	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
-+	TP_ARGS(ring, trb)
-+);
++	switch (g->speed) {
++	case USB_SPEED_HIGH:
++		/* Max NAK rate */
++		if (usb_endpoint_xfer_control(dep->endpoint.desc) ||
++		    usb_endpoint_xfer_bulk(dep->endpoint.desc)) {
++			interval = usbssp_parse_microframe_interval(g, dep);
++			break;
++		}
++		/* Fall through - SS and HS isoc/int have same decoding */
++	case USB_SPEED_SUPER_PLUS:
++	case USB_SPEED_SUPER:
++		if (usb_endpoint_xfer_int(dep->endpoint.desc) ||
++		    usb_endpoint_xfer_isoc(dep->endpoint.desc)) {
++			interval = usbssp_parse_exponent_interval(g, dep);
++		}
++		break;
 +
-+DEFINE_EVENT(usbssp_log_trb, usbssp_queue_trb,
-+	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
-+	TP_ARGS(ring, trb)
-+);
++	case USB_SPEED_FULL:
++		if (usb_endpoint_xfer_isoc(dep->endpoint.desc)) {
++			interval = usbssp_parse_exponent_interval(g, dep);
++			break;
++		}
++		/*
++		 * Fall through for interrupt endpoint interval decoding
++		 * since it uses the same rules as low speed interrupt
++		 * endpoints.
++		 */
++	case USB_SPEED_LOW:
++		if (usb_endpoint_xfer_int(dep->endpoint.desc) ||
++		    usb_endpoint_xfer_isoc(dep->endpoint.desc)) {
++			interval = usbssp_parse_frame_interval(g, dep);
++		}
++		break;
 +
-+DECLARE_EVENT_CLASS(usbssp_log_priv_dev,
-+	TP_PROTO(struct usbssp_device *priv_dev),
-+	TP_ARGS(priv_dev),
-+	TP_STRUCT__entry(
-+		__field(struct usbssp_device *, priv_dev)
-+		__field(struct usb_gadget *, gadget)
-+		__field(unsigned long long, out_ctx)
-+		__field(unsigned long long, in_ctx)
-+		__field(u8, port_num)
-+	),
-+	TP_fast_assign(
-+		__entry->priv_dev = priv_dev;
-+		__entry->gadget = priv_dev->gadget;
-+		__entry->in_ctx = (unsigned long long) priv_dev->in_ctx->dma;
-+		__entry->out_ctx = (unsigned long long) priv_dev->out_ctx->dma;
-+		__entry->port_num = priv_dev->port_num;
-+	),
-+	TP_printk("priv_dev %p gadget %p ctx %llx | %llx, port %d ",
-+		__entry->priv_dev, __entry->gadget, __entry->in_ctx, __entry->out_ctx,
-+		__entry->port_num
-+	)
-+);
++	default:
++		BUG();
++	}
++	return interval;
++}
 +
-+DEFINE_EVENT(usbssp_log_priv_dev, usbssp_alloc_priv_device,
-+	TP_PROTO(struct usbssp_device *vdev),
-+	TP_ARGS(vdev)
-+);
++/*
++ * The "Mult" field in the endpoint context is only set for SuperSpeed isoc eps.
++ * High speed endpoint descriptors can define "the number of additional
++ * transaction opportunities per microframe", but that goes in the Max Burst
++ * endpoint context field.
++ */
++static u32 usbssp_get_endpoint_mult(struct usb_gadget *g,
++				    struct usbssp_ep *dep)
++{
++	if (g->speed < USB_SPEED_SUPER ||
++	    !usb_endpoint_xfer_isoc(dep->endpoint.desc))
++		return 0;
 +
-+DEFINE_EVENT(usbssp_log_priv_dev, usbssp_free_priv_device,
-+	TP_PROTO(struct usbssp_device *vdev),
-+	TP_ARGS(vdev)
-+);
++	return dep->endpoint.comp_desc->bmAttributes;
++}
 +
-+DEFINE_EVENT(usbssp_log_priv_dev, usbssp_setup_device,
-+	TP_PROTO(struct usbssp_device *vdev),
-+	TP_ARGS(vdev)
-+);
++static u32 usbssp_get_endpoint_max_burst(struct usb_gadget *g,
++					 struct usbssp_ep *dep)
++{
++	/* Super speed and Plus have max burst in ep companion desc */
++	if (g->speed >= USB_SPEED_SUPER)
++		return dep->endpoint.comp_desc->bMaxBurst;
 +
-+DEFINE_EVENT(usbssp_log_priv_dev, usbssp_setup_addressable_priv_device,
-+	TP_PROTO(struct usbssp_device *vdev),
-+	TP_ARGS(vdev)
-+);
++	if (g->speed == USB_SPEED_HIGH &&
++	   (usb_endpoint_xfer_isoc(dep->endpoint.desc) ||
++	    usb_endpoint_xfer_int(dep->endpoint.desc)))
++		return (usb_endpoint_maxp(dep->endpoint.desc) & 0x1800) >> 11;
 +
-+DEFINE_EVENT(usbssp_log_priv_dev, usbssp_stop_device,
-+	TP_PROTO(struct usbssp_device *vdev),
-+	TP_ARGS(vdev)
-+);
++	return 0;
++}
 +
-+DECLARE_EVENT_CLASS(usbssp_log_request,
-+	TP_PROTO(struct usb_request *request),
-+	TP_ARGS(request),
-+	TP_STRUCT__entry(
-+		__field(struct usb_request *, request)
-+		__field(void *, buf)
-+		__field(unsigned int, length)
-+		__field(dma_addr_t, dma)
-+		__field(struct scatterlist*, sg)
-+		__field(unsigned int, num_sgs)
-+		__field(unsigned int, num_mapped_sgs)
-+		__field(unsigned int, stream_id)
-+		__field(unsigned int, no_interrupt)
-+		__field(unsigned int, zero)
-+		__field(unsigned int, short_not_ok)
-+		__field(unsigned int, dma_mapped)
-+		__field(int, status)
-+		__field(unsigned int, actual)
-+	),
-+	TP_fast_assign(
-+		__entry->request = request;
-+		__entry->buf = request->buf;
-+		__entry->length = request->length;
-+		__entry->dma = request->dma;
-+		__entry->sg = request->sg;
-+		__entry->num_sgs = request->num_sgs;
-+		__entry->num_mapped_sgs = request->num_mapped_sgs;
-+		__entry->stream_id = request->stream_id;
-+		__entry->no_interrupt = request->no_interrupt;
-+		__entry->zero = request->zero;
-+		__entry->short_not_ok = request->short_not_ok;
-+		__entry->dma_mapped = 0 /*request->dma_mapped*/;
-+		__entry->status = request->status;
-+		__entry->actual = request->actual;
-+	),
++static u32 usbssp_get_endpoint_type(const struct usb_endpoint_descriptor *desc)
++{
++	int in;
 +
-+	TP_printk("req %p; buf %p, len %d, dma %llx, sg %p, num_sg %d, num_m_sg %d,"
-+			"stream_id %d, no_int %x, zero %x, short_not_ok %x, dma_mapped %x, "
-+			"status %d, actual %d",
-+			__entry->request,
-+			__entry->buf, __entry->length, __entry->dma, __entry->sg,
-+			__entry->num_sgs, __entry->num_mapped_sgs, __entry->stream_id,
-+			__entry->no_interrupt, __entry->zero, __entry->short_not_ok,
-+			__entry->dma_mapped, __entry->status, __entry->actual
-+		)
++	in = usb_endpoint_dir_in(desc);
 +
-+);
++	switch (usb_endpoint_type(desc)) {
++	case USB_ENDPOINT_XFER_CONTROL:
++		return CTRL_EP;
++	case USB_ENDPOINT_XFER_BULK:
++		return in ? BULK_IN_EP : BULK_OUT_EP;
++	case USB_ENDPOINT_XFER_ISOC:
++		return in ? ISOC_IN_EP : ISOC_OUT_EP;
++	case USB_ENDPOINT_XFER_INT:
++		return in ? INT_IN_EP : INT_OUT_EP;
++	}
++	return 0;
++}
 +
-+DEFINE_EVENT(usbssp_log_request, usbssp_request_enqueue,
-+	TP_PROTO(struct usb_request *request),
-+	TP_ARGS(request)
-+);
++/*
++ * Return the maximum endpoint service interval time (ESIT) payload.
++ * Basically, this is the maxpacket size, multiplied by the burst size
++ * and mult size.
++ */
++static u32 usbssp_get_max_esit_payload(struct usb_gadget *g,
++				       struct usbssp_ep *dep)
++{
++	int max_burst;
++	int max_packet;
 +
-+DEFINE_EVENT(usbssp_log_request, usbssp_request_giveback,
-+	TP_PROTO(struct usb_request *request),
-+	TP_ARGS(request)
-+);
++	/* Only applies for interrupt or isochronous endpoints*/
++	if (usb_endpoint_xfer_control(dep->endpoint.desc) ||
++	    usb_endpoint_xfer_bulk(dep->endpoint.desc))
++		return 0;
 +
-+DEFINE_EVENT(usbssp_log_request, usbssp_request_dequeue,
-+	TP_PROTO(struct usb_request *request),
-+	TP_ARGS(request)
-+);
++	/* SuperSpeedPlus Isoc ep sending over 48k per esit*/
 +
-+DEFINE_EVENT(usbssp_log_request, usbssp_alloc_request,
-+	TP_PROTO(struct usb_request *request),
-+	TP_ARGS(request)
-+);
++	if ((g->speed >= USB_SPEED_SUPER_PLUS) &&
++	    USB_SS_SSP_ISOC_COMP(dep->endpoint.desc->bmAttributes))
++		return le32_to_cpu(dep->endpoint.comp_desc->wBytesPerInterval);
++	/* SuperSpeed or SuperSpeedPlus Isoc ep with less than 48k per esit */
++	else if (g->speed >= USB_SPEED_SUPER)
++		return le16_to_cpu(dep->endpoint.comp_desc->wBytesPerInterval);
 +
-+DEFINE_EVENT(usbssp_log_request, usbssp_free_request,
-+	TP_PROTO(struct usb_request *request),
-+	TP_ARGS(request)
-+);
++	max_packet = usb_endpoint_maxp(dep->endpoint.desc);
++	max_burst = usb_endpoint_maxp_mult(dep->endpoint.desc);
++	/* A 0 in max burst means 1 transfer per ESIT */
++	return max_packet * max_burst;
++}
 +
-+DECLARE_EVENT_CLASS(usbssp_log_ep_ctx,
-+	TP_PROTO(struct usbssp_ep_ctx *ctx),
-+	TP_ARGS(ctx),
-+	TP_STRUCT__entry(
-+		__field(u32, info)
-+		__field(u32, info2)
-+		__field(u64, deq)
-+		__field(u32, tx_info)
-+	),
-+	TP_fast_assign(
-+		__entry->info = le32_to_cpu(ctx->ep_info);
-+		__entry->info2 = le32_to_cpu(ctx->ep_info2);
-+		__entry->deq = le64_to_cpu(ctx->deq);
-+		__entry->tx_info = le32_to_cpu(ctx->tx_info);
-+	),
-+	TP_printk("%s", usbssp_decode_ep_context(__entry->info,
-+		__entry->info2, __entry->deq, __entry->tx_info)
-+	)
-+);
++/*
++ * Set up an endpoint with one ring segment. Do not allocate stream rings.
++ * Drivers will have to call usb_alloc_streams() to do that.
++ */
++int usbssp_endpoint_init(struct usbssp_udc *usbssp_data,
++			 struct usbssp_device *dev_priv,
++			 struct usbssp_ep *dep,
++			 gfp_t mem_flags)
++{
++	unsigned int ep_index;
++	struct usbssp_ep_ctx *ep_ctx;
++	struct usbssp_ring *ep_ring;
++	unsigned int max_packet;
++	enum usbssp_ring_type ring_type;
++	u32 max_esit_payload;
++	u32 endpoint_type;
++	unsigned int max_burst;
++	unsigned int interval;
++	unsigned int mult;
++	unsigned int avg_trb_len;
++	unsigned int err_count = 0;
 +
-+DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_remove_request,
-+	TP_PROTO(struct usbssp_ep_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	ep_index = usbssp_get_endpoint_index(dep->endpoint.desc);
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->in_ctx, ep_index);
 +
-+DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_handle_cmd_stop_ep,
-+	TP_PROTO(struct usbssp_ep_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	endpoint_type = usbssp_get_endpoint_type(dep->endpoint.desc);
++	if (!endpoint_type)
++		return -EINVAL;
 +
-+DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_handle_cmd_set_deq_ep,
-+	TP_PROTO(struct usbssp_ep_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	ring_type = usb_endpoint_type(dep->endpoint.desc);
 +
-+DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_handle_cmd_reset_ep,
-+	TP_PROTO(struct usbssp_ep_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	/*
++	 * Get values to fill the endpoint context, mostly from ep descriptor.
++	 * The average TRB buffer lengt for bulk endpoints is unclear as we
++	 * have no clue on scatter gather list entry size. For Isoc and Int,
++	 * set it to max available.
++	 */
++	max_esit_payload = usbssp_get_max_esit_payload(&usbssp_data->gadget, dep);
++	interval = usbssp_get_endpoint_interval(&usbssp_data->gadget, dep);
++	mult = usbssp_get_endpoint_mult(&usbssp_data->gadget, dep);
++	max_packet = GET_MAX_PACKET(usb_endpoint_maxp(dep->endpoint.desc));
++	max_burst = usbssp_get_endpoint_max_burst(&usbssp_data->gadget, dep);
++	avg_trb_len = max_esit_payload;
 +
-+DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_handle_cmd_config_ep,
-+	TP_PROTO(struct usbssp_ep_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	/* Allow 3 retries for everything but isoc, set CErr = 3 */
++	if (!usb_endpoint_xfer_isoc(dep->endpoint.desc))
++		err_count = 3;
++	if (usb_endpoint_xfer_bulk(dep->endpoint.desc) &&
++	    usbssp_data->gadget.speed == USB_SPEED_HIGH)
++		max_packet = 512;
++	/* DC spec indicates that ctrl ep avg TRB Length should be 8 */
++	if (usb_endpoint_xfer_control(dep->endpoint.desc))
++		avg_trb_len = 8;
 +
-+DECLARE_EVENT_CLASS(usbssp_log_slot_ctx,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx),
-+	TP_STRUCT__entry(
-+		__field(u32, info)
-+		__field(u32, info2)
-+		__field(u32, int_target)
-+		__field(u32, state)
-+	),
-+	TP_fast_assign(
-+		__entry->info = le32_to_cpu(ctx->dev_info);
-+		__entry->info2 = le32_to_cpu(ctx->dev_info2);
-+		__entry->int_target = le64_to_cpu(ctx->int_target);
-+		__entry->state = le32_to_cpu(ctx->dev_state);
-+	),
-+	TP_printk("%s", usbssp_decode_slot_context(__entry->info,
-+			__entry->info2, __entry->int_target,
-+			__entry->state)
-+	)
-+);
++	/* Set up the endpoint ring */
++	dev_priv->eps[ep_index].new_ring = usbssp_ring_alloc(usbssp_data, 2, 1,
++							ring_type, max_packet,
++							mem_flags);
 +
-+DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_alloc_dev,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	dev_priv->eps[ep_index].skip = false;
++	ep_ring = dev_priv->eps[ep_index].new_ring;
 +
-+DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_free_dev,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	/* Fill the endpoint context */
++	ep_ctx->ep_info = cpu_to_le32(EP_MAX_ESIT_PAYLOAD_HI(max_esit_payload) |
++				EP_INTERVAL(interval) | EP_MULT(mult));
++	ep_ctx->ep_info2 = cpu_to_le32(EP_TYPE(endpoint_type) |
++				MAX_PACKET(max_packet) | MAX_BURST(max_burst) |
++				ERROR_COUNT(err_count));
++	ep_ctx->deq = cpu_to_le64(ep_ring->first_seg->dma |
++				ep_ring->cycle_state);
 +
-+DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_handle_cmd_disable_slot,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	ep_ctx->tx_info = cpu_to_le32(EP_MAX_ESIT_PAYLOAD_LO(max_esit_payload) |
++				EP_AVG_TRB_LENGTH(avg_trb_len));
 +
-+DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_reset_device,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	return 0;
++}
 +
-+DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_setup_device_slot,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
+ struct usbssp_command *usbssp_alloc_command(struct usbssp_udc *usbssp_data,
+ 					    bool allocate_completion,
+ 					    gfp_t mem_flags)
+diff --git a/drivers/usb/usbssp/gadget.c b/drivers/usb/usbssp/gadget.c
+index d5ed2c48e3fa..f5b0659b6f2d 100644
+--- a/drivers/usb/usbssp/gadget.c
++++ b/drivers/usb/usbssp/gadget.c
+@@ -463,6 +463,29 @@ unsigned int usbssp_get_endpoint_index(
+ 	return index;
+ }
+ 
++/**
++ * The reverse operation to usbssp_get_endpoint_index.
++ * Calculate the USB endpoint address from the USBSSP endpoint index.
++ */
++unsigned int usbssp_get_endpoint_address(unsigned int ep_index)
++{
++	unsigned int number = DIV_ROUND_UP(ep_index, 2);
++	unsigned int direction = ep_index % 2 ? USB_DIR_OUT : USB_DIR_IN;
 +
-+DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_handle_cmd_addr_dev,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++	return direction | number;
++}
 +
-+DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_handle_cmd_reset_dev,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++/**
++ * Find the flag for this endpoint (for use in the control context). Use the
++ * endpoint index to create a bitmask. The slot context is bit 0, endpoint 0 is
++ * bit 1, etc.
++ */
++unsigned int usbssp_get_endpoint_flag(
++			const struct usb_endpoint_descriptor *desc)
++{
++	return 1 << (usbssp_get_endpoint_index(desc) + 1);
++}
 +
-+DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_handle_cmd_set_deq,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
+ /* Compute the last valid endpoint context index. Basically, this is the
+  * endpoint index plus one. For slot contexts with more than valid endpoint,
+  * we find the most significant bit set in the added contexts flags.
+@@ -692,6 +715,132 @@ int usbssp_dequeue(struct usbssp_ep *ep_priv, struct usbssp_request *req_priv)
+ 	return ret;
+ }
+ 
 +
-+DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_configure_endpoint,
-+	TP_PROTO(struct usbssp_slot_ctx *ctx),
-+	TP_ARGS(ctx)
-+);
++/**
++ * Add an endpoint to a new possible bandwidth configuration for this device.
++ * Only one call to this function is allowed per endpoint before
++ * check_bandwidth() or reset_bandwidth() must be called.
++ * A call to usbssp_drop_endpoint() followed by a call to
++ * usbssp_add_endpoint() will add the endpoint to the schedule with possibly
++ * new parameters denoted by different endpoint descriptor in usbssp_ep.
++ * A call to usbssp_add_endpoint() followed by a call to usbssp_drop_endpoint()
++ * is not allowed.
++ *
++ */
++int usbssp_add_endpoint(struct usbssp_udc *usbssp_data, struct usbssp_ep *dep)
++{
++	const struct usb_endpoint_descriptor *desc = dep->endpoint.desc;
++	struct usbssp_container_ctx *in_ctx;
++	unsigned int ep_index;
++	struct usbssp_input_control_ctx *ctrl_ctx;
++	u32 added_ctxs;
++	u32 new_add_flags, new_drop_flags;
++	struct usbssp_device *dev_priv;
++	int ret = 0;
 +
-+DECLARE_EVENT_CLASS(usbssp_log_ring,
-+	TP_PROTO(struct usbssp_ring *ring),
-+	TP_ARGS(ring),
-+	TP_STRUCT__entry(
-+		__field(u32, type)
-+		__field(void *, ring)
-+		__field(dma_addr_t, enq)
-+		__field(dma_addr_t, deq)
-+		__field(dma_addr_t, enq_seg)
-+		__field(dma_addr_t, deq_seg)
-+		__field(unsigned int, num_segs)
-+		__field(unsigned int, stream_id)
-+		__field(unsigned int, cycle_state)
-+		__field(unsigned int, num_trbs_free)
-+		__field(unsigned int, bounce_buf_len)
-+	),
-+	TP_fast_assign(
-+		__entry->ring = ring;
-+		__entry->type = ring->type;
-+		__entry->num_segs = ring->num_segs;
-+		__entry->stream_id = ring->stream_id;
-+		__entry->enq_seg = ring->enq_seg->dma;
-+		__entry->deq_seg = ring->deq_seg->dma;
-+		__entry->cycle_state = ring->cycle_state;
-+		__entry->num_trbs_free = ring->num_trbs_free;
-+		__entry->bounce_buf_len = ring->bounce_buf_len;
-+		__entry->enq = usbssp_trb_virt_to_dma(ring->enq_seg, ring->enqueue);
-+		__entry->deq = usbssp_trb_virt_to_dma(ring->deq_seg, ring->dequeue);
-+	),
-+	TP_printk("%s %p: enq %pad(%pad) deq %pad(%pad) segs %d stream %d free_trbs %d bounce %d cycle %d",
-+			usbssp_ring_type_string(__entry->type), __entry->ring,
-+			&__entry->enq, &__entry->enq_seg,
-+			&__entry->deq, &__entry->deq_seg,
-+			__entry->num_segs,
-+			__entry->stream_id,
-+			__entry->num_trbs_free,
-+			__entry->bounce_buf_len,
-+			__entry->cycle_state
-+		)
-+);
++	ret = usbssp_check_args(usbssp_data, dep, 1, true, __func__);
++	if (ret <= 0)
++		return ret;
 +
-+DEFINE_EVENT(usbssp_log_ring, usbssp_ring_alloc,
-+	TP_PROTO(struct usbssp_ring *ring),
-+	TP_ARGS(ring)
-+);
++	if (usbssp_data->usbssp_state & USBSSP_STATE_DYING)
++		return -ENODEV;
 +
-+DEFINE_EVENT(usbssp_log_ring, usbssp_ring_free,
-+	TP_PROTO(struct usbssp_ring *ring),
-+	TP_ARGS(ring)
-+);
++	added_ctxs = usbssp_get_endpoint_flag(desc);
++	if (added_ctxs == SLOT_FLAG || added_ctxs == EP0_FLAG) {
++		dev_dbg(usbssp_data->dev, "USBSSP %s - can't add slot or ep 0 %#x\n",
++			__func__, added_ctxs);
++		return 0;
++	}
 +
-+DEFINE_EVENT(usbssp_log_ring, usbssp_ring_expansion,
-+	TP_PROTO(struct usbssp_ring *ring),
-+	TP_ARGS(ring)
-+);
++	dev_priv = &usbssp_data->devs;
++	in_ctx = dev_priv->in_ctx;
++	ctrl_ctx = usbssp_get_input_control_ctx(in_ctx);
++	if (!ctrl_ctx) {
++		dev_warn(usbssp_data->dev, "%s: Could not get input context, bad type.\n",
++			__func__);
++		return 0;
++	}
 +
-+DEFINE_EVENT(usbssp_log_ring, usbssp_inc_enq,
-+	TP_PROTO(struct usbssp_ring *ring),
-+	TP_ARGS(ring)
-+);
++	ep_index = usbssp_get_endpoint_index(desc);
 +
-+DEFINE_EVENT(usbssp_log_ring, usbssp_inc_deq,
-+	TP_PROTO(struct usbssp_ring *ring),
-+	TP_ARGS(ring)
-+);
++	/*
++	 * If this endpoint is already in use, and the upper layers are trying
++	 * to add it again without dropping it, reject the addition.
++	 */
++	if (dev_priv->eps[ep_index].ring &&
++	    !(le32_to_cpu(ctrl_ctx->drop_flags) & added_ctxs)) {
++		dev_warn(usbssp_data->dev,
++			"Trying to add endpoint 0x%x without dropping it.\n",
++			(unsigned int) desc->bEndpointAddress);
++		return -EINVAL;
++	}
 +
-+DECLARE_EVENT_CLASS(usbssp_log_portsc,
-+		TP_PROTO(u32 portnum, u32 portsc),
-+		TP_ARGS(portnum, portsc),
-+		TP_STRUCT__entry(
-+				__field(u32, portnum)
-+				__field(u32, portsc)
-+				),
-+		TP_fast_assign(
-+				__entry->portnum = portnum;
-+				__entry->portsc = portsc;
-+				),
-+		TP_printk("port-%d: %s",
-+			__entry->portnum,
-+			usbssp_decode_portsc(__entry->portsc)
-+			)
-+);
++	/*
++	 * If already noted the endpoint is enabled,
++	 * ignore this request.
++	 */
++	if (le32_to_cpu(ctrl_ctx->add_flags) & added_ctxs) {
++		dev_warn(usbssp_data->dev, "USBSSP %s called with enabled ep %p\n",
++			__func__, dep);
++		return 0;
++	}
 +
-+DEFINE_EVENT(usbssp_log_portsc, usbssp_handle_port_status,
-+		TP_PROTO(u32 portnum, u32 portsc),
-+		TP_ARGS(portnum, portsc)
-+);
++	if (usbssp_endpoint_init(usbssp_data, dev_priv, dep, GFP_ATOMIC) < 0) {
++		dev_dbg(usbssp_data->dev, "%s - could not initialize ep %#x\n",
++			__func__, desc->bEndpointAddress);
++		return -ENOMEM;
++	}
 +
-+#endif /* __USBSSP_TRACE_H */
-+/* this part must be outside header guard */
++	ctrl_ctx->add_flags |= cpu_to_le32(added_ctxs);
++	new_add_flags = le32_to_cpu(ctrl_ctx->add_flags);
++	new_drop_flags = le32_to_cpu(ctrl_ctx->drop_flags);
 +
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
++	dev_dbg(usbssp_data->dev,
++		"add ep 0x%x, new drop flags = %#x, new add flags = %#x\n",
++		(unsigned int) desc->bEndpointAddress,
++		(unsigned int) new_drop_flags,
++		(unsigned int) new_add_flags);
++	return 0;
++}
 +
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE gadget-trace
++static void usbssp_zero_in_ctx(struct usbssp_udc *usbssp_data,
++			       struct usbssp_device *dev_priv)
++{
++	struct usbssp_input_control_ctx *ctrl_ctx;
++	struct usbssp_ep_ctx *ep_ctx;
++	struct usbssp_slot_ctx *slot_ctx;
++	int i;
 +
-+#include <trace/define_trace.h>
++	ctrl_ctx = usbssp_get_input_control_ctx(dev_priv->in_ctx);
++	if (!ctrl_ctx) {
++		dev_warn(usbssp_data->dev,
++			"%s: Could not get input context, bad type.\n",
++			__func__);
++		return;
++	}
++
++	/*
++	 * When a device's add flag and drop flag are zero, any subsequent
++	 * configure endpoint command will leave that endpoint's state
++	 * untouched. Make sure we don't leave any old state in the input
++	 * endpoint contexts.
++	 */
++	ctrl_ctx->drop_flags = 0;
++	ctrl_ctx->add_flags = 0;
++	slot_ctx = usbssp_get_slot_ctx(usbssp_data, dev_priv->in_ctx);
++	slot_ctx->dev_info &= cpu_to_le32(~LAST_CTX_MASK);
++
++	/* Endpoint 0 is always valid */
++	slot_ctx->dev_info |= cpu_to_le32(LAST_CTX(1));
++	for (i = 1; i < 31; ++i) {
++		ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->in_ctx, i);
++		ep_ctx->ep_info = 0;
++		ep_ctx->ep_info2 = 0;
++		ep_ctx->deq = 0;
++		ep_ctx->tx_info = 0;
++	}
++}
++
+ static int usbssp_configure_endpoint_result(struct usbssp_udc *usbssp_data,
+ 					    struct usb_gadget *g,
+ 					    u32 *cmd_status)
+@@ -854,6 +1003,21 @@ static int usbssp_configure_endpoint(struct usbssp_udc *usbssp_data,
+ 	return ret;
+ }
+ 
++static void usbssp_check_bw_drop_ep_streams(struct usbssp_udc *usbssp_data,
++					    struct usbssp_device *vdev, int i)
++{
++	struct usbssp_ep *ep = &vdev->eps[i];
++
++	if (ep->ep_state & EP_HAS_STREAMS) {
++		dev_warn(usbssp_data->dev,
++			"WARN: endpoint 0x%02x has streams on set_interface, freeing streams.\n",
++			 usbssp_get_endpoint_address(i));
++		usbssp_free_stream_info(usbssp_data, ep->stream_info);
++		ep->stream_info = NULL;
++		ep->ep_state &= ~EP_HAS_STREAMS;
++	}
++}
++
+ int usbssp_halt_endpoint(struct usbssp_udc *usbssp_data, struct usbssp_ep *dep,
+ 			 int value)
+ {
+@@ -961,10 +1125,115 @@ int usbssp_halt_endpoint(struct usbssp_udc *usbssp_data, struct usbssp_ep *dep,
+ 	kfree(command->completion);
+ 	kfree(command);
+ 	return ret;
++}
+ 
+-	return 0;
++/**
++ *  Called after one or more calls to usbssp_add_endpoint() or
++ * usbssp_drop_endpoint(). If this call fails, the driver is expected
++ * to call usbssp_reset_bandwidth().
++ */
++int usbssp_check_bandwidth(struct usbssp_udc *usbssp_data, struct usb_gadget *g)
++{
++	int i;
++	int ret = 0;
++	struct usbssp_device *dev_priv;
++	struct usbssp_input_control_ctx *ctrl_ctx;
++	struct usbssp_slot_ctx *slot_ctx;
++	struct usbssp_command *command;
++
++	ret = usbssp_check_args(usbssp_data, NULL, 0, true, __func__);
++	if (ret <= 0)
++		return ret;
++
++	if ((usbssp_data->usbssp_state & USBSSP_STATE_DYING) ||
++	    (usbssp_data->usbssp_state & USBSSP_STATE_REMOVING))
++		return -ENODEV;
++
++	dev_priv = &usbssp_data->devs;
++
++	command = usbssp_alloc_command(usbssp_data, true, GFP_ATOMIC);
++	if (!command)
++		return -ENOMEM;
++
++	command->in_ctx = dev_priv->in_ctx;
++
++	ctrl_ctx = usbssp_get_input_control_ctx(command->in_ctx);
++	if (!ctrl_ctx) {
++		dev_warn(usbssp_data->dev,
++			"%s: Could not get input context, bad type.\n",
++			__func__);
++		ret = -ENOMEM;
++		goto command_cleanup;
++	}
++	ctrl_ctx->add_flags |= cpu_to_le32(SLOT_FLAG);
++	ctrl_ctx->add_flags &= cpu_to_le32(~EP0_FLAG);
++	ctrl_ctx->drop_flags &= cpu_to_le32(~(SLOT_FLAG | EP0_FLAG));
++
++	/* Don't issue the command if there's no endpoints to update.*/
++	if (ctrl_ctx->add_flags == cpu_to_le32(SLOT_FLAG) &&
++	    ctrl_ctx->drop_flags == 0) {
++		ret = 0;
++		goto command_cleanup;
++	}
++
++	/* Fix up Context Entries field. Minimum value is EP0 == BIT(1). */
++	slot_ctx = usbssp_get_slot_ctx(usbssp_data, dev_priv->in_ctx);
++	for (i = 31; i >= 1; i--) {
++		__le32 le32 = cpu_to_le32(BIT(i));
++
++		if ((dev_priv->eps[i-1].ring && !(ctrl_ctx->drop_flags & le32))
++		    || (ctrl_ctx->add_flags & le32) || i == 1) {
++			slot_ctx->dev_info &= cpu_to_le32(~LAST_CTX_MASK);
++			slot_ctx->dev_info |= cpu_to_le32(LAST_CTX(i));
++			break;
++		}
++	}
++
++	ret = usbssp_configure_endpoint(usbssp_data, g, command,
++			false, false);
++
++	if (ret)
++		/* Caller should call reset_bandwidth() */
++		goto command_cleanup;
++
++	/* Free any rings that were dropped, but not changed. */
++	for (i = 1; i < 31; ++i) {
++		if ((le32_to_cpu(ctrl_ctx->drop_flags) & (1 << (i + 1))) &&
++		    !(le32_to_cpu(ctrl_ctx->add_flags) & (1 << (i + 1)))) {
++			usbssp_free_endpoint_ring(usbssp_data, dev_priv, i);
++			usbssp_check_bw_drop_ep_streams(usbssp_data,
++							dev_priv, i);
++		}
++	}
++
++	usbssp_zero_in_ctx(usbssp_data, dev_priv);
++
++	/*
++	 * Install any rings for completely new endpoints or changed endpoints,
++	 * and free any old rings from changed endpoints.
++	 */
++	for (i = 1; i < 31; ++i) {
++		if (!dev_priv->eps[i].new_ring)
++			continue;
++
++		/*
++		 * Only free the old ring if it exists.
++		 * It may not if this is the first add of an endpoint.
++		 */
++		if (dev_priv->eps[i].ring)
++			usbssp_free_endpoint_ring(usbssp_data, dev_priv, i);
++
++		usbssp_check_bw_drop_ep_streams(usbssp_data, dev_priv, i);
++		dev_priv->eps[i].ring = dev_priv->eps[i].new_ring;
++		dev_priv->eps[i].new_ring = NULL;
++	}
++command_cleanup:
++	kfree(command->completion);
++	kfree(command);
++	return ret;
+ }
+ 
++
+ /*
+  * This submits a Reset Device Command, which will set the device state to 0,
+  * set the device address to 0, and disable all the endpoints except the default
+diff --git a/drivers/usb/usbssp/gadget.h b/drivers/usb/usbssp/gadget.h
+index 81d7fe44519a..c4075e765dcc 100644
+--- a/drivers/usb/usbssp/gadget.h
++++ b/drivers/usb/usbssp/gadget.h
+@@ -1694,6 +1694,11 @@ void usbssp_copy_ep0_dequeue_into_input_ctx(struct usbssp_udc *usbssp_data);
+ unsigned int usbssp_get_endpoint_index(const struct usb_endpoint_descriptor *desc);
+ unsigned int usbssp_get_endpoint_address(unsigned int ep_index);
+ unsigned int usbssp_last_valid_endpoint(u32 added_ctxs);
++int usbssp_endpoint_init(struct usbssp_udc *usbssp_data,
++			struct usbssp_device *dev_priv,
++			struct usbssp_ep *dep,
++			gfp_t mem_flags);
++
+ int usbssp_ring_expansion(struct usbssp_udc *usbssp_data,
+ 			struct usbssp_ring *ring,
+ 			unsigned int num_trbs, gfp_t flags);
+@@ -1705,6 +1710,9 @@ struct usbssp_ring *usbssp_dma_to_transfer_ring(struct usbssp_ep *ep,
+ struct usbssp_ring *usbssp_stream_id_to_ring(struct usbssp_device *dev,
+ 					unsigned int ep_index,
+ 					unsigned int stream_id);
++void usbssp_free_endpoint_ring(struct usbssp_udc *usbssp_data,
++			struct usbssp_device *dev_priv,
++			unsigned int ep_index);
+ void usbssp_free_stream_info(struct usbssp_udc *usbssp_data,
+ 			struct usbssp_stream_info *stream_info);
+ struct usbssp_ring *usbssp_dma_to_transfer_ring(
+@@ -1857,6 +1865,8 @@ int usbssp_setup_analyze(struct usbssp_udc *usbssp_data);
+ int usbssp_status_stage(struct usbssp_udc *usbssp_data);
+ 
+ int usbssp_reset_device(struct usbssp_udc *usbssp_data);
++int usbssp_check_bandwidth(struct usbssp_udc *usbssp_data,
++			struct usb_gadget *g);
+ 
+ static inline struct usbssp_ring *usbssp_request_to_transfer_ring(
+ 					struct usbssp_udc *usbssp_data,
 -- 
 2.17.1
 
