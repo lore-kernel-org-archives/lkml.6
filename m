@@ -2,180 +2,129 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A27C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEF4ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE502084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:21:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEelePge"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE502084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B05E20856
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:23:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B05E20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731745AbeGSPFS (ORCPT
+        id S1731686AbeGSPG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:05:18 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44495 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeGSPFR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:05:17 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1-v6so3904703pgp.11;
-        Thu, 19 Jul 2018 07:21:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OLQF/Rr3CcrUgKUwqEEy4FdbYdVvg6yrQ1ObadMgpzs=;
-        b=PEelePgeNZxC9yaDkGqyTFMKkNNrGUymB1aE2i10+Bp9XOD6eLDc9tCvknTKVsNytd
-         oOVO/GEXDgMrYVg50V3Iz5UvKdDJfuEDrQ2LbvwJXx23MR4NtmALHp1mt1Y/mHaddTK3
-         1jmmRAy60mhUmY/XpAfstPSWWgru14z/j6Dlrj/xSPrhiacKzzuV6Nhe8ehgUiPUScCX
-         4XHu83xpheKnGbxsUdeLGxbGXLxI9s5e5qBQhcUXVY+YgP/xiEqduAcLgo0wu6eJ3j0b
-         09FyAJV2fXgMXdQLQilQaekQw1hMItKxftTRMpeOzUmbjTkHI4u3gaI54FO9pBiYbzVw
-         P0EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OLQF/Rr3CcrUgKUwqEEy4FdbYdVvg6yrQ1ObadMgpzs=;
-        b=RT/oNpdDDSWL/Q6Cc2BnJ7XJgHXrJ+8rDEKptEoPykafyg4S9UTOq3OCkhw9u7PJ5P
-         ikSMwYYUGuci2seqKgC59Xitse+xDLDlCR/6T8ZcdKyd8lzf6Z+ZlGLa8F6sl392Mp1A
-         MMsGbNyEhdACbKh/dmABH0GOe/gPokpqiSu+t0zvI1rXab2xyNGIk4otfp7jdA9xicO+
-         le+77Us3Mnn24rumDyzjHrifeLfKNHusuO8MAsAjU4n8RrWLrl2LWIJ+lceeZJMO7lZM
-         sZws+MRchQdpFqt47KGShPPDpVN23eEsIaCuIob85QNgZiUb+patOmazxqjxg46qbMYZ
-         Ky/w==
-X-Gm-Message-State: AOUpUlErZZDKm+t3dPpKiRA/hb8rDBcaKnwYItmSEom6LtacTcydNm+z
-        PDxo8/uIeAYAx4J20iHWQ9CVB1r1
-X-Google-Smtp-Source: AAOMgpdTdwjf/p1KV+0CyZ6XbZN6KcWEMDLAb7GylaHT8Zpb8UP+EqqY71B8QCudrzuARH3EZvkz3Q==
-X-Received: by 2002:a62:3a5b:: with SMTP id h88-v6mr9805677pfa.61.1532010112521;
-        Thu, 19 Jul 2018 07:21:52 -0700 (PDT)
-Received: from [192.168.0.77] ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id t69-v6sm1494086pfj.7.2018.07.19.07.21.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 07:21:51 -0700 (PDT)
-Subject: Re: [PATCH] bpf: synchronize bpf uapi header with tools
-To:     Quentin Monnet <quentin.monnet@netronome.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Ahern <dsahern@gmail.com>
-References: <20180719125355.26441-1-treeze.taeung@gmail.com>
- <77e00498-74ae-1ee5-8f4b-ad8b3c5f8929@netronome.com>
-From:   Taeung Song <treeze.taeung@gmail.com>
-Message-ID: <92fb6df6-e631-eba5-a7b3-f6d7173988fb@gmail.com>
-Date:   Thu, 19 Jul 2018 23:21:47 +0900
+        Thu, 19 Jul 2018 11:06:59 -0400
+Received: from mga18.intel.com ([134.134.136.126]:35489 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730451AbeGSPG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 11:06:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 07:23:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,374,1526367600"; 
+   d="scan'208";a="58138686"
+Received: from heli-mobl.ccr.corp.intel.com (HELO [10.252.187.17]) ([10.252.187.17])
+  by orsmga008.jf.intel.com with ESMTP; 19 Jul 2018 07:23:29 -0700
+Subject: Re: [PATCHv5 08/19] x86/mm: Introduce variables to store number,
+ shift and mask of KeyIDs
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
+ <20180717112029.42378-9-kirill.shutemov@linux.intel.com>
+ <1edc05b0-8371-807e-7cfa-6e8f61ee9b70@intel.com>
+ <20180719102130.b4f6b6v5wg3modtc@kshutemo-mobl1>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <e56be94d-e70e-8100-9b15-98a224442db9@intel.com>
+Date:   Thu, 19 Jul 2018 07:23:27 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <77e00498-74ae-1ee5-8f4b-ad8b3c5f8929@netronome.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180719102130.b4f6b6v5wg3modtc@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Quentin,
+On 07/19/2018 03:21 AM, Kirill A. Shutemov wrote:
+> On Wed, Jul 18, 2018 at 04:19:10PM -0700, Dave Hansen wrote:
+>> On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
+>>> mktme_nr_keyids holds number of KeyIDs available for MKTME, excluding
+>>> KeyID zero which used by TME. MKTME KeyIDs start from 1.
+>>>
+>>> mktme_keyid_shift holds shift of KeyID within physical address.
+>> I know what all these words mean, but the combination of them makes no
+>> sense to me.  I still don't know what the variable does after reading this.
+>>
+>> Is this the lowest bit in the physical address which is used for the
+>> KeyID?  How many bits you must shift up a KeyID to get to the location
+>> at which it can be masked into the physical address?
+> Right.
+> 
+> I'm not sure what is not clear from the description. It look fine to me.
 
-On 07/19/2018 11:01 PM, Quentin Monnet wrote:
-> Hi Taeung,
-> 
-> 2018-07-19 21:53 UTC+0900 ~ Taeung Song <treeze.taeung@gmail.com>
->> To pick the change in:
->>
->>    4c79579b44b1 ("bpf: Change bpf_fib_lookup to return lookup status")
->>
->> This bpftool build warning occurs:
->>
->>    Warning: Kernel ABI header at 'tools/include/uapi/linux/bpf.h' differs from latest version at 'include/uapi/linux/bpf.h'
->>
->> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
->> Cc: David Ahern <dsahern@gmail.com>
->> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
->> ---
->>   tools/include/uapi/linux/bpf.h | 28 +++++++++++++++++++++++-----
->>   1 file changed, 23 insertions(+), 5 deletions(-)
->>
->> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
->> index 59b19b6a40d7..b7db3261c62d 100644
->> --- a/tools/include/uapi/linux/bpf.h
->> +++ b/tools/include/uapi/linux/bpf.h
->> @@ -1857,7 +1857,8 @@ union bpf_attr {
->>    *		is resolved), the nexthop address is returned in ipv4_dst
->>    *		or ipv6_dst based on family, smac is set to mac address of
->>    *		egress device, dmac is set to nexthop mac address, rt_metric
->> - *		is set to metric from route (IPv4/IPv6 only).
->> + *		is set to metric from route (IPv4/IPv6 only), and ifindex
->> + *		is set to the device index of the nexthop from the FIB lookup.
->>    *
->>    *             *plen* argument is the size of the passed in struct.
->>    *             *flags* argument can be a combination of one or more of the
->> @@ -1873,9 +1874,10 @@ union bpf_attr {
->>    *             *ctx* is either **struct xdp_md** for XDP programs or
->>    *             **struct sk_buff** tc cls_act programs.
->>    *     Return
->> - *             Egress device index on success, 0 if packet needs to continue
->> - *             up the stack for further processing or a negative error in case
->> - *             of failure.
->> + *		* < 0 if any input argument is invalid
->> + *		*   0 on success (packet is forwarded, nexthop neighbor exists)
->> + *		* > 0 one of **BPF_FIB_LKUP_RET_** codes explaining why the
->> + *		*     packet is not forwarded or needs assist from full stack
->>    *
->>    * int bpf_sock_hash_update(struct bpf_sock_ops_kern *skops, struct bpf_map *map, void *key, u64 flags)
->>    *	Description
->> @@ -2612,6 +2614,18 @@ struct bpf_raw_tracepoint_args {
->>   #define BPF_FIB_LOOKUP_DIRECT  BIT(0)
->>   #define BPF_FIB_LOOKUP_OUTPUT  BIT(1)
->>   
->> +enum {
->> +	BPF_FIB_LKUP_RET_SUCCESS,      /* lookup successful */
->> +	BPF_FIB_LKUP_RET_BLACKHOLE,    /* dest is blackholed; can be dropped */
->> +	BPF_FIB_LKUP_RET_UNREACHABLE,  /* dest is unreachable; can be dropped */
->> +	BPF_FIB_LKUP_RET_PROHIBIT,     /* dest not allowed; can be dropped */
->> +	BPF_FIB_LKUP_RET_NOT_FWDED,    /* packet is not forwarded */
->> +	BPF_FIB_LKUP_RET_FWD_DISABLED, /* fwding is not enabled on ingress */
->> +	BPF_FIB_LKUP_RET_UNSUPP_LWT,   /* fwd requires encapsulation */
->> +	BPF_FIB_LKUP_RET_NO_NEIGH,     /* no neighbor entry for nh */
->> +	BPF_FIB_LKUP_RET_FRAG_NEEDED,  /* fragmentation required to fwd */
->> +};
->> +
->>   struct bpf_fib_lookup {
->>   	/* input:  network family for lookup (AF_INET, AF_INET6)
->>   	 * output: network family of egress nexthop
->> @@ -2625,7 +2639,11 @@ struct bpf_fib_lookup {
->>   
->>   	/* total length of packet from network header - used for MTU check */
->>   	__u16	tot_len;
->> -	__u32	ifindex;  /* L3 device index for lookup */
->> +
->> +	/* input: L3 device index for lookup
->> +	 * output: device index from FIB lookup
->> +	 */
->> +	__u32	ifindex;
->>   
->>   	union {
->>   		/* inputs to lookup */
->>
-> 
-> This has been updated in the bpf-next tree already, see commit
-> 9b8ca3795199 ("tools: bpf: synchronise BPF UAPI header with tools").
-> 
-> Best regards,
-> Quentin
-> 
+Well, OK, I guess I can write a better one for you.
 
-OK ! Thanks.
+"Position in the PTE of the lowest bit of the KeyID"
 
---
-Thanks,
-Taeung
+It's also a name that could use some love (now that I know what it
+does).  mktme_keyid_pte_shift would be much better.  Or
+mktme_keyid_low_pte_bit.
