@@ -2,176 +2,115 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2376C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E1DECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75C3420673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:10:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75C3420673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 306A220673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:11:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="apdEpXc1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 306A220673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731949AbeGSQyo (ORCPT
+        id S1731986AbeGSQz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:54:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35028 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731645AbeGSQyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:54:44 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F137040704A7;
-        Thu, 19 Jul 2018 16:10:51 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B6061C640;
-        Thu, 19 Jul 2018 16:10:46 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 12:08:03 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>, sgrubb@redhat.com,
-        aviro@redhat.com
-Subject: Re: [RFC PATCH ghak59 V1 1/6] audit: give a clue what CONFIG_CHANGE
- op was involved
-Message-ID: <20180719160803.7faw2feelfkunysa@madcap2.tricolour.ca>
-References: <cover.1529003588.git.rgb@redhat.com>
- <17f22b579c28c6cd9475a57e792b5d4fb4dde1dc.1529003588.git.rgb@redhat.com>
- <CAHC9VhTxjcmJGEq6XQmRV0Ouk8oOyHO2C8+HVQOy1qxw9yKyXw@mail.gmail.com>
- <20180713004122.qlxdpkae4ihkxatg@madcap2.tricolour.ca>
- <CAHC9VhTwYo2p9sKJvhK5haQWuNtR20AEDoA=yGW1gQqdYBzMzQ@mail.gmail.com>
+        Thu, 19 Jul 2018 12:55:29 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55729 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731690AbeGSQz2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:55:28 -0400
+Received: by mail-wm0-f68.google.com with SMTP id f21-v6so6784805wmc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 09:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nxcq7V7YY1KojCBc91j6YRIDuQ5vl3QYk8lS9naGGfA=;
+        b=apdEpXc1HWd2acc3UwzM+Y1Us90wD1b8rZMy71pw/Eee4thsMI4o1UC7plZ1y1zFjj
+         0PVJBYXCz3npFvURrGVla+fMaobC/whB9So7VC7C4otp4GuOia+/YgmQ7ayH1lILWToy
+         MVIfqE3anJvHSnJx/hDX+gAptzZwS0C4E6wu5kohmsrXlW4gq+ZjI4w9f/pfOxZ/kFlp
+         hyUU9cvr04qrGslb26MuE9dBnNCU6igGuYS4VMrdlfUwGXwn++ND8v+2+A6IU6HA/nZa
+         J3IadiuZhxd0md3LteyjX9bX2B0tcjHLQ19gLjfFDHs5D/7FO5/Gl3HYXHLHKnYQ673R
+         zNeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nxcq7V7YY1KojCBc91j6YRIDuQ5vl3QYk8lS9naGGfA=;
+        b=ISYdlKHFntbgBPMh+znLc+V+Z/bzGZJ4PcfDTuVBWThpX0cxiBa0Qv7AZSY7x/xQk4
+         CjFZ7uayRxAhCu1jN70IC87G+9EBSyK+TF899HXcSfY5ZI95x1DpjSlrP8CXroJ/m+lv
+         aEf4AF1OsNlRsAfE5iVYcz7ysvTycUBGbMr3dvnHZtsGu+JW1gyzB8y++vzXtecHiJW9
+         dP5eMwWzuw/qoUtdZCwTsA96XG1g44JEh3FaUR+ZyFdmas1AhAU08khVmKbDe4YZSBqN
+         IDTc0tgdtgJMnaz4ICO1T7Rf5iwO0kNWtWtaq2siR+c2bMkTRU58Y1AgQZrb6z7LvLHh
+         wAZw==
+X-Gm-Message-State: AOUpUlFs9v+WP6rLYjbUkgd0jBY9uZVqdRvF5gWVthhBCHPCxk4wO3hR
+        oFY4UONiVoKwE+4QJOKT/j0TQtU1yKxUb5l76X2cxA==
+X-Google-Smtp-Source: AAOMgpcnYqAJe5ky7yiRNqzCneLvhDWXOThTEPorzU68Eo3IFg+b4eoeuBCw/JsZ/EVaeFUsqI4qH2wYkj0ms0yXF0E=
+X-Received: by 2002:a1c:91c7:: with SMTP id t190-v6mr4855133wmd.2.1532016694624;
+ Thu, 19 Jul 2018 09:11:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTwYo2p9sKJvhK5haQWuNtR20AEDoA=yGW1gQqdYBzMzQ@mail.gmail.com>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 16:10:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 16:10:52 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
+References: <153201627722.12295.11034132843390627757.stgit@localhost.localdomain>
+In-Reply-To: <153201627722.12295.11034132843390627757.stgit@localhost.localdomain>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Thu, 19 Jul 2018 09:11:22 -0700
+Message-ID: <CALvZod6iCE8W51m2N704GQ_ML==J76SU6e9w7RCFE2+Vd+Vjaw@mail.gmail.com>
+Subject: Re: [PATCH] mm: Cleanup in do_shrink_slab()
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-18 17:45, Paul Moore wrote:
-> On Thu, Jul 12, 2018 at 8:43 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-06-28 15:41, Paul Moore wrote:
-> > > On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > The failure to add an audit rule due to audit locked gives no clue
-> > > > what CONFIG_CHANGE operation failed.
-> > > > Similarly the set operation is the only other operation that doesn't
-> > > > give the "op=" field to indicate the action.
-> > > > All other CONFIG_CHANGE records include an op= field to give a clue as
-> > > > to what sort of configuration change is being executed.
-> > > >
-> > > > Since these are the only CONFIG_CHANGE records that that do not have an
-> > > > op= field, add them to bring them in line with the rest.
-> > >
-> > > Normally this would be an immediate reject because this patch inserts
-> > > a field into an existing record, but the CONFIG_CHANGE record is so
-> > > variable (supposedly bad in its own right) that I don't this really
-> > > matters.
-> > >
-> > > With that out of the way, I think this patch is fine, but I don't
-> > > think it is complete.  At the very least there is another
-> > > CONFIG_CHANGE record in audit_watch_log_rule_change() that doesn't
-> > > appear to include an "op" field.  If we want to make sure we have an
-> > > "op" field in every CONFIG_CHANGE record, let's actually add them all
-> > > :)
-> >
-> > The version I'm looking at already had it when it was added in 2009.
-> 
-> Yup, there it is ... now I'm wondering what tree I was looking at as a
-> reference while reviewing this?
-> 
-> /me scratches head
-> 
-> > This one doesn't add the auid and ses fields because they will be
-> > covered by the linking of this record with the syscall record via the
-> > audit_context() introduced in another patch.
-> 
-> Yeah, I'm not concerned about that for the reasons you state.
-> 
-> > > and one more in audit_receive_msg().  There may be more.
-> >
-> > I believe they're covered by other patches in the ghak59 set.
-> 
-> If they are in the later patches it might be good to move those "op="
-> additions into this patch.
+On Thu, Jul 19, 2018 at 9:04 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> Group long variables together to minimize number of occupied lines
+> and place all definitions in back Christmas tree order. Also,
+> simplify expression around batch_size: use all power of C language!
+>
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-I don't see any CONFIG_CHANGE records generated in audit_receive_msg()
-that are missing op= field.  Can you narrow it down?
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
 
-> > > > Old records:
-> > > > type=CONFIG_CHANGE msg=audit(1519812997.781:374): pid=610 uid=0 auid=0 ses=1 subj=... audit_enabled=2 res=0
-> > > > type=CONFIG_CHANGE msg=audit(2018-06-14 14:55:04.507:47) : audit_enabled=1 old=1 auid=unset ses=unset subj=... res=yes
-> > > >
-> > > > New records:
-> > > > type=CONFIG_CHANGE msg=audit(1520958477.855:100): pid=610 uid=0 auid=0 ses=1 subj=... op=add_rule audit_enabled=2 res=0
-> > > >
-> > > > type=CONFIG_CHANGE msg=audit(2018-06-14 14:55:04.507:47) : op=set audit_enabled=1 old=1 auid=unset ses=unset subj=... res=yes
-> > > >
-> > > > See: https://github.com/linux-audit/audit-kernel/issues/59
-> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > ---
-> > > >  kernel/audit.c | 6 ++++--
-> > > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > > index e7478cb..ad54339 100644
-> > > > --- a/kernel/audit.c
-> > > > +++ b/kernel/audit.c
-> > > > @@ -403,7 +403,7 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
-> > > >         ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> > > >         if (unlikely(!ab))
-> > > >                 return rc;
-> > > > -       audit_log_format(ab, "%s=%u old=%u", function_name, new, old);
-> > > > +       audit_log_format(ab, "op=set %s=%u old=%u", function_name, new, old);
-> > > >         audit_log_session_info(ab);
-> > > >         rc = audit_log_task_context(ab);
-> > > >         if (rc)
-> > > > @@ -1365,7 +1365,9 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> > > >                         return -EINVAL;
-> > > >                 if (audit_enabled == AUDIT_LOCKED) {
-> > > >                         audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
-> > > > -                       audit_log_format(ab, " audit_enabled=%d res=0", audit_enabled);
-> > > > +                       audit_log_format(ab, " op=%s_rule audit_enabled=%d res=0",
-> > > > +                                        msg_type == AUDIT_ADD_RULE ? "add" : "remove",
-> > > > +                                        audit_enabled);
-> > > >                         audit_log_end(ab);
-> > > >                         return -EPERM;
-> > > >                 }
-> > > > --
-> > > > 1.8.3.1
-> > >
-> > > --
-> > > paul moore
-> > > www.paul-moore.com
-> >
-> > - RGB
-> >
-> > --
-> > Richard Guy Briggs <rgb@redhat.com>
-> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > Remote, Ottawa, Red Hat Canada
-> > IRC: rgb, SunRaycer
-> > Voice: +1.647.777.2635, Internal: (81) 32635
-> 
-> 
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> ---
+>  mm/vmscan.c |   11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 9918bfc1d2f9..636657213b9b 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -445,16 +445,11 @@ EXPORT_SYMBOL(unregister_shrinker);
+>  static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+>                                     struct shrinker *shrinker, int priority)
+>  {
+> -       unsigned long freed = 0;
+> +       long total_scan, freeable, nr, new_nr, next_deferred, scanned = 0;
+> +       long batch_size = shrinker->batch ? : SHRINK_BATCH;
+>         unsigned long long delta;
+> -       long total_scan;
+> -       long freeable;
+> -       long nr;
+> -       long new_nr;
+>         int nid = shrinkctl->nid;
+> -       long batch_size = shrinker->batch ? shrinker->batch
+> -                                         : SHRINK_BATCH;
+> -       long scanned = 0, next_deferred;
+> +       unsigned long freed = 0;
+>
+>         freeable = shrinker->count_objects(shrinker, shrinkctl);
+>         if (freeable == 0 || freeable == SHRINK_EMPTY)
+>
