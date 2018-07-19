@@ -2,328 +2,109 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65383C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C65C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 045EE2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:49:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045EE2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A8DA2084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:49:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qE9utXiQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A8DA2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731889AbeGSQcz (ORCPT
+        id S1731980AbeGSQdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:32:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34118 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730521AbeGSQcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:32:54 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6460C407447D;
-        Thu, 19 Jul 2018 15:49:06 +0000 (UTC)
-Received: from doriath (ovpn-116-197.phx2.redhat.com [10.3.116.197])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D3FE2026D6B;
-        Thu, 19 Jul 2018 15:49:00 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 11:48:59 -0400
-From:   Luiz Capitulino <lcapitulino@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        Pankaj Gupta <pagupta@redhat.com>, kwolf@redhat.com,
-        haozhong zhang <haozhong.zhang@intel.com>, jack@suse.cz,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        kvm@vger.kernel.org, riel@surriel.com, linux-nvdimm@ml01.01.org,
-        ross zwisler <ross.zwisler@intel.com>,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        hch@infradead.org, imammedo@redhat.com, mst@redhat.com,
-        niteshnarayanlal@hotmail.com, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>, nilal@redhat.com
-Subject: Re: [Qemu-devel] [RFC v3] qemu: Add virtio pmem device
-Message-ID: <20180719114859.29348ed4@doriath>
-In-Reply-To: <b6ef19f3-7f16-5427-bfed-f352a76e48b7@redhat.com>
-References: <20180713075232.9575-1-pagupta@redhat.com>
-        <20180713075232.9575-4-pagupta@redhat.com>
-        <20180718085529.133a0a22@doriath>
-        <367397176.52317488.1531979293251.JavaMail.zimbra@redhat.com>
-        <20180719121635.GA28107@stefanha-x1.localdomain>
-        <b6ef19f3-7f16-5427-bfed-f352a76e48b7@redhat.com>
+        Thu, 19 Jul 2018 12:33:00 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39010 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730521AbeGSQc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:32:59 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g2-v6so4134487pgs.6;
+        Thu, 19 Jul 2018 08:49:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vwuCZ6xPTlRJQalzosoTte9tThqGeIAnZeI/2C8NNPI=;
+        b=qE9utXiQu4KbCphO1MvzTM1zVJC5Tet0YSIjFqxUvfJfyNDaho6NOeeanI1g0UbOO3
+         sBCk1SenVWCgMRQL7QhfYJs7MMmO3ekAC/USdfl59NXHPBC9PjRw9hvPQdsu/Ja7VzsP
+         wrOesmKzOiGPPld1cg5IFnMCFSMK60whjxTV9vmT3x7jqe3N6XD1yZrWPLOMjrTSoYq4
+         xSr7uazsfo4I+3WHbivA+atTInInUnkpijVGcTNDS1neQT9RLZABJ2PDlm4Fwd7F/NjI
+         6qu94DKlB59ijBdc2N5FnlTwhkFcK3/+97eQdd5feNWZ383vtA2cRlOU5QYAfNrO6PdQ
+         7ASg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vwuCZ6xPTlRJQalzosoTte9tThqGeIAnZeI/2C8NNPI=;
+        b=dYuIHc0cOmcbXfsbJejzpk/hSCgY2rx9cbVx8KfORIPsIXRWnUnXmPMIK0nqkxvXy+
+         IPSwS/OrkbxpKzyntv5P8Wm0zfLhS1ruYi3QqIWH1bUnw7Zv1LZMJMmBH6kfXh248rlI
+         vYX1XFVDOP4G+kn2Fg+M2Pwg0HVTXGmYKgqMaIBHvUVG8ACO43ufhty0tSjufHjJTD7J
+         9i4KutlUz+8wWwBDym2hgZolfVuDGb7qRlZIDzPFVfvLl1J58pIAasBkWzzo8RHxQiIA
+         jHg8mJR9Q3jS/hBjJjqGqZTXMavNO8xmceDt7u+sD0HbQ3yoKWR/zSaZBvad5LsvnB2o
+         vJOw==
+X-Gm-Message-State: AOUpUlF7g+3vJap+f9+vck7FwXl8Y3WtxaayOYayv4HOUdxFDWQhIlyz
+        sDj5nYUuWGDsQMgiwBs54NhySYQy
+X-Google-Smtp-Source: AAOMgpcn8MFshYvYcHT7TO9VU3xWyyyNIV8V3n+cuwbdcnH8XxlKTq3t7y+4Xz7LgzqMwdZONAh2VQ==
+X-Received: by 2002:a62:c288:: with SMTP id w8-v6mr10088593pfk.92.1532015352304;
+        Thu, 19 Jul 2018 08:49:12 -0700 (PDT)
+Received: from dsa-mb.local ([2601:282:800:fd80:41e6:c9c0:c223:a927])
+        by smtp.googlemail.com with ESMTPSA id f67-v6sm15470912pfe.75.2018.07.19.08.49.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 08:49:11 -0700 (PDT)
+Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to
+ per-namespace
+To:     Michael Richardson <mcr@sandelman.ca>, dsahern@kernel.org
+Cc:     netdev@vger.kernel.org, nikita.leshchenko@oracle.com,
+        roopa@cumulusnetworks.com, stephen@networkplumber.org,
+        idosch@mellanox.com, jiri@mellanox.com, saeedm@mellanox.com,
+        alex.aring@gmail.com, linux-wpan@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180717120651.15748-1-dsahern@kernel.org>
+ <15730.1531961643@localhost>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <996fe2a0-391d-d596-dbfd-7d330e3098bf@gmail.com>
+Date:   Thu, 19 Jul 2018 09:49:09 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <15730.1531961643@localhost>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 15:49:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 15:49:06 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lcapitulino@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 15:58:20 +0200
-David Hildenbrand <david@redhat.com> wrote:
-
-> On 19.07.2018 14:16, Stefan Hajnoczi wrote:
-> > On Thu, Jul 19, 2018 at 01:48:13AM -0400, Pankaj Gupta wrote:  
-> >>  
-> >>>  
-> >>>>  This patch adds virtio-pmem Qemu device.
-> >>>>
-> >>>>  This device presents memory address range information to guest
-> >>>>  which is backed by file backend type. It acts like persistent
-> >>>>  memory device for KVM guest. Guest can perform read and persistent
-> >>>>  write operations on this memory range with the help of DAX capable
-> >>>>  filesystem.
-> >>>>
-> >>>>  Persistent guest writes are assured with the help of virtio based
-> >>>>  flushing interface. When guest userspace space performs fsync on
-> >>>>  file fd on pmem device, a flush command is send to Qemu over VIRTIO
-> >>>>  and host side flush/sync is done on backing image file.
-> >>>>
-> >>>> Changes from RFC v2:
-> >>>> - Use aio_worker() to avoid Qemu from hanging with blocking fsync
-> >>>>   call - Stefan
-> >>>> - Use virtio_st*_p() for endianess - Stefan
-> >>>> - Correct indentation in qapi/misc.json - Eric
-> >>>>
-> >>>> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> >>>> ---
-> >>>>  hw/virtio/Makefile.objs                     |   3 +
-> >>>>  hw/virtio/virtio-pci.c                      |  44 +++++
-> >>>>  hw/virtio/virtio-pci.h                      |  14 ++
-> >>>>  hw/virtio/virtio-pmem.c                     | 241
-> >>>>  ++++++++++++++++++++++++++++
-> >>>>  include/hw/pci/pci.h                        |   1 +
-> >>>>  include/hw/virtio/virtio-pmem.h             |  42 +++++
-> >>>>  include/standard-headers/linux/virtio_ids.h |   1 +
-> >>>>  qapi/misc.json                              |  26 ++-
-> >>>>  8 files changed, 371 insertions(+), 1 deletion(-)
-> >>>>  create mode 100644 hw/virtio/virtio-pmem.c
-> >>>>  create mode 100644 include/hw/virtio/virtio-pmem.h
-> >>>>
-> >>>> diff --git a/hw/virtio/Makefile.objs b/hw/virtio/Makefile.objs
-> >>>> index 1b2799cfd8..7f914d45d0 100644
-> >>>> --- a/hw/virtio/Makefile.objs
-> >>>> +++ b/hw/virtio/Makefile.objs
-> >>>> @@ -10,6 +10,9 @@ obj-$(CONFIG_VIRTIO_CRYPTO) += virtio-crypto.o
-> >>>>  obj-$(call land,$(CONFIG_VIRTIO_CRYPTO),$(CONFIG_VIRTIO_PCI)) +=
-> >>>>  virtio-crypto-pci.o
-> >>>>  
-> >>>>  obj-$(CONFIG_LINUX) += vhost.o vhost-backend.o vhost-user.o
-> >>>> +ifeq ($(CONFIG_MEM_HOTPLUG),y)
-> >>>> +obj-$(CONFIG_LINUX) += virtio-pmem.o
-> >>>> +endif
-> >>>>  obj-$(CONFIG_VHOST_VSOCK) += vhost-vsock.o
-> >>>>  endif
-> >>>>  
-> >>>> diff --git a/hw/virtio/virtio-pci.c b/hw/virtio/virtio-pci.c
-> >>>> index 3a01fe90f0..93d3fc05c7 100644
-> >>>> --- a/hw/virtio/virtio-pci.c
-> >>>> +++ b/hw/virtio/virtio-pci.c
-> >>>> @@ -2521,6 +2521,49 @@ static const TypeInfo virtio_rng_pci_info = {
-> >>>>      .class_init    = virtio_rng_pci_class_init,
-> >>>>  };
-> >>>>  
-> >>>> +/* virtio-pmem-pci */
-> >>>> +
-> >>>> +static void virtio_pmem_pci_realize(VirtIOPCIProxy *vpci_dev, Error
-> >>>> **errp)
-> >>>> +{
-> >>>> +    VirtIOPMEMPCI *vpmem = VIRTIO_PMEM_PCI(vpci_dev);
-> >>>> +    DeviceState *vdev = DEVICE(&vpmem->vdev);
-> >>>> +
-> >>>> +    qdev_set_parent_bus(vdev, BUS(&vpci_dev->bus));
-> >>>> +    object_property_set_bool(OBJECT(vdev), true, "realized", errp);
-> >>>> +}
-> >>>> +
-> >>>> +static void virtio_pmem_pci_class_init(ObjectClass *klass, void *data)
-> >>>> +{
-> >>>> +    DeviceClass *dc = DEVICE_CLASS(klass);
-> >>>> +    VirtioPCIClass *k = VIRTIO_PCI_CLASS(klass);
-> >>>> +    PCIDeviceClass *pcidev_k = PCI_DEVICE_CLASS(klass);
-> >>>> +    k->realize = virtio_pmem_pci_realize;
-> >>>> +    set_bit(DEVICE_CATEGORY_MISC, dc->categories);
-> >>>> +    pcidev_k->vendor_id = PCI_VENDOR_ID_REDHAT_QUMRANET;
-> >>>> +    pcidev_k->device_id = PCI_DEVICE_ID_VIRTIO_PMEM;
-> >>>> +    pcidev_k->revision = VIRTIO_PCI_ABI_VERSION;
-> >>>> +    pcidev_k->class_id = PCI_CLASS_OTHERS;
-> >>>> +}
-> >>>> +
-> >>>> +static void virtio_pmem_pci_instance_init(Object *obj)
-> >>>> +{
-> >>>> +    VirtIOPMEMPCI *dev = VIRTIO_PMEM_PCI(obj);
-> >>>> +
-> >>>> +    virtio_instance_init_common(obj, &dev->vdev, sizeof(dev->vdev),
-> >>>> +                                TYPE_VIRTIO_PMEM);
-> >>>> +    object_property_add_alias(obj, "memdev", OBJECT(&dev->vdev), "memdev",
-> >>>> +                              &error_abort);
-> >>>> +}
-> >>>> +
-> >>>> +static const TypeInfo virtio_pmem_pci_info = {
-> >>>> +    .name          = TYPE_VIRTIO_PMEM_PCI,
-> >>>> +    .parent        = TYPE_VIRTIO_PCI,
-> >>>> +    .instance_size = sizeof(VirtIOPMEMPCI),
-> >>>> +    .instance_init = virtio_pmem_pci_instance_init,
-> >>>> +    .class_init    = virtio_pmem_pci_class_init,
-> >>>> +};
-> >>>> +
-> >>>> +
-> >>>>  /* virtio-input-pci */
-> >>>>  
-> >>>>  static Property virtio_input_pci_properties[] = {
-> >>>> @@ -2714,6 +2757,7 @@ static void virtio_pci_register_types(void)
-> >>>>      type_register_static(&virtio_balloon_pci_info);
-> >>>>      type_register_static(&virtio_serial_pci_info);
-> >>>>      type_register_static(&virtio_net_pci_info);
-> >>>> +    type_register_static(&virtio_pmem_pci_info);
-> >>>>  #ifdef CONFIG_VHOST_SCSI
-> >>>>      type_register_static(&vhost_scsi_pci_info);
-> >>>>  #endif
-> >>>> diff --git a/hw/virtio/virtio-pci.h b/hw/virtio/virtio-pci.h
-> >>>> index 813082b0d7..fe74fcad3f 100644
-> >>>> --- a/hw/virtio/virtio-pci.h
-> >>>> +++ b/hw/virtio/virtio-pci.h
-> >>>> @@ -19,6 +19,7 @@
-> >>>>  #include "hw/virtio/virtio-blk.h"
-> >>>>  #include "hw/virtio/virtio-net.h"
-> >>>>  #include "hw/virtio/virtio-rng.h"
-> >>>> +#include "hw/virtio/virtio-pmem.h"
-> >>>>  #include "hw/virtio/virtio-serial.h"
-> >>>>  #include "hw/virtio/virtio-scsi.h"
-> >>>>  #include "hw/virtio/virtio-balloon.h"
-> >>>> @@ -57,6 +58,7 @@ typedef struct VirtIOInputHostPCI VirtIOInputHostPCI;
-> >>>>  typedef struct VirtIOGPUPCI VirtIOGPUPCI;
-> >>>>  typedef struct VHostVSockPCI VHostVSockPCI;
-> >>>>  typedef struct VirtIOCryptoPCI VirtIOCryptoPCI;
-> >>>> +typedef struct VirtIOPMEMPCI VirtIOPMEMPCI;
-> >>>>  
-> >>>>  /* virtio-pci-bus */
-> >>>>  
-> >>>> @@ -274,6 +276,18 @@ struct VirtIOBlkPCI {
-> >>>>      VirtIOBlock vdev;
-> >>>>  };
-> >>>>  
-> >>>> +/*
-> >>>> + * virtio-pmem-pci: This extends VirtioPCIProxy.
-> >>>> + */
-> >>>> +#define TYPE_VIRTIO_PMEM_PCI "virtio-pmem-pci"
-> >>>> +#define VIRTIO_PMEM_PCI(obj) \
-> >>>> +        OBJECT_CHECK(VirtIOPMEMPCI, (obj), TYPE_VIRTIO_PMEM_PCI)
-> >>>> +
-> >>>> +struct VirtIOPMEMPCI {
-> >>>> +    VirtIOPCIProxy parent_obj;
-> >>>> +    VirtIOPMEM vdev;
-> >>>> +};
-> >>>> +
-> >>>>  /*
-> >>>>   * virtio-balloon-pci: This extends VirtioPCIProxy.
-> >>>>   */
-> >>>> diff --git a/hw/virtio/virtio-pmem.c b/hw/virtio/virtio-pmem.c
-> >>>> new file mode 100644
-> >>>> index 0000000000..08c96d7e80
-> >>>> --- /dev/null
-> >>>> +++ b/hw/virtio/virtio-pmem.c
-> >>>> @@ -0,0 +1,241 @@
-> >>>> +/*
-> >>>> + * Virtio pmem device
-> >>>> + *
-> >>>> + * Copyright (C) 2018 Red Hat, Inc.
-> >>>> + * Copyright (C) 2018 Pankaj Gupta <pagupta@redhat.com>
-> >>>> + *
-> >>>> + * This work is licensed under the terms of the GNU GPL, version 2.
-> >>>> + * See the COPYING file in the top-level directory.
-> >>>> + *
-> >>>> + */
-> >>>> +
-> >>>> +#include "qemu/osdep.h"
-> >>>> +#include "qapi/error.h"
-> >>>> +#include "qemu-common.h"
-> >>>> +#include "qemu/error-report.h"
-> >>>> +#include "hw/virtio/virtio-access.h"
-> >>>> +#include "hw/virtio/virtio-pmem.h"
-> >>>> +#include "hw/mem/memory-device.h"
-> >>>> +#include "block/aio.h"
-> >>>> +#include "block/thread-pool.h"
-> >>>> +
-> >>>> +typedef struct VirtIOPMEMresp {
-> >>>> +    int ret;
-> >>>> +} VirtIOPMEMResp;
-> >>>> +
-> >>>> +typedef struct VirtIODeviceRequest {
-> >>>> +    VirtQueueElement elem;
-> >>>> +    int fd;
-> >>>> +    VirtIOPMEM *pmem;
-> >>>> +    VirtIOPMEMResp resp;
-> >>>> +} VirtIODeviceRequest;
-> >>>> +
-> >>>> +static int worker_cb(void *opaque)
-> >>>> +{
-> >>>> +    VirtIODeviceRequest *req = opaque;
-> >>>> +    int err = 0;
-> >>>> +
-> >>>> +    /* flush raw backing image */
-> >>>> +    err = fsync(req->fd);
-> >>>> +    if (err != 0) {
-> >>>> +        err = errno;
-> >>>> +    }
-> >>>> +    req->resp.ret = err;  
-> >>>
-> >>> Host question: are you returning the guest errno code to the host?  
-> >>
-> >> No. I am returning error code from the host in-case of host fsync
-> >> failure, otherwise returning zero.  
-> > 
-> > I think that's what Luiz meant.  errno constants are not portable
-> > between operating systems and architectures.  Therefore they cannot be
-> > used in external interfaces in software that expects to communicate with
-> > other systems.
-> > 
-> > It will be necessary to define specific constants for virtio-pmem
-> > instead of passing errno from the host to guest.
-> >   
+On 7/18/18 6:54 PM, Michael Richardson wrote:
+>> Remove open use of arp_tbl and nd_tbl in favor of the new
+>> ipv{4,6}_neigh_table helpers. Since the existence of the IPv6 table
+>> is managed by the core networking, the IS_ENABLED checks for IPv6
+>> can be removed in favor of "is the table non-NULL".
 > 
-> In general, I wonder if we should report errors at all or rather *kill*
-> the guest. That might sound harsh, but think about the following scenario:
-
-I almost sure that I read in the nvdimm spec that real hardware will
-cause a memory error on sync or read/write error. If we truly want
-to emulate this, then I guess QEMU should be able to inject a memory
-error for the entire region instead of returning the fsync() error
-to the guest.
-
-> fsync() fails due to some block that cannot e.g. be written (e.g.
-> network connection failed). What happens if our guest tries to
-> read/write that mmaped block? (e.g. network connection failed).
-
-I think it gets a SIGBUS? Btw, I think that QEMU already has the
-machinery to turn a SIGBUS into an memory error in the guest.
-
-> I assume we'll get a signal an get killed? So we are trying to optimize
-> one special case (fsync()) although every read/write is prone to kill
-> the guest. And as soon as the guest will try to access the block that
-> made fsync fail, we will crash the guest either way.
-
-I think you have a point.
-
-> 
-> I assume the main problem is that we are trying to take a file (with all
-> the errors that can happen during read/write/fsync) and make it look
-> like memory (dax). On ordinary block access, we can forward errors, but
-> not if it's memory (maybe using MCE, but it's complicated and
-> architecture specific).
-> 
-> So I wonder if we should rather assume that our backend file is placed
-> on some stable storage that cannot easily fail.
-> 
-> (we might have the same problem with NVDIMM right now, at least the
-> memory reading/writing part)
-> 
-> It's complicated and I am not a block level expert :)
-> 
-> > Stefan
-> >   
-> 
+> What's the advantage of changing this check? (I am ignorant)
 > 
 
+Just makes the code simpler.
+
+The current nd_tbl is a global owned by the ipv6 code
+(net/ipv6/ndisc.c). If CONFIG_IPV6 is not enabled, then nd_tbl is not
+defined which leads code referencing it to use if checks like this:
+
+#if IS_ENABLED(CONFIG_IPV6)
+		if (!p->dev || (p->tbl != &nd_tbl && p->tbl != &arp_tbl))
+#else
+		if (!p->dev || p->tbl != &arp_tbl)
+#endif
+
+With the neigh_find_table approach the IS_ENABLED can be removed in
+favor of 'if (tbl)'. If tbl is set, then ipv6 is loaded and initialized.
