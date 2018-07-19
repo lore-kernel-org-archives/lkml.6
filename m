@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07ED5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:31:05 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB1D120684
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD29C468C6
 	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:31:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1D120684
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 53A5820684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:31:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53A5820684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731974AbeGSOOO (ORCPT
+        id S1731855AbeGSON4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:14:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54206 "EHLO mx1.suse.de"
+        Thu, 19 Jul 2018 10:13:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54174 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731829AbeGSON4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731738AbeGSON4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Jul 2018 10:13:56 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 35816AF48;
+        by mx1.suse.de (Postfix) with ESMTP id 35921AF4B;
         Thu, 19 Jul 2018 13:30:44 +0000 (UTC)
 From:   Johannes Thumshirn <jthumshirn@suse.de>
 To:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
@@ -35,38 +35,62 @@ Cc:     James Smart <james.smart@broadcom.com>,
         Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
         Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
         Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 0/4] Rework NVMe abort handling
-Date:   Thu, 19 Jul 2018 15:28:34 +0200
-Message-Id: <20180719132838.15556-1-jthumshirn@suse.de>
+Subject: [PATCH 2/4] nvme: rdma: abort commands before resetting controller
+Date:   Thu, 19 Jul 2018 15:28:36 +0200
+Message-Id: <20180719132838.15556-3-jthumshirn@suse.de>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180719132838.15556-1-jthumshirn@suse.de>
+References: <20180719132838.15556-1-jthumshirn@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI currently is the only transport we have which is doing more than
-queueing a transport reset but trying to abort the command first.
+Currently if a timeout on rdma happens we just go ahead and reset the
+underlying transport.
 
-This series brings the other transports we currently have up to the
-same level.
+Instead try to abort the timeout out command and if this fails as well
+continue the error path escalation and tear down the transport.
 
-On FC we can prepend a third escalation level by first to abort the FC
-operation before trying to abort the NVMe command.
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+---
+ drivers/nvme/host/rdma.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-Johannes Thumshirn (4):
-  nvme: factor out pci abort handling into core
-  nvme: rdma: abort commands before resetting controller
-  nvmet: loop: abort commands before resetting controller
-  nvme: fc: abort commands before resetting controller
-
- drivers/nvme/host/core.c   | 47 +++++++++++++++++++++++++++++++++++
- drivers/nvme/host/fc.c     |  9 +++++++
- drivers/nvme/host/nvme.h   |  1 +
- drivers/nvme/host/pci.c    | 61 +++++++++-------------------------------------
- drivers/nvme/host/rdma.c   | 22 ++++++++++++++---
- drivers/nvme/target/loop.c | 17 ++++++++++++-
- 6 files changed, 104 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index 13a6064e4794..aed4752cfac6 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -1671,10 +1671,26 @@ static enum blk_eh_timer_return
+ nvme_rdma_timeout(struct request *rq, bool reserved)
+ {
+ 	struct nvme_rdma_request *req = blk_mq_rq_to_pdu(rq);
++	struct nvme_ctrl *ctrl = &req->queue->ctrl->ctrl;
++	u16 qid = nvme_rdma_queue_idx(req->queue);
++	int ret;
++
++	dev_warn(ctrl->device,
++		 "I/O %d QID %d timeout, aborting\n",
++		 rq->tag, qid);
++
++	ret = nvme_abort_cmd(ctrl, rq, cpu_to_le16(qid));
++	if (!ret)
++		return BLK_EH_RESET_TIMER;
+ 
+-	dev_warn(req->queue->ctrl->ctrl.device,
+-		 "I/O %d QID %d timeout, reset controller\n",
+-		 rq->tag, nvme_rdma_queue_idx(req->queue));
++	/*
++	 * If the request was already cancelled once there's no need
++	 * in doing it again, escalate to the next error recovery
++	 * level.
++	 */
++	dev_warn(ctrl->device,
++		 "I/O %d QID %d abort failed %d, reset controller\n",
++		 rq->tag, qid, ret);
+ 
+ 	/* queue error recovery */
+ 	nvme_rdma_error_recovery(req->queue->ctrl);
 -- 
 2.16.4
 
