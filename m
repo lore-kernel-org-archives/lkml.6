@@ -2,155 +2,244 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC26ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9A6ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 406A220684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:52:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Aok4or8b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406A220684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 1E46B20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:54:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E46B20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbeGTAha (ORCPT
+        id S1730598AbeGTAkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:37:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:46621 "EHLO ozlabs.org"
+        Thu, 19 Jul 2018 20:40:09 -0400
+Received: from mga03.intel.com ([134.134.136.65]:49498 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727870AbeGTAha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:37:30 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41WrQl1bWMz9s1R;
-        Fri, 20 Jul 2018 09:51:59 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532044319;
-        bh=XChIum8t8+rTrHqhl3x1ZCTiRMZSKMdxxfnSrGO9KM4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Aok4or8bYoL+e6lddwQZ97l4/VZ8bIEHxaZ06DtXqhqnzvlpEDBldlFNRuWY5mt39
-         GPYfP0jSmygBIlbIhpepvIaO5fDxbF1JYpOH//pSFVLMXwtUIYjL5Yc7fCkAQYoMax
-         h0/BETV9fpaGxolIjuRJMZYqFsiiM/mEtal59vgNiyk0SDLWbNzMBSFR2ZHbxMWlud
-         P5390ijd7207egEvxX6LYBW5d0d5GDff6Aqw/e+89AATqzkNH/MjdMAMBXLmNmwxcx
-         8nem9SNnrJ3cFlgYCyr6SLxvBYPOGldHImdV1NjV8+2OD8RB5WaAXHKO0EDFgKzl3H
-         kXlvpcyTvb/AA==
-Date:   Fri, 20 Jul 2018 09:51:38 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: linux-next: manual merge of the powerpc tree with the powerpc-fixes
- tree
-Message-ID: <20180720095138.275cc9aa@canb.auug.org.au>
+        id S1729215AbeGTAkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 20:40:09 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 16:54:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,376,1526367600"; 
+   d="gz'50?scan'50,208,50";a="68553927"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga002.fm.intel.com with ESMTP; 19 Jul 2018 16:54:38 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fgIkn-0002m2-DO; Fri, 20 Jul 2018 07:54:37 +0800
+Date:   Fri, 20 Jul 2018 07:54:00 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     kbuild-all@01.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf/x86/intel: Fix unwind errors from PEBS entries
+ (mk-II)
+Message-ID: <201807200713.X3kvIzIF%fengguang.wu@intel.com>
+References: <20180719211954.GZ2512@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/M/wB7O1tQxgKIF7Eg3TSknz"; protocol="application/pgp-signature"
+Content-Type: multipart/mixed; boundary="KsGdsel6WgEHnImy"
+Content-Disposition: inline
+In-Reply-To: <20180719211954.GZ2512@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/M/wB7O1tQxgKIF7Eg3TSknz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+--KsGdsel6WgEHnImy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+Hi Peter,
 
-  drivers/vfio/vfio_iommu_spapr_tce.c
+I love your patch! Yet something to improve:
 
-between commit:
+[auto build test ERROR on tip/perf/core]
+[also build test ERROR on v4.18-rc5 next-20180719]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-  1463edca6734 ("vfio/spapr: Use IOMMU pageshift rather than pagesize")
+url:    https://github.com/0day-ci/linux/commits/Peter-Zijlstra/perf-x86-intel-Fix-unwind-errors-from-PEBS-entries-mk-II/20180720-061741
+config: powerpc-allnoconfig (attached as .config)
+compiler: powerpc-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        GCC_VERSION=7.2.0 make.cross ARCH=powerpc 
 
-from the powerpc-fixes tree and commit:
+All errors (new ones prefixed by >>):
 
-  00a5c58d9499 ("KVM: PPC: Make iommu_table::it_userspace big endian")
+   In file included from include/linux/perf_event.h:17:0,
+                    from include/linux/trace_events.h:10,
+                    from include/trace/syscall.h:7,
+                    from arch/powerpc/kernel/ptrace.c:32:
+>> include/uapi/linux/perf_event.h:147:39: error: left shift count >= width of type [-Werror=shift-count-overflow]
+     __PERF_SAMPLE_CALLCHAIN_EARLY  = 1UL << 63,
+                                          ^~
+   cc1: all warnings being treated as errors
 
-from the powerpc tree.
+vim +147 include/uapi/linux/perf_event.h
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+   118	
+   119	/*
+   120	 * Bits that can be set in attr.sample_type to request information
+   121	 * in the overflow packets.
+   122	 */
+   123	enum perf_event_sample_format {
+   124		PERF_SAMPLE_IP				= 1U << 0,
+   125		PERF_SAMPLE_TID				= 1U << 1,
+   126		PERF_SAMPLE_TIME			= 1U << 2,
+   127		PERF_SAMPLE_ADDR			= 1U << 3,
+   128		PERF_SAMPLE_READ			= 1U << 4,
+   129		PERF_SAMPLE_CALLCHAIN			= 1U << 5,
+   130		PERF_SAMPLE_ID				= 1U << 6,
+   131		PERF_SAMPLE_CPU				= 1U << 7,
+   132		PERF_SAMPLE_PERIOD			= 1U << 8,
+   133		PERF_SAMPLE_STREAM_ID			= 1U << 9,
+   134		PERF_SAMPLE_RAW				= 1U << 10,
+   135		PERF_SAMPLE_BRANCH_STACK		= 1U << 11,
+   136		PERF_SAMPLE_REGS_USER			= 1U << 12,
+   137		PERF_SAMPLE_STACK_USER			= 1U << 13,
+   138		PERF_SAMPLE_WEIGHT			= 1U << 14,
+   139		PERF_SAMPLE_DATA_SRC			= 1U << 15,
+   140		PERF_SAMPLE_IDENTIFIER			= 1U << 16,
+   141		PERF_SAMPLE_TRANSACTION			= 1U << 17,
+   142		PERF_SAMPLE_REGS_INTR			= 1U << 18,
+   143		PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
+   144	
+   145		PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
+   146	
+ > 147		__PERF_SAMPLE_CALLCHAIN_EARLY		= 1UL << 63,
+   148	};
+   149	
 
---=20
-Cheers,
-Stephen Rothwell
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-diff --cc drivers/vfio/vfio_iommu_spapr_tce.c
-index 7cd63b0c1a46,11a4c194d6e3..000000000000
---- a/drivers/vfio/vfio_iommu_spapr_tce.c
-+++ b/drivers/vfio/vfio_iommu_spapr_tce.c
-@@@ -487,11 -449,11 +449,11 @@@ static void tce_iommu_unuse_page_v2(str
-  	if (!pua)
-  		return;
- =20
-- 	ret =3D tce_iommu_prereg_ua_to_hpa(container, *pua, tbl->it_page_shift,
-- 			&hpa, &mem);
-+ 	ret =3D tce_iommu_prereg_ua_to_hpa(container, be64_to_cpu(*pua),
- -			IOMMU_PAGE_SIZE(tbl), &hpa, &mem);
-++			tbl->it_page_shift, &hpa, &mem);
-  	if (ret)
-- 		pr_debug("%s: tce %lx at #%lx was not cached, ret=3D%d\n",
-- 				__func__, *pua, entry, ret);
-+ 		pr_debug("%s: tce %llx at #%lx was not cached, ret=3D%d\n",
-+ 				__func__, be64_to_cpu(*pua), entry, ret);
-  	if (mem)
-  		mm_iommu_mapped_dec(mem);
- =20
-@@@ -599,19 -561,12 +561,12 @@@ static long tce_iommu_build_v2(struct t
-  	unsigned long hpa;
-  	enum dma_data_direction dirtmp;
- =20
-- 	if (!tbl->it_userspace) {
-- 		ret =3D tce_iommu_userspace_view_alloc(tbl, container->mm);
-- 		if (ret)
-- 			return ret;
-- 	}
--=20
-  	for (i =3D 0; i < pages; ++i) {
-  		struct mm_iommu_table_group_mem_t *mem =3D NULL;
-- 		unsigned long *pua =3D IOMMU_TABLE_USERSPACE_ENTRY(tbl,
-- 				entry + i);
-+ 		__be64 *pua =3D IOMMU_TABLE_USERSPACE_ENTRY(tbl, entry + i);
- =20
-  		ret =3D tce_iommu_prereg_ua_to_hpa(container,
- -				tce, IOMMU_PAGE_SIZE(tbl), &hpa, &mem);
- +				tce, tbl->it_page_shift, &hpa, &mem);
-  		if (ret)
-  			break;
- =20
+--KsGdsel6WgEHnImy
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
---Sig_/M/wB7O1tQxgKIF7Eg3TSknz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+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
+TQAA
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltRJAoACgkQAVBC80lX
-0GyGIwf/UsUGTDeLCB1dBOXDnIOy937KSGh90Zwx+oOyTE8mjziQB/MtJjZeEhVi
-GtTzPDqTwZeOKU963SX9EmrkpmyHby/aSWB2iBeVnsCqvsUxSEAXMIUlbttfyCxT
-4wDxGKIgAHoSTn7aDJoOjfLd88FiNmCKwX51UFSNqqkbMbQY9s8U7AQ6yuba23gr
-y7rZtAddwYo401xYF5TtUxv9OBgkm1vKyA5vtRPvvHuR023ax9+JkI7NX8Djo4BK
-/6JyLVIQRqkjal7HoJ9lgUkk2KLB77ENvCdR82DOJZETPG56zSxH6zwPaG5eWRK1
-o270Y/I3BCyXzZjC/f8RQg7KGprJcw==
-=n+fN
------END PGP SIGNATURE-----
-
---Sig_/M/wB7O1tQxgKIF7Eg3TSknz--
+--KsGdsel6WgEHnImy--
