@@ -2,149 +2,114 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AADC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF50EC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CE2A2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A6C82084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 18:38:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HIOPFR/f";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lTMrnF1a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CE2A2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VDxCgBlu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6C82084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732377AbeGSTUs (ORCPT
+        id S1732150AbeGSTXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 15:20:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34236 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731625AbeGSTUs (ORCPT
+        Thu, 19 Jul 2018 15:23:14 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51312 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731839AbeGSTXO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 15:20:48 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 51622607B9; Thu, 19 Jul 2018 18:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532025384;
-        bh=AKeQb8RdSaIV0O/urw4vsAXCiG72IyanuyGHnqdDx7k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HIOPFR/fUWvmlpjAyFwQK5nf8wgnFLFCGfzDs1XnS4rTHMK8ycgFHaJkz4PPXI1lp
-         hg82bcWx9fh+OzITM02C92YLXLmkfDONrjXjE4f5OX+eIEdXyN4PJlN34YUknVGSXW
-         dFxa65qWOwPyx2h2k4hnMl6IYNfjDUNHJOe1oI3M=
-Received: from [10.235.228.39] (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tbaicar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3CC0160791;
-        Thu, 19 Jul 2018 18:36:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532025382;
-        bh=AKeQb8RdSaIV0O/urw4vsAXCiG72IyanuyGHnqdDx7k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lTMrnF1ani5IZkxMYpWfXkTlRulEg/Vi4lheC/LpQs1rB7YU+pIc24fbG/YbG4e2S
-         aq5lsmijthDHKsuuh7XVZ5mj2uTTlaE9/U7u5P7NbPW4vVLtrsWR/6L3dYyxyLTKc+
-         Mgu00cBkLAwhKJbtWGO2Hj9mb2GZfhT5/24o0j3M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3CC0160791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tbaicar@codeaurora.org
-Subject: Re: [RFC PATCH] EDAC, ghes: Enable per-layer error reporting for ARM
-To:     James Morse <james.morse@arm.com>, Borislav Petkov <bp@alien8.de>,
-        harba@qti.qualcomm.com
-Cc:     mchehab@kernel.org, linux-edac@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1531762009-15112-1-git-send-email-tbaicar@codeaurora.org>
- <20180719140102.GB25185@nazgul.tnic>
- <94e3a0fb-9b7d-045f-733b-9f063dcb39e4@arm.com>
-From:   Tyler Baicar <tbaicar@codeaurora.org>
-Message-ID: <45fefe7d-c6ea-5791-4477-13ecce39ce48@codeaurora.org>
-Date:   Thu, 19 Jul 2018 14:36:21 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 15:23:14 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JIcn5F052141;
+        Thu, 19 Jul 2018 18:38:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=87VTLnUIlx6TAiR23fp4/8KHP1Y+ZidcrJZDxikoaBA=;
+ b=VDxCgBluaZnuToldJWmYaEx5/4oXho27OAwRtRoPHRgkauBWqDnbjif3WRIW4rr1rPUq
+ 7qjxWH2oVyCR3hyrHy0CZGRTP1o60cPndd4ItFFCqMewauB8N/sPp9WTkODKM/83Gs2Y
+ tMnVa0wX+jxgNVhEXxaJwLTHXLWymuoUB5yLiHdZ4CxrEIoOw00N0855DlQhcBXhgeK5
+ V0xh5PgrrHB4Jg9z+UtiSjy25YiIgPUvFPRnptzzxCn1rsCRbTPNBXTHeG/1dYmkCHRz
+ NP6S8vKQauumJHIIO6kyTAkKlFgT7Jzd57CLspafqPKITpGBe18BMHLGjILLtpYH4z5T FQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2k9yjx8cfc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Jul 2018 18:38:48 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6JIckIu028445
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Jul 2018 18:38:46 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6JIckeI020950;
+        Thu, 19 Jul 2018 18:38:46 GMT
+Received: from mail-oi0-f49.google.com (/209.85.218.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Jul 2018 11:38:46 -0700
+Received: by mail-oi0-f49.google.com with SMTP id n84-v6so16784048oib.9;
+        Thu, 19 Jul 2018 11:38:46 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGsLedVYyqoneFj0T/Cny1zRwVS27KPStsoZofQ/7W72kBh8eWs
+        YHHFlgKKc+/CnIPTtkHlPL4qOa1FovF0u8KATrc=
+X-Google-Smtp-Source: AAOMgpfBDG0IB+tiSoEV9nmPz6bRUkjk0REz3dxre4xZUbfYvEc6nSdtCyx+6DVRSDPOYbVm8o6CnWTcyYoW7ZZ28Ao=
+X-Received: by 2002:aca:edc1:: with SMTP id l184-v6mr11184837oih.65.1532025525817;
+ Thu, 19 Jul 2018 11:38:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <94e3a0fb-9b7d-045f-733b-9f063dcb39e4@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20180718022211.6259-1-pasha.tatashin@oracle.com>
+ <20180718022211.6259-21-pasha.tatashin@oracle.com> <20180719103340.GA2494@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1807191300150.1602@nanos.tec.linutronix.de>
+ <4295075b-8a0f-1723-2e80-1bbd2f038846@oracle.com> <alpine.DEB.2.21.1807191817080.1693@nanos.tec.linutronix.de>
+ <CAGM2reYpApca9v-2qpVbTGXGVWiEEL5mkEWzTAvXFiztmtkh1Q@mail.gmail.com>
+In-Reply-To: <CAGM2reYpApca9v-2qpVbTGXGVWiEEL5mkEWzTAvXFiztmtkh1Q@mail.gmail.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 19 Jul 2018 14:38:09 -0400
+X-Gmail-Original-Message-ID: <CAGM2rebBN0v0epfTssM=ShiWZ4GTDaN_cgGWdKE4+k+jV6CxyA@mail.gmail.com>
+Message-ID: <CAGM2rebBN0v0epfTssM=ShiWZ4GTDaN_cgGWdKE4+k+jV6CxyA@mail.gmail.com>
+Subject: Re: [PATCH v14 20/25] x86/tsc: calibrate tsc only once
+To:     tglx@linutronix.de
+Cc:     peterz@infradead.org, Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        prarit@redhat.com, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, pbonzini@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8959 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=659
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807190195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/19/2018 10:46 AM, James Morse wrote:
-> On 19/07/18 15:01, Borislav Petkov wrote:
->> On Mon, Jul 16, 2018 at 01:26:49PM -0400, Tyler Baicar wrote:
->>> Enable per-layer error reporting for ARM systems so that the error
->>> counters are incremented per-DIMM.
->>>
->>> On ARM systems that use firmware first error handling it is understood
-> understood by whom? Is this written down somewhere, or is it the convention. (in
-> which case, lets get it written down somewhere)
-Hey Boris, James,
+On Thu, Jul 19, 2018 at 12:49 PM Pavel Tatashin
+<pasha.tatashin@oracle.com> wrote:
+>
+> > So create two functions. native_...early..() and native....(). The early
+> > one does not contain the hpet/pmtimer stuff and it replaces the ops.pointer
+> > with the late one which contains all of it.
+>
+> Good idea. Actually, the late one will contain only hpet/pmtimer and I
+> will set it only if tsc frequency was not determined only.
 
-It has just been convention, but Harb recently brought up the idea of adding it 
-to SBBR.
->>> that card=channel and module=DIMM on that channel. Populate that
-> I'm guessing this is the mapping between CPER records and the DMItable data.
-Unfortunately the DMI table doesn't actually have channel and DIMM number values 
-which
-makes this more complicated than I originally thought...
->>> information and enable per layer error reporting for ARM systems so that
->>> the EDAC error counters are incremented based on DIMM number as per the
->>> SMBIOS table rather than just incrementing the noinfo counters on the
->>> memory controller.
-> Does this work on x86, and its just the dmi/cper fields have a subtle difference?
-There are CPU specific EDAC drivers for a lot of x86 folks and those drivers 
-populate the layer information
-in a custom way.
+If we determined tsc early in boot using one of the quick methods:
+from cpuid/msr/quick_pit, can we assume that frequencies of all other
+CPUs will be determined the same way? Or do we still have to fallback
+to PIT/HPET/PMTIMER? I wondering if we support heterogeneous
+multi-socket platforms with different CPUs, because that the only
+platforms where I see such scenario is possible.
 
-With more investigation and testing it turns out a simple patch like this is not 
-going to work. This worked for
-me on a 1DPC board since the card number turned out to always be the same as the 
-index into the DMI table
-to find the proper DIMM. On a 2DPC board this fails completely. The ghes_edac 
-driver only sets up a single
-layer so it is only using the card number with this patch. That setup can be 
-seen here:
-
-https://elixir.bootlin.com/linux/v4.18-rc5/source/drivers/edac/ghes_edac.c#L469
-
-So it is only setting up a single layer with all the DIMMs on that layer. In 
-order to properly enable the layers
-to represent channel and DIMM number on that channel, we would need to have a 
-way of determining the
-number of channels (which would be layers[0].size) and the number of DIMMs each 
-channel supported
-(layers[1].size). There doesn't appear to be a way to determine that information 
-at this point.
-
-With the current ghes_edac setup, it seems the only way this could work would be 
-to have the firmware
-always report the module value to be the index into the DMI table that this DIMM 
-information lives. When I
-say index into the DMI table, I'm meaning the index into the list of "type 17" 
-DMI entries. So, DIMM number
-doesn't actually matter, what really matters is the ordering of the type 17 
-entries in the DMI table.
-
-This seems pretty hacky to me, so if anyone has other suggestions please share 
-them. The goal is to be able to
-enable the per layer error reporting in the ghes_edac driver so that the per 
-dimm counters exposed in the
-EDAC sysfs nodes are properly updated. The other obvious but more messy way 
-would be to have notifiers
-register to be called by ghes_edac and have a custom EDAC driver for each CPU to 
-properly populate their layer
-information.
-
-Thanks,
-Tyler
-
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
-
+Thank you,
+Pavel
