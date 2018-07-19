@@ -2,105 +2,200 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48C6ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C577C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB2C2084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:23:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5KC1zLU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB2C2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 22CC420693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:24:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22CC420693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731232AbeGSLGT (ORCPT
+        id S1731305AbeGSLG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 07:06:19 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45168 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730598AbeGSLGT (ORCPT
+        Thu, 19 Jul 2018 07:06:57 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46514 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbeGSLG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 07:06:19 -0400
-Received: by mail-lj1-f194.google.com with SMTP id q5-v6so6732013ljh.12;
-        Thu, 19 Jul 2018 03:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rGwWKn29vtcxvCO/gtF2+bZliPLeWRIhSZgbVRPH6ws=;
-        b=X5KC1zLUPsFD4D9+UveGsRbg4/IPQLZGH+nzz2XU+5S9C738L2oTF3tr7b8cVpjwTA
-         KlIhStFNZmeC1iTA9SYUNtzAAdDwsvZCjNMFJDSHLzLflSSTYG29cjV026shQKI/+ZZO
-         zhr9bJWAnI0SSxzUlXU6uWEVxBxq6MKlgbAG1G8jZmA0ZyIgtKlY7zRad7X81RcbSkhi
-         tT60fvDF+ziQQCzIr3uEzODBBEX7drRbcm+a/DK5Y8oHyyUyrWvUe1vWWf9h2MdgSGBn
-         fazJ2zf7w5vV+fXy+C/WwaIezirS3nwJSY94pvuOz8TTAFVjTdWbrTSVgNkYII/4t4LK
-         4apg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rGwWKn29vtcxvCO/gtF2+bZliPLeWRIhSZgbVRPH6ws=;
-        b=oQtSFVQAx2TBej7GE8BvmOFIPPdfl5P+2zoGMv6Mhf+E/FHCa2R+A7EwseWRnzFGEt
-         ucVR/Oancxud8YeftB6tHj7nMdHlzL6uEjfjILVOlpKUEP33gwXNbKltSqx9h/xfvCor
-         aLEYMAHI7iSz3yafnvirhSBM3U9KuUOWuGJv/dffScudLkANR2KBD6eWKFlPjj0wZGG6
-         D+9upN5/s6lOAMQd1zTu2ISy1k9mzHSByJY+Ds9v923pliPOE0IetR1Bc2oM0JJPQ7Ur
-         Xn/b/YvQzs+pTOmMx/n/1ibhz0TzN7nW2ICaYCsgCTJKLpcBvsjTnV95G/NbFO0mVKhb
-         7Raw==
-X-Gm-Message-State: AOUpUlGiomFcF9JykROrJeWrhv0SiDStg7L5NoYlCdu6eDT83JSimlMh
-        cbW4N27+vpgq3oJbOfWwmJs=
-X-Google-Smtp-Source: AAOMgpcUf0Hhc1nR6tAfBHo+PVq2V4COkGmjmZzKI2kAsb2qU4mFhT0VasAERYeoPD8gPVf/nlqOcQ==
-X-Received: by 2002:a2e:4357:: with SMTP id q84-v6mr7098366lja.13.1531995829681;
-        Thu, 19 Jul 2018 03:23:49 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id n7-v6sm907456lfe.87.2018.07.19.03.23.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 03:23:48 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1fg65w-00051P-TO; Thu, 19 Jul 2018 12:23:36 +0200
-Date:   Thu, 19 Jul 2018 12:23:36 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Keerthy <j-keerthy@ti.com>
-Cc:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        t-kristo@ti.com, linux-rtc@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johan@kernel.org
-Subject: Re: [PATCH v4 1/4] rtc: omap: Cut down the shutdown time from 2
- seconds to 1 sec
-Message-ID: <20180719102336.GA19245@localhost>
-References: <1531372060-10532-1-git-send-email-j-keerthy@ti.com>
- <1531372060-10532-2-git-send-email-j-keerthy@ti.com>
+        Thu, 19 Jul 2018 07:06:57 -0400
+Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 87e891bf6d43d026; Thu, 19 Jul 2018 12:24:27 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 05/26] PM / Domains: Add helper functions to attach/detach CPUs to/from genpd
+Date:   Thu, 19 Jul 2018 12:22:47 +0200
+Message-ID: <3889041.sTGkQNs1Ck@aspire.rjw.lan>
+In-Reply-To: <20180620172226.15012-6-ulf.hansson@linaro.org>
+References: <20180620172226.15012-1-ulf.hansson@linaro.org> <20180620172226.15012-6-ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531372060-10532-2-git-send-email-j-keerthy@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 10:37:37AM +0530, Keerthy wrote:
-> Cut down the shutdown time from 2 seconds to 1 sec. In case of roll
-> over try again.
+On Wednesday, June 20, 2018 7:22:05 PM CEST Ulf Hansson wrote:
+> Introduce two new genpd helper functions, of_genpd_attach|detach_cpu(),
+> which takes the CPU-number as an in-parameter.
 > 
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> To attach a CPU to a genpd, of_genpd_attach_cpu() starts by fetching the
+> struct device belonging to the CPU. Then it calls genpd_dev_pm_attach(),
+> which via DT tries to hook up the CPU device to its corresponding PM
+> domain. If it succeeds, of_genpd_attach_cpu() continues to prepare/enable
+> runtime PM of the device.
+> 
+> To detach a CPU from its PM domain, of_genpd_attach_cpu() reverse the
+> operations made from of_genpd_attach_cpu(). However, first it checks that
+> the CPU device has a valid PM domain pointer assigned, as to make sure it
+> belongs to genpd.
+> 
+> Cc: Lina Iyer <ilina@codeaurora.org>
+> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/base/power/domain.c | 69 +++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_domain.h   |  9 +++++
+>  2 files changed, 78 insertions(+)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 6149ce0bfa7b..299fa2febbec 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2445,6 +2445,75 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
+>  
+> +/*
+> + * of_genpd_attach_cpu() - Attach a CPU to its PM domain
+> + * @cpu: The CPU to be attached.
+> + *
+> + * Parses the OF node of the CPU's device, to find a PM domain specifier. If
+> + * such is found, attaches the CPU's device to the retrieved pm_domain ops and
+> + * enables runtime PM for it. This to allow the CPU to be power managed through
+> + * its PM domain.
+> + *
+> + * Returns zero when successfully attached the CPU's device to its PM domain,
+> + * else a negative error code.
+> + */
+> +int of_genpd_attach_cpu(int cpu)
+> +{
+> +	struct device *dev = get_cpu_device(cpu);
+> +	int ret;
+> +
+> +	if (!dev) {
+> +		pr_warn("genpd: no dev for cpu%d\n", cpu);
+> +		return -ENODEV;
+> +	}
 
-> @@ -435,17 +435,23 @@ static void omap_rtc_power_off(void)
+I'm not sure about the value of the above.  Is it possible even?
 
-> +	/* set alarm one second from now */
->  	omap_rtc_read_time_raw(rtc, &tm);
-> +	seconds = tm.tm_sec;
->  	bcd2tm(&tm);
->  	rtc_tm_to_time(&tm, &now);
-> -	rtc_time_to_tm(now + 2, &tm);
-> +	rtc_time_to_tm(now + 1, &tm);
+> +
+> +	ret = genpd_dev_pm_attach(dev);
+> +	if (ret != 1) {
+> +		dev_warn(dev, "genpd: attach cpu failed %d\n", ret);
 
-One more thing, the comment before final mdelay as well as that delay
-itself also needs to be updated to reflect this change.
+This looks like a debug message.  Do you really want to print it with high prio?
 
-Thanks,
-Johan
+> +		return ret < 0 ? ret : -ENODEV;
+> +	}
+> +
+> +	pm_runtime_irq_safe(dev);
+> +	pm_runtime_get_noresume(dev);
+> +	pm_runtime_set_active(dev);
+> +	pm_runtime_enable(dev);
+> +
+> +	dev_info(dev, "genpd: attached cpu\n");
+
+This definitely is a debug message.
+
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(of_genpd_attach_cpu);
+> +
+> +/**
+> + * of_genpd_detach_cpu() - Detach a CPU from its PM domain
+> + * @cpu: The CPU to be detached.
+> + *
+> + * Detach the CPU's device from its corresponding PM domain. If detaching is
+> + * completed successfully, disable runtime PM and restore the runtime PM usage
+> + * count for the CPU's device.
+> + */
+> +void of_genpd_detach_cpu(int cpu)
+> +{
+> +	struct device *dev = get_cpu_device(cpu);
+> +
+> +	if (!dev) {
+> +		pr_warn("genpd: no dev for cpu%d\n", cpu);
+> +		return;
+> +	}
+> +
+> +	/* Check that the device is attached to a genpd. */
+> +	if (!(dev->pm_domain && dev->pm_domain->detach == genpd_dev_pm_detach))
+> +		return;
+> +
+> +	genpd_dev_pm_detach(dev, true);
+> +
+> +	pm_runtime_disable(dev);
+> +	pm_runtime_put_noidle(dev);
+> +	pm_runtime_reinit(dev);
+> +
+> +	dev_info(dev, "genpd: detached cpu\n");
+> +}
+> +EXPORT_SYMBOL(of_genpd_detach_cpu);
+> +
+>  static const struct of_device_id idle_state_match[] = {
+>  	{ .compatible = "domain-idle-state", },
+>  	{ }
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index 3f67ff0c1c69..2c09cf80b285 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -243,6 +243,8 @@ unsigned int of_genpd_opp_to_performance_state(struct device *dev,
+>  int genpd_dev_pm_attach(struct device *dev);
+>  struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+>  					 unsigned int index);
+> +int of_genpd_attach_cpu(int cpu);
+> +void of_genpd_detach_cpu(int cpu);
+>  #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
+>  static inline int of_genpd_add_provider_simple(struct device_node *np,
+>  					struct generic_pm_domain *genpd)
+> @@ -294,6 +296,13 @@ static inline struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+>  	return NULL;
+>  }
+>  
+> +static inline int of_genpd_attach_cpu(int cpu)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +static inline void of_genpd_detach_cpu(int cpu) {}
+> +
+>  static inline
+>  struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
+>  {
+> 
+
+I'd combine this with patch [04/26].  The split here is somewhat artificial IMO.
+
