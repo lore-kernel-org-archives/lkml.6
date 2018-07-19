@@ -2,85 +2,76 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6414ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A96E9ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3988B2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:45:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3988B2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 55237206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:48:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dIS9Chd2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55237206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730776AbeGSWaY (ORCPT
+        id S1730998AbeGSWdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 18:30:24 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44846 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727721AbeGSWaY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 18:30:24 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fgGjg-00068r-1e; Thu, 19 Jul 2018 21:45:20 +0000
-Date:   Thu, 19 Jul 2018 22:45:20 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 (v4.18 regression fix)] vfs: don't evict uninitialized
- inode
-Message-ID: <20180719214519.GA23379@ZenIV.linux.org.uk>
-References: <20180706204521.29654-1-mszeredi@redhat.com>
- <CAJfpeguFaaE8i+fAg3HhQm6MPcFzMciY3WLfQUPdnY4xnmC7kg@mail.gmail.com>
- <20180718121833.GR30522@ZenIV.linux.org.uk>
+        Thu, 19 Jul 2018 18:33:45 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:40593 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730021AbeGSWdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 18:33:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=xB34T3WceJoGujrhlru+cxYlxi6k9E+mPs+PI4uYjo4=;
+        b=dIS9Chd2P/ib3RZKfINp+bB6RmOZSlZu4OAJ8UzEs5TtR8LNs01zK6eapA4gfTBuNLZR944ZjGQEV4l2Am80oce5FeAJ7ix3u9VbSl7+cOydy45wHXg8zgnPD9vind3leQ7VXwbS/WRe/8NxUKq8ZSQu6e4A3PXdHz0kmIHlfTg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fgGmX-0005IP-9Y; Thu, 19 Jul 2018 23:48:17 +0200
+Date:   Thu, 19 Jul 2018 23:48:17 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 4/5] net: add support for nvmem to
+ eth_platform_get_mac_address()
+Message-ID: <20180719214817.GF12150@lunn.ch>
+References: <20180718161035.7005-1-brgl@bgdev.pl>
+ <20180718161035.7005-5-brgl@bgdev.pl>
+ <20180719174728.GK6920@n2100.armlinux.org.uk>
+ <CAMRc=MfYp8Q4KNUMhLqf5jgd+C-_bWnfHworTbaCj0CZgRqMeA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180718121833.GR30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAMRc=MfYp8Q4KNUMhLqf5jgd+C-_bWnfHworTbaCj0CZgRqMeA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 01:18:33PM +0100, Al Viro wrote:
+> Hi Russell,
+> 
+> this issue is gone now in v3 but thanks for the example - I somehow
+> never thought about it.
 
-> BTW, why have you left generic_readlink() sitting around?  AFAICS,
-> it could've been folded into the only remaining caller just as
-> you've made it static in late 2016...  I'll fold it in;
-> just curious what was the reason for not doing that back then...
+Please don't send patchset so fast. It wastes people time, reviewing
+outdated versions. No more than one version of a patchset per day.
 
-BTW^2:
-const char *vfs_get_link(struct dentry *dentry, struct delayed_call *done)
-{
-        const char *res = ERR_PTR(-EINVAL);
-        struct inode *inode = d_inode(dentry);
-
-        if (d_is_symlink(dentry)) {
-                res = ERR_PTR(security_inode_readlink(dentry));
-                if (!res)
-                        res = inode->i_op->get_link(dentry, inode, done);
-        }
-        return res;
-}
-hits a method call that is not needed in the majority of cases.  Is there
-any subtle reason why it shouldn't be
-
-const char *vfs_get_link(struct dentry *dentry, struct delayed_call *done)
-{
-        const char *res = ERR_PTR(-EINVAL);
-        struct inode *inode = d_inode(dentry);
-
-        if (d_is_symlink(dentry)) {
-                res = ERR_PTR(security_inode_readlink(dentry));
-                if (!res)
-			res = inode->i_link;
-		if (!res)
-                        res = inode->i_op->get_link(dentry, inode, done);
-        }
-        return res;
-}
-instead?
+	 Andrew
