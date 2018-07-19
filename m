@@ -2,155 +2,166 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C98ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2444ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05FF92084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:20:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05FF92084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B63720673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:20:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="HePdaSCX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B63720673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730926AbeGTAFq (ORCPT
+        id S1731053AbeGTAF6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:05:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46403 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729919AbeGTAFq (ORCPT
+        Thu, 19 Jul 2018 20:05:58 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:38780 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729919AbeGTAF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:05:46 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNJOtr2450892
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 16:19:24 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNJOOV2450889;
-        Thu, 19 Jul 2018 16:19:24 -0700
-Date:   Thu, 19 Jul 2018 16:19:24 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-ae2e565bc6aaee3f3db420fec5fdd39755c9813e@git.kernel.org>
-Cc:     llong@redhat.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, aarcange@redhat.com,
-        jpoimboe@redhat.com, dhgutteridge@sympatico.ca, eduval@amazon.com,
-        pavel@ucw.cz, dvlasenk@redhat.com, mingo@kernel.org,
-        David.Laight@aculab.com, brgerst@gmail.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de, bp@alien8.de,
-        hpa@zytor.com, luto@kernel.org, dave.hansen@intel.com,
-        jroedel@suse.de, jkosina@suse.cz, peterz@infradead.org,
-        gregkh@linuxfoundation.org, jgross@suse.com,
-        boris.ostrovsky@oracle.com
-Reply-To: peterz@infradead.org, gregkh@linuxfoundation.org,
-          boris.ostrovsky@oracle.com, jgross@suse.com, tglx@linutronix.de,
-          bp@alien8.de, hpa@zytor.com, luto@kernel.org, jkosina@suse.cz,
-          jroedel@suse.de, dave.hansen@intel.com,
-          dhgutteridge@sympatico.ca, jpoimboe@redhat.com,
-          dvlasenk@redhat.com, mingo@kernel.org, pavel@ucw.cz,
-          eduval@amazon.com, torvalds@linux-foundation.org,
-          David.Laight@aculab.com, brgerst@gmail.com, llong@redhat.com,
-          will.deacon@arm.com, aarcange@redhat.com,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <1531906876-13451-3-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-3-git-send-email-joro@8bytes.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/32: Rename TSS_sysenter_sp0 to
- TSS_entry2task_stack
-Git-Commit-ID: ae2e565bc6aaee3f3db420fec5fdd39755c9813e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 19 Jul 2018 20:05:57 -0400
+Received: from mail-vk0-f50.google.com (mail-vk0-f50.google.com [209.85.213.50]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w6JNKFIC002074;
+        Fri, 20 Jul 2018 08:20:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w6JNKFIC002074
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1532042416;
+        bh=L0LJaIAF8Vcn5wpIhzyLgcwsbh0R/yVeY5CwsoNKI60=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=HePdaSCXe5UXc6hwa3/aun0Vt27GyL7Su+9k1PSgeOji4PkQvHkOf4Cb6nhcQMFaN
+         RxyWbXqHg5aB8NFZf8AfSJaBC8+uZ6ZpVlwrLRo85y4vbWC/Zt99IM8w6dvSCGXw4e
+         XSqyVCHVdia9/89Boj4ABIcffGl+ryo6nXv1J+aW0pN8bg3HWIYDYnNkLHx3p0XMPJ
+         udO4DM4ARkLhKspI43gkQwt8u1Y4q6NtT0du1vcQUdxROxlOR6pSZzVBmcCvBEnH5E
+         BNBxakVVEdrNe9i6Zd8fBjn4HSili8FvnxLw2K5xH7Lnv4Mm6TLsPUdLqG1/YtjfE5
+         +mFIlYLHNyW2w==
+X-Nifty-SrcIP: [209.85.213.50]
+Received: by mail-vk0-f50.google.com with SMTP id s17-v6so5229112vke.10;
+        Thu, 19 Jul 2018 16:20:15 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFM0n3JE80wXbsvfbDy6Vk7yqEgXDtq9fFCmOqHu0naHZLJLtAo
+        M7B8R8grqexbz8+lpRsM8J4hxxE251zjg/oYxCY=
+X-Google-Smtp-Source: AAOMgpf5h2wmP2+pUvhRkARZIa3Tv8WpoAjUVavIwOymuGu3e95pU33Q1CLI+IVWYgA3aBZ4ljf+Dm/nd27toHtOIR0=
+X-Received: by 2002:a1f:420d:: with SMTP id p13-v6mr4688825vka.10.1532042414606;
+ Thu, 19 Jul 2018 16:20:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 16:19:34
+ -0700 (PDT)
+In-Reply-To: <20180719223521.GA30287@roeck-us.net>
+References: <20180719120447.6e7ba23d@canb.auug.org.au> <cbc20089-6847-c0eb-5b5a-735245986be1@roeck-us.net>
+ <20180719152940.0720e9c1@canb.auug.org.au> <6dabf12b-e3db-dfe8-101c-02772039e21a@roeck-us.net>
+ <20180720080906.7a30c573@canb.auug.org.au> <20180719223521.GA30287@roeck-us.net>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 20 Jul 2018 08:19:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARfZH=ZEdFuRq_g1HsJ+Pv1m=v343JLyE-6+uM_d+3eWA@mail.gmail.com>
+Message-ID: <CAK7LNARfZH=ZEdFuRq_g1HsJ+Pv1m=v343JLyE-6+uM_d+3eWA@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ae2e565bc6aaee3f3db420fec5fdd39755c9813e
-Gitweb:     https://git.kernel.org/tip/ae2e565bc6aaee3f3db420fec5fdd39755c9813e
-Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 18 Jul 2018 11:40:39 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 01:11:35 +0200
+2018-07-20 7:35 GMT+09:00 Guenter Roeck <linux@roeck-us.net>:
+> On Fri, Jul 20, 2018 at 08:09:06AM +1000, Stephen Rothwell wrote:
+>> Hi Guenter,
+>>
+>> On Thu, 19 Jul 2018 06:49:01 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+>> >
+>> > On 07/18/2018 10:29 PM, Stephen Rothwell wrote:
+>> > >
+>> > > On Wed, 18 Jul 2018 20:52:56 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+>> > >>
+>> > >> On 07/18/2018 07:04 PM, Stephen Rothwell wrote:
+>> > >>>
+>> > >>> After merging the net-next tree, today's linux-next build (x86_64
+>> > >>> allmodconfig) produced this warning:
+>> > >>>
+>> > >>> *
+>> > >>> * Restart config...
+>> > >>> *
+>> > >>> ....
+>> > >>>
+>> > >>> This is output by my "make allmodconfig" and only started after merging
+>> > >>> the net-next tree today.  It has continued for further merges/builds.
+>> > >>>
+>> > >>> I suspect commit
+>> > >>>
+>> > >>>     1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
+>> > >>>
+>> > >>> which added an "imply" clause.
+>> > >>>
+>> > >> I thought "imply" was better than "depends on HWMON || HWMON=n", but maybe
+>> > >> not. Is that a caveat when using "imply", and does it mean that "imply"
+>> > >> should better not be used ?
+>> > >
+>> > > I don't know, sorry.  It was just my best guess from what I could see
+>> > > had changed.
+>> > >
+>> > > I wonder if it makes a difference that I am doing my "make
+>> > > allmodconfig" on top of a previous "make allmodconfig" and some symbols
+>> > > are marked as "NEW" (though they are not symbols related to the changes
+>> > > that happened during the net-next tree merge)?
+>> > >
+>> >
+>> > I tried to reproduce the problem, but I don't see the message.
+>> >
+>> > What I do see, though, is that "make allmodconfig" on a clean tree,
+>> > followed by "make menuconfig", results in configuration changes.
+>> > Specifically,
+>> >
+>> >  > CONFIG_ARC_EMAC_CORE=m
+>> >  > CONFIG_ARC_EMAC=m
+>> >  > CONFIG_EMAC_ROCKCHIP=m
+>> >
+>> > is removed by menuconfig, and a large number of "# ... is not set"
+>> > configuration lines are added. Weird and bad, since several of the
+>> > disabled configurations _should_ be enabled by "make allmodconfig",
+>> > and a large number of hwmon drivers are affected. Bisect does point
+>> > to "net: phy: sfp: Add HWMON support for module sensors", meaning
+>> > "imply hwmon" does have severe side effects and can not be used.
+>> >
+>> > I'll try to find a fix.
+>>
+>> OK, my mistake, the "make allmodconfig" works, the following "make"
+>> causes the config restart.  (I am actually doing cross builds and using
+>> an external object directory, in case that matters.)
+>>
+>> I removed the "imply HWMON" line added by the above commit and the
+>> problem went away.  Also, using "depends on HWMON || HWMON=n" instead
+>> of the imply fixes it.
+>
+> Yes, replacing imply with the dependency is what I did in the fixup patch.
+> Sorry, I should have copied you: https://patchwork.kernel.org/patch/10534925/
+>
+> It is a bit different - imply was supposed to enforce HWMON={y,n} if SFP=y,
+> and the depends line enforces SFP={n,m} if HWMON=m. I have no idea why
+> imply doesn't work, but I think I'll stay away from it in the future.
+>
+> Guenter
 
-x86/entry/32: Rename TSS_sysenter_sp0 to TSS_entry2task_stack
 
-The stack address doesn't need to be stored in tss.sp0 if the stack is
-switched manually like on sysenter. Rename the offset so that it still
-makes sense when its location is changed in later patches.
+Hmm, this could be a Kconfig bug.
 
-This stackk will also be used for all kernel-entry points, not just
-sysenter. Reflect that and the fact that it is the offset to the task-stack
-location in the name as well.
+I will take a look.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-3-git-send-email-joro@8bytes.org
 
----
- arch/x86/entry/entry_32.S        | 2 +-
- arch/x86/kernel/asm-offsets_32.c | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+BTW,
+'depends on HWMON || HWMON=n' is pointless
+because it is always true.
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index c371bfee137a..39f711ad0fc9 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -412,7 +412,7 @@ ENTRY(xen_sysenter_target)
-  * 0(%ebp) arg6
-  */
- ENTRY(entry_SYSENTER_32)
--	movl	TSS_sysenter_sp0(%esp), %esp
-+	movl	TSS_entry2task_stack(%esp), %esp
- .Lsysenter_past_esp:
- 	pushl	$__USER_DS		/* pt_regs->ss */
- 	pushl	%ebp			/* pt_regs->sp (stashed in bp) */
-diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
-index a4a3be399f4b..15b3f45b69cd 100644
---- a/arch/x86/kernel/asm-offsets_32.c
-+++ b/arch/x86/kernel/asm-offsets_32.c
-@@ -46,8 +46,9 @@ void foo(void)
- 	OFFSET(saved_context_gdt_desc, saved_context, gdt_desc);
- 	BLANK();
- 
--	/* Offset from the sysenter stack to tss.sp0 */
--	DEFINE(TSS_sysenter_sp0, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
-+	/* Offset from the entry stack to task stack stored in TSS */
-+	DEFINE(TSS_entry2task_stack,
-+	       offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
- 	       offsetofend(struct cpu_entry_area, entry_stack_page.stack));
- 
- #ifdef CONFIG_STACKPROTECTOR
+
+
+-- 
+Best Regards
+Masahiro Yamada
