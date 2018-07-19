@@ -1,57 +1,77 @@
 Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,PHOTO_EDITING_FREEM,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF55ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DBC6ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AB7820684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:21:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AB7820684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=customglassware.com
+	by mail.kernel.org (Postfix) with ESMTP id C453120684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:22:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C453120684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731884AbeGSQFJ (ORCPT
+        id S1731939AbeGSQGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:05:09 -0400
-Received: from diskinternals.com ([199.83.103.122]:56223 "EHLO luggagio.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731105AbeGSQFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:05:08 -0400
-X-Greylist: delayed 592 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Jul 2018 12:05:08 EDT
-To:     linux-kernel@vger.kernel.org
-Subject: photos
-Message-ID: <0fafb40573d018b7cfdbe0efca907af0@denniskirk.com>
-Date:   Thu, 19 Jul 2018 16:33:47 +0200
-From:   "Jeremy" <tejltani@customglassware.com>
-Reply-To: luojinsho@sina.com
+        Thu, 19 Jul 2018 12:06:17 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33395 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731442AbeGSQGR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:06:17 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fgAlI-0001sp-8y; Thu, 19 Jul 2018 17:22:36 +0200
+Date:   Thu, 19 Jul 2018 17:22:35 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        mingo@redhat.com, bhe@redhat.com, keescook@chromium.org,
+        yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com,
+        lcapitulino@redhat.com, caoj.fnst@cn.fujitsu.com,
+        douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v3 2/4] x86/boot: Add acpitb.c to parse acpi tables
+In-Reply-To: <20180717100409.10547-3-fanc.fnst@cn.fujitsu.com>
+Message-ID: <alpine.DEB.2.21.1807191720270.1693@nanos.tec.linutronix.de>
+References: <20180717100409.10547-1-fanc.fnst@cn.fujitsu.com> <20180717100409.10547-3-fanc.fnst@cn.fujitsu.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-How are you doing today?
+On Tue, 17 Jul 2018, Chao Fan wrote:
+> +
+> +/* Search efi table for rsdp table. */
+> +static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+> +{
+> +	efi_system_table_t *systab;
+> +	bool find_rsdp = false;
+> +	bool acpi_20 = false;
+> +	bool efi_64 = false;
+> +	void *config_tables;
+> +	struct efi_info *e;
+> +	char *sig;
+> +	int size;
+> +	int i;
+> +
+> +#ifndef CONFIG_EFI
+> +	return false;
+> +#endif
 
-We have not heard from you yet. Are you still interested in our photo
-retouching services?
-We mainly do:
+Please no. Wrap the whole function into CONFIG_EFI annd have a stub for the
+non EFI case returning false.
 
-e-commerce products photo retouching
-jewelry photos retouching
-model beauty/skin retouching
-wedding photo editing
-also photo cutting out, clipping path
+Thanks,
 
-You may choose to send us a photo for testing which you can check our
-quality.
-
-Regards,
-Jeremy
-
+	tglx
