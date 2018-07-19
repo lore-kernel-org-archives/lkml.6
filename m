@@ -3,61 +3,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5E6ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9D7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB30520673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB30520673
+	by mail.kernel.org (Postfix) with ESMTP id B87DB20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87DB20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731455AbeGTANl (ORCPT
+        id S1731186AbeGTAON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:13:41 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38337 "EHLO
+        Thu, 19 Jul 2018 20:14:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55497 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730266AbeGTANk (ORCPT
+        with ESMTP id S1727553AbeGTAON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:13:40 -0400
+        Thu, 19 Jul 2018 20:14:13 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNRIFm2453388
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNRoGK2453429
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 16:27:18 -0700
+        Thu, 19 Jul 2018 16:27:50 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNRIPS2453382;
-        Thu, 19 Jul 2018 16:27:18 -0700
-Date:   Thu, 19 Jul 2018 16:27:18 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNRoov2453425;
+        Thu, 19 Jul 2018 16:27:50 -0700
+Date:   Thu, 19 Jul 2018 16:27:50 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-e3238faf20fb1b51a814497751398ab525a2c884@git.kernel.org>
-Cc:     dhgutteridge@sympatico.ca, will.deacon@arm.com,
-        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
-        torvalds@linux-foundation.org, jgross@suse.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org, pavel@ucw.cz,
-        jroedel@suse.de, jkosina@suse.cz, gregkh@linuxfoundation.org,
-        tglx@linutronix.de, llong@redhat.com, eduval@amazon.com,
-        aarcange@redhat.com, luto@kernel.org, jpoimboe@redhat.com,
-        dvlasenk@redhat.com, boris.ostrovsky@oracle.com,
-        David.Laight@aculab.com, bp@alien8.de, brgerst@gmail.com
-Reply-To: jpoimboe@redhat.com, luto@kernel.org, David.Laight@aculab.com,
-          dvlasenk@redhat.com, boris.ostrovsky@oracle.com,
-          brgerst@gmail.com, bp@alien8.de, jroedel@suse.de,
-          jkosina@suse.cz, pavel@ucw.cz, tglx@linutronix.de,
-          gregkh@linuxfoundation.org, llong@redhat.com, eduval@amazon.com,
-          aarcange@redhat.com, torvalds@linux-foundation.org,
-          jgross@suse.com, linux-kernel@vger.kernel.org,
-          dave.hansen@intel.com, dhgutteridge@sympatico.ca,
-          will.deacon@arm.com, peterz@infradead.org, hpa@zytor.com,
-          mingo@kernel.org
-In-Reply-To: <1531906876-13451-18-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-18-git-send-email-joro@8bytes.org>
+Message-ID: <tip-8372d66865deb45ee3ec21401a9c80f231b728c8@git.kernel.org>
+Cc:     David.Laight@aculab.com, boris.ostrovsky@oracle.com, bp@alien8.de,
+        peterz@infradead.org, dvlasenk@redhat.com,
+        torvalds@linux-foundation.org, mingo@kernel.org, pavel@ucw.cz,
+        hpa@zytor.com, jpoimboe@redhat.com, dave.hansen@intel.com,
+        will.deacon@arm.com, jkosina@suse.cz, jroedel@suse.de,
+        jgross@suse.com, eduval@amazon.com, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, luto@kernel.org, llong@redhat.com,
+        aarcange@redhat.com, dhgutteridge@sympatico.ca, brgerst@gmail.com,
+        tglx@linutronix.de
+Reply-To: dvlasenk@redhat.com, torvalds@linux-foundation.org,
+          peterz@infradead.org, David.Laight@aculab.com,
+          boris.ostrovsky@oracle.com, bp@alien8.de, jpoimboe@redhat.com,
+          hpa@zytor.com, mingo@kernel.org, pavel@ucw.cz, jgross@suse.com,
+          jroedel@suse.de, jkosina@suse.cz, gregkh@linuxfoundation.org,
+          eduval@amazon.com, linux-kernel@vger.kernel.org,
+          will.deacon@arm.com, dave.hansen@intel.com, tglx@linutronix.de,
+          dhgutteridge@sympatico.ca, brgerst@gmail.com, llong@redhat.com,
+          luto@kernel.org, aarcange@redhat.com
+In-Reply-To: <1531906876-13451-19-git-send-email-joro@8bytes.org>
+References: <1531906876-13451-19-git-send-email-joro@8bytes.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/pgtable/32: Allocate 8k page-tables when PTI is
- enabled
-Git-Commit-ID: e3238faf20fb1b51a814497751398ab525a2c884
+Subject: [tip:x86/pti] x86/pgtable: Move pgdp kernel/user conversion
+ functions to pgtable.h
+Git-Commit-ID: 8372d66865deb45ee3ec21401a9c80f231b728c8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -71,19 +71,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e3238faf20fb1b51a814497751398ab525a2c884
-Gitweb:     https://git.kernel.org/tip/e3238faf20fb1b51a814497751398ab525a2c884
+Commit-ID:  8372d66865deb45ee3ec21401a9c80f231b728c8
+Gitweb:     https://git.kernel.org/tip/8372d66865deb45ee3ec21401a9c80f231b728c8
 Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 18 Jul 2018 11:40:54 +0200
+AuthorDate: Wed, 18 Jul 2018 11:40:55 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 20 Jul 2018 01:11:41 +0200
 
-x86/pgtable/32: Allocate 8k page-tables when PTI is enabled
+x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
 
-Allocate a kernel and a user page-table root when PTI is enabled. Also
-allocate a full page per root for PAE because otherwise the bit to flip in
-CR3 to switch between them would be non-constant, which creates a lot of
-hassle.  Keep that for a later optimization.
+Make them available on 32 bit and clone_pgd_range() happy.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -113,87 +110,130 @@ Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Waiman Long <llong@redhat.com>
 Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
 Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-18-git-send-email-joro@8bytes.org
+Link: https://lkml.kernel.org/r/1531906876-13451-19-git-send-email-joro@8bytes.org
 
 ---
- arch/x86/kernel/head_32.S | 20 +++++++++++++++-----
- arch/x86/mm/pgtable.c     |  5 +++--
- 2 files changed, 18 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/pgtable.h    | 49 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/pgtable_64.h | 49 ---------------------------------------
+ 2 files changed, 49 insertions(+), 49 deletions(-)
 
-diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-index abe6df15a8fb..30f9cb2c0b55 100644
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -512,11 +512,18 @@ ENTRY(initial_code)
- ENTRY(setup_once_ref)
- 	.long setup_once
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 5715647fc4fe..eb474329d751 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1155,6 +1155,55 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ }
+ #endif
  
 +#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+#define	PGD_ALIGN	(2 * PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	1024
-+#else
-+#define	PGD_ALIGN	(PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	0
-+#endif
++/*
++ * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
++ * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
++ * the user one is in the last 4k.  To switch between them, you
++ * just need to flip the 12th bit in their addresses.
++ */
++#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
++
++/*
++ * This generates better code than the inline assembly in
++ * __set_bit().
++ */
++static inline void *ptr_set_bit(void *ptr, int bit)
++{
++	unsigned long __ptr = (unsigned long)ptr;
++
++	__ptr |= BIT(bit);
++	return (void *)__ptr;
++}
++static inline void *ptr_clear_bit(void *ptr, int bit)
++{
++	unsigned long __ptr = (unsigned long)ptr;
++
++	__ptr &= ~BIT(bit);
++	return (void *)__ptr;
++}
++
++static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
++{
++	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
++}
++
++static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
++{
++	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
++}
++
++static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
++{
++	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
++}
++
++static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
++{
++	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
++}
++#endif /* CONFIG_PAGE_TABLE_ISOLATION */
++
  /*
-  * BSS section
-  */
- __PAGE_ALIGNED_BSS
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- #ifdef CONFIG_X86_PAE
- .globl initial_pg_pmd
- initial_pg_pmd:
-@@ -526,14 +533,17 @@ initial_pg_pmd:
- initial_page_table:
- 	.fill 1024,4,0
+  * clone_pgd_range(pgd_t *dst, pgd_t *src, int count);
+  *
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 9406c4fe1d38..4adba19c7bf6 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -132,55 +132,6 @@ static inline pud_t native_pudp_get_and_clear(pud_t *xp)
  #endif
-+	.align PGD_ALIGN
- initial_pg_fixmap:
- 	.fill 1024,4,0
--.globl empty_zero_page
--empty_zero_page:
--	.fill 4096,1,0
- .globl swapper_pg_dir
-+	.align PGD_ALIGN
- swapper_pg_dir:
- 	.fill 1024,4,0
-+	.fill PTI_USER_PGD_FILL,4,0
-+.globl empty_zero_page
-+empty_zero_page:
-+	.fill 4096,1,0
- EXPORT_SYMBOL(empty_zero_page)
- 
- /*
-@@ -542,7 +552,7 @@ EXPORT_SYMBOL(empty_zero_page)
- #ifdef CONFIG_X86_PAE
- __PAGE_ALIGNED_DATA
- 	/* Page-aligned for the benefit of paravirt? */
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- ENTRY(initial_page_table)
- 	.long	pa(initial_pg_pmd+PGD_IDENT_ATTR),0	/* low identity map */
- # if KPMDS == 3
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 47b5951e592b..db6fb7740bf7 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -343,7 +343,8 @@ static inline pgd_t *_pgd_alloc(void)
- 	 * We allocate one page for pgd.
- 	 */
- 	if (!SHARED_KERNEL_PMD)
--		return (pgd_t *)__get_free_page(PGALLOC_GFP);
-+		return (pgd_t *)__get_free_pages(PGALLOC_GFP,
-+						 PGD_ALLOCATION_ORDER);
- 
- 	/*
- 	 * Now PAE kernel is not running as a Xen domain. We can allocate
-@@ -355,7 +356,7 @@ static inline pgd_t *_pgd_alloc(void)
- static inline void _pgd_free(pgd_t *pgd)
- {
- 	if (!SHARED_KERNEL_PMD)
--		free_page((unsigned long)pgd);
-+		free_pages((unsigned long)pgd, PGD_ALLOCATION_ORDER);
- 	else
- 		kmem_cache_free(pgd_cache, pgd);
  }
+ 
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-/*
+- * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
+- * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
+- * the user one is in the last 4k.  To switch between them, you
+- * just need to flip the 12th bit in their addresses.
+- */
+-#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
+-
+-/*
+- * This generates better code than the inline assembly in
+- * __set_bit().
+- */
+-static inline void *ptr_set_bit(void *ptr, int bit)
+-{
+-	unsigned long __ptr = (unsigned long)ptr;
+-
+-	__ptr |= BIT(bit);
+-	return (void *)__ptr;
+-}
+-static inline void *ptr_clear_bit(void *ptr, int bit)
+-{
+-	unsigned long __ptr = (unsigned long)ptr;
+-
+-	__ptr &= ~BIT(bit);
+-	return (void *)__ptr;
+-}
+-
+-static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
+-{
+-	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-
+-static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
+-{
+-	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-
+-static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
+-{
+-	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-
+-static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
+-{
+-	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-#endif /* CONFIG_PAGE_TABLE_ISOLATION */
+-
+ /*
+  * Page table pages are page-aligned.  The lower half of the top
+  * level is used for userspace and the top half for the kernel.
