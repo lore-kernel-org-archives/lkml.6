@@ -2,174 +2,181 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FE5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B609C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB72B2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:58:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0FA72084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:58:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kaPcbQ+8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB72B2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q5RE4Jbc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0FA72084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731873AbeGSQmL (ORCPT
+        id S1731968AbeGSQmT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:42:11 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:59498 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730053AbeGSQmL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:42:11 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6JFwG52115260;
-        Thu, 19 Jul 2018 10:58:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1532015896;
-        bh=fdtbsz7j3PNhboGrAlyQ1M/Ljs2UYWmFCk+2Gkgq6+M=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=kaPcbQ+8zxGy0yrDYWfOoWvuEFClSCJ1b6uEUm+R3T+YEhInBVZeusFwVr2Rv6op+
-         FVrEpz5kFMXP5P8c0nMpOrvFGckrxmNIjWdzdNOcOBUh4E98j9K2w7NAPU+nFRULQ2
-         MFKtkkU3bc6Mpbqlhb8fnNO+ps33oeb9MnOmkNwE=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JFwGxc001672;
-        Thu, 19 Jul 2018 10:58:16 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 19
- Jul 2018 10:58:15 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 19 Jul 2018 10:58:15 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JFwC16026921;
-        Thu, 19 Jul 2018 10:58:13 -0500
-Subject: Re: [PATCH v2 2/4] pci: dwc: pci-dra7xx: Enable errata i870 for both
- EP and RC mode
-To:     Tony Lindgren <tony@atomide.com>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        KISHON VIJAY ABRAHAM <kishon@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-References: <20180627122919.23926-1-vigneshr@ti.com>
- <20180627122919.23926-3-vigneshr@ti.com> <20180718110250.GA21589@red-moon>
- <b7f1cef7-b0d8-733a-c450-163299d281d0@ti.com>
- <20180719111556.GB9213@e107981-ln.cambridge.arm.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <c9d953f8-bc60-5243-bd11-a3a053c08340@ti.com>
-Date:   Thu, 19 Jul 2018 21:29:02 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 19 Jul 2018 12:42:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58118 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731636AbeGSQmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:42:19 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFA972084C;
+        Thu, 19 Jul 2018 15:58:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532015909;
+        bh=Kd7C8hqNnLFQP/2WGRkzXOw9JqegZm9zBOPcwT3lnIY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q5RE4JbcwdHFzzW2YoAv4L3u2lI6gXlwo5iVtOodGQbExmmF0qrY7M3+hJLiFZ7Gt
+         Xs6HDMciO737/Ug1kx06MRPGISRuWB495kdDQa8Uvi/iTkWkqdUrkgFd3iTsO5tmaB
+         9SZYIHuMhEEaZRxNRu3i+9uGncNXf3L5TIS+cowE=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id A2CE414486C; Thu, 19 Jul 2018 12:58:26 -0300 (-03)
+Date:   Thu, 19 Jul 2018 12:58:26 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kan Liang <kan.liang@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Lukasz Odzioba <lukasz.odzioba@intel.com>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: Re: [PATCH 4/4] perf tools: Fix struct comm_str removal crash
+Message-ID: <20180719155826.GF4070@kernel.org>
+References: <20180719143345.12963-1-jolsa@kernel.org>
+ <20180719143345.12963-5-jolsa@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180719111556.GB9213@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719143345.12963-5-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Thu, Jul 19, 2018 at 04:33:45PM +0200, Jiri Olsa escreveu:
+> We occasionaly hit following assert failure in perf top,
+> when processing the /proc info in multiple threads.
 
+Namhyung, are you ok with this one?
 
-On Thursday 19 July 2018 04:45 PM, Lorenzo Pieralisi wrote:
-> On Thu, Jul 19, 2018 at 04:04:34PM +0530, Vignesh R wrote:
->> Hi Lorenzo,
->>
-[...]
->>>> +	ret = dra7xx_pcie_unaligned_memaccess(dev);
->>>> +	if (ret)
->>>> +		dev_err(dev, "WA for Errata i870 not appplied. Update DT\n");
->>>
->>> Hi Vignesh,
->>>
->>> Nit: s/appplied/applied
->>>
->>
->> Oops, let me know if you want me to resend with this fixed.
+- Arnaldo
+ 
+>   perf: ...include/linux/refcount.h:109: refcount_inc:
+>         Assertion `!(!refcount_inc_not_zero(r))' failed.
 > 
-> I can fix it, no problem but see below.
+> The gdb backtrace looks like this:
 > 
->>> Two questions:
->>>
->>> - Current code applies the unaligned_memaccess() workaround for all
->>>   compatible variants. This is fine for current controllers (since
->>>   they are all affected), the code path above will have to be
->>>   reworked if there is any other compatible IP re-using the driver
->>>   that does not require the workaround.
->>
->> There are no compatible IPs that don't require this workaround. Also, I
->> don't see this IP being re-used in future. If you insist, I can add a
->> errata flag
+>   [Switching to Thread 0x7ffff11ba700 (LWP 13749)]
+>   0x00007ffff50839fb in raise () from /lib64/libc.so.6
+>   (gdb)
+>   #0  0x00007ffff50839fb in raise () from /lib64/libc.so.6
+>   #1  0x00007ffff5085800 in abort () from /lib64/libc.so.6
+>   #2  0x00007ffff507c0da in __assert_fail_base () from /lib64/libc.so.6
+>   #3  0x00007ffff507c152 in __assert_fail () from /lib64/libc.so.6
+>   #4  0x0000000000535373 in refcount_inc (r=0x7fffdc009be0)
+>       at ...include/linux/refcount.h:109
+>   #5  0x00000000005354f1 in comm_str__get (cs=0x7fffdc009bc0)
+>       at util/comm.c:24
+>   #6  0x00000000005356bd in __comm_str__findnew (str=0x7fffd000b260 ":2",
+>       root=0xbed5c0 <comm_str_root>) at util/comm.c:72
+>   #7  0x000000000053579e in comm_str__findnew (str=0x7fffd000b260 ":2",
+>       root=0xbed5c0 <comm_str_root>) at util/comm.c:95
+>   #8  0x000000000053582e in comm__new (str=0x7fffd000b260 ":2",
+>       timestamp=0, exec=false) at util/comm.c:111
+>   #9  0x00000000005363bc in thread__new (pid=2, tid=2) at util/thread.c:57
+>   #10 0x0000000000523da0 in ____machine__findnew_thread (machine=0xbfde38,
+>       threads=0xbfdf28, pid=2, tid=2, create=true) at util/machine.c:457
+>   #11 0x0000000000523eb4 in __machine__findnew_thread (machine=0xbfde38,
+>   ...
 > 
-> I do not insist, I just pointed this out ;-)
+> The failing assertion is this one:
 > 
->>> - How do you want this series to go upstream ? If it goes via arm-soc,
->>>   which I think it should, here is my ACK on this patch:
->>>
->> Patch 1 and 2(dt bindings update and driver patch) can go in via PCI
->> tree. And DT changes(patch 3 and 4) can be picked up by Tony via
->> omap/arm-soc tree. They are mostly independent and should not cause any
->> problems. Does that sound good?
+>   REFCOUNT_WARN(!refcount_inc_not_zero(r), ...
 > 
-> It should be fine but technically as soon as patch (2) is applied we
-> would have a regression if patches (3) and (4) are applied separately.
+> The problem is that we keep global comm_str_root list, which
+> is accessed by multiple threads during the perf top startup
+> and following 2 paths can race:
 > 
-
-Right, although not a regression, I see your point. It would be good to
-merge patch 3 and 4 before patch 2.
-
-Tony,
-Let me know if you are okay with taking this series via omap tree. I can
-resend re-ordering patch 2 to come at the end of the series.
-
-Regards
-Vignesh
-
+>   thread 1:
+>     ...
+>     thread__new
+>       comm__new
+>         comm_str__findnew
+>           down_write(&comm_str_lock);
+>           __comm_str__findnew
+>             comm_str__get
 > 
->>> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->>>
->>
->> Thanks!
->>
->>> Please let me know if I can drop this series from the PCI patchwork.
->>>
->>> Thanks,
->>> Lorenzo
->>>
->>>> +
->>>>  	switch (mode) {
->>>>  	case DW_PCIE_RC_TYPE:
->>>>  		if (!IS_ENABLED(CONFIG_PCI_DRA7XX_HOST)) {
->>>> @@ -717,10 +721,6 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
->>>>  		dra7xx_pcie_writel(dra7xx, PCIECTRL_TI_CONF_DEVICE_TYPE,
->>>>  				   DEVICE_TYPE_EP);
->>>>  
->>>> -		ret = dra7xx_pcie_ep_unaligned_memaccess(dev);
->>>> -		if (ret)
->>>> -			goto err_gpio;
->>>> -
->>>>  		ret = dra7xx_add_pcie_ep(dra7xx, pdev);
->>>>  		if (ret < 0)
->>>>  			goto err_gpio;
->>>> -- 
->>>> 2.18.0
->>>>
->>
->> -- 
->> Regards
->> Vignesh
-
--- 
-Regards
-Vignesh
+>   thread 2:
+>     ...
+>     comm__override or comm__free
+>       comm_str__put
+>         refcount_dec_and_test
+>           down_write(&comm_str_lock);
+>           rb_erase(&cs->rb_node, &comm_str_root);
+> 
+> Because thread 2 first decrements the refcnt and only after then it
+> removes the struct comm_str from the list, the thread 1 can find this
+> object on the list with refcnt equls to 0 and hit the assert.
+> 
+> This patch fixes the thread 1 __comm_str__findnew path, by ignoring
+> objects that already dropped the refcnt to 0. For the rest of the
+> objects we take the refcnt before comparing its name and release
+> it afterwards with comm_str__put, which can also release the object
+> completely.
+> 
+> Link: http://lkml.kernel.org/n/tip-vrizt6sw1lu1ybsrl9l0wwln@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/util/comm.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
+> index 7798a2cc8a86..9c4a18991e41 100644
+> --- a/tools/perf/util/comm.c
+> +++ b/tools/perf/util/comm.c
+> @@ -18,11 +18,9 @@ struct comm_str {
+>  static struct rb_root comm_str_root;
+>  static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,};
+>  
+> -static struct comm_str *comm_str__get(struct comm_str *cs)
+> +static bool comm_str__get(struct comm_str *cs)
+>  {
+> -	if (cs)
+> -		refcount_inc(&cs->refcnt);
+> -	return cs;
+> +	return cs ? refcount_inc_not_zero(&cs->refcnt) : false;
+>  }
+>  
+>  static void comm_str__put(struct comm_str *cs)
+> @@ -67,9 +65,14 @@ struct comm_str *__comm_str__findnew(const char *str, struct rb_root *root)
+>  		parent = *p;
+>  		iter = rb_entry(parent, struct comm_str, rb_node);
+>  
+> +		/*
+> +		 * If we race with comm_str__put, iter->refcnt is 0
+> +		 * and it will be removed within comm_str__put call
+> +		 * shortly, ignore it in this search.
+> +		 */
+>  		cmp = strcmp(str, iter->str);
+> -		if (!cmp)
+> -			return comm_str__get(iter);
+> +		if (!cmp && comm_str__get(iter))
+> +			return iter;
+>  
+>  		if (cmp < 0)
+>  			p = &(*p)->rb_left;
+> -- 
+> 2.17.1
