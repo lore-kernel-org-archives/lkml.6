@@ -2,286 +2,130 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2D5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E975ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834372084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:48:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834372084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B7332084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:49:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="IOITun4G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B7332084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731641AbeGSNb1 (ORCPT
+        id S1731420AbeGSNcv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 09:31:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41704 "EHLO mx1.redhat.com"
+        Thu, 19 Jul 2018 09:32:51 -0400
+Received: from mail-he1eur01on0137.outbound.protection.outlook.com ([104.47.0.137]:35463
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731542AbeGSNb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 09:31:27 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DF36F7A7E5;
-        Thu, 19 Jul 2018 12:48:25 +0000 (UTC)
-Received: from doriath (ovpn-116-197.phx2.redhat.com [10.3.116.197])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ECAB22026D7E;
-        Thu, 19 Jul 2018 12:48:20 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 08:48:19 -0400
-From:   Luiz Capitulino <lcapitulino@redhat.com>
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Pankaj Gupta <pagupta@redhat.com>, kwolf@redhat.com,
-        haozhong zhang <haozhong.zhang@intel.com>, jack@suse.cz,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        kvm@vger.kernel.org, riel@surriel.com, linux-nvdimm@ml01.01.org,
-        david@redhat.com, ross zwisler <ross.zwisler@intel.com>,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        hch@infradead.org, imammedo@redhat.com, mst@redhat.com,
-        niteshnarayanlal@hotmail.com, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>, nilal@redhat.com
-Subject: Re: [Qemu-devel] [RFC v3] qemu: Add virtio pmem device
-Message-ID: <20180719084819.730b7971@doriath>
-In-Reply-To: <20180719121635.GA28107@stefanha-x1.localdomain>
-References: <20180713075232.9575-1-pagupta@redhat.com>
-        <20180713075232.9575-4-pagupta@redhat.com>
-        <20180718085529.133a0a22@doriath>
-        <367397176.52317488.1531979293251.JavaMail.zimbra@redhat.com>
-        <20180719121635.GA28107@stefanha-x1.localdomain>
+        id S1730049AbeGSNcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 09:32:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iqvMekRDm+NtaeG8WHM8uDBUpTs+1BgmVltTgZfHoZk=;
+ b=IOITun4G6++qhpiU/70QcGIiQuvhFw3YOxPVocuqstxjg/if4ZZpwuG4cakagvjvTc/yr9nbLRQwY7J/+FzD6FmPwz6+4p1DvkYwqE4OwCvenRFDoO00x49z6/ePHkAvYxY+71jKBGobZj1cb7e21h6+4L1eC3mEA30D5hPfVp0=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
+Received: from localhost.localdomain (185.231.240.5) by
+ HE1PR0801MB2026.eurprd08.prod.outlook.com (2603:10a6:3:50::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.19; Thu, 19 Jul 2018 12:49:43 +0000
+Subject: [PATCH] fuse: Add missed unlock_page() to fuse_readpages_fill()
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ktkhai@virtuozzo.com
+Date:   Thu, 19 Jul 2018 15:49:39 +0300
+Message-ID: <153200455673.28926.11139427627005446149.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 19 Jul 2018 12:48:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 19 Jul 2018 12:48:25 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lcapitulino@redhat.com' RCPT:''
+X-Originating-IP: [185.231.240.5]
+X-ClientProxiedBy: LO2P265CA0054.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:60::18) To HE1PR0801MB2026.eurprd08.prod.outlook.com
+ (2603:10a6:3:50::15)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: dcba65d1-d984-4888-859f-08d5ed761a06
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600067)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB2026;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2026;3:fk4wqZpoPF//UvviNs1sC3+//6sZNfvduVfx6CyNG4+k6toeu6b33H1SZdb8+7pg3h+BU+q0rBqBmFmzGb0R58V19DBt7cXmLT99d85UsmWDUO+GDzes+LDqS8dtmd3jGWIjO38lXaXWM1d2M/jHO0wO6as8DVi+NZXcinpMHjJGC7iGgxZsnMdVcxls6hp2v94BlF/TOqtG9N09/9ApKVS51SJYaY8Kzmpnq/3/ldB1TuDHmQwrMGydKWC2ijSs;25:+Xv5dhkuB+UuXQ7HWcNIt6qbpJWaFyBt3EnWTmIBV0WO2eu+Ak6BVSp+7mjGq1vUb72DQK2F6KMv886gPMffndZRYmMGHDaqpGDSSqkup9qKMor2jPbGKV1Cgxo4uk8bniG5LW4gNgJ965CVEkV4pQSOXzYVXP052v7p/WXJwOVCoJPKcn8PAqmLNpG3lClldNMHz3+upuS4d8LwejjZWtBPnEmX9//HlhZwtTXTwN4UD2c59TFOKJ7G+4jD9EwI+jWe01MMOSH4Ji5Is55gPvGju94LoocXCQfBJvazUpEzJZFSKaWW4cu8AGVYvL55jsfZhYgbzM/TED26Y7tJwA==;31:w9V6AiwWxC8Y2qvtNjo0pEPTLIaMgq6Zraa4MO+zHfuC894hLXdhEj0K0JXOti5WdnezaaYvNzNBySAsAGr1jmARepqGeu/sxSlGfyRzvjW0TOq+k3W1aYsEZWK8QZQC4ZiFjtSq7c4qkOquGqM7dUYBwVzXnKrhYy5hqMF3LLYOCYqpIdrd6x2n6ny9gwy7v4LYUuRF9o1XXBqszIqdAgub/3RBCLiIbHEr3wvrxIA=
+X-MS-TrafficTypeDiagnostic: HE1PR0801MB2026:
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2026;20:OkrNTWeYaB60SuSUszsdSKrLUxLhOKVI9khCyv0dFEJYiObuirz15W0uByqyBylmjVvSJse8py8hP3r1TtDAWQWWxpQ1jYUvqJu630zsd3Zsqz4bR8L9frmCC/O/gg+6n0Q1a/NhUqRSyLC0UmsX4M+3SAB98qrb9FvTUg3Wsg3l8x6JxaqoKvxRUVgMY4T1P14kIOUUoFWpwlvdPXY3B7DxGeZYAihFqKNvWbYSm6RDQrYRg3TeAjPNTxS2flHxtJPLl7G0fHE8olKmth1avDH35RMOlDsPiYx/UoAU5bY8FFIwmhj/G0RmO0vgZG/9M5wp6i+6hQfnAB1jxpvUnSB4ooLEGNqKbxFqDFW1QgW5+1rajsNvm2D0RErYYx1disRF49q4V67fAef7/XZC8ck9uqoCSaEoLDqsnupspRMp4fX23wcFOMre1R4NNcxMchXyUcmqVJS/cI2ZxWmauZjX0ytIAm2dcEknWyB9XbIAs9SUFebvxCOTrZWD1pwR;4:lkf5jVj/Ee5HLaZhXMPw8ZTXZCGBGUSq/pkaV9yZO53LjlSsQhXG2y1v9ZP2ev4imfO20JqYiLAuMmSkjM9EROAL9TlkJ7vVhcFOEXRSWNthL29zP124Aqot/LYzpE63vwPg4NCZfvP7d4DxAzVE6SVMLGF5FyLUZ6SOHnQi36LTc7MHS7yh3hmmko6XLrYdBGQFYLXNBQkQEFp96Uzh/lo8zXZ6FBQk6VpOFjiAeAxKVU9F3Wp12pL75gwxouLfTGePZXB0QjcqXpnX3oFI9g==
+X-Microsoft-Antispam-PRVS: <HE1PR0801MB202685464A9CB397E4F67A89CD520@HE1PR0801MB2026.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:HE1PR0801MB2026;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB2026;
+X-Forefront-PRVS: 0738AF4208
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(366004)(346002)(136003)(376002)(39850400004)(396003)(199004)(189003)(305945005)(486006)(386003)(6506007)(230700001)(81156014)(476003)(6116002)(53936002)(52116002)(956004)(7736002)(8676002)(105586002)(58126008)(7696005)(3846002)(86362001)(106356001)(14444005)(316002)(2906002)(81166006)(68736007)(8936002)(66066001)(25786009)(478600001)(55016002)(47776003)(9686003)(61506002)(5660300001)(23676004)(33896004)(6666003)(97736004)(186003)(1857600001)(2486003)(26005)(16526019)(50466002)(103116003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB2026;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjIwMjY7MjM6RkFzZTlRSWNFa2cvTTlXdzJzTFgxdE1H?=
+ =?utf-8?B?M2dIUFhjWTh1Vjk3MGpsd0d2dDlEN3l1VW5vWUk3RHZzY21Rb2ZXWi9ENTA4?=
+ =?utf-8?B?UnBXMEdtZVptU09EbjVZNVc3NUd3TngyOXdCdC9NT205WTdoUEI3U0xCc2lT?=
+ =?utf-8?B?RWs3aEk2YWhza3lxcmxOTTlmL0xuRjQ3OW4vZnM4OUFoZFhUVHYrU3I0WlBM?=
+ =?utf-8?B?eVhtdWdneExqdGlZWXNET1dHMTJrNDV0NDN4V2FvQ0Q3bEpLb0pBMWQrcTlW?=
+ =?utf-8?B?TVFHUTJlU1NzdGpNVjNLalR5ZGl5a29vcEJENlZ6VEduWGY5enhhUjJINGZ3?=
+ =?utf-8?B?OVA3WENkV0NYVmNDeHFjcmJkVWo0UERMUlhyTS9DNU1UNXRWWjVSTlFDYWgw?=
+ =?utf-8?B?OWxKWERYaWNHQ2JpUHZBNVRIUTFkVGlzVEh1aXdHSFFZNkxUWmFSZ3hrQUtr?=
+ =?utf-8?B?VjZvZGZKaFZBZ1A2OXRNb2xHc0V4VTJvbWYrT2Y5Q0xvajVnajRXVTFUVEdS?=
+ =?utf-8?B?MXhXbXBjQVFYZWJGZVZ6bFhhZ1FJQlpGQnFQVENvc0NyQjFTVldYTDVScjlh?=
+ =?utf-8?B?aExDNE1Nb1dQYmtKQ0VFblNMRzZsYjI5L2ZWR3lTZzVCaSswYWtoRHJhSWw0?=
+ =?utf-8?B?TnpuSUtFN25VMGJTNWdIZnJLQnlYMEk1MnRqRGVXWXc1YmtwS2pBcXAzMVVu?=
+ =?utf-8?B?UlBuQUh4UllHVkovVTljQkdrYzdFMDJuQWFhZVd5UDBwY0FWN2ZqSUh4WXRp?=
+ =?utf-8?B?YmZRNkZQMjZMd3BZOXhtRXQ2aVROVjh3WXc2OGZ0QzVnNHZHS2gva1pQNzBZ?=
+ =?utf-8?B?RFU2MTNDU29PdjhWQmNrK0lOdFJlRnJ2YmIwSEdJY0JCZm9reE1oNS9uVjFr?=
+ =?utf-8?B?OG9RbGZYaUpveHFRRm1tUDhYZ2pIK2ZoTDlIUHg2R0JrSnhaeW9vejFFSFJD?=
+ =?utf-8?B?aTRWRjBpMmRMTmNkMjJaSlZ5eHM2U2wyNW1MOHFScGVCVXRBZzNwdUdhdTBQ?=
+ =?utf-8?B?RUJBZnJCMmtIRkRJOGIrVkNraHQxMGl3Z0QzRjdFSEg1Z2NCY0xCUnZuR1Nl?=
+ =?utf-8?B?MG1pckJTR1E1TTVUL25CUjhhMTlodFVjQ1EzWGtiSE42WjJud1M4ZC9oa2hS?=
+ =?utf-8?B?SGZBODRYUjc0TS9HUGVMNXVmVDYyUXIxWG9zTEVZNE0yODR1Z0UzWVpwaEVi?=
+ =?utf-8?B?eVFCOXlyd3RhcGJsbURSOC9ZNVFWSWRBNDdoeHNzUGxXUnhvM2FlZUtkQUVv?=
+ =?utf-8?B?eFYyTlV3N2NCNEtxaDBRaHdTelA1QmhzeGJ2eUY4bjcyc1A0ZUNXSHJOb05I?=
+ =?utf-8?B?ZVhjVFdMRDFOdGYyL3ovSG4zWDBVR2VrY1dhYW5rWlN2TGs2d0gzdmo5Rjg3?=
+ =?utf-8?B?NW1GOWEyUWRDdXRUREFObld5OTBLY3ZuZUd2VTJQeWJraFAyV2pkMW91TThq?=
+ =?utf-8?B?aTV1R0grWjNQMms3UTIrQUV0ZDcvK2FaeXlsWkV0TWJwL0JUcWlRNzBLa08v?=
+ =?utf-8?B?Tm5oM28zMy9WbE5DTmZZWTRsVmk2UEJjWjQ4YlllTzIwSzN3K2o5WFFDY1BQ?=
+ =?utf-8?B?eVNtcTJrTE9lUldrSS9ycVVHc0J0UkdMV2I1WFJsRDQ1R2I1NmkvQWJaZVhu?=
+ =?utf-8?Q?s=3D?=
+X-Microsoft-Antispam-Message-Info: zDjVxEjg1m5H8IVTW527GZRPbtNIXm3OS99IF3abgBApWXWJu4/P4+LmHbMYgNfLEx8+dM8mnyE2TsQeYlIraAMc6rmPfX78Y7icmQ80SeIZT0G1Y191Odo21c0eQyxmpKk92K+h/Iwc2hnqxDwQQRpNOtyKlfpucXlXED9vs80ZHY0AiIWgvSDcu+9d3YQCDm3+4RkObgj0OZUXhbl0CLvvRqfv5QMy3mJ2dvj8NttjvJ/6sAZ5PxjZn5I4RHSWGIiIEDkxLJSZ6zbklPszbtSsZjItmvl8T9I9AGuDfgGtuZck82Vo7sQRwgBbltYp18lUxdIzROBXQkRtjc6r0bb78HEPQ/eotRBMz71N0vU=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2026;6:RPLJFmKnc8vWPUhZ11ccsIQxFC/GcXnYTz5PnwgqrhkS1fcmFP4NyIUM19GTV9l+ORnSj9elzeVPFNS3Z85BGg+BdsMLYe71xyecx3JaDCpKLjjgIe9bmn6L47qYOiNyCvAV4iifJOIQ4OUMoUNn8xqLL9+R306Pl+Wqz810Kpq7TX3YfydC8Dvw8n1CAlv1E9x7YXK9J5OCFlgiXLfdbsoz0rUlMjM7cvhdK/vrhUT/mh25Nl4G8RfZPsZY7qEkdM99Ru6La3CVmjEf44drD2rh0ydB9U9n2L4W6UPRbMqsrORyLBUgplFkblfcFoMNLH9PoGMuy/gHy6nb9SkR660UYuEyIAXS2OMY7GiPsxdlZl7QG9Dlgyu6s/kvkdPK/0kuWS0NIpzKqXK+8hSDJatc2n2XlwErQ3dm2lMAQuz7XdcXjfMqqtsntaLt/b6mndWxyKIBaZ2r92yvywyOEw==;5:OvyBzZHm3F11uKpEHev/1SaF8iif0iwAdqeSRCW13IQc5IT2LMBI4vi4B670ayl9OVPd0fd8sU/Wyk5xZsviIBvKnUFerkI7hxKhBFq0v8QML7uLLs2sqy3mmLzdSgFPh2WPDoJypWoiZzNhAmS5wp2XH64NjhAfA2vx9F7Kz5A=;24:rrXisZVlIBXRj+PFI7LxerTaGi+xCBBvkuV87phKMA+X3/EddoUnHBZv+MYa5r05t//m0r9srRi94BtxqRMb1tD4sLWEMuxox0UKj40SinU=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2026;7:wAhKphVIg5/gjyhOxjV1VI98uayEbRgBZ9N4QYox/GGhaxCZ9O0cuaFK8Sg7nXL7Aabrx43K/Hz+hwRMK/YOSDheuz8dqA+QsJyaDZN5SarKZfSxFM5pb65Wmg1P+hI8adI31pe06d8259kp1k1A6/IcXemv+3hWOEFyKfc4tbpfVwiCrzAahCS5ZYpMga5I7oqlmlU+rx/TPsXLpRMUgr6BuswNYZ7P38RsvjST0GmIqKV9hRBNIMQBQ63s/sKs;20:nvxMoMNr8jQWUQK+qiWmFJsnEDZGqUf+uMwuu0IX9SjzP13WG5/R9DCwRw+HZ886qjPncDRD3Ata1HtIBwQGofrMOt0/V4OpqulZ2SxRsjGt6ZI2fuExyWsuYp0zgA98UYJii8WVgzfuAUOFraPwEpA5cb8Wmq9qIrkQI9nDzSo=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2018 12:49:43.5883 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dcba65d1-d984-4888-859f-08d5ed761a06
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB2026
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 13:16:35 +0100
-Stefan Hajnoczi <stefanha@redhat.com> wrote:
+The above error path returns with page unlocked,
+so this place seems also to behave the same.
 
-> On Thu, Jul 19, 2018 at 01:48:13AM -0400, Pankaj Gupta wrote:
-> >   
-> > >   
-> > > >  This patch adds virtio-pmem Qemu device.
-> > > > 
-> > > >  This device presents memory address range information to guest
-> > > >  which is backed by file backend type. It acts like persistent
-> > > >  memory device for KVM guest. Guest can perform read and persistent
-> > > >  write operations on this memory range with the help of DAX capable
-> > > >  filesystem.
-> > > > 
-> > > >  Persistent guest writes are assured with the help of virtio based
-> > > >  flushing interface. When guest userspace space performs fsync on
-> > > >  file fd on pmem device, a flush command is send to Qemu over VIRTIO
-> > > >  and host side flush/sync is done on backing image file.
-> > > > 
-> > > > Changes from RFC v2:
-> > > > - Use aio_worker() to avoid Qemu from hanging with blocking fsync
-> > > >   call - Stefan
-> > > > - Use virtio_st*_p() for endianess - Stefan
-> > > > - Correct indentation in qapi/misc.json - Eric
-> > > > 
-> > > > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> > > > ---
-> > > >  hw/virtio/Makefile.objs                     |   3 +
-> > > >  hw/virtio/virtio-pci.c                      |  44 +++++
-> > > >  hw/virtio/virtio-pci.h                      |  14 ++
-> > > >  hw/virtio/virtio-pmem.c                     | 241
-> > > >  ++++++++++++++++++++++++++++
-> > > >  include/hw/pci/pci.h                        |   1 +
-> > > >  include/hw/virtio/virtio-pmem.h             |  42 +++++
-> > > >  include/standard-headers/linux/virtio_ids.h |   1 +
-> > > >  qapi/misc.json                              |  26 ++-
-> > > >  8 files changed, 371 insertions(+), 1 deletion(-)
-> > > >  create mode 100644 hw/virtio/virtio-pmem.c
-> > > >  create mode 100644 include/hw/virtio/virtio-pmem.h
-> > > > 
-> > > > diff --git a/hw/virtio/Makefile.objs b/hw/virtio/Makefile.objs
-> > > > index 1b2799cfd8..7f914d45d0 100644
-> > > > --- a/hw/virtio/Makefile.objs
-> > > > +++ b/hw/virtio/Makefile.objs
-> > > > @@ -10,6 +10,9 @@ obj-$(CONFIG_VIRTIO_CRYPTO) += virtio-crypto.o
-> > > >  obj-$(call land,$(CONFIG_VIRTIO_CRYPTO),$(CONFIG_VIRTIO_PCI)) +=
-> > > >  virtio-crypto-pci.o
-> > > >  
-> > > >  obj-$(CONFIG_LINUX) += vhost.o vhost-backend.o vhost-user.o
-> > > > +ifeq ($(CONFIG_MEM_HOTPLUG),y)
-> > > > +obj-$(CONFIG_LINUX) += virtio-pmem.o
-> > > > +endif
-> > > >  obj-$(CONFIG_VHOST_VSOCK) += vhost-vsock.o
-> > > >  endif
-> > > >  
-> > > > diff --git a/hw/virtio/virtio-pci.c b/hw/virtio/virtio-pci.c
-> > > > index 3a01fe90f0..93d3fc05c7 100644
-> > > > --- a/hw/virtio/virtio-pci.c
-> > > > +++ b/hw/virtio/virtio-pci.c
-> > > > @@ -2521,6 +2521,49 @@ static const TypeInfo virtio_rng_pci_info = {
-> > > >      .class_init    = virtio_rng_pci_class_init,
-> > > >  };
-> > > >  
-> > > > +/* virtio-pmem-pci */
-> > > > +
-> > > > +static void virtio_pmem_pci_realize(VirtIOPCIProxy *vpci_dev, Error
-> > > > **errp)
-> > > > +{
-> > > > +    VirtIOPMEMPCI *vpmem = VIRTIO_PMEM_PCI(vpci_dev);
-> > > > +    DeviceState *vdev = DEVICE(&vpmem->vdev);
-> > > > +
-> > > > +    qdev_set_parent_bus(vdev, BUS(&vpci_dev->bus));
-> > > > +    object_property_set_bool(OBJECT(vdev), true, "realized", errp);
-> > > > +}
-> > > > +
-> > > > +static void virtio_pmem_pci_class_init(ObjectClass *klass, void *data)
-> > > > +{
-> > > > +    DeviceClass *dc = DEVICE_CLASS(klass);
-> > > > +    VirtioPCIClass *k = VIRTIO_PCI_CLASS(klass);
-> > > > +    PCIDeviceClass *pcidev_k = PCI_DEVICE_CLASS(klass);
-> > > > +    k->realize = virtio_pmem_pci_realize;
-> > > > +    set_bit(DEVICE_CATEGORY_MISC, dc->categories);
-> > > > +    pcidev_k->vendor_id = PCI_VENDOR_ID_REDHAT_QUMRANET;
-> > > > +    pcidev_k->device_id = PCI_DEVICE_ID_VIRTIO_PMEM;
-> > > > +    pcidev_k->revision = VIRTIO_PCI_ABI_VERSION;
-> > > > +    pcidev_k->class_id = PCI_CLASS_OTHERS;
-> > > > +}
-> > > > +
-> > > > +static void virtio_pmem_pci_instance_init(Object *obj)
-> > > > +{
-> > > > +    VirtIOPMEMPCI *dev = VIRTIO_PMEM_PCI(obj);
-> > > > +
-> > > > +    virtio_instance_init_common(obj, &dev->vdev, sizeof(dev->vdev),
-> > > > +                                TYPE_VIRTIO_PMEM);
-> > > > +    object_property_add_alias(obj, "memdev", OBJECT(&dev->vdev), "memdev",
-> > > > +                              &error_abort);
-> > > > +}
-> > > > +
-> > > > +static const TypeInfo virtio_pmem_pci_info = {
-> > > > +    .name          = TYPE_VIRTIO_PMEM_PCI,
-> > > > +    .parent        = TYPE_VIRTIO_PCI,
-> > > > +    .instance_size = sizeof(VirtIOPMEMPCI),
-> > > > +    .instance_init = virtio_pmem_pci_instance_init,
-> > > > +    .class_init    = virtio_pmem_pci_class_init,
-> > > > +};
-> > > > +
-> > > > +
-> > > >  /* virtio-input-pci */
-> > > >  
-> > > >  static Property virtio_input_pci_properties[] = {
-> > > > @@ -2714,6 +2757,7 @@ static void virtio_pci_register_types(void)
-> > > >      type_register_static(&virtio_balloon_pci_info);
-> > > >      type_register_static(&virtio_serial_pci_info);
-> > > >      type_register_static(&virtio_net_pci_info);
-> > > > +    type_register_static(&virtio_pmem_pci_info);
-> > > >  #ifdef CONFIG_VHOST_SCSI
-> > > >      type_register_static(&vhost_scsi_pci_info);
-> > > >  #endif
-> > > > diff --git a/hw/virtio/virtio-pci.h b/hw/virtio/virtio-pci.h
-> > > > index 813082b0d7..fe74fcad3f 100644
-> > > > --- a/hw/virtio/virtio-pci.h
-> > > > +++ b/hw/virtio/virtio-pci.h
-> > > > @@ -19,6 +19,7 @@
-> > > >  #include "hw/virtio/virtio-blk.h"
-> > > >  #include "hw/virtio/virtio-net.h"
-> > > >  #include "hw/virtio/virtio-rng.h"
-> > > > +#include "hw/virtio/virtio-pmem.h"
-> > > >  #include "hw/virtio/virtio-serial.h"
-> > > >  #include "hw/virtio/virtio-scsi.h"
-> > > >  #include "hw/virtio/virtio-balloon.h"
-> > > > @@ -57,6 +58,7 @@ typedef struct VirtIOInputHostPCI VirtIOInputHostPCI;
-> > > >  typedef struct VirtIOGPUPCI VirtIOGPUPCI;
-> > > >  typedef struct VHostVSockPCI VHostVSockPCI;
-> > > >  typedef struct VirtIOCryptoPCI VirtIOCryptoPCI;
-> > > > +typedef struct VirtIOPMEMPCI VirtIOPMEMPCI;
-> > > >  
-> > > >  /* virtio-pci-bus */
-> > > >  
-> > > > @@ -274,6 +276,18 @@ struct VirtIOBlkPCI {
-> > > >      VirtIOBlock vdev;
-> > > >  };
-> > > >  
-> > > > +/*
-> > > > + * virtio-pmem-pci: This extends VirtioPCIProxy.
-> > > > + */
-> > > > +#define TYPE_VIRTIO_PMEM_PCI "virtio-pmem-pci"
-> > > > +#define VIRTIO_PMEM_PCI(obj) \
-> > > > +        OBJECT_CHECK(VirtIOPMEMPCI, (obj), TYPE_VIRTIO_PMEM_PCI)
-> > > > +
-> > > > +struct VirtIOPMEMPCI {
-> > > > +    VirtIOPCIProxy parent_obj;
-> > > > +    VirtIOPMEM vdev;
-> > > > +};
-> > > > +
-> > > >  /*
-> > > >   * virtio-balloon-pci: This extends VirtioPCIProxy.
-> > > >   */
-> > > > diff --git a/hw/virtio/virtio-pmem.c b/hw/virtio/virtio-pmem.c
-> > > > new file mode 100644
-> > > > index 0000000000..08c96d7e80
-> > > > --- /dev/null
-> > > > +++ b/hw/virtio/virtio-pmem.c
-> > > > @@ -0,0 +1,241 @@
-> > > > +/*
-> > > > + * Virtio pmem device
-> > > > + *
-> > > > + * Copyright (C) 2018 Red Hat, Inc.
-> > > > + * Copyright (C) 2018 Pankaj Gupta <pagupta@redhat.com>
-> > > > + *
-> > > > + * This work is licensed under the terms of the GNU GPL, version 2.
-> > > > + * See the COPYING file in the top-level directory.
-> > > > + *
-> > > > + */
-> > > > +
-> > > > +#include "qemu/osdep.h"
-> > > > +#include "qapi/error.h"
-> > > > +#include "qemu-common.h"
-> > > > +#include "qemu/error-report.h"
-> > > > +#include "hw/virtio/virtio-access.h"
-> > > > +#include "hw/virtio/virtio-pmem.h"
-> > > > +#include "hw/mem/memory-device.h"
-> > > > +#include "block/aio.h"
-> > > > +#include "block/thread-pool.h"
-> > > > +
-> > > > +typedef struct VirtIOPMEMresp {
-> > > > +    int ret;
-> > > > +} VirtIOPMEMResp;
-> > > > +
-> > > > +typedef struct VirtIODeviceRequest {
-> > > > +    VirtQueueElement elem;
-> > > > +    int fd;
-> > > > +    VirtIOPMEM *pmem;
-> > > > +    VirtIOPMEMResp resp;
-> > > > +} VirtIODeviceRequest;
-> > > > +
-> > > > +static int worker_cb(void *opaque)
-> > > > +{
-> > > > +    VirtIODeviceRequest *req = opaque;
-> > > > +    int err = 0;
-> > > > +
-> > > > +    /* flush raw backing image */
-> > > > +    err = fsync(req->fd);
-> > > > +    if (err != 0) {
-> > > > +        err = errno;
-> > > > +    }
-> > > > +    req->resp.ret = err;  
-> > > 
-> > > Host question: are you returning the guest errno code to the host?  
-> > 
-> > No. I am returning error code from the host in-case of host fsync
-> > failure, otherwise returning zero.  
-> 
-> I think that's what Luiz meant.  errno constants are not portable
-> between operating systems and architectures.  Therefore they cannot be
-> used in external interfaces in software that expects to communicate with
-> other systems.
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ fs/fuse/file.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Oh, thanks. Only saw this email now.
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 67648ccbdd43..fe8d84eb714a 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -866,6 +866,7 @@ static int fuse_readpages_fill(void *_data, struct page *page)
+ 	}
+ 
+ 	if (WARN_ON(req->num_pages >= req->max_pages)) {
++		unlock_page(page);
+ 		fuse_put_request(fc, req);
+ 		return -EIO;
+ 	}
 
-> It will be necessary to define specific constants for virtio-pmem
-> instead of passing errno from the host to guest.
-
-Yes, defining your own constants work. But I think the only fsync()
-error that will make sense for the guest is EIO. The other errors
-only make sense for the host.
