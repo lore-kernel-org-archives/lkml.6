@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 078E5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BEDECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B543220684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B543220684
+	by mail.kernel.org (Postfix) with ESMTP id 4C2BC20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C2BC20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731661AbeGSXqM (ORCPT
+        id S1731684AbeGSXqP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:46:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54183 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:46:15 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54212 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731404AbeGSXqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:46:12 -0400
+        id S1731404AbeGSXqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:46:13 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6A4452098C; Fri, 20 Jul 2018 01:00:55 +0200 (CEST)
+        id 02C4C20996; Fri, 20 Jul 2018 01:00:57 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9C62320935;
-        Fri, 20 Jul 2018 01:00:53 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 461472097D;
+        Fri, 20 Jul 2018 01:00:55 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 12/33] mtd: rawnand: lpc32xx_slc: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 01:00:05 +0200
-Message-Id: <20180719230026.8741-13-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 13/33] mtd: rawnand: marvell: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 01:00:06 +0200
+Message-Id: <20180719230026.8741-14-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -73,103 +73,241 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/lpc32xx_slc.c | 77 +++++++++++++++++++++-----------------
- 1 file changed, 42 insertions(+), 35 deletions(-)
+ drivers/mtd/nand/raw/marvell_nand.c | 206 +++++++++++++++++++-----------------
+ 1 file changed, 109 insertions(+), 97 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/lpc32xx_slc.c b/drivers/mtd/nand/raw/lpc32xx_slc.c
-index 42820aa1abab..41c135567e8c 100644
---- a/drivers/mtd/nand/raw/lpc32xx_slc.c
-+++ b/drivers/mtd/nand/raw/lpc32xx_slc.c
-@@ -779,6 +779,46 @@ static struct lpc32xx_nand_cfg_slc *lpc32xx_parse_dt(struct device *dev)
- 	return ncfg;
+diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
+index bd5f9a4b7b16..1a4aeb08352a 100644
+--- a/drivers/mtd/nand/raw/marvell_nand.c
++++ b/drivers/mtd/nand/raw/marvell_nand.c
+@@ -319,6 +319,7 @@ struct marvell_nfc_caps {
+  */
+ struct marvell_nfc {
+ 	struct nand_controller controller;
++	struct nand_controller_ops ops;
+ 	struct device *dev;
+ 	void __iomem *regs;
+ 	struct clk *core_clk;
+@@ -2290,6 +2291,111 @@ static int marvell_nfc_setup_data_interface(struct mtd_info *mtd, int chipnr,
+ 	return 0;
  }
  
-+static int lpc32xx_nand_attach_chip(struct nand_chip *chip)
++static int marvell_nand_attach_chip(struct nand_chip *chip)
 +{
 +	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
++	struct marvell_nand_chip *marvell_nand = to_marvell_nand(chip);
++	struct marvell_nfc *nfc = to_marvell_nfc(chip->controller);
++	struct pxa3xx_nand_platform_data *pdata = dev_get_platdata(nfc->dev);
++	int ret;
 +
-+	/* OOB and ECC CPU and DMA work areas */
-+	host->ecc_buf = (uint32_t *)(host->data_buf + LPC32XX_DMA_DATA_SIZE);
++	if (pdata && pdata->flash_bbt)
++		chip->bbt_options |= NAND_BBT_USE_FLASH;
++
++	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
++		/*
++		 * We'll use a bad block table stored in-flash and don't
++		 * allow writing the bad block marker to the flash.
++		 */
++		chip->bbt_options |= NAND_BBT_NO_OOB_BBM;
++		chip->bbt_td = &bbt_main_descr;
++		chip->bbt_md = &bbt_mirror_descr;
++	}
++
++	/* Save the chip-specific fields of NDCR */
++	marvell_nand->ndcr = NDCR_PAGE_SZ(mtd->writesize);
++	if (chip->options & NAND_BUSWIDTH_16)
++		marvell_nand->ndcr |= NDCR_DWIDTH_M | NDCR_DWIDTH_C;
 +
 +	/*
-+	 * Small page FLASH has a unique OOB layout, but large and huge
-+	 * page FLASH use the standard layout. Small page FLASH uses a
-+	 * custom BBT marker layout.
++	 * On small page NANDs, only one cycle is needed to pass the
++	 * column address.
 +	 */
-+	if (mtd->writesize <= 512)
-+		mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
-+
-+	/* These sizes remain the same regardless of page size */
-+	chip->ecc.size = 256;
-+	chip->ecc.bytes = LPC32XX_SLC_DEV_ECC_BYTES;
-+	chip->ecc.prepad = 0;
-+	chip->ecc.postpad = 0;
++	if (mtd->writesize <= 512) {
++		marvell_nand->addr_cyc = 1;
++	} else {
++		marvell_nand->addr_cyc = 2;
++		marvell_nand->ndcr |= NDCR_RA_START;
++	}
 +
 +	/*
-+	 * Use a custom BBT marker setup for small page FLASH that
-+	 * won't interfere with the ECC layout. Large and huge page
-+	 * FLASH use the standard layout.
++	 * Now add the number of cycles needed to pass the row
++	 * address.
++	 *
++	 * Addressing a chip using CS 2 or 3 should also need the third row
++	 * cycle but due to inconsistance in the documentation and lack of
++	 * hardware to test this situation, this case is not supported.
 +	 */
-+	if ((chip->bbt_options & NAND_BBT_USE_FLASH) &&
-+	    mtd->writesize <= 512) {
-+		chip->bbt_td = &bbt_smallpage_main_descr;
-+		chip->bbt_md = &bbt_smallpage_mirror_descr;
++	if (chip->options & NAND_ROW_ADDR_3)
++		marvell_nand->addr_cyc += 3;
++	else
++		marvell_nand->addr_cyc += 2;
++
++	if (pdata) {
++		chip->ecc.size = pdata->ecc_step_size;
++		chip->ecc.strength = pdata->ecc_strength;
++	}
++
++	ret = marvell_nand_ecc_init(mtd, &chip->ecc);
++	if (ret) {
++		dev_err(nfc->dev, "ECC init failed: %d\n", ret);
++		return ret;
++	}
++
++	if (chip->ecc.mode == NAND_ECC_HW) {
++		/*
++		 * Subpage write not available with hardware ECC, prohibit also
++		 * subpage read as in userspace subpage access would still be
++		 * allowed and subpage write, if used, would lead to numerous
++		 * uncorrectable ECC errors.
++		 */
++		chip->options |= NAND_NO_SUBPAGE_WRITE;
++	}
++
++	if (pdata || nfc->caps->legacy_of_bindings) {
++		/*
++		 * We keep the MTD name unchanged to avoid breaking platforms
++		 * where the MTD cmdline parser is used and the bootloader
++		 * has not been updated to use the new naming scheme.
++		 */
++		mtd->name = "pxa3xx_nand-0";
++	} else if (!mtd->name) {
++		/*
++		 * If the new bindings are used and the bootloader has not been
++		 * updated to pass a new mtdparts parameter on the cmdline, you
++		 * should define the following property in your NAND node, ie:
++		 *
++		 *	label = "main-storage";
++		 *
++		 * This way, mtd->name will be set by the core when
++		 * nand_set_flash_node() is called.
++		 */
++		mtd->name = devm_kasprintf(nfc->dev, GFP_KERNEL,
++					   "%s:nand.%d", dev_name(nfc->dev),
++					   marvell_nand->sels[0].cs);
++		if (!mtd->name) {
++			dev_err(nfc->dev, "Failed to allocate mtd->name\n");
++			return -ENOMEM;
++		}
 +	}
 +
 +	return 0;
 +}
 +
-+static struct nand_controller_ops lpc32xx_nand_controller_ops = {
-+	.attach_chip = lpc32xx_nand_attach_chip,
++static const struct nand_controller_ops marvell_nand_controller_ops = {
++	.attach_chip = marvell_nand_attach_chip,
 +};
 +
- /*
-  * Probe for NAND controller
-  */
-@@ -884,41 +924,8 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
- 	}
+ static int marvell_nand_chip_init(struct device *dev, struct marvell_nfc *nfc,
+ 				  struct device_node *np)
+ {
+@@ -2432,105 +2538,11 @@ static int marvell_nand_chip_init(struct device *dev, struct marvell_nfc *nfc,
+ 	marvell_nand->ndtr1 = readl_relaxed(nfc->regs + NDTR1);
  
- 	/* Find NAND device */
--	res = nand_scan_ident(mtd, 1, NULL);
--	if (res)
--		goto release_dma;
+ 	chip->options |= NAND_BUSWIDTH_AUTO;
+-	ret = nand_scan_ident(mtd, marvell_nand->nsels, NULL);
+-	if (ret) {
+-		dev_err(dev, "could not identify the nand chip\n");
+-		return ret;
+-	}
 -
--	/* OOB and ECC CPU and DMA work areas */
--	host->ecc_buf = (uint32_t *)(host->data_buf + LPC32XX_DMA_DATA_SIZE);
+-	if (pdata && pdata->flash_bbt)
+-		chip->bbt_options |= NAND_BBT_USE_FLASH;
+-
+-	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
+-		/*
+-		 * We'll use a bad block table stored in-flash and don't
+-		 * allow writing the bad block marker to the flash.
+-		 */
+-		chip->bbt_options |= NAND_BBT_NO_OOB_BBM;
+-		chip->bbt_td = &bbt_main_descr;
+-		chip->bbt_md = &bbt_mirror_descr;
+-	}
+-
+-	/* Save the chip-specific fields of NDCR */
+-	marvell_nand->ndcr = NDCR_PAGE_SZ(mtd->writesize);
+-	if (chip->options & NAND_BUSWIDTH_16)
+-		marvell_nand->ndcr |= NDCR_DWIDTH_M | NDCR_DWIDTH_C;
 -
 -	/*
--	 * Small page FLASH has a unique OOB layout, but large and huge
--	 * page FLASH use the standard layout. Small page FLASH uses a
--	 * custom BBT marker layout.
+-	 * On small page NANDs, only one cycle is needed to pass the
+-	 * column address.
 -	 */
--	if (mtd->writesize <= 512)
--		mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
--
--	/* These sizes remain the same regardless of page size */
--	chip->ecc.size = 256;
--	chip->ecc.bytes = LPC32XX_SLC_DEV_ECC_BYTES;
--	chip->ecc.prepad = chip->ecc.postpad = 0;
--
--	/*
--	 * Use a custom BBT marker setup for small page FLASH that
--	 * won't interfere with the ECC layout. Large and huge page
--	 * FLASH use the standard layout.
--	 */
--	if ((chip->bbt_options & NAND_BBT_USE_FLASH) &&
--	    mtd->writesize <= 512) {
--		chip->bbt_td = &bbt_smallpage_main_descr;
--		chip->bbt_md = &bbt_smallpage_mirror_descr;
+-	if (mtd->writesize <= 512) {
+-		marvell_nand->addr_cyc = 1;
+-	} else {
+-		marvell_nand->addr_cyc = 2;
+-		marvell_nand->ndcr |= NDCR_RA_START;
 -	}
 -
 -	/*
--	 * Fills out all the uninitialized function pointers with the defaults
+-	 * Now add the number of cycles needed to pass the row
+-	 * address.
+-	 *
+-	 * Addressing a chip using CS 2 or 3 should also need the third row
+-	 * cycle but due to inconsistance in the documentation and lack of
+-	 * hardware to test this situation, this case is not supported.
 -	 */
--	res = nand_scan_tail(mtd);
-+	chip->dummy_controller.ops = &lpc32xx_nand_controller_ops;
-+	res = nand_scan(mtd, 1);
- 	if (res)
- 		goto release_dma;
+-	if (chip->options & NAND_ROW_ADDR_3)
+-		marvell_nand->addr_cyc += 3;
+-	else
+-		marvell_nand->addr_cyc += 2;
+-
+-	if (pdata) {
+-		chip->ecc.size = pdata->ecc_step_size;
+-		chip->ecc.strength = pdata->ecc_strength;
+-	}
+-
+-	ret = marvell_nand_ecc_init(mtd, &chip->ecc);
+-	if (ret) {
+-		dev_err(dev, "ECC init failed: %d\n", ret);
+-		return ret;
+-	}
+-
+-	if (chip->ecc.mode == NAND_ECC_HW) {
+-		/*
+-		 * Subpage write not available with hardware ECC, prohibit also
+-		 * subpage read as in userspace subpage access would still be
+-		 * allowed and subpage write, if used, would lead to numerous
+-		 * uncorrectable ECC errors.
+-		 */
+-		chip->options |= NAND_NO_SUBPAGE_WRITE;
+-	}
+-
+-	if (pdata || nfc->caps->legacy_of_bindings) {
+-		/*
+-		 * We keep the MTD name unchanged to avoid breaking platforms
+-		 * where the MTD cmdline parser is used and the bootloader
+-		 * has not been updated to use the new naming scheme.
+-		 */
+-		mtd->name = "pxa3xx_nand-0";
+-	} else if (!mtd->name) {
+-		/*
+-		 * If the new bindings are used and the bootloader has not been
+-		 * updated to pass a new mtdparts parameter on the cmdline, you
+-		 * should define the following property in your NAND node, ie:
+-		 *
+-		 *	label = "main-storage";
+-		 *
+-		 * This way, mtd->name will be set by the core when
+-		 * nand_set_flash_node() is called.
+-		 */
+-		mtd->name = devm_kasprintf(nfc->dev, GFP_KERNEL,
+-					   "%s:nand.%d", dev_name(nfc->dev),
+-					   marvell_nand->sels[0].cs);
+-		if (!mtd->name) {
+-			dev_err(nfc->dev, "Failed to allocate mtd->name\n");
+-			return -ENOMEM;
+-		}
+-	}
+ 
+-	ret = nand_scan_tail(mtd);
++	chip->controller->ops = &marvell_nand_controller_ops;
++	ret = nand_scan(mtd, marvell_nand->nsels);
+ 	if (ret) {
+-		dev_err(dev, "nand_scan_tail failed: %d\n", ret);
++		dev_err(dev, "could not scan the nand chip\n");
+ 		return ret;
+ 	}
  
 -- 
 2.14.1
