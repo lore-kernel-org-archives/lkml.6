@@ -2,77 +2,116 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A40C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB51ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7BA2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9DFA2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:50:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ROkreOhr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D7BA2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtvSLHJq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9DFA2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732012AbeGSQdL (ORCPT
+        id S1732020AbeGSQdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:33:11 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:55282 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731894AbeGSQdK (ORCPT
+        Thu, 19 Jul 2018 12:33:44 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:39847 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731661AbeGSQdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:33:10 -0400
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6JFmK09025758;
-        Thu, 19 Jul 2018 08:48:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=facebook; bh=UVoOARMZrx+tf6lEKrpQfLfI77awjkCOjAfulumGcdg=;
- b=ROkreOhr8LXoNMXN/3xEDTwu2nnfwghrcx8BfGlD7DYo0ehh1qG3mpI4Xilto3ESy51r
- d5m5JwaRYmr4UeumOJv7LOCR41q1yCgDfuAK5AScXn3gCex1K6dDN/jtolrQZVUK+SMI
- Sgp4CcYZiCMDGx5T6JQj4kNNmukIioh2lww= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2kaf14hv9f-12
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 19 Jul 2018 08:48:39 -0700
-Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
- mail.thefacebook.com (192.168.16.15) with Microsoft SMTP Server (TLS) id
- 14.3.361.1; Thu, 19 Jul 2018 08:48:18 -0700
-Date:   Thu, 19 Jul 2018 08:48:17 -0700
-From:   Martin KaFai Lau <kafai@fb.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-CC:     <ast@kernel.org>, <daniel@iogearbox.net>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-Subject: Re: [PATCH v2 bpf-next] bpfilter: Fix mismatch in function argument
- types
-Message-ID: <20180719154817.ycwupljsx4ghkhom@kafai-mbp.dhcp.thefacebook.com>
-References: <20180719075659.9800-1-yuehaibing@huawei.com>
+        Thu, 19 Jul 2018 12:33:44 -0400
+Received: by mail-io0-f195.google.com with SMTP id o22-v6so6400394ioh.6;
+        Thu, 19 Jul 2018 08:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rJdMZXwu3uCJ+o7UcwwH3hruC86qsd3iAj2cY0XoJmI=;
+        b=PtvSLHJqRPBadKRLjFU3eRQCtleYkxUKgFeo4y+98OrwKqCiSDf35VrA3iVFSa9w/+
+         a+2nLX2xzwKy+lUWGY2dK3WGncimPKBRtOUd/nb6BqeUFXSyRH0kPxJaiyPuxjRVAeI6
+         ugEQVWq3REzzkWcEbj47Igb7NtHVQH0vJMCK6enYzdtqsBOPMLWeoGgNZqYO4EVuLW2b
+         Q3+cKEtYZrkBD44he8MaBdQEOgrBtXUM7CY7BivIBJ27vPL5w/xwlyR6Stu3Ps62UV+j
+         vVnIW/KwBKxi0pC6C12Y+KhUarYr+rlIaZGKk+g7LHd3X2g8duQesfvqLX6CZ09ad/U6
+         3kyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rJdMZXwu3uCJ+o7UcwwH3hruC86qsd3iAj2cY0XoJmI=;
+        b=K0NR1S/ABwUli9MR41HK7AkxkPWO1znoFAPajad/f0mlZLmZgaLqnkCKVX7Q6YjAhR
+         qCAGju8ib+1ZaurF6CXX0XE3jeZgUz5qDoYTtpiYf7P5qrVdUQ6sDAJo65Prr+1wFUCq
+         7tuH+btoCMYF4HhW1JPYYujjsL5uDBUSjTGf97qiS4x3VZKMb9i22zwzyMFOgepJGWl1
+         ZMo9PzC6tTVbdMze5z1twKrXpGypvqVtNMinTwFTOvhRJx5tDINkfmSd6X8DCjQ54QM8
+         bIzOsLIBwC/tRLHQ3hPMjPDTXpN5F6ZW5owt/D+U6onUEAS7pdsu8Ya1bTZu1zcjzmpC
+         yVvQ==
+X-Gm-Message-State: AOUpUlEHU3V7uSxY8/nla5LjE6d3tT0ffpa1F40fhMqWZp12xUDVGXtU
+        2HyCzvQwDnIgudF+BQw28MA=
+X-Google-Smtp-Source: AAOMgpfQShzMH1z8AYqWflG7LXUBjX6HsQbxz/AM2vZVHkcN8KHzI2572f5dNioK8pZfemE5C0xkLw==
+X-Received: by 2002:a6b:8851:: with SMTP id k78-v6mr9507308iod.290.1532015397396;
+        Thu, 19 Jul 2018 08:49:57 -0700 (PDT)
+Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id x6-v6sm1038034ith.1.2018.07.19.08.49.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 08:49:56 -0700 (PDT)
+Subject: Re: [PATCH v3] PCI: Check for PCIe downtraining conditions
+To:     Tal Gilboa <talgi@mellanox.com>, Bjorn Helgaas <helgaas@kernel.org>
+Cc:     bhelgaas@google.com, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, keith.busch@intel.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Dave Airlie <airlied@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+References: <20180604155523.14906-1-mr.nuke.me@gmail.com>
+ <20180716211706.GB12391@bhelgaas-glaptop.roam.corp.google.com>
+ <628346bc-b455-05f2-2051-35a807076ea0@mellanox.com>
+From:   "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <25e4f647-f830-e1cc-bffc-0cc894885667@gmail.com>
+Date:   Thu, 19 Jul 2018 10:49:55 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180719075659.9800-1-yuehaibing@huawei.com>
-User-Agent: NeoMutt/20180512
-X-Originating-IP: [192.168.52.123]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-19_06:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <628346bc-b455-05f2-2051-35a807076ea0@mellanox.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 03:56:59PM +0800, YueHaibing wrote:
-> Fix following warning:
-> net/ipv4/bpfilter/sockopt.c:28:5: error: symbol 'bpfilter_ip_set_sockopt' redeclared with different type
-> net/ipv4/bpfilter/sockopt.c:34:5: error: symbol 'bpfilter_ip_get_sockopt' redeclared with different type
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-LGTM.  Missing a Fixes tag though.
 
-Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
-Acked-by: Martin KaFai Lau <kafai@fb.com>
+
+On 07/18/2018 08:38 AM, Tal Gilboa wrote:
+> On 7/16/2018 5:17 PM, Bjorn Helgaas wrote:
+>> [+cc maintainers of drivers that already use pcie_print_link_status()
+>> and GPU folks]
+[snip]
+>>
+>>> +    /* Multi-function PCIe share the same link/status. */
+>>> +    if ((PCI_FUNC(dev->devfn) != 0) || dev->is_virtfn)
+>>> +        return;
+>>> +
+>>> +    pcie_print_link_status(dev);
+>>> +}
+> 
+> Is this function called by default for every PCIe device? What about 
+> VFs? We make an exception for them on our driver since a VF doesn't have 
+> access to the needed information in order to provide a meaningful message.
+
+I'm assuming VF means virtual function. pcie_print_link_status() doesn't 
+care if it's passed a virtual function. It will try to do its job. 
+That's why I bail out three lines above, with 'dev->is_virtfn' check.
+
+Alex
