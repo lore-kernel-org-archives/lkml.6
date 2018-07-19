@@ -3,237 +3,141 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9D7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4E0ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B87DB20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87DB20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id E731520673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:29:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E731520673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731186AbeGTAON (ORCPT
+        id S1731595AbeGTAOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:14:13 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55497 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbeGTAON (ORCPT
+        Thu, 19 Jul 2018 20:14:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47801 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727553AbeGTAOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:14:13 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNRoGK2453429
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 16:27:50 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNRoov2453425;
-        Thu, 19 Jul 2018 16:27:50 -0700
-Date:   Thu, 19 Jul 2018 16:27:50 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-8372d66865deb45ee3ec21401a9c80f231b728c8@git.kernel.org>
-Cc:     David.Laight@aculab.com, boris.ostrovsky@oracle.com, bp@alien8.de,
-        peterz@infradead.org, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, mingo@kernel.org, pavel@ucw.cz,
-        hpa@zytor.com, jpoimboe@redhat.com, dave.hansen@intel.com,
-        will.deacon@arm.com, jkosina@suse.cz, jroedel@suse.de,
-        jgross@suse.com, eduval@amazon.com, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, luto@kernel.org, llong@redhat.com,
-        aarcange@redhat.com, dhgutteridge@sympatico.ca, brgerst@gmail.com,
-        tglx@linutronix.de
-Reply-To: dvlasenk@redhat.com, torvalds@linux-foundation.org,
-          peterz@infradead.org, David.Laight@aculab.com,
-          boris.ostrovsky@oracle.com, bp@alien8.de, jpoimboe@redhat.com,
-          hpa@zytor.com, mingo@kernel.org, pavel@ucw.cz, jgross@suse.com,
-          jroedel@suse.de, jkosina@suse.cz, gregkh@linuxfoundation.org,
-          eduval@amazon.com, linux-kernel@vger.kernel.org,
-          will.deacon@arm.com, dave.hansen@intel.com, tglx@linutronix.de,
-          dhgutteridge@sympatico.ca, brgerst@gmail.com, llong@redhat.com,
-          luto@kernel.org, aarcange@redhat.com
-In-Reply-To: <1531906876-13451-19-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-19-git-send-email-joro@8bytes.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/pgtable: Move pgdp kernel/user conversion
- functions to pgtable.h
-Git-Commit-ID: 8372d66865deb45ee3ec21401a9c80f231b728c8
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 19 Jul 2018 20:14:25 -0400
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1fgIM0-0004nb-Pi; Thu, 19 Jul 2018 23:29:00 +0000
+Subject: Re: [PATCH 2/2] apparmor: Fully initialize aa_perms struct when
+ answering userspace query
+To:     Tyler Hicks <tyhicks@canonical.com>
+Cc:     James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>,
+        Seth Arnold <seth.arnold@canonical.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1530854701-7348-1-git-send-email-tyhicks@canonical.com>
+ <1530854701-7348-3-git-send-email-tyhicks@canonical.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <273ffca8-d77f-ef46-4235-728c879cc996@canonical.com>
+Date:   Thu, 19 Jul 2018 16:28:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1530854701-7348-3-git-send-email-tyhicks@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8372d66865deb45ee3ec21401a9c80f231b728c8
-Gitweb:     https://git.kernel.org/tip/8372d66865deb45ee3ec21401a9c80f231b728c8
-Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 18 Jul 2018 11:40:55 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 01:11:41 +0200
+On 07/05/2018 10:25 PM, Tyler Hicks wrote:
+> Fully initialize the aa_perms struct in profile_query_cb() to avoid the
+> potential of using an uninitialized struct member's value in a response
+> to a query from userspace.
+> 
+> Detected by CoverityScan CID#1415126 ("Uninitialized scalar variable")
+> 
+> Fixes: 4f3b3f2d79a4 ("apparmor: add profile permission query ability"> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 
-x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
+I've pulled this into apparmor-next
 
-Make them available on 32 bit and clone_pgd_range() happy.
+> ---
+>  security/apparmor/apparmorfs.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index 949dd8a48164..e09fe4d7307c 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -603,7 +603,7 @@ static const struct file_operations aa_fs_ns_revision_fops = {
+>  static void profile_query_cb(struct aa_profile *profile, struct aa_perms *perms,
+>  			     const char *match_str, size_t match_len)
+>  {
+> -	struct aa_perms tmp;
+> +	struct aa_perms tmp = { };
+>  	struct aa_dfa *dfa;
+>  	unsigned int state = 0;
+>  
+> @@ -613,7 +613,6 @@ static void profile_query_cb(struct aa_profile *profile, struct aa_perms *perms,
+>  		dfa = profile->file.dfa;
+>  		state = aa_dfa_match_len(dfa, profile->file.start,
+>  					 match_str + 1, match_len - 1);
+> -		tmp = nullperms;
+>  		if (state) {
+>  			struct path_cond cond = { };
+>  
+> @@ -627,8 +626,6 @@ static void profile_query_cb(struct aa_profile *profile, struct aa_perms *perms,
+>  					 match_str, match_len);
+>  		if (state)
+>  			aa_compute_perms(dfa, state, &tmp);
+> -		else
+> -			tmp = nullperms;
+>  	}
+>  	aa_apply_modes_to_perms(profile, &tmp);
+>  	aa_perms_accum_raw(perms, &tmp);
+> 
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-19-git-send-email-joro@8bytes.org
-
----
- arch/x86/include/asm/pgtable.h    | 49 +++++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/pgtable_64.h | 49 ---------------------------------------
- 2 files changed, 49 insertions(+), 49 deletions(-)
-
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 5715647fc4fe..eb474329d751 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1155,6 +1155,55 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
- }
- #endif
- 
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+/*
-+ * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
-+ * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
-+ * the user one is in the last 4k.  To switch between them, you
-+ * just need to flip the 12th bit in their addresses.
-+ */
-+#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
-+
-+/*
-+ * This generates better code than the inline assembly in
-+ * __set_bit().
-+ */
-+static inline void *ptr_set_bit(void *ptr, int bit)
-+{
-+	unsigned long __ptr = (unsigned long)ptr;
-+
-+	__ptr |= BIT(bit);
-+	return (void *)__ptr;
-+}
-+static inline void *ptr_clear_bit(void *ptr, int bit)
-+{
-+	unsigned long __ptr = (unsigned long)ptr;
-+
-+	__ptr &= ~BIT(bit);
-+	return (void *)__ptr;
-+}
-+
-+static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
-+{
-+	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+
-+static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
-+{
-+	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+
-+static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
-+{
-+	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+
-+static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
-+{
-+	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+#endif /* CONFIG_PAGE_TABLE_ISOLATION */
-+
- /*
-  * clone_pgd_range(pgd_t *dst, pgd_t *src, int count);
-  *
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 9406c4fe1d38..4adba19c7bf6 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -132,55 +132,6 @@ static inline pud_t native_pudp_get_and_clear(pud_t *xp)
- #endif
- }
- 
--#ifdef CONFIG_PAGE_TABLE_ISOLATION
--/*
-- * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
-- * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
-- * the user one is in the last 4k.  To switch between them, you
-- * just need to flip the 12th bit in their addresses.
-- */
--#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
--
--/*
-- * This generates better code than the inline assembly in
-- * __set_bit().
-- */
--static inline void *ptr_set_bit(void *ptr, int bit)
--{
--	unsigned long __ptr = (unsigned long)ptr;
--
--	__ptr |= BIT(bit);
--	return (void *)__ptr;
--}
--static inline void *ptr_clear_bit(void *ptr, int bit)
--{
--	unsigned long __ptr = (unsigned long)ptr;
--
--	__ptr &= ~BIT(bit);
--	return (void *)__ptr;
--}
--
--static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
--{
--	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
--}
--
--static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
--{
--	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
--}
--
--static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
--{
--	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
--}
--
--static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
--{
--	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
--}
--#endif /* CONFIG_PAGE_TABLE_ISOLATION */
--
- /*
-  * Page table pages are page-aligned.  The lower half of the top
-  * level is used for userspace and the top half for the kernel.
