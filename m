@@ -6,232 +6,311 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF371ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CF1ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9978120856
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:39:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9978120856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 304D72084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:42:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 304D72084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731035AbeGTAZV (ORCPT
+        id S1730505AbeGTA2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:25:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41267 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbeGTAZV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:25:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNcqBO2454662
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 16:38:52 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNcqim2454659;
-        Thu, 19 Jul 2018 16:38:52 -0700
-Date:   Thu, 19 Jul 2018 16:38:52 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-97193702c6d353e12aefc0fb2f73a98ca421cd56@git.kernel.org>
-Cc:     dvlasenk@redhat.com, boris.ostrovsky@oracle.com,
-        David.Laight@aculab.com, llong@redhat.com, luto@kernel.org,
-        hpa@zytor.com, jroedel@suse.de, peterz@infradead.org, pavel@ucw.cz,
-        eduval@amazon.com, aarcange@redhat.com, jpoimboe@redhat.com,
-        jgross@suse.com, mingo@kernel.org, bp@alien8.de,
-        torvalds@linux-foundation.org, brgerst@gmail.com,
-        dhgutteridge@sympatico.ca, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, dave.hansen@intel.com, jkosina@suse.cz,
-        tglx@linutronix.de, gregkh@linuxfoundation.org
-Reply-To: aarcange@redhat.com, jpoimboe@redhat.com, eduval@amazon.com,
-          pavel@ucw.cz, hpa@zytor.com, peterz@infradead.org,
-          jroedel@suse.de, David.Laight@aculab.com, luto@kernel.org,
-          llong@redhat.com, boris.ostrovsky@oracle.com,
-          dvlasenk@redhat.com, jkosina@suse.cz, dave.hansen@intel.com,
-          will.deacon@arm.com, gregkh@linuxfoundation.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          dhgutteridge@sympatico.ca, brgerst@gmail.com, bp@alien8.de,
-          mingo@kernel.org, jgross@suse.com, torvalds@linux-foundation.org
-In-Reply-To: <1531906876-13451-40-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-40-git-send-email-joro@8bytes.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/32: Add debug code to check entry/exit CR3
-Git-Commit-ID: 97193702c6d353e12aefc0fb2f73a98ca421cd56
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 19 Jul 2018 20:28:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57767 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727940AbeGTA2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 20:28:13 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id AC4EE20728; Fri, 20 Jul 2018 01:42:44 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0136C20739;
+        Fri, 20 Jul 2018 01:42:33 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 01:42:33 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Han Xu <han.xu@nxp.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Xiaolei Li <xiaolei.li@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 33/33] mtd: rawnand: allocate dynamically ONFI
+ parameters during detection
+Message-ID: <20180720014233.130b0e3d@bbrezillon>
+In-Reply-To: <20180719230026.8741-34-miquel.raynal@bootlin.com>
+References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
+        <20180719230026.8741-34-miquel.raynal@bootlin.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  97193702c6d353e12aefc0fb2f73a98ca421cd56
-Gitweb:     https://git.kernel.org/tip/97193702c6d353e12aefc0fb2f73a98ca421cd56
-Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 18 Jul 2018 11:41:16 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 01:11:49 +0200
+On Fri, 20 Jul 2018 01:00:26 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-x86/entry/32: Add debug code to check entry/exit CR3
+> Now that it is possible to do dynamic allocations during the
+> identification phase, convert the onfi_params structure (which is only
+> needed with ONFI compliant chips) into a pointer that will be allocated
+> only if needed.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  drivers/mtd/nand/raw/nand_base.c    | 61 ++++++++++++++++++++++---------------
+>  drivers/mtd/nand/raw/nand_micron.c  |  6 ++--
+>  drivers/mtd/nand/raw/nand_timings.c | 12 ++++----
+>  include/linux/mtd/rawnand.h         |  6 ++--
+>  4 files changed, 48 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index dfee2556a8a8..4dc248769abb 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -5151,6 +5151,8 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  {
+>  	struct mtd_info *mtd = nand_to_mtd(chip);
+>  	struct nand_onfi_params *p;
+> +	struct onfi_params *onfi;
+> +	int onfi_version = 0;
+>  	char *model;
+>  	char id[4];
+>  	int i, ret, val;
+> @@ -5207,21 +5209,19 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  	/* Check version */
+>  	val = le16_to_cpu(p->revision);
+>  	if (val & ONFI_VERSION_2_3)
+> -		chip->parameters.onfi.version = 23;
+> +		onfi_version = 23;
+>  	else if (val & ONFI_VERSION_2_2)
+> -		chip->parameters.onfi.version = 22;
+> +		onfi_version = 22;
+>  	else if (val & ONFI_VERSION_2_1)
+> -		chip->parameters.onfi.version = 21;
+> +		onfi_version = 21;
+>  	else if (val & ONFI_VERSION_2_0)
+> -		chip->parameters.onfi.version = 20;
+> +		onfi_version = 20;
+>  	else if (val & ONFI_VERSION_1_0)
+> -		chip->parameters.onfi.version = 10;
+> +		onfi_version = 10;
+>  
+> -	if (!chip->parameters.onfi.version) {
+> +	if (!onfi_version) {
+>  		pr_info("unsupported ONFI version: %d\n", val);
+>  		goto free_onfi_param_page;
+> -	} else {
+> -		ret = 1;
+>  	}
+>  
+>  	sanitize_string(p->manufacturer, sizeof(p->manufacturer));
+> @@ -5262,7 +5262,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  	if (p->ecc_bits != 0xff) {
+>  		chip->ecc_strength_ds = p->ecc_bits;
+>  		chip->ecc_step_ds = 512;
+> -	} else if (chip->parameters.onfi.version >= 21 &&
+> +	} else if (onfi_version >= 21 &&
+>  		(le16_to_cpu(p->features) & ONFI_FEATURE_EXT_PARAM_PAGE)) {
+>  
+>  		/*
+> @@ -5289,19 +5289,32 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  		bitmap_set(chip->parameters.set_feature_list,
+>  			   ONFI_FEATURE_ADDR_TIMING_MODE, 1);
+>  	}
+> -	chip->parameters.onfi.tPROG = le16_to_cpu(p->t_prog);
+> -	chip->parameters.onfi.tBERS = le16_to_cpu(p->t_bers);
+> -	chip->parameters.onfi.tR = le16_to_cpu(p->t_r);
+> -	chip->parameters.onfi.tCCS = le16_to_cpu(p->t_ccs);
+> -	chip->parameters.onfi.async_timing_mode =
+> -		le16_to_cpu(p->async_timing_mode);
+> -	chip->parameters.onfi.vendor_revision =
+> -		le16_to_cpu(p->vendor_revision);
+> -	memcpy(chip->parameters.onfi.vendor, p->vendor,
+> -	       sizeof(p->vendor));
+>  
+> +	onfi = kzalloc(sizeof(*onfi), GFP_KERNEL);
+> +	if (!onfi) {
+> +		ret = -ENOMEM;
+> +		goto free_model;
+> +	}
+> +	onfi->version = onfi_version;
+> +	onfi->tPROG = le16_to_cpu(p->t_prog);
+> +	onfi->tBERS = le16_to_cpu(p->t_bers);
+> +	onfi->tR = le16_to_cpu(p->t_r);
+> +	onfi->tCCS = le16_to_cpu(p->t_ccs);
+> +	onfi->async_timing_mode = le16_to_cpu(p->async_timing_mode);
+> +	onfi->vendor_revision = le16_to_cpu(p->vendor_revision);
+> +	memcpy(onfi->vendor, p->vendor, sizeof(p->vendor));
+> +	chip->parameters.onfi = onfi;
+> +
+> +	/* Identification done, free the full ONFI parameter page and exit */
+> +	kfree(p);
+> +
+> +	return 1;
+> +
+> +free_model:
+> +	kfree(model);
+>  free_onfi_param_page:
+>  	kfree(p);
+> +
+>  	return ret;
+>  }
+>  
+> @@ -5562,9 +5575,7 @@ static bool find_full_id_nand(struct nand_chip *chip,
+>  		chip->ecc_step_ds = NAND_ECC_STEP(type);
+>  		chip->onfi_timing_mode_default =
+>  					type->onfi_timing_mode_default;
+> -
+> -		strncpy(chip->parameters.model, type->name,
+> -			sizeof(chip->parameters.model) - 1);
+> +		chip->parameters.model = type->name;
+>  
+>  		return true;
+>  	}
+> @@ -5703,7 +5714,6 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
+>  		}
+>  	}
+>  
+> -	chip->parameters.onfi.version = 0;
+>  	if (!type->name || !type->pagesize) {
+>  		/* Check if the chip is ONFI compliant */
+>  		ret = nand_flash_detect_onfi(chip);
+> @@ -5723,8 +5733,7 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
+>  	if (!type->name)
+>  		return -ENODEV;
+>  
+> -	strncpy(chip->parameters.model, type->name,
+> -		sizeof(chip->parameters.model) - 1);
 
-Add code to check whether the kernel is entered and left with the correct
-CR3 and make it depend on CONFIG_DEBUG_ENTRY.  This is needed because there
-is no NX protection of user-addresses in the kernel-CR3 on x86-32 and that
-type of bug would not be detected otherwise.
+Okay, so you have regression in patch 32, because
+chip->parameters.model has been turned into a const char *, but you
+keep copying things into this pointer without allocating the buffer
+before.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-40-git-send-email-joro@8bytes.org
+> +	chip->parameters.model = type->name;
 
----
- arch/x86/entry/entry_32.S | 43 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Uh, that's wrong. You free chip->parameters.model in the cleanup, but
+you do not allocate it here. You should use kstrdup(type->name) here.
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index b1541c74c71a..010cdb41e3c7 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -166,6 +166,24 @@
- .Lend_\@:
- .endm
- 
-+.macro BUG_IF_WRONG_CR3 no_user_check=0
-+#ifdef CONFIG_DEBUG_ENTRY
-+	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
-+	.if \no_user_check == 0
-+	/* coming from usermode? */
-+	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
-+	jz	.Lend_\@
-+	.endif
-+	/* On user-cr3? */
-+	movl	%cr3, %eax
-+	testl	$PTI_SWITCH_MASK, %eax
-+	jnz	.Lend_\@
-+	/* From userspace with kernel cr3 - BUG */
-+	ud2
-+.Lend_\@:
-+#endif
-+.endm
-+
- /*
-  * Switch to kernel cr3 if not already loaded and return current cr3 in
-  * \scratch_reg
-@@ -213,6 +231,8 @@
- .macro SAVE_ALL_NMI cr3_reg:req
- 	SAVE_ALL
- 
-+	BUG_IF_WRONG_CR3
-+
- 	/*
- 	 * Now switch the CR3 when PTI is enabled.
- 	 *
-@@ -224,6 +244,7 @@
- 
- .Lend_\@:
- .endm
-+
- /*
-  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-  * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
-@@ -287,6 +308,8 @@
- 
- .Lswitched_\@:
- 
-+	BUG_IF_WRONG_CR3
-+
- 	RESTORE_REGS pop=\pop
- .endm
- 
-@@ -357,6 +380,8 @@
- 
- 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
- 
-+	BUG_IF_WRONG_CR3
-+
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
- 
- 	/*
-@@ -799,6 +824,7 @@ ENTRY(entry_SYSENTER_32)
- 	 */
- 	pushfl
- 	pushl	%eax
-+	BUG_IF_WRONG_CR3 no_user_check=1
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
- 	popl	%eax
- 	popfl
-@@ -893,6 +919,7 @@ ENTRY(entry_SYSENTER_32)
- 	 * whereas POPF does not.)
- 	 */
- 	btrl	$X86_EFLAGS_IF_BIT, (%esp)
-+	BUG_IF_WRONG_CR3 no_user_check=1
- 	popfl
- 	popl	%eax
- 
-@@ -970,6 +997,8 @@ restore_all:
- 	/* Switch back to user CR3 */
- 	SWITCH_TO_USER_CR3 scratch_reg=%eax
- 
-+	BUG_IF_WRONG_CR3
-+
- 	/* Restore user state */
- 	RESTORE_REGS pop=4			# skip orig_eax/error_code
- .Lirq_return:
-@@ -983,6 +1012,7 @@ restore_all:
- restore_all_kernel:
- 	TRACE_IRQS_IRET
- 	PARANOID_EXIT_TO_KERNEL_MODE
-+	BUG_IF_WRONG_CR3
- 	RESTORE_REGS 4
- 	jmp	.Lirq_return
- 
-@@ -990,6 +1020,19 @@ restore_all_kernel:
- ENTRY(iret_exc	)
- 	pushl	$0				# no error code
- 	pushl	$do_iret_error
-+
-+#ifdef CONFIG_DEBUG_ENTRY
-+	/*
-+	 * The stack-frame here is the one that iret faulted on, so its a
-+	 * return-to-user frame. We are on kernel-cr3 because we come here from
-+	 * the fixup code. This confuses the CR3 checker, so switch to user-cr3
-+	 * as the checker expects it.
-+	 */
-+	pushl	%eax
-+	SWITCH_TO_USER_CR3 scratch_reg=%eax
-+	popl	%eax
-+#endif
-+
- 	jmp	common_exception
- .previous
- 	_ASM_EXTABLE(.Lirq_return, iret_exc)
+>  
+>  	chip->chipsize = (uint64_t)type->chipsize << 20;
+>  
+> @@ -6033,6 +6042,8 @@ static int nand_scan_ident(struct mtd_info *mtd, int maxchips,
+>  static void nand_scan_ident_cleanup(struct nand_chip *chip)
+>  {
+>  	kfree(chip->parameters.model);
+> +	kfree(chip->parameters.onfi);
+> +
+>  }
+>  
+>  static int nand_set_ecc_soft_ops(struct mtd_info *mtd)
+> diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
+> index 656947d91841..8466a1740b3b 100644
+> --- a/drivers/mtd/nand/raw/nand_micron.c
+> +++ b/drivers/mtd/nand/raw/nand_micron.c
+> @@ -88,9 +88,9 @@ static int micron_nand_setup_read_retry(struct mtd_info *mtd, int retry_mode)
+>  static int micron_nand_onfi_init(struct nand_chip *chip)
+>  {
+>  	struct nand_parameters *p = &chip->parameters;
+> -	struct nand_onfi_vendor_micron *micron = (void *)p->onfi.vendor;
+> +	struct nand_onfi_vendor_micron *micron = (void *)p->onfi->vendor;
+>  
+> -	if (chip->parameters.onfi.version && p->onfi.vendor_revision) {
+> +	if (p->onfi && p->onfi->vendor_revision) {
+>  		chip->read_retries = micron->read_retry_options;
+>  		chip->setup_read_retry = micron_nand_setup_read_retry;
+>  	}
+> @@ -382,7 +382,7 @@ static int micron_supports_on_die_ecc(struct nand_chip *chip)
+>  	u8 id[5];
+>  	int ret;
+>  
+> -	if (!chip->parameters.onfi.version)
+> +	if (!chip->parameters.onfi)
+>  		return MICRON_ON_DIE_UNSUPPORTED;
+>  
+>  	if (chip->bits_per_cell != 1)
+> diff --git a/drivers/mtd/nand/raw/nand_timings.c b/drivers/mtd/nand/raw/nand_timings.c
+> index 9bb599106a31..ebc7b5f76f77 100644
+> --- a/drivers/mtd/nand/raw/nand_timings.c
+> +++ b/drivers/mtd/nand/raw/nand_timings.c
+> @@ -294,6 +294,7 @@ int onfi_fill_data_interface(struct nand_chip *chip,
+>  			     int timing_mode)
+>  {
+>  	struct nand_data_interface *iface = &chip->data_interface;
+> +	struct onfi_params *onfi = chip->parameters.onfi;
+>  
+>  	if (type != NAND_SDR_IFACE)
+>  		return -EINVAL;
+> @@ -308,17 +309,16 @@ int onfi_fill_data_interface(struct nand_chip *chip,
+>  	 * tPROG, tBERS, tR and tCCS.
+>  	 * These information are part of the ONFI parameter page.
+>  	 */
+> -	if (chip->parameters.onfi.version) {
+> -		struct nand_parameters *params = &chip->parameters;
+> +	if (onfi) {
+>  		struct nand_sdr_timings *timings = &iface->timings.sdr;
+>  
+>  		/* microseconds -> picoseconds */
+> -		timings->tPROG_max = 1000000ULL * params->onfi.tPROG;
+> -		timings->tBERS_max = 1000000ULL * params->onfi.tBERS;
+> -		timings->tR_max = 1000000ULL * params->onfi.tR;
+> +		timings->tPROG_max = 1000000ULL * onfi->tPROG;
+> +		timings->tBERS_max = 1000000ULL * onfi->tBERS;
+> +		timings->tR_max = 1000000ULL * onfi->tR;
+>  
+>  		/* nanoseconds -> picoseconds */
+> -		timings->tCCS_min = 1000UL * params->onfi.tCCS;
+> +		timings->tCCS_min = 1000UL * onfi->tCCS;
+>  	} else {
+>  		struct nand_sdr_timings *timings = &iface->timings.sdr;
+>  		/*
+> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+> index 5723d940a47d..8074cbd4e3fe 100644
+> --- a/include/linux/mtd/rawnand.h
+> +++ b/include/linux/mtd/rawnand.h
+> @@ -488,7 +488,7 @@ struct nand_parameters {
+>  	DECLARE_BITMAP(get_feature_list, ONFI_FEATURE_NUMBER);
+>  
+>  	/* ONFI parameters */
+> -	struct onfi_params onfi;
+> +	struct onfi_params *onfi;
+>  };
+>  
+>  /* The maximum expected count of bytes in the NAND ID sequence */
+> @@ -1618,10 +1618,10 @@ struct platform_nand_data {
+>  /* return the supported asynchronous timing mode. */
+>  static inline int onfi_get_async_timing_mode(struct nand_chip *chip)
+>  {
+> -	if (!chip->parameters.onfi.version)
+> +	if (!chip->parameters.onfi)
+>  		return ONFI_TIMING_MODE_UNKNOWN;
+>  
+> -	return chip->parameters.onfi.async_timing_mode;
+> +	return chip->parameters.onfi->async_timing_mode;
+>  }
+>  
+>  int onfi_fill_data_interface(struct nand_chip *chip,
+
