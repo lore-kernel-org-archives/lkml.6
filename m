@@ -2,87 +2,105 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2FFC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42280C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD2520671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:51:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD2520671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+	by mail.kernel.org (Postfix) with ESMTP id F0C5F20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:55:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FmtYa9u5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0C5F20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731170AbeGSIdS (ORCPT
+        id S1731380AbeGSIht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 04:33:18 -0400
-Received: from a.mx.secunet.com ([62.96.220.36]:42740 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727528AbeGSIdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 04:33:18 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 9A8A2201AA;
-        Thu, 19 Jul 2018 11:51:10 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id wJWzdI0ZEDyx; Thu, 19 Jul 2018 11:51:10 +0200 (CEST)
-Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 4D9BF201A7;
-        Thu, 19 Jul 2018 11:51:10 +0200 (CEST)
-Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
- (10.53.40.204) with Microsoft SMTP Server id 14.3.399.0; Thu, 19 Jul 2018
- 09:51:24 +0200
-Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 1864B3181DA2;
- Thu, 19 Jul 2018 09:51:25 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 09:51:25 +0200
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     air icy <icytxw@gmail.com>
-CC:     Herbert Xu <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: UBSAN: Undefined behaviour in ./include/net/xfrm.h
-Message-ID: <20180719075124.m3evqrlif3ha4ecn@gauss3.secunet.de>
-References: <CAAzSK-wP5XZahbzkKjQSDDKQscOMszaj11ti_i7vRsF-CrWErQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAAzSK-wP5XZahbzkKjQSDDKQscOMszaj11ti_i7vRsF-CrWErQ@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 684AE89D-9B00-4F9F-9BE9-E85F41C784FB
+        Thu, 19 Jul 2018 04:37:49 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37190 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730253AbeGSIht (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 04:37:49 -0400
+Received: by mail-wr1-f65.google.com with SMTP id q10-v6so7055912wrd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 00:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WMOkLIsG/oHM9JHFwTipgD2hZHc9heTydoDPlmr6g38=;
+        b=FmtYa9u5OsxyjlMofN48n0ZaXa/MtWiU7CP96YR0JDMXQ92j/bzh/XOwk3JlRIhlIT
+         Ud/sjNDY73iLSRuxxbjkUArbHTKzWEI6zp4Zu7er3rWeW8HpbZl1co4xwIudaoLeAvgR
+         K+SjbqgrF2Cyb93s41t/dtUP96Ov7bdArhG2831eB5Al2wzWjMxtskDhLJK6YOd3skHI
+         7/XU5Xwb3OrZvFNYQJQUvIXLLi+miO2/AOrqE1ZKMDhz3i1NIY6yg3cExamkceqLF5sj
+         lp20VwbjXtdV1AieOErB3DnZJrSU5M3aGx0k3OGEOtI98CfANApll5Iyd1J66ayVkF9z
+         RxRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WMOkLIsG/oHM9JHFwTipgD2hZHc9heTydoDPlmr6g38=;
+        b=JKMEg9CRgQ4/BN8RZmmNoo+uBr+I6P/74duM5CUlKSzncxgSntH6Rsh/MeeyDC4vAr
+         AG8VuHwato4R2BlabtBVYn1qGxAPsPPJTtG0Mpc3R6CQ2UqEwlSwJG6CNK1u43N43FRF
+         TNFjr5ez4nBIzuchAHJXgJO/jMtD7w3pzIh+w5BmSOVM2EwpZ179zEIEzGbGmtFU696Y
+         xhZnDn80so2R79UPqSRF4NFUkMNm53P8J5/KnMumEQFlCrFXZb6SAGSEqBdANlMrgle3
+         Ksmy77AoiDF+sW39vWrRlOR2XuKdc07ppB3aSoQmjODfgrNU+WWuXwYFMVghwJpwBBd6
+         RzNw==
+X-Gm-Message-State: AOUpUlH5Qf3xSklxsFSAfoePtQFzXtwbEyexA76iIrdqevo6r0zViyuJ
+        DGgfzRscQnlPs3CE8HgiraFuNw==
+X-Google-Smtp-Source: AAOMgpe+DriaAu6TzkFmGZ6LIHSZLsD4bPgzMhCvFlD0JAV8ieJJgVWZhMQORLtUXDl9V/HWMiUC4w==
+X-Received: by 2002:adf:f74d:: with SMTP id z13-v6mr7056112wrp.85.1531986955141;
+        Thu, 19 Jul 2018 00:55:55 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id 35-v6sm4103428wri.78.2018.07.19.00.55.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Jul 2018 00:55:54 -0700 (PDT)
+Message-ID: <1531986953.26720.21.camel@baylibre.com>
+Subject: Re: [alsa-devel] [PATCH RESEND 02/15] ASoC: meson: add axg fifo
+        base driver
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>
+Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Carlo Caione <carlo@caione.org>,
+        linux-amlogic@lists.infradead.org
+Date:   Thu, 19 Jul 2018 09:55:53 +0200
+In-Reply-To: <s5ha7qoblk0.wl-tiwai@suse.de>
+References: <20180717154304.9973-1-jbrunet@baylibre.com>
+         <20180717154304.9973-3-jbrunet@baylibre.com>
+         <20180718115054.GI5700@sirena.org.uk> <s5ha7qoblk0.wl-tiwai@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 11:46:44PM +0800, air icy wrote:
-> Hi,
-> 
-> static inline bool addr4_match(__be32 a1, __be32 a2, u8 prefixlen)
-> {
-> /* C99 6.5.7 (3): u32 << 32 is undefined behaviour */
-> if (sizeof(long) == 4 && prefixlen == 0)
-> return true;
-> return !((a1 ^ a2) & htonl(~0UL << (32 - prefixlen)));
-> }
-> 
-> 
-> $ cat report0
-> ================================================================================
-> UBSAN: Undefined behaviour in ./include/net/xfrm.h:894:23
-> shift exponent -128 is negative
+On Wed, 2018-07-18 at 17:39 +0200, Takashi Iwai wrote:
+> On Wed, 18 Jul 2018 13:50:54 +0200,
+> Mark Brown wrote:
+> > 
+> > On Tue, Jul 17, 2018 at 05:42:51PM +0200, Jerome Brunet wrote:
+> > 
+> > > +	return !status ? IRQ_NONE : IRQ_HANDLED;
+> > 
+> > Please just write normal conditional statements, it makes things a lot
+> > easier to read (the ! isn't helping either here).
 
-Looks like we don't validate the prefixlen of the address family
-in the xfrm_selector.
+Indeed. I'll correct this in a follow up patch
 
-> This bug can be repro, if you need the repro file, please tell me.
+> 
+> ... and there is the standard IRQ_RETVAL() macro for this purpose.
 
-Can you send me your reproducer?
+I was not aware of it. Thanks for the tip Takashi
+
+> 
+> 
+> Takashi
+
