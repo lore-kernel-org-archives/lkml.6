@@ -6,131 +6,176 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBA4ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DED1ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DD4B20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:27:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DD4B20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3EBCB20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:28:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EBCB20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731175AbeGTANK (ORCPT
+        id S1731304AbeGTANW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:13:10 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42057 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727615AbeGTANK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:13:10 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNQlgd2453195
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 16:26:47 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNQkxO2453191;
-        Thu, 19 Jul 2018 16:26:46 -0700
-Date:   Thu, 19 Jul 2018 16:26:46 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-7ffcf1497c8ab59a705bfafb7401876fd2f6f71e@git.kernel.org>
-Cc:     jgross@suse.com, jpoimboe@redhat.com, gregkh@linuxfoundation.org,
-        will.deacon@arm.com, dhgutteridge@sympatico.ca, pavel@ucw.cz,
-        torvalds@linux-foundation.org, aarcange@redhat.com,
-        llong@redhat.com, linux-kernel@vger.kernel.org,
-        David.Laight@aculab.com, jkosina@suse.cz, luto@kernel.org,
-        bp@alien8.de, brgerst@gmail.com, mingo@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, boris.ostrovsky@oracle.com,
-        dvlasenk@redhat.com, dave.hansen@intel.com, eduval@amazon.com,
-        peterz@infradead.org, jroedel@suse.de
-Reply-To: dave.hansen@intel.com, eduval@amazon.com, dvlasenk@redhat.com,
-          peterz@infradead.org, jroedel@suse.de, bp@alien8.de,
-          luto@kernel.org, brgerst@gmail.com, mingo@kernel.org,
-          tglx@linutronix.de, hpa@zytor.com, boris.ostrovsky@oracle.com,
-          torvalds@linux-foundation.org, dhgutteridge@sympatico.ca,
-          pavel@ucw.cz, linux-kernel@vger.kernel.org, aarcange@redhat.com,
-          llong@redhat.com, David.Laight@aculab.com, jkosina@suse.cz,
-          jgross@suse.com, jpoimboe@redhat.com, will.deacon@arm.com,
-          gregkh@linuxfoundation.org
-In-Reply-To: <1531906876-13451-17-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-17-git-send-email-joro@8bytes.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/pgtable/pae: Unshare kernel PMDs when PTI is
- enabled
-Git-Commit-ID: 7ffcf1497c8ab59a705bfafb7401876fd2f6f71e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 19 Jul 2018 20:13:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57197 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730266AbeGTANV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 20:13:21 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 66AC520717; Fri, 20 Jul 2018 01:27:57 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2196D20732;
+        Fri, 20 Jul 2018 01:27:33 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 01:27:32 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Han Xu <han.xu@nxp.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Xiaolei Li <xiaolei.li@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 28/33] mtd: rawnand: docg4: convert driver to
+ nand_scan()
+Message-ID: <20180720012732.3753e0ef@bbrezillon>
+In-Reply-To: <20180719230026.8741-29-miquel.raynal@bootlin.com>
+References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
+        <20180719230026.8741-29-miquel.raynal@bootlin.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7ffcf1497c8ab59a705bfafb7401876fd2f6f71e
-Gitweb:     https://git.kernel.org/tip/7ffcf1497c8ab59a705bfafb7401876fd2f6f71e
-Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 18 Jul 2018 11:40:53 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 01:11:40 +0200
+On Fri, 20 Jul 2018 01:00:21 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-x86/pgtable/pae: Unshare kernel PMDs when PTI is enabled
+> Two helpers have been added to the core to make ECC-related
+> configuration between the detection phase and the final NAND scan. Use
+> these hooks and convert the driver to just use nand_scan() instead of
+> both nand_scan_ident() and nand_scan_tail().
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  drivers/mtd/nand/raw/docg4.c | 55 ++++++++++++++++++++++++++------------------
+>  1 file changed, 32 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/docg4.c b/drivers/mtd/nand/raw/docg4.c
+> index 4dccdfba6140..2f6fcd4efab2 100644
+> --- a/drivers/mtd/nand/raw/docg4.c
+> +++ b/drivers/mtd/nand/raw/docg4.c
+> @@ -1227,10 +1227,9 @@ static void __init init_mtd_structs(struct mtd_info *mtd)
+>  	 * required within a nand driver because they are performed by the nand
+>  	 * infrastructure code as part of nand_scan().  In this case they need
+>  	 * to be initialized here because we skip call to nand_scan_ident() (the
+> -	 * first half of nand_scan()).  The call to nand_scan_ident() is skipped
+> -	 * because for this device the chip id is not read in the manner of a
+> -	 * standard nand device.  Unfortunately, nand_scan_ident() does other
+> -	 * things as well, such as call nand_set_defaults().
+> +	 * first half of nand_scan()).  The call to nand_scan_ident() could be
+> +	 * skipped because for this device the chip id is not read in the manner
+> +	 * of a standard nand device.
+>  	 */
+>  
+>  	struct nand_chip *nand = mtd_to_nand(mtd);
+> @@ -1315,6 +1314,27 @@ static int __init read_id_reg(struct mtd_info *mtd)
+>  
+>  static char const *part_probes[] = { "cmdlinepart", "saftlpart", NULL };
+>  
+> +static int docg4_attach_chip(struct nand_chip *chip)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(chip);
+> +	struct docg4_priv *doc = (struct docg4_priv *)(chip + 1);
+> +
+> +	init_mtd_structs(mtd);
+> +
+> +	/* Initialize kernel BCH algorithm */
+> +	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
+> +	if (!doc->bch)
+> +		return -EINVAL;
+> +
+> +	reset(mtd);
+> +
+> +	return read_id_reg(mtd);
+> +}
+> +
+> +static struct nand_controller_ops docg4_controller_ops = {
+> +	.attach_chip = docg4_attach_chip,
+> +};
+> +
+>  static int __init probe_docg4(struct platform_device *pdev)
+>  {
+>  	struct mtd_info *mtd;
+> @@ -1350,26 +1370,16 @@ static int __init probe_docg4(struct platform_device *pdev)
+>  	mtd->dev.parent = &pdev->dev;
+>  	doc->virtadr = virtadr;
+>  	doc->dev = dev;
+> -
+> -	init_mtd_structs(mtd);
+> -
+> -	/* initialize kernel bch algorithm */
+> -	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
+> -	if (doc->bch == NULL) {
+> -		retval = -EINVAL;
+> -		goto free_nand;
+> -	}
+> -
+>  	platform_set_drvdata(pdev, doc);
+>  
+> -	reset(mtd);
+> -	retval = read_id_reg(mtd);
+> -	if (retval == -ENODEV) {
+> -		dev_warn(dev, "No diskonchip G4 device found.\n");
+> -		goto free_bch;
+> -	}
+> -
+> -	retval = nand_scan_tail(mtd);
+> +	/*
+> +	 * Asking for 0 chips is useless here but it warns the user that the use
+> +	 * of the nand_scan() function is a bit abused here because the
+> +	 * initialization is actually a bit specific and re-handled again in the
+> +	 * ->attach_chip() hook. It will probably leak some memory though.
+> +	 */
+> +	nand->dummy_controller.ops = &docg4_controller_ops;
+> +	retval = nand_scan(mtd, 0);
+>  	if (retval)
+>  		goto free_bch;
 
-With PTI the per-process LDT must be mapped into the kernel address-space
-for each process, which requires separate kernel PMDs per PGD.
+Hm, not sure this works. The driver only calls nand_scan_tail(), but
+you replace that by a call to nand_scan(), which will call both
+nand_scan_ident() and nand_scan_tail(), and I'm pretty sure
+nand_scan_ident() will fail here.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-17-git-send-email-joro@8bytes.org
+>  
+> @@ -1389,7 +1399,6 @@ static int __init probe_docg4(struct platform_device *pdev)
+>  	nand_cleanup(nand);
+>  free_bch:
+>  	free_bch(doc->bch);
+> -free_nand:
+>  	kfree(nand);
+>  unmap:
+>  	iounmap(virtadr);
 
----
- arch/x86/include/asm/pgtable-3level_types.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/pgtable-3level_types.h b/arch/x86/include/asm/pgtable-3level_types.h
-index 6a59a6d0cc50..78038e057876 100644
---- a/arch/x86/include/asm/pgtable-3level_types.h
-+++ b/arch/x86/include/asm/pgtable-3level_types.h
-@@ -21,9 +21,10 @@ typedef union {
- #endif	/* !__ASSEMBLY__ */
- 
- #ifdef CONFIG_PARAVIRT
--#define SHARED_KERNEL_PMD	(pv_info.shared_kernel_pmd)
-+#define SHARED_KERNEL_PMD	((!static_cpu_has(X86_FEATURE_PTI) &&	\
-+				 (pv_info.shared_kernel_pmd)))
- #else
--#define SHARED_KERNEL_PMD	1
-+#define SHARED_KERNEL_PMD	(!static_cpu_has(X86_FEATURE_PTI))
- #endif
- 
- /*
