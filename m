@@ -2,143 +2,80 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45682C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F71C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F0020671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:28:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F0020671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E1CD520856
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:34:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PG9OWKLc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CD520856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbeGSHKK (ORCPT
+        id S1727650AbeGSHQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 03:10:10 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51404 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 03:16:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726931AbeGSHKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 03:10:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D5D0120766; Thu, 19 Jul 2018 08:28:37 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7F0DB206F3;
-        Thu, 19 Jul 2018 08:28:36 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 08:28:34 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Subject: Re: [RFC PATCH 5/8] mtd: rawnand: ams-delta: Request data port GPIO
- resource
-Message-ID: <20180719082834.32827212@bbrezillon>
-In-Reply-To: <20180718235710.18242-6-jmkrzyszt@gmail.com>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
-        <20180718235710.18242-6-jmkrzyszt@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1727288AbeGSHQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 03:16:15 -0400
+Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D2E320857;
+        Thu, 19 Jul 2018 06:34:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531982083;
+        bh=z14h+nP1rj1STh2wbePJTlzoWntypm4duoaGeNZq1rI=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=PG9OWKLczc2QfqWnVnll7ayqhoGibVtmaxb9ntiSMyI9ZGyWWt9Wz3p8JGm1Um1Gd
+         jjrvQqZ8OmaRy9Nf0ERe7+Hl2/dvz+3JccS/J2fKu/h0z8t4loULuYqLJfBvIp91Wb
+         xMFbDg0I8vrRe1LxVZKwN+H+0AUZojsVOl/32vts=
+Received: by mail-wm0-f51.google.com with SMTP id o11-v6so4945846wmh.2;
+        Wed, 18 Jul 2018 23:34:43 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEREF+fAqaVPSjoXbyyJh7RiGeuGsfEPlWErsaAB3xra4InZCHu
+        iNtwfrAHlqaLbFuAYXHoFo1j0qLNXBZrfxBoOGo=
+X-Google-Smtp-Source: AAOMgpeEFleNEaEK2mPgs/WIEyGQucrpsqL3j4m+UO7vthlBQnTuHM222icM1oYTrpIwMb+0W43Fat9J3vp/7OCAUJk=
+X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr3526127wmm.117.1531982081979;
+ Wed, 18 Jul 2018 23:34:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 23:34:41
+ -0700 (PDT)
+In-Reply-To: <c5e83bb8-840a-9e91-648c-4472b956c111@math.uni-bielefeld.de>
+References: <20180718195620.5331-1-krzk@kernel.org> <c5e83bb8-840a-9e91-648c-4472b956c111@math.uni-bielefeld.de>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 19 Jul 2018 08:34:41 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfPNp_fc8dcz066pWAmS9zmTDWTULyvLp-mTpdyppFYQQ@mail.gmail.com>
+Message-ID: <CAJKOXPfPNp_fc8dcz066pWAmS9zmTDWTULyvLp-mTpdyppFYQQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: Remove unused mout_user_aclk400_mcuisp_p4x12
+ variable
+To:     Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 01:57:07 +0200
-Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+On 18 July 2018 at 22:33, Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+> Speaking of the ISP clocks driver, I wonder why this one was never merged?
+> https://patches.linaro.org/patch/115531/
 
-> Data port used by the driver is actually an OMAP MPUIO device, already
-> under control of gpio-omap driver.  For that reason we used to not
-> request the memory region of the port as that would fail because the
-> region is already busy.  Despite that, we are still accessing the port
-> by just ioremapping it and performing read/write operations.  Moreover,
-> we are doing that without any proteciton from other users legally
-> manipulating the port pins over GPIO API.
-> 
-> The plan is to convert the driver to access the port over functions
-> exposed by the gpio-omap driver.  Before that happens, we can already
-> obtain exclusive access to the port by requesting an array of its GPIO
-> descriptors.  For that to work on Amstrad Delta, respective GPIO lookup
-> table entries are added to the board init file.
-> 
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> ---
->  arch/arm/mach-omap1/board-ams-delta.c | 11 ++++++++++-
->  drivers/mtd/nand/raw/ams-delta.c      |  8 ++++++++
+Thanks for reminding this!
 
-Can we split that in 2 patches: one adding data entries to the lookup
-table, and another one patching the driver to request the gpiod array.
+It seems that Sylwester is out of office so we'll have to wait for reply.
 
->  2 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-> index eedacdfe9725..16f7bbe47607 100644
-> --- a/arch/arm/mach-omap1/board-ams-delta.c
-> +++ b/arch/arm/mach-omap1/board-ams-delta.c
-> @@ -337,7 +337,8 @@ static struct platform_device ams_delta_nand_device = {
->  	.resource	= ams_delta_nand_resources,
->  };
->  
-> -#define OMAP_GPIO_LABEL	"gpio-0-15"
-> +#define OMAP_GPIO_LABEL		"gpio-0-15"
-> +#define OMAP_MPUIO_LABEL	"mpuio"
->  
->  static struct gpiod_lookup_table ams_delta_nand_gpio_table = {
->  	.table = {
-> @@ -349,6 +350,14 @@ static struct gpiod_lookup_table ams_delta_nand_gpio_table = {
->  		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_NWE, "nwe", 0),
->  		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_ALE, "ale", 0),
->  		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_CLE, "cle", 0),
-> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 0, "data", 0, 0),
-> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 1, "data", 1, 0),
-> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 2, "data", 2, 0),
-> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 3, "data", 3, 0),
-> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 4, "data", 4, 0),
-> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 5, "data", 5, 0),
-> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 6, "data", 6, 0),
-> +		GPIO_LOOKUP_IDX(OMAP_MPUIO_LABEL, 7, "data", 7, 0),
->  		{ },
->  	},
->  };
-> diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
-> index d7e4c9dbef67..ad62c0245458 100644
-> --- a/drivers/mtd/nand/raw/ams-delta.c
-> +++ b/drivers/mtd/nand/raw/ams-delta.c
-> @@ -189,6 +189,7 @@ static int ams_delta_init(struct platform_device *pdev)
->  	struct mtd_info *mtd;
->  	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	void __iomem *io_base;
-> +	struct gpio_descs *data_gpiods;
->  	int err = 0;
->  
->  	if (!res)
-> @@ -289,6 +290,13 @@ static int ams_delta_init(struct platform_device *pdev)
->  		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
->  		goto out_mtd;
->  	}
-> +	/* Request array of data pins, initialize them as output and set low */
-> +	data_gpiods = devm_gpiod_get_array(&pdev->dev, "data", GPIOD_OUT_LOW);
-> +	if (IS_ERR(data_gpiods)) {
-> +		err = PTR_ERR(data_gpiods);
-> +		dev_err(&pdev->dev, "data GPIO request failed: %d\n", err);
-> +		goto out_mtd;
-> +	}
->  
->  	/* Scan to find existence of the device */
->  	err = nand_scan(mtd, 1);
-
+Best regards,
+Krzysztof
