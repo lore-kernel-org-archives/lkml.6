@@ -2,182 +2,70 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AFEC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B591CECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE6620693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:09:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE6620693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AFCC20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:09:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AFCC20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731554AbeGSIvN (ORCPT
+        id S1731581AbeGSIvR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 04:51:13 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54124 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731391AbeGSIvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 04:51:12 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5C11C207AD; Thu, 19 Jul 2018 10:09:15 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1A3EC20732;
-        Thu, 19 Jul 2018 10:09:15 +0200 (CEST)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v2 2/2] drm/sun4i: sun4i: Introduce a quirk for lowest plane alpha support
-Date:   Thu, 19 Jul 2018 10:08:38 +0200
-Message-Id: <20180719080838.31598-2-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180719080838.31598-1-paul.kocialkowski@bootlin.com>
-References: <20180719080838.31598-1-paul.kocialkowski@bootlin.com>
+        Thu, 19 Jul 2018 04:51:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38442 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731391AbeGSIvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 04:51:16 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F13440201CA;
+        Thu, 19 Jul 2018 08:09:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A2D72026D6B;
+        Thu, 19 Jul 2018 08:09:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180718154637.31878-1-mszeredi@redhat.com>
+References: <20180718154637.31878-1-mszeredi@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: make open_with_fake_path() not contribute to nr_files
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <18288.1531987758.1@warthog.procyon.org.uk>
+Date:   Thu, 19 Jul 2018 09:09:18 +0100
+Message-ID: <18289.1531987758@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 19 Jul 2018 08:09:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 19 Jul 2018 08:09:20 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not all sunxi platforms with the first version of the Display Engine
-support an alpha component on the plane with the lowest z position
-(as in: lowest z-pos), that gets blended with the background color.
+Miklos Szeredi <mszeredi@redhat.com> wrote:
 
-In particular, the A13 is known to have this limitation. However, it was
-recently discovered that the A20 and A33 are capable of having alpha on
-their lowest plane.
+> Stacking file operations in overlay will store an extra open file for each
+> overlay file opened.
+> 
+> The overhead is just that of "struct file" which is about 256bytes, because
+> overlay already pins an extra dentry and inode when the file is open, which
+> add up to a much larger overhead.
+> 
+> For fear of breaking working setups, don't start accounting the extra file.
 
-Thus, this introduces a specific quirk to indicate such support,
-per-platform. Since this was not tested on sun4i and sun6i platforms, a
-conservative approach is kept and this feature is not supported.
+Sounds useful for cachefiles too, though Christoph Hellwig objected strongly
+last time I tried this, so you might want to check with him directly.
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
-
-Changes since v1:
-* reordered backend declaration;
-* updated comment to reflect that not all platforms are affected;
-* used num_alpha_planes_max variable instead of define, since it is now
-  dynamic;
-* reordered check to have quirk first in associated conditional.
-
- drivers/gpu/drm/sun4i/sun4i_backend.c | 40 +++++++++++++++++----------
- drivers/gpu/drm/sun4i/sun4i_backend.h |  1 -
- 2 files changed, 26 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index 075cb0ff56ca..685fc3840c6d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -34,6 +34,8 @@
- struct sun4i_backend_quirks {
- 	/* backend <-> TCON muxing selection done in backend */
- 	bool needs_output_muxing;
-+	/* alpha at the lowest z position is not always supported */
-+	bool supports_lowest_plane_alpha;
- };
- 
- static const u32 sunxi_rgb2yuv_coef[12] = {
-@@ -463,12 +465,14 @@ static int sun4i_backend_atomic_check(struct sunxi_engine *engine,
- 				      struct drm_crtc_state *crtc_state)
- {
- 	struct drm_plane_state *plane_states[SUN4I_BACKEND_NUM_LAYERS] = { 0 };
-+	struct sun4i_backend *backend = engine_to_sun4i_backend(engine);
- 	struct drm_atomic_state *state = crtc_state->state;
- 	struct drm_device *drm = state->dev;
- 	struct drm_plane *plane;
- 	unsigned int num_planes = 0;
- 	unsigned int num_alpha_planes = 0;
- 	unsigned int num_frontend_planes = 0;
-+	unsigned int num_alpha_planes_max = 1;
- 	unsigned int num_yuv_planes = 0;
- 	unsigned int current_pipe = 0;
- 	unsigned int i;
-@@ -532,33 +536,39 @@ static int sun4i_backend_atomic_check(struct sunxi_engine *engine,
- 	 * the layer with the highest priority.
- 	 *
- 	 * The second step is the actual alpha blending, that takes
--	 * the two pipes as input, and uses the eventual alpha
-+	 * the two pipes as input, and uses the potential alpha
- 	 * component to do the transparency between the two.
- 	 *
--	 * This two steps scenario makes us unable to guarantee a
-+	 * This two-step scenario makes us unable to guarantee a
- 	 * robust alpha blending between the 4 layers in all
- 	 * situations, since this means that we need to have one layer
- 	 * with alpha at the lowest position of our two pipes.
- 	 *
--	 * However, we cannot even do that, since the hardware has a
--	 * bug where the lowest plane of the lowest pipe (pipe 0,
--	 * priority 0), if it has any alpha, will discard the pixel
--	 * entirely and just display the pixels in the background
--	 * color (black by default).
-+	 * However, we cannot even do that on every platform, since the
-+	 * hardware has a bug where the lowest plane of the lowest pipe
-+	 * (pipe 0, priority 0), if it has any alpha, will discard the
-+	 * pixel data entirely and just display the pixels in the
-+	 * background color (black by default).
- 	 *
--	 * This means that we effectively have only three valid
--	 * configurations with alpha, all of them with the alpha being
--	 * on pipe1 with the lowest position, which can be 1, 2 or 3
--	 * depending on the number of planes and their zpos.
-+	 * This means that on the affected platforms, we effectively
-+	 * have only three valid configurations with alpha, all of them
-+	 * with the alpha being on pipe1 with the lowest position, which
-+	 * can be 1, 2 or 3 depending on the number of planes and their zpos.
- 	 */
--	if (num_alpha_planes > SUN4I_BACKEND_NUM_ALPHA_LAYERS) {
-+
-+	/* For platforms that are not affected by the issue described above. */
-+	if (backend->quirks->supports_lowest_plane_alpha)
-+		num_alpha_planes_max++;
-+
-+	if (num_alpha_planes > num_alpha_planes_max) {
- 		DRM_DEBUG_DRIVER("Too many planes with alpha, rejecting...\n");
- 		return -EINVAL;
- 	}
- 
- 	/* We can't have an alpha plane at the lowest position */
--	if (plane_states[0]->fb->format->has_alpha ||
--	    (plane_states[0]->alpha != DRM_BLEND_ALPHA_OPAQUE))
-+	if (!backend->quirks->supports_lowest_plane_alpha &&
-+	    (plane_states[0]->fb->format->has_alpha ||
-+	    (plane_states[0]->alpha != DRM_BLEND_ALPHA_OPAQUE)))
- 		return -EINVAL;
- 
- 	for (i = 1; i < num_planes; i++) {
-@@ -943,9 +953,11 @@ static const struct sun4i_backend_quirks sun6i_backend_quirks = {
- 
- static const struct sun4i_backend_quirks sun7i_backend_quirks = {
- 	.needs_output_muxing = true,
-+	.supports_lowest_plane_alpha = true,
- };
- 
- static const struct sun4i_backend_quirks sun8i_a33_backend_quirks = {
-+	.supports_lowest_plane_alpha = true,
- };
- 
- static const struct sun4i_backend_quirks sun9i_backend_quirks = {
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.h b/drivers/gpu/drm/sun4i/sun4i_backend.h
-index ad6609323f0e..e3d4c6035eb2 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.h
-@@ -167,7 +167,6 @@
- #define SUN4I_BACKEND_PIPE_OFF(p)		(0x5000 + (0x400 * (p)))
- 
- #define SUN4I_BACKEND_NUM_LAYERS		4
--#define SUN4I_BACKEND_NUM_ALPHA_LAYERS		1
- #define SUN4I_BACKEND_NUM_FRONTEND_LAYERS	1
- #define SUN4I_BACKEND_NUM_YUV_PLANES		1
- 
--- 
-2.18.0
-
+David
