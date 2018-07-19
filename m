@@ -2,114 +2,172 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF7BC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A68CFC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F93D20661
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:21:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="j9hizwfY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F93D20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 607BC20661
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:23:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607BC20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731999AbeGSRF3 (ORCPT
+        id S1731931AbeGSRG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 13:05:29 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:35395 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731839AbeGSRF3 (ORCPT
+        Thu, 19 Jul 2018 13:06:56 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.164]:45890 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727575AbeGSRGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 13:05:29 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 1623010C0E9D;
-        Thu, 19 Jul 2018 09:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1532017295; bh=OJK8EfutOcg55HEWf/pyKQ/uE7gYYFJ2MNXUwbXz0jQ=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=j9hizwfYzmwMMVb45r3m6/ILe5eFQrrDHFIhsGYEmfHAcTaeQFJImpTqCfwvpuEXL
-         3Z2VjlTp1hstH6B/ivegP4depCzXMtE/A58ZJDb6qzP4yW7WOl2O189MS5ktG/MhGp
-         nUSkXRma75BcATmrXGHUKDqH4s7MhkqB9Igo4oLKC3aci4JKlDAAr1SoYouMv2HJCx
-         VN1b9qllBJNv3TStxfZmhpnW5PVq66TnntPuJ5Fu9ZTRNmNq68fRiivpkppRQaSlno
-         DxodriqXhlbY4280dpVhenv0+36kcTfRwO93hrmlF7IFfgfmKVPQ9feI6fQ2lynif2
-         zktXq9sex2m7Q==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 7A35B3790;
-        Thu, 19 Jul 2018 09:21:33 -0700 (PDT)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001;
- Thu, 19 Jul 2018 09:21:33 -0700
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     Elad Kanfi <eladkan@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: arch/arc/ allmodconfig
-Thread-Topic: arch/arc/ allmodconfig
-Thread-Index: AQHUHyKW1M3GsAcZr0iuL832AquqnA==
-Date:   Thu, 19 Jul 2018 16:21:32 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B0724EB@US01WEMBX2.internal.synopsys.com>
-References: <e074d0ae-6d79-d21a-2278-15d516bb943e@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.104]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 19 Jul 2018 13:06:55 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id DD0085E3644
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 11:20:42 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id gBf5f3HWXPvAdgBfMf8BXl; Thu, 19 Jul 2018 11:20:42 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=35348 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fgBf4-000biS-P4; Thu, 19 Jul 2018 11:20:14 -0500
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Wan ZongShun <mcuos.com@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180710132902.GA13541@embeddedor.com>
+ <20180718100309.49c5452a@xps13>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
+ 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
+ tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
+ DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
+ 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
+ YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
+ m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
+ NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
+ qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
+ LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzSxHdXN0YXZvIEEu
+ IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPsLBfQQTAQgAJwUCWywcDAIbIwUJ
+ CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
+ l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
+ obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
+ cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
+ ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
+ JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
+ JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
+ PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
+ R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
+ 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
+ e5YnLxF8ctRAp7K4yVlvA87BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
+ H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
+ DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
+ 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
+ otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
+ l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
+ jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
+ zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
+ I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
+ ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
+ EQEAAcLBZQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
+ UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
+ XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
+ WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
+ imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
+ fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
+ 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
+ ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
+ YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
+ GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] mtd: nuc900_nand: mark expected switch fall-through
+Message-ID: <ad24ee3a-0212-0762-87c4-9a93faecbeef@embeddedor.com>
+Date:   Thu, 19 Jul 2018 11:20:08 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180718100309.49c5452a@xps13>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fgBf4-000biS-P4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:35348
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 20
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+CC some folks from Mellanox=0A=
-=0A=
-On 07/18/2018 10:37 PM, Randy Dunlap wrote:=0A=
-> Hi,=0A=
->=0A=
-> When I try to (cross-)build arch/arc/ allmodconfig, I get a syntax error =
-here:=0A=
->=0A=
-> ./arch/arc/plat-eznps/mtm.c: In function 'mtm_enable_core':=0A=
-> ../arch/arc/plat-eznps/mtm.c:113:30: error: storage size of 'dpc' isn't k=
-nown=0A=
->   struct nps_host_reg_aux_dpc dpc;=0A=
->                               ^~~=0A=
->=0A=
-> There is no struct nps_host_reg_aux_dpc in the kernel tree.=0A=
->=0A=
-> Can you do something about this, please?=0A=
-=0A=
-Thx for the report Randy. I'm calling out Mellanox folks to see if they can=
-=0A=
-provide a fixup, else we will revert the corresponding change.=0A=
-=0A=
-@Elad, upstream commit 3f9cd874dcc8705 "ARC: [plat-eznps] avoid toggling of=
- DPC=0A=
-register" added reference to struct nps_host_reg_aux_dpc but the definition=
- is=0A=
-missing. Can you please provide a fixup as I have no idea of that platform=
-=0A=
-specific struct.=0A=
-=0A=
-@ Leon, reaching our to you, since it seems you removed Elad from MAINTAINE=
-RS=0A=
-file, so I'm not sure if he is still at Mellanox.=0A=
-The two folks I worked with on EZCHiip Linux port Noam Camus and Gilad have=
- left=0A=
-Mellanox.=0A=
-If you or someone from Mellanox are interested in maintaining this platform=
-,=0A=
-please update the arch/arc/plat-eznps section of MAINTAINERS file.=0A=
-=0A=
-=0A=
-Thx,=0A=
--Vineet=0A=
+Hi Miquel,
+
+On 07/18/2018 03:03 AM, Miquel Raynal wrote:
+> Hi Gustavo,
+> 
+> Prefix should be "mtd: rawnand: nuc900:"
+> 
+
+Oh OK. I'll fix it. Thanks.
+
+> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote on Tue, 10 Jul
+> 2018 08:29:02 -0500:
+> 
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Addresses-Coverity-ID: 1471717 ("Missing break in switch")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/mtd/nand/raw/nuc900_nand.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mtd/nand/raw/nuc900_nand.c b/drivers/mtd/nand/raw/nuc900_nand.c
+>> index af5b32c9..53a9f6c 100644
+>> --- a/drivers/mtd/nand/raw/nuc900_nand.c
+>> +++ b/drivers/mtd/nand/raw/nuc900_nand.c
+>> @@ -191,8 +191,9 @@ static void nuc900_nand_command_lp(struct mtd_info *mtd, unsigned int command,
+>>  		return;
+>>  
+>>  	case NAND_CMD_READ0:
+>> -
+>>  		write_cmd_reg(nand, NAND_CMD_READSTART);
+>> +		/* fall through */
+> 
+> Have you checked this is actually the right thing to do?
+> 
+
+Actually, no. My first impression was that due to the long time this code has been there,
+this might be a missing-break-in-switch false positive. But, due to your comments and a
+double check at the code, it may well be that this is an actual bug and that a return
+statement should be added after calling write_cmd_reg. Similar to the cases above.
+
+I can send a patch to fix this, but it would be great if someone could help me to verify
+this first. :)
+
+Thanks for the feedback!
+--
+Gustavo
