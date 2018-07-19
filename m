@@ -2,116 +2,164 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 394B5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC02BC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E51642084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:12:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKqmMcFR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51642084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BB8D2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:12:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB8D2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731872AbeGSP4Y (ORCPT
+        id S1731915AbeGSP4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:56:24 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:38018 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731008AbeGSP4Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:56:24 -0400
-Received: by mail-oi0-f65.google.com with SMTP id v8-v6so15591207oie.5;
-        Thu, 19 Jul 2018 08:12:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=4jNIFrG3VcyqV/YSOtZeJPoomFc64au5p9xTOZCJpYI=;
-        b=dKqmMcFR+w4Ihzd+Z/IfeylyGG8FUJwxXbWPnXh/JezXedow0qNxvytF3BDJN2MrJB
-         WbU89PIKTxpX+91MSgDH2wrjMfwFm2aOSB4EZgJzHiGg87bMYMG40xJuWXAbw+udUrSq
-         Y+gg495D4jDX1rfSWF+wxGZ35TCtTUK/ZQbVy2e0DL2YLUcybMLRVeCNKw+6gQUUp4bv
-         VWqtAy7iY1teKBKYHpEuZoehFaPzMCwtCPHNCD8H2cKeEi51/5uJemafHyKyfuGmdUHS
-         UXdTZo+TzXIxulyxYUgY8i8fOagi8FdwO6SsqyDLWnreIoHk/NdyezcFRMaajutekwK0
-         ugkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=4jNIFrG3VcyqV/YSOtZeJPoomFc64au5p9xTOZCJpYI=;
-        b=igCLQVy3rXMdjKa/DVxUeZ9Rgr141aQrChZTwhc4hNnOVAfbyRfo/skaNhX2mREc4L
-         15gjFwXA/1QkuDEJnkMi4+yUDJGTqu/mTfMbpxIdc8+qrJMemFPw0JPr8q++GOdaOLvU
-         aDpr1TH7kf5v79wXHIIUs3oJV3WJITNVyjbuLlbj/zOKEo0QF1m/FBX2qHG6Jw0vNcEG
-         M5jr3OiTRWlkQuPWqCKlLC4rYD1VskfEOmfkzOL7I0i3u4uizAubfmOZpmaasUcvxfnw
-         Jr9O6ng0eTD5IhMrQ08r3I4A1Rglgr1qwZ+qv6e+9HC4BkN5mQeBRRZBLOt/Bc7seCyu
-         gnNg==
-X-Gm-Message-State: AOUpUlGFw9n+izuR/AnhTBC+6XRnLlSjRj05iUGxwm76BP/gs4WhNNkb
-        l1riyxREYq2HjLzOW7QjtIHyeFSSnBzrUgdQLFk=
-X-Google-Smtp-Source: AAOMgpd+KOhZ1xS7CGCRt7NiLATfYm1gWdRGTk1UQR0HX5bQEH+6mHe+7ehPlTZ5ZRXzyahoqossu2vaF/9anbxHzbE=
-X-Received: by 2002:aca:a69b:: with SMTP id t27-v6mr11926560oij.261.1532013166454;
- Thu, 19 Jul 2018 08:12:46 -0700 (PDT)
+        Thu, 19 Jul 2018 11:56:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53664 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731733AbeGSP4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 11:56:32 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AED0536A5D4;
+        Thu, 19 Jul 2018 15:12:54 +0000 (UTC)
+Received: from t450s.home (ovpn-116-29.phx2.redhat.com [10.3.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3EA2E60851;
+        Thu, 19 Jul 2018 15:12:53 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 09:12:52 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Srinath Mannam <srinath.mannam@broadcom.com>
+Cc:     Ray Jui <ray.jui@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        kvm@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        aik@ozlabs.ru, David Gibson <david@gibson.dropbear.id.au>,
+        benh@kernel.crashing.org
+Subject: Re: [RFC PATCH] vfio/pci: map prefetchble bars as writecombine
+Message-ID: <20180719091252.749f2433@t450s.home>
+In-Reply-To: <CABe79T6G2_eegbQ_SOy4W38xXngQE3b4RBPys-tO+yBd2jq_fQ@mail.gmail.com>
+References: <1531457777-11825-1-git-send-email-srinath.mannam@broadcom.com>
+        <20180717092207.775e381c@t450s.home>
+        <CABe79T7eVS5Z5+CkNRfWik=jFeejq54xheUOS=Jc9oU6qX8=kA@mail.gmail.com>
+        <20180718152531.60f7df6b@t450s.home>
+        <CABe79T6G2_eegbQ_SOy4W38xXngQE3b4RBPys-tO+yBd2jq_fQ@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:ac9:42c1:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 08:12:45
- -0700 (PDT)
-In-Reply-To: <CA+sq2CdDuimDCYK+9arO7-oRpNxdynX+rqYwpeBi9C_R+4pQNw@mail.gmail.com>
-References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
- <20180420163109.46077.60334.stgit@ahduyck-green-test.jf.intel.com> <CA+sq2CdDuimDCYK+9arO7-oRpNxdynX+rqYwpeBi9C_R+4pQNw@mail.gmail.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Thu, 19 Jul 2018 08:12:45 -0700
-Message-ID: <CAKgT0UcTn=fxhrTvAaJNbGFiKPyZ-MaK0T6+AJewFs6YzDvT0Q@mail.gmail.com>
-Subject: Re: [pci PATCH v8 4/4] pci-pf-stub: Add PF driver stub for PFs that
- function only to enable VFs
-To:     Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Cc:     Alexander Duyck <alexander.h.duyck@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
-        Don Dutile <ddutile@redhat.com>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, dwmw@amazon.co.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 19 Jul 2018 15:12:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 3:52 AM, Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
-> Hi,
->
->> +static struct pci_driver pf_stub_driver = {
->> +       .name                   = "pci-pf-stub",
->> +       .id_table               = pci_pf_stub_white_list,
->> +       .probe                  = pci_pf_stub_probe,
->> +       .sriov_configure        = pci_sriov_configure_simple,
->> +};
->> +
->
-> Is there any specific reason for not disabling SRIOV upon driver unload/remove ?
->
-> i.e if a user sets numVFs to a non-zero value and unloads this driver
-> then we have a
-> situation where there is no PF driver in kernel but VFs still exist.
->
-> Thanks,
-> Sunil.
+On Thu, 19 Jul 2018 20:17:11 +0530
+Srinath Mannam <srinath.mannam@broadcom.com> wrote:
 
-I think it was probably just an oversight on my part. Feel free to
-submit a patch to disable SR-IOV on remove and I will give it a quick
-review/ack assuming the code itself is fine.
+> HI Alex,
+> 
+> On Thu, Jul 19, 2018 at 2:55 AM, Alex Williamson
+> <alex.williamson@redhat.com> wrote:
+> > On Thu, 19 Jul 2018 00:05:18 +0530
+> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
+> >  
+> >> Hi Alex,
+> >>
+> >> On Tue, Jul 17, 2018 at 8:52 PM, Alex Williamson
+> >> <alex.williamson@redhat.com> wrote:  
+> >> > On Fri, 13 Jul 2018 10:26:17 +0530
+> >> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
+> >> >  
+> >> >> By default all BARs map with VMA access permissions
+> >> >> as pgprot_noncached.
+> >> >>
+> >> >> In ARM64 pgprot_noncached is MT_DEVICE_nGnRnE which
+> >> >> is strongly ordered and allows aligned access.
+> >> >> This type of mapping works for NON-PREFETCHABLE bars
+> >> >> containing EP controller registers.
+> >> >> But it restricts PREFETCHABLE bars from doing
+> >> >> unaligned access.
+> >> >>
+> >> >> In CMB NVMe drives PREFETCHABLE bars are required to
+> >> >> map as MT_NORMAL_NC to do unaligned access.
+> >> >>
+> >> >> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> >> >> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> >> >> Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+> >> >> ---  
+> >> >
+> >> > This has been discussed before:
+> >> >
+> >> > https://www.spinics.net/lists/kvm/msg156548.html  
+> >> Thank you for inputs.. I have gone through the long list of mail chain
+> >> discussion.  
+> >> >
+> >> > CC'ing the usual suspects from the previous thread.  I'm not convinced
+> >> > that the patch here has considered anything other than the ARM64
+> >> > implications and it's not clear that it considers compatibility with
+> >> > existing users or devices at all.  Can we guarantee for all devices and
+> >> > use cases that WC is semantically equivalent and preferable to UC?  If
+> >> > not then we need to device an extension to the interface that allows
+> >> > the user to specify WC.  Thanks,
+> >> >  
+> >> To implement with user specified WC flags, many changes need to be done.
+> >> Suppose In DPDK, prefetcable BARs map using WC flag, then also same
+> >> question comes
+> >> that WC may be different for different CPUs.
+> >> As per functionality, both WC and PREFETCHABLE are same, like merging writes and
+> >> typically WC is uncached.
+> >> So, based on prefetchable BARs behavior and usage we need to map bar memory.
+> >> Is it right to map prefetchable BARs as strongly ordered, aligned
+> >> access and uncached?  
+> >
+> > Is it possible to answer that question generically?  Whether to map a
+> > BAR as UC or WC is generally a question for the driver.  Does the
+> > device handle unaligned accesses?  Does the device need strong memory
+> > ordering?  If this is a driver level question then the driver that
+> > needs to make that decision is the userspace driver.  VFIO is just a
+> > pass-through here and since we don't offer the user a choice of
+> > mappings, we take the safer and more conservative mapping, ie. UC.
+> >  
+> Yes, you are right, driver should make the decision based on its requirement.
+> In my case, user space driver is part of SPDK, so SPDK should request DPDK
+> and DPDK should request VFIO to map BAR for its choice of mapping.
+> So to implement this we need code changes in VFIO, DPDK and SPDK.
+> 
+> > You're suggesting that there are many changes to be done if we modify
+> > the vfio interface to expose WC under the user's control rather than
+> > simply transparently impose WC for all mappings, but is that really the
+> > case?  Most devices on most platforms seem to work fine now.  Perhaps WC
+> > is a performance optimization, but this is the first instance I've seen
+> > of it as a functional issue.  Does that suggest that the imposed
+> > alignment on your platform is perhaps unique and the relaxed alignment
+> > should be implemented at the architecture specific memory flags for UC
+> > mappings?  For instance, does x86 require this change for the same
+> > device?  The chance for regressions of other devices on other platforms
+> > seems rather high as proposed. Thanks,  
+> This issue is not specific to platform or device. this is the requirement of
+> CMB enabled NVMe cards.
+> NVMe kernel driver already has support to map CMB bar as WC using
+> ioremap_wc function.
+> File: drivers/nvme/host/pci.c
+> Function: nvme_map_cmb
+> code: dev->cmb = ioremap_wc(pci_resource_start(pdev, bar) + offset, size);
+> It means ioremap_wc is working with all platforms and WC map of
+> perfetchable BARs does not harm.
+> Same is required in SPDK NVMe driver also, without WC map it may work
+> in x86 platform, but it does not work in ARM platforms.
 
-Thanks.
+Doesn't this contradict your assertion that it's not specific to
+platform or device?  The device requires support for unaligned
+accesses.  The platform chooses to restrict unaligned accesses for
+non-WC mappings while other platforms do not.  The native driver can
+still clearly have performance considerations for choosing to use WC
+mappings, but it's still not clear to me that the functionality issue
+isn't self inflicted by the platform definition of UC vs WC.  Thanks,
 
-- Alex
+Alex
