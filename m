@@ -1,195 +1,122 @@
-Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94841ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FC8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 00:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DDE82075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:59:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DDE82075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id DE6DD2084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 00:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE6DD2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730996AbeGSAjo (ORCPT
+        id S1730096AbeGSAmA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 20:39:44 -0400
-Received: from gate.crashing.org ([63.228.1.57]:32971 "EHLO gate.crashing.org"
+        Wed, 18 Jul 2018 20:42:00 -0400
+Received: from mga09.intel.com ([134.134.136.24]:12460 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729972AbeGSAjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 20:39:43 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6INwIBG007176;
-        Wed, 18 Jul 2018 18:58:20 -0500
-Message-ID: <c69d0e7c3a95d83da87b566a62619462671a233b.camel@kernel.crashing.org>
-Subject: Re: [RFC PATCH v2 1/4] dt-bindings: misc: Add bindings for misc.
- BMC control fields
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eugene.Cho@dell.com, a.amelkin@yadro.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>, stewart@linux.ibm.com,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Thu, 19 Jul 2018 09:58:18 +1000
-In-Reply-To: <CAL_JsqL_bMXLAA0091-g8PmhXR5g5Pf2y2=ey7Ss5ofHm46sWw@mail.gmail.com>
-References: <20180711053122.30773-1-andrew@aj.id.au>
-         <20180711053122.30773-2-andrew@aj.id.au>
-         <20180711200450.GB17291@rob-hp-laptop>
-         <1531356830.3551458.1437853280.551CA8C5@webmail.messagingengine.com>
-         <CAL_JsqKpXxR4t_-3BOy-0mFePXkaSck_4PfHRD=OZQ-_-T5P=w@mail.gmail.com>
-         <b6ced4cad4d7ff78330181b2c893855c23103953.camel@kernel.crashing.org>
-         <1531463489.747186.1439263128.075AECE1@webmail.messagingengine.com>
-         <CAL_JsqLZo-=7UkuvvUFYdCR4asBBiWyC=Q1ryH=-HLU6vzf9tA@mail.gmail.com>
-         <ece91112ecfdc7218184c4c4519e455cf9397e11.camel@kernel.crashing.org>
-         <CAL_JsqL_bMXLAA0091-g8PmhXR5g5Pf2y2=ey7Ss5ofHm46sWw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728103AbeGSAmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 20:42:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 17:01:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,371,1526367600"; 
+   d="scan'208";a="73938235"
+Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
+  by orsmga001.jf.intel.com with ESMTP; 18 Jul 2018 17:01:39 -0700
+Subject: Re: [PATCHv5 17/19] x86/mm: Implement sync_direct_mapping()
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
+ <20180717112029.42378-18-kirill.shutemov@linux.intel.com>
+Cc:     Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <4a99e079-7bd0-a611-571a-d730815b4b2a@intel.com>
+Date:   Wed, 18 Jul 2018 17:01:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180717112029.42378-18-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-18 at 13:50 -0600, Rob Herring wrote:
-> 
-> > So Rob, I think that's precisely where the disconnect is.
-> > 
-> > I think we all (well hopefully) agree that those few tunables don't fit
-> > in any existing subystem and aren't likely to ever do (famous last
-> > words...).
-> > 
-> > Where we disagree is we want to make this parametrized via the DT, and
-> > you want us to hard wire the list in some kind of SoC driver for a
-> > given SoC family/version.
-> > 
-> > The reason I think hard wiring the list in the driver is not a great
-> > solution is that that list in itself is prone to variations, possibly
-> > fairly often, between boards, vendors, versions of boards, etc...
-> 
-> Can we separate the list of what's enabled from the details of the
-> registers?  Even if we put all this into DT, we may still want to have
-> some separation for dts file structure. Some portion of this has to be
-> SoC specific because you are simply exposing SoC registers.
+On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
+>  arch/x86/include/asm/mktme.h |   8 +
+>  arch/x86/mm/init_64.c        |  10 +
+>  arch/x86/mm/mktme.c          | 437 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 455 insertions(+)
 
-Not sure I understand what you mean by "what's enabled".
+I'm not the maintainer.  But, NAK from me on this on the diffstat alone.
 
-The goal here is to expose register "fields" (nor raw values, some
-registers need locking for RMW etc... the kernel would handle that via
-syscon locking I expect), so basically named "tunables" to userspace.
+There is simply too much technical debt here.  There is no way this code
+is not riddled with bugs and I would bet lots of beer on the fact that
+this has received little to know testing with all the combinations that
+matter, like memory hotplug.  I'd love to be proven wrong, so I eagerly
+await to be dazzled with the test results that have so far escaped
+mention in the changelog.
 
-Userspace is the one that knows the values for a given system.
+Please make an effort to refactor this to reuse the code that we already
+have to manage the direct mapping.  We can't afford 455 new lines of
+page table manipulation that nobody tests or runs.
 
-> > We can't know for sure every SoC tunable (out of the gazillions in
-> > those chips) are going to be needed for a given system. We know which
-> > ones we do use for ours, and that's a couple of handfuls, but it could
-> > be that Dell need a slightly different set, and so might Yadro, or so
-> > might our next board revision for that matter.
-> 
-> That's very hand wavy. Do you have some concrete examples (i.e. dts
-> files) showing the differences.
-
-We could list what we have on the pile for some of our IBM systems
-today, but we would need Dell and Yadro to chime in with what they
-need.
-
-I still, from experience with that stuff and gut feeling, am pretty
-sure it's going to be a moving list, and updating the kernel driver
-constantly isn't going to fly.
-
-> One problem I'm having with this is you are still going to need per
-> board specifics in userspace.
-
-Yes. Userspace is ultimately the one that knows what needs to be done
-on a given machine.
-
->  You may be moving some of details out,
-> but moving to DT is not going to completely eliminate that. 
-
-We aren't trying to either. We are trying to make sure we don't need to
-change the *kernel* all the time, in part bcs we are pushing hard for
-OpenBMC vendors to use upstream with, if possible, no vendor changes.
-
-So userspace has to know the board specific tunables anyways. Today in
-many systems, it does that by whacking /dev/mem. I guess you can
-understand why that is bad :-)
-
-> I agree
-> that not using /dev/mem is a good thing, but there are several ways
-> you could do that independent of any DT binding.
-
-Such as ? The only other option is to have one or more kernel drivers
-that have built-in the precise and complete list of those tunables that
-need to be exposed.
-
-It's not impossible, but I worry that it's not going to scale terribly
-well, and that vendors will constantly "fork" that driver to add
-different things to that list.
-
-I might be wrong here, so I'd like for Eugene (Dell) and Alexander
-(Yadro) to chime in, but experience with BMCs has shown that we
-regularily , as we add a feature or rewrite something, need to find
-another new magic SoC tunable the HW manufacturer hid somewhere that
-will make our stuff work.
-
-> > Now, updating the device-tree in the board flash with whatever vendor
-> > specific information is needed is a LOT easier than getting the kernel
-> > driver constantly updated. The device-tree after all is there to
-> > reflect among other things system specific ways in which the SoC is
-> > wired and configured. This is rather close...
-> 
-> Sadly, updating my kernel is easier than updating my PC firmware
-> (though packaged firmware on my current laptop changes that). I can
-> assure you that ARM boards are generally much worse in that regard.
-> BTW, you may want to pay attention to EBBR[1][2]. Not sure how much
-> you care for BMCs, but there may be some interest.
-
-You are conflating your host kernel and your BMC here. The BMC kernel
-is part of the "firmware", as is its DTS and the BMC userspace.
-
-(Again this isn't the host DTS, this is the BMC DTS).
-
-They get all updated together. My point isn't about the ease or
-difficulty for a *user* to udpate their BMC, in that case the solutions
-above are equivalent.
-
-The point is from a system vendor perspective. A system vendor using
-OpenBMC will *customize* their BMC build in various ways. Typically
-they *will* have a custom DT since this is what represents their
-specific system and they will have some specific userspace bits.
-
-However, we are trying very hard for them *not* to fork the kernel, and
-if possible move OpenBMC towards a fully upstream kernel (still working
-on getting all the SoC drivers cleaned up and pushed up but it's moving
-in the right direction).
-
-So from a vendor perspective, such as us IBM, we *alread* have custom
-DTs and customized userspace, that's part of the normal flow of
-deploying a BMC.
-
-However, we are trying *NOT* to have a custom kernel (and we don't, at
-the moment there is an OpenBMC kernel accross vendors, though it's not
-*yet* fully upstream).
-
-So if the solution proposed is prone to requiring frequent changes to a
-kernel driver, that solution makes the above a lot more difficult and
-will encourage vendors to keep forking kernels.
-
-This is what we are trying to avoid.
-
-Cheers,
-Ben.
-
-> Rob
-> 
-> [1] https://github.com/ARM-software/ebbr
-> [2] https://lists.linaro.org/pipermail/boot-architecture/
+How _was_ this tested?
