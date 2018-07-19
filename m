@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7EBECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34755ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1445D20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1445D20684
+	by mail.kernel.org (Postfix) with ESMTP id C4B9520684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B9520684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731292AbeGSXp7 (ORCPT
+        id S1731356AbeGSXqA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:45:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54034 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:46:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54053 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731031AbeGSXp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:45:58 -0400
+        id S1731246AbeGSXp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:45:59 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DD5D820908; Fri, 20 Jul 2018 01:00:40 +0200 (CEST)
+        id BA15E20935; Fri, 20 Jul 2018 01:00:42 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7176420732;
-        Fri, 20 Jul 2018 01:00:37 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 08C0320732;
+        Fri, 20 Jul 2018 01:00:40 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 03/33] mtd: rawnand: davinci: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 00:59:56 +0200
-Message-Id: <20180719230026.8741-4-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 04/33] mtd: rawnand: denali: convert to nand_scan()
+Date:   Fri, 20 Jul 2018 00:59:57 +0200
+Message-Id: <20180719230026.8741-5-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -71,253 +71,197 @@ configuration between the detection phase and the final NAND scan. Use
 these hooks and convert the driver to just use nand_scan() instead of
 both nand_scan_ident() and nand_scan_tail().
 
-Also change the unused "struct device *dev" parameter of the driver
-structure into a platform device to reuse it in the ->attach_chip()
-hook.
-
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/davinci_nand.c | 195 +++++++++++++++++++-----------------
- 1 file changed, 102 insertions(+), 93 deletions(-)
+ drivers/mtd/nand/raw/denali.c | 138 +++++++++++++++++++++++-------------------
+ 1 file changed, 77 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-index 626c9363e460..ae8b07541519 100644
---- a/drivers/mtd/nand/raw/davinci_nand.c
-+++ b/drivers/mtd/nand/raw/davinci_nand.c
-@@ -53,7 +53,7 @@
- struct davinci_nand_info {
- 	struct nand_chip	chip;
- 
--	struct device		*dev;
-+	struct platform_device	*pdev;
- 
- 	bool			is_readmode;
- 
-@@ -605,6 +605,104 @@ static struct davinci_nand_pdata
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index 4d53f41ada08..8325e5231abc 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -1205,62 +1205,12 @@ static int denali_multidev_fixup(struct denali_nand_info *denali)
+ 	return 0;
  }
- #endif
  
-+static int davinci_nand_attach_chip(struct nand_chip *chip)
-+{
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct davinci_nand_info *info = to_davinci_nand(mtd);
-+	struct davinci_nand_pdata *pdata = nand_davinci_get_pdata(info->pdev);
-+	int ret = 0;
+-int denali_init(struct denali_nand_info *denali)
++static int denali_attach_chip(struct nand_chip *chip)
+ {
+-	struct nand_chip *chip = &denali->nand;
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+-	u32 features = ioread32(denali->reg + FEATURES);
++	struct denali_nand_info *denali = mtd_to_denali(mtd);
+ 	int ret;
+ 
+-	mtd->dev.parent = denali->dev;
+-	denali_hw_init(denali);
+-
+-	init_completion(&denali->complete);
+-	spin_lock_init(&denali->irq_lock);
+-
+-	denali_clear_irq_all(denali);
+-
+-	ret = devm_request_irq(denali->dev, denali->irq, denali_isr,
+-			       IRQF_SHARED, DENALI_NAND_NAME, denali);
+-	if (ret) {
+-		dev_err(denali->dev, "Unable to request IRQ\n");
+-		return ret;
+-	}
+-
+-	denali_enable_irq(denali);
+-	denali_reset_banks(denali);
+-
+-	denali->active_bank = DENALI_INVALID_BANK;
+-
+-	nand_set_flash_node(chip, denali->dev->of_node);
+-	/* Fallback to the default name if DT did not give "label" property */
+-	if (!mtd->name)
+-		mtd->name = "denali-nand";
+-
+-	chip->select_chip = denali_select_chip;
+-	chip->read_byte = denali_read_byte;
+-	chip->write_byte = denali_write_byte;
+-	chip->read_word = denali_read_word;
+-	chip->cmd_ctrl = denali_cmd_ctrl;
+-	chip->dev_ready = denali_dev_ready;
+-	chip->waitfunc = denali_waitfunc;
+-
+-	if (features & FEATURES__INDEX_ADDR) {
+-		denali->host_read = denali_indexed_read;
+-		denali->host_write = denali_indexed_write;
+-	} else {
+-		denali->host_read = denali_direct_read;
+-		denali->host_write = denali_direct_write;
+-	}
+-
+-	/* clk rate info is needed for setup_data_interface */
+-	if (denali->clk_rate && denali->clk_x_rate)
+-		chip->setup_data_interface = denali_setup_data_interface;
+-
+-	ret = nand_scan_ident(mtd, denali->max_banks, NULL);
+-	if (ret)
+-		goto disable_irq;
+-
+ 	if (ioread32(denali->reg + FEATURES) & FEATURES__DMA)
+ 		denali->dma_avail = 1;
+ 
+@@ -1293,7 +1243,7 @@ int denali_init(struct denali_nand_info *denali)
+ 				   mtd->oobsize - denali->oob_skip_bytes);
+ 	if (ret) {
+ 		dev_err(denali->dev, "Failed to setup ECC settings.\n");
+-		goto disable_irq;
++		return ret;
+ 	}
+ 
+ 	dev_dbg(denali->dev,
+@@ -1337,7 +1287,7 @@ int denali_init(struct denali_nand_info *denali)
+ 
+ 	ret = denali_multidev_fixup(denali);
+ 	if (ret)
+-		goto disable_irq;
++		return ret;
+ 
+ 	/*
+ 	 * This buffer is DMA-mapped by denali_{read,write}_page_raw.  Do not
+@@ -1345,26 +1295,92 @@ int denali_init(struct denali_nand_info *denali)
+ 	 * guarantee DMA-safe alignment.
+ 	 */
+ 	denali->buf = kmalloc(mtd->writesize + mtd->oobsize, GFP_KERNEL);
+-	if (!denali->buf) {
+-		ret = -ENOMEM;
+-		goto disable_irq;
++	if (!denali->buf)
++		return -ENOMEM;
 +
-+	if (IS_ERR(pdata))
-+		return PTR_ERR(pdata);
-+
-+	switch (info->chip.ecc.mode) {
-+	case NAND_ECC_NONE:
-+		pdata->ecc_bits = 0;
-+		break;
-+	case NAND_ECC_SOFT:
-+		pdata->ecc_bits = 0;
-+		/*
-+		 * This driver expects Hamming based ECC when ecc_mode is set
-+		 * to NAND_ECC_SOFT. Force ecc.algo to NAND_ECC_HAMMING to
-+		 * avoid adding an extra ->ecc_algo field to
-+		 * davinci_nand_pdata.
-+		 */
-+		info->chip.ecc.algo = NAND_ECC_HAMMING;
-+		break;
-+	case NAND_ECC_HW:
-+		if (pdata->ecc_bits == 4) {
-+			/*
-+			 * No sanity checks:  CPUs must support this,
-+			 * and the chips may not use NAND_BUSWIDTH_16.
-+			 */
-+
-+			/* No sharing 4-bit hardware between chipselects yet */
-+			spin_lock_irq(&davinci_nand_lock);
-+			if (ecc4_busy)
-+				ret = -EBUSY;
-+			else
-+				ecc4_busy = true;
-+			spin_unlock_irq(&davinci_nand_lock);
-+
-+			if (ret == -EBUSY)
-+				return ret;
-+
-+			info->chip.ecc.calculate = nand_davinci_calculate_4bit;
-+			info->chip.ecc.correct = nand_davinci_correct_4bit;
-+			info->chip.ecc.hwctl = nand_davinci_hwctl_4bit;
-+			info->chip.ecc.bytes = 10;
-+			info->chip.ecc.options = NAND_ECC_GENERIC_ERASED_CHECK;
-+			info->chip.ecc.algo = NAND_ECC_BCH;
-+		} else {
-+			/* 1bit ecc hamming */
-+			info->chip.ecc.calculate = nand_davinci_calculate_1bit;
-+			info->chip.ecc.correct = nand_davinci_correct_1bit;
-+			info->chip.ecc.hwctl = nand_davinci_hwctl_1bit;
-+			info->chip.ecc.bytes = 3;
-+			info->chip.ecc.algo = NAND_ECC_HAMMING;
-+		}
-+		info->chip.ecc.size = 512;
-+		info->chip.ecc.strength = pdata->ecc_bits;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * Update ECC layout if needed ... for 1-bit HW ECC, the default
-+	 * is OK, but it allocates 6 bytes when only 3 are needed (for
-+	 * each 512 bytes).  For the 4-bit HW ECC, that default is not
-+	 * usable:  10 bytes are needed, not 6.
-+	 */
-+	if (pdata->ecc_bits == 4) {
-+		int chunks = mtd->writesize / 512;
-+
-+		if (!chunks || mtd->oobsize < 16) {
-+			dev_dbg(&info->pdev->dev, "too small\n");
-+			return -EINVAL;
-+		}
-+
-+		/* For small page chips, preserve the manufacturer's
-+		 * badblock marking data ... and make sure a flash BBT
-+		 * table marker fits in the free bytes.
-+		 */
-+		if (chunks == 1) {
-+			mtd_set_ooblayout(mtd, &hwecc4_small_ooblayout_ops);
-+		} else if (chunks == 4 || chunks == 8) {
-+			mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
-+			info->chip.ecc.mode = NAND_ECC_HW_OOB_FIRST;
-+		} else {
-+			return -EIO;
-+		}
-+	}
-+
-+	return ret;
++	return 0;
 +}
 +
-+static struct nand_controller_ops davinci_nand_controller_ops = {
-+	.attach_chip = davinci_nand_attach_chip,
++static void denali_detach_chip(struct nand_chip *chip)
++{
++	struct mtd_info *mtd = nand_to_mtd(chip);
++	struct denali_nand_info *denali = mtd_to_denali(mtd);
++
++	kfree(denali->buf);
++}
++
++static struct nand_controller_ops denali_controller_ops = {
++	.attach_chip = denali_attach_chip,
++	.detach_chip = denali_detach_chip,
 +};
 +
- static int nand_davinci_probe(struct platform_device *pdev)
- {
- 	struct davinci_nand_pdata	*pdata;
-@@ -658,7 +756,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
- 		return -EADDRNOTAVAIL;
++int denali_init(struct denali_nand_info *denali)
++{
++	struct nand_chip *chip = &denali->nand;
++	struct mtd_info *mtd = nand_to_mtd(chip);
++	u32 features = ioread32(denali->reg + FEATURES);
++	int ret;
++
++	mtd->dev.parent = denali->dev;
++	denali_hw_init(denali);
++
++	init_completion(&denali->complete);
++	spin_lock_init(&denali->irq_lock);
++
++	denali_clear_irq_all(denali);
++
++	ret = devm_request_irq(denali->dev, denali->irq, denali_isr,
++			       IRQF_SHARED, DENALI_NAND_NAME, denali);
++	if (ret) {
++		dev_err(denali->dev, "Unable to request IRQ\n");
++		return ret;
++	}
++
++	denali_enable_irq(denali);
++	denali_reset_banks(denali);
++
++	denali->active_bank = DENALI_INVALID_BANK;
++
++	nand_set_flash_node(chip, denali->dev->of_node);
++	/* Fallback to the default name if DT did not give "label" property */
++	if (!mtd->name)
++		mtd->name = "denali-nand";
++
++	chip->select_chip = denali_select_chip;
++	chip->read_byte = denali_read_byte;
++	chip->write_byte = denali_write_byte;
++	chip->read_word = denali_read_word;
++	chip->cmd_ctrl = denali_cmd_ctrl;
++	chip->dev_ready = denali_dev_ready;
++	chip->waitfunc = denali_waitfunc;
++
++	if (features & FEATURES__INDEX_ADDR) {
++		denali->host_read = denali_indexed_read;
++		denali->host_write = denali_indexed_write;
++	} else {
++		denali->host_read = denali_direct_read;
++		denali->host_write = denali_direct_write;
  	}
  
--	info->dev		= &pdev->dev;
-+	info->pdev		= pdev;
- 	info->base		= base;
- 	info->vaddr		= vaddr;
- 
-@@ -708,97 +806,13 @@ static int nand_davinci_probe(struct platform_device *pdev)
- 	spin_unlock_irq(&davinci_nand_lock);
- 
- 	/* Scan to find existence of the device(s) */
--	ret = nand_scan_ident(mtd, pdata->mask_chipsel ? 2 : 1, NULL);
-+	info->chip.dummy_controller.ops = &davinci_nand_controller_ops;
-+	ret = nand_scan(mtd, pdata->mask_chipsel ? 2 : 1);
- 	if (ret < 0) {
- 		dev_dbg(&pdev->dev, "no NAND chip(s) found\n");
- 		return ret;
- 	}
- 
--	switch (info->chip.ecc.mode) {
--	case NAND_ECC_NONE:
--		pdata->ecc_bits = 0;
--		break;
--	case NAND_ECC_SOFT:
--		pdata->ecc_bits = 0;
--		/*
--		 * This driver expects Hamming based ECC when ecc_mode is set
--		 * to NAND_ECC_SOFT. Force ecc.algo to NAND_ECC_HAMMING to
--		 * avoid adding an extra ->ecc_algo field to
--		 * davinci_nand_pdata.
--		 */
--		info->chip.ecc.algo = NAND_ECC_HAMMING;
--		break;
--	case NAND_ECC_HW:
--		if (pdata->ecc_bits == 4) {
--			/* No sanity checks:  CPUs must support this,
--			 * and the chips may not use NAND_BUSWIDTH_16.
--			 */
--
--			/* No sharing 4-bit hardware between chipselects yet */
--			spin_lock_irq(&davinci_nand_lock);
--			if (ecc4_busy)
--				ret = -EBUSY;
--			else
--				ecc4_busy = true;
--			spin_unlock_irq(&davinci_nand_lock);
--
--			if (ret == -EBUSY)
--				return ret;
--
--			info->chip.ecc.calculate = nand_davinci_calculate_4bit;
--			info->chip.ecc.correct = nand_davinci_correct_4bit;
--			info->chip.ecc.hwctl = nand_davinci_hwctl_4bit;
--			info->chip.ecc.bytes = 10;
--			info->chip.ecc.options = NAND_ECC_GENERIC_ERASED_CHECK;
--			info->chip.ecc.algo = NAND_ECC_BCH;
--		} else {
--			/* 1bit ecc hamming */
--			info->chip.ecc.calculate = nand_davinci_calculate_1bit;
--			info->chip.ecc.correct = nand_davinci_correct_1bit;
--			info->chip.ecc.hwctl = nand_davinci_hwctl_1bit;
--			info->chip.ecc.bytes = 3;
--			info->chip.ecc.algo = NAND_ECC_HAMMING;
--		}
--		info->chip.ecc.size = 512;
--		info->chip.ecc.strength = pdata->ecc_bits;
--		break;
--	default:
--		return -EINVAL;
--	}
--
--	/* Update ECC layout if needed ... for 1-bit HW ECC, the default
--	 * is OK, but it allocates 6 bytes when only 3 are needed (for
--	 * each 512 bytes).  For the 4-bit HW ECC, that default is not
--	 * usable:  10 bytes are needed, not 6.
--	 */
--	if (pdata->ecc_bits == 4) {
--		int	chunks = mtd->writesize / 512;
--
--		if (!chunks || mtd->oobsize < 16) {
--			dev_dbg(&pdev->dev, "too small\n");
--			ret = -EINVAL;
--			goto err;
--		}
--
--		/* For small page chips, preserve the manufacturer's
--		 * badblock marking data ... and make sure a flash BBT
--		 * table marker fits in the free bytes.
--		 */
--		if (chunks == 1) {
--			mtd_set_ooblayout(mtd, &hwecc4_small_ooblayout_ops);
--		} else if (chunks == 4 || chunks == 8) {
--			mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
--			info->chip.ecc.mode = NAND_ECC_HW_OOB_FIRST;
--		} else {
--			ret = -EIO;
--			goto err;
--		}
--	}
--
 -	ret = nand_scan_tail(mtd);
--	if (ret < 0)
--		goto err;
--
- 	if (pdata->parts)
- 		ret = mtd_device_register(mtd, pdata->parts, pdata->nr_parts);
- 	else
-@@ -815,11 +829,6 @@ static int nand_davinci_probe(struct platform_device *pdev)
- err_cleanup_nand:
- 	nand_cleanup(&info->chip);
++	/* clk rate info is needed for setup_data_interface */
++	if (denali->clk_rate && denali->clk_x_rate)
++		chip->setup_data_interface = denali_setup_data_interface;
++
++	chip->dummy_controller.ops = &denali_controller_ops;
++	ret = nand_scan(mtd, denali->max_banks);
+ 	if (ret)
+-		goto free_buf;
++		goto disable_irq;
  
--err:
--	spin_lock_irq(&davinci_nand_lock);
--	if (info->chip.ecc.mode == NAND_ECC_HW_SYNDROME)
--		ecc4_busy = false;
--	spin_unlock_irq(&davinci_nand_lock);
- 	return ret;
- }
+ 	ret = mtd_device_register(mtd, NULL, 0);
+ 	if (ret) {
+ 		dev_err(denali->dev, "Failed to register MTD: %d\n", ret);
+ 		goto cleanup_nand;
+ 	}
++
+ 	return 0;
+ 
+ cleanup_nand:
+ 	nand_cleanup(chip);
+-free_buf:
+-	kfree(denali->buf);
+ disable_irq:
+ 	denali_disable_irq(denali);
  
 -- 
 2.14.1
