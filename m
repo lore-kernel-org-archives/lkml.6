@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E17BECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C85ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEB4820684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB4820684
+	by mail.kernel.org (Postfix) with ESMTP id 862362084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862362084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731863AbeGSXrB (ORCPT
+        id S1731886AbeGSXrE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:47:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54424 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:47:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54469 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730811AbeGSXq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:46:59 -0400
+        id S1730811AbeGSXrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:47:02 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8D2922097D; Fri, 20 Jul 2018 01:01:42 +0200 (CEST)
+        id 82C3E2098C; Fri, 20 Jul 2018 01:01:45 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D32CC20949;
-        Fri, 20 Jul 2018 01:01:10 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id ED85A20717;
+        Fri, 20 Jul 2018 01:01:13 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 22/33] mtd: rawnand: tango: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 01:00:15 +0200
-Message-Id: <20180719230026.8741-23-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 24/33] mtd: rawnand: txx9ndfmc: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 01:00:17 +0200
+Message-Id: <20180719230026.8741-25-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -73,73 +73,75 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/tango_nand.c | 40 +++++++++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 16 deletions(-)
+ drivers/mtd/nand/raw/txx9ndfmc.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/tango_nand.c b/drivers/mtd/nand/raw/tango_nand.c
-index dd7a26efdf4f..d06d1aa918ed 100644
---- a/drivers/mtd/nand/raw/tango_nand.c
-+++ b/drivers/mtd/nand/raw/tango_nand.c
-@@ -517,6 +517,28 @@ static int tango_set_timings(struct mtd_info *mtd, int csline,
- 	return 0;
- }
+diff --git a/drivers/mtd/nand/raw/txx9ndfmc.c b/drivers/mtd/nand/raw/txx9ndfmc.c
+index 9019022774f7..4b2d9418d14a 100644
+--- a/drivers/mtd/nand/raw/txx9ndfmc.c
++++ b/drivers/mtd/nand/raw/txx9ndfmc.c
+@@ -254,23 +254,23 @@ static void txx9ndfmc_initialize(struct platform_device *dev)
+ #define TXX9NDFMC_NS_TO_CYC(gbusclk, ns) \
+ 	DIV_ROUND_UP((ns) * DIV_ROUND_UP(gbusclk, 1000), 1000000)
  
-+static int tango_attach_chip(struct nand_chip *chip)
-+{
-+	struct nand_ecc_ctrl *ecc = &chip->ecc;
-+
-+	ecc->mode = NAND_ECC_HW;
-+	ecc->algo = NAND_ECC_BCH;
-+	ecc->bytes = DIV_ROUND_UP(ecc->strength * FIELD_ORDER, BITS_PER_BYTE);
-+
-+	ecc->read_page_raw = tango_read_page_raw;
-+	ecc->write_page_raw = tango_write_page_raw;
-+	ecc->read_page = tango_read_page;
-+	ecc->write_page = tango_write_page;
-+	ecc->read_oob = tango_read_oob;
-+	ecc->write_oob = tango_write_oob;
+-static int txx9ndfmc_nand_scan(struct mtd_info *mtd)
++static int txx9ndfmc_attach_chip(struct nand_chip *chip)
+ {
+-	struct nand_chip *chip = mtd_to_nand(mtd);
+-	int ret;
++	struct mtd_info *mtd = nand_to_mtd(chip);
+ 
+-	ret = nand_scan_ident(mtd, 1, NULL);
+-	if (!ret) {
+-		if (mtd->writesize >= 512) {
+-			/* Hardware ECC 6 byte ECC per 512 Byte data */
+-			chip->ecc.size = 512;
+-			chip->ecc.bytes = 6;
+-		}
+-		ret = nand_scan_tail(mtd);
++	if (mtd->writesize >= 512) {
++		/* Hardware ECC 6 byte ECC per 512 Byte data */
++		chip->ecc.size = 512;
++		chip->ecc.bytes = 6;
+ 	}
+-	return ret;
 +
 +	return 0;
-+}
-+
-+static struct nand_controller_ops tango_controller_ops = {
-+	.attach_chip = tango_attach_chip,
+ }
+ 
++static struct nand_controller_ops txx9ndfmc_controller_ops = {
++	.attach_chip = txx9ndfmc_attach_chip,
 +};
 +
- static int chip_init(struct device *dev, struct device_node *np)
+ static int __init txx9ndfmc_probe(struct platform_device *dev)
  {
- 	u32 cs;
-@@ -560,28 +582,14 @@ static int chip_init(struct device *dev, struct device_node *np)
- 			NAND_NO_SUBPAGE_WRITE |
- 			NAND_WAIT_TCCS;
- 	chip->controller = &nfc->hw;
-+	chip->controller->ops = &tango_controller_ops;
- 	tchip->base = nfc->pbus_base + (cs * 256);
+ 	struct txx9ndfmc_platform_data *plat = dev_get_platdata(&dev->dev);
+@@ -304,6 +304,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
+ 		 (gbusclk + 500000) / 1000000, hold, spw);
  
- 	nand_set_flash_node(chip, np);
- 	mtd_set_ooblayout(mtd, &tango_nand_ooblayout_ops);
- 	mtd->dev.parent = dev;
+ 	nand_controller_init(&drvdata->controller);
++	drvdata->controller.ops = &txx9ndfmc_controller_ops;
  
--	err = nand_scan_ident(mtd, 1, NULL);
--	if (err)
--		return err;
--
--	ecc->mode = NAND_ECC_HW;
--	ecc->algo = NAND_ECC_BCH;
--	ecc->bytes = DIV_ROUND_UP(ecc->strength * FIELD_ORDER, BITS_PER_BYTE);
--
--	ecc->read_page_raw = tango_read_page_raw;
--	ecc->write_page_raw = tango_write_page_raw;
--	ecc->read_page = tango_read_page;
--	ecc->write_page = tango_write_page;
--	ecc->read_oob = tango_read_oob;
--	ecc->write_oob = tango_write_oob;
--
--	err = nand_scan_tail(mtd);
-+	err = nand_scan(mtd, 1);
- 	if (err)
- 		return err;
+ 	platform_set_drvdata(dev, drvdata);
+ 	txx9ndfmc_initialize(dev);
+@@ -332,7 +333,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
+ 		chip->ecc.correct = txx9ndfmc_correct_data;
+ 		chip->ecc.hwctl = txx9ndfmc_enable_hwecc;
+ 		chip->ecc.mode = NAND_ECC_HW;
+-		/* txx9ndfmc_nand_scan will overwrite ecc.size and ecc.bytes */
++		/* nand_scan() will overwrite ecc.size and ecc.bytes */
+ 		chip->ecc.size = 256;
+ 		chip->ecc.bytes = 3;
+ 		chip->ecc.strength = 1;
+@@ -359,7 +360,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
+ 		if (plat->wide_mask & (1 << i))
+ 			chip->options |= NAND_BUSWIDTH_16;
  
+-		if (txx9ndfmc_nand_scan(mtd)) {
++		if (nand_scan(mtd, 1)) {
+ 			kfree(txx9_priv->mtdname);
+ 			kfree(txx9_priv);
+ 			continue;
 -- 
 2.14.1
 
