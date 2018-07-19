@@ -2,164 +2,100 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC02BC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24ABDC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB8D2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:12:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB8D2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C76CA2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76CA2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731915AbeGSP4c (ORCPT
+        id S1731816AbeGSP7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:56:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53664 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731733AbeGSP4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:56:32 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AED0536A5D4;
-        Thu, 19 Jul 2018 15:12:54 +0000 (UTC)
-Received: from t450s.home (ovpn-116-29.phx2.redhat.com [10.3.116.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3EA2E60851;
-        Thu, 19 Jul 2018 15:12:53 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 09:12:52 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     Ray Jui <ray.jui@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        kvm@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        aik@ozlabs.ru, David Gibson <david@gibson.dropbear.id.au>,
-        benh@kernel.crashing.org
-Subject: Re: [RFC PATCH] vfio/pci: map prefetchble bars as writecombine
-Message-ID: <20180719091252.749f2433@t450s.home>
-In-Reply-To: <CABe79T6G2_eegbQ_SOy4W38xXngQE3b4RBPys-tO+yBd2jq_fQ@mail.gmail.com>
-References: <1531457777-11825-1-git-send-email-srinath.mannam@broadcom.com>
-        <20180717092207.775e381c@t450s.home>
-        <CABe79T7eVS5Z5+CkNRfWik=jFeejq54xheUOS=Jc9oU6qX8=kA@mail.gmail.com>
-        <20180718152531.60f7df6b@t450s.home>
-        <CABe79T6G2_eegbQ_SOy4W38xXngQE3b4RBPys-tO+yBd2jq_fQ@mail.gmail.com>
+        Thu, 19 Jul 2018 11:59:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46462 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730521AbeGSP7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 11:59:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E1ECCAFC8;
+        Thu, 19 Jul 2018 15:15:57 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 17:15:55 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oscar Salvador <osalvador@techadventures.net>
+Cc:     akpm@linux-foundation.org, pasha.tatashin@oracle.com,
+        vbabka@suse.cz, aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v2 3/5] mm/page_alloc: Optimize free_area_init_core
+Message-ID: <20180719151555.GH7193@dhcp22.suse.cz>
+References: <20180719132740.32743-1-osalvador@techadventures.net>
+ <20180719132740.32743-4-osalvador@techadventures.net>
+ <20180719134417.GC7193@dhcp22.suse.cz>
+ <20180719140327.GB10988@techadventures.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 19 Jul 2018 15:12:55 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719140327.GB10988@techadventures.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 20:17:11 +0530
-Srinath Mannam <srinath.mannam@broadcom.com> wrote:
-
-> HI Alex,
+On Thu 19-07-18 16:03:27, Oscar Salvador wrote:
+> On Thu, Jul 19, 2018 at 03:44:17PM +0200, Michal Hocko wrote:
+> > On Thu 19-07-18 15:27:38, osalvador@techadventures.net wrote:
+> > > From: Oscar Salvador <osalvador@suse.de>
+> > > 
+> > > In free_area_init_core we calculate the amount of managed pages
+> > > we are left with, by substracting the memmap pages and the pages
+> > > reserved for dma.
+> > > With the values left, we also account the total of kernel pages and
+> > > the total of pages.
+> > > 
+> > > Since memmap pages are calculated from zone->spanned_pages,
+> > > let us only do these calculcations whenever zone->spanned_pages is greather
+> > > than 0.
+> > 
+> > But why do we care? How do we test this? In other words, why is this
+> > worth merging?
+>  
+> Uhm, unless the values are going to be updated, why do we want to go through all
+> comparasions/checks?
+> I thought it was a nice thing to have the chance to skip that block unless we are going to
+> update the counters.
 > 
-> On Thu, Jul 19, 2018 at 2:55 AM, Alex Williamson
-> <alex.williamson@redhat.com> wrote:
-> > On Thu, 19 Jul 2018 00:05:18 +0530
-> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
-> >  
-> >> Hi Alex,
-> >>
-> >> On Tue, Jul 17, 2018 at 8:52 PM, Alex Williamson
-> >> <alex.williamson@redhat.com> wrote:  
-> >> > On Fri, 13 Jul 2018 10:26:17 +0530
-> >> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
-> >> >  
-> >> >> By default all BARs map with VMA access permissions
-> >> >> as pgprot_noncached.
-> >> >>
-> >> >> In ARM64 pgprot_noncached is MT_DEVICE_nGnRnE which
-> >> >> is strongly ordered and allows aligned access.
-> >> >> This type of mapping works for NON-PREFETCHABLE bars
-> >> >> containing EP controller registers.
-> >> >> But it restricts PREFETCHABLE bars from doing
-> >> >> unaligned access.
-> >> >>
-> >> >> In CMB NVMe drives PREFETCHABLE bars are required to
-> >> >> map as MT_NORMAL_NC to do unaligned access.
-> >> >>
-> >> >> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> >> >> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> >> >> Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
-> >> >> ---  
-> >> >
-> >> > This has been discussed before:
-> >> >
-> >> > https://www.spinics.net/lists/kvm/msg156548.html  
-> >> Thank you for inputs.. I have gone through the long list of mail chain
-> >> discussion.  
-> >> >
-> >> > CC'ing the usual suspects from the previous thread.  I'm not convinced
-> >> > that the patch here has considered anything other than the ARM64
-> >> > implications and it's not clear that it considers compatibility with
-> >> > existing users or devices at all.  Can we guarantee for all devices and
-> >> > use cases that WC is semantically equivalent and preferable to UC?  If
-> >> > not then we need to device an extension to the interface that allows
-> >> > the user to specify WC.  Thanks,
-> >> >  
-> >> To implement with user specified WC flags, many changes need to be done.
-> >> Suppose In DPDK, prefetcable BARs map using WC flag, then also same
-> >> question comes
-> >> that WC may be different for different CPUs.
-> >> As per functionality, both WC and PREFETCHABLE are same, like merging writes and
-> >> typically WC is uncached.
-> >> So, based on prefetchable BARs behavior and usage we need to map bar memory.
-> >> Is it right to map prefetchable BARs as strongly ordered, aligned
-> >> access and uncached?  
-> >
-> > Is it possible to answer that question generically?  Whether to map a
-> > BAR as UC or WC is generally a question for the driver.  Does the
-> > device handle unaligned accesses?  Does the device need strong memory
-> > ordering?  If this is a driver level question then the driver that
-> > needs to make that decision is the userspace driver.  VFIO is just a
-> > pass-through here and since we don't offer the user a choice of
-> > mappings, we take the safer and more conservative mapping, ie. UC.
-> >  
-> Yes, you are right, driver should make the decision based on its requirement.
-> In my case, user space driver is part of SPDK, so SPDK should request DPDK
-> and DPDK should request VFIO to map BAR for its choice of mapping.
-> So to implement this we need code changes in VFIO, DPDK and SPDK.
-> 
-> > You're suggesting that there are many changes to be done if we modify
-> > the vfio interface to expose WC under the user's control rather than
-> > simply transparently impose WC for all mappings, but is that really the
-> > case?  Most devices on most platforms seem to work fine now.  Perhaps WC
-> > is a performance optimization, but this is the first instance I've seen
-> > of it as a functional issue.  Does that suggest that the imposed
-> > alignment on your platform is perhaps unique and the relaxed alignment
-> > should be implemented at the architecture specific memory flags for UC
-> > mappings?  For instance, does x86 require this change for the same
-> > device?  The chance for regressions of other devices on other platforms
-> > seems rather high as proposed. Thanks,  
-> This issue is not specific to platform or device. this is the requirement of
-> CMB enabled NVMe cards.
-> NVMe kernel driver already has support to map CMB bar as WC using
-> ioremap_wc function.
-> File: drivers/nvme/host/pci.c
-> Function: nvme_map_cmb
-> code: dev->cmb = ioremap_wc(pci_resource_start(pdev, bar) + offset, size);
-> It means ioremap_wc is working with all platforms and WC map of
-> perfetchable BARs does not harm.
-> Same is required in SPDK NVMe driver also, without WC map it may work
-> in x86 platform, but it does not work in ARM platforms.
+> Again, if you think this only adds complexity and no good, I can drop it.
 
-Doesn't this contradict your assertion that it's not specific to
-platform or device?  The device requires support for unaligned
-accesses.  The platform chooses to restrict unaligned accesses for
-non-WC mappings while other platforms do not.  The native driver can
-still clearly have performance considerations for choosing to use WC
-mappings, but it's still not clear to me that the functionality issue
-isn't self inflicted by the platform definition of UC vs WC.  Thanks,
+Your changelog doesn't really explain the motivation. Does the change
+help performance? Is this a pure cleanup?
 
-Alex
+The function is certainly not an example of beauty. It is more an
+example of changes done on top of older ones without much thinking. But
+I do not see your change would make it so much better. I would consider
+it a much nicer cleanup if it was split into logical units each doing
+one specific thing.
+
+Btw. are you sure this change is correct? E.g.
+		/*
+		 * Set an approximate value for lowmem here, it will be adjusted
+		 * when the bootmem allocator frees pages into the buddy system.
+		 * And all highmem pages will be managed by the buddy system.
+		 */
+		zone->managed_pages = is_highmem_idx(j) ? realsize : freesize;
+
+expects freesize to be calculated properly and just from quick reading
+the code I do not see why skipping other adjustments is ok for size > 0.
+Maybe this is OK, I dunno and my brain is already heading few days off
+but a real cleanup wouldn't even make me think what the heck is going on
+here.
+
+-- 
+Michal Hocko
+SUSE Labs
