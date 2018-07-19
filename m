@@ -2,143 +2,149 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E706ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 04:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD2BECDFBD
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 04:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E2E2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 04:36:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E2E2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 47C7A20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 04:39:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="jf2PHG9R";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iv0i68fU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47C7A20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbeGSFRU (ORCPT
+        id S1727441AbeGSFU6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 01:17:20 -0400
-Received: from gate.crashing.org ([63.228.1.57]:59530 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbeGSFRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 01:17:19 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6J4ZOEF020357;
-        Wed, 18 Jul 2018 23:35:25 -0500
-Message-ID: <9787b471abc49c0b3db60e3471473a7a5b45ade7.camel@kernel.crashing.org>
-Subject: Re: [RFC PATCH v2 1/4] dt-bindings: misc: Add bindings for misc.
- BMC control fields
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eugene.Cho@dell.com, a.amelkin@yadro.com,
-        linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        stewart@linux.ibm.com, OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Thu, 19 Jul 2018 14:35:24 +1000
-In-Reply-To: <1531967302.2140539.1445583600.0F5ED287@webmail.messagingengine.com>
-References: <20180711053122.30773-1-andrew@aj.id.au>
-         <20180711053122.30773-2-andrew@aj.id.au>
-         <20180711200450.GB17291@rob-hp-laptop>
-         <1531356830.3551458.1437853280.551CA8C5@webmail.messagingengine.com>
-         <CAL_JsqKpXxR4t_-3BOy-0mFePXkaSck_4PfHRD=OZQ-_-T5P=w@mail.gmail.com>
-         <b6ced4cad4d7ff78330181b2c893855c23103953.camel@kernel.crashing.org>
-         <1531463489.747186.1439263128.075AECE1@webmail.messagingengine.com>
-         <CAL_JsqLZo-=7UkuvvUFYdCR4asBBiWyC=Q1ryH=-HLU6vzf9tA@mail.gmail.com>
-         <ece91112ecfdc7218184c4c4519e455cf9397e11.camel@kernel.crashing.org>
-         <CAL_JsqL_bMXLAA0091-g8PmhXR5g5Pf2y2=ey7Ss5ofHm46sWw@mail.gmail.com>
-         <c69d0e7c3a95d83da87b566a62619462671a233b.camel@kernel.crashing.org>
-         <1531967302.2140539.1445583600.0F5ED287@webmail.messagingengine.com>
+        Thu, 19 Jul 2018 01:20:58 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:46089 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726931AbeGSFU6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 01:20:58 -0400
+Received: by mail-yb0-f193.google.com with SMTP id c3-v6so2765261ybi.13
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 21:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=bXEgyHTH6uod0tFsk5+OEAwOiCXfxwcaDdmD+0i18XI=;
+        b=jf2PHG9RnoWn+MzFtjD8wcZrOW83dwQmW2SlofeDp5r7hbKjIAtPGLaFN3ZC5nrgFK
+         QzXY4ef+YRfVyvbZpV2gwoBAZb8zXJWAGsobThBgLyjW1cDa6bPWId3/mpNPBWOXw5h9
+         /uPvjeOCoMjp0LMlV02h7Ww4Lfb6YaYcdxGzmndVSbkhNg0N+9Hnufumlfp4KrQ6+abm
+         riQyMJ4R/R8InJS/ta8a7SFu1YVWW+OVSDm28kWAyYs6MBTRr86yuIP4/PIR4UDiigOZ
+         4u3i7rgDP46NkfPSNlk7acQG+6FKZJOgs6Ifk12ORbKLN/Wedfev/WT6Py4UEu19ioSp
+         M3yQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=bXEgyHTH6uod0tFsk5+OEAwOiCXfxwcaDdmD+0i18XI=;
+        b=iv0i68fUbqOSU0hwQPNRqDHlX852MwT/CiOOco3H10tg0g0COpRw2CaOQGCt9lkOnG
+         WmntiYKg8Y5sWXi8tIQitm4WCajPrlWDzfLNJC1M6LAXm+P5UmH2PcoGV11ihYG8eBVl
+         uK6hwwLHYCCZq7uqYM340J0qrRKuYEJNpg7Vk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=bXEgyHTH6uod0tFsk5+OEAwOiCXfxwcaDdmD+0i18XI=;
+        b=akq+C17FYqk0NH0/5Jn7BSmMHxU5e9fu15iqjxuVm8d0Ehp6blcmntH+JXSn37b8fZ
+         JNxcaglwCMSBrwKlmdBboDrB8bV/pNB427HdDwPv9686MCNJNJRrnFGMuP8rVGWn1jqj
+         WpRc2gvtk7Hfgi16wPOEesI9FV9mL4SqU4zvoG1hF/usfbUI/KylwX+4y/5ugiX9vKwU
+         yZZXC3QnXbppryMkvMkJsW7I3oM3bYMaXKrbjqsTb6kHG1Tpk5AICTWyx3EdFeeqVGeI
+         OcojNNebDfh/+HxwJDapuv+aOOvhjm8TDURsHfpOqXVZ+X/zlmWCFzxFP1Fg5H+RdldD
+         l/Gg==
+X-Gm-Message-State: AOUpUlHqtz5M6axXBxJ86mB4faLVVBScr9rgFoL4AxvVJbB1Km0hkMLk
+        n+s9ZkWrSGFYMm+5sBx40dgGJaq7pIiD1E1RPQZqHw==
+X-Google-Smtp-Source: AAOMgpehnixLogNw78oXLMj08jN5JJze1OjMa+uYxi93tFOmS6aQF5gl/Occu9yMLQQWSIXKTjyW0jfddgbwhBFvZjY=
+X-Received: by 2002:a25:b219:: with SMTP id i25-v6mr4891671ybj.112.1531975187629;
+ Wed, 18 Jul 2018 21:39:47 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 21:39:46
+ -0700 (PDT)
+In-Reply-To: <20180716172205.GB77258@google.com>
+References: <20180716035657.GA32180@beast> <20180716172205.GB77258@google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 18 Jul 2018 21:39:46 -0700
+X-Google-Sender-Auth: kevPxNfh9Nd3xf64Hr44p58Tfu4
+Message-ID: <CAGXu5jJL8B+eBwm5j7M=p9zd+n559M+yFC9RoDyV8cjmvT6JhQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/power/64: Remove VLA usage
+To:     Eric Biggers <ebiggers@google.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-07-19 at 11:58 +0930, Andrew Jeffery wrote:
-> > > I agree
-> > > that not using /dev/mem is a good thing, but there are several ways
-> > > you could do that independent of any DT binding.
-> > 
-> > Such as ? The only other option is to have one or more kernel drivers
-> > that have built-in the precise and complete list of those tunables that
-> > need to be exposed.
-> > 
-> > It's not impossible, but I worry that it's not going to scale terribly
-> > well, and that vendors will constantly "fork" that driver to add
-> > different things to that list.
-> 
-> Picking on that last point, "different things" doesn't necessarily
-> mean "different fields in the SoC" (though it may). We could just
-> need to use different initial values for the fields already
-> described. 
+On Mon, Jul 16, 2018 at 10:22 AM, Eric Biggers <ebiggers@google.com> wrote:
+> On Sun, Jul 15, 2018 at 08:56:57PM -0700, Kees Cook wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this
+>> removes the discouraged use of AHASH_REQUEST_ON_STACK by switching to
+>> shash directly and allocating the descriptor in heap memory (which should
+>> be fine: the tfm has already been allocated there too).
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>  arch/x86/power/hibernate_64.c | 35 +++++++++++++++++++----------------
+>>  1 file changed, 19 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+>> index 67ccf64c8bd8..0ed01bb935a6 100644
+>> --- a/arch/x86/power/hibernate_64.c
+>> +++ b/arch/x86/power/hibernate_64.c
+>> @@ -233,28 +233,31 @@ struct restore_data_record {
+>>   */
+>>  static int get_e820_md5(struct e820_table *table, void *buf)
+>>  {
+>> -     struct scatterlist sg;
+>> -     struct crypto_ahash *tfm;
+>> +     struct crypto_shash *tfm;
+>> +     struct shash_desc *desc;
+>>       int size;
+>>       int ret = 0;
+>>
+>> -     tfm = crypto_alloc_ahash("md5", 0, CRYPTO_ALG_ASYNC);
+>> +     tfm = crypto_alloc_shash("md5", 0, 0);
+>>       if (IS_ERR(tfm))
+>>               return -ENOMEM;
+>>
+>> -     {
+>> -             AHASH_REQUEST_ON_STACK(req, tfm);
+>> -             size = offsetof(struct e820_table, entries) + sizeof(struct e820_entry) * table->nr_entries;
+>> -             ahash_request_set_tfm(req, tfm);
+>> -             sg_init_one(&sg, (u8 *)table, size);
+>> -             ahash_request_set_callback(req, 0, NULL, NULL);
+>> -             ahash_request_set_crypt(req, &sg, buf, size);
+>> -
+>> -             if (crypto_ahash_digest(req))
+>> -                     ret = -EINVAL;
+>> -             ahash_request_zero(req);
+>> -     }
+>> -     crypto_free_ahash(tfm);
+>> +     desc = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(tfm),
+>> +                    GFP_KERNEL);
+>> +     if (!desc)
+>> +             return -ENOMEM;
+>
+> Need crypto_free_shash(tfm) if the kmalloc() here fails.
 
-I don't worry about initial values too much. Those could be specified
-by userspace. It would be trivial to have something akin to
-/etc/sysctl.conf that contains the initial values and a script blasting
-them early. In fact I prefer this being in userspace to be frank. It
-could be in the initramfs if we want it done early enough, maybe with a
-usermode helper.
+Ah thanks! Fixed now for the next version.
 
-Unless we have some demonstrable reasons why some of these must be set
-before the various kernel drivers initialize.
+-Kees
 
-> So taking that into account, the field descriptions could vary wildly
-> from platform to platform - where "platform" here is the combination
-> of the BMC, its host system, and the host system's required
-> configuration - not just referring to the BMC in isolation.  That in
-> turn may cause a fork of the driver (changes that are incompatible
-> with other platforms), or not scale terribly well as Ben suggests.
-
-I really only worry about the actual set of registers/fields. I think
-folding in initial values goes a bit too far.
-
-> The initial value concept can help reduce the impact on userspace as
-> userpace may no-longer need to care about it, so I think it's a
-> desirable property.
-
-I don't worry too much about userspace containing system specific bits
-and pieces such as a config file with the appropriate initial values
-for the platform. Userspace will have to contain platform specific
-stuff regardless (if anything, stuff like thermal control is
-intrinsicly different from one platform to the next).
-
->  With respect to devicetree, the field definitions will stay in the
-> SoC dtsi, but the initial values would be described on a per-platform 
-> basis in the dts.
-
-If the fields are in the SoC dtsi, then Rob has a reasonable argument
-that the list of fields is rather fixed for a given SoC and thus could
-be hard wired in the driver.... 
-
-I think at this stage, we need to create more clarity. In order to do
-that, I think we need to come up with a list, as exhaustive as we can,
-of what are the fields/register we need for our platforms, and find any
-reason why userspace wouldn't be a good enough location to stick the
-initial values.
-
-Then we need Dell and Yadro (and maybe others) to help with their
-variant of that list for the same SoCs to begin with.
-
-With that, we'll get an idea of whether we think we can get a
-reasonable stable long term list that's appropriate for most vendors.
-
-If that's the case, then my objections to have it in the kernel instead
-of the DT fade away a bit.
-
-If one or two of those fields absolutely must have their defaults
-early, then we can consider a specific set of one or two properties in
-the SoC node for that SoC family that provides those specific defaults.
-
-But unless we have that list, I think we'll be throwing too many
-hypotheticals around to convince Rob and others.
-
-Andrew, can you start with a list that shows what you expect us to need
-on our systems ?
-
-Cheers,
-Ben
-
+-- 
+Kees Cook
+Pixel Security
