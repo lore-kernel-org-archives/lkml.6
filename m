@@ -2,372 +2,112 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAB5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BCFC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1123F20693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:08:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1123F20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EA1E220693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 11:10:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA1E220693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731225AbeGSLum (ORCPT
+        id S1730782AbeGSLxN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 07:50:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:47854 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726630AbeGSLul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 07:50:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A1E2ED1;
-        Thu, 19 Jul 2018 04:08:02 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FC6A3F246;
-        Thu, 19 Jul 2018 04:08:00 -0700 (PDT)
-Date:   Thu, 19 Jul 2018 12:07:58 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>, james.morse@arm.com
-Subject: Re: [PATCH 1/2] arm64: Introduce current_stack_type
-Message-ID: <20180719110757.jh4cnitfrz6pasho@lakrids.cambridge.arm.com>
-References: <20180718211013.14512-1-labbott@redhat.com>
- <20180718211013.14512-2-labbott@redhat.com>
+        Thu, 19 Jul 2018 07:53:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56652 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727320AbeGSLxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 07:53:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1930EADD1;
+        Thu, 19 Jul 2018 11:10:32 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 13:10:31 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, vdavydov.dev@gmail.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, chris@chris-wilson.co.uk,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: Keep int fields in struct shrink_control together
+Message-ID: <20180719111031.GX7193@dhcp22.suse.cz>
+References: <153199724495.21131.9248876333336922199.stgit@localhost.localdomain>
+ <153199747930.21131.861043607301997810.stgit@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180718211013.14512-2-labbott@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <153199747930.21131.861043607301997810.stgit@localhost.localdomain>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laura,
+On Thu 19-07-18 13:51:19, Kirill Tkhai wrote:
+> gfp_t is of unsigned type, so let's move nid to keep
+> them together.
 
-On Wed, Jul 18, 2018 at 02:10:12PM -0700, Laura Abbott wrote:
+I guess you meant unsigned int so you can fill up a hole in
+shrink_control and as such reduce the stack consumption a bit (at least
+on 64b).
+
+An output from pahole is usually a great tool to visualize this.
+
+die__process_function: tag not supported (INVALID)!
+struct shrink_control {
+	gfp_t                      gfp_mask;             /*     0     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	long unsigned int          nr_to_scan;           /*     8     8 */
+	long unsigned int          nr_scanned;           /*    16     8 */
+	int                        nid;                  /*    24     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	struct mem_cgroup *        memcg;                /*    32     8 */
+
+	/* size: 40, cachelines: 1, members: 5 */
+	/* sum members: 32, holes: 2, sum holes: 8 */
+	/* last cacheline: 40 bytes */
+};
+
 > 
-> In preparation for enabling the stackleak plugin on arm64,
-> we need a way to get the bounds of the current stack.
-> Introduce a new primitive current_stack_type which is similar
-> to x86's get_stack_info. Utilize that to rework
-> on_accessible_stack slightly as well.
-> 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
 > ---
-> So this did end up looking quite a bit like get_stack_info but I didn't
-> really see the need to integrate this more than this. I do think
-> actually enumerating the types makes things a bit cleaner.
-> ---
->  arch/arm64/include/asm/sdei.h       |  8 ++-
->  arch/arm64/include/asm/stacktrace.h | 94 ++++++++++++++++++++++++-----
->  arch/arm64/kernel/ptrace.c          |  2 +-
->  arch/arm64/kernel/sdei.c            | 21 ++++++-
->  4 files changed, 103 insertions(+), 22 deletions(-)
+>  include/linux/shrinker.h |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm64/include/asm/sdei.h b/arch/arm64/include/asm/sdei.h
-> index e073e6886685..34f7b203845b 100644
-> --- a/arch/arm64/include/asm/sdei.h
-> +++ b/arch/arm64/include/asm/sdei.h
-> @@ -40,15 +40,17 @@ asmlinkage unsigned long __sdei_handler(struct pt_regs *regs,
->  unsigned long sdei_arch_get_entry_point(int conduit);
->  #define sdei_arch_get_entry_point(x)	sdei_arch_get_entry_point(x)
+> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> index b154fd2b084c..d58aaaed34a4 100644
+> --- a/include/linux/shrinker.h
+> +++ b/include/linux/shrinker.h
+> @@ -12,6 +12,9 @@
+>  struct shrink_control {
+>  	gfp_t gfp_mask;
 >  
-> -bool _on_sdei_stack(unsigned long sp);
-> -static inline bool on_sdei_stack(unsigned long sp)
-> +bool _on_sdei_stack(unsigned long sp, unsigned long *, unsigned long *);
-> +static inline bool on_sdei_stack(unsigned long sp,
-> +				unsigned long *stack_low,
-> +				unsigned long *stack_high)
->  {
->  	if (!IS_ENABLED(CONFIG_VMAP_STACK))
->  		return false;
->  	if (!IS_ENABLED(CONFIG_ARM_SDE_INTERFACE))
->  		return false;
->  	if (in_nmi())
-> -		return _on_sdei_stack(sp);
-> +		return _on_sdei_stack(sp, stack_low, stack_high);
->  
->  	return false;
->  }
-> diff --git a/arch/arm64/include/asm/stacktrace.h b/arch/arm64/include/asm/stacktrace.h
-> index 902f9edacbea..9855a0425e64 100644
-> --- a/arch/arm64/include/asm/stacktrace.h
-> +++ b/arch/arm64/include/asm/stacktrace.h
-> @@ -39,7 +39,9 @@ extern void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk);
->  
->  DECLARE_PER_CPU(unsigned long *, irq_stack_ptr);
->  
-> -static inline bool on_irq_stack(unsigned long sp)
-> +static inline bool on_irq_stack(unsigned long sp,
-> +				unsigned long *stack_low,
-> +				unsigned long *stack_high)
->  {
->  	unsigned long low = (unsigned long)raw_cpu_read(irq_stack_ptr);
->  	unsigned long high = low + IRQ_STACK_SIZE;
-> @@ -47,47 +49,109 @@ static inline bool on_irq_stack(unsigned long sp)
->  	if (!low)
->  		return false;
->  
-> -	return (low <= sp && sp < high);
-> +	if (sp < low || sp >= high)
-> +		return false;
+> +	/* current node being shrunk (for NUMA aware shrinkers) */
+> +	int nid;
 > +
-> +	if (stack_low && stack_high) {
-> +		*stack_low = low;
-> +		*stack_high = high;
-> +	}
-> +
-> +	return true;
->  }
-
-Rather than having to pass separete pointers to low/high, could we
-please wrap them up as a struct, e.g.
-
-struct stack_info {
-	unsigned long low, high;
-	stack_type type;
-}
-
-... and pass a single pointer to that? e.g.
-
-static inline bool on_irq_stack(unsigned long sp, struct stack_info *info)
-{
-	unsigned long low = (unsigned long)raw_cpu_read(irq_stack_ptr);
-	unsigned long high = low + IRQ_STACK_SIZE;
-
-	if (!low)
-		return false;
-	
-	if (sp < low || sp >= high)
-		return false;
-	
-	if (info) {
-		info->low = low;
-		info->high = high;
-		info->type = STACK_TYPE_IRQ;
-	}
-
-	return true;
-}
-
-That simplified the prototypes, and will allow us to distinguish the two
-SDEI stacks (which we'll need for making stack unwiding robust to
-cross-stack loops).
-
-> -static inline bool on_task_stack(struct task_struct *tsk, unsigned long sp)
-> +static inline bool on_task_stack(struct task_struct *tsk, unsigned long sp,
-> +				unsigned long *stack_low,
-> +				unsigned long *stack_high)
->  {
->  	unsigned long low = (unsigned long)task_stack_page(tsk);
->  	unsigned long high = low + THREAD_SIZE;
+>  	/*
+>  	 * How many objects scan_objects should scan and try to reclaim.
+>  	 * This is reset before every call, so it is safe for callees
+> @@ -26,9 +29,6 @@ struct shrink_control {
+>  	 */
+>  	unsigned long nr_scanned;
 >  
-> -	return (low <= sp && sp < high);
-> +	if (sp < low || sp >= high)
-> +		return false;
-> +
-> +	if (stack_low && stack_high) {
-> +		*stack_low = low;
-> +		*stack_high = high;
-> +	}
-> +
-> +	return true;
->  }
->  
->  #ifdef CONFIG_VMAP_STACK
->  DECLARE_PER_CPU(unsigned long [OVERFLOW_STACK_SIZE/sizeof(long)], overflow_stack);
->  
-> -static inline bool on_overflow_stack(unsigned long sp)
-> +static inline bool on_overflow_stack(unsigned long sp,
-> +				unsigned long *stack_low,
-> +				unsigned long *stack_high)
->  {
->  	unsigned long low = (unsigned long)raw_cpu_ptr(overflow_stack);
->  	unsigned long high = low + OVERFLOW_STACK_SIZE;
->  
-> -	return (low <= sp && sp < high);
-> +	if (sp < low || sp >= high)
-> +		return false;
-> +
-> +	if (stack_low && stack_high) {
-> +		*stack_low = low;
-> +		*stack_high = high;
-> +	}
-> +
-> +	return true;
->  }
->  #else
-> -static inline bool on_overflow_stack(unsigned long sp) { return false; }
-> +static inline bool on_overflow_stack(unsigned long sp,
-> +			unsigned long *stack_low,
-> +			unsigned long *stack_high) { return false; }
->  #endif
->  
-> +enum stack_type {
-> +	STACK_TYPE_UNKNOWN,
-> +	STACK_TYPE_TASK,
-> +	STACK_TYPE_IRQ,
-> +	STACK_TYPE_OVERFLOW,
-> +	STACK_TYPE_SDEI,
-> +};
+> -	/* current node being shrunk (for NUMA aware shrinkers) */
+> -	int nid;
+> -
+>  	/* current memcg being shrunk (for memcg aware shrinkers) */
+>  	struct mem_cgroup *memcg;
+>  };
 
-For SDEI we'll need STACK_TYPE_SDEI_NORMAL and STACK_TYPE_SDEI_CRITICAL,
-at least for stack unwinding.
-
-> +
-> +static inline enum stack_type current_stack_type(struct task_struct *tsk,
-> +						unsigned long sp,
-> +						unsigned long *stack_low,
-> +						unsigned long *stack_high)
-> +{
-> +	if (on_task_stack(tsk, sp, stack_low, stack_high))
-> +		return STACK_TYPE_TASK;
-> +	if (on_irq_stack(sp, stack_low, stack_high))
-> +		return STACK_TYPE_IRQ;
-> +	if (on_overflow_stack(sp, stack_low, stack_high))
-> +		return STACK_TYPE_OVERFLOW;
-> +	if (on_sdei_stack(sp, stack_low, stack_high))
-> +		return STACK_TYPE_SDEI;
-> +	return STACK_TYPE_UNKNOWN;
-> +}
-> +
->  /*
->   * We can only safely access per-cpu stacks from current in a non-preemptible
->   * context.
->   */
->  static inline bool on_accessible_stack(struct task_struct *tsk, unsigned long sp)
->  {
-> -	if (on_task_stack(tsk, sp))
-> +	enum stack_type type;
-> +	unsigned long low, high;
-> +
-> +	type = current_stack_type(tsk, sp, &low, &high);
-> +
-> +	switch (type) {
-> +	case STACK_TYPE_TASK:
->  		return true;
-> -	if (tsk != current || preemptible())
-> +	case STACK_TYPE_IRQ:
-> +	case STACK_TYPE_OVERFLOW:
-> +	case STACK_TYPE_SDEI:
-> +		if (tsk != current || preemptible())
-> +			return false;
-> +		else
-> +			return true;
-> +	case STACK_TYPE_UNKNOWN:
->  		return false;
-> -	if (on_irq_stack(sp))
-> -		return true;
-> -	if (on_overflow_stack(sp))
-> -		return true;
-> -	if (on_sdei_stack(sp))
-> -		return true;
-> +	}
->  
->  	return false;
->  }
-
-With the stacut stack_info, I think we can leave the logic of
-on_accessible_stack() as-is, modulo a new info parameter that we pass on
-into each on_<foo>_stack(), and then we don't neeed a separate
-current_stack_type() function.
-
-> diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-> index 5c338ce5a7fa..a6b3a2be7561 100644
-> --- a/arch/arm64/kernel/ptrace.c
-> +++ b/arch/arm64/kernel/ptrace.c
-> @@ -132,7 +132,7 @@ static bool regs_within_kernel_stack(struct pt_regs *regs, unsigned long addr)
->  {
->  	return ((addr & ~(THREAD_SIZE - 1))  ==
->  		(kernel_stack_pointer(regs) & ~(THREAD_SIZE - 1))) ||
-> -		on_irq_stack(addr);
-> +		on_irq_stack(addr, NULL, NULL);
->  }
->  
->  /**
-> diff --git a/arch/arm64/kernel/sdei.c b/arch/arm64/kernel/sdei.c
-> index 6b8d90d5ceae..8e18913a53fd 100644
-> --- a/arch/arm64/kernel/sdei.c
-> +++ b/arch/arm64/kernel/sdei.c
-> @@ -88,7 +88,9 @@ static int init_sdei_stacks(void)
->  	return err;
->  }
->  
-> -bool _on_sdei_stack(unsigned long sp)
-> +bool _on_sdei_stack(unsigned long sp,
-> +		unsigned long *stack_low,
-> +		unsigned long *stack_high)
->  {
->  	unsigned long low, high;
->  
-> @@ -98,13 +100,26 @@ bool _on_sdei_stack(unsigned long sp)
->  	low = (unsigned long)raw_cpu_read(sdei_stack_critical_ptr);
->  	high = low + SDEI_STACK_SIZE;
->  
-> -	if (low <= sp && sp < high)
-> +	if (low <= sp && sp < high) {
-> +		if (stack_low && stack_high) {
-> +			*stack_low = low;
-> +			*stack_high = high;
-> +		}
->  		return true;
-> +	}
->  
->  	low = (unsigned long)raw_cpu_read(sdei_stack_normal_ptr);
->  	high = low + SDEI_STACK_SIZE;
->  
-> -	return (low <= sp && sp < high);
-> +	if (low <= sp && sp < high) {
-> +		if (stack_low && stack_high) {
-> +			*stack_low = low;
-> +			*stack_high = high;
-> +		}
-> +		return true;
-> +	}
-> +
-> +	return false;
->  }
-
-We should probably split this into separate on_sdei_normal_stack() and
-on_sdei_critical_stack() functions.
-
-Then we can do:
-
-bool on_sdei_<foo>_stack(...)
-{
-	if (<out of bounds>)
-		return false;
-	
-	if (info) {
-		<assign info fields>;
-	}
-
-	return true;
-}
-
-bool _on_sdei_stack(unsigned long sp, struct stack_info *info)
-{
-	if (on_sedi_critical_stack(sp, info))
-		return true;
-	if (on_sdei_normal_stack(sp, info))
-		return true;
-	
-	return false;
-}
-
-... which is a little nicer for legibility.
-
-Otherwise, this looks good to me.
-
-Thanks,
-Mark.
+-- 
+Michal Hocko
+SUSE Labs
