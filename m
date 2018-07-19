@@ -2,129 +2,167 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1EBC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B773EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A32DB20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:06:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="XiFxWPje"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A32DB20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B50820673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:07:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B50820673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731760AbeGSOuC (ORCPT
+        id S1731764AbeGSOuz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:50:02 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:33428 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731471AbeGSOuC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:50:02 -0400
-Received: by mail-io0-f193.google.com with SMTP id z20-v6so7180203iol.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 07:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:organization:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=qhk7DcdRiJwPLhrUv1W8bD542RILzdVdXn5/MdJu0x0=;
-        b=XiFxWPjeloioH/KeeIqsQ+oY3wjRtNDbmfXYLRSjbVNJwCnl7sXoGq/btaqZNp7AR5
-         LvjlXcPoNB/A5Tx/JS9Zxt1pPX5s/aBGjVS1kvFbrfqr0RyrWOX20IZ6tkS6mDxgoD0C
-         EuHFt9uLFWMm3t4XWvSwxBBqapC5zauqOc6EYEKmlu+CM/guo3YrKZSYkONPA3Ris5HT
-         I8QuCWPGFDDE8k2DUAehVeRq6C3ZRUYxQNkvxkNrmVyAxOT08uiEA5jDKToCo2I1yQb1
-         eaFuD0V8R6ZJWYIQVpCk6U1kW3xkUAJFspW6sFVgfoyfYOUig9TLHCWpPsWUBT6yvmav
-         nhNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:organization:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=qhk7DcdRiJwPLhrUv1W8bD542RILzdVdXn5/MdJu0x0=;
-        b=oTeV/0ZdmL3FsHhedvm+xWebS/6EOK0E8S+I3sALDIBRPK3wLIxW8TvNbCtcJRzO9s
-         qcpD71t2RGA4yQgNazPxC5m9KA/O48ZW/dXfRuEuor5yE+/A0rHgjnqcBX+afax+i9EX
-         nKklxLR82n/UUNbalHlLTUWT+CSb4XUvwVvbOiZkPX8QZEYOeF/48dNaKk1rzzYDVxY8
-         XuOb5x6TfcdUTscZq+SPmaMMc4u2rwJSs+da9mdlylji2nSKOrG42FYgx9K3cmJ1huhs
-         qDquXey9BJiUs3bEEkdb4OAuexa4/GgGma1Ia+c1UhkIaeF9FH1ckfkWk5k6e7P5iLY4
-         hy5w==
-X-Gm-Message-State: AOUpUlGgwYuGkGsTTHhEX5lYUnOdYR1XQ09Bm+D9QaoSy30w91Do6q2v
-        RurReEBo8mZtyZQcY4IOfNIb0Q==
-X-Google-Smtp-Source: AAOMgpfBeOcWpbAXhinFHg73RvZSCTJXEb66vSw86NtYVf3G1WNKwpjuFe8CS/MK+S8pMdXRMZgdTA==
-X-Received: by 2002:a6b:19c4:: with SMTP id 187-v6mr8668977ioz.244.1532009201519;
-        Thu, 19 Jul 2018 07:06:41 -0700 (PDT)
-Received: from localhost ([2604:2d80:4413:8125:59cb:8e52:e49b:158f])
-        by smtp.googlemail.com with ESMTPSA id n195-v6sm1759756itg.16.2018.07.19.07.06.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Jul 2018 07:06:40 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Yixun Lan <yixun.lan@amlogic.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, <qianggui.song@amlogic.com>,
-        Rob Herring <robh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <bo.yang@amlogic.com>,
-        <sboyd@kernel.org>, <jian.hu@amlogic.com>,
-        <xingyu.chen@amlogic.com>, <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <sunny.luo@amlogic.com>,
-        <carlo@caione.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-Organization: BayLibre
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-        <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
-        <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
-        <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
-        <1531216472.2708.71.camel@baylibre.com> <7hfu0jmhbe.fsf@baylibre.com>
-        <7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com>
-Date:   Thu, 19 Jul 2018 09:06:39 -0500
-In-Reply-To: <7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com> (Yixun Lan's
-        message of "Tue, 17 Jul 2018 09:24:02 +0800")
-Message-ID: <7h601be2vk.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 19 Jul 2018 10:50:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33566 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731110AbeGSOuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 10:50:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1B97EAF63;
+        Thu, 19 Jul 2018 14:07:33 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 16:07:33 +0200
+Message-ID: <s5hzhyn71zu.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 4.18-rc6
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+Linus,
 
-[...]
+please pull sound fixes for v4.18-rc6 from:
 
->> 
->> As Jerome said, I think consistency is an important goal, so leaving off
->> the "meson-" for drivers/clk is fine with me.
->> 
-> ok
->
->> Also for consistency, for the rest of the drivers, keeping "meson-" is
->> probably the right thing to do.
->> 
-> ok, for the above, you are talking about the already exist compatible
-> names? or the patches we will push in the future?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-4.18-rc6
 
-I'm talking about future patches.
+The topmost commit is f3d737b6340b0c7bacd8bc751605f0ed6203f146
 
->> However, patches would be welcome to add compatibles without the "meson"
->> for the rest of the drivers & documentation as well, but please do not
->> remove any compatibles.
->> 
-> I assume you are talking about the patches in the future we will push?
-> to drop the "meson".
->
-> I'm confused here, as the above two paragraphs conflict with each other
+----------------------------------------------------------------
 
-Yeah, what I wrote is confusing, sorry about that.
+sound fixes for 4.18-rc6
 
-What I mean is that new patches should stay consistent with compatibles
-in their existing drivers/subsystems.  That means keeping the "meson-"
-prefix for everything except drivers/clk.
+A rawmidi race fix and three trivial HD-audio quirks.
 
-In addition to that, patches would be welcome for *adding* compatibles
-without "meson" to all the current drivers.
+----------------------------------------------------------------
 
-Kevin
+Po-Hsu Lin (1):
+      ALSA: hda: add mute led support for HP ProBook 455 G5
 
+Takashi Iwai (2):
+      ALSA: rawmidi: Change resized buffers atomically
+      ALSA: hda/realtek - Yet another Clevo P950 quirk entry
+
+YOKOTA Hiroshi (1):
+      ALSA: hda/realtek - Add Panasonic CF-SZ6 headset jack quirk
+
+---
+ sound/core/rawmidi.c           | 20 ++++++++++++++------
+ sound/pci/hda/patch_conexant.c |  1 +
+ sound/pci/hda/patch_realtek.c  |  2 ++
+ 3 files changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/sound/core/rawmidi.c b/sound/core/rawmidi.c
+index 69616d00481c..b53026a72e73 100644
+--- a/sound/core/rawmidi.c
++++ b/sound/core/rawmidi.c
+@@ -635,7 +635,7 @@ static int snd_rawmidi_info_select_user(struct snd_card *card,
+ int snd_rawmidi_output_params(struct snd_rawmidi_substream *substream,
+ 			      struct snd_rawmidi_params * params)
+ {
+-	char *newbuf;
++	char *newbuf, *oldbuf;
+ 	struct snd_rawmidi_runtime *runtime = substream->runtime;
+ 	
+ 	if (substream->append && substream->use_count > 1)
+@@ -648,13 +648,17 @@ int snd_rawmidi_output_params(struct snd_rawmidi_substream *substream,
+ 		return -EINVAL;
+ 	}
+ 	if (params->buffer_size != runtime->buffer_size) {
+-		newbuf = krealloc(runtime->buffer, params->buffer_size,
+-				  GFP_KERNEL);
++		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
+ 		if (!newbuf)
+ 			return -ENOMEM;
++		spin_lock_irq(&runtime->lock);
++		oldbuf = runtime->buffer;
+ 		runtime->buffer = newbuf;
+ 		runtime->buffer_size = params->buffer_size;
+ 		runtime->avail = runtime->buffer_size;
++		runtime->appl_ptr = runtime->hw_ptr = 0;
++		spin_unlock_irq(&runtime->lock);
++		kfree(oldbuf);
+ 	}
+ 	runtime->avail_min = params->avail_min;
+ 	substream->active_sensing = !params->no_active_sensing;
+@@ -665,7 +669,7 @@ EXPORT_SYMBOL(snd_rawmidi_output_params);
+ int snd_rawmidi_input_params(struct snd_rawmidi_substream *substream,
+ 			     struct snd_rawmidi_params * params)
+ {
+-	char *newbuf;
++	char *newbuf, *oldbuf;
+ 	struct snd_rawmidi_runtime *runtime = substream->runtime;
+ 
+ 	snd_rawmidi_drain_input(substream);
+@@ -676,12 +680,16 @@ int snd_rawmidi_input_params(struct snd_rawmidi_substream *substream,
+ 		return -EINVAL;
+ 	}
+ 	if (params->buffer_size != runtime->buffer_size) {
+-		newbuf = krealloc(runtime->buffer, params->buffer_size,
+-				  GFP_KERNEL);
++		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
+ 		if (!newbuf)
+ 			return -ENOMEM;
++		spin_lock_irq(&runtime->lock);
++		oldbuf = runtime->buffer;
+ 		runtime->buffer = newbuf;
+ 		runtime->buffer_size = params->buffer_size;
++		runtime->appl_ptr = runtime->hw_ptr = 0;
++		spin_unlock_irq(&runtime->lock);
++		kfree(oldbuf);
+ 	}
+ 	runtime->avail_min = params->avail_min;
+ 	return 0;
+diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
+index e7fcfc3b8885..f641c20095f7 100644
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -964,6 +964,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
+ 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
++	SND_PCI_QUIRK(0x103c, 0x836e, "HP ProBook 455 G5", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 7496be4491b1..f6af3e1c2b93 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -2366,6 +2366,7 @@ static const struct snd_pci_quirk alc882_fixup_tbl[] = {
+ 	SND_PCI_QUIRK_VENDOR(0x1462, "MSI", ALC882_FIXUP_GPIO3),
+ 	SND_PCI_QUIRK(0x147b, 0x107a, "Abit AW9D-MAX", ALC882_FIXUP_ABIT_AW9D_MAX),
+ 	SND_PCI_QUIRK(0x1558, 0x9501, "Clevo P950HR", ALC1220_FIXUP_CLEVO_P950),
++	SND_PCI_QUIRK(0x1558, 0x95e1, "Clevo P95xER", ALC1220_FIXUP_CLEVO_P950),
+ 	SND_PCI_QUIRK(0x1558, 0x95e2, "Clevo P950ER", ALC1220_FIXUP_CLEVO_P950),
+ 	SND_PCI_QUIRK_VENDOR(0x1558, "Clevo laptop", ALC882_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x161f, 0x2054, "Medion laptop", ALC883_FIXUP_EAPD),
+@@ -6569,6 +6570,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x10cf, 0x1629, "Lifebook U7x7", ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x10cf, 0x1845, "Lifebook U904", ALC269_FIXUP_LIFEBOOK_EXTMIC),
+ 	SND_PCI_QUIRK(0x10ec, 0x10f2, "Intel Reference board", ALC700_FIXUP_INTEL_REFERENCE),
++	SND_PCI_QUIRK(0x10f7, 0x8338, "Panasonic CF-SZ6", ALC269_FIXUP_HEADSET_MODE),
+ 	SND_PCI_QUIRK(0x144d, 0xc109, "Samsung Ativ book 9 (NP900X3G)", ALC269_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x144d, 0xc740, "Samsung Ativ book 8 (NP870Z5G)", ALC269_FIXUP_ATIV_BOOK_8),
+ 	SND_PCI_QUIRK(0x1458, 0xfa53, "Gigabyte BXBT-2807", ALC283_FIXUP_HEADSET_MIC),
