@@ -2,173 +2,224 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2E4C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3274C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34FB7206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:23:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34FB7206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 5DDE6206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:24:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DDE6206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731505AbeGSJFW (ORCPT
+        id S1731541AbeGSJG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 05:05:22 -0400
-Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:48858 "EHLO
-        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729880AbeGSJFW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 05:05:22 -0400
-Received: from mail.blacknight.com (unknown [81.17.254.26])
-        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id F15721C1A5D
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 09:23:19 +0100 (IST)
-Received: (qmail 19315 invoked from network); 19 Jul 2018 08:23:19 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.66])
-  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 19 Jul 2018 08:23:19 -0000
-Date:   Thu, 19 Jul 2018 09:23:19 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 2/7] mm, slab/slub: introduce kmalloc-reclaimable
- caches
-Message-ID: <20180719082319.6jkltwinon3pyzyn@techsingularity.net>
-References: <20180718133620.6205-1-vbabka@suse.cz>
- <20180718133620.6205-3-vbabka@suse.cz>
+        Thu, 19 Jul 2018 05:06:26 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55121 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731262AbeGSJG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 05:06:26 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 08F41207AD; Thu, 19 Jul 2018 10:24:25 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BD17C20731;
+        Thu, 19 Jul 2018 10:24:24 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 10:24:24 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+Cc:     miquel.raynal@bootlin.com, richard@nod.at, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mtd: nand: toshiba: Add support for ->exec_op()
+Message-ID: <20180719102424.30ffa07e@bbrezillon>
+In-Reply-To: <1531986827-18743-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+References: <1531986827-18743-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20180718133620.6205-3-vbabka@suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 03:36:15PM +0200, Vlastimil Babka wrote:
-> Kmem caches can be created with a SLAB_RECLAIM_ACCOUNT flag, which indicates
-> they contain objects which can be reclaimed under memory pressure (typically
-> through a shrinker). This makes the slab pages accounted as NR_SLAB_RECLAIMABLE
-> in vmstat, which is reflected also the MemAvailable meminfo counter and in
-> overcommit decisions. The slab pages are also allocated with __GFP_RECLAIMABLE,
-> which is good for anti-fragmentation through grouping pages by mobility.
+On Thu, 19 Jul 2018 16:53:47 +0900
+KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> wrote:
+
+> This patch is a patch to support TOSHIBA MEMORY CORPORATION BENAND
+> memory devices.  This use vendor specific command
+> (TOSHIBA_NAND_CMD_ECC_STATUS) to know the exact bitflips.  However, I
+> could not test this patch because I do not have a platform that
+> supports chip-> exec_op.  Therefore, I post this patch as RFC.
 > 
-> The generic kmalloc-X caches are created without this flag, but sometimes are
-> used also for objects that can be reclaimed, which due to varying size cannot
-> have a dedicated kmem cache with SLAB_RECLAIM_ACCOUNT flag. A prominent example
-> are dcache external names, which prompted the creation of a new, manually
-> managed vmstat counter NR_INDIRECTLY_RECLAIMABLE_BYTES in commit f1782c9bc547
-> ("dcache: account external names as indirectly reclaimable memory").
+> As soon as I get a platform that supports chip-> exec_op, I would like
+> to test and re-post.
 > 
-> To better handle this and any other similar cases, this patch introduces
-> SLAB_RECLAIM_ACCOUNT variants of kmalloc caches, named kmalloc-rcl-X.
-> They are used whenever the kmalloc() call passes __GFP_RECLAIMABLE among gfp
-> flags. They are added to the kmalloc_caches array as a new type. Allocations
-> with both __GFP_DMA and __GFP_RECLAIMABLE will use a dma type cache.
+> Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+> ---
+>  drivers/mtd/nand/raw/nand_toshiba.c | 76
+> +++++++++++++++++++++++++++++-------- 1 file changed, 61
+> insertions(+), 15 deletions(-)
 > 
-> This change only applies to SLAB and SLUB, not SLOB. This is fine, since SLOB's
-> target are tiny system and this patch does add some overhead of kmem management
-> objects.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->
-> <SNIP>
->
-> @@ -309,12 +310,19 @@ extern struct kmem_cache *kmalloc_caches[KMALLOC_TYPES][KMALLOC_SHIFT_HIGH + 1];
->  static __always_inline unsigned int kmalloc_type(gfp_t flags)
->  {
->  	int is_dma = 0;
-> +	int is_reclaimable;
+> diff --git a/drivers/mtd/nand/raw/nand_toshiba.c
+> b/drivers/mtd/nand/raw/nand_toshiba.c index 6cec923..12218cd 100644
+> --- a/drivers/mtd/nand/raw/nand_toshiba.c
+> +++ b/drivers/mtd/nand/raw/nand_toshiba.c
+> @@ -17,28 +17,74 @@
 >  
->  #ifdef CONFIG_ZONE_DMA
->  	is_dma = !!(flags & __GFP_DMA);
->  #endif
+>  #include <linux/mtd/rawnand.h>
 >  
-> -	return is_dma;
-> +	is_reclaimable = !!(flags & __GFP_RECLAIMABLE);
+> +/* ECC Status Read Command for BENAND */
+> +#define TOSHIBA_NAND_CMD_ECC_STATUS_READ	0x7A
 > +
-> +	/*
-> +	 * If an allocation is botth __GFP_DMA and __GFP_RECLAIMABLE, return
-> +	 * KMALLOC_DMA and effectively ignore __GFP_RECLAIMABLE
-> +	 */
-> +	return (is_dma * 2) + (is_reclaimable & !is_dma);
->  }
->  
-
-s/botth/both/
-
-
-
->  /*
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 4614248ca381..614fb7ab8312 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1107,10 +1107,21 @@ void __init setup_kmalloc_cache_index_table(void)
->  	}
->  }
->  
-> -static void __init new_kmalloc_cache(int idx, slab_flags_t flags)
-> +static void __init
-> +new_kmalloc_cache(int idx, int type, slab_flags_t flags)
->  {
-> -	kmalloc_caches[KMALLOC_NORMAL][idx] = create_kmalloc_cache(
-> -					kmalloc_info[idx].name,
-> +	const char *name;
+> +/* ECC Status Mask for BENAND */
+> +#define TOSHIBA_NAND_ECC_STATUS_MASK	0x0F
 > +
-> +	if (type == KMALLOC_RECLAIM) {
-> +		flags |= SLAB_RECLAIM_ACCOUNT;
-> +		name = kasprintf(GFP_NOWAIT, "kmalloc-rcl-%u",
-> +						kmalloc_info[idx].size);
-> +		BUG_ON(!name);
+>  /* Recommended to rewrite for BENAND */
+>  #define TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED	BIT(3)
+>  
+> +static int toshiba_nand_benand_read_eccstatus_op(struct nand_chip
+> *chip,
+> +						 u8 *buf)
+> +{
+> +	u8 *ecc_status = buf;
+> +
+
+How about letting this function return -ENOTSUPP when ->exec_op() is
+not implemented?
+
+	if (!chip->exec_op)
+		return -ENOTSUPP;
+
+> +	const struct nand_sdr_timings *sdr =
+> +		nand_get_sdr_timings(&chip->data_interface);
+> +	struct nand_op_instr instrs[] = {
+> +		NAND_OP_CMD(TOSHIBA_NAND_CMD_ECC_STATUS_READ,
+> +			    PSEC_TO_NSEC(sdr->tADL_min)),
+> +		NAND_OP_8BIT_DATA_IN(chip->ecc.steps, ecc_status, 0),
+> +	};
+> +	struct nand_operation op = NAND_OPERATION(instrs);
+> +
+> +	/* Drop the DATA_IN instruction if chip->ecc.steps is set to
+> 0. */
+> +	if (!chip->ecc.steps)
+
+Can this really happen? I hope not.
+
+> +		op.ninstrs--;
+> +
+> +	return nand_exec_op(chip, &op);
+> +}
+> +
+>  static int toshiba_nand_benand_eccstatus(struct mtd_info *mtd,
+>  					 struct nand_chip *chip)
+>  {
+> -	int ret;
+> +	int ret, i;
+>  	unsigned int max_bitflips = 0;
+> -	u8 status;
+> -
+> -	/* Check Status */
+> -	ret = nand_status_op(chip, &status);
+> -	if (ret)
+> -		return ret;
+> -
+> -	if (status & NAND_STATUS_FAIL) {
+> -		/* uncorrected */
+> -		mtd->ecc_stats.failed++;
+> -	} else if (status & TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED)
+> {
+> -		/* corrected */
+> -		max_bitflips = mtd->bitflip_threshold;
+> -		mtd->ecc_stats.corrected += max_bitflips;
+> +	u8 status, bitflips, ecc_status[8];
+> +
+> +	if (chip->exec_op) {
+> +		/* Check ECC Status */
+> +		ret = toshiba_nand_benand_read_eccstatus_op(chip,
+> ecc_status);
+> +		if (ret)
+> +			return ret;
+> +
+> +		for (i = 0; i < chip->ecc.steps; i++) {
+> +			bitflips = (ecc_status[i] &
+> +				    TOSHIBA_NAND_ECC_STATUS_MASK);
+
+Unneeded parens.
+
+> +			if (bitflips == 0x0F) {
+
+Please define a macro for the UNCORRECTABLE (0xf) value.
+
+> +				mtd->ecc_stats.failed++;
+> +			} else {
+> +				mtd->ecc_stats.corrected += bitflips;
+> +				max_bitflips = max_t(unsigned int,
+> +						     max_bitflips,
+> bitflips);
+
+Declare bitflips as an unsigned int, so that you can use max() instead
+of max_t().
+
+> +			}
+> +		}
 > +	} else {
-> +		name = kmalloc_info[idx].name;
-> +	}
+> +		/* Check Status */
+> +		ret = nand_status_op(chip, &status);
+> +		if (ret)
+> +			return ret;
 > +
-> +	kmalloc_caches[type][idx] = create_kmalloc_cache(name,
->  					kmalloc_info[idx].size, flags, 0,
->  					kmalloc_info[idx].size);
->  }
+> +		if (status & NAND_STATUS_FAIL) {
+> +			/* uncorrected */
+> +			mtd->ecc_stats.failed++;
+> +		} else if (status &
+> TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED) {
+> +			/* corrected */
+> +			max_bitflips = mtd->bitflip_threshold;
+> +			mtd->ecc_stats.corrected += max_bitflips;
+> +		}
+>  	}
 
-I was going to query that BUG_ON but if I'm reading it right, we just
-have to be careful in the future that the "normal" kmalloc cache is always
-initialised before the reclaimable cache or there will be issues.
+If you go for the "toshiba_nand_benand_read_eccstatus_op() returns
+-ENOTSUPP solution", you could replace the above section by:
 
-> @@ -1122,22 +1133,25 @@ static void __init new_kmalloc_cache(int idx, slab_flags_t flags)
->   */
->  void __init create_kmalloc_caches(slab_flags_t flags)
->  {
-> -	int i;
-> -	int type = KMALLOC_NORMAL;
-> +	int i, type;
->  
-> -	for (i = KMALLOC_SHIFT_LOW; i <= KMALLOC_SHIFT_HIGH; i++) {
-> -		if (!kmalloc_caches[type][i])
-> -			new_kmalloc_cache(i, flags);
-> +	for (type = KMALLOC_NORMAL; type <= KMALLOC_RECLAIM; type++) {
-> +		for (i = KMALLOC_SHIFT_LOW; i <= KMALLOC_SHIFT_HIGH; i++) {
-> +			if (!kmalloc_caches[type][i])
-> +				new_kmalloc_cache(i, type, flags);
->  
+	ret = toshiba_nand_benand_read_eccstatus_op(chip, ecc_status);
+	if (!ret) {
+		u8 ecc_status[8];
+		unsigned int i;
 
-I don't see a problem here as such but the values of the KMALLOC_* types
-is important both for this function and the kmalloc_type(). It might be
-worth adding a warning that these functions be examined if updating the
-types but then again, anyone trying and getting it wrong will have a
-broken kernel so;
+		for (i = 0; i < chip->ecc.steps; i++) {
+			bitflips = ecc_status[i] & TOSHIBA_NAND_ECC_STATUS_MASK;
+			if (bitflips == TOSHIBA_NAND_ECC_STATUS_UNCORR) {
+				mtd->ecc_stats.failed++;
+			} else {
+				mtd->ecc_stats.corrected += bitflips;
+				max_bitflips = max(max_bitflips,bitflips);
+			}
+		}
 
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
+		return max_bitflips;
+	}
 
--- 
-Mel Gorman
-SUSE Labs
+	/*
+	 * Fallback to regular status check if
+	 * toshiba_nand_benand_read_eccstatus_op() failed.
+	 */
+	ret = nand_status_op(chip, &status);
+	if (ret)
+		return ret;
+
+	if (status & NAND_STATUS_FAIL) {
+		/* uncorrected */
+		mtd->ecc_stats.failed++;
+	} else if (status & TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED) {
+		/* corrected */
+		max_bitflips = mtd->bitflip_threshold;
+		mtd->ecc_stats.corrected += max_bitflips;
+	}
+ 
+ 	return max_bitflips;
+}
