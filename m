@@ -6,43 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 944D2ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1159AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4755220673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:33:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4755220673
+	by mail.kernel.org (Postfix) with ESMTP id B169620673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:34:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B169620673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbeGSXSi (ORCPT
+        id S1731492AbeGSXT0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:18:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33405 "EHLO
+        Thu, 19 Jul 2018 19:19:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58321 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731112AbeGSXSh (ORCPT
+        with ESMTP id S1731065AbeGSXT0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:18:37 -0400
+        Thu, 19 Jul 2018 19:19:26 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMXLHG2439893
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMXtKj2439926
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 15:33:21 -0700
+        Thu, 19 Jul 2018 15:33:55 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMXLgj2439890;
-        Thu, 19 Jul 2018 15:33:21 -0700
-Date:   Thu, 19 Jul 2018 15:33:21 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMXtst2439922;
+        Thu, 19 Jul 2018 15:33:55 -0700
+Date:   Thu, 19 Jul 2018 15:33:55 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Pavel Tatashin <tipbot@zytor.com>
-Message-ID: <tip-857baa87b6422bcfb84ed3631d6839920cb5b09d@git.kernel.org>
-Cc:     pasha.tatashin@oracle.com, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, pasha.tatashin@oracle.com,
-          mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <20180719205545.16512-24-pasha.tatashin@oracle.com>
-References: <20180719205545.16512-24-pasha.tatashin@oracle.com>
+Message-ID: <tip-46457ea464f5341d1f9dad8dd213805d45f7f117@git.kernel.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, mingo@kernel.org, pasha.tatashin@oracle.com,
+        hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
+          tglx@linutronix.de, pasha.tatashin@oracle.com, hpa@zytor.com,
+          mingo@kernel.org
+In-Reply-To: <20180719205545.16512-25-pasha.tatashin@oracle.com>
+References: <20180719205545.16512-25-pasha.tatashin@oracle.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] sched/clock: Enable sched clock early
-Git-Commit-ID: 857baa87b6422bcfb84ed3631d6839920cb5b09d
+Subject: [tip:x86/timers] sched/clock: Use static key for
+ sched_clock_running
+Git-Commit-ID: 46457ea464f5341d1f9dad8dd213805d45f7f117
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,21 +59,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  857baa87b6422bcfb84ed3631d6839920cb5b09d
-Gitweb:     https://git.kernel.org/tip/857baa87b6422bcfb84ed3631d6839920cb5b09d
+Commit-ID:  46457ea464f5341d1f9dad8dd213805d45f7f117
+Gitweb:     https://git.kernel.org/tip/46457ea464f5341d1f9dad8dd213805d45f7f117
 Author:     Pavel Tatashin <pasha.tatashin@oracle.com>
-AuthorDate: Thu, 19 Jul 2018 16:55:42 -0400
+AuthorDate: Thu, 19 Jul 2018 16:55:43 -0400
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 20 Jul 2018 00:02:43 +0200
 
-sched/clock: Enable sched clock early
+sched/clock: Use static key for sched_clock_running
 
-Allow sched_clock() to be used before schec_clock_init() is called.  This
-provides a way to get early boot timestamps on machines with unstable
-clocks.
+sched_clock_running may be read every time sched_clock_cpu() is called.
+Yet, this variable is updated only twice during boot, and never changes
+again, therefore it is better to make it a static key.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
 Cc: steven.sistare@oracle.com
 Cc: daniel.m.jordan@oracle.com
 Cc: linux@armlinux.org.uk
@@ -80,7 +84,6 @@ Cc: john.stultz@linaro.org
 Cc: sboyd@codeaurora.org
 Cc: hpa@zytor.com
 Cc: douly.fnst@cn.fujitsu.com
-Cc: peterz@infradead.org
 Cc: prarit@redhat.com
 Cc: feng.tang@intel.com
 Cc: pmladek@suse.com
@@ -89,69 +92,97 @@ Cc: linux-s390@vger.kernel.org
 Cc: boris.ostrovsky@oracle.com
 Cc: jgross@suse.com
 Cc: pbonzini@redhat.com
-Link: https://lkml.kernel.org/r/20180719205545.16512-24-pasha.tatashin@oracle.com
+Link: https://lkml.kernel.org/r/20180719205545.16512-25-pasha.tatashin@oracle.com
 
 ---
- init/main.c          |  2 +-
- kernel/sched/clock.c | 20 +++++++++++++++++++-
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ kernel/sched/clock.c | 16 ++++++++--------
+ kernel/sched/debug.c |  2 --
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/init/main.c b/init/main.c
-index 162d931c9511..ff0a24170b95 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -642,7 +642,6 @@ asmlinkage __visible void __init start_kernel(void)
- 	softirq_init();
- 	timekeeping_init();
- 	time_init();
--	sched_clock_init();
- 	printk_safe_init();
- 	perf_event_init();
- 	profile_init();
-@@ -697,6 +696,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	acpi_early_init();
- 	if (late_time_init)
- 		late_time_init();
-+	sched_clock_init();
- 	calibrate_delay();
- 	pid_idr_init();
- 	anon_vma_init();
 diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
-index 0e9dbb2d9aea..422cd63f8f17 100644
+index 422cd63f8f17..c5c47ad3f386 100644
 --- a/kernel/sched/clock.c
 +++ b/kernel/sched/clock.c
-@@ -202,7 +202,25 @@ static void __sched_clock_gtod_offset(void)
+@@ -67,7 +67,7 @@ unsigned long long __weak sched_clock(void)
+ }
+ EXPORT_SYMBOL_GPL(sched_clock);
+ 
+-__read_mostly int sched_clock_running;
++static DEFINE_STATIC_KEY_FALSE(sched_clock_running);
+ 
+ #ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
+ /*
+@@ -191,7 +191,7 @@ void clear_sched_clock_stable(void)
+ 
+ 	smp_mb(); /* matches sched_clock_init_late() */
+ 
+-	if (sched_clock_running == 2)
++	if (static_key_count(&sched_clock_running.key) == 2)
+ 		__clear_sched_clock_stable();
+ }
+ 
+@@ -215,7 +215,7 @@ void __init sched_clock_init(void)
+ 	__sched_clock_gtod_offset();
+ 	local_irq_restore(flags);
+ 
+-	sched_clock_running = 1;
++	static_branch_inc(&sched_clock_running);
+ 
+ 	/* Now that sched_clock_running is set adjust scd */
+ 	local_irq_save(flags);
+@@ -228,7 +228,7 @@ void __init sched_clock_init(void)
+  */
+ static int __init sched_clock_init_late(void)
+ {
+-	sched_clock_running = 2;
++	static_branch_inc(&sched_clock_running);
+ 	/*
+ 	 * Ensure that it is impossible to not do a static_key update.
+ 	 *
+@@ -373,7 +373,7 @@ u64 sched_clock_cpu(int cpu)
+ 	if (sched_clock_stable())
+ 		return sched_clock() + __sched_clock_offset;
+ 
+-	if (unlikely(!sched_clock_running))
++	if (!static_branch_unlikely(&sched_clock_running))
+ 		return sched_clock();
+ 
+ 	preempt_disable_notrace();
+@@ -396,7 +396,7 @@ void sched_clock_tick(void)
+ 	if (sched_clock_stable())
+ 		return;
+ 
+-	if (unlikely(!sched_clock_running))
++	if (!static_branch_unlikely(&sched_clock_running))
+ 		return;
+ 
+ 	lockdep_assert_irqs_disabled();
+@@ -455,13 +455,13 @@ EXPORT_SYMBOL_GPL(sched_clock_idle_wakeup_event);
  
  void __init sched_clock_init(void)
  {
-+	unsigned long flags;
-+
-+	/*
-+	 * Set __gtod_offset such that once we mark sched_clock_running,
-+	 * sched_clock_tick() continues where sched_clock() left off.
-+	 *
-+	 * Even if TSC is buggered, we're still UP at this point so it
-+	 * can't really be out of sync.
-+	 */
-+	local_irq_save(flags);
-+	__sched_clock_gtod_offset();
-+	local_irq_restore(flags);
-+
- 	sched_clock_running = 1;
-+
-+	/* Now that sched_clock_running is set adjust scd */
-+	local_irq_save(flags);
-+	sched_clock_tick();
-+	local_irq_restore(flags);
+-	sched_clock_running = 1;
++	static_branch_inc(&sched_clock_running);
+ 	generic_sched_clock_init();
  }
- /*
-  * We run this as late_initcall() such that it runs after all built-in drivers,
-@@ -356,7 +374,7 @@ u64 sched_clock_cpu(int cpu)
- 		return sched_clock() + __sched_clock_offset;
  
- 	if (unlikely(!sched_clock_running))
--		return 0ull;
-+		return sched_clock();
+ u64 sched_clock_cpu(int cpu)
+ {
+-	if (unlikely(!sched_clock_running))
++	if (!static_branch_unlikely(&sched_clock_running))
+ 		return 0;
  
- 	preempt_disable_notrace();
- 	scd = cpu_sdc(cpu);
+ 	return sched_clock();
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index e593b4118578..b0212f489a33 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -623,8 +623,6 @@ void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
+ #undef PU
+ }
+ 
+-extern __read_mostly int sched_clock_running;
+-
+ static void print_cpu(struct seq_file *m, int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
