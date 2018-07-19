@@ -2,112 +2,93 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17442ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F02AEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA74E2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:01:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA74E2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C5102084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:02:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="nwywHYpk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C5102084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730913AbeGSVqQ (ORCPT
+        id S1730876AbeGSVqz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 17:46:16 -0400
-Received: from mga11.intel.com ([192.55.52.93]:3671 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727523AbeGSVqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 17:46:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 14:01:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,375,1526367600"; 
-   d="scan'208";a="68323023"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.153])
-  by orsmga003.jf.intel.com with ESMTP; 19 Jul 2018 14:01:16 -0700
-Subject: Re: [PATCH] tpm: add support for partial reads
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        jarkko.sakkinen@linux.intel.com
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
- <1532020750.5396.4.camel@HansenPartnership.com>
- <421c4b75-9e9d-7045-adad-797fd112898a@intel.com>
- <1532026030.3198.2.camel@HansenPartnership.com>
- <e8c17a40-7e5e-61e9-7088-32817766b614@intel.com>
- <1532029979.3198.4.camel@HansenPartnership.com>
- <0b9f0bb5-6620-0499-6680-5ec595167f23@intel.com>
- <1532032049.3061.1.camel@HansenPartnership.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <0e9d3267-b9f4-2f56-9470-36931ae8f685@intel.com>
-Date:   Thu, 19 Jul 2018 14:01:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 17:46:55 -0400
+Received: from mx.aristanetworks.com ([162.210.129.12]:59373 "EHLO
+        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727523AbeGSVqz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 17:46:55 -0400
+X-Greylist: delayed 511 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Jul 2018 17:46:54 EDT
+Received: from prod-mx.aristanetworks.com (localhost [127.0.0.1])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 8F02D10C3;
+        Thu, 19 Jul 2018 13:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1532033614;
+        bh=fT4JI+vJ1G3qXT1/jFNxasArjdZvQQLQmN4wRLC9X+o=;
+        h=Date:From:To:Cc:Subject;
+        b=nwywHYpkaWVJI8bVzfL+1jvvNlTDg2kAPUGhGnOXOlIoDDskTGbWmbLu5VFZ4WNYJ
+         uCXwRnorUNI/6BUkwxMOgpevW8FDs55tN67FceWvlCbc6zwVKSqrkG0HPmIogaYFhs
+         oFwFdKSvDatR+LGoAnvu7DDurgbvjF6nJF3p86gxn1MFjah5jxstQpsncNh7tf174n
+         IZM+JQpXnW77GY3IdNKaAAnujdyrPgOvvso9d2wT404Tub1B6KL4C214GDAMzZSwoR
+         wggFPOkhpL6urVA4JjNiZ4WQdU15L5l19Lgg2p+qd5EJ+2YoCkwcSFBvRoKKZusfpI
+         99srOk6vNzDZw==
+Received: from visor (unknown [172.20.208.17])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 80ED410BF;
+        Thu, 19 Jul 2018 13:53:34 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 13:53:34 -0700
+From:   Ivan Delalande <colona@arista.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] exec: don't force_sigsegv processes with a pending fatal
+ signal
+Message-ID: <20180719205334.GA23942@visor>
 MIME-Version: 1.0
-In-Reply-To: <1532032049.3061.1.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 01:27 PM, James Bottomley wrote:
-> On Thu, 2018-07-19 at 13:12 -0700, Tadeusz Struk wrote:
->> On 07/19/2018 12:52 PM, James Bottomley wrote:
->>> The ABI break is the error case as I outlined above.  We can't
->>> assume everyone uses the current interface without getting an error
->>> and one error and your hosed is a nasty failure case to change the
->>> interface to. 
->>
->> Well, if there is a broken application out there that doesn't work
->> today it will not work after this change neither.
-> 
-> It doesn't have to be broken ... it could be using EFAULT to probe the
-> buffer size for instance.  That's the point of not breaking the ABI:
-> you don't second guess what applications are doing.
-> 
+We were seeing unexplained segfaults in coreutils processes and other
+basic utilities that we tracked down to binfmt_elf failing to load
+segments for ld.so. Digging further, the actual problem seems to occur
+when a process gets sigkilled while it is still being loaded by the
+kernel. In our case when _do_page_fault goes for a retry it will return
+early as it first checks for fatal_signal_pending(), so load_elf_interp
+also returns with error and as a result search_binary_handler will
+force_sigsegv() which is pretty confusing as nothing actually failed
+here.
 
-Looking at the existing implementation again:
-https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/tree/drivers/char/tpm/tpm-dev-common.c?h=next-tpm#n56
+Fixes: 19d860a140be ("handle suicide on late failure exits in execve() in search_binary_handler()")
+Reference: https://lkml.org/lkml/2013/2/14/5
+Signed-off-by: Ivan Delalande <colona@arista.com>
+---
+ fs/exec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-EFAULT is returned only if the copy_to_user() fails.
-So today, if an application wants read 1 byte of a response, and provides
-1 byte buffer for it, then only 1 byte of the response will be copied,
-no error code will be returned, and the rest of the response will be gone.
-I don't really see how and why would anyone use EFAULT err to probe for
-the buffer size. That would really be a broken application.
-
-Thanks,
+diff --git a/fs/exec.c b/fs/exec.c
+index 2d4e0075bd24..620d6489b61c 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1657,7 +1657,8 @@ int search_binary_handler(struct linux_binprm *bprm)
+ 		if (retval < 0 && !bprm->mm) {
+ 			/* we got to flush_old_exec() and failed after it */
+ 			read_unlock(&binfmt_lock);
+-			force_sigsegv(SIGSEGV, current);
++			if (!fatal_signal_pending(current))
++				force_sigsegv(SIGSEGV, current);
+ 			return retval;
+ 		}
+ 		if (retval != -ENOEXEC || !bprm->file) {
 -- 
-Tadeusz
+2.18.0
