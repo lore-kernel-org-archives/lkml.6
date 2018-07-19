@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1D6ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052CEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3628620684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3628620684
+	by mail.kernel.org (Postfix) with ESMTP id A8A8A2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:00:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A8A2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731505AbeGSXqF (ORCPT
+        id S1731557AbeGSXqH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:46:05 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54103 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:46:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54117 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731404AbeGSXqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:46:04 -0400
+        id S1731452AbeGSXqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:46:06 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8B54B207B4; Fri, 20 Jul 2018 01:00:47 +0200 (CEST)
+        id 05E9B20876; Fri, 20 Jul 2018 01:00:49 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 208632091A;
-        Fri, 20 Jul 2018 01:00:46 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8B2F22072F;
+        Fri, 20 Jul 2018 01:00:47 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 07/33] mtd: rawnand: fsmc: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 01:00:00 +0200
-Message-Id: <20180719230026.8741-8-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 08/33] mtd: rawnand: gpmi: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 01:00:01 +0200
+Message-Id: <20180719230026.8741-9-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -73,174 +73,89 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/fsmc_nand.c | 148 +++++++++++++++++++++------------------
- 1 file changed, 78 insertions(+), 70 deletions(-)
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c | 56 ++++++++++++++++++------------
+ 1 file changed, 33 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/fsmc_nand.c b/drivers/mtd/nand/raw/fsmc_nand.c
-index 59524d181bfe..020495e6cd55 100644
---- a/drivers/mtd/nand/raw/fsmc_nand.c
-+++ b/drivers/mtd/nand/raw/fsmc_nand.c
-@@ -919,6 +919,82 @@ static int fsmc_nand_probe_config_dt(struct platform_device *pdev,
+diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+index 6294d018df65..5da2fd6e37cc 100644
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+@@ -744,9 +744,9 @@ static int gpmi_alloc_dma_buffer(struct gpmi_nand_data *this)
+ 	 * [2] Allocate a read/write data buffer.
+ 	 *     The gpmi_alloc_dma_buffer can be called twice.
+ 	 *     We allocate a PAGE_SIZE length buffer if gpmi_alloc_dma_buffer
+-	 *     is called before the nand_scan_ident; and we allocate a buffer
+-	 *     of the real NAND page size when the gpmi_alloc_dma_buffer is
+-	 *     called after the nand_scan_ident.
++	 *     is called before the NAND identification; and we allocate a
++	 *     buffer of the real NAND page size when the gpmi_alloc_dma_buffer
++	 *     is called after.
+ 	 */
+ 	this->data_buffer_dma = kzalloc(mtd->writesize ?: PAGE_SIZE,
+ 					GFP_DMA | GFP_KERNEL);
+@@ -1865,6 +1865,34 @@ static int gpmi_init_last(struct gpmi_nand_data *this)
  	return 0;
  }
  
-+static int fsmc_nand_attach_chip(struct nand_chip *nand)
++static int gpmi_nand_attach_chip(struct nand_chip *chip)
 +{
-+	struct mtd_info *mtd = nand_to_mtd(nand);
-+	struct fsmc_nand_data *host = mtd_to_fsmc(mtd);
++	struct gpmi_nand_data *this = nand_get_controller_data(chip);
++	int ret;
 +
-+	if (AMBA_REV_BITS(host->pid) >= 8) {
-+		switch (mtd->oobsize) {
-+		case 16:
-+		case 64:
-+		case 128:
-+		case 224:
-+		case 256:
-+			break;
-+		default:
-+			dev_warn(host->dev,
-+				 "No oob scheme defined for oobsize %d\n",
-+				 mtd->oobsize);
-+			return -EINVAL;
-+		}
++	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
++		chip->bbt_options |= NAND_BBT_NO_OOB;
 +
-+		mtd_set_ooblayout(mtd, &fsmc_ecc4_ooblayout_ops);
-+
-+		return 0;
++		if (of_property_read_bool(this->dev->of_node,
++					  "fsl,no-blockmark-swap"))
++			this->swap_block_mark = false;
 +	}
++	dev_dbg(this->dev, "Blockmark swapping %sabled\n",
++		this->swap_block_mark ? "en" : "dis");
 +
-+	switch (nand->ecc.mode) {
-+	case NAND_ECC_HW:
-+		dev_info(host->dev, "Using 1-bit HW ECC scheme\n");
-+		nand->ecc.calculate = fsmc_read_hwecc_ecc1;
-+		nand->ecc.correct = nand_correct_data;
-+		nand->ecc.bytes = 3;
-+		nand->ecc.strength = 1;
-+		break;
++	ret = gpmi_init_last(this);
++	if (ret)
++		return ret;
 +
-+	case NAND_ECC_SOFT:
-+		if (nand->ecc.algo == NAND_ECC_BCH) {
-+			dev_info(host->dev,
-+				 "Using 4-bit SW BCH ECC scheme\n");
-+			break;
-+		}
-+
-+	case NAND_ECC_ON_DIE:
-+		break;
-+
-+	default:
-+		dev_err(host->dev, "Unsupported ECC mode!\n");
-+		return -ENOTSUPP;
-+	}
-+
-+	/*
-+	 * Don't set layout for BCH4 SW ECC. This will be
-+	 * generated later in nand_bch_init() later.
-+	 */
-+	if (nand->ecc.mode == NAND_ECC_HW) {
-+		switch (mtd->oobsize) {
-+		case 16:
-+		case 64:
-+		case 128:
-+			mtd_set_ooblayout(mtd,
-+					  &fsmc_ecc1_ooblayout_ops);
-+			break;
-+		default:
-+			dev_warn(host->dev,
-+				 "No oob scheme defined for oobsize %d\n",
-+				 mtd->oobsize);
-+			return -EINVAL;
-+		}
-+	}
++	chip->options |= NAND_SKIP_BBTSCAN;
 +
 +	return 0;
 +}
 +
-+static struct nand_controller_ops fsmc_nand_controller_ops = {
-+	.attach_chip = fsmc_nand_attach_chip,
++static struct nand_controller_ops gpmi_nand_controller_ops = {
++	.attach_chip = gpmi_nand_attach_chip,
 +};
 +
- /*
-  * fsmc_nand_probe - Probe function
-  * @pdev:       platform device structure
-@@ -1048,76 +1124,8 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
- 	/*
- 	 * Scan to find existence of the device
- 	 */
--	ret = nand_scan_ident(mtd, 1, NULL);
--	if (ret) {
--		dev_err(&pdev->dev, "No NAND Device found!\n");
--		goto release_dma_write_chan;
--	}
--
--	if (AMBA_REV_BITS(host->pid) >= 8) {
--		switch (mtd->oobsize) {
--		case 16:
--		case 64:
--		case 128:
--		case 224:
--		case 256:
--			break;
--		default:
--			dev_warn(&pdev->dev, "No oob scheme defined for oobsize %d\n",
--				 mtd->oobsize);
--			ret = -EINVAL;
--			goto release_dma_write_chan;
--		}
--
--		mtd_set_ooblayout(mtd, &fsmc_ecc4_ooblayout_ops);
--	} else {
--		switch (nand->ecc.mode) {
--		case NAND_ECC_HW:
--			dev_info(&pdev->dev, "Using 1-bit HW ECC scheme\n");
--			nand->ecc.calculate = fsmc_read_hwecc_ecc1;
--			nand->ecc.correct = nand_correct_data;
--			nand->ecc.bytes = 3;
--			nand->ecc.strength = 1;
--			break;
--
--		case NAND_ECC_SOFT:
--			if (nand->ecc.algo == NAND_ECC_BCH) {
--				dev_info(&pdev->dev, "Using 4-bit SW BCH ECC scheme\n");
--				break;
--			}
--
--		case NAND_ECC_ON_DIE:
--			break;
--
--		default:
--			dev_err(&pdev->dev, "Unsupported ECC mode!\n");
--			goto release_dma_write_chan;
--		}
--
--		/*
--		 * Don't set layout for BCH4 SW ECC. This will be
--		 * generated later in nand_bch_init() later.
--		 */
--		if (nand->ecc.mode == NAND_ECC_HW) {
--			switch (mtd->oobsize) {
--			case 16:
--			case 64:
--			case 128:
--				mtd_set_ooblayout(mtd,
--						  &fsmc_ecc1_ooblayout_ops);
--				break;
--			default:
--				dev_warn(&pdev->dev,
--					 "No oob scheme defined for oobsize %d\n",
--					 mtd->oobsize);
--				ret = -EINVAL;
--				goto release_dma_write_chan;
--			}
--		}
--	}
--
--	/* Second stage of scan to fill MTD data-structures */
--	ret = nand_scan_tail(mtd);
-+	nand->dummy_controller.ops = &fsmc_nand_controller_ops;
-+	ret = nand_scan(mtd, 1);
+ static int gpmi_nand_init(struct gpmi_nand_data *this)
+ {
+ 	struct nand_chip *chip = &this->nand;
+@@ -1905,26 +1933,8 @@ static int gpmi_nand_init(struct gpmi_nand_data *this)
  	if (ret)
- 		goto release_dma_write_chan;
+ 		goto err_out;
+ 
+-	ret = nand_scan_ident(mtd, GPMI_IS_MX6(this) ? 2 : 1, NULL);
+-	if (ret)
+-		goto err_out;
+-
+-	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
+-		chip->bbt_options |= NAND_BBT_NO_OOB;
+-
+-		if (of_property_read_bool(this->dev->of_node,
+-						"fsl,no-blockmark-swap"))
+-			this->swap_block_mark = false;
+-	}
+-	dev_dbg(this->dev, "Blockmark swapping %sabled\n",
+-		this->swap_block_mark ? "en" : "dis");
+-
+-	ret = gpmi_init_last(this);
+-	if (ret)
+-		goto err_out;
+-
+-	chip->options |= NAND_SKIP_BBTSCAN;
+-	ret = nand_scan_tail(mtd);
++	chip->dummy_controller.ops = &gpmi_nand_controller_ops;
++	ret = nand_scan(mtd, GPMI_IS_MX6(this) ? 2 : 1);
+ 	if (ret)
+ 		goto err_out;
  
 -- 
 2.14.1
