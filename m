@@ -2,101 +2,112 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 234B7ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 090E5C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E7420673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:54:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1E7420673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id B778520673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:54:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="stj1ws77"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B778520673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731672AbeGSOhr (ORCPT
+        id S1731710AbeGSOiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:37:47 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:17455 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730433AbeGSOhr (ORCPT
+        Thu, 19 Jul 2018 10:38:02 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38738 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730433AbeGSOiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:37:47 -0400
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6JDsS8M016327;
-        Thu, 19 Jul 2018 22:54:28 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
- Thu, 19 Jul 2018 22:54:28 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6JDsN85016284
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 19 Jul 2018 22:54:28 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v5] x86: Avoid pr_cont() in show_opcodes().
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, joe@perches.com,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@suse.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <1531907643-3367-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20180718115753.GA25388@gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <ed59bf3b-705f-8433-f498-0acc2f09ef97@i-love.sakura.ne.jp>
-Date:   Thu, 19 Jul 2018 22:54:22 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 10:38:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=knconBZjf3pP0Q8+N2eKVc87U+1NaPR4TA9wiezBgO4=; b=stj1ws77G++GvZtkY5v5lPt88
+        YQjEbfRAQ7X+rS9vRxYH47FVukq5q/a/RmKv5pRG0sR24RYvmHs0yanTQroB3guDwkoljmhGGjLKX
+        aT1wsykQARkiLaEcr1YBjIiErV0v4jtq3+LvDaFXaKLdWHsIQ1z2KuzMRqTbUtRKxkoDqfaqMKFdj
+        5k4eBVuEeEv4OdZ0QrRrOQ+UiIHKqz3GbDTb5stLt1sOYQhxfePCOSj4qd6tKg68uw7sB1+yG0sL4
+        2kePc2VeM67ur4ZkH0MPMFbQdlIoHlkBKnw4sjNKZAx/ayFG+s9tK8/4qTlTP3j6WxaExugUmtXCA
+        6P7FmlBXQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fg9O2-0003fV-Qc; Thu, 19 Jul 2018 13:54:31 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 969FD20289330; Thu, 19 Jul 2018 15:54:29 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 15:54:29 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v11 9/9] cpuset: Allow reporting of sched domain
+ generation info
+Message-ID: <20180719135429.GF2494@hirez.programming.kicks-ass.net>
+References: <1529825440-9574-1-git-send-email-longman@redhat.com>
+ <1529825440-9574-10-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180718115753.GA25388@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529825440-9574-10-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/18 20:57, Ingo Molnar wrote:
+On Sun, Jun 24, 2018 at 03:30:40PM +0800, Waiman Long wrote:
+> This patch enables us to report sched domain generation information.
 > 
-> * Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+> If DYNAMIC_DEBUG is enabled, issuing the following command
 > 
->> Since syzbot is confused by concurrent printk() messages [1],
->> this patch changes show_opcodes() to use %ph format string.
->>
->> When we start adding prefix to each line of printk() output,
->> we will be able to handle concurrent printk() messages.
->>
->> [1] https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
->>
->> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>   echo "file cpuset.c +p" > /sys/kernel/debug/dynamic_debug/control
 > 
-> Wasn't that variant of the patch written by Rasmus?
+> and setting loglevel to 8 will allow the kernel to show what scheduling
+> domain changes are being made.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  kernel/cgroup/cpuset.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 07a5575..62b7e61 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -836,6 +836,23 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>  	return ndoms;
+>  }
+>  
+> +#ifdef CONFIG_DEBUG_KERNEL
+> +static inline void debug_print_domains(cpumask_var_t *doms, int ndoms)
+> +{
+> +	int i;
+> +	char buf[200];
+> +	char *ptr, *end = buf + sizeof(buf) - 1;
+> +
+> +	for (i = 0, ptr = buf, *end = '\0'; i < ndoms; i++)
+> +		ptr += snprintf(ptr, end - ptr, "dom%d=%*pbl ", i,
+> +				cpumask_pr_args(doms[i]));
+> +
+> +	pr_debug("Generated %d domains: %s\n", ndoms, buf);
+> +}
+> +#else
+> +static inline void debug_print_domains(cpumask_var_t *doms, int ndoms) { }
+> +#endif
 
-Rasmus Villemoes taught me that we can use "%*ph" format string and pass
-length as arguments for "*" part. Then, since Joe Perches suggested me to
-use #define for length variable, I updated to use "#define length immediate"
-and replaced "%*ph" with "%" __strigify(length) "ph" and removed length from
-arguments. That is v5 patch.
-
-> 
-> If so then the changelog should start with:
-> 
->  From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-
-OK. I posted v6 patch with From: line updated.
-
-> 
-> Thanks,
-> 
-> 	Ingo
-> 
-
+I still hate this patch.. it prints information already available in
+sched_debug and has that rediculous on-stack buffer.
