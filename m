@@ -2,116 +2,556 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB47ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF6AECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37AC42084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:52:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37AC42084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 0BBF82084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:53:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BBF82084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730432AbeGSVh1 (ORCPT
+        id S1730534AbeGSVin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 17:37:27 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46049 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727609AbeGSVh0 (ORCPT
+        Thu, 19 Jul 2018 17:38:43 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34233 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727555AbeGSVin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 17:37:26 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c4-v6so9308727wrs.12
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 13:52:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RuRQobfna1gFuE+SiuGl+tZbbFsIbAQ3ocQMrEiC49A=;
-        b=CLmiPp6ahmEhieIF06m5R+WcBT/y3EZ8jP8WWVRTyRGJPbeAtfEeDuB99YYufvjB1n
-         cFcDlS3tUHx9EKOXelEWr4tH9SwSy6dAuvG/61xSXFGu4PamWQVopCIZGgtA5+Z3QiVY
-         MfcF3jLLb+yAcpTDL1VwcWF5MqWv4AlKcK/zf8afx6QPX/VmYHKbVlk3+3Ob9XbQmPjE
-         QHKugdOhdAHP0Fbb3nc2YYVDt3vTWhE2co1436869zj4Xf6OFnUXVHOibe7nU0Lfw2yH
-         RNAhzkKM2ye5lj7YHchqj8ZIMdiVTIVmcvYIm/IE+dtpRVFovwiDWACDvb8L+eRq4ieq
-         GR3Q==
-X-Gm-Message-State: AOUpUlGuO96YczwxeihucYR1QUGhMH7jzD6k9e4Yo9C+4Ex48yCHiSRW
-        JzvdTdVFaMgPlR3ZUpylqpi683s2N7o=
-X-Google-Smtp-Source: AAOMgpdDvGNa2fqzTr4KV5nDgMZCBUdxTUX0RL3YaHTzhhTztCw2TpGFhfSLUoa3xGa/SH57aULcdQ==
-X-Received: by 2002:a5d:4210:: with SMTP id n16-v6mr8088100wrq.55.1532033556651;
-        Thu, 19 Jul 2018 13:52:36 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id h1-v6sm80631wri.90.2018.07.19.13.52.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 13:52:35 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 615141241AE; Thu, 19 Jul 2018 22:52:35 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 22:52:35 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, pasha.tatashin@oracle.com,
-        vbabka@suse.cz, aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v2 3/5] mm/page_alloc: Optimize free_area_init_core
-Message-ID: <20180719205235.GA14010@techadventures.net>
-References: <20180719132740.32743-1-osalvador@techadventures.net>
- <20180719132740.32743-4-osalvador@techadventures.net>
- <20180719134417.GC7193@dhcp22.suse.cz>
- <20180719140327.GB10988@techadventures.net>
- <20180719151555.GH7193@dhcp22.suse.cz>
+        Thu, 19 Jul 2018 17:38:43 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 9F7A28049F; Thu, 19 Jul 2018 22:53:50 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 22:53:44 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     pali.rohar@gmail.com, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
+        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
+        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
+        clayton@craftyguy.net, martijn@brixit.nl,
+        sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        mchehab@s-opensource.com, sakari.ailus@iki.fi,
+        linux-media@vger.kernel.org, hans.verkuil@cisco.com
+Subject: Re: [PATCH, libv4l]: Make libv4l2 usable on devices with complex
+ pipeline
+Message-ID: <20180719205344.GA12098@amd>
+References: <20180708213258.GA18217@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
 Content-Disposition: inline
-In-Reply-To: <20180719151555.GH7193@dhcp22.suse.cz>
+In-Reply-To: <20180708213258.GA18217@amd>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 05:15:55PM +0200, Michal Hocko wrote:
-> Your changelog doesn't really explain the motivation. Does the change
-> help performance? Is this a pure cleanup?
 
-Hi Michal,
+--YZ5djTAD1cGYuMQK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry to not have explained this better from the very beginning.
+On Sun 2018-07-08 23:32:58, Pavel Machek wrote:
+>=20
+> Add support for opening multiple devices in v4l2_open(), and for
+> mapping controls between devices.
+>=20
+> This is necessary for complex devices, such as Nokia N900.
+>=20
+> Signed-off-by: Pavel Machek <pavel@ucw.cz>
 
-It should help a bit in performance terms as we would be skipping those
-condition checks and assignations for zones that do not have any pages.
-It is not a huge win, but I think that skipping code we do not really need to run
-is worh to have.
+Ping?
 
-> The function is certainly not an example of beauty. It is more an
-> example of changes done on top of older ones without much thinking. But
-> I do not see your change would make it so much better. I would consider
-> it a much nicer cleanup if it was split into logical units each doing
-> one specific thing.
+There's a lot of work to do on libv4l2... timely patch handling would
+be nice.
 
-About the cleanup, I thought that moving that block of code to a separate function
-would make the code easier to follow.
-If you think that this is still not enough, I can try to split it and see the outcome.
+> diff --git a/lib/include/libv4l2.h b/lib/include/libv4l2.h
+> index ea1870d..a0ec0a9 100644
+> --- a/lib/include/libv4l2.h
+> +++ b/lib/include/libv4l2.h
+> @@ -58,6 +58,10 @@ LIBV4L_PUBLIC extern FILE *v4l2_log_file;
+>     invalid memory address will not lead to failure with errno being EFAU=
+LT,
+>     as it would with a real ioctl, but will cause libv4l2 to break, and y=
+ou
+>     get to keep both pieces.
+> +
+> +   You can open complex pipelines by passing ".cv" file with pipeline
+> +   description to v4l2_open(). libv4l2 will open all the required
+> +   devices automatically in that case.
+>  */
+> =20
+>  LIBV4L_PUBLIC int v4l2_open(const char *file, int oflag, ...);
+> diff --git a/lib/libv4l2/libv4l2-priv.h b/lib/libv4l2/libv4l2-priv.h
+> index 1924c91..1ee697a 100644
+> --- a/lib/libv4l2/libv4l2-priv.h
+> +++ b/lib/libv4l2/libv4l2-priv.h
+> @@ -104,6 +104,7 @@ struct v4l2_dev_info {
+>  	void *plugin_library;
+>  	void *dev_ops_priv;
+>  	const struct libv4l_dev_ops *dev_ops;
+> +	struct v4l2_controls_map *map;
+>  };
+> =20
+>  /* From v4l2-plugin.c */
+> @@ -130,4 +131,20 @@ static inline void v4l2_plugin_cleanup(void *plugin_=
+lib, void *plugin_priv,
+>  extern const char *v4l2_ioctls[];
+>  void v4l2_log_ioctl(unsigned long int request, void *arg, int result);
+> =20
+> +
+> +struct v4l2_control_map {
+> +	unsigned long control;
+> +	int fd;
+> +};
+> +
+> +struct v4l2_controls_map {
+> +	int main_fd;
+> +	int num_fds;
+> +	int num_controls;
+> +	struct v4l2_control_map map[];
+> +};
+> +
+> +int v4l2_open_pipeline(struct v4l2_controls_map *map, int v4l2_flags);
+> +LIBV4L_PUBLIC int v4l2_get_fd_for_control(int fd, unsigned long control);
+> +
+>  #endif
+> diff --git a/lib/libv4l2/libv4l2.c b/lib/libv4l2/libv4l2.c
+> index 2db25d1..ac430f0 100644
+> --- a/lib/libv4l2/libv4l2.c
+> +++ b/lib/libv4l2/libv4l2.c
+> @@ -70,6 +70,8 @@
+>  #include <sys/types.h>
+>  #include <sys/mman.h>
+>  #include <sys/stat.h>
+> +#include <dirent.h>
+> +
+>  #include "libv4l2.h"
+>  #include "libv4l2-priv.h"
+>  #include "libv4l-plugin.h"
+> @@ -618,6 +620,8 @@ static void v4l2_update_fps(int index, struct v4l2_st=
+reamparm *parm)
+>  		devices[index].fps =3D 0;
+>  }
+> =20
+> +static int v4l2_open_complex(int fd, int v4l2_flags);
+> +
+>  int v4l2_open(const char *file, int oflag, ...)
+>  {
+>  	int fd;
+> @@ -641,6 +645,21 @@ int v4l2_open(const char *file, int oflag, ...)
+>  	if (fd =3D=3D -1)
+>  		return fd;
+> =20
+> +	int len =3D strlen(file);
+> +	char *end =3D ".cv";
+> +	int len2 =3D strlen(end);
+> +	if ((len > len2) && (!strcmp(file + len - len2, end))) {
+> +		/* .cv extension */
+> +		struct stat sb;
+> +
+> +		if (fstat(fd, &sb) =3D=3D 0) {
+> +			if ((sb.st_mode & S_IFMT) =3D=3D S_IFREG) {
+> +				return v4l2_open_complex(fd, 0);
+> +			}
+> +		}
+> +	=09
+> +	}
+> +
+>  	if (v4l2_fd_open(fd, 0) =3D=3D -1) {
+>  		int saved_err =3D errno;
+> =20
+> @@ -787,6 +806,8 @@ no_capture:
+>  	if (index >=3D devices_used)
+>  		devices_used =3D index + 1;
+> =20
+> +	devices[index].map =3D NULL;
+> +
+>  	/* Note we always tell v4lconvert to optimize src fmt selection for
+>  	   our default fps, the only exception is the app explicitly selecting
+>  	   a frame rate using the S_PARM ioctl after a S_FMT */
+> @@ -1056,12 +1077,47 @@ static int v4l2_s_fmt(int index, struct v4l2_form=
+at *dest_fmt)
+>  	return 0;
+>  }
+> =20
+> +int v4l2_get_fd_for_control(int fd, unsigned long control)
+> +{
+> +	int index =3D v4l2_get_index(fd);
+> +	struct v4l2_controls_map *map;
+> +	int lo =3D 0;
+> +	int hi;
+> +
+> +	if (index < 0)
+> +		return fd;
+> +
+> +	map =3D devices[index].map;
+> +	if (!map)
+> +		return fd;
+> +	hi =3D map->num_controls;
+> +
+> +	while (lo < hi) {
+> +		int i =3D (lo + hi) / 2;
+> +		if (map->map[i].control =3D=3D control) {
+> +			return map->map[i].fd;
+> +		}
+> +		if (map->map[i].control > control) {
+> +			hi =3D i;
+> +			continue;
+> +		}
+> +		if (map->map[i].control < control) {
+> +			lo =3D i+1;
+> +			continue;
+> +		}
+> +		printf("Bad: impossible condition in binary search\n");
+> +		exit(1);
+> +	}
+> +	return fd;
+> +}
+> +
+>  int v4l2_ioctl(int fd, unsigned long int request, ...)
+>  {
+>  	void *arg;
+>  	va_list ap;
+>  	int result, index, saved_err;
+> -	int is_capture_request =3D 0, stream_needs_locking =3D 0;
+> +	int is_capture_request =3D 0, stream_needs_locking =3D 0,=20
+> +	    is_subdev_request =3D 0;
+> =20
+>  	va_start(ap, request);
+>  	arg =3D va_arg(ap, void *);
+> @@ -1076,18 +1132,19 @@ int v4l2_ioctl(int fd, unsigned long int request,=
+ ...)
+>  	   ioctl, causing it to get sign extended, depending upon this behavior=
+ */
+>  	request =3D (unsigned int)request;
+> =20
+>  	if (devices[index].convert =3D=3D NULL)
+>  		goto no_capture_request;
+> =20
+>  	/* Is this a capture request and do we need to take the stream lock? */
+>  	switch (request) {
+> -	case VIDIOC_QUERYCAP:
+>  	case VIDIOC_QUERYCTRL:
+>  	case VIDIOC_G_CTRL:
+>  	case VIDIOC_S_CTRL:
+>  	case VIDIOC_G_EXT_CTRLS:
+> -	case VIDIOC_TRY_EXT_CTRLS:
+>  	case VIDIOC_S_EXT_CTRLS:
+> +		is_subdev_request =3D 1;
+> +	case VIDIOC_QUERYCAP:
+> +	case VIDIOC_TRY_EXT_CTRLS:
+>  	case VIDIOC_ENUM_FRAMESIZES:
+>  	case VIDIOC_ENUM_FRAMEINTERVALS:
+>  		is_capture_request =3D 1;
+> @@ -1151,10 +1209,15 @@ int v4l2_ioctl(int fd, unsigned long int request,=
+ ...)
+>  	}
+> =20
+>  	if (!is_capture_request) {
+> +		int sub_fd;
+>  no_capture_request:
+> +		sub_fd =3D fd;
+> +		if (is_subdev_request) {
+> +			sub_fd =3D v4l2_get_fd_for_control(index, ((struct v4l2_queryctrl *) =
+arg)->id);
+> +		}
+>  		result =3D devices[index].dev_ops->ioctl(
+>  				devices[index].dev_ops_priv,
+> -				fd, request, arg);
+> +				sub_fd, request, arg);
+>  		saved_err =3D errno;
+>  		v4l2_log_ioctl(request, arg, result);
+>  		errno =3D saved_err;
+> @@ -1782,3 +1845,194 @@ int v4l2_get_control(int fd, int cid)
+>  			(qctrl.maximum - qctrl.minimum) / 2) /
+>  		(qctrl.maximum - qctrl.minimum);
+>  }
+> +
+> +int v4l2_open_pipeline(struct v4l2_controls_map *map, int v4l2_flags)
+> +{
+> +	int index;
+> +	int i;
+> +
+> +	for (i=3D0; i<map->num_controls; i++) {
+> +		if (map->map[i].fd <=3D 0) {
+> +			V4L2_LOG_ERR("v4l2_open_pipeline: Bad fd in map.\n");
+> +			return -1;
+> +		}
+> +		if (i>=3D1 && map->map[i].control <=3D map->map[i-1].control) {
+> +			V4L2_LOG_ERR("v4l2_open_pipeline: Controls not sorted.\n");
+> +			return -1;
+> +		}
+> +	}
+> +
+> +	i =3D v4l2_fd_open(map->main_fd, v4l2_flags);
+> +	index =3D v4l2_get_index(map->main_fd);
+> +	devices[index].map =3D map;
+> +	return i;
+> +}
+> +
+> +static void scan_devices(char **device_names, int *device_fds, int num)
+> +{
+> +	struct dirent **namelist;
+> +	int n;
+> +	char *class_v4l =3D "/sys/class/video4linux";
+> +
+> +	n =3D scandir(class_v4l, &namelist, NULL, alphasort);
+> +	if (n < 0) {
+> +		perror("scandir");
+> +		return;
+> +	}
+> +=09
+> +	while (n--) {
+> +		if (namelist[n]->d_name[0] !=3D '.') {
+> +			char filename[1024], content[1024];
+> +			sprintf(filename, "%s/%s/name", class_v4l, namelist[n]->d_name);
+> +			FILE *f =3D fopen(filename, "r");
+> +			if (!f) {
+> +				printf("Strange, can't open %s", filename);
+> +			} else {
+> +				fgets(content, 1024, f);
+> +				fclose(f);
+> +
+> +				int i;
+> +				for (i =3D num-1; i >=3D0; i--) {
+> +					if (!strcmp(content, device_names[i])) {
+> +						sprintf(filename, "/dev/%s", namelist[n]->d_name);
+> +						device_fds[i] =3D open(filename, O_RDWR);
+> +						if (device_fds[i] < 0) {
+> +							V4L2_LOG_ERR("Error opening %s: %m\n", filename);
+> +						}
+> +					}
+> +				}
+> +			}
+> +		}
+> +		free(namelist[n]);
+> +	}
+> +	free(namelist);
+> + =20
+> +}
+> +
+> +static int v4l2_open_complex(int fd, int v4l2_flags)
+> +{
+> +#define perr(s) V4L2_LOG_ERR("open_complex: " s "\n")
+> +#define BUF 256
+> +	FILE *f =3D fdopen(fd, "r");
+> +
+> +	int res =3D -1;
+> +	char buf[BUF];
+> +	int version, num_modes, num_devices, num_controls;
+> +	int dev, control;
+> +
+> +	if (!f) {
+> +		perr("open of .cv file failed: %m");
+> +		goto err;
+> +	}
+> +
+> +	if (fscanf(f, "Complex Video: %d\n", &version) !=3D 1) {
+> +		perr(".cv file does not have required header");
+> +		goto close;
+> +	}
+> +
+> +	if (version !=3D 0) {
+> +		perr(".cv file has unknown version");
+> +		goto close;
+> +	}
+> + =20
+> +	if (fscanf(f, "#modes: %d\n", &num_modes) !=3D 1) {
+> +		perr("could not parse modes");
+> +		goto close;
+> +	}
+> +
+> +	if (num_modes !=3D 1) {
+> +		perr("only single mode is supported for now");
+> +		goto close;
+> +	}
+> +
+> +	if (fscanf(f, "Mode: %s\n", buf) !=3D 1) {
+> +		perr("could not parse mode name");
+> +		goto close;
+> +	}
+> +
+> +	if (fscanf(f, " #devices: %d\n", &num_devices) !=3D 1) {
+> +		perr("could not parse number of devices");
+> +		goto close;
+> +	}
+> +#define MAX_DEVICES 16
+> +	char *device_names[MAX_DEVICES] =3D { NULL, };
+> +	int device_fds[MAX_DEVICES];
+> +	if (num_devices > MAX_DEVICES) {
+> +		perr("too many devices");
+> +		goto close;
+> +	}
+> + =20
+> +	for (dev =3D 0; dev < num_devices; dev++) {
+> +		int tmp;
+> +		if (fscanf(f, "%d: ", &tmp) !=3D 1) {
+> +			perr("could not parse device");
+> +			goto free_devices;
+> +		}
+> +		if (tmp !=3D dev) {
+> +			perr("bad device number");
+> +			goto free_devices;
+> +		}
+> +		fgets(buf, BUF, f);
+> +		device_names[dev] =3D strdup(buf);
+> +		device_fds[dev] =3D -1;
+> +	}
+> +
+> +	scan_devices(device_names, device_fds, num_devices);
+> +
+> +	for (dev =3D 0; dev < num_devices; dev++) {
+> +		if (device_fds[dev] =3D=3D -1) {
+> +			perr("Could not open all required devices");
+> +			goto close_devices;
+> +		}
+> +	}
+> +
+> +	if (fscanf(f, " #controls: %d\n", &num_controls) !=3D 1) {
+> +		perr("can not parse number of controls");
+> +		goto close_devices;
+> +	}
+> +
+> +	struct v4l2_controls_map *map =3D malloc(sizeof(struct v4l2_controls_ma=
+p) +
+> +					       num_controls*sizeof(struct v4l2_control_map));
+> +
+> +	map->num_controls =3D num_controls;
+> +	map->num_fds =3D num_devices;
+> +	map->main_fd =3D device_fds[0];
+> + =20
+> +	for (control =3D 0; control < num_controls; control++) {
+> +		unsigned long num;
+> +		int dev;
+> +		if (fscanf(f, "0x%lx: %d\n", &num, &dev) !=3D 2) {
+> +			perr("could not parse control");
+> +			goto free_map;
+> +		}
+> +		if ((dev < 0) || (dev >=3D num_devices)) {
+> +			perr("device out of range");
+> +			goto free_map;
+> +		}
+> +		map->map[control].control =3D num;
+> +		map->map[control].fd =3D device_fds[dev];
+> +	}
+> +	if (fscanf(f, "%s", buf) > 0) {
+> +		perr("junk at end of file");
+> +		goto free_map;
+> +	}
+> +
+> +	res =3D v4l2_open_pipeline(map, v4l2_flags);
+> +
+> +	if (res < 0) {
+> +free_map:
+> +		free(map);
+> +close_devices:
+> +		for (dev =3D 0; dev < num_devices; dev++)
+> +			close(device_fds[dev]);
+> +	}
+> +free_devices:
+> +	for (dev =3D 0; dev < num_devices; dev++) {
+> +		free(device_names[dev]);
+> +	}
+> +close:
+> +	fclose(f);
+> +err:
+> +	return res;
+> +}
+> +
+> diff --git a/lib/libv4lconvert/control/libv4lcontrol.c b/lib/libv4lconver=
+t/control/libv4lcontrol.c
+> index 59f28b1..c1e6f93 100644
+> --- a/lib/libv4lconvert/control/libv4lcontrol.c
+> +++ b/lib/libv4lconvert/control/libv4lcontrol.c
+> @@ -863,6 +863,7 @@ int v4lcontrol_vidioc_queryctrl(struct v4lcontrol_dat=
+a *data, void *arg)
+>  	struct v4l2_queryctrl *ctrl =3D arg;
+>  	int retval;
+>  	uint32_t orig_id =3D ctrl->id;
+> +	int fd;
+> =20
+>  	/* if we have an exact match return it */
+>  	for (i =3D 0; i < V4LCONTROL_COUNT; i++)
+> @@ -872,8 +873,9 @@ int v4lcontrol_vidioc_queryctrl(struct v4lcontrol_dat=
+a *data, void *arg)
+>  			return 0;
+>  		}
+> =20
+> +	fd =3D v4l2_get_fd_for_control(data->fd, ctrl->id);
+>  	/* find out what the kernel driver would respond. */
+> -	retval =3D data->dev_ops->ioctl(data->dev_ops_priv, data->fd,
+> +	retval =3D data->dev_ops->ioctl(data->dev_ops_priv, fd,
+>  			VIDIOC_QUERYCTRL, arg);
+> =20
+>  	if ((data->priv_flags & V4LCONTROL_SUPPORTS_NEXT_CTRL) &&
+> @@ -903,6 +905,7 @@ int v4lcontrol_vidioc_g_ctrl(struct v4lcontrol_data *=
+data, void *arg)
+>  {
+>  	int i;
+>  	struct v4l2_control *ctrl =3D arg;
+> +	int fd;
+> =20
+>  	for (i =3D 0; i < V4LCONTROL_COUNT; i++)
+>  		if ((data->controls & (1 << i)) &&
+> @@ -911,7 +914,8 @@ int v4lcontrol_vidioc_g_ctrl(struct v4lcontrol_data *=
+data, void *arg)
+>  			return 0;
+>  		}
+> =20
+> -	return data->dev_ops->ioctl(data->dev_ops_priv, data->fd,
+> +	fd =3D v4l2_get_fd_for_control(data->fd, ctrl->id);
+> +	return data->dev_ops->ioctl(data->dev_ops_priv, fd,
+>  			VIDIOC_G_CTRL, arg);
+>  }
+> =20
+> @@ -994,6 +998,7 @@ int v4lcontrol_vidioc_s_ctrl(struct v4lcontrol_data *=
+data, void *arg)
+>  {
+>  	int i;
+>  	struct v4l2_control *ctrl =3D arg;
+> +	int fd;
+> =20
+>  	for (i =3D 0; i < V4LCONTROL_COUNT; i++)
+>  		if ((data->controls & (1 << i)) &&
+> @@ -1008,7 +1013,8 @@ int v4lcontrol_vidioc_s_ctrl(struct v4lcontrol_data=
+ *data, void *arg)
+>  			return 0;
+>  		}
+> =20
+> -	return data->dev_ops->ioctl(data->dev_ops_priv, data->fd,
+> +	fd =3D v4l2_get_fd_for_control(data->fd, ctrl->id);
+> +	return data->dev_ops->ioctl(data->dev_ops_priv, fd,
+>  			VIDIOC_S_CTRL, arg);
+>  }
+> =20
+>=20
 
-> Btw. are you sure this change is correct? E.g.
-> 		/*
-> 		 * Set an approximate value for lowmem here, it will be adjusted
-> 		 * when the bootmem allocator frees pages into the buddy system.
-> 		 * And all highmem pages will be managed by the buddy system.
-> 		 */
-> 		zone->managed_pages = is_highmem_idx(j) ? realsize : freesize;
-> 
-> expects freesize to be calculated properly and just from quick reading
-> the code I do not see why skipping other adjustments is ok for size > 0.
-> Maybe this is OK, I dunno and my brain is already heading few days off
-> but a real cleanup wouldn't even make me think what the heck is going on
-> here.
 
-This changed in commit e69438596bb3e97809e76be315e54a4a444f4797.
-Current code does not have "realsize" anymore.
 
-Thanks
--- 
-Oscar Salvador
-SUSE L3
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--YZ5djTAD1cGYuMQK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltQ+lcACgkQMOfwapXb+vIOPQCgh2lRztQ+Rld2RKTyFqwdyJqQ
+1mgAoLekkwW8YR4IkC7ApIzM7fA0HVJe
+=OwiC
+-----END PGP SIGNATURE-----
+
+--YZ5djTAD1cGYuMQK--
