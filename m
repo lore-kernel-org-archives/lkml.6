@@ -2,83 +2,108 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB7CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6DDECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7143020684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:34:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7143020684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 4DDE820684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:35:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DDE820684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731900AbeGSPSJ (ORCPT
+        id S1731830AbeGSPTE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:18:09 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:43460 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbeGSPSJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:18:09 -0400
-Received: by mail-vk0-f68.google.com with SMTP id s17-v6so4481617vke.10;
-        Thu, 19 Jul 2018 07:34:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nlo8qoM312shHVkd7Ikm1w3cvRIYfoSUmH3Jx/YOBV4=;
-        b=LxV9fMD6usJNzhsMe3R6tcYvfqV/MOP4W3Dgn3k0vMRhLq1mYt+InWInbwIZ4PNga/
-         BKEPyPTBmaLPs+IbtdBQLe8T8Mkx1HZs+Q9Gm4FXDtFpIK4x7JQsuKQq2QIbytCSBMZf
-         ZlLDSIDdvO6Oe8n3dLeta6qz23JpJyiDzoAVVc/rVtX6Gy/rI6ljmXk1ZYfozCLBs29v
-         E07sKV5T3wDdln4wLr3NoLHyA6mputAU9/jW3PC9LaDkWzzvxnlqmBKctrhpURfc/xOw
-         sc26H9tlOUHruhIJQcP18pXNL+OIFPWS24+2Yo8zsudtcGwBWbWJUEOIqKbrU31X3JPm
-         xYBg==
-X-Gm-Message-State: AOUpUlGXsEVw+nhqUh9JpMvRVqyPLVfCCJJsQ2KZ9+Y3HZoxCwBe4kOB
-        KUzikn3Jb4lR/iTrNVs/A5pID7ElsK0RRzXQ0hQ=
-X-Google-Smtp-Source: AAOMgpeeCDDMUuMuYmXkDIADCB/4ZPGNQmRYAk9CeI3C+DjHlZA2SBSOYUJbajuPhwMZlik/A5XrHCseBtcTzHCTO/A=
-X-Received: by 2002:a1f:d507:: with SMTP id m7-v6mr5942301vkg.40.1532010881327;
- Thu, 19 Jul 2018 07:34:41 -0700 (PDT)
+        Thu, 19 Jul 2018 11:19:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39532 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731471AbeGSPTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 11:19:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8E958AD61;
+        Thu, 19 Jul 2018 14:35:35 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 16:35:34 +0200
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <keith.busch@intel.com>,
+        James Smart <james.smart@broadcom.com>,
+        Hannes Reinecke <hare@suse.de>, Ewan Milne <emilne@redhat.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] Rework NVMe abort handling
+Message-ID: <20180719143534.i36vo45lhz24xbrg@linux-x5ow.site>
+References: <20180719132838.15556-1-jthumshirn@suse.de>
+ <20180719134203.GA15212@lst.de>
+ <20180719141025.yveza2svhvc2r4lw@linux-x5ow.site>
+ <20180719142355.GA18800@lst.de>
 MIME-Version: 1.0
-References: <20180718030152.kdq53mwpdfusvwl5@angband.pl> <20180719114749.00a7f979@alans-desktop>
- <20180719142844.u3u4p7tywb54y4yd@angband.pl>
-In-Reply-To: <20180719142844.u3u4p7tywb54y4yd@angband.pl>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 19 Jul 2018 16:34:28 +0200
-Message-ID: <CAMuHMdXGY9YMwXiEm=Jn=rv6WW0V9P0k7DFZ-5BE4Smu7YzMgg@mail.gmail.com>
-Subject: Re: [PATCH 0/6] vt: no blinking on console, 256/24-bit color improvements
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-console@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180719142355.GA18800@lst.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adam,
+On Thu, Jul 19, 2018 at 04:23:55PM +0200, Christoph Hellwig wrote:
+> On Thu, Jul 19, 2018 at 04:10:25PM +0200, Johannes Thumshirn wrote:
+> > The problem I'm trying to solve here is really just single commands
+> > timing out because of i.e. a bad switch in between which causes frame
+> > loss somewhere.
+> 
+> And that is exactly the case where NVMe abort does not actually work
+> in any sensible way.
+> 
+> Remember that while NVMe guarantes ordered delivery inside a given
+> queue it does not guarantee anything between multiple queues.
+> 
+> So now you have your buggy FC setup where an I/O command times out
+> because your switch delayed it for two hours due to a firmware bug.
+> 
+> After 30 seconds we send an abort over the admin queue, which happens
+> to pass through just fine.  The controller will tell you: no command
+> found as it has never seen it.
+> 
+> No with the the code following what we have in PCIe that just means
+> we'll eventually controller reset after the I/O command times out
+> the second time as we still won't have seen a completion for it.
 
-On Thu, Jul 19, 2018 at 4:29 PM Adam Borowski <kilobyte@angband.pl> wrote:
-> And vgacon has code that looks like it can do CGA and MDA (redundant with
-> mdacon?), either of which I haven't used in... quite a while.  Might be
-> tricky getting access to such hardware to test...
+Exactly that was my intention.
 
-Mdacon is meant to be used next to vgacon, for systems with both color and
-monochrome graphics adapters.
+> If you incorrectly just continue and resend the command we'll actually
+> get the command sent twice and thus a potential bug once the original
+> command just gets sent along.
 
-Gr{oetje,eeting}s,
+OK, let me see where I'm stuck here. We're issuing a command, it gets
+lost due to $REASON and I'm aborting it. The upper layers then
+eventually retry the command and it arrives at the target side. But so
+does the old command as well and we have a duplicate. Correct?
 
-                        Geert
+So if we keep our old behavior and tear down the queues and
+re-establish them, then the upper layers retry the command and it
+arrives on the target. But shortly afterwards the switch happens to
+find the old command in it's ingress buffers and decides to forward it
+to the target as well, how does that differ? The CMDID and SQID are
+probably different but all the payload will be the same, wouldn't it?
 
+So we still have our duplicate on the other side, don't we?
+
+I feel I'm missing out something here.
+
+Byte,
+	Johannes
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
