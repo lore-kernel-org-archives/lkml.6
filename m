@@ -2,119 +2,147 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC64DECDFB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E328ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69BA720673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:43:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jea1lfUP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69BA720673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3218120673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:43:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3218120673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=magewell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbeGSEYX (ORCPT
+        id S1727117AbeGSEYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 00:24:23 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:44066 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725739AbeGSEYX (ORCPT
+        Thu, 19 Jul 2018 00:24:33 -0400
+Received: from out20-38.mail.aliyun.com ([115.124.20.38]:39236 "EHLO
+        out20-38.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725739AbeGSEYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 00:24:23 -0400
-Received: by mail-io0-f193.google.com with SMTP id q19-v6so5924215ioh.11;
-        Wed, 18 Jul 2018 20:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=qb8jQk27eVIMBU+02Ne81Yi5oNEbhn6KeTw/YxDIdLk=;
-        b=Jea1lfUPcILKdGP/wDp2Tg6ucy6CXuOcLYJN4YoDOE2J4zn4h+TTB6ZaYkf11k2jAH
-         A8mSNDrIOwiacfbbnATPLho79sixmXi5ENoYAaWsQm1jJQniO5SCZ9ssUe9yyCBEOsrU
-         /CMEeb05iAEWuaxNxPtWK/DQZBLw2fKAb9JWV1amCVdEgkq3YIpcsQ/9AOXc7fjE6uCh
-         O2I3luo1XsODCjjeCdrOlIuS7VamFFlIo27C9tHKsCGXjntAvU6rK346AN+yaL+esfmz
-         NkiDfIorAFDmpqHFiOLY6A+JRCqlt9/u2Id3RonXw/uLKwbuhn4b2cwaEUZwDRm5LEEP
-         LnrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=qb8jQk27eVIMBU+02Ne81Yi5oNEbhn6KeTw/YxDIdLk=;
-        b=oKJxRJMS34ZCgn22DA4OHXklieFXPc1LsROG2XgdeO2HQUV5JASQnjQ+wduyiVVD48
-         4qbWRLpGWhAtpkoCkgmcDp1CFGW1O+/Cw98Pz3k7AICC4KLgRrqx6MQmteVOLZtK86F3
-         fR4SAnJinrvaG7FT/Hpwnw2LB06TyT/8ETH5VoiBV3j4RvZxhEvFGlTn968zeFFtgNvE
-         ts06ZpZw+pk9WDmqhbgazL1bdG0A1CJiN44oBhf9EA6epXfITbf1Af5dw90OZp8Iii45
-         u6g/ZnuNg58P72wR8HpwaidNxG78yiywZnovUJZY7c91QliC5+6+8u2osMD9ny9dRKLz
-         6bcg==
-X-Gm-Message-State: AOUpUlFk64qcyZ/3sEol0BbZ/gPot3QNGCw48G5YmoYUvZIu+12G4+ju
-        pWxn1irG5VsgExR7ZzhQF43JGHcnW57mhbaQDCo=
-X-Google-Smtp-Source: AAOMgpeAeEZtyrf8YPfRPDCAErH5Q3iCOI2VrSUATbNd3qw0axmrV2nN9lFQZ5wjEexqBhBC74Sa/+EUNPNENm8AbBo=
-X-Received: by 2002:a6b:bc41:: with SMTP id m62-v6mr7588737iof.64.1531971803619;
- Wed, 18 Jul 2018 20:43:23 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:d00d:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 20:43:23
- -0700 (PDT)
-In-Reply-To: <20180719005941.10458-1-andrew.smirnov@gmail.com>
-References: <20180719005941.10458-1-andrew.smirnov@gmail.com>
-From:   Chris Healy <cphealy@gmail.com>
-Date:   Wed, 18 Jul 2018 20:43:23 -0700
-Message-ID: <CAFXsbZrb6_EmkMEhCT064LgjdWPq4t7hBYGg_UM9WLXW2WbZaA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: vf610: Add ZII CFU1 board
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 19 Jul 2018 00:24:33 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07598314|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07423;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=27;RT=27;SR=0;TI=SMTPD_---.CSaQ2Fr_1531971789;
+Received: from John(mailfrom:yong.deng@magewell.com fp:SMTPD_---.CSaQ2Fr_1531971789)
+          by smtp.aliyun-inc.com(10.147.44.145);
+          Thu, 19 Jul 2018 11:43:09 +0800
+Date:   Thu, 19 Jul 2018 11:43:06 +0800
+From:   Yong <yong.deng@magewell.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v10 2/2] media: V3s: Add support for Allwinner CSI.
+Message-Id: <20180719114306.55b2e5f9e9a140a8922a2785@magewell.com>
+In-Reply-To: <20180718095513.4cm77g2iuilvfmd6@paasikivi.fi.intel.com>
+References: <1525417745-37964-1-git-send-email-yong.deng@magewell.com>
+        <20180626110821.wkal6fcnoncsze6y@valkosipuli.retiisi.org.uk>
+        <20180705154802.03604f156709be11892b19c0@magewell.com>
+        <20180718095513.4cm77g2iuilvfmd6@paasikivi.fi.intel.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.30; i686-pc-mingw32)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Add support for the Zodiac Inflight Innovations CFU1
-> board (VF610-based).
->
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: cphealy@gmail.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->
-> Shawn:
->
-> Currently this patch is rebase on top of [spu3], if that is
-> problematic, let me know and I'll update it accordingly
->
-> Thanks,
-> Andrey Smirnov
->
-> [spu3] lkml.kernel.org/r/20180717040651.641-1-andrew.smirnov@gmail.com
->
->  arch/arm/boot/dts/Makefile           |   1 +
->  arch/arm/boot/dts/vf610-zii-cfu1.dts | 307 +++++++++++++++++++++++++++
->  2 files changed, 308 insertions(+)
->  create mode 100644 arch/arm/boot/dts/vf610-zii-cfu1.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index e331b2c16539..85797819fdd9 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -569,6 +569,7 @@ dtb-$(CONFIG_SOC_VF610) += \
->         vf610-cosmic.dtb \
->         vf610m4-cosmic.dtb \
->         vf610-twr.dtb \
-> +       vf610-zii-cfu1.dtb \
->         vf610-zii-dev-rev-b.dtb \
+On Wed, 18 Jul 2018 12:55:14 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+
+> Hi Yong,
+> 
+> On Thu, Jul 05, 2018 at 03:48:02PM +0800, Yong wrote:
+> > > > +
+> > > > +/* -----------------------------------------------------------------------------
+> > > > + * Media Operations
+> > > > + */
+> > > > +static int sun6i_video_formats_init(struct sun6i_video *video,
+> > > > +				    const struct media_pad *remote)
+> > > > +{
+> > > > +	struct v4l2_subdev_mbus_code_enum mbus_code = { 0 };
+> > > > +	struct sun6i_csi *csi = video->csi;
+> > > > +	struct v4l2_format format;
+> > > > +	struct v4l2_subdev *subdev;
+> > > > +	u32 pad;
+> > > > +	const u32 *pixformats;
+> > > > +	int pixformat_count = 0;
+> > > > +	u32 subdev_codes[32]; /* subdev format codes, 32 should be enough */
+> > > > +	int codes_count = 0;
+> > > > +	int num_fmts = 0;
+> > > > +	int i, j;
+> > > > +
+> > > > +	pad = remote->index;
+> > > > +	subdev = media_entity_to_v4l2_subdev(remote->entity);
+> > > > +	if (subdev == NULL)
+> > > > +		return -ENXIO;
+> > > > +
+> > > > +	/* Get supported pixformats of CSI */
+> > > > +	pixformat_count = sun6i_csi_get_supported_pixformats(csi, &pixformats);
+> > > > +	if (pixformat_count <= 0)
+> > > > +		return -ENXIO;
+> > > > +
+> > > > +	/* Get subdev formats codes */
+> > > > +	mbus_code.pad = pad;
+> > > > +	mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+> > > > +	while (!v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL,
+> > > > +				 &mbus_code)) {
+> > > 
+> > > The formats supported by the external sub-device may depend on horizontal
+> > > and vertical flipping. You shouldn't assume any particular configuration
+> > > here: instead, bridge drivers generally just need to make sure the formats
+> > > match in link validation when streaming is started. At least the CSI-2
+> > > receiver driver and the DMA engine driver (video device) should check the
+> > > configuration is valid. See e.g. the IPU3 driver:
+> > > drivers/media/pci/intel/ipu3/ipu3-cio2.c .
+> > 
+> > Can mbus_code be added dynamically ?
+> > The code here only enum the mbus code and get the possible supported
+> > pairs of pixformat and mbus by SoC. Not try to check if the formats
+> > (width height ...) is valid or not. The formats validation will be 
+> > in link validation when streaming is started as per your advise. 
+> 
+> The formats that can be enumerated from the sensor here are those settable
+> using SUBDEV_S_FMT. The enumeration will change on raw sensors if you use
+> the flipping controls. As the bridge driver implements MC as well as subdev
+> APIs, generally the sensor configuration is out of scope of this driver
+> since it's directly configured from the user space.
+> 
+> Just check that the pipeline is valid before starting streaming in your
+> driver.
+
+OK. I will take some time to change these code.
+
+> 
+> -- 
+> Kind regards,
+> 
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
 
 
-Tested-by: Chris Healy <cphealy@gmail.com>
+Thanks,
+Yong
