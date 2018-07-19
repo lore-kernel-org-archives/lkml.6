@@ -2,159 +2,105 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3FEC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09206C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38F852084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:19:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF2892084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:26:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Y0r0KyMa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F852084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="K+grE9Ms"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2892084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732180AbeGSUDf (ORCPT
+        id S1732092AbeGSULX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 16:03:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:50826 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731442AbeGSUDf (ORCPT
+        Thu, 19 Jul 2018 16:11:23 -0400
+Received: from mail-io0-f177.google.com ([209.85.223.177]:43798 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732029AbeGSULX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 16:03:35 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JJEMjD114134;
-        Thu, 19 Jul 2018 19:18:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=5EV4D0wtpefNpwqWT/wtx9dXjo49SDc11WB+S5Go60w=;
- b=Y0r0KyMacj+HYywk2foCkplWl3ywqarbNrgRsrMDhKu3DDzf9/fJ2xbCEIVnDWQLCr7y
- C/CRdBtd0luQE5F9NlUzKWTtnuB/dCidyIz6N9WpimeVGzZYQgQ7sMGuigoui1J9PHo/
- qVM1BgEz/kXZYLsV9Rp1L2n4g5JBO3KSt+MJNJcYF8/S2+XCOjVr5i3OXE/SOt+aYkQ1
- 41gw2znA8f3geII9ikKabdAvjru/CLtLd8UrDbEUuMPA5Syb3YVFw20YwT85KVtbXz36
- nyUkT/1Ik0YJZkQNUtL1DpbIEFcyAgHZpPbkS0DAsWChkmpZuY0WSyUsGs05X90jfTy/ uQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2k9yjgrgn0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 19:18:38 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6JJIas2001844
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 19:18:37 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JJIZgN007960;
-        Thu, 19 Jul 2018 19:18:36 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Jul 2018 12:18:35 -0700
-Subject: Re: [PATCH] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
-To:     Waiman Long <longman@redhat.com>, Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <1532008100-26922-1-git-send-email-longman@redhat.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <22f2465a-128e-730f-bc51-5a55ef16a039@oracle.com>
-Date:   Thu, 19 Jul 2018 15:18:58 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 19 Jul 2018 16:11:23 -0400
+Received: by mail-io0-f177.google.com with SMTP id y10-v6so8024344ioa.10
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 12:26:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:organization:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=Q9GODC0daVzGD/O4C7veKyR9Ur4HjgGTd4dW0a4G5r8=;
+        b=K+grE9MsDqRMUCHM2oC3lei0Xp7rPkCye1QOurKwNHTYiXNwWsBxWobLOjb/Mm2x3h
+         TtBSGdN5khY8nISIVuHa6YV4C4KadVvX09/Yj/z5uhz5pLKyned8eiGnEKb3AfKxgc+J
+         ZU/5CrhnRURGYqM3Q9X5o7FeJYvLxESmYbrEuINyPwoscBRSmffAHO0ay/l4lYPNXykB
+         gw1AcFSLEmOHGuuCH7ky1J6BAAszqauH917zcfZ77cXT3pEPWSGXv2qWfgTzIMkEQzrt
+         9jRCvnJdh3mL99bRZmc6t8l0MFVnz4awb6XwdWOcmuM2V7b5k6v0YcZ05v+djdWrjM2m
+         +PDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:organization:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=Q9GODC0daVzGD/O4C7veKyR9Ur4HjgGTd4dW0a4G5r8=;
+        b=BghO4Jyfoqp8i3M9MfGcEpSeb6J80whARGBlD51adVnoGTgxBXNJzWwK0LG2tOvlSE
+         F8KU+weInNr67D1v+Et40sqtVQp/w4dQwsAUDrMtl7fjWpwFHLbXgSBI4mR6ITHj5wF+
+         5pr6Bf9TMCctyklPaLMnlinGAX9KnRy5ZEw03mGAucWwiE7hkqOK/OWfLaRvXaz3KUoJ
+         vVdYBckBC8ef+YtgcFCBY2JOacxi/ywoOEH1GUVVvMihzFvJHgr0zCLrM9QC+E91mi1U
+         /A+U5zCoM0R75HGBGhXCzvPybhH7bhPeHEQCeBNl1+smn1OVKM8xsi4k1QC5VoJFlo/N
+         UyZg==
+X-Gm-Message-State: AOUpUlF7zs+pCRWbp8FH14KZcgCZaQmx7s/d5oaXcrtxMNuop/kwsvX4
+        W4j9Vd9Dus7ZcOhTwU7XrnxtgQ==
+X-Google-Smtp-Source: AA+uWPzgxAamgL9TcYIxLVnrS681Yl4nqRidyx0cvLv7WZZCtEOkwG0WHzfJ5/A0J2mckmZHVFWYMA==
+X-Received: by 2002:a6b:1d4b:: with SMTP id d72-v6mr8780632iod.190.1532028409596;
+        Thu, 19 Jul 2018 12:26:49 -0700 (PDT)
+Received: from localhost ([2604:2d80:4413:8125:59cb:8e52:e49b:158f])
+        by smtp.googlemail.com with ESMTPSA id r13-v6sm2595759ioc.71.2018.07.19.12.26.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Jul 2018 12:26:48 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     arm@kernel.org, Olof Johansson <olof@lixom.net>
+Cc:     Carlo Caione <carlo@caione.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commits in the amlogic tree
+Organization: BayLibre
+References: <20180716080014.75c9016b@canb.auug.org.au>
+Date:   Thu, 19 Jul 2018 14:26:47 -0500
+In-Reply-To: <20180716080014.75c9016b@canb.auug.org.au> (Stephen Rothwell's
+        message of "Mon, 16 Jul 2018 08:00:14 +1000")
+Message-ID: <7h4lgvm3go.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1532008100-26922-1-git-send-email-longman@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8959 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=764
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807190201
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 09:48 AM, Waiman Long wrote:
-> On a VM with only 1 vCPU, the locking fast paths will always be
-> successful. In this case, there is no need to use the the PV qspinlock
-> code which has higher overhead on the unlock side than the native
-> qspinlock code.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+
+> Commits
 >
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  arch/x86/xen/spinlock.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>   3f1ad8c53b29 ("ARM64: dts: meson: enable the saradc node in meson-gx-p23x-q20x.dtsi")
+>   4dabd157d48e ("ARM64: dts: meson-gx-p23x-q20x: move the wifi node to each board's .dts")
 >
-> diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
-> index cd97a62..38f47ae 100644
-> --- a/arch/x86/xen/spinlock.c
-> +++ b/arch/x86/xen/spinlock.c
-> @@ -130,7 +130,8 @@ void xen_uninit_lock_cpu(int cpu)
->  void __init xen_init_spinlocks(void)
->  {
->  
-> -	if (!xen_pvspin) {
-> +	/*  Don't need to use pvqspinlock code if there is only 1 vCPU. */
-> +	if (!xen_pvspin || num_possible_cpus() == 1) {
->  		printk(KERN_DEBUG "xen: PV spinlocks disabled\n");
->  		return;
->  	}
+> are missing a Signed-off-by from their committer.
 
+Oops.  I missed these.
 
-I think we need to set xen_pvspin to false for such configurations.
-Notice that xen_init_lock_cpu() will try to perform some additional
-pvspinlock initializations.
+Olof, these were just merged by you in my PR[1].  How do you want me to
+handle this?
 
+I could respin the PR, or just send another with them reverted then
+re-applied with signoff?
 
--boris
+Or, since these branches don't need to be static (yet), I suppose you
+could just edit the commits and add my signoff.  
+
+I'm OK with any of the above, let me know your preferene.
+
+Kevin
+
+[1] https://marc.info/?l=linux-arm-kernel&m=153184268320170
