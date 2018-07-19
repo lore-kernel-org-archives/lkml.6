@@ -2,284 +2,132 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1548ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE3EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 446302084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:59:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B73202084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:00:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LBU/c5Tq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 446302084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="FPbcvHwY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B73202084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731473AbeGSVo0 (ORCPT
+        id S1731556AbeGSVpH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 17:44:26 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:44928 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730491AbeGSVl5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 17:41:57 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JKsGSI191815;
-        Thu, 19 Jul 2018 20:56:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=WUw+VtBegXSCpkkz+9MOAs0j5Ivqg3t6vnuRyOrfIRc=;
- b=LBU/c5Tq7jumI+seBUpAjamNCxCwqseLaKf4fgFYHxeLJ7W/0ujn8h2rpNxYXA8yByZb
- KFMKuEjpdJU1PLMq2+PRhBtnSBYMji9Nwj0ZxHtX7oS2olqoGipz6ESm2Z1MAwTVemNr
- xI1ltHKaDyauEQet59/GmR8nCG72QuHiW3/OKS1qmqunpT/HHjTX3fHy8/pQuhSOQppd
- Ch2EMtND0wFHS5TjDUkrEK21zGkbUU/3sBMJxdwCnKDgaIboHrcIC/7/yhuOn8RQNFED
- rf3dr73Wq/ztrfnEPeyoMalCdg1OAl10S9n1bXA+g+uEJTEU5VYfxgkh5bkKtfPCDi5l kQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2k9yjgruf0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 20:56:20 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuIcU012082
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 20:56:19 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6JKuIkM002231;
-        Thu, 19 Jul 2018 20:56:18 GMT
-Received: from localhost.localdomain (/73.69.118.222)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Jul 2018 20:56:18 +0000
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
-        feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com
-Subject: [PATCH v15 04/26] x86/kvmclock: Cleanup the code
-Date:   Thu, 19 Jul 2018 16:55:23 -0400
-Message-Id: <20180719205545.16512-5-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180719205545.16512-1-pasha.tatashin@oracle.com>
-References: <20180719205545.16512-1-pasha.tatashin@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8959 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807190218
+        Thu, 19 Jul 2018 17:45:07 -0400
+Received: from mail-eopbgr710125.outbound.protection.outlook.com ([40.107.71.125]:39360
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730301AbeGSVpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 17:45:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TRG/NLrqO9GCsA77xjAnZEU5S3Xd+0Vx94Cx4AsKVEQ=;
+ b=FPbcvHwYo0fXw04uZ2mqYJIlFbQRjGw8NJmyoiadY32OZnqC1+FfbvPQRE6srWG6xP8vG/9mhemG9/YkDxE7D3VV9fOBOaztO+JguebOgc45ZT3007ASdBGS6xz8cp7XKVTu3ngB1KXxbYqhHsANvpZurIB9XR8wLQkCjcdPeSY=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+Received: from localhost (4.16.204.77) by
+ BN7PR08MB4930.namprd08.prod.outlook.com (2603:10b6:408:28::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.16; Thu, 19 Jul 2018 21:00:10 +0000
+Date:   Thu, 19 Jul 2018 14:00:07 -0700
+From:   Paul Burton <paul.burton@mips.com>
+To:     Maciej Rozycki <Maciej.Rozycki@mips.com>
+Cc:     James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MIPS: Add FP_MODE regset support
+Message-ID: <20180719210007.u3ddehsxb573avli@pburton-laptop>
+References: <alpine.DEB.2.00.1805111326000.10896@tp.orcam.me.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.00.1805111326000.10896@tp.orcam.me.uk>
+User-Agent: NeoMutt/20180622
+X-Originating-IP: [4.16.204.77]
+X-ClientProxiedBy: BYAPR07CA0055.namprd07.prod.outlook.com
+ (2603:10b6:a03:60::32) To BN7PR08MB4930.namprd08.prod.outlook.com
+ (2603:10b6:408:28::16)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5b322a4b-c0da-4443-24c1-08d5edba9dae
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR08MB4930;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4930;3:g+MmnmFKMFsv2gsHLyxCgOcX/Cbvm2hRV9y7SSFFLhbzdpxLbcC7Km/0hFBoj7/rdeoGWUQyyIi+49EYZRlEioE9TKvYYveefV9zTIsw/x2QBcKNL30/OfOiE3XLQSr/iJScA43MlfULJ8a2jEvo4cwzba0TAkoUDC4/jAC2YcmZtQNs/ZnVoL4W4HzdfEo/HRs5yWEHWmUlLxkcshgCZR6au/33kW4x6qiu+hXL+RyEYTTbmM6LoSLz7i5EDL+X;25:kDB0ncImqHLDlU8JZvT8F72L60YD+I0pkvF/0RAHmUSdVxRm5PaIIH2oXjQ1o4G1h/7wGMON0yz7RQwvwP5GVdwogjM5NGxIqPu5ZKvnqL8H68bIss0X618SZ1B2gM+/pi/k8QacFaBnTjH3/zir9gAazrRio7QwDpPUCUzK07R8XE+UXrSJ9weLooPT4t7GUsFjJVcKzzmaDSt6W/IPL7niZTqManuetBOUP9tH73D+tNIq3UZ35S/r9EP7Hz6+CXJrxhuDvAGBbDuBlK69FbXWtNBsFKof33Qe99erj9Ujtjc+rPqgZAi/H4TtvL3FLSuB/tsrkvrDNyVXOb49mQ==;31:RZsTL+qSI0fGd9/cYfE3OEUG10VecDLuqOx1fW38txRNi9y3dJKtEqQcEEzzwwLqsFOxA8z2R1YrK3jYe0v6BBlYDFHYVf3KSN2VwVLuKM3TyXIB51OznMZ07Gw84BsZcp7egUuOa9H+rohaqGbm7Yy7OJCimar4wwj30dRzJOgNXQoIzt4xFqpX6nMxJfbt9kEt+BDFfFFBbZF/Fq9rVlORiO5Ym/LFS9tAWFVr1gY=
+X-MS-TrafficTypeDiagnostic: BN7PR08MB4930:
+X-LD-Processed: 463607d3-1db3-40a0-8a29-970c56230104,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4930;20:+JegTNtmqMXSb0lUUfO6fVec0N8NzBPS1oIbhV75wEYozWFSwhWLLRMmdtU7RvG8A711yKjXohh74hCFucW/7pyVBsxblUsvcv7hd3LIjB6w+6/ul7iqlxY9IWfYVeu9vPkCftA+AKPlKYSZpQWkwz/7LEgrhBYbimLKC7xTExLOKm1or0N32Ps7vQLbYhJe2oGLgUUnPSUJ40IljYCX8EGyfnQuJlKmY+luh/vuGuoq1FhF897PkonWHzstXEiz;4:3AKTvgR7SUIExZAvU8buPFpd8CUXUKyicDx5+A8axE2iedtSxo37TdEXdDdcs6bF0E1P93+o+S02GWNJbaz5ac6XUi1r/ssltvVAwzCOIJJniNC6xuAWw6HQrQlNNWdbM2GVf4R/wv6HAvgPykYWfu6rB/L/DptepjnehjppLqo7QgwBUvbQWte+/wm1b/tCApr5Ey72wzc2gFVmEACXaAgJNQFR4N7h3uzOz/EyRvaOXkEZ0I/uhzIXJs2pryjI0a+UNHAb3pbwE0Z6AjATxg==
+X-Microsoft-Antispam-PRVS: <BN7PR08MB4930F1DCD8416FD81E765E6AC1520@BN7PR08MB4930.namprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(93006095)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(2016111802025)(20161123558120)(20161123562045)(20161123564045)(6043046)(6072148)(201708071742011)(7699016);SRVR:BN7PR08MB4930;BCL:0;PCL:0;RULEID:;SRVR:BN7PR08MB4930;
+X-Forefront-PRVS: 0738AF4208
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(7916004)(396003)(376002)(346002)(136003)(39840400004)(366004)(199004)(189003)(6666003)(5660300001)(68736007)(6636002)(2906002)(50466002)(33716001)(81166006)(53936002)(81156014)(76506005)(97736004)(6246003)(8676002)(47776003)(8936002)(66066001)(305945005)(7736002)(25786009)(6862004)(106356001)(105586002)(4326008)(6116002)(42882007)(229853002)(316002)(446003)(11346002)(6486002)(76176011)(16586007)(6306002)(16526019)(9686003)(58126008)(52116002)(54906003)(44832011)(26005)(386003)(33896004)(486006)(23726003)(3846002)(956004)(6496006)(476003)(1076002)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:BN7PR08MB4930;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR08MB4930;23:0aX/sm1hx9E8qisonmFwyW0wQObEJWkq59aBRhkS/?=
+ =?us-ascii?Q?KBfRyCm4ljpyEhJ0FEd5ovV5FxAmSRdxD+mzh8n47TVaFKO/8BQuViF6ZHXj?=
+ =?us-ascii?Q?5LEzZlE3C5dUojpfYcRnAHyhJL0WKl6RPqmdiKnExFtqiHOo5t5epquCbebh?=
+ =?us-ascii?Q?cs0cazA/2AsXo1ZHfRGTmCo07lvbvouGqlW6gbzmSDGUkLWZX43qnn6nqycD?=
+ =?us-ascii?Q?suLp+bWRPhaV7zKcW7h93ZpgGruPB6QfmHKWuIxEilRYWusuQuVauHta8l9g?=
+ =?us-ascii?Q?bRsosf8n1wcmxMQ54PIPPSxobCikrcjOjLth6mQmUd4lk2ANPMG6otrwKpxG?=
+ =?us-ascii?Q?JPvPato7kJfLTPshmRnRIWlB5rp6oFSn/eUMp99ytKTjsvwO+YgdzgDCiZiq?=
+ =?us-ascii?Q?Ng4DX23b3QD4uhKBj0J2YlqGnN0btHxFfgq8roVud5/TOjhpePieff/vIOK+?=
+ =?us-ascii?Q?Z9uz+WbDtXQ3me4E5FZZ8H6h7IG+wcUxp64mNhIuw+Xuo/1ZdfSJ+/Id846S?=
+ =?us-ascii?Q?kZMU7A4aJTlgKRXlr/xpwiMrcxraeDxYj3m5VZJDOfT4j4ooS8xhtQg2QGVI?=
+ =?us-ascii?Q?4udXOW7QzEoHBX8Vu5b6Oz8TIMD7zvbhJcTpU4lsWXhSVXps7TygGEEh1LEx?=
+ =?us-ascii?Q?osu3CRQHPx6D+YQKccUQPzcMjoWZGc+qZeOnWjwp6KRNcw8kpugQvenmsPBe?=
+ =?us-ascii?Q?3USlAcr7b3s/7tMXvCvB4y9eSsztv0Y5Bl7FRw009beC8K3YcHAujusDvFtF?=
+ =?us-ascii?Q?qqfOC8jfRpNvuswwjJgLbroee6ITmWNXnjC164OgkXSvCFlpYp/3ba5ik8fU?=
+ =?us-ascii?Q?dDam69yinUIqAsf9IlQN58QU+cV0ihRIVdLBEtnZoiFE9ZitkOH+c0X2icp/?=
+ =?us-ascii?Q?ndrBz5O/GoGmWxqPWG+rC8nifW4X/CIIJPhvcF0i6qsPvMDBJSb/YRGcvqTS?=
+ =?us-ascii?Q?R9nM6RdzTLif//+JYZ/47tr0CDZTLH7lND0BdxmMBNM+CgIsOl/Rb1vKzVfq?=
+ =?us-ascii?Q?MJ4RHsMdgP6h36RUV175ta2tdqSKMmRwAaRXFE0pss2H484uAH6b1KtpuLYP?=
+ =?us-ascii?Q?rsElLnBwlGmU9HN2l0jNP7jMMnLbceZlAnW2p7X+/gc0HtdTyb05OfZEtDij?=
+ =?us-ascii?Q?qd+lzro7ZQNXIsjc0+XnFn1EuvfCEccte5o2kqzEncxKDQt3rcXvBo+9MlaG?=
+ =?us-ascii?Q?fWtyWRAr9CfOo57FfkA0oj2OEH//9YB5kwQRRCL0a9sxhbeqmqfO5PlEgXrd?=
+ =?us-ascii?Q?CRWOic8NYuM84FsKpNIH13K3Nh10+heWG2bwlArI5Ac+hjwoKbHiTsFPmKKe?=
+ =?us-ascii?Q?UN5AkXdUdMcpl7ga5onfcLK8Z2mbLIshuM+yVGKNgUC?=
+X-Microsoft-Antispam-Message-Info: LtzcbS3OO9+gO7E1Z2punCR629crlRaOR7W5JGdHMK0JQ9pbZe2uqQWORF2LaTF6tWZ1wbpGiTgl7l5qz/8s/z53/iyg9uyo3xIluHAaFAGUSuMHuE/2elBDs3GfsFvgC6GdTjt+uJsXUJkTuL+c2GqUJLPQL4Yg2fovJoTLlo/a4LUlECbHwPZZsW7Xso9EvmQvFcVwmApIzdwvcey/V9+KtLj3s3Bm+PmgatM5NoHdcUOKVNRi2R0spOs5aqnJxeMm0NKjUUXKoUAXpG/lLlTZ39kU+ykm824eDR6YUu/EcCXZBaTJwaPT8j8Q0e8dC7zmjmW5W85LbUvCwZVAnf59t9egwDn5b3B+YQpMNAo=
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4930;6:dkYPHaRJBx2r4l1DHlrG+zRa9smU7WOtRvfkXOKvJKeO8hxkwaDAKMZn5iJlANsEl0saEM/wSyAD+ihbfq8J4FWGDCnpu9jnt9I3pMMkdfqnFrU2JesHZmwQK8wbZXlxnFnhXPUdHvlJkDfrigLQwuIVU0m5DvC1U/ukoEVatXWx3VJnZhFAPX9Ey7GNtTd3fvThEuk8enqanUsBZTn8veRx4KqkHBmqcHb8C+koZpbdmzVlCoMDBBc8CpJqXGUc2AYeMaY/e4iNMbhAqkjVScWLilnX6MkOxTMUmBfKceYrBDcm5XqThcDhe36IG4veGzRR5+aPt3dDEvWktRkThkSdZA7xN20vmT+PiV4FDQUqanNEvRyAlPhntof61ohBonVDsXM649kCF6sCnOq30qQC7CZqY0pq3TwCbLFJgUrY742RuT3Jn8pi4GJFgDdv6E3OWi9lnMKq1o7ksopSvA==;5:EhCU0A565kivcKWzQvmhZbKV344/PDMPvh4mDNWrgCHw4DuJUIPB30gLA+1h0R/U2XLYI8dxrCX1b4ai98F1ecH50SKgb7zJTDdEEDzojVPnPbyP9pbvbi38eUKs/aAjWqHx+2TqkZIaN1smdiWDPtichKVDXPCtCiZdo8rFxw0=;7:Qa9tpP6vc7c/PewhP0GzoEXdBX2Im4R1nctfMSnjzbpuA/4x2w97l2YYGLSdXfRm8QRZWMpoxpA7jFqzY6wJX9Nnf4k7jTkhr4IkNTqg6qZKnjidv3ztPW18OBnidVVvMeWewWR4EbAKQ10H/W1SHp94KJbK2n2IKWN+9tQNrJjXT2ehaI0Ay+/wxP6LnfC9FMOVdLrfX5J+WgHBFpYYk8ONH0PlxOfCo56U3fDeqmRTyPB0nMz+MW9b74aM1fTc
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2018 21:00:10.6366 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b322a4b-c0da-4443-24c1-08d5edba9dae
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4930
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+Hi Maciej,
 
-- Cleanup the mrs write for wall clock. The type casts to (int) are sloppy
-  because the wrmsr parameters are u32 and aside of that wrmsrl() already
-  provides the high/low split for free.
+On Tue, May 15, 2018 at 03:40:18PM -0700, Maciej Rozycki wrote:
+> Define an NT_MIPS_FP_MODE core file note and implement a corresponding 
+> regset holding the state handled by PR_SET_FP_MODE and PR_GET_FP_MODE 
+> prctl(2) requests.  This lets debug software correctly interpret the 
+> contents of floating-point general registers both in live debugging and 
+> in core files, and also switch floating-point modes of a live process.
+> 
+> Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+> ---
+> NB due to patch conflicts this change relies on the DSP ASE regset series 
+> <https://patchwork.kernel.org/patch/10402171/> to be applied first.
+> ---
+>  arch/mips/kernel/ptrace.c |   63 ++++++++++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/elf.h  |    1 
+>  2 files changed, 64 insertions(+)
 
-- Remove the pointless get_cpu()/put_cpu() dance from various
-  functions. Either they are called during early init where CPU is
-  guaranteed to be 0 or they are already called from non preemptible
-  context where smp_processor_id() can be used safely
+Thanks - applied to mips-next for 4.19, though with NT_MIPS_FP_MODE
+changed to 0x801.
 
-- Simplify the convoluted check for kvmclock in the init function.
-
-- Mark the parameter parsing function __init. No point in keeping it
-  around.
-
-- Convert to pr_info()
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kernel/kvmclock.c | 72 ++++++++++++--------------------------
- 1 file changed, 22 insertions(+), 50 deletions(-)
-
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index f0a0aef5e9fa..4afb03e49a4f 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -37,7 +37,7 @@ static int msr_kvm_system_time = MSR_KVM_SYSTEM_TIME;
- static int msr_kvm_wall_clock = MSR_KVM_WALL_CLOCK;
- static u64 kvm_sched_clock_offset;
- 
--static int parse_no_kvmclock(char *arg)
-+static int __init parse_no_kvmclock(char *arg)
- {
- 	kvmclock = 0;
- 	return 0;
-@@ -61,13 +61,9 @@ static struct pvclock_wall_clock wall_clock;
- static void kvm_get_wallclock(struct timespec64 *now)
- {
- 	struct pvclock_vcpu_time_info *vcpu_time;
--	int low, high;
- 	int cpu;
- 
--	low = (int)slow_virt_to_phys(&wall_clock);
--	high = ((u64)slow_virt_to_phys(&wall_clock) >> 32);
--
--	native_write_msr(msr_kvm_wall_clock, low, high);
-+	wrmsrl(msr_kvm_wall_clock, slow_virt_to_phys(&wall_clock));
- 
- 	cpu = get_cpu();
- 
-@@ -117,11 +113,11 @@ static inline void kvm_sched_clock_init(bool stable)
- 	kvm_sched_clock_offset = kvm_clock_read();
- 	pv_time_ops.sched_clock = kvm_sched_clock_read;
- 
--	printk(KERN_INFO "kvm-clock: using sched offset of %llu cycles\n",
--			kvm_sched_clock_offset);
-+	pr_info("kvm-clock: using sched offset of %llu cycles",
-+		kvm_sched_clock_offset);
- 
- 	BUILD_BUG_ON(sizeof(kvm_sched_clock_offset) >
--	         sizeof(((struct pvclock_vcpu_time_info *)NULL)->system_time));
-+		sizeof(((struct pvclock_vcpu_time_info *)NULL)->system_time));
- }
- 
- /*
-@@ -135,16 +131,8 @@ static inline void kvm_sched_clock_init(bool stable)
-  */
- static unsigned long kvm_get_tsc_khz(void)
- {
--	struct pvclock_vcpu_time_info *src;
--	int cpu;
--	unsigned long tsc_khz;
--
--	cpu = get_cpu();
--	src = &hv_clock[cpu].pvti;
--	tsc_khz = pvclock_tsc_khz(src);
--	put_cpu();
- 	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
--	return tsc_khz;
-+	return pvclock_tsc_khz(&hv_clock[0].pvti);
- }
- 
- static void kvm_get_preset_lpj(void)
-@@ -161,29 +149,27 @@ static void kvm_get_preset_lpj(void)
- 
- bool kvm_check_and_clear_guest_paused(void)
- {
--	bool ret = false;
- 	struct pvclock_vcpu_time_info *src;
--	int cpu = smp_processor_id();
-+	bool ret = false;
- 
- 	if (!hv_clock)
- 		return ret;
- 
--	src = &hv_clock[cpu].pvti;
-+	src = &hv_clock[smp_processor_id()].pvti;
- 	if ((src->flags & PVCLOCK_GUEST_STOPPED) != 0) {
- 		src->flags &= ~PVCLOCK_GUEST_STOPPED;
- 		pvclock_touch_watchdogs();
- 		ret = true;
- 	}
--
- 	return ret;
- }
- 
- struct clocksource kvm_clock = {
--	.name = "kvm-clock",
--	.read = kvm_clock_get_cycles,
--	.rating = 400,
--	.mask = CLOCKSOURCE_MASK(64),
--	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
-+	.name	= "kvm-clock",
-+	.read	= kvm_clock_get_cycles,
-+	.rating	= 400,
-+	.mask	= CLOCKSOURCE_MASK(64),
-+	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
- };
- EXPORT_SYMBOL_GPL(kvm_clock);
- 
-@@ -199,7 +185,7 @@ static void kvm_register_clock(char *txt)
- 	src = &hv_clock[cpu].pvti;
- 	pa = slow_virt_to_phys(src) | 0x01ULL;
- 	wrmsrl(msr_kvm_system_time, pa);
--	pr_info("kvm-clock: cpu %d, msr %llx, %s\n", cpu, pa, txt);
-+	pr_info("kvm-clock: cpu %d, msr %llx, %s", cpu, pa, txt);
- }
- 
- static void kvm_save_sched_clock_state(void)
-@@ -244,20 +230,19 @@ static void kvm_shutdown(void)
- 
- void __init kvmclock_init(void)
- {
--	struct pvclock_vcpu_time_info *vcpu_time;
--	int cpu;
- 	u8 flags;
- 
--	if (!kvm_para_available())
-+	if (!kvm_para_available() || !kvmclock)
- 		return;
- 
--	if (kvmclock && kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE2)) {
-+	if (kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE2)) {
- 		msr_kvm_system_time = MSR_KVM_SYSTEM_TIME_NEW;
- 		msr_kvm_wall_clock = MSR_KVM_WALL_CLOCK_NEW;
--	} else if (!(kvmclock && kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE)))
-+	} else if (!kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE)) {
- 		return;
-+	}
- 
--	printk(KERN_INFO "kvm-clock: Using msrs %x and %x",
-+	pr_info("kvm-clock: Using msrs %x and %x",
- 		msr_kvm_system_time, msr_kvm_wall_clock);
- 
- 	hv_clock = (struct pvclock_vsyscall_time_info *)hv_clock_mem;
-@@ -267,20 +252,15 @@ void __init kvmclock_init(void)
- 	if (kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE_STABLE_BIT))
- 		pvclock_set_flags(PVCLOCK_TSC_STABLE_BIT);
- 
--	cpu = get_cpu();
--	vcpu_time = &hv_clock[cpu].pvti;
--	flags = pvclock_read_flags(vcpu_time);
--
-+	flags = pvclock_read_flags(&hv_clock[0].pvti);
- 	kvm_sched_clock_init(flags & PVCLOCK_TSC_STABLE_BIT);
--	put_cpu();
- 
- 	x86_platform.calibrate_tsc = kvm_get_tsc_khz;
- 	x86_platform.calibrate_cpu = kvm_get_tsc_khz;
- 	x86_platform.get_wallclock = kvm_get_wallclock;
- 	x86_platform.set_wallclock = kvm_set_wallclock;
- #ifdef CONFIG_X86_LOCAL_APIC
--	x86_cpuinit.early_percpu_clock_init =
--		kvm_setup_secondary_clock;
-+	x86_cpuinit.early_percpu_clock_init = kvm_setup_secondary_clock;
- #endif
- 	x86_platform.save_sched_clock_state = kvm_save_sched_clock_state;
- 	x86_platform.restore_sched_clock_state = kvm_restore_sched_clock_state;
-@@ -296,20 +276,12 @@ void __init kvmclock_init(void)
- int __init kvm_setup_vsyscall_timeinfo(void)
- {
- #ifdef CONFIG_X86_64
--	int cpu;
- 	u8 flags;
--	struct pvclock_vcpu_time_info *vcpu_time;
- 
- 	if (!hv_clock)
- 		return 0;
- 
--	cpu = get_cpu();
--
--	vcpu_time = &hv_clock[cpu].pvti;
--	flags = pvclock_read_flags(vcpu_time);
--
--	put_cpu();
--
-+	flags = pvclock_read_flags(&hv_clock[0].pvti);
- 	if (!(flags & PVCLOCK_TSC_STABLE_BIT))
- 		return 1;
- 
--- 
-2.18.0
-
+Paul
