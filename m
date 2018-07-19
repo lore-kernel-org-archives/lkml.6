@@ -2,102 +2,102 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB4CC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B13A1C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D63F2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:55:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r7m3D9Ie"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D63F2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 701C02084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:55:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 701C02084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731896AbeGSQi4 (ORCPT
+        id S1731962AbeGSQji (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:38:56 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:37106 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731813AbeGSQi4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:38:56 -0400
-Received: by mail-it0-f68.google.com with SMTP id p17-v6so10595278itc.2;
-        Thu, 19 Jul 2018 08:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MK+AghjjDRBj4gE7hWCPaTbcdqWC4IO66VxE4NyAcK4=;
-        b=r7m3D9IeSPH5Z9wgFDIOnbDzLM0YluuPOKw/6/iYneJ6Q6X2yc8SO439FLcaiQ0No2
-         NnVzf21nUqv+PokeqcrLmhVQcwsaYQC1UzuvJDxOvrM6RCaWZao0j5Vei8nFBpV4GWsr
-         TXthg93nRQQjC+j8Wn5b7Gf43iU87by2w43b2Hq6utBTOc9zYYl/BNQFyUmJLqzZImGR
-         j0hccNJnxstTXVkjfr6farBDlrjyk/PRV2YptpMWlYDxPSPlcgw8sae652pTWUGF00jR
-         I43qK5H+4+n5ICEESGZXCLMMTNOa4kNEOxTKA6IKcNi0UYyNJ5CMcZilvGVRDfnOE0sz
-         kdsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MK+AghjjDRBj4gE7hWCPaTbcdqWC4IO66VxE4NyAcK4=;
-        b=sIOKSIKLi9QLCgtOh3VLubOtBRMyFFzKMr1b3cDOur4SVGsbBlMLWZEruRS+aMacT6
-         uacTypWBN84r39eH9BDy4b9gvdN2ImuZZGwsBrPHcDxKXEWyKcIrmDlBY7ueSero36sJ
-         sdCYE3ICipogs/ocp9nZtbGfVgbieB04SsrNKg4xzoWyE+N/m6cdRw/RvpbCFCp8cb/1
-         VJu7GX5bwA7LVGTdvnCMZMwljGR+cWBkGe2UAOS3ueqCoL7so4qu0sPtU0iK05eA8eyL
-         xROW7g+jyAW9xwI7HSzqa7JUkXyS9vzC4LJH6rmPk5pYoHy6ToQ01Ys5lFlp5BKLn89T
-         jjOg==
-X-Gm-Message-State: AOUpUlFpnkeH1275lxxTzWcGfQx+GDu6Iv0g57kfeWdAhDAo+VHe9jIi
-        004Dihd3mv3JXociLjKWRt1RH/ArC3Q=
-X-Google-Smtp-Source: AAOMgpcUZtoZq3EmwhYFPdWB1l74JHFbIGP9ExKwWLjkkojzjkCs5ZPNxG2RY5uALGvkeCdW6eVGXg==
-X-Received: by 2002:a02:3344:: with SMTP id k4-v6mr10284108jak.45.1532015708251;
-        Thu, 19 Jul 2018 08:55:08 -0700 (PDT)
-Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id c5-v6sm3066835itj.9.2018.07.19.08.55.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 08:55:07 -0700 (PDT)
-Subject: Re: [PATCH] PCI/AER: Do not clear AER bits if we don't own AER
-To:     Sinan Kaya <okaya@kernel.org>, bhelgaas@google.com,
-        keith.busch@intel.com
-Cc:     alex_gagniuc@dellteam.com, austin_bolen@dell.com,
-        shyam_iyer@dell.com, Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180717153135.25925-1-mr.nuke.me@gmail.com>
- <494a5df8-0987-3a6c-30a4-a3c9ef4ed1f3@kernel.org>
-From:   "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <37509c44-64fe-4140-c776-53c3346cbfe5@gmail.com>
-Date:   Thu, 19 Jul 2018 10:55:06 -0500
+        Thu, 19 Jul 2018 12:39:38 -0400
+Received: from mga14.intel.com ([192.55.52.115]:8555 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731524AbeGSQji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:39:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 08:55:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,375,1526367600"; 
+   d="scan'208";a="246609688"
+Received: from mldahl-mobl2.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.254.107.75])
+  by fmsmga005.fm.intel.com with ESMTP; 19 Jul 2018 08:55:39 -0700
+Subject: Re: [PATCH] tpm: add support for partial reads
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <5984eedf-792f-2d8c-be7a-143ca570592a@intel.com>
+Date:   Thu, 19 Jul 2018 08:55:38 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <494a5df8-0987-3a6c-30a4-a3c9ef4ed1f3@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/17/2018 10:41 AM, Sinan Kaya wrote:
+On 07/19/2018 08:52 AM, Tadeusz Struk wrote:
+> Currently to read a response from the TPM device an application needs
+> provide "big enough" buffer for the whole response and read it in one go.
+> The application doesn't know how big the response it beforehand so it
+> always needs to maintain a 4K buffer and read the max (4K).
+> In case if the user of the TSS library doesn't provide big enough buffer
+> the TCTI spec says that the library should set the required size and return
+> TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the application could
+> allocate a bigger buffer and call receive again.
+> To make it possible in the TSS library this requires being able to do
+> partial reads from the driver.
+> The library would read the header first to get the actual size of the
+> response from the header and then read the rest of the response.
+> This patch adds support for partial reads.
 > 
-> On 7/17/2018 8:31 AM, Alexandru Gagniuc wrote:
->> +    if (pcie_aer_get_firmware_first(dev))
->> +        return -EIO;
+> The usecase is implemented in this TSS commit:
+> https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
 > 
-> Can you move this to closer to the caller pci_aer_init()?
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 
-I could move it there. although pci_cleanup_aer_error_status_regs() is 
-called directly from pci_restore_state.  Of course, aer_cap should be 
-zero in this case, and we'd still bail out.
-I find the intent clearer if we check it here rather than having to do 
-the mental parsing of the state of aer_cap.
+This needs to go on top of this:
+https://patchwork.kernel.org/patch/10460863/
 
-Alex
+Thanks,
+-- 
+Tadeusz
