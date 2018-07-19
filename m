@@ -2,139 +2,260 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86614C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFBBC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B0A92084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:31:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B0A92084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BED32206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 19:37:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="De+mWPLV";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I8VoB3qx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BED32206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbeGSUQR (ORCPT
+        id S1727555AbeGSUWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 16:16:17 -0400
-Received: from mga06.intel.com ([134.134.136.31]:38597 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726875AbeGSUQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 16:16:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 12:31:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,375,1526367600"; 
-   d="scan'208";a="74204098"
-Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga001.jf.intel.com with ESMTP; 19 Jul 2018 12:31:43 -0700
-Subject: Re: [RFC PATCH v2 16/27] mm: Modify can_follow_write_pte/pmd for
- shadow stack
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-17-yu-cheng.yu@intel.com>
- <de510df6-7ea9-edc6-9c49-2f80f16472b4@linux.intel.com>
- <1531328731.15351.3.camel@intel.com>
- <45a85b01-e005-8cb6-af96-b23ce9b5fca7@linux.intel.com>
- <1531868610.3541.21.camel@intel.com>
- <fa9db8c5-41c8-05e9-ad8d-dc6aaf11cb04@linux.intel.com>
- <1531944882.10738.1.camel@intel.com>
- <3f158401-f0b6-7bf7-48ab-2958354b28ad@linux.intel.com>
- <1531955428.12385.30.camel@intel.com>
- <f4c90626-51d8-5551-5b77-baaff81f16bb@linux.intel.com>
- <1532019963.16711.61.camel@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <b3cafb94-39c1-3e03-a4f0-295e506da0a6@linux.intel.com>
-Date:   Thu, 19 Jul 2018 12:31:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 16:22:13 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:40638 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727449AbeGSUWM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 16:22:12 -0400
+Received: by mail-vk0-f65.google.com with SMTP id s23-v6so4967229vks.7
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 12:37:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=s1YPoIFX3roIUs6tHjkjOZjBAXMjjaZ2a/m4FhQzxso=;
+        b=De+mWPLVZemo+6dHdDm+M1BxsVRcGHZeFRsNN03Ro7TQUqHmrl38aKzMGZjEzzfNo0
+         8DKHm6vQ4t/ajVkKvKkMQqC2pTFfxwIOIWI1hmj04KnazZ5MGNCtWAWGECQ73gtNYyo2
+         3l4u+ZoRF5hG/5LymS44R0OhbJhlMBcJ4QC3A5y/kvf9a4V3GH6wWOo9QqWfDSXhnpsf
+         NAx/CZcK4o4p79EPDyKemw0CM1bgSSCeNOHY1jNNMyDQuvFnEwQHen1n26csY+9D+WuZ
+         XUahmM9/866u7UQePKFAN+V2UF1hozFHEHz7XZ4C3SKP7jqh3bzqzyK1wCoz7t4i0EPf
+         xTBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=s1YPoIFX3roIUs6tHjkjOZjBAXMjjaZ2a/m4FhQzxso=;
+        b=I8VoB3qxSi8Gxw0Q5MKZY360oXdgAoufYkMW+0EFSbfb0cwL4S6tQyUTLewfdl3OC8
+         jmm2U7t59Pbu/eAxrS89aRMvy7v1EDRBOHHeTyEjmdLi7bjrEdnRj0X1ZC3RzFXV96Qg
+         1DoyrIIhifBYJu5K3Yi2QGmwjCYYvONUB8TAE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=s1YPoIFX3roIUs6tHjkjOZjBAXMjjaZ2a/m4FhQzxso=;
+        b=ACW0e00fRG5+0UTQfpD55oHHn2Cu3JqFXRUnS5Pk0Wjmy6siXXKsnhBj4NERzFMPja
+         PV1cgUZAm7iMZ3k7/ivBCDjYPN9GI2EcMBGoydCo0kL2iC0YkhijXhiAqp7Qf1okeCV4
+         TBSBGFlvzOMkbzwm/lRDhXZoSYxu6MB/jI1G2E+p8l3co2lV5IgyQBkStvKipavwjLmj
+         qxyaVQJVbNItV3PXLzmfJvUeGT/lQkBGRyMdldQDs4Ai7yjLg/YBfmo4/BqHNtYhdLj1
+         spSJsFT77H0u5vjUMkTVRdsgU7pi9k3d4LL8LGucNGskNhMMQKEL/YcqOhcdhv5LhCgi
+         AYYw==
+X-Gm-Message-State: AOUpUlHMiu6aZvMwTUWLySZnJV80o3Jd29lgxHIo7Pu7b7BxJSIFCmCN
+        hNsd1vJK8auqRlGT9s+CWfXic5r4BnikqT6jPMOZeQ==
+X-Google-Smtp-Source: AAOMgpdK15PzXDJhnKOElBdOJvHbm49yvLaqukor5GQ0lwvmKHsMOeRiwdsSxOcRjzJeD4BxOAExmbS+HwSaI/nYudY=
+X-Received: by 2002:a1f:8511:: with SMTP id h17-v6mr6737261vkd.69.1532029056339;
+ Thu, 19 Jul 2018 12:37:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1532019963.16711.61.camel@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 12:37:35 -0700 (PDT)
+In-Reply-To: <b1a787db-40b2-ab63-124b-84055b91c4a9@codeaurora.org>
+References: <20180718180431.48580-1-dianders@chromium.org> <20180718180431.48580-3-dianders@chromium.org>
+ <6248e3cc-f458-7dec-143c-7d2aeccde590@codeaurora.org> <CAD=FV=XrxNgXq1BcMQaQGsb-cHeckxr2LcCKSZxcgX-ikWv4uA@mail.gmail.com>
+ <b1a787db-40b2-ab63-124b-84055b91c4a9@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 19 Jul 2018 12:37:35 -0700
+X-Google-Sender-Auth: 5xLjYRPHRK2Vz6bpAf-i7k5lpdU
+Message-ID: <CAD=FV=Wh9p0QsM0q2zPtP7nmPEf0G3n_YVc9+g-Zq36o11nAKg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Graham Roff <grahamr@qti.qualcomm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 10:06 AM, Yu-cheng Yu wrote:
-> Which pte_write() do you think is right?
+Hi,
 
-There isn't one that's right.
+On Thu, Jul 19, 2018 at 12:02 PM, Taniya Das <tdas@codeaurora.org> wrote:
+>
+>
+> On 7/19/2018 11:25 PM, Doug Anderson wrote:
+>>
+>> Hi,
+>>
+>> On Thu, Jul 19, 2018 at 4:04 AM, Taniya Das <tdas@codeaurora.org> wrote:
+>>>
+>>> Hi Doug,
+>>>
+>>> Please find my comments inline.
+>>>
+>>> On 7/18/2018 11:34 PM, Douglas Anderson wrote:
+>>>>
+>>>>
+>>>> Add both the interface and core clock.
+>>>>
+>>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>>>> ---
+>>>>
+>>>>    drivers/clk/qcom/gcc-sdm845.c | 73
+>>>> +++++++++++++++++++++++++++++++++++
+>>>>    1 file changed, 73 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/gcc-sdm845.c
+>>>> b/drivers/clk/qcom/gcc-sdm845.c
+>>>> index 0f694ed4238a..2ee96f9bc217 100644
+>>>> --- a/drivers/clk/qcom/gcc-sdm845.c
+>>>> +++ b/drivers/clk/qcom/gcc-sdm845.c
+>>>> @@ -162,6 +162,20 @@ static const char * const gcc_parent_names_10[] = {
+>>>>          "core_bi_pll_test_se",
+>>>>    };
+>>>>    +static const struct parent_map gcc_parent_map_9[] = {
+>>>> +       { P_BI_TCXO, 0 },
+>>>> +       { P_GPLL0_OUT_MAIN, 1 },
+>>>> +       { P_GPLL0_OUT_EVEN, 6 },
+>>>> +       { P_SLEEP_CLK, 7 },
+>>>
+>>>
+>>>
+>>> SRC 7 has 'core_bi_pll_test_se' and not 'sleep_clk'.
+>>>
+>>> Please use the 'gcc_parent_map_0'
+>>
+>>
+>> Are you sure?  I'm looking at a doc showing the bitfields of
+>> GCC_QSPI_CORE_CFG_RCGR.  It says:
+>>
+>> 0x0: bi_tcxo.
+>> 0x1: gpll0_out_main.
+>> 0x6: gpll0_out_even.
+>> 0x7: sleep_clk.
+>>
+>> This contrasts with other clocks using 'gcc_parent_map_0' (for
+>> instance "gcc_qupv3_wrap0_s0_clk_src") where 0x7 is simply not listed
+>> in my doc.
+>>
+>> ...so either my doc is wrong or yours is.  Any way to resolve that?
+>>
+>
+> I am not sure of the document you are referring, but the connectivity
+> details I have shared are from the design side and they are ones which we
+> have to follow.
 
-The problem is that the behavior right now is ambiguous.  Some callers
-of pte_write() need to know about _PAGE_RW alone and others want to know
-if (_PAGE_RW || is_shstk()).
+I'll start up a separate thread about this w/ you and the people I
+received the doc from.  It's concerning if the doc we received is
+wrong.
 
-The point is that you need both, plus a big audit of all the pte_write()
-users to ensure they use the right one.
 
-For instance, see spurious_fault_check().  We can get a shadowstack
-fault that also has X86_PF_WRITE, but pte_write()==0.  That might make a
-shadowstack write fault falsely appear spurious.
+>>> F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
+>>
+>>
+>> Sure.  For my edification, is there a reason to use main vs. even?
+>>
+>
+> The frequencies to be generated are also as per design data. These source
+> usage depends on timing closure for certain max frequencies.
+
+Sounds a bit like a non-answer, but I guess it's not critical to
+understand the mysteries here.
+
+
+
+>>>> +static struct clk_rcg2 gcc_qspi_core_clk_src = {
+>>>> +       .cmd_rcgr = 0x4b008,
+>>>> +       .mnd_width = 0,
+>>>> +       .hid_width = 5,
+>>>> +       .parent_map = gcc_parent_map_9,
+>>>> +       .freq_tbl = ftbl_gcc_qspi_core_clk_src,
+>>>> +       .clkr.hw.init = &(struct clk_init_data){
+>>>> +               .name = "gcc_qspi_core_clk_src",
+>>>> +               .parent_names = gcc_parent_names_9,
+>>>> +               .num_parents = 4,
+>>>> +               .ops = &clk_rcg2_floor_ops,
+>>>
+>>>
+>>>
+>>> Could we use the rcg2_ops instead?
+>>
+>>
+>> I'd rather not.  Any reason why you think that'd be a good idea?
+>>
+>> Specifically imagine that we have a SPI flash chip that's rated to run
+>> at a max of 20 MHz.  In the device tree we'd ideally want to specify:
+>>
+>>    spi-max-frequency = <20000000>;
+>>
+>> It appears that we need to run the SPI core as 4 times the rate of the
+>> SPI bus, so we'd try to set this clock to 80 MHz.  If we round up
+>> we'll end up at 100 MHz or 150 MHz for the SPI core and have a SPI bus
+>> rate of 25 MHz or 37.5 MHz.  That would violate the whole idea of
+>> "spi-max-frequency".  It's much better to round down to 75 MHz.
+>>
+>>
+>> In general I've always seen that for safety it's always better the
+>> round clocks down and round voltage up, so I was actually confused by
+>> the fact that most of the clocks in this file used rcg2_ops instead of
+>> clk_rcg2_floor_ops...  I'd be curious if we should we change more of
+>> them to clk_rcg2_floor_ops.  As a random example I'll take
+>> "gcc_sdcc2_apps_clk_src".  If someone happened to have a full sized SD
+>> slot and put an MMC card in then you'd be in trouble.  Why?
+>>
+>> For MMC a valid rate to request is 52000000.  When the SD card core
+>> requests this you'll round up to 100 MHz.  Oops.  That makes the card
+>> not work.
+>>
+>> I just happen to have a micro to full size adapter at my desk and a
+>> 2GB MMC card and I can confirm that's a true bug that prevents this
+>> card from enumerating.  Changing this to a clk_rcg2_floor_ops fixes
+>> it.  True that it's unlikely anyone will really plug a MMC card into
+>> this slot, but I fail to see the advantage of rounding up when
+>> rounding down is safer.
+>>
+>>
+>
+> These ops were mostly for SDCC/MMC usage only as this was a requirement of
+> rounding the frequency, as the clock framework didn't provide any such API.
+> The QSPI should be safe to use the normal rcg ops as the frequency requests
+> should be from the table itself. Thus request is to move to use the
+> rcg2_ops.
+
+I'm not totally sure I understand what you say here.  I'll try to
+break my confusion down:
+
+1. I think you're saying that "clk_rcg2_floor_ops" was introduced
+originally for use by SD/MMC.  Is that right?  ...but my example above
+shows specifically that SD/MMC is _not_ using "clk_rcg2_floor_ops".
+
+
+2. I'm confused about you say that the QSPI driver will only be
+requesting rates from the table itself.  Does that mean we need to
+duplicate the table here in the QSPI driver so the QSPI driver will
+only ask for exact rates that it knows the clock driver will be able
+to provide?  ...or are you saying that we should always specify SPI
+transfer rates in the device tree that we know will be achievable by
+the clock driver?  Both of these ideas seem fragile.
+
+
+I'm still confused about what benefit you think we get for rounding up
+for this clock.
+
+
+-Doug
