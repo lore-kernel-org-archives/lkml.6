@@ -2,201 +2,230 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3135FC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E270C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5B1420671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB7FD2084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:24:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eJ/KKwIW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B1420671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fZqK3eEO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7FD2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730831AbeGSNFm (ORCPT
+        id S1731417AbeGSNHL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 09:05:42 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52604 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbeGSNFm (ORCPT
+        Thu, 19 Jul 2018 09:07:11 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:56158 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeGSNHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 09:05:42 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6JCML0W006355;
-        Thu, 19 Jul 2018 07:22:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1532002941;
-        bh=cinzrYqbk/kXfUzHer3YzyiDrWVqeI1ETc/ZwqVMgik=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=eJ/KKwIW0Ibl6KbwPyK181zH1/JOY0mR1hPmvz5XDBp2clZDWBL6bZmBxn0nSztY0
-         aW+8qYEv3pRtFGg4hH+aJSshLYEG/kQjkQHdfLQUn6xI/bQOYkpCR9NXTgBtwb0D2P
-         A4jdHa7NPm+i5tSiwJ/jEZY03t7UJXfLFe4Dw5co=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JCMLiF013290;
-        Thu, 19 Jul 2018 07:22:21 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 19
- Jul 2018 07:22:20 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 19 Jul 2018 07:22:20 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6JCMImL016316;
-        Thu, 19 Jul 2018 07:22:18 -0500
-Subject: Re: [PATCH v4 1/4] rtc: omap: Cut down the shutdown time from 2
- seconds to 1 sec
-From:   Keerthy <j-keerthy@ti.com>
-To:     Johan Hovold <johan@kernel.org>
-CC:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
-        <t-kristo@ti.com>, <linux-rtc@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1531372060-10532-1-git-send-email-j-keerthy@ti.com>
- <1531372060-10532-2-git-send-email-j-keerthy@ti.com>
- <20180719100229.GQ10204@localhost>
- <ed335c7a-f079-082d-d572-93632087fd8f@ti.com>
-Message-ID: <a6930aca-f475-5b53-ce9d-d45fbc75d69c@ti.com>
-Date:   Thu, 19 Jul 2018 17:52:17 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 19 Jul 2018 09:07:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ki/ACVzz7BMh/WJfdOaS3Sxv+m6u48S62NHsZ83NENo=; b=fZqK3eEOr9TJ/WubZ7ho+qPjD
+        mnFmvU1h3tnddQMWh3j3pNDhcNsItJQdI3lPn4v6Cvwv8Ne9VhPw7tSQx4WBgMJwIvRTSwU2C/1Dd
+        PBApyFwBERAKM0iScejUQPvJv6AfutmBfiaiJDeXMKFp9bpvo8vDsRhIfYKUCAd7v2F2M=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:56711)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1fg7yI-0005Xy-J9; Thu, 19 Jul 2018 13:23:50 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1fg7yF-0002R8-QB; Thu, 19 Jul 2018 13:23:47 +0100
+Date:   Thu, 19 Jul 2018 13:23:46 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 2/3] net: add support for nvmem to
+ eth_platform_get_mac_address()
+Message-ID: <20180719122346.GJ6920@n2100.armlinux.org.uk>
+References: <20180719082028.26116-1-brgl@bgdev.pl>
+ <20180719082028.26116-3-brgl@bgdev.pl>
+ <20180719084503.tfv6jllsukk2zv3f@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <ed335c7a-f079-082d-d572-93632087fd8f@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719084503.tfv6jllsukk2zv3f@mwanda>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 19, 2018 at 11:48:37AM +0300, Dan Carpenter wrote:
+> On Thu, Jul 19, 2018 at 10:20:27AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > 
+> > Many non-DT platforms read the MAC address from EEPROM. Usually it's
+> > either done with callbacks defined in board files or from SoC-specific
+> > ethernet drivers.
+> > 
+> > In order to generalize this, try to read the MAC from nvmem in
+> > eth_platform_get_mac_address() using a standard lookup name:
+> > "mac-address".
+> > 
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >  net/ethernet/eth.c | 27 +++++++++++++++++++++++++++
+> >  1 file changed, 27 insertions(+)
+> > 
+> > diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+> > index 39af03894598..af3b4b1b77eb 100644
+> > --- a/net/ethernet/eth.c
+> > +++ b/net/ethernet/eth.c
+> > @@ -54,6 +54,7 @@
+> >  #include <linux/if_ether.h>
+> >  #include <linux/of_net.h>
+> >  #include <linux/pci.h>
+> > +#include <linux/nvmem-consumer.h>
+> >  #include <net/dst.h>
+> >  #include <net/arp.h>
+> >  #include <net/sock.h>
+> > @@ -527,8 +528,11 @@ unsigned char * __weak arch_get_platform_mac_address(void)
+> >  
+> >  int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+> >  {
+> > +	unsigned char addrbuf[ETH_ALEN];
+> >  	const unsigned char *addr;
+> > +	struct nvmem_cell *nvmem;
+> >  	struct device_node *dp;
+> > +	size_t alen;
+> >  
+> >  	if (dev_is_pci(dev))
+> >  		dp = pci_device_to_OF_node(to_pci_dev(dev));
+> > @@ -541,6 +545,29 @@ int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+> >  	if (!addr)
+> >  		addr = arch_get_platform_mac_address();
+> >  
+> > +	if (!addr) {
+> > +		nvmem = nvmem_cell_get(dev, "mac-address");
+> > +		if (IS_ERR(nvmem) && PTR_ERR(nvmem) == -EPROBE_DEFER)
+> > +			/* We may have a lookup registered for MAC address but
+> > +			 * the corresponding nvmem provider hasn't been
+> > +			 * registered yet.
+> > +			 */
+> > +			return -EPROBE_DEFER;
+> > +
+> > +		if (!IS_ERR(nvmem)) {
+> > +			addr = nvmem_cell_read(nvmem, &alen);
+> > +			if (!IS_ERR(addr)) {
+>                                     ^^^^
+> Never do success handling.  Always error handling.  Otherwise the code
+> is indent a lot and the error handling is far from the call.
+> 
+> > +				if (alen == ETH_ALEN)
+> > +					ether_addr_copy(addrbuf, addr);
+> > +
+> > +				kfree(addr);
+> > +				addr = alen == ETH_ALEN ? addrbuf : NULL;
+> > +			}
+> > +
+> > +			nvmem_cell_put(nvmem);
+> > +		}
+> > +	}
+> > +
+> >  	if (!addr || !is_valid_ether_addr(addr))
+>                                           ^^^^
+> Instead of handling the error we dereference the error pointer here.
+> 
+> *frowny face*
+> 
+> >  		return -ENODEV;
+> >  
+> > --
+> 
+> Maybe this?
+> 
+> 	if (!addr) {
+> 		nvmem = nvmem_cell_get(dev, "mac-address");
+> 		if (PTR_ERR(nvmem) == -EPROBE_DEFER)
+> 			return -EPROBE_DEFER;
+> 		if (IS_ERR(nvmem))
+> 			return -ENODEV;
+> 		addr = nvmem_cell_read(nvmem, &alen);
+> 		if (IS_ERR(addr))
+> 			return PTR_ERR(addr);
 
+The problem with doing it this way is... error handling is Hard(tm).
+You missed the call to nvmem_cell_put() here.
 
-On Thursday 19 July 2018 05:23 PM, Keerthy wrote:
-> 
-> 
-> On Thursday 19 July 2018 03:32 PM, Johan Hovold wrote:
->> On Thu, Jul 12, 2018 at 10:37:37AM +0530, Keerthy wrote:
->>> Cut down the shutdown time from 2 seconds to 1 sec. In case of roll
->>> over try again.
->>>
->>> Signed-off-by: Keerthy <j-keerthy@ti.com>
->>> ---
->>>
->>> Changes in v4:
->>>
->>>   * Fixed a compilation issue.
->>>   * Extended the roll over check post interrupt programming.
->>>
->>>  drivers/rtc/rtc-omap.c | 13 +++++++++++--
->>>  1 file changed, 11 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
->>> index 323ff55..88da927 100644
->>> --- a/drivers/rtc/rtc-omap.c
->>> +++ b/drivers/rtc/rtc-omap.c
->>
->> First, the comment above this function would need to be updated as part
->> of this patch as it refers to the two-second alarm offset.
-> 
-> Yes, will change that.
-> 
->>
->>> @@ -435,17 +435,23 @@ static void omap_rtc_power_off(void)
->>>  	struct rtc_time tm;
->>>  	unsigned long now;
->>>  	u32 val;
->>> +	int seconds;
->>>  
->>>  	rtc->type->unlock(rtc);
->>>  	/* enable pmic_power_en control */
->>>  	val = rtc_readl(rtc, OMAP_RTC_PMIC_REG);
->>>  	rtc_writel(rtc, OMAP_RTC_PMIC_REG, val | OMAP_RTC_PMIC_POWER_EN_EN);
->>>  
->>> -	/* set alarm two seconds from now */
->>> +again:
->>> +	/* Clear any existing ALARM2 event */
->>> +	rtc_writel(rtc, OMAP_RTC_STATUS_REG, OMAP_RTC_STATUS_ALARM2);
->>
->> Why is this needed? Any pending interrupt is cleared at probe, and a
->> previous attempt to set the alarm really led to the alarm going off, why
->> would we retry?
-> 
-> Yes this is not needed.
-> 
->>
->>> +
->>> +	/* set alarm one second from now */
->>>  	omap_rtc_read_time_raw(rtc, &tm);
->>> +	seconds = tm.tm_sec;
->>>  	bcd2tm(&tm);
->>>  	rtc_tm_to_time(&tm, &now);
->>> -	rtc_time_to_tm(now + 2, &tm);
->>> +	rtc_time_to_tm(now + 1, &tm);
->>>  
->>>  	if (tm2bcd(&tm) < 0) {
->>>  		dev_err(&rtc->rtc->dev, "power off failed\n");
->>> @@ -470,6 +476,9 @@ static void omap_rtc_power_off(void)
->>>  	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
->>>  	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
->>>  			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
->>
->> Add a newline here.
-> 
-> Okay
-> 
->>
->>> +	/* Our calculations started right before the rollover, try again */
->>
->> Nit: use all lower case unless writing full sentences, which also
->> matches most of the other comments in this file.
-> 
-> okay
-> 
->>
->>> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
->>> +		goto again;
->>
->> Here the alarm may have gone off as part of the roll over, in which case
->> you shouldn't retry.
-> 
-> Ex: We programmed at Sec = 2 and we expect ALARM2 to fire at sec = 3.
-> 
-> In the event of Roll over before setting the
-> OMAP_RTC_INTERRUPTS_IT_ALARM2 bit in the OMAP_RTC_INTERRUPTS_REG will we
-> not miss the ALARM2 event? Then poweroff would fail right?
-> 
-> Hence the attempt to retry the next second. This sequence would begin
-> right at the beginning of a new second and we expect the full sequence
-> to get over without having to retry again.
-> 
-> Hope i am clear.
+> 		if (alen != ETH_ALEN) {
+> 			kfree(addr);
 
-I tried to program the interrupt for the same second on the hardware and
-it does not fire. So to take care of roll over corner case one attempt
-to retry is needed.
+and again here.
 
-> 
->>
->> Add a newline here too.
-> 
-> Okay
-> 
->>
->>>  	rtc->type->lock(rtc);
->>>  
->>>  	/*
->>
->> Thanks,
->> Johan
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> 			return -ENODEV;
+> 		}
+> 		ether_addr_copy(addrbuf, addr);
+> 		kfree(addr);
+> 		addr = addrbuf;
+
+and here.
+
+> 	}
+> 	if (!is_valid_ether_addr(addr))
+> 		return -ENODEV;
+> 	ether_addr_copy(mac_addr, addr);
+> 	return 0;
+
+Without checking the semantics, a possible solution to that could be:
+
+	if (!addr) {
+		nvmem = nvmem_cell_get(dev, "mac-address");
+		if (PTR_ERR(nvmem) == -EPROBE_DEFER)
+			return -EPROBE_DEFER;
+		if (IS_ERR(nvmem))
+			return -ENODEV;
+		addr = nvmem_cell_read(nvmem, &alen);
++		nvmem_cell_put(nvmem);
+		if (IS_ERR(addr))
+			return PTR_ERR(addr);
+		if (alen != ETH_ALEN) {
+			kfree(addr);
+			return -ENODEV;
+		}
+		ether_addr_copy(addrbuf, addr);
+		kfree(addr);
+		addr = addrbuf;
+	}
+	if (!is_valid_ether_addr(addr))
+		return -ENODEV;
+	ether_addr_copy(mac_addr, addr);
+	return 0;
+
+A potential better solution would be to put this code in a separate
+function, and then do:
+
+	if (!addr)
+		addr = eth_platform_get_nvmem_mac_address(dev, addrbuf);
+
+which returns either NULL or addrbuf depending on whether it failed or
+succeeded, which would probably end up with cleaner code.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
+According to speedtest.net: 13Mbps down 490kbps up
