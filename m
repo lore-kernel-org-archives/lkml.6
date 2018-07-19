@@ -2,226 +2,179 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9115C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3F2C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF3020693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:21:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="zwd4ZrIM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF3020693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 4F11920693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:23:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F11920693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730635AbeGSLEF (ORCPT
+        id S1731054AbeGSLGK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 07:04:05 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42510 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbeGSLEF (ORCPT
+        Thu, 19 Jul 2018 07:06:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51758 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730598AbeGSLGJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 07:04:05 -0400
-Received: by mail-pf0-f195.google.com with SMTP id l9-v6so3696211pff.9
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 03:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JhicpM+fOwiju9bXMJkS3VO7PHDcULJCpsLkjk0bEWY=;
-        b=zwd4ZrIM/kAY6Q2wPWF6kkcEksFgOYPNgetSQA3VKxZ6K21+ok7hIDxKxZ+s8CN81A
-         PTAIyLFm/9JYAMdEwhqN57LVFn6Nc9CSQBorZ3vxsRHlShUWS2pIDj/a5B6sfeWuMkPw
-         k1ZIJRixHobbzCSdKGnjcfOSl8XfvjROAYQpdIu9NpGPp+iRv6Y2vR7gk6r8H2960HTb
-         vN7wgOd4NVJ0uBpJ58w+ghEvS0mtpRuORwTugZc0N4F3ojaR24x/Q5jLBCZsmgPCymw3
-         F6FA5mBmfb3WXRdJFPIIUA3tHTRJheZwv8P5J7otLU7SE03iRGR1L4jl8Zp5EZE4hwgx
-         Okuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JhicpM+fOwiju9bXMJkS3VO7PHDcULJCpsLkjk0bEWY=;
-        b=WNQQ6XjjCC47BJgUs3KOliWC/dxm+Hh9lRmeGhdn1KJk7b2C5lLBU2RZ14wWA7vIe2
-         9WZ1fcXFwUW7wQCXGFynFbA9XzRcZI9ih2MoLqDVwB81ozR4IafSt6OIzWpNXjk0RtNw
-         BXJbPIpsxcEIVmpaApZkqFMo4wfOJ75owie6ckijE9LP9QHYp+txqXrxBi+Ib/jQM5BS
-         rHq5PyaWx8H0N4zhkPSGxB61AQsbjZnEUExvjVD/eXg7FFAQxUVjqkSHtPlXcvpYl+i2
-         vxwnONF+oNGBX+lnQiJliB5AC2T3rfbKVciPJ90vYM/5nGrIZCGzzvmMWhbDqeqFiz8G
-         Lzsw==
-X-Gm-Message-State: AOUpUlFoBt6XDnizgCY2ezYs58LGJfZ849E8SVmcr1LFaZ4XV27r1HwM
-        eiMvOJolBQKmd9dv9jpL696WpMhyToPj2w==
-X-Google-Smtp-Source: AAOMgpfjenhRm7TPLvKOeN++8hHfUzYus1YwdjVdwEdwbgSOWE2EiDKQYqyCGHQXA3sHVww3DZfq7g==
-X-Received: by 2002:a65:5284:: with SMTP id y4-v6mr8998233pgp.283.1531995697129;
-        Thu, 19 Jul 2018 03:21:37 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.40])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm10131045pfj.122.2018.07.19.03.21.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 03:21:36 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 079E4300251; Thu, 19 Jul 2018 13:21:30 +0300 (+03)
-Date:   Thu, 19 Jul 2018 13:21:30 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv5 08/19] x86/mm: Introduce variables to store number,
- shift and mask of KeyIDs
-Message-ID: <20180719102130.b4f6b6v5wg3modtc@kshutemo-mobl1>
-References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
- <20180717112029.42378-9-kirill.shutemov@linux.intel.com>
- <1edc05b0-8371-807e-7cfa-6e8f61ee9b70@intel.com>
+        Thu, 19 Jul 2018 07:06:09 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6JAJ6V8124499
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 06:23:41 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kap3nq74e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 06:23:41 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 19 Jul 2018 11:23:38 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 19 Jul 2018 11:23:36 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6JANZgv42729624
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 19 Jul 2018 10:23:35 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A5154C040;
+        Thu, 19 Jul 2018 13:23:53 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 092454C046;
+        Thu, 19 Jul 2018 13:23:53 +0100 (BST)
+Received: from oc7330422307.ibm.com (unknown [9.152.224.168])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 19 Jul 2018 13:23:52 +0100 (BST)
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+To:     David Woodhouse <dwmw2@infradead.org>, paulmck@linux.vnet.ibm.com
+Cc:     Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+References: <1531396842.8759.125.camel@infradead.org>
+ <20180712125351.GP3593@linux.vnet.ibm.com>
+ <20180712161704.GA20726@linux.vnet.ibm.com>
+ <20180716154015.GA21419@linux.vnet.ibm.com>
+ <1531815548.19223.23.camel@infradead.org>
+ <20180717125653.GH12945@linux.vnet.ibm.com>
+ <20180718153628.GA24359@linux.vnet.ibm.com>
+ <1531929711.3414.29.camel@infradead.org>
+ <20180718163712.GB12945@linux.vnet.ibm.com>
+ <1531942865.3414.35.camel@infradead.org>
+ <20180718201700.GN12945@linux.vnet.ibm.com>
+ <86d12d1a-46dd-d82a-96c2-e842ac5a2a6c@de.ibm.com>
+ <1531984833.12620.16.camel@infradead.org>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Thu, 19 Jul 2018 12:23:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1edc05b0-8371-807e-7cfa-6e8f61ee9b70@intel.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <1531984833.12620.16.camel@infradead.org>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18071910-0020-0000-0000-000002A86E1A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071910-0021-0000-0000-000020F4E253
+Message-Id: <a2626528-1819-07f2-24f2-ded6437cca5d@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-19_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=811 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807190113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 04:19:10PM -0700, Dave Hansen wrote:
-> On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
-> > mktme_nr_keyids holds number of KeyIDs available for MKTME, excluding
-> > KeyID zero which used by TME. MKTME KeyIDs start from 1.
-> > 
-> > mktme_keyid_shift holds shift of KeyID within physical address.
+
+
+On 07/19/2018 09:20 AM, David Woodhouse wrote:
+> On Thu, 2018-07-19 at 08:45 +0200, Christian Borntraeger wrote:
+>>
+>>> My thought would be something like this:
+>>>  
+>>>        if (context_tracking_cpu_is_enabled())
+>>>                rcu_kvm_enter();
+>>>        else
+>>>                rcu_virt_note_context_switch(smp_processor_id());
+>>
+>> In the past we needed that (when we introduced that). At least with every
+>> host interrupt we called this making an rcu event at least every HZ.
+>> Will the changes in need_resched make this part unnecessary?
 > 
-> I know what all these words mean, but the combination of them makes no
-> sense to me.  I still don't know what the variable does after reading this.
+> Yes, the change in need_resched() should make this part unnecessary.
+> Unless your architecture's version of the vcpu_run() loop just loops
+> forever even when TIF_NEED_RESCHED is set? :)
+
+Very early versions did that. The SIE instruction is interruptible
+so you can continue to run the guest by simply returning from an host
+interrupt. All sane versions of KVM on s390 now make sure to make a
+short trip into C after a host interrupt. There we check for
+need_resched signals and machine checks so we are good.
+
 > 
-> Is this the lowest bit in the physical address which is used for the
-> KeyID?  How many bits you must shift up a KeyID to get to the location
-> at which it can be masked into the physical address?
-
-Right.
-
-I'm not sure what is not clear from the description. It look fine to me.
-
-> > mktme_keyid_mask holds mask to extract KeyID from physical address.
+> I'm not sure about the context tracking condition in the code snippet
+> cited above, though. I think that's what caused my problem in the first
+> place — I have CONTEXT_TRACKING_FORCE && !NO_HZ_FULL. So in 4.15, that
+> means rcu_user_enter() did nothing and rcu_virt_note_context_switch()
+> wasn't called. Hence the observed stalls.
 > 
-> Good descriptions, wrong place.  Please put these in the code.
-
-Okay.
-
-> Also, the grammar constantly needs some work.  "holds mask" needs to be
-> "holds the mask".
-
-Right. Thanks
-
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > ---
-> >  arch/x86/include/asm/mktme.h | 16 ++++++++++++++++
-> >  arch/x86/kernel/cpu/intel.c  | 12 ++++++++----
-> >  arch/x86/mm/Makefile         |  2 ++
-> >  arch/x86/mm/mktme.c          |  5 +++++
-> >  4 files changed, 31 insertions(+), 4 deletions(-)
-> >  create mode 100644 arch/x86/include/asm/mktme.h
-> >  create mode 100644 arch/x86/mm/mktme.c
-> > 
-> > diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
-> > new file mode 100644
-> > index 000000000000..df31876ec48c
-> > --- /dev/null
-> > +++ b/arch/x86/include/asm/mktme.h
-> > @@ -0,0 +1,16 @@
-> > +#ifndef	_ASM_X86_MKTME_H
-> > +#define	_ASM_X86_MKTME_H
-> > +
-> > +#include <linux/types.h>
-> > +
-> > +#ifdef CONFIG_X86_INTEL_MKTME
-> > +extern phys_addr_t mktme_keyid_mask;
-> > +extern int mktme_nr_keyids;
-> > +extern int mktme_keyid_shift;
-> > +#else
-> > +#define mktme_keyid_mask	((phys_addr_t)0)
-> > +#define mktme_nr_keyids		0
-> > +#define mktme_keyid_shift	0
-> > +#endif
-> > +
-> > +#endif
-> > diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> > index bf2caf9d52dd..efc9e9fc47d4 100644
-> > --- a/arch/x86/kernel/cpu/intel.c
-> > +++ b/arch/x86/kernel/cpu/intel.c
-> > @@ -573,6 +573,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
-> >  
-> >  #ifdef CONFIG_X86_INTEL_MKTME
-> >  	if (mktme_status == MKTME_ENABLED && nr_keyids) {
-> > +		mktme_nr_keyids = nr_keyids;
-> > +		mktme_keyid_shift = c->x86_phys_bits - keyid_bits;
-> > +
-> >  		/*
-> >  		 * Mask out bits claimed from KeyID from physical address mask.
-> >  		 *
-> > @@ -580,10 +583,8 @@ static void detect_tme(struct cpuinfo_x86 *c)
-> >  		 * and number of bits claimed for KeyID is 6, bits 51:46 of
-> >  		 * physical address is unusable.
-> >  		 */
-> > -		phys_addr_t keyid_mask;
-> > -
-> > -		keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, c->x86_phys_bits - keyid_bits);
-> > -		physical_mask &= ~keyid_mask;
-> > +		mktme_keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, mktme_keyid_shift);
-> > +		physical_mask &= ~mktme_keyid_mask;
+> Should rcu_user_enter() itself be conditional on CONTEXT_TRACKING not
+> NO_HZ_FULL? 
 > 
-> Seems a bit silly that we introduce keyid_mask only to make it global a
-> few patches later.
 
-Is it a big deal?
-
-I found it easier to split changes into logical pieces this way.
-
-> >  	} else {
-> >  		/*
-> >  		 * Reset __PHYSICAL_MASK.
-> > @@ -591,6 +592,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
-> >  		 * between CPUs.
-> >  		 */
-> >  		physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
-> > +		mktme_keyid_mask = 0;
-> > +		mktme_keyid_shift = 0;
-> > +		mktme_nr_keyids = 0;
-> >  	}
-> 
-> Should be unnecessary.  These are zeroed by the compiler.
-
-No. detect_tme() called for each CPU in the system.
-
-> > diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-> > index 4b101dd6e52f..4ebee899c363 100644
-> > --- a/arch/x86/mm/Makefile
-> > +++ b/arch/x86/mm/Makefile
-> > @@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
-> >  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
-> >  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
-> >  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-> > +
-> > +obj-$(CONFIG_X86_INTEL_MKTME)	+= mktme.o
-> > diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-> > new file mode 100644
-> > index 000000000000..467f1b26c737
-> > --- /dev/null
-> > +++ b/arch/x86/mm/mktme.c
-> > @@ -0,0 +1,5 @@
-> > +#include <asm/mktme.h>
-> > +
-> > +phys_addr_t mktme_keyid_mask;
-> > +int mktme_nr_keyids;
-> > +int mktme_keyid_shift;
-> 
-> Descriptions should be here, please, not in the changelog.
-
-Okay.
-
--- 
- Kirill A. Shutemov
