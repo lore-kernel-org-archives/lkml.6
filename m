@@ -6,102 +6,211 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76822ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8D2ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D74F205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E19EE205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:35:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="jDSAspKe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D74F205C9
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="rblFLWIF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19EE205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731899AbeGSQSt (ORCPT
+        id S1731963AbeGSQTY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:18:49 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54548 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731126AbeGSQSt (ORCPT
+        Thu, 19 Jul 2018 12:19:24 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34866 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731775AbeGSQTY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:18:49 -0400
-Received: by mail-it0-f67.google.com with SMTP id s7-v6so10387431itb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:35:05 -0700 (PDT)
+        Thu, 19 Jul 2018 12:19:24 -0400
+Received: by mail-it0-f66.google.com with SMTP id q20-v6so10511557ith.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:35:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=M9rUApt2giMgnzdCEAfEaQGjajQkmsEQa9iejnqjbrM=;
-        b=jDSAspKek4bKF/7O5hgSna3QZKYNgwdKyF2zbkkkAtmmXdZaSWNqJQUyF1ExCiNOhp
-         3OYOFPRC6wryx4mmENqBUJIKVl0meAdzFLMdwTK8NqeyVJ575IIsdUbv4WIgf0kncXUx
-         LoOyxLJbLWcn6uu+PKa/3bI93/wZAVze2Z6vOB3fi0xWkRREKR7+YerollK3eSNCAAWa
-         iOtiZutYrJq7th+h6cx9w448bXqAG0VOYsVgxZbGZ0Qs8Gfkk7f3Gnsw/w3CELkX6WvG
-         1hEeRUyBystmQLRSgkBl5lVI1+UTXPHatRslCmTC/AffNVN1hPNRFD3b9022HiIc4fxr
-         knEQ==
+        bh=fpjT7LGURvaHnPeD63JRN66HubRrDYEim016IoZqmxA=;
+        b=rblFLWIFFbmqsU0RLZTSCr+Oo26aomVVWshVESWGGzSU6ZpFM3iKWqnhacIhoGAq5r
+         5khRDzcCqWMF4USiuNgZAckrI3oq3SybGQzSKl1zkxv3H0JUjvaRB9Q6nln8EOD3Yt99
+         40QvEnE1xZFxwpCko6LV3f8xPW5Lw0RYPeYm5Z8AqvDyUqIGCtR2mtwy6obiVUJZKG3G
+         YX+AQmVYMONYyv8UU5l/QWR1fSOAjiMRIeSeAn7x/ZHxUYfTEg6lGK/2aXdBmXoCezxy
+         8tsoTvj1qjcEVfaEKixbB6fkmFAmStOPLpjAnhlxMi5gyEe+4jmez4FakUM8Bnbp1j1N
+         CrEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=M9rUApt2giMgnzdCEAfEaQGjajQkmsEQa9iejnqjbrM=;
-        b=KCtqIrKDoYDy+yGaYvroV0JcItkcmL8Lij4sehOevTbnw0MHeELOwF1PUnX/G8zOzZ
-         ADJOu4ZOoIvQ50Y6Lovksz4GtGgEz1VOXMsSiRuelD9Ht3uaBBHM237ffujsfS15pziH
-         DjtxJNXVZgO4EQQcmA9s41t+HaE3Jy3hRtPuj8TIxXsUjbdyXbsREDfSGhT+Q+eqSGH+
-         3D4c97wh/jbyotNuNAmvZcIdsSQsLTaAPm2tZ2lfq0S/liSIBJP/ITm8iCF1oEdCTrHt
-         T4OzDxfe/8VU0t3JR2TloGCl6TUvdxLyBaK93AK5kB14XuyImqK7W9/TR6sIsyCNouAQ
-         GSrA==
-X-Gm-Message-State: AOUpUlGxN8Q6KcGdxTGdQv2eQXy/Mw8cgOEm3S6JUwwUdjBEKQDjp308
-        TNJ/KTD1kHi76my+dlmcIVpgrb2TGsUdo94PXSdp8A==
-X-Google-Smtp-Source: AAOMgpcJPgKXYYdG8VKkjDhOjpAUINFkwb6cWM6hB0lDkLCD9MIR3tRsmPVSQy6JdoMZebfPuaCdTMRzg0rICf2EIj8=
-X-Received: by 2002:a24:e48c:: with SMTP id o134-v6mr5159496ith.125.1532014505482;
- Thu, 19 Jul 2018 08:35:05 -0700 (PDT)
+        bh=fpjT7LGURvaHnPeD63JRN66HubRrDYEim016IoZqmxA=;
+        b=Yam7p4jgt4SnLRulz0EaS3vvSZWON3sw0UUMX/CuGLQk5ApacdC5y68ZB+zHb7Yvx2
+         e+Gyrc59n4KthkFAr1Lxxt9SJWcqBq6a+/MBV0tUwdm+EuGTXpZ2jxvybpO+dMh6EQ6Z
+         ASF8qCRT3cDMtfQf+ExmLPqXiiTIGkW//MKTq39xANF9J7CF+UdXIFi9x0+hEWiQowxt
+         52Wl6YH//fE9FZ+vwxVk+cheBk1P4tPjfaQUXDoH9DC0eGRq1ud7zw2etF9mM/8D4tla
+         8svPeU5hquZ2Jtcnuc3DdSMKmyX5II1+2kPFyXuWk0kAu6pdFHDMQ2vnGLRaFiWCY3RJ
+         cX/w==
+X-Gm-Message-State: AOUpUlHDGLZoFlK8hzhZBMHrF/diguwmMQDRM2+WMu1CkaLsn0+fWWdX
+        fImuJwX0OMsjxKa8yhx/wyStNMbNowQGlZXPgZxqzQ==
+X-Google-Smtp-Source: AAOMgpd46AkoQnaHaW7T9NscUwjy2j8aiTwSdbHfVwlZia64pOiPqIvy9yh8lrbGGCIM2x5/L4PGTXHycvFUf1aEgOo=
+X-Received: by 2002:a24:e48c:: with SMTP id o134-v6mr5161662ith.125.1532014540903;
+ Thu, 19 Jul 2018 08:35:40 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 08:35:04
+Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 08:35:40
  -0700 (PDT)
-In-Reply-To: <20180719152712.GE9119@lunn.ch>
-References: <20180718161035.7005-1-brgl@bgdev.pl> <20180718161035.7005-6-brgl@bgdev.pl>
- <20180718164737.GE12477@lunn.ch> <CAMRc=MeRv3_C8_R-Awfr1zjLa3G_CVAACc-2t_ihB+1v+BCTGw@mail.gmail.com>
- <20180718170352.GF12477@lunn.ch> <CAMRc=Md3oeEktzrA9UZyNPX6pB4bG+Gv0o6cjbs0UUKb3sYTsA@mail.gmail.com>
- <20180719150138.GC9119@lunn.ch> <CAMRc=MfKedvD2OXes02op2ErGR2HKkzJwjHtv5i4NkbJAVg3dw@mail.gmail.com>
- <20180719152712.GE9119@lunn.ch>
+In-Reply-To: <20180719123722.sk5fcih6pufy4wpd@mwanda>
+References: <20180719082028.26116-1-brgl@bgdev.pl> <20180719082028.26116-3-brgl@bgdev.pl>
+ <20180719084503.tfv6jllsukk2zv3f@mwanda> <CAMpxmJUgyB1hYi-G3KVxMsm0P+aKGuHOB8LSuH+bJbYfjengJA@mail.gmail.com>
+ <20180719090929.arbysqo2bk3esoar@mwanda> <CAMRc=Mdu5CLA99p48nNFZBSFHBKiERzp-m59vKDDe5STjjKZNA@mail.gmail.com>
+ <20180719123722.sk5fcih6pufy4wpd@mwanda>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 19 Jul 2018 17:35:04 +0200
-Message-ID: <CAMRc=MeqnRXF_R1J5G8ySvCr8pZhZMHiV3WHNFun=d8GjiOT9A@mail.gmail.com>
-Subject: Re: [PATCH 5/5] net: add MTD support to eth_platform_get_mac_address()
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+Date:   Thu, 19 Jul 2018 17:35:40 +0200
+Message-ID: <CAMRc=MeuoHcnRKc4uP8F5MEripV_w3gT9Eg1LPMRZc479vUHBQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] net: add support for nvmem to eth_platform_get_mac_address()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         "David S . Miller" <davem@davemloft.net>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
         David Lechner <david@lechnology.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        Andrew Lunn <andrew@lunn.ch>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>, netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-19 17:27 GMT+02:00 Andrew Lunn <andrew@lunn.ch>:
->> Unfortunately: this would effectively block me from improving the
->> support for older davinci boards.
+2018-07-19 14:37 GMT+02:00 Dan Carpenter <dan.carpenter@oracle.com>:
+> On Thu, Jul 19, 2018 at 12:06:51PM +0200, Bartosz Golaszewski wrote:
+>> It looks simpler as long as you don't add all the new routines
+>> resulting from this approach. I've just tried to quickly implement
+>> this solution and it resulted in much bigger and duplicated code
+>> (checking the validity of mac_addr, copying it etc.). I would prefer
+>> the current approach and would like to read someone else's opinion on
+>> that.
 >
-> Is there something blocking you from converting the board to device
-> tree? This is something i did with a lot of the Marvell boards a few
-> years ago. For a while, we had both DT and board setup files. After a
-> couple of cycles, we killed off the setup files.
+> It's not too bad.  There is two extra ether_addr_copy() calls and one
+> extra is_valid_ether_addr().  There are two extra alen declarations and
+> one extra addr declaration.  The functions don't share *that* much code.
 >
->        Andrew
+> regards,
+> dan carpenter
+>
+> diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+> index fd8faa0dfa61..8ab7289a5069 100644
+> --- a/net/ethernet/eth.c
+> +++ b/net/ethernet/eth.c
+> @@ -54,6 +54,8 @@
+>  #include <linux/if_ether.h>
+>  #include <linux/of_net.h>
+>  #include <linux/pci.h>
+> +#include <linux/nvmem-consumer.h>
+> +#include <linux/mtd/mtd.h>
+>  #include <net/dst.h>
+>  #include <net/arp.h>
+>  #include <net/sock.h>
+> @@ -525,7 +527,7 @@ unsigned char * __weak arch_get_platform_mac_address(void)
+>         return NULL;
+>  }
+>
+> -int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+> +static int of_eth_get_mac_address(struct device *dev, u8 *mac_addr)
+>  {
+>         const unsigned char *addr;
+>         struct device_node *dp;
+> @@ -547,4 +549,82 @@ int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+>         ether_addr_copy(mac_addr, addr);
+>         return 0;
+>  }
+> +
+> +static int nvmem_eth_get_mac_address(struct device *dev, u8 *mac_addr)
+> +{
+> +       struct nvmem_cell *nvmem;
+> +       unsigned char *addr;
+> +       size_t alen;
+> +       int ret = 0;
+> +
+> +       nvmem = nvmem_cell_get(dev, "mac-address");
+> +       if (PTR_ERR(nvmem) == -EPROBE_DEFER)
+> +               /* We may have a lookup registered for MAC address but the
+> +                * corresponding nvmem provider hasn't been registered yet.
+> +                */
+> +               return -EPROBE_DEFER;
+> +       if (IS_ERR(nvmem))
+> +               return PTR_ERR(nvmem);
+> +       addr = nvmem_cell_read(nvmem, &alen);
+> +       if (IS_ERR(addr)) {
+> +               ret = PTR_ERR(addr);
+> +               goto put_nvmem;
+> +       }
+> +       if (alen != ETH_ALEN || !is_valid_ether_addr(addr)) {
+> +               ret = -EINVAL;
+> +               goto free_addr;
+> +       }
+> +       ether_addr_copy(mac_addr, addr);
+> +free_addr:
+> +       kfree(addr);
+> +put_nvmem:
+> +       nvmem_cell_put(nvmem);
+> +       return ret;
+> +}
+> +
+> +static int mtd_eth_get_mac_address(struct device *dev, u8 *mac_addr)
+> +{
+> +       struct mtd_info *mtd;
+> +       u8 addrbuf[ETH_ALEN];
+> +       size_t alen;
+> +       int ret;
+> +
+> +       /* This function should go away as soon as MTD gets nvmem support. */
+> +       if (!IS_ENABLED(CONFIG_MTD))
+> +               return -ENODEV;
+> +
+> +       mtd = get_mtd_device_nm("MAC-Address");
+> +       if (IS_ERR(mtd))
+> +               return PTR_ERR(mtd);
+> +       ret = mtd_read(mtd, 0, ETH_ALEN, &alen, addrbuf);
+> +       if (ret)
+> +               goto put_mtd;
+> +       if (!is_valid_ether_addr(addrbuf)) {
+> +               ret = -EINVAL;
+> +               goto put_mtd;
+> +       }
+> +       ether_addr_copy(mac_addr, addrbuf);
+> +put_mtd:
+> +       put_mtd_device(mtd);
+> +       return ret;
+> +}
+> +
+> +int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+> +{
+> +       int ret;
+> +
+> +       ret = of_eth_get_mac_address(dev, mac_addr);
+> +       if (!ret)
+> +               return 0;
+> +       ret = nvmem_eth_get_mac_address(dev, mac_addr);
+> +       if (ret == -EPROBE_DEFER)
+> +               return -EPROBE_DEFER;
+> +       if (!ret)
+> +               return 0;
+> +       ret = mtd_eth_get_mac_address(dev, mac_addr);
+> +       if (!ret)
+> +               return 0;
+> +
+> +       return -ENODEV;
+> +}
+>  EXPORT_SYMBOL(eth_platform_get_mac_address);
 
-Actually some board are supported both in DT and board files
-(da850-evm) right now, but Sekhar wants to keep the support via board
-files in the kernel so that's a no go.
+Please take a look at v3 - I did it a bit differently but the idea is the same.
 
 Bart
