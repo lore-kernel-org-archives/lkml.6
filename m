@@ -2,109 +2,117 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B17C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D20AC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C65220671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:17:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C65220671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C1A120693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:22:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="0SLvjTn9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C1A120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbeGSH6t (ORCPT
+        id S1730432AbeGSIEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 03:58:49 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52184 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727288AbeGSH6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 03:58:48 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id CCD8453BAE834;
-        Thu, 19 Jul 2018 15:17:03 +0800 (CST)
-Received: from [127.0.0.1] (10.177.16.168) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Thu, 19 Jul 2018
- 15:17:01 +0800
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>,
-        Dominique Martinet <asmadeus@codewreck.org>
-From:   jiangyiwen <jiangyiwen@huawei.com>
-Subject: [V9fs-developer] [PATCH v3] Fix a hard lockup case in the virtio
- transport
-Message-ID: <5B503AEC.5080404@huawei.com>
-Date:   Thu, 19 Jul 2018 15:17:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Thu, 19 Jul 2018 04:04:15 -0400
+Received: from mail-pl0-f53.google.com ([209.85.160.53]:46686 "EHLO
+        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727451AbeGSIEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 04:04:14 -0400
+Received: by mail-pl0-f53.google.com with SMTP id t17-v6so667047ply.13
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 00:22:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CQnIrC/UF3jw2Pp17aC6lk4RP7cOOWSL/mYL4siOjeM=;
+        b=0SLvjTn9qryo7iJhVB424QYE0aaGBCFoxvaRHPY0Ds5DwKxp68+HwFWONLVSnXDTE8
+         P/0H8/5JuhUed55jB01NhnADn3n4/Tt0obJfldtsLtDc7zFyGbaHKQjsPXve++25WAnF
+         oIOkQgsOMMO74CakxyyRS3hZvi7wkHAxQvHfac3/tvt9pijrNHoTl/0QCSSWQYCNK8cT
+         hyItoOVdWa9Q7600lmG8rI4YU/diCKs5kxcFrenqYWiUBdAhJ4QQGSU4+wFLaQamSTZc
+         hfFHT+JoaFM1AUdrgG+81gc0EbYE0u9Rl6l/MaVjqAEbPBrPT8R6AgfB8i/JoIwFmrX4
+         NH7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CQnIrC/UF3jw2Pp17aC6lk4RP7cOOWSL/mYL4siOjeM=;
+        b=iw69u29+0M1AMk6O15QEXmbGMzpVBff/K80EDLu/IpTe5rwn5Vu3s7v/rzeYU+5Ur1
+         11CLKlT+N27CzWeGCCN2JEQR5cl07FnNqHXmd1JkFfOCmYnB3SU9kWdhnbkfSZT5ncqs
+         7JRX48Bot8xEehUhwj+ocSadIK5rk/VhClJqvUU+QIo0E9TDfUNN2khdwMsUbGbQFG7X
+         bwoxmI3KcjmRIvEHteKqRAFchcHBQ05t8ZNymk6aP+Tbcqe5J/t/n5zsxw0Uox7R4V4t
+         3tOHVsGGKTZVMMUYOSZa/si5i8Qawnfk8pc5syTGgV+R3+/2EW446/O5F7AWBRabnCKQ
+         Wd7g==
+X-Gm-Message-State: AOUpUlEY3tOogxfUjmh8xQkdSorm9ZfB4ENKVoUVeSH0TsS0Eis/Ajnk
+        K3tYl/Rk1ckDHDpJaa5AugyA5w==
+X-Google-Smtp-Source: AAOMgpfe97877ID/Q5v+0GF/KPzPbbNIlGQ0B5i45MoaRFuaMjVYW3Kl7h+dotpxC140dDbVehXW/w==
+X-Received: by 2002:a17:902:981:: with SMTP id 1-v6mr9108153pln.11.1531984953178;
+        Thu, 19 Jul 2018 00:22:33 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id p62-v6sm8289481pfb.58.2018.07.19.00.22.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 00:22:32 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id BE0913001F8; Thu, 19 Jul 2018 10:16:06 +0300 (+03)
+Date:   Thu, 19 Jul 2018 10:16:06 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv5 02/19] mm: Do not use zero page in encrypted pages
+Message-ID: <20180719071606.dkeq5btz5wlzk4oq@kshutemo-mobl1>
+References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
+ <20180717112029.42378-3-kirill.shutemov@linux.intel.com>
+ <e09c67ab-38a7-5b76-29e6-a45627eec1e5@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e09c67ab-38a7-5b76-29e6-a45627eec1e5@intel.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When client has multiple threads that issue io requests
-all the time, and the server has a very good performance,
-it may cause cpu is running in the irq context for a long
-time because it can check virtqueue has buf in the *while*
-loop.
+On Wed, Jul 18, 2018 at 10:36:24AM -0700, Dave Hansen wrote:
+> On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
+> > Zero page is not encrypted and putting it into encrypted VMA produces
+> > garbage.
+> > 
+> > We can map zero page with KeyID-0 into an encrypted VMA, but this would
+> > be violation security boundary between encryption domains.
+> 
+> Why?  How is it a violation?
+> 
+> It only matters if they write secrets.  They can't write secrets to the
+> zero page.
 
-So we should keep chan->lock in the whole loop.
+I believe usage of zero page is wrong here. It would indirectly reveal
+content of supposedly encrypted memory region.
 
-Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
----
- net/9p/trans_virtio.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+I can see argument why it should be okay and I don't have very strong
+opinion on this.
 
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index 05006cb..3589864 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -144,24 +144,25 @@ static void req_done(struct virtqueue *vq)
- 	struct virtio_chan *chan = vq->vdev->priv;
- 	unsigned int len;
- 	struct p9_req_t *req;
-+	bool need_wakeup = false;
- 	unsigned long flags;
+If folks see it's okay to use zero page in encrypted VMAs I can certainly
+make it work.
 
- 	p9_debug(P9_DEBUG_TRANS, ": request done\n");
+> Is this only because you accidentally inherited ->vm_page_prot on the
+> zero page PTE?
 
--	while (1) {
--		spin_lock_irqsave(&chan->lock, flags);
--		req = virtqueue_get_buf(chan->vq, &len);
--		if (req == NULL) {
--			spin_unlock_irqrestore(&chan->lock, flags);
--			break;
-+	spin_lock_irqsave(&chan->lock, flags);
-+	while ((req = virtqueue_get_buf(chan->vq, &len)) != NULL) {
-+		if (!chan->ring_bufs_avail) {
-+			chan->ring_bufs_avail = 1;
-+			need_wakeup = true;
- 		}
--		chan->ring_bufs_avail = 1;
--		spin_unlock_irqrestore(&chan->lock, flags);
--		/* Wakeup if anyone waiting for VirtIO ring space. */
--		wake_up(chan->vc_wq);
-+
- 		if (len)
- 			p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
- 	}
-+	spin_unlock_irqrestore(&chan->lock, flags);
-+	/* Wakeup if anyone waiting for VirtIO ring space. */
-+	if (need_wakeup)
-+		wake_up(chan->vc_wq);
- }
+Yes, in previous patchset I mapped zero page with wrong KeyID. This is one
+of possible fixes for this.
 
- /**
 -- 
-1.8.3.1
-
+ Kirill A. Shutemov
