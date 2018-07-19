@@ -3,80 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CD7ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 376D3ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C627320673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:54:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C627320673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id D073C20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:55:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D073C20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731857AbeGSPi2 (ORCPT
+        id S1731906AbeGSPie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:38:28 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33322 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730521AbeGSPi2 (ORCPT
+        Thu, 19 Jul 2018 11:38:34 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57635 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731864AbeGSPie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:38:28 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fgAKR-0001SA-LY; Thu, 19 Jul 2018 16:54:51 +0200
-Date:   Thu, 19 Jul 2018 16:54:48 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Daniel Kurtz <djkurtz@chromium.org>
-cc:     Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
-        Ken Xue <Ken.Xue@amd.com>, Daniel Drake <drake@endlessm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] pinctrl/amd: only handle irq if it is pending and
- unmasked
-In-Reply-To: <20180717005719.258905-1-djkurtz@chromium.org>
-Message-ID: <alpine.DEB.2.21.1807191654230.1693@nanos.tec.linutronix.de>
-References: <20180717005719.258905-1-djkurtz@chromium.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 19 Jul 2018 11:38:34 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JEsuJ62319531
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 19 Jul 2018 07:54:56 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JEssUx2319528;
+        Thu, 19 Jul 2018 07:54:54 -0700
+Date:   Thu, 19 Jul 2018 07:54:54 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yi Wang <tipbot@zytor.com>
+Message-ID: <tip-30587589251a00974115e0815ac316980f48dbb5@git.kernel.org>
+Cc:     jiang.biao2@zte.com.cn, mingo@kernel.org, anna-maria@linutronix.de,
+        hpa@zytor.com, tglx@linutronix.de, wang.yi59@zte.com.cn,
+        linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, jiang.biao2@zte.com.cn,
+          anna-maria@linutronix.de, wang.yi59@zte.com.cn,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com
+In-Reply-To: <1531721337-30284-1-git-send-email-wang.yi59@zte.com.cn>
+References: <1531721337-30284-1-git-send-email-wang.yi59@zte.com.cn>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] timer: Fix coding style
+Git-Commit-ID: 30587589251a00974115e0815ac316980f48dbb5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Jul 2018, Daniel Kurtz wrote:
+Commit-ID:  30587589251a00974115e0815ac316980f48dbb5
+Gitweb:     https://git.kernel.org/tip/30587589251a00974115e0815ac316980f48dbb5
+Author:     Yi Wang <wang.yi59@zte.com.cn>
+AuthorDate: Mon, 16 Jul 2018 14:08:57 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 19 Jul 2018 16:52:40 +0200
 
-> The AMD pinctrl driver demultiplexes GPIO interrupts and fires off their
-> individual handlers.
-> 
-> If one of these GPIO irqs is configured as a level interrupt, and its
-> downstream handler is a threaded ONESHOT interrupt, the GPIO interrupt
-> source is masked by handle_level_irq() until the eventual return of the
-> threaded irq handler.  During this time the level GPIO interrupt status
-> will still report as high until the actual gpio source is cleared - both
-> in the individual GPIO interrupt status bit (INTERRUPT_STS_OFF) and in
-> its corresponding "WAKE_INT_STATUS_REG" bit.
-> 
-> Thus, if another GPIO interrupt occurs during this time,
-> amd_gpio_irq_handler() will see that the (masked-and-not-yet-cleared)
-> level irq is still pending and incorrectly call its handler again.
-> 
-> To fix this, have amd_gpio_irq_handler() check for both interrupts status
-> and mask before calling generic_handle_irq().
-> 
-> Note: Is it possible that this bug was the source of the interrupt storm
-> on Ryzen when using chained interrupts before commit ba714a9c1dea85
-> ("pinctrl/amd: Use regular interrupt instead of chained")?
-> 
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+timer: Fix coding style
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+The call to wake_up_nohz_cpu() is incorrectly indented. Remove the surplus TAB.
+
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Cc: john.stultz@linaro.org
+Cc: sboyd@kernel.org
+Cc: zhong.weidong@zte.com.cn
+CC: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Link: https://lkml.kernel.org/r/1531721337-30284-1-git-send-email-wang.yi59@zte.com.cn
+
+---
+ kernel/time/timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index cc2d23e6ff61..baa528a24a73 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -581,7 +581,7 @@ trigger_dyntick_cpu(struct timer_base *base, struct timer_list *timer)
+ 	 * wheel:
+ 	 */
+ 	base->next_expiry = timer->expires;
+-		wake_up_nohz_cpu(base->cpu);
++	wake_up_nohz_cpu(base->cpu);
+ }
+ 
+ static void
