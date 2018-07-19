@@ -2,182 +2,118 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DB2C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:00:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC39FC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DBCD20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:00:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3E3320684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:00:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bA3dsgaa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DBCD20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Fx8J/03x";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V9iQUbvL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E3320684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730966AbeGSMnK (ORCPT
+        id S1731361AbeGSMnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 08:43:10 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34050 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730451AbeGSMnK (ORCPT
+        Thu, 19 Jul 2018 08:43:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53210 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731094AbeGSMnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:43:10 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c13-v6so7817253wrt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 05:00:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=vbIBHcCP7TWdjRelz80wqC2++ODtotrHkzVxAc96dQg=;
-        b=bA3dsgaaS3TWRxXDmdYtFzcPD1YVcPV2jW2eT+zsFcvJ+WYfRY+/2ZtOGuV/KzPem9
-         HlQY5ekQK2sc/FWQNHC3ov9x4RCkfjRcKkpneh4Vn5LlzGZf1nwEzghG31SFvtscXOIu
-         ay0X1dZb1h5IHWmSVRKvCFE6Aq95FfqImiHhg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vbIBHcCP7TWdjRelz80wqC2++ODtotrHkzVxAc96dQg=;
-        b=lUcIa4QjuZ8qdhJp7K3vRylb6VqJKIQiQQvgFQuYCT+2ux2tBuDa+5xz0Aqdp4a0wP
-         E2XfynExuHZnSSYt4Z+Xe48FkliRNVd+gnjPf0cKnnZ1mimJMXw9QUUp/mw0fOJ2oSUt
-         bWcLNC91AbaX/IiC3ErCo6pYAaieFtWcdxmMapEZ5Ph2XX9XM6BNZp9Qr2CGvjep95A/
-         bLM98dd9Refuku7YKTlei9HXc0xvXDGW46K5xcrgFWWIOKeFIfsHPHEcS4gBiJ/J9oLE
-         o9L/w7Y7McO88WiV/2cIrwfVEwGTipCX0dFnrhj2sXeK5K1SEGXasyZ2PeD+S4pJK8fc
-         gPlA==
-X-Gm-Message-State: AOUpUlHmxF1UV9Lx37rW0hV0OFlnK9FoM5VP7lgJausc6374TsY3XiQT
-        u/J5DZRc9rnNkzj9KCGF3TztZ2vUq2Q=
-X-Google-Smtp-Source: AAOMgpd6V/SGSJzicM7V012nbHOwpgTfpgQ6xINZg46NNMvgOCO2w+wDTHFfjOUkbKuFGeZvs104FA==
-X-Received: by 2002:a5d:5043:: with SMTP id h3-v6mr6974818wrt.186.1532001619411;
-        Thu, 19 Jul 2018 05:00:19 -0700 (PDT)
-Received: from vingu-laptop.home ([2a01:cb14:8227:ec00:30f7:19b6:cda6:1ba8])
-        by smtp.gmail.com with ESMTPSA id f20-v6sm9882203wrh.89.2018.07.19.05.00.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 19 Jul 2018 05:00:18 -0700 (PDT)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] sched/fair: remove #ifdefs from scale_rt_capacity
-Date:   Thu, 19 Jul 2018 14:00:06 +0200
-Message-Id: <1532001606-6689-1-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Thu, 19 Jul 2018 08:43:23 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 90D92607B9; Thu, 19 Jul 2018 12:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532001633;
+        bh=vrh8wRnMDFfScS8Rz4pfi0jWws8+jT6s4ffAyZuatdM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Fx8J/03xPzoccozlAtWBgosU6FY17DpodSKQGgcJHMp3+OT004N8SzbIcTxAtHMuK
+         7iA4EE/igvueKG7+Si8WMMa/A1LnL/xTBsbtfJMlF4Jp1KvnemQc5tOACWBI70Iiwa
+         gq0DL3hRc8GawlcHKK628GwDmFxHD8xeA2XpNaa4=
+Received: from [10.201.3.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sricharan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0AD4E60481;
+        Thu, 19 Jul 2018 12:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532001632;
+        bh=vrh8wRnMDFfScS8Rz4pfi0jWws8+jT6s4ffAyZuatdM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=V9iQUbvLfMcOIiiMXDl8yVZzrXgL87GjD79ATr/SkaEHBRvxHOiJMdzJHRO01iFwD
+         Q/uOeS1SZQyHS+lwThwwONC+E5BYdWKXtHfEQJuhU+Qf4lJpl5xf+/YN+advCJ10ZE
+         2mc0GJjbj2wMO3QtYSdaWGgY4bt29PYuthbccWBE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0AD4E60481
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH] remoteproc: qcom: fix Q6V5_WCSS dependencies
+To:     Arnd Bergmann <arnd@arndb.de>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rohit kumar <rohitkr@codeaurora.org>,
+        Sarangdhar Joshi <spjoshi@codeaurora.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180718111730.3531477-1-arnd@arndb.de>
+From:   Sricharan R <sricharan@codeaurora.org>
+Message-ID: <4fe9f7c1-84b6-9216-2557-a408071d390a@codeaurora.org>
+Date:   Thu, 19 Jul 2018 17:30:28 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180718111730.3531477-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reuse cpu_util_irq() that has been defined for schedutil and set irq util
-to 0 when !CONFIG_IRQ_TIME_ACCOUNTING
+Hi Arnd,
 
-But the compiler is not able to optimize the sequence (at least with
-aarch64 GCC 7.2.1)
-	free *= (max - irq);
-	free /= max;
-when irq is fixed to 0
+On 7/18/2018 4:46 PM, Arnd Bergmann wrote:
+> A new driver got added that depends on QCOM_SMD and fails to link
+> as built-in with CONFIG_QCOM_SMD=m:
+> 
+> drivers/remoteproc/qcom_common.o: In function `smd_subdev_stop':
+> qcom_common.c:(.text+0x674): undefined reference to `qcom_smd_unregister_edge'
+> drivers/remoteproc/qcom_common.o: In function `smd_subdev_start':
+> qcom_common.c:(.text+0x700): undefined reference to `qcom_smd_register_edge'
+> 
+> We've fixed the same thing several times before, so use the same
+> dependency here.
+> 
+> Fixes: 3a3d4163e0bf ("remoteproc: qcom: Introduce Hexagon V5 based WCSS driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Add a new inline function scale_irq_capacity() that will scale utilization
-when irq is accounted. Reuse this funciton in schedutil which applies
-similar formula.
+Oops, missed it. Sorry.
 
-Suggested-by: Ingo Molnar <mingo@redhat.com>
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/cpufreq_schedutil.c |  3 +--
- kernel/sched/fair.c              | 13 +++----------
- kernel/sched/sched.h             | 20 ++++++++++++++++++--
- 3 files changed, 22 insertions(+), 14 deletions(-)
+Acked-by: Sricharan R <sricharan@codeaurora.org>
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 97dcd44..3fffad3 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -247,8 +247,7 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
- 	 *   U' = irq + ------- * U
- 	 *                max
- 	 */
--	util *= (max - irq);
--	util /= max;
-+	util = scale_irq_capacity(util, irq, max);
- 	util += irq;
- 
- 	/*
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d5f7d52..14c3fdd 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7551,16 +7551,12 @@ static unsigned long scale_rt_capacity(int cpu)
- 	struct rq *rq = cpu_rq(cpu);
- 	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
- 	unsigned long used, free;
--#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
- 	unsigned long irq;
--#endif
- 
--#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
--	irq = READ_ONCE(rq->avg_irq.util_avg);
-+	irq = cpu_util_irq(rq);
- 
- 	if (unlikely(irq >= max))
- 		return 1;
--#endif
- 
- 	used = READ_ONCE(rq->avg_rt.util_avg);
- 	used += READ_ONCE(rq->avg_dl.util_avg);
-@@ -7569,11 +7565,8 @@ static unsigned long scale_rt_capacity(int cpu)
- 		return 1;
- 
- 	free = max - used;
--#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
--	free *= (max - irq);
--	free /= max;
--#endif
--	return free;
-+
-+	return scale_irq_capacity(free, irq, max);
- }
- 
- static void update_cpu_capacity(struct sched_domain *sd, int cpu)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index ebb4b3c..b80c3fd 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2210,17 +2210,33 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
- {
- 	return READ_ONCE(rq->avg_rt.util_avg);
- }
-+#endif
- 
--#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-+#if defined(SMP) \
-+ && (defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING))
- static inline unsigned long cpu_util_irq(struct rq *rq)
- {
- 	return rq->avg_irq.util_avg;
- }
-+
-+static inline
-+unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
-+{
-+	util *= (max - irq);
-+	util /= max;
-+
-+	return util;
-+
-+}
- #else
- static inline unsigned long cpu_util_irq(struct rq *rq)
- {
- 	return 0;
- }
- 
--#endif
-+static inline
-+unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
-+{
-+	return util;
-+}
- #endif
+Regards,
+ Sricharan
+
+> ---
+>  drivers/remoteproc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 0dde3753c3a5..052d4dd347f9 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -127,6 +127,7 @@ config QCOM_Q6V5_WCSS
+>  	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
+>  	depends on OF && ARCH_QCOM
+>  	depends on QCOM_SMEM
+> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+>  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	select MFD_SYSCON
+> 
+
 -- 
-2.7.4
-
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
