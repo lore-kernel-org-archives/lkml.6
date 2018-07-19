@@ -2,95 +2,102 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE71C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C10C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC64820673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 181C820673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:52:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRtjWXDV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC64820673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WrG0IRrJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 181C820673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731791AbeGSOcs (ORCPT
+        id S1731577AbeGSOgG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:32:48 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38635 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeGSOcr (ORCPT
+        Thu, 19 Jul 2018 10:36:06 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38638 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730451AbeGSOgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:32:47 -0400
-Received: by mail-pl0-f65.google.com with SMTP id b1-v6so3690128pls.5;
-        Thu, 19 Jul 2018 06:49:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WPrW7DOwPWR+JBnMfGE8j4e1SLB+96g5kPWfdkhAX2I=;
-        b=nRtjWXDVZmLE5Pe02JsdEifEHqSI1xfTaZAjHAvsfcCnvI0fr8DXMkXRMZFtWDosMZ
-         qLzMjAbapg2U2Q9G74DVGJkir85gJj4fr56i7hnMOrDi8Lpx18ne74oZMNqzARP3dnSk
-         r+5+X7UK4aCrhnpUdm76amhogLMsYcOrlhlUToPjB7sTI6P5eyPxo34IhKoBQ6v2sVhu
-         QgDCJ8jggJ2W4YaoccBKWu4CP9LCBUajFqKEDIHqNc1cQ1EXqpSimzVjRPSlcfqypHg4
-         QZCLTx2RJDIHvLKatYSl3xIXLNdOMRDJe6MiZBQ2pWFHQnmQHH9MDxE4XGCvBQPd2M0A
-         motw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WPrW7DOwPWR+JBnMfGE8j4e1SLB+96g5kPWfdkhAX2I=;
-        b=YWz9LKL0BNfkpFVQwHtryIXHs0KCS2ioLl7Ah8A00f7Bc48WTuYzv60Q21qxczwptE
-         UFwdYA036XYeRvYs8p4lG7C02x/phM6YCpq33ljpgiHV5o8BTRZJq9Roa6+HQP8cuD7N
-         elxX23IZeVUC8bDNxd4VAxfNfb2yeJgK/V3g6YM01NFPCBaD2tz+XiLgSuiCHeezp3Pt
-         gSK3OP1cBZgGHFjH7svohsflLJw5l7xC47hy7Xr/kjYoGm92CqlgOq79N2wARPUEpsd8
-         XG8tvAIYXLl29Ehw2eSrXrIMZQBqicgeEg9YqIFPGmphZ+25oHlhkwetTS4zNI3WBTbX
-         m0yw==
-X-Gm-Message-State: AOUpUlFFhPnCQopzWuTp6yVUj87HPl7XjCh2kHb0uQK/ambewHkOdj9m
-        sUeRPbSC1sfXU9bBRcp4kts=
-X-Google-Smtp-Source: AAOMgpcxMiSwrS2Qge3aOo2wRfUe4Ql3DxwKWuQmIfOdz3m28qHAiqM2+N29NRHoGNsZWyS/bjlngA==
-X-Received: by 2002:a17:902:5a4c:: with SMTP id f12-v6mr10161971plm.253.1532008172074;
-        Thu, 19 Jul 2018 06:49:32 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id v82-v6sm20502214pfd.64.2018.07.19.06.49.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 06:49:31 -0700 (PDT)
-Subject: Re: [PATCH V4 net-next 2/3] tcp: Add tcp_retransmit_stamp() helper
- routine
-To:     Jon Maxwell <jmaxwell37@gmail.com>, davem@davemloft.net
-Cc:     edumazet@google.com, ncardwell@google.com, David.Laight@aculab.com,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmaxwell@redhat.com
-References: <20180719011444.4694-3-jmaxwell37@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <dc623e0c-e624-c514-b297-5b7f24dcd984@gmail.com>
-Date:   Thu, 19 Jul 2018 06:49:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 19 Jul 2018 10:36:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9y3ZpgYtdHV1f5BZq6DQpPBciG7Ugn3PjPKzl3567fA=; b=WrG0IRrJDAoztD1ygNlKx0ZMy
+        H4cajpz3fEjWshpAWul5YTB+vvRw2sl+8Wqp+j/CqSN8K8U9bQ9QnPWQ0AUAKi10+KrRmu2vRDbw7
+        sO/4dh2KBbnwmWG3tWPINmKMNG9q9lLF/a2B4TUJXDU+2npeNJ7db91ABeBAioZqGB7kzldpesq9P
+        NwT/N7vgtbzyD9cl9C9WuIpzaPvPdoCX2FuS6Hehq10QPf8dcwrfzB8uYauKoJlWfxBwU3op3h1j+
+        3Qmgwp7L9cS3OCKzyrvmvWUBKPCN4tUVC064E3G2LOWV2p5tJ4hRSpA9Rb7z2kU//Dfv8l8XUILDi
+        GZNucCFNA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fg9M3-0003eS-BJ; Thu, 19 Jul 2018 13:52:28 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B410B20289330; Thu, 19 Jul 2018 15:52:24 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 15:52:24 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+Message-ID: <20180719135224.GE2494@hirez.programming.kicks-ass.net>
+References: <1529825440-9574-1-git-send-email-longman@redhat.com>
+ <1529825440-9574-8-git-send-email-longman@redhat.com>
+ <20180702165322.GI533219@devbig577.frc2.facebook.com>
+ <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
+ <20180703155823.GS533219@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <20180719011444.4694-3-jmaxwell37@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180703155823.GS533219@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/18/2018 06:14 PM, Jon Maxwell wrote:
-> Create a seperate helper routine as per Neal Cardwells suggestion. To
-> be used by the final commit in this series and retransmits_timed_out().
+On Tue, Jul 03, 2018 at 08:58:23AM -0700, Tejun Heo wrote:
+> Hello, Waiman.
 > 
-> Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
+> On Tue, Jul 03, 2018 at 08:41:31AM +0800, Waiman Long wrote:
+> > > So, effective changing when enabling partition on a child feels wrong
+> > > to me.  It's supposed to contain what's actually allowed to the cgroup
+> > > from its parent and that shouldn't change regardless of how those
+> > > resources are used.  It's still given to the cgroup from its parent.
+> > 
+> > Another way to work around this issue is to expose the reserved_cpus in
+> > the parent for holding CPUs that can taken by a chid partition. That
+> > will require adding one more cpuset file for those cgroups that are
+> > partition roots.
+> 
+> Yeah, that should work.
+> 
+> > I don't mind restricting that to the first level children for now. That
+> > does restrict where we can put the container root if we want a separate
+> > partition for a container. Let's hear if others have any objection about
+> > that.
+> 
+> As currently implemented, partioning locks away the cpus which should
+> be a system level decision, not container level, so it makes sense to
+> me that it is only available to system root.
 
+I'm terribly confused, what?!
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-
+Why would a container not be allowed to create partitions for its
+various RT workloads?
