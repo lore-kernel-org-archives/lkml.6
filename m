@@ -5,48 +5,50 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AFCECDE5F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97816C468C6
 	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DA72084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:07:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8DA72084C
+	by mail.kernel.org (Postfix) with ESMTP id 574452084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 06:07:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 574452084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731323AbeGSGtH (ORCPT
+        id S1731374AbeGSGtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 19 Jul 2018 02:49:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:39719 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.11.71.1]:44275 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbeGSGtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 02:49:05 -0400
+        id S1730440AbeGSGtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 02:49:07 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 41WNpf5qnDz9s78; Thu, 19 Jul 2018 16:07:38 +1000 (AEST)
+        id 41WNph2Dpxz9s9F; Thu, 19 Jul 2018 16:07:39 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 00c376fdd7ed6cc083da3a3c51a63a75f270d647
-In-Reply-To: <20180702074205.12837-1-aik@ozlabs.ru>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>, linuxppc-dev@lists.ozlabs.org
+X-powerpc-patch-commit: 9c3250a127901c93b23723dc5859c71a0d068fb8
+In-Reply-To: <1531346584-9157-1-git-send-email-eleon@ele0n.de>
+To:     Daniel Klamt <eleon@ele0n.de>, benh@kernel.crashing.org
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>, linux-kernel@vger.kernel.org
-Subject: Re: [kernel] powerpc/powernv/ioda2: Add 256M IOMMU page size to the default POWER8 case
-Message-Id: <41WNpf5qnDz9s78@ozlabs.org>
-Date:   Thu, 19 Jul 2018 16:07:38 +1000 (AEST)
+Cc:     linux-kernel@i4.cs.fau.de, linux-kernel@vger.kernel.org,
+        paulus@samba.org, Daniel Klamt <eleon@ele0n.de>,
+        Bjoern Noetel <bjoern@br3ak3r.de>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: powerpc: Replaced msleep(x) with msleep(OPAL_BUSY_DELAY_MS)
+Message-Id: <41WNph2Dpxz9s9F@ozlabs.org>
+Date:   Thu, 19 Jul 2018 16:07:39 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-02 at 07:42:05 UTC, Alexey Kardashevskiy wrote:
-> The sketchy bypass uses 256M pages so add this page size as well.
+On Wed, 2018-07-11 at 22:03:04 UTC, Daniel Klamt wrote:
+> Replaced msleep(x) with with msleep(OPAL_BUSY_DELAY_MS)
+> to diocument these sleep is to wait for opal.
 > 
-> This should cause no behavioral change but will be used later.
-> 
-> Fixes: 477afd6ea6 "powerpc/ioda: Use ibm,supported-tce-sizes for IOMMU page size mask"
-> Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+> Signed-off-by: Daniel Klamt <eleon@ele0n.de>
+> Signed-off-by: Bjoern Noetel <bjoern@br3ak3r.de>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/00c376fdd7ed6cc083da3a3c51a63a
+https://git.kernel.org/powerpc/c/9c3250a127901c93b23723dc5859c7
 
 cheers
