@@ -2,140 +2,113 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8350CC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC11AC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CB320671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:18:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CB320671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7363920671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:19:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eGde0bPh";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LDZfCNnO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7363920671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeGSKAx (ORCPT
+        id S1727555AbeGSKCB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 06:00:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:36727 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726857AbeGSKAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 06:00:53 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9BCFCC4F65321;
-        Thu, 19 Jul 2018 17:18:35 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Thu, 19 Jul 2018
- 17:18:28 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <jon.maloy@ericsson.com>,
-        <ying.xue@windriver.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <tipc-discussion@lists.sourceforge.net>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] tipc: make some functions static
-Date:   Thu, 19 Jul 2018 17:16:59 +0800
-Message-ID: <20180719091659.20248-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        Thu, 19 Jul 2018 06:02:01 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39868 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725777AbeGSKCA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 06:02:00 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5C1D960B12; Thu, 19 Jul 2018 09:19:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531991986;
+        bh=KdLNVDkSxNhVn+2PFyM2EtUfOXpjM6S/RFQTecj6AMw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eGde0bPhsbYh3yHNKtX2AbMJjJvVlMLBvHg3Pdzq8P7HSYzcOM+tYQkzYZDP2QRNf
+         GPJ8pmrAfIZypkJpRDesUIgzNkB9lk5GCUBKbBgPy2u2FUJ2CPKdDjs8o+4zfcPixw
+         5wiSRC40CVD2fotqPb7+8Q8btc7IgZD9hTUF74kc=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0600360541;
+        Thu, 19 Jul 2018 09:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531991985;
+        bh=KdLNVDkSxNhVn+2PFyM2EtUfOXpjM6S/RFQTecj6AMw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LDZfCNnOii6pi9CQbzdg0mS8ELF3rCDkS7BUCo462yT6Y4rOhAlPEI+bhXm+2Kkq1
+         hHqyLhiSiCrmSoe4P6pGcUni0SaDoKpkvrTEFrlE9+h0/y+1yD8k6W6VQwMZ5/iC6b
+         CtNA+67qBCsQyiak8KoDxN4WtWu2hsH4YtGjMqlI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0600360541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   Raju P L S S S N <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
+        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH 0/6] drivers/qcom: add additional functionality to RPMH
+Date:   Thu, 19 Jul 2018 14:49:29 +0530
+Message-Id: <1531991975-23665-1-git-send-email-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following sparse warnings:
+From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
 
-net/tipc/link.c:376:5: warning: symbol 'link_bc_rcv_gap' was not declared. Should it be static?
-net/tipc/link.c:823:6: warning: symbol 'link_prepare_wakeup' was not declared. Should it be static?
-net/tipc/link.c:959:6: warning: symbol 'tipc_link_advance_backlog' was not declared. Should it be static?
-net/tipc/link.c:1009:5: warning: symbol 'tipc_link_retrans' was not declared. Should it be static?
-net/tipc/monitor.c:687:5: warning: symbol '__tipc_nl_add_monitor_peer' was not declared. Should it be static?
-net/tipc/group.c:230:20: warning: symbol 'tipc_group_find_member' was not declared. Should it be static?
+This set of patches add additional functionality to RPMH drivers[1].
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/tipc/group.c   |  4 ++--
- net/tipc/link.c    | 11 ++++++-----
- net/tipc/monitor.c |  3 ++-
- 3 files changed, 10 insertions(+), 8 deletions(-)
+PM drivers can choose to disallow idle modes when RSC controller is busy sending
+or processing requests. The patches add necesary functions to query the 
+controller status.
 
-diff --git a/net/tipc/group.c b/net/tipc/group.c
-index 8f43e7d..e82f13c 100644
---- a/net/tipc/group.c
-+++ b/net/tipc/group.c
-@@ -227,8 +227,8 @@ void tipc_group_delete(struct net *net, struct tipc_group *grp)
- 	kfree(grp);
- }
- 
--struct tipc_member *tipc_group_find_member(struct tipc_group *grp,
--					   u32 node, u32 port)
-+static struct tipc_member *tipc_group_find_member(struct tipc_group *grp,
-+						  u32 node, u32 port)
- {
- 	struct rb_node *n = grp->members.rb_node;
- 	u64 nkey, key = (u64)node << 32 | port;
-diff --git a/net/tipc/link.c b/net/tipc/link.c
-index 6987ffc..b1f0bee 100644
---- a/net/tipc/link.c
-+++ b/net/tipc/link.c
-@@ -373,7 +373,7 @@ int tipc_link_bc_peers(struct tipc_link *l)
- 	return l->ackers;
- }
- 
--u16 link_bc_rcv_gap(struct tipc_link *l)
-+static u16 link_bc_rcv_gap(struct tipc_link *l)
- {
- 	struct sk_buff *skb = skb_peek(&l->deferdq);
- 	u16 gap = 0;
-@@ -820,7 +820,7 @@ static int link_schedule_user(struct tipc_link *l, struct tipc_msg *hdr)
-  * Wake up a number of waiting users, as permitted by available space
-  * in the send queue
-  */
--void link_prepare_wakeup(struct tipc_link *l)
-+static void link_prepare_wakeup(struct tipc_link *l)
- {
- 	struct sk_buff *skb, *tmp;
- 	int imp, i = 0;
-@@ -956,7 +956,8 @@ int tipc_link_xmit(struct tipc_link *l, struct sk_buff_head *list,
- 	return rc;
- }
- 
--void tipc_link_advance_backlog(struct tipc_link *l, struct sk_buff_head *xmitq)
-+static void tipc_link_advance_backlog(struct tipc_link *l,
-+				      struct sk_buff_head *xmitq)
- {
- 	struct sk_buff *skb, *_skb;
- 	struct tipc_msg *hdr;
-@@ -1006,8 +1007,8 @@ static void link_retransmit_failure(struct tipc_link *l, struct sk_buff *skb)
-  * @to: retransmit to (inclusive) this sequence number
-  * xmitq: queue for accumulating the retransmitted packets
-  */
--int tipc_link_retrans(struct tipc_link *l, struct tipc_link *r,
--		      u16 from, u16 to, struct sk_buff_head *xmitq)
-+static int tipc_link_retrans(struct tipc_link *l, struct tipc_link *r,
-+			     u16 from, u16 to, struct sk_buff_head *xmitq)
- {
- 	struct sk_buff *_skb, *skb = skb_peek(&l->transmq);
- 	u16 bc_ack = l->bc_rcvlink->rcv_nxt - 1;
-diff --git a/net/tipc/monitor.c b/net/tipc/monitor.c
-index 5453e56..67f6938 100644
---- a/net/tipc/monitor.c
-+++ b/net/tipc/monitor.c
-@@ -684,7 +684,8 @@ int tipc_nl_monitor_get_threshold(struct net *net)
- 	return tn->mon_threshold;
- }
- 
--int __tipc_nl_add_monitor_peer(struct tipc_peer *peer, struct tipc_nl_msg *msg)
-+static int __tipc_nl_add_monitor_peer(struct tipc_peer *peer,
-+				      struct tipc_nl_msg *msg)
- {
- 	struct tipc_mon_domain *dom = peer->domain;
- 	struct nlattr *attrs;
+The controllers may be in 'solver' state, where they could be in autonomous
+mode executing low power modes for their hardware and as such are not available
+for sending active votes. Functionality to get notified about such state and 
+disallow requests for state change in that case is added in these patches.
+
+The Power Domain Controller can be programmed to wakeup the RSC and
+setup the resources back in the active state, before the processor is
+woken up by a timer interrupt. The wakeup value from the timer hardware
+can be copied to the PDC which has its own timer and is in an always-on
+power domain. Programming the wakeup value is done through a separate
+register on the RSC. Fuctions necessary to program wakeup is added in
+the patches.
+
+Please consider reviewing this patchset.
+
+[1] https://lkml.org/lkml/2018/6/20/519
+
+Lina Iyer (5):
+  drivers: qcom: rpmh-rsc: return if the controller is idle
+  drivers: qcom: rpmh: export controller idle status
+  drivers: qcom: rpmh: disallow active requests in solver mode
+  drivers: qcom: rpmh-rsc: write PDC data
+  drivers: qcom: rpmh: write PDC data
+
+Raju P.L.S.S.S.N (1):
+  drivers: qcom: rpmh-rsc: clear active mode configuration for waketcs
+
+ drivers/soc/qcom/rpmh-internal.h |   6 ++
+ drivers/soc/qcom/rpmh-rsc.c      | 134 ++++++++++++++++++++++++++++++---------
+ drivers/soc/qcom/rpmh.c          | 100 +++++++++++++++++++++++++++++
+ include/soc/qcom/rpmh.h          |  16 +++++
+ 4 files changed, 227 insertions(+), 29 deletions(-)
+
 -- 
-2.7.0
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
 
