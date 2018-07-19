@@ -2,85 +2,140 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3062CC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8350CC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1540206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:14:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tMUQfbR0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1540206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 16CB320671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:18:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CB320671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730821AbeGSJ4L (ORCPT
+        id S1727485AbeGSKAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 05:56:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36910 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbeGSJ4L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 05:56:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JeFK8tOezHXJTwWgDOi2sa3rSt1ZV2Xb/G0KT5OadUc=; b=tMUQfbR0eGMYYShpQIvBioLYX
-        p3lKM5/17XfCyK8jEGxShgtApr2zFPOcKEqsYlWc/UmxSdIbzdnY8hrJ3dKsE2VX3NFx7Ci1ZMsVA
-        8nmo6PVxbJZ65RDr54BvSuxThL8VnuCg2vdWri9D8GfmXFJIVHcOwNNE44o3nzNFvCtRwEwS/si9K
-        5/TuaObCaK5Gj2v35yDl1HKIlqXYcGMlIbYzjxRFuNcZpfrT/OfPHdQU8g6tbHA0Mv+ar08Mx5N5/
-        SqnmFdhIBcgpUdO40l7ZoyxjY09V8rUqrqIh/F7dJFSTGbCqc0syxwB99nP+DYDlnLt2CneH9lTvH
-        opr0r2uWw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fg50R-0007Wf-IW; Thu, 19 Jul 2018 09:13:51 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 41B2020289330; Thu, 19 Jul 2018 11:13:49 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 11:13:49 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     songliubraving@fb.com, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@kernel.org, torvalds@linux-foundation.org,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/mm] x86/mm/tlb: Make lazy TLB mode lazier
-Message-ID: <20180719091349.GY2494@hirez.programming.kicks-ass.net>
-References: <20180716190337.26133-5-riel@surriel.com>
- <tip-ac0315896970d8589291e9d8a1569fc65967b7f1@git.kernel.org>
- <20180717113330.GU2476@hirez.programming.kicks-ass.net>
- <08AC2AF2-17DE-4416-BBBD-B6B950D20906@surriel.com>
- <20180718160007.GS2494@hirez.programming.kicks-ass.net>
- <081E558D-DB34-4A18-A35C-896BC47F6EBA@surriel.com>
- <20180718182359.GW2494@hirez.programming.kicks-ass.net>
- <477353D9-BA10-4AAB-ACC4-DDFDAE63895B@surriel.com>
+        Thu, 19 Jul 2018 06:00:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:36727 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726857AbeGSKAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 06:00:53 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 9BCFCC4F65321;
+        Thu, 19 Jul 2018 17:18:35 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Thu, 19 Jul 2018
+ 17:18:28 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <jon.maloy@ericsson.com>,
+        <ying.xue@windriver.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <tipc-discussion@lists.sourceforge.net>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] tipc: make some functions static
+Date:   Thu, 19 Jul 2018 17:16:59 +0800
+Message-ID: <20180719091659.20248-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <477353D9-BA10-4AAB-ACC4-DDFDAE63895B@surriel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 02:51:45PM -0400, Rik van Riel wrote:
+Fixes the following sparse warnings:
 
-> > Ah, ok. I wasn't entirely sure the new lazy was purely for the idle
-> > case. But yes, the KVM paravirt thing should get the idle case right.
-> > 
-> Not just idle, but also running in kernel threads like ksoftirqd,
-> kworker, kswapd, etc.
+net/tipc/link.c:376:5: warning: symbol 'link_bc_rcv_gap' was not declared. Should it be static?
+net/tipc/link.c:823:6: warning: symbol 'link_prepare_wakeup' was not declared. Should it be static?
+net/tipc/link.c:959:6: warning: symbol 'tipc_link_advance_backlog' was not declared. Should it be static?
+net/tipc/link.c:1009:5: warning: symbol 'tipc_link_retrans' was not declared. Should it be static?
+net/tipc/monitor.c:687:5: warning: symbol '__tipc_nl_add_monitor_peer' was not declared. Should it be static?
+net/tipc/group.c:230:20: warning: symbol 'tipc_group_find_member' was not declared. Should it be static?
 
-Right, that's what I thought.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/tipc/group.c   |  4 ++--
+ net/tipc/link.c    | 11 ++++++-----
+ net/tipc/monitor.c |  3 ++-
+ 3 files changed, 10 insertions(+), 8 deletions(-)
 
-> However, kvm_flush_tlb_other calls
-> native_flush_tlb_other, so it should get that optimization automatically
-> from my patch series.
+diff --git a/net/tipc/group.c b/net/tipc/group.c
+index 8f43e7d..e82f13c 100644
+--- a/net/tipc/group.c
++++ b/net/tipc/group.c
+@@ -227,8 +227,8 @@ void tipc_group_delete(struct net *net, struct tipc_group *grp)
+ 	kfree(grp);
+ }
+ 
+-struct tipc_member *tipc_group_find_member(struct tipc_group *grp,
+-					   u32 node, u32 port)
++static struct tipc_member *tipc_group_find_member(struct tipc_group *grp,
++						  u32 node, u32 port)
+ {
+ 	struct rb_node *n = grp->members.rb_node;
+ 	u64 nkey, key = (u64)node << 32 | port;
+diff --git a/net/tipc/link.c b/net/tipc/link.c
+index 6987ffc..b1f0bee 100644
+--- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -373,7 +373,7 @@ int tipc_link_bc_peers(struct tipc_link *l)
+ 	return l->ackers;
+ }
+ 
+-u16 link_bc_rcv_gap(struct tipc_link *l)
++static u16 link_bc_rcv_gap(struct tipc_link *l)
+ {
+ 	struct sk_buff *skb = skb_peek(&l->deferdq);
+ 	u16 gap = 0;
+@@ -820,7 +820,7 @@ static int link_schedule_user(struct tipc_link *l, struct tipc_msg *hdr)
+  * Wake up a number of waiting users, as permitted by available space
+  * in the send queue
+  */
+-void link_prepare_wakeup(struct tipc_link *l)
++static void link_prepare_wakeup(struct tipc_link *l)
+ {
+ 	struct sk_buff *skb, *tmp;
+ 	int imp, i = 0;
+@@ -956,7 +956,8 @@ int tipc_link_xmit(struct tipc_link *l, struct sk_buff_head *list,
+ 	return rc;
+ }
+ 
+-void tipc_link_advance_backlog(struct tipc_link *l, struct sk_buff_head *xmitq)
++static void tipc_link_advance_backlog(struct tipc_link *l,
++				      struct sk_buff_head *xmitq)
+ {
+ 	struct sk_buff *skb, *_skb;
+ 	struct tipc_msg *hdr;
+@@ -1006,8 +1007,8 @@ static void link_retransmit_failure(struct tipc_link *l, struct sk_buff *skb)
+  * @to: retransmit to (inclusive) this sequence number
+  * xmitq: queue for accumulating the retransmitted packets
+  */
+-int tipc_link_retrans(struct tipc_link *l, struct tipc_link *r,
+-		      u16 from, u16 to, struct sk_buff_head *xmitq)
++static int tipc_link_retrans(struct tipc_link *l, struct tipc_link *r,
++			     u16 from, u16 to, struct sk_buff_head *xmitq)
+ {
+ 	struct sk_buff *_skb, *skb = skb_peek(&l->transmq);
+ 	u16 bc_ack = l->bc_rcvlink->rcv_nxt - 1;
+diff --git a/net/tipc/monitor.c b/net/tipc/monitor.c
+index 5453e56..67f6938 100644
+--- a/net/tipc/monitor.c
++++ b/net/tipc/monitor.c
+@@ -684,7 +684,8 @@ int tipc_nl_monitor_get_threshold(struct net *net)
+ 	return tn->mon_threshold;
+ }
+ 
+-int __tipc_nl_add_monitor_peer(struct tipc_peer *peer, struct tipc_nl_msg *msg)
++static int __tipc_nl_add_monitor_peer(struct tipc_peer *peer,
++				      struct tipc_nl_msg *msg)
+ {
+ 	struct tipc_mon_domain *dom = peer->domain;
+ 	struct nlattr *attrs;
+-- 
+2.7.0
 
-Aah, seems I forgot that part, then yes indeed, it all works.
+
