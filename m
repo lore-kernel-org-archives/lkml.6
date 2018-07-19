@@ -2,96 +2,76 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D313C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5840EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9E22084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:33:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKZ/P0uj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9E22084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 11F6B2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:35:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11F6B2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731865AbeGSOQg (ORCPT
+        id S1731829AbeGSOSM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:16:36 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44667 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731780AbeGSOQg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:16:36 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r1-v6so3778517pgp.11;
-        Thu, 19 Jul 2018 06:33:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hzm3tTtEyG950qHxGDtVD1907MYzH2eh6zPjGlfusMU=;
-        b=fKZ/P0ujYZx5Xodt1/0mQWhU51PYCk/DDoxaJs7lqQNTvO4WtyDN7KqvSA5ennZ6jk
-         SoFvCd8qGQ/QIWw2W/8/ps/KFEcWeBBBzfYT94ePAUdueqfdX7brTjJZLQrvDgf4A2q3
-         YN8PgiYlihw0LbkCv3GqiT1uCDKY+vcbbX+H/QuiDSSOJaG7THkaXMDX0/pfX11MATHa
-         hb1nFeK6ZUtlceYXpXelb2b+xhqTW3XGUGWBdTSqzXN2D8y8fkx9BKRh+mZeN2o2IxaV
-         d91NDmjeVuyRVb7LYucdro+iZgUAhhUJFrCzSC+O6gBxguJWxjlk6Y0NnDkjhzAAA7lt
-         0nOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hzm3tTtEyG950qHxGDtVD1907MYzH2eh6zPjGlfusMU=;
-        b=uLoii+ht3Mx9lMDLcivLA9Y5cJqyBsNjJfev47jU3ZPgdYVEAHsHAppd8IngJVSfTD
-         bvQTjUdzVbnuCA7OvPecsDDKRrJAH8Ysw+iyTXUzBP8sjMEE3ANeX6Hh5jlY99o5dtKH
-         Xb2+XrdBl9MxKr/1bltyGUOdLXt3nXS6awmqd5m104khK2gkTGfALzVk14vXjDDfKiuY
-         KwiGYzUcU7iG8JDzlZkuWOBOmvGVCB34l9FpGpFbo0Z10YAy5VedmwTXdwpLbAe33afO
-         7eRh/lGbyvV6FHvK7Y/ifncMpnSSU6uH49t1kJlkNmSy6H65w+KnRRTPaa8RcLIF83TS
-         Ca+w==
-X-Gm-Message-State: AOUpUlF3BsF4bvwQu6VRk84sfPd8CJRpv1SZshk4+jBlubN0TbT0uonl
-        8KDwCJuXgLlwBk1/J7nM2sQ=
-X-Google-Smtp-Source: AAOMgpc0hqchnXTthj0N3sheIJAYtzRXtqcIOIh3uoF620FUYIT1SN3JWDnVgkiwGAUjhK7MTzto/Q==
-X-Received: by 2002:aa7:82c3:: with SMTP id f3-v6mr9581917pfn.136.1532007204662;
-        Thu, 19 Jul 2018 06:33:24 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id u8-v6sm9955717pfl.105.2018.07.19.06.33.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 06:33:23 -0700 (PDT)
-Subject: Re: [PATCH V4 net-next 1/3] tcp: convert icsk_user_timeout from
- jiffies to msecs
-To:     Jon Maxwell <jmaxwell37@gmail.com>, davem@davemloft.net
-Cc:     edumazet@google.com, ncardwell@google.com, David.Laight@aculab.com,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmaxwell@redhat.com
-References: <20180719011444.4694-2-jmaxwell37@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <8a9af363-9bb2-7193-f647-a73c28949ded@gmail.com>
-Date:   Thu, 19 Jul 2018 06:33:17 -0700
+        Thu, 19 Jul 2018 10:18:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43282 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731126AbeGSOSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 10:18:12 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A2F847A7E5;
+        Thu, 19 Jul 2018 13:34:59 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4FBFF111AF17;
+        Thu, 19 Jul 2018 13:34:58 +0000 (UTC)
+Subject: Re: [PATCH] x86/kvm: Don't use pvqspinlock code if only 1 vCPU
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joe Mario <jmario@redhat.com>
+References: <1531864767-30648-1-git-send-email-longman@redhat.com>
+ <20180719011546.GB28585@char.US.ORACLE.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <24e1962a-075c-8168-5d95-033b826ee919@redhat.com>
+Date:   Thu, 19 Jul 2018 09:34:58 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180719011444.4694-2-jmaxwell37@gmail.com>
+In-Reply-To: <20180719011546.GB28585@char.US.ORACLE.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 19 Jul 2018 13:34:59 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 19 Jul 2018 13:34:59 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/18/2018 09:15 PM, Konrad Rzeszutek Wilk wrote:
+> On Tue, Jul 17, 2018 at 05:59:27PM -0400, Waiman Long wrote:
+>> On a VM with only 1 vCPU, the locking fast path will always be
+>> successful. In this case, there is no need to use the the PV qspinlock
+>> code which has higher overhead on the unlock side than the native
+>> qspinlock code.
+> Why not make this global? That is for both KVM and Xen and any
+> other virtualized guest that uses this?
 
+Right, I will send another patch for Xen. The pvqspinlock code has to be
+explicitly opted in. Right now, both Xen and KVM used it in the tree. I
+am not sure about other out-of-tree modules. There is nothing I can do
+for those.
 
-On 07/18/2018 06:14 PM, Jon Maxwell wrote:
-> This is a preparatory commit. Part of this series that improves the
-> socket TCP_USER_TIMEOUT option accuracy. Implement Eric Dumazets idea
-> to convert icsk->icsk_user_timeout from jiffies to msecs. To eliminate
-> the msecs_to_jiffies() and jiffies_to_msecs() dance in future.
-> 
-> Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-
+Cheers,
+Longman
