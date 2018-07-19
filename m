@@ -2,108 +2,210 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6DDECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFC5ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DDE820684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:35:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DDE820684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 125E820856
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 14:36:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125E820856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731830AbeGSPTE (ORCPT
+        id S1731819AbeGSPTw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:19:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39532 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731471AbeGSPTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:19:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8E958AD61;
-        Thu, 19 Jul 2018 14:35:35 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 16:35:34 +0200
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <keith.busch@intel.com>,
-        James Smart <james.smart@broadcom.com>,
-        Hannes Reinecke <hare@suse.de>, Ewan Milne <emilne@redhat.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] Rework NVMe abort handling
-Message-ID: <20180719143534.i36vo45lhz24xbrg@linux-x5ow.site>
-References: <20180719132838.15556-1-jthumshirn@suse.de>
- <20180719134203.GA15212@lst.de>
- <20180719141025.yveza2svhvc2r4lw@linux-x5ow.site>
- <20180719142355.GA18800@lst.de>
+        Thu, 19 Jul 2018 11:19:52 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:40128 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730899AbeGSPTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 11:19:52 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 60040413EB;
+        Thu, 19 Jul 2018 16:36:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id XDiF46qDUI89; Thu, 19 Jul 2018 16:36:20 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 16:36:16 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Tyler Hicks <tyhicks@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        netdev@vger.kernel.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        bridge@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH net-next v2 6/7] net: Create reusable function for
+ getting ownership info of sysfs inodes
+Message-ID: <20180719143616.GA29715@mailbox.org>
+References: <1531497949-1766-1-git-send-email-tyhicks@canonical.com>
+ <1531497949-1766-7-git-send-email-tyhicks@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180719142355.GA18800@lst.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <1531497949-1766-7-git-send-email-tyhicks@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 04:23:55PM +0200, Christoph Hellwig wrote:
-> On Thu, Jul 19, 2018 at 04:10:25PM +0200, Johannes Thumshirn wrote:
-> > The problem I'm trying to solve here is really just single commands
-> > timing out because of i.e. a bad switch in between which causes frame
-> > loss somewhere.
-> 
-> And that is exactly the case where NVMe abort does not actually work
-> in any sensible way.
-> 
-> Remember that while NVMe guarantes ordered delivery inside a given
-> queue it does not guarantee anything between multiple queues.
-> 
-> So now you have your buggy FC setup where an I/O command times out
-> because your switch delayed it for two hours due to a firmware bug.
-> 
-> After 30 seconds we send an abort over the admin queue, which happens
-> to pass through just fine.  The controller will tell you: no command
-> found as it has never seen it.
-> 
-> No with the the code following what we have in PCIe that just means
-> we'll eventually controller reset after the I/O command times out
-> the second time as we still won't have seen a completion for it.
 
-Exactly that was my intention.
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> If you incorrectly just continue and resend the command we'll actually
-> get the command sent twice and thus a potential bug once the original
-> command just gets sent along.
+On Fri, Jul 13, 2018 at 04:05:48PM +0000, Tyler Hicks wrote:
+> Make net_ns_get_ownership() reusable by networking code outside of core.
+> This is useful, for example, to allow bridge related sysfs files to be
+> owned by container root.
+>=20
+> Add a function comment since this is a potentially dangerous function to
+> use given the way that kobject_get_ownership() works by initializing uid
+> and gid before calling .get_ownership().
+>=20
+> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+> ---
+>  include/net/net_namespace.h |  7 +++++++
+>  net/core/net-sysfs.c        | 15 ---------------
+>  net/core/net_namespace.c    | 25 +++++++++++++++++++++++++
+>  3 files changed, 32 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+> index a71264d75d7f..a257710527ce 100644
+> --- a/include/net/net_namespace.h
+> +++ b/include/net/net_namespace.h
+> @@ -170,6 +170,8 @@ extern struct net init_net;
+>  struct net *copy_net_ns(unsigned long flags, struct user_namespace *user=
+_ns,
+>  			struct net *old_net);
+> =20
+> +void net_ns_get_ownership(const struct net *net, kuid_t *uid, kgid_t *gi=
+d);
+> +
+>  void net_ns_barrier(void);
+>  #else /* CONFIG_NET_NS */
+>  #include <linux/sched.h>
+> @@ -182,6 +184,11 @@ static inline struct net *copy_net_ns(unsigned long =
+flags,
+>  	return old_net;
+>  }
+> =20
+> +static inline void net_ns_get_ownership(const struct net *net,
+> +					kuid_t *uid, kgid_t *gid)
+> +{
+> +}
+> +
+>  static inline void net_ns_barrier(void) {}
+>  #endif /* CONFIG_NET_NS */
+> =20
+> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+> index 41d84c40fe51..a3ad8108d296 100644
+> --- a/net/core/net-sysfs.c
+> +++ b/net/core/net-sysfs.c
+> @@ -656,21 +656,6 @@ static const struct attribute_group wireless_group =
+=3D {
+>  #define net_class_groups	NULL
+>  #endif /* CONFIG_SYSFS */
+> =20
+> -static void net_ns_get_ownership(const struct net *net,
+> -				 kuid_t *uid, kgid_t *gid)
+> -{
+> -	if (net) {
+> -		kuid_t ns_root_uid =3D make_kuid(net->user_ns, 0);
+> -		kgid_t ns_root_gid =3D make_kgid(net->user_ns, 0);
+> -
+> -		if (uid_valid(ns_root_uid))
+> -			*uid =3D ns_root_uid;
+> -
+> -		if (gid_valid(ns_root_gid))
+> -			*gid =3D ns_root_gid;
+> -	}
+> -}
+> -
+>  #ifdef CONFIG_SYSFS
+>  #define to_rx_queue_attr(_attr) \
+>  	container_of(_attr, struct rx_queue_attribute, attr)
+> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+> index a11e03f920d3..5257875fa84d 100644
+> --- a/net/core/net_namespace.c
+> +++ b/net/core/net_namespace.c
+> @@ -448,6 +448,31 @@ struct net *copy_net_ns(unsigned long flags,
+>  	return net;
+>  }
+> =20
+> +/**
+> + * net_ns_get_ownership - get sysfs ownership data for @net
+> + * @net: network namespace in question (can be NULL)
+> + * @uid: kernel user ID for sysfs objects (must be GLOBAL_ROOT_UID)
+> + * @gid: kernel group ID for sysfs objects (must be GLOBAL_ROOT_GID)
+> + *
+> + * Returns the uid/gid pair of root in the user namespace associated wit=
+h the
+> + * given network namespace. The caller must initialize @uid and @gid to
+> + * GLOBAL_ROOT_UID/GLOBAL_ROOT_GID before calling this function.
 
-OK, let me see where I'm stuck here. We're issuing a command, it gets
-lost due to $REASON and I'm aborting it. The upper layers then
-eventually retry the command and it arrives at the target side. But so
-does the old command as well and we have a duplicate. Correct?
+If they must be so initialized why not just enforce this directly in the
+function? This way callers can rely on always getting back the correct
+permissions and the comment can be removed as well.
 
-So if we keep our old behavior and tear down the queues and
-re-establish them, then the upper layers retry the command and it
-arrives on the target. But shortly afterwards the switch happens to
-find the old command in it's ingress buffers and decides to forward it
-to the target as well, how does that differ? The CMDID and SQID are
-probably different but all the payload will be the same, wouldn't it?
+Christian
 
-So we still have our duplicate on the other side, don't we?
+> + */
+> +void net_ns_get_ownership(const struct net *net, kuid_t *uid, kgid_t *gi=
+d)
+> +{
+> +	if (net) {
+> +		kuid_t ns_root_uid =3D make_kuid(net->user_ns, 0);
+> +		kgid_t ns_root_gid =3D make_kgid(net->user_ns, 0);
+> +
+> +		if (uid_valid(ns_root_uid))
+> +			*uid =3D ns_root_uid;
+> +
+> +		if (gid_valid(ns_root_gid))
+> +			*gid =3D ns_root_gid;
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(net_ns_get_ownership);
+> +
+>  static void unhash_nsid(struct net *net, struct net *last)
+>  {
+>  	struct net *tmp;
+> --=20
+> 2.7.4
+>=20
+> _______________________________________________
+> Containers mailing list
+> Containers@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/containers
 
-I feel I'm missing out something here.
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Byte,
-	Johannes
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE7btrcuORLb1XUhEwjrBW1T7ssS0FAltQod4ACgkQjrBW1T7s
+sS2uPhAAqn0X9OEVlw+nqjAGYf+tQur3pO1AfL2dC1aPMl7qe1iJ2aPUjdA+sdeC
+ro2yibV11AXWBkwxBB/d2Djm9FmN2yObQEJJgRu70Lp+pWyij6GzWJSfP4yVZfs4
+ltbtpbGlDb41j9gdKultK3XfMmcqf28GyOY8ekHbHQWvnw/Uu8mVIoI0AP7DEzlA
+H1WuIyAsFdQVjxqGxDb74aEtVD/krRMgpopzvkOmx0rrRW0xciLFBfQ1sk6Y/Y6w
+md5HxNo5Gn4hiv+UFQM6B7nrXpCaZQzAysWC+UxvFNuDz9QcLr4j/F1OaDOEbTB3
+EDRhcQn+zB3+TAIsycFe7D7XJuuLXoloHDVK97wGureATf5/S2XLeyXM3b3kvErh
+UivdKJ1k226t+aNzgUGfznyqdTBFDJRJOnUeqZMDwKBbdwHx+d8y3ZsZiUNm0Oqc
+YVpY6JzTFEcRsJdBpqX5uJVefFMHVEPnGq07HbjXHzZezfzbn3ypY+DyrYaReE0m
+8ZlOZadfBGshyBcAnnkkj5bWIkGomS0czy30OmBtoY0qzFatiIyxyJIUI/HpZC7f
+v8LwRoyG26MLqP6nuIkM/KINkZ+Qk3vyBGnZYyQAWbIbcNtcYxoe6/Nbd2uKSjMU
+l5lDlrqsfmzlnhes+e9dc3u82SganNGi9NrDLIKMckzhjz9/emI=
+=HB6L
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
