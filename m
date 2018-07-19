@@ -2,124 +2,286 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D705AC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2D5ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 765FA2084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:47:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="blFIzjLL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765FA2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id 834372084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:48:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834372084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731596AbeGSNaw (ORCPT
+        id S1731641AbeGSNb1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 09:30:52 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42210 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730053AbeGSNaw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 09:30:52 -0400
-Received: by mail-qt0-f195.google.com with SMTP id z8-v6so7005432qto.9
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 05:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9EV0y4Jq/QZWXMWnQmu4hP1A9LHDHt4yfnVQqzpTXvI=;
-        b=blFIzjLLctoonekQuJXp2TJgQC+b+PNfwwsKVsSmYRf3xi1PPOUWe+zKGiZ+8DaCdV
-         tARumXHM4rnwZi0vepiQPLT1YLOXYMQAYuqcN6G4x7pP/KmYPjzwHVdp39v/OCAPcel3
-         qXCgOqfvpW8BEHKFRD1ld9nQhQun6PR1/GpTnDySObdAsJ8ApSEDAG2uivEi3wm+/+O+
-         WUnOufedvOB0rAxpEBGTHn15qo+8QMxNAL4+PwWVQtD/RQrJBvu6TPIGTjo77mD7ZTJq
-         qmy4p9BIg0EhR3puAUKDDns+NR9M3qM4V0XUFWcncKoicbhU+mVqZUJxz/nko+SXN5QZ
-         0V9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9EV0y4Jq/QZWXMWnQmu4hP1A9LHDHt4yfnVQqzpTXvI=;
-        b=rj27CwtmTma4e50JkOU8edpJEK580k2HWvxIVSgymEsA+MuAffhXT/XH9yuJZ0SYVK
-         gcnB5y+I0FKhITnH/fOL4Qi0gVSRGeqsWsQVdRJ40TxJNnYmn9awNobuquyeN9GJr4hE
-         WScN8y8UMMmJTIYg7/2lCeDzR8ZXaXLbBPMvtMT9MiD3nchI5PU2oY3JA+m8dD0HdKNN
-         4pUROhb5EZGkrEfh3i3jnEdbt50cN4qr8Qn1BlBOciKEzitsCmBjFDooDKh9ZkTOGt8S
-         WTuKbyuWWheT8nQ5i9JZXaovWP6G0YlODpTZyrKAJhWpWvOR8vQd+fErW1ZOBJeIMLcp
-         7q/Q==
-X-Gm-Message-State: AOUpUlE5r35fyPTkD3c4JMkhlU7teQ7lHBZ569ZFmMpDor3fVpEG4JUj
-        AvNLndiRA368HUQue5e5A1wz7A==
-X-Google-Smtp-Source: AAOMgpefWKHFdu3CVa5JjNNTvP0FXBnKfOklLvDZ7rySgg2dcRIoNu+qOQV93bZfXKqGtP9sypIz3w==
-X-Received: by 2002:a0c:d683:: with SMTP id k3-v6mr10534516qvi.154.1532004472024;
-        Thu, 19 Jul 2018 05:47:52 -0700 (PDT)
-Received: from localhost (pool-96-246-38-36.nycmny.fios.verizon.net. [96.246.38.36])
-        by smtp.gmail.com with ESMTPSA id w79-v6sm5798205qkw.35.2018.07.19.05.47.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Jul 2018 05:47:50 -0700 (PDT)
-Date:   Thu, 19 Jul 2018 08:50:38 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
- and IO
-Message-ID: <20180719125038.GB13799@cmpxchg.org>
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
- <20180712172942.10094-9-hannes@cmpxchg.org>
- <20180718120318.GC2476@hirez.programming.kicks-ass.net>
- <20180719092614.GY2512@hirez.programming.kicks-ass.net>
+        Thu, 19 Jul 2018 09:31:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41704 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731542AbeGSNb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 09:31:27 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DF36F7A7E5;
+        Thu, 19 Jul 2018 12:48:25 +0000 (UTC)
+Received: from doriath (ovpn-116-197.phx2.redhat.com [10.3.116.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ECAB22026D7E;
+        Thu, 19 Jul 2018 12:48:20 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 08:48:19 -0400
+From:   Luiz Capitulino <lcapitulino@redhat.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Pankaj Gupta <pagupta@redhat.com>, kwolf@redhat.com,
+        haozhong zhang <haozhong.zhang@intel.com>, jack@suse.cz,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        kvm@vger.kernel.org, riel@surriel.com, linux-nvdimm@ml01.01.org,
+        david@redhat.com, ross zwisler <ross.zwisler@intel.com>,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        hch@infradead.org, imammedo@redhat.com, mst@redhat.com,
+        niteshnarayanlal@hotmail.com, pbonzini@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, nilal@redhat.com
+Subject: Re: [Qemu-devel] [RFC v3] qemu: Add virtio pmem device
+Message-ID: <20180719084819.730b7971@doriath>
+In-Reply-To: <20180719121635.GA28107@stefanha-x1.localdomain>
+References: <20180713075232.9575-1-pagupta@redhat.com>
+        <20180713075232.9575-4-pagupta@redhat.com>
+        <20180718085529.133a0a22@doriath>
+        <367397176.52317488.1531979293251.JavaMail.zimbra@redhat.com>
+        <20180719121635.GA28107@stefanha-x1.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180719092614.GY2512@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 19 Jul 2018 12:48:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 19 Jul 2018 12:48:25 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lcapitulino@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 11:26:14AM +0200, Peter Zijlstra wrote:
-> On Wed, Jul 18, 2018 at 02:03:18PM +0200, Peter Zijlstra wrote:
-> 
-> > Leaving us just 5 bytes short of needing a single cacheline :/
-> > 
-> > struct ponies {
-> >         unsigned int               tasks[3];                                             /*     0    12 */
-> >         unsigned int               cpu_state:2;                                          /*    12:30  4 */
-> >         unsigned int               io_state:2;                                           /*    12:28  4 */
-> >         unsigned int               mem_state:2;                                          /*    12:26  4 */
-> > 
-> >         /* XXX 26 bits hole, try to pack */
-> > 
-> >         /* typedef u64 */ long long unsigned int     last_time;                          /*    16     8 */
-> >         /* typedef u64 */ long long unsigned int     some_time[3];                       /*    24    24 */
-> >         /* typedef u64 */ long long unsigned int     full_time[2];                       /*    48    16 */
-> >         /* --- cacheline 1 boundary (64 bytes) --- */
-> >         /* typedef u64 */ long long unsigned int     nonidle_time;                       /*    64     8 */
-> > 
-> >         /* size: 72, cachelines: 2, members: 8 */
-> >         /* bit holes: 1, sum bit holes: 26 bits */
-> >         /* last cacheline: 8 bytes */
-> > };
-> > 
-> > ARGGH!
-> 
-> It _might_ be possible to use curr->se.exec_start for last_time if you
-> very carefully audit and place the hooks. I've not gone through it in
-> detail, but it might just work.
+On Thu, 19 Jul 2018 13:16:35 +0100
+Stefan Hajnoczi <stefanha@redhat.com> wrote:
 
-Hnngg, and chop off an entire cacheline...
+> On Thu, Jul 19, 2018 at 01:48:13AM -0400, Pankaj Gupta wrote:
+> >   
+> > >   
+> > > >  This patch adds virtio-pmem Qemu device.
+> > > > 
+> > > >  This device presents memory address range information to guest
+> > > >  which is backed by file backend type. It acts like persistent
+> > > >  memory device for KVM guest. Guest can perform read and persistent
+> > > >  write operations on this memory range with the help of DAX capable
+> > > >  filesystem.
+> > > > 
+> > > >  Persistent guest writes are assured with the help of virtio based
+> > > >  flushing interface. When guest userspace space performs fsync on
+> > > >  file fd on pmem device, a flush command is send to Qemu over VIRTIO
+> > > >  and host side flush/sync is done on backing image file.
+> > > > 
+> > > > Changes from RFC v2:
+> > > > - Use aio_worker() to avoid Qemu from hanging with blocking fsync
+> > > >   call - Stefan
+> > > > - Use virtio_st*_p() for endianess - Stefan
+> > > > - Correct indentation in qapi/misc.json - Eric
+> > > > 
+> > > > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> > > > ---
+> > > >  hw/virtio/Makefile.objs                     |   3 +
+> > > >  hw/virtio/virtio-pci.c                      |  44 +++++
+> > > >  hw/virtio/virtio-pci.h                      |  14 ++
+> > > >  hw/virtio/virtio-pmem.c                     | 241
+> > > >  ++++++++++++++++++++++++++++
+> > > >  include/hw/pci/pci.h                        |   1 +
+> > > >  include/hw/virtio/virtio-pmem.h             |  42 +++++
+> > > >  include/standard-headers/linux/virtio_ids.h |   1 +
+> > > >  qapi/misc.json                              |  26 ++-
+> > > >  8 files changed, 371 insertions(+), 1 deletion(-)
+> > > >  create mode 100644 hw/virtio/virtio-pmem.c
+> > > >  create mode 100644 include/hw/virtio/virtio-pmem.h
+> > > > 
+> > > > diff --git a/hw/virtio/Makefile.objs b/hw/virtio/Makefile.objs
+> > > > index 1b2799cfd8..7f914d45d0 100644
+> > > > --- a/hw/virtio/Makefile.objs
+> > > > +++ b/hw/virtio/Makefile.objs
+> > > > @@ -10,6 +10,9 @@ obj-$(CONFIG_VIRTIO_CRYPTO) += virtio-crypto.o
+> > > >  obj-$(call land,$(CONFIG_VIRTIO_CRYPTO),$(CONFIG_VIRTIO_PCI)) +=
+> > > >  virtio-crypto-pci.o
+> > > >  
+> > > >  obj-$(CONFIG_LINUX) += vhost.o vhost-backend.o vhost-user.o
+> > > > +ifeq ($(CONFIG_MEM_HOTPLUG),y)
+> > > > +obj-$(CONFIG_LINUX) += virtio-pmem.o
+> > > > +endif
+> > > >  obj-$(CONFIG_VHOST_VSOCK) += vhost-vsock.o
+> > > >  endif
+> > > >  
+> > > > diff --git a/hw/virtio/virtio-pci.c b/hw/virtio/virtio-pci.c
+> > > > index 3a01fe90f0..93d3fc05c7 100644
+> > > > --- a/hw/virtio/virtio-pci.c
+> > > > +++ b/hw/virtio/virtio-pci.c
+> > > > @@ -2521,6 +2521,49 @@ static const TypeInfo virtio_rng_pci_info = {
+> > > >      .class_init    = virtio_rng_pci_class_init,
+> > > >  };
+> > > >  
+> > > > +/* virtio-pmem-pci */
+> > > > +
+> > > > +static void virtio_pmem_pci_realize(VirtIOPCIProxy *vpci_dev, Error
+> > > > **errp)
+> > > > +{
+> > > > +    VirtIOPMEMPCI *vpmem = VIRTIO_PMEM_PCI(vpci_dev);
+> > > > +    DeviceState *vdev = DEVICE(&vpmem->vdev);
+> > > > +
+> > > > +    qdev_set_parent_bus(vdev, BUS(&vpci_dev->bus));
+> > > > +    object_property_set_bool(OBJECT(vdev), true, "realized", errp);
+> > > > +}
+> > > > +
+> > > > +static void virtio_pmem_pci_class_init(ObjectClass *klass, void *data)
+> > > > +{
+> > > > +    DeviceClass *dc = DEVICE_CLASS(klass);
+> > > > +    VirtioPCIClass *k = VIRTIO_PCI_CLASS(klass);
+> > > > +    PCIDeviceClass *pcidev_k = PCI_DEVICE_CLASS(klass);
+> > > > +    k->realize = virtio_pmem_pci_realize;
+> > > > +    set_bit(DEVICE_CATEGORY_MISC, dc->categories);
+> > > > +    pcidev_k->vendor_id = PCI_VENDOR_ID_REDHAT_QUMRANET;
+> > > > +    pcidev_k->device_id = PCI_DEVICE_ID_VIRTIO_PMEM;
+> > > > +    pcidev_k->revision = VIRTIO_PCI_ABI_VERSION;
+> > > > +    pcidev_k->class_id = PCI_CLASS_OTHERS;
+> > > > +}
+> > > > +
+> > > > +static void virtio_pmem_pci_instance_init(Object *obj)
+> > > > +{
+> > > > +    VirtIOPMEMPCI *dev = VIRTIO_PMEM_PCI(obj);
+> > > > +
+> > > > +    virtio_instance_init_common(obj, &dev->vdev, sizeof(dev->vdev),
+> > > > +                                TYPE_VIRTIO_PMEM);
+> > > > +    object_property_add_alias(obj, "memdev", OBJECT(&dev->vdev), "memdev",
+> > > > +                              &error_abort);
+> > > > +}
+> > > > +
+> > > > +static const TypeInfo virtio_pmem_pci_info = {
+> > > > +    .name          = TYPE_VIRTIO_PMEM_PCI,
+> > > > +    .parent        = TYPE_VIRTIO_PCI,
+> > > > +    .instance_size = sizeof(VirtIOPMEMPCI),
+> > > > +    .instance_init = virtio_pmem_pci_instance_init,
+> > > > +    .class_init    = virtio_pmem_pci_class_init,
+> > > > +};
+> > > > +
+> > > > +
+> > > >  /* virtio-input-pci */
+> > > >  
+> > > >  static Property virtio_input_pci_properties[] = {
+> > > > @@ -2714,6 +2757,7 @@ static void virtio_pci_register_types(void)
+> > > >      type_register_static(&virtio_balloon_pci_info);
+> > > >      type_register_static(&virtio_serial_pci_info);
+> > > >      type_register_static(&virtio_net_pci_info);
+> > > > +    type_register_static(&virtio_pmem_pci_info);
+> > > >  #ifdef CONFIG_VHOST_SCSI
+> > > >      type_register_static(&vhost_scsi_pci_info);
+> > > >  #endif
+> > > > diff --git a/hw/virtio/virtio-pci.h b/hw/virtio/virtio-pci.h
+> > > > index 813082b0d7..fe74fcad3f 100644
+> > > > --- a/hw/virtio/virtio-pci.h
+> > > > +++ b/hw/virtio/virtio-pci.h
+> > > > @@ -19,6 +19,7 @@
+> > > >  #include "hw/virtio/virtio-blk.h"
+> > > >  #include "hw/virtio/virtio-net.h"
+> > > >  #include "hw/virtio/virtio-rng.h"
+> > > > +#include "hw/virtio/virtio-pmem.h"
+> > > >  #include "hw/virtio/virtio-serial.h"
+> > > >  #include "hw/virtio/virtio-scsi.h"
+> > > >  #include "hw/virtio/virtio-balloon.h"
+> > > > @@ -57,6 +58,7 @@ typedef struct VirtIOInputHostPCI VirtIOInputHostPCI;
+> > > >  typedef struct VirtIOGPUPCI VirtIOGPUPCI;
+> > > >  typedef struct VHostVSockPCI VHostVSockPCI;
+> > > >  typedef struct VirtIOCryptoPCI VirtIOCryptoPCI;
+> > > > +typedef struct VirtIOPMEMPCI VirtIOPMEMPCI;
+> > > >  
+> > > >  /* virtio-pci-bus */
+> > > >  
+> > > > @@ -274,6 +276,18 @@ struct VirtIOBlkPCI {
+> > > >      VirtIOBlock vdev;
+> > > >  };
+> > > >  
+> > > > +/*
+> > > > + * virtio-pmem-pci: This extends VirtioPCIProxy.
+> > > > + */
+> > > > +#define TYPE_VIRTIO_PMEM_PCI "virtio-pmem-pci"
+> > > > +#define VIRTIO_PMEM_PCI(obj) \
+> > > > +        OBJECT_CHECK(VirtIOPMEMPCI, (obj), TYPE_VIRTIO_PMEM_PCI)
+> > > > +
+> > > > +struct VirtIOPMEMPCI {
+> > > > +    VirtIOPCIProxy parent_obj;
+> > > > +    VirtIOPMEM vdev;
+> > > > +};
+> > > > +
+> > > >  /*
+> > > >   * virtio-balloon-pci: This extends VirtioPCIProxy.
+> > > >   */
+> > > > diff --git a/hw/virtio/virtio-pmem.c b/hw/virtio/virtio-pmem.c
+> > > > new file mode 100644
+> > > > index 0000000000..08c96d7e80
+> > > > --- /dev/null
+> > > > +++ b/hw/virtio/virtio-pmem.c
+> > > > @@ -0,0 +1,241 @@
+> > > > +/*
+> > > > + * Virtio pmem device
+> > > > + *
+> > > > + * Copyright (C) 2018 Red Hat, Inc.
+> > > > + * Copyright (C) 2018 Pankaj Gupta <pagupta@redhat.com>
+> > > > + *
+> > > > + * This work is licensed under the terms of the GNU GPL, version 2.
+> > > > + * See the COPYING file in the top-level directory.
+> > > > + *
+> > > > + */
+> > > > +
+> > > > +#include "qemu/osdep.h"
+> > > > +#include "qapi/error.h"
+> > > > +#include "qemu-common.h"
+> > > > +#include "qemu/error-report.h"
+> > > > +#include "hw/virtio/virtio-access.h"
+> > > > +#include "hw/virtio/virtio-pmem.h"
+> > > > +#include "hw/mem/memory-device.h"
+> > > > +#include "block/aio.h"
+> > > > +#include "block/thread-pool.h"
+> > > > +
+> > > > +typedef struct VirtIOPMEMresp {
+> > > > +    int ret;
+> > > > +} VirtIOPMEMResp;
+> > > > +
+> > > > +typedef struct VirtIODeviceRequest {
+> > > > +    VirtQueueElement elem;
+> > > > +    int fd;
+> > > > +    VirtIOPMEM *pmem;
+> > > > +    VirtIOPMEMResp resp;
+> > > > +} VirtIODeviceRequest;
+> > > > +
+> > > > +static int worker_cb(void *opaque)
+> > > > +{
+> > > > +    VirtIODeviceRequest *req = opaque;
+> > > > +    int err = 0;
+> > > > +
+> > > > +    /* flush raw backing image */
+> > > > +    err = fsync(req->fd);
+> > > > +    if (err != 0) {
+> > > > +        err = errno;
+> > > > +    }
+> > > > +    req->resp.ret = err;  
+> > > 
+> > > Host question: are you returning the guest errno code to the host?  
+> > 
+> > No. I am returning error code from the host in-case of host fsync
+> > failure, otherwise returning zero.  
+> 
+> I think that's what Luiz meant.  errno constants are not portable
+> between operating systems and architectures.  Therefore they cannot be
+> used in external interfaces in software that expects to communicate with
+> other systems.
 
-But don't we flush that delta out and update the timestamp on every
-tick? entity_tick() does update_curr(). That might be too expensive :(
+Oh, thanks. Only saw this email now.
+
+> It will be necessary to define specific constants for virtio-pmem
+> instead of passing errno from the host to guest.
+
+Yes, defining your own constants work. But I think the only fsync()
+error that will make sense for the guest is EIO. The other errors
+only make sense for the host.
