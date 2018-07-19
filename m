@@ -2,105 +2,118 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3F2ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 323D4ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1603E20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:02:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rdr1NXBn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1603E20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id E664B2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:03:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E664B2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731881AbeGSPpm (ORCPT
+        id S1731739AbeGSPrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:45:42 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:40156 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731661AbeGSPpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:45:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=zc5MRzgkTrbEzeRcts0ir+Ak8KNE8+R3EyOn5XYnUbM=;
-        b=Rdr1NXBnSFbfXz5/HjcM1yOKO5cfMuXUcb7WNstmclmKQ5FsYqxFJaPx1/XArYDhvZkbP3wr3u8Lq70ASINvz5XIVeNyAm9L1MXlG/oncuTtxv1fShTy4ghk1LbeGzTB5AQxND6jXjhPXr2VQ0+EIbOId8bWwfPhUGxdoC0myz0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fgAR0-0002fE-C6; Thu, 19 Jul 2018 17:01:38 +0200
-Date:   Thu, 19 Jul 2018 17:01:38 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 5/5] net: add MTD support to
- eth_platform_get_mac_address()
-Message-ID: <20180719150138.GC9119@lunn.ch>
-References: <20180718161035.7005-1-brgl@bgdev.pl>
- <20180718161035.7005-6-brgl@bgdev.pl>
- <20180718164737.GE12477@lunn.ch>
- <CAMRc=MeRv3_C8_R-Awfr1zjLa3G_CVAACc-2t_ihB+1v+BCTGw@mail.gmail.com>
- <20180718170352.GF12477@lunn.ch>
- <CAMRc=Md3oeEktzrA9UZyNPX6pB4bG+Gv0o6cjbs0UUKb3sYTsA@mail.gmail.com>
+        Thu, 19 Jul 2018 11:47:22 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:38273 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727584AbeGSPrW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 11:47:22 -0400
+Received: by mail-vk0-f65.google.com with SMTP id b77-v6so4533779vkb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:03:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9eGgboGyndLCLMaknkrN5sWw1Ff4hPy5x5eRlVHDl9k=;
+        b=tXEu0snf/0zlbiFWxFmaVsGWis1twLrUzvcvRhUbbJkcGZCxtRjl45JsUQ71sNsXvU
+         YkBBp+QzY4/2DKDiB/zfdqUAaC158LNftZpVm0A0aYSkWQDmmRXx2cg1Mev+fVXoGWsD
+         R9Hnkrxlgwy7wj/qtYVwV7wV2aqUvb3/BZADVGzWQvicQfKu/bVLmwRmgpq8KWkuAPCH
+         O4f1DPYnnANwGWW603oLRdukzdIz4ea1f3R4jQUOzch/Pqg3pBBUpDvvP+iWIShaN2j3
+         YNIiwCKeYwfBf8vuxMpm4rMGl3sf8EtOInzEINGWyFtHYzyYatOzGCkWKIPyBNpzs6gO
+         Rw3g==
+X-Gm-Message-State: AOUpUlE4VDl2jyiICLmn8dAl6KWAq1mRarHbAPdibZgdwJYlXwSi2kD4
+        CBRP7eRVbSVr0faFCJIRgX04mMaN4hdWt/1gdE4=
+X-Google-Smtp-Source: AAOMgpe88/v6IkJA3f0VzQg25pT+E2qkrCU/zWcdQ7oHtslza0JFza+XhX9CJsc4gU5sFChNCuOiOJ0OHYRFpdMMoA0=
+X-Received: by 2002:a1f:6b11:: with SMTP id g17-v6mr6069718vkc.82.1532012626364;
+ Thu, 19 Jul 2018 08:03:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=Md3oeEktzrA9UZyNPX6pB4bG+Gv0o6cjbs0UUKb3sYTsA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180718145254.4770-1-geert+renesas@glider.be> <CAK8P3a19tFrP7ymiMHcmQ9Jah4_zTwuoM3=KN+WQROiZ36ArPA@mail.gmail.com>
+In-Reply-To: <CAK8P3a19tFrP7ymiMHcmQ9Jah4_zTwuoM3=KN+WQROiZ36ArPA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 19 Jul 2018 17:03:34 +0200
+Message-ID: <CAMuHMdWCjr__9QB-wSiuo7ZZnOc9PuCRLJU=cVTrfvywJh5eBg@mail.gmail.com>
+Subject: Re: [PATCH v2] checkpatch: Only encode UTF-8 quoted printable mail headers
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 10:14:29AM +0200, Bartosz Golaszewski wrote:
-> 2018-07-18 19:03 GMT+02:00 Andrew Lunn <andrew@lunn.ch>:
-> >> >> +#ifdef CONFIG_MTD
-> >> >> +     /* NOTE: this should go away as soon as MTD gets nvmem support. */
-> >> >> +     if (!addr) {
-> >> >> +             struct mtd_info *mtd;
-> >> >> +             int rv;
-> >> >> +
-> >> >> +             mtd = get_mtd_device_nm("MAC-Address");
-> >> >
-> >> > In order for this to go away, you need to keep backwards
-> >> > compatibility. When using nvmem, you look for a cell called
-> >> > "mac-address". Here you are looking for "MAC-Address". That is going
-> >> > to make backwards compatibility harder. How do you plan to do it?
-> >> >
-> >> >    Andrew
-> >>
-> >> I'm trying to adjust to already existing users. The only user of
-> >> get_mtd_device_nm() who calls it to read the MAC address registers a
-> >> partition called "MAC-Address". We can't change it since it's visible
-> >> from user space. In the future we'd just have to have a list of
-> >> supported string that we'd use to do the nvmem lookup.
-> >
-> > Why not have the nvmem cell called "MAC-Address"? When you add nvmem
-> > support to MTD, i assume you are going to map each MTD partition to an
-> > nvmem cell?
-> 
-> Because all existing users of nvmem use "mac-address" as the name of
-> this cell already. I guess we will need to live with both in this
-> particular function.
+Hi Arnd,
 
-So i'm not convinced this last patch is making things better. I would
-prefer if it was dropped for the moment. Wait until MTD via nvmem is
-actually implemented and there is a concrete concept of how a MAC
-address would be looked up without having lots of ugly code.
+On Thu, Jul 19, 2018 at 4:50 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> On a related note, I've looked through all files in the kernel, and found
+> that very file files in there are something other than 7-bit ASCII, UTF-8
+> or non-text files (according to /usr/bin/file). These are the only ones I found:
+>
+> Documentation/devicetree/bindings/net/nfc/pn544.txt: ISO-8859 text
+> arch/arm/boot/dts/sun4i-a10-inet97fv2.dts:           C source, ISO-8859 text
+> arch/arm/crypto/sha256_glue.c:                       C source, ISO-8859 text
+> arch/arm/crypto/sha256_neon_glue.c:                  C source, ISO-8859 text
+> arch/m68k/hp300/hp300map.map:                        ISO-8859 text
+> arch/s390/kernel/ebcdic.c:                           C source, Non-ISO
+> extended-ASCII text
+> drivers/crypto/vmx/ghashp8-ppc.pl:                   a /usr/bin/env
+> perl script, ISO-8859 text executable
+> drivers/iio/dac/ltc2632.c:                           C source, ISO-8859 text
+> drivers/power/reset/ltc2952-poweroff.c:              C source, ISO-8859 text
+> drivers/staging/rtl8188eu/include/odm.h:             C source, ISO-8859 text
+> drivers/tty/vt/defkeymap.map:                        ISO-8859 text
+> kernel/events/callchain.c:                           C source, ISO-8859 text
+> lib/fonts/font_7x14.c:                               data
+> lib/fonts/font_8x16.c:                               data
+> lib/fonts/font_8x8.c:                                data
+> lib/fonts/font_pearl_8x8.c:                          data
+> net/netfilter/ipvs/Kconfig:                          ISO-8859 text
+> net/netfilter/ipvs/ip_vs_mh.c:                       C source, ISO-8859 text
+> tools/power/cpupower/po/de.po:                       GNU gettext
+> message catalogue, ISO-8859 text
+> tools/power/cpupower/po/fr.po:                       GNU gettext
+> message catalogue, ISO-8859 text
+>
+> Almost all of those can be trivially converted using 'recode ISO-8859-1..UTF-8',
+> which we should probably do. The four font files contain comments for each
+> of the 256 characters, so that recode turns e.g. the <FF> character
+> into <U+00FF>,
+> which is probably still what we want here.
+>
+> The one exception seems to be arch/s390/kernel/ebcdic.c, which apparently
+> uses 0x81 bytes as an excape before characters ISO-8859-1 characters with
+> the high bit set. I don't know what that encoding is called, but I managed
+> to manually convert it into something useful.
 
-	Andrew
+Yes, we should convert everything to UTF-8.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
