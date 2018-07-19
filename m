@@ -6,63 +6,66 @@ X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URG_BIZ autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 307A9ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F44C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA79B2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3552206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:36:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HPiOF7RX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA79B2084C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ndv2o7Nj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3552206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731314AbeGSIR6 (ORCPT
+        id S1731402AbeGSISB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 04:17:58 -0400
-Received: from twosheds.infradead.org ([90.155.92.209]:54494 "EHLO
+        Thu, 19 Jul 2018 04:18:01 -0400
+Received: from twosheds.infradead.org ([90.155.92.209]:54496 "EHLO
         twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727288AbeGSIR6 (ORCPT
+        with ESMTP id S1727288AbeGSIR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 04:17:58 -0400
+        Thu, 19 Jul 2018 04:17:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
         References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AYEy4YAsmqdlK/x6u9bFKZP2S9WBkfdDNyL6/sjtEPA=; b=HPiOF7RXyCU+EZLgxRHlNBOyE
-        w/RgHA7esR3RYotQJCqxz2n3MlIPCoVpWYFx73xyDXIADuR3iCjcWrSE76O7DVVSnKMbvgS8Iz/aj
-        U+WAsZnRtI9ypwDv+QUd9ZL8zU+SINF9bZ+9FM+3oWqDWsfPonpKbhHAuWj/Dpthl8KmRdl3UuI6Z
-        HqMHRAI9KPIFW6dnvWVaRJMcosk+3kahD/FYcrW01Hv0My81+liKjCRW44oYcSm9DhDwZ6Yuf/RzE
-        tVZzWXIVG3iicw4twfHN2anQZjIKbmAM62ITL1bnTKh6UnHxZUTbtvtMmCZ4UALx4hCWLZgb6fMds
-        tCAYrCo3A==;
+         bh=taB8ixhDfDhC3LeJZd4osUG0hboYP7Pg0Af1/M2mJj8=; b=Ndv2o7NjJ+MXLWcTta02KH5Xn
+        4mSaa+BH3TGQcTO51YkH6hIke8tVYqe34JAO44bBUdKlXRiyPMyIMyIfQVdDNf5X1yV3/xp5hB34b
+        L2XlJIOvCJYXd+JPd0N6pDYJqZOW/gd8jmhaagGxaqAKFgeVwxJh7YvRjLD2Q0Whjm3WsrlQEnb/d
+        ch3LuvAZ8aUXkSCx103SFwgJypEvOXjXNIHDx+bcGfeJORF/rQhRTS9WW+/Y0o8TsVkQfpNp/NNvO
+        heq5+3BF5Aoz4j26NYI06xDhzy0H/CjiHjeDh+Q4JgqHdr8k18o0ksLH/v4kbgFZ42rQx0qGuH48X
+        jzge+rxrg==;
 Received: from [54.239.6.185] (helo=uc8d3ff76b9bc5848a9cc.ant.amazon.com)
         by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fg3Tq-001zW6-AB; Thu, 19 Jul 2018 07:36:06 +0000
-Message-ID: <1531981007.12620.7.camel@infradead.org>
+        id 1fg3Ts-001zWD-Pd; Thu, 19 Jul 2018 07:36:08 +0000
+Message-ID: <1531984833.12620.16.camel@infradead.org>
 Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
  requested
 From:   David Woodhouse <dwmw2@infradead.org>
-To:     paulmck@linux.vnet.ibm.com,
-        Frederic Weisbecker <frederic@kernel.org>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        paulmck@linux.vnet.ibm.com
 Cc:     Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>
-In-Reply-To: <20180719031152.GR12945@linux.vnet.ibm.com>
-References: <1531168538.26547.5.camel@infradead.org>
-         <20180709204248.GF3593@linux.vnet.ibm.com>
-         <1531169145.26547.8.camel@infradead.org>
-         <20180709210532.GH3593@linux.vnet.ibm.com>
-         <20180709220823.GA18045@linux.vnet.ibm.com>
-         <1531319025.8759.57.camel@infradead.org>
-         <20180711144303.GQ3593@linux.vnet.ibm.com>
-         <20180711164952.GA29994@linux.vnet.ibm.com>
-         <e21c6d7666bfbad1e1c8295559a6ddc7e4110105.camel@infradead.org>
-         <20180719003205.GB5595@lerouge> <20180719031152.GR12945@linux.vnet.ibm.com>
+        kvm <kvm@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+In-Reply-To: <86d12d1a-46dd-d82a-96c2-e842ac5a2a6c@de.ibm.com>
+References: <1531396842.8759.125.camel@infradead.org>
+         <20180712125351.GP3593@linux.vnet.ibm.com>
+         <20180712161704.GA20726@linux.vnet.ibm.com>
+         <20180716154015.GA21419@linux.vnet.ibm.com>
+         <1531815548.19223.23.camel@infradead.org>
+         <20180717125653.GH12945@linux.vnet.ibm.com>
+         <20180718153628.GA24359@linux.vnet.ibm.com>
+         <1531929711.3414.29.camel@infradead.org>
+         <20180718163712.GB12945@linux.vnet.ibm.com>
+         <1531942865.3414.35.camel@infradead.org>
+         <20180718201700.GN12945@linux.vnet.ibm.com>
+         <86d12d1a-46dd-d82a-96c2-e842ac5a2a6c@de.ibm.com>
 Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-YBgBvhsGajFGa0MuVNhi"
-Date:   Thu, 19 Jul 2018 08:16:47 +0200
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-Lw4VHMnSdxkBpk9JJ92r"
+Date:   Thu, 19 Jul 2018 09:20:33 +0200
 Mime-Version: 1.0
 X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
 X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
@@ -72,40 +75,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-YBgBvhsGajFGa0MuVNhi
+--=-Lw4VHMnSdxkBpk9JJ92r
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-
-On Wed, 2018-07-18 at 20:11 -0700, Paul E. McKenney wrote:
+On Thu, 2018-07-19 at 08:45 +0200, Christian Borntraeger wrote:
 >=20
-> > That is interesting. As I replied to Paul, we are already calling
-> > rcu_user_enter/exit() on guest_enter/exit_irqsoff(). So I'm wondering w=
-hy
-> > you're seeing such an optimization by repeating those calls.
+> > My thought would be something like this:
 > >=C2=A0
-> > Perhaps the rcu_user_* somehow aren't actually called from
-> > __context_tracking_enter()...? Some bug in context tracking?
-> > Otherwise it's a curious side effect.
+> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (context_tracking_cpu_is_en=
+abled())
+> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0rcu_kvm_enter();
+> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
+> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0rcu_virt_note_context_switch(smp_processor_id());
 >=20
-> David is working with v4.15.=C2=A0 Is this maybe something that has chang=
-ed
-> since then?
+> In the past we needed that (when we introduced that). At least with every
+> host interrupt we called this making an rcu event at least every HZ.
+> Will the changes in need_resched make this part unnecessary?
 
-To clarify: in 4.15 without CONFIG_PREEMPT and without NO_HZ_FULL I was
-seeing RCU stalls because a thread in vcpu_run() was *never* seen to go
-through a quiescent state. Hence the change to need_resched() in the
-first patch in this thread, which fixed the problem at hand and seemed
-to address the general case.
+Yes, the change in need_resched() should make this part unnecessary.
+Unless your architecture's version of the vcpu_run() loop just loops
+forever even when TIF_NEED_RESCHED is set? :)
 
-It then seemed by *inspection* that the NO_HZ_FULL case was probably
-broken, because we'd failed to spot the rcu_user_* calls. But
-rcu_user_enter() does nothing in the !NO_HZ_FULL case, so wouldn't have
-helped in the testing that we were doing anyway.
+I'm not sure about the context tracking condition in the code snippet
+cited above, though. I think that's what caused my problem in the first
+place =E2=80=94 I have CONTEXT_TRACKING_FORCE && !NO_HZ_FULL. So in 4.15, t=
+hat
+means rcu_user_enter() did nothing and rcu_virt_note_context_switch()
+wasn't called. Hence the observed stalls.
 
-
---=-YBgBvhsGajFGa0MuVNhi
+Should rcu_user_enter() itself be conditional on CONTEXT_TRACKING not
+NO_HZ_FULL?=C2=A0
+--=-Lw4VHMnSdxkBpk9JJ92r
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Disposition: attachment; filename="smime.p7s"
 Content-Transfer-Encoding: base64
@@ -188,21 +191,21 @@ px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
 QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
 U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MTkwNjE2NDdaMC8GCSqG
-SIb3DQEJBDEiBCC15lx6mXUEjbyYS7PuXGVnJvYOfINIY/r0NlXKNw32/DCBvQYJKwYBBAGCNxAE
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MTkwNzIwMzNaMC8GCSqG
+SIb3DQEJBDEiBCA1hVpzKp/xqAVtJXGTopWOzkmOIy4D4edb8eVl/mDgRTCBvQYJKwYBBAGCNxAE
 MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
 VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
 IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
 jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
 cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
 aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBABVdy90COVDz
-XSGuHDGS0P1w/R/oeNt+rJahkS3aI+yomh/LUEGyG7LG1jIwTGbrFbC51o6PoVg3SNNKdmoCChEg
-EN3lHyvuExEnLDFl7t4k/wICbbZDY0nRh4soNWKxKfmeyuJIM/THlGOjrWP0rZ8xYgIo8mutI+Pm
-zNKek/5efaU8xwjPGfZEqhngNTSto3NWONz1IMW/7YulceETfhddUto2mj4b5HRy40xEyzQxzWoD
-7EclV41uagONuK5TKTjVmHggKSRrIAg7eLso/5n0Kx+SiWsO3JH3ZAGT95cUjn/gNpwJYdeOhsvu
-XFgVZtky1rOAToXcFAtk8PZ4X7kAAAAAAAA=
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAFFVhbaihO+P
+MVgPqqu9zQ9IRUX7y97h4KFgIZUhcPWIT8mlVEiXQED/OlxAT6RTFfCEl3l9HHWGjdDRSJKzXfah
+PCcnZa6iJooNN2/906rroaHNG9xWbimLc5l4psN+HDUmw7vhKFGaDPmB+d+hfcyxyOrG8UWvORDH
+88NkizYFWUoS2cn0HLfodkJpjOFZNWkkzI1gi3VRyeR0yYG4haeSsAiX7QrAPTSYhiBs6tLFOvR/
+jrrbpRVIt2fG3khOrnhA0gg6RIprw4K6YZ1jA5NLRhOtKnxZBtk61U/ePMpVLdVma98idMlDmZyK
+x1nefGAzAXVUf4n0NY5wBvRtHKIAAAAAAAA=
 
 
---=-YBgBvhsGajFGa0MuVNhi--
+--=-Lw4VHMnSdxkBpk9JJ92r--
 
