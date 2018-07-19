@@ -2,99 +2,77 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA166C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07826ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879432086B
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:56:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="msoGHII5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879432086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id A61F22084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:58:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A61F22084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731674AbeGSNjs (ORCPT
+        id S1731650AbeGSNlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 09:39:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34422 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730528AbeGSNjh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 09:39:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Gav4/C9vSOOXI2qu0UcM2ChCacoDHQJI2xirMnrvTFg=; b=msoGHII5gxr+bblRF00h2piVo
-        PIQkk2uvFrXxPwahC8iO85E7mMy4jELkNRwBlg3xFQA9JiUdp6/IC4kAw5mB7PpOmcGW+Y2DQkXRP
-        MLRdpI1hv6CD4oydgAmc75iBhyAdWfh4kK1HQtef+Yyi/oPteFsHCxbpnX7dEeFj5mgZEwMTQatjb
-        LeMl2ZCrOX8sSMn0nwKr7wP+/O7tTY228PsenYQc2CYWf0M8TbRqRNaFL6H+K1y9l8uvVz08DalC/
-        I6RzxJpnHn8DvUAjBuzLq+qTBTIEppJDBfPdYhyVICRFiMmRxJadrIDirxeOITMEwUMZM8D+8rR+i
-        meJYAyufA==;
-Received: from [96.72.186.57] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fg8Tz-0006Qz-UZ; Thu, 19 Jul 2018 12:56:35 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Richard Kuo <rkuo@codeaurora.org>
-Cc:     linux-hexagon@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] hexagon: implement the sync_sg_for_device DMA operation
-Date:   Thu, 19 Jul 2018 05:56:34 -0700
-Message-Id: <20180719125635.824-3-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180719125635.824-1-hch@lst.de>
-References: <20180719125635.824-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 19 Jul 2018 09:41:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46382 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730521AbeGSNlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 09:41:05 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1A3CF40201CA;
+        Thu, 19 Jul 2018 12:58:02 +0000 (UTC)
+Received: from doriath (ovpn-116-197.phx2.redhat.com [10.3.116.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5FEC82026D6B;
+        Thu, 19 Jul 2018 12:57:57 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 08:57:56 -0400
+From:   Luiz Capitulino <lcapitulino@redhat.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Pankaj Gupta <pagupta@redhat.com>, kwolf@redhat.com,
+        haozhong zhang <haozhong.zhang@intel.com>, jack@suse.cz,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        kvm@vger.kernel.org, riel@surriel.com, linux-nvdimm@ml01.01.org,
+        david@redhat.com, ross zwisler <ross.zwisler@intel.com>,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        hch@infradead.org, imammedo@redhat.com, mst@redhat.com,
+        niteshnarayanlal@hotmail.com, pbonzini@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, nilal@redhat.com
+Subject: Re: [Qemu-devel] [RFC v3] qemu: Add virtio pmem device
+Message-ID: <20180719085756.1b1f9678@doriath>
+In-Reply-To: <20180719084819.730b7971@doriath>
+References: <20180713075232.9575-1-pagupta@redhat.com>
+        <20180713075232.9575-4-pagupta@redhat.com>
+        <20180718085529.133a0a22@doriath>
+        <367397176.52317488.1531979293251.JavaMail.zimbra@redhat.com>
+        <20180719121635.GA28107@stefanha-x1.localdomain>
+        <20180719084819.730b7971@doriath>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 19 Jul 2018 12:58:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 19 Jul 2018 12:58:02 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lcapitulino@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This methods needs to provide the equivalent of sync_single_for_device
-for each S/G list element, but was missing.
+On Thu, 19 Jul 2018 08:48:19 -0400
+Luiz Capitulino <lcapitulino@redhat.com> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/hexagon/kernel/dma.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+> > It will be necessary to define specific constants for virtio-pmem
+> > instead of passing errno from the host to guest.  
+> 
+> Yes, defining your own constants work. But I think the only fsync()
+> error that will make sense for the guest is EIO. The other errors
+> only make sense for the host.
 
-diff --git a/arch/hexagon/kernel/dma.c b/arch/hexagon/kernel/dma.c
-index d2b717f352f4..9e46556a227d 100644
---- a/arch/hexagon/kernel/dma.c
-+++ b/arch/hexagon/kernel/dma.c
-@@ -188,6 +188,18 @@ static void hexagon_sync_single_for_device(struct device *dev,
- 	dma_sync(dma_addr_to_virt(dma_handle), size, dir);
- }
- 
-+static void hexagon_sync_sg_for_device(struct device *dev,
-+		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
-+{
-+	struct scatterlist *sg;
-+	int i;
-+
-+	for_each_sg(sgl, sg, nents, i)
-+		hexagon_sync_single_for_device(dev, sg_dma_address(sg),
-+				sg->length, dir);
-+}
-+
-+
- static int hexagon_mapping_error(struct device *dev, dma_addr_t dma_addr)
- {
- 	return dma_addr == HEXAGON_MAPPING_ERROR;
-@@ -199,6 +211,7 @@ const struct dma_map_ops hexagon_dma_ops = {
- 	.map_sg		= hexagon_map_sg,
- 	.map_page	= hexagon_map_page,
- 	.sync_single_for_device = hexagon_sync_single_for_device,
-+	.sync_sg_for_device = hexagon_sync_sg_for_device,
- 	.mapping_error	= hexagon_mapping_error,
- };
- 
--- 
-2.18.0
-
+Just to clarify: of course you'll return an error to guest on any
+fsync() error. But maybe you should always return EIO even if the error
+was EBADF for example. Or just signal the error with some constant,
+and let the guest implementation pick any errno it prefers (this was
+my first suggestion).
