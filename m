@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7510DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 941DCECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFE720684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EFE720684
+	by mail.kernel.org (Postfix) with ESMTP id 564A120684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564A120684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732045AbeGSXrq (ORCPT
+        id S1731846AbeGSXrA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:47:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54558 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:47:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54437 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731917AbeGSXrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:47:10 -0400
+        id S1730813AbeGSXq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:46:59 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AE4A2209C3; Fri, 20 Jul 2018 01:01:53 +0200 (CEST)
+        id 93FD620949; Fri, 20 Jul 2018 01:01:42 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F00DF2099F;
-        Fri, 20 Jul 2018 01:01:23 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 81DB32072F;
+        Fri, 20 Jul 2018 01:01:12 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 30/33] mtd: rawnand: jz4740: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 01:00:23 +0200
-Message-Id: <20180719230026.8741-31-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 23/33] mtd: rawnand: txx9ndfmc: rename nand controller internal structure
+Date:   Fri, 20 Jul 2018 01:00:16 +0200
+Message-Id: <20180719230026.8741-24-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -66,130 +66,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two helpers have been added to the core to make ECC-related
-configuration between the detection phase and the final NAND scan. Use
-these hooks and convert the driver to just use nand_scan() instead of
-both nand_scan_ident() and nand_scan_tail().
+As already done in the core, calling a struct nand_controller
+'hw_control' is misleading. Use the same name as in nand_base.c:
+'controller'.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/jz4740_nand.c | 46 ++++++++++++++++++++++++--------------
- 1 file changed, 29 insertions(+), 17 deletions(-)
+ drivers/mtd/nand/raw/txx9ndfmc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/jz4740_nand.c b/drivers/mtd/nand/raw/jz4740_nand.c
-index 9bb8a89e09f9..72f5783a7da8 100644
---- a/drivers/mtd/nand/raw/jz4740_nand.c
-+++ b/drivers/mtd/nand/raw/jz4740_nand.c
-@@ -59,6 +59,7 @@
- 
- struct jz_nand {
- 	struct nand_chip chip;
-+	struct platform_device *pdev;
+diff --git a/drivers/mtd/nand/raw/txx9ndfmc.c b/drivers/mtd/nand/raw/txx9ndfmc.c
+index 8f5bbbac4612..9019022774f7 100644
+--- a/drivers/mtd/nand/raw/txx9ndfmc.c
++++ b/drivers/mtd/nand/raw/txx9ndfmc.c
+@@ -73,7 +73,7 @@ struct txx9ndfmc_drvdata {
  	void __iomem *base;
- 	struct resource *mem;
+ 	unsigned char hold;	/* in gbusclock */
+ 	unsigned char spw;	/* in gbusclock */
+-	struct nand_controller hw_control;
++	struct nand_controller controller;
+ };
  
-@@ -329,8 +330,8 @@ static int jz_nand_detect_bank(struct platform_device *pdev,
- 	writel(ctrl, nand->base + JZ_REG_NAND_CTRL);
+ static struct platform_device *mtd_to_platdev(struct mtd_info *mtd)
+@@ -303,7 +303,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
+ 	dev_info(&dev->dev, "CLK:%ldMHz HOLD:%d SPW:%d\n",
+ 		 (gbusclk + 500000) / 1000000, hold, spw);
  
- 	if (chipnr == 0) {
--		/* Detect first chip. */
--		ret = nand_scan_ident(mtd, 1, NULL);
-+		/* Detect the first chip and register it */
-+		ret = nand_scan(mtd, 1);
- 		if (ret)
- 			goto notfound_id;
+-	nand_controller_init(&drvdata->hw_control);
++	nand_controller_init(&drvdata->controller);
  
-@@ -367,6 +368,25 @@ static int jz_nand_detect_bank(struct platform_device *pdev,
- 	return ret;
- }
+ 	platform_set_drvdata(dev, drvdata);
+ 	txx9ndfmc_initialize(dev);
+@@ -337,7 +337,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
+ 		chip->ecc.bytes = 3;
+ 		chip->ecc.strength = 1;
+ 		chip->chip_delay = 100;
+-		chip->controller = &drvdata->hw_control;
++		chip->controller = &drvdata->controller;
  
-+static int jz_nand_attach_chip(struct nand_chip *chip)
-+{
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct jz_nand *nand = mtd_to_jz_nand(mtd);
-+	struct device *dev = mtd->dev.parent;
-+	struct jz_nand_platform_data *pdata = dev_get_platdata(dev);
-+
-+	if (pdata && pdata->ident_callback) {
-+		pdata->ident_callback(nand->pdev, mtd, &pdata->partitions,
-+				      &pdata->num_partitions);
-+	}
-+
-+	return 0;
-+}
-+
-+static struct nand_controller_ops jz_nand_controller_ops = {
-+	.attach_chip = jz_nand_attach_chip,
-+};
-+
- static int jz_nand_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -397,6 +417,7 @@ static int jz_nand_probe(struct platform_device *pdev)
- 	mtd		= nand_to_mtd(chip);
- 	mtd->dev.parent = &pdev->dev;
- 	mtd->name	= "jz4740-nand";
-+	nand->pdev	= pdev;
- 
- 	chip->ecc.hwctl		= jz_nand_hwctl;
- 	chip->ecc.calculate	= jz_nand_calculate_ecc_rs;
-@@ -410,6 +431,7 @@ static int jz_nand_probe(struct platform_device *pdev)
- 	chip->chip_delay = 50;
- 	chip->cmd_ctrl = jz_nand_cmd_ctrl;
- 	chip->select_chip = jz_nand_select_chip;
-+	chip->dummy_controller.ops = &jz_nand_controller_ops;
- 
- 	if (nand->busy_gpio)
- 		chip->dev_ready = jz_nand_dev_ready;
-@@ -450,20 +472,10 @@ static int jz_nand_probe(struct platform_device *pdev)
- 		else
- 			nand->banks[chipnr] = 0;
- 	}
-+
- 	if (chipnr == 0) {
- 		dev_err(&pdev->dev, "No NAND chips found\n");
--		goto err_iounmap_mmio;
--	}
--
--	if (pdata && pdata->ident_callback) {
--		pdata->ident_callback(pdev, mtd, &pdata->partitions,
--					&pdata->num_partitions);
--	}
--
--	ret = nand_scan_tail(mtd);
--	if (ret) {
--		dev_err(&pdev->dev,  "Failed to scan NAND\n");
--		goto err_unclaim_banks;
-+		goto err_nand_release;
- 	}
- 
- 	ret = mtd_device_register(mtd, pdata ? pdata->partitions : NULL,
-@@ -471,15 +483,13 @@ static int jz_nand_probe(struct platform_device *pdev)
- 
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to add mtd device\n");
--		goto err_nand_release;
-+		goto err_unclaim_banks;
- 	}
- 
- 	dev_info(&pdev->dev, "Successfully registered JZ4740 NAND driver\n");
- 
- 	return 0;
- 
--err_nand_release:
--	nand_release(mtd);
- err_unclaim_banks:
- 	while (chipnr--) {
- 		unsigned char bank = nand->banks[chipnr];
-@@ -487,6 +497,8 @@ static int jz_nand_probe(struct platform_device *pdev)
- 					 nand->bank_base[bank - 1]);
- 	}
- 	writel(0, nand->base + JZ_REG_NAND_CTRL);
-+err_nand_release:
-+	nand_release(mtd);
- err_iounmap_mmio:
- 	jz_nand_iounmap_resource(nand->mem, nand->base);
- err_free:
+ 		nand_set_controller_data(chip, txx9_priv);
+ 		txx9_priv->dev = dev;
 -- 
 2.14.1
 
