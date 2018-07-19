@@ -2,196 +2,162 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F658ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF9BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2135220673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:35:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2135220673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 980CF20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:35:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrmWGZ7z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980CF20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731584AbeGSXUS (ORCPT
+        id S1731606AbeGSXUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:20:18 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38541 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730913AbeGSXUR (ORCPT
+        Thu, 19 Jul 2018 19:20:34 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44673 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730913AbeGSXUe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:20:17 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMZ1vJ2439993
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 15:35:01 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMZ0b22439990;
-        Thu, 19 Jul 2018 15:35:00 -0700
-Date:   Thu, 19 Jul 2018 15:35:00 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Pavel Tatashin <tipbot@zytor.com>
-Message-ID: <tip-8dbe438589f373544a1af8b4a859e4da853c0f90@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, pasha.tatashin@oracle.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: mingo@kernel.org, pasha.tatashin@oracle.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <20180719205545.16512-27-pasha.tatashin@oracle.com>
-References: <20180719205545.16512-27-pasha.tatashin@oracle.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/tsc: Make use of tsc_calibrate_cpu_early()
-Git-Commit-ID: 8dbe438589f373544a1af8b4a859e4da853c0f90
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 19 Jul 2018 19:20:34 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r1-v6so5004869pgp.11;
+        Thu, 19 Jul 2018 15:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Qf1Hn5KUU+drF66O1KR8yYwoWVVaL9lmRNeH3v0A/YI=;
+        b=JrmWGZ7zlOr90nq7KiIqHoYNTsy89ygjBwASt/Gg4Sd5KolxTCpoFT+2C+w8En1uzs
+         qpFyzm2TZIKKJP40SPaUbyMGUPGDetHezscD1tO/jGXcphJeydhh5MkKn/ekWVeuGoOT
+         w/pMxnChS/c2aWeDruZ1s+WweUXXK9tYI6GBMjZIG/KY534sq7c6oeFLB8YQG7F9lWbx
+         XfjZUF9T0wp1XiL8we3QOLLAKf2FgSCxyOsgAZlohUtzXHjMy4iAo64QrN06hpUve7rp
+         7yZqj19TaVKVA8Qj+aOPju4Vefi6P0w/mCTE6NFZytMv35ijXUJr475T+iKXtxaGDp0h
+         555A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Qf1Hn5KUU+drF66O1KR8yYwoWVVaL9lmRNeH3v0A/YI=;
+        b=XYcEFKIl9pXrfOYilcdPgJIVVa1GEb3aBLr/Ik1kMe/zMGxynp9C3vWBa/hO9cVXLV
+         NucUEWFuQc8XxZYu0MxpRdCsTdGUX1pIzYNSirtJ38ggyualiWyKRfLhyAYbP4PPnDy3
+         HASXM33gZFkWY0//wvuOYy10B/PZGz9hymysxkquPigVJbpveg3S/inO0QmmRYzGl++u
+         f0yl/UiuLRy7QmpaZu7XB3F8pLOTiOFPGQj0pmGfxu/TUbvbuzF8dCGjFnboSyh17vdp
+         EHJz3NUjw7pSCKvfMX4PRE64fdNL/3EO8WlgKaECvxKrE2PQ3YilVU7igBD0HusITKL/
+         qgQA==
+X-Gm-Message-State: AOUpUlHu3cfhkgR5siL9ATH9u17O6iYpUpcTW2gSUA56lJOB3gFOUOgb
+        g6K+XrRsl1WO05N9/KpAeeg=
+X-Google-Smtp-Source: AAOMgpeZGzjv0Cdn9EWsyoFY5XQnVcdcEOPzy31XkPrq5Q6cCOFNDM4saYLtaNGCnj9+BzkUFKAOyA==
+X-Received: by 2002:a63:d15:: with SMTP id c21-v6mr11860109pgl.322.1532039723508;
+        Thu, 19 Jul 2018 15:35:23 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id e82-v6sm346492pfd.40.2018.07.19.15.35.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 15:35:22 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 15:35:21 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Message-ID: <20180719223521.GA30287@roeck-us.net>
+References: <20180719120447.6e7ba23d@canb.auug.org.au>
+ <cbc20089-6847-c0eb-5b5a-735245986be1@roeck-us.net>
+ <20180719152940.0720e9c1@canb.auug.org.au>
+ <6dabf12b-e3db-dfe8-101c-02772039e21a@roeck-us.net>
+ <20180720080906.7a30c573@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180720080906.7a30c573@canb.auug.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8dbe438589f373544a1af8b4a859e4da853c0f90
-Gitweb:     https://git.kernel.org/tip/8dbe438589f373544a1af8b4a859e4da853c0f90
-Author:     Pavel Tatashin <pasha.tatashin@oracle.com>
-AuthorDate: Thu, 19 Jul 2018 16:55:45 -0400
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 00:02:44 +0200
+On Fri, Jul 20, 2018 at 08:09:06AM +1000, Stephen Rothwell wrote:
+> Hi Guenter,
+> 
+> On Thu, 19 Jul 2018 06:49:01 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> >
+> > On 07/18/2018 10:29 PM, Stephen Rothwell wrote:
+> > > 
+> > > On Wed, 18 Jul 2018 20:52:56 -0700 Guenter Roeck <linux@roeck-us.net> wrote:  
+> > >>
+> > >> On 07/18/2018 07:04 PM, Stephen Rothwell wrote:  
+> > >>>
+> > >>> After merging the net-next tree, today's linux-next build (x86_64
+> > >>> allmodconfig) produced this warning:
+> > >>>
+> > >>> *
+> > >>> * Restart config...
+> > >>> *
+> > >>> ....
+> > >>>
+> > >>> This is output by my "make allmodconfig" and only started after merging
+> > >>> the net-next tree today.  It has continued for further merges/builds.
+> > >>>
+> > >>> I suspect commit
+> > >>>
+> > >>>     1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
+> > >>>
+> > >>> which added an "imply" clause.
+> > >>>      
+> > >> I thought "imply" was better than "depends on HWMON || HWMON=n", but maybe
+> > >> not. Is that a caveat when using "imply", and does it mean that "imply"
+> > >> should better not be used ?  
+> > > 
+> > > I don't know, sorry.  It was just my best guess from what I could see
+> > > had changed.
+> > > 
+> > > I wonder if it makes a difference that I am doing my "make
+> > > allmodconfig" on top of a previous "make allmodconfig" and some symbols
+> > > are marked as "NEW" (though they are not symbols related to the changes
+> > > that happened during the net-next tree merge)?
+> > >   
+> > 
+> > I tried to reproduce the problem, but I don't see the message.
+> > 
+> > What I do see, though, is that "make allmodconfig" on a clean tree,
+> > followed by "make menuconfig", results in configuration changes.
+> > Specifically,
+> > 
+> >  > CONFIG_ARC_EMAC_CORE=m
+> >  > CONFIG_ARC_EMAC=m
+> >  > CONFIG_EMAC_ROCKCHIP=m  
+> > 
+> > is removed by menuconfig, and a large number of "# ... is not set"
+> > configuration lines are added. Weird and bad, since several of the
+> > disabled configurations _should_ be enabled by "make allmodconfig",
+> > and a large number of hwmon drivers are affected. Bisect does point
+> > to "net: phy: sfp: Add HWMON support for module sensors", meaning
+> > "imply hwmon" does have severe side effects and can not be used.
+> > 
+> > I'll try to find a fix.
+> 
+> OK, my mistake, the "make allmodconfig" works, the following "make"
+> causes the config restart.  (I am actually doing cross builds and using
+> an external object directory, in case that matters.)
+> 
+> I removed the "imply HWMON" line added by the above commit and the
+> problem went away.  Also, using "depends on HWMON || HWMON=n" instead
+> of the imply fixes it.
 
-x86/tsc: Make use of tsc_calibrate_cpu_early()
+Yes, replacing imply with the dependency is what I did in the fixup patch.
+Sorry, I should have copied you: https://patchwork.kernel.org/patch/10534925/
 
-During early boot enable tsc_calibrate_cpu_early() and switch to
-tsc_calibrate_cpu() only later. Do this unconditionally, because it is
-unknown what methods other cpus will use to calibrate once they are
-onlined.
+It is a bit different - imply was supposed to enforce HWMON={y,n} if SFP=y,
+and the depends line enforces SFP={n,m} if HWMON=m. I have no idea why
+imply doesn't work, but I think I'll stay away from it in the future.
 
-If by the time tsc_init() is called tsc frequency is still unknown do only
-pit_hpet_ptimer_calibrate_cpu() to calibrate, as this function contains the
-only methods wich have not been called and tried earlier.
-
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: steven.sistare@oracle.com
-Cc: daniel.m.jordan@oracle.com
-Cc: linux@armlinux.org.uk
-Cc: schwidefsky@de.ibm.com
-Cc: heiko.carstens@de.ibm.com
-Cc: john.stultz@linaro.org
-Cc: sboyd@codeaurora.org
-Cc: hpa@zytor.com
-Cc: douly.fnst@cn.fujitsu.com
-Cc: peterz@infradead.org
-Cc: prarit@redhat.com
-Cc: feng.tang@intel.com
-Cc: pmladek@suse.com
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: linux-s390@vger.kernel.org
-Cc: boris.ostrovsky@oracle.com
-Cc: jgross@suse.com
-Cc: pbonzini@redhat.com
-Link: https://lkml.kernel.org/r/20180719205545.16512-27-pasha.tatashin@oracle.com
-
----
- arch/x86/include/asm/tsc.h |  1 -
- arch/x86/kernel/tsc.c      | 25 +++++++++++++++++++------
- arch/x86/kernel/x86_init.c |  2 +-
- 3 files changed, 20 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
-index 88140e4f2292..eb5bbfeccb66 100644
---- a/arch/x86/include/asm/tsc.h
-+++ b/arch/x86/include/asm/tsc.h
-@@ -39,7 +39,6 @@ extern void mark_tsc_unstable(char *reason);
- extern int unsynchronized_tsc(void);
- extern int check_tsc_unstable(void);
- extern void mark_tsc_async_resets(char *reason);
--extern unsigned long native_calibrate_cpu(void);
- extern unsigned long native_calibrate_cpu_early(void);
- extern unsigned long native_calibrate_tsc(void);
- extern unsigned long long native_sched_clock_from_tsc(u64 tsc);
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 60586779b02c..02e416b87ac1 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -854,7 +854,7 @@ unsigned long native_calibrate_cpu_early(void)
- /**
-  * native_calibrate_cpu - calibrate the cpu
-  */
--unsigned long native_calibrate_cpu(void)
-+static unsigned long native_calibrate_cpu(void)
- {
- 	unsigned long tsc_freq = native_calibrate_cpu_early();
- 
-@@ -1374,13 +1374,19 @@ unreg:
-  */
- device_initcall(init_tsc_clocksource);
- 
--static bool __init determine_cpu_tsc_frequencies(void)
-+static bool __init determine_cpu_tsc_frequencies(bool early)
- {
- 	/* Make sure that cpu and tsc are not already calibrated */
- 	WARN_ON(cpu_khz || tsc_khz);
- 
--	cpu_khz = x86_platform.calibrate_cpu();
--	tsc_khz = x86_platform.calibrate_tsc();
-+	if (early) {
-+		cpu_khz = x86_platform.calibrate_cpu();
-+		tsc_khz = x86_platform.calibrate_tsc();
-+	} else {
-+		/* We should not be here with non-native cpu calibration */
-+		WARN_ON(x86_platform.calibrate_cpu != native_calibrate_cpu);
-+		cpu_khz = pit_hpet_ptimer_calibrate_cpu();
-+	}
- 
- 	/*
- 	 * Trust non-zero tsc_khz as authorative,
-@@ -1419,7 +1425,7 @@ void __init tsc_early_init(void)
- {
- 	if (!boot_cpu_has(X86_FEATURE_TSC))
- 		return;
--	if (!determine_cpu_tsc_frequencies())
-+	if (!determine_cpu_tsc_frequencies(true))
- 		return;
- 	loops_per_jiffy = get_loops_per_jiffy();
- 
-@@ -1431,6 +1437,13 @@ void __init tsc_early_init(void)
- 
- void __init tsc_init(void)
- {
-+	/*
-+	 * native_calibrate_cpu_early can only calibrate using methods that are
-+	 * available early in boot.
-+	 */
-+	if (x86_platform.calibrate_cpu == native_calibrate_cpu_early)
-+		x86_platform.calibrate_cpu = native_calibrate_cpu;
-+
- 	if (!boot_cpu_has(X86_FEATURE_TSC)) {
- 		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
- 		return;
-@@ -1438,7 +1451,7 @@ void __init tsc_init(void)
- 
- 	if (!tsc_khz) {
- 		/* We failed to determine frequencies earlier, try again */
--		if (!determine_cpu_tsc_frequencies()) {
-+		if (!determine_cpu_tsc_frequencies(false)) {
- 			mark_tsc_unstable("could not calculate TSC khz");
- 			setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
- 			return;
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index 3ab867603e81..2792b5573818 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -109,7 +109,7 @@ struct x86_cpuinit_ops x86_cpuinit = {
- static void default_nmi_init(void) { };
- 
- struct x86_platform_ops x86_platform __ro_after_init = {
--	.calibrate_cpu			= native_calibrate_cpu,
-+	.calibrate_cpu			= native_calibrate_cpu_early,
- 	.calibrate_tsc			= native_calibrate_tsc,
- 	.get_wallclock			= mach_get_cmos_time,
- 	.set_wallclock			= mach_set_rtc_mmss,
+Guenter
