@@ -2,130 +2,79 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B71C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BEAC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8340620693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:40:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8340620693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DE3E20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:42:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE3E20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeGSKWW (ORCPT
+        id S1727527AbeGSKYZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 06:22:22 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:46938 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbeGSKWW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 06:22:22 -0400
-Received: by mail-qt0-f195.google.com with SMTP id d4-v6so6583744qtn.13
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 02:40:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZhIsIdKkP1k30p/ir9RcxBY1puJ714y6M0HqZoDwsoc=;
-        b=ae1MtNcYfCXApZfa4SDdpEA6tvoG2uk29/RUZxFGrV/twkxMOmy34u+L8vbPUzfUS0
-         TJDh/It5dkNrINBBVPqBfUCWSSKb1Kp7N5ARt+/mcKnP4zcx477aptLVBPFgDgzw+z0q
-         SHe/t0FowpXlccSXKKMfM0J4LlWw1qqJkxpzSeKEUooF9tyVM0TG8FLa7tA9nalGeI7u
-         HtKXcanDMCUH1huEN2XvsNLwXAM9KaX9U9inRuVjlAUxm+OD2PS3h0pir2MnlZhA1CEd
-         GII9USXsjzzotk+VxLioVU4Q9bUDOlej3C/97+e7Q6XWEGfYc5s75MsjyCwMnjM0p06I
-         h3bQ==
-X-Gm-Message-State: AOUpUlH6/j7e+wZYHCirZ4qgmGwbjJxnFl11srv1L/lhCILl7okZXFtX
-        wJei7teRg/WszU0Zl6lmBy08GyF5et392b3TDdF0dw==
-X-Google-Smtp-Source: AAOMgpeqbmQU5hecpYcGAZHJM22aZzAZXdZ7hL5t1dgMGHbucXapdFaM7gYyV+ocQbx9+qhbDWWQ/oM3HOtLdugkEF8=
-X-Received: by 2002:ac8:34d3:: with SMTP id x19-v6mr8460592qtb.81.1531993203187;
- Thu, 19 Jul 2018 02:40:03 -0700 (PDT)
+        Thu, 19 Jul 2018 06:24:25 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52280 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726956AbeGSKYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 06:24:25 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 798C6B958CB5A;
+        Thu, 19 Jul 2018 17:42:02 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.382.0; Thu, 19 Jul 2018 17:41:53 +0800
+From:   x00249684 <xuwei5@huawei.com>
+To:     <liwei213@huawei.com>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <vinholikatti@gmail.com>, <jejb@linux.vnet.ibm.com>,
+        <martin.petersen@oracle.com>, <khilman@baylibre.com>,
+        <arnd@arndb.de>, <gregory.clement@free-electrons.com>,
+        <thomas.petazzoni@free-electrons.com>,
+        <yamada.masahiro@socionext.com>, <riku.voipio@linaro.org>,
+        <treding@nvidia.com>, <krzk@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-scsi@vger.kernel.org>, <zangleigang@hisilicon.com>,
+        <gengjianfeng@hisilicon.com>, <sunzhaosheng@hisilicon.com>,
+        <ian.rickards@arm.com>, <guodong.xu@linaro.org>,
+        <puck.chen@hisilicon.com>, <john.stultz@linaro.org>,
+        <fengbaopeng@hisilicon.com>
+Subject: Re: [PATCH v11 3/4] [RESEND] arm64: dts: add ufs dts node
+Date:   Thu, 19 Jul 2018 17:40:41 +0800
+Message-ID: <1531993241-173790-1-git-send-email-xuwei5@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <20180717093659.103263-4-liwei213@huawei.com>
+References: <20180717093659.103263-4-liwei213@huawei.com>
 MIME-Version: 1.0
-References: <20180718193200.17944-1-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20180718193200.17944-1-srinivas.pandruvada@linux.intel.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Thu, 19 Jul 2018 11:39:51 +0200
-Message-ID: <CAO-hwJJ=hsdu7AapAaWbB-JQUk9+24Lcx6i31bF5xaVwXdNQpQ@mail.gmail.com>
-Subject: Re: [PATCH v2] HID: intel-ish-hid: Prevent loading of driver on Mehlow
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 9:32 PM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
+>From: Li Wei <liwei213@huawei.com>
 >
-> On Mehlow Xeon-E workstation, ISH PCI device is enabled but without ISH
-> firmware. Here the ISH device PCI device id was reused for some non Linux
-> storage drivers. So this was not done for enabling ISH. But this has a
-> undesirable side effect for Linux.
+>arm64: dts: add ufs node for Hisilicon.
 >
-> Here the ISH driver will be loaded via PCI enumeration and will try to do
-> reset sequence. But reset sequence will wait till timeout as there is no
-> real ISH firmware is present to take action. This delay will add to boot
-> time of Linux (This platform will still continue to boot after this
-> timeout).
->
-> To avoid this boot delay we need to prevent loading of ISH drivers on
-> this platform. So we need to have hack to avoid treating this device as
-> ISH on this platform. To identify this workstation, we need some runtime
-> method. Luckily there are special PCI id on this workstation to
-> distinguish from the client version of this platform. On client version,
-> the ISH is supported using same PCI device id. So this change look for
-> the presence of PCI device IDs A309 and A30A and exit.
->
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
-> v2
->  Replaced pci_get_device with pci_dev_present to check in a loop as
-> suggested by Benjamin.
+>Signed-off-by: Li Wei <liwei213@huawei.com>
+>Reviewed-by: Rob Herring <robh@kernel.org>
+>Tested-by: John Stultz <john.stultz@linaro.org>
 
-That's even better than what I suggested :)
+Fine to me. Thanks!
+Acked-by: Wei Xu <xuwei5@hisilicon.com>
 
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+But it will not be so staightforward when applying the patch
+since in the recent pull request the hi3660.dtsi has been tidied up.
+If it makes inconvenient, I can apply it once the binding is merged.
+Thanks!
 
-Cheers,
-Benjamin
-
->
->  drivers/hid/intel-ish-hid/ipc/pci-ish.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/hid/intel-ish-hid/ipc/pci-ish.c b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> index a2c53ea3b5ed..4a55eab39b88 100644
-> --- a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> +++ b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> @@ -95,6 +95,13 @@ static int ish_init(struct ishtp_device *dev)
->         return 0;
->  }
->
-> +static const struct pci_device_id ish_invalid_pci_ids[] = {
-> +       /* Mehlow platform special pci ids */
-> +       {PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xA309)},
-> +       {PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xA30A)},
-> +       {}
-> +};
-> +
->  /**
->   * ish_probe() - PCI driver probe callback
->   * @pdev:      pci device
-> @@ -110,6 +117,10 @@ static int ish_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->         struct ish_hw *hw;
->         int     ret;
->
-> +       /* Check for invalid platforms for ISH support */
-> +       if (pci_dev_present(ish_invalid_pci_ids))
-> +               return -ENODEV;
-> +
->         /* enable pci dev */
->         ret = pci_enable_device(pdev);
->         if (ret) {
-> --
-> 2.17.1
->
+Best Regards,
+Wei
