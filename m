@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B9DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FCCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957F620684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:37:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957F620684
+	by mail.kernel.org (Postfix) with ESMTP id 50AAB20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:38:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50AAB20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731404AbeGTAXO (ORCPT
+        id S1731422AbeGTAXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:23:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37381 "EHLO
+        Thu, 19 Jul 2018 20:23:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39715 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730505AbeGTAXO (ORCPT
+        with ESMTP id S1727650AbeGTAXl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:23:14 -0400
+        Thu, 19 Jul 2018 20:23:41 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNampL2454507
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNbIit2454546
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 16:36:48 -0700
+        Thu, 19 Jul 2018 16:37:18 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNam8H2454504;
-        Thu, 19 Jul 2018 16:36:48 -0700
-Date:   Thu, 19 Jul 2018 16:36:48 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNbING2454542;
+        Thu, 19 Jul 2018 16:37:18 -0700
+Date:   Thu, 19 Jul 2018 16:37:18 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-9bae3197e15dd5e03ce8e237db6fe4486b08a775@git.kernel.org>
-Cc:     jpoimboe@redhat.com, dave.hansen@intel.com, dvlasenk@redhat.com,
-        peterz@infradead.org, torvalds@linux-foundation.org,
-        brgerst@gmail.com, llong@redhat.com, dhgutteridge@sympatico.ca,
-        jgross@suse.com, pavel@ucw.cz, boris.ostrovsky@oracle.com,
-        gregkh@linuxfoundation.org, tglx@linutronix.de, hpa@zytor.com,
-        aarcange@redhat.com, eduval@amazon.com, bp@alien8.de,
-        jroedel@suse.de, mingo@kernel.org, jkosina@suse.cz,
-        will.deacon@arm.com, David.Laight@aculab.com,
-        linux-kernel@vger.kernel.org, luto@kernel.org
-Reply-To: David.Laight@aculab.com, will.deacon@arm.com, luto@kernel.org,
-          linux-kernel@vger.kernel.org, eduval@amazon.com, jkosina@suse.cz,
-          mingo@kernel.org, bp@alien8.de, jroedel@suse.de, hpa@zytor.com,
-          aarcange@redhat.com, gregkh@linuxfoundation.org,
-          tglx@linutronix.de, boris.ostrovsky@oracle.com,
-          dhgutteridge@sympatico.ca, llong@redhat.com, brgerst@gmail.com,
-          pavel@ucw.cz, jgross@suse.com, torvalds@linux-foundation.org,
-          dvlasenk@redhat.com, peterz@infradead.org, dave.hansen@intel.com,
-          jpoimboe@redhat.com
-In-Reply-To: <1531906876-13451-36-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-36-git-send-email-joro@8bytes.org>
+Message-ID: <tip-6df934b92a549cb3badb6d576f71aeb133e2f110@git.kernel.org>
+Cc:     luto@kernel.org, pavel@ucw.cz, aarcange@redhat.com,
+        jkosina@suse.cz, dhgutteridge@sympatico.ca,
+        torvalds@linux-foundation.org, bp@alien8.de,
+        boris.ostrovsky@oracle.com, mingo@kernel.org, hpa@zytor.com,
+        brgerst@gmail.com, jpoimboe@redhat.com, dvlasenk@redhat.com,
+        peterz@infradead.org, dave.hansen@intel.com, jgross@suse.com,
+        tglx@linutronix.de, gregkh@linuxfoundation.org, eduval@amazon.com,
+        will.deacon@arm.com, jroedel@suse.de, llong@redhat.com,
+        linux-kernel@vger.kernel.org, David.Laight@aculab.com
+Reply-To: pavel@ucw.cz, luto@kernel.org, jkosina@suse.cz,
+          aarcange@redhat.com, torvalds@linux-foundation.org,
+          dhgutteridge@sympatico.ca, boris.ostrovsky@oracle.com,
+          bp@alien8.de, hpa@zytor.com, mingo@kernel.org,
+          jpoimboe@redhat.com, brgerst@gmail.com, dave.hansen@intel.com,
+          peterz@infradead.org, dvlasenk@redhat.com, jgross@suse.com,
+          tglx@linutronix.de, will.deacon@arm.com, eduval@amazon.com,
+          gregkh@linuxfoundation.org, jroedel@suse.de, llong@redhat.com,
+          linux-kernel@vger.kernel.org, David.Laight@aculab.com
+In-Reply-To: <1531906876-13451-37-git-send-email-joro@8bytes.org>
+References: <1531906876-13451-37-git-send-email-joro@8bytes.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/ldt: Split out sanity check in map_ldt_struct()
-Git-Commit-ID: 9bae3197e15dd5e03ce8e237db6fe4486b08a775
+Subject: [tip:x86/pti] x86/ldt: Enable LDT user-mapping for PAE
+Git-Commit-ID: 6df934b92a549cb3badb6d576f71aeb133e2f110
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -70,18 +70,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9bae3197e15dd5e03ce8e237db6fe4486b08a775
-Gitweb:     https://git.kernel.org/tip/9bae3197e15dd5e03ce8e237db6fe4486b08a775
+Commit-ID:  6df934b92a549cb3badb6d576f71aeb133e2f110
+Gitweb:     https://git.kernel.org/tip/6df934b92a549cb3badb6d576f71aeb133e2f110
 Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 18 Jul 2018 11:41:12 +0200
+AuthorDate: Wed, 18 Jul 2018 11:41:13 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 01:11:47 +0200
+CommitDate: Fri, 20 Jul 2018 01:11:48 +0200
 
-x86/ldt: Split out sanity check in map_ldt_struct()
+x86/ldt: Enable LDT user-mapping for PAE
 
-This splits out the mapping sanity check and the actual mapping of the LDT
-to user-space from the map_ldt_struct() function in a way so that it is
-re-usable for PAE paging.
+This adds the needed special case for PAE to get the LDT mapped into the
+user page-table when PTI is enabled. The big difference to the other paging
+modes is that on PAE there is no full top-level PGD entry available for the
+LDT, but only a PMD entry.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -111,138 +112,98 @@ Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Waiman Long <llong@redhat.com>
 Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
 Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-36-git-send-email-joro@8bytes.org
+Link: https://lkml.kernel.org/r/1531906876-13451-37-git-send-email-joro@8bytes.org
 
 ---
- arch/x86/kernel/ldt.c | 82 ++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 58 insertions(+), 24 deletions(-)
+ arch/x86/include/asm/mmu_context.h |  5 ----
+ arch/x86/kernel/ldt.c              | 53 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index e921b3d494d5..69af9a0d57b7 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -100,6 +100,49 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
- 	return new_ldt;
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index bbc796eb0a3b..eeeb9289c764 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -71,12 +71,7 @@ struct ldt_struct {
+ 
+ static inline void *ldt_slot_va(int slot)
+ {
+-#ifdef CONFIG_X86_64
+ 	return (void *)(LDT_BASE_ADDR + LDT_SLOT_STRIDE * slot);
+-#else
+-	BUG();
+-	return (void *)fix_to_virt(FIX_HOLE);
+-#endif
  }
  
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
+ /*
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 69af9a0d57b7..733e6ace0fa4 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -126,6 +126,57 @@ static void do_sanity_check(struct mm_struct *mm,
+ 	}
+ }
+ 
++#ifdef CONFIG_X86_PAE
 +
-+static void do_sanity_check(struct mm_struct *mm,
-+			    bool had_kernel_mapping,
-+			    bool had_user_mapping)
++static pmd_t *pgd_to_pmd_walk(pgd_t *pgd, unsigned long va)
 +{
-+	if (mm->context.ldt) {
-+		/*
-+		 * We already had an LDT.  The top-level entry should already
-+		 * have been allocated and synchronized with the usermode
-+		 * tables.
-+		 */
-+		WARN_ON(!had_kernel_mapping);
-+		if (static_cpu_has(X86_FEATURE_PTI))
-+			WARN_ON(!had_user_mapping);
-+	} else {
-+		/*
-+		 * This is the first time we're mapping an LDT for this process.
-+		 * Sync the pgd to the usermode tables.
-+		 */
-+		WARN_ON(had_kernel_mapping);
-+		if (static_cpu_has(X86_FEATURE_PTI))
-+			WARN_ON(had_user_mapping);
-+	}
++	p4d_t *p4d;
++	pud_t *pud;
++
++	if (pgd->pgd == 0)
++		return NULL;
++
++	p4d = p4d_offset(pgd, va);
++	if (p4d_none(*p4d))
++		return NULL;
++
++	pud = pud_offset(p4d, va);
++	if (pud_none(*pud))
++		return NULL;
++
++	return pmd_offset(pud, va);
 +}
 +
 +static void map_ldt_struct_to_user(struct mm_struct *mm)
 +{
-+	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
++	pgd_t *k_pgd = pgd_offset(mm, LDT_BASE_ADDR);
++	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
++	pmd_t *k_pmd, *u_pmd;
++
++	k_pmd = pgd_to_pmd_walk(k_pgd, LDT_BASE_ADDR);
++	u_pmd = pgd_to_pmd_walk(u_pgd, LDT_BASE_ADDR);
 +
 +	if (static_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
-+		set_pgd(kernel_to_user_pgdp(pgd), *pgd);
++		set_pmd(u_pmd, *k_pmd);
 +}
 +
 +static void sanity_check_ldt_mapping(struct mm_struct *mm)
 +{
-+	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
-+	bool had_kernel = (pgd->pgd != 0);
-+	bool had_user   = (kernel_to_user_pgdp(pgd)->pgd != 0);
++	pgd_t *k_pgd = pgd_offset(mm, LDT_BASE_ADDR);
++	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
++	bool had_kernel, had_user;
++	pmd_t *k_pmd, *u_pmd;
++
++	k_pmd      = pgd_to_pmd_walk(k_pgd, LDT_BASE_ADDR);
++	u_pmd      = pgd_to_pmd_walk(u_pgd, LDT_BASE_ADDR);
++	had_kernel = (k_pmd->pmd != 0);
++	had_user   = (u_pmd->pmd != 0);
 +
 +	do_sanity_check(mm, had_kernel, had_user);
 +}
 +
++#else /* !CONFIG_X86_PAE */
++
+ static void map_ldt_struct_to_user(struct mm_struct *mm)
+ {
+ 	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
+@@ -143,6 +194,8 @@ static void sanity_check_ldt_mapping(struct mm_struct *mm)
+ 	do_sanity_check(mm, had_kernel, had_user);
+ }
+ 
++#endif /* CONFIG_X86_PAE */
++
  /*
   * If PTI is enabled, this maps the LDT into the kernelmode and
   * usermode tables for the given mm.
-@@ -115,9 +158,8 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
- static int
- map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- {
--#ifdef CONFIG_PAGE_TABLE_ISOLATION
--	bool is_vmalloc, had_top_level_entry;
- 	unsigned long va;
-+	bool is_vmalloc;
- 	spinlock_t *ptl;
- 	pgd_t *pgd;
- 	int i;
-@@ -131,13 +173,15 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 	 */
- 	WARN_ON(ldt->slot != -1);
- 
-+	/* Check if the current mappings are sane */
-+	sanity_check_ldt_mapping(mm);
-+
- 	/*
- 	 * Did we already have the top level entry allocated?  We can't
- 	 * use pgd_none() for this because it doens't do anything on
- 	 * 4-level page table kernels.
- 	 */
- 	pgd = pgd_offset(mm, LDT_BASE_ADDR);
--	had_top_level_entry = (pgd->pgd != 0);
- 
- 	is_vmalloc = is_vmalloc_addr(ldt->entries);
- 
-@@ -172,35 +216,25 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 		pte_unmap_unlock(ptep, ptl);
- 	}
- 
--	if (mm->context.ldt) {
--		/*
--		 * We already had an LDT.  The top-level entry should already
--		 * have been allocated and synchronized with the usermode
--		 * tables.
--		 */
--		WARN_ON(!had_top_level_entry);
--		if (static_cpu_has(X86_FEATURE_PTI))
--			WARN_ON(!kernel_to_user_pgdp(pgd)->pgd);
--	} else {
--		/*
--		 * This is the first time we're mapping an LDT for this process.
--		 * Sync the pgd to the usermode tables.
--		 */
--		WARN_ON(had_top_level_entry);
--		if (static_cpu_has(X86_FEATURE_PTI)) {
--			WARN_ON(kernel_to_user_pgdp(pgd)->pgd);
--			set_pgd(kernel_to_user_pgdp(pgd), *pgd);
--		}
--	}
-+	/* Propagate LDT mapping to the user page-table */
-+	map_ldt_struct_to_user(mm);
- 
- 	va = (unsigned long)ldt_slot_va(slot);
- 	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, 0);
- 
- 	ldt->slot = slot;
--#endif
- 	return 0;
- }
- 
-+#else /* !CONFIG_PAGE_TABLE_ISOLATION */
-+
-+static int
-+map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_PAGE_TABLE_ISOLATION */
-+
- static void free_ldt_pgtables(struct mm_struct *mm)
- {
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
