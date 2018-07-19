@@ -2,141 +2,151 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEEFC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29593C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8D2020673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C98C320661
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:19:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vZgkReBf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8D2020673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h7HCB+Ti"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C98C320661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbeGSRAd (ORCPT
+        id S1732011AbeGSRDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 13:00:33 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:43868 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeGSRAd (ORCPT
+        Thu, 19 Jul 2018 13:03:37 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38996 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731699AbeGSRDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 13:00:33 -0400
-Received: by mail-pl0-f68.google.com with SMTP id o7-v6so3869853plk.10;
-        Thu, 19 Jul 2018 09:16:39 -0700 (PDT)
+        Thu, 19 Jul 2018 13:03:37 -0400
+Received: by mail-wm0-f66.google.com with SMTP id h20-v6so6966250wmb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 09:19:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RlcZD3q5eY/o8SO2Atokt+Ioz76TKgEq98TgZrjQpIg=;
-        b=vZgkReBflDFl5cw0iZtgNHOtVyj5ByxZbhJ48d5/E22KwXvGenn3kzEZLL6dxdkF/q
-         Fzvs8STWrytkutBflgJDAfvjLJhRpcA2tzUZIYd5MzdkWU2OkRuRY8Sp8Y+3TwDwIWqJ
-         lXD3CXjdDzeXuwSX48ZnlRefkWGoQDTG/rEGn5ErpDAehp3kSWWtrvoypPJ9QjhodKZt
-         koeou36GawBWqrwgpa9uhlYeqjRNo/gZGsWjaDyTIr06AYWuuz0UjsbnJYMQAofD1uXB
-         jvHB0cH5gUP38nzJ3TUTDGQ7ZKFlaICI6eZ1pdeZychzIo9KdyC3sONsM57/qHrRCm3P
-         az6Q==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=mtoEkUenwKXEVaYbLXYNYms73QdfgGVwiTkvGMMXbUc=;
+        b=h7HCB+TimIpmhToaMwJaEFFBzqR+qNrE9o1oaW0duPE1abrV7PPQPZ6duGld4DAnke
+         FSDCW+uiu/Gg0rxhhYxKBN0L1bCrk4qvROu6rRJwh82SE6tAoAj/dL/aeHfkaebJoK4U
+         xpMckLeth5OMVrl60O0VGUoTh2YpM4CX+I8og=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RlcZD3q5eY/o8SO2Atokt+Ioz76TKgEq98TgZrjQpIg=;
-        b=Obb2RFbmXrvE7piMShodgJoe4fK5sifKmOQxSbHRZ0kSnu5mtxITI9pQ9i7FLr8ICu
-         6G6L1Veg8K6GPOvzckaZcJ2kfBlTm4jQgF85vUsbaweFSs2gvMq9Pm9FyKM08HV9Q40i
-         7qfBqL1tfFTezQADXGaTl4EXzrNMru7tz8y94CZNLmrUrn47c8J6KcD9HibhBeje0/1J
-         N8DOg385FgIajSYEo7YIeSHIHvXLaneYZp7KTTntmI0N81OeK0gti1+JXT343lHuRwPX
-         Zxw3pJV13HOW8xLOxn2GSH+3oeezsrA0C1TvgRwyn/yVCXKndrrrQFA6WHQh8iz/f2D8
-         b3NA==
-X-Gm-Message-State: AOUpUlGwLqh23cd7oi8QPoD1GeIHW/kI7OJGFiMuUxZovj1XZ7CQZ57U
-        zqj1kP3B5zZI4lDtnpjjc2DhLf6/
-X-Google-Smtp-Source: AAOMgpdlr6q7iH23KRD74OimywlIZAuo5KsIC4ERq0TkjBpG3AYeAcgOHNdu12l7ui9I0z9mMgb/jQ==
-X-Received: by 2002:a17:902:301:: with SMTP id 1-v6mr10618464pld.127.1532016999279;
-        Thu, 19 Jul 2018 09:16:39 -0700 (PDT)
-Received: from dsa-mb.local ([2601:282:800:fd80:41e6:c9c0:c223:a927])
-        by smtp.googlemail.com with ESMTPSA id s1-v6sm16342366pfj.53.2018.07.19.09.16.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 09:16:38 -0700 (PDT)
-Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to
- per-namespace
-To:     David Miller <davem@davemloft.net>
-Cc:     xiyou.wangcong@gmail.com, netdev@vger.kernel.org,
-        nikita.leshchenko@oracle.com, roopa@cumulusnetworks.com,
-        stephen@networkplumber.org, idosch@mellanox.com, jiri@mellanox.com,
-        saeedm@mellanox.com, alex.aring@gmail.com,
-        linux-wpan@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
- <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
- <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
- <20180718.125938.2271502580775162784.davem@davemloft.net>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
-Date:   Thu, 19 Jul 2018 10:16:36 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180718.125938.2271502580775162784.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=mtoEkUenwKXEVaYbLXYNYms73QdfgGVwiTkvGMMXbUc=;
+        b=LymxUd4EGx6TRE4HmDLBuFQjnLIzl6R1nFCF2VG9ccTw3ym4QmKnqOOF93ivzemWhH
+         7SirNPbFi6i7poVb66WYMS15ZE6sceMunIJGSJwxtx54tQDW5CWv3m1IA1w+lvp+TLql
+         GV1/yd05902RPI9R4Thgg53FIH09wg97nsi7NR737gCNQ6bEG5RoYWBu7yLnvIN0yLuU
+         +LNohERFoqqeNfO5VaLQ1jILxhzr/iQ6PihseVhd2EG4xbd+hKPl2ow6RDAUDXP5l4Wk
+         Ef02eF6Sk8ksrMqudiAeHcSqBf4CWX+73Zqfqa5CJLyCHtmkGZgLRI8y5+V7lQKqVZwq
+         J1Yw==
+X-Gm-Message-State: AOUpUlFI/pFtd7Tiyu+i4nk9SULPRGDruvF0CPh6Wk14ryBdsshTwwqd
+        DC3+UXAoADdkdWEU6B6/dVOONw==
+X-Google-Smtp-Source: AAOMgpfIqTeUDtC/mnpNFU20vWnw+LXi5Tc8gDdWQ9ZjGdUjz1URvCU7vRVr/4wiH79C2QDo++mI8Q==
+X-Received: by 2002:a1c:90e:: with SMTP id 14-v6mr4753800wmj.130.1532017182509;
+        Thu, 19 Jul 2018 09:19:42 -0700 (PDT)
+Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id r125-v6sm9610361wmb.27.2018.07.19.09.19.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Jul 2018 09:19:41 -0700 (PDT)
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@linaro.org
+Subject: [PATCH v2] backlight: pwm_bl: Fix uninitialized variable
+Date:   Thu, 19 Jul 2018 17:19:23 +0100
+Message-Id: <20180719161923.21510-1-daniel.thompson@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180716210241.9457-1-daniel.thompson@linaro.org>
+References: <20180716210241.9457-1-daniel.thompson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/17/18 9:59 PM, David Miller wrote:
-> From: David Ahern <dsahern@gmail.com>
-> Date: Tue, 17 Jul 2018 13:02:18 -0600
-> 
->> I understand the concern about global resource and limits: as it stands
->> you have to increase the limits in init_net to the max expected and hope
->> for the best. With per namespace limits you can lower the limits of each
->> namespace better control the total impact on the total memory used.
->> Perhaps the defaults for namespaces after init_net could have really low
->> defaults (e.g., 16 / 32 / 64 for gc_thresh 1/2/3) requiring admin
->> intervention.
-> 
-> How does this work when a namespace creates another namespace?
-> 
-> Changing the defaults for non-init_net namespaces could work, but that
-> could be a surprise to some people.
-> 
+Currently, if the DT does not define num-interpolated-steps then
+num_steps is undefined and the interpolation code will deploy randomly.
+Fix this.
 
-Patches 14 (ipv4) and 15 (ipv6) currently use the existing hardcoded
-values - not based on current init_net or anything else. This could be
-changed to:
+Additionally fix a small grammar error that was identified and
+tighten up return code checking of DT properties, both of which came
+up during review of this patch.
 
-+	if (net_eq(net, &init_net)) {
-+		arp_tbl->gc_thresh1	= 128;
-+		arp_tbl->gc_thresh2	= 512;
-+		arp_tbl->gc_thresh3	= 1024;
-+	} else {
-+		arp_tbl->gc_thresh1	= 16;
-+		arp_tbl->gc_thresh2	= 32;
-+		arp_tbl->gc_thresh3	= 64;
-+	}
+Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation between
+brightness-levels")
+Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+---
 
-and update the documentation that any new network namespaces have lower
-defaults.
+Notes:
+    v2:
+     - Simplify SoB chain (with Marcel's permission)
+     - Separate complex if statement and make other similar calls use same
+       return code checking approach
+     - Tidy up comment formatting and fix pre-existing grammar error
 
-As for any change in behavior: today neighbor entries from one namespace
-can be removed due to actions in another so no obvious correlation. With
-lower settings then gc could kick in and remove entries that otherwise
-would not have been. The big hit would be to a new namespace where an
-app inserts a lot of PERMANENT entries.
+ drivers/video/backlight/pwm_bl.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
-Chatting with Nikolay about this and he brought up a good corollary - ip
-fragmentation. It really is a similar problem in that memory is consumed
-as a result of packets received from an external entity. The ipfrag
-sysctls are per namespace with a limit that non-init_net namespaces can
-not set high_thresh > the current value of init_net. Potential memory
-consumed by fragments scales with the number of namespaces which is the
-primary concern with making neighbor tables per namespace.
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 9ee4c1b735b2..f7799f62fea0 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -284,30 +284,29 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 		ret = of_property_read_u32_array(node, "brightness-levels",
+ 						 data->levels,
+ 						 data->max_brightness);
+-		if (ret < 0)
++		if (!ret)
+ 			return ret;
 
-If we kept the current default settings (128/512/1024) per namespace we
-still have capped memory use, and the one user visible hit that comes to
-mind is the namespace with a lot of PERM entries.
+ 		ret = of_property_read_u32(node, "default-brightness-level",
+ 					   &value);
+-		if (ret < 0)
++		if (!ret)
+ 			return ret;
+
+ 		data->dft_brightness = value;
+
+ 		/*
+ 		 * This property is optional, if is set enables linear
+-		 * interpolation between each of the values of brightness levels
+-		 * and creates a new pre-computed table.
++		 * interpolation between each of the values of brightness
++		 * levels and creates a new pre-computed table.
+ 		 */
+-		of_property_read_u32(node, "num-interpolated-steps",
+-				     &num_steps);
+-
+-		/*
+-		 * Make sure that there is at least two entries in the
+-		 * brightness-levels table, otherwise we can't interpolate
+-		 * between two points.
+-		 */
+-		if (num_steps) {
++		ret = of_property_read_u32(node, "num-interpolated-steps",
++					   &num_steps);
++		if (!ret || num_steps) {
++			/*
++			 * Make sure that there are at least two entries in
++			 * the brightness-levels table, otherwise we can't
++			 * interpolate between two points.
++			 */
+ 			if (data->max_brightness < 2) {
+ 				dev_err(dev, "can't interpolate\n");
+ 				return -EINVAL;
+--
+2.17.1
+
