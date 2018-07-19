@@ -2,147 +2,109 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E328ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BDEECDFB4
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3218120673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:43:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3218120673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=magewell.com
+	by mail.kernel.org (Postfix) with ESMTP id 22BB12084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:53:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uJUGmJ15"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BB12084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbeGSEYd (ORCPT
+        id S1727185AbeGSEeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 00:24:33 -0400
-Received: from out20-38.mail.aliyun.com ([115.124.20.38]:39236 "EHLO
-        out20-38.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725739AbeGSEYd (ORCPT
+        Thu, 19 Jul 2018 00:34:01 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38512 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726640AbeGSEeB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 00:24:33 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07598314|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07423;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=27;RT=27;SR=0;TI=SMTPD_---.CSaQ2Fr_1531971789;
-Received: from John(mailfrom:yong.deng@magewell.com fp:SMTPD_---.CSaQ2Fr_1531971789)
-          by smtp.aliyun-inc.com(10.147.44.145);
-          Thu, 19 Jul 2018 11:43:09 +0800
-Date:   Thu, 19 Jul 2018 11:43:06 +0800
-From:   Yong <yong.deng@magewell.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v10 2/2] media: V3s: Add support for Allwinner CSI.
-Message-Id: <20180719114306.55b2e5f9e9a140a8922a2785@magewell.com>
-In-Reply-To: <20180718095513.4cm77g2iuilvfmd6@paasikivi.fi.intel.com>
-References: <1525417745-37964-1-git-send-email-yong.deng@magewell.com>
-        <20180626110821.wkal6fcnoncsze6y@valkosipuli.retiisi.org.uk>
-        <20180705154802.03604f156709be11892b19c0@magewell.com>
-        <20180718095513.4cm77g2iuilvfmd6@paasikivi.fi.intel.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.30; i686-pc-mingw32)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 19 Jul 2018 00:34:01 -0400
+Received: by mail-pf0-f193.google.com with SMTP id v15-v6so3197619pff.5;
+        Wed, 18 Jul 2018 20:52:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=s5wkn7KzIHXcu8iYSx3rRYrbRkzTH++HYBe2a53i2gc=;
+        b=uJUGmJ15IErQB6xveEi6CnutWG7UWhwO7Rtj/wsZYfxEA17+utYHA7uNxzSUWm7fBF
+         pPjhIei4Y08SXj31XAgr3CHwxyjtYw0/QVn5jySjuIrMXoyjERdAlTZ0iZ7yxO/BUpth
+         lmIy/7MqpFEMldV/aM/TjRsQsv17pRQCuFVFaDEuxVRZK4h88Se0A6Q9Ix1X1hJOx+n2
+         7IU3elkQOoN0r4S3k62Mg5UZN6KnlQLRxj6BCPGnmh8xs+3TqXUwUi6JD2+i/V7VYTuM
+         hboBdrgCETnSKNBVej62zW79OGxAfGMyaaHNGAC0n0Hq9AqfmTL9j/3OBCeRQAR4iaQk
+         AWlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=s5wkn7KzIHXcu8iYSx3rRYrbRkzTH++HYBe2a53i2gc=;
+        b=Doa2+3DO11Ww846GXwyk2iITnNuZ2e6Rok4Zadw4lp1YgbhBip4Rq+D4hOoDgI5xIY
+         iu8/yHQzh4MHrsZA+1zP3OYY9jdkWWj0bhHDKfj0JHRHjxoamnXm+03nbHaZy9QtYXpw
+         fBp2OhZlQpixckew8haCT3Fdk7CkRe723fOcVGMi5L+Flz/y6wKLmbZKSYnlrNEEK6lA
+         Mn43MVi4ExSMhN7HfrN4VDzp/EkSaZAvT9+VkYq36WuFDdqgJwPeIhao/7H/tWsW1wuO
+         nuud1xz2462MXSBWPW2og6mjjjk6jyjjomLHL6pDHqddhmCdN4XWiiz7DHu3ja1vLSff
+         IUbQ==
+X-Gm-Message-State: AOUpUlEfCgxbRLjFPgg1LxQLvGPPTfHc3Qx4ktSpZvQNP0+59paoKSMv
+        R8L1BnTpqDKBYsyLikkpuOI=
+X-Google-Smtp-Source: AAOMgpf7TS2IIRlS8xCXYBSAsgkJq2ytmH+q0kPovG5TNOkevyfWw5MKkNEmS4XGApNg4ahsa9/Lvg==
+X-Received: by 2002:a63:380d:: with SMTP id f13-v6mr8349272pga.124.1531972379377;
+        Wed, 18 Jul 2018 20:52:59 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id o27-v6sm15324568pfj.35.2018.07.18.20.52.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Jul 2018 20:52:58 -0700 (PDT)
+Subject: Re: linux-next: build warning after merge of the net-next tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Lunn <andrew@lunn.ch>
+References: <20180719120447.6e7ba23d@canb.auug.org.au>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <cbc20089-6847-c0eb-5b5a-735245986be1@roeck-us.net>
+Date:   Wed, 18 Jul 2018 20:52:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180719120447.6e7ba23d@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jul 2018 12:55:14 +0300
-Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-
-> Hi Yong,
+On 07/18/2018 07:04 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Thu, Jul 05, 2018 at 03:48:02PM +0800, Yong wrote:
-> > > > +
-> > > > +/* -----------------------------------------------------------------------------
-> > > > + * Media Operations
-> > > > + */
-> > > > +static int sun6i_video_formats_init(struct sun6i_video *video,
-> > > > +				    const struct media_pad *remote)
-> > > > +{
-> > > > +	struct v4l2_subdev_mbus_code_enum mbus_code = { 0 };
-> > > > +	struct sun6i_csi *csi = video->csi;
-> > > > +	struct v4l2_format format;
-> > > > +	struct v4l2_subdev *subdev;
-> > > > +	u32 pad;
-> > > > +	const u32 *pixformats;
-> > > > +	int pixformat_count = 0;
-> > > > +	u32 subdev_codes[32]; /* subdev format codes, 32 should be enough */
-> > > > +	int codes_count = 0;
-> > > > +	int num_fmts = 0;
-> > > > +	int i, j;
-> > > > +
-> > > > +	pad = remote->index;
-> > > > +	subdev = media_entity_to_v4l2_subdev(remote->entity);
-> > > > +	if (subdev == NULL)
-> > > > +		return -ENXIO;
-> > > > +
-> > > > +	/* Get supported pixformats of CSI */
-> > > > +	pixformat_count = sun6i_csi_get_supported_pixformats(csi, &pixformats);
-> > > > +	if (pixformat_count <= 0)
-> > > > +		return -ENXIO;
-> > > > +
-> > > > +	/* Get subdev formats codes */
-> > > > +	mbus_code.pad = pad;
-> > > > +	mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
-> > > > +	while (!v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL,
-> > > > +				 &mbus_code)) {
-> > > 
-> > > The formats supported by the external sub-device may depend on horizontal
-> > > and vertical flipping. You shouldn't assume any particular configuration
-> > > here: instead, bridge drivers generally just need to make sure the formats
-> > > match in link validation when streaming is started. At least the CSI-2
-> > > receiver driver and the DMA engine driver (video device) should check the
-> > > configuration is valid. See e.g. the IPU3 driver:
-> > > drivers/media/pci/intel/ipu3/ipu3-cio2.c .
-> > 
-> > Can mbus_code be added dynamically ?
-> > The code here only enum the mbus code and get the possible supported
-> > pairs of pixformat and mbus by SoC. Not try to check if the formats
-> > (width height ...) is valid or not. The formats validation will be 
-> > in link validation when streaming is started as per your advise. 
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 > 
-> The formats that can be enumerated from the sensor here are those settable
-> using SUBDEV_S_FMT. The enumeration will change on raw sensors if you use
-> the flipping controls. As the bridge driver implements MC as well as subdev
-> APIs, generally the sensor configuration is out of scope of this driver
-> since it's directly configured from the user space.
+> *
+> * Restart config...
+> *
+> ....
 > 
-> Just check that the pipeline is valid before starting streaming in your
-> driver.
-
-OK. I will take some time to change these code.
-
+> This is output by my "make allmodconfig" and only started after merging
+> the net-next tree today.  It has continued for further merges/builds.
 > 
-> -- 
-> Kind regards,
+> I suspect commit
 > 
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
+>    1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
+> 
+> which added an "imply" clause.
+> 
+I thought "imply" was better than "depends on HWMON || HWMON=n", but maybe
+not. Is that a caveat when using "imply", and does it mean that "imply"
+should better not be used ?
 
-
-Thanks,
-Yong
+Guenter
