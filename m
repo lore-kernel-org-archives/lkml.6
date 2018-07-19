@@ -1,175 +1,84 @@
 Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A9FC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3D9C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED08720661
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:20:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNx2PZqR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED08720661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 83DA620661
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:20:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83DA620661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732078AbeGSRDx (ORCPT
+        id S1732091AbeGSREQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 13:03:53 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36416 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732057AbeGSRDx (ORCPT
+        Thu, 19 Jul 2018 13:04:16 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33623 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731888AbeGSREQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 13:03:53 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s7-v6so773502pgv.3;
-        Thu, 19 Jul 2018 09:19:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9OlyJ2pVh5xloN/eMpUiLy/QUIjy53mMtCnRjo5tQ9k=;
-        b=TNx2PZqRoFAzQi8Z73zWDFOx95uPD3uG6ufuZtgi+uzl4ZyaBJy0N2nWiSWl1q6pAX
-         QixIpOTe+knc1O8GasnZ6eRLSNI4ofRAoYlDTLiYu1CEgT03UJauLwfQoF9MqW/OinGD
-         HMMsMMI5dZKOtDygZ+wNmsxFg2foXJoSZF2D51d/AV5AGX93Qu+ACNgf3YQje9C4u/1p
-         VUSSWB/EMxmDNlJ2dCmGpZ/lr+j2j6PJ6vKQNhKlm+3qC341ReTOD+sdm9caJYmlhMwW
-         +t/oMWXAt/rK6nRHycZKo/0uRtvGdWpoxGrijBfa8rL4KgXHljbtOBKSrk9uUspPKoq1
-         tE6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9OlyJ2pVh5xloN/eMpUiLy/QUIjy53mMtCnRjo5tQ9k=;
-        b=ZmG7zgHwaJxANx18GK1zX0cK/zlT1SiKJ6H18N4YulHuP7L0WGGBDR7NJ/PyEhxBkP
-         kLwUd9XBdKfebS7eWzQrubHaOhAR5tkEC6PTuHAaPYP/RVKZyrxxSrJ2BzLZtDBXJY6d
-         Nm4zDZzfs3TaXtxU2rH3JmOPDHYEVx3Vhv8hlUkHdjC5vWau1JjdjBYcx7wTNXbbxbEr
-         djVvDbJZ5YAsLGsWxey3gzbWMVcq0eEPTKoQZKA6A9IAVKhTBE9ZcmstLj6dPgPYxYo6
-         +s3RVqXyDXLjFh3UTAP0MT8xKbdyEkJ3QP9cx/b9xZ6NCxKF14F9w9H+tatAWErjYNjm
-         9Zow==
-X-Gm-Message-State: AOUpUlF/8Use91CKWXX1ZYSx8CtTi0fDMnvBSLPntN2RShH5RCJ1kCC7
-        yJpEaQ3+aDXOP+L/cY+pLyE=
-X-Google-Smtp-Source: AAOMgpepZcvOGyUbF1wXli7XIFBfvR+peaUpQ3T+rMCTzLtWIf6OmrRyf4fjZuzJJ/pgZ+xa+UfueA==
-X-Received: by 2002:a63:8b44:: with SMTP id j65-v6mr10703146pge.248.1532017198888;
-        Thu, 19 Jul 2018 09:19:58 -0700 (PDT)
-Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
-        by smtp.gmail.com with ESMTPSA id x87-v6sm14053444pfa.143.2018.07.19.09.19.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Jul 2018 09:19:58 -0700 (PDT)
-Date:   Thu, 19 Jul 2018 09:19:56 -0700
-From:   Eric Biggers <ebiggers3@gmail.com>
-To:     syzbot <syzbot+0977fcb74b8a12a967b8@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: kernel BUG at fs/super.c:LINE!
-Message-ID: <20180719161956.GA99752@gmail.com>
-References: <00000000000072ce39057072d272@google.com>
- <20180708211159.GA700@sol.localdomain>
+        Thu, 19 Jul 2018 13:04:16 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fgBeQ-00032V-2N; Thu, 19 Jul 2018 18:19:34 +0200
+Date:   Thu, 19 Jul 2018 18:19:33 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+cc:     Peter Zijlstra <peterz@infradead.org>, steven.sistare@oracle.com,
+        daniel.m.jordan@oracle.com, linux@armlinux.org.uk,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        john.stultz@linaro.org, sboyd@codeaurora.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, prarit@redhat.com, feng.tang@intel.com,
+        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, pbonzini@redhat.com
+Subject: Re: [PATCH v14 20/25] x86/tsc: calibrate tsc only once
+In-Reply-To: <4295075b-8a0f-1723-2e80-1bbd2f038846@oracle.com>
+Message-ID: <alpine.DEB.2.21.1807191817080.1693@nanos.tec.linutronix.de>
+References: <20180718022211.6259-1-pasha.tatashin@oracle.com> <20180718022211.6259-21-pasha.tatashin@oracle.com> <20180719103340.GA2494@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1807191300150.1602@nanos.tec.linutronix.de>
+ <4295075b-8a0f-1723-2e80-1bbd2f038846@oracle.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180708211159.GA700@sol.localdomain>
-User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 08, 2018 at 02:11:59PM -0700, Eric Biggers wrote:
-> On Sat, Jul 07, 2018 at 06:29:02PM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    526674536360 Add linux-next specific files for 20180706
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1443b168400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c8d1cfc0cb798e48
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=0977fcb74b8a12a967b8
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=159481b2400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142bca2c400000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+0977fcb74b8a12a967b8@syzkaller.appspotmail.com
-> > 
-> > RBP: 0000000000000004 R08: 0000000020000180 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> > R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-> > Filesystem sysfs get_tree() didn't set fc->root
-> > ------------[ cut here ]------------
-> > kernel BUG at fs/super.c:1761!
-> > invalid opcode: 0000 [#1] SMP KASAN
-> > CPU: 1 PID: 4470 Comm: syz-executor042 Not tainted 4.18.0-rc3-next-20180706+
-> > #1
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > RIP: 0010:vfs_get_tree.cold.21+0x4f/0x60 fs/super.c:1756
-> > Code: 37 00 48 c1 e0 2a 48 89 da 48 c1 ea 03 80 3c 02 00 74 08 48 89 df e8
-> > 30 f0 f4 ff 48 8b 33 48 c7 c7 a0 5a f3 87 e8 05 36 9d ff <0f> 0b 4c 89 ef e8
-> > 17 f0 f4 ff eb c0 90 90 90 90 90 55 48 89 e5 53
-> > RSP: 0018:ffff8801aac07be0 EFLAGS: 00010286
-> > RAX: 000000000000002f RBX: ffffffff8906e5e0 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: ffffffff81634381 RDI: 0000000000000001
-> > RBP: ffff8801aac07c10 R08: ffff8801a6cd6440 R09: ffffed003b5e4fc0
-> > R10: ffffed003b5e4fc0 R11: ffff8801daf27e07 R12: 0000000000000000
-> > R13: ffff8801bf72bdc8 R14: 0000000000000020 R15: ffff8801bf72bdd8
-> > FS:  0000000001bf0880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00000000004b4f7c CR3: 00000001c4ae4000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  do_new_mount fs/namespace.c:2567 [inline]
-> >  do_mount+0x6c1/0x1fb0 fs/namespace.c:2889
-> >  ksys_mount+0x12d/0x140 fs/namespace.c:3105
-> >  __do_sys_mount fs/namespace.c:3119 [inline]
-> >  __se_sys_mount fs/namespace.c:3116 [inline]
-> >  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3116
-> >  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x440c89
-> > Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> > 0f 83 bb 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> > RSP: 002b:00007ffe59b66978 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> > RAX: ffffffffffffffda RBX: 00007ffe59b66990 RCX: 0000000000440c89
-> > RDX: 0000000020000280 RSI: 00000000200000c0 RDI: 0000000020000000
-> > RBP: 0000000000000004 R08: 0000000020000180 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> > R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-> > Modules linked in:
-> > Dumping ftrace buffer:
-> >    (ftrace buffer empty)
-> > ---[ end trace 07cdba975902c41a ]---
-> > RIP: 0010:vfs_get_tree.cold.21+0x4f/0x60 fs/super.c:1756
-> > Code: 37 00 48 c1 e0 2a 48 89 da 48 c1 ea 03 80 3c 02 00 74 08 48 89 df e8
-> > 30 f0 f4 ff 48 8b 33 48 c7 c7 a0 5a f3 87 e8 05 36 9d ff <0f> 0b 4c 89 ef e8
-> > 17 f0 f4 ff eb c0 90 90 90 90 90 55 48 89 e5 53
-> > RSP: 0018:ffff8801aac07be0 EFLAGS: 00010286
-> > RAX: 000000000000002f RBX: ffffffff8906e5e0 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: ffffffff81634381 RDI: 0000000000000001
-> > RBP: ffff8801aac07c10 R08: ffff8801a6cd6440 R09: ffffed003b5e4fc0
-> > R10: ffffed003b5e4fc0 R11: ffff8801daf27e07 R12: 0000000000000000
-> > R13: ffff8801bf72bdc8 R14: 0000000000000020 R15: ffff8801bf72bdd8
-> > FS:  0000000001bf0880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00000000004b4f7c CR3: 00000001c4ae4000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+On Thu, 19 Jul 2018, Pavel Tatashin wrote:
+> On 07/19/2018 07:01 AM, Thomas Gleixner wrote:
 > 
-> This is a bug in "kernfs, sysfs, cgroup, intel_rdt: Support fs_context" from the
-> fs_context patch series.  Proposed fix is
-> https://patchwork.kernel.org/patch/10513375/ ("sysfs: check return value of
-> kernfs_get_tree()").  It might get folded into the original patch.
+> And hpet_pmtime_calibrate_cpu() contains all the hpet/pmtime stuff.
 > 
+> However, when cpu_khz = x86_platform.calibrate_cpu() is called the first
+> time, we still call hpet_pmtime_calibrate_cpu() from
+> native_calibrate_cpu(). We cannot simply split native_calibrate_cpu()
+> into two independent functions because it is also called from
+> recalibrate_cpu_khz().
 
-Fix was folded into "kernfs, sysfs, cgroup, intel_rdt: Support fs_context",
-so invalidating this bug report.
+> So, the question is how to enforce that the first time we do not call hpet/pmtime?
+> 
+> 1. Use a new global variable? Kind of ugly.
+> 2. Use system_state == SYSTEM_BOOTING ? Ugly, and probably not very safe.
 
-#syz invalid
+Both are horrible.
 
-- Eric
+So create two functions. native_...early..() and native....(). The early
+one does not contain the hpet/pmtimer stuff and it replaces the ops.pointer
+with the late one which contains all of it.
+
+Hmm?
+
+Thanks,
+
+	tglx
