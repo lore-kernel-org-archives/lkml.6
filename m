@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7A2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D30ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7446820862
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:57:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE8BC20862
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:57:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kibDvQCj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7446820862
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gkwusNut"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE8BC20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731416AbeGSVmT (ORCPT
+        id S1731446AbeGSVmT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 19 Jul 2018 17:42:19 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45278 "EHLO
+Received: from aserp2120.oracle.com ([141.146.126.78]:45292 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731254AbeGSVmR (ORCPT
+        with ESMTP id S1730628AbeGSVmS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 17:42:17 -0400
+        Thu, 19 Jul 2018 17:42:18 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JKs5c3191508;
-        Thu, 19 Jul 2018 20:56:32 GMT
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JKso7e192061;
+        Thu, 19 Jul 2018 20:56:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=KIc2q7BCkp3E2/GG6EsGHTnVhfILanH2549gIYVBqmw=;
- b=kibDvQCj1aC1eZMch/wTp4iH9P6wAqIh/qf9ArsG05FlwUie2fAlyXZFIlq+BDj0p2W6
- km3DO6JTnz7Qz52p8lMsjchAVdGboL+DrXrKPFMAKH5+s9grcgwr+kngMIRqHXGizdhK
- 8sgyzpMYcjTjDcz/MyB9P+PtUJ14ViyCI5xZW7WOrQIHMj1u0MiZjcrDzQWbkH6kCnkz
- ObrMLP14UpKMj1KI5AGuj8AsBvZG7N8UgGD5fYMwPY1HZdO/k8bUl341sGLFrw4HgXnf
- BN8ISD5PvMqrjqll/Ny76Y36vMugmUiOFk0Ub5+oFvv8kwU94A1fgPk+Qey0W03zfMYg XA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2k9yjgrufb-1
+ bh=u9xkzVrGLcSIP1S5upihsE8ORFj1GIa4knBRLdaeXvE=;
+ b=gkwusNutBPmrNf7EVmAwDwgaCEx9eBN2OUGCFU9NzhlOgbx3OqnJ2ZgxD4Hk/BvfntHN
+ foWVn8NpCfHeb4N0lZU+d91qusja+8NdQXdfy9vapHn4iYx24VEm08VwZNPNNG+r5bdM
+ kSdsqrNioUA9xXwNBVghhq9coL65bOgLV+BOuncDY70/75flrwd7tbNq/FQ1wXhxtI1Q
+ 6m8J7/Wep1gccEJfI+ywZ8ffVi/h9H3kiyMXIQpAVe0L+O5e9/gtntrphexoKhVNkRtc
+ giMx6n9coAQIHRUDHemSBDmHlizsGzSk/7XQ4qhm6SOM3ZDYsXnNnxM4NuRrgbv5j2Yq /Q== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2k9yjgrufp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 20:56:32 +0000
+        Thu, 19 Jul 2018 20:56:39 +0000
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuVv3022438
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKucAd001514
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 20:56:31 GMT
+        Thu, 19 Jul 2018 20:56:38 GMT
 Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuU4n003646;
-        Thu, 19 Jul 2018 20:56:30 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuc7w003735;
+        Thu, 19 Jul 2018 20:56:38 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Jul 2018 20:56:30 +0000
+        with ESMTP ; Thu, 19 Jul 2018 20:56:37 +0000
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -61,15 +61,15 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
         boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com
-Subject: [PATCH v15 10/26] x86/CPU: Call detect_nopl() only on the BSP
-Date:   Thu, 19 Jul 2018 16:55:29 -0400
-Message-Id: <20180719205545.16512-11-pasha.tatashin@oracle.com>
+Subject: [PATCH v15 14/26] s390/time: add read_persistent_wall_and_boot_offset()
+Date:   Thu, 19 Jul 2018 16:55:33 -0400
+Message-Id: <20180719205545.16512-15-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180719205545.16512-1-pasha.tatashin@oracle.com>
 References: <20180719205545.16512-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8959 signatures=668706
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=868
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=986
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1806210000 definitions=main-1807190218
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,57 +77,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@alien8.de>
+read_persistent_wall_and_boot_offset() will replace read_boot_clock64()
+because on some architectures it is more convenient to read both sources
+as one may depend on the other. For s390, implementation is the same
+as read_boot_clock64() but also calling and returning value of
+read_persistent_clock64()
 
-Make it use the setup_* variants and have it be called only on the BSP
-and drop the call in generic_identify() - X86_FEATURE_NOPL will be
-replicated to the APs through the forced caps. Helps keep the mess at a
-manageable level.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 ---
- arch/x86/kernel/cpu/common.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ arch/s390/kernel/time.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 71281ac43b15..46408a8cdf62 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1024,12 +1024,12 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
-  * unless we can find a reliable way to detect all the broken cases.
-  * Enable it explicitly on 64-bit for non-constant inputs of cpu_has().
-  */
--static void detect_nopl(struct cpuinfo_x86 *c)
-+static void detect_nopl(void)
+diff --git a/arch/s390/kernel/time.c b/arch/s390/kernel/time.c
+index cf561160ea88..d1f5447d5687 100644
+--- a/arch/s390/kernel/time.c
++++ b/arch/s390/kernel/time.c
+@@ -221,6 +221,24 @@ void read_persistent_clock64(struct timespec64 *ts)
+ 	ext_to_timespec64(clk, ts);
+ }
+ 
++void __init read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
++						 struct timespec64 *boot_offset)
++{
++	unsigned char clk[STORE_CLOCK_EXT_SIZE];
++	struct timespec64 boot_time;
++	__u64 delta;
++
++	delta = initial_leap_seconds + TOD_UNIX_EPOCH;
++	memcpy(clk, tod_clock_base, STORE_CLOCK_EXT_SIZE);
++	*(__u64 *)&clk[1] -= delta;
++	if (*(__u64 *)&clk[1] > delta)
++		clk[0]--;
++	ext_to_timespec64(clk, &boot_time);
++
++	read_persistent_clock64(wall_time);
++	*boot_offset = timespec64_sub(*wall_time, boot_time);
++}
++
+ void read_boot_clock64(struct timespec64 *ts)
  {
- #ifdef CONFIG_X86_32
--	clear_cpu_cap(c, X86_FEATURE_NOPL);
-+	setup_clear_cpu_cap(X86_FEATURE_NOPL);
- #else
--	set_cpu_cap(c, X86_FEATURE_NOPL);
-+	setup_force_cpu_cap(X86_FEATURE_NOPL);
- #endif
- }
- 
-@@ -1108,7 +1108,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 	if (!pgtable_l5_enabled())
- 		setup_clear_cpu_cap(X86_FEATURE_LA57);
- 
--	detect_nopl(c);
-+	detect_nopl();
- }
- 
- void __init early_cpu_init(void)
-@@ -1206,8 +1206,6 @@ static void generic_identify(struct cpuinfo_x86 *c)
- 
- 	get_model_name(c); /* Default name */
- 
--	detect_nopl(c);
--
- 	detect_null_seg_behavior(c);
- 
- 	/*
+ 	unsigned char clk[STORE_CLOCK_EXT_SIZE];
 -- 
 2.18.0
 
