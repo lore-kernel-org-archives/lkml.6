@@ -3,102 +3,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA30C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96CBC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA2222084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:03:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA2222084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 81D322084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:06:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D322084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731178AbeGSMqR (ORCPT
+        id S1731334AbeGSMs6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 08:46:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:54021 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730316AbeGSMqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:46:17 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41WXj72ZP9z9rxs;
-        Thu, 19 Jul 2018 22:03:22 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Bharata B Rao <bharata@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] powerpc/prom_init: remove linux,stdout-package property
-In-Reply-To: <20180718162116.GA24748@kermit-br-ibm-com>
-References: <20180712171904.18971-1-muriloo@linux.ibm.com> <87a7qoq3z2.fsf@concordia.ellerman.id.au> <20180718162116.GA24748@kermit-br-ibm-com>
-Date:   Thu, 19 Jul 2018 22:03:19 +1000
-Message-ID: <878t67cu0o.fsf@concordia.ellerman.id.au>
+        Thu, 19 Jul 2018 08:48:58 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:32816 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727335AbeGSMs6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 08:48:58 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fg7h0-0006ja-N4; Thu, 19 Jul 2018 14:05:58 +0200
+Date:   Thu, 19 Jul 2018 14:05:58 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
+cc:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>
+Subject: Re: [PATCH V3 1/4] X86/Hyper-V: Add flush HvFlushGuestPhysicalAddressSpace
+ hypercall support
+In-Reply-To: <20180719083946.121493-2-Tianyu.Lan@microsoft.com>
+Message-ID: <alpine.DEB.2.21.1807191404241.1602@nanos.tec.linutronix.de>
+References: <20180719083946.121493-1-Tianyu.Lan@microsoft.com> <20180719083946.121493-2-Tianyu.Lan@microsoft.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Murilo Opsfelder Araujo <muriloo@linux.ibm.com> writes:
-> On Wed, Jul 18, 2018 at 07:37:37PM +1000, Michael Ellerman wrote:
->> Murilo Opsfelder Araujo <muriloo@linux.ibm.com> writes:
->> > This property was added in 2004 by
->> >
->> >     https://github.com/mpe/linux-fullhistory/commit/689fe5072fe9a0dec914bfa4fa60aed1e54563e6
->> >
->> > and the only use of it, which was already inside `#if 0`, was removed a month
->> > later by
->> >
->> >     https://github.com/mpe/linux-fullhistory/commit/1fbe5a6d90f6cd4ea610737ef488719d1a875de7
->> >
->> > Fixes: https://github.com/linuxppc/linux/issues/125
->> 
->> That is going to confuse some scripts that are expecting that to be a
->> "Fixes: <some commit>" tag :)
->> 
->> The proper tag to use there would be "Link:".
->> 
->> But, I'd prefer we didn't add github issue links to the history, as I'm
->> not sure they won't bit-rot eventually. Not because I'm a anti-Microsoft
->> conspiracy person but just because it's a repo I set up and manage and
->> there's no long term plan for it necessarily.
->> 
->> > ---
->> >  arch/powerpc/kernel/prom_init.c | 2 --
->> >  1 file changed, 2 deletions(-)
->> 
->> Including the link here would be ideal, as it means it doesn't end up in
->> the commit history, but it does end up in the mail archive. So if we
->> ever really need to find it, it should be there.
->> 
->> cheers
->
-> Hi, Michael.
->
-> Thanks for reviewing it.  I've sent v2 with your suggestions:
->
->     https://lkml.kernel.org/r/20180718161544.12134-1-muriloo@linux.ibm.com
+On Thu, 19 Jul 2018, Tianyu Lan wrote:
+> @@ -0,0 +1,64 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Hyper-V nested virtualization code.
+> + *
+> + * Copyright (C) 2018, Microsoft, Inc.
+> + *
+> + * Author : Lan Tianyu <Tianyu.Lan@microsoft.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms of the GNU General Public License version 2 as published
+> + * by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful, but
+> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
+> + * NON INFRINGEMENT.  See the GNU General Public License for more
+> + * details.
 
-Thanks.
+You already have the SPDX identifier. So the GPL boilerplate is not really
+required, unless your legal departement insist on it.
 
-I had actually already applied the first version, but I didn't say that
-in my email did I :}
+Thanks,
 
-So I've rebased and applied your v2, thanks.
-
-cheers
+	tglx
