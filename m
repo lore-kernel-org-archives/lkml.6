@@ -2,365 +2,133 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6236ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8AECC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:36:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF4620684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:33:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF4620684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 74CF520684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:36:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZIyTv4Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74CF520684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731313AbeGSNQK (ORCPT
+        id S1731205AbeGSNT2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 09:16:10 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37212 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbeGSNQK (ORCPT
+        Thu, 19 Jul 2018 09:19:28 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44268 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727367AbeGSNT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 09:16:10 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id D0D7B263BED
-Date:   Thu, 19 Jul 2018 14:33:08 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     linux-media@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: Re: [PATCH -next v4 1/3] regmap: add SCCB support
-Message-ID: <20180719123308.iiytv2o52dw5lsbk@earth.universe>
-References: <1531756070-8560-1-git-send-email-akinobu.mita@gmail.com>
- <1531756070-8560-2-git-send-email-akinobu.mita@gmail.com>
+        Thu, 19 Jul 2018 09:19:28 -0400
+Received: by mail-lj1-f194.google.com with SMTP id q127-v6so7210482ljq.11;
+        Thu, 19 Jul 2018 05:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+zz5FBWZM7c5/Rp37TfmfELQ+U8kN1pTTzwEaujQh5E=;
+        b=AZIyTv4QNdPoUH7U1JMZKS+jKCXFrWApFh76rDsICHtigDSdY8iU7YVmerM6a2LFz2
+         phKplIPDDCipO89uElxtu68B6nvNos2fHaTBnnn7UeMKC0UeNVMgIYlNSw16Jpu2xNF6
+         MZHQczb1iz8pTvFNZViGb4lycSUIjdIdu0HZWO8NU6H3UMI5JiL2gHJf7Lso7b6Gpd5l
+         PTboVT69APY5jD3cnCmIb34oQWmNFE1HLDLnCbGZinSaNZ6f7QnQgEg4SYRsTNr34Qoz
+         EiYawb7kJLa/PCKUvGKrFjCj0tjJoyjDgE/yFrV94gyWl2WWakxq4TNNZN9TZ4yJV3LM
+         S/6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+zz5FBWZM7c5/Rp37TfmfELQ+U8kN1pTTzwEaujQh5E=;
+        b=NkAhHqlGODOUTYm70lj13zj1TUxKUbBqNQu48DNS+2ziiFjWt6IZQq+7s7R7WrFgLq
+         0t26jlnP3lnImuyWYenYn5JeTJSmkimA6smzUFudCzgKBro+GlCOMT3qJxZxjAx9pzwn
+         j4eLATFS5iiz3FBwAJoOjS6u1LFxs6NYmMKtG4/gPnHp8WbTY3MPdoUVY99LeLOHOTpf
+         Y+syy+6o967CkalnG2jhepNC0Pwk48KJUhhF/gzQkuH6iqPpFH0VRDiw54ybWuc9pxdW
+         kJalTVIUUTLiGs6OnFTkv/0dQjd1PKuXCmKVWQ0WQEXRuYP8J89pr25BSAKyDeeTEy32
+         9x7g==
+X-Gm-Message-State: AOUpUlEqyFfrHP7ZnF+A4bjVRby/BkyoLBv9tr79xEkMMSiu2CBRciu1
+        Q/eBiz5UpmqOSXBf0KJQK1g=
+X-Google-Smtp-Source: AAOMgpeid8thTR2mJc6gM4KmbtpTvCpwv2Pi8+cn2f3QPIwn40cNsMHNfCAF5YNuDMyyius25rzjKg==
+X-Received: by 2002:a19:1888:: with SMTP id 8-v6mr6342967lfy.121.1532003789250;
+        Thu, 19 Jul 2018 05:36:29 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id j9-v6sm1095530ljh.40.2018.07.19.05.36.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 05:36:28 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fg8AL-0006IG-7Z; Thu, 19 Jul 2018 14:36:17 +0200
+Date:   Thu, 19 Jul 2018 14:36:17 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     Johan Hovold <johan@kernel.org>, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, t-kristo@ti.com,
+        linux-rtc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] rtc: omap: Cut down the shutdown time from 2
+ seconds to 1 sec
+Message-ID: <20180719123617.GV10204@localhost>
+References: <1531372060-10532-1-git-send-email-j-keerthy@ti.com>
+ <1531372060-10532-2-git-send-email-j-keerthy@ti.com>
+ <20180719100229.GQ10204@localhost>
+ <ed335c7a-f079-082d-d572-93632087fd8f@ti.com>
+ <a6930aca-f475-5b53-ce9d-d45fbc75d69c@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ezlpf72tvg54m3jz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1531756070-8560-2-git-send-email-akinobu.mita@gmail.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <a6930aca-f475-5b53-ce9d-d45fbc75d69c@ti.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 19, 2018 at 05:52:17PM +0530, Keerthy wrote:
+> On Thursday 19 July 2018 05:23 PM, Keerthy wrote:
+> > On Thursday 19 July 2018 03:32 PM, Johan Hovold wrote:
+> >> On Thu, Jul 12, 2018 at 10:37:37AM +0530, Keerthy wrote:
 
---ezlpf72tvg54m3jz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> >>> @@ -470,6 +476,9 @@ static void omap_rtc_power_off(void)
+> >>>  	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+> >>>  	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
+> >>>  			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
 
-Hi,
+> >>> +	/* Our calculations started right before the rollover, try again */
 
-On Tue, Jul 17, 2018 at 12:47:48AM +0900, Akinobu Mita wrote:
-> This adds Serial Camera Control Bus (SCCB) support for regmap API that
-> is intended to be used by some of Omnivision sensor drivers.
->=20
-> The ov772x and ov9650 drivers are going to use this SCCB regmap API.
->=20
-> The ov772x driver was previously only worked with the i2c controller
-> drivers that support I2C_FUNC_PROTOCOL_MANGLING, because the ov772x
-> device doesn't support repeated starts.  After commit 0b964d183cbf
-> ("media: ov772x: allow i2c controllers without
-> I2C_FUNC_PROTOCOL_MANGLING"), reading ov772x register is replaced with
-> issuing two separated i2c messages in order to avoid repeated start.
-> Using this SCCB regmap hides the implementation detail.
->=20
-> The ov9650 driver also issues two separated i2c messages to read the
-> registers as the device doesn't support repeated start.  So it can
-> make use of this SCCB regmap.
->=20
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Peter Rosin <peda@axentia.se>
-> Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Hans Verkuil <hans.verkuil@cisco.com>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-> ---
+> >>> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
+> >>> +		goto again;
+> >>
+> >> Here the alarm may have gone off as part of the roll over, in which case
+> >> you shouldn't retry.
+> > 
+> > Ex: We programmed at Sec = 2 and we expect ALARM2 to fire at sec = 3.
+> > 
+> > In the event of Roll over before setting the
+> > OMAP_RTC_INTERRUPTS_IT_ALARM2 bit in the OMAP_RTC_INTERRUPTS_REG will we
+> > not miss the ALARM2 event? Then poweroff would fail right?
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Right, that would fail.
 
--- Sebastian
+> > Hence the attempt to retry the next second. This sequence would begin
+> > right at the beginning of a new second and we expect the full sequence
+> > to get over without having to retry again.
+> > 
+> > Hope i am clear.
 
->  drivers/base/regmap/Kconfig       |   4 ++
->  drivers/base/regmap/Makefile      |   1 +
->  drivers/base/regmap/regmap-sccb.c | 128 ++++++++++++++++++++++++++++++++=
-++++++
->  include/linux/regmap.h            |  35 +++++++++++
->  4 files changed, 168 insertions(+)
->  create mode 100644 drivers/base/regmap/regmap-sccb.c
->=20
-> diff --git a/drivers/base/regmap/Kconfig b/drivers/base/regmap/Kconfig
-> index aff34c0..6ad5ef4 100644
-> --- a/drivers/base/regmap/Kconfig
-> +++ b/drivers/base/regmap/Kconfig
-> @@ -45,3 +45,7 @@ config REGMAP_IRQ
->  config REGMAP_SOUNDWIRE
->  	tristate
->  	depends on SOUNDWIRE_BUS
-> +
-> +config REGMAP_SCCB
-> +	tristate
-> +	depends on I2C
-> diff --git a/drivers/base/regmap/Makefile b/drivers/base/regmap/Makefile
-> index 5ed0023..f5b4e88 100644
-> --- a/drivers/base/regmap/Makefile
-> +++ b/drivers/base/regmap/Makefile
-> @@ -15,3 +15,4 @@ obj-$(CONFIG_REGMAP_MMIO) +=3D regmap-mmio.o
->  obj-$(CONFIG_REGMAP_IRQ) +=3D regmap-irq.o
->  obj-$(CONFIG_REGMAP_W1) +=3D regmap-w1.o
->  obj-$(CONFIG_REGMAP_SOUNDWIRE) +=3D regmap-sdw.o
-> +obj-$(CONFIG_REGMAP_SCCB) +=3D regmap-sccb.o
-> diff --git a/drivers/base/regmap/regmap-sccb.c b/drivers/base/regmap/regm=
-ap-sccb.c
-> new file mode 100644
-> index 0000000..b6eb876
-> --- /dev/null
-> +++ b/drivers/base/regmap/regmap-sccb.c
-> @@ -0,0 +1,128 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Register map access API - SCCB support
-> +
-> +#include <linux/regmap.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +
-> +#include "internal.h"
-> +
-> +/**
-> + * sccb_is_available - Check if the adapter supports SCCB protocol
-> + * @adap: I2C adapter
-> + *
-> + * Return true if the I2C adapter is capable of using SCCB helper functi=
-ons,
-> + * false otherwise.
-> + */
-> +static bool sccb_is_available(struct i2c_adapter *adap)
-> +{
-> +	u32 needed_funcs =3D I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_WRITE_BYTE_DA=
-TA;
-> +
-> +	/*
-> +	 * If we ever want support for hardware doing SCCB natively, we will
-> +	 * introduce a sccb_xfer() callback to struct i2c_algorithm and check
-> +	 * for it here.
-> +	 */
-> +
-> +	return (i2c_get_functionality(adap) & needed_funcs) =3D=3D needed_funcs;
-> +}
-> +
-> +/**
-> + * regmap_sccb_read - Read data from SCCB slave device
-> + * @context: Device that will be interacted wit
-> + * @reg: Register to be read from
-> + * @val: Pointer to store read value
-> + *
-> + * This executes the 2-phase write transmission cycle that is followed b=
-y a
-> + * 2-phase read transmission cycle, returning negative errno else zero on
-> + * success.
-> + */
-> +static int regmap_sccb_read(void *context, unsigned int reg, unsigned in=
-t *val)
-> +{
-> +	struct device *dev =3D context;
-> +	struct i2c_client *i2c =3D to_i2c_client(dev);
-> +	int ret;
-> +	union i2c_smbus_data data;
-> +
-> +	i2c_lock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
-> +
-> +	ret =3D __i2c_smbus_xfer(i2c->adapter, i2c->addr, i2c->flags,
-> +			       I2C_SMBUS_WRITE, reg, I2C_SMBUS_BYTE, NULL);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret =3D __i2c_smbus_xfer(i2c->adapter, i2c->addr, i2c->flags,
-> +			       I2C_SMBUS_READ, 0, I2C_SMBUS_BYTE, &data);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	*val =3D data.byte;
-> +out:
-> +	i2c_unlock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * regmap_sccb_write - Write data to SCCB slave device
-> + * @context: Device that will be interacted wit
-> + * @reg: Register to write to
-> + * @val: Value to be written
-> + *
-> + * This executes the SCCB 3-phase write transmission cycle, returning ne=
-gative
-> + * errno else zero on success.
-> + */
-> +static int regmap_sccb_write(void *context, unsigned int reg, unsigned i=
-nt val)
-> +{
-> +	struct device *dev =3D context;
-> +	struct i2c_client *i2c =3D to_i2c_client(dev);
-> +
-> +	return i2c_smbus_write_byte_data(i2c, reg, val);
-> +}
-> +
-> +static struct regmap_bus regmap_sccb_bus =3D {
-> +	.reg_write =3D regmap_sccb_write,
-> +	.reg_read =3D regmap_sccb_read,
-> +};
-> +
-> +static const struct regmap_bus *regmap_get_sccb_bus(struct i2c_client *i=
-2c,
-> +					const struct regmap_config *config)
-> +{
-> +	if (config->val_bits =3D=3D 8 && config->reg_bits =3D=3D 8 &&
-> +			sccb_is_available(i2c->adapter))
-> +		return &regmap_sccb_bus;
-> +
-> +	return ERR_PTR(-ENOTSUPP);
-> +}
-> +
-> +struct regmap *__regmap_init_sccb(struct i2c_client *i2c,
-> +				  const struct regmap_config *config,
-> +				  struct lock_class_key *lock_key,
-> +				  const char *lock_name)
-> +{
-> +	const struct regmap_bus *bus =3D regmap_get_sccb_bus(i2c, config);
-> +
-> +	if (IS_ERR(bus))
-> +		return ERR_CAST(bus);
-> +
-> +	return __regmap_init(&i2c->dev, bus, &i2c->dev, config,
-> +			     lock_key, lock_name);
-> +}
-> +EXPORT_SYMBOL_GPL(__regmap_init_sccb);
-> +
-> +struct regmap *__devm_regmap_init_sccb(struct i2c_client *i2c,
-> +				       const struct regmap_config *config,
-> +				       struct lock_class_key *lock_key,
-> +				       const char *lock_name)
-> +{
-> +	const struct regmap_bus *bus =3D regmap_get_sccb_bus(i2c, config);
-> +
-> +	if (IS_ERR(bus))
-> +		return ERR_CAST(bus);
-> +
-> +	return __devm_regmap_init(&i2c->dev, bus, &i2c->dev, config,
-> +				  lock_key, lock_name);
-> +}
-> +EXPORT_SYMBOL_GPL(__devm_regmap_init_sccb);
-> +
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-> index 4f38068..52bf358 100644
-> --- a/include/linux/regmap.h
-> +++ b/include/linux/regmap.h
-> @@ -514,6 +514,10 @@ struct regmap *__regmap_init_i2c(struct i2c_client *=
-i2c,
->  				 const struct regmap_config *config,
->  				 struct lock_class_key *lock_key,
->  				 const char *lock_name);
-> +struct regmap *__regmap_init_sccb(struct i2c_client *i2c,
-> +				  const struct regmap_config *config,
-> +				  struct lock_class_key *lock_key,
-> +				  const char *lock_name);
->  struct regmap *__regmap_init_slimbus(struct slim_device *slimbus,
->  				 const struct regmap_config *config,
->  				 struct lock_class_key *lock_key,
-> @@ -558,6 +562,10 @@ struct regmap *__devm_regmap_init_i2c(struct i2c_cli=
-ent *i2c,
->  				      const struct regmap_config *config,
->  				      struct lock_class_key *lock_key,
->  				      const char *lock_name);
-> +struct regmap *__devm_regmap_init_sccb(struct i2c_client *i2c,
-> +				       const struct regmap_config *config,
-> +				       struct lock_class_key *lock_key,
-> +				       const char *lock_name);
->  struct regmap *__devm_regmap_init_spi(struct spi_device *dev,
->  				      const struct regmap_config *config,
->  				      struct lock_class_key *lock_key,
-> @@ -646,6 +654,19 @@ int regmap_attach_dev(struct device *dev, struct reg=
-map *map,
->  				i2c, config)
-> =20
->  /**
-> + * regmap_init_sccb() - Initialise register map
-> + *
-> + * @i2c: Device that will be interacted with
-> + * @config: Configuration for register map
-> + *
-> + * The return value will be an ERR_PTR() on error or a valid pointer to
-> + * a struct regmap.
-> + */
-> +#define regmap_init_sccb(i2c, config)					\
-> +	__regmap_lockdep_wrapper(__regmap_init_sccb, #config,		\
-> +				i2c, config)
-> +
-> +/**
->   * regmap_init_slimbus() - Initialise register map
->   *
->   * @slimbus: Device that will be interacted with
-> @@ -798,6 +819,20 @@ bool regmap_ac97_default_volatile(struct device *dev=
-, unsigned int reg);
->  				i2c, config)
-> =20
->  /**
-> + * devm_regmap_init_sccb() - Initialise managed register map
-> + *
-> + * @i2c: Device that will be interacted with
-> + * @config: Configuration for register map
-> + *
-> + * The return value will be an ERR_PTR() on error or a valid pointer
-> + * to a struct regmap.  The regmap will be automatically freed by the
-> + * device management code.
-> + */
-> +#define devm_regmap_init_sccb(i2c, config)				\
-> +	__regmap_lockdep_wrapper(__devm_regmap_init_sccb, #config,	\
-> +				i2c, config)
-> +
-> +/**
->   * devm_regmap_init_spi() - Initialise register map
->   *
->   * @dev: Device that will be interacted with
-> --=20
-> 2.7.4
->=20
+Yes, sure, but my point is that could end up retrying also after the
+alarm has fired correctly (e.g. due to latencies in turning of the
+power).
 
---ezlpf72tvg54m3jz
-Content-Type: application/pgp-signature; name="signature.asc"
+It may be enough to check OMAP_RTC_STATUS_REG before retrying.
 
------BEGIN PGP SIGNATURE-----
+> I tried to program the interrupt for the same second on the hardware and
+> it does not fire. So to take care of roll over corner case one attempt
+> to retry is needed.
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAltQhQIACgkQ2O7X88g7
-+poInA//XOQNuin98E5XmdaYi8c6xYzQQ30Oz48zRy7RFGXht8JGvlh3Crpf1MDq
-CE1QVUgMeqmU46Q04FLspZ9Ook+oRPuYFOgf7b1bK+vqsUnFHS+UYFLU1IXFTI+C
-DV+8OwqA6MXJvA4ExPafu7UTLo65oxWB+wM4BG2DTY5m1Dk1oUlOzbF8P8H8MPai
-EP+7GYvHfbBrAY9T48BgLmPerydbhr7gEaPvxea2We1Ymu6ooHotCHpxFXQuXTmR
-hr1rWba7xpmuGJj/v2sCvvnzFIX6UNBAE8+FIKTS6xQvkLhsjWaDex0Vmjk9ivFx
-qvW1Kf4y1cMZVPMBRjaK9SGoI4w+ZcsnM7MtkLzObb9rjBdQbMIQ0VapeY4T/vm4
-3w2vjAQBDpRS033J4auA9lQbA8nN09tPfCnqVhI6/HrsezxWsNqL01r5eLUchwqW
-XNRadZQSNt31NAVKGoyBDfoAmF4StqE1vWON+INHbCiNmyPgOxwG32qCRls+2fQJ
-3pSoO9yA+8M3LOdskuYbUnL//TCOozd3Qxrs3mjRZ5ibw4zNbnEttnXpzVf4tiWY
-Q/GZfWRRLBL+jlmCbuoBJkSrOyZ1Zr1lcyYzeTioXWrOf9O2jO0QPVJFC9knTrst
-UYD9Xn0qRlrGGU8uW8XZAR09MCX08k4iZeTjIiX9ykZV79R6QZM=
-=ZcyN
------END PGP SIGNATURE-----
+Yes, that's expected.
 
---ezlpf72tvg54m3jz--
+Thanks,
+Johan
