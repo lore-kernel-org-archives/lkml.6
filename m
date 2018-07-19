@@ -2,90 +2,103 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A910C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD04ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3200A20671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:55:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3200A20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B49752084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 10:55:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49752084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731671AbeGSLi0 (ORCPT
+        id S1731692AbeGSLi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 07:38:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:47390 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731655AbeGSLiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 07:38:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 970301684;
-        Thu, 19 Jul 2018 03:55:49 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 145753F246;
-        Thu, 19 Jul 2018 03:55:46 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, robh@kernel.org,
-        mathieu.poirier@linaro.org, sudeep.holla@arm.com,
-        frowand.list@gmail.com, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, matt.sealey@arm.com,
-        charles.garcia-tobin@arm.com, coresight@lists.linaro.org,
-        john.horley@arm.com, mike.leach@linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Kim Phillips <kim.phillips@arm.com>
-Subject: [PATCH v2 04/10] coresight: platform: Fix leaking device reference
-Date:   Thu, 19 Jul 2018 11:55:08 +0100
-Message-Id: <1531997715-6767-5-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
-References: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
+        Thu, 19 Jul 2018 07:38:28 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55192 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731656AbeGSLi1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 07:38:27 -0400
+Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 2e8dde5ba2417363; Thu, 19 Jul 2018 12:55:49 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     Lan Tianyu <tianyu.lan@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] ACPI: save NVS memory for ASUS 1025C laptop
+Date:   Thu, 19 Jul 2018 12:54:09 +0200
+Message-ID: <4593492.JrdWhbroZC@aspire.rjw.lan>
+In-Reply-To: <1531137835-21581-1-git-send-email-w@1wt.eu>
+References: <1531137835-21581-1-git-send-email-w@1wt.eu>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't drop the reference on the remote device while parsing the
-connection, held by bus_find_device(). Fix this by duplicating the
-device name and dropping the reference.
+On Monday, July 9, 2018 2:03:55 PM CEST Willy Tarreau wrote:
+> Every time I tried to upgrade my laptop from 3.10.x to 4.x I faced an
+> issue by which the fan would run at full speed upon resume. Bisecting
+> it showed me the issue was introduced in 3.17 by commit 821d6f0359b0
+> (ACPI / sleep: Do not save NVS for new machines to accelerate S3). This
+> code only affects machines built starting as of 2012, but this Asus
+> 1025C laptop was made in 2012 and apparently needs the NVS data to be
+> saved, otherwise the CPU's thermal state is not properly reported on
+> resume and the fan runs at full speed upon resume.
+> 
+> Here's a very simple way to check if such a machine is affected :
+> 
+>   # cat /sys/class/thermal/thermal_zone0/temp
+>   55000
+> 
+>   ( now suspend, wait one second and resume )
+> 
+>   # cat /sys/class/thermal/thermal_zone0/temp
+>   0
+> 
+>   (and after ~15 seconds the fan starts to spin)
+> 
+> Let's apply the same quirk as commit cbc00c13 (ACPI: save NVS memory
+> for Lenovo G50-45) and reuse the function it provides. Note that this
+> commit was already backported to 4.9.x but not 4.4.x.
+> 
+> Cc: <linux-acpi@vger.kernel.org>
+> Cc: <stable@vger.kernel.org> # 3.17+: requires cbc00c13
+> Signed-off-by: Willy Tarreau <w@1wt.eu>
+> ---
+>  drivers/acpi/sleep.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+> index 974e584..af54d7b 100644
+> --- a/drivers/acpi/sleep.c
+> +++ b/drivers/acpi/sleep.c
+> @@ -338,6 +338,14 @@ static const struct dmi_system_id acpisleep_dmi_table[] __initconst = {
+>  		DMI_MATCH(DMI_PRODUCT_NAME, "K54HR"),
+>  		},
+>  	},
+> +	{
+> +	.callback = init_nvs_save_s3,
+> +	.ident = "Asus 1025C",
+> +	.matches = {
+> +		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> +		DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
+> +		},
+> +	},
+>  	/*
+>  	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
+>  	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
+> 
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- - New in v2
----
- drivers/hwtracing/coresight/of_coresight.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-index 6c2f95a..c5f664c 100644
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -161,7 +161,9 @@ static int of_coresight_parse_endpoint(struct device *dev,
- 		}
- 
- 		pdata->outports[*i] = endpoint.port;
--		pdata->child_names[*i] = dev_name(rdev);
-+		pdata->child_names[*i] = devm_kstrdup(dev,
-+						      dev_name(rdev),
-+						      GFP_KERNEL);
- 		pdata->child_ports[*i] = rendpoint.id;
- 		/* Move the index */
- 		(*i)++;
-@@ -171,6 +173,8 @@ static int of_coresight_parse_endpoint(struct device *dev,
- 		of_node_put(rparent);
- 	if (rport)
- 		of_node_put(rport);
-+	if (rdev)
-+		put_device(rdev);
- 
- 	return ret;
- }
--- 
-2.7.4
 
