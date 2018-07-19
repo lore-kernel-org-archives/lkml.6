@@ -2,143 +2,260 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8875EECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26CEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B2D920652
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:18:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JA966Qz9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UKMkvVpE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B2D920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 8789120661
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:22:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8789120661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730926AbeGSXEB (ORCPT
+        id S1731000AbeGSXHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:04:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48302 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730383AbeGSXEA (ORCPT
+        Thu, 19 Jul 2018 19:07:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37989 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730383AbeGSXHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:04:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7C03560B1E; Thu, 19 Jul 2018 22:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532038734;
-        bh=PGYF59ny5Qx8fu1sEfS/nVzeA68tRuCHlJyVezeXR2Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JA966Qz96kZ9Tc7HbuDcTNtoRR0AlsCWDt/Y+GbZJy9fhKh+A4oIKykZlHa0N3C6Q
-         NfpcjdohByUOxSorAhm0AuChbUQHaCFXszLPDuOmXHYAe+/MWsW55iRBYd4BgJW6QO
-         sP50IxqDxdF6p4lbFAh+kmSg02LYJ1x+gRfacQhI=
-Received: from vgutta-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vnkgutta@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 05E1C60274;
-        Thu, 19 Jul 2018 22:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532038733;
-        bh=PGYF59ny5Qx8fu1sEfS/nVzeA68tRuCHlJyVezeXR2Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UKMkvVpEEWc2LnY6vZeqO4/0tUOKiJPiVbjlhsdXwhdcnPUWGnBvB9/3nl0+g3+oY
-         YbP0NNP15P5SALlOHLrMox+D2J9jMOYlhoY06ZKnFhfOtLStukk2+k5PYqN3SyM9+2
-         qUl8rP+LEleiqzDQnJMflOIv8LRwtlhbB+q0p5CE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 05E1C60274
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vnkgutta@codeaurora.org
-From:   Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-To:     linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, rishabhb@codeaurora.org,
-        linux-kernel@vger.kernel.org, robh@kernel.org, hoeun.ryu@gmail.com,
-        adobriyan@gmail.com, zhizhouzhang@asrmicro.com,
-        suzuki.poulose@arm.com, mark.rutland@arm.com, james.morse@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com
-Cc:     Abhimanyu Kapur <abhimany@codeaurora.org>,
-        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Subject: [PATCH] ARM64: smp: Fix cpu_up() racing with sys_reboot
-Date:   Thu, 19 Jul 2018 15:18:46 -0700
-Message-Id: <1532038726-3376-1-git-send-email-vnkgutta@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 19 Jul 2018 19:07:35 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMLvH12437005
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 19 Jul 2018 15:21:57 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMLunU2437002;
+        Thu, 19 Jul 2018 15:21:56 -0700
+Date:   Thu, 19 Jul 2018 15:21:56 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Pavel Tatashin <tipbot@zytor.com>
+Message-ID: <tip-368a540e0232ad446931f5a4e8a5e06f69f21343@git.kernel.org>
+Cc:     hpa@zytor.com, pbonzini@redhat.com, pasha.tatashin@oracle.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org
+Reply-To: hpa@zytor.com, pasha.tatashin@oracle.com, pbonzini@redhat.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de
+In-Reply-To: <20180719205545.16512-2-pasha.tatashin@oracle.com>
+References: <20180719205545.16512-2-pasha.tatashin@oracle.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/timers] x86/kvmclock: Remove memblock dependency
+Git-Commit-ID: 368a540e0232ad446931f5a4e8a5e06f69f21343
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nothing stops a process from hotplugging in a CPU concurrently
-with a sys_reboot() call. In such a situation we could have
-ipi_cpu_stop() mark a cpu as 'offline' and _cpu_up() ignore the
-fact that the CPU is not really offline and call the
-CPU_UP_PREPARE notifier. When this happens stop_machine code will
-complain that the cpu thread already exists and BUG_ON().
+Commit-ID:  368a540e0232ad446931f5a4e8a5e06f69f21343
+Gitweb:     https://git.kernel.org/tip/368a540e0232ad446931f5a4e8a5e06f69f21343
+Author:     Pavel Tatashin <pasha.tatashin@oracle.com>
+AuthorDate: Thu, 19 Jul 2018 16:55:20 -0400
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 20 Jul 2018 00:02:36 +0200
 
-CPU0                      CPU1
+x86/kvmclock: Remove memblock dependency
 
- sys_reboot()
- kernel_restart()
- machine_restart()
- machine_shutdown()
- smp_send_stop()
- ...                   ipi_cpu_stop()
-		       set_cpu_online(1, false)
-                       local_irq_disable()
-                       while(1)
-        <PREEMPT>
- cpu_up()
- _cpu_up()
- if (!cpu_online(1))
- __cpu_notify(CPU_UP_PREPARE...)
+KVM clock is initialized later compared to other hypervisor clocks because
+it has a dependency on the memblock allocator.
 
- cpu_stop_cpu_callback()
- BUG_ON(stopper->thread)
+Bring it in line with other hypervisors by using memory from the BSS
+instead of allocating it.
 
-This is easily reproducible by hotplugging in and out in a tight
-loop while also rebooting.
+The benefits:
 
-Since the CPU is not really offline and hasn't gone through the
-proper steps to be marked as such, let's mark the CPU as inactive.
-This is just as easily testable as online and avoids any possibility
-of _cpu_up() trying to bring the CPU back online when it never was
-offline to begin with. Based on the similar patchset by for arm
-targets 040c163( "ARM: smp: Fix cpu_up() racing with sys_reboot)"
+  - Remove ifdef from common code
+  - Earlier availability of the clock
+  - Remove dependency on memblock, and reduce code
 
-Signed-off-by: Abhimanyu Kapur <abhimany@codeaurora.org>
-Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+The downside:
+
+  - Static allocation of the per cpu data structures sized NR_CPUS * 64byte
+    Will be addressed in follow up patches.
+
+[ tglx: Split out from larger series ]
+
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: steven.sistare@oracle.com
+Cc: daniel.m.jordan@oracle.com
+Cc: linux@armlinux.org.uk
+Cc: schwidefsky@de.ibm.com
+Cc: heiko.carstens@de.ibm.com
+Cc: john.stultz@linaro.org
+Cc: sboyd@codeaurora.org
+Cc: hpa@zytor.com
+Cc: douly.fnst@cn.fujitsu.com
+Cc: peterz@infradead.org
+Cc: prarit@redhat.com
+Cc: feng.tang@intel.com
+Cc: pmladek@suse.com
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: linux-s390@vger.kernel.org
+Cc: boris.ostrovsky@oracle.com
+Cc: jgross@suse.com
+Link: https://lkml.kernel.org/r/20180719205545.16512-2-pasha.tatashin@oracle.com
+
 ---
- arch/arm64/kernel/smp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/kvm.c      |  1 +
+ arch/x86/kernel/kvmclock.c | 66 ++++++++--------------------------------------
+ arch/x86/kernel/setup.c    |  4 ---
+ 3 files changed, 12 insertions(+), 59 deletions(-)
 
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index 2faa986..adee4d3 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -790,7 +790,7 @@ void arch_irq_work_raise(void)
-  */
- static void ipi_cpu_stop(unsigned int cpu)
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 5b2300b818af..c65c232d3ddd 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -628,6 +628,7 @@ const __initconst struct hypervisor_x86 x86_hyper_kvm = {
+ 	.name			= "KVM",
+ 	.detect			= kvm_detect,
+ 	.type			= X86_HYPER_KVM,
++	.init.init_platform	= kvmclock_init,
+ 	.init.guest_late_init	= kvm_guest_init,
+ 	.init.x2apic_available	= kvm_para_available,
+ };
+diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+index 3b8e7c13c614..1f6ac5aaa904 100644
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -23,9 +23,9 @@
+ #include <asm/apic.h>
+ #include <linux/percpu.h>
+ #include <linux/hardirq.h>
+-#include <linux/memblock.h>
+ #include <linux/sched.h>
+ #include <linux/sched/clock.h>
++#include <linux/mm.h>
+ 
+ #include <asm/mem_encrypt.h>
+ #include <asm/x86_init.h>
+@@ -44,6 +44,13 @@ static int parse_no_kvmclock(char *arg)
+ }
+ early_param("no-kvmclock", parse_no_kvmclock);
+ 
++/* Aligned to page sizes to match whats mapped via vsyscalls to userspace */
++#define HV_CLOCK_SIZE	(sizeof(struct pvclock_vsyscall_time_info) * NR_CPUS)
++#define WALL_CLOCK_SIZE	(sizeof(struct pvclock_wall_clock))
++
++static u8 hv_clock_mem[PAGE_ALIGN(HV_CLOCK_SIZE)] __aligned(PAGE_SIZE);
++static u8 wall_clock_mem[PAGE_ALIGN(WALL_CLOCK_SIZE)] __aligned(PAGE_SIZE);
++
+ /* The hypervisor will put information about time periodically here */
+ static struct pvclock_vsyscall_time_info *hv_clock;
+ static struct pvclock_wall_clock *wall_clock;
+@@ -245,43 +252,12 @@ static void kvm_shutdown(void)
+ 	native_machine_shutdown();
+ }
+ 
+-static phys_addr_t __init kvm_memblock_alloc(phys_addr_t size,
+-					     phys_addr_t align)
+-{
+-	phys_addr_t mem;
+-
+-	mem = memblock_alloc(size, align);
+-	if (!mem)
+-		return 0;
+-
+-	if (sev_active()) {
+-		if (early_set_memory_decrypted((unsigned long)__va(mem), size))
+-			goto e_free;
+-	}
+-
+-	return mem;
+-e_free:
+-	memblock_free(mem, size);
+-	return 0;
+-}
+-
+-static void __init kvm_memblock_free(phys_addr_t addr, phys_addr_t size)
+-{
+-	if (sev_active())
+-		early_set_memory_encrypted((unsigned long)__va(addr), size);
+-
+-	memblock_free(addr, size);
+-}
+-
+ void __init kvmclock_init(void)
  {
--	set_cpu_online(cpu, false);
-+	set_cpu_active(cpu, false);
+ 	struct pvclock_vcpu_time_info *vcpu_time;
+-	unsigned long mem, mem_wall_clock;
+-	int size, cpu, wall_clock_size;
++	int cpu;
+ 	u8 flags;
  
- 	local_daif_mask();
- 	sdei_mask_local_cpu();
-@@ -925,10 +925,10 @@ void smp_send_stop(void)
+-	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+-
+ 	if (!kvm_para_available())
+ 		return;
  
- 	/* Wait up to one second for other CPUs to stop */
- 	timeout = USEC_PER_SEC;
--	while (num_online_cpus() > 1 && timeout--)
-+	while (num_active_cpus() > 1 && timeout--)
- 		udelay(1);
+@@ -291,28 +267,11 @@ void __init kvmclock_init(void)
+ 	} else if (!(kvmclock && kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE)))
+ 		return;
  
--	if (num_online_cpus() > 1)
-+	if (num_active_cpus() > 1)
- 		pr_warning("SMP: failed to stop secondary CPUs %*pbl\n",
- 			   cpumask_pr_args(cpu_online_mask));
+-	wall_clock_size = PAGE_ALIGN(sizeof(struct pvclock_wall_clock));
+-	mem_wall_clock = kvm_memblock_alloc(wall_clock_size, PAGE_SIZE);
+-	if (!mem_wall_clock)
+-		return;
+-
+-	wall_clock = __va(mem_wall_clock);
+-	memset(wall_clock, 0, wall_clock_size);
+-
+-	mem = kvm_memblock_alloc(size, PAGE_SIZE);
+-	if (!mem) {
+-		kvm_memblock_free(mem_wall_clock, wall_clock_size);
+-		wall_clock = NULL;
+-		return;
+-	}
+-
+-	hv_clock = __va(mem);
+-	memset(hv_clock, 0, size);
++	wall_clock = (struct pvclock_wall_clock *)wall_clock_mem;
++	hv_clock = (struct pvclock_vsyscall_time_info *)hv_clock_mem;
  
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+ 	if (kvm_register_clock("primary cpu clock")) {
+ 		hv_clock = NULL;
+-		kvm_memblock_free(mem, size);
+-		kvm_memblock_free(mem_wall_clock, wall_clock_size);
+ 		wall_clock = NULL;
+ 		return;
+ 	}
+@@ -357,13 +316,10 @@ int __init kvm_setup_vsyscall_timeinfo(void)
+ 	int cpu;
+ 	u8 flags;
+ 	struct pvclock_vcpu_time_info *vcpu_time;
+-	unsigned int size;
+ 
+ 	if (!hv_clock)
+ 		return 0;
+ 
+-	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+-
+ 	cpu = get_cpu();
+ 
+ 	vcpu_time = &hv_clock[cpu].pvti;
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 2f86d883dd95..da1dbd99cb6e 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1197,10 +1197,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	memblock_find_dma_reserve();
+ 
+-#ifdef CONFIG_KVM_GUEST
+-	kvmclock_init();
+-#endif
+-
+ 	tsc_early_delay_calibrate();
+ 	if (!early_xdbc_setup_hardware())
+ 		early_xdbc_register_console();
