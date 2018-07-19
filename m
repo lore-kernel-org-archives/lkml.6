@@ -2,113 +2,359 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8578CC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B770EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BAAF20671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:48:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BAAF20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EFA020671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 07:49:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EFA020671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731431AbeGSIao (ORCPT
+        id S1731455AbeGSIbW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 04:30:44 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:34339 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727700AbeGSIao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 04:30:44 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 44E96491580D7;
-        Thu, 19 Jul 2018 15:48:45 +0800 (CST)
-Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.382.0; Thu, 19 Jul 2018
- 15:48:39 +0800
-Subject: Re: [V9fs-developer] [PATCH v3] Fix a hard lockup case in the virtio
- transport
-To:     jiangyiwen <jiangyiwen@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        "Ron Minnich" <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>
-References: <5B503AEC.5080404@huawei.com>
-CC:     <v9fs-developer@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   piaojun <piaojun@huawei.com>
-Message-ID: <5B504231.3090706@huawei.com>
-Date:   Thu, 19 Jul 2018 15:48:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        Thu, 19 Jul 2018 04:31:22 -0400
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:37619 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727700AbeGSIbW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 04:31:22 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 22C1A10195219;
+        Thu, 19 Jul 2018 09:49:27 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id B5B56CC67F; Thu, 19 Jul 2018 09:49:26 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 09:49:26 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     nouveau@lists.freedesktop.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/fb_helper: Add
+ drm_fb_helper_output_poll_changed_with_rpm()
+Message-ID: <20180719074926.GA14303@wunner.de>
+References: <20180718205645.25924-1-lyude@redhat.com>
+ <20180718205645.25924-2-lyude@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <5B503AEC.5080404@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718205645.25924-2-lyude@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LGTM
+On Wed, Jul 18, 2018 at 04:56:39PM -0400, Lyude Paul wrote:
+> When DP MST hubs get confused, they can occasionally stop responding for
+> a good bit of time up until the point where the DRM driver manages to
+> do the right DPCD accesses to get it to start responding again. In a
+> worst case scenario however, this process can take upwards of 10+
+> seconds.
+> 
+> Currently we use the default output_poll_changed handler
+> drm_fb_helper_output_poll_changed() to handle output polling, which
+> doesn't happen to grab any power references on the device when polling.
+> If we're unlucky enough to have a hub (such as Lenovo's infamous laptop
+> docks for the P5x/P7x series) that's easily startled and confused, this
+> can lead to a pretty nasty deadlock situation that looks like this:
+> 
+> - Hotplug event from hub happens, we enter
+>   drm_fb_helper_output_poll_changed() and start communicating with the
+>   hub
+> - While we're in drm_fb_helper_output_poll_changed() and attempting to
+>   communicate with the hub, we end up confusing it and cause it to stop
+>   responding for at least 10 seconds
+> - After 5 seconds of being in drm_fb_helper_output_poll_changed(), the
+>   pm core attempts to put the GPU into autosuspend, which ends up
+>   calling drm_kms_helper_poll_disable()
+> - While the runtime PM core is waiting in drm_kms_helper_poll_disable()
+>   for the output poll to finish, we end up finally detecting an MST
+>   display
+> - We notice the new display and tries to enable it, which triggers
+>   an atomic commit which triggers a call to pm_runtime_get_sync()
+> - the output poll thread deadlocks the pm core waiting for the pm core
+>   to finish the autosuspend request while the pm core waits for the
+>   output poll thread to finish
 
-On 2018/7/19 15:17, jiangyiwen wrote:
-> When client has multiple threads that issue io requests
-> all the time, and the server has a very good performance,
-> it may cause cpu is running in the irq context for a long
-> time because it can check virtqueue has buf in the *while*
-> loop.
+This will still deadlock if ->runtime_suspend commences before the
+hotplug event and the hotplug event occurs before polling has been
+disabled by ->runtime_suspend.
+
+The correct fix is to call pm_runtime_get_sync() *conditionally* in
+the atomic commit which enables the display, using the same conditional
+as d61a5c106351, i.e. if (!drm_kms_helper_is_poll_worker()).
+
+Now I realize I sent you down the wrong path when I suggested to
+introduce a DRM helper here.  My apologies, I didn't fully appreciate
+what is going awry here!
+
+Anything that happens in nouveau's poll worker never needs to acquire
+a runtime PM ref because polling is only enabled while runtime active,
+and ->runtime_suspend waits for an ongoing poll to finish.
+
+Thinking a bit more about this, our mistake is to acquire runtime PM
+refs too far down in the call stack.  As a fix that can be backported
+to stable, adding if (!drm_kms_helper_is_poll_worker()) conditionals
+seems fine to me, but the long term fix is to push acquisition of refs
+further up in the call stack.
+
+E.g., if the user forces connector probing via sysfs, a runtime PM ref
+should be acquired in status_store() in drm_sysfs.c before invoking
+connector->funcs->fill_modes().  That way, if the user forces connector
+probing while the GPU is powering down, rpm_resume() will correctly wait
+for rpm_suspend() to finish before resuming the card.  So if we architect
+it like this, we're actually using the functionality provided by the
+PM core in the way that it's supposed to be used.
+
+The problem is that adding pm_runtime_get_sync() to status_store()
+conflicts with the desire to have a library of generic DRM functions:
+Some GPUs may be able to probe connectors without resuming to runtime
+active state, others don't use runtime PM at all.  One solution that
+comes to mind is a driver_features flag which tells the DRM core whether
+to acquire a runtime PM ref in various places.
+
+In your original patches 4 and 5, what exactly was the call stack which
+led to i2c being accessed while runtime suspended?  Was it sysfs access
+via /sys/class/i2c-adapter/* ?  If so, acquisition of the runtime PM ref
+needs to likewise happen in that sysfs entry point, rather than deep down
+in the call stack upon accessing the i2c bus.
+
+Thanks,
+
+Lukas
+
 > 
-> So we should keep chan->lock in the whole loop.
+> Sample:
+> [  246.669625] INFO: task kworker/4:0:37 blocked for more than 120 seconds.
+> [  246.673398]       Not tainted 4.18.0-rc5Lyude-Test+ #2
+> [  246.675271] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  246.676527] kworker/4:0     D    0    37      2 0x80000000
+> [  246.677580] Workqueue: events output_poll_execute [drm_kms_helper]
+> [  246.678704] Call Trace:
+> [  246.679753]  __schedule+0x322/0xaf0
+> [  246.680916]  schedule+0x33/0x90
+> [  246.681924]  schedule_preempt_disabled+0x15/0x20
+> [  246.683023]  __mutex_lock+0x569/0x9a0
+> [  246.684035]  ? kobject_uevent_env+0x117/0x7b0
+> [  246.685132]  ? drm_fb_helper_hotplug_event.part.28+0x20/0xb0 [drm_kms_helper]
+> [  246.686179]  mutex_lock_nested+0x1b/0x20
+> [  246.687278]  ? mutex_lock_nested+0x1b/0x20
+> [  246.688307]  drm_fb_helper_hotplug_event.part.28+0x20/0xb0 [drm_kms_helper]
+> [  246.689420]  drm_fb_helper_output_poll_changed+0x23/0x30 [drm_kms_helper]
+> [  246.690462]  drm_kms_helper_hotplug_event+0x2a/0x30 [drm_kms_helper]
+> [  246.691570]  output_poll_execute+0x198/0x1c0 [drm_kms_helper]
+> [  246.692611]  process_one_work+0x231/0x620
+> [  246.693725]  worker_thread+0x214/0x3a0
+> [  246.694756]  kthread+0x12b/0x150
+> [  246.695856]  ? wq_pool_ids_show+0x140/0x140
+> [  246.696888]  ? kthread_create_worker_on_cpu+0x70/0x70
+> [  246.697998]  ret_from_fork+0x3a/0x50
+> [  246.699034] INFO: task kworker/0:1:60 blocked for more than 120 seconds.
+> [  246.700153]       Not tainted 4.18.0-rc5Lyude-Test+ #2
+> [  246.701182] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  246.702278] kworker/0:1     D    0    60      2 0x80000000
+> [  246.703293] Workqueue: pm pm_runtime_work
+> [  246.704393] Call Trace:
+> [  246.705403]  __schedule+0x322/0xaf0
+> [  246.706439]  ? wait_for_completion+0x104/0x190
+> [  246.707393]  schedule+0x33/0x90
+> [  246.708375]  schedule_timeout+0x3a5/0x590
+> [  246.709289]  ? mark_held_locks+0x58/0x80
+> [  246.710208]  ? _raw_spin_unlock_irq+0x2c/0x40
+> [  246.711222]  ? wait_for_completion+0x104/0x190
+> [  246.712134]  ? trace_hardirqs_on_caller+0xf4/0x190
+> [  246.713094]  ? wait_for_completion+0x104/0x190
+> [  246.713964]  wait_for_completion+0x12c/0x190
+> [  246.714895]  ? wake_up_q+0x80/0x80
+> [  246.715727]  ? get_work_pool+0x90/0x90
+> [  246.716649]  flush_work+0x1c9/0x280
+> [  246.717483]  ? flush_workqueue_prep_pwqs+0x1b0/0x1b0
+> [  246.718442]  __cancel_work_timer+0x146/0x1d0
+> [  246.719247]  cancel_delayed_work_sync+0x13/0x20
+> [  246.720043]  drm_kms_helper_poll_disable+0x1f/0x30 [drm_kms_helper]
+> [  246.721123]  nouveau_pmops_runtime_suspend+0x3d/0xb0 [nouveau]
+> [  246.721897]  pci_pm_runtime_suspend+0x6b/0x190
+> [  246.722825]  ? pci_has_legacy_pm_support+0x70/0x70
+> [  246.723737]  __rpm_callback+0x7a/0x1d0
+> [  246.724721]  ? pci_has_legacy_pm_support+0x70/0x70
+> [  246.725607]  rpm_callback+0x24/0x80
+> [  246.726553]  ? pci_has_legacy_pm_support+0x70/0x70
+> [  246.727376]  rpm_suspend+0x142/0x6b0
+> [  246.728185]  pm_runtime_work+0x97/0xc0
+> [  246.728938]  process_one_work+0x231/0x620
+> [  246.729796]  worker_thread+0x44/0x3a0
+> [  246.730614]  kthread+0x12b/0x150
+> [  246.731395]  ? wq_pool_ids_show+0x140/0x140
+> [  246.732202]  ? kthread_create_worker_on_cpu+0x70/0x70
+> [  246.732878]  ret_from_fork+0x3a/0x50
+> [  246.733768] INFO: task kworker/4:2:422 blocked for more than 120 seconds.
+> [  246.734587]       Not tainted 4.18.0-rc5Lyude-Test+ #2
+> [  246.735393] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  246.736113] kworker/4:2     D    0   422      2 0x80000080
+> [  246.736789] Workqueue: events_long drm_dp_mst_link_probe_work [drm_kms_helper]
+> [  246.737665] Call Trace:
+> [  246.738490]  __schedule+0x322/0xaf0
+> [  246.739250]  schedule+0x33/0x90
+> [  246.739908]  rpm_resume+0x19c/0x850
+> [  246.740750]  ? finish_wait+0x90/0x90
+> [  246.741541]  __pm_runtime_resume+0x4e/0x90
+> [  246.742370]  nv50_disp_atomic_commit+0x31/0x210 [nouveau]
+> [  246.743124]  drm_atomic_commit+0x4a/0x50 [drm]
+> [  246.743775]  restore_fbdev_mode_atomic+0x1c8/0x240 [drm_kms_helper]
+> [  246.744603]  restore_fbdev_mode+0x31/0x140 [drm_kms_helper]
+> [  246.745373]  drm_fb_helper_restore_fbdev_mode_unlocked+0x54/0xb0 [drm_kms_helper]
+> [  246.746220]  drm_fb_helper_set_par+0x2d/0x50 [drm_kms_helper]
+> [  246.746884]  drm_fb_helper_hotplug_event.part.28+0x96/0xb0 [drm_kms_helper]
+> [  246.747675]  drm_fb_helper_output_poll_changed+0x23/0x30 [drm_kms_helper]
+> [  246.748544]  drm_kms_helper_hotplug_event+0x2a/0x30 [drm_kms_helper]
+> [  246.749439]  nv50_mstm_hotplug+0x15/0x20 [nouveau]
+> [  246.750111]  drm_dp_send_link_address+0x177/0x1c0 [drm_kms_helper]
+> [  246.750764]  drm_dp_check_and_send_link_address+0xa8/0xd0 [drm_kms_helper]
+> [  246.751602]  drm_dp_mst_link_probe_work+0x51/0x90 [drm_kms_helper]
+> [  246.752314]  process_one_work+0x231/0x620
+> [  246.752979]  worker_thread+0x44/0x3a0
+> [  246.753838]  kthread+0x12b/0x150
+> [  246.754619]  ? wq_pool_ids_show+0x140/0x140
+> [  246.755386]  ? kthread_create_worker_on_cpu+0x70/0x70
+> [  246.756162]  ret_from_fork+0x3a/0x50
+> [  246.756847]
+>                Showing all locks held in the system:
+> [  246.758261] 3 locks held by kworker/4:0/37:
+> [  246.759016]  #0: 00000000f8df4d2d ((wq_completion)"events"){+.+.}, at: process_one_work+0x1b3/0x620
+> [  246.759856]  #1: 00000000e6065461 ((work_completion)(&(&dev->mode_config.output_poll_work)->work)){+.+.}, at: process_one_work+0x1b3/0x620
+> [  246.760670]  #2: 00000000cb66735f (&helper->lock){+.+.}, at: drm_fb_helper_hotplug_event.part.28+0x20/0xb0 [drm_kms_helper]
+> [  246.761516] 2 locks held by kworker/0:1/60:
+> [  246.762274]  #0: 00000000fff6be0f ((wq_completion)"pm"){+.+.}, at: process_one_work+0x1b3/0x620
+> [  246.762982]  #1: 000000005ab44fb4 ((work_completion)(&dev->power.work)){+.+.}, at: process_one_work+0x1b3/0x620
+> [  246.763890] 1 lock held by khungtaskd/64:
+> [  246.764664]  #0: 000000008cb8b5c3 (rcu_read_lock){....}, at: debug_show_all_locks+0x23/0x185
+> [  246.765588] 5 locks held by kworker/4:2/422:
+> [  246.766440]  #0: 00000000232f0959 ((wq_completion)"events_long"){+.+.}, at: process_one_work+0x1b3/0x620
+> [  246.767390]  #1: 00000000bb59b134 ((work_completion)(&mgr->work)){+.+.}, at: process_one_work+0x1b3/0x620
+> [  246.768154]  #2: 00000000cb66735f (&helper->lock){+.+.}, at: drm_fb_helper_restore_fbdev_mode_unlocked+0x4c/0xb0 [drm_kms_helper]
+> [  246.768966]  #3: 000000004c8f0b6b (crtc_ww_class_acquire){+.+.}, at: restore_fbdev_mode_atomic+0x4b/0x240 [drm_kms_helper]
+> [  246.769921]  #4: 000000004c34a296 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_backoff+0x8a/0x1b0 [drm]
+> [  246.770839] 1 lock held by dmesg/1038:
+> [  246.771739] 2 locks held by zsh/1172:
+> [  246.772650]  #0: 00000000836d0438 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> [  246.773680]  #1: 000000001f4f4d48 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0xc1/0x870
 > 
-> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Reviewed-by: Jun Piao <piaojun@huawei.com>
+> [  246.775522] =============================================
+> 
+> So, to fix this (and any other possible deadlock issues like this that
+> could occur in the output_poll_changed patch) we make sure that
+> nouveau's output_poll_changed functions grab a runtime power ref before
+> sending any hotplug events, and hold it until we're finished. We
+> introduce this through adding a generic DRM helper which other drivers
+> may reuse.
+> 
+> This fixes deadlock issues when in fbcon with nouveau on my P50, and
+> should fix it for everyone else's as well!
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Karol Herbst <karolherbst@gmail.com>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: stable@vger.kernel.org
 > ---
->  net/9p/trans_virtio.c | 21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
+> Changes since v1:
+>  - Add a generic helper for DRM to handle this
 > 
-> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-> index 05006cb..3589864 100644
-> --- a/net/9p/trans_virtio.c
-> +++ b/net/9p/trans_virtio.c
-> @@ -144,24 +144,25 @@ static void req_done(struct virtqueue *vq)
->  	struct virtio_chan *chan = vq->vdev->priv;
->  	unsigned int len;
->  	struct p9_req_t *req;
-> +	bool need_wakeup = false;
->  	unsigned long flags;
+>  drivers/gpu/drm/drm_fb_helper.c         | 23 +++++++++++++++++++++++
+>  drivers/gpu/drm/nouveau/dispnv50/disp.c |  2 +-
+>  include/drm/drm_fb_helper.h             |  5 +++++
+>  3 files changed, 29 insertions(+), 1 deletion(-)
 > 
->  	p9_debug(P9_DEBUG_TRANS, ": request done\n");
-> 
-> -	while (1) {
-> -		spin_lock_irqsave(&chan->lock, flags);
-> -		req = virtqueue_get_buf(chan->vq, &len);
-> -		if (req == NULL) {
-> -			spin_unlock_irqrestore(&chan->lock, flags);
-> -			break;
-> +	spin_lock_irqsave(&chan->lock, flags);
-> +	while ((req = virtqueue_get_buf(chan->vq, &len)) != NULL) {
-> +		if (!chan->ring_bufs_avail) {
-> +			chan->ring_bufs_avail = 1;
-> +			need_wakeup = true;
->  		}
-> -		chan->ring_bufs_avail = 1;
-> -		spin_unlock_irqrestore(&chan->lock, flags);
-> -		/* Wakeup if anyone waiting for VirtIO ring space. */
-> -		wake_up(chan->vc_wq);
-> +
->  		if (len)
->  			p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
->  	}
-> +	spin_unlock_irqrestore(&chan->lock, flags);
-> +	/* Wakeup if anyone waiting for VirtIO ring space. */
-> +	if (need_wakeup)
-> +		wake_up(chan->vc_wq);
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 2ee1eaa66188..1ab2f3646526 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -34,6 +34,7 @@
+>  #include <linux/sysrq.h>
+>  #include <linux/slab.h>
+>  #include <linux/module.h>
+> +#include <linux/pm_runtime.h>
+>  #include <drm/drmP.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_fb_helper.h>
+> @@ -2928,6 +2929,28 @@ void drm_fb_helper_output_poll_changed(struct drm_device *dev)
 >  }
-> 
->  /**
+>  EXPORT_SYMBOL(drm_fb_helper_output_poll_changed);
+>  
+> +/**
+> + * drm_fb_helper_output_poll_changed_with_rpm - DRM mode
+> + *                                              config \.output_poll_changed
+> + *                                              helper for fbdev emulation
+> + * @dev: DRM device
+> + *
+> + * Same as drm_fb_helper_output_poll_changed, except that it makes sure that
+> + * the device is active by synchronously grabbing a runtime power reference
+> + * while probing.
+> + */
+> +void drm_fb_helper_output_poll_changed_with_rpm(struct drm_device *dev)
+> +{
+> +	int ret;
+> +
+> +	ret = pm_runtime_get_sync(dev->dev);
+> +	if (WARN_ON(ret < 0 && ret != -EACCES))
+> +		return;
+> +	drm_fb_helper_hotplug_event(dev->fb_helper);
+> +	pm_runtime_put(dev->dev);
+> +}
+> +EXPORT_SYMBOL(drm_fb_helper_output_poll_changed_with_rpm);
+> +
+>  /* The Kconfig DRM_KMS_HELPER selects FRAMEBUFFER_CONSOLE (if !EXPERT)
+>   * but the module doesn't depend on any fb console symbols.  At least
+>   * attempt to load fbcon to avoid leaving the system without a usable console.
+> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> index eb3e41a78806..fa3ab618a0f9 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> @@ -2015,7 +2015,7 @@ nv50_disp_atomic_state_alloc(struct drm_device *dev)
+>  static const struct drm_mode_config_funcs
+>  nv50_disp_func = {
+>  	.fb_create = nouveau_user_framebuffer_create,
+> -	.output_poll_changed = drm_fb_helper_output_poll_changed,
+> +	.output_poll_changed = drm_fb_helper_output_poll_changed_with_rpm,
+>  	.atomic_check = nv50_disp_atomic_check,
+>  	.atomic_commit = nv50_disp_atomic_commit,
+>  	.atomic_state_alloc = nv50_disp_atomic_state_alloc,
+> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+> index b069433e7fc1..ca809bfbaebb 100644
+> --- a/include/drm/drm_fb_helper.h
+> +++ b/include/drm/drm_fb_helper.h
+> @@ -330,6 +330,7 @@ void drm_fb_helper_fbdev_teardown(struct drm_device *dev);
+>  
+>  void drm_fb_helper_lastclose(struct drm_device *dev);
+>  void drm_fb_helper_output_poll_changed(struct drm_device *dev);
+> +void drm_fb_helper_output_poll_changed_with_rpm(struct drm_device *dev);
+>  #else
+>  static inline void drm_fb_helper_prepare(struct drm_device *dev,
+>  					struct drm_fb_helper *helper,
+> @@ -564,6 +565,10 @@ static inline void drm_fb_helper_output_poll_changed(struct drm_device *dev)
+>  {
+>  }
+>  
+> +static inline void drm_fb_helper_output_poll_changed_with_rpm(struct drm_device *dev)
+> +{
+> +}
+> +
+>  #endif
+>  
+>  static inline int
+> -- 
+> 2.17.1
 > 
