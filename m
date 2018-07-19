@@ -2,117 +2,103 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77C9C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D69B7C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0662D2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D7BA2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:10:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxWtBSNR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0662D2084C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRJSkPtv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D7BA2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731235AbeGSMwX (ORCPT
+        id S1731446AbeGSMxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 08:52:23 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42213 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbeGSMwW (ORCPT
+        Thu, 19 Jul 2018 08:53:05 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38482 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726475AbeGSMxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:52:22 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y4-v6so3567317pgp.9;
-        Thu, 19 Jul 2018 05:09:31 -0700 (PDT)
+        Thu, 19 Jul 2018 08:53:05 -0400
+Received: by mail-pg1-f193.google.com with SMTP id k3-v6so3574158pgq.5;
+        Thu, 19 Jul 2018 05:10:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bMu8Fi3pHigZInUUMKFPEkET+QY2hckCoVBrP3Yv/7g=;
-        b=cxWtBSNRlvv1l7kSHc0KeFWACgY5fcQ5oMW9AMkLSLh7KrZ0meyBuNFjpCppwbIZGS
-         D0UuXkF/+4dzkduhQJNNmKp4llHvtB7Prfk192I9uwgxaJR3IFgQ2VB8kE6Nvp5rgnHv
-         M+pDYGm18sLNM9NuZz89Ds6jzlCaSN004Uw9TRNhIJ+seCYHLJ7XsjcFaWpTpj9Pbxa8
-         CQFB3pd4F06c96RWr2k0lDWLydwa2f4WvtnIXHearL3uIhVELDWiVlfs1YN8jczRnZic
-         w7JIiT/6J2u8MjBYMB8EyLB0n85V046The9SMH3+ZvYxNXuuEbWNHZw9g90QyH/fDEwA
-         lTtg==
+        h=from:to:cc:subject:date:message-id;
+        bh=21pKPZhtnO957syxU7OiO14AZTXWGdj1VCApUX7g3w8=;
+        b=BRJSkPtvzBOI2k4v+mu5mxbMUjm6lFT696gcWNvHC9sSx79Q0zmtV5t+KXyXLMR4UZ
+         Zl3oef3FiW4hAxQJ7TXAhgJ7QieO3u88vaAq2GKuuqTmfh19bLZs98gQJPq8ZguHHjWn
+         rNqgCSKKdhauMmSpIXjLugfs/UTrDoYGIFOK4Pg3IZoy/Ex6dIFyBAe06KeZ2AFbpgMF
+         00OOHQ+2C4zpZ6RMaTK90Q8lpjCHXzViS0ClMSHB+6kCUCQp6kHiIHXz4xhz3Q+bQyNx
+         S4AlvuzqDQm06iylNPgzGV9DQM3YCtDyRPzusq9DSQaxBLMcjmG2oJ9zCaMNfwWe2QqD
+         wu4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bMu8Fi3pHigZInUUMKFPEkET+QY2hckCoVBrP3Yv/7g=;
-        b=R6hqjBoAHBzqho023QaerXVFk5gpi0F92turuHqgqB42rYfuOJ+8OhNbKhhzY6SHep
-         D5z1mfsjQdgz878x5M7VMhMSngpguOCLq4P9scrxiTpo3Lb6mrizkyP3pmLa/wJ5eseS
-         GErEGiDTml408rfHORAV24ePX2MQ7dtrUmXWlhjJMHQAmsMDRlW1CHl/5ObUscv8IE30
-         qP2+5S4gFgC2CWA39cwUPED065p0QzFtfX5/UmWOXkRi1luKzmX77HkifmMKM5Bm6u2w
-         uAi5U2d50ZQUDLA8nOCURuYezIKmvIIITst4yHxJtXmc7rC94z5ZE6m0XoXrgVlvGAqo
-         +XYQ==
-X-Gm-Message-State: AOUpUlGGwDY8glVOr42jGmNrTtcugb3yGA8yUaJwgb7WQAhwSB4VIEWA
-        xM40fnrCY/WdK/w3k0d9fXCMlW92
-X-Google-Smtp-Source: AAOMgpddp0JDvqngK9FzDUNIvPlAlOVV1x7fvZTUrm3bDn89tJouy4eH7aoHk/L7Bez4XNbKT44RAw==
-X-Received: by 2002:a62:5f82:: with SMTP id t124-v6mr9329142pfb.223.1532002171047;
-        Thu, 19 Jul 2018 05:09:31 -0700 (PDT)
-Received: from [192.168.0.77] ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id 21-v6sm17624849pgx.20.2018.07.19.05.09.28
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=21pKPZhtnO957syxU7OiO14AZTXWGdj1VCApUX7g3w8=;
+        b=fL7zfJiQqXafjXDqBvv0Tdl02WcRXqGEdWm9/eUubHvsuspDrA4UDPhRtrFAg1rbme
+         WHNZFbPPpkiw+OhIvTAyVs8iTl6RL/pZLofSgfLOTfytnrjmMGT81T+XBncqkiqTVDad
+         M0rIE4d1BEKhlg+lJhTpvqhmAs4o9Y7/TqqbMICMwGd7I2fxv7yCDZ71W/+v556OWYsC
+         DLGjbeQA5T+wOYmiycOCUw07zV3RZ4TXx82bsYOkQtqkHwcDqcAFGFbIK44gfCsB3EPH
+         CuMrk/xjn19F8OUXTfPUvO8wyJgBhHXrIvrQoIJ5c6ImZAp0zuJmiLOUNu+RvlogxKde
+         j7hw==
+X-Gm-Message-State: AOUpUlFUKbzEcpxBtY7LQUQp7sx/YjMxot/tJG4X6FY/VjQvmgZHGbhY
+        1XKRiviFtQ791Yds619PaU0=
+X-Google-Smtp-Source: AAOMgpeTuvbG+bwK+L4fbPaem/S+9afo85FM9A0IoXTwAx3mimTQqOvcKfC+xRXmretAoSZHI+mNug==
+X-Received: by 2002:a62:4808:: with SMTP id v8-v6mr9309310pfa.89.1532002214027;
+        Thu, 19 Jul 2018 05:10:14 -0700 (PDT)
+Received: from localhost.localdomain ([211.196.191.92])
+        by smtp.gmail.com with ESMTPSA id z123-v6sm8726490pfz.16.2018.07.19.05.10.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 05:09:29 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] tools/bpftool: ignore build products
+        Thu, 19 Jul 2018 05:10:13 -0700 (PDT)
 From:   Taeung Song <treeze.taeung@gmail.com>
 To:     Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180719024515.6659-1-treeze.taeung@gmail.com>
-Message-ID: <262e416e-d712-c850-4126-6a45632da4eb@gmail.com>
-Date:   Thu, 19 Jul 2018 21:09:26 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180719024515.6659-1-treeze.taeung@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 1/2] tools/bpftool: ignore build products
+Date:   Thu, 19 Jul 2018 21:10:04 +0900
+Message-Id: <20180719121005.12018-1-treeze.taeung@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'll resend v3 because it is better to add "bpftool*.8"
-to tools/bpf/bpftool/.gitignore.
+For untracked things of tools/bpf, add this.
 
-   Untracked files:
-     (use "git add <file>..." to include in what will be committed)
+Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
+---
+ tools/bpf/.gitignore         | 5 +++++
+ tools/bpf/bpftool/.gitignore | 1 +
+ 2 files changed, 6 insertions(+)
+ create mode 100644 tools/bpf/.gitignore
 
-           tools/bpf/bpftool/Documentation/bpftool-cgroup.8
-           tools/bpf/bpftool/Documentation/bpftool-map.8
-           tools/bpf/bpftool/Documentation/bpftool-perf.8
-           tools/bpf/bpftool/Documentation/bpftool-prog.8
-           tools/bpf/bpftool/Documentation/bpftool.8
+diff --git a/tools/bpf/.gitignore b/tools/bpf/.gitignore
+new file mode 100644
+index 000000000000..dfe2bd5a4b95
+--- /dev/null
++++ b/tools/bpf/.gitignore
+@@ -0,0 +1,5 @@
++FEATURE-DUMP.bpf
++bpf_asm
++bpf_dbg
++bpf_exp.yacc.*
++bpf_jit_disasm
+diff --git a/tools/bpf/bpftool/.gitignore b/tools/bpf/bpftool/.gitignore
+index d7e678c2d396..103cc5b5b446 100644
+--- a/tools/bpf/bpftool/.gitignore
++++ b/tools/bpf/bpftool/.gitignore
+@@ -1,3 +1,4 @@
+ *.d
+ bpftool
++bpftool*.8
+ FEATURE-DUMP.bpftool
+-- 
+2.17.1
 
-Thanks,
-Taeung
-
-On 07/19/2018 11:45 AM, Taeung Song wrote:
-> For untracked things of tools/bpf, add this.
-> 
-> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
-> ---
->   tools/bpf/.gitignore | 5 +++++
->   1 file changed, 5 insertions(+)
->   create mode 100644 tools/bpf/.gitignore
-> 
-> diff --git a/tools/bpf/.gitignore b/tools/bpf/.gitignore
-> new file mode 100644
-> index 000000000000..dfe2bd5a4b95
-> --- /dev/null
-> +++ b/tools/bpf/.gitignore
-> @@ -0,0 +1,5 @@
-> +FEATURE-DUMP.bpf
-> +bpf_asm
-> +bpf_dbg
-> +bpf_exp.yacc.*
-> +bpf_jit_disasm
-> 
