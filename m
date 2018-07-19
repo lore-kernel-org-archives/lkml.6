@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFBAECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF42ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7078C20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:01:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7078C20684
+	by mail.kernel.org (Postfix) with ESMTP id 0655020684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:02:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0655020684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731949AbeGSXrK (ORCPT
+        id S1731974AbeGSXrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:47:10 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54545 "EHLO mail.bootlin.com"
+        Thu, 19 Jul 2018 19:47:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54599 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731892AbeGSXrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:47:10 -0400
+        id S1731925AbeGSXrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 19:47:11 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BFA80209BC; Fri, 20 Jul 2018 01:01:52 +0200 (CEST)
+        id B6070209C0; Fri, 20 Jul 2018 01:01:53 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8F57E20908;
-        Fri, 20 Jul 2018 01:01:20 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 67BE7209CA;
+        Fri, 20 Jul 2018 01:01:25 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 28/33] mtd: rawnand: docg4: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 01:00:21 +0200
-Message-Id: <20180719230026.8741-29-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 31/33] mtd: rawnand: tegra: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 01:00:24 +0200
+Message-Id: <20180719230026.8741-32-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719230026.8741-1-miquel.raynal@bootlin.com>
 References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
@@ -73,98 +73,241 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/docg4.c | 55 ++++++++++++++++++++++++++------------------
- 1 file changed, 32 insertions(+), 23 deletions(-)
+ drivers/mtd/nand/raw/tegra_nand.c | 162 +++++++++++++++++++++-----------------
+ 1 file changed, 88 insertions(+), 74 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/docg4.c b/drivers/mtd/nand/raw/docg4.c
-index 4dccdfba6140..2f6fcd4efab2 100644
---- a/drivers/mtd/nand/raw/docg4.c
-+++ b/drivers/mtd/nand/raw/docg4.c
-@@ -1227,10 +1227,9 @@ static void __init init_mtd_structs(struct mtd_info *mtd)
- 	 * required within a nand driver because they are performed by the nand
- 	 * infrastructure code as part of nand_scan().  In this case they need
- 	 * to be initialized here because we skip call to nand_scan_ident() (the
--	 * first half of nand_scan()).  The call to nand_scan_ident() is skipped
--	 * because for this device the chip id is not read in the manner of a
--	 * standard nand device.  Unfortunately, nand_scan_ident() does other
--	 * things as well, such as call nand_set_defaults().
-+	 * first half of nand_scan()).  The call to nand_scan_ident() could be
-+	 * skipped because for this device the chip id is not read in the manner
-+	 * of a standard nand device.
- 	 */
+diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
+index 31c0d9ca9d23..c40a53066cee 100644
+--- a/drivers/mtd/nand/raw/tegra_nand.c
++++ b/drivers/mtd/nand/raw/tegra_nand.c
+@@ -906,74 +906,13 @@ static int tegra_nand_select_strength(struct nand_chip *chip, int oobsize)
+ 				       bits_per_step, oobsize);
+ }
  
- 	struct nand_chip *nand = mtd_to_nand(mtd);
-@@ -1315,6 +1314,27 @@ static int __init read_id_reg(struct mtd_info *mtd)
- 
- static char const *part_probes[] = { "cmdlinepart", "saftlpart", NULL };
- 
-+static int docg4_attach_chip(struct nand_chip *chip)
-+{
+-static int tegra_nand_chips_init(struct device *dev,
+-				 struct tegra_nand_controller *ctrl)
++static int tegra_nand_attach_chip(struct nand_chip *chip)
+ {
+-	struct device_node *np = dev->of_node;
+-	struct device_node *np_nand;
+-	int nsels, nchips = of_get_child_count(np);
+-	struct tegra_nand_chip *nand;
+-	struct mtd_info *mtd;
+-	struct nand_chip *chip;
++	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
++	struct tegra_nand_chip *nand = to_tegra_chip(chip);
 +	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct docg4_priv *doc = (struct docg4_priv *)(chip + 1);
-+
-+	init_mtd_structs(mtd);
-+
-+	/* Initialize kernel BCH algorithm */
-+	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
-+	if (!doc->bch)
-+		return -EINVAL;
-+
-+	reset(mtd);
-+
-+	return read_id_reg(mtd);
+ 	int bits_per_step;
+ 	int ret;
+-	u32 cs;
+-
+-	if (nchips != 1) {
+-		dev_err(dev, "Currently only one NAND chip supported\n");
+-		return -EINVAL;
+-	}
+-
+-	np_nand = of_get_next_child(np, NULL);
+-
+-	nsels = of_property_count_elems_of_size(np_nand, "reg", sizeof(u32));
+-	if (nsels != 1) {
+-		dev_err(dev, "Missing/invalid reg property\n");
+-		return -EINVAL;
+-	}
+-
+-	/* Retrieve CS id, currently only single die NAND supported */
+-	ret = of_property_read_u32(np_nand, "reg", &cs);
+-	if (ret) {
+-		dev_err(dev, "could not retrieve reg property: %d\n", ret);
+-		return ret;
+-	}
+-
+-	nand = devm_kzalloc(dev, sizeof(*nand), GFP_KERNEL);
+-	if (!nand)
+-		return -ENOMEM;
+-
+-	nand->cs[0] = cs;
+-
+-	nand->wp_gpio = devm_gpiod_get_optional(dev, "wp", GPIOD_OUT_LOW);
+-
+-	if (IS_ERR(nand->wp_gpio)) {
+-		ret = PTR_ERR(nand->wp_gpio);
+-		dev_err(dev, "Failed to request WP GPIO: %d\n", ret);
+-		return ret;
+-	}
+-
+-	chip = &nand->chip;
+-	chip->controller = &ctrl->controller;
+-
+-	mtd = nand_to_mtd(chip);
+-
+-	mtd->dev.parent = dev;
+-	mtd->owner = THIS_MODULE;
+-
+-	nand_set_flash_node(chip, np_nand);
+-
+-	if (!mtd->name)
+-		mtd->name = "tegra_nand";
+-
+-	chip->options = NAND_NO_SUBPAGE_WRITE | NAND_USE_BOUNCE_BUFFER;
+-	chip->exec_op = tegra_nand_exec_op;
+-	chip->select_chip = tegra_nand_select_chip;
+-	chip->setup_data_interface = tegra_nand_setup_data_interface;
+-
+-	ret = nand_scan_ident(mtd, 1, NULL);
+-	if (ret)
+-		return ret;
+ 
+ 	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+ 		chip->bbt_options |= NAND_BBT_NO_OOB;
+@@ -982,7 +921,8 @@ static int tegra_nand_chips_init(struct device *dev,
+ 	chip->ecc.size = 512;
+ 	chip->ecc.steps = mtd->writesize / chip->ecc.size;
+ 	if (chip->ecc_step_ds != 512) {
+-		dev_err(dev, "Unsupported step size %d\n", chip->ecc_step_ds);
++		dev_err(ctrl->dev, "Unsupported step size %d\n",
++			chip->ecc_step_ds);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1004,14 +944,15 @@ static int tegra_nand_chips_init(struct device *dev,
+ 	}
+ 
+ 	if (chip->ecc.algo == NAND_ECC_BCH && mtd->writesize < 2048) {
+-		dev_err(dev, "BCH supports 2K or 4K page size only\n");
++		dev_err(ctrl->dev, "BCH supports 2K or 4K page size only\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (!chip->ecc.strength) {
+ 		ret = tegra_nand_select_strength(chip, mtd->oobsize);
+ 		if (ret < 0) {
+-			dev_err(dev, "No valid strength found, minimum %d\n",
++			dev_err(ctrl->dev,
++				"No valid strength found, minimum %d\n",
+ 				chip->ecc_strength_ds);
+ 			return ret;
+ 		}
+@@ -1039,7 +980,7 @@ static int tegra_nand_chips_init(struct device *dev,
+ 			nand->config_ecc |= CONFIG_TVAL_8;
+ 			break;
+ 		default:
+-			dev_err(dev, "ECC strength %d not supported\n",
++			dev_err(ctrl->dev, "ECC strength %d not supported\n",
+ 				chip->ecc.strength);
+ 			return -EINVAL;
+ 		}
+@@ -1062,17 +1003,17 @@ static int tegra_nand_chips_init(struct device *dev,
+ 			nand->bch_config |= BCH_TVAL_16;
+ 			break;
+ 		default:
+-			dev_err(dev, "ECC strength %d not supported\n",
++			dev_err(ctrl->dev, "ECC strength %d not supported\n",
+ 				chip->ecc.strength);
+ 			return -EINVAL;
+ 		}
+ 		break;
+ 	default:
+-		dev_err(dev, "ECC algorithm not supported\n");
++		dev_err(ctrl->dev, "ECC algorithm not supported\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	dev_info(dev, "Using %s with strength %d per 512 byte step\n",
++	dev_info(ctrl->dev, "Using %s with strength %d per 512 byte step\n",
+ 		 chip->ecc.algo == NAND_ECC_BCH ? "BCH" : "RS",
+ 		 chip->ecc.strength);
+ 
+@@ -1095,7 +1036,8 @@ static int tegra_nand_chips_init(struct device *dev,
+ 		nand->config |= CONFIG_PS_4096;
+ 		break;
+ 	default:
+-		dev_err(dev, "Unsupported writesize %d\n", mtd->writesize);
++		dev_err(ctrl->dev, "Unsupported writesize %d\n",
++			mtd->writesize);
+ 		return -ENODEV;
+ 	}
+ 
+@@ -1106,7 +1048,79 @@ static int tegra_nand_chips_init(struct device *dev,
+ 	nand->config |= CONFIG_TAG_BYTE_SIZE(mtd->oobsize - 1);
+ 	writel_relaxed(nand->config, ctrl->regs + CONFIG);
+ 
+-	ret = nand_scan_tail(mtd);
++	return 0;
 +}
 +
-+static struct nand_controller_ops docg4_controller_ops = {
-+	.attach_chip = docg4_attach_chip,
++static const struct nand_controller_ops tegra_nand_controller_ops = {
++	.attach_chip = &tegra_nand_attach_chip,
 +};
 +
- static int __init probe_docg4(struct platform_device *pdev)
- {
- 	struct mtd_info *mtd;
-@@ -1350,26 +1370,16 @@ static int __init probe_docg4(struct platform_device *pdev)
- 	mtd->dev.parent = &pdev->dev;
- 	doc->virtadr = virtadr;
- 	doc->dev = dev;
--
--	init_mtd_structs(mtd);
--
--	/* initialize kernel bch algorithm */
--	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
--	if (doc->bch == NULL) {
--		retval = -EINVAL;
--		goto free_nand;
--	}
--
- 	platform_set_drvdata(pdev, doc);
++static int tegra_nand_chips_init(struct device *dev,
++				 struct tegra_nand_controller *ctrl)
++{
++	struct device_node *np = dev->of_node;
++	struct device_node *np_nand;
++	int nsels, nchips = of_get_child_count(np);
++	struct tegra_nand_chip *nand;
++	struct mtd_info *mtd;
++	struct nand_chip *chip;
++	int ret;
++	u32 cs;
++
++	if (nchips != 1) {
++		dev_err(dev, "Currently only one NAND chip supported\n");
++		return -EINVAL;
++	}
++
++	np_nand = of_get_next_child(np, NULL);
++
++	nsels = of_property_count_elems_of_size(np_nand, "reg", sizeof(u32));
++	if (nsels != 1) {
++		dev_err(dev, "Missing/invalid reg property\n");
++		return -EINVAL;
++	}
++
++	/* Retrieve CS id, currently only single die NAND supported */
++	ret = of_property_read_u32(np_nand, "reg", &cs);
++	if (ret) {
++		dev_err(dev, "could not retrieve reg property: %d\n", ret);
++		return ret;
++	}
++
++	nand = devm_kzalloc(dev, sizeof(*nand), GFP_KERNEL);
++	if (!nand)
++		return -ENOMEM;
++
++	nand->cs[0] = cs;
++
++	nand->wp_gpio = devm_gpiod_get_optional(dev, "wp", GPIOD_OUT_LOW);
++
++	if (IS_ERR(nand->wp_gpio)) {
++		ret = PTR_ERR(nand->wp_gpio);
++		dev_err(dev, "Failed to request WP GPIO: %d\n", ret);
++		return ret;
++	}
++
++	chip = &nand->chip;
++	chip->controller = &ctrl->controller;
++	chip->controller->ops = &tegra_nand_controller_ops;
++
++	mtd = nand_to_mtd(chip);
++
++	mtd->dev.parent = dev;
++	mtd->owner = THIS_MODULE;
++
++	nand_set_flash_node(chip, np_nand);
++
++	if (!mtd->name)
++		mtd->name = "tegra_nand";
++
++	chip->options = NAND_NO_SUBPAGE_WRITE | NAND_USE_BOUNCE_BUFFER;
++	chip->exec_op = tegra_nand_exec_op;
++	chip->select_chip = tegra_nand_select_chip;
++	chip->setup_data_interface = tegra_nand_setup_data_interface;
++
++	ret = nand_scan(mtd, 1);
+ 	if (ret)
+ 		return ret;
  
--	reset(mtd);
--	retval = read_id_reg(mtd);
--	if (retval == -ENODEV) {
--		dev_warn(dev, "No diskonchip G4 device found.\n");
--		goto free_bch;
--	}
--
--	retval = nand_scan_tail(mtd);
-+	/*
-+	 * Asking for 0 chips is useless here but it warns the user that the use
-+	 * of the nand_scan() function is a bit abused here because the
-+	 * initialization is actually a bit specific and re-handled again in the
-+	 * ->attach_chip() hook. It will probably leak some memory though.
-+	 */
-+	nand->dummy_controller.ops = &docg4_controller_ops;
-+	retval = nand_scan(mtd, 0);
- 	if (retval)
- 		goto free_bch;
- 
-@@ -1389,7 +1399,6 @@ static int __init probe_docg4(struct platform_device *pdev)
- 	nand_cleanup(nand);
- free_bch:
- 	free_bch(doc->bch);
--free_nand:
- 	kfree(nand);
- unmap:
- 	iounmap(virtadr);
 -- 
 2.14.1
 
