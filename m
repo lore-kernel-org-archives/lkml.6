@@ -2,118 +2,103 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC39FC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA30C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E3320684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:00:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Fx8J/03x";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V9iQUbvL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E3320684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id CA2222084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 12:03:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA2222084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731361AbeGSMnX (ORCPT
+        id S1731178AbeGSMqR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 08:43:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53210 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731094AbeGSMnX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:43:23 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 90D92607B9; Thu, 19 Jul 2018 12:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532001633;
-        bh=vrh8wRnMDFfScS8Rz4pfi0jWws8+jT6s4ffAyZuatdM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Fx8J/03xPzoccozlAtWBgosU6FY17DpodSKQGgcJHMp3+OT004N8SzbIcTxAtHMuK
-         7iA4EE/igvueKG7+Si8WMMa/A1LnL/xTBsbtfJMlF4Jp1KvnemQc5tOACWBI70Iiwa
-         gq0DL3hRc8GawlcHKK628GwDmFxHD8xeA2XpNaa4=
-Received: from [10.201.3.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 19 Jul 2018 08:46:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:54021 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730316AbeGSMqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 08:46:17 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0AD4E60481;
-        Thu, 19 Jul 2018 12:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532001632;
-        bh=vrh8wRnMDFfScS8Rz4pfi0jWws8+jT6s4ffAyZuatdM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=V9iQUbvLfMcOIiiMXDl8yVZzrXgL87GjD79ATr/SkaEHBRvxHOiJMdzJHRO01iFwD
-         Q/uOeS1SZQyHS+lwThwwONC+E5BYdWKXtHfEQJuhU+Qf4lJpl5xf+/YN+advCJ10ZE
-         2mc0GJjbj2wMO3QtYSdaWGgY4bt29PYuthbccWBE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0AD4E60481
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH] remoteproc: qcom: fix Q6V5_WCSS dependencies
-To:     Arnd Bergmann <arnd@arndb.de>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rohit kumar <rohitkr@codeaurora.org>,
-        Sarangdhar Joshi <spjoshi@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180718111730.3531477-1-arnd@arndb.de>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <4fe9f7c1-84b6-9216-2557-a408071d390a@codeaurora.org>
-Date:   Thu, 19 Jul 2018 17:30:28 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by ozlabs.org (Postfix) with ESMTPSA id 41WXj72ZP9z9rxs;
+        Thu, 19 Jul 2018 22:03:22 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Bharata B Rao <bharata@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc/prom_init: remove linux,stdout-package property
+In-Reply-To: <20180718162116.GA24748@kermit-br-ibm-com>
+References: <20180712171904.18971-1-muriloo@linux.ibm.com> <87a7qoq3z2.fsf@concordia.ellerman.id.au> <20180718162116.GA24748@kermit-br-ibm-com>
+Date:   Thu, 19 Jul 2018 22:03:19 +1000
+Message-ID: <878t67cu0o.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20180718111730.3531477-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Murilo Opsfelder Araujo <muriloo@linux.ibm.com> writes:
+> On Wed, Jul 18, 2018 at 07:37:37PM +1000, Michael Ellerman wrote:
+>> Murilo Opsfelder Araujo <muriloo@linux.ibm.com> writes:
+>> > This property was added in 2004 by
+>> >
+>> >     https://github.com/mpe/linux-fullhistory/commit/689fe5072fe9a0dec914bfa4fa60aed1e54563e6
+>> >
+>> > and the only use of it, which was already inside `#if 0`, was removed a month
+>> > later by
+>> >
+>> >     https://github.com/mpe/linux-fullhistory/commit/1fbe5a6d90f6cd4ea610737ef488719d1a875de7
+>> >
+>> > Fixes: https://github.com/linuxppc/linux/issues/125
+>> 
+>> That is going to confuse some scripts that are expecting that to be a
+>> "Fixes: <some commit>" tag :)
+>> 
+>> The proper tag to use there would be "Link:".
+>> 
+>> But, I'd prefer we didn't add github issue links to the history, as I'm
+>> not sure they won't bit-rot eventually. Not because I'm a anti-Microsoft
+>> conspiracy person but just because it's a repo I set up and manage and
+>> there's no long term plan for it necessarily.
+>> 
+>> > ---
+>> >  arch/powerpc/kernel/prom_init.c | 2 --
+>> >  1 file changed, 2 deletions(-)
+>> 
+>> Including the link here would be ideal, as it means it doesn't end up in
+>> the commit history, but it does end up in the mail archive. So if we
+>> ever really need to find it, it should be there.
+>> 
+>> cheers
+>
+> Hi, Michael.
+>
+> Thanks for reviewing it.  I've sent v2 with your suggestions:
+>
+>     https://lkml.kernel.org/r/20180718161544.12134-1-muriloo@linux.ibm.com
 
-On 7/18/2018 4:46 PM, Arnd Bergmann wrote:
-> A new driver got added that depends on QCOM_SMD and fails to link
-> as built-in with CONFIG_QCOM_SMD=m:
-> 
-> drivers/remoteproc/qcom_common.o: In function `smd_subdev_stop':
-> qcom_common.c:(.text+0x674): undefined reference to `qcom_smd_unregister_edge'
-> drivers/remoteproc/qcom_common.o: In function `smd_subdev_start':
-> qcom_common.c:(.text+0x700): undefined reference to `qcom_smd_register_edge'
-> 
-> We've fixed the same thing several times before, so use the same
-> dependency here.
-> 
-> Fixes: 3a3d4163e0bf ("remoteproc: qcom: Introduce Hexagon V5 based WCSS driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Thanks.
 
-Oops, missed it. Sorry.
+I had actually already applied the first version, but I didn't say that
+in my email did I :}
 
-Acked-by: Sricharan R <sricharan@codeaurora.org>
+So I've rebased and applied your v2, thanks.
 
-Regards,
- Sricharan
-
-> ---
->  drivers/remoteproc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 0dde3753c3a5..052d4dd347f9 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -127,6 +127,7 @@ config QCOM_Q6V5_WCSS
->  	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
->  	depends on OF && ARCH_QCOM
->  	depends on QCOM_SMEM
-> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
->  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
->  	depends on QCOM_SYSMON || QCOM_SYSMON=n
->  	select MFD_SYSCON
-> 
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+cheers
