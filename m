@@ -2,105 +2,97 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 461ACECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFCCC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 029A42084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:58:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YPYzioMC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 029A42084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1507C2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:59:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1507C2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731801AbeGSOmN (ORCPT
+        id S1731820AbeGSOmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:42:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40168 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731105AbeGSOmN (ORCPT
+        Thu, 19 Jul 2018 10:42:20 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39428 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731804AbeGSOmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:42:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YbZEhod6+oCuO/XJF2r6OBkvvUCmqgWhGVTmfRqzeHs=; b=YPYzioMCKH4PSfBh4+LL2AHDL
-        j6HIpqdFgyPpOJOPtr3hPi9Z3+LfFKSXLuAzdwEJwu7i9h3JakG3tfdsK7cx7et62hiH4y1/mBGXJ
-        Xfm6eqoEBk5rh92v8+z0iECUZotqY6LDAoU1sWhVLChd2JH3LdkxGe8Sfmz3GGbm5ZIqGEp7yfWUt
-        Xd3c98GuMyzhsg/RNUme9fceOhhhfrsl0uUtDehgVgyOUFFMX/wWj8kBRo2cJqbf/Ozvv9+s1+yul
-        erSJY+tTJQdl6FBjVRTZeQW97mMJMe5Nt+dgyRCBHtqqpQLN10KU5UuVOKEcisA79z3OAV9GMrPKD
-        6WiFz8iQw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fg9SC-0001wY-ER; Thu, 19 Jul 2018 13:58:48 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E64DA20277352; Thu, 19 Jul 2018 15:58:46 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 15:58:46 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
- and IO
-Message-ID: <20180719135846.GH2494@hirez.programming.kicks-ass.net>
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
- <20180712172942.10094-9-hannes@cmpxchg.org>
- <20180718120318.GC2476@hirez.programming.kicks-ass.net>
- <20180718223644.GH2838@cmpxchg.org>
+        Thu, 19 Jul 2018 10:42:19 -0400
+Received: by mail-wm0-f67.google.com with SMTP id h20-v6so6486579wmb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 06:59:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m9lxl6NH9FppFxQrFdHhXypzdTnxtxazSHxp69Rq0yo=;
+        b=mPKo9PBfKBxCDQ4YSLAV2S80YNXrys/nNq7mNEHbO6VPY88jvxTkXtwVRcGFFg6Z5A
+         H4pMPdW2iJ51B7zeiTy2caX5VeDC3rUO/XN6NuYdDSzzRbP5sYwMN2pYv8lseMbnGmk1
+         LYmFzAe7BC/ab4WhlxwHhE3RM+CJg15ncXxed3fyEGYitZIDPFGhHSkxrp+Vg3wuY5qi
+         NFi0Pwk5NP1R604cSVvV90Uo4vYYmvTj92c2oF33GxoUNeV7/lu8ts9fE+Oy6Lsl/GR3
+         as0MXOv5lCDUbKHAZHnjZx5caZnRhc2cLsxov41xGT3gKm1krW3nZz9USq7uVLsvFC0j
+         M1lw==
+X-Gm-Message-State: AOUpUlEdvRs/yJMX0s/3eeW369x3M4b4af7Zvhjds3J8IlDHE1bLSMt8
+        Cfmmw4+cQXXvtdGGPOgyps8=
+X-Google-Smtp-Source: AAOMgpcoP273dJkxklqtAN0mnYbrWklFBvJHdK0nWP34L9N7X2wm1iohmY4ctnt117grG0WF0vvY3w==
+X-Received: by 2002:a1c:e409:: with SMTP id b9-v6mr4143456wmh.34.1532008740316;
+        Thu, 19 Jul 2018 06:59:00 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id m17-v6sm10280339wrg.65.2018.07.19.06.58.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 06:58:59 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 175E8124188; Thu, 19 Jul 2018 15:58:59 +0200 (CEST)
+Date:   Thu, 19 Jul 2018 15:58:59 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, pasha.tatashin@oracle.com,
+        vbabka@suse.cz, aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v2 5/5] mm/page_alloc: Only call pgdat_set_deferred_range
+ when the system boots
+Message-ID: <20180719135859.GA10988@techadventures.net>
+References: <20180719132740.32743-1-osalvador@techadventures.net>
+ <20180719132740.32743-6-osalvador@techadventures.net>
+ <20180719134622.GE7193@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180718223644.GH2838@cmpxchg.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180719134622.GE7193@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 06:36:44PM -0400, Johannes Weiner wrote:
-> On Wed, Jul 18, 2018 at 02:03:18PM +0200, Peter Zijlstra wrote:
-> > On Thu, Jul 12, 2018 at 01:29:40PM -0400, Johannes Weiner wrote:
-> > > +	/* Time in which tasks wait for the CPU */
-> > > +	state = PSI_NONE;
-> > > +	if (tasks[NR_RUNNING] > 1)
-> > > +		state = PSI_SOME;
-> > > +	time_state(&groupc->res[PSI_CPU], state, now);
-> > > +
-> > > +	/* Time in which tasks wait for memory */
-> > > +	state = PSI_NONE;
-> > > +	if (tasks[NR_MEMSTALL]) {
-> > > +		if (!tasks[NR_RUNNING] ||
-> > > +		    (cpu_curr(cpu)->flags & PF_MEMSTALL))
+On Thu, Jul 19, 2018 at 03:46:22PM +0200, Michal Hocko wrote:
+> On Thu 19-07-18 15:27:40, osalvador@techadventures.net wrote:
+> > From: Oscar Salvador <osalvador@suse.de>
 > > 
-> > I'm confused, why do we care if the current tasks is MEMSTALL or not?
+> > We should only care about deferred initialization when booting.
 > 
-> We want to know whether we're losing CPU potential because of a lack
-> of memory. That can happen when the task waits for refaults and the
-> CPU goes idle, but it can also happen when the CPU is performing
-> reclaim.
-> 
-> If the task waits for refaults and something else is runnable, we're
-> not losing CPU potential. But if the task performs reclaim and uses
-> the CPU, nothing else can do productive work on that CPU.
+> Again why is this worth doing?
 
-Right, this is because MEMSTALL is not just blocking (as per that other
-sub-thread).
+Well, it is not a big win if that is what you meant.
 
-This is really unfortunate, because it means the state is not a simple
-function of the task counts.
+Those two fields are only being used when dealing with deferred pages,
+which only happens at boot time.
+
+If later on, free_area_init_node gets called from memhotplug code,
+we will also set the fields, although they will not be used.
+
+Is this a problem? No, but I think it is more clear from the code if we
+see when this is called.
+So I would say it was only for code consistency.
+
+If you think this this is not worth, I am ok with dropping it.
+
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
