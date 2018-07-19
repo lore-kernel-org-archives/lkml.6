@@ -2,97 +2,78 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 201EAECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759F8ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6F692084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:28:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F692084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B7B220684
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 13:28:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B7B220684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731924AbeGSOLc (ORCPT
+        id S1731953AbeGSOLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 10:11:32 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:2275 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731577AbeGSOLc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:11:32 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6JDNm0e013885;
-        Thu, 19 Jul 2018 15:27:58 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2kap7s9mu1-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 19 Jul 2018 15:27:58 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DA12231;
-        Thu, 19 Jul 2018 13:27:57 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B5E5B2CC6;
-        Thu, 19 Jul 2018 13:27:57 +0000 (GMT)
-Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG3NODE3.st.com
- (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 19 Jul
- 2018 15:27:57 +0200
-Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
- SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
- 15.00.1347.000; Thu, 19 Jul 2018 15:27:57 +0200
-From:   Patrice CHOTARD <patrice.chotard@st.com>
-To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-CC:     "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>
-Subject: Re: [U-BOOT internal] ARM: dts: stm32: Add clk-lse node's label on
- stm32f429
-Thread-Topic: [U-BOOT internal] ARM: dts: stm32: Add clk-lse node's label on
- stm32f429
-Thread-Index: AQHUH2HvV/XOq0riq0ug9kPTNucwfKSWaFAA
-Date:   Thu, 19 Jul 2018 13:27:56 +0000
-Message-ID: <a4472301-1394-3680-079d-b7eab8a6a917@st.com>
-References: <1532005842-3264-1-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1532005842-3264-1-git-send-email-patrice.chotard@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.45]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BA478747DF938A42BFA53932E3DBD9CE@st.com>
-Content-Transfer-Encoding: base64
+        Thu, 19 Jul 2018 10:11:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43086 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731577AbeGSOLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 10:11:49 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 58B617A7E5;
+        Thu, 19 Jul 2018 13:28:38 +0000 (UTC)
+Received: from krava (ovpn-204-211.brq.redhat.com [10.40.204.211])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 52D9D1C5B9;
+        Thu, 19 Jul 2018 13:28:35 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 15:28:34 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH] perf/core: fix a possible deadlock scenario
+Message-ID: <20180719132834.GF18667@krava>
+References: <20180716215101.4713-1-xiyou.wangcong@gmail.com>
+ <20180718081905.GA13520@krava>
+ <CAM_iQpVX_9C42Wh+ydti=droRz_Xs_Cv4ovVcg4nqu+n1OScKg@mail.gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-19_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAM_iQpVX_9C42Wh+ydti=droRz_Xs_Cv4ovVcg4nqu+n1OScKg@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 19 Jul 2018 13:28:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 19 Jul 2018 13:28:38 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-U29ycnksIGRvbid0IHRha2UgY2FyZSBhYm91dCB0aGlzIHBhdGNoLCBpdCB3YXMgc2VuZCB1c2lu
-ZyB0aGUgd3Jvbmcgc2NyaXB0DQoNClBhdHJpY2UNCg0KT24gMDcvMTkvMjAxOCAwMzoxMCBQTSwg
-cGF0cmljZS5jaG90YXJkQHN0LmNvbSB3cm90ZToNCj4gRnJvbTogUGF0cmljZSBDaG90YXJkIDxw
-YXRyaWNlLmNob3RhcmRAc3QuY29tPg0KPiANCj4gQWRkIG1pc3NpbmcgY2xrX2xzZSBsYWJlbCBm
-b3Igbm9kZSBjbGstbHNlLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogUGF0cmljZSBDaG90YXJkIDxw
-YXRyaWNlLmNob3RhcmRAc3QuY29tPg0KPiAtLS0NCj4gICBhcmNoL2FybS9ib290L2R0cy9zdG0z
-MmY0MjkuZHRzaSB8IDIgKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
-ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9zdG0zMmY0
-MjkuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N0bTMyZjQyOS5kdHNpDQo+IGluZGV4IGVkZTc3
-ZTBmMWM0MS4uNjQyNzhlODFiYzA4IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9z
-dG0zMmY0MjkuZHRzaQ0KPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9zdG0zMmY0MjkuZHRzaQ0K
-PiBAQCAtNTgsNyArNTgsNyBAQA0KPiAgIAkJCWNsb2NrLWZyZXF1ZW5jeSA9IDwwPjsNCj4gICAJ
-CX07DQo+ICAgDQo+IC0JCWNsay1sc2Ugew0KPiArCQljbGtfbHNlOiBjbGstbHNlIHsNCj4gICAJ
-CQkjY2xvY2stY2VsbHMgPSA8MD47DQo+ICAgCQkJY29tcGF0aWJsZSA9ICJmaXhlZC1jbG9jayI7
-DQo+ICAgCQkJY2xvY2stZnJlcXVlbmN5ID0gPDMyNzY4PjsNCj4g
+On Wed, Jul 18, 2018 at 01:21:11PM -0700, Cong Wang wrote:
+
+SNIP
+
+> > hum, the swevent pmu does not triger NMI, so that timer
+> > will never be touched in NMI context
+> 
+> Good to know! So I worry too much here.
+> 
+> But still, given hrtimer interrupt is called with IRQ disabled, getting
+> stuck in a hrtimer callback could also block IPI handler, therefore
+> causing soft lockups.
+> 
+> Let me know if you want me to adjust the changelog for this.
+
+yep, it's confusing, I think it should be removed from changelog
+
+jirka
