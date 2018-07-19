@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4B2C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC87FECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C3532084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:30:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3532084E
+	by mail.kernel.org (Postfix) with ESMTP id 6FF9B2084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:30:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF9B2084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732014AbeGSQNY (ORCPT
+        id S1731988AbeGSQNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 19 Jul 2018 12:13:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43257 "EHLO mail.bootlin.com"
+Received: from mail.bootlin.com ([62.4.15.54]:43293 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731942AbeGSQNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731949AbeGSQNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Jul 2018 12:13:22 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7BE322093A; Thu, 19 Jul 2018 17:29:38 +0200 (CEST)
+        id A70D220728; Thu, 19 Jul 2018 17:29:39 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D61AE206F6;
-        Thu, 19 Jul 2018 17:29:37 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 11C4F206F6;
+        Thu, 19 Jul 2018 17:29:39 +0200 (CEST)
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc:     Przemyslaw Sroka <psroka@cadence.com>,
         Przemyslaw Gaj <pgaj@cadence.com>,
         Peter Rosin <peda@axentia.se>,
         Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH v6 08/10] dt-bindings: i3c: Document Cadence I3C master bindings
-Date:   Thu, 19 Jul 2018 17:29:28 +0200
-Message-Id: <20180719152930.3715-9-boris.brezillon@bootlin.com>
+Subject: [PATCH v6 10/10] dt-bindings: gpio: Add bindings for Cadence I3C gpio expander
+Date:   Thu, 19 Jul 2018 17:29:30 +0200
+Message-Id: <20180719152930.3715-11-boris.brezillon@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180719152930.3715-1-boris.brezillon@bootlin.com>
 References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
@@ -67,7 +67,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document Cadence I3C master DT bindings.
+Document the Cadence I3C gpio expander bindings.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
@@ -76,62 +76,58 @@ Changes in v5:
 - Add Rob's R-b
 
 Changes in v4:
-- Fix example to match the new representation
+- Use GPIO_ and IRQ_TYPE_ macros instead of raw numbers
+- Fix the unit-address in the example
 ---
- .../devicetree/bindings/i3c/cdns,i3c-master.txt    | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
+ .../devicetree/bindings/gpio/gpio-cdns-i3c.txt     | 39 ++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
 
-diff --git a/Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt b/Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
 new file mode 100644
-index 000000000000..0e2b8b8770bf
+index 000000000000..d0155a9cea79
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
-@@ -0,0 +1,44 @@
-+Bindings for cadence I3C master block
-+=====================================
++++ b/Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+@@ -0,0 +1,39 @@
++* Cadence I3C GPIO expander
 +
-+Required properties:
-+--------------------
-+- compatible: shall be "cdns,i3c-master"
-+- clocks: shall reference the pclk and sysclk
-+- clock-names: shall contain "pclk" and "sysclk"
-+- interrupts: the interrupt line connected to this I3C master
-+- reg: I3C master registers
++The Cadence I3C GPIO expander provides 8 GPIOs controllable over I3C.
++This GPIOs can be configured in output or input mode and if they are in input
++mode they can generate IBIs (In Band Interrupts).
 +
-+Mandatory properties defined by the generic binding (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-+
-+- #address-cells: shall be set to 1
-+- #size-cells: shall be set to 0
-+
-+Optional properties defined by the generic binding (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-+
-+- i2c-scl-hz
-+- i3c-scl-hz
-+
-+I3C device connected on the bus follow the generic description (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details).
++Required properties for GPIO node:
++- reg : 3 cells encoding the I3C static address (none in our case) and the I3C
++	Provisional ID. See Documentation/devicetree/bindings/i3c/i3c.txt for
++	more details.
++	Should be <0x0 0x392 0x0>.
++- gpio-controller : Marks the device node as a gpio controller.
++- #gpio-cells : Should be two. The first cell is the pin number and
++  the second cell is used to specify the gpio polarity (GPIO_ACTIVE_HIGH or
++  GPIO_ACTIVE_LOW)
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells : Should be 2. The first cell is the GPIO number.
++  The second cell is used to specify trigger type and level flags.
++  The following trigger types are accepted (see
++  <dt-bindings/interrupt-controller/irq.h> for their definition):
++	IRQ_TYPE_EDGE_RISING
++	IRQ_TYPE_EDGE_FALLING
++	IRQ_TYPE_EDGE_BOTH
++	IRQ_TYPE_LEVEL_HIGH
++	IRQ_TYPE_LEVEL_LOW
 +
 +Example:
 +
-+	i3c-master@0d040000 {
-+		compatible = "cdns,i3c-master";
-+		clocks = <&coreclock>, <&i3csysclock>;
-+		clock-names = "pclk", "sysclk";
-+		interrupts = <3 0>;
-+		reg = <0x0d040000 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-scl-hz = <100000>;
-+
-+		nunchuk: nunchuk@52 {
-+			compatible = "nintendo,nunchuk";
-+			reg = <0x52 0x80000010 0>;
++	i3c-master@xxx {
++		...
++		i3c_gpio_expander: gpio@0,39200000000 {
++			reg = <0 0x392 0x0>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
 +		};
++		...
 +	};
-+
 -- 
 2.14.1
 
