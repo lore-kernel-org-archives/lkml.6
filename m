@@ -2,391 +2,212 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC41EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0934ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A8B7205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:47:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ji8jrimJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8B7205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 68E4E204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:47:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68E4E204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732677AbeGTOfz (ORCPT
+        id S1733148AbeGTOgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 10:35:55 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39513 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731583AbeGTOfy (ORCPT
+        Fri, 20 Jul 2018 10:36:11 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59454 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731583AbeGTOgL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 10:35:54 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h10-v6so11389782wre.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 06:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uDsxoV8I4bvFx7XdxU3vOpRVbmbhHoqDKmahueIcrdA=;
-        b=ji8jrimJtj2Sb3fuBJe/Jws/3TnTiDY0zbA16huIeDQn6BLmKcHzYyS4n5IGW9UjhH
-         vgHJ4q3USnDCpq2opkLBJMejQvBbwFGXKKTPLwLnMrk5+bV+mYRQKse0O1WgFdjjbE+a
-         CAxAsIwAK30AezBwTVe+LqD5W0XAOGLTfajEg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uDsxoV8I4bvFx7XdxU3vOpRVbmbhHoqDKmahueIcrdA=;
-        b=S/rpN2KKL5yDYgfYcq+CGQaz5mj6oa/KmeQoTZIjmhFR46cC4NS96WPDTv46iPSVSk
-         TnRk5UIdqIVPNT4wh/6/0EeliSMcCIWHlG9YtSPnZQkUMPNoN7RN9fKlVaD6YWbSzdP9
-         91NtVXPVaUjJzEDYQvTbHbBzx4r5ZVzQmujl5pO4HYgWOjTFQhxWVq+JscBAOwM5uxHw
-         9L1dIK92BrcFwBbYq2lHUJdYQ9VIqH9gADnWvZ51X/sOT2d9Ab3zrUkUhOXQUP/LNexc
-         jYVlvgNvIJwRW35WXhPmnxwiBE3Du3vzmiKNaH/ya2IE2iF1HMy1/0k0s839k1hsMgUl
-         krpA==
-X-Gm-Message-State: AOUpUlHxfkWBTaiaGpKra1QgwyDzDIR6mrCBXN3qrwBNOMM9F3ae7nny
-        0Ybi1XtzeiHNya9AP6HjU1Mfvg==
-X-Google-Smtp-Source: AAOMgpclos6gP8wwaRxELAp4hXPvtXR7rGuuiS5jA55WXpG14jlpCvm32xjqU3ao0ADYtiDYkPcIMg==
-X-Received: by 2002:a5d:574d:: with SMTP id q13-v6mr1532032wrw.24.1532094449570;
-        Fri, 20 Jul 2018 06:47:29 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.googlemail.com with ESMTPSA id w142-v6sm3139848wme.13.2018.07.20.06.47.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 06:47:28 -0700 (PDT)
-Subject: Re: [PATCH V4 6/8] backlight: qcom-wled: Add support for WLED4
- peripheral
-To:     Kiran Gunda <kgunda@codeaurora.org>, bjorn.andersson@linaro.org,
-        jingoohan1@gmail.com, lee.jones@linaro.org,
-        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org
-References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
- <1531131741-19971-7-git-send-email-kgunda@codeaurora.org>
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <e5bdf2fe-321a-f2e5-22f5-c886f019ac1a@linaro.org>
-Date:   Fri, 20 Jul 2018 14:47:27 +0100
+        Fri, 20 Jul 2018 10:36:11 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6KDi9Xq015972
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 09:47:47 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kbf09nnqs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 09:47:46 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Fri, 20 Jul 2018 14:47:44 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 20 Jul 2018 14:47:38 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6KDlbtw27656404
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 20 Jul 2018 13:47:38 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F30FB42047;
+        Fri, 20 Jul 2018 16:47:54 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7F424203F;
+        Fri, 20 Jul 2018 16:47:44 +0100 (BST)
+Received: from [9.77.210.204] (unknown [9.77.210.204])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Jul 2018 16:47:44 +0100 (BST)
+Subject: Re: [PATCH v6 0/6] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     srikar@linux.vnet.ibm.com, oleg@redhat.com, mhiramat@kernel.org,
+        Song Liu <liu.song.a23@gmail.com>
+Cc:     rostedt@goodmis.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180716084706.28244-1-ravi.bangoria@linux.ibm.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Fri, 20 Jul 2018 19:17:26 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1531131741-19971-7-git-send-email-kgunda@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180716084706.28244-1-ravi.bangoria@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18072013-0028-0000-0000-000002DE0D08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072013-0029-0000-0000-00002395E006
+Message-Id: <0c0adc46-ca53-94d6-658e-77c724e6ce73@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-20_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807200156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/18 11:22, Kiran Gunda wrote:
-> WLED4 peripheral is present on some PMICs like pmi8998 and
-> pm660l. It has a different register map and configurations
-> are also different. Add support for it.
+Oleg, Srikar, Masami, Song,
+
+Any feedback please? :)
+
+Thanks,
+Ravi
+
+On 07/16/2018 02:17 PM, Ravi Bangoria wrote:
+> Userspace Statically Defined Tracepoints[1] are dtrace style markers
+> inside userspace applications. Applications like PostgreSQL, MySQL,
+> Pthread, Perl, Python, Java, Ruby, Node.js, libvirt, QEMU, glib etc
+> have these markers embedded in them. These markers are added by developer
+> at important places in the code. Each marker source expands to a single
+> nop instruction in the compiled code but there may be additional
+> overhead for computing the marker arguments which expands to couple of
+> instructions. In case the overhead is more, execution of it can be
+> omitted by runtime if() condition when no one is tracing on the marker:
 > 
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> ---
-> Changes from V3:
-> 	- The WLED3 specific changes are splitted out
-> 	- Merged the wled3_sync_toggle and wled4_syn_toggle functions
-> 	- Modified the compatible .data
-> 	- Moved from if/else to switch/case to select the version specific data
-> 	- Addressed few more minor comments from Bjorn
+>     if (reference_counter > 0) {
+>         Execute marker instructions;
+>     }
 > 
->   drivers/video/backlight/qcom-wled.c | 264 +++++++++++++++++++++++++++++++++++-
->   1 file changed, 258 insertions(+), 6 deletions(-)
+> Default value of reference counter is 0. Tracer has to increment the 
+> reference counter before tracing on a marker and decrement it when
+> done with the tracing.
 > 
-> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-> index 87fc1d0..362d254 100644
-> --- a/drivers/video/backlight/qcom-wled.c
-> +++ b/drivers/video/backlight/qcom-wled.c
-> @@ -64,6 +64,28 @@
->   #define WLED3_SINK_REG_STR_CABC(n)			(0x66 + (n * 0x10))
->   #define  WLED3_SINK_REG_STR_CABC_MASK			BIT(7)
->   
-> +/* WLED4 specific sink registers */
-> +#define WLED4_SINK_REG_CURR_SINK			0x46
-> +#define  WLED4_SINK_REG_CURR_SINK_MASK			GENMASK(7, 4)
-> +#define  WLED4_SINK_REG_CURR_SINK_SHFT			4
-> +
-> +/* WLED4 specific per-'string' registers below */
-> +#define WLED4_SINK_REG_STR_MOD_EN(n)			(0x50 + (n * 0x10))
-> +#define  WLED4_SINK_REG_STR_MOD_MASK			BIT(7)
-> +
-> +#define WLED4_SINK_REG_STR_FULL_SCALE_CURR(n)		(0x52 + (n * 0x10))
-> +#define  WLED4_SINK_REG_STR_FULL_SCALE_CURR_MASK	GENMASK(3, 0)
-> +
-> +#define WLED4_SINK_REG_STR_MOD_SRC(n)			(0x53 + (n * 0x10))
-> +#define  WLED4_SINK_REG_STR_MOD_SRC_MASK		BIT(0)
-> +#define  WLED4_SINK_REG_STR_MOD_SRC_INT			0x00
-> +#define  WLED4_SINK_REG_STR_MOD_SRC_EXT			0x01
-> +
-> +#define WLED4_SINK_REG_STR_CABC(n)			(0x56 + (n * 0x10))
-> +#define  WLED4_SINK_REG_STR_CABC_MASK			BIT(7)
-> +
-> +#define WLED4_SINK_REG_BRIGHT(n)			(0x57 + (n * 0x10))
-> +
->   struct wled_var_cfg {
->   	const u32 *values;
->   	u32 (*fn)(u32);
-> @@ -98,6 +120,7 @@ struct wled {
->   	struct device *dev;
->   	struct regmap *regmap;
->   	u16 ctrl_addr;
-> +	u16 sink_addr;
->   	u16 max_string_count;
->   	u32 brightness;
->   	u32 max_brightness;
-> @@ -124,6 +147,29 @@ static int wled3_set_brightness(struct wled *wled, u16 brightness)
->   	return 0;
->   }
->   
-> +static int wled4_set_brightness(struct wled *wled, u16 brightness)
-> +{
-> +	int rc, i;
-> +	u16 low_limit = wled->max_brightness * 4 / 1000;
-> +	u8 v[2];
-> +
-> +	/* WLED4's lower limit of operation is 0.4% */
-> +	if (brightness > 0 && brightness < low_limit)
-> +		brightness = low_limit;
-> +
-> +	v[0] = brightness & 0xff;
-> +	v[1] = (brightness >> 8) & 0xf;
-> +
-> +	for (i = 0;  i < wled->cfg.num_strings; ++i) {
-> +		rc = regmap_bulk_write(wled->regmap, wled->sink_addr +
-> +				       WLED4_SINK_REG_BRIGHT(i), v, 2);
-> +		if (rc < 0)
-> +			return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static int wled_module_enable(struct wled *wled, int val)
->   {
->   	int rc;
-> @@ -141,13 +187,13 @@ static int wled_sync_toggle(struct wled *wled)
->   	unsigned int mask = GENMASK(wled->max_string_count - 1, 0);
->   
->   	rc = regmap_update_bits(wled->regmap,
-> -				wled->ctrl_addr + WLED_SINK_REG_SYNC,
-> +				wled->sink_addr + WLED_SINK_REG_SYNC,
->   				mask, mask);
->   	if (rc < 0)
->   		return rc;
->   
->   	rc = regmap_update_bits(wled->regmap,
-> -				wled->ctrl_addr + WLED_SINK_REG_SYNC,
-> +				wled->sink_addr + WLED_SINK_REG_SYNC,
->   				mask, WLED_SINK_REG_SYNC_CLEAR);
->   
->   	return rc;
-> @@ -274,6 +320,120 @@ static int wled3_setup(struct wled *wled)
->   	.cabc = false,
->   };
->   
-> +static int wled4_setup(struct wled *wled)
-> +{
-> +	int rc, temp, i, j;
-> +	u16 addr;
-> +	u8 sink_en = 0;
-> +	u32 sink_cfg = 0;
-> +
-> +	rc = regmap_update_bits(wled->regmap,
-> +				wled->ctrl_addr + WLED_CTRL_REG_OVP,
-> +				WLED_CTRL_REG_OVP_MASK, wled->cfg.ovp);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = regmap_update_bits(wled->regmap,
-> +				wled->ctrl_addr + WLED_CTRL_REG_ILIMIT,
-> +				WLED_CTRL_REG_ILIMIT_MASK,
-> +				wled->cfg.boost_i_limit);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = regmap_update_bits(wled->regmap,
-> +				wled->ctrl_addr + WLED_CTRL_REG_FREQ,
-> +				WLED_CTRL_REG_FREQ_MASK,
-> +				wled->cfg.switch_freq);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = regmap_read(wled->regmap, wled->sink_addr +
-> +			 WLED4_SINK_REG_CURR_SINK, &sink_cfg);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	for (i = 0; i < wled->cfg.num_strings; i++) {
-> +		j = wled->cfg.enabled_strings[i];
-> +		temp = j + WLED4_SINK_REG_CURR_SINK_SHFT;
-> +		sink_en |= 1 << temp;
-> +	}
-> +
-> +	if (sink_cfg == sink_en)
-> +		return 0;
-> +
-> +	rc = regmap_update_bits(wled->regmap,
-> +				wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
-> +				WLED4_SINK_REG_CURR_SINK_MASK, 0);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
-> +				WLED_CTRL_REG_MOD_EN,
-> +				WLED_CTRL_REG_MOD_EN_MASK, 0);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	/* Per sink/string configuration */
-> +	for (i = 0; i < wled->cfg.num_strings; i++) {
-> +		j = wled->cfg.enabled_strings[i];
-> +
-> +		addr = wled->sink_addr +
-> +				WLED4_SINK_REG_STR_MOD_EN(j);
-> +		rc = regmap_update_bits(wled->regmap, addr,
-> +					WLED4_SINK_REG_STR_MOD_MASK,
-> +					WLED4_SINK_REG_STR_MOD_MASK);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		addr = wled->sink_addr +
-> +				WLED4_SINK_REG_STR_FULL_SCALE_CURR(j);
-> +		rc = regmap_update_bits(wled->regmap, addr,
-> +					WLED4_SINK_REG_STR_FULL_SCALE_CURR_MASK,
-> +					wled->cfg.string_i_limit);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		addr = wled->sink_addr +
-> +				WLED4_SINK_REG_STR_CABC(j);
-> +		rc = regmap_update_bits(wled->regmap, addr,
-> +					WLED4_SINK_REG_STR_CABC_MASK,
-> +					wled->cfg.cabc ?
-> +					WLED4_SINK_REG_STR_CABC_MASK : 0);
-> +		if (rc < 0)
-> +			return rc;
-> +	}
-> +
-> +	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
-> +				WLED_CTRL_REG_MOD_EN,
-> +				WLED_CTRL_REG_MOD_EN_MASK,
-> +				WLED_CTRL_REG_MOD_EN_MASK);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = regmap_update_bits(wled->regmap,
-> +				wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
-> +				WLED4_SINK_REG_CURR_SINK_MASK, sink_en);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = wled_sync_toggle(wled);
-> +	if (rc < 0) {
-> +		dev_err(wled->dev, "Failed to toggle sync reg rc:%d\n", rc);
-> +		return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct wled_config wled4_config_defaults = {
-> +	.boost_i_limit = 4,
-> +	.string_i_limit = 10,
-> +	.ovp = 1,
-> +	.num_strings = 4,
-> +	.switch_freq = 11,
-> +	.cabc = false,
-> +};
-> +
->   static const u32 wled3_boost_i_limit_values[] = {
->   	105, 385, 525, 805, 980, 1260, 1400, 1680,
->   };
-> @@ -283,6 +443,15 @@ static int wled3_setup(struct wled *wled)
->   	.size = ARRAY_SIZE(wled3_boost_i_limit_values),
->   };
->   
-> +static const u32 wled4_boost_i_limit_values[] = {
-> +	105, 280, 450, 620, 970, 1150, 1300, 1500,
-> +};
-> +
-> +static const struct wled_var_cfg wled4_boost_i_limit_cfg = {
-> +	.values = wled4_boost_i_limit_values,
-> +	.size = ARRAY_SIZE(wled4_boost_i_limit_values),
-> +};
-> +
->   static const u32 wled3_ovp_values[] = {
->   	35, 32, 29, 27,
->   };
-> @@ -292,6 +461,15 @@ static int wled3_setup(struct wled *wled)
->   	.size = ARRAY_SIZE(wled3_ovp_values),
->   };
->   
-> +static const u32 wled4_ovp_values[] = {
-> +	31100, 29600, 19600, 18100,
-> +};
-> +
-> +static const struct wled_var_cfg wled4_ovp_cfg = {
-> +	.values = wled4_ovp_values,
-> +	.size = ARRAY_SIZE(wled4_ovp_values),
-> +};
-> +
->   static u32 wled3_num_strings_values_fn(u32 idx)
->   {
->   	return idx + 1;
-> @@ -302,6 +480,11 @@ static u32 wled3_num_strings_values_fn(u32 idx)
->   	.size = 3,
->   };
->   
-> +static const struct wled_var_cfg wled4_num_strings_cfg = {
-> +	.fn = wled3_num_strings_values_fn,
-> +	.size = 4,
-> +};
-> +
->   static u32 wled3_switch_freq_values_fn(u32 idx)
->   {
->   	return 19200 / (2 * (1 + idx));
-> @@ -316,10 +499,24 @@ static u32 wled3_switch_freq_values_fn(u32 idx)
->   	.size = 26,
->   };
->   
-> +static const u32 wled4_string_i_limit_values[] = {
-> +	0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000,
-> +	22500, 25000, 27500, 30000,
-> +};
-> +
-> +static const struct wled_var_cfg wled4_string_i_limit_cfg = {
-> +	.values = wled4_string_i_limit_values,
-> +	.size = ARRAY_SIZE(wled4_string_i_limit_values),
-> +};
-> +
->   static const struct wled_var_cfg wled3_string_cfg = {
->   	.size = 8,
->   };
->   
-> +static const struct wled_var_cfg wled4_string_cfg = {
-> +	.size = 16,
-> +};
-> +
->   static u32 wled_values(const struct wled_var_cfg *cfg, u32 idx)
->   {
->   	if (idx >= cfg->size)
-> @@ -332,6 +529,7 @@ static u32 wled_values(const struct wled_var_cfg *cfg, u32 idx)
->   }
->   
->   #define	WLED3	3
-> +#define	WLED4	4
+> Currently, perf tool has limited supports for SDT markers. I.e. it
+> can not trace markers surrounded by reference counter. Also, it's
+> not easy to add reference counter logic in userspace tool like perf,
+> so basic idea for this patchset is to add reference counter logic in
+> the a uprobe infrastructure. Ex,[2]
+> 
+>   # cat tick.c
+>     ... 
+>     for (i = 0; i < 100; i++) {
+> 	DTRACE_PROBE1(tick, loop1, i);
+>         if (TICK_LOOP2_ENABLED()) {
+>             DTRACE_PROBE1(tick, loop2, i); 
+>         }
+>         printf("hi: %d\n", i); 
+>         sleep(1);
+>     }   
+>     ... 
+> 
+> Here tick:loop1 is marker without reference counter where as tick:loop2
+> is surrounded by reference counter condition.
+> 
+>   # perf buildid-cache --add /tmp/tick
+>   # perf probe sdt_tick:loop1
+>   # perf probe sdt_tick:loop2
+> 
+>   # perf stat -e sdt_tick:loop1,sdt_tick:loop2 -- /tmp/tick
+>   hi: 0
+>   hi: 1
+>   hi: 2
+>   ^C
+>   Performance counter stats for '/tmp/tick':
+>              3      sdt_tick:loop1
+>              0      sdt_tick:loop2
+>      2.747086086 seconds time elapsed
+> 
+> Perf failed to record data for tick:loop2. Same experiment with this
+> patch series:
+> 
+>   # ./perf buildid-cache --add /tmp/tick
+>   # ./perf probe sdt_tick:loop2
+>   # ./perf stat -e sdt_tick:loop2 /tmp/tick
+>     hi: 0
+>     hi: 1
+>     hi: 2
+>     ^C  
+>      Performance counter stats for '/tmp/tick':
+>                  3      sdt_tick:loop2
+>        2.561851452 seconds time elapsed
+> 
+> 
+> v6 changes:
+>  - Do not export struct uprobe outside of uprobe.c. Instead, use
+>    container_of(arch_uprobe) to regain uprobe in uprobe_write_opcode().
+>  - Allow 0 as a special value for reference counter _offset_. I.e.
+>    two uprobes, one having ref_ctr_offset=0 and the other having
+>    non-zero ref_ctr_offset can coexists.
+>  - If vma holding reference counter is not present while patching an
+>    instruction, we add that uprobe in delayed_uprobe_list. When
+>    appropriate mapping is created, we increment the reference counter
+>    and remove uprobe from delayed_uprobe_list. While doing all this,
+>    v5 was searching for all such uprobes in uprobe_tree which is not 
+>    require. Also, uprobes are stored in rbtree with inode+offset as
+>    the key and v5 was searching uprobe based on inode+ref_ctr_offset
+>    which is wrong too. Fix this by directly looing on delayed_uprobe_list.
+>  - Consider VM_SHARED vma as invalid for reference counter. Return
+>    false from valid_ref_ctr_vma() if vma->vm_flags has VM_SHARED set.
+>  - No need to use FOLL_FORCE in get_user_pages_remote() while getting
+>    a page to update reference counter. Remove it.
+>  - Do not mention usage of reference counter in Documentation/.
+> 
+> 
+> v5 can be found at: https://lkml.org/lkml/2018/6/28/51
+> 
+> Ravi Bangoria (6):
+>   Uprobes: Simplify uprobe_register() body
+>   Uprobe: Additional argument arch_uprobe to uprobe_write_opcode()
+>   Uprobes: Support SDT markers having reference count (semaphore)
+>   trace_uprobe/sdt: Prevent multiple reference counter for same uprobe
+>   Uprobes/sdt: Prevent multiple reference counter for same uprobe
+>   perf probe: Support SDT markers having reference counter (semaphore)
+> 
+>  arch/arm/probes/uprobes/core.c |   2 +-
+>  arch/mips/kernel/uprobes.c     |   2 +-
+>  include/linux/uprobes.h        |   7 +-
+>  kernel/events/uprobes.c        | 358 ++++++++++++++++++++++++++++++++++++-----
+>  kernel/trace/trace.c           |   2 +-
+>  kernel/trace/trace_uprobe.c    |  78 ++++++++-
+>  tools/perf/util/probe-event.c  |  39 ++++-
+>  tools/perf/util/probe-event.h  |   1 +
+>  tools/perf/util/probe-file.c   |  34 +++-
+>  tools/perf/util/probe-file.h   |   1 +
+>  tools/perf/util/symbol-elf.c   |  46 ++++--
+>  tools/perf/util/symbol.h       |   7 +
+>  12 files changed, 503 insertions(+), 74 deletions(-)
+> 
 
-Are these macros always going to define 3 to be 3 and 4 to be 4. If so 
-we probably don't need them (and they should be removed from patch 5/8 too).
-
-There is a degree of nitpicking here however. The rest looks OK to me.
-
-
-Daniel.
