@@ -2,163 +2,235 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAF9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9695EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB3EF20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:34:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB3EF20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 443EA20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:36:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLOZqlLy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443EA20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbeGTKWL (ORCPT
+        id S1728273AbeGTKXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 06:22:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58816 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727243AbeGTKWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 06:22:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 95489ACDF;
-        Fri, 20 Jul 2018 09:34:46 +0000 (UTC)
-Subject: Re: [PATCH v3 2/7] mm, slab/slub: introduce kmalloc-reclaimable
- caches
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20180718133620.6205-1-vbabka@suse.cz>
- <20180718133620.6205-3-vbabka@suse.cz>
- <20180719082319.6jkltwinon3pyzyn@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <6981b5a7-470c-ab1d-99dd-23304d81358a@suse.cz>
-Date:   Fri, 20 Jul 2018 11:32:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 20 Jul 2018 06:23:34 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38460 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbeGTKXd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 06:23:33 -0400
+Received: by mail-oi0-f66.google.com with SMTP id v8-v6so20234988oie.5;
+        Fri, 20 Jul 2018 02:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=0WCvZ/UwTuSTOy/hE5dovvSALzhVcvXV0ItuU1I71fY=;
+        b=FLOZqlLyG2EheiodwW9/3/qpUErSzGln893aC9YKuj+dvXpfYyn22Z3F8OHLio1g0l
+         8wRS5xSenJPCdB37/WKA1VIBBjVWzxPf7dwXSVJI5lPQVEkZQId8vRlfqCasLtL+Cg/1
+         H1DtfZ2tql80SRojaX0M0TrOAkIHGcStjYFMA8C10ZeR/gXpsBOoFQtSJaeZS4faOz8V
+         k0PHxuDlODrlcfT89aVR7z6LdWC6uBLR25U/XIirjdCXQLrmSskUhhx0L0GWbLG/nnUZ
+         hN6xu+bGjMC5ogxgQtDABTRetU/0OUB+ymaw5urhVU8s7a0xuoPcuEY9pmq7z4DhBrWe
+         0PUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=0WCvZ/UwTuSTOy/hE5dovvSALzhVcvXV0ItuU1I71fY=;
+        b=o6UHOuTE06YXDfdc1L9e8ArNB6Anu+C3j35bn02aqAFHcsbfWWKXLFHkaop+nr9Mt8
+         PBhfnxsLot1T0N3hZfOI+TJbBjZpxFGP6Sl8UhM7sZqbILDqXFkpB3hZzB/rfvZTL9J1
+         GdVZG2p2o2hJH72S15A407HAPqeUXwJ1XjPqUzvGNZ0iLDOSzSf0aJt/cFu0iIfHUcKz
+         lWwpPYS/fCjTt+HPevMvOvIKNEG1yLgCNAviLrZk36LeHKfInVcKpcG3tq4v+rvLDRz+
+         MF6H9ObFMfMOKN4swe+Plj+y45NPmCqCDx78ZTB55XtgEzMNif7UJU+QGAw7blSHm0f2
+         Q2Ng==
+X-Gm-Message-State: AOUpUlFWEQ04Pf2Fxn3fMv1YCS3rD9XA4Ae7Ll5xnFkMM+jiBvEYcf2R
+        d7OGDHLvkllcxJmaWRpr0kcMfnPDcVi1EtdMJpMjvbnW
+X-Google-Smtp-Source: AAOMgpcOtlwTz28Az83CMyOPFS7fg7DkRQFX13ExX6+vZtswesdnZTFu86ex54Vc6KOg+yeueAaBve2cekQ7ek8ggFI=
+X-Received: by 2002:aca:c514:: with SMTP id v20-v6mr1386677oif.153.1532079369443;
+ Fri, 20 Jul 2018 02:36:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180719082319.6jkltwinon3pyzyn@techsingularity.net>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 02:35:49 -0700 (PDT)
+In-Reply-To: <31826cf1b99fa2372cd4cf0b6cee8ba0ba4288f1.camel@collabora.com>
+References: <20180617143625.32133-1-matwey@sai.msu.ru> <20180617143625.32133-2-matwey@sai.msu.ru>
+ <c02f92a8998fc62d3e3d48aa154fbaa7e223dd10.camel@collabora.com>
+ <CAJs94EavBDcFHpd0KcCZJTgWf0JC=AEDY=X8b3P2nZvt8mBCPA@mail.gmail.com>
+ <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com>
+ <CAJs94EZjTLLCN=oy3aapMsbLEHU69iO9yq=hXdm4_G1H2UMcyQ@mail.gmail.com> <31826cf1b99fa2372cd4cf0b6cee8ba0ba4288f1.camel@collabora.com>
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Date:   Fri, 20 Jul 2018 12:35:49 +0300
+X-Google-Sender-Auth: HRtKaj3nVgFRNXKo-ixNR_tXo_8
+Message-ID: <CAJs94EZgww6Ez+O74=qL8g0HdpbfTPjZbcoikcnzUtBOk2-Vxw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
+ ISO transfer
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Hans de Goede <hdegoede@redhat.com>, hverkuil@xs4all.nl,
+        mchehab@kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        linux-media@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 10:23 AM, Mel Gorman wrote:
->>  /*
->> diff --git a/mm/slab_common.c b/mm/slab_common.c
->> index 4614248ca381..614fb7ab8312 100644
->> --- a/mm/slab_common.c
->> +++ b/mm/slab_common.c
->> @@ -1107,10 +1107,21 @@ void __init setup_kmalloc_cache_index_table(void)
->>  	}
->>  }
->>  
->> -static void __init new_kmalloc_cache(int idx, slab_flags_t flags)
->> +static void __init
->> +new_kmalloc_cache(int idx, int type, slab_flags_t flags)
->>  {
->> -	kmalloc_caches[KMALLOC_NORMAL][idx] = create_kmalloc_cache(
->> -					kmalloc_info[idx].name,
->> +	const char *name;
->> +
->> +	if (type == KMALLOC_RECLAIM) {
->> +		flags |= SLAB_RECLAIM_ACCOUNT;
->> +		name = kasprintf(GFP_NOWAIT, "kmalloc-rcl-%u",
->> +						kmalloc_info[idx].size);
->> +		BUG_ON(!name);
->> +	} else {
->> +		name = kmalloc_info[idx].name;
->> +	}
->> +
->> +	kmalloc_caches[type][idx] = create_kmalloc_cache(name,
->>  					kmalloc_info[idx].size, flags, 0,
->>  					kmalloc_info[idx].size);
->>  }
-> 
-> I was going to query that BUG_ON but if I'm reading it right, we just
-> have to be careful in the future that the "normal" kmalloc cache is always
-> initialised before the reclaimable cache or there will be issues.
+2018-07-20 2:36 GMT+03:00 Ezequiel Garcia <ezequiel@collabora.com>:
+> On Wed, 2018-07-18 at 15:10 +0300, Matwey V. Kornilov wrote:
+>> 2018-07-17 23:10 GMT+03:00 Ezequiel Garcia <ezequiel@collabora.com>:
+>> > Hi Matwey,
+>> >
+>> > First of all, sorry for the delay.
+>> >
+>> > Adding Alan and Hans. Guys, do you have any feedback here?
+>> >
+>> > See below for some feedback on my side.
+>> >
+>> > On Mon, 2018-06-18 at 10:10 +0300, Matwey V. Kornilov wrote:
+>> > > Hi Ezequiel,
+>> > >
+>> > > 2018-06-18 8:11 GMT+03:00 Ezequiel Garcia <ezequiel@collabora.com>:
+>> > > > + Laurent
+>> > > >
+>> > > > On Sun, 2018-06-17 at 17:36 +0300, Matwey V. Kornilov wrote:
+>> > > > > DMA cocherency slows the transfer down on systems without hardware
+>> > > > > coherent DMA.
+>> > > > >
+>> > > > > Based on previous commit the following performance benchmarks have been
+>> > > > > carried out. Average memcpy() data transfer rate (rate) and handler
+>> > > > > completion time (time) have been measured when running video stream at
+>> > > > > 640x480 resolution at 10fps.
+>> > > > >
+>> > > > > x86_64 based system (Intel Core i5-3470). This platform has hardware
+>> > > > > coherent DMA support and proposed change doesn't make big difference here.
+>> > > > >
+>> > > > >  * kmalloc:            rate = (4.4 +- 1.0) GBps
+>> > > > >                        time = (2.4 +- 1.2) usec
+>> > > > >  * usb_alloc_coherent: rate = (4.1 +- 0.9) GBps
+>> > > > >                        time = (2.5 +- 1.0) usec
+>> > > > >
+>> > > > > We see that the measurements agree well within error ranges in this case.
+>> > > > > So no performance downgrade is introduced.
+>> > > > >
+>> > > > > armv7l based system (TI AM335x BeagleBone Black). This platform has no
+>> > > > > hardware coherent DMA support. DMA coherence is implemented via disabled
+>> > > > > page caching that slows down memcpy() due to memory controller behaviour.
+>> > > > >
+>> > > > >  * kmalloc:            rate =  (190 +-  30) MBps
+>> > > > >                        time =   (50 +-  10) usec
+>> > > > >  * usb_alloc_coherent: rate =   (33 +-   4) MBps
+>> > > > >                        time = (3000 +- 400) usec
+>> > > > >
+>> > > > > Note, that quantative difference leads (this commit leads to 5 times
+>> > > > > acceleration) to qualitative behavior change in this case. As it was
+>> > > > > stated before, the video stream can not be successfully received at AM335x
+>> > > > > platforms with MUSB based USB host controller due to performance issues
+>> > > > > [1].
+>> > > > >
+>> > > > > [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+>> > > > >
+>> > > >
+>> > > > This is quite interesting! I have receive similar complaints
+>> > > > from users wanting to use stk1160 on BBB and Raspberrys,
+>> > > > without much luck on either, due to insufficient isoc bandwidth.
+>> > > >
+>> > > > I'm guessing other ARM platforms could be suffering
+>> > > > from the same issue.
+>> > > >
+>> > > > Note that stk1160 and uvcvideo drivers use kmalloc on platforms
+>> > > > where DMA_NONCOHERENT is defined, but this is not the case
+>> > > > on ARM platforms.
+>> > >
+>> > > There are some ARMv7 platforms that have coherent DMA (for instance
+>> > > Broadcome Horthstar Plus series), but the most of them don't have. It
+>> > > is defined in device tree file, and there is no way to recover this
+>> > > information at runtime in USB perepherial driver.
+>> > >
+>> > > >
+>> > > > So, what is the benefit of using consistent
+>> > > > for these URBs, as opposed to streaming?
+>> > >
+>> > > I don't know, I think there is no real benefit and all we see is a
+>> > > consequence of copy-pasta when some webcam drivers were inspired by
+>> > > others and development priparily was going at x86 platforms.
+>> >
+>> > You are probably right about the copy-pasta.
+>> >
+>> > >  It would
+>> > > be great if somebody corrected me here. DMA Coherence is quite strong
+>> > > property and I cannot figure out how can it help when streaming video.
+>> > > The CPU host always reads from the buffer and never writes to.
+>> > > Hardware perepherial always writes to and never reads from. Moreover,
+>> > > buffer access is mutually exclusive and separated in time by Interrupt
+>> > > fireing and URB starting (when we reuse existing URB for new request).
+>> > > Only single one memory barrier is really required here.
+>> > >
+>> >
+>> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
+>> > create DMA mappings and use the streaming API. Which makes more
+>> > sense in hardware without hardware coherency.
+>> >
+>> > The only thing that bothers me with this patch is that it's not
+>> > really something specific to this driver. If this fix is valid
+>> > for pwc, then it's valid for all the drivers allocating coherent
+>> > memory.
+>> >
+>> > And also, this path won't prevent further copy-paste spread
+>> > of the coherent allocation.
+>> >
+>> > Is there any chance we can introduce a helper to allocate
+>> > isoc URBs, and then change all drivers to use it? No need
+>> > to do all of them now, but it would be good to at least have
+>> > a plan for it.
+>>
+>> Well, basically I am agree with you.
+>> However, I don't have all possible hardware to test, so I can't fix
+>> all possible drivers.
+>
+> Sure. And keep in mind this is more about the USB host controller,
+> than about this specific driver. So it's the controller what we
+> would have to test!
+>
+>> Also I can not figure out how could the helper looked like. What do
+>> you think about usb_alloc() (c.f. usb_alloc_coherent()) ?
+>>
+>
+> I do not know that either. But it's something we can think about.
+>
+> Meanwhile, it would be a shame to loose or stall this excellent
+> effort (which is effectively enabling a cameras on a bunch of devices).
+>
+> How about you introduce a driver parameter (or device attribute),
+> to avoid changing the behavior for USB host controllers we don't know
+> about?
 
-Yeah, I was just copying how the dma-kmalloc code does it.
+It would be fine for me, if there are no objections. I know that some
+maintainers don't like module parameters per se.
 
->> @@ -1122,22 +1133,25 @@ static void __init new_kmalloc_cache(int idx, slab_flags_t flags)
->>   */
->>  void __init create_kmalloc_caches(slab_flags_t flags)
->>  {
->> -	int i;
->> -	int type = KMALLOC_NORMAL;
->> +	int i, type;
->>  
->> -	for (i = KMALLOC_SHIFT_LOW; i <= KMALLOC_SHIFT_HIGH; i++) {
->> -		if (!kmalloc_caches[type][i])
->> -			new_kmalloc_cache(i, flags);
->> +	for (type = KMALLOC_NORMAL; type <= KMALLOC_RECLAIM; type++) {
->> +		for (i = KMALLOC_SHIFT_LOW; i <= KMALLOC_SHIFT_HIGH; i++) {
->> +			if (!kmalloc_caches[type][i])
->> +				new_kmalloc_cache(i, type, flags);
->>  
-> 
-> I don't see a problem here as such but the values of the KMALLOC_* types
-> is important both for this function and the kmalloc_type(). It might be
-> worth adding a warning that these functions be examined if updating the
-> types but then again, anyone trying and getting it wrong will have a
-> broken kernel so;
+>
+> Something like 'alloc_coherent_urbs=y/n'. Perhaps set that
+> to 'yes' by default in x86, and 'no' by default in the rest?
+>
+> We can think about a generic solution later.
+>
+> Thanks,
+> Eze
+>
 
-OK
 
-> Acked-by: Mel Gorman <mgorman@techsingularity.net>
 
-Thanks!
-
+-- 
+With best regards,
+Matwey V. Kornilov.
+Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
