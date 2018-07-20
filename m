@@ -2,134 +2,223 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A69BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5462ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F141E20647
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:41:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F141E20647
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 763992084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:42:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="XI8Zc1xF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 763992084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387830AbeGTQa1 (ORCPT
+        id S2387890AbeGTQbB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:30:27 -0400
-Received: from sauhun.de ([88.99.104.3]:57802 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731747AbeGTQa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 12:30:26 -0400
-Received: from localhost (p54B33241.dip0.t-ipconnect.de [84.179.50.65])
-        by pokefinder.org (Postfix) with ESMTPSA id 2416E5E000F;
-        Fri, 20 Jul 2018 17:41:33 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 17:41:32 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>
-Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
-Message-ID: <20180720154132.2fwmwpiwtxa73ljf@ninjato>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
- <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
- <20180720101206.tv7nsoanwo5ftnia@ninjato>
- <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
- <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
- <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
- <a74a7472-e900-d031-d10b-b12f03ea9ff1@axentia.se>
+        Fri, 20 Jul 2018 12:31:01 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:32844 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387846AbeGTQbA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 12:31:00 -0400
+Received: by mail-it0-f65.google.com with SMTP id y124-v6so5530264itc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 08:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=momoV2Csm6uwI0ZNQ9oSHqa+k44ZyKDlI/pysCJ0o/s=;
+        b=XI8Zc1xFENHzciKuJUsongsFWLxgBGni4vb2Dr6eHTaZI8uL1GYkpaqT2x1I4wlf/u
+         WGGuC4sTv4jCVdZtd/zvGPp9K4EYll2C3GptpHPCXIMbBWEkDzoh94DBfbrPD5uw7ZpI
+         7gg//tDtxn7db9lQBSrTqXBut8kxNB0YTZlQLwQWOaj2EIgA5VTe+qbeSKyh0YgZvsue
+         VkuYUxKEdmgYvkaScytD8k6Dc3eykRcxQqy9zKRS+25iJ8jNL5fxrZls4haDBXkgsX0v
+         z0tBuUFZVVcIFL2ERrNpit1TrxxC8aQfZc3cdkwTxruP/d1UhUF2m8Sb7UXdg4M5E89f
+         yKVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=momoV2Csm6uwI0ZNQ9oSHqa+k44ZyKDlI/pysCJ0o/s=;
+        b=DBm0S+pPSLF4ibi9fEsv6hDB61s/GWttQm03f8qxyUgX270JtFT/W666pHSkEzZ+MG
+         nbiS3kIvJxZ8qKSdYvlL2ujmfum1RAZqdUGJsfZCtjAuIjfeVbqFtO4p/w2QA3GbXbE+
+         0ybcrAFQ0byb5MgFGbmp9gd0YK6ogZRwMrv8umkalKshg9wb3+Wa6rxKBOVxm6VylCbQ
+         HbuuXCuNi0TjLV0x0e2JJoc/qpGJ8/7BzLEAWpKIo4TxsImamEoOV/208yGA8EsOaO3W
+         rabJ3YlT12IDbVoT+tRA7zm7KMhCErk2diOsV8V0KIzbK0rrR6qZ33M73lW9oM3qfzuS
+         p4ow==
+X-Gm-Message-State: AOUpUlHtl8KqtPrrfvXip7Z5h7Km6BXqwXCh+lMP/F6STtDAZdTEukVm
+        +Y9ebwIyTz3o+eTY9POPsgu0oRqCVLwL8j1sIqC+aA==
+X-Google-Smtp-Source: AAOMgpd34uQ1WPIUpsNHTMt4knTIlOUh/rKpZsZ2cP2jPmveqT8jiU2K6XSFHWSSB7u5ZVL9gcwvktDJ9q4o50vst1Y=
+X-Received: by 2002:a24:2e88:: with SMTP id i130-v6mr2189984ita.123.1532101327784;
+ Fri, 20 Jul 2018 08:42:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5qjmuivse67kaw4q"
-Content-Disposition: inline
-In-Reply-To: <a74a7472-e900-d031-d10b-b12f03ea9ff1@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: by 2002:a4f:bb58:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 08:42:07
+ -0700 (PDT)
+In-Reply-To: <20180720144916.fyqpmrtgt23sax6n@linux-8ccs>
+References: <20180716122125.175792-1-maco@android.com> <20180716122125.175792-3-maco@android.com>
+ <20180719163208.5xvrafugpcbhh7kj@linux-8ccs> <CAB0TPYFVSWtJ6RPRUZ1bpS-rBaV7YyPR-4B2Ogxs+FNAbiScNw@mail.gmail.com>
+ <20180720144916.fyqpmrtgt23sax6n@linux-8ccs>
+From:   Martijn Coenen <maco@android.com>
+Date:   Fri, 20 Jul 2018 17:42:07 +0200
+Message-ID: <CAB0TPYFQvkTsMvfJCTSFSJAoCbmOUJz7mCQGoORs6nRcC3Fhdg@mail.gmail.com>
+Subject: Re: [PATCH 2/6] module: add support for symbol namespaces.
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oliver Neukum <oneukum@suse.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        USB Storage list <usb-storage@lists.one-eyed-alien.net>,
+        linux-scsi@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Iliyan Malchev <malchev@google.com>,
+        Joel Fernandes <joelaf@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 20, 2018 at 4:49 PM, Jessica Yu <jeyu@kernel.org> wrote:
+> Thanks. Also, it looks like we're currently just warning (in both
+> modpost and on module load) if a module uses symbols from a namespace
+> it doesn't import. Are you also planning to eventually introduce
+> namespace enforcement?
 
---5qjmuivse67kaw4q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is something I've definitely been thinking about, and was curious
+what others would think. My main concern with enforcement is that it
+will start failing to load out-of-tree modules that use newly
+namespaced symbols. On the other hand, I think those modules will need
+to be rebuilt anyway to be able to load, because the changes to struct
+kernel_symbol make them incompatible with the current kernel. That
+could be another reason for having these symbols in a special section
+(with its own struct namespaced_kernel_symbol); but on the other hand,
+it would make the module loader more complex just to facilitate
+out-of-tree drivers, and I'm not sure where the trade-off between
+those two falls.
 
+> It'd be trivial to fail the module build in
+> modpost as well as reject the module on load if it uses an exported
+> symbol belonging to a namespace it doesn't import. Although, I'd go
+> with the warnings for a development cycle or two, to gently introduce
+> the change in API and let other subsystems as well as out-of-tree
+> module developers catch up.
 
-> I don't have an actual example for I2C, maybe Wolfram does? But I can
-> invent a case. E.g. the speedy DMA-enabled master cannot generate
-> RESTART, which is a must for (re-)configuration, but not for passing
-> data to the device.
+An approach like that makes sense to me. Another alternative would be
+to make it a CONFIG_ option, and let distros/etc. decide what they are
+comfortable with.
 
-DMA capable controllers may also not react adequate to the slave doing
-clock stretching (which is forbidden in I3C).
+Thanks,
+Martijn
 
-Renesas R-Car Gen2 has two I2C IP cores. One can do DMA and automatic
-transfers to the PMIC, the other has I2C slave functionality. One cannot
-do I2C_SMBUS_QUICK, the other can. And some more kind of quirks.
-Sometimes you can mux the pins to GPIO, so you have a third option.
-
-This setup is the reason the demux driver exists.
-
-> Also consider some future HW that has several I3C blocks, but they
-> are not identical. There's one beefy kind and one slim kind (I'm sure
-> you can find HW with different flavors of I2C blocks). Even if the
-> HW designers intended for one type of block to be superior in every
-> aspect, they might have made a mistake? This HW also has a pinmux, so
-> the SW is free to route different I3C blocks to the actual I3C bus.
-
-So, basically this is what happened with R-Car. Now, I tend to think
-that I3C is much more complex and noone would put two I3C IP cores into
-on SoC. But it was not too long ago that I wouldn't believe someone put
-two different I2C IP cores into a SoC. Then again, it happened when I2C
-was around for 35 years...
-
-
---5qjmuivse67kaw4q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltSAqgACgkQFA3kzBSg
-KbbN1g//WcDSNStRmr0iBDO0XSjnWhcI+kcUTf8ETxISUPklVAzkORin4E42FKXC
-soxRpX/m7z5tU5QjHJRq5MFXFp3JShO3kUpofLAhC6eQt60C75Unk48QP7Doktmg
-Rx4OoWOkNwykZEYglRN1pSjdCzu0kRboRsxpAuUD41YVSRebRdzxwXpgVEUeA9pG
-W4apNVpmjn1CBxDP9UmM7rE+6hJIUS5tzA0KtRHaF3QoAn2kH1F/c+lHFYaTqSUR
-WZw7hcyIOky6ylSQShY2OTV4xurZm8Qx84QE0i+DJ9VENTMuhvZisEKlxm5pSelL
-TGWqDNHe16kxNMaheRP/rZVMlbLosbtlhvRrrYwfoH+1M2tl50nk7rDCqd/EBgv/
-KIrCprk6tZeSITJUd+GO5Srx3JYD1Cwj0L9wbt0IEHHj+ZamisgO5VhqqqcXcp0e
-NXPsp1vcbnoUTNqk7P8yK6UDlhSRoCbcMlQ0BE6hm6qvwYfwLHnLlVnDi9fShsnd
-m4ielcyEKVvj8VSufzYNuRy3G0FZmujMJJlnaMa/ZqESjfaRquWlhKvpwDyvghdC
-5i0VNH1dAJoCyMejMlMFTLc/4+Gew1I6p0pCmfI5NJDLmyTuQQpRk4lA57qHueY4
-4hkWptnUuKNTE1+C7xXKj25gm/lnr4HoF+4aT1H6vI6FNT1y8OI=
-=nV3b
------END PGP SIGNATURE-----
-
---5qjmuivse67kaw4q--
+>
+>
+> Jessica
+>
+>
+>>> Also, this would get rid of the extra __knsimport section, the extra
+>>> ns_dependencies field in struct module, and all those helper functions
+>>> that
+>>> manage it. In addition, having the modinfo tag may potentially help with
+>>> debugging as we have the namespace imports clearly listed if we don't
+>>> have
+>>> the source code for a module. We'd probably need to modify get_modinfo()
+>>> to
+>>> handle multiple import: tags though. Luis [1] had written some code a
+>>> while
+>>> ago to handle multiple (of the same) modinfo tags.
+>>>
+>>> Thoughts on this?
+>>>
+>>> Thanks,
+>>>
+>>> Jessica
+>>>
+>>> [1] https://lkml.kernel.org/r/20171130023605.29568-3-mcgrof@kernel.org
+>>>
+>>>
+>>>> getname:
+>>>>         /* We must make copy under the lock if we failed to get ref. */
+>>>>         strncpy(ownername, module_name(owner), MODULE_NAME_LEN);
+>>>> @@ -3061,6 +3118,11 @@ static int find_module_sections(struct module
+>>>> *mod,
+>>>> struct load_info *info)
+>>>>                                      sizeof(*mod->gpl_syms),
+>>>>                                      &mod->num_gpl_syms);
+>>>>         mod->gpl_crcs = section_addr(info, "__kcrctab_gpl");
+>>>> +
+>>>> +       mod->ns_imports = section_objs(info, "__knsimport",
+>>>> +                                      sizeof(*mod->ns_imports),
+>>>> +                                      &mod->num_ns_imports);
+>>>> +
+>>>>         mod->gpl_future_syms = section_objs(info,
+>>>>                                             "__ksymtab_gpl_future",
+>>>>
+>>>> sizeof(*mod->gpl_future_syms),
+>>>> @@ -3381,6 +3443,19 @@ static int post_relocation(struct module *mod,
+>>>> const struct load_info *info)
+>>>>         return module_finalize(info->hdr, info->sechdrs, mod);
+>>>> }
+>>>>
+>>>> +static void verify_namespace_dependencies(struct module *mod)
+>>>> +{
+>>>> +       struct module_ns_dep *ns_dep;
+>>>> +
+>>>> +       list_for_each_entry(ns_dep, &mod->ns_dependencies, ns_dep) {
+>>>> +               if (!module_imports_ns(mod, ns_dep->namespace)) {
+>>>> +                       pr_warn("%s: module uses symbols from namespace
+>>>> %s,"
+>>>> +                               " but does not import it.\n",
+>>>> +                               mod->name, ns_dep->namespace);
+>>>> +               }
+>>>> +       }
+>>>> +}
+>>>> +
+>>>> /* Is this module of this name done loading?  No locks held. */
+>>>> static bool finished_loading(const char *name)
+>>>> {
+>>>> @@ -3682,6 +3757,8 @@ static int load_module(struct load_info *info,
+>>>> const
+>>>> char __user *uargs,
+>>>>         if (err)
+>>>>                 goto free_module;
+>>>>
+>>>> +       INIT_LIST_HEAD(&mod->ns_dependencies);
+>>>> +
+>>>> #ifdef CONFIG_MODULE_SIG
+>>>>         mod->sig_ok = info->sig_ok;
+>>>>         if (!mod->sig_ok) {
+>>>> @@ -3730,6 +3807,8 @@ static int load_module(struct load_info *info,
+>>>> const
+>>>> char __user *uargs,
+>>>>         if (err < 0)
+>>>>                 goto free_modinfo;
+>>>>
+>>>> +       verify_namespace_dependencies(mod);
+>>>> +
+>>>>         flush_module_icache(mod);
+>>>>
+>>>>         /* Now copy in args */
+>>>> --
+>>>> 2.18.0.203.gfac676dfb9-goog
+>>>>
+>>>
+>
