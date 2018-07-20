@@ -6,169 +6,111 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F09ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E614EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C06620673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:57:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C06620673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id A83FC2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:59:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A83FC2084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbeGTLpF (ORCPT
+        id S1728830AbeGTLqn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:45:05 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55920 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbeGTLpE (ORCPT
+        Fri, 20 Jul 2018 07:46:43 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([207.82.80.211]:53213 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727289AbeGTLqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:45:04 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fgT69-00019Y-FO; Fri, 20 Jul 2018 10:57:21 +0000
-Subject: Re: [PATCH] apparmor: remove redundant pointer 'info'
-To:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180714161905.5403-1-colin.king@canonical.com>
- <5702474d-5215-cdea-8d77-24f45fef92cc@canonical.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <3dd0cabe-2d58-7a3f-087f-84ee4ccb6128@canonical.com>
-Date:   Fri, 20 Jul 2018 11:57:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <5702474d-5215-cdea-8d77-24f45fef92cc@canonical.com>
-Content-Type: text/plain; charset=utf-8
+        Fri, 20 Jul 2018 07:46:42 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-115-F7fa8LnjOrWsLpX9wEOGfQ-1; Fri, 20 Jul 2018 11:57:45 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
+ 20 Jul 2018 11:59:25 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 20 Jul 2018 11:59:25 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Masahiro Yamada' <yamada.masahiro@socionext.com>,
+        'Michal Marek' <michal.lkml@markovi.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Detect invalid .o files created by objtool.
+Thread-Topic: [PATCH] Detect invalid .o files created by objtool.
+Thread-Index: AdQgGLh7PYZxMOlYSQi/8LvLaBR9Jg==
+Date:   Fri, 20 Jul 2018 10:59:25 +0000
+Message-ID: <30f4d334645246ddb7175b601de2c502@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+MIME-Version: 1.0
+X-MC-Unique: F7fa8LnjOrWsLpX9wEOGfQ-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/07/18 11:31, John Johansen wrote:
-> On 07/14/2018 09:19 AM, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Pointer 'info' is being assigned but is never used hence it is
->> redundant and can be removed.
->>
->> Cleans up clang warning:
->> warning: variable 'info' set but not used [-Wunused-but-set-variable]
->>
-> NAK,
-> 
-> real problem wrong fix, instead of deleting the additional context info
-> we need to be auditing it
 
-Ah, thanks for fixing that.
+The objtool code that generates to ORC unwind tables found a bug
+in libelf that causes the section headers to not be rewritten.
+The next access to the output file generates a ' File format not recognised'
+error from objdump or ld.
 
-Colin
+Module compilation uses 'objdump ... | grep -q ...' and the objump
+error is treated the same as the grep not finding the required line.
+This means the build doesn't even stop.
 
-> 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 098d546d8253..08c88de0ffda 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -1036,7 +1036,7 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
->  audit:
->  	aa_audit_file(profile, &nullperms, OP_CHANGE_HAT, AA_MAY_CHANGEHAT,
->  		      name, hat ? hat->base.hname : NULL,
-> -		      hat ? &hat->label : NULL, GLOBAL_ROOT_UID, NULL,
-> +		      hat ? &hat->label : NULL, GLOBAL_ROOT_UID, info,
->  		      error);
->  	if (!hat || (error && error != -ENOENT))
->  		return ERR_PTR(error);
-> 
-> I pushed this fix into apparmor-next
-> 
-> 
-> 
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  security/apparmor/domain.c | 6 +-----
->>  1 file changed, 1 insertion(+), 5 deletions(-)
->>
->> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
->> index 098d546d8253..410d9ce09861 100644
->> --- a/security/apparmor/domain.c
->> +++ b/security/apparmor/domain.c
->> @@ -1006,7 +1006,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
->>  					 const char *name, bool sibling)
->>  {
->>  	struct aa_profile *root, *hat = NULL;
->> -	const char *info = NULL;
->>  	int error = 0;
->>  
->>  	if (sibling && PROFILE_IS_HAT(profile)) {
->> @@ -1014,7 +1013,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
->>  	} else if (!sibling && !PROFILE_IS_HAT(profile)) {
->>  		root = aa_get_profile(profile);
->>  	} else {
->> -		info = "conflicting target types";
->>  		error = -EPERM;
->>  		goto audit;
->>  	}
->> @@ -1025,10 +1023,8 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
->>  		if (COMPLAIN_MODE(profile)) {
->>  			hat = aa_new_null_profile(profile, true, name,
->>  						  GFP_KERNEL);
->> -			if (!hat) {
->> -				info = "failed null profile create";
->> +			if (!hat)
->>  				error = -ENOMEM;
->> -			}
->>  		}
->>  	}
->>  	aa_put_profile(root);
->>
-> 
+Detect errors from objdump when building modules.
+
+Verfify (with objdump -h) that the file modified by objtool is valid.
+If invalid suggest updating libelf.so or disabling the ORC unwinder.
+
+Signed-off-by: David Laight <david.laight@aculab.com>
+---
+ scripts/Makefile.build | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index e7889f4..200b02c 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -193,7 +193,9 @@ else
+ cmd_cc_o_c = $(CC) $(c_flags) -c -o $(@D)/.tmp_$(@F) $<
+ 
+ cmd_modversions_c =								\
+-	if $(OBJDUMP) -h $(@D)/.tmp_$(@F) | grep -q __ksymtab; then		\
++	if ! obj_headers=$$($(OBJDUMP) -h $(@D)/.tmp_$(@F)); then		\
++		false;								\
++	elif echo "$obj_headers" | grep -q __ksymtab; then			\
+ 		$(call cmd_gensymtypes_c,$(KBUILD_SYMTYPES),$(@:.o=.symtypes))	\
+ 		    > $(@D)/.tmp_$(@F:.o=.ver);					\
+ 										\
+@@ -277,7 +279,14 @@ endif
+ # 'OBJECT_FILES_NON_STANDARD_foo.o := 'n': override directory skip for a file
+ cmd_objtool = $(if $(patsubst y%,, \
+ 	$(OBJECT_FILES_NON_STANDARD_$(basetarget).o)$(OBJECT_FILES_NON_STANDARD)n), \
+-	$(__objtool_obj) $(objtool_args) "$(objtool_o)";)
++	$(__objtool_obj) $(objtool_args) "$(objtool_o)" && { \
++		$(OBJDUMP) -h "$(objtool_o)" >/dev/null 2>&1 || { \
++			echo >&2 "******* objtool generated the invalid file $(objtool_o)"; \
++			echo >&2 "******* Update libelf.so or disable the ORC unwinder"; \
++			/bin/false; \
++		}; \
++	};)
++
+ objtool_obj = $(if $(patsubst y%,, \
+ 	$(OBJECT_FILES_NON_STANDARD_$(basetarget).o)$(OBJECT_FILES_NON_STANDARD)n), \
+ 	$(__objtool_obj))
+-- 
+1.8.1.2
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
