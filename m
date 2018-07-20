@@ -2,178 +2,111 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE14ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 04:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4D2ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 04:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CE0720673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 04:55:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CuuyUax+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE0720673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0FC4920673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 04:57:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC4920673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeGTFmI (ORCPT
+        id S1727289AbeGTFnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 01:42:08 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41017 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727011AbeGTFmI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 01:42:08 -0400
-Received: by mail-pg1-f194.google.com with SMTP id z8-v6so5745904pgu.8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 21:55:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FkmFZS8JYFsvDt0doVB5nhA6QI9nPzYl0tDTZCr9Ptw=;
-        b=CuuyUax+ZrEa6b1tV2NpkQQuK74Z/PFABjyXhgiBcEszOs/Sn5GKDtt22ueW6eLfrq
-         JHzbk+UQPiDqGpWj6fIZ693NZzg8zsvRMjcihWuGsbusKEjl0DCk+SSTjeaU82JF+VvZ
-         EBQI4cjESxtqR0exJtXcxhCzbz66Ke/pxvpbo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FkmFZS8JYFsvDt0doVB5nhA6QI9nPzYl0tDTZCr9Ptw=;
-        b=i1vSO9H4MaHaxBLoCGyOL2Gqr8y3S2D2rmyEujISnapc9BEF/bAfqWjyqSDGQoQIqy
-         vWyXOmO2fyE830lwtwep9gJJhggZP+v/DghoaJq/xzgBmq7RWOgaBniylXZ9IJe4CcXG
-         ZOxfzdlBlXf/DjuWVo1Df8ZQYzFJV45dc1l95VmkNqJuA6zovHmCgvAdXXKNt4pjUvEb
-         bhG0RFrlG7G9Acwp9we/aIGf/o5EfTTUk2oXBQES7aXq0PHiaaASt8cLpc/qzXConORa
-         KqzJ03bj/at8PAgB4p5C0XsQvKWhGu1IFZWBIyhpot77XS7KB099FU19amruTxu0JIJn
-         gjKQ==
-X-Gm-Message-State: AOUpUlHk4oeiWYhwouD0inIgu2fJXxMHSENYxhV8bHFi84jWOiKAPmGK
-        dniZtG38fiLiU/BAKJ0ItNNozAxcC7Q=
-X-Google-Smtp-Source: AAOMgpeIMvkBBRP9H2lUDBHNI3ldDEXqksFL39zuL732WY2FGqjBeWBtJ1RQmmsWtFfrv5ZX8I/NlA==
-X-Received: by 2002:a62:5ec3:: with SMTP id s186-v6mr620538pfb.129.1532062545425;
-        Thu, 19 Jul 2018 21:55:45 -0700 (PDT)
-Received: from localhost ([122.171.235.75])
-        by smtp.gmail.com with ESMTPSA id r11-v6sm913760pgn.62.2018.07.19.21.55.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 21:55:44 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 10:25:43 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, rjw@rjwysocki.net
-Subject: Re: [PATCH] sched/fair: remove #ifdefs from scale_rt_capacity
-Message-ID: <20180720045543.jx76p67sntophjne@vireshk-i7>
-References: <1532001606-6689-1-git-send-email-vincent.guittot@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532001606-6689-1-git-send-email-vincent.guittot@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Fri, 20 Jul 2018 01:43:22 -0400
+Received: from gate.crashing.org ([63.228.1.57]:49461 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726579AbeGTFnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 01:43:22 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6K4uDrj014252;
+        Thu, 19 Jul 2018 23:56:15 -0500
+Message-ID: <483b76bac7cb8043d9d780d5ffa5e43438279887.camel@kernel.crashing.org>
+Subject: Re: [RFC PATCH v2 1/4] dt-bindings: misc: Add bindings for misc.
+ BMC control fields
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh@kernel.org>,
+        Eugene.Cho@dell.com, a.amelkin@yadro.com
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        stewart@linux.ibm.com, OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Fri, 20 Jul 2018 14:56:13 +1000
+In-Reply-To: <1532045276.1219110.1446722072.546C1F9D@webmail.messagingengine.com>
+References: <20180711053122.30773-1-andrew@aj.id.au>
+         <20180711053122.30773-2-andrew@aj.id.au>
+         <20180711200450.GB17291@rob-hp-laptop>
+         <1531356830.3551458.1437853280.551CA8C5@webmail.messagingengine.com>
+         <CAL_JsqKpXxR4t_-3BOy-0mFePXkaSck_4PfHRD=OZQ-_-T5P=w@mail.gmail.com>
+         <b6ced4cad4d7ff78330181b2c893855c23103953.camel@kernel.crashing.org>
+         <1531463489.747186.1439263128.075AECE1@webmail.messagingengine.com>
+         <CAL_JsqLZo-=7UkuvvUFYdCR4asBBiWyC=Q1ryH=-HLU6vzf9tA@mail.gmail.com>
+         <ece91112ecfdc7218184c4c4519e455cf9397e11.camel@kernel.crashing.org>
+         <CAL_JsqL_bMXLAA0091-g8PmhXR5g5Pf2y2=ey7Ss5ofHm46sWw@mail.gmail.com>
+         <c69d0e7c3a95d83da87b566a62619462671a233b.camel@kernel.crashing.org>
+         <1531967302.2140539.1445583600.0F5ED287@webmail.messagingengine.com>
+         <9787b471abc49c0b3db60e3471473a7a5b45ade7.camel@kernel.crashing.org>
+         <1532045276.1219110.1446722072.546C1F9D@webmail.messagingengine.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-07-18, 14:00, Vincent Guittot wrote:
-> Reuse cpu_util_irq() that has been defined for schedutil and set irq util
-> to 0 when !CONFIG_IRQ_TIME_ACCOUNTING
+On Fri, 2018-07-20 at 09:37 +0930, Andrew Jeffery wrote:
+> > 
+> > Andrew, can you start with a list that shows what you expect us to need
+> > on our systems ?
+> > 
 > 
-> But the compiler is not able to optimize the sequence (at least with
-> aarch64 GCC 7.2.1)
-> 	free *= (max - irq);
-> 	free /= max;
-> when irq is fixed to 0
+> Okay, our Witherspoon and Romulus platforms containing the ASPEED AST2500 currently need the following tuneables exposed:
 > 
-> Add a new inline function scale_irq_capacity() that will scale utilization
-> when irq is accounted. Reuse this funciton in schedutil which applies
-> similar formula.
+> > From the SCU:
 > 
-> Suggested-by: Ingo Molnar <mingo@redhat.com>
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  kernel/sched/cpufreq_schedutil.c |  3 +--
->  kernel/sched/fair.c              | 13 +++----------
->  kernel/sched/sched.h             | 20 ++++++++++++++++++--
->  3 files changed, 22 insertions(+), 14 deletions(-)
+> - Debug UART enable
+> - VGA DAC mux
+> - VGA scratch registers 0-7
+> - LPC SuperIO decode enable
+> - VGA MMIO decode enable
 > 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 97dcd44..3fffad3 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -247,8 +247,7 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
->  	 *   U' = irq + ------- * U
->  	 *                max
->  	 */
-> -	util *= (max - irq);
-> -	util /= max;
-> +	util = scale_irq_capacity(util, irq, max);
->  	util += irq;
->  
->  	/*
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index d5f7d52..14c3fdd 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7551,16 +7551,12 @@ static unsigned long scale_rt_capacity(int cpu)
->  	struct rq *rq = cpu_rq(cpu);
->  	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
->  	unsigned long used, free;
-> -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
->  	unsigned long irq;
-> -#endif
->  
-> -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> -	irq = READ_ONCE(rq->avg_irq.util_avg);
-> +	irq = cpu_util_irq(rq);
->  
->  	if (unlikely(irq >= max))
->  		return 1;
-> -#endif
->  
->  	used = READ_ONCE(rq->avg_rt.util_avg);
->  	used += READ_ONCE(rq->avg_dl.util_avg);
-> @@ -7569,11 +7565,8 @@ static unsigned long scale_rt_capacity(int cpu)
->  		return 1;
->  
->  	free = max - used;
-> -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> -	free *= (max - irq);
-> -	free /= max;
-> -#endif
-> -	return free;
-> +
-> +	return scale_irq_capacity(free, irq, max);
->  }
->  
->  static void update_cpu_capacity(struct sched_domain *sd, int cpu)
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index ebb4b3c..b80c3fd 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2210,17 +2210,33 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
->  {
->  	return READ_ONCE(rq->avg_rt.util_avg);
->  }
-> +#endif
->  
-> -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> +#if defined(SMP) \
-> + && (defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING))
->  static inline unsigned long cpu_util_irq(struct rq *rq)
->  {
->  	return rq->avg_irq.util_avg;
->  }
-> +
-> +static inline
-> +unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
-> +{
-> +	util *= (max - irq);
+> > From the LPC controller:
+> 
+> - iLPC2AHB enable
+> - SuperIO scratch registers 0x20-0x2f
+> 
+> (The LPC controller is just as much of a collection of random bits as the SCU)
+> 
+> Lastly, our Palmetto platform uses an AST2400 which has fewer features compared to the AST2500. Its tuneable list is the same as the above with the exception of "Debug UART enable".
+> 
+> Tuneables that we may need to expose in the future include:
+> 
+> > From the SCU:
+> 
+> - PCI VID/DID for the BMC PCIe device
+> - VGA device enable (may need to be disabled if the platform contains a discrete graphics processor)
 
-() can be dropped here. 
+Additionally there's a bunch of resigters controlling the mapping of
+various MMIO regions of the BMC PCIe device to portions of the BMC
+address space. I'm not sure what's the best way to handle that.
 
-Other than that: 
+This specific set might require a dedicated device as a subnode of
+the SCU in the DT that contains all the mappings as properties... 
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+That or we consider them static enough and just whack it in u-boot.
 
--- 
-viresh
+> > From the LPC controller:
+> 
+> - UART mux
+> 
+> Alexander, Eugene, can you chime in with your platforms' needs?
+> 
+> Cheers,
+> 
+> Andrew
