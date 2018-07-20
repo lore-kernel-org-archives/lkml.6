@@ -2,119 +2,105 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B84ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A9AECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B7FC20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:38:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B7FC20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EC78A206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:39:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC78A206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbeGTJ0G (ORCPT
+        id S1728469AbeGTJ03 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 05:26:06 -0400
-Received: from mga02.intel.com ([134.134.136.20]:32574 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727347AbeGTJ0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:26:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 01:38:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,378,1526367600"; 
-   d="scan'208";a="76370846"
-Received: from dazhang1-z97x.sh.intel.com (HELO [10.239.13.115]) ([10.239.13.115])
-  by orsmga002.jf.intel.com with ESMTP; 20 Jul 2018 01:38:44 -0700
-Subject: Re: [PATCH V2 0/4] Fix kvm misconceives NVDIMM pages as reserved mmio
-To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com, jack@suse.cz, hch@lst.de,
-        yu.c.zhang@intel.com, dave.jiang@intel.com
-Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, yi.z.zhang@intel.com
-References: <cover.1531241281.git.yi.z.zhang@linux.intel.com>
- <c4e1c527-a372-bd6a-a101-5a8e9026e7c1@linux.intel.com>
- <25569674-2d8f-8b54-4ba7-478b57067325@redhat.com>
-From:   "Zhang,Yi" <yi.z.zhang@linux.intel.com>
-Message-ID: <3e822509-dc66-0fe8-bad6-d4e4ef9eb528@linux.intel.com>
-Date:   Sat, 21 Jul 2018 00:24:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 20 Jul 2018 05:26:29 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35846 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727331AbeGTJ03 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 05:26:29 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fgQwQ-0002yh-Qg; Fri, 20 Jul 2018 10:39:11 +0200
+Date:   Fri, 20 Jul 2018 10:39:07 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Paul Menzel <pmenzel+linux-x86@molgen.mpg.de>
+cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: UBSAN: Undefined behaviour in arch/x86/events/amd/ibs.c:582:24:
+ member access within null pointer of type 'struct perf_event'
+In-Reply-To: <eb1d1d7d-7ca6-677d-2ae5-911935706516@molgen.mpg.de>
+Message-ID: <alpine.DEB.2.21.1807200958390.1580@nanos.tec.linutronix.de>
+References: <eb1d1d7d-7ca6-677d-2ae5-911935706516@molgen.mpg.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <25569674-2d8f-8b54-4ba7-478b57067325@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Paolo, let's wait Jan&Dan 's comments.
+Paul,
 
-Thank you, Paolo.
+On Fri, 20 Jul 2018, Paul Menzel wrote:
+> Enabling the undefined behavior sanitizer and building GNU/Linux 4.18-rc5+
+> (with some unrelated commits) with GCC 8.1.0 from Debian Sid/unstable, the
+> warning below is shown.
+> 
+> > [    2.111913]
+> > ================================================================================
+> > [    2.111917] UBSAN: Undefined behaviour in
+> > arch/x86/events/amd/ibs.c:582:24
+> > [    2.111919] member access within null pointer of type 'struct perf_event'
+> > [    2.111926] CPU: 0 PID: 144 Comm: udevadm Not tainted
+> > 4.18.0-rc5-00316-g4864b68cedf2 #104
+> > [    2.111928] Hardware name: ASROCK E350M1/E350M1, BIOS TIMELESS 01/01/1970
+> > [    2.111930] Call Trace:
+> > [    2.111943]  dump_stack+0x55/0x89
+> > [    2.111949]  ubsan_epilogue+0xb/0x33
+> > [    2.111953]  handle_null_ptr_deref+0x7f/0x90
+> > [    2.111958]  __ubsan_handle_type_mismatch_v1+0x55/0x60
+> > [    2.111964]  perf_ibs_handle_irq+0x596/0x620
 
-Regards
-Yi
+Right, the code dereferences event before checking the STARTED bit. Patch
+below should cure the issue. The warning should not trigger, if I analyzed
+the thing correctly. Emphasis on *should*
 
-On 2018年07月20日 16:32, Paolo Bonzini wrote:
-> On 20/07/2018 16:11, Zhang,Yi wrote:
->> Added Jiang,Dave,
->>
->> Ping for further review, comments.
-> I need an Acked-by from the MM people to merge this.  Jan, Dan?
->
-> Paolo
->
->> Thanks All
->>
->> Regards
->> Yi.
->>
->>
->> On 2018年07月11日 01:01, Zhang Yi wrote:
->>> For device specific memory space, when we move these area of pfn to
->>> memory zone, we will set the page reserved flag at that time, some of
->>> these reserved for device mmio, and some of these are not, such as
->>> NVDIMM pmem.
->>>
->>> Now, we map these dev_dax or fs_dax pages to kvm for DIMM/NVDIMM
->>> backend, since these pages are reserved. the check of
->>> kvm_is_reserved_pfn() misconceives those pages as MMIO. Therefor, we
->>> introduce 2 page map types, MEMORY_DEVICE_FS_DAX/MEMORY_DEVICE_DEV_DAX,
->>> to indentify these pages are from NVDIMM pmem. and let kvm treat these
->>> as normal pages.
->>>
->>> Without this patch, Many operations will be missed due to this
->>> mistreatment to pmem pages. For example, a page may not have chance to
->>> be unpinned for KVM guest(in kvm_release_pfn_clean); not able to be
->>> marked as dirty/accessed(in kvm_set_pfn_dirty/accessed) etc.
->>>
->>> V1:
->>> https://lkml.org/lkml/2018/7/4/91
->>>
->>> V2:
->>> *Add documentation for MEMORY_DEVICE_DEV_DAX memory type in comment block
->>> *Add is_dax_page() in mm.h to differentiate the pages is from DAX device.
->>> *Remove the function kvm_is_nd_pfn().
->>>
->>> Zhang Yi (4):
->>>   kvm: remove redundant reserved page check
->>>   mm: introduce memory type MEMORY_DEVICE_DEV_DAX
->>>   mm: add a function to differentiate the pages is from DAX device
->>>     memory
->>>   kvm: add a check if pfn is from NVDIMM pmem.
->>>
->>>  drivers/dax/pmem.c       |  1 +
->>>  include/linux/memremap.h |  9 +++++++++
->>>  include/linux/mm.h       | 12 ++++++++++++
->>>  virt/kvm/kvm_main.c      | 16 ++++++++--------
->>>  4 files changed, 30 insertions(+), 8 deletions(-)
->>>
->>
+Thanks,
+
+	tglx
+
+8<--------------------
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 4b98101209a1..d50bb4dc0650 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -579,7 +579,7 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
+ {
+ 	struct cpu_perf_ibs *pcpu = this_cpu_ptr(perf_ibs->pcpu);
+ 	struct perf_event *event = pcpu->event;
+-	struct hw_perf_event *hwc = &event->hw;
++	struct hw_perf_event *hwc;
+ 	struct perf_sample_data data;
+ 	struct perf_raw_record raw;
+ 	struct pt_regs regs;
+@@ -602,6 +602,10 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
+ 		return 0;
+ 	}
+ 
++	if (WARN_ON_ONCE(!event))
++		goto fail;
++
++	hwc = &event->hw;
+ 	msr = hwc->config_base;
+ 	buf = ibs_data.regs;
+ 	rdmsrl(msr, *buf);
+
 
