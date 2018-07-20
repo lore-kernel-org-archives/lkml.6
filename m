@@ -2,163 +2,166 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FF9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E9EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7BDD206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:30:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BDD206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id BBB8220652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:32:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBB8220652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeGTLRx (ORCPT
+        id S1728362AbeGTLTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:17:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38708 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727216AbeGTLRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:17:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D4963ADA7;
-        Fri, 20 Jul 2018 10:30:15 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] fs/seq_file: remove kmalloc(ops) for single_open seqfiles
-Date:   Fri, 20 Jul 2018 12:29:52 +0200
-Message-Id: <20180720102952.30935-1-vbabka@suse.cz>
-X-Mailer: git-send-email 2.18.0
+        Fri, 20 Jul 2018 07:19:40 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55598 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbeGTLTk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 07:19:40 -0400
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1fgShc-0008Hj-3h; Fri, 20 Jul 2018 10:32:00 +0000
+Subject: Re: [PATCH] apparmor: remove redundant pointer 'info'
+To:     Colin King <colin.king@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180714161905.5403-1-colin.king@canonical.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <5702474d-5215-cdea-8d77-24f45fef92cc@canonical.com>
+Date:   Fri, 20 Jul 2018 03:31:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180714161905.5403-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-single_open() currently allocates seq_operations with kmalloc(). This is
-suboptimal, because that's four pointers, of which three are constant, and
-only the 'show' op differs. We also have to be careful to use single_release()
-to avoid leaking the ops structure.
+On 07/14/2018 09:19 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer 'info' is being assigned but is never used hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable 'info' set but not used [-Wunused-but-set-variable]
+> 
+NAK,
 
-Instead of this we can have a fixed single_show() function and constant ops
-structure for these seq_files. We can store the pointer to the 'show' op as
-a new field of struct seq_file. That's also not terribly elegant, because the
-field is there also for non-single_open() seq files, but it's a single pointer
-in an already existing (and already relatively large) structure instead of
-an extra kmalloc of four pointers, so the tradeoff is OK.
+real problem wrong fix, instead of deleting the additional context info
+we need to be auditing it
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- Documentation/filesystems/seq_file.txt |  5 +++-
- fs/seq_file.c                          | 40 ++++++++++++--------------
- include/linux/seq_file.h               |  5 ++--
- 3 files changed, 25 insertions(+), 25 deletions(-)
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 098d546d8253..08c88de0ffda 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1036,7 +1036,7 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+ audit:
+ 	aa_audit_file(profile, &nullperms, OP_CHANGE_HAT, AA_MAY_CHANGEHAT,
+ 		      name, hat ? hat->base.hname : NULL,
+-		      hat ? &hat->label : NULL, GLOBAL_ROOT_UID, NULL,
++		      hat ? &hat->label : NULL, GLOBAL_ROOT_UID, info,
+ 		      error);
+ 	if (!hat || (error && error != -ENOENT))
+ 		return ERR_PTR(error);
 
-diff --git a/Documentation/filesystems/seq_file.txt b/Documentation/filesystems/seq_file.txt
-index 9de4303201e1..ed61495abee8 100644
---- a/Documentation/filesystems/seq_file.txt
-+++ b/Documentation/filesystems/seq_file.txt
-@@ -335,4 +335,7 @@ When output time comes, the show() function will be called once. The data
- value given to single_open() can be found in the private field of the
- seq_file structure. When using single_open(), the programmer should use
- single_release() instead of seq_release() in the file_operations structure
--to avoid a memory leak.
-+to avoid a memory leak. Note that the implementation has changed and current
-+kernels will not leak anymore, but it's better to keep using single_release()
-+in case the implementation details change again.
-+
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 4cc090b50cc5..3fd2ded04d93 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -563,22 +563,27 @@ static void single_stop(struct seq_file *p, void *v)
- {
- }
- 
-+static int single_show(struct seq_file *p, void *v)
-+{
-+	return p->single_show_op(p, v);
-+}
-+
-+static const struct seq_operations single_seq_op = {
-+	.start	= single_start,
-+	.next	= single_next,
-+	.stop	= single_stop,
-+	.show	= single_show
-+};
-+
- int single_open(struct file *file, int (*show)(struct seq_file *, void *),
- 		void *data)
- {
--	struct seq_operations *op = kmalloc(sizeof(*op), GFP_KERNEL_ACCOUNT);
--	int res = -ENOMEM;
--
--	if (op) {
--		op->start = single_start;
--		op->next = single_next;
--		op->stop = single_stop;
--		op->show = show;
--		res = seq_open(file, op);
--		if (!res)
--			((struct seq_file *)file->private_data)->private = data;
--		else
--			kfree(op);
-+	int res;
-+
-+	res = seq_open(file, &single_seq_op);
-+	if (!res) {
-+		((struct seq_file *)file->private_data)->private = data;
-+		((struct seq_file *)file->private_data)->single_show_op = show;
- 	}
- 	return res;
- }
-@@ -602,15 +607,6 @@ int single_open_size(struct file *file, int (*show)(struct seq_file *, void *),
- }
- EXPORT_SYMBOL(single_open_size);
- 
--int single_release(struct inode *inode, struct file *file)
--{
--	const struct seq_operations *op = ((struct seq_file *)file->private_data)->op;
--	int res = seq_release(inode, file);
--	kfree(op);
--	return res;
--}
--EXPORT_SYMBOL(single_release);
--
- int seq_release_private(struct inode *inode, struct file *file)
- {
- 	struct seq_file *seq = file->private_data;
-diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-index a121982af0f5..c9a70c584a7d 100644
---- a/include/linux/seq_file.h
-+++ b/include/linux/seq_file.h
-@@ -24,9 +24,10 @@ struct seq_file {
- 	u64 version;
- 	struct mutex lock;
- 	const struct seq_operations *op;
--	int poll_event;
-+	int (*single_show_op)(struct seq_file *, void *);
- 	const struct file *file;
- 	void *private;
-+	int poll_event;
- };
- 
- struct seq_operations {
-@@ -140,7 +141,7 @@ int seq_path_root(struct seq_file *m, const struct path *path,
- 
- int single_open(struct file *, int (*)(struct seq_file *, void *), void *);
- int single_open_size(struct file *, int (*)(struct seq_file *, void *), void *, size_t);
--int single_release(struct inode *, struct file *);
-+#define single_release	seq_release
- void *__seq_open_private(struct file *, const struct seq_operations *, int);
- int seq_open_private(struct file *, const struct seq_operations *, int);
- int seq_release_private(struct inode *, struct file *);
--- 
-2.18.0
+I pushed this fix into apparmor-next
+
+
+
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  security/apparmor/domain.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index 098d546d8253..410d9ce09861 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -1006,7 +1006,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+>  					 const char *name, bool sibling)
+>  {
+>  	struct aa_profile *root, *hat = NULL;
+> -	const char *info = NULL;
+>  	int error = 0;
+>  
+>  	if (sibling && PROFILE_IS_HAT(profile)) {
+> @@ -1014,7 +1013,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+>  	} else if (!sibling && !PROFILE_IS_HAT(profile)) {
+>  		root = aa_get_profile(profile);
+>  	} else {
+> -		info = "conflicting target types";
+>  		error = -EPERM;
+>  		goto audit;
+>  	}
+> @@ -1025,10 +1023,8 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+>  		if (COMPLAIN_MODE(profile)) {
+>  			hat = aa_new_null_profile(profile, true, name,
+>  						  GFP_KERNEL);
+> -			if (!hat) {
+> -				info = "failed null profile create";
+> +			if (!hat)
+>  				error = -ENOMEM;
+> -			}
+>  		}
+>  	}
+>  	aa_put_profile(root);
+> 
 
