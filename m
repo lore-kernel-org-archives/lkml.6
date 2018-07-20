@@ -6,169 +6,82 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF44ECDFBB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDFEECDFB8
 	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4F5C20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4F5C20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neuling.org
+	by mail.kernel.org (Postfix) with ESMTP id 2544F20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:09:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2544F20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeGTHwl convert rfc822-to-8bit (ORCPT
+        id S1727216AbeGTHz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 03:52:41 -0400
-Received: from ozlabs.org ([203.11.71.1]:43577 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeGTHwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 03:52:41 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by ozlabs.org (Postfix) with ESMTP id 41X23M6Krpz9s3Z;
-        Fri, 20 Jul 2018 17:05:51 +1000 (AEST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id 3C56AEE78BF; Fri, 20 Jul 2018 17:05:51 +1000 (AEST)
-Message-ID: <6ac334813cdc7729d1a3529b183880c2be7acddf.camel@neuling.org>
-Subject: Re: [RESEND][PATCH] powerpc/powernv : Save/Restore SPRG3 on
- entry/exit from stop.
-From:   Michael Neuling <mikey@neuling.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>, ego@linux.vnet.ibm.com
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Florian Weimer <fweimer@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Date:   Fri, 20 Jul 2018 17:05:51 +1000
-In-Reply-To: <871sbya08w.fsf@concordia.ellerman.id.au>
-References: <1531826849-31838-1-git-send-email-ego@linux.vnet.ibm.com>
-         <1531843216-22209-1-git-send-email-ego@linux.vnet.ibm.com>
-         <80bbdf47081e3e302ab5f28b5ddc9e2faabba842.camel@neuling.org>
-         <20180718081249.GA17700@in.ibm.com>
-         <1205bfc10c62986b4345fa258cf37e820c08226b.camel@neuling.org>
-         <87tvoubpro.fsf@concordia.ellerman.id.au>
-         <dd4a5526966b9b24b7eb52efadf3b9bcd4a94bd1.camel@neuling.org>
-         <871sbya08w.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Fri, 20 Jul 2018 03:55:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36444 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725139AbeGTHz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 03:55:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2F228AF49;
+        Fri, 20 Jul 2018 07:09:09 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     David Miller <davem@davemloft.net>
+Date:   Fri, 20 Jul 2018 17:09:01 +1000
+Cc:     herbert@gondor.apana.org.au, tgraf@suug.ch, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, eric.dumazet@gmail.com
+Subject: Re: [PATCH - revised] rhashtable: detect when object movement might have invalidated a lookup
+In-Reply-To: <20180719.234329.512279372120817504.davem@davemloft.net>
+References: <87fu0kt5m0.fsf@notabene.neil.brown.name> <20180719.051440.931407144963903326.davem@davemloft.net> <87va9aqv05.fsf@notabene.neil.brown.name> <20180719.234329.512279372120817504.davem@davemloft.net>
+Message-ID: <87sh4eqt82.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-20 at 16:29 +1000, Michael Ellerman wrote:
-> Michael Neuling <mikey@neuling.org> writes:
-> > On Fri, 2018-07-20 at 12:32 +1000, Michael Ellerman wrote:
-> > > Michael Neuling <mikey@neuling.org> writes:
-> > > > On Wed, 2018-07-18 at 13:42 +0530, Gautham R Shenoy wrote:
-> > > > > On Wed, Jul 18, 2018 at 09:24:19AM +1000, Michael Neuling wrote:
-> > > > > > 
-> > > > > > >  	DEFINE(PPC_DBELL_SERVER, PPC_DBELL_SERVER);
-> > > > > > > diff --git a/arch/powerpc/kernel/idle_book3s.S
-> > > > > > > b/arch/powerpc/kernel/idle_book3s.S
-> > > > > > > index d85d551..5069d42 100644
-> > > > > > > --- a/arch/powerpc/kernel/idle_book3s.S
-> > > > > > > +++ b/arch/powerpc/kernel/idle_book3s.S
-> > > > > > > @@ -120,6 +120,9 @@ power9_save_additional_sprs:
-> > > > > > >  	mfspr	r4, SPRN_MMCR2
-> > > > > > >  	std	r3, STOP_MMCR1(r13)
-> > > > > > >  	std	r4, STOP_MMCR2(r13)
-> > > > > > > +
-> > > > > > > +	mfspr	r3, SPRN_SPRG3
-> > > > > > > +	std	r3, STOP_SPRG3(r13)
-> > > > > > 
-> > > > > > We don't need to save it.  Just restore it from paca->sprg_vdso
-> > > > > > which
-> > > > > > should
-> > > > > > never change.
-> > > > > 
-> > > > > Ok. I will respin a patch to restore SPRG3 from paca->sprg_vdso.
-> > > > > 
-> > > > > > 
-> > > > > > How can we do better at catching these missing SPRGs?
-> > > > > 
-> > > > > We can go through the list of SPRs from the POWER9 User Manual and
-> > > > > document explicitly why we don't have to save/restore certain SPRs
-> > > > > during the execution of the stop instruction. Does this sound ok ?
-> > > > > 
-> > > > > (Ref: Table 4-8, Section 4.7.3.4 from the POWER9 User Manual
-> > > > > accessible from
-> > > > > https://openpowerfoundation.org/?resource_lib=power9-processor-users-m
-> > > > > anua
-> > > > > l)
-> > > > 
-> > > > I was thinking of a boot time test case built into linux. linux has some
-> > > > boot
-> > > > time test cases which you can enable via CONFIG options.
-> > > > 
-> > > > Firstly you could see if an SPR exists using the same trick xmon does in
-> > > > dump_one_spr(). Then once you have a list of usable SPRs, you could
-> > > > write
-> > > > all
-> > > > the known ones (I assume you'd have to leave out some, like the PSSCR),
-> > > > then
-> > > > set
-> > > 
-> > > Write what value?
-> > > 
-> > > Ideally you want to write a random bit pattern to reduce the chance
-> > > that only some bits are being restored.
-> > 
-> > The xmon dump_one_spr() trick tries to work around that by writing one
-> > random
-> > value and then a different one to see if it really is a nop.
-> > 
-> > > But you can't do that because writing a value to an SPRs has an effect.
-> > 
-> > Sure that's a concern but xmon seems to get away with it.
-> 
-> I don't think it writes, but maybe I'm reading the code wrong.
+--=-=-=
+Content-Type: text/plain
 
-You're right, sorry. It's the write the GPR that becomes a NOP when the SPR is
-not there. I misremembered how it worked. 
+On Thu, Jul 19 2018, David Miller wrote:
 
-Maybe that won't work stop since we'd need to be able change the SPR value to
-ensure we don't hit the reset value after a stop state. 
+> From: NeilBrown <neilb@suse.com>
+> Date: Fri, 20 Jul 2018 16:30:34 +1000
+>
+>> Does this ruling also apply to the bit-spin-lock changes and the
+>> per-cpu-counter changes that I have proposed?  These improve
+>> scalability when updates dominate.  Not having these in mainline
+>> would mean I need to carry a separate rhashtables implementation for
+>> lustre, which means code diversion which isn't healthy in the long
+>> run.
+>
+> If it helps existing rhashtable users generally, then it is fine,
+> since it will actually be tested by upstream users.
 
-We'd be able to detect SPRs that that change from it's reset value but not those
-that are already at their reset value.
+Good, thanks.
 
-> Writing a random value to the MSR could be fun :)
+NeilBrown
 
-Fortunately the MSR is not an SPR :-P
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > 
-> > Yeah, I'm not convinced it'll work either but it would be a nice piece of
-> > test
-> > infrastructure to have if it does work.
-> 
-> Yeah I guess I'd rather we worked on 1) and 2) below first :)
+-----BEGIN PGP SIGNATURE-----
 
-ok
-
-> > We'd still need to marry up the SPR numbers we get from the test to what's
-> > actually being restored in Linux.
-> > 
-> > > But there's a much simpler solution, we should 1) have a selftest for
-> > > getcpu() and 2) we should be running the glibc (I think?) test suite
-> > > that found this in the first place. It's frankly embarrassing that we
-> > > didn't find this.
-> > 
-> > Yeah, we should do that also, but how do we catch the next SPR we are
-> > missing.
-> > I'd like some systematic way of doing that rather than wack-a-mole.
-> 
-> Whack-a-mole 😂😂😂😂
-
-I preferred waking them :-)
-
-> We could also improve things by documenting how each SPR is handled, eg.
-> is it saved/restored across idle, syscall, KVM etc. And possibly that
-> could even become code that defines how SPRs are handled, rather than it
-> all being done ad-hoc.
-
-Yeah.  It's complicated by linux calling opal_slw_set_reg() to change what's
-saved. This was part of the reason I'd hoped doing a linux test case would help
-as we could do it after those calls.
-
-Mikey
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltRio0ACgkQOeye3VZi
+gbmtog//X8squ2wPl2LDLLe34S2GMQ9uANO5+mCZLKImPqr+1EoSCyiQJeWpl6j8
+oiuqDKgF2V3lixs6N6zhZCkW9QLU0PqlovVtc4RGWZg5Roa4qHeT+BTQBT0CtwHc
+YFGDqYTQQAWv71aT4y2fqiNHPL4+LduZdWaEWrQwusTtzHnaVKqXdbSay0A0gMCU
+LaPlCKuwPMH3ZubeP18PBPhz+rF3nb3X+KG18wCaz4CQAdqpxue7wiUFybeDimrL
+Rdarh5e7YEmrWtNUpnnUBybu0RQsLm3v5pXhNGBKKGfwgecHD930bXO/weVttBXH
+LK08tUhvepppHmHXgfH20ReVSGIWUuwOMWZANK+6r5idjPhZgPh5FqKWHN8NfOgE
+ScE3aFAx+YJk3QKEb2WbrYQ75iJ2UNMZO8xD1BIXNy9OGZ4pK7Zq1fE2lUpFz6r1
+cFI9AjVnTxuKsqfVVKyvNytjN0ab8jV1b4wyUS9UQs3bD6tAsKgEixU7mex2WWVr
+DXgoihENUu3tGAENVt2Ncey1cNWFgBQHyj4tM5VduUBjinaEMchLyzpHjvd7AoS9
+erHsPvuIWzbFXdWmzP0byEQILNvotLF+97rfdy69FTFhVymyn5RJFAVqWyqv1vLW
+jgLMSd6erFG2KHOzFsaWi7JWXT4IBhcg7jd/QkSP0UFHkrWqYZQ=
+=qfRm
+-----END PGP SIGNATURE-----
+--=-=-=--
