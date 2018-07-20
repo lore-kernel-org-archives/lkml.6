@@ -6,62 +6,60 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6764FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 521B6ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C05D20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:38:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C05D20652
+	by mail.kernel.org (Postfix) with ESMTP id 164E320671
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:38:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 164E320671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbeGTV1z (ORCPT
+        id S1728873AbeGTV2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 17:27:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37993 "EHLO
+        Fri, 20 Jul 2018 17:28:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43107 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728396AbeGTV1y (ORCPT
+        with ESMTP id S1727984AbeGTV2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 17:27:54 -0400
+        Fri, 20 Jul 2018 17:28:24 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6KKasFm2784959
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6KKbRIj2785011
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 20 Jul 2018 13:36:54 -0700
+        Fri, 20 Jul 2018 13:37:27 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6KKaq2Q2784955;
-        Fri, 20 Jul 2018 13:36:52 -0700
-Date:   Fri, 20 Jul 2018 13:36:52 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6KKbRpK2785008;
+        Fri, 20 Jul 2018 13:37:27 -0700
+Date:   Fri, 20 Jul 2018 13:37:27 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-77754cfa09a6c528c38cbca9ee4cc4f7cf6ad6f2@git.kernel.org>
-Cc:     brgerst@gmail.com, torvalds@linux-foundation.org, jroedel@suse.de,
-        hpa@zytor.com, jkosina@suse.cz, acme@kernel.org,
-        tglx@linutronix.de, eduval@amazon.com, jpoimboe@redhat.com,
-        dhgutteridge@sympatico.ca, namhyung@kernel.org, llong@redhat.com,
-        boris.ostrovsky@oracle.com, jolsa@redhat.com,
-        dave.hansen@intel.com, mingo@kernel.org, bp@alien8.de,
-        jgross@suse.com, luto@kernel.org, aarcange@redhat.com,
-        dvlasenk@redhat.com, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, pavel@ucw.cz, will.deacon@arm.com,
-        David.Laight@aculab.com, peterz@infradead.org,
-        alexander.shishkin@linux.intel.com
-Reply-To: dvlasenk@redhat.com, linux-kernel@vger.kernel.org,
-          gregkh@linuxfoundation.org, pavel@ucw.cz, will.deacon@arm.com,
-          David.Laight@aculab.com, peterz@infradead.org,
-          alexander.shishkin@linux.intel.com, boris.ostrovsky@oracle.com,
-          llong@redhat.com, jolsa@redhat.com, dave.hansen@intel.com,
-          mingo@kernel.org, bp@alien8.de, jgross@suse.com, luto@kernel.org,
-          aarcange@redhat.com, jpoimboe@redhat.com,
-          dhgutteridge@sympatico.ca, namhyung@kernel.org,
-          brgerst@gmail.com, torvalds@linux-foundation.org,
-          jroedel@suse.de, hpa@zytor.com, jkosina@suse.cz, acme@kernel.org,
-          eduval@amazon.com, tglx@linutronix.de
-In-Reply-To: <1532103744-31902-2-git-send-email-joro@8bytes.org>
-References: <1532103744-31902-2-git-send-email-joro@8bytes.org>
+Message-ID: <tip-d5e84c21dbf5ea458897f88346dc979909eed913@git.kernel.org>
+Cc:     tglx@linutronix.de, jpoimboe@redhat.com, David.Laight@aculab.com,
+        dvlasenk@redhat.com, alexander.shishkin@linux.intel.com,
+        acme@kernel.org, jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, jgross@suse.com, mingo@kernel.org,
+        brgerst@gmail.com, bp@alien8.de, dave.hansen@intel.com,
+        dhgutteridge@sympatico.ca, luto@kernel.org, hpa@zytor.com,
+        jroedel@suse.de, peterz@infradead.org, pavel@ucw.cz,
+        llong@redhat.com, jkosina@suse.cz, eduval@amazon.com,
+        aarcange@redhat.com, will.deacon@arm.com, namhyung@kernel.org,
+        torvalds@linux-foundation.org, boris.ostrovsky@oracle.com
+Reply-To: mingo@kernel.org, jolsa@redhat.com, linux-kernel@vger.kernel.org,
+          jgross@suse.com, gregkh@linuxfoundation.org,
+          alexander.shishkin@linux.intel.com, dvlasenk@redhat.com,
+          acme@kernel.org, tglx@linutronix.de, David.Laight@aculab.com,
+          jpoimboe@redhat.com, namhyung@kernel.org, will.deacon@arm.com,
+          boris.ostrovsky@oracle.com, torvalds@linux-foundation.org,
+          pavel@ucw.cz, peterz@infradead.org, eduval@amazon.com,
+          aarcange@redhat.com, jkosina@suse.cz, llong@redhat.com,
+          jroedel@suse.de, bp@alien8.de, brgerst@gmail.com,
+          luto@kernel.org, hpa@zytor.com, dhgutteridge@sympatico.ca,
+          dave.hansen@intel.com
+In-Reply-To: <1532103744-31902-3-git-send-email-joro@8bytes.org>
+References: <1532103744-31902-3-git-send-email-joro@8bytes.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] perf/core: Make sure the ring-buffer is mapped in all
- page-tables
-Git-Commit-ID: 77754cfa09a6c528c38cbca9ee4cc4f7cf6ad6f2
+Subject: [tip:x86/pti] x86/entry/32: Check for VM86 mode in slow-path check
+Git-Commit-ID: d5e84c21dbf5ea458897f88346dc979909eed913
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -75,32 +73,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  77754cfa09a6c528c38cbca9ee4cc4f7cf6ad6f2
-Gitweb:     https://git.kernel.org/tip/77754cfa09a6c528c38cbca9ee4cc4f7cf6ad6f2
+Commit-ID:  d5e84c21dbf5ea458897f88346dc979909eed913
+Gitweb:     https://git.kernel.org/tip/d5e84c21dbf5ea458897f88346dc979909eed913
 Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Fri, 20 Jul 2018 18:22:22 +0200
+AuthorDate: Fri, 20 Jul 2018 18:22:23 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 20 Jul 2018 22:33:41 +0200
 
-perf/core: Make sure the ring-buffer is mapped in all page-tables
+x86/entry/32: Check for VM86 mode in slow-path check
 
-The ring-buffer is accessed in the NMI handler, so it's better to avoid
-faulting on it. Sync the vmalloc range with all page-tables in system to
-make sure everyone has it mapped.
+The SWITCH_TO_KERNEL_STACK macro only checks for CPL == 0 to go down the
+slow and paranoid entry path. The problem is that this check also returns
+true when coming from VM86 mode. This is not a problem by itself, as the
+paranoid path handles VM86 stack-frames just fine, but it is not necessary
+as the normal code path handles VM86 mode as well (and faster).
 
-This fixes a WARN_ON_ONCE() that can be triggered with PTI enabled on
-x86-32:
+Extend the check to include VM86 mode. This also makes an optimization of
+the paranoid path possible.
 
-  WARNING: CPU: 4 PID: 0 at arch/x86/mm/fault.c:320 vmalloc_fault+0x220/0x230
-
-This triggers because with PTI enabled on an PAE kernel the PMDs are no
-longer shared between the page-tables, so the vmalloc changes do not
-propagate automatically.
-
-Note: Andy said rightfully that we should try to fix the vmalloc code for
-that case, but that's not a hot fix for the issue at hand.
-
-Fixes: 7757d607c6b3 ("x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32")
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: "H . Peter Anvin" <hpa@zytor.com>
@@ -133,43 +123,32 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1532103744-31902-2-git-send-email-joro@8bytes.org
+Link: https://lkml.kernel.org/r/1532103744-31902-3-git-send-email-joro@8bytes.org
 
 ---
- kernel/events/ring_buffer.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/x86/entry/entry_32.S | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 5d3cf407e374..df2d8cf0072c 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -814,6 +814,13 @@ static void rb_free_work(struct work_struct *work)
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 010cdb41e3c7..2767c625a52c 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -414,8 +414,16 @@
+ 	andl	$(0x0000ffff), PT_CS(%esp)
  
- 	vfree(base);
- 	kfree(rb);
-+
-+	/*
-+	 * FIXME: PAE workaround for vmalloc_fault(): Make sure buffer is
-+	 * unmapped in all page-tables.
-+	 */
-+	if (IS_ENABLED(CONFIG_X86_PAE))
-+		vmalloc_sync_all();
- }
+ 	/* Special case - entry from kernel mode via entry stack */
+-	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
+-	jz	.Lentry_from_kernel_\@
++#ifdef CONFIG_VM86
++	movl	PT_EFLAGS(%esp), %ecx		# mix EFLAGS and CS
++	movb	PT_CS(%esp), %cl
++	andl	$(X86_EFLAGS_VM | SEGMENT_RPL_MASK), %ecx
++#else
++	movl	PT_CS(%esp), %ecx
++	andl	$SEGMENT_RPL_MASK, %ecx
++#endif
++	cmpl	$USER_RPL, %ecx
++	jb	.Lentry_from_kernel_\@
  
- void rb_free(struct ring_buffer *rb)
-@@ -840,6 +847,15 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
- 	if (!all_buf)
- 		goto fail_all_buf;
- 
-+	/*
-+	 * FIXME: PAE workaround for vmalloc_fault(): The buffer is
-+	 * accessed in NMI handlers, make sure it is mapped in all
-+	 * page-tables in the system so that we don't fault on the range in
-+	 * an NMI handler.
-+	 */
-+	if (IS_ENABLED(CONFIG_X86_PAE))
-+		vmalloc_sync_all();
-+
- 	rb->user_page = all_buf;
- 	rb->data_pages[0] = all_buf + PAGE_SIZE;
- 	if (nr_pages) {
+ 	/* Bytes to copy */
+ 	movl	$PTREGS_SIZE, %ecx
