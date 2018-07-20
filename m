@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4BDECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413ADECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9F5A20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9F5A20652
+	by mail.kernel.org (Postfix) with ESMTP id 03D8D20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:42:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03D8D20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389986AbeGTN3v (ORCPT
+        id S2389633AbeGTNaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:29:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51940 "EHLO
+        Fri, 20 Jul 2018 09:30:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52194 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbeGTN3u (ORCPT
+        with ESMTP id S1731571AbeGTNaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:29:50 -0400
+        Fri, 20 Jul 2018 09:30:12 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82350D6C;
-        Fri, 20 Jul 2018 12:39:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 079FAC8A;
+        Fri, 20 Jul 2018 12:38:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.17 087/101] arm64: Add per-cpu infrastructure to call ARCH_WORKAROUND_2
-Date:   Fri, 20 Jul 2018 14:14:33 +0200
-Message-Id: <20180720121426.930415015@linuxfoundation.org>
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 057/101] s390/qeth: avoid using is_multicast_ether_addr_64bits on (u8 *)[6]
+Date:   Fri, 20 Jul 2018 14:14:03 +0200
+Message-Id: <20180720121425.547783082@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -53,75 +51,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-commit 5cf9ce6e5ea50f805c6188c04ed0daaec7b6887d upstream.
+[ Upstream commit 9d0a58fb9747afd27d490c02a97889a1b59f6be4 ]
 
-In a heterogeneous system, we can end up with both affected and
-unaffected CPUs. Let's check their status before calling into the
-firmware.
+*ether_addr*_64bits functions have been introduced to optimize
+performance critical paths, which access 6-byte ethernet address as u64
+value to get "nice" assembly. A harmless hack works nicely on ethernet
+addresses shoved into a structure or a larger buffer, until busted by
+Kasan on smth like plain (u8 *)[6].
 
-Reviewed-by: Julien Grall <julien.grall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+qeth_l2_set_mac_address calls qeth_l2_remove_mac passing
+u8 old_addr[ETH_ALEN] as an argument.
+
+Adding/removing macs for an ethernet adapter is not that performance
+critical. Moreover is_multicast_ether_addr_64bits itself on s390 is not
+faster than is_multicast_ether_addr:
+
+is_multicast_ether_addr(%r2) -> %r2
+llc	%r2,0(%r2)
+risbg	%r2,%r2,63,191,0
+
+is_multicast_ether_addr_64bits(%r2) -> %r2
+llgc	%r2,0(%r2)
+risbg	%r2,%r2,63,191,0
+
+So, let's just use is_multicast_ether_addr instead of
+is_multicast_ether_addr_64bits.
+
+Fixes: bcacfcbc82b4 ("s390/qeth: fix MAC address update sequence")
+Reviewed-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpu_errata.c |    2 ++
- arch/arm64/kernel/entry.S      |   11 +++++++----
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ drivers/s390/net/qeth_l2_main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -233,6 +233,8 @@ enable_smccc_arch_workaround_1(const str
- #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -141,7 +141,7 @@ static int qeth_l2_send_setmac(struct qe
  
- #ifdef CONFIG_ARM64_SSBD
-+DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
-+
- void __init arm64_update_smccc_conduit(struct alt_instr *alt,
- 				       __le32 *origptr, __le32 *updptr,
- 				       int nr_inst)
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -140,8 +140,10 @@ alternative_else_nop_endif
+ static int qeth_l2_write_mac(struct qeth_card *card, u8 *mac)
+ {
+-	enum qeth_ipa_cmds cmd = is_multicast_ether_addr_64bits(mac) ?
++	enum qeth_ipa_cmds cmd = is_multicast_ether_addr(mac) ?
+ 					IPA_CMD_SETGMAC : IPA_CMD_SETVMAC;
+ 	int rc;
  
- 	// This macro corrupts x0-x3. It is the caller's duty
- 	// to save/restore them if required.
--	.macro	apply_ssbd, state
-+	.macro	apply_ssbd, state, targ, tmp1, tmp2
- #ifdef CONFIG_ARM64_SSBD
-+	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
-+	cbz	\tmp2, \targ
- 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
- 	mov	w1, #\state
- alternative_cb	arm64_update_smccc_conduit
-@@ -176,12 +178,13 @@ alternative_cb_end
- 	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
- 	disable_step_tsk x19, x20		// exceptions when scheduling.
+@@ -158,7 +158,7 @@ static int qeth_l2_write_mac(struct qeth
  
--	apply_ssbd 1
-+	apply_ssbd 1, 1f, x22, x23
+ static int qeth_l2_remove_mac(struct qeth_card *card, u8 *mac)
+ {
+-	enum qeth_ipa_cmds cmd = is_multicast_ether_addr_64bits(mac) ?
++	enum qeth_ipa_cmds cmd = is_multicast_ether_addr(mac) ?
+ 					IPA_CMD_DELGMAC : IPA_CMD_DELVMAC;
+ 	int rc;
  
- #ifdef CONFIG_ARM64_SSBD
- 	ldp	x0, x1, [sp, #16 * 0]
- 	ldp	x2, x3, [sp, #16 * 1]
- #endif
-+1:
- 
- 	mov	x29, xzr			// fp pointed to user-space
- 	.else
-@@ -323,8 +326,8 @@ alternative_if ARM64_WORKAROUND_845719
- alternative_else_nop_endif
- #endif
- 3:
--	apply_ssbd 0
--
-+	apply_ssbd 0, 5f, x0, x1
-+5:
- 	.endif
- 
- 	msr	elr_el1, x21			// set up the return data
 
 
