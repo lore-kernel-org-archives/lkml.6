@@ -2,112 +2,106 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DBDECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF8CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27E4020673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:04:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E4020673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C0C820673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:04:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C0C820673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbeGTIvb (ORCPT
+        id S1727971AbeGTIvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:51:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55568 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727219AbeGTIvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:51:31 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A9D4872630;
-        Fri, 20 Jul 2018 08:04:26 +0000 (UTC)
-Received: from [10.36.117.156] (ovpn-117-156.ams2.redhat.com [10.36.117.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3F769111DCE5;
-        Fri, 20 Jul 2018 08:04:25 +0000 (UTC)
-Subject: Re: [PATCH v3 5/6] KVM: X86: Add NMI support to PV IPIs
-To:     Wanpeng Li <kernellwp@gmail.com>, Radim Krcmar <rkrcmar@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <1530598891-21370-1-git-send-email-wanpengli@tencent.com>
- <1530598891-21370-6-git-send-email-wanpengli@tencent.com>
- <20180719163138.GC11749@flask>
- <CANRm+CwzG8jcsVhhGa2w55KcCTpwm-yokFR2Oi6LYaoS0ameqQ@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <825c953c-ec48-84cf-f1ca-bdee5d327427@redhat.com>
-Date:   Fri, 20 Jul 2018 10:04:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CANRm+CwzG8jcsVhhGa2w55KcCTpwm-yokFR2Oi6LYaoS0ameqQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 08:04:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 08:04:26 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+        Fri, 20 Jul 2018 04:51:54 -0400
+Received: from mout.perfora.net ([74.208.4.196]:42739 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727201AbeGTIvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:51:54 -0400
+Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MRmud-1fZf4934tV-00SyRn; Fri, 20 Jul 2018 10:04:37 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: [PATCH 2/2] ASoC: tegra: probe deferral error reporting
+Date:   Fri, 20 Jul 2018 10:04:24 +0200
+Message-Id: <20180720080424.31505-2-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180720080424.31505-1-marcel@ziswiler.com>
+References: <20180720080424.31505-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:ont/fEOq6Ti2cNWyJh7UAxOMsT+dtNakUjlzMR2TwzPf5d6Keaf
+ MNU7ULd71P23UgBCXtQFW99AIASL5aPtzG1J2Fxb01yCQuixhQ1YQindQXJJkp5V7hn20uE
+ /dOglQdf41A39yQjzuko97qf2bSo9g+yqiWRFlCDMaJCiRhrChICd9uaRVznDRjEXtjVM6U
+ cKxM7SAWtvXwBZm0qTSgg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:r1pop4lALAk=:Nz1Wefe8hOC0/IeREgk3jw
+ p6TRSqxpyC+tqMLkLAzCupYlyBbSqSj+8MrPxKogbF+AVyIIc9ohCOnh9hoXKwBF+UswQvMpx
+ rGeHcn5dV4PdySauci4DxvXUJT2Q2WVmlVTy9+asrH5HcVGtQGKv6BnRtbhE0/DjGaW3e/S25
+ OsN/dqd7ududsE7oO7FtBczdrU58ZIjpmo/EGxncpOLKCnFMRjBjmAlUTKNlsYu7eFn9tIySA
+ K/4x9APQ3MR4OOcqAXD+eZyHY4i19tR7fl6XmAsI7giVyrz6wPBKsrPT+Vs7yddScSi7A1MXh
+ J7kkSBQWZkXmR4hs/FOFMgEXbfbnQwzw3uYlMVmaNzZcyDss8Y3K5VTLqmQZvfB5L+UcX5ybh
+ FMnV4xofTlgnxPK3ObzGR8J1zG9/wEWvpjMHLWbsekhatBj4T4DWbuHfZ3TALxIYG5r21An5a
+ 5Lh3CMHINqKcwsrHQCJ8LVUzvVSD/EytzBuFE8Ehsy6MxioZiLhI7J7jcxLAnf7jZyWFguZlI
+ 3qUFyjraUqT4RkMYKvgvis8KEm4Ev/29w23tuSks+Do0iXQNV9N7QROFO8rXLZtJap3pz0NDP
+ fcMyLD5PFJi2RabZnptSnGUUruIM/Xbu4a3/QPRWeLYNkihSi3/PHaVGtFIs8RJ8IDwekvJ9k
+ 4DaV4E86tgf8e8p7D1jHQFiBO0n5N3US2PNJT/j6QZZp/Xmqebysve97o5xmYwbNKLVY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/07/2018 05:53, Wanpeng Li wrote:
->>> -     ret = kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitmap_high, vector);
->>> +     switch (vector) {
->>> +     default:
->>> +             icr = APIC_DM_FIXED | vector;
->>> +             break;
->>> +     case NMI_VECTOR:
->>> +             icr = APIC_DM_NMI;
->> I think it would be better to say that KVM interprets NMI_VECTOR and
->> sends the interrupt as APIC_DM_NMI.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-It's not KVM, this is arch/x86/kernel/kvm.c so the guest side.
+Actually report the error codes from of_get_named_gpio() resp.
+devm_gpio_request_one() upon trying to get the codec reset resp. sync
+GPIOs which may as well just be a probe deferrals.
 
-Paolo
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-> Yeah, in addition, SDM 10.6.1 also mentioned that:
-> Delivery mode:
->     100 (NMI) Delivers an NMI interrupt to the target processor or
-> processors. The vector information is ignored.
+---
+
+ sound/soc/tegra/tegra20_ac97.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
+index 682ef33afb5f..4875512f0732 100644
+--- a/sound/soc/tegra/tegra20_ac97.c
++++ b/sound/soc/tegra/tegra20_ac97.c
+@@ -351,18 +351,21 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 		ret = devm_gpio_request_one(&pdev->dev, ac97->reset_gpio,
+ 					    GPIOF_OUT_INIT_HIGH, "codec-reset");
+ 		if (ret) {
+-			dev_err(&pdev->dev, "could not get codec-reset GPIO\n");
++			dev_err(&pdev->dev, "could not get codec-reset GPIO: "
++					    "%d\n", ret);
+ 			goto err_clk_put;
+ 		}
+ 	} else {
+-		dev_err(&pdev->dev, "no codec-reset GPIO supplied\n");
++		ret = ac97->reset_gpio;
++		dev_err(&pdev->dev, "no codec-reset GPIO supplied: %d\n", ret);
+ 		goto err_clk_put;
+ 	}
+ 
+ 	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
+ 					    "nvidia,codec-sync-gpio", 0);
+ 	if (!gpio_is_valid(ac97->sync_gpio)) {
+-		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
++		ret = ac97->sync_gpio;
++		dev_err(&pdev->dev, "no codec-sync GPIO supplied: %d\n", ret);
+ 		goto err_clk_put;
+ 	}
+ 
+-- 
+2.14.4
 
