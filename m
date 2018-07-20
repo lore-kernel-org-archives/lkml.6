@@ -2,135 +2,177 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C466ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1930ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2B2720673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:55:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7889F20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:57:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gKh9EB79"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2B2720673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fF8DXxnq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7889F20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbeGTLnZ (ORCPT
+        id S1729860AbeGTLox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:43:25 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:37100 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727983AbeGTLnZ (ORCPT
+        Fri, 20 Jul 2018 07:44:53 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41292 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbeGTLox (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:43:25 -0400
-Received: by mail-yb0-f195.google.com with SMTP id r3-v6so4463488ybo.4
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 03:55:44 -0700 (PDT)
+        Fri, 20 Jul 2018 07:44:53 -0400
+Received: by mail-lf1-f65.google.com with SMTP id v22-v6so1503178lfe.8;
+        Fri, 20 Jul 2018 03:57:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9KzDb9stgx9l2CJByrnMYfMZEin6YTqcaj9BIPOPqdU=;
-        b=gKh9EB79tT9HY87oJ/7W7DxOtfRhBjPOSwBYDddtlieNtyZhkqDjH72H+nKNR4Z1US
-         DVG2rb2/elrliGpZpyxg2sMOPwbj2IN26UDKj4WTXXvYWtJnjKmqojk+fBB3x35oVmBl
-         jp7Fah5aTnKpN88BTWM0KEbcvATLWShycTQi0=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=z43dF2khbYJcgqJvlRlv7aXo1E2B5EqmU3p5M6AROqs=;
+        b=fF8DXxnqJsv/N4ovg8dfZcjqG9NXZ6o0SsV3vwcevT/CSsVqHt2m2rYHsU2Khhsevp
+         uIPpODV7KwV7cBFpv23t+Nj5GP6x2JrADfknnEez/2vGgEUMPQL2VhXA3NmJyNbi+CuO
+         m017cyKmJDj8FDY9CAArInHbelzeBleZ8QUsamgqPUuZuK3T0RAT0QpVuls/nsdyI/4U
+         /uxhfqDe9Gr4mAFOWkMXuQh/QyGeJZOK3HJVan2HLkxsWjxBEv7pKoMxTafmE2qW15kW
+         bNp7RQ+wql75YNbYHNV8hlmQtQG3gasrvYv7JnZkT/RJk/kdujx6AMRFVmZ4IXsSTYny
+         tz+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9KzDb9stgx9l2CJByrnMYfMZEin6YTqcaj9BIPOPqdU=;
-        b=fmw34Azy8QTa/qEc1ZTpS92ezAwKxuAxUR0lZ8e+RuW8VZrbtacxmMm3QpQF4LLU1U
-         IGnMcP3pCfwBP3uxG7y4TQ9O58QK27J3JUTOKExhPUP0gEqdcLurTQ8zqSQNm2Vvkgsf
-         N4pZwv0ZeWL0J5rjeLRgAbYUK8FSc9pSALXhvtl5hW9Tt8dkNzlhwKofbWf/Afgs5qqy
-         HhtvlxpVwYeE1z9DYhrDchH+U/TZE5dXt6ErDvFS402YJr8Fza8gHjbZTHqZ3MN0Jk6l
-         JhvP5CLY9hQPAv+iqvLnWHQKpwSjNt66rQxuHoLh2VQRUSOpU5MuutrboMeYS3RdM0Rv
-         DO2A==
-X-Gm-Message-State: AOUpUlE9kvLkUY/F/Vdrx+Melojvt63QwPwNEkKb4GhfzeyQ8Oe5aVIn
-        hFnFR6GvC09EpBiBOEjeJ8xVxiYExCE=
-X-Google-Smtp-Source: AAOMgpfEx3RbjNk2TCB9lokuUv/ftbsjSnmrNHRsIFlXA+X4R+p8W9CG76pj3Biklarpp2xd8lScOA==
-X-Received: by 2002:a25:3105:: with SMTP id x5-v6mr710186ybx.468.1532084143511;
-        Fri, 20 Jul 2018 03:55:43 -0700 (PDT)
-Received: from mail-yb0-f178.google.com (mail-yb0-f178.google.com. [209.85.213.178])
-        by smtp.gmail.com with ESMTPSA id f64-v6sm747762ywd.58.2018.07.20.03.55.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 03:55:41 -0700 (PDT)
-Received: by mail-yb0-f178.google.com with SMTP id c3-v6so4453089ybi.13
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 03:55:41 -0700 (PDT)
-X-Received: by 2002:a25:4b01:: with SMTP id y1-v6mr675748yba.344.1532084140544;
- Fri, 20 Jul 2018 03:55:40 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=z43dF2khbYJcgqJvlRlv7aXo1E2B5EqmU3p5M6AROqs=;
+        b=ojuZHzM82Q9pfB0TALtUntNPhqPvXhnD43TCPviiTIrHCbHzNxflcDTBuGiQh3z0iT
+         DPTm05VVj3cBjPMmAVmh5N2LUzJEnmWe+2mBE52J/cG62oOIL2ky5fgwKlyupoM5PqgG
+         GJ5XpeUBRhoQUBpg3omfySeteQvANx6ulI2LXrP0ppx7ReypsJsbnr2dqvtVTW6gvydP
+         CsNLuiX77C/cVsv90h8Xkb4PmdVvshisO+TQKdWZBJ5Gj7UVrTQ6G0cEMHsp2w9PG/d3
+         nSdgD8jtQYMQViRxkNBwH32DcCbXn/8lPnkGmGLrgFLHsRZEPDLQDND6jbMUCsCy7TIL
+         attw==
+X-Gm-Message-State: AOUpUlFAIi6F1Hsss4Q3nyjq+2neskVzQg7eOCUYQMeJ28lHwqGVFBAR
+        +u790qIwG0QHDWppPeKORiD09WKLiktf1moOVEA=
+X-Google-Smtp-Source: AAOMgpes4jGE6gov3v1Fs7zaUSsQNUXZviXPt7ZrFzgDMphV1iyMS63q8NZ90QNErLfgF9O+tVnQGGNza3lsi/qVl98=
+X-Received: by 2002:a19:b24e:: with SMTP id b75-v6mr1063381lff.11.1532084228538;
+ Fri, 20 Jul 2018 03:57:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com> <Pine.LNX.4.44L0.1807171643120.1344-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1807171643120.1344-100000@iolanthe.rowland.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 20 Jul 2018 19:55:29 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5D4YHOkMhyTmpPzpp9aPNoZtJMHgU1xmvb4PoPRaOFrbg@mail.gmail.com>
-Message-ID: <CAAFQd5D4YHOkMhyTmpPzpp9aPNoZtJMHgU1xmvb4PoPRaOFrbg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-To:     stern@rowland.harvard.edu
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>, matwey@sai.msu.ru,
-        hdegoede@redhat.com, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
-        bhumirks@gmail.com, colin.king@canonical.com,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 03:57:07
+ -0700 (PDT)
+In-Reply-To: <20180720101206.tv7nsoanwo5ftnia@ninjato>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+ <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
+ <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se> <20180720101206.tv7nsoanwo5ftnia@ninjato>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 20 Jul 2018 12:57:07 +0200
+X-Google-Sender-Auth: WxP8cv0M6F9eLTfnExnz8SPkC0c
+Message-ID: <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Peter Rosin <peda@axentia.se>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 5:51 AM Alan Stern <stern@rowland.harvard.edu> wrote:
+On Fri, Jul 20, 2018 at 12:12 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 >
-> On Tue, 17 Jul 2018, Ezequiel Garcia wrote:
+>> I have not read much of the I3C spec. I'm just coming from the
+>> current situation with I2C and the i2c-demux-pinctrl driver which
+>> tries to retrofit this into the I2C world and is not doing a grand
+>> job. And how could it?
+>>
+>> If you can acknowledge that i2c-demux-pinctrl is needed for I2C
+>> but for some reason is not needed for I3C because of something
+>> that differs between I2C and I3C, then fine, by all means ditch
+>> the explicit bus object.
+>>
+>> But in my mind splitting up the devices on the same bus between
+>> several of our own masters and then not have a single object for
+>> the bus is going to cause headaches down the line. Be it address
+>> clashes or trouble with master ping-pong or whatever.
+>>
+>> I think the reason for i2c-demux-pinctrl is that some (most?) I2C
+>> hardware suffers from quirks and one way to work around it is to
+>> make selected accesses from a different master. I expect I3C HW
+>> to also suffer from quirks...
+>>
+>> Maybe a bit-bang I3C master isn't feasible for some fundamental
+>> reason? But if it is, then I'd say that it's just a matter of time
+>> until someone finds a situation where such a thing could be used to
+>> work around some I3C quirk. And then it might be too expensive to
+>> always use the bit-bang master for the affected device.
+>>
+>> But what do I know? Don't let me hold this series back...
 >
-> > Hi Matwey,
-> >
-> > First of all, sorry for the delay.
-> >
-> > Adding Alan and Hans. Guys, do you have any feedback here?
->
-> ...
->
-> > > > So, what is the benefit of using consistent
-> > > > for these URBs, as opposed to streaming?
-> > >
-> > > I don't know, I think there is no real benefit and all we see is a
-> > > consequence of copy-pasta when some webcam drivers were inspired by
-> > > others and development priparily was going at x86 platforms.
-> >
-> > You are probably right about the copy-pasta.
-> >
-> > >  It would
-> > > be great if somebody corrected me here. DMA Coherence is quite strong
-> > > property and I cannot figure out how can it help when streaming video.
-> > > The CPU host always reads from the buffer and never writes to.
-> > > Hardware perepherial always writes to and never reads from. Moreover,
-> > > buffer access is mutually exclusive and separated in time by Interrupt
-> > > fireing and URB starting (when we reuse existing URB for new request).
-> > > Only single one memory barrier is really required here.
-> > >
-> >
-> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
-> > create DMA mappings and use the streaming API. Which makes more
-> > sense in hardware without hardware coherency.
->
-> As far as I know, the _only_ advantage to using coherent DMA in this
-> situation is that you then do not have to pay the overhead of
-> constantly setting up and tearing down the streaming mappings.  So it
-> depends very much on the platform: If coherent buffers are cached then
-> it's a slight win and otherwise it's a big lose.
+> Thanks, Peter. You nailed it, the I2C use case (and its limits). From
+> what I know about I3C, bit-banging doesn't sound very feasible to me, so
+> the situation might be a bit different. Still, no one knows about future
+> I3C use cases and HW quirks. This is why I encouraged the seperate bus
+> object because back then it was said it was easy to do and implement. If
+> this now becomes a show-stopper, we can surely re-decide. I am not
+> strong on this point, it was just something which would have helped I2C.
+> (And for that matter, we (= the Renesas Upstream Kernel Team) was
+> discussing something similar to the i2c demuxer for SPI, too. We have
+> multiple IP cores which can do SPI on R-Car, all with their pros and
+> cons)
 
-Isn't it about usb_alloc_coherent() being backed by DMA coherent API
-(dma_alloc_coherent/attrs()) and ending up allocating uncached (or
-write-combine) memory for devices with non-coherent DMAs? I'm not sure
-how this memory is used by this driver, but if it reads from it using
-CPU, uncached mapping might be significantly slower than cached
-mapping of memory allocated with kmalloc().
+I think we need to distinguish between demuxing and i3c master
+handover here, they are two separate issues that both need to be solved
+and that are not too hard to do, but we get into trouble if we combine
+them in arbitrary ways, which is what I'm concerned about:
 
-Best regards,
-Tomasz
+* What I understand from reading i2c-demux-pinctrl.c, a slave device
+  will only ever be observable from one master at a time, when you
+  switch over, all children get removed on one master and added to
+  the other one, to be probed again by their respective drivers.
+  I can see this as a useful feature on i3c as well, in particular to
+  deal with the situation where we have i2c slaves connected to a
+  pinmux that can switch them between an i3c master and an
+  i2c-only master (possibly a gpio based one). That particular use
+  case however doesn't seem to fix well in the current code, which
+  is structure around i3c buses.
+
+* The other thing we definitely have to support for i3c is to deal with
+   handing over control of the bus between the i3c master owned
+   by Linux, and other masters that are /not/ owned by the same
+   Linux instance. This is the part that the spec discusses in much
+   detail, with the intention of temporarily giving up control of the
+   bus to let another master do its thing on a shared slave without
+   user interaction.
+
+Combining the two quickly gets nasty I think. The current design
+seems to imply that a device driver could keep talking to a slave
+while it is being reparented from one master to another. I can't
+think of a good reason why we would possibly want that, but
+it definitely opens up questions in what happens to e.g. the sysfs
+representation, lock order, and power management that I'd rather
+not have to think about.
+
+       Arnd
