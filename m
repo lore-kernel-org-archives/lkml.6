@@ -6,78 +6,116 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B178ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF49ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0B9320671
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:42:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0B9320671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A483C20671
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:43:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A483C20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbeGTUb5 (ORCPT
+        id S1727867AbeGTUdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 16:31:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44350 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbeGTUb5 (ORCPT
+        Fri, 20 Jul 2018 16:33:09 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37781 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727633AbeGTUdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 16:31:57 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5399D4C;
-        Fri, 20 Jul 2018 19:42:13 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 12:42:12 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH -next 0/2] fs/epoll: loosen irq safety when possible
-Message-Id: <20180720124212.7260d76d83e2b8e5e3349ea5@linux-foundation.org>
-In-Reply-To: <20180720172956.2883-1-dave@stgolabs.net>
-References: <20180720172956.2883-1-dave@stgolabs.net>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        Fri, 20 Jul 2018 16:33:09 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fgbJ7-00028X-K9; Fri, 20 Jul 2018 21:43:17 +0200
+Date:   Fri, 20 Jul 2018 21:43:16 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+cc:     Joerg Roedel <joro@8bytes.org>, Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH 1/3] perf/core: Make sure the ring-buffer is mapped in
+ all page-tables
+In-Reply-To: <CALCETrW7o=s7esmE4+SxLPsLv2SvJZU6f7jfsedazZVrot2EqA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1807202142130.1694@nanos.tec.linutronix.de>
+References: <1532103744-31902-1-git-send-email-joro@8bytes.org> <1532103744-31902-2-git-send-email-joro@8bytes.org> <CALCETrXJX8tPVgD=Ce41534uneAAobm-HyjeGwVYgJDJ_+-bDw@mail.gmail.com> <alpine.DEB.2.21.1807202126400.1694@nanos.tec.linutronix.de>
+ <CALCETrW7o=s7esmE4+SxLPsLv2SvJZU6f7jfsedazZVrot2EqA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 10:29:54 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
-
-> Hi,
+On Fri, 20 Jul 2018, Andy Lutomirski wrote:
+> On Fri, Jul 20, 2018 at 12:27 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > On Fri, 20 Jul 2018, Andy Lutomirski wrote:
+> >> > On Jul 20, 2018, at 6:22 AM, Joerg Roedel <joro@8bytes.org> wrote:
+> >> >
+> >> > From: Joerg Roedel <jroedel@suse.de>
+> >> >
+> >> > The ring-buffer is accessed in the NMI handler, so we better
+> >> > avoid faulting on it. Sync the vmalloc range with all
+> >> > page-tables in system to make sure everyone has it mapped.
+> >> >
+> >> > This fixes a WARN_ON_ONCE() that can be triggered with PTI
+> >> > enabled on x86-32:
+> >> >
+> >> >    WARNING: CPU: 4 PID: 0 at arch/x86/mm/fault.c:320 vmalloc_fault+0x220/0x230
+> >> >
+> >> > This triggers because with PTI enabled on an PAE kernel the
+> >> > PMDs are no longer shared between the page-tables, so the
+> >> > vmalloc changes do not propagate automatically.
+> >>
+> >> It seems like it would be much more robust to fix the vmalloc_fault()
+> >> code instead.
+> >
+> > Right, but now the obvious fix for the issue at hand is this. We surely
+> > should revisit this.
 > 
-> Both patches replace saving+restoring interrupts when taking the
-> ep->lock (now the waitqueue lock), with just disabling local irqs.
-> This shows immediate performance benefits in patch 1 for an epoll
-> workload running on Xen.
-
-I'm surprised.  Is spin_lock_irqsave() significantly more expensive
-than spin_lock_irq()?  Relative to all the other stuff those functions
-are doing?  If so, how come?  Some architectural thing makes
-local_irq_save() much more costly than local_irq_disable()?
-
-> The main concern we need to have with this
-> sort of changes in epoll is the ep_poll_callback() which is passed
-> to the wait queue wakeup and is done very often under irq context,
-> this patch does not touch this call.
-
-Yeah, these changes are scary.  For the code as it stands now, and for
-the code as it evolves.
-
-I'd have more confidence if we had some warning mechanism if we run
-spin_lock_irq() when IRQs are disabled, which is probably-a-bug.  But
-afaict we don't have that.  Probably for good reasons - I wonder what
-they are?
-
-> Patches have been tested pretty heavily with the customer workload,
-> microbenchmarks, ltp testcases and two high level workloads that
-> use epoll under the hood: nginx and libevent benchmarks.
+> If you commit this under this reasoning, then please at least make it say:
 > 
-> Details are in the individual patches.
+> /* XXX: The vmalloc_fault() code is buggy on PTI+PAE systems, and this
+> is a workaround. */
 > 
-> Applies on top of mmotd.
+> Let's not have code in the kernel that pretends to make sense but is
+> actually voodoo magic that works around bugs elsewhere.  It's no fun
+> to maintain down the road.
 
-Please convince me about the performance benefits?
+Fair enough. Lemme amend it. Joerg is looking into it, but I surely want to
+get that stuff some exposure in next ASAP.
+
+Thanks,
+
+	tglx
+
