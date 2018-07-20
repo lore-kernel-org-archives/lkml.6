@@ -2,144 +2,102 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B65CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C392ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B839320652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:48:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4CCD20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:48:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ebH61TNe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B839320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="YKKPLOcY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4CCD20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbeGTIfj (ORCPT
+        id S1728291AbeGTIfj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 20 Jul 2018 04:35:39 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:28746 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbeGTIfJ (ORCPT
+Received: from services.gouders.net ([141.101.32.176]:54496 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbeGTIfi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:35:09 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w6K7kdj3008048;
-        Fri, 20 Jul 2018 16:46:46 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w6K7kdj3008048
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1532072806;
-        bh=0AEHVsWGTyJTmFv8yz8zN2xealBncVG4ABdemn2CJys=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ebH61TNe8HjsZTIoHVQ2ZkzzjIKpmcbxPCf40AEu50t8rSvDMs76Dt6nKniwhOB38
-         WO3bLS6C35VQ55BMYbKkIZsMEZriIUTSCMXgw9Ru4xqW0qoB43XA1GMb5OQ865/oya
-         4ZHj3R1ZaEtrrro/H/og4efQm0wS/oXZDeV0RHuVm6Go+yWj6HYsyKJWZbUcSTRnoL
-         tbuFoDkGl/tMmIYpYysC4fpgZpK6d+PbK0sSNUPeCr0r25sEoxBh9yz5lZw1dOAINw
-         9+ajZo5c3L6iW5q4rPmP13AeTzWdbHPvrRUDZ/YAgMmA9a0qnuXi9FiqMI1D//cqF6
-         rdad4bdXE1/OA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
+        Fri, 20 Jul 2018 04:35:38 -0400
+Received: from lena.gouders.net ([193.175.198.193])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w6K7mGpI031540
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Fri, 20 Jul 2018 09:48:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1532072908; bh=RC4mWJZYhMl7JHiAjT75Qx//tBV/boReNxyhISHoMpY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=YKKPLOcY2E80z9PPM/4YD/X3m451h/l/A28KuPSVLT4Rz+l1blBeu823sE9C2P31k
+         dDoWoNIHfC2TOqBLeXNpnSfehanM5blHOYbz37/SBg1Vacaiun9VXNpTawt2xi1UNu
+         FSytM3hjhbd46oKP0tIPV1bJ5Hn5dRtlL47shfXw=
+From:   Dirk Gouders <dirk@gouders.net>
+To:     Joe Perches <joe@perches.com>
 Cc:     Dirk Gouders <dirk@gouders.net>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
+        Andy Whitcroft <apw@canonical.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 11/11] kbuild: remove auto.conf from prerequisite of phony targets
-Date:   Fri, 20 Jul 2018 16:46:36 +0900
-Message-Id: <1532072796-7947-12-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532072796-7947-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1532072796-7947-1-git-send-email-yamada.masahiro@socionext.com>
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] checkpatch: kbuild: if_changed: check for multiple calls in targets
+Date:   Fri, 20 Jul 2018 09:48:04 +0200
+Message-Id: <20180720074804.4160-1-dirk@gouders.net>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <ghy3eafbrf.fsf@lena.gouders.net>
+References: <ghy3eafbrf.fsf@lena.gouders.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The top-level Makefile adds include/config/auto.conf as
-prerequisites of 'scripts', 'prepare1', etc.
+The kbuild function if_changed should not be called more than once for
+a target.
 
-They were needed to terminate the build when include/config/auto.conf
-is missing.
+Because that function writes the command line to a .cmd file for later
+tests, multiple calls of it within a target would result in overwrites
+of previous values and effectively render the command line test
+meaningless, resulting in flip-flop behaviour.
 
-Now that the inclusion of include/config/auto.conf is mandatory
-in the top-level Makefile if dot-config is 1 (Note 'include' directive
-is used instead of '-include').
+Add a check for makefiles and kbuild files and produce an error for
+targets with multiple calls to if_changed.
 
-Make terminates the build by itself if it fails to create or update
-include/config/auto.conf so we are sure that include/config/auto.conf
-exists in the very first stage of make.
+Three examples that now could be detected:
 
-I am still keeping include/config/auto.conf as the prerequisite of
-%/modules.builtin because modules.builtin is a real file.  According
-to commit a6c366324cac ("kbuild: Do not unnecessarily regenerate
-modules.builtin"), it is intentional to compare time-stamps between
-%/modules.builtin and include/config/auto.conf .  I moved tristate.conf
-here because it is only included from scripts/Makefile.modbuiltin.
+98f78525371b55ccd (x86/boot: Refuse to build with data relocations)
+6a8dfe1cac5c591ae (microblaze: support U-BOOT image format)
+684151a75bf25f5ae (sparc32: added U-Boot build target: uImage)
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Joe Perches <joe@perches.com>
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Dirk Gouders <dirk@gouders.net>
 ---
+v2: rework commit message and regular expression
+---
+ scripts/checkpatch.pl | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Changes in v4: None
-
- Makefile | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 0ec1c27..ceb9c1e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -650,10 +650,6 @@ include/config/auto.conf:
- 	/bin/false)
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 447857ffaf6b..437e98414f74 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2911,6 +2911,14 @@ sub process {
+ 			     "Use of $flag is deprecated, please use \`$replacement->{$flag} instead.\n" . $herecurr) if ($replacement->{$flag});
+ 		}
  
- endif # may-sync-config
--
--else
--# Dummy target needed, because used as prerequisite
--include/config/auto.conf: ;
- endif # $(dot-config)
- 
- KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
-@@ -1048,15 +1044,14 @@ define filechk_kernel.release
- endef
- 
- # Store (new) KERNELRELEASE string in include/config/kernel.release
--include/config/kernel.release: include/config/auto.conf FORCE
-+include/config/kernel.release: $(srctree)/Makefile FORCE
- 	$(call filechk,kernel.release)
- 
- # Additional helpers built in scripts/
- # Carefully list dependencies so we do not try to build scripts twice
- # in parallel
- PHONY += scripts
--scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
--	 asm-generic gcc-plugins $(autoksyms_h)
-+scripts: scripts_basic asm-generic gcc-plugins $(autoksyms_h)
- 	$(Q)$(MAKE) $(build)=$(@)
- 
- # Things we need to do before we recursively start building the kernel
-@@ -1086,8 +1081,7 @@ endif
- # that need to depend on updated CONFIG_* values can be checked here.
- prepare2: prepare3 outputmakefile asm-generic
- 
--prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
--                   include/config/auto.conf
-+prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
- 	$(cmd_crmodverdir)
- 
- archprepare: archheaders archscripts prepare1 scripts_basic
-@@ -1225,7 +1219,7 @@ modules: $(vmlinux-dirs) $(if $(KBUILD_BUILTIN),vmlinux) modules.builtin
- modules.builtin: $(vmlinux-dirs:%=%/modules.builtin)
- 	$(Q)$(AWK) '!x[$$0]++' $^ > $(objtree)/modules.builtin
- 
--%/modules.builtin: include/config/auto.conf
-+%/modules.builtin: include/config/auto.conf include/config/tristate.conf
- 	$(Q)$(MAKE) $(modbuiltin)=$*
- 
- 
++		# Check for multiple calls of if_changed within a target in Makefiles
++		if (($realfile =~ /Makefile.*/ || $realfile =~ /Kbuild.*/) &&
++		    ($prevline =~ /^[ +]\t\s*\$\(call\s+if_changed,/) &&
++		    ($line =~ /^[ +]\t\s*\$\(call\s+if_changed,/)) {
++				ERROR("MULTIPLE_IF_CHANGED",
++				      "Multiple calls of if_changed within a target.\n" . $herecurr);
++		}
++
+ # check for DT compatible documentation
+ 		if (defined $root &&
+ 			(($realfile =~ /\.dtsi?$/ && $line =~ /^\+\s*compatible\s*=\s*\"/) ||
 -- 
-2.7.4
+2.16.1
 
