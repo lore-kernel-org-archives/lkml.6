@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C8FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7828ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7D620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:42:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7D620652
+	by mail.kernel.org (Postfix) with ESMTP id B0E1A20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E1A20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390085AbeGTNa7 (ORCPT
+        id S2390095AbeGTNbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:30:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53182 "EHLO
+        Fri, 20 Jul 2018 09:31:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53282 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389343AbeGTNa6 (ORCPT
+        with ESMTP id S2389343AbeGTNbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:30:58 -0400
+        Fri, 20 Jul 2018 09:31:01 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93E9BCF3;
-        Fri, 20 Jul 2018 12:39:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4857BCBE;
+        Fri, 20 Jul 2018 12:37:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.17 092/101] arm64: ssbd: Restore mitigation status on CPU resume
-Date:   Fri, 20 Jul 2018 14:14:38 +0200
-Message-Id: <20180720121427.132568465@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 048/101] net: macb: initialize bp->queues[0].bp for at91rm9200
+Date:   Fri, 20 Jul 2018 14:13:54 +0200
+Message-Id: <20180720121425.057743700@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -52,95 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-commit 647d0519b53f440a55df163de21c52a8205431cc upstream.
+[ Upstream commit fec9d3b1dc4c481f20f5d2f5aef3ad1cb7504186 ]
 
-On a system where firmware can dynamically change the state of the
-mitigation, the CPU will always come up with the mitigation enabled,
-including when coming back from suspend.
+The macb driver currently crashes on at91rm9200 with the following trace:
 
-If the user has requested "no mitigation" via a command line option,
-let's enforce it by calling into the firmware again to disable it.
+Unable to handle kernel NULL pointer dereference at virtual address 00000014
+[...]
+[<c031da44>] (macb_rx_desc) from [<c031f2bc>] (at91ether_open+0x2e8/0x3f8)
+[<c031f2bc>] (at91ether_open) from [<c041e8d8>] (__dev_open+0x120/0x13c)
+[<c041e8d8>] (__dev_open) from [<c041ec08>] (__dev_change_flags+0x17c/0x1a8)
+[<c041ec08>] (__dev_change_flags) from [<c041ec4c>] (dev_change_flags+0x18/0x4c)
+[<c041ec4c>] (dev_change_flags) from [<c07a5f4c>] (ip_auto_config+0x220/0x10b0)
+[<c07a5f4c>] (ip_auto_config) from [<c000a4fc>] (do_one_initcall+0x78/0x18c)
+[<c000a4fc>] (do_one_initcall) from [<c0783e50>] (kernel_init_freeable+0x184/0x1c4)
+[<c0783e50>] (kernel_init_freeable) from [<c0574d70>] (kernel_init+0x8/0xe8)
+[<c0574d70>] (kernel_init) from [<c00090e0>] (ret_from_fork+0x14/0x34)
 
-Similarily, for a resume from hibernate, the mitigation could have
-been disabled by the boot kernel. Let's ensure that it is set
-back on in that case.
+Solve that by initializing bp->queues[0].bp in at91ether_init (as is done
+in macb_init).
 
-Acked-by: Will Deacon <will.deacon@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: ae1f2a56d273 ("net: macb: Added support for many RX queues")
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/cpufeature.h |    6 ++++++
- arch/arm64/kernel/cpu_errata.c      |    2 +-
- arch/arm64/kernel/hibernate.c       |   11 +++++++++++
- arch/arm64/kernel/suspend.c         |    8 ++++++++
- 4 files changed, 26 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/cadence/macb_main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -553,6 +553,12 @@ static inline int arm64_get_ssbd_state(v
- #endif
- }
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -3732,6 +3732,8 @@ static int at91ether_init(struct platfor
+ 	int err;
+ 	u32 reg;
  
-+#ifdef CONFIG_ARM64_SSBD
-+void arm64_set_ssbd_mitigation(bool state);
-+#else
-+static inline void arm64_set_ssbd_mitigation(bool state) {}
-+#endif
++	bp->queues[0].bp = bp;
 +
- #endif /* __ASSEMBLY__ */
+ 	dev->netdev_ops = &at91ether_netdev_ops;
+ 	dev->ethtool_ops = &macb_ethtool_ops;
  
- #endif
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -303,7 +303,7 @@ void __init arm64_enable_wa2_handling(st
- 		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
- }
- 
--static void arm64_set_ssbd_mitigation(bool state)
-+void arm64_set_ssbd_mitigation(bool state)
- {
- 	switch (psci_ops.conduit) {
- 	case PSCI_CONDUIT_HVC:
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -313,6 +313,17 @@ int swsusp_arch_suspend(void)
- 
- 		sleep_cpu = -EINVAL;
- 		__cpu_suspend_exit();
-+
-+		/*
-+		 * Just in case the boot kernel did turn the SSBD
-+		 * mitigation off behind our back, let's set the state
-+		 * to what we expect it to be.
-+		 */
-+		switch (arm64_get_ssbd_state()) {
-+		case ARM64_SSBD_FORCE_ENABLE:
-+		case ARM64_SSBD_KERNEL:
-+			arm64_set_ssbd_mitigation(true);
-+		}
- 	}
- 
- 	local_daif_restore(flags);
---- a/arch/arm64/kernel/suspend.c
-+++ b/arch/arm64/kernel/suspend.c
-@@ -62,6 +62,14 @@ void notrace __cpu_suspend_exit(void)
- 	 */
- 	if (hw_breakpoint_restore)
- 		hw_breakpoint_restore(cpu);
-+
-+	/*
-+	 * On resume, firmware implementing dynamic mitigation will
-+	 * have turned the mitigation on. If the user has forcefully
-+	 * disabled it, make sure their wishes are obeyed.
-+	 */
-+	if (arm64_get_ssbd_state() == ARM64_SSBD_FORCE_DISABLE)
-+		arm64_set_ssbd_mitigation(false);
- }
- 
- /*
 
 
