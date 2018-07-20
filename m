@@ -2,198 +2,122 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC17ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 672D9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B8CC204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:32:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8CC204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DE5E20864
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:32:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="PoYciMbh";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gxjrFoJz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE5E20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbeGUAWn (ORCPT
+        id S1729313AbeGUAXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 20:22:43 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43158 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727812AbeGUAWn (ORCPT
+        Fri, 20 Jul 2018 20:23:17 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:34640 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728788AbeGUAXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 20:22:43 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6KNUPPk106834
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 19:32:15 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kbnkgpcsv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 19:32:14 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 20 Jul 2018 19:32:13 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 20 Jul 2018 19:32:11 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6KNWARM1900970
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Jul 2018 23:32:10 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 33F9FB206E;
-        Fri, 20 Jul 2018 19:31:58 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04B08B206A;
-        Fri, 20 Jul 2018 19:31:57 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 20 Jul 2018 19:31:57 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0EAAF16CA2D3; Fri, 20 Jul 2018 16:32:12 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 16:32:12 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     David Chen <david.chen@nutanix.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: RCU nocb list not reclaiming causing OOM
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <BYAPR02MB4501B990E353A2616594821294510@BYAPR02MB4501.namprd02.prod.outlook.com>
+        Fri, 20 Jul 2018 20:23:17 -0400
+Received: by mail-vk0-f66.google.com with SMTP id l143-v6so6826600vke.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 16:32:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=MNFt+i9DVqWlcpzvEhwEM+GXKRMSwVetAPeNaDtq8xU=;
+        b=PoYciMbhusYTn0LV01wNXmBm0qCkg12HAQVZMsVFnER+wLCe2voYvLCTGFeeq0+7VI
+         84g/1F1c8Cim6fRTWBr2EyCfUGwB91UugWbHkEG52i20Na10dedtnpmGa+lYqx/b5Q+P
+         SDBp9MuLu94jOYpp+eytZbOxpqXcCw2fGLdPrdgJs0bvb2x4FMI4j2/cK9W8SwyOaSup
+         NOaMtIjOBojkGdLLA3azY78gaUfemEGWWbxQ4g6wuN+kTljj8rbc9asWFQ6ETZmUmPCk
+         ciVAPZ7mltz50VoID28YdcDGs0MsXKEn0HCvjSjl4nc3k5Wi1NeTcY1UFv7JH/el8nra
+         V7KQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=MNFt+i9DVqWlcpzvEhwEM+GXKRMSwVetAPeNaDtq8xU=;
+        b=gxjrFoJzr67ill3AcH3XMNCN1Teb4wbkQBHpUh94aMgrQF6VOL3WZDnSqp6SZJT2rE
+         ypG7sG8OVExQmZMr5SSWYqBgXRBEZci2Zor39K/oUR6jdqBjONI9hnpW5+RT9mXXUhhs
+         QBL36DxtKcELCI/aEzQ/VRFRBSDad79zr+82E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=MNFt+i9DVqWlcpzvEhwEM+GXKRMSwVetAPeNaDtq8xU=;
+        b=cznnE0RASXodP6Jyig43GuKrhTEXgUkQJZixz4CTUfMK1MI2QOkzwQDtpPRNFNtbHI
+         PjODb45xCGVoSuPjMps2IlFOO51eB3EtMKpeo+aSk8CMoDi0sZTy24b4KsqT5fEzvCQD
+         Cxvc6eJWcwAjhhFSNLRBhMSGeb4ark/gpfobPcCrD5VyUMLKOnNdYX9l6fhdNtVySWHQ
+         LYvde8vLi0iai5dqSkqzPcIPWoco93Gz+smAv2Y3Zfi6pBrwsMpD4s21jsGvtERuL5xN
+         kRILkr4dN0aWR/Z0ugx3OYYoofdQrCoTzi5UblX/MEFB4snHQjaU1siirpPkrRhMRzu/
+         Mv2A==
+X-Gm-Message-State: AOUpUlGh9cvnQ7ga47K754g1HhR7Cy0FPVQ1WnZIv/9AMIr9ie0IFdoU
+        iGmo61ecWhjglnAPZjT/bMfDVj2mvdK7w2fPyda6UQ==
+X-Google-Smtp-Source: AAOMgpdyyrwu9oh3NJh3TIryJTwUq7jTq1X2W4J4BfSGdi8+WgNPonylIELONas/iOnJE4Yj+6JXGP+14D5BeSDY7Sc=
+X-Received: by 2002:a1f:3653:: with SMTP id d80-v6mr2472255vka.79.1532129568470;
+ Fri, 20 Jul 2018 16:32:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BYAPR02MB4501B990E353A2616594821294510@BYAPR02MB4501.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18072023-0040-0000-0000-00000451E965
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009400; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01063743; UDB=6.00546277; IPR=6.00841594;
- MB=3.00022236; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-20 23:32:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072023-0041-0000-0000-000008581808
-Message-Id: <20180720233212.GC12945@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807200254
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 16:32:47 -0700 (PDT)
+In-Reply-To: <CAD=FV=VEQwudhCU0h7muB6ZM1WPETW0h4-=wo_=jgk0gyqfhBA@mail.gmail.com>
+References: <1532087461-3474-1-git-send-email-dkota@codeaurora.org>
+ <1532087461-3474-2-git-send-email-dkota@codeaurora.org> <CAD=FV=VEQwudhCU0h7muB6ZM1WPETW0h4-=wo_=jgk0gyqfhBA@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 20 Jul 2018 16:32:47 -0700
+X-Google-Sender-Auth: 5QrkRP6g-q3nBmf80m0sdXG3Z88
+Message-ID: <CAD=FV=WMAyg8Z+uamOyQ4iBs_SgTG3VTuw1t5u++FZtEpRWH8w@mail.gmail.com>
+Subject: Re: [PATCH V2] spi: spi-geni-qcom: Add SPI driver support for GENI
+ based QUP
+To:     Dilip Kota <dkota@codeaurora.org>
+Cc:     Timur Tabi <timur@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        Sagar Dharia <sdharia@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 11:05:52PM +0000, David Chen wrote:
-> Hi Paul,
-> 
-> We hit an RCU issue on 4.9.37 kernel. One of the nocb_follower list grows too
-> large, and not getting reclaimed, causing the system to OOM.
-> 
-> Printing the culprit rcu_sched_data:
-> 
->   nocb_q_count = {
->     counter = 32369635
->   },
->   nocb_follower_head = 0xffff88ae901c0a00,
->   nocb_follower_tail = 0xffff88af1538b8d8,
->   nocb_kthread = 0xffff88b06d290000,
-> 
-> As you can see here, the nocb_follower_head is not empty, so in theory, the
-> nocb_kthread shouldn't go to sleep. However, if dump the stack of the kthread:
-> 
-> crash> bt 0xffff88b06d290000
-> PID: 21     TASK: ffff88b06d290000  CPU: 3   COMMAND: "rcuos/1"
->  #0 [ffffafc9020b7dc0] __schedule at ffffffff8d8789dc
->  #1 [ffffafc9020b7e38] schedule at ffffffff8d878e76
->  #2 [ffffafc9020b7e50] rcu_nocb_kthread at ffffffff8d112337
->  #3 [ffffafc9020b7ec8] kthread at ffffffff8d0c6ce7
->  #4 [ffffafc9020b7f50] ret_from_fork at ffffffff8d87d755
-> 
-> And if we dis the address at ffffffff8d112337:
-> 
-> /usr/src/debug/kernel-4.9.37/linux-4.9.37-29.nutanix.07142017.el7.centos.x86_64/kernel/rcu/tree_plugin.h: 2106
-> 0xffffffff8d11232d <rcu_nocb_kthread+381>:      test   %rax,%rax
-> 0xffffffff8d112330 <rcu_nocb_kthread+384>:      jne    0xffffffff8d112355 <rcu_nocb_kthread+421>
-> 0xffffffff8d112332 <rcu_nocb_kthread+386>:      callq  0xffffffff8d878e40 <schedule>
-> 0xffffffff8d112337 <rcu_nocb_kthread+391>:      lea    -0x40(%rbp),%rsi
-> 
-> So the kthread is blocked at swait_event_interruptible in the nocb_follower_wait.
-> This contradict with the fact that nocb_follower_head was not empty. So I
-> wonder if this is caused by the lack of memory barrier in the place shown below.
-> If the head is set to NULL after doing xchg, it will overwrite the head set
-> by leader. This caused the kthread to sleep the next iteration, and the leader
-> won't wake him up as the tail doesn't point to head.
-> 
-> Please tell me what do you think.
-> 
-> Thanks,
-> David
-> 
-> diff -ru linux-4.9.37.orig/kernel/rcu/tree_plugin.h linux-4.9.37/kernel/rcu/tree_plugin.h
-> --- linux-4.9.37.orig/kernel/rcu/tree_plugin.h	2017-07-12 06:42:41.000000000 -0700
-> +++ linux-4.9.37/kernel/rcu/tree_plugin.h	2018-07-20 15:25:57.311206343 -0700
-> @@ -2149,6 +2149,7 @@
->  		BUG_ON(!list);
->  		trace_rcu_nocb_wake(rdp->rsp->name, rdp->cpu, "WokeNonEmpty");
->  		WRITE_ONCE(rdp->nocb_follower_head, NULL);
-> +		smp_mb();
->  		tail = xchg(&rdp->nocb_follower_tail, &rdp->nocb_follower_head);
+Hi,
 
-The xchg() operation implies full memory barriers both before and after,
-so adding the smp_mb() before would have no effect.
+On Fri, Jul 20, 2018 at 3:53 PM, Doug Anderson <dianders@chromium.org> wrote:
+>> +               mas->oversampling = 1;
+>> +               /* Transmit an entire FIFO worth of data per IRQ */
+>> +               mas->tx_wm = 1;
+>> +               geni_se_get_wrapper_version(se, major, minor, step);
+>
+> In v1 Stephen said:
+>
+>> Drop extra parenthesis.
+>
+> I'll further add that I'd prefer it if you based your series atop
+> <https://patchwork.kernel.org/patch/10412417/> which changes the
+> prototype here.
 
-But let me take a look at post-4.9 changes to this code...
+Whoops.  Extra parenthesis was actually referring to the line below
+this one, AKA:
 
-I suggest trying out the following commit:
 
-6b5fc3a13318 ("rcu: Add memory barriers for NOCB leader wakeup")
+> +               if ((major == 1) && (minor == 0))
+> +                       mas->oversampling = 2;
 
-If that one doesn't help, the following might be worth trying, but probably
-a lot harder to backport:
+...that still applies.  ...but then ignore my comment suggesting that
+you base your series atop Stephen's.  You already did that.  Certainly
+you should mention somewhere in your email that your patch is based on
+his.
 
-8be6e1b15c54 ("rcu: Use timer as backstop for NOCB deferred wakeups")
 
-Please let me know how it goes!
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 6b5fc3a1331810db407c9e0e673dc1837afdc9d0
-Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Date:   Fri Apr 28 20:11:09 2017 -0700
-
-    rcu: Add memory barriers for NOCB leader wakeup
-    
-    Wait/wakeup operations do not guarantee ordering on their own.  Instead,
-    either locking or memory barriers are required.  This commit therefore
-    adds memory barriers to wake_nocb_leader() and nocb_leader_wait().
-    
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-    Tested-by: Krister Johansen <kjlx@templeofstupid.com>
-    Cc: <stable@vger.kernel.org> # 4.6.x
-
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 0b1042545116..573fbe9640a0 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1810,6 +1810,7 @@ static void wake_nocb_leader(struct rcu_data *rdp, bool force)
- 	if (READ_ONCE(rdp_leader->nocb_leader_sleep) || force) {
- 		/* Prior smp_mb__after_atomic() orders against prior enqueue. */
- 		WRITE_ONCE(rdp_leader->nocb_leader_sleep, false);
-+		smp_mb(); /* ->nocb_leader_sleep before swake_up(). */
- 		swake_up(&rdp_leader->nocb_wq);
- 	}
- }
-@@ -2064,6 +2065,7 @@ static void nocb_leader_wait(struct rcu_data *my_rdp)
- 	 * nocb_gp_head, where they await a grace period.
- 	 */
- 	gotcbs = false;
-+	smp_mb(); /* wakeup before ->nocb_head reads. */
- 	for (rdp = my_rdp; rdp; rdp = rdp->nocb_next_follower) {
- 		rdp->nocb_gp_head = READ_ONCE(rdp->nocb_head);
- 		if (!rdp->nocb_gp_head)
-
+-Doug
