@@ -2,89 +2,167 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEA6ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97173ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 029B92084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:49:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 029B92084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CCE02084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:50:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kiTuJVGa";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kiTuJVGa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CCE02084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeGUAkW (ORCPT
+        id S1728834AbeGUAlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 20:40:22 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:48494 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727845AbeGUAkV (ORCPT
+        Fri, 20 Jul 2018 20:41:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47468 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727845AbeGUAlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 20:40:21 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T50SZ8a_1532130571;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T50SZ8a_1532130571)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 21 Jul 2018 07:49:33 +0800
-Subject: Re: [PATCH] mm: thp: remove use_zero_page sysfs knob
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, kirill@shutemov.name,
-        hughd@google.com, aaron.lu@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1532110430-115278-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180720123243.6dfc95ba061cd06e05c0262e@linux-foundation.org>
- <alpine.DEB.2.21.1807201300290.224013@chino.kir.corp.google.com>
- <3238b5d2-fd89-a6be-0382-027a24a4d3ad@linux.alibaba.com>
- <alpine.DEB.2.21.1807201401390.231119@chino.kir.corp.google.com>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <b258c765-ad71-0dd4-d420-75139c55e7c7@linux.alibaba.com>
-Date:   Fri, 20 Jul 2018 16:49:30 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Fri, 20 Jul 2018 20:41:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E505360274; Fri, 20 Jul 2018 23:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532130631;
+        bh=EYgZyTY+JquTfc47QVg5BvacMMAmkIZyxARhjeVgKjU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kiTuJVGa9wj3ja1WSgOVf6l6Zii0x+glZ7Czwhq2HCNkEo0yKMfKGTKaT8hN7X4/l
+         faDrViCi6N6RW/u9MsG7qRzG1d+RwvbRPA2UAxnJw5RFOMH39Pk+zEmDG5Y5sb6NXc
+         5kLyy7Gl4xge5ugnlS/zgSux/1re/J2t6H3dHgrk=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 15AED60274;
+        Fri, 20 Jul 2018 23:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532130631;
+        bh=EYgZyTY+JquTfc47QVg5BvacMMAmkIZyxARhjeVgKjU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kiTuJVGa9wj3ja1WSgOVf6l6Zii0x+glZ7Czwhq2HCNkEo0yKMfKGTKaT8hN7X4/l
+         faDrViCi6N6RW/u9MsG7qRzG1d+RwvbRPA2UAxnJw5RFOMH39Pk+zEmDG5Y5sb6NXc
+         5kLyy7Gl4xge5ugnlS/zgSux/1re/J2t6H3dHgrk=
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1807201401390.231119@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Date:   Fri, 20 Jul 2018 16:50:31 -0700
+From:   Subhash Jadavani <subhashj@codeaurora.org>
+To:     Asutosh Das <asutoshd@codeaurora.org>
+Cc:     cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org,
+        Sujit Reddy Thumma <sthumma@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/9] scsi: Allow auto suspend override by low-level
+ driver
+In-Reply-To: <8135b00502f7e089478c9b988806ed40b7d5d40b.1530880006.git.asutoshd@codeaurora.org>
+References: <cover.1530880006.git.asutoshd@codeaurora.org>
+ <8135b00502f7e089478c9b988806ed40b7d5d40b.1530880006.git.asutoshd@codeaurora.org>
+Message-ID: <2c51ab099a01e17163bc219b1c4a135b@codeaurora.org>
+X-Sender: subhashj@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-07-06 05:30, Asutosh Das wrote:
+> From: Sujit Reddy Thumma <sthumma@codeaurora.org>
+> 
+> Until now the scsi mid-layer forbids runtime suspend till userspace
+> enables it. This is mainly to quarantine some disks with broken
+> runtime power management or have high latencies executing suspend
+> resume callbacks. If the userspace doesn't enable the runtime suspend
+> the underlying hardware will be always on even when it is not doing
+> any useful work and thus wasting power.
+> 
+> Some low-level drivers for the controllers can efficiently use runtime
+> power management to reduce power consumption and improve battery life.
+> Allow runtime suspend parameters override within the LLD itself
+> instead of waiting for userspace to control the power management.
+> 
+> Signed-off-by: Sujit Reddy Thumma <sthumma@codeaurora.org>
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
+>  drivers/scsi/scsi_scan.c   | 4 ++++
+>  drivers/scsi/scsi_sysfs.c  | 3 ++-
+>  drivers/scsi/sd.c          | 2 ++
+>  include/scsi/scsi_device.h | 3 +++
+>  4 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
+> index 0880d97..5b7232a 100644
+> --- a/drivers/scsi/scsi_scan.c
+> +++ b/drivers/scsi/scsi_scan.c
+> @@ -969,6 +969,10 @@ static int scsi_add_lun(struct scsi_device *sdev,
+> unsigned char *inq_result,
+> 
+>  	transport_configure_device(&sdev->sdev_gendev);
+> 
+> +	/* The LLD can override auto suspend tunables in ->slave_configure() 
+> */
+> +	sdev->use_rpm_auto = 0;
+> +	sdev->autosuspend_delay = SCSI_DEFAULT_AUTOSUSPEND_DELAY;
+> +
+>  	if (sdev->host->hostt->slave_configure) {
+>  		ret = sdev->host->hostt->slave_configure(sdev);
+>  		if (ret) {
+> diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+> index 7943b76..706e778 100644
+> --- a/drivers/scsi/scsi_sysfs.c
+> +++ b/drivers/scsi/scsi_sysfs.c
+> @@ -1266,7 +1266,8 @@ int scsi_sysfs_add_sdev(struct scsi_device *sdev)
+>  	device_enable_async_suspend(&sdev->sdev_gendev);
+>  	scsi_autopm_get_target(starget);
+>  	pm_runtime_set_active(&sdev->sdev_gendev);
+> -	pm_runtime_forbid(&sdev->sdev_gendev);
+> +	if (!sdev->use_rpm_auto)
+> +		pm_runtime_forbid(&sdev->sdev_gendev);
+>  	pm_runtime_enable(&sdev->sdev_gendev);
+>  	scsi_autopm_put_target(starget);
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index a6201e6..205624f 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -3269,6 +3269,8 @@ static void sd_probe_async(void *data,
+> async_cookie_t cookie)
+>  	}
+> 
+>  	blk_pm_runtime_init(sdp->request_queue, dev);
+> +	if (sdp->autosuspend_delay >= 0)
+> +		pm_runtime_set_autosuspend_delay(dev, sdp->autosuspend_delay);
+>  	device_add_disk(dev, gd);
+>  	if (sdkp->capacity)
+>  		sd_dif_config_host(sdkp);
+> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+> index 4c36af6..1d5ae90 100644
+> --- a/include/scsi/scsi_device.h
+> +++ b/include/scsi/scsi_device.h
+> @@ -197,7 +197,10 @@ struct scsi_device {
+>  	unsigned broken_fua:1;		/* Don't set FUA bit */
+>  	unsigned lun_in_cdb:1;		/* Store LUN bits in CDB[1] */
+>  	unsigned unmap_limit_for_ws:1;	/* Use the UNMAP limit for WRITE SAME 
+> */
+> +	unsigned use_rpm_auto:1; /* Enable runtime PM auto suspend */
+> 
+> +#define SCSI_DEFAULT_AUTOSUSPEND_DELAY  -1
+> +	int autosuspend_delay;
+>  	atomic_t disk_events_disable_depth; /* disable depth for disk events 
+> */
+> 
+>  	DECLARE_BITMAP(supported_events, SDEV_EVT_MAXBITS); /* supported 
+> events */
 
+Looks good to me.
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
 
-On 7/20/18 2:05 PM, David Rientjes wrote:
-> On Fri, 20 Jul 2018, Yang Shi wrote:
->
->>> We disable the huge zero page through this interface, there were issues
->>> related to the huge zero page shrinker (probably best to never free a
->>> per-node huge zero page after allocated) and CVE-2017-1000405 for huge
->>> dirty COW.
->> Thanks for the information. It looks the CVE has been resolved by commit
->> a8f97366452ed491d13cf1e44241bc0b5740b1f0 ("mm, thp: Do not make page table
->> dirty unconditionally in touch_p[mu]d()"), which is in 4.15 already.
->>
-> For users who run kernels earlier than 4.15 they may choose to mitigate
-> the CVE by using this tunable.  It's not something we permanently need to
-> have, but it may likely be too early.
-
-Yes, it might be good to keep it around for a while.
-
->
->> What was the shrinker related issue? I'm supposed it has been resolved, right?
->>
-> The huge zero page can be reclaimed under memory pressure and, if it is,
-> it is attempted to be allocted again with gfp flags that attempt memory
-> compaction that can become expensive.  If we are constantly under memory
-> pressure, it gets freed and reallocated millions of times always trying to
-> compact memory both directly and by kicking kcompactd in the background.
-
-Even though we don't use huge zero page, we may also run into the 
-similar issue under memory pressure. Just save the cost of calling huge 
-zero page shrinker, but actually its cost sound not high.
-
->
-> It likely should also be per node.
-
-
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
