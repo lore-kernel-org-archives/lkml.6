@@ -3,56 +3,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8632EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DA1ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A23D20647
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C282720661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="o7Hvbbp/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A23D20647
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="eCsjURK9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C282720661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388203AbeGTRea (ORCPT
+        id S2388219AbeGTRec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:34:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59890 "EHLO
+        Fri, 20 Jul 2018 13:34:32 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59954 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387732AbeGTRe3 (ORCPT
+        with ESMTP id S1732067AbeGTReb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:34:29 -0400
+        Fri, 20 Jul 2018 13:34:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=oPz4/c6xGcoiPZZJs3nm3zNCFiO7d94tXeO0WGLc9/0=; b=o7Hvbbp/DA4t
-        irTIxX7j5oxWwIAmhdYVAHK3sEZ/F3lGyYJb5gV89D1X0M8t4pM/ItuKZfA7qTf5Wc4jI1XCahZTq
-        OeUBTEGykoGRTc3gThRzehHBTJrrBRj+3KQrPtq3+Sug1UH+pkv9aaKP42COa2EYInatb0QP67pkf
-        Mva6A=;
+        List-Archive; bh=4jAjYn0eKiZDLm3TlEpAl36dpnlAmg6TymuTDrg4sNc=; b=eCsjURK9TaJX
+        Aq4uQnau8kZOWvuvkpdaPrshaI8mZ4hrhoVYJscC5ApG2dJRzvYiKO1lkJMG7Ia2N+IWppeuJeZC0
+        P25zmbVLPeeTYcmqdlraQdJQpDMHi1EJhxWs1ZNlQOSBpA+oK3tm1AXk7MRriViqglM94eh8Oe7GF
+        diytQ=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fgYWv-00006H-Pk; Fri, 20 Jul 2018 16:45:21 +0000
+        id 1fgYWx-00006O-NA; Fri, 20 Jul 2018 16:45:23 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fgYWv-00014q-CE; Fri, 20 Jul 2018 17:45:21 +0100
+        id 1fgYWx-00016N-92; Fri, 20 Jul 2018 17:45:23 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Niklas Cassel <niklas.cassel@linaro.org>
 Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Applied "regulator: qcom_spmi: Do not initialise static to NULL" to the regulator tree
-In-Reply-To:  <20180716113525.9335-4-niklas.cassel@linaro.org>
-Message-Id: <E1fgYWv-00014q-CE@debutante>
-Date:   Fri, 20 Jul 2018 17:45:21 +0100
+Subject: Applied "regulator: qcom_spmi: Use correct regmap when checking for error" to the regulator tree
+In-Reply-To:  <20180716113525.9335-3-niklas.cassel@linaro.org>
+Message-Id: <E1fgYWx-00016N-92@debutante>
+Date:   Fri, 20 Jul 2018 17:45:23 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: qcom_spmi: Do not initialise static to NULL
+   regulator: qcom_spmi: Use correct regmap when checking for error
 
 has been applied to the regulator tree at
 
@@ -85,15 +85,15 @@ to this mail.
 Thanks,
 Mark
 
-From 9689ca0af345b82d06a02e45cc214c1b8bad9e8d Mon Sep 17 00:00:00 2001
+From 85046a15529606466bc778e1205f4cab8e3724d1 Mon Sep 17 00:00:00 2001
 From: Niklas Cassel <niklas.cassel@linaro.org>
-Date: Mon, 16 Jul 2018 15:32:53 +0200
-Subject: [PATCH] regulator: qcom_spmi: Do not initialise static to NULL
+Date: Mon, 16 Jul 2018 15:32:52 +0200
+Subject: [PATCH] regulator: qcom_spmi: Use correct regmap when checking for
+ error
 
-Fix the following checkpatch error:
-
-ERROR: do not initialise statics to NULL
-+static struct regmap *saw_regmap = NULL;
+Since we have just assigned saw_regmap, and since the error message
+refers to saw_regmap, it feels safe to assume that it is saw_regmap,
+and not regmap, that should be checked for errors.
 
 Fixes: 0caecaa87202 ("regulator: qcom_spmi: Add support for SAW")
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
@@ -103,18 +103,18 @@ Signed-off-by: Mark Brown <broonie@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-index ba3d5e63ada6..5246f5b870c2 100644
+index 4cc14c65d86b..ba3d5e63ada6 100644
 --- a/drivers/regulator/qcom_spmi-regulator.c
 +++ b/drivers/regulator/qcom_spmi-regulator.c
-@@ -1060,7 +1060,7 @@ static irqreturn_t spmi_regulator_vs_ocp_isr(int irq, void *data)
- #define SAW3_AVS_CTL_TGGL_MASK	0x8000000
- #define SAW3_AVS_CTL_CLEAR_MASK	0x7efc00
+@@ -1775,7 +1775,7 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 		syscon = of_parse_phandle(node, "qcom,saw-reg", 0);
+ 		saw_regmap = syscon_node_to_regmap(syscon);
+ 		of_node_put(syscon);
+-		if (IS_ERR(regmap))
++		if (IS_ERR(saw_regmap))
+ 			dev_err(dev, "ERROR reading SAW regmap\n");
+ 	}
  
--static struct regmap *saw_regmap = NULL;
-+static struct regmap *saw_regmap;
- 
- static void spmi_saw_set_vdd(void *data)
- {
 -- 
 2.18.0
 
