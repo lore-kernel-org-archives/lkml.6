@@ -2,115 +2,171 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2463DECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB9FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D938320673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:06:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D938320673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 21AF62064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:09:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PCeJ1Tm2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AF62064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbeGTIyB (ORCPT
+        id S1727718AbeGTI4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:54:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37734 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727139AbeGTIyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:54:01 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3EF0D402B032;
-        Fri, 20 Jul 2018 08:06:56 +0000 (UTC)
-Received: from [10.36.117.156] (ovpn-117-156.ams2.redhat.com [10.36.117.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0B97B16870;
-        Fri, 20 Jul 2018 08:06:54 +0000 (UTC)
-Subject: Re: [PATCH v3 2/6] KVM: X86: Implement PV IPIs in linux guest
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     Radim Krcmar <rkrcmar@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <1530598891-21370-1-git-send-email-wanpengli@tencent.com>
- <1530598891-21370-3-git-send-email-wanpengli@tencent.com>
- <20180719162826.GB11749@flask>
- <1357a0b5-0cd8-8cb5-6c61-c9662219bed0@redhat.com>
- <CANRm+CxFy_R9VpxhBDuJNwZxp6Sh6wKkemaosDJ436cESk5s8A@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <2a7a78b3-cc4e-de17-ee5d-6f6582683d34@redhat.com>
-Date:   Fri, 20 Jul 2018 10:06:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 20 Jul 2018 04:56:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40288 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727331AbeGTI4i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:56:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QAo3jxuYoYiQnIcEgEM3SbDs7faq4jcPRHeNvHLkE9w=; b=PCeJ1Tm2RuDvCjBwZG+zNG4O6
+        Cki1TgrvgxDU8QHhGiYqenfK11XwQYJadMfyG12l0cF1Dy6auHuneDcg/p9gQyj4+v3D63Y+wrVgc
+        /X3J5+nOhrjbczo0VNRhQ+I4UyofKXHAU6j8ixGoKuDp/GHaOi/wsIL3PWkJigpH+VLXN7y5fYJz6
+        i1UmHi+CkBZH4g/rzpinHyIKeAErAefw9WUw3TeCQY1NyX/FdvxjZZ1aQbaOpPReR8kFNqsizK4Ms
+        cQS731l22KIDjeQTPEPUWWe8y206yY/rWZX+6wiPxFRe3icHVzz/IOpNhF7QGe0TtZJlItJqAiXMR
+        LKhFfGeQg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fgQTR-0003dt-AI; Fri, 20 Jul 2018 08:09:13 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2221420289335; Fri, 20 Jul 2018 10:09:11 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 10:09:11 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
+        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, prarit@redhat.com, feng.tang@intel.com,
+        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, pbonzini@redhat.com
+Subject: Re: [PATCH v15 23/26] sched: early boot clock
+Message-ID: <20180720080911.GM2494@hirez.programming.kicks-ass.net>
+References: <20180719205545.16512-1-pasha.tatashin@oracle.com>
+ <20180719205545.16512-24-pasha.tatashin@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <CANRm+CxFy_R9VpxhBDuJNwZxp6Sh6wKkemaosDJ436cESk5s8A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 08:06:56 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 08:06:56 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719205545.16512-24-pasha.tatashin@oracle.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/07/2018 07:58, Wanpeng Li wrote:
->>
->> We could keep the cluster size of 128, but it would be more complicated
->> to do the left shift in the first "else if".  If the limit is 64, you
->> can keep the two arguments in the hypercall, and just pass 0 as the
->> "high" bitmap on 64-bit kernels.
-> As David pointed out, we need to scale to higher APIC IDs.
+On Thu, Jul 19, 2018 at 04:55:42PM -0400, Pavel Tatashin wrote:
+> diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
+> index 0e9dbb2d9aea..422cd63f8f17 100644
+> --- a/kernel/sched/clock.c
+> +++ b/kernel/sched/clock.c
+> @@ -202,7 +202,25 @@ static void __sched_clock_gtod_offset(void)
+>  
+>  void __init sched_clock_init(void)
+>  {
+> +	unsigned long flags;
+> +
+> +	/*
+> +	 * Set __gtod_offset such that once we mark sched_clock_running,
+> +	 * sched_clock_tick() continues where sched_clock() left off.
+> +	 *
+> +	 * Even if TSC is buggered, we're still UP at this point so it
+> +	 * can't really be out of sync.
+> +	 */
+> +	local_irq_save(flags);
+> +	__sched_clock_gtod_offset();
+> +	local_irq_restore(flags);
+> +
+>  	sched_clock_running = 1;
+> +
+> +	/* Now that sched_clock_running is set adjust scd */
+> +	local_irq_save(flags);
+> +	sched_clock_tick();
+> +	local_irq_restore(flags);
+>  }
 
-The offset is enough to scale to higher APIC IDs.
+Sorry, that's still wrong. Because the moment you enable
+sched_clock_running we need to have everything set-up for it to run.
 
-It's just an optimization to allow 128 CPUs per hypercall instead of 64
-CPUs.  But actually you can use __uint128_t on 64-bit machines, I forgot
-about that.  With u64 on 32-bit and __uint128_t on 64-bit, you can do 64
-CPUs per hypercall on 32-bit and 128 CPUs per hypercall on 64-bit.
+The above looks double weird because you could've just done that =1
+under the same IRQ-disable section and it would've mostly been OK
+(except for NMIs). But the reason it's weird like that is because you're
+going to change it into a static key later on.
 
- I will add
-> the cpu id to apic id transfer in the for loop. How about:
-> kvm_hypercall2(KVM_HC_SEND_IPI, ipi_bitmap, vector); directly. In
-> addition, why need to pass the 0 as the "high" bitmap even if for 128
-> vCPUs case?
+The below cures things.
+
+---
+Subject: sched/clock: Close a hole in sched_clock_init()
+
+All data required for the 'unstable' sched_clock must be set-up _before_
+enabling it -- setting sched_clock_running. This includes the
+__gtod_offset but also a recent scd stamp.
+
+Make the gtod-offset update also set the csd stamp -- it requires the
+same two clock reads _anyway_. This doesn't hurt in the
+sched_clock_tick_stable() case and ensures sched_clock_init() gets
+everything set-up before use.
+
+Also switch to unconditional IRQ-disable/enable because the static key
+stuff already requires this is not ran with IRQs disabled.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ kernel/sched/clock.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
+index c5c47ad3f386..811a39aca1ce 100644
+--- a/kernel/sched/clock.c
++++ b/kernel/sched/clock.c
+@@ -197,13 +197,14 @@ void clear_sched_clock_stable(void)
+ 
+ static void __sched_clock_gtod_offset(void)
+ {
+-	__gtod_offset = (sched_clock() + __sched_clock_offset) - ktime_get_ns();
++	struct sched_clock_data *scd = this_scd();
++
++	__scd_stamp(scd);
++	__gtod_offset = (scd->tick_raw + __sched_clock_offset) - scd->tick_gtod;
+ }
+ 
+ void __init sched_clock_init(void)
+ {
+-	unsigned long flags;
+-
+ 	/*
+ 	 * Set __gtod_offset such that once we mark sched_clock_running,
+ 	 * sched_clock_tick() continues where sched_clock() left off.
+@@ -211,16 +212,11 @@ void __init sched_clock_init(void)
+ 	 * Even if TSC is buggered, we're still UP at this point so it
+ 	 * can't really be out of sync.
+ 	 */
+-	local_irq_save(flags);
++	local_irq_disable();
+ 	__sched_clock_gtod_offset();
+-	local_irq_restore(flags);
++	local_irq_enable();
+ 
+ 	static_branch_inc(&sched_clock_running);
+-
+-	/* Now that sched_clock_running is set adjust scd */
+-	local_irq_save(flags);
+-	sched_clock_tick();
+-	local_irq_restore(flags);
+ }
+ /*
+  * We run this as late_initcall() such that it runs after all built-in drivers,
 
