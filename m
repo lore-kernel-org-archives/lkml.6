@@ -2,87 +2,109 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B194ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74FFECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A99C206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:02:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A99C206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 513AB206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:03:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sZc4dBqC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 513AB206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728155AbeGTItS (ORCPT
+        id S1727725AbeGTIuc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:49:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37558 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727176AbeGTItS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:49:18 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0D983401EF2E;
-        Fri, 20 Jul 2018 08:02:15 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (ovpn-204-189.brq.redhat.com [10.40.204.189])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 264207C52;
-        Fri, 20 Jul 2018 08:02:11 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Rik van Riel <riel@surriel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Mike Galbraith <efault@gmx.de>,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
-References: <20180716190337.26133-1-riel@surriel.com>
-        <20180716190337.26133-5-riel@surriel.com>
-        <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com>
-        <B6566AA4-2E8A-43BD-A224-0F6D4747B8FB@surriel.com>
-        <F93A3335-4830-4E36-9179-D0FA5D640C8A@amacapital.net>
-        <B976CC13-D014-433A-83DE-F8DF9AB4F421@surriel.com>
-        <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
-Date:   Fri, 20 Jul 2018 10:02:10 +0200
-In-Reply-To: <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
-        (Andy Lutomirski's message of "Thu, 19 Jul 2018 09:45:47 -0700")
-Message-ID: <87muumtjwd.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 20 Jul 2018 04:50:32 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33019 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeGTIuc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:50:32 -0400
+Received: by mail-oi0-f66.google.com with SMTP id l10-v6so19854858oii.0;
+        Fri, 20 Jul 2018 01:03:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to:cc;
+        bh=5HwqE1bsGfTQHm7LDHWtYHMlQnsHaPc7IrHaNTdv1JA=;
+        b=sZc4dBqCdxSQ8ejE8DspMrBWPm+vtKLQ9lvX6kl5OM6IrJ2X8m5PL2ap50mM55bALO
+         8Y9/w/c2+kEaWj0AtohMiM6gUrvQg/vqYpjAOi0HYD458R6IDvoFmP8y3XPJiQwF1cUF
+         MZDS2E6NTP2nXRfPePd3JNJcvJAXD57GqXUW0pxLcm90JYgTVmbI6lYQDSmmqM8PKlKY
+         Yjgmd+p81+CxKBbD86cVrK01l/1i00A0SNTNFSGx9aA34lbq0zwdGr/ZW67tOw4j5xV0
+         n4fH4XxGg4iZ4/ZQi73Q6WOLt+/Dqvv4/7AsYpHkiw452PN9iceshQ6L+eyczNzVAdLh
+         r9sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:cc;
+        bh=5HwqE1bsGfTQHm7LDHWtYHMlQnsHaPc7IrHaNTdv1JA=;
+        b=b7+R/Oj5LDvS3uvA3jdgVsHgtINLsa8AXXxi1tLkjPKWa3Tvz1iu0bce7kChSPZtNw
+         eHRw2lscY3AVn6ta+cm8qJsddw7SFba83mXpshqbGs/FOQD/7lTAjIDGZwgIN5fzglcY
+         14aS5i28++LWSG7hXRI1mYy5uHAqb463Ms/v4p1LT3tKahRqMBDE0Eo6Osbk3TcjTkfZ
+         TNqJZAQgndvBYPiKjCg7pynaMy5A2fv2uphU1axSysDFLe2QCqK12Z5iha94/XD72oVF
+         sZ4Zif+YJfeqr9yrREl4pCsQZ54DTIC3tHCKHFxvTNqrKYfpo1DhtfMW5oEJ2o7qKW+E
+         9DwA==
+X-Gm-Message-State: AOUpUlHPnVJmOSOc+UqweNnq470rLuYQxnAx+xGreDrZMk0rUryAdNDn
+        tznUMD7AhBJSSW+XRLp/Lbbw2ti+BGa+nyNsSck=
+X-Google-Smtp-Source: AAOMgpds+tRg/Qi6jKk/WksJ56g2Kvym/KLpTKLETES7w6za/9yNsVldP0y8X7k9mPE8t2agUsxn8MqSA5+UmQCUKxw=
+X-Received: by 2002:aca:adc6:: with SMTP id w189-v6mr1085625oie.174.1532073808472;
+ Fri, 20 Jul 2018 01:03:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 08:02:15 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 08:02:15 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 01:03:28
+ -0700 (PDT)
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 20 Jul 2018 10:03:28 +0200
+X-Google-Sender-Auth: JF72ly2KZOzSNVpeDeDDCkQ4jUc
+Message-ID: <CAJZ5v0ipKgfRfCmkRshrm9726=5rj5dUrKSLAK2GNEcdvnBMtw@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v4.18-rc6
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy Lutomirski <luto@amacapital.net> writes:
+Hi Linus,
 
-> [I added PeterZ and Vitaly -- can you see any way in which this would
-> break something obscure?  I don't.]
+Please pull from the tag
 
-Thanks for CCing me,
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-4.18-rc6
 
-I don't see how this can break things either. At first glance, however,
-I'm afraid we can add performance penalty to virtualized guests which
-don't use native_flush_tlb_others() (Hyper-V, KVM): we will be reloading
-CR3 without a need as we don't look at lazy mode in PV tlb flush
-functions.
+with top-most commit 95d6c0857e54b788982746071130d822a795026b
 
-We can either check to switch_mm_irqs_off() that
-native_flush_tlb_others() is in use or teach PV tlb flush functions to
-look at lazy mode too.
+ cpufreq: intel_pstate: Register when ACPI PCCH is present
 
-(Sorry if I'm missing something important here or if this was already
-discussed. I just became aware of this work)
+on top of commit 9d3cce1e8b8561fed5f383d22a4d6949db4eadbe
 
-[...]
+ Linux 4.18-rc5
 
--- 
-  Vitaly
+to receive a power management fix for 4.18-rc6.
+
+This fixes a relatively old initialization issue in intel_pstate
+causing the pcc-cpufreq driver to be used instead of it on some HP
+Proliant systems, which turned into a functional regression during
+the 4.17 cycle, because pcc-cpufreq is a scalability disaster and
+that was amplified by the idle loop rework done at that time (Rafael
+Wysocki).
+
+Thanks!
+
+
+---------------
+
+Rafael J. Wysocki (1):
+      cpufreq: intel_pstate: Register when ACPI PCCH is present
+
+---------------
+
+ drivers/cpufreq/intel_pstate.c | 17 ++++++++++++++++-
+ drivers/cpufreq/pcc-cpufreq.c  |  4 ++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
