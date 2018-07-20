@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09578ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C56F2ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAB882084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAB882084A
+	by mail.kernel.org (Postfix) with ESMTP id 874812084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 874812084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732550AbeGTNPL (ORCPT
+        id S1732728AbeGTNPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34982 "EHLO
+        Fri, 20 Jul 2018 09:15:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34990 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730130AbeGTNPK (ORCPT
+        with ESMTP id S1730130AbeGTNPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:10 -0400
+        Fri, 20 Jul 2018 09:15:13 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE44341C;
-        Fri, 20 Jul 2018 12:27:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8B882A95;
+        Fri, 20 Jul 2018 12:27:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        stable@vger.kernel.org, Daniele Iamartino <danielei@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 18/31] r8152: napi hangup fix after disconnect
-Date:   Fri, 20 Jul 2018 14:13:48 +0200
-Message-Id: <20180720121340.812996969@linuxfoundation.org>
+Subject: [PATCH 4.4 19/31] tcp: fix Fast Open key endianness
+Date:   Fri, 20 Jul 2018 14:13:49 +0200
+Message-Id: <20180720121340.850175090@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -51,46 +53,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit 0ee1f4734967af8321ecebaf9c74221ace34f2d5 ]
+[ Upstream commit c860e997e9170a6d68f9d1e6e2cf61f572191aaf ]
 
-When unplugging an r8152 adapter while the interface is UP, the NIC
-becomes unusable.  usb->disconnect (aka rtl8152_disconnect) deletes
-napi. Then, rtl8152_disconnect calls unregister_netdev and that invokes
-netdev->ndo_stop (aka rtl8152_close). rtl8152_close tries to
-napi_disable, but the napi is already deleted by disconnect above. So
-the first while loop in napi_disable never finishes. This results in
-complete deadlock of the network layer as there is rtnl_mutex held by
-unregister_netdev.
+Fast Open key could be stored in different endian based on the CPU.
+Previously hosts in different endianness in a server farm using
+the same key config (sysctl value) would produce different cookies.
+This patch fixes it by always storing it as little endian to keep
+same API for LE hosts.
 
-So avoid the call to napi_disable in rtl8152_close when the device is
-already gone.
-
-The other calls to usb_kill_urb, cancel_delayed_work_sync,
-netif_stop_queue etc. seem to be fine. The urb and netdev is not
-destroyed yet.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: linux-usb@vger.kernel.org
-Cc: netdev@vger.kernel.org
+Reported-by: Daniele Iamartino <danielei@google.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/r8152.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv4/sysctl_net_ipv4.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -3139,7 +3139,8 @@ static int rtl8152_close(struct net_devi
- #ifdef CONFIG_PM_SLEEP
- 	unregister_pm_notifier(&tp->pm_notifier);
- #endif
--	napi_disable(&tp->napi);
-+	if (!test_bit(RTL8152_UNPLUG, &tp->flags))
-+		napi_disable(&tp->napi);
- 	clear_bit(WORK_ENABLE, &tp->flags);
- 	usb_kill_urb(tp->intr_urb);
- 	cancel_delayed_work_sync(&tp->schedule);
+--- a/net/ipv4/sysctl_net_ipv4.c
++++ b/net/ipv4/sysctl_net_ipv4.c
+@@ -213,8 +213,9 @@ static int proc_tcp_fastopen_key(struct
+ {
+ 	struct ctl_table tbl = { .maxlen = (TCP_FASTOPEN_KEY_LENGTH * 2 + 10) };
+ 	struct tcp_fastopen_context *ctxt;
+-	int ret;
+ 	u32  user_key[4]; /* 16 bytes, matching TCP_FASTOPEN_KEY_LENGTH */
++	__le32 key[4];
++	int ret, i;
+ 
+ 	tbl.data = kmalloc(tbl.maxlen, GFP_KERNEL);
+ 	if (!tbl.data)
+@@ -223,11 +224,14 @@ static int proc_tcp_fastopen_key(struct
+ 	rcu_read_lock();
+ 	ctxt = rcu_dereference(tcp_fastopen_ctx);
+ 	if (ctxt)
+-		memcpy(user_key, ctxt->key, TCP_FASTOPEN_KEY_LENGTH);
++		memcpy(key, ctxt->key, TCP_FASTOPEN_KEY_LENGTH);
+ 	else
+-		memset(user_key, 0, sizeof(user_key));
++		memset(key, 0, sizeof(key));
+ 	rcu_read_unlock();
+ 
++	for (i = 0; i < ARRAY_SIZE(key); i++)
++		user_key[i] = le32_to_cpu(key[i]);
++
+ 	snprintf(tbl.data, tbl.maxlen, "%08x-%08x-%08x-%08x",
+ 		user_key[0], user_key[1], user_key[2], user_key[3]);
+ 	ret = proc_dostring(&tbl, write, buffer, lenp, ppos);
+@@ -243,12 +247,16 @@ static int proc_tcp_fastopen_key(struct
+ 		 * first invocation of tcp_fastopen_cookie_gen
+ 		 */
+ 		tcp_fastopen_init_key_once(false);
+-		tcp_fastopen_reset_cipher(user_key, TCP_FASTOPEN_KEY_LENGTH);
++
++		for (i = 0; i < ARRAY_SIZE(user_key); i++)
++			key[i] = cpu_to_le32(user_key[i]);
++
++		tcp_fastopen_reset_cipher(key, TCP_FASTOPEN_KEY_LENGTH);
+ 	}
+ 
+ bad_key:
+ 	pr_debug("proc FO key set 0x%x-%x-%x-%x <- 0x%s: %u\n",
+-	       user_key[0], user_key[1], user_key[2], user_key[3],
++		 user_key[0], user_key[1], user_key[2], user_key[3],
+ 	       (char *)tbl.data, ret);
+ 	kfree(tbl.data);
+ 	return ret;
 
 
