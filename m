@@ -2,203 +2,66 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0675ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9710DECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FECA2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:40:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FECA2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EE375206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:43:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE375206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbeGTH0o (ORCPT
+        id S1727160AbeGTHaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 03:26:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:58526 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726624AbeGTH0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 03:26:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FCCE18A;
-        Thu, 19 Jul 2018 23:40:02 -0700 (PDT)
-Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 630103F246;
-        Thu, 19 Jul 2018 23:40:00 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 07:39:57 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCHv2 2/2] arm64: Clear the stack
-Message-ID: <20180720063956.n64a2bgaykzj5xh6@salmiak>
-References: <20180719232806.3397-1-labbott@redhat.com>
- <20180719232806.3397-3-labbott@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180719232806.3397-3-labbott@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 20 Jul 2018 03:30:13 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:42268 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726624AbeGTHaN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 03:30:13 -0400
+Received: from localhost (unknown [172.58.43.55])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6292514810848;
+        Thu, 19 Jul 2018 23:43:30 -0700 (PDT)
+Date:   Thu, 19 Jul 2018 23:43:29 -0700 (PDT)
+Message-Id: <20180719.234329.512279372120817504.davem@davemloft.net>
+To:     neilb@suse.com
+Cc:     herbert@gondor.apana.org.au, tgraf@suug.ch, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, eric.dumazet@gmail.com
+Subject: Re: [PATCH - revised] rhashtable: detect when object movement
+ might have invalidated a lookup
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <87va9aqv05.fsf@notabene.neil.brown.name>
+References: <87fu0kt5m0.fsf@notabene.neil.brown.name>
+        <20180719.051440.931407144963903326.davem@davemloft.net>
+        <87va9aqv05.fsf@notabene.neil.brown.name>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 19 Jul 2018 23:43:31 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 04:28:06PM -0700, Laura Abbott wrote:
-> 
-> Implementation of stackleak based heavily on the x86 version
-> 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
+From: NeilBrown <neilb@suse.com>
+Date: Fri, 20 Jul 2018 16:30:34 +1000
 
-Reviewed-by: Mark Rutlamd <mark.rutland@arm.com>
+> Does this ruling also apply to the bit-spin-lock changes and the
+> per-cpu-counter changes that I have proposed?  These improve
+> scalability when updates dominate.  Not having these in mainline
+> would mean I need to carry a separate rhashtables implementation for
+> lustre, which means code diversion which isn't healthy in the long
+> run.
 
-Thanks for working on this!
+If it helps existing rhashtable users generally, then it is fine,
+since it will actually be tested by upstream users.
 
-Mark.
-
-> ---
-> v2: Convert to adjusted on_acessible_stack APIs. Fixed alloca check to
-> just panic. Dropped the extra include per Kees. I also didn't add the
-> Reviewed-by since the APIs did change and I wanted another pass.
-> ---
->  arch/arm64/Kconfig                    |  1 +
->  arch/arm64/include/asm/processor.h    | 15 +++++++++++++++
->  arch/arm64/kernel/entry.S             |  7 +++++++
->  arch/arm64/kernel/process.c           | 17 +++++++++++++++++
->  arch/arm64/kvm/hyp/Makefile           |  3 ++-
->  drivers/firmware/efi/libstub/Makefile |  3 ++-
->  6 files changed, 44 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 42c090cf0292..216d36a49ab5 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -96,6 +96,7 @@ config ARM64
->  	select HAVE_ARCH_MMAP_RND_BITS
->  	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
->  	select HAVE_ARCH_SECCOMP_FILTER
-> +	select HAVE_ARCH_STACKLEAK
->  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
->  	select HAVE_ARCH_TRACEHOOK
->  	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
-> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-> index a73ae1e49200..0061450a793b 100644
-> --- a/arch/arm64/include/asm/processor.h
-> +++ b/arch/arm64/include/asm/processor.h
-> @@ -266,5 +266,20 @@ extern void __init minsigstksz_setup(void);
->  #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
->  #define SVE_GET_VL()	sve_get_current_vl()
->  
-> +/*
-> + * For CONFIG_GCC_PLUGIN_STACKLEAK
-> + *
-> + * These need to be macros because otherwise we get stuck in a nightmare
-> + * of header definitions for the use of task_stack_page.
-> + */
-> +
-> +#define current_top_of_stack()							\
-> +({										\
-> +	struct stack_info _info;						\
-> +	BUG_ON(!on_accessible_stack(current, current_stack_pointer, &_info));	\
-> +	_info.high;								\
-> +})
-> +#define on_thread_stack()	(on_task_stack(current, current_stack_pointer, NULL))
-> +
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ASM_PROCESSOR_H */
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index 28ad8799406f..67d12016063d 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -431,6 +431,11 @@ tsk	.req	x28		// current thread_info
->  
->  	.text
->  
-> +	.macro	stackleak_erase
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +	bl	stackleak_erase
-> +#endif
-> +	.endm
->  /*
->   * Exception vectors.
->   */
-> @@ -910,6 +915,7 @@ ret_fast_syscall:
->  	and	x2, x1, #_TIF_WORK_MASK
->  	cbnz	x2, work_pending
->  	enable_step_tsk x1, x2
-> +	stackleak_erase
->  	kernel_exit 0
->  ret_fast_syscall_trace:
->  	enable_daif
-> @@ -936,6 +942,7 @@ ret_to_user:
->  	cbnz	x2, work_pending
->  finish_ret_to_user:
->  	enable_step_tsk x1, x2
-> +	stackleak_erase
->  	kernel_exit 0
->  ENDPROC(ret_to_user)
->  
-> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> index e10bc363f533..2724e4d31b16 100644
-> --- a/arch/arm64/kernel/process.c
-> +++ b/arch/arm64/kernel/process.c
-> @@ -493,3 +493,20 @@ void arch_setup_new_exec(void)
->  {
->  	current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
->  }
-> +
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +void __used stackleak_check_alloca(unsigned long size)
-> +{
-> +	unsigned long stack_left;
-> +	unsigned long current_sp = current_stack_pointer;
-> +	struct stack_info info;
-> +
-> +	BUG_ON(!on_accessible_stack(current, current_sp, &info));
-> +
-> +	stack_left = current_sp - info.low;
-> +
-> +	if (size >= stack_left)
-> +		panic("alloca() over the kernel stack boundary\n");
-> +}
-> +EXPORT_SYMBOL(stackleak_check_alloca);
-> +#endif
-> diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-> index 4313f7475333..2fabc2dc1966 100644
-> --- a/arch/arm64/kvm/hyp/Makefile
-> +++ b/arch/arm64/kvm/hyp/Makefile
-> @@ -3,7 +3,8 @@
->  # Makefile for Kernel-based Virtual Machine module, HYP part
->  #
->  
-> -ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING
-> +ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING \
-> +		$(DISABLE_STACKLEAK_PLUGIN)
->  
->  KVM=../../../../virt/kvm
->  
-> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> index a34e9290a699..25dd2a14560d 100644
-> --- a/drivers/firmware/efi/libstub/Makefile
-> +++ b/drivers/firmware/efi/libstub/Makefile
-> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
->  KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
->  				   -D__NO_FORTIFY \
->  				   $(call cc-option,-ffreestanding) \
-> -				   $(call cc-option,-fno-stack-protector)
-> +				   $(call cc-option,-fno-stack-protector) \
-> +				   $(DISABLE_STACKLEAK_PLUGIN)
->  
->  GCOV_PROFILE			:= n
->  KASAN_SANITIZE			:= n
-> -- 
-> 2.17.1
-> 
+Thanks.
