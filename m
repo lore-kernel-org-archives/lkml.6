@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA75ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB416ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61C482084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C482084A
+	by mail.kernel.org (Postfix) with ESMTP id 99BB62084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99BB62084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387410AbeGTNP1 (ORCPT
+        id S2387732AbeGTNPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35032 "EHLO
+        Fri, 20 Jul 2018 09:15:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35040 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731662AbeGTNP0 (ORCPT
+        with ESMTP id S1731662AbeGTNP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:26 -0400
+        Fri, 20 Jul 2018 09:15:29 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 823C441C;
-        Fri, 20 Jul 2018 12:27:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD99CA95;
+        Fri, 20 Jul 2018 12:27:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.4 23/31] net/mlx5: Fix command interface race in polling mode
-Date:   Fri, 20 Jul 2018 14:13:53 +0200
-Message-Id: <20180720121340.992365177@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 24/31] net: cxgb3_main: fix potential Spectre v1
+Date:   Fri, 20 Jul 2018 14:13:54 +0200
+Message-Id: <20180720121341.027300543@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -50,79 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Vesker <valex@mellanox.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit d412c31dae053bf30a1bc15582a9990df297a660 ]
+commit 676bcfece19f83621e905aa55b5ed2d45cc4f2d3 upstream.
 
-The command interface can work in two modes: Events and Polling.
-In the general case, each time we invoke a command, a work is
-queued to handle it.
+t.qset_idx can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-When working in events, the interrupt handler completes the
-command execution. On the other hand, when working in polling
-mode, the work itself completes it.
+This issue was detected with the help of Smatch:
 
-Due to a bug in the work handler, a command could have been
-completed by the interrupt handler, while the work handler
-hasn't finished yet, causing the it to complete once again
-if the command interface mode was changed from Events to
-polling after the interrupt handler was called.
+drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:2286 cxgb_extension_ioctl()
+warn: potential spectre issue 'adapter->msix_info'
 
-mlx5_unload_one()
-        mlx5_stop_eqs()
-                // Destroy the EQ before cmd EQ
-                ...cmd_work_handler()
-                        write_doorbell()
-                        --> EVENT_TYPE_CMD
-                                mlx5_cmd_comp_handler() // First free
-                                        free_ent(cmd, ent->idx)
-                                        complete(&ent->done)
+Fix this by sanitizing t.qset_idx before using it to index
+adapter->msix_info
 
-        <-- mlx5_stop_eqs //cmd was complete
-                // move to polling before destroying the last cmd EQ
-                mlx5_cmd_use_polling()
-                        cmd->mode = POLL;
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-                --> cmd_work_handler (continues)
-                        if (cmd->mode == POLL)
-                                mlx5_cmd_comp_handler() // Double free
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
-The solution is to store the cmd->mode before writing the doorbell.
-
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Signed-off-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -643,6 +643,7 @@ static void cmd_work_handler(struct work
- 	struct semaphore *sem;
- 	unsigned long flags;
- 	int alloc_ret;
-+	int cmd_mode;
+---
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -50,6 +50,7 @@
+ #include <linux/stringify.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
+ #include <asm/uaccess.h>
  
- 	sem = ent->page_queue ? &cmd->pages_sem : &cmd->sem;
- 	down(sem);
-@@ -688,6 +689,7 @@ static void cmd_work_handler(struct work
- 	set_signature(ent, !cmd->checksum_disabled);
- 	dump_command(dev, ent, 1);
- 	ent->ts1 = ktime_get_ns();
-+	cmd_mode = cmd->mode;
+ #include "common.h"
+@@ -2256,6 +2257,7 @@ static int cxgb_extension_ioctl(struct n
  
- 	/* ring doorbell after the descriptor is valid */
- 	mlx5_core_dbg(dev, "writing 0x%x to command doorbell\n", 1 << ent->idx);
-@@ -695,7 +697,7 @@ static void cmd_work_handler(struct work
- 	iowrite32be(1 << ent->idx, &dev->iseg->cmd_dbell);
- 	mmiowb();
- 	/* if not in polling don't use ent after this point */
--	if (cmd->mode == CMD_MODE_POLLING) {
-+	if (cmd_mode == CMD_MODE_POLLING) {
- 		poll_timeout(ent);
- 		/* make sure we read the descriptor after ownership is SW */
- 		rmb();
+ 		if (t.qset_idx >= nqsets)
+ 			return -EINVAL;
++		t.qset_idx = array_index_nospec(t.qset_idx, nqsets);
+ 
+ 		q = &adapter->params.sge.qset[q1 + t.qset_idx];
+ 		t.rspq_size = q->rspq_size;
 
 
