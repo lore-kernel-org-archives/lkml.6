@@ -2,155 +2,132 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3715FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88102ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5AB520661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32353206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:45:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KMYuT974"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5AB520661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="h2aLNmO+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32353206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730720AbeGTMVi (ORCPT
+        id S1728404AbeGTMdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 08:21:38 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:39889 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeGTMVi (ORCPT
+        Fri, 20 Jul 2018 08:33:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36316 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727408AbeGTMdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:21:38 -0400
-Received: by mail-yb0-f194.google.com with SMTP id k124-v6so4492786ybk.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 04:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J9a2aU9NvxhFScVBSoJn1INAlVasF0taOD+jKhgcVgM=;
-        b=KMYuT974hVc8eubgQEf/yAB/7d38VBhSMeM47WeHd8jpXGB/JprFozhfCYdsNy8GHS
-         ndm97PvZ5/VtrGp2xaNNKpswOT5Er1XhQd+9vzwWnaXPfJlY+gCVjnUUKp7UgxkJ/sPl
-         OcpGWdFg8G0G3RRCVXLSwcwGGUKDv7E1jLFKI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J9a2aU9NvxhFScVBSoJn1INAlVasF0taOD+jKhgcVgM=;
-        b=JSALRS2kWUWPAgM1yn/FFlDbkKcq0Dei7ls18g0sgwf1w8BWshbA07xHuNYI00qda8
-         ir88PeMHUAkzwL6u0zg8pFASxbWBvF/VX2NzvZuXaEBiscb8Fb2EvMa4b95dqLUijP3j
-         Kp9udBrYIfJ12E/j8hYIE2Ufxug5gMLsnvPDPqSZMkLSQMSMqfi8pKxkfjCW25ZwIxhi
-         fsu9k8A20bYS4OVpSn8MRMOHddCmdB0fp8uMAI4MyNmXWUDsJOPWi3XUY3zXo2GcWDhF
-         oXcBo+V1Y7qW9D+3OoSKvSgKtqbwre8bVwVvR7SAUISAXBn+cKmRXvDF+cyOvgBdH3Xl
-         GFIQ==
-X-Gm-Message-State: AOUpUlGmeBdU+U7Jzi8frpQW6YKsxL6GGLVno3RCalC+YcJ4rEYi6XDX
-        9G1M7o9NWuB5JnZVNiSkxHPvets2nnM=
-X-Google-Smtp-Source: AAOMgpd7EKTY8WM8tFyvlX8Dirwm2hoPvsAtrouPe8aBVCjbj3iPS6n8k+UlZsMlzm2t8UpoM1AebQ==
-X-Received: by 2002:a25:d7ce:: with SMTP id o197-v6mr783595ybg.175.1532086427464;
-        Fri, 20 Jul 2018 04:33:47 -0700 (PDT)
-Received: from mail-yb0-f170.google.com (mail-yb0-f170.google.com. [209.85.213.170])
-        by smtp.gmail.com with ESMTPSA id q3-v6sm748940ywh.95.2018.07.20.04.33.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 04:33:46 -0700 (PDT)
-Received: by mail-yb0-f170.google.com with SMTP id s8-v6so4493985ybe.8
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 04:33:45 -0700 (PDT)
-X-Received: by 2002:a25:5709:: with SMTP id l9-v6mr809164ybb.226.1532086425074;
- Fri, 20 Jul 2018 04:33:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com>
- <Pine.LNX.4.44L0.1807171643120.1344-100000@iolanthe.rowland.org>
- <CAAFQd5D4YHOkMhyTmpPzpp9aPNoZtJMHgU1xmvb4PoPRaOFrbg@mail.gmail.com> <CAJs94EY4x7GWuT1tF4cPquLRDFR060CuZAxS75nhOf0deYbG2w@mail.gmail.com>
-In-Reply-To: <CAJs94EY4x7GWuT1tF4cPquLRDFR060CuZAxS75nhOf0deYbG2w@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 20 Jul 2018 20:33:33 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Bwokm4GH5qXTDFCyH=cN2T-r5bR4F036-TGA+CK77MCA@mail.gmail.com>
-Message-ID: <CAAFQd5Bwokm4GH5qXTDFCyH=cN2T-r5bR4F036-TGA+CK77MCA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>, hdegoede@redhat.com,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        rostedt@goodmis.org, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Fri, 20 Jul 2018 08:33:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=f818n1gZTZhbN1EYhmiY+1eRCpC3kyC0eUV5hsrW/qg=; b=h2aLNmO+yksjiyJV3+CG6soY/
+        ji4eK+8iTm66YvCpL6c257jnObE7vd9cnxyTHHybR6tRBcqlyN0yHEjji2do0+mfZ68upyVW3zqP2
+        NOlNBNwih0L0E3Zwx4WjKBDicELn5GpnQ/rNRX4bIlrHgpr5e56rIn2WhqzaX2+6pIKtA=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fgTqQ-0008Ka-O0; Fri, 20 Jul 2018 11:45:10 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fgTqP-00059h-TG; Fri, 20 Jul 2018 12:45:09 +0100
+Date:   Fri, 20 Jul 2018 12:45:09 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>, dm-devel@redhat.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+        Jonathan Cameron <jonathan.cameron@huawei.com>
+Subject: Re: [PATCH 0/5] crypto: add IV generation templates
+Message-ID: <20180720114509.GA10784@sirena.org.uk>
+References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
+ <CAK8P3a0T0Ku-2GOY8fT38LVy4GpvVSsx=szi0ZNEUq8Z_hZweQ@mail.gmail.com>
+ <CAKv+Gu8uD4NNS9SaWdSST7n+984ybTBLhGDpq3k5GG4o1+PMWA@mail.gmail.com>
+ <5d0bb72c-862e-63be-3cc5-83ed02b9a575@huawei.com>
+ <CAKv+Gu-hvEUyOOh_xpYsSj2WTcbM1FwRnJ1DkTGH1UjxkppNMQ@mail.gmail.com>
+ <20180719155026.GF27938@sirena.org.uk>
+ <CAKv+Gu_mb26HRi==5oeQyZ7ZOgifg7RUNt2c2V=tTqvFrMYq5g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_mb26HRi==5oeQyZ7ZOgifg7RUNt2c2V=tTqvFrMYq5g@mail.gmail.com>
+X-Cookie: This unit... must... survive.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 8:23 PM Matwey V. Kornilov <matwey@sai.msu.ru> wrote:
->
-> 2018-07-20 13:55 GMT+03:00 Tomasz Figa <tfiga@chromium.org>:
-> > On Wed, Jul 18, 2018 at 5:51 AM Alan Stern <stern@rowland.harvard.edu> wrote:
-> >>
-> >> On Tue, 17 Jul 2018, Ezequiel Garcia wrote:
-> >>
-> >> > Hi Matwey,
-> >> >
-> >> > First of all, sorry for the delay.
-> >> >
-> >> > Adding Alan and Hans. Guys, do you have any feedback here?
-> >>
-> >> ...
-> >>
-> >> > > > So, what is the benefit of using consistent
-> >> > > > for these URBs, as opposed to streaming?
-> >> > >
-> >> > > I don't know, I think there is no real benefit and all we see is a
-> >> > > consequence of copy-pasta when some webcam drivers were inspired by
-> >> > > others and development priparily was going at x86 platforms.
-> >> >
-> >> > You are probably right about the copy-pasta.
-> >> >
-> >> > >  It would
-> >> > > be great if somebody corrected me here. DMA Coherence is quite strong
-> >> > > property and I cannot figure out how can it help when streaming video.
-> >> > > The CPU host always reads from the buffer and never writes to.
-> >> > > Hardware perepherial always writes to and never reads from. Moreover,
-> >> > > buffer access is mutually exclusive and separated in time by Interrupt
-> >> > > fireing and URB starting (when we reuse existing URB for new request).
-> >> > > Only single one memory barrier is really required here.
-> >> > >
-> >> >
-> >> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
-> >> > create DMA mappings and use the streaming API. Which makes more
-> >> > sense in hardware without hardware coherency.
-> >>
-> >> As far as I know, the _only_ advantage to using coherent DMA in this
-> >> situation is that you then do not have to pay the overhead of
-> >> constantly setting up and tearing down the streaming mappings.  So it
-> >> depends very much on the platform: If coherent buffers are cached then
-> >> it's a slight win and otherwise it's a big lose.
-> >
-> > Isn't it about usb_alloc_coherent() being backed by DMA coherent API
-> > (dma_alloc_coherent/attrs()) and ending up allocating uncached (or
-> > write-combine) memory for devices with non-coherent DMAs? I'm not sure
->
-> Yes, this is what exactly happens at armv7l platforms.
 
-Okay, thanks. So this seems to be exactly the same thing that is
-happening in the UVC driver. There is quite a bit of random accesses
-to extract some header fields and then a big memcpy into VB2 buffer to
-assemble final frame.
+--0F1p//8PRICkK4MW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If we don't want to pay the cost of creating and destroying the
-streaming mapping, we could map (dma_map_single()) once, set
-transfer_dma of URB and URB_NO_TRANSFER_DMA_MAP and then just
-synchronize the caches (dma_sync_single()) before submitting/after
-completing the URB.
+On Fri, Jul 20, 2018 at 10:02:21AM +0900, Ard Biesheuvel wrote:
+> On 20 July 2018 at 00:50, Mark Brown <broonie@kernel.org> wrote:
 
-Best regards,
-Tomasz
+> > Existing hardware can definitely do the IV generation and I believe that
+> > it can chain multiple sectors together though I'd need to confirm this,
+> > as mentioned elsewhere in the thread the ccree driver is for one of
+> > the relevant devices.  I've poked some relevant people.
+
+> As far as I can infer from the ccree driver source, IV generation and
+> en/decryption are separate operations, and given that each sector
+> requires both operations to be applied in sequence, letting the crypto
+> layer handle an entire bio does not have any benefit *at the moment*.
+
+Interesting...  they were reporting some benefits from that with their
+out of tree driver prior to upstreaming (and there are other
+implementations out there, that's the only one I definitely know about).
+I have to confess I didn't look at their in tree driver, looking briefly
+now it looks awfully like the hardware should be able to chain IV
+generation together with encryption without bothering the CPU which
+would be good enough.
+
+> In fact, it seems to me that the ability to use protected AES keys is
+> much more appealing than any performance argument (including 'it may
+> be slower but at least it does not load the CPU'), so some background
+> on how such a change would enable this use case would be beneficial as
+> well to getting this adopted.
+
+Right, that's another benefit which was on the radar for followup work.
+
+> So my recommendation would be to focus on moving the IV generation
+> into the crypto layer, but conservatively, and not confuse people by
+> making additional changes that could theoretically improve
+> performance, but only on hardware that does not exist.
+
+It certainly seems like splitting things up will at least allow things
+to progress.
+
+--0F1p//8PRICkK4MW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltRy0UACgkQJNaLcl1U
+h9D4cAf/UeA1QxAG8k/NTSGp51av2cdaz/Een7dRZFxOJcXArVrBiJFvNIT//4OX
+F7vKF9RFwOFi+okI30UvaLKslVPryr3wi7cLubcwsrJnCgPvYFTcrfkOwZu1FCs3
+BmT+w+eSiUIrd2dy+Lobb8rzSQPIJDPW5mo6zvAPK8Ml1mpNyrAgbg4AgH2KkCWm
+oLBEYxhg7348vL65RrYEbYNDvIpZ54chIrxwFsknVK1iSEm+orJR0k9EFMhw7wmZ
+XSie3/248JCKl0A/poweBaGXoxjRJM9ilSD2HICwodFJImwfmtiH6+XPMaibheTY
+Q6gEEiIPvz+o6snHzsD4qKSBOwRJQA==
+=5nTD
+-----END PGP SIGNATURE-----
+
+--0F1p//8PRICkK4MW--
