@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ADDECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D35ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EF2220652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:48:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF2220652
+	by mail.kernel.org (Postfix) with ESMTP id 1901C20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:48:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1901C20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390335AbeGTNgQ (ORCPT
+        id S2390363AbeGTNgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:36:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57992 "EHLO
+        Fri, 20 Jul 2018 09:36:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58220 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390229AbeGTNgO (ORCPT
+        with ESMTP id S2389390AbeGTNgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:36:14 -0400
+        Fri, 20 Jul 2018 09:36:22 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDC38899;
-        Fri, 20 Jul 2018 12:36:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5D2DD63;
+        Fri, 20 Jul 2018 12:38:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Meelis Roos <mroos@linux.ee>,
-        Mathieu Malaterre <malat@debian.org>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 031/101] net: sungem: fix rx checksum support
-Date:   Fri, 20 Jul 2018 14:13:37 +0200
-Message-Id: <20180720121424.279339923@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.17 075/101] bdi: Fix another oops in wb_workfn()
+Date:   Fri, 20 Jul 2018 14:14:21 +0200
+Message-Id: <20180720121426.479564015@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -53,109 +52,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit 12b03558cef6d655d0d394f5e98a6fd07c1f6c0f ]
+commit 3ee7e8697d5860b173132606d80a9cd35e7113ee upstream.
 
-After commit 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE
-are friends"), sungem owners reported the infamous "eth0: hw csum failure"
-message.
+syzbot is reporting NULL pointer dereference at wb_workfn() [1] due to
+wb->bdi->dev being NULL. And Dmitry confirmed that wb->state was
+WB_shutting_down after wb->bdi->dev became NULL. This indicates that
+unregister_bdi() failed to call wb_shutdown() on one of wb objects.
 
-CHECKSUM_COMPLETE has in fact never worked for this driver, but this
-was masked by the fact that upper stacks had to strip the FCS, and
-therefore skb->ip_summed was set back to CHECKSUM_NONE before
-my recent change.
+The problem is in cgwb_bdi_unregister() which does cgwb_kill() and thus
+drops bdi's reference to wb structures before going through the list of
+wbs again and calling wb_shutdown() on each of them. This way the loop
+iterating through all wbs can easily miss a wb if that wb has already
+passed through cgwb_remove_from_bdi_list() called from wb_shutdown()
+from cgwb_release_workfn() and as a result fully shutdown bdi although
+wb_workfn() for this wb structure is still running. In fact there are
+also other ways cgwb_bdi_unregister() can race with
+cgwb_release_workfn() leading e.g. to use-after-free issues:
 
-Driver configures a number of bytes to skip when the chip computes
-the checksum, and for some reason only half of the Ethernet header
-was skipped.
+CPU1                            CPU2
+                                cgwb_bdi_unregister()
+                                  cgwb_kill(*slot);
 
-Then a second problem is that we should strip the FCS by default,
-unless the driver is updated to eventually support NETIF_F_RXFCS in
-the future.
+cgwb_release()
+  queue_work(cgwb_release_wq, &wb->release_work);
+cgwb_release_workfn()
+                                  wb = list_first_entry(&bdi->wb_list, ...)
+                                  spin_unlock_irq(&cgwb_lock);
+  wb_shutdown(wb);
+  ...
+  kfree_rcu(wb, rcu);
+                                  wb_shutdown(wb); -> oops use-after-free
 
-Finally, a driver should check if NETIF_F_RXCSUM feature is enabled
-or not, so that the admin can turn off rx checksum if wanted.
+We solve these issues by synchronizing writeback structure shutdown from
+cgwb_bdi_unregister() with cgwb_release_workfn() using a new mutex. That
+way we also no longer need synchronization using WB_shutting_down as the
+mutex provides it for CONFIG_CGROUP_WRITEBACK case and without
+CONFIG_CGROUP_WRITEBACK wb_shutdown() can be called only once from
+bdi_unregister().
 
-Many thanks to Andreas Schwab and Mathieu Malaterre for their
-help in debugging this issue.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Meelis Roos <mroos@linux.ee>
-Reported-by: Mathieu Malaterre <malat@debian.org>
-Reported-by: Andreas Schwab <schwab@linux-m68k.org>
-Tested-by: Andreas Schwab <schwab@linux-m68k.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/sun/sungem.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/sun/sungem.c
-+++ b/drivers/net/ethernet/sun/sungem.c
-@@ -60,8 +60,7 @@
- #include <linux/sungem_phy.h>
- #include "sungem.h"
+---
+ include/linux/backing-dev-defs.h |    2 +-
+ mm/backing-dev.c                 |   20 +++++++-------------
+ 2 files changed, 8 insertions(+), 14 deletions(-)
+
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -22,7 +22,6 @@ struct dentry;
+  */
+ enum wb_state {
+ 	WB_registered,		/* bdi_register() was done */
+-	WB_shutting_down,	/* wb_shutdown() in progress */
+ 	WB_writeback_running,	/* Writeback is in progress */
+ 	WB_has_dirty_io,	/* Dirty inodes on ->b_{dirty|io|more_io} */
+ 	WB_start_all,		/* nr_pages == 0 (all) work pending */
+@@ -189,6 +188,7 @@ struct backing_dev_info {
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 	struct radix_tree_root cgwb_tree; /* radix tree of active cgroup wbs */
+ 	struct rb_root cgwb_congested_tree; /* their congested states */
++	struct mutex cgwb_release_mutex;  /* protect shutdown of wb structs */
+ #else
+ 	struct bdi_writeback_congested *wb_congested;
+ #endif
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -359,15 +359,8 @@ static void wb_shutdown(struct bdi_write
+ 	spin_lock_bh(&wb->work_lock);
+ 	if (!test_and_clear_bit(WB_registered, &wb->state)) {
+ 		spin_unlock_bh(&wb->work_lock);
+-		/*
+-		 * Wait for wb shutdown to finish if someone else is just
+-		 * running wb_shutdown(). Otherwise we could proceed to wb /
+-		 * bdi destruction before wb_shutdown() is finished.
+-		 */
+-		wait_on_bit(&wb->state, WB_shutting_down, TASK_UNINTERRUPTIBLE);
+ 		return;
+ 	}
+-	set_bit(WB_shutting_down, &wb->state);
+ 	spin_unlock_bh(&wb->work_lock);
  
--/* Stripping FCS is causing problems, disabled for now */
--#undef STRIP_FCS
-+#define STRIP_FCS
+ 	cgwb_remove_from_bdi_list(wb);
+@@ -379,12 +372,6 @@ static void wb_shutdown(struct bdi_write
+ 	mod_delayed_work(bdi_wq, &wb->dwork, 0);
+ 	flush_delayed_work(&wb->dwork);
+ 	WARN_ON(!list_empty(&wb->work_list));
+-	/*
+-	 * Make sure bit gets cleared after shutdown is finished. Matches with
+-	 * the barrier provided by test_and_clear_bit() above.
+-	 */
+-	smp_wmb();
+-	clear_and_wake_up_bit(WB_shutting_down, &wb->state);
+ }
  
- #define DEFAULT_MSG	(NETIF_MSG_DRV		| \
- 			 NETIF_MSG_PROBE	| \
-@@ -435,7 +434,7 @@ static int gem_rxmac_reset(struct gem *g
- 	writel(desc_dma & 0xffffffff, gp->regs + RXDMA_DBLOW);
- 	writel(RX_RING_SIZE - 4, gp->regs + RXDMA_KICK);
- 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
--	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
-+	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
- 	writel(val, gp->regs + RXDMA_CFG);
- 	if (readl(gp->regs + GREG_BIFCFG) & GREG_BIFCFG_M66EN)
- 		writel(((5 & RXDMA_BLANK_IPKTS) |
-@@ -760,7 +759,6 @@ static int gem_rx(struct gem *gp, int wo
- 	struct net_device *dev = gp->dev;
- 	int entry, drops, work_done = 0;
- 	u32 done;
--	__sum16 csum;
+ static void wb_exit(struct bdi_writeback *wb)
+@@ -508,10 +495,12 @@ static void cgwb_release_workfn(struct w
+ 	struct bdi_writeback *wb = container_of(work, struct bdi_writeback,
+ 						release_work);
  
- 	if (netif_msg_rx_status(gp))
- 		printk(KERN_DEBUG "%s: rx interrupt, done: %d, rx_new: %d\n",
-@@ -855,9 +853,13 @@ static int gem_rx(struct gem *gp, int wo
- 			skb = copy_skb;
- 		}
++	mutex_lock(&wb->bdi->cgwb_release_mutex);
+ 	wb_shutdown(wb);
  
--		csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
--		skb->csum = csum_unfold(csum);
--		skb->ip_summed = CHECKSUM_COMPLETE;
-+		if (likely(dev->features & NETIF_F_RXCSUM)) {
-+			__sum16 csum;
-+
-+			csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
-+			skb->csum = csum_unfold(csum);
-+			skb->ip_summed = CHECKSUM_COMPLETE;
-+		}
- 		skb->protocol = eth_type_trans(skb, gp->dev);
+ 	css_put(wb->memcg_css);
+ 	css_put(wb->blkcg_css);
++	mutex_unlock(&wb->bdi->cgwb_release_mutex);
  
- 		napi_gro_receive(&gp->napi, skb);
-@@ -1761,7 +1763,7 @@ static void gem_init_dma(struct gem *gp)
- 	writel(0, gp->regs + TXDMA_KICK);
+ 	fprop_local_destroy_percpu(&wb->memcg_completions);
+ 	percpu_ref_exit(&wb->refcnt);
+@@ -697,6 +686,7 @@ static int cgwb_bdi_init(struct backing_
  
- 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
--	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
-+	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
- 	writel(val, gp->regs + RXDMA_CFG);
+ 	INIT_RADIX_TREE(&bdi->cgwb_tree, GFP_ATOMIC);
+ 	bdi->cgwb_congested_tree = RB_ROOT;
++	mutex_init(&bdi->cgwb_release_mutex);
  
- 	writel(desc_dma >> 32, gp->regs + RXDMA_DBHI);
-@@ -2985,8 +2987,8 @@ static int gem_init_one(struct pci_dev *
- 	pci_set_drvdata(pdev, dev);
+ 	ret = wb_init(&bdi->wb, bdi, 1, GFP_KERNEL);
+ 	if (!ret) {
+@@ -717,7 +707,10 @@ static void cgwb_bdi_unregister(struct b
+ 	spin_lock_irq(&cgwb_lock);
+ 	radix_tree_for_each_slot(slot, &bdi->cgwb_tree, &iter, 0)
+ 		cgwb_kill(*slot);
++	spin_unlock_irq(&cgwb_lock);
  
- 	/* We can do scatter/gather and HW checksum */
--	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM;
--	dev->features |= dev->hw_features | NETIF_F_RXCSUM;
-+	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
-+	dev->features = dev->hw_features;
- 	if (pci_using_dac)
- 		dev->features |= NETIF_F_HIGHDMA;
++	mutex_lock(&bdi->cgwb_release_mutex);
++	spin_lock_irq(&cgwb_lock);
+ 	while (!list_empty(&bdi->wb_list)) {
+ 		wb = list_first_entry(&bdi->wb_list, struct bdi_writeback,
+ 				      bdi_node);
+@@ -726,6 +719,7 @@ static void cgwb_bdi_unregister(struct b
+ 		spin_lock_irq(&cgwb_lock);
+ 	}
+ 	spin_unlock_irq(&cgwb_lock);
++	mutex_unlock(&bdi->cgwb_release_mutex);
+ }
  
+ /**
 
 
