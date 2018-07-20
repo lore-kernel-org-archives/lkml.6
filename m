@@ -2,166 +2,120 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E784ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4225BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A51120652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:58:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E02782084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:04:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fE3XC5e/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A51120652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OoTcvBb9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E02782084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730782AbeGTMpx (ORCPT
+        id S1730183AbeGTMwQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 08:45:53 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39701 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeGTMpx (ORCPT
+        Fri, 20 Jul 2018 08:52:16 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:45250 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeGTMwQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:45:53 -0400
-Received: by mail-oi0-f65.google.com with SMTP id d189-v6so20853951oib.6;
-        Fri, 20 Jul 2018 04:57:59 -0700 (PDT)
+        Fri, 20 Jul 2018 08:52:16 -0400
+Received: by mail-yb0-f193.google.com with SMTP id h127-v6so4517771ybg.12;
+        Fri, 20 Jul 2018 05:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=3KBhkYM0//pFIijGA7jXwPIu8+FxotN64wPWzocx7wg=;
-        b=fE3XC5e//jxx4W0WkPyLjCSTIjgE0s9RMd50WcQ9ii5cNvz3VLjjaSByRHM84fYoas
-         rblk3TVP7PjyvQsZEspLqSSPdjVUDwkcRCGWw7nr3yhsETrJHm9lHWWnMOgOHka//sd7
-         By+f+QenW3An2m2kAth1As7qFmsx2lqBQ/jcw7uaS7ZjBtzOO3FyDtIQBe/8akzOUHDR
-         QNKahoLMKHSzV2WzjxjtlLH+H5baVljsuXdmxu2ov4hjrOaNQAxTFflCawMO/eZHMMW6
-         6J5cknRPlTlhFMqMkkQX+896ilqxHUMJ5WRJxkTApoAW3lrFYSM5/izcOP1nKpbu7nOs
-         fqpg==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EE8DOX5ZIE3rtJp1zM5TJJep5oDH4cHuKZ9DE8KZmQI=;
+        b=OoTcvBb9/Pxtz93qbOBRPREr0gTpQu+qg8l1NQieCQL7aoaa9AdGaResGWg/E8BD4+
+         Ja8+/Q/uzzzh+hKvRb8C68OWXeYG6ymZjz+lx2IbcQqhgTrmJ7Nmo+f2QGYJbBrZTq5v
+         0Cu6zJLbBbaz+/L+usDwGAqocoMS8UpEzp9MiZ6jzIYx4V9a1KvItwIwZh5HJwo2uQxg
+         jysCdVepx29TMc8/03OrQDYKuG3RbiGfVumeZJ6MBrc21wZo39ajH+GUstd3mIn2CfV3
+         PEx4wggSHlid2yxGhakfWrrbk6u9RpMUHWnp4xLlwcSpxhsAatsAC6Ll+Mom2KRCqTXr
+         EJTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=3KBhkYM0//pFIijGA7jXwPIu8+FxotN64wPWzocx7wg=;
-        b=WFeu6LTZzJfUk0o7zTF5UzowNdxtb8rVS26HUkFOmsSwfBqW58+FmyElcp0+VfD3PU
-         hnppf25ZIc8tsMqCU7QQPtyeacyyCD+Q865vJ33u5cA2ZSBFg1U6aOW0F8xty77fHa+i
-         LGFP56zWf5o2v3U8lGGwX44JT1sQks+OeTzkVwVeFJJZ6LfZY7Yvjp2NvnBAtAJSTAyl
-         eh7IXu3jVMsnPH8vZV0vAKR+CJ153AXLm24IFApyGASfXmjkIiih/PcGvgbAhEa25yR9
-         fm8Ncn1iHdjMszugDxk8IYSJgT6ubdRBXS9asZs2wxxxzJ/ilqy72Jfa8OTkrvlL3MwV
-         OXMw==
-X-Gm-Message-State: AOUpUlFwVlHM8n8i1DKi9F1kjfZ1GpjDpFvHf8cIXUHxBWymlnH4sI1K
-        3FA7Rd6eV4SR+tzOxpyFeaWcUYxTlVhexeVPyDM=
-X-Google-Smtp-Source: AAOMgpdNHlYRy53nLXxQeTsb1tS+4BYefJqFqoB2yVum+m17NZ/LOVINK184IqGEKSGO4EiqlA2yy9SppROaHrEIv3I=
-X-Received: by 2002:aca:c514:: with SMTP id v20-v6mr1889441oif.153.1532087878629;
- Fri, 20 Jul 2018 04:57:58 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EE8DOX5ZIE3rtJp1zM5TJJep5oDH4cHuKZ9DE8KZmQI=;
+        b=Fi/cp1FhW/rGCG287wR576pPnV1ROwEUnu5JW/doPXxIbM2bk5+JqIcIpXZh0ksqFt
+         ru5Mk3ooHTzh5aDPq5Dgs8UPjtiY/ZdCElg/B2fTchtmPkF4siFS9zZsgN8mVJawAqxu
+         L9m5SYiVm1d7nRijok7TkA3vjLjFgSuWkE9gYDqBVC8bjYCEJ/Cqi9rgzsg6y7myDehu
+         hEoyoj8Z3EENpQOd/xzfWH/oa3bnrxJZuRqsVAq693748D9Cg2dtQ4ZkiP8AnZppFl/B
+         RcrYv+y00nEC8qCW55Z3tIm1oKeyxDenILdQ9bT9YUNlteP8aO8cyJ5zCsbSejaFZhbR
+         ORfA==
+X-Gm-Message-State: AOUpUlFZqU3P11iF+djLtjFVUoYOHCw3ftjS3MlHjHa6oiWS5c224qzA
+        jYEVPGihwcqdPd98OkMpaeU=
+X-Google-Smtp-Source: AAOMgpc3m2WvQa11oTasLwdButJ3/ZBtiqI9qN6lPnCYPGa2qd6/hAY9L2TmqYu3ttxHXI7lmZK6JQ==
+X-Received: by 2002:a25:c641:: with SMTP id k62-v6mr829717ybf.384.1532088259189;
+        Fri, 20 Jul 2018 05:04:19 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:180::1:5c80])
+        by smtp.gmail.com with ESMTPSA id g203-v6sm811530ywb.69.2018.07.20.05.04.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 05:04:18 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 05:04:16 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+Message-ID: <20180720120416.GA1934745@devbig577.frc2.facebook.com>
+References: <20180702165322.GI533219@devbig577.frc2.facebook.com>
+ <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
+ <20180703155823.GS533219@devbig577.frc2.facebook.com>
+ <20180719135224.GE2494@hirez.programming.kicks-ass.net>
+ <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
+ <20180719153045.GT72677@devbig577.frc2.facebook.com>
+ <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
+ <20180719165201.GU72677@devbig577.frc2.facebook.com>
+ <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
+ <20180720114549.GY72677@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 04:57:38 -0700 (PDT)
-In-Reply-To: <CAAFQd5Bwokm4GH5qXTDFCyH=cN2T-r5bR4F036-TGA+CK77MCA@mail.gmail.com>
-References: <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com>
- <Pine.LNX.4.44L0.1807171643120.1344-100000@iolanthe.rowland.org>
- <CAAFQd5D4YHOkMhyTmpPzpp9aPNoZtJMHgU1xmvb4PoPRaOFrbg@mail.gmail.com>
- <CAJs94EY4x7GWuT1tF4cPquLRDFR060CuZAxS75nhOf0deYbG2w@mail.gmail.com> <CAAFQd5Bwokm4GH5qXTDFCyH=cN2T-r5bR4F036-TGA+CK77MCA@mail.gmail.com>
-From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Date:   Fri, 20 Jul 2018 14:57:38 +0300
-X-Google-Sender-Auth: eXTOxP4BxIwtNT6Qg6-ENoFIeiM
-Message-ID: <CAJs94EaXpiHaJS0M7SxUtmjNAL869sPe9XpC1rorHgJOum-Oog@mail.gmail.com>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180720114549.GY72677@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-20 14:33 GMT+03:00 Tomasz Figa <tfiga@chromium.org>:
-> On Fri, Jul 20, 2018 at 8:23 PM Matwey V. Kornilov <matwey@sai.msu.ru> wrote:
->>
->> 2018-07-20 13:55 GMT+03:00 Tomasz Figa <tfiga@chromium.org>:
->> > On Wed, Jul 18, 2018 at 5:51 AM Alan Stern <stern@rowland.harvard.edu> wrote:
->> >>
->> >> On Tue, 17 Jul 2018, Ezequiel Garcia wrote:
->> >>
->> >> > Hi Matwey,
->> >> >
->> >> > First of all, sorry for the delay.
->> >> >
->> >> > Adding Alan and Hans. Guys, do you have any feedback here?
->> >>
->> >> ...
->> >>
->> >> > > > So, what is the benefit of using consistent
->> >> > > > for these URBs, as opposed to streaming?
->> >> > >
->> >> > > I don't know, I think there is no real benefit and all we see is a
->> >> > > consequence of copy-pasta when some webcam drivers were inspired by
->> >> > > others and development priparily was going at x86 platforms.
->> >> >
->> >> > You are probably right about the copy-pasta.
->> >> >
->> >> > >  It would
->> >> > > be great if somebody corrected me here. DMA Coherence is quite strong
->> >> > > property and I cannot figure out how can it help when streaming video.
->> >> > > The CPU host always reads from the buffer and never writes to.
->> >> > > Hardware perepherial always writes to and never reads from. Moreover,
->> >> > > buffer access is mutually exclusive and separated in time by Interrupt
->> >> > > fireing and URB starting (when we reuse existing URB for new request).
->> >> > > Only single one memory barrier is really required here.
->> >> > >
->> >> >
->> >> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
->> >> > create DMA mappings and use the streaming API. Which makes more
->> >> > sense in hardware without hardware coherency.
->> >>
->> >> As far as I know, the _only_ advantage to using coherent DMA in this
->> >> situation is that you then do not have to pay the overhead of
->> >> constantly setting up and tearing down the streaming mappings.  So it
->> >> depends very much on the platform: If coherent buffers are cached then
->> >> it's a slight win and otherwise it's a big lose.
->> >
->> > Isn't it about usb_alloc_coherent() being backed by DMA coherent API
->> > (dma_alloc_coherent/attrs()) and ending up allocating uncached (or
->> > write-combine) memory for devices with non-coherent DMAs? I'm not sure
->>
->> Yes, this is what exactly happens at armv7l platforms.
->
-> Okay, thanks. So this seems to be exactly the same thing that is
-> happening in the UVC driver. There is quite a bit of random accesses
-> to extract some header fields and then a big memcpy into VB2 buffer to
-> assemble final frame.
->
-> If we don't want to pay the cost of creating and destroying the
-> streaming mapping, we could map (dma_map_single()) once, set
-> transfer_dma of URB and URB_NO_TRANSFER_DMA_MAP and then just
-> synchronize the caches (dma_sync_single()) before submitting/after
-> completing the URB.
+Hello,
 
-Thank you. Now it is becoming clearer to me. Please allow me some time
-to try to sketch the implementation.
+On Fri, Jul 20, 2018 at 04:45:49AM -0700, Tejun Heo wrote:
+> > > 2. take away any given cpu from ist subtree.
+> > 
+> > I really hate this obsession of yours and doubly so for partitions. But
+> > why would this currently not be allowed?
+> 
+> Well, sorry that you hate it.  It's a fundamental architectural
+> constraint.  If it can't satisfy that, it should't be in cgroup.
 
->
-> Best regards,
-> Tomasz
->
+Just in case it wasn't clear from previous the exchanges, basic
+architecture designs like this are what makes things like delegation
+actually useful across all controllers.  If we allow a descendant in
+the hierarchy to restrict waht its ancestors can do, it becomes really
+painful operationally.
 
+For now, I'd suggest just doing it at the first child level and move
+on unless there are clear use cases where nested partitions are
+useful, which I find unlikely given the nature of the operation -
+partitions don't really have anything to do with one another.
 
+Thanks.
 
 -- 
-With best regards,
-Matwey V. Kornilov.
-Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
-119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
+tejun
