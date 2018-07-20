@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39377ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E55CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E638020833
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E638020833
+	by mail.kernel.org (Postfix) with ESMTP id 4A3D6204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A3D6204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387784AbeGTQEZ (ORCPT
+        id S2387843AbeGTQE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:04:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54088 "EHLO mail.bootlin.com"
+        Fri, 20 Jul 2018 12:04:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54130 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731968AbeGTQEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 12:04:25 -0400
+        id S1731035AbeGTQE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 12:04:26 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2F53A20993; Fri, 20 Jul 2018 17:15:39 +0200 (CEST)
+        id 49FC720996; Fri, 20 Jul 2018 17:15:40 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7EA98203EC;
-        Fri, 20 Jul 2018 17:15:28 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id A8C2D20765;
+        Fri, 20 Jul 2018 17:15:29 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,176 +55,202 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 00/35] Allow dynamic allocations during NAND chip identification phase
-Date:   Fri, 20 Jul 2018 17:14:52 +0200
-Message-Id: <20180720151527.16038-1-miquel.raynal@bootlin.com>
+Subject: [PATCH v4 02/35] mtd: rawnand: cafe: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 17:14:54 +0200
+Message-Id: <20180720151527.16038-3-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180720151527.16038-1-miquel.raynal@bootlin.com>
+References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Two helpers have been added to the core to make ECC-related
+configuration between the detection phase and the final NAND scan. Use
+these hooks and convert the driver to just use nand_scan() instead of
+both nand_scan_ident() and nand_scan_tail().
 
-This series make a quite deep change in the NAND framework. Until now,
-the NAND chip identification phase could be done in two manners from the
-controller driver perspective:
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ drivers/mtd/nand/raw/cafe_nand.c | 130 +++++++++++++++++++++++----------------
+ 1 file changed, 76 insertions(+), 54 deletions(-)
 
-1/ Call nand_scan()
-
-  or
-
-1/ Call nand_scan_ident()
-2/ Do some controller-dependent configuration
-3/ Call nand_scan_tail().
-
-The fact that the identifaction could be split in two operations
-involved that in the NAND framework, it was not possible to do any
-dynamic allocation without risking a memory leak. What if the core
-allocates a structure, then the driver between nand_scan_ident() and
-nand_scan_tail() decides it cannot handle the chip and errors out?
-The structure allocated by the core is lost: it is a memory leak. One
-solution could have been to add a nand_scan_ident_cleanup() function,
-but that would mean patching all the drivers anyway to make them call
-this function when something fails between nand_scan_ident() and
-nand_scan_tail().
-
-To avoid this situation, we migrate all drivers to use nand_scan() in
-conjuction with the recently added hooks ->attach_chip() and
-->detach_chip() that are part of the nand_controller structure
-operations. Drivers that need to tweak their configuration after
-nand_scan_ident() should implement it. Any dynamically allocated space
-in ->attach_chip() must be freed in the second hook: ->detach_chip().
-
-The ->detach_chip() does not have to be called upon error in the
-controller driver probe function. The nand_cleanup() helper already
-exists for that and will do the call if needed. Of course, this helper
-must be called on error after a successful nand_scan(), just like
-before.
-
-Once all drivers not using nand_scan() are migrated, nand_scan_ident()
-and nand_scan_tail() are unexported and only available internally.
-
-A previous work [1] removed the ONFI/JEDEC parameter pages and instead
-allocated a nand_parameters structure in nand_chip, embedding both
-generic entries and ONFI-related ones. The deal was, once dynamic
-allocation possible, allocate in nand_scan_ident() the ONFI strcuture
-only if actually needed. This is done in the last patches.
-
-This series applies on top of nand/next.
-
-Thank you,
-Miquèl
-
-[1] http://lists.infradead.org/pipermail/linux-mtd/2018-March/079456.html
-
-Changes since v3:
-=================
-* Constified all the nand_controller_ops structure definitions.
-* Fixed a build issue in fsl_elbc.
-* Added a patch in the core to prevent executing nand_scan_ident if
-  maxchips is NULL.
-* Fixed the regression around the model name.
-* Used kstrdup to allocate the model.
-* The migration from char model[] to const char *model is done in a
-  separate patch.
-
-Changes since v2:
-=================
-* Rebased on top of nand/next.
-* Adapted all drivers to declare statically a nand_controller_ops
-  structure and assign it in the probe().
-* Added the migration of the tegra_nand.c driver.
-* Moved brcmnand controller ops affectation in the probe().
-
-Changes since v1:
-=================
-* Rebased on top of nand/next.
-* Light rewording of the cover letter about the possibility to have a
-  nand_scan_ident_cleanup() function (just as example of how this series
-  could have been done differently).
-* Changed the hooks to reside in the nand_hw_ctrl structure instead of
-  being part of nand_ecc_ctrl as these hooks are more
-  controller-related.
-
-
-Miquel Raynal (35):
-  mtd: rawnand: brcmnand: convert driver to nand_scan()
-  mtd: rawnand: cafe: convert driver to nand_scan()
-  mtd: rawnand: davinci: convert driver to nand_scan()
-  mtd: rawnand: denali: convert to nand_scan()
-  mtd: rawnand: fsl_elbc: convert driver to nand_scan()
-  mtd: rawnand: fsl_ifc: convert driver to nand_scan()
-  mtd: rawnand: fsmc: convert driver to nand_scan()
-  mtd: rawnand: gpmi: convert driver to nand_scan()
-  mtd: rawnand: hisi504: convert driver to nand_scan()
-  mtd: rawnand: jz4780: convert driver to nand_scan()
-  mtd: rawnand: lpc32xx_mlc: convert driver to nand_scan()
-  mtd: rawnand: lpc32xx_slc: convert driver to nand_scan()
-  mtd: rawnand: marvell: convert driver to nand_scan()
-  mtd: rawnand: mtk: convert driver to nand_scan()
-  mtd: rawnand: mxc: convert driver to nand_scan()
-  mtd: rawnand: nandsim: convert driver to nand_scan()
-  mtd: rawnand: omap2: convert driver to nand_scan()
-  mtd: rawnand: s3c2410: convert driver to nand_scan()
-  mtd: rawnand: sh_flctl: move all NAND chip related setup in one
-    function
-  mtd: rawnand: sh_flctl: convert driver to nand_scan()
-  mtd: rawnand: sunxi: convert driver to nand_scan()
-  mtd: rawnand: tango: convert driver to nand_scan()
-  mtd: rawnand: txx9ndfmc: rename nand controller internal structure
-  mtd: rawnand: txx9ndfmc: convert driver to nand_scan()
-  mtd: rawnand: vf610: convert driver to nand_scan()
-  mtd: rawnand: atmel: convert driver to nand_scan()
-  mtd: rawnand: sm_common: convert driver to nand_scan_with_ids()
-  mtd: rawnand: allow exiting immediately nand_scan_ident()
-  mtd: rawnand: docg4: convert driver to nand_scan()
-  mtd: rawnand: qcom: convert driver to nand_scan()
-  mtd: rawnand: jz4740: convert driver to nand_scan()
-  mtd: rawnand: tegra: convert driver to nand_scan()
-  mtd: rawnand: do not export nand_scan_[ident|tail]() anymore
-  mtd: rawnand: allocate model parameter dynamically
-  mtd: rawnand: allocate dynamically ONFI parameters during detection
-
- drivers/mtd/nand/raw/atmel/nand-controller.c |  83 ++---
- drivers/mtd/nand/raw/brcmnand/brcmnand.c     |  47 ++-
- drivers/mtd/nand/raw/cafe_nand.c             | 130 ++++---
- drivers/mtd/nand/raw/davinci_nand.c          | 195 +++++-----
- drivers/mtd/nand/raw/denali.c                | 138 +++----
- drivers/mtd/nand/raw/docg4.c                 |  55 +--
- drivers/mtd/nand/raw/fsl_elbc_nand.c         |  19 +-
- drivers/mtd/nand/raw/fsl_ifc_nand.c          |  19 +-
- drivers/mtd/nand/raw/fsmc_nand.c             | 148 ++++----
- drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c   |  56 +--
- drivers/mtd/nand/raw/hisi504_nand.c          |  78 ++--
- drivers/mtd/nand/raw/jz4740_nand.c           |  46 ++-
- drivers/mtd/nand/raw/jz4780_nand.c           |  34 +-
- drivers/mtd/nand/raw/lpc32xx_mlc.c           | 109 +++---
- drivers/mtd/nand/raw/lpc32xx_slc.c           |  77 ++--
- drivers/mtd/nand/raw/marvell_nand.c          | 205 ++++++-----
- drivers/mtd/nand/raw/mtk_nand.c              |  75 ++--
- drivers/mtd/nand/raw/mxc_nand.c              | 136 +++----
- drivers/mtd/nand/raw/nand_base.c             | 132 +++++--
- drivers/mtd/nand/raw/nand_micron.c           |   6 +-
- drivers/mtd/nand/raw/nand_timings.c          |  12 +-
- drivers/mtd/nand/raw/nandsim.c               |  82 +++--
- drivers/mtd/nand/raw/omap2.c                 | 521 +++++++++++++--------------
- drivers/mtd/nand/raw/qcom_nandc.c            |  71 ++--
- drivers/mtd/nand/raw/s3c2410.c               |  30 +-
- drivers/mtd/nand/raw/sh_flctl.c              |  57 ++-
- drivers/mtd/nand/raw/sm_common.c             |  39 +-
- drivers/mtd/nand/raw/sunxi_nand.c            |  43 +--
- drivers/mtd/nand/raw/tango_nand.c            |  40 +-
- drivers/mtd/nand/raw/tegra_nand.c            | 162 +++++----
- drivers/mtd/nand/raw/txx9ndfmc.c             |  35 +-
- drivers/mtd/nand/raw/vf610_nfc.c             | 127 +++----
- include/linux/mtd/rawnand.h                  |  17 +-
- include/linux/mtd/sh_flctl.h                 |   1 +
- 34 files changed, 1612 insertions(+), 1413 deletions(-)
-
+diff --git a/drivers/mtd/nand/raw/cafe_nand.c b/drivers/mtd/nand/raw/cafe_nand.c
+index ac0be933a490..c303c261dd8d 100644
+--- a/drivers/mtd/nand/raw/cafe_nand.c
++++ b/drivers/mtd/nand/raw/cafe_nand.c
+@@ -71,7 +71,9 @@ struct cafe_priv {
+ 	unsigned char *dmabuf;
+ };
+ 
+-static int usedma = 1;
++#define CAFE_DEFAULT_DMA	1
++
++static int usedma = CAFE_DEFAULT_DMA;
+ module_param(usedma, int, 0644);
+ 
+ static int skipbbt = 0;
+@@ -593,6 +595,76 @@ static int cafe_mul(int x)
+ 	return gf4096_mul(x, 0xe01);
+ }
+ 
++static int cafe_nand_attach_chip(struct nand_chip *chip)
++{
++	struct mtd_info *mtd = nand_to_mtd(chip);
++	struct cafe_priv *cafe = nand_get_controller_data(chip);
++	int err = 0;
++
++	cafe->dmabuf = dma_alloc_coherent(&cafe->pdev->dev, 2112,
++					  &cafe->dmaaddr, GFP_KERNEL);
++	if (!cafe->dmabuf)
++		return -ENOMEM;
++
++	/* Set up DMA address */
++	cafe_writel(cafe, lower_32_bits(cafe->dmaaddr), NAND_DMA_ADDR0);
++	cafe_writel(cafe, upper_32_bits(cafe->dmaaddr), NAND_DMA_ADDR1);
++
++	cafe_dev_dbg(&cafe->pdev->dev, "Set DMA address to %x (virt %p)\n",
++		     cafe_readl(cafe, NAND_DMA_ADDR0), cafe->dmabuf);
++
++	/* Restore the DMA flag */
++	usedma = CAFE_DEFAULT_DMA;
++
++	cafe->ctl2 = BIT(27); /* Reed-Solomon ECC */
++	if (mtd->writesize == 2048)
++		cafe->ctl2 |= BIT(29); /* 2KiB page size */
++
++	/* Set up ECC according to the type of chip we found */
++	mtd_set_ooblayout(mtd, &cafe_ooblayout_ops);
++	if (mtd->writesize == 2048) {
++		cafe->nand.bbt_td = &cafe_bbt_main_descr_2048;
++		cafe->nand.bbt_md = &cafe_bbt_mirror_descr_2048;
++	} else if (mtd->writesize == 512) {
++		cafe->nand.bbt_td = &cafe_bbt_main_descr_512;
++		cafe->nand.bbt_md = &cafe_bbt_mirror_descr_512;
++	} else {
++		dev_warn(&cafe->pdev->dev,
++			 "Unexpected NAND flash writesize %d. Aborting\n",
++			 mtd->writesize);
++		err = -ENOTSUPP;
++		goto out_free_dma;
++	}
++
++	cafe->nand.ecc.mode = NAND_ECC_HW_SYNDROME;
++	cafe->nand.ecc.size = mtd->writesize;
++	cafe->nand.ecc.bytes = 14;
++	cafe->nand.ecc.strength = 4;
++	cafe->nand.ecc.write_page = cafe_nand_write_page_lowlevel;
++	cafe->nand.ecc.write_oob = cafe_nand_write_oob;
++	cafe->nand.ecc.read_page = cafe_nand_read_page;
++	cafe->nand.ecc.read_oob = cafe_nand_read_oob;
++
++	return 0;
++
++ out_free_dma:
++	dma_free_coherent(&cafe->pdev->dev, 2112, cafe->dmabuf, cafe->dmaaddr);
++
++	return err;
++}
++
++static void cafe_nand_detach_chip(struct nand_chip *chip)
++{
++	struct cafe_priv *cafe = nand_get_controller_data(chip);
++
++	dma_free_coherent(&cafe->pdev->dev, 2112, cafe->dmabuf, cafe->dmaaddr);
++}
++
++static const struct nand_controller_ops cafe_nand_controller_ops = {
++	.attach_chip = cafe_nand_attach_chip,
++	.detach_chip = cafe_nand_detach_chip,
++};
++
+ static int cafe_nand_probe(struct pci_dev *pdev,
+ 				     const struct pci_device_id *ent)
+ {
+@@ -600,7 +672,6 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+ 	struct cafe_priv *cafe;
+ 	uint32_t ctrl;
+ 	int err = 0;
+-	int old_dma;
+ 
+ 	/* Very old versions shared the same PCI ident for all three
+ 	   functions on the chip. Verify the class too... */
+@@ -708,62 +779,15 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+ 		cafe_readl(cafe, GLOBAL_CTRL),
+ 		cafe_readl(cafe, GLOBAL_IRQ_MASK));
+ 
+-	/* Do not use the DMA for the nand_scan_ident() */
+-	old_dma = usedma;
++	/* Do not use the DMA during the NAND identification */
+ 	usedma = 0;
+ 
+ 	/* Scan to find existence of the device */
+-	err = nand_scan_ident(mtd, 2, NULL);
++	cafe->nand.dummy_controller.ops = &cafe_nand_controller_ops;
++	err = nand_scan(mtd, 2);
+ 	if (err)
+ 		goto out_irq;
+ 
+-	cafe->dmabuf = dma_alloc_coherent(&cafe->pdev->dev, 2112,
+-					  &cafe->dmaaddr, GFP_KERNEL);
+-	if (!cafe->dmabuf) {
+-		err = -ENOMEM;
+-		goto out_irq;
+-	}
+-
+-	/* Set up DMA address */
+-	cafe_writel(cafe, lower_32_bits(cafe->dmaaddr), NAND_DMA_ADDR0);
+-	cafe_writel(cafe, upper_32_bits(cafe->dmaaddr), NAND_DMA_ADDR1);
+-
+-	cafe_dev_dbg(&cafe->pdev->dev, "Set DMA address to %x (virt %p)\n",
+-		cafe_readl(cafe, NAND_DMA_ADDR0), cafe->dmabuf);
+-
+-	/* Restore the DMA flag */
+-	usedma = old_dma;
+-
+-	cafe->ctl2 = 1<<27; /* Reed-Solomon ECC */
+-	if (mtd->writesize == 2048)
+-		cafe->ctl2 |= 1<<29; /* 2KiB page size */
+-
+-	/* Set up ECC according to the type of chip we found */
+-	mtd_set_ooblayout(mtd, &cafe_ooblayout_ops);
+-	if (mtd->writesize == 2048) {
+-		cafe->nand.bbt_td = &cafe_bbt_main_descr_2048;
+-		cafe->nand.bbt_md = &cafe_bbt_mirror_descr_2048;
+-	} else if (mtd->writesize == 512) {
+-		cafe->nand.bbt_td = &cafe_bbt_main_descr_512;
+-		cafe->nand.bbt_md = &cafe_bbt_mirror_descr_512;
+-	} else {
+-		pr_warn("Unexpected NAND flash writesize %d. Aborting\n",
+-			mtd->writesize);
+-		goto out_free_dma;
+-	}
+-	cafe->nand.ecc.mode = NAND_ECC_HW_SYNDROME;
+-	cafe->nand.ecc.size = mtd->writesize;
+-	cafe->nand.ecc.bytes = 14;
+-	cafe->nand.ecc.strength = 4;
+-	cafe->nand.ecc.write_page = cafe_nand_write_page_lowlevel;
+-	cafe->nand.ecc.write_oob = cafe_nand_write_oob;
+-	cafe->nand.ecc.read_page = cafe_nand_read_page;
+-	cafe->nand.ecc.read_oob = cafe_nand_read_oob;
+-
+-	err = nand_scan_tail(mtd);
+-	if (err)
+-		goto out_free_dma;
+-
+ 	pci_set_drvdata(pdev, mtd);
+ 
+ 	mtd->name = "cafe_nand";
+@@ -775,8 +799,6 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+ 
+  out_cleanup_nand:
+ 	nand_cleanup(&cafe->nand);
+- out_free_dma:
+-	dma_free_coherent(&cafe->pdev->dev, 2112, cafe->dmabuf, cafe->dmaaddr);
+  out_irq:
+ 	/* Disable NAND IRQ in global IRQ mask register */
+ 	cafe_writel(cafe, ~1 & cafe_readl(cafe, GLOBAL_IRQ_MASK), GLOBAL_IRQ_MASK);
 -- 
 2.14.1
 
