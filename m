@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64059ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0921ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17AFB206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17AFB206B7
+	by mail.kernel.org (Postfix) with ESMTP id 6C54B206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C54B206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389413AbeGTN0Z (ORCPT
+        id S2389423AbeGTN02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:26:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46546 "EHLO
+        Fri, 20 Jul 2018 09:26:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46670 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388568AbeGTN0Y (ORCPT
+        with ESMTP id S2388568AbeGTN01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:26:24 -0400
+        Fri, 20 Jul 2018 09:26:27 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7CEF0CF4;
-        Fri, 20 Jul 2018 12:34:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BA5ECB1;
+        Fri, 20 Jul 2018 12:32:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 50/92] rtlwifi: Fix kernel Oops "Fw download fail!!"
-Date:   Fri, 20 Jul 2018 14:13:54 +0200
-Message-Id: <20180720121420.894949092@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Meelis Roos <mroos@linux.ee>,
+        Mathieu Malaterre <malat@debian.org>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 35/92] net: sungem: fix rx checksum support
+Date:   Fri, 20 Jul 2018 14:13:39 +0200
+Message-Id: <20180720121420.049804993@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -51,165 +53,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ping-Ke Shih <pkshih@realtek.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 12dfa2f68ab659636e092db13b5d17cf9aac82af upstream.
+[ Upstream commit 12b03558cef6d655d0d394f5e98a6fd07c1f6c0f ]
 
-When connecting to AP, mac80211 asks driver to enter and leave PS quickly,
-but driver deinit doesn't wait for delayed work complete when entering PS,
-then driver reinit procedure and delay work are running simultaneously.
-This will cause unpredictable kernel oops or crash like
+After commit 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE
+are friends"), sungem owners reported the infamous "eth0: hw csum failure"
+message.
 
-rtl8723be: error H2C cmd because of Fw download fail!!!
-WARNING: CPU: 3 PID: 159 at drivers/net/wireless/realtek/rtlwifi/
-	 rtl8723be/fw.c:227 rtl8723be_fill_h2c_cmd+0x182/0x510 [rtl8723be]
-CPU: 3 PID: 159 Comm: kworker/3:2 Tainted: G       O     4.16.13-2-ARCH #1
-Hardware name: ASUSTeK COMPUTER INC. X556UF/X556UF, BIOS X556UF.406
-	       10/21/2016
-Workqueue: rtl8723be_pci rtl_c2hcmd_wq_callback [rtlwifi]
-RIP: 0010:rtl8723be_fill_h2c_cmd+0x182/0x510 [rtl8723be]
-RSP: 0018:ffffa6ab01e1bd70 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffffa26069071520 RCX: 0000000000000001
-RDX: 0000000080000001 RSI: ffffffff8be70e9c RDI: 00000000ffffffff
-RBP: 0000000000000000 R08: 0000000000000048 R09: 0000000000000348
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: ffffa26069071520 R14: 0000000000000000 R15: ffffa2607d205f70
-FS:  0000000000000000(0000) GS:ffffa26081d80000(0000) knlGS:000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000443b39d3000 CR3: 000000037700a005 CR4: 00000000003606e0
-Call Trace:
- ? halbtc_send_bt_mp_operation.constprop.17+0xd5/0xe0 [btcoexist]
- ? ex_btc8723b1ant_bt_info_notify+0x3b8/0x820 [btcoexist]
- ? rtl_c2hcmd_launcher+0xab/0x110 [rtlwifi]
- ? process_one_work+0x1d1/0x3b0
- ? worker_thread+0x2b/0x3d0
- ? process_one_work+0x3b0/0x3b0
- ? kthread+0x112/0x130
- ? kthread_create_on_node+0x60/0x60
- ? ret_from_fork+0x35/0x40
-Code: 00 76 b4 e9 e2 fe ff ff 4c 89 ee 4c 89 e7 e8 56 22 86 ca e9 5e ...
+CHECKSUM_COMPLETE has in fact never worked for this driver, but this
+was masked by the fact that upper stacks had to strip the FCS, and
+therefore skb->ip_summed was set back to CHECKSUM_NONE before
+my recent change.
 
-This patch ensures all delayed works done before entering PS to satisfy
-our expectation, so use cancel_delayed_work_sync() instead. An exception
-is delayed work ips_nic_off_wq because running task may be itself, so add
-a parameter ips_wq to deinit function to handle this case.
+Driver configures a number of bytes to skip when the chip computes
+the checksum, and for some reason only half of the Ethernet header
+was skipped.
 
-This issue is reported and fixed in below threads:
-https://github.com/lwfinger/rtlwifi_new/issues/367
-https://github.com/lwfinger/rtlwifi_new/issues/366
+Then a second problem is that we should strip the FCS by default,
+unless the driver is updated to eventually support NETIF_F_RXFCS in
+the future.
 
-Tested-by: Evgeny Kapun <abacabadabacaba@gmail.com> # 8723DE
-Tested-by: Shivam Kakkar <shivam543@gmail.com> # 8723BE on 4.18-rc1
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Fixes: cceb0a597320 ("rtlwifi: Add work queue for c2h cmd.")
-Cc: Stable <stable@vger.kernel.org> # 4.11+
-Reviewed-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Finally, a driver should check if NETIF_F_RXCSUM feature is enabled
+or not, so that the admin can turn off rx checksum if wanted.
+
+Many thanks to Andreas Schwab and Mathieu Malaterre for their
+help in debugging this issue.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Meelis Roos <mroos@linux.ee>
+Reported-by: Mathieu Malaterre <malat@debian.org>
+Reported-by: Andreas Schwab <schwab@linux-m68k.org>
+Tested-by: Andreas Schwab <schwab@linux-m68k.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/wireless/realtek/rtlwifi/base.c |   17 ++++++++++-------
- drivers/net/wireless/realtek/rtlwifi/base.h |    2 +-
- drivers/net/wireless/realtek/rtlwifi/core.c |    2 +-
- drivers/net/wireless/realtek/rtlwifi/pci.c  |    2 +-
- drivers/net/wireless/realtek/rtlwifi/ps.c   |    4 ++--
- drivers/net/wireless/realtek/rtlwifi/usb.c  |    2 +-
- 6 files changed, 16 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/sun/sungem.c |   22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/base.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/base.c
-@@ -483,18 +483,21 @@ static void _rtl_init_deferred_work(stru
+--- a/drivers/net/ethernet/sun/sungem.c
++++ b/drivers/net/ethernet/sun/sungem.c
+@@ -59,8 +59,7 @@
+ #include <linux/sungem_phy.h>
+ #include "sungem.h"
  
- }
+-/* Stripping FCS is causing problems, disabled for now */
+-#undef STRIP_FCS
++#define STRIP_FCS
  
--void rtl_deinit_deferred_work(struct ieee80211_hw *hw)
-+void rtl_deinit_deferred_work(struct ieee80211_hw *hw, bool ips_wq)
- {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ #define DEFAULT_MSG	(NETIF_MSG_DRV		| \
+ 			 NETIF_MSG_PROBE	| \
+@@ -434,7 +433,7 @@ static int gem_rxmac_reset(struct gem *g
+ 	writel(desc_dma & 0xffffffff, gp->regs + RXDMA_DBLOW);
+ 	writel(RX_RING_SIZE - 4, gp->regs + RXDMA_KICK);
+ 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
+-	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
++	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
+ 	writel(val, gp->regs + RXDMA_CFG);
+ 	if (readl(gp->regs + GREG_BIFCFG) & GREG_BIFCFG_M66EN)
+ 		writel(((5 & RXDMA_BLANK_IPKTS) |
+@@ -759,7 +758,6 @@ static int gem_rx(struct gem *gp, int wo
+ 	struct net_device *dev = gp->dev;
+ 	int entry, drops, work_done = 0;
+ 	u32 done;
+-	__sum16 csum;
  
- 	del_timer_sync(&rtlpriv->works.watchdog_timer);
+ 	if (netif_msg_rx_status(gp))
+ 		printk(KERN_DEBUG "%s: rx interrupt, done: %d, rx_new: %d\n",
+@@ -854,9 +852,13 @@ static int gem_rx(struct gem *gp, int wo
+ 			skb = copy_skb;
+ 		}
  
--	cancel_delayed_work(&rtlpriv->works.watchdog_wq);
--	cancel_delayed_work(&rtlpriv->works.ips_nic_off_wq);
--	cancel_delayed_work(&rtlpriv->works.ps_work);
--	cancel_delayed_work(&rtlpriv->works.ps_rfon_wq);
--	cancel_delayed_work(&rtlpriv->works.fwevt_wq);
--	cancel_delayed_work(&rtlpriv->works.c2hcmd_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.watchdog_wq);
-+	if (ips_wq)
-+		cancel_delayed_work(&rtlpriv->works.ips_nic_off_wq);
-+	else
-+		cancel_delayed_work_sync(&rtlpriv->works.ips_nic_off_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.ps_work);
-+	cancel_delayed_work_sync(&rtlpriv->works.ps_rfon_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.fwevt_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.c2hcmd_wq);
- }
- EXPORT_SYMBOL_GPL(rtl_deinit_deferred_work);
+-		csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
+-		skb->csum = csum_unfold(csum);
+-		skb->ip_summed = CHECKSUM_COMPLETE;
++		if (likely(dev->features & NETIF_F_RXCSUM)) {
++			__sum16 csum;
++
++			csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
++			skb->csum = csum_unfold(csum);
++			skb->ip_summed = CHECKSUM_COMPLETE;
++		}
+ 		skb->protocol = eth_type_trans(skb, gp->dev);
  
---- a/drivers/net/wireless/realtek/rtlwifi/base.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/base.h
-@@ -121,7 +121,7 @@ void rtl_init_rfkill(struct ieee80211_hw
- void rtl_deinit_rfkill(struct ieee80211_hw *hw);
+ 		napi_gro_receive(&gp->napi, skb);
+@@ -1760,7 +1762,7 @@ static void gem_init_dma(struct gem *gp)
+ 	writel(0, gp->regs + TXDMA_KICK);
  
- void rtl_watch_dog_timer_callback(unsigned long data);
--void rtl_deinit_deferred_work(struct ieee80211_hw *hw);
-+void rtl_deinit_deferred_work(struct ieee80211_hw *hw, bool ips_wq);
+ 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
+-	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
++	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
+ 	writel(val, gp->regs + RXDMA_CFG);
  
- bool rtl_action_proc(struct ieee80211_hw *hw, struct sk_buff *skb, u8 is_tx);
- int rtlwifi_rate_mapping(struct ieee80211_hw *hw, bool isht,
---- a/drivers/net/wireless/realtek/rtlwifi/core.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/core.c
-@@ -196,7 +196,7 @@ static void rtl_op_stop(struct ieee80211
- 		/* reset sec info */
- 		rtl_cam_reset_sec_info(hw);
+ 	writel(desc_dma >> 32, gp->regs + RXDMA_DBHI);
+@@ -2986,8 +2988,8 @@ static int gem_init_one(struct pci_dev *
+ 	pci_set_drvdata(pdev, dev);
  
--		rtl_deinit_deferred_work(hw);
-+		rtl_deinit_deferred_work(hw, false);
- 	}
- 	rtlpriv->intf_ops->adapter_stop(hw);
+ 	/* We can do scatter/gather and HW checksum */
+-	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM;
+-	dev->features |= dev->hw_features | NETIF_F_RXCSUM;
++	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
++	dev->features = dev->hw_features;
+ 	if (pci_using_dac)
+ 		dev->features |= NETIF_F_HIGHDMA;
  
---- a/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -2359,7 +2359,7 @@ void rtl_pci_disconnect(struct pci_dev *
- 		ieee80211_unregister_hw(hw);
- 		rtlmac->mac80211_registered = 0;
- 	} else {
--		rtl_deinit_deferred_work(hw);
-+		rtl_deinit_deferred_work(hw, false);
- 		rtlpriv->intf_ops->adapter_stop(hw);
- 	}
- 	rtlpriv->cfg->ops->disable_interrupt(hw);
---- a/drivers/net/wireless/realtek/rtlwifi/ps.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/ps.c
-@@ -66,7 +66,7 @@ bool rtl_ps_disable_nic(struct ieee80211
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 
- 	/*<1> Stop all timer */
--	rtl_deinit_deferred_work(hw);
-+	rtl_deinit_deferred_work(hw, true);
- 
- 	/*<2> Disable Interrupt */
- 	rtlpriv->cfg->ops->disable_interrupt(hw);
-@@ -287,7 +287,7 @@ void rtl_ips_nic_on(struct ieee80211_hw
- 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
- 	enum rf_pwrstate rtstate;
- 
--	cancel_delayed_work(&rtlpriv->works.ips_nic_off_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.ips_nic_off_wq);
- 
- 	spin_lock(&rtlpriv->locks.ips_lock);
- 	if (ppsc->inactiveps) {
---- a/drivers/net/wireless/realtek/rtlwifi/usb.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/usb.c
-@@ -1150,7 +1150,7 @@ void rtl_usb_disconnect(struct usb_inter
- 		ieee80211_unregister_hw(hw);
- 		rtlmac->mac80211_registered = 0;
- 	} else {
--		rtl_deinit_deferred_work(hw);
-+		rtl_deinit_deferred_work(hw, false);
- 		rtlpriv->intf_ops->adapter_stop(hw);
- 	}
- 	/*deinit rfkill */
 
 
