@@ -2,107 +2,98 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 124E9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70028ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC9F120661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:20:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC9F120661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E0E320647
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:24:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0E320647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388155AbeGTSKH (ORCPT
+        id S2388065AbeGTSN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 14:10:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49910 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387950AbeGTSKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 14:10:07 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8DD1281663EE;
-        Fri, 20 Jul 2018 17:20:53 +0000 (UTC)
-Received: from treble (ovpn-120-158.rdu2.redhat.com [10.10.120.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2E1132026D69;
-        Fri, 20 Jul 2018 17:20:53 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 12:20:51 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc:     Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
-        Jiri Kosina <jikos@kernel.org>, live-patching@vger.kernel.org,
+        Fri, 20 Jul 2018 14:13:26 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37543 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731556AbeGTSNZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 14:13:25 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fgZ8P-0008D2-0s; Fri, 20 Jul 2018 19:24:05 +0200
+Date:   Fri, 20 Jul 2018 19:24:00 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Yury Norov <ynorov@caviumnetworks.com>
+cc:     Frederic Weisbecker <frederic@kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Goutham, Sunil" <Sunil.Goutham@cavium.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: Validate module/old func name length
-Message-ID: <20180720172051.jkgm3txclbon2bsy@treble>
-References: <1532080002-10724-1-git-send-email-kamalesh@linux.vnet.ibm.com>
+Subject: Re: [PATCH] nohz: don't kick non-idle CPUs in
+ tick_nohz_full_kick_cpu()
+In-Reply-To: <20180719202200.GA17106@yury-thinkpad>
+Message-ID: <alpine.DEB.2.21.1807201916270.1694@nanos.tec.linutronix.de>
+References: <20180712181922.23073-1-ynorov@caviumnetworks.com> <20180716153109.GA29270@lerouge> <20180719202200.GA17106@yury-thinkpad>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1532080002-10724-1-git-send-email-kamalesh@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20180323
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 17:20:53 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 17:20:53 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 03:16:42PM +0530, Kamalesh Babulal wrote:
-> livepatch module author can pass module name/old function name with more
-> than the defined character limit. With obj->name length greater than
-> MODULE_NAME_LEN, the livepatch module gets loaded but waits forever on
-> the module specified by obj->name to be loaded. It also populates a /sys
-> directory with an untruncated object name.
+On Thu, 19 Jul 2018, Yury Norov wrote:
+> While here. I just wonder, on my system IRQs are sent to nohz_full CPUs
+> at every incoming ssh connection. The trace is like this:
+> [  206.835533] Call trace:
+> [  206.848411] [<ffff00000889f984>] dump_stack+0x84/0xa8
+> [  206.853455] [<ffff0000081ea308>] _task_isolation_remote+0x130/0x140
+> [  206.859714] [<ffff0000081bf5ec>] irq_work_queue_on+0xcc/0xfc
+> [  206.865365] [<ffff0000081478ac>] tick_nohz_full_kick_cpu+0x88/0x94
+> [  206.871536] [<ffff000008147930>] tick_nohz_dep_set_all+0x78/0xa8
+> [  206.877533] [<ffff000008147b58>] tick_nohz_dep_set_signal+0x28/0x34
+> [  206.883792] [<ffff0000081421fc>] set_process_cpu_timer+0xd0/0x128
+> [  206.889876] [<ffff0000081422ac>] update_rlimit_cpu+0x58/0x7c
+> [  206.895528] [<ffff0000083aa3d0>] selinux_bprm_committing_creds+0x180/0x1fc
+> [  206.902394] [<ffff00000839e394>] security_bprm_committing_creds+0x40/0x5c
+> [  206.909173] [<ffff00000828c4a0>] install_exec_creds+0x20/0x6c
+> [  206.914911] [<ffff0000082e15b0>] load_elf_binary+0x368/0xbb8
+> [  206.920561] [<ffff00000828d09c>] search_binary_handler+0xb8/0x224
+> [  206.926645] [<ffff00000828d99c>] do_execveat_common+0x44c/0x5f0
+> [  206.932555] [<ffff00000828db78>] do_execve+0x38/0x44
+> [  206.937510] [<ffff00000828dd74>] SyS_execve+0x34/0x44
 > 
-> In the case of funcs->old_name length greater then KSYM_NAME_LEN, it
-> would not match against any of the symbol table entries. Instead loop
-> through the symbol table comparing them against a nonexisting function,
-> which can be avoided.
-> 
-> The same issues apply, to misspelled/incorrect names. At least gatekeep
-> the modules with over the limit string length, by checking for their
-> length during livepatch module registration.
-> 
-> Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+> I suspect that scp, ssh tunneling and similar network activities will source 
+> ticks on nohz_full CPUs as well. On high-loaded server it may generate
+> significant interrupt traffic on nohz_full CPUs. Is it desirable behavior?
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Supsicions and desirable are not really technical interesting aspects.
 
-> ---
->  kernel/livepatch/core.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> index 3a4656fb7047..5b77a7314e01 100644
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -678,6 +678,9 @@ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
->  	if (!func->old_name || !func->new_func)
->  		return -EINVAL;
->  
-> +	if (strlen(func->old_name) >= KSYM_NAME_LEN)
-> +		return -EINVAL;
-> +
->  	INIT_LIST_HEAD(&func->stack_node);
->  	func->patched = false;
->  	func->transition = false;
-> @@ -751,6 +754,9 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
->  	if (!obj->funcs)
->  		return -EINVAL;
->  
-> +	if (klp_is_module(obj) && strlen(obj->name) >= MODULE_NAME_LEN)
-> +		return -EINVAL;
-> +
->  	obj->patched = false;
->  	obj->mod = NULL;
->  
-> -- 
-> 2.7.4
-> 
+Just from looking at the stack trace it's obvious that there is a CPU TIME
+rlimit on that newly spawned sshd. That's nothing what the kernel
+imposes. That's what user space sets.
 
--- 
-Josh
+Now the actual mechanism which does that, i.e. set_process_cpu_timer() ends
+up IPI'ing _ALL_ nohz full CPUs for no real good reason. In the exec path
+this is really pointless because the new process is not running yet and it
+is single threaded. So forcing a IPI to all cpus is pretty pointless.
+
+In fact the state of the task/process for which update_rlimit_cpu(() is
+called is known, so the IPI can really be either avoided completely or
+restricted to the CPUs on which this process can run or actually runs.
+
+Fredric?
+
+Thanks,
+
+	tglx
