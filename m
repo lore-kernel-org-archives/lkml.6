@@ -2,81 +2,125 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0924ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A343FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79F542064D
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:16:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F542064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 29BF72064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:19:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29BF72064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbeGTJDG (ORCPT
+        id S1728170AbeGTJGK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 05:03:06 -0400
-Received: from mga02.intel.com ([134.134.136.20]:30774 "EHLO mga02.intel.com"
+        Fri, 20 Jul 2018 05:06:10 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38038 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727549AbeGTJDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:03:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 01:16:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,378,1526367600"; 
-   d="scan'208";a="217572367"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by orsmga004.jf.intel.com with ESMTP; 20 Jul 2018 01:15:06 -0700
-Subject: Re: [PATCH] usb: xhci: Fix memory leak in xhci_endpoint_reset()
-To:     iq_132@sina.com, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zheng Xiaowei <zhengxiaowei@ruijie.com.cn>
-References: <1531120365-44810-1-git-send-email-iq_132@sina.com>
-From:   Mathias Nyman <mathias.nyman@intel.com>
-Message-ID: <fec4a873-9367-9289-9e49-20cad7387f77@intel.com>
-Date:   Fri, 20 Jul 2018 11:17:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1727762AbeGTJGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 05:06:10 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 101F2207AD; Fri, 20 Jul 2018 10:19:02 +0200 (CEST)
+Received: from localhost (unknown [37.170.73.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6A78120618;
+        Fri, 20 Jul 2018 10:19:00 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 10:18:59 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm@kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: at91: DT for 4.19
+Message-ID: <20180720081859.GA22228@piout.net>
 MIME-Version: 1.0
-In-Reply-To: <1531120365-44810-1-git-send-email-iq_132@sina.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.07.2018 10:12, iq_132@sina.com wrote:
-> 
-> From: Zheng Xiaowei <zhengxiaowei@ruijie.com.cn>
-> 
-> If td_list is not empty the cfg_cmd will not be freed,
-> call xhci_free_command to free it.
-> 
-> Signed-off-by: Zheng Xiaowei <zhengxiaowei@ruijie.com.cn>
-> ---
->   drivers/usb/host/xhci.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index 2f4850f..68e6132 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -3051,6 +3051,7 @@ static void xhci_endpoint_reset(struct usb_hcd *hcd,
->   	if (!list_empty(&ep->ring->td_list)) {
->   		dev_err(&udev->dev, "EP not empty, refuse reset\n");
->   		spin_unlock_irqrestore(&xhci->lock, flags);
-> +		xhci_free_command(xhci, cfg_cmd);
->   		goto cleanup;
->   	}
->   	xhci_queue_stop_endpoint(xhci, stop_cmd, udev->slot_id, ep_index, 0);
-> 
+Arnd, Olof,
 
-Thanks, adding to queue
+Here are the unusually large DT PR for AT91. It contains mainly new DTs.
 
--Mathias
+There is a pm.c change that I'm including here so it is along with the
+corresponding DT changes.
+
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/at91-ab-4.19-dt
+
+for you to fetch changes up to c8cbc1c20c29697e7335a5044fe6c60aa5c6e922:
+
+  ARM: dts: at91: fix typos for SSC TD functions (2018-07-20 10:05:14 +0200)
+
+----------------------------------------------------------------
+AT91 DT for 4.19:
+
+ - New boards from Laird: WB45N, WB50N, SOM60 modules and DVK, Gatwick
+ - fix the PMC compatibles
+
+----------------------------------------------------------------
+Alexandre Belloni (4):
+      dt-bindings: arm: remove PMC bindings
+      dt-bindings: clk: at91: Document all the PMC compatibles
+      ARM: at91: fix USB clock detection handling
+      ARM: dts: fix PMC compatible
+
+Ben Whitten (6):
+      dt-bindings: add laird and giantec vendor prefix
+      ARM: dts: at91: add labels to soc dtsi for derivative boards
+      ARM: dts: add support for Laird WB45N cpu module and DVK
+      ARM: dts: add support for Laird WB50N cpu module and DVK
+      ARM: dts: add support for Gatwick board based on WB50N
+      ARM: dts: add support for Laird SOM60 module and DVK boards
+
+Claudiu Beznea (1):
+      ARM: dts: at91: fix typos for SSC TD functions
+
+ .../devicetree/bindings/arm/atmel-pmc.txt          |  14 --
+ .../devicetree/bindings/clock/at91-clock.txt       |   9 +-
+ .../devicetree/bindings/vendor-prefixes.txt        |   2 +
+ arch/arm/boot/dts/Makefile                         |   4 +
+ arch/arm/boot/dts/at91-dvk_som60.dts               |  95 +++++++++
+ arch/arm/boot/dts/at91-dvk_su60_somc.dtsi          | 159 ++++++++++++++
+ arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi      |  90 ++++++++
+ arch/arm/boot/dts/at91-gatwick.dts                 | 121 +++++++++++
+ arch/arm/boot/dts/at91-som60.dtsi                  | 230 +++++++++++++++++++++
+ arch/arm/boot/dts/at91-wb45n.dts                   |  64 ++++++
+ arch/arm/boot/dts/at91-wb45n.dtsi                  | 165 +++++++++++++++
+ arch/arm/boot/dts/at91-wb50n.dts                   | 112 ++++++++++
+ arch/arm/boot/dts/at91-wb50n.dtsi                  | 198 ++++++++++++++++++
+ arch/arm/boot/dts/at91sam9261.dtsi                 |   2 +-
+ arch/arm/boot/dts/at91sam9263.dtsi                 |   2 +-
+ arch/arm/boot/dts/at91sam9rl.dtsi                  |   2 +-
+ arch/arm/boot/dts/at91sam9x5.dtsi                  |   8 +-
+ arch/arm/boot/dts/sama5d2-pinfunc.h                |   4 +-
+ arch/arm/boot/dts/sama5d3.dtsi                     |   8 +-
+ arch/arm/boot/dts/sama5d4.dtsi                     |   2 +-
+ arch/arm/mach-at91/pm.c                            |   5 +
+ 21 files changed, 1263 insertions(+), 33 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/atmel-pmc.txt
+ create mode 100644 arch/arm/boot/dts/at91-dvk_som60.dts
+ create mode 100644 arch/arm/boot/dts/at91-dvk_su60_somc.dtsi
+ create mode 100644 arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi
+ create mode 100644 arch/arm/boot/dts/at91-gatwick.dts
+ create mode 100644 arch/arm/boot/dts/at91-som60.dtsi
+ create mode 100644 arch/arm/boot/dts/at91-wb45n.dts
+ create mode 100644 arch/arm/boot/dts/at91-wb45n.dtsi
+ create mode 100644 arch/arm/boot/dts/at91-wb50n.dts
+ create mode 100644 arch/arm/boot/dts/at91-wb50n.dtsi
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
