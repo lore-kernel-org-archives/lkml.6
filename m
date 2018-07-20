@@ -2,106 +2,107 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43801ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 01:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664A9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 01:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF61B2084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 01:48:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 174312084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 01:49:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VZ8Nnv6B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF61B2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="A1+fhfNL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174312084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731557AbeGTCeC (ORCPT
+        id S1731554AbeGTCfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 22:34:02 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40285 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731446AbeGTCeA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 22:34:00 -0400
-Received: by mail-pg1-f196.google.com with SMTP id x5-v6so5358422pgp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 18:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TK1WDbeXxDnAkoiR4N4slQI5HJBht91mInwgn17IrQ0=;
-        b=VZ8Nnv6BZ94a23iQ0zH0JXowN4YBd3UQvKDC+65woEeUzIrnGOPiTVJUHqB+41bviu
-         0mccSQjfmELIkbnUsVSI5vUR9jlVuMOGhNTSO2/OMIOMpsgbWRiCn85TAoppIqRLmpo3
-         x6nbwOfmyPAxN34pAhVCll1MlqqlRknOc9LQk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=TK1WDbeXxDnAkoiR4N4slQI5HJBht91mInwgn17IrQ0=;
-        b=BynnKoyi+9Q+X4VDt2xufqy87TrU5LEGAn4Q9766fs8glUA8dfQj1ff4o9xWNBxote
-         I2REEzqVTcr8XxYHDBWsKkSGcqg5Z5Fd/8eySrkDERww6fuQlv+Oc2+mWq4IVRs2kOUy
-         wG0QiqveKofrqSleu4FAzX1RdgP25rCFkA3LvprddVMsL2k7bgrO1EqnQK47xNoSEm7z
-         cDiTeg5PMh9S3EXb8TwpZ+TJCljBBhMZzlM4tmToL2SWQmG4NYBZ3F7h7ntrVDbVCLm1
-         WMztWNBD9nWsaBSWZey4pM+mkNwz+7z+Bv6sJpW5OJXR6KX3V5asZzMnUf/MynQ9VZsD
-         pNIQ==
-X-Gm-Message-State: AOUpUlEizoUoPA3FTdmJzGHLQH5Oqf9wPpOK8Srerz2rltSnycI9e2zr
-        GHKVusrhmpXnVHsQXktV4VsEdA==
-X-Google-Smtp-Source: AAOMgpdWs0SORXjMLOpLGOYcroI6QhZukGe1nhxjWSHO50TCgxUKDPjEGagisRzpn7jtu3YLf040eg==
-X-Received: by 2002:a63:b349:: with SMTP id x9-v6mr73318pgt.337.1532051290075;
-        Thu, 19 Jul 2018 18:48:10 -0700 (PDT)
-Received: from localhost.localdomain (fs76eedbeb.tkyc508.ap.nuro.jp. [118.238.219.235])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm475868pgb.14.2018.07.19.18.48.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 18:48:09 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH 9/9] efivars: Call guid_parse() against guid_t type of variable
-Date:   Fri, 20 Jul 2018 10:47:26 +0900
-Message-Id: <20180720014726.24031-10-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180720014726.24031-1-ard.biesheuvel@linaro.org>
-References: <20180720014726.24031-1-ard.biesheuvel@linaro.org>
+        Thu, 19 Jul 2018 22:35:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:53523 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730514AbeGTCfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 22:35:20 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Wv2G50nYz9s3Z;
+        Fri, 20 Jul 2018 11:49:26 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1532051368;
+        bh=e7YcXkWikWPPRYlnoFurrp84hZXue9eWaRER0NVMPUw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=A1+fhfNLGqy4z5sUHJlp4xR6grjczEQtEQO2skRRrJKXCvJvP0IG+Y/hGga01Z4Lq
+         lMHFu9JAnYAC19v8Q0Kdvd+UaoFzz4Wx5WUvmQDfNbJuhuCuTzLwYrPlnOf7FaNtqo
+         7Y0v77YftMsCWKg9YKYj0/Houh7+Qn40Y++6tT7cOzHOIBTwWmSCo2PX1cxZMJEzto
+         WzlYpcUfHDGZkxCxiWn6DKqwYhMmo3R9L0IbSRxA9LEG03C1roKhzliOByRNbpHbng
+         XecN/WwE8oku3FWGSQoydD/UaP6ppM9nqnOoGc4ILzsfSD9wftqYiGCHPWSm2vrnMC
+         fxNiUlbcclICA==
+Date:   Fri, 20 Jul 2018 11:49:25 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Message-ID: <20180720114925.3ae30654@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//79q4MkxEoDJ1QAHe4ctpbp"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+--Sig_//79q4MkxEoDJ1QAHe4ctpbp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-uuid_le_to_bin() is deprecated API and take into consideration that variable,
-to where we store parsed data, is type of guid_t we switch to guid_parse()
-for sake of consistency.
+Hi all,
 
-While here, add error checking to it.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- fs/efivarfs/inode.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+  drivers/net/ethernet/cavium/Kconfig
 
-diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
-index 71fccccf317e..8c6ab6c95727 100644
---- a/fs/efivarfs/inode.c
-+++ b/fs/efivarfs/inode.c
-@@ -86,7 +86,9 @@ static int efivarfs_create(struct inode *dir, struct dentry *dentry,
- 	/* length of the variable name itself: remove GUID and separator */
- 	namelen = dentry->d_name.len - EFI_VARIABLE_GUID_LEN - 1;
- 
--	uuid_le_to_bin(dentry->d_name.name + namelen + 1, &var->var.VendorGuid);
-+	err = guid_parse(dentry->d_name.name + namelen + 1, &var->var.VendorGuid);
-+	if (err)
-+		goto out;
- 
- 	if (efivar_variable_is_removable(var->var.VendorGuid,
- 					 dentry->d_name.name, namelen))
--- 
-2.17.1
+between commit:
 
+  e40562abdf81 ("net: cavium: Add fine-granular dependencies on PCI")
+
+from Linus' tree and commit:
+
+  74525cc5f5f7 ("net: cavium: add missing PCI dependencies")
+
+from the net-next tree.
+
+I fixed it up (I used the latter version, but they were logically
+identical) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_//79q4MkxEoDJ1QAHe4ctpbp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltRP6UACgkQAVBC80lX
+0GyMTgf/YV1hxo0WBuRGtOO3nrP2m7x7c6yh/jonTBIrX+aviHTxw1wwv6KL0QYG
+NgoH1sdwcntHqVDUM8gOFyJKbbdUD5CSLZvHJOnEs+ufyRRmcFE4etBj8WjhmzQo
+2XnnTD86xGywgK4eRrxqaMgGcJ9+n+OI9kCjW/m+KuF6DCrn38X7WBChBh621KU8
+hpAulMSXb7Ft4pDwMNnrgvTHQhbNKhUFWgfBblvDe75b7djjEwRsEun171r3NaH7
+bYEtMNT/+TgsM14yHUwuDaJpYHKeM/o5tEl31pt3c6QvTC3mqdlEDIfPcL0l10Yi
+tbIdYXFBaUFy6QUVkWqhHUCxjPOfOg==
+=roZu
+-----END PGP SIGNATURE-----
+
+--Sig_//79q4MkxEoDJ1QAHe4ctpbp--
