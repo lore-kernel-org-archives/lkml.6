@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 432D5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C0EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B5C206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B5C206B7
+	by mail.kernel.org (Postfix) with ESMTP id A9B00206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B00206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389066AbeGTNYO (ORCPT
+        id S2389072AbeGTNYS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:24:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44084 "EHLO
+        Fri, 20 Jul 2018 09:24:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44140 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388378AbeGTNYO (ORCPT
+        with ESMTP id S2388378AbeGTNYR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:24:14 -0400
+        Fri, 20 Jul 2018 09:24:17 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C529ACF5;
-        Fri, 20 Jul 2018 12:34:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67C7AC84;
+        Fri, 20 Jul 2018 12:33:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 49/92] net: cxgb3_main: fix potential Spectre v1
-Date:   Fri, 20 Jul 2018 14:13:53 +0200
-Message-Id: <20180720121420.833475867@linuxfoundation.org>
+        stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.14 09/92] bcm63xx_enet: correct clock usage
+Date:   Fri, 20 Jul 2018 14:13:13 +0200
+Message-Id: <20180720121417.793949160@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -51,53 +51,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
 
-commit 676bcfece19f83621e905aa55b5ed2d45cc4f2d3 upstream.
+commit 9c86b846ce02f7e35d7234cf090b80553eba5389 upstream.
 
-t.qset_idx can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Check the return code of prepare_enable and change one last instance of
+enable only to prepare_enable. Also properly disable and release the
+clock in error paths and on remove for enetsw.
 
-This issue was detected with the help of Smatch:
-
-drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:2286 cxgb_extension_ioctl()
-warn: potential spectre issue 'adapter->msix_info'
-
-Fix this by sanitizing t.qset_idx before using it to index
-adapter->msix_info
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/broadcom/bcm63xx_enet.c |   31 ++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-@@ -51,6 +51,7 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
-+#include <linux/nospec.h>
+--- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
++++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+@@ -1773,7 +1773,9 @@ static int bcm_enet_probe(struct platfor
+ 		ret = PTR_ERR(priv->mac_clk);
+ 		goto out;
+ 	}
+-	clk_prepare_enable(priv->mac_clk);
++	ret = clk_prepare_enable(priv->mac_clk);
++	if (ret)
++		goto out_put_clk_mac;
  
- #include "common.h"
- #include "cxgb3_ioctl.h"
-@@ -2268,6 +2269,7 @@ static int cxgb_extension_ioctl(struct n
+ 	/* initialize default and fetch platform data */
+ 	priv->rx_ring_size = BCMENET_DEF_RX_DESC;
+@@ -1805,9 +1807,11 @@ static int bcm_enet_probe(struct platfor
+ 		if (IS_ERR(priv->phy_clk)) {
+ 			ret = PTR_ERR(priv->phy_clk);
+ 			priv->phy_clk = NULL;
+-			goto out_put_clk_mac;
++			goto out_disable_clk_mac;
+ 		}
+-		clk_prepare_enable(priv->phy_clk);
++		ret = clk_prepare_enable(priv->phy_clk);
++		if (ret)
++			goto out_put_clk_phy;
+ 	}
  
- 		if (t.qset_idx >= nqsets)
- 			return -EINVAL;
-+		t.qset_idx = array_index_nospec(t.qset_idx, nqsets);
+ 	/* do minimal hardware init to be able to probe mii bus */
+@@ -1901,13 +1905,16 @@ out_free_mdio:
+ out_uninit_hw:
+ 	/* turn off mdc clock */
+ 	enet_writel(priv, 0, ENET_MIISC_REG);
+-	if (priv->phy_clk) {
++	if (priv->phy_clk)
+ 		clk_disable_unprepare(priv->phy_clk);
++
++out_put_clk_phy:
++	if (priv->phy_clk)
+ 		clk_put(priv->phy_clk);
+-	}
  
- 		q = &adapter->params.sge.qset[q1 + t.qset_idx];
- 		t.rspq_size = q->rspq_size;
+-out_put_clk_mac:
++out_disable_clk_mac:
+ 	clk_disable_unprepare(priv->mac_clk);
++out_put_clk_mac:
+ 	clk_put(priv->mac_clk);
+ out:
+ 	free_netdev(dev);
+@@ -2752,7 +2759,9 @@ static int bcm_enetsw_probe(struct platf
+ 		ret = PTR_ERR(priv->mac_clk);
+ 		goto out_unmap;
+ 	}
+-	clk_enable(priv->mac_clk);
++	ret = clk_prepare_enable(priv->mac_clk);
++	if (ret)
++		goto out_put_clk;
+ 
+ 	priv->rx_chan = 0;
+ 	priv->tx_chan = 1;
+@@ -2773,7 +2782,7 @@ static int bcm_enetsw_probe(struct platf
+ 
+ 	ret = register_netdev(dev);
+ 	if (ret)
+-		goto out_put_clk;
++		goto out_disable_clk;
+ 
+ 	netif_carrier_off(dev);
+ 	platform_set_drvdata(pdev, dev);
+@@ -2782,6 +2791,9 @@ static int bcm_enetsw_probe(struct platf
+ 
+ 	return 0;
+ 
++out_disable_clk:
++	clk_disable_unprepare(priv->mac_clk);
++
+ out_put_clk:
+ 	clk_put(priv->mac_clk);
+ 
+@@ -2813,6 +2825,9 @@ static int bcm_enetsw_remove(struct plat
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	release_mem_region(res->start, resource_size(res));
+ 
++	clk_disable_unprepare(priv->mac_clk);
++	clk_put(priv->mac_clk);
++
+ 	free_netdev(dev);
+ 	return 0;
+ }
 
 
