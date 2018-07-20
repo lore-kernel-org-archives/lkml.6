@@ -6,36 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9933BECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFD3ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57FCD2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57FCD2084A
+	by mail.kernel.org (Postfix) with ESMTP id D63C72084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63C72084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387784AbeGTNPh (ORCPT
+        id S2387807AbeGTNPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35058 "EHLO
+        Fri, 20 Jul 2018 09:15:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731662AbeGTNPh (ORCPT
+        with ESMTP id S1731662AbeGTNPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:37 -0400
+        Fri, 20 Jul 2018 09:15:40 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB62341C;
-        Fri, 20 Jul 2018 12:27:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43A9ABB6;
+        Fri, 20 Jul 2018 12:27:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
-Subject: [PATCH 4.4 26/31] MIPS: Call dump_stack() from show_regs()
-Date:   Fri, 20 Jul 2018 14:13:56 +0200
-Message-Id: <20180720121341.095972489@linuxfoundation.org>
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Sodagudi Prasad <psodagud@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 03/31] compiler, clang: always inline when CONFIG_OPTIMIZE_INLINING is disabled
+Date:   Fri, 20 Jul 2018 14:13:33 +0200
+Message-Id: <20180720121340.280711659@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -52,72 +58,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: David Rientjes <rientjes@google.com>
 
-commit 5a267832c2ec47b2dad0fdb291a96bb5b8869315 upstream.
+commit 9a04dbcfb33b4012d0ce8c0282f1e3ca694675b1 upstream.
 
-The generic nmi_cpu_backtrace() function calls show_regs() when a struct
-pt_regs is available, and dump_stack() otherwise. If we were to make use
-of the generic nmi_cpu_backtrace() with MIPS' current implementation of
-show_regs() this would mean that we see only register data with no
-accompanying stack information, in contrast with our current
-implementation which calls dump_stack() regardless of whether register
-state is available.
+The motivation for commit abb2ea7dfd82 ("compiler, clang: suppress
+warning for unused static inline functions") was to suppress clang's
+warnings about unused static inline functions.
 
-In preparation for making use of the generic nmi_cpu_backtrace() to
-implement arch_trigger_cpumask_backtrace(), have our implementation of
-show_regs() call dump_stack() and drop the explicit dump_stack() call in
-arch_dump_stack() which is invoked by arch_trigger_cpumask_backtrace().
+For configs without CONFIG_OPTIMIZE_INLINING enabled, such as any non-x86
+architecture, `inline' in the kernel implies that
+__attribute__((always_inline)) is used.
 
-This will allow the output we produce to remain the same after a later
-patch switches to using nmi_cpu_backtrace(). It may mean that we produce
-extra stack output in other uses of show_regs(), but this:
+Some code depends on that behavior, see
+  https://lkml.org/lkml/2017/6/13/918:
 
-  1) Seems harmless.
-  2) Is good for consistency between arch_trigger_cpumask_backtrace()
-     and other users of show_regs().
-  3) Matches the behaviour of the ARM & PowerPC architectures.
+  net/built-in.o: In function `__xchg_mb':
+  arch/arm64/include/asm/cmpxchg.h:99: undefined reference to `__compiletime_assert_99'
+  arch/arm64/include/asm/cmpxchg.h:99: undefined reference to `__compiletime_assert_99
 
-Marked for stable back to v4.9 as a prerequisite of the following patch
-"MIPS: Call dump_stack() from show_regs()".
+The full fix would be to identify these breakages and annotate the
+functions with __always_inline instead of `inline'.  But since we are
+late in the 4.12-rc cycle, simply carry forward the forced inlining
+behavior and work toward moving arm64, and other architectures, toward
+CONFIG_OPTIMIZE_INLINING behavior.
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19596/
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # v4.9+
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1706261552200.1075@chino.kir.corp.google.com
+Signed-off-by: David Rientjes <rientjes@google.com>
+Reported-by: Sodagudi Prasad <psodagud@codeaurora.org>
+Tested-by: Sodagudi Prasad <psodagud@codeaurora.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/process.c |    4 ++--
- arch/mips/kernel/traps.c   |    1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ include/linux/compiler-clang.h |    8 --------
+ include/linux/compiler-gcc.h   |   18 +++++++++++-------
+ 2 files changed, 11 insertions(+), 15 deletions(-)
 
---- a/arch/mips/kernel/process.c
-+++ b/arch/mips/kernel/process.c
-@@ -637,8 +637,8 @@ static void arch_dump_stack(void *info)
- 
- 	if (regs)
- 		show_regs(regs);
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -15,11 +15,3 @@
+  * with any version that can compile the kernel
+  */
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
 -
--	dump_stack();
-+	else
-+		dump_stack();
- }
+-/*
+- * GCC does not warn about unused static inline functions for
+- * -Wunused-function.  This turns out to avoid the need for complex #ifdef
+- * directives.  Suppress the warning in clang as well.
+- */
+-#undef inline
+-#define inline inline __attribute__((unused)) notrace
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -66,18 +66,22 @@
  
- void arch_trigger_all_cpu_backtrace(bool include_self)
---- a/arch/mips/kernel/traps.c
-+++ b/arch/mips/kernel/traps.c
-@@ -344,6 +344,7 @@ static void __show_regs(const struct pt_
- void show_regs(struct pt_regs *regs)
- {
- 	__show_regs((struct pt_regs *)regs);
-+	dump_stack();
- }
+ /*
+  * Force always-inline if the user requests it so via the .config,
+- * or if gcc is too old:
++ * or if gcc is too old.
++ * GCC does not warn about unused static inline functions for
++ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
++ * directives.  Suppress the warning in clang as well by using "unused"
++ * function attribute, which is redundant but not harmful for gcc.
+  */
+ #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
+     !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
+-#define inline		inline		__attribute__((always_inline)) notrace
+-#define __inline__	__inline__	__attribute__((always_inline)) notrace
+-#define __inline	__inline	__attribute__((always_inline)) notrace
++#define inline inline		__attribute__((always_inline,unused)) notrace
++#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
++#define __inline __inline	__attribute__((always_inline,unused)) notrace
+ #else
+ /* A lot of inline functions can cause havoc with function tracing */
+-#define inline		inline		notrace
+-#define __inline__	__inline__	notrace
+-#define __inline	__inline	notrace
++#define inline inline		__attribute__((unused)) notrace
++#define __inline__ __inline__	__attribute__((unused)) notrace
++#define __inline __inline	__attribute__((unused)) notrace
+ #endif
  
- void show_registers(struct pt_regs *regs)
+ #define __always_inline	inline __attribute__((always_inline))
 
 
