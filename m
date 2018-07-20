@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB283ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB60BECDFBD
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E91B20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E91B20854
+	by mail.kernel.org (Postfix) with ESMTP id 9EFA920854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EFA920854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388517AbeGTNUP (ORCPT
+        id S2388529AbeGTNUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:20:15 -0400
+        Fri, 20 Jul 2018 09:20:16 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:39860 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731780AbeGTNUO (ORCPT
+        with ESMTP id S2388160AbeGTNUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:20:14 -0400
+        Fri, 20 Jul 2018 09:20:16 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3287DC96;
-        Fri, 20 Jul 2018 12:31:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ECCC6C50;
+        Fri, 20 Jul 2018 12:31:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.9 60/66] arm64: ssbd: Introduce thread flag to control userspace mitigation
-Date:   Fri, 20 Jul 2018 14:14:17 +0200
-Message-Id: <20180720121412.160159085@linuxfoundation.org>
+Subject: [PATCH 4.9 61/66] arm64: ssbd: Add prctl interface for per-thread mitigation
+Date:   Fri, 20 Jul 2018 14:14:18 +0200
+Message-Id: <20180720121412.220311864@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -54,48 +53,144 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 9dd9614f5476687abbff8d4b12cd08ae70d7c2ad upstream.
+commit 9cdc0108baa8ef87c76ed834619886a46bd70cbe upstream.
 
-In order to allow userspace to be mitigated on demand, let's
-introduce a new thread flag that prevents the mitigation from
-being turned off when exiting to userspace, and doesn't turn
-it on on entry into the kernel (with the assumption that the
-mitigation is always enabled in the kernel itself).
+If running on a system that performs dynamic SSBD mitigation, allow
+userspace to request the mitigation for itself. This is implemented
+as a prctl call, allowing the mitigation to be enabled or disabled at
+will for this particular thread.
 
-This will be used by a prctl interface introduced in a later
-patch.
-
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Acked-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/thread_info.h |    1 +
- arch/arm64/kernel/entry.S            |    2 ++
- 2 files changed, 3 insertions(+)
+ arch/arm64/kernel/Makefile |    1 
+ arch/arm64/kernel/ssbd.c   |  108 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 109 insertions(+)
+ create mode 100644 arch/arm64/kernel/ssbd.c
 
---- a/arch/arm64/include/asm/thread_info.h
-+++ b/arch/arm64/include/asm/thread_info.h
-@@ -122,6 +122,7 @@ static inline struct thread_info *curren
- #define TIF_RESTORE_SIGMASK	20
- #define TIF_SINGLESTEP		21
- #define TIF_32BIT		22	/* 32bit process */
-+#define TIF_SSBD		23	/* Wants SSB mitigation */
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -50,6 +50,7 @@ arm64-obj-$(CONFIG_RANDOMIZE_BASE)	+= ka
+ arm64-obj-$(CONFIG_HIBERNATION)		+= hibernate.o hibernate-asm.o
+ arm64-obj-$(CONFIG_KEXEC)		+= machine_kexec.o relocate_kernel.o	\
+ 					   cpu-reset.o
++arm64-obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
  
- #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
- #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -105,6 +105,8 @@ alternative_cb	arm64_enable_wa2_handling
- alternative_cb_end
- 	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
- 	cbz	\tmp2, \targ
-+	ldr	\tmp2, [tsk, #TI_FLAGS]
-+	tbnz	\tmp2, #TIF_SSBD, \targ
- 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
- 	mov	w1, #\state
- alternative_cb	arm64_update_smccc_conduit
+ ifeq ($(CONFIG_KVM),y)
+ arm64-obj-$(CONFIG_HARDEN_BRANCH_PREDICTOR)	+= bpi.o
+--- /dev/null
++++ b/arch/arm64/kernel/ssbd.c
+@@ -0,0 +1,108 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018 ARM Ltd, All Rights Reserved.
++ */
++
++#include <linux/errno.h>
++#include <linux/prctl.h>
++#include <linux/sched.h>
++#include <linux/thread_info.h>
++
++#include <asm/cpufeature.h>
++
++/*
++ * prctl interface for SSBD
++ */
++static int ssbd_prctl_set(struct task_struct *task, unsigned long ctrl)
++{
++	int state = arm64_get_ssbd_state();
++
++	/* Unsupported */
++	if (state == ARM64_SSBD_UNKNOWN)
++		return -EINVAL;
++
++	/* Treat the unaffected/mitigated state separately */
++	if (state == ARM64_SSBD_MITIGATED) {
++		switch (ctrl) {
++		case PR_SPEC_ENABLE:
++			return -EPERM;
++		case PR_SPEC_DISABLE:
++		case PR_SPEC_FORCE_DISABLE:
++			return 0;
++		}
++	}
++
++	/*
++	 * Things are a bit backward here: the arm64 internal API
++	 * *enables the mitigation* when the userspace API *disables
++	 * speculation*. So much fun.
++	 */
++	switch (ctrl) {
++	case PR_SPEC_ENABLE:
++		/* If speculation is force disabled, enable is not allowed */
++		if (state == ARM64_SSBD_FORCE_ENABLE ||
++		    task_spec_ssb_force_disable(task))
++			return -EPERM;
++		task_clear_spec_ssb_disable(task);
++		clear_tsk_thread_flag(task, TIF_SSBD);
++		break;
++	case PR_SPEC_DISABLE:
++		if (state == ARM64_SSBD_FORCE_DISABLE)
++			return -EPERM;
++		task_set_spec_ssb_disable(task);
++		set_tsk_thread_flag(task, TIF_SSBD);
++		break;
++	case PR_SPEC_FORCE_DISABLE:
++		if (state == ARM64_SSBD_FORCE_DISABLE)
++			return -EPERM;
++		task_set_spec_ssb_disable(task);
++		task_set_spec_ssb_force_disable(task);
++		set_tsk_thread_flag(task, TIF_SSBD);
++		break;
++	default:
++		return -ERANGE;
++	}
++
++	return 0;
++}
++
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl)
++{
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssbd_prctl_set(task, ctrl);
++	default:
++		return -ENODEV;
++	}
++}
++
++static int ssbd_prctl_get(struct task_struct *task)
++{
++	switch (arm64_get_ssbd_state()) {
++	case ARM64_SSBD_UNKNOWN:
++		return -EINVAL;
++	case ARM64_SSBD_FORCE_ENABLE:
++		return PR_SPEC_DISABLE;
++	case ARM64_SSBD_KERNEL:
++		if (task_spec_ssb_force_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
++		if (task_spec_ssb_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
++		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
++	case ARM64_SSBD_FORCE_DISABLE:
++		return PR_SPEC_ENABLE;
++	default:
++		return PR_SPEC_NOT_AFFECTED;
++	}
++}
++
++int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
++{
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssbd_prctl_get(task);
++	default:
++		return -ENODEV;
++	}
++}
 
 
