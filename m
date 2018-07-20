@@ -2,125 +2,124 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A343FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F1FCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29BF72064D
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:19:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29BF72064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 534A3206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:19:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534A3206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbeGTJGK (ORCPT
+        id S1728261AbeGTJGo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 05:06:10 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38038 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727762AbeGTJGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:06:10 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 101F2207AD; Fri, 20 Jul 2018 10:19:02 +0200 (CEST)
-Received: from localhost (unknown [37.170.73.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6A78120618;
-        Fri, 20 Jul 2018 10:19:00 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 10:18:59 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: at91: DT for 4.19
-Message-ID: <20180720081859.GA22228@piout.net>
+        Fri, 20 Jul 2018 05:06:44 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:32689 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728185AbeGTJGo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 05:06:44 -0400
+X-UUID: 560fcb4fb9904a02a7d83e2bcc0ed465-20180720
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <erin.lo@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1248894736; Fri, 20 Jul 2018 16:19:31 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 20 Jul 2018 16:19:30 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 20 Jul 2018 16:19:30 +0800
+Message-ID: <1532074769.19148.2.camel@mtksdaap41>
+Subject: Re: [PATCH v3 0/4] Add basic support for Mediatek MT8183 SoC
+From:   Erin Lo <erin.lo@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <mars.cheng@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-serial@vger.kernel.org>, <yingjoe.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Fri, 20 Jul 2018 16:19:29 +0800
+In-Reply-To: <9ba45353-a6e1-9a6e-f05b-4b1679ae9e52@gmail.com>
+References: <1526538126-51497-1-git-send-email-erin.lo@mediatek.com>
+         <9ba45353-a6e1-9a6e-f05b-4b1679ae9e52@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd, Olof,
+On Mon, 2018-07-16 at 11:28 +0200, Matthias Brugger wrote:
+> Hi Erin,
+> 
+> On 17/05/18 08:22, Erin Lo wrote:
+> > MT8183 is a SoC based on 64bit ARMv8 architecture.
+> > It contains 4 CA53 and 4 CA73 cores.
+> > MT8183 share many HW IP with MT65xx series.
+> > This patchset was tested on MT8183 evaluation board, and boot to shell ok.
+> > 
+> > This series contains document bindings, device tree including interrupt, uart.
+> > 
+> > Change in v3:
+> > 1. Fill out GICC, GICH, GICV regions
+> > 2. Update Copyright to 2018
+> > 
+> > Change in v2:
+> > 1. Split dt-bindings into different patches
+> > 2. Correct bindings for supported SoCs (mtk-uart.txt)
+> > 
+> > Ben Ho (1):
+> >   arm64: dts: Add Mediatek SoC MT8183 and evaluation board dts and
+> >     Makefile
+> > 
+> > Erin Lo (3):
+> >   dt-bindings: arm: Add bindings for Mediatek MT8183 SoC Platform
+> >   dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
+> >   dt-bindings: serial: Add compatible for Mediatek MT8183
+> > 
+> 
+> I'm a bit reluctant to take this series, as it will only enable the EVB board to
+> boot into a serial console. Are you planning to add support for other devices of
+> this SoC?
+> 
+> Apart please take into account that there is an issue with the dts file, as you
+> were told by the kbuild test robot.
+> 
+> Regards,
+> Matthias
+> 
 
-Here are the unusually large DT PR for AT91. It contains mainly new DTs.
+Hi, Matthias
+Sorry for missing this letter...since mail proxy server.
+We plan to add support all the devices of MT8183 in serious.
+We have implemented the clock and pinctrl driver for upstream and they
+are in internal review right now.
 
-There is a pm.c change that I'm including here so it is along with the
-corresponding DT changes.
+About the dts issue... do you suggest me to send new patch right now or
+wait for clock and pinctrl driver ready then send them together?
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+Best Regards,
+Erin
 
-are available in the Git repository at:
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/at91-ab-4.19-dt
 
-for you to fetch changes up to c8cbc1c20c29697e7335a5044fe6c60aa5c6e922:
-
-  ARM: dts: at91: fix typos for SSC TD functions (2018-07-20 10:05:14 +0200)
-
-----------------------------------------------------------------
-AT91 DT for 4.19:
-
- - New boards from Laird: WB45N, WB50N, SOM60 modules and DVK, Gatwick
- - fix the PMC compatibles
-
-----------------------------------------------------------------
-Alexandre Belloni (4):
-      dt-bindings: arm: remove PMC bindings
-      dt-bindings: clk: at91: Document all the PMC compatibles
-      ARM: at91: fix USB clock detection handling
-      ARM: dts: fix PMC compatible
-
-Ben Whitten (6):
-      dt-bindings: add laird and giantec vendor prefix
-      ARM: dts: at91: add labels to soc dtsi for derivative boards
-      ARM: dts: add support for Laird WB45N cpu module and DVK
-      ARM: dts: add support for Laird WB50N cpu module and DVK
-      ARM: dts: add support for Gatwick board based on WB50N
-      ARM: dts: add support for Laird SOM60 module and DVK boards
-
-Claudiu Beznea (1):
-      ARM: dts: at91: fix typos for SSC TD functions
-
- .../devicetree/bindings/arm/atmel-pmc.txt          |  14 --
- .../devicetree/bindings/clock/at91-clock.txt       |   9 +-
- .../devicetree/bindings/vendor-prefixes.txt        |   2 +
- arch/arm/boot/dts/Makefile                         |   4 +
- arch/arm/boot/dts/at91-dvk_som60.dts               |  95 +++++++++
- arch/arm/boot/dts/at91-dvk_su60_somc.dtsi          | 159 ++++++++++++++
- arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi      |  90 ++++++++
- arch/arm/boot/dts/at91-gatwick.dts                 | 121 +++++++++++
- arch/arm/boot/dts/at91-som60.dtsi                  | 230 +++++++++++++++++++++
- arch/arm/boot/dts/at91-wb45n.dts                   |  64 ++++++
- arch/arm/boot/dts/at91-wb45n.dtsi                  | 165 +++++++++++++++
- arch/arm/boot/dts/at91-wb50n.dts                   | 112 ++++++++++
- arch/arm/boot/dts/at91-wb50n.dtsi                  | 198 ++++++++++++++++++
- arch/arm/boot/dts/at91sam9261.dtsi                 |   2 +-
- arch/arm/boot/dts/at91sam9263.dtsi                 |   2 +-
- arch/arm/boot/dts/at91sam9rl.dtsi                  |   2 +-
- arch/arm/boot/dts/at91sam9x5.dtsi                  |   8 +-
- arch/arm/boot/dts/sama5d2-pinfunc.h                |   4 +-
- arch/arm/boot/dts/sama5d3.dtsi                     |   8 +-
- arch/arm/boot/dts/sama5d4.dtsi                     |   2 +-
- arch/arm/mach-at91/pm.c                            |   5 +
- 21 files changed, 1263 insertions(+), 33 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/atmel-pmc.txt
- create mode 100644 arch/arm/boot/dts/at91-dvk_som60.dts
- create mode 100644 arch/arm/boot/dts/at91-dvk_su60_somc.dtsi
- create mode 100644 arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi
- create mode 100644 arch/arm/boot/dts/at91-gatwick.dts
- create mode 100644 arch/arm/boot/dts/at91-som60.dtsi
- create mode 100644 arch/arm/boot/dts/at91-wb45n.dts
- create mode 100644 arch/arm/boot/dts/at91-wb45n.dtsi
- create mode 100644 arch/arm/boot/dts/at91-wb50n.dts
- create mode 100644 arch/arm/boot/dts/at91-wb50n.dtsi
-
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
