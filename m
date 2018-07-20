@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8703EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B288ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41817206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41817206B7
+	by mail.kernel.org (Postfix) with ESMTP id 3F3B1206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F3B1206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389084AbeGTNYX (ORCPT
+        id S2389091AbeGTNY1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:24:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44222 "EHLO
+        Fri, 20 Jul 2018 09:24:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44294 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388061AbeGTNYW (ORCPT
+        with ESMTP id S2387890AbeGTNY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:24:22 -0400
+        Fri, 20 Jul 2018 09:24:26 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 206F5C8D;
-        Fri, 20 Jul 2018 12:33:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1C23C9E;
+        Fri, 20 Jul 2018 12:33:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.14 10/92] bcm63xx_enet: do not write to random DMA channel on BCM6345
-Date:   Fri, 20 Jul 2018 14:13:14 +0200
-Message-Id: <20180720121417.840655566@linuxfoundation.org>
+Subject: [PATCH 4.14 11/92] PCI: exynos: Fix a potential init_clk_resources NULL pointer dereference
+Date:   Fri, 20 Jul 2018 14:13:15 +0200
+Message-Id: <20180720121417.892084940@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -51,36 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jonas Gorski <jonas.gorski@gmail.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
 
-commit d6213c1f2ad54a964b77471690264ed685718928 upstream.
+commit b5d6bc90c9129279d363ccbc02ad11e7b657c0b4 upstream.
 
-The DMA controller regs actually point to DMA channel 0, so the write to
-ENETDMA_CFG_REG will actually modify a random DMA channel.
+In order to avoid triggering a NULL pointer dereference in
+exynos_pcie_probe() a check must be put in place to detect if
+the init_clk_resources hook is initialized before calling it.
 
-Since DMA controller registers do not exist on BCM6345, guard the write
-with the usual check for dma_has_sram.
+Add the respective function pointer check in exynos_pcie_probe().
 
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+[lorenzo.pieralisi@arm.com: rewrote the commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/broadcom/bcm63xx_enet.c |    3 ++-
+ drivers/pci/dwc/pci-exynos.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-+++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-@@ -1062,7 +1062,8 @@ static int bcm_enet_open(struct net_devi
- 	val = enet_readl(priv, ENET_CTL_REG);
- 	val |= ENET_CTL_ENABLE_MASK;
- 	enet_writel(priv, val, ENET_CTL_REG);
--	enet_dma_writel(priv, ENETDMA_CFG_EN_MASK, ENETDMA_CFG_REG);
-+	if (priv->dma_has_sram)
-+		enet_dma_writel(priv, ENETDMA_CFG_EN_MASK, ENETDMA_CFG_REG);
- 	enet_dmac_writel(priv, priv->dma_chan_en_mask,
- 			 ENETDMAC_CHANCFG, priv->rx_chan);
+--- a/drivers/pci/dwc/pci-exynos.c
++++ b/drivers/pci/dwc/pci-exynos.c
+@@ -695,7 +695,8 @@ static int __init exynos_pcie_probe(stru
+ 			return ret;
+ 	}
  
+-	if (ep->ops && ep->ops->get_clk_resources) {
++	if (ep->ops && ep->ops->get_clk_resources &&
++			ep->ops->init_clk_resources) {
+ 		ret = ep->ops->get_clk_resources(ep);
+ 		if (ret)
+ 			return ret;
 
 
