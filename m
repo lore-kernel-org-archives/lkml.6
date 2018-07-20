@@ -2,149 +2,118 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D21ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC33ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD9620661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A6920661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:29:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+L3+bzP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD9620661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xvdqqi6T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A6920661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728585AbeGTMQC (ORCPT
+        id S1730130AbeGTMRM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 08:16:02 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43249 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbeGTMQC (ORCPT
+        Fri, 20 Jul 2018 08:17:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43408 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbeGTMRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:16:02 -0400
-Received: by mail-lf1-f65.google.com with SMTP id m12-v6so1571159lfc.10;
-        Fri, 20 Jul 2018 04:28:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=SqJ4GtMi/P88XgAFrR3gDyoz1BqU7PUjBI9FD/Ec8gs=;
-        b=M+L3+bzPcu2bASF+TlWTXXAmOUhrIiYhNQN27Zv8A7m6zouoWOpFhv38vKaYBf5S6H
-         78fOGaSCoTRVQ9GQgTY8axULUq48dFlof48Gcy+W+95LXvRuynWVi2y54GBgVwY5/Gbl
-         u1iop/AkABgNblF3AskFndrKToI/U8GwYxBmZkK4xs2hT7B2Yzagz+sLv3rUtQmAtLmk
-         zmpqOjc12FdD+gvdwkLB3PIbipT6EQw2GJtu+K6Rek1BMPzdKl2ntUebgCSmMLoSXtQe
-         coTZjHyYrsEavFdTGt032Vn/9MaTnuGzuPCaYG07x9T5oEVgpl88qKOmxOuW4kkVT5XP
-         5X9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=SqJ4GtMi/P88XgAFrR3gDyoz1BqU7PUjBI9FD/Ec8gs=;
-        b=sEWSnOnmWbwmQ5aHdo+FuDAH0i2jLFXTml5k9hmGIDb8zehMZ1FPYH0VuhAaF6Hjhu
-         zvt1PSReif2rwjbUvsQZlTGOy7APKkj/v+msuZlGdWxKmOb1UrUT9jJLjO+UwNQYdMsb
-         BmBM5SpHAXeT3oBJTDFKhN9l+aafRYeYo2/0gXM39cVagFsH+I8iYlirNiuM8JAi8pjD
-         goC2+5gGyWpCQnoI/CWFvtJFRVikXeofJnDWvt4Y1Qi23rEgPCK/Q7kHMlXch0k1b4FN
-         IqPhXPSfBG6VPbd11ivX8/gfhB85w33OqfMJ8th/PuMz1iEV69IIsxBlo1bs5AIfRSvr
-         gwuA==
-X-Gm-Message-State: AOUpUlGsdPP0sgk+SUPiO5fPCYBsH1cCiiE7Ozvhb5m3H6kHigPc5bv/
-        JxwNdyWVxuf0x+cLpVX/G+v6eYca0sJLrwn73nQ=
-X-Google-Smtp-Source: AAOMgpdMAfodJMX4gOeyzKeKlpQXcpVkj06eXZpPEfih0eGJsokwbZxnf1K13gMZSOgQMaSSuwt2USLEqH2TYKEXat8=
-X-Received: by 2002:a19:ea5c:: with SMTP id i89-v6mr1163751lfh.19.1532086091357;
- Fri, 20 Jul 2018 04:28:11 -0700 (PDT)
+        Fri, 20 Jul 2018 08:17:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fbNmvEDLIK+g3GEv1sutNSGTnwK5E+Gm5XObJe2ygJQ=; b=Xvdqqi6TSGt1QsEd8ZpXdabjO
+        /5nKGJhOOMRgTSQKqH9fYXiIzobuMUo+lHTH1nFbQV6Z3SwPRLdoNPFArTJwQCi18glhnaCceZBrp
+        82R+GtbVSvsNL5Ymsg3HDSwjPji5qNHnZ7VWt/bQx7mR7Tnx+R7Ev0woOs/Ls+8fLeW9RRagvQD6M
+        eeWAs66WsJQqeod5dN03WNq4gUF4oZLm4JSiClNy698TljGZQzJaywH12Lja5Sq3e/T3PvFzphHdL
+        bM07T0tDUTsfot8mJl+58Qlcq+48SuRdPU9kgW6ywhboBn1JTa3p5HoXzfkeAUrnGE37HT74DgxKI
+        WkRk5KqXQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fgTay-0007lP-C3; Fri, 20 Jul 2018 11:29:12 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CFF0B20289335; Fri, 20 Jul 2018 13:29:10 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 13:29:10 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+Message-ID: <20180720112910.GI2476@hirez.programming.kicks-ass.net>
+References: <1529825440-9574-1-git-send-email-longman@redhat.com>
+ <1529825440-9574-8-git-send-email-longman@redhat.com>
+ <20180702165322.GI533219@devbig577.frc2.facebook.com>
+ <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
+ <20180703155823.GS533219@devbig577.frc2.facebook.com>
+ <20180719135224.GE2494@hirez.programming.kicks-ass.net>
+ <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
+ <20180719153045.GT72677@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 04:28:10
- -0700 (PDT)
-In-Reply-To: <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
- <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se> <20180720101206.tv7nsoanwo5ftnia@ninjato>
- <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com> <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 20 Jul 2018 13:28:10 +0200
-X-Google-Sender-Auth: Ix89EmYESe-t8dONXgRe3c3D0Ac
-Message-ID: <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719153045.GT72677@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 1:13 PM, Peter Rosin <peda@axentia.se> wrote:
-> On 2018-07-20 12:57, Arnd Bergmann wrote:
->> * What I understand from reading i2c-demux-pinctrl.c, a slave device
->>   will only ever be observable from one master at a time, when you
->>   switch over, all children get removed on one master and added to
->>   the other one, to be probed again by their respective drivers.
->>   I can see this as a useful feature on i3c as well, in particular to
->>   deal with the situation where we have i2c slaves connected to a
->>   pinmux that can switch them between an i3c master and an
->>   i2c-only master (possibly a gpio based one). That particular use
->>   case however doesn't seem to fix well in the current code, which
->>   is structure around i3c buses.
->
-> It's pretty easy to come up with examples where this reprobing is
-> not desirable at all. E.g. if one of the involved I2C devices is
-> a HDMI encoder (I have a TDA19988 here) sitting in the middle of the
-> graphics pipeline. Blink-blink on the screen because some *other*
-> unrelated device needed to be accessed by an alternative master. Not
-> pretty.
+On Thu, Jul 19, 2018 at 08:30:45AM -0700, Tejun Heo wrote:
+> On Thu, Jul 19, 2018 at 10:04:54AM -0400, Waiman Long wrote:
+> > > Why would a container not be allowed to create partitions for its
+> > > various RT workloads?
+> > 
+> > As far as I understand, Tejun has some concern about the way that
+> > partitioning works is inconsistent with how other resources are being
+> > managed by cgroup v2 controllers. I adds an incremental patch to
+> > temporarily disable the creation of partition below the first level
+> > children to buy us time so that we can reach a compromise later on what
+> > to do. We can always add features, but taking away features after they
+> > are made available will be hard.
+> > 
+> > I am fine either way. It is up to you and Tejun to figure out what
+> > should be made available to the users.
+> 
+> So, the main thing is that putting a cpu into a partition locks away
+> the cpu from its ancestors.  That's a system level operation which
+> isn't delegatable. 
 
-Agreed, we definitely don't want to reprobe all devices during normal
-operation for i3c master handover.
+If I understood things right, the partition file is actually owned by
+the parent. So only the parent can flip that flag. In case of a
+container, the filesystem namespace capturing the cgroup would cause
+that file to be effectively r/o.
 
-What is the least contrived use case that you can think of where we
-would want to use one master to talk to one device on the bus,
-but another master to talk to another device on the same bus?
-I still hope that we can decide that this is not a useful scenario
-at all.
+So effectively the partition flag if part of the parent control. The
+parent takes the CPUs away to give them to the child cgroup. The child
+itself cannot take or give here.
 
-If we find a case in which it is needed, we could still deal with it
-like this:
-- enumerate all slaves connected to the bus for each of the
-  two masters
-- mark each slave as status="enabled" in at most one of the
-  buses, and as disabled everywhere else
-- Use dynamic handover according to the bus protocol to
-  switch masters without having Linux even know that the
-  two buses are shared.
+This is perhaps a little unorthodox, but it delegates just fine. Because
+if a container finds .partition == 1, it knows it too can create (sub)
+partitions.
 
-That scenario would then fall completely into the "secondary
-master handover" category but require no special handling
-in the i3c layer beyond what we need for secondary masters
-that are managed by something outside of the kernel's
-score (a microcontroller, firmware, ...).
+> If we want to allow partitioning in subtrees, the
+> parent still be able to take away partitioned cpus too even if that
+> means ignoring descendants' configurations, which btw is exactly what
+> cpuset does for non-partition configs.
 
-       Arnd
+I don't see why it would not be able to take away CPUs. But in case of
+partitions this really is henous behaviour of the parent.
+
+
