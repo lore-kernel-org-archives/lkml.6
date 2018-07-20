@@ -2,117 +2,92 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D31ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9EEECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD69720850
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:34:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD69720850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id 064E520854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:35:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064E520854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388169AbeGTRXs (ORCPT
+        id S2388082AbeGTRYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:23:48 -0400
-Received: from mout.perfora.net ([74.208.4.196]:35487 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731305AbeGTRXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:23:48 -0400
-Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
- mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MXWro-1fU1Bp3VXK-00WX2I; Fri, 20 Jul 2018 18:34:32 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 1/2] ARM: dts: tegra20: restore address order
-Date:   Fri, 20 Jul 2018 18:34:25 +0200
-Message-Id: <20180720163426.4410-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.4
-X-Provags-ID: V03:K1:gI4bynWGfd6gLbGAu6DBJ9zYJaKK8v64b2DM6yPkeM9/2VwDhQO
- tR3JIUWd0ozyYUrdMP9FhUyBzl5i2GFTUs0ZUlUlL5Qv+nfR0N6sW9vJB8SkWY/g2fCgBCy
- +AdGbJfrHonqbBsdWEwWL+m6ZhUifRwPo/cYET4cWCk+kRXkSXsy1qFD3rr46JiT7V5D9eM
- lL1r6qefcbUGMaOHHoZvQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:v2E7j0hvQFA=:N/limeanUhf2AuAEtNfUK5
- tEKTzMXWmDhZZDW97siGAZMnmSvJ1oNN3atwOn3Kwz0RnsjRwFS77R40dX8yhRAw3rccPAytq
- qnRac1mZd2lyb3nCnYYfOJZYjBaknsfS7Dh1pcWSkQsrnxiOvvDa7ak+3fh7xnWYOr/kpQxbv
- u/4mY0xscF726vJlIo7K3AL2qvCh1ygoubClhc8FCLWeGbAVZJPj9tbVjKpcdzQ6x1SU6PHz4
- UmA19Ypj5ggPASszfjDEpKEe/38iNSLb8rUrcbsPZoFLeVZaPp97tt0rTfMFvd7RDyfj/BUt6
- 7sjqNM1lmmDpfgQIFVBHqeGVUqNDsH55TomKfX8rynPxDEI4VlJdGXMhB7YGNQZsBAcW3HSJ9
- eEyZU4beEW3LKpd1H0ANYg5WeE6t58MAboN57avE4Z9Rlzbtvvo69wS/iv51aRqs8bvSIrrZz
- MgHexac3QM1ozNf87NL1xkLEfYn3iTPjF3ozF8Vxcam/74FZhehQ6IEWKFc5l2K9oKAaha2Di
- tkPFIrsqFB0mKg2JwxgaARMUz1yII8bidv/W0COr/GZZ7m0ZETfEXtuz9sQl3tWgQUk8or6kM
- HClvhqxfY1YjaC/p/gq4P8fB6iKm0Lr2BxmNAPCmn08STczZFeAEIU7JItCLT1+Z/bMRIeOWI
- FF2xNIrg2vNVB1snuec8+shJcS96fBPjfWWFFHWRaVvBfh6/1GVoQ2jeNYMs9JqVDZ1Y=
+        Fri, 20 Jul 2018 13:24:20 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55652 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731305AbeGTRYU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:24:20 -0400
+Received: by mail-it0-f68.google.com with SMTP id 16-v6so15462860itl.5;
+        Fri, 20 Jul 2018 09:35:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VcPxtB9T7Gbi3b30kFhXH0Cfx1cjRLHRunUolPWZuG4=;
+        b=aSSs60NUCuHIgIDC3ufHAG9aIghYn/vzcd5Ll4D5xVPt2T8rod+C7zlwgy44uKgumq
+         G8SSt/xAD3dtr4DTYl7S5056tCxSB2T74PVedmirBTGwEjMG5cYvXrs3CWE0A1OAvZAg
+         tY+zAj0MuoUYgkXVBYg0Y1NsXygLzD6nwbu1WcJKogefT5cu2G6NU7WYqwCeTKNt4I5d
+         5XcN3pQShkk70IJBHLO+qC5d35NswQbdmMou4B+fsMy2dF1ufPx+22EdWC26JQqiInXK
+         dlLWXK5BfuOj2uZK1a8LG8pPJlieIvMVg8c7ZKy1GekKcT5qPhNtVphZjjEY8Kpis/1S
+         d/fw==
+X-Gm-Message-State: AOUpUlEbIlTl6bTQeSG7HZzogss4oDAJXKIWyr0CSH3NdzdWZNr+E7Lm
+        INEZMa1IPtwm85gNwQQdYg==
+X-Google-Smtp-Source: AAOMgpcGiphdjrCjj+bCoBR9caxyti+MqWocEiTy98WfflvlVn9sgGdL92/O/1j65pjolHaflLLMZw==
+X-Received: by 2002:a24:9d92:: with SMTP id f140-v6mr2499911itd.130.1532104516694;
+        Fri, 20 Jul 2018 09:35:16 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id 16-v6sm1214306itk.15.2018.07.20.09.35.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 20 Jul 2018 09:35:16 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 10:35:15 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Alexandre Torgue <alexandre.torgue@st.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        amelie.delaunay@st.com
+Subject: Re: [PATCH 1/2] pinctrl: stm32: fix bank io port number
+Message-ID: <20180720163515.GA16515@rob-hp-laptop>
+References: <1531745857-5561-1-git-send-email-alexandre.torgue@st.com>
+ <1531745857-5561-2-git-send-email-alexandre.torgue@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531745857-5561-2-git-send-email-alexandre.torgue@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Mon, Jul 16, 2018 at 02:57:36PM +0200, Alexandre Torgue wrote:
+> In case the exti line is not in line with the bank number (that is the case
+> when there is an hole between two banks, for example GPIOK and then GPIOZ),
+> use "st,bank-ioport" DT property to get the right exti line.
+> 
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> index 9a06e1f..60c678a 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> @@ -55,6 +55,8 @@ Optional properties:
+>     NOTE: If "gpio-ranges" is used for a gpio controller, all gpio-controller
+>     have to use a "gpio-ranges" entry.
+>     More details in Documentation/devicetree/bindings/gpio/gpio.txt.
+> + - st,bank-ioport: should correspond to the EXTI IOport selection (EXTI line
+> +   used to select GPIOs as interrupts).
 
-Commit 6c468f109884 ("ARM: dts: tegra: add Tegra20 NAND flash
-controller node") introduced the nand-controller node. However, it got
-added at the wrong spot not honoring the address order. Fix this.
+ioport sounds like something else. Perhaps '-exti-line'?
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
- arch/arm/boot/dts/tegra20.dtsi | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 979f38293fe5..a22c6a8f8f83 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -419,19 +419,6 @@
- 		status = "disabled";
- 	};
- 
--	gmi@70009000 {
--		compatible = "nvidia,tegra20-gmi";
--		reg = <0x70009000 0x1000>;
--		#address-cells = <2>;
--		#size-cells = <1>;
--		ranges = <0 0 0xd0000000 0xfffffff>;
--		clocks = <&tegra_car TEGRA20_CLK_NOR>;
--		clock-names = "gmi";
--		resets = <&tegra_car 42>;
--		reset-names = "gmi";
--		status = "disabled";
--	};
--
- 	nand-controller@70008000 {
- 		compatible = "nvidia,tegra20-nand";
- 		reg = <0x70008000 0x100>;
-@@ -447,6 +434,19 @@
- 		status = "disabled";
- 	};
- 
-+	gmi@70009000 {
-+		compatible = "nvidia,tegra20-gmi";
-+		reg = <0x70009000 0x1000>;
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0xd0000000 0xfffffff>;
-+		clocks = <&tegra_car TEGRA20_CLK_NOR>;
-+		clock-names = "gmi";
-+		resets = <&tegra_car 42>;
-+		reset-names = "gmi";
-+		status = "disabled";
-+	};
-+
- 	pwm: pwm@7000a000 {
- 		compatible = "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
--- 
-2.14.4
-
+>  
+>  Example 1:
+>  #include <dt-bindings/pinctrl/stm32f429-pinfunc.h>
