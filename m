@@ -2,120 +2,127 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E73ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D4CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBEBA206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:35:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="Mw6+RLNT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBEBA206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 9B53220833
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:35:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B53220833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388892AbeGTNXA (ORCPT
+        id S2388905AbeGTNXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:23:00 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39275 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388411AbeGTNXA (ORCPT
+        Fri, 20 Jul 2018 09:23:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42638 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729837AbeGTNXD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:23:00 -0400
-Received: by mail-pl0-f65.google.com with SMTP id m1-v6so158665plt.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 05:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ne/2zHMtQRSo/Lsg4s82GtCBfv4jU5VHrzHhPF06vdc=;
-        b=Mw6+RLNTjXbzv9DEH4DahTtO3URLjXF+ExOma1UlENN3qjWrR3p4wuYMhtsXahLcru
-         HYKhPo/ZS7zpMgwDs3Q5AU7lMKB/HHFyGmF4YzR+LM+QyRbiOnJkgfPX+cVTauRSD16n
-         HU590B7+CJqCnwk0o2UKpRCmwc2Z4ZPuE18pLse8Ze9YPkTmMj4PDsAzLzidQRoo0Oro
-         Md5WNI7f9eDuNYA9p2CH+7DeP2rZWQuN8IUa/5IyFbeHj4pfgtk5E6hl6Yr/ZttK0RNC
-         Zur9awFGx4pGFCcBtvSzwfPG2qDG9niK3hjK0ywIP2yNjgPq2qr6ebHxI5n/O4s145Si
-         Oj2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ne/2zHMtQRSo/Lsg4s82GtCBfv4jU5VHrzHhPF06vdc=;
-        b=sSr+ovIHbtdrogWSiIxaofS0ecoEO8wf6L4grIl4oFI5ql8f9dxsL+KgqZJnZqHLww
-         hJRM2RRnXKwDLHfiW1P+Mbp0PLg/TarLhXCB3LRdoGGLi0kzFnH5IlsRBv+cBzgGgJBJ
-         IQPTvVykcYuIulkWn/UV4Jpsc1e4MWrPM0fqDsV671+ICF4F6jqIr7AMVlSKpaH8FdMC
-         YQCdCp9UazjOrj7P5knHfbgPzAoJQNhpV4MW8nrG+bmuIrP5wJQJbZenJ0unUqTIFqc1
-         ug0KWc+W1glzzT0CqoudDTNfDQHTCNSTBN+qWQjlLdI6P7sWe3JOdAQCoQO2bwgg0nGv
-         jK5w==
-X-Gm-Message-State: AOUpUlFuYdKAs/v/fxSN33fZ84l03KUuN3kCVZnqAbhJJFwMpmHodz/h
-        wBtsEfl+pKV64tskxUj0HrYfQw==
-X-Google-Smtp-Source: AAOMgpeRUYBsn7QUFH6/Jbr4021NrnmuGqcKTOqAlrZWM3KbQaJTvPX/R4MdioXZZTqZwbW8TkUwIA==
-X-Received: by 2002:a17:902:b708:: with SMTP id d8-v6mr1962621pls.184.1532090097644;
-        Fri, 20 Jul 2018 05:34:57 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id g16-v6sm3100411pfe.88.2018.07.20.05.34.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 05:34:57 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 9852C300254; Fri, 20 Jul 2018 15:34:53 +0300 (+03)
-Date:   Fri, 20 Jul 2018 15:34:53 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv5 08/19] x86/mm: Introduce variables to store number,
- shift and mask of KeyIDs
-Message-ID: <20180720123453.sqz6w5ihaw7gvnoo@kshutemo-mobl1>
-References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
- <20180717112029.42378-9-kirill.shutemov@linux.intel.com>
- <1edc05b0-8371-807e-7cfa-6e8f61ee9b70@intel.com>
- <20180719102130.b4f6b6v5wg3modtc@kshutemo-mobl1>
- <e56be94d-e70e-8100-9b15-98a224442db9@intel.com>
+        Fri, 20 Jul 2018 09:23:03 -0400
+Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D353DBD8;
+        Fri, 20 Jul 2018 12:32:54 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 38/92] qed: Fix setting of incorrect eswitch mode.
+Date:   Fri, 20 Jul 2018 14:13:42 +0200
+Message-Id: <20180720121420.273029838@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
+References: <20180720121417.206337808@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e56be94d-e70e-8100-9b15-98a224442db9@intel.com>
-User-Agent: NeoMutt/20180622
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 07:23:27AM -0700, Dave Hansen wrote:
-> On 07/19/2018 03:21 AM, Kirill A. Shutemov wrote:
-> > On Wed, Jul 18, 2018 at 04:19:10PM -0700, Dave Hansen wrote:
-> >> On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
-> >>> mktme_nr_keyids holds number of KeyIDs available for MKTME, excluding
-> >>> KeyID zero which used by TME. MKTME KeyIDs start from 1.
-> >>>
-> >>> mktme_keyid_shift holds shift of KeyID within physical address.
-> >> I know what all these words mean, but the combination of them makes no
-> >> sense to me.  I still don't know what the variable does after reading this.
-> >>
-> >> Is this the lowest bit in the physical address which is used for the
-> >> KeyID?  How many bits you must shift up a KeyID to get to the location
-> >> at which it can be masked into the physical address?
-> > Right.
-> > 
-> > I'm not sure what is not clear from the description. It look fine to me.
-> 
-> Well, OK, I guess I can write a better one for you.
-> 
-> "Position in the PTE of the lowest bit of the KeyID"
-> 
-> It's also a name that could use some love (now that I know what it
-> does).  mktme_keyid_pte_shift would be much better.  Or
-> mktme_keyid_low_pte_bit.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Okay, thanks.
+------------------
 
--- 
- Kirill A. Shutemov
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+
+[ Upstream commit 538f8d00ba8bb417c4d9e76c61dee59d812d8287 ]
+
+By default, driver sets the eswitch mode incorrectly as VEB (virtual
+Ethernet bridging).
+Need to set VEB eswitch mode only when sriov is enabled, and it should be
+to set NONE by default. The patch incorporates this change.
+
+Fixes: 0fefbfbaa ("qed*: Management firmware - notifications and defaults")
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/qlogic/qed/qed_dev.c   |    2 +-
+ drivers/net/ethernet/qlogic/qed/qed_sriov.c |   19 +++++++++++++++++--
+ 2 files changed, 18 insertions(+), 3 deletions(-)
+
+--- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+@@ -1782,7 +1782,7 @@ int qed_hw_init(struct qed_dev *cdev, st
+ 			DP_INFO(p_hwfn, "Failed to update driver state\n");
+ 
+ 		rc = qed_mcp_ov_update_eswitch(p_hwfn, p_hwfn->p_main_ptt,
+-					       QED_OV_ESWITCH_VEB);
++					       QED_OV_ESWITCH_NONE);
+ 		if (rc)
+ 			DP_INFO(p_hwfn, "Failed to update eswitch mode\n");
+ 	}
+--- a/drivers/net/ethernet/qlogic/qed/qed_sriov.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
+@@ -4396,6 +4396,8 @@ static void qed_sriov_enable_qid_config(
+ static int qed_sriov_enable(struct qed_dev *cdev, int num)
+ {
+ 	struct qed_iov_vf_init_params params;
++	struct qed_hwfn *hwfn;
++	struct qed_ptt *ptt;
+ 	int i, j, rc;
+ 
+ 	if (num >= RESC_NUM(&cdev->hwfns[0], QED_VPORT)) {
+@@ -4408,8 +4410,8 @@ static int qed_sriov_enable(struct qed_d
+ 
+ 	/* Initialize HW for VF access */
+ 	for_each_hwfn(cdev, j) {
+-		struct qed_hwfn *hwfn = &cdev->hwfns[j];
+-		struct qed_ptt *ptt = qed_ptt_acquire(hwfn);
++		hwfn = &cdev->hwfns[j];
++		ptt = qed_ptt_acquire(hwfn);
+ 
+ 		/* Make sure not to use more than 16 queues per VF */
+ 		params.num_queues = min_t(int,
+@@ -4445,6 +4447,19 @@ static int qed_sriov_enable(struct qed_d
+ 		goto err;
+ 	}
+ 
++	hwfn = QED_LEADING_HWFN(cdev);
++	ptt = qed_ptt_acquire(hwfn);
++	if (!ptt) {
++		DP_ERR(hwfn, "Failed to acquire ptt\n");
++		rc = -EBUSY;
++		goto err;
++	}
++
++	rc = qed_mcp_ov_update_eswitch(hwfn, ptt, QED_OV_ESWITCH_VEB);
++	if (rc)
++		DP_INFO(cdev, "Failed to update eswitch mode\n");
++	qed_ptt_release(hwfn, ptt);
++
+ 	return num;
+ 
+ err:
+
+
