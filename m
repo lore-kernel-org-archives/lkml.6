@@ -2,190 +2,110 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43276ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F59ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0853D206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0853D206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 85896206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85896206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388813AbeGTNWi (ORCPT
+        id S2388821AbeGTNWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:22:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42208 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733077AbeGTNWh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:22:37 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55744CEF;
-        Fri, 20 Jul 2018 12:32:07 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 23/92] net: fix use-after-free in GRO with ESP
-Date:   Fri, 20 Jul 2018 14:13:27 +0200
-Message-Id: <20180720121418.875696486@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
-References: <20180720121417.206337808@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 20 Jul 2018 09:22:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41060 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388096AbeGTNWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 09:22:40 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3D66A40704BB;
+        Fri, 20 Jul 2018 12:34:38 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-17.ams2.redhat.com [10.36.116.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 061CE111AF1D;
+        Fri, 20 Jul 2018 12:34:34 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+Subject: [PATCH v1 1/2] mm: clarify semantics of reserved pages
+Date:   Fri, 20 Jul 2018 14:34:21 +0200
+Message-Id: <20180720123422.10127-2-david@redhat.com>
+In-Reply-To: <20180720123422.10127-1-david@redhat.com>
+References: <20180720123422.10127-1-david@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 12:34:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 12:34:38 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+The reserved bit once was used to hinder pages from getting swapped. While
+this still works, the semantics are a little bit stronger nowadays: The
+page should never be touched by anybody in the system except by the owner.
+The original comment already gave a hint about that.
 
-------------------
+So especially, these pages should also not be dumped by dumping tools.
+Let's make that more clear by updating the comment.
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+This will be useful especially in the future in virtual environments where
+pages marked with the reserved bit might no longer be accessible.
 
-[ Upstream commit 603d4cf8fe095b1ee78f423d514427be507fb513 ]
-
-Since the addition of GRO for ESP, gro_receive can consume the skb and
-return -EINPROGRESS. In that case, the lower layer GRO handler cannot
-touch the skb anymore.
-
-Commit 5f114163f2f5 ("net: Add a skb_gro_flush_final helper.") converted
-some of the gro_receive handlers that can lead to ESP's gro_receive so
-that they wouldn't access the skb when -EINPROGRESS is returned, but
-missed other spots, mainly in tunneling protocols.
-
-This patch finishes the conversion to using skb_gro_flush_final(), and
-adds a new helper, skb_gro_flush_final_remcsum(), used in VXLAN and
-GUE.
-
-Fixes: 5f114163f2f5 ("net: Add a skb_gro_flush_final helper.")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Miles Chen <miles.chen@mediatek.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: "Marc-André Lureau" <marcandre.lureau@redhat.com>
+Cc: Petr Tesarik <ptesarik@suse.cz>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/net/geneve.c      |    2 +-
- drivers/net/vxlan.c       |    4 +---
- include/linux/netdevice.h |   20 ++++++++++++++++++++
- net/8021q/vlan.c          |    2 +-
- net/ipv4/fou.c            |    4 +---
- net/ipv4/gre_offload.c    |    2 +-
- net/ipv4/udp_offload.c    |    2 +-
- 7 files changed, 26 insertions(+), 10 deletions(-)
+ include/linux/page-flags.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/geneve.c
-+++ b/drivers/net/geneve.c
-@@ -474,7 +474,7 @@ static struct sk_buff **geneve_gro_recei
- out_unlock:
- 	rcu_read_unlock();
- out:
--	NAPI_GRO_CB(skb)->flush |= flush;
-+	skb_gro_flush_final(skb, pp, flush);
- 
- 	return pp;
- }
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -623,9 +623,7 @@ static struct sk_buff **vxlan_gro_receiv
- 	flush = 0;
- 
- out:
--	skb_gro_remcsum_cleanup(skb, &grc);
--	skb->remcsum_offload = 0;
--	NAPI_GRO_CB(skb)->flush |= flush;
-+	skb_gro_flush_final_remcsum(skb, pp, flush, &grc);
- 
- 	return pp;
- }
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -2668,11 +2668,31 @@ static inline void skb_gro_flush_final(s
- 	if (PTR_ERR(pp) != -EINPROGRESS)
- 		NAPI_GRO_CB(skb)->flush |= flush;
- }
-+static inline void skb_gro_flush_final_remcsum(struct sk_buff *skb,
-+					       struct sk_buff **pp,
-+					       int flush,
-+					       struct gro_remcsum *grc)
-+{
-+	if (PTR_ERR(pp) != -EINPROGRESS) {
-+		NAPI_GRO_CB(skb)->flush |= flush;
-+		skb_gro_remcsum_cleanup(skb, grc);
-+		skb->remcsum_offload = 0;
-+	}
-+}
- #else
- static inline void skb_gro_flush_final(struct sk_buff *skb, struct sk_buff **pp, int flush)
- {
- 	NAPI_GRO_CB(skb)->flush |= flush;
- }
-+static inline void skb_gro_flush_final_remcsum(struct sk_buff *skb,
-+					       struct sk_buff **pp,
-+					       int flush,
-+					       struct gro_remcsum *grc)
-+{
-+	NAPI_GRO_CB(skb)->flush |= flush;
-+	skb_gro_remcsum_cleanup(skb, grc);
-+	skb->remcsum_offload = 0;
-+}
- #endif
- 
- static inline int dev_hard_header(struct sk_buff *skb, struct net_device *dev,
---- a/net/8021q/vlan.c
-+++ b/net/8021q/vlan.c
-@@ -664,7 +664,7 @@ static struct sk_buff **vlan_gro_receive
- out_unlock:
- 	rcu_read_unlock();
- out:
--	NAPI_GRO_CB(skb)->flush |= flush;
-+	skb_gro_flush_final(skb, pp, flush);
- 
- 	return pp;
- }
---- a/net/ipv4/fou.c
-+++ b/net/ipv4/fou.c
-@@ -448,9 +448,7 @@ next_proto:
- out_unlock:
- 	rcu_read_unlock();
- out:
--	NAPI_GRO_CB(skb)->flush |= flush;
--	skb_gro_remcsum_cleanup(skb, &grc);
--	skb->remcsum_offload = 0;
-+	skb_gro_flush_final_remcsum(skb, pp, flush, &grc);
- 
- 	return pp;
- }
---- a/net/ipv4/gre_offload.c
-+++ b/net/ipv4/gre_offload.c
-@@ -223,7 +223,7 @@ static struct sk_buff **gre_gro_receive(
- out_unlock:
- 	rcu_read_unlock();
- out:
--	NAPI_GRO_CB(skb)->flush |= flush;
-+	skb_gro_flush_final(skb, pp, flush);
- 
- 	return pp;
- }
---- a/net/ipv4/udp_offload.c
-+++ b/net/ipv4/udp_offload.c
-@@ -295,7 +295,7 @@ unflush:
- out_unlock:
- 	rcu_read_unlock();
- out:
--	NAPI_GRO_CB(skb)->flush |= flush;
-+	skb_gro_flush_final(skb, pp, flush);
- 	return pp;
- }
- EXPORT_SYMBOL(udp_gro_receive);
-
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 901943e4754b..ba81e11a868c 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -17,8 +17,8 @@
+ /*
+  * Various page->flags bits:
+  *
+- * PG_reserved is set for special pages, which can never be swapped out. Some
+- * of them might not even exist...
++ * PG_reserved is set for special pages, which should never be touched (read/
++ * write) by anybody except their owner. Some of them might not even exist.
+  *
+  * The PG_private bitflag is set on pagecache pages if they contain filesystem
+  * specific data (which is normally at page->private). It can be used by
+-- 
+2.17.1
 
