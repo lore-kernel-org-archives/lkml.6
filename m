@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13585ECDFBD
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F3DECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9B6520652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9B6520652
+	by mail.kernel.org (Postfix) with ESMTP id F0FC920652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0FC920652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390297AbeGTNdF (ORCPT
+        id S2390307AbeGTNdI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:33:05 -0400
+        Fri, 20 Jul 2018 09:33:08 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:55512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389964AbeGTNdE (ORCPT
+        with ESMTP id S2389263AbeGTNdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:33:04 -0400
+        Fri, 20 Jul 2018 09:33:07 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDF1ACFE;
-        Fri, 20 Jul 2018 12:40:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 442F3BE1;
+        Fri, 20 Jul 2018 12:37:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.17 100/101] bpf, arm32: fix to use bpf_jit_binary_lock_ro api
-Date:   Fri, 20 Jul 2018 14:14:46 +0200
-Message-Id: <20180720121427.468225807@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 051/101] xen-netfront: Fix mismatched rtnl_unlock
+Date:   Fri, 20 Jul 2018 14:13:57 +0200
+Message-Id: <20180720121425.201476691@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -50,36 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-commit 18d405af30bf6506bf2fc49056de7691c949812e upstream.
+[ Upstream commit cb257783c2927b73614b20f915a91ff78aa6f3e8 ]
 
-Any eBPF JIT that where its underlying arch supports ARCH_HAS_SET_MEMORY
-would need to use bpf_jit_binary_{un,}lock_ro() pair instead of the
-set_memory_{ro,rw}() pair directly as otherwise changes to the former
-might break. arm32's eBPF conversion missed to change it, so fix this
-up here.
-
-Fixes: 39c13c204bb1 ("arm: eBPF JIT compiler")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm/net/bpf_jit_32.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/xen-netfront.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm/net/bpf_jit_32.c
-+++ b/arch/arm/net/bpf_jit_32.c
-@@ -1928,7 +1928,7 @@ struct bpf_prog *bpf_int_jit_compile(str
- 		/* there are 2 passes here */
- 		bpf_jit_dump(prog->len, image_size, 2, ctx.target);
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1810,7 +1810,7 @@ static int talk_to_netback(struct xenbus
+ 	err = xen_net_read_mac(dev, info->netdev->dev_addr);
+ 	if (err) {
+ 		xenbus_dev_fatal(dev, err, "parsing %s/mac", dev->nodename);
+-		goto out;
++		goto out_unlocked;
+ 	}
  
--	set_memory_ro((unsigned long)header, header->pages);
-+	bpf_jit_binary_lock_ro(header);
- 	prog->bpf_func = (void *)ctx.target;
- 	prog->jited = 1;
- 	prog->jited_len = image_size;
+ 	rtnl_lock();
+@@ -1925,6 +1925,7 @@ abort_transaction_no_dev_fatal:
+ 	xennet_destroy_queues(info);
+  out:
+ 	rtnl_unlock();
++out_unlocked:
+ 	device_unregister(&dev->dev);
+ 	return err;
+ }
 
 
