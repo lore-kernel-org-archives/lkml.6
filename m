@@ -2,125 +2,84 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 215D8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01933ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEB5120856
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2EF120854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:37:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVYGzr1P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB5120856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GmGxolEY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2EF120854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388173AbeGTRYs (ORCPT
+        id S2387873AbeGTR0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:24:48 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:35129 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731305AbeGTRYs (ORCPT
+        Fri, 20 Jul 2018 13:26:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41730 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731583AbeGTR0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:24:48 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w3-v6so5415747plq.2;
-        Fri, 20 Jul 2018 09:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HVOb+vFJlwfEy9YaU1RuD0B68qKfBVjS/jc+VgEZqW0=;
-        b=IVYGzr1PM5y15J1KmhJAms/qMWxuTvoAstTZcDuwfLhhuCzaH7Q0Kdsc5u6019s2MQ
-         dx62gu33J0UxfVclczqiSvezRiBv06QIQgLicKpNTB9mpcb/ckyiJFxfneaZd3oYYCuE
-         naxUOsefS9YviJ7W4Yp+TDF94frfCqt+F8yVucXao6HUwBZewItFNUvGKHS8JKDxVsZ6
-         7mDT5u9H1sIsyCbjHleP4SNZSV7NPBpAbTSHDDNJcdt7t/HtEuiYGtOgJS98+QstG0Qz
-         YUH4T6L+RG3c/0T67qr3oJqHbddplsAtMsK6rJWjkhOL+pi1pFix9kmG3GrFuTbnvIQd
-         Ya0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HVOb+vFJlwfEy9YaU1RuD0B68qKfBVjS/jc+VgEZqW0=;
-        b=nDwsNFVSf3la2g0jWhZecQXA4AD+0usFytIii9ew+bPtpP8n9CP5jgaKngXOFMzBCV
-         Ru5W1nkqYl7yMggZO9URlHXEdLAKQowhZU6rX7LuQpbgtnUYZfOyKPDvn05c61ImilGb
-         uc2fYe1sdhFNHOjxBFwrV0cheqj3UfkRDVcgfxLQDHMtEG4cNn9Erx2xDoTHsM4ulKeE
-         Gq2GOeaxDiYXmpXGuEwBd2AGOlACHYCeKxSddUwOJmhrzi2uEbp1L8wzEstlhjmTsIbo
-         KFkUVYszqz1d5Yfiyv4bUvlE1Vq0/qJLWhpE6vnC/3OPWwYYCU/rkarsW8d5gyhg0V4K
-         GMRg==
-X-Gm-Message-State: AOUpUlF32oMinOBeNApRknmGCW5peII8xZn2BQb0DK2CThHOhgWwguxR
-        qCJ8drbQMWzofIUCrFp7wg1G9rQpt9I=
-X-Google-Smtp-Source: AAOMgpdLoqjPwxb9+ftdvpvh481Tp8lEpUatiQKUgoVJO+xH+/lTOs0m6VHglgF3krU91DMAUHKWGA==
-X-Received: by 2002:a17:902:9b82:: with SMTP id y2-v6mr2768795plp.69.1532104544616;
-        Fri, 20 Jul 2018 09:35:44 -0700 (PDT)
-Received: from localhost ([223.72.65.191])
-        by smtp.gmail.com with ESMTPSA id a77-v6sm8642687pfj.38.2018.07.20.09.35.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 09:35:44 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH v4 6/6] KVM: X86: Expose PV_SEND_IPI CPUID feature bit to guest
-Date:   Sat, 21 Jul 2018 00:35:39 +0800
-Message-Id: <1532104539-16075-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 20 Jul 2018 13:26:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xAc+QZuJtG4zHD2LbKoFxMFVM9j39N2b5KvwLuHdD04=; b=GmGxolEYIkn8eJ7VfTqcOs/7+
+        FH/69wphSVLxIANNeCL7TUzgLPbxsuT2cD/16hpbcL5zbP4s0Tplpe9UdetvOPrZMjod5OGccjAqy
+        VUh5sEyI1SASotQXAT5iY9lX3bJtVMI+hR9ZbWJ4LLQhzOP0yXthjHKTmNf2kAXzjXz3criPPQu1i
+        vYPIFKIpeCU8EAC6PJH040Er1Qb46n1xAa6pLvX5HKD2yyWr522uTsCjdIfirwvufrYm5d0J9Bc/k
+        HLa38qCskeK5PjpGaQ5B/Vfw5TA453P3e2IyAKt5bO7716yS5/orErIAJ4Y8q210qSe+Ar4wTwGd6
+        lXTxn0Ocg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fgYP3-0006gs-Sd; Fri, 20 Jul 2018 16:37:14 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 110C520275F4C; Fri, 20 Jul 2018 18:37:12 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 18:37:12 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+Message-ID: <20180720163712.GU2494@hirez.programming.kicks-ass.net>
+References: <20180719135224.GE2494@hirez.programming.kicks-ass.net>
+ <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
+ <20180719153045.GT72677@devbig577.frc2.facebook.com>
+ <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
+ <20180719165201.GU72677@devbig577.frc2.facebook.com>
+ <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
+ <20180720114549.GY72677@devbig577.frc2.facebook.com>
+ <20180720154454.GR2494@hirez.programming.kicks-ass.net>
+ <20180720155613.GB1934745@devbig577.frc2.facebook.com>
+ <4857a9db-ebf5-24f8-c42d-d795f5c75854@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4857a9db-ebf5-24f8-c42d-d795f5c75854@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On Fri, Jul 20, 2018 at 12:19:29PM -0400, Waiman Long wrote:
+> I am not against the idea of making it hierarchical eventually. I am
+> just hoping to get thing going by merging the patchset in its current
+> form and then we can make it hierarchical in a followup patch.
 
-Expose PV_SEND_IPI feature bit to guest, the guest can check this feature
-bit before using paravirtualized send IPIs.
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- Documentation/virtual/kvm/cpuid.txt | 4 ++++
- arch/x86/kvm/cpuid.c                | 3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
-index ab022dc..97ca194 100644
---- a/Documentation/virtual/kvm/cpuid.txt
-+++ b/Documentation/virtual/kvm/cpuid.txt
-@@ -62,6 +62,10 @@ KVM_FEATURE_ASYNC_PF_VMEXIT        ||    10 || paravirtualized async PF VM exit
-                                    ||       || can be enabled by setting bit 2
-                                    ||       || when writing to msr 0x4b564d02
- ------------------------------------------------------------------------------
-+KVM_FEATURE_PV_SEND_IPI            ||    11 || guest checks this feature bit
-+                                   ||       || before using paravirtualized
-+                                   ||       || send IPIs.
-+------------------------------------------------------------------------------
- KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
-                                    ||       || per-cpu warps are expected in
-                                    ||       || kvmclock.
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 7e042e3..7bcfa61 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -621,7 +621,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 			     (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT) |
- 			     (1 << KVM_FEATURE_PV_UNHALT) |
- 			     (1 << KVM_FEATURE_PV_TLB_FLUSH) |
--			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT);
-+			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT) |
-+			     (1 << KVM_FEATURE_PV_SEND_IPI);
- 
- 		if (sched_info_on())
- 			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
--- 
-2.7.4
-
+Where's the rush? Why can't we do this right in one go?
