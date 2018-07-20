@@ -2,39 +2,38 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80882ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D5FECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3313C206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3313C206B7
+	by mail.kernel.org (Postfix) with ESMTP id 87F09206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F09206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731629AbeGTNNm (ORCPT
+        id S1731654AbeGTNNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:13:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34690 "EHLO
+        Fri, 20 Jul 2018 09:13:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34698 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730183AbeGTNNl (ORCPT
+        with ESMTP id S1730183AbeGTNNo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:13:41 -0400
+        Fri, 20 Jul 2018 09:13:44 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 775AEBBF;
-        Fri, 20 Jul 2018 12:25:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B865BBD;
+        Fri, 20 Jul 2018 12:25:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 18/29] net: dccp: switch rx_tstamp_last_feedback to monotonic clock
-Date:   Fri, 20 Jul 2018 14:11:13 +0200
-Message-Id: <20180720115159.632277649@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 3.18 19/29] net/mlx5: Fix incorrect raw command length parsing
+Date:   Fri, 20 Jul 2018 14:11:14 +0200
+Message-Id: <20180720115159.665608484@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720115158.974693829@linuxfoundation.org>
 References: <20180720115158.974693829@linuxfoundation.org>
@@ -51,65 +50,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Alex Vesker <valex@mellanox.com>
 
-[ Upstream commit 0ce4e70ff00662ad7490e545ba0cd8c1fa179fca ]
+[ Upstream commit 603b7bcff824740500ddfa001d7a7168b0b38542 ]
 
-To compute delays, better not use time of the day which can
-be changed by admins or malicious programs.
+The NULL character was not set correctly for the string containing
+the command length, this caused failures reading the output of the
+command due to a random length. The fix is to initialize the output
+length string.
 
-Also change ccid3_first_li() to use s64 type for delta variable
-to avoid potential overflows.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
-Cc: dccp@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Alex Vesker <valex@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/ccids/ccid3.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/net/dccp/ccids/ccid3.c
-+++ b/net/dccp/ccids/ccid3.c
-@@ -599,7 +599,7 @@ static void ccid3_hc_rx_send_feedback(st
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -933,7 +933,7 @@ static ssize_t outlen_write(struct file
  {
- 	struct ccid3_hc_rx_sock *hc = ccid3_hc_rx_sk(sk);
- 	struct dccp_sock *dp = dccp_sk(sk);
--	ktime_t now = ktime_get_real();
-+	ktime_t now = ktime_get();
- 	s64 delta = 0;
+ 	struct mlx5_core_dev *dev = filp->private_data;
+ 	struct mlx5_cmd_debug *dbg = &dev->cmd.dbg;
+-	char outlen_str[8];
++	char outlen_str[8] = {0};
+ 	int outlen;
+ 	void *ptr;
+ 	int err;
+@@ -948,8 +948,6 @@ static ssize_t outlen_write(struct file
+ 	if (copy_from_user(outlen_str, buf, count))
+ 		return -EFAULT;
  
- 	switch (fbtype) {
-@@ -631,7 +631,7 @@ static void ccid3_hc_rx_send_feedback(st
- 		return;
- 	}
- 
--	ccid3_pr_debug("Interval %ldusec, X_recv=%u, 1/p=%u\n", (long)delta,
-+	ccid3_pr_debug("Interval %lldusec, X_recv=%u, 1/p=%u\n", delta,
- 		       hc->rx_x_recv, hc->rx_pinv);
- 
- 	hc->rx_tstamp_last_feedback = now;
-@@ -678,7 +678,8 @@ static int ccid3_hc_rx_insert_options(st
- static u32 ccid3_first_li(struct sock *sk)
- {
- 	struct ccid3_hc_rx_sock *hc = ccid3_hc_rx_sk(sk);
--	u32 x_recv, p, delta;
-+	u32 x_recv, p;
-+	s64 delta;
- 	u64 fval;
- 
- 	if (hc->rx_rtt == 0) {
-@@ -686,7 +687,9 @@ static u32 ccid3_first_li(struct sock *s
- 		hc->rx_rtt = DCCP_FALLBACK_RTT;
- 	}
- 
--	delta  = ktime_to_us(net_timedelta(hc->rx_tstamp_last_feedback));
-+	delta = ktime_us_delta(ktime_get(), hc->rx_tstamp_last_feedback);
-+	if (delta <= 0)
-+		delta = 1;
- 	x_recv = scaled_div32(hc->rx_bytes_recv, delta);
- 	if (x_recv == 0) {		/* would also trigger divide-by-zero */
- 		DCCP_WARN("X_recv==0\n");
+-	outlen_str[7] = 0;
+-
+ 	err = sscanf(outlen_str, "%d", &outlen);
+ 	if (err < 0)
+ 		return err;
 
 
