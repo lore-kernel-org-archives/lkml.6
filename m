@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A104ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67370ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A3D206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:35:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A3D206B7
+	by mail.kernel.org (Postfix) with ESMTP id 2531C206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:35:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2531C206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388999AbeGTNX2 (ORCPT
+        id S2389008AbeGTNXb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:23:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42938 "EHLO
+        Fri, 20 Jul 2018 09:23:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388086AbeGTNX1 (ORCPT
+        with ESMTP id S1727693AbeGTNXa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:23:27 -0400
+        Fri, 20 Jul 2018 09:23:30 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E6DDC19;
-        Fri, 20 Jul 2018 12:32:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E173BE6;
+        Fri, 20 Jul 2018 12:33:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, Doron Roberts-Kedes <doronrk@fb.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 33/92] net/packet: fix use-after-free
-Date:   Fri, 20 Jul 2018 14:13:37 +0200
-Message-Id: <20180720121419.934593677@linuxfoundation.org>
+Subject: [PATCH 4.14 44/92] strparser: Remove early eaten to fix full tcp receive buffer stall
+Date:   Fri, 20 Jul 2018 14:13:48 +0200
+Message-Id: <20180720121420.539302777@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -52,176 +50,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Doron Roberts-Kedes <doronrk@fb.com>
 
-[ Upstream commit 945d015ee0c3095d2290e845565a23dedfd8027c ]
+[ Upstream commit 977c7114ebda2e746a114840d3a875e0cdb826fb ]
 
-We should put copy_skb in receive_queue only after
-a successful call to virtio_net_hdr_from_skb().
+On receving an incomplete message, the existing code stores the
+remaining length of the cloned skb in the early_eaten field instead of
+incrementing the value returned by __strp_recv. This defers invocation
+of sock_rfree for the current skb until the next invocation of
+__strp_recv, which returns early_eaten if early_eaten is non-zero.
 
-syzbot report :
+This behavior causes a stall when the current message occupies the very
+tail end of a massive skb, and strp_peek/need_bytes indicates that the
+remainder of the current message has yet to arrive on the socket. The
+TCP receive buffer is totally full, causing the TCP window to go to
+zero, so the remainder of the message will never arrive.
 
-BUG: KASAN: use-after-free in __skb_unlink include/linux/skbuff.h:1843 [inline]
-BUG: KASAN: use-after-free in __skb_dequeue include/linux/skbuff.h:1863 [inline]
-BUG: KASAN: use-after-free in skb_dequeue+0x16a/0x180 net/core/skbuff.c:2815
-Read of size 8 at addr ffff8801b044ecc0 by task syz-executor217/4553
+Incrementing the value returned by __strp_recv by the amount otherwise
+stored in early_eaten prevents stalls of this nature.
 
-CPU: 0 PID: 4553 Comm: syz-executor217 Not tainted 4.18.0-rc1+ #111
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
- __skb_unlink include/linux/skbuff.h:1843 [inline]
- __skb_dequeue include/linux/skbuff.h:1863 [inline]
- skb_dequeue+0x16a/0x180 net/core/skbuff.c:2815
- skb_queue_purge+0x26/0x40 net/core/skbuff.c:2852
- packet_set_ring+0x675/0x1da0 net/packet/af_packet.c:4331
- packet_release+0x630/0xd90 net/packet/af_packet.c:2991
- __sock_release+0xd7/0x260 net/socket.c:603
- sock_close+0x19/0x20 net/socket.c:1186
- __fput+0x35b/0x8b0 fs/file_table.c:209
- ____fput+0x15/0x20 fs/file_table.c:243
- task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x1b08/0x2750 kernel/exit.c:865
- do_group_exit+0x177/0x440 kernel/exit.c:968
- __do_sys_exit_group kernel/exit.c:979 [inline]
- __se_sys_exit_group kernel/exit.c:977 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:977
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4448e9
-Code: Bad RIP value.
-RSP: 002b:00007ffd5f777ca8 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004448e9
-RDX: 00000000004448e9 RSI: 000000000000fcfb RDI: 0000000000000001
-RBP: 00000000006cf018 R08: 00007ffd0000a45b R09: 0000000000000000
-R10: 00007ffd5f777e48 R11: 0000000000000202 R12: 00000000004021f0
-R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 4553:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
- kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
- skb_clone+0x1f5/0x500 net/core/skbuff.c:1282
- tpacket_rcv+0x28f7/0x3200 net/packet/af_packet.c:2221
- deliver_skb net/core/dev.c:1925 [inline]
- deliver_ptype_list_skb net/core/dev.c:1940 [inline]
- __netif_receive_skb_core+0x1bfb/0x3680 net/core/dev.c:4611
- __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4693
- netif_receive_skb_internal+0x12e/0x7d0 net/core/dev.c:4767
- netif_receive_skb+0xbf/0x420 net/core/dev.c:4791
- tun_rx_batched.isra.55+0x4ba/0x8c0 drivers/net/tun.c:1571
- tun_get_user+0x2af1/0x42f0 drivers/net/tun.c:1981
- tun_chr_write_iter+0xb9/0x154 drivers/net/tun.c:2009
- call_write_iter include/linux/fs.h:1795 [inline]
- new_sync_write fs/read_write.c:474 [inline]
- __vfs_write+0x6c6/0x9f0 fs/read_write.c:487
- vfs_write+0x1f8/0x560 fs/read_write.c:549
- ksys_write+0x101/0x260 fs/read_write.c:598
- __do_sys_write fs/read_write.c:610 [inline]
- __se_sys_write fs/read_write.c:607 [inline]
- __x64_sys_write+0x73/0xb0 fs/read_write.c:607
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 4553:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
- kfree_skbmem+0x154/0x230 net/core/skbuff.c:582
- __kfree_skb net/core/skbuff.c:642 [inline]
- kfree_skb+0x1a5/0x580 net/core/skbuff.c:659
- tpacket_rcv+0x189e/0x3200 net/packet/af_packet.c:2385
- deliver_skb net/core/dev.c:1925 [inline]
- deliver_ptype_list_skb net/core/dev.c:1940 [inline]
- __netif_receive_skb_core+0x1bfb/0x3680 net/core/dev.c:4611
- __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4693
- netif_receive_skb_internal+0x12e/0x7d0 net/core/dev.c:4767
- netif_receive_skb+0xbf/0x420 net/core/dev.c:4791
- tun_rx_batched.isra.55+0x4ba/0x8c0 drivers/net/tun.c:1571
- tun_get_user+0x2af1/0x42f0 drivers/net/tun.c:1981
- tun_chr_write_iter+0xb9/0x154 drivers/net/tun.c:2009
- call_write_iter include/linux/fs.h:1795 [inline]
- new_sync_write fs/read_write.c:474 [inline]
- __vfs_write+0x6c6/0x9f0 fs/read_write.c:487
- vfs_write+0x1f8/0x560 fs/read_write.c:549
- ksys_write+0x101/0x260 fs/read_write.c:598
- __do_sys_write fs/read_write.c:610 [inline]
- __se_sys_write fs/read_write.c:607 [inline]
- __x64_sys_write+0x73/0xb0 fs/read_write.c:607
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801b044ecc0
- which belongs to the cache skbuff_head_cache of size 232
-The buggy address is located 0 bytes inside of
- 232-byte region [ffff8801b044ecc0, ffff8801b044eda8)
-The buggy address belongs to the page:
-page:ffffea0006c11380 count:1 mapcount:0 mapping:ffff8801d9be96c0 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea0006c17988 ffff8801d9bec248 ffff8801d9be96c0
-raw: 0000000000000000 ffff8801b044e040 000000010000000c 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8801b044eb80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff8801b044ec00: 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc
->ffff8801b044ec80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-                                           ^
- ffff8801b044ed00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8801b044ed80: fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc
-
-Fixes: 58d19b19cd99 ("packet: vnet_hdr support for tpacket_rcv")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Doron Roberts-Kedes <doronrk@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ net/strparser/strparser.c |   17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2303,6 +2303,13 @@ static int tpacket_rcv(struct sk_buff *s
- 		if (po->stats.stats1.tp_drops)
- 			status |= TP_STATUS_LOSING;
- 	}
-+
-+	if (do_vnet &&
-+	    virtio_net_hdr_from_skb(skb, h.raw + macoff -
-+				    sizeof(struct virtio_net_hdr),
-+				    vio_le(), true, 0))
-+		goto drop_n_account;
-+
- 	po->stats.stats1.tp_packets++;
- 	if (copy_skb) {
- 		status |= TP_STATUS_COPY;
-@@ -2310,15 +2317,6 @@ static int tpacket_rcv(struct sk_buff *s
- 	}
- 	spin_unlock(&sk->sk_receive_queue.lock);
+--- a/net/strparser/strparser.c
++++ b/net/strparser/strparser.c
+@@ -35,7 +35,6 @@ struct _strp_msg {
+ 	 */
+ 	struct strp_msg strp;
+ 	int accum_len;
+-	int early_eaten;
+ };
  
--	if (do_vnet) {
--		if (virtio_net_hdr_from_skb(skb, h.raw + macoff -
--					    sizeof(struct virtio_net_hdr),
--					    vio_le(), true, 0)) {
--			spin_lock(&sk->sk_receive_queue.lock);
--			goto drop_n_account;
--		}
--	}
+ static inline struct _strp_msg *_strp_msg(struct sk_buff *skb)
+@@ -115,20 +114,6 @@ static int __strp_recv(read_descriptor_t
+ 	head = strp->skb_head;
+ 	if (head) {
+ 		/* Message already in progress */
 -
- 	skb_copy_bits(skb, 0, h.raw + macoff, snaplen);
+-		stm = _strp_msg(head);
+-		if (unlikely(stm->early_eaten)) {
+-			/* Already some number of bytes on the receive sock
+-			 * data saved in skb_head, just indicate they
+-			 * are consumed.
+-			 */
+-			eaten = orig_len <= stm->early_eaten ?
+-				orig_len : stm->early_eaten;
+-			stm->early_eaten -= eaten;
+-
+-			return eaten;
+-		}
+-
+ 		if (unlikely(orig_offset)) {
+ 			/* Getting data with a non-zero offset when a message is
+ 			 * in progress is not expected. If it does happen, we
+@@ -297,9 +282,9 @@ static int __strp_recv(read_descriptor_t
+ 				}
  
- 	if (!(ts_status = tpacket_get_timestamp(skb, &ts, po->tp_tstamp)))
+ 				stm->accum_len += cand_len;
++				eaten += cand_len;
+ 				strp->need_bytes = stm->strp.full_len -
+ 						       stm->accum_len;
+-				stm->early_eaten = cand_len;
+ 				STRP_STATS_ADD(strp->stats.bytes, cand_len);
+ 				desc->count = 0; /* Stop reading socket */
+ 				break;
 
 
