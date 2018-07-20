@@ -2,39 +2,41 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C95ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE30ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E24F5206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24F5206B7
+	by mail.kernel.org (Postfix) with ESMTP id 125A4206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125A4206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389361AbeGTNZr (ORCPT
+        id S2389367AbeGTNZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:25:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45842 "EHLO
+        Fri, 20 Jul 2018 09:25:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45932 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388356AbeGTNZq (ORCPT
+        with ESMTP id S2388351AbeGTNZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:25:46 -0400
+        Fri, 20 Jul 2018 09:25:52 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03EFDCA6;
-        Fri, 20 Jul 2018 12:34:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF0EBBE1;
+        Fri, 20 Jul 2018 12:33:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.14 75/92] arm64: alternatives: Add dynamic patching feature
-Date:   Fri, 20 Jul 2018 14:14:19 +0200
-Message-Id: <20180720121422.034694295@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 61/92] reiserfs: fix buffer overflow with long warning messages
+Date:   Fri, 20 Jul 2018 14:14:05 +0200
+Message-Id: <20180720121421.379485552@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -51,212 +53,252 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Eric Biggers <ebiggers@google.com>
 
-Commit dea5e2a4c5bcf196f879a66cebdcca07793e8ba4 upstream.
+commit fe10e398e860955bac4d28ec031b701d358465e4 upstream.
 
-We've so far relied on a patching infrastructure that only gave us
-a single alternative, without any way to provide a range of potential
-replacement instructions. For a single feature, this is an all or
-nothing thing.
+ReiserFS prepares log messages into a 1024-byte buffer with no bounds
+checks.  Long messages, such as the "unknown mount option" warning when
+userspace passes a crafted mount options string, overflow this buffer.
+This causes KASAN to report a global-out-of-bounds write.
 
-It would be interesting to have a more flexible grained way of patching
-the kernel though, where we could dynamically tune the code that gets
-injected.
+Fix it by truncating messages to the buffer size.
 
-In order to achive this, let's introduce a new form of dynamic patching,
-assiciating a callback to a patching site. This callback gets source and
-target locations of the patching request, as well as the number of
-instructions to be patched.
-
-Dynamic patching is declared with the new ALTERNATIVE_CB and alternative_cb
-directives:
-
-	asm volatile(ALTERNATIVE_CB("mov %0, #0\n", callback)
-		     : "r" (v));
-or
-	alternative_cb callback
-		mov	x0, #0
-	alternative_cb_end
-
-where callback is the C function computing the alternative.
-
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: http://lkml.kernel.org/r/20180707203621.30922-1-ebiggers3@gmail.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/alternative.h |   41 ++++++++++++++++++++++++++++++---
- arch/arm64/kernel/alternative.c      |   43 ++++++++++++++++++++++++++---------
- 2 files changed, 69 insertions(+), 15 deletions(-)
 
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -5,6 +5,8 @@
- #include <asm/cpucaps.h>
- #include <asm/insn.h>
- 
-+#define ARM64_CB_PATCH ARM64_NCAPS
-+
- #ifndef __ASSEMBLY__
- 
- #include <linux/init.h>
-@@ -22,12 +24,19 @@ struct alt_instr {
- 	u8  alt_len;		/* size of new instruction(s), <= orig_len */
- };
- 
-+typedef void (*alternative_cb_t)(struct alt_instr *alt,
-+				 __le32 *origptr, __le32 *updptr, int nr_inst);
-+
- void __init apply_alternatives_all(void);
- void apply_alternatives(void *start, size_t length);
- 
--#define ALTINSTR_ENTRY(feature)						      \
-+#define ALTINSTR_ENTRY(feature,cb)					      \
- 	" .word 661b - .\n"				/* label           */ \
-+	" .if " __stringify(cb) " == 0\n"				      \
- 	" .word 663f - .\n"				/* new instruction */ \
-+	" .else\n"							      \
-+	" .word " __stringify(cb) "- .\n"		/* callback */	      \
-+	" .endif\n"							      \
- 	" .hword " __stringify(feature) "\n"		/* feature bit     */ \
- 	" .byte 662b-661b\n"				/* source len      */ \
- 	" .byte 664f-663f\n"				/* replacement len */
-@@ -45,15 +54,18 @@ void apply_alternatives(void *start, siz
-  * but most assemblers die if insn1 or insn2 have a .inst. This should
-  * be fixed in a binutils release posterior to 2.25.51.0.2 (anything
-  * containing commit 4e4d08cf7399b606 or c1baaddf8861).
-+ *
-+ * Alternatives with callbacks do not generate replacement instructions.
-  */
--#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled)	\
-+#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled, cb)	\
- 	".if "__stringify(cfg_enabled)" == 1\n"				\
- 	"661:\n\t"							\
- 	oldinstr "\n"							\
- 	"662:\n"							\
- 	".pushsection .altinstructions,\"a\"\n"				\
--	ALTINSTR_ENTRY(feature)						\
-+	ALTINSTR_ENTRY(feature,cb)					\
- 	".popsection\n"							\
-+	" .if " __stringify(cb) " == 0\n"				\
- 	".pushsection .altinstr_replacement, \"a\"\n"			\
- 	"663:\n\t"							\
- 	newinstr "\n"							\
-@@ -61,11 +73,17 @@ void apply_alternatives(void *start, siz
- 	".popsection\n\t"						\
- 	".org	. - (664b-663b) + (662b-661b)\n\t"			\
- 	".org	. - (662b-661b) + (664b-663b)\n"			\
-+	".else\n\t"							\
-+	"663:\n\t"							\
-+	"664:\n\t"							\
-+	".endif\n"							\
- 	".endif\n"
- 
- #define _ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg, ...)	\
--	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg))
-+	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
- 
-+#define ALTERNATIVE_CB(oldinstr, cb) \
-+	__ALTERNATIVE_CFG(oldinstr, "NOT_AN_INSTRUCTION", ARM64_CB_PATCH, 1, cb)
- #else
- 
- #include <asm/assembler.h>
-@@ -132,6 +150,14 @@ void apply_alternatives(void *start, siz
- 661:
- .endm
- 
-+.macro alternative_cb cb
-+	.set .Lasm_alt_mode, 0
-+	.pushsection .altinstructions, "a"
-+	altinstruction_entry 661f, \cb, ARM64_CB_PATCH, 662f-661f, 0
-+	.popsection
-+661:
-+.endm
-+
- /*
-  * Provide the other half of the alternative code sequence.
-  */
-@@ -158,6 +184,13 @@ void apply_alternatives(void *start, siz
- .endm
- 
- /*
-+ * Callback-based alternative epilogue
-+ */
-+.macro alternative_cb_end
-+662:
-+.endm
-+
-+/*
-  * Provides a trivial alternative or default sequence consisting solely
-  * of NOPs. The number of NOPs is chosen automatically to match the
-  * previous case.
---- a/arch/arm64/kernel/alternative.c
-+++ b/arch/arm64/kernel/alternative.c
-@@ -107,32 +107,53 @@ static u32 get_alt_insn(struct alt_instr
- 	return insn;
+---
+ fs/reiserfs/prints.c |  141 +++++++++++++++++++++++++++++----------------------
+ 1 file changed, 81 insertions(+), 60 deletions(-)
+
+--- a/fs/reiserfs/prints.c
++++ b/fs/reiserfs/prints.c
+@@ -76,83 +76,99 @@ static char *le_type(struct reiserfs_key
  }
  
-+static void patch_alternative(struct alt_instr *alt,
-+			      __le32 *origptr, __le32 *updptr, int nr_inst)
-+{
-+	__le32 *replptr;
-+	int i;
-+
-+	replptr = ALT_REPL_PTR(alt);
-+	for (i = 0; i < nr_inst; i++) {
-+		u32 insn;
-+
-+		insn = get_alt_insn(alt, origptr + i, replptr + i);
-+		updptr[i] = cpu_to_le32(insn);
-+	}
-+}
-+
- static void __apply_alternatives(void *alt_region, bool use_linear_alias)
+ /* %k */
+-static void sprintf_le_key(char *buf, struct reiserfs_key *key)
++static int scnprintf_le_key(char *buf, size_t size, struct reiserfs_key *key)
  {
- 	struct alt_instr *alt;
- 	struct alt_region *region = alt_region;
--	__le32 *origptr, *replptr, *updptr;
-+	__le32 *origptr, *updptr;
-+	alternative_cb_t alt_cb;
+ 	if (key)
+-		sprintf(buf, "[%d %d %s %s]", le32_to_cpu(key->k_dir_id),
+-			le32_to_cpu(key->k_objectid), le_offset(key),
+-			le_type(key));
++		return scnprintf(buf, size, "[%d %d %s %s]",
++				 le32_to_cpu(key->k_dir_id),
++				 le32_to_cpu(key->k_objectid), le_offset(key),
++				 le_type(key));
+ 	else
+-		sprintf(buf, "[NULL]");
++		return scnprintf(buf, size, "[NULL]");
+ }
  
- 	for (alt = region->begin; alt < region->end; alt++) {
--		u32 insn;
--		int i, nr_inst;
-+		int nr_inst;
+ /* %K */
+-static void sprintf_cpu_key(char *buf, struct cpu_key *key)
++static int scnprintf_cpu_key(char *buf, size_t size, struct cpu_key *key)
+ {
+ 	if (key)
+-		sprintf(buf, "[%d %d %s %s]", key->on_disk_key.k_dir_id,
+-			key->on_disk_key.k_objectid, reiserfs_cpu_offset(key),
+-			cpu_type(key));
++		return scnprintf(buf, size, "[%d %d %s %s]",
++				 key->on_disk_key.k_dir_id,
++				 key->on_disk_key.k_objectid,
++				 reiserfs_cpu_offset(key), cpu_type(key));
+ 	else
+-		sprintf(buf, "[NULL]");
++		return scnprintf(buf, size, "[NULL]");
+ }
  
--		if (!cpus_have_cap(alt->cpufeature))
-+		/* Use ARM64_CB_PATCH as an unconditional patch */
-+		if (alt->cpufeature < ARM64_CB_PATCH &&
-+		    !cpus_have_cap(alt->cpufeature))
- 			continue;
+-static void sprintf_de_head(char *buf, struct reiserfs_de_head *deh)
++static int scnprintf_de_head(char *buf, size_t size,
++			     struct reiserfs_de_head *deh)
+ {
+ 	if (deh)
+-		sprintf(buf,
+-			"[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
+-			deh_offset(deh), deh_dir_id(deh), deh_objectid(deh),
+-			deh_location(deh), deh_state(deh));
++		return scnprintf(buf, size,
++				 "[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
++				 deh_offset(deh), deh_dir_id(deh),
++				 deh_objectid(deh), deh_location(deh),
++				 deh_state(deh));
+ 	else
+-		sprintf(buf, "[NULL]");
++		return scnprintf(buf, size, "[NULL]");
  
--		BUG_ON(alt->alt_len != alt->orig_len);
-+		if (alt->cpufeature == ARM64_CB_PATCH)
-+			BUG_ON(alt->alt_len != 0);
-+		else
-+			BUG_ON(alt->alt_len != alt->orig_len);
+ }
  
- 		pr_info_once("patching kernel code\n");
- 
- 		origptr = ALT_ORIG_PTR(alt);
--		replptr = ALT_REPL_PTR(alt);
- 		updptr = use_linear_alias ? lm_alias(origptr) : origptr;
--		nr_inst = alt->alt_len / sizeof(insn);
-+		nr_inst = alt->orig_len / AARCH64_INSN_SIZE;
+-static void sprintf_item_head(char *buf, struct item_head *ih)
++static int scnprintf_item_head(char *buf, size_t size, struct item_head *ih)
+ {
+ 	if (ih) {
+-		strcpy(buf,
+-		       (ih_version(ih) == KEY_FORMAT_3_6) ? "*3.6* " : "*3.5*");
+-		sprintf_le_key(buf + strlen(buf), &(ih->ih_key));
+-		sprintf(buf + strlen(buf), ", item_len %d, item_location %d, "
+-			"free_space(entry_count) %d",
+-			ih_item_len(ih), ih_location(ih), ih_free_space(ih));
++		char *p = buf;
++		char * const end = buf + size;
 +
-+		if (alt->cpufeature < ARM64_CB_PATCH)
-+			alt_cb = patch_alternative;
-+		else
-+			alt_cb  = ALT_REPL_PTR(alt);
++		p += scnprintf(p, end - p, "%s",
++			       (ih_version(ih) == KEY_FORMAT_3_6) ?
++			       "*3.6* " : "*3.5*");
++
++		p += scnprintf_le_key(p, end - p, &ih->ih_key);
++
++		p += scnprintf(p, end - p,
++			       ", item_len %d, item_location %d, free_space(entry_count) %d",
++			       ih_item_len(ih), ih_location(ih),
++			       ih_free_space(ih));
++		return p - buf;
+ 	} else
+-		sprintf(buf, "[NULL]");
++		return scnprintf(buf, size, "[NULL]");
+ }
  
--		for (i = 0; i < nr_inst; i++) {
--			insn = get_alt_insn(alt, origptr + i, replptr + i);
--			updptr[i] = cpu_to_le32(insn);
--		}
-+		alt_cb(alt, origptr, updptr, nr_inst);
+-static void sprintf_direntry(char *buf, struct reiserfs_dir_entry *de)
++static int scnprintf_direntry(char *buf, size_t size,
++			      struct reiserfs_dir_entry *de)
+ {
+ 	char name[20];
  
- 		flush_icache_range((uintptr_t)origptr,
- 				   (uintptr_t)(origptr + nr_inst));
+ 	memcpy(name, de->de_name, de->de_namelen > 19 ? 19 : de->de_namelen);
+ 	name[de->de_namelen > 19 ? 19 : de->de_namelen] = 0;
+-	sprintf(buf, "\"%s\"==>[%d %d]", name, de->de_dir_id, de->de_objectid);
++	return scnprintf(buf, size, "\"%s\"==>[%d %d]",
++			 name, de->de_dir_id, de->de_objectid);
+ }
+ 
+-static void sprintf_block_head(char *buf, struct buffer_head *bh)
++static int scnprintf_block_head(char *buf, size_t size, struct buffer_head *bh)
+ {
+-	sprintf(buf, "level=%d, nr_items=%d, free_space=%d rdkey ",
+-		B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
++	return scnprintf(buf, size,
++			 "level=%d, nr_items=%d, free_space=%d rdkey ",
++			 B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
+ }
+ 
+-static void sprintf_buffer_head(char *buf, struct buffer_head *bh)
++static int scnprintf_buffer_head(char *buf, size_t size, struct buffer_head *bh)
+ {
+-	sprintf(buf,
+-		"dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
+-		bh->b_bdev, bh->b_size,
+-		(unsigned long long)bh->b_blocknr, atomic_read(&(bh->b_count)),
+-		bh->b_state, bh->b_page,
+-		buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
+-		buffer_dirty(bh) ? "DIRTY" : "CLEAN",
+-		buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
++	return scnprintf(buf, size,
++			 "dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
++			 bh->b_bdev, bh->b_size,
++			 (unsigned long long)bh->b_blocknr,
++			 atomic_read(&(bh->b_count)),
++			 bh->b_state, bh->b_page,
++			 buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
++			 buffer_dirty(bh) ? "DIRTY" : "CLEAN",
++			 buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
+ }
+ 
+-static void sprintf_disk_child(char *buf, struct disk_child *dc)
++static int scnprintf_disk_child(char *buf, size_t size, struct disk_child *dc)
+ {
+-	sprintf(buf, "[dc_number=%d, dc_size=%u]", dc_block_number(dc),
+-		dc_size(dc));
++	return scnprintf(buf, size, "[dc_number=%d, dc_size=%u]",
++			 dc_block_number(dc), dc_size(dc));
+ }
+ 
+ static char *is_there_reiserfs_struct(char *fmt, int *what)
+@@ -189,55 +205,60 @@ static void prepare_error_buf(const char
+ 	char *fmt1 = fmt_buf;
+ 	char *k;
+ 	char *p = error_buf;
++	char * const end = &error_buf[sizeof(error_buf)];
+ 	int what;
+ 
+ 	spin_lock(&error_lock);
+ 
+-	strcpy(fmt1, fmt);
++	if (WARN_ON(strscpy(fmt_buf, fmt, sizeof(fmt_buf)) < 0)) {
++		strscpy(error_buf, "format string too long", end - error_buf);
++		goto out_unlock;
++	}
+ 
+ 	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
+ 		*k = 0;
+ 
+-		p += vsprintf(p, fmt1, args);
++		p += vscnprintf(p, end - p, fmt1, args);
+ 
+ 		switch (what) {
+ 		case 'k':
+-			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
++			p += scnprintf_le_key(p, end - p,
++					      va_arg(args, struct reiserfs_key *));
+ 			break;
+ 		case 'K':
+-			sprintf_cpu_key(p, va_arg(args, struct cpu_key *));
++			p += scnprintf_cpu_key(p, end - p,
++					       va_arg(args, struct cpu_key *));
+ 			break;
+ 		case 'h':
+-			sprintf_item_head(p, va_arg(args, struct item_head *));
++			p += scnprintf_item_head(p, end - p,
++						 va_arg(args, struct item_head *));
+ 			break;
+ 		case 't':
+-			sprintf_direntry(p,
+-					 va_arg(args,
+-						struct reiserfs_dir_entry *));
++			p += scnprintf_direntry(p, end - p,
++						va_arg(args, struct reiserfs_dir_entry *));
+ 			break;
+ 		case 'y':
+-			sprintf_disk_child(p,
+-					   va_arg(args, struct disk_child *));
++			p += scnprintf_disk_child(p, end - p,
++						  va_arg(args, struct disk_child *));
+ 			break;
+ 		case 'z':
+-			sprintf_block_head(p,
+-					   va_arg(args, struct buffer_head *));
++			p += scnprintf_block_head(p, end - p,
++						  va_arg(args, struct buffer_head *));
+ 			break;
+ 		case 'b':
+-			sprintf_buffer_head(p,
+-					    va_arg(args, struct buffer_head *));
++			p += scnprintf_buffer_head(p, end - p,
++						   va_arg(args, struct buffer_head *));
+ 			break;
+ 		case 'a':
+-			sprintf_de_head(p,
+-					va_arg(args,
+-					       struct reiserfs_de_head *));
++			p += scnprintf_de_head(p, end - p,
++					       va_arg(args, struct reiserfs_de_head *));
+ 			break;
+ 		}
+ 
+-		p += strlen(p);
+ 		fmt1 = k + 2;
+ 	}
+-	vsprintf(p, fmt1, args);
++	p += vscnprintf(p, end - p, fmt1, args);
++out_unlock:
+ 	spin_unlock(&error_lock);
+ 
+ }
 
 
