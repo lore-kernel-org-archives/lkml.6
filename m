@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB4CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 342B8ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFB3D20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFB3D20652
+	by mail.kernel.org (Postfix) with ESMTP id 8EE43206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE43206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389737AbeGTN2V (ORCPT
+        id S2389749AbeGTN2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:28:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49774 "EHLO
+        Fri, 20 Jul 2018 09:28:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49868 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728252AbeGTN2U (ORCPT
+        with ESMTP id S1728252AbeGTN2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:28:20 -0400
+        Fri, 20 Jul 2018 09:28:23 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 026B1BCF;
-        Fri, 20 Jul 2018 12:36:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9463ECEE;
+        Fri, 20 Jul 2018 12:36:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        Stefano Brivio <sbrivio@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 034/101] qed: Fix setting of incorrect eswitch mode.
-Date:   Fri, 20 Jul 2018 14:13:40 +0200
-Message-Id: <20180720121424.395987218@linuxfoundation.org>
+Subject: [PATCH 4.17 017/101] net: fix use-after-free in GRO with ESP
+Date:   Fri, 20 Jul 2018 14:13:23 +0200
+Message-Id: <20180720121423.681819617@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -52,77 +51,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 538f8d00ba8bb417c4d9e76c61dee59d812d8287 ]
+[ Upstream commit 603d4cf8fe095b1ee78f423d514427be507fb513 ]
 
-By default, driver sets the eswitch mode incorrectly as VEB (virtual
-Ethernet bridging).
-Need to set VEB eswitch mode only when sriov is enabled, and it should be
-to set NONE by default. The patch incorporates this change.
+Since the addition of GRO for ESP, gro_receive can consume the skb and
+return -EINPROGRESS. In that case, the lower layer GRO handler cannot
+touch the skb anymore.
 
-Fixes: 0fefbfbaa ("qed*: Management firmware - notifications and defaults")
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Commit 5f114163f2f5 ("net: Add a skb_gro_flush_final helper.") converted
+some of the gro_receive handlers that can lead to ESP's gro_receive so
+that they wouldn't access the skb when -EINPROGRESS is returned, but
+missed other spots, mainly in tunneling protocols.
+
+This patch finishes the conversion to using skb_gro_flush_final(), and
+adds a new helper, skb_gro_flush_final_remcsum(), used in VXLAN and
+GUE.
+
+Fixes: 5f114163f2f5 ("net: Add a skb_gro_flush_final helper.")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_dev.c   |    2 +-
- drivers/net/ethernet/qlogic/qed/qed_sriov.c |   19 +++++++++++++++++--
- 2 files changed, 18 insertions(+), 3 deletions(-)
+ drivers/net/geneve.c      |    2 +-
+ drivers/net/vxlan.c       |    4 +---
+ include/linux/netdevice.h |   20 ++++++++++++++++++++
+ net/8021q/vlan.c          |    2 +-
+ net/ipv4/fou.c            |    4 +---
+ net/ipv4/gre_offload.c    |    2 +-
+ net/ipv4/udp_offload.c    |    2 +-
+ 7 files changed, 26 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -1789,7 +1789,7 @@ int qed_hw_init(struct qed_dev *cdev, st
- 			DP_INFO(p_hwfn, "Failed to update driver state\n");
+--- a/drivers/net/geneve.c
++++ b/drivers/net/geneve.c
+@@ -474,7 +474,7 @@ static struct sk_buff **geneve_gro_recei
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final(skb, pp, flush);
  
- 		rc = qed_mcp_ov_update_eswitch(p_hwfn, p_hwfn->p_main_ptt,
--					       QED_OV_ESWITCH_VEB);
-+					       QED_OV_ESWITCH_NONE);
- 		if (rc)
- 			DP_INFO(p_hwfn, "Failed to update eswitch mode\n");
- 	}
---- a/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-@@ -4400,6 +4400,8 @@ static void qed_sriov_enable_qid_config(
- static int qed_sriov_enable(struct qed_dev *cdev, int num)
- {
- 	struct qed_iov_vf_init_params params;
-+	struct qed_hwfn *hwfn;
-+	struct qed_ptt *ptt;
- 	int i, j, rc;
+ 	return pp;
+ }
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -623,9 +623,7 @@ static struct sk_buff **vxlan_gro_receiv
+ 	flush = 0;
  
- 	if (num >= RESC_NUM(&cdev->hwfns[0], QED_VPORT)) {
-@@ -4412,8 +4414,8 @@ static int qed_sriov_enable(struct qed_d
+ out:
+-	skb_gro_remcsum_cleanup(skb, &grc);
+-	skb->remcsum_offload = 0;
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final_remcsum(skb, pp, flush, &grc);
  
- 	/* Initialize HW for VF access */
- 	for_each_hwfn(cdev, j) {
--		struct qed_hwfn *hwfn = &cdev->hwfns[j];
--		struct qed_ptt *ptt = qed_ptt_acquire(hwfn);
-+		hwfn = &cdev->hwfns[j];
-+		ptt = qed_ptt_acquire(hwfn);
- 
- 		/* Make sure not to use more than 16 queues per VF */
- 		params.num_queues = min_t(int,
-@@ -4449,6 +4451,19 @@ static int qed_sriov_enable(struct qed_d
- 		goto err;
- 	}
- 
-+	hwfn = QED_LEADING_HWFN(cdev);
-+	ptt = qed_ptt_acquire(hwfn);
-+	if (!ptt) {
-+		DP_ERR(hwfn, "Failed to acquire ptt\n");
-+		rc = -EBUSY;
-+		goto err;
+ 	return pp;
+ }
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -2735,11 +2735,31 @@ static inline void skb_gro_flush_final(s
+ 	if (PTR_ERR(pp) != -EINPROGRESS)
+ 		NAPI_GRO_CB(skb)->flush |= flush;
+ }
++static inline void skb_gro_flush_final_remcsum(struct sk_buff *skb,
++					       struct sk_buff **pp,
++					       int flush,
++					       struct gro_remcsum *grc)
++{
++	if (PTR_ERR(pp) != -EINPROGRESS) {
++		NAPI_GRO_CB(skb)->flush |= flush;
++		skb_gro_remcsum_cleanup(skb, grc);
++		skb->remcsum_offload = 0;
 +	}
-+
-+	rc = qed_mcp_ov_update_eswitch(hwfn, ptt, QED_OV_ESWITCH_VEB);
-+	if (rc)
-+		DP_INFO(cdev, "Failed to update eswitch mode\n");
-+	qed_ptt_release(hwfn, ptt);
-+
- 	return num;
++}
+ #else
+ static inline void skb_gro_flush_final(struct sk_buff *skb, struct sk_buff **pp, int flush)
+ {
+ 	NAPI_GRO_CB(skb)->flush |= flush;
+ }
++static inline void skb_gro_flush_final_remcsum(struct sk_buff *skb,
++					       struct sk_buff **pp,
++					       int flush,
++					       struct gro_remcsum *grc)
++{
++	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_remcsum_cleanup(skb, grc);
++	skb->remcsum_offload = 0;
++}
+ #endif
  
- err:
+ static inline int dev_hard_header(struct sk_buff *skb, struct net_device *dev,
+--- a/net/8021q/vlan.c
++++ b/net/8021q/vlan.c
+@@ -688,7 +688,7 @@ static struct sk_buff **vlan_gro_receive
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final(skb, pp, flush);
+ 
+ 	return pp;
+ }
+--- a/net/ipv4/fou.c
++++ b/net/ipv4/fou.c
+@@ -448,9 +448,7 @@ next_proto:
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
+-	skb_gro_remcsum_cleanup(skb, &grc);
+-	skb->remcsum_offload = 0;
++	skb_gro_flush_final_remcsum(skb, pp, flush, &grc);
+ 
+ 	return pp;
+ }
+--- a/net/ipv4/gre_offload.c
++++ b/net/ipv4/gre_offload.c
+@@ -223,7 +223,7 @@ static struct sk_buff **gre_gro_receive(
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final(skb, pp, flush);
+ 
+ 	return pp;
+ }
+--- a/net/ipv4/udp_offload.c
++++ b/net/ipv4/udp_offload.c
+@@ -295,7 +295,7 @@ unflush:
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final(skb, pp, flush);
+ 	return pp;
+ }
+ EXPORT_SYMBOL(udp_gro_receive);
 
 
