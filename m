@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7176CECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29329ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E58206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E58206B7
+	by mail.kernel.org (Postfix) with ESMTP id E308A206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E308A206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388384AbeGTNWS (ORCPT
+        id S2388761AbeGTNWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:22:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41896 "EHLO
+        Fri, 20 Jul 2018 09:22:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41956 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729922AbeGTNWR (ORCPT
+        with ESMTP id S1728029AbeGTNWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:22:17 -0400
+        Fri, 20 Jul 2018 09:22:22 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C56C6A73;
-        Fri, 20 Jul 2018 12:31:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34643BCF;
+        Fri, 20 Jul 2018 12:32:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Walker <Thomas.Walker@twosigma.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 17/92] hv_netvsc: split sub-channel setup into async and sync
-Date:   Fri, 20 Jul 2018 14:13:21 +0200
-Message-Id: <20180720121418.363390882@linuxfoundation.org>
+        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
+        Guy Kushnir <guyk@mellanox.com>, Eli Cohen <eli@melloanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 27/92] net/mlx5: E-Switch, Avoid setup attempt if not being e-switch manager
+Date:   Fri, 20 Jul 2018 14:13:31 +0200
+Message-Id: <20180720121419.214875716@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -52,230 +51,154 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <sthemmin@microsoft.com>
+From: Or Gerlitz <ogerlitz@mellanox.com>
 
-[ Upstream commit 3ffe64f1a641b80a82d9ef4efa7a05ce69049871 ]
+[ Upstream commit 0efc8562491b7d36f6bbc4fbc8f3348cb6641e9c ]
 
-When doing device hotplug the sub channel must be async to avoid
-deadlock issues because device is discovered in softirq context.
+In smartnic env, the host (PF) driver might not be an e-switch
+manager, hence the FW will err on driver attempts to deal with
+setting/unsetting the eswitch and as a result the overall setup
+of sriov will fail.
 
-When doing changes to MTU and number of channels, the setup
-must be synchronous to avoid races such as when MTU and device
-settings are done in a single ip command.
+Fix that by avoiding the operation if e-switch management is not
+allowed for this driver instance. While here, move to use the
+correct name for the esw manager capability name.
 
-Reported-by: Thomas Walker <Thomas.Walker@twosigma.com>
-Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
-Fixes: 732e49850c5e ("netvsc: fix race on sub channel creation")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 81848731ff40 ('net/mlx5: E-Switch, Add SR-IOV (FDB) support')
+Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
+Reported-by: Guy Kushnir <guyk@mellanox.com>
+Reviewed-by: Eli Cohen <eli@melloanox.com>
+Tested-by: Eli Cohen <eli@melloanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/hyperv_net.h   |    2 -
- drivers/net/hyperv/netvsc.c       |   37 ++++++++++++++++++++++-
- drivers/net/hyperv/netvsc_drv.c   |   17 +++++++++-
- drivers/net/hyperv/rndis_filter.c |   61 +++++++-------------------------------
- 4 files changed, 65 insertions(+), 52 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c  |    2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.h |    2 ++
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |    3 ++-
+ drivers/net/ethernet/mellanox/mlx5/core/fw.c      |    5 +++--
+ drivers/net/ethernet/mellanox/mlx5/core/sriov.c   |    7 ++++++-
+ include/linux/mlx5/mlx5_ifc.h                     |    2 +-
+ 7 files changed, 16 insertions(+), 7 deletions(-)
 
---- a/drivers/net/hyperv/hyperv_net.h
-+++ b/drivers/net/hyperv/hyperv_net.h
-@@ -207,7 +207,7 @@ int netvsc_recv_callback(struct net_devi
- void netvsc_channel_cb(void *context);
- int netvsc_poll(struct napi_struct *napi, int budget);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -726,7 +726,7 @@ static bool mlx5e_is_vf_vport_rep(struct
+ 	struct mlx5e_rep_priv *rpriv = priv->ppriv;
+ 	struct mlx5_eswitch_rep *rep;
  
--void rndis_set_subchannel(struct work_struct *w);
-+int rndis_set_subchannel(struct net_device *ndev, struct netvsc_device *nvdev);
- int rndis_filter_open(struct netvsc_device *nvdev);
- int rndis_filter_close(struct netvsc_device *nvdev);
- struct netvsc_device *rndis_filter_device_add(struct hv_device *dev,
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -62,6 +62,41 @@ void netvsc_switch_datapath(struct net_d
- 			       VM_PKT_DATA_INBAND, 0);
- }
+-	if (!MLX5_CAP_GEN(priv->mdev, eswitch_flow_table))
++	if (!MLX5_ESWITCH_MANAGER(priv->mdev))
+ 		return false;
  
-+/* Worker to setup sub channels on initial setup
-+ * Initial hotplug event occurs in softirq context
-+ * and can't wait for channels.
-+ */
-+static void netvsc_subchan_work(struct work_struct *w)
-+{
-+	struct netvsc_device *nvdev =
-+		container_of(w, struct netvsc_device, subchan_work);
-+	struct rndis_device *rdev;
-+	int i, ret;
+ 	rep = rpriv->rep;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -1535,7 +1535,7 @@ int mlx5_eswitch_enable_sriov(struct mlx
+ 	if (!ESW_ALLOWED(esw))
+ 		return 0;
+ 
+-	if (!MLX5_CAP_GEN(esw->dev, eswitch_flow_table) ||
++	if (!MLX5_ESWITCH_MANAGER(esw->dev) ||
+ 	    !MLX5_CAP_ESW_FLOWTABLE_FDB(esw->dev, ft_support)) {
+ 		esw_warn(esw->dev, "E-Switch FDB is not supported, aborting ...\n");
+ 		return -EOPNOTSUPP;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.h
+@@ -39,6 +39,8 @@
+ #include <linux/mlx5/device.h>
+ #include "lib/mpfs.h"
+ 
++#define MLX5_ESWITCH_MANAGER(mdev) MLX5_CAP_GEN(mdev, eswitch_manager)
 +
-+	/* Avoid deadlock with device removal already under RTNL */
-+	if (!rtnl_trylock()) {
-+		schedule_work(w);
-+		return;
-+	}
-+
-+	rdev = nvdev->extension;
-+	if (rdev) {
-+		ret = rndis_set_subchannel(rdev->ndev, nvdev);
-+		if (ret == 0) {
-+			netif_device_attach(rdev->ndev);
-+		} else {
-+			/* fallback to only primary channel */
-+			for (i = 1; i < nvdev->num_chn; i++)
-+				netif_napi_del(&nvdev->chan_table[i].napi);
-+
-+			nvdev->max_chn = 1;
-+			nvdev->num_chn = 1;
-+		}
-+	}
-+
-+	rtnl_unlock();
-+}
-+
- static struct netvsc_device *alloc_net_device(void)
- {
- 	struct netvsc_device *net_device;
-@@ -78,7 +113,7 @@ static struct netvsc_device *alloc_net_d
+ enum {
+ 	SRIOV_NONE,
+ 	SRIOV_LEGACY,
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -36,6 +36,7 @@
+ #include "mlx5_core.h"
+ #include "fs_core.h"
+ #include "fs_cmd.h"
++#include "eswitch.h"
+ #include "diag/fs_tracepoint.h"
  
- 	init_completion(&net_device->channel_init_wait);
- 	init_waitqueue_head(&net_device->subchan_open);
--	INIT_WORK(&net_device->subchan_work, rndis_set_subchannel);
-+	INIT_WORK(&net_device->subchan_work, netvsc_subchan_work);
- 
- 	return net_device;
- }
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -911,8 +911,20 @@ static int netvsc_attach(struct net_devi
- 	if (IS_ERR(nvdev))
- 		return PTR_ERR(nvdev);
- 
--	/* Note: enable and attach happen when sub-channels setup */
-+	if (nvdev->num_chn > 1) {
-+		ret = rndis_set_subchannel(ndev, nvdev);
-+
-+		/* if unavailable, just proceed with one queue */
-+		if (ret) {
-+			nvdev->max_chn = 1;
-+			nvdev->num_chn = 1;
-+		}
-+	}
- 
-+	/* In any case device is now ready */
-+	netif_device_attach(ndev);
-+
-+	/* Note: enable and attach happen when sub-channels setup */
- 	netif_carrier_off(ndev);
- 
- 	if (netif_running(ndev)) {
-@@ -2035,6 +2047,9 @@ static int netvsc_probe(struct hv_device
- 
- 	memcpy(net->dev_addr, device_info.mac_adr, ETH_ALEN);
- 
-+	if (nvdev->num_chn > 1)
-+		schedule_work(&nvdev->subchan_work);
-+
- 	/* hw_features computed in rndis_netdev_set_hwcaps() */
- 	net->features = net->hw_features |
- 		NETIF_F_HIGHDMA | NETIF_F_SG |
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -1055,29 +1055,15 @@ static void netvsc_sc_open(struct vmbus_
-  * This breaks overlap of processing the host message for the
-  * new primary channel with the initialization of sub-channels.
-  */
--void rndis_set_subchannel(struct work_struct *w)
-+int rndis_set_subchannel(struct net_device *ndev, struct netvsc_device *nvdev)
- {
--	struct netvsc_device *nvdev
--		= container_of(w, struct netvsc_device, subchan_work);
- 	struct nvsp_message *init_packet = &nvdev->channel_init_pkt;
--	struct net_device_context *ndev_ctx;
--	struct rndis_device *rdev;
--	struct net_device *ndev;
--	struct hv_device *hv_dev;
-+	struct net_device_context *ndev_ctx = netdev_priv(ndev);
-+	struct hv_device *hv_dev = ndev_ctx->device_ctx;
-+	struct rndis_device *rdev = nvdev->extension;
- 	int i, ret;
- 
--	if (!rtnl_trylock()) {
--		schedule_work(w);
--		return;
--	}
--
--	rdev = nvdev->extension;
--	if (!rdev)
--		goto unlock;	/* device was removed */
--
--	ndev = rdev->ndev;
--	ndev_ctx = netdev_priv(ndev);
--	hv_dev = ndev_ctx->device_ctx;
-+	ASSERT_RTNL();
- 
- 	memset(init_packet, 0, sizeof(struct nvsp_message));
- 	init_packet->hdr.msg_type = NVSP_MSG5_TYPE_SUBCHANNEL;
-@@ -1091,13 +1077,13 @@ void rndis_set_subchannel(struct work_st
- 			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- 	if (ret) {
- 		netdev_err(ndev, "sub channel allocate send failed: %d\n", ret);
--		goto failed;
-+		return ret;
+ #define INIT_TREE_NODE_ARRAY_SIZE(...)	(sizeof((struct init_tree_node[]){__VA_ARGS__}) /\
+@@ -2211,7 +2212,7 @@ int mlx5_init_fs(struct mlx5_core_dev *d
+ 			goto err;
  	}
  
- 	wait_for_completion(&nvdev->channel_init_wait);
- 	if (init_packet->msg.v5_msg.subchn_comp.status != NVSP_STAT_SUCCESS) {
- 		netdev_err(ndev, "sub channel request failed\n");
--		goto failed;
-+		return -EIO;
+-	if (MLX5_CAP_GEN(dev, eswitch_flow_table)) {
++	if (MLX5_ESWITCH_MANAGER(dev)) {
+ 		if (MLX5_CAP_ESW_FLOWTABLE_FDB(dev, ft_support)) {
+ 			err = init_fdb_root_ns(steering);
+ 			if (err)
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fw.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fw.c
+@@ -34,6 +34,7 @@
+ #include <linux/mlx5/cmd.h>
+ #include <linux/module.h>
+ #include "mlx5_core.h"
++#include "eswitch.h"
+ #include "../../mlxfw/mlxfw.h"
+ 
+ static int mlx5_cmd_query_adapter(struct mlx5_core_dev *dev, u32 *out,
+@@ -152,13 +153,13 @@ int mlx5_query_hca_caps(struct mlx5_core
  	}
  
- 	nvdev->num_chn = 1 +
-@@ -1116,21 +1102,7 @@ void rndis_set_subchannel(struct work_st
- 	for (i = 0; i < VRSS_SEND_TAB_SIZE; i++)
- 		ndev_ctx->tx_table[i] = i % nvdev->num_chn;
+ 	if (MLX5_CAP_GEN(dev, vport_group_manager) &&
+-	    MLX5_CAP_GEN(dev, eswitch_flow_table)) {
++	    MLX5_ESWITCH_MANAGER(dev)) {
+ 		err = mlx5_core_get_caps(dev, MLX5_CAP_ESWITCH_FLOW_TABLE);
+ 		if (err)
+ 			return err;
+ 	}
  
--	netif_device_attach(ndev);
--	rtnl_unlock();
--	return;
--
--failed:
--	/* fallback to only primary channel */
--	for (i = 1; i < nvdev->num_chn; i++)
--		netif_napi_del(&nvdev->chan_table[i].napi);
--
--	nvdev->max_chn = 1;
--	nvdev->num_chn = 1;
--
--	netif_device_attach(ndev);
--unlock:
--	rtnl_unlock();
-+	return 0;
- }
+-	if (MLX5_CAP_GEN(dev, eswitch_flow_table)) {
++	if (MLX5_ESWITCH_MANAGER(dev)) {
+ 		err = mlx5_core_get_caps(dev, MLX5_CAP_ESWITCH);
+ 		if (err)
+ 			return err;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/sriov.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/sriov.c
+@@ -88,6 +88,9 @@ static int mlx5_device_enable_sriov(stru
+ 		return -EBUSY;
+ 	}
  
- static int rndis_netdev_set_hwcaps(struct rndis_device *rndis_device,
-@@ -1321,21 +1293,12 @@ struct netvsc_device *rndis_filter_devic
- 		netif_napi_add(net, &net_device->chan_table[i].napi,
- 			       netvsc_poll, NAPI_POLL_WEIGHT);
++	if (!MLX5_ESWITCH_MANAGER(dev))
++		goto enable_vfs_hca;
++
+ 	err = mlx5_eswitch_enable_sriov(dev->priv.eswitch, num_vfs, SRIOV_LEGACY);
+ 	if (err) {
+ 		mlx5_core_warn(dev,
+@@ -95,6 +98,7 @@ static int mlx5_device_enable_sriov(stru
+ 		return err;
+ 	}
  
--	if (net_device->num_chn > 1)
--		schedule_work(&net_device->subchan_work);
-+	return net_device;
++enable_vfs_hca:
+ 	for (vf = 0; vf < num_vfs; vf++) {
+ 		err = mlx5_core_enable_hca(dev, vf + 1);
+ 		if (err) {
+@@ -140,7 +144,8 @@ static void mlx5_device_disable_sriov(st
+ 	}
  
  out:
--	/* if unavailable, just proceed with one queue */
--	if (ret) {
--		net_device->max_chn = 1;
--		net_device->num_chn = 1;
--	}
--
--	/* No sub channels, device is ready */
--	if (net_device->num_chn == 1)
--		netif_device_attach(net);
--
--	return net_device;
-+	/* setting up multiple channels failed */
-+	net_device->max_chn = 1;
-+	net_device->num_chn = 1;
+-	mlx5_eswitch_disable_sriov(dev->priv.eswitch);
++	if (MLX5_ESWITCH_MANAGER(dev))
++		mlx5_eswitch_disable_sriov(dev->priv.eswitch);
  
- err_dev_remv:
- 	rndis_filter_device_remove(dev, net_device);
+ 	if (mlx5_wait_for_vf_pages(dev))
+ 		mlx5_core_warn(dev, "timeout reclaiming VFs pages\n");
+--- a/include/linux/mlx5/mlx5_ifc.h
++++ b/include/linux/mlx5/mlx5_ifc.h
+@@ -857,7 +857,7 @@ struct mlx5_ifc_cmd_hca_cap_bits {
+ 	u8         reserved_at_1a4[0x1];
+ 	u8         ets[0x1];
+ 	u8         nic_flow_table[0x1];
+-	u8         eswitch_flow_table[0x1];
++	u8         eswitch_manager[0x1];
+ 	u8	   early_vf_enable[0x1];
+ 	u8         mcam_reg[0x1];
+ 	u8         pcam_reg[0x1];
 
 
