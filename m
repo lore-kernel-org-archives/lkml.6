@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7F9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 244C5ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24925206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF875206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:39:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="aAyMI2Xv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24925206B7
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="CbUgUb8a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF875206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbeGTJ0p (ORCPT
+        id S1729317AbeGTJ0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 05:26:45 -0400
-Received: from mail-eopbgr30122.outbound.protection.outlook.com ([40.107.3.122]:1245
+        Fri, 20 Jul 2018 05:26:51 -0400
+Received: from mail-eopbgr30109.outbound.protection.outlook.com ([40.107.3.109]:59520
         "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727331AbeGTJ0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:26:44 -0400
+        id S1727331AbeGTJ0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 05:26:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U58SokJTD3JR9OW+PgQgtnPZvNZmHcpmE/pRzpDrBUo=;
- b=aAyMI2XvTE2p0M/vwl+78KryEvHS1P5YwofkPsLisUdxOPRYMpBvDD8AUD5hf4f4UWiAtZfXwJ8zjUndWm/0K9LNWvx8CEcWuhf/J+0WQ+ncgTbECNR+wcRFD2mEQbTgxLpD1p2aXy1zxhVoyB8GSb4akCMDcWT3jS7q0zt7cEE=
+ bh=GXffP0Kv1n9K5xRMmZw8SUi5qq8kEqA8OG3oevy6nT0=;
+ b=CbUgUb8aBei37/QREWkYfiK67MP+ceBAFIwGZfVMaoNxoX62qkkaGozTD3qE7uVck3Y3NnvVB8GXZ5OXYmfJVwRNzhVngy+iTAiE7EkDMTGt9u/LNYwCV2/YKQ2ZrSpGMV34WVWPORVsj2UUQ+5qPZWru5RV3+MsT4ClTe8LBEk=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se; 
 Received: from orc.pedanet (85.226.244.23) by
  HE1PR0201MB2459.eurprd02.prod.outlook.com (2603:10a6:3:82::7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.16; Fri, 20 Jul 2018 08:39:26 +0000
+ 15.20.973.16; Fri, 20 Jul 2018 08:39:32 +0000
 From:   Peter Rosin <peda@axentia.se>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
@@ -49,10 +49,12 @@ Cc:     Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
         linux-i2c@vger.kernel.org, Peter Chang <dpf@google.com>,
         Deepa Dinamani <deepadinamani@google.com>,
         John Sperbeck <jsperbeck@google.com>
-Subject: [PATCH v4 0/2] Fix lockdep warning with nested instances of i2c-mux
-Date:   Fri, 20 Jul 2018 10:39:12 +0200
-Message-Id: <20180720083914.1950-1-peda@axentia.se>
+Subject: [PATCH v4 1/2] rtmutex: allow specifying a subclass for nested locking
+Date:   Fri, 20 Jul 2018 10:39:13 +0200
+Message-Id: <20180720083914.1950-2-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180720083914.1950-1-peda@axentia.se>
+References: <20180720083914.1950-1-peda@axentia.se>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [85.226.244.23]
@@ -60,49 +62,50 @@ X-ClientProxiedBy: HE1PR0402CA0010.eurprd04.prod.outlook.com
  (2603:10a6:3:d0::20) To HE1PR0201MB2459.eurprd02.prod.outlook.com
  (2603:10a6:3:82::7)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 754345e5-76b8-451f-4090-08d5ee1c4d92
+X-MS-Office365-Filtering-Correlation-Id: 40ada897-d2e9-4029-7b42-08d5ee1c514f
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(5600053)(711020)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:HE1PR0201MB2459;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0201MB2459;3:pomueAztHK6wXhG6QYsseNvWdW8+f897A5/k9KBvH4drLC1n4jxIqUkae+hxIFheI4G/qRZLXI3ECqfrxLOG0sBqdY1sEmY39IXG4fpA/HmefUDnk4BHGUF0cZbWu1j1PbqMwissv9d7+upF7X/HE62jynFMD3USpUbJR/LeXUTX7reqfP60E+wpuF9Yl0MTC8ibzIUxW8yoYeRTMkeQ6Zc5LO9Ps6JWeI/R0z7bsRZMSE3SYMLgB+VJN24RP3XN;25:9cMqmUZecxIkugcsf54hxhI6e+cRGnyCKrFVtNjmzNs5RyFUH6P25oMLkzg/DOE9NBJWd3yZbI5HxywHEWOoZ4RR2p3n6XhHDxgQpIhUtar3o9doCJ/3R3BkChDzITl/5RAdR4p7zjdNJF8WfcdZJH1DE5WPWVF4zqhngEyjyFjx/s4GRa5k3OgD9o+bI1L7PxxEcBiJnSZ2ch809GQPMhPk620WNv8zNY2LV+ASxvjd949avApRinR9HzxBCPSThHmO1wg+73WPxkDTQWI2lt7ZiqloQcxWXJk+09uDXmAFW5uwkBgkoPmjM2/jHeLUT74Fhm+jN8u76mHJA9NeTQ==;31:Qo0CJuhrCGKxAeWJvja9k1pMjlxcNf5cm3vwKmKFOTNwAiWttolcOs5Ig+Qlt/eZsqQmbfYi7uqlWBixxmTbJvXeMUeLHd3ZxGhUK2sVA2uqzXte9mI9YER50ZvEQdRHf9HyNS1l1cJz/EiYyGVknup+THYgvNEFyHo9x/yC2eTSVZQGQ6WFtIoBSfnwMan0XpKubp6YpHHf4GFyCNKvQFK54UNTc8eK6DFIvZk8g8Y=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0201MB2459;3:057o/s2szgUhAaPfF10Rub1TMACe5ejoQd/C7Gg10zCFj2b+FspXKDYPiJ+icYTkRBZuU7Q18Pyv0Vu2C4uiZ577yXljM1APsBfOZuJEB8aiN6xfce/rMnJ2Z0qQAEeEoWKuNmSfqO83evc9Hx5kBDHcoG9Z+7i+z6QVIm0mNNmIqTR1CDanXAVLv/XAjgNsB6DWGb/rav/4M96vkPJpq8rpA/PXmj6JBnZPput8XTx1HdqQht4Zn3JsuX+qGc8f;25:zWaW2O7g4UBdHDCyo/LYbOc70aIxEtDl4QVxCgjVkvyrepItyO5yGwKBbKoHxufGtmISkUEl1Jk2dH1gB/+QmdJuInZGcaquWMBDj8f/nIqigi2nZthLPm6JRd0qxL+DpmzfezKgpw5z+HLomQXWgelbUxu7pD1acNfQqcUIbYJ1OLszRlm56ZuDLBsHZsT/YfPZG4MsfOaRrQwbzar76DTVfWZAlKXqda+iRo05jQqkGsEuWboMkiBnjVnyVDZyo7Rxya1U6Pkg17KXFcafjiEv1ZUSTFmszHCQCjpAp3XUZNFBDGL++M2g4zMSfVOS5bYw7nguiBcd5i3nhEi5fA==;31:Rv89HgF4AM0mvPpACMxeVWyEWMG6UOxpkx95Dp0DhgcEs1LgX9CBCEj95bussbPRhuFb3WCfPrAR/pbQsVpgyEHFBlRKBayostMZo/+IuAsNb9J2teZB4psSOlTzWGuZ5bkpKqujhsPSwwcCXHk7+UkurnJ316OpExMljGu3xPccCIOHqh8wCjNBRzO9qwylyHgW/BD/K5fD7fVgdjpiFryXLZOkVe1Jtj/pU3HUPI4=
 X-MS-TrafficTypeDiagnostic: HE1PR0201MB2459:
-X-Microsoft-Antispam-PRVS: <HE1PR0201MB2459B54C6C1AD81639738F4FBC510@HE1PR0201MB2459.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Antispam-PRVS: <HE1PR0201MB24596311EDF5123B7672FBC1BC510@HE1PR0201MB2459.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(211936372134217)(153496737603132);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123558120)(2016111802025)(20161123560045)(6043046)(6072148)(201708071742011)(7699016);SRVR:HE1PR0201MB2459;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0201MB2459;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0201MB2459;4:+z1F2GabHeLPg1jlDYQ8ahS3ngqB2pRmo/bpbnGZSIkBtiaNz8eAw7hwWI/bQYoVCgYl1mXG1fpGjdOL5UUvFaRfniMcGCmjNAFC6jHQ2F3MEzWflK9JEg5ZG/oBa8VY0EsaQzIuQ0Q8gwslczSEFTw6mQbBEC7Ay9+mVHC09v/nFuXZl3ylBtrukSUSV7VmRl69D9N/0mdpO9SILZy/cjSK1Lixj3ZKy9gGCWWVoTqzAy/FMZfolABnErb5Gd/Wq1rGs3jUx6Pt7UDZfoWylA==
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0201MB2459;4:2x6v6ygD2vnD8D8GQSJ63mKDWittsW7tIOv3uPb/3o7FvAiKNCXuJOLT4VINXw/mFHq+CiR4sqAetPfcfAa4oblhlABNzOPqH7vramUPT1fXxZfTlUof05amWqQd5pfi4yTk4Hi/Cqz52/L5MnTiuo1dAdfc1SM/llaNkTVtMDQG9YH9Fnc/IhFZL5HYJQAPsV+3CVduuIBZqwksqxAWaqQI9/r6uQ3dmR3f5KsLmLAK62MmpdbVswizWEmSuV6zw/0aGMZOwyzd2xxIW5i+xcAKcLBkCkLbT02guGK/NU3e3a3jCBqQBK7P3tEKDakleMtLQLhoF2sI42n1ndy/WsiDWc+FV0PohULn56mqMa8=
 X-Forefront-PRVS: 073966E86B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39830400003)(346002)(366004)(376002)(199004)(189003)(36756003)(6486002)(47776003)(6512007)(6306002)(478600001)(66066001)(4326008)(7736002)(14444005)(26005)(305945005)(486006)(476003)(25786009)(956004)(2616005)(50226002)(316002)(74482002)(52116002)(51416003)(86362001)(54906003)(16586007)(2351001)(106356001)(6916009)(6666003)(105586002)(97736004)(6506007)(966005)(386003)(68736007)(7416002)(5660300001)(16526019)(81166006)(8936002)(81156014)(186003)(53936002)(2906002)(48376002)(3846002)(50466002)(1076002)(2361001)(6116002)(8676002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0201MB2459;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39830400003)(346002)(366004)(376002)(199004)(189003)(36756003)(6486002)(47776003)(6512007)(478600001)(66066001)(4326008)(7736002)(14444005)(26005)(305945005)(486006)(476003)(11346002)(446003)(25786009)(956004)(2616005)(50226002)(316002)(76176011)(74482002)(52116002)(51416003)(575784001)(86362001)(54906003)(16586007)(2351001)(106356001)(6916009)(6666003)(105586002)(97736004)(6506007)(386003)(68736007)(7416002)(5660300001)(16526019)(81166006)(8936002)(81156014)(186003)(53936002)(2906002)(48376002)(3846002)(50466002)(1076002)(2361001)(6116002)(8676002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0201MB2459;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: axentia.se does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR0201MB2459;23:he2T9BzMQtvvSerMhdp//MWSLW5ruAPiNKJIurt?=
- =?us-ascii?Q?g+o1PBLR1JYlniaasX/MLnZBdY3XfZ29hQcOj/owQfWu3HREmGIm9NOmQqOr?=
- =?us-ascii?Q?/TtBBWUkhQsjh+gwpqKvjBtbXe5G+ZqrcIdfM63nGz+HCPDasciF7TGlcbIU?=
- =?us-ascii?Q?OsCfTUIH735O4pXAm/472gf4mRVoEFaEMZA1SKZfqmpDAq7w0P7Ikp4R5uFT?=
- =?us-ascii?Q?t5QRzlTrPUdXsbdBDYuC+ARcxL7/A9w/HpczLB6lt8vSx0chSUS0RX1yTdR2?=
- =?us-ascii?Q?VGsI4qyRayVR6o0fhkzW4RMr9pm9tNAKaIvw0GcZ66yJDJAcXuVfdgM5lUem?=
- =?us-ascii?Q?aAenXscKidOOGzJCzbT1m1bElRWfl8ROWZL1bxYD0ztqcJuF2OiHz1HpVLUd?=
- =?us-ascii?Q?bfhPXb+eXWF6sLoizmd5HFXtMOqvYuRKGJLn5iV9VsrNQCpCQm7sCDx/DY69?=
- =?us-ascii?Q?e8fkPWeMKjyHaBBwFOLnXjMubd7ApruJWl1MYxJLWWYHnsLYKwZGDoUeTpzh?=
- =?us-ascii?Q?j21dpjxjIgv3u31a1k5p+bBwq5QCKTnmE4h0nV53uX2CpoaWRKr13HdULG6N?=
- =?us-ascii?Q?w5u0/OjJIZ2PkPN0L0pA9W8CWC+u8TcVuK8PsiN/+hCdCEF9LnDbxEhwJ158?=
- =?us-ascii?Q?Q8tjHGZdYumVydqadgX/ljeuJu6WGWkM1YVQfbrGtjdKRrhxn74cddXyg7ty?=
- =?us-ascii?Q?sx8bPNpYanoksCoFXBZoUT77/bvE3aO0YmIjN8m+nKnnamW2WjpNOmR8v3WR?=
- =?us-ascii?Q?RuZGH+KxyBoLKsTTjDiJIPdOeWUoL5RDiOGFrYeubKFis3IZ11TXtboUMg4C?=
- =?us-ascii?Q?c3i0yog00Tpeo38wQIT9Gx1Zzdb1gmR962nNNxZs5EpHiR0B740DQA+NrwLv?=
- =?us-ascii?Q?rG8jN0G+csNpoKlCxwLcVZZOSuxo0nXA1KPNXdzUVtfdIV7UUSHVAaO/XNaC?=
- =?us-ascii?Q?VcXRCiDhXvPmenErPQx5pCpR3PGpqfHuWqC+xbj3joisZNbwxoYJnbGqVCah?=
- =?us-ascii?Q?2Bl8Cs+rrqKNaqhYJy76K+Igg13N6mKEYBXnuk+EepUGVqzGqZFfzHUfOhlK?=
- =?us-ascii?Q?zUCU6hXZndIOiIGTfWb6KG4HETzVdTkVMg2kB+lkQkro0S9Z+bLilk12l4BM?=
- =?us-ascii?Q?xYzdDGAGYk7Hy55ne3I9YDc/xXUbgBEJuy0agwbWmy5DaFSqibddXuKHP3qx?=
- =?us-ascii?Q?O8zMq10hTf5i2yRLfuMy/1phdPcO35YpLcQfclJyL9BixotawY8uKXGVRusN?=
- =?us-ascii?Q?1MYkSaqMH9hacs+18mTd0RrxFOuweDLslqdyNDuXgsGbNPG5CTIi721u+nlN?=
- =?us-ascii?Q?DG/B0k56A532Q0GtQjvqzCH0=3D?=
-X-Microsoft-Antispam-Message-Info: ParenIl4KimngzxWHdRvyiW8fb22HvVfKPM8k9E8DhcKnSFDN6t0RMIY6xRweXNhF66x4Xf2DRru3AtQb6ugvpLWp1vTwlql3xn54QGlwIQiaSEpaPBK851KDaOHq3YUjYH1vA05fdF7ize5wz1Zk9O/TtCfwnywowF58XZzxv8ZSj5/9xWFWLdXlVUKQAayeCinIHoBnPcWYPzl4WoMf+De2U4J6N39+eAticPOkpaSoVAQflUb96rM6C2t+DP2JB5rkbK1HpfbS5dgd6+xnSIJy0idkTA6p8Xpcu7IVs9/7mo3FIshnH+374Pvh+9Gr84n8mrczqht8mYExgmSYXQer6vnXmijv7ED7blyy9Q=
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0201MB2459;6:K6iyqAOJS5v4VQ2xxN/lBHXvkkuaChevyRBu8COvsgGdgNCnDhigSnYRCPNC0mDNFqVpQ4m9mkWY/OsClmVoiUCH4U0A4bE57WpYARLAjlFK57B48FxT1/XjW1pBAE4JTL2t9pq7H8V6D7FnGg4L1esJaPSTNfZiezKYNZ1zcvvVlMrJ8d3BaYaPnbj6c0ypJtqLhchjajEUiyCaW7AoC2LcW5VQPlrm/mhEX84y7HIATDpCBGGJzjrkXsKW8o/hIgzKyPpLhgqlDq/pghhl58ko9uJydFRXqDq7k+pwjUJNAMxFA6ayCz8tO30YbZtsiFcendM53AI9kdbuw2EXTALApDaDO/2ok0uHxlyoCEA49uFULELuoSQIWcim+Ma6T2DswqfEBK5KwkxLtwyTYInje8P34SuQcLaMEU6QLs2KR2oe+EYHgQjwXaNzCe3SyAg8tVCelnXFoEtGglo0Ug==;5:nUUuwTv/9lHACzj6FSkBoWrWQ5aG6NC6YxRQBd7WITTV+cZZaFtdVdgMHAnKsn758RZInURMptwEH4tZUPHQfRYqzMc0AGr0U98bxl+vlvry/yDQeV+gYGQLDuTEjK/UVMk/9Yk0QBcbLHTzkk9MMvuNXNPZfqjdEj3bI4sDaF4=;7:3Y9ftf+E8W6971b4oqUB8y5dcEKpVj64e4xnfmIBdPh9MvGA4nB5MeCdRfgnjCnv4Gys04wKwsPUzQf7W+ZWDqdWXDD0cpZ5sZAnHy9FuiiU8Zy788W4OhGRnHeS2pnV9R/M7r3f90r4AGFbsO4EO02lxoYoq7Bf/8v7jCgWl/vsqyP+seyZ5wnRU9xtZk4ccAzvegpl6yy7sY5nxh0EGQmQltUZqJf4TikjEKvhXojGqktMIZizTHj5bFq3+65o
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR0201MB2459;23:bVQytVOMIkqaIJkhXpI2FllxA9nb+vqiKwCbTg+?=
+ =?us-ascii?Q?u3OUacZK+3gIFUPKC11Gt3ZS7XJu6lYGeIRiCArzyj5kqwxAby6iNOhPv0xf?=
+ =?us-ascii?Q?GmpBheu/wBCoc8M7TojAjSsbA/FVlC6gwPNH3R3zdKPza/5ykomRMveTxdON?=
+ =?us-ascii?Q?/dNQbT7N/ruYDAjb8P37ettXUKKTY77YxAdsl7HRN6xgKIPeq0p5r2pn8p6K?=
+ =?us-ascii?Q?x4/8qORojuLRFigeAf716n7kaJT+KWRm617R9CGzWzi8LjwJeOEWGbf1k4yg?=
+ =?us-ascii?Q?1YJR/P4tpGB4w8eqj27OEw9NJ6sFURZGBKnkNBbYW+pZ7ulNLhPuMKc7W1UO?=
+ =?us-ascii?Q?8T0L7B0DgfwmntzNz2cJskeLaQ89ls0U2f+e8PhoNHyhrKSl0TRkJ45q+BXA?=
+ =?us-ascii?Q?dk0trA6kCid+CS3fuiboOHIqc0J0dpwMRyiGzpP9gS5CSCYoi/Osuq/UtxZM?=
+ =?us-ascii?Q?szbL6nVA/B7TsscDHJPVzdoWwnbzrR1/1rhr3uyhjR76kSuOPNTIfo1kTni2?=
+ =?us-ascii?Q?m2jpJtBUTVVmTVmiuPASBH842EJmWrUItSTVq+tQV0035hs53MEVQw54sXbU?=
+ =?us-ascii?Q?Dcli/axbPtiMu36ecGXXuQxtD2Hq5zW8DXV35OnjUgcW0ZcvMHeNO+2jTSDd?=
+ =?us-ascii?Q?Gcbvp0C9IUql/IcxwDlYM6KcsJPdzXZCScmz7DlvfSDdH4mbMM7y4PGai75i?=
+ =?us-ascii?Q?ALtMA4BAP3KWhPZmAXLS8MW5mDFs5a1uNPBYX2KD55PPmDlvtT9uge/3XKGL?=
+ =?us-ascii?Q?kBnEIV8RRU6l143AdczVOybBXlTzIwMiMXk9IVjAcDJhcQ3zQgF4Hld4tCt3?=
+ =?us-ascii?Q?uYJfxuuex6PrGClYhjy0hjrZWVBfR8x9PZDk5stkYU1SVI/qYigX5kAoovJG?=
+ =?us-ascii?Q?+ZBU5EMfo/wtTcI+NpYFbzLJTdPoQWXYOSPTnXb3oi+S2bz3xOeYs4BG3+U2?=
+ =?us-ascii?Q?8nnWWdcgH82EYr+8WENF95yzF2bUioa72r2X9RE33glVWpkyGAhgvDS4gWhu?=
+ =?us-ascii?Q?RYC6l7ZOF77AEtIIvdKtCMbm08oolK42o9v3ACNXsbbbbolux8fktdmAGkxc?=
+ =?us-ascii?Q?eQ0dslyAOPQZoOuYifXLLtAAOYHaZHHVuk45buWfu85KmFLjI+cUhrjm5dzz?=
+ =?us-ascii?Q?ROx1y3b3zVyvZiL6pnBtqUjcBaAZRxw3q+O0OYDLaXy8BHeHQJ5XvaUaKAEk?=
+ =?us-ascii?Q?RW7mEVKYE+IasN4TqQbov9bJQxrYl5N8cZddexlCQJ/RDlcNvQbrSjKv/sZ/?=
+ =?us-ascii?Q?Ank5lQeaWED2dOuKvD/GOEAm7uqYUaY9/LoAX1v0YDgT1sROg3ILOQ8Zai8l?=
+ =?us-ascii?Q?jUuI42mH8YssDcmM1ePpuz20B0Lc1sgcj4sY6jBKkSa09vPHNE/9ESc35D+h?=
+ =?us-ascii?Q?h7sFUvQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: 6zudZnde918EYlUjVIRyBJ2Y2Ad4KJ8rAAGv+32Qwr1CGBK+AeFCheIoOcLdM9tnrqWr7mtyBSKNbY5Muht5IczXgDbOcQu7nx2IQR/hgghdDhjnIfaVBjxSJ/AHf74k1LU+IU2B5nlBQOAZuxYwolYplAgB1dTfT2ZXodO9acPxph99pHYISaRepfIpxv36qYH2zinOqzVe9kq8rF4dw++aCL/toR5Jq1eAHGqO6WGvycbYgvqADJQvLmFUKL5uE1fBgA23njJSfy/yHBKscIwbiA1doSXfjs3opNchzFni8N/Pnc08HS8RgOqALb6NDDvloLadgSE86V5cS2LGUEjRwUIwHtF4P0MtHyujZcQ=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0201MB2459;6:IdVegOXVbIIDKxq49Ux9JcbWtDV4tkCr1m15s6EIGxJKsOHfwG2vMHnrH47TW7tioztOADW671s6aQjvjE1AVF+cLFBTfryG4mnCXORFzqRqi55vddlYl+l50NqeYEoQRphRvXn+qst/pRAKIKdkEtX9ck5DPw0OehWrEf/4DAjEd35JRaPcrG8uRYTdZ9ZSTdY0OZq1/FTPbJVz45vjOqrKfn9QQUY39fj74UCpCX2lGfKOvdTSodCjgUsEBXxUEh6SUHvy6y+/lk4v9TIWsY92ZuqYqssPkOGM3BLpStj+Gkbl/xhoR2PyRiKgPf2Eh9JPFq34WlAFg49lm3pPgmHo+SQxHubzueffG7wA0h7lljY35bgUIWEGFI9tlCmndXKiWqKQhbrYTzl2CLeBmHlrFGU/YQZfx9xbPOh1gxI03331uHo+rrOicik+JcOVHoheEbwPy32J9SvTsZHPTw==;5:Pg64EHPUM4RL5OnA1gTgJgfFZzcwy37XfXsPW1yyCZWmgdHt0mCcmj+8J1o9ZJWouo1PUBx9XXefiw2RoBOb1AYABSFplmg/FXL6U3sucS2abYsRjwb6NFvXX86JxWPwrwKs8BbrV5docfk0u3B2hbm3GxT2anLrnuoIctyQXbk=;7:DieiLPXY7NEY9xz2SxCjbRHmOa5NBA9gwtY1pdBsSl1yRMSk0JSm58BFb+ofgTS31kxje2xS4tvfeSsKJEw4AJqdLM0/pBqqJv2U1K7y+j9dVb10iRTbKHrrFcsl8G2SKJ5DkTfOv8ZhqUxZwpin/IbPVMGXN3PFYIvLxyq+9Upv2jbQpQsYbNa5rH8unMj7RS1ofUANPGLJvW8FlVC7dEarnZ8dzSaMN2xHgeW0LWrKKjViwKC+SBAc0hqML4rT
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2018 08:39:26.7265 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 754345e5-76b8-451f-4090-08d5ee1c4d92
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2018 08:39:32.9998 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40ada897-d2e9-4029-7b42-08d5ee1c514f
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0201MB2459
@@ -111,44 +114,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+Needed for annotating rt_mutex locks.
 
-Ping. This is almost a resend of v3, but I added tested-by tags from
-John and unwrapped a line in the commit message, so it's a v4.
+Tested-by: John Sperbeck <jsperbeck@google.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
+---
+ include/linux/rtmutex.h  |  7 +++++++
+ kernel/locking/rtmutex.c | 29 +++++++++++++++++++++++++----
+ 2 files changed, 32 insertions(+), 4 deletions(-)
 
-How is this going to find its way to Linus? I can move this through
-the i2c-mux tree, but I obviously need a tag for patch 1/2 for that...
-
-Cheers,
-Peter
-
-Changes since v3    https://lkml.org/lkml/2018/5/24/994
-- Added Tested-by tags from John.
-- Unwrapped commit message for patch 2/2.
-
-Changes since v2    https://lkml.org/lkml/2018/5/24/176
-- EXPORT_SYMBOL_GPL(rt_mutex_lock_nested) is more appropriate (the
-  rt_ prefix was missing).
-
-Changes since v1    https://lkml.org/lkml/2018/5/24/93
-- Further compile tests indicated a missing #define for rt_mutex_lock
-  with lockdep enabled, so that one is added.
-- I have verified that I don't get any lockdep splat for a local i2c-mux
-  setup with these patches applied, and that I do without them.
-
-Cheers,
-Peter
-
-Peter Rosin (2):
-  rtmutex: allow specifying a subclass for nested locking
-  i2c: mux: annotate the nested rt_mutex usage
-
- drivers/i2c/i2c-core-base.c |  2 +-
- drivers/i2c/i2c-mux.c       |  4 ++--
- include/linux/rtmutex.h     |  7 +++++++
- kernel/locking/rtmutex.c    | 29 +++++++++++++++++++++++++----
- 4 files changed, 35 insertions(+), 7 deletions(-)
-
+diff --git a/include/linux/rtmutex.h b/include/linux/rtmutex.h
+index 1b92a28dd672..6fd615a0eea9 100644
+--- a/include/linux/rtmutex.h
++++ b/include/linux/rtmutex.h
+@@ -106,7 +106,14 @@ static inline int rt_mutex_is_locked(struct rt_mutex *lock)
+ extern void __rt_mutex_init(struct rt_mutex *lock, const char *name, struct lock_class_key *key);
+ extern void rt_mutex_destroy(struct rt_mutex *lock);
+ 
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++extern void rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass);
++#define rt_mutex_lock(lock) rt_mutex_lock_nested(lock, 0)
++#else
+ extern void rt_mutex_lock(struct rt_mutex *lock);
++#define rt_mutex_lock_nested(lock, subclass) rt_mutex_lock(lock)
++#endif
++
+ extern int rt_mutex_lock_interruptible(struct rt_mutex *lock);
+ extern int rt_mutex_timed_lock(struct rt_mutex *lock,
+ 			       struct hrtimer_sleeper *timeout);
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 4f014be7a4b8..2823d4163a37 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1465,6 +1465,29 @@ rt_mutex_fastunlock(struct rt_mutex *lock,
+ 		rt_mutex_postunlock(&wake_q);
+ }
+ 
++static inline void __rt_mutex_lock(struct rt_mutex *lock, unsigned int subclass)
++{
++	might_sleep();
++
++	mutex_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
++	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
++}
++
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++/**
++ * rt_mutex_lock_nested - lock a rt_mutex
++ *
++ * @lock: the rt_mutex to be locked
++ * @subclass: the lockdep subclass
++ */
++void __sched rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass)
++{
++	__rt_mutex_lock(lock, subclass);
++}
++EXPORT_SYMBOL_GPL(rt_mutex_lock_nested);
++#endif
++
++#ifndef CONFIG_DEBUG_LOCK_ALLOC
+ /**
+  * rt_mutex_lock - lock a rt_mutex
+  *
+@@ -1472,12 +1495,10 @@ rt_mutex_fastunlock(struct rt_mutex *lock,
+  */
+ void __sched rt_mutex_lock(struct rt_mutex *lock)
+ {
+-	might_sleep();
+-
+-	mutex_acquire(&lock->dep_map, 0, 0, _RET_IP_);
+-	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
++	__rt_mutex_lock(lock, 0);
+ }
+ EXPORT_SYMBOL_GPL(rt_mutex_lock);
++#endif
+ 
+ /**
+  * rt_mutex_lock_interruptible - lock a rt_mutex interruptible
 -- 
 2.11.0
 
