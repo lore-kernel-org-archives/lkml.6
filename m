@@ -6,128 +6,127 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88102ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E462ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32353206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:45:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5798C206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:46:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="h2aLNmO+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32353206B7
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoTwqdmE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5798C206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbeGTMdL (ORCPT
+        id S1729922AbeGTMdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 08:33:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36316 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727408AbeGTMdL (ORCPT
+        Fri, 20 Jul 2018 08:33:44 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:36361 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727408AbeGTMdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:33:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=f818n1gZTZhbN1EYhmiY+1eRCpC3kyC0eUV5hsrW/qg=; b=h2aLNmO+yksjiyJV3+CG6soY/
-        ji4eK+8iTm66YvCpL6c257jnObE7vd9cnxyTHHybR6tRBcqlyN0yHEjji2do0+mfZ68upyVW3zqP2
-        NOlNBNwih0L0E3Zwx4WjKBDicELn5GpnQ/rNRX4bIlrHgpr5e56rIn2WhqzaX2+6pIKtA=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fgTqQ-0008Ka-O0; Fri, 20 Jul 2018 11:45:10 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fgTqP-00059h-TG; Fri, 20 Jul 2018 12:45:09 +0100
-Date:   Fri, 20 Jul 2018 12:45:09 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject: Re: [PATCH 0/5] crypto: add IV generation templates
-Message-ID: <20180720114509.GA10784@sirena.org.uk>
-References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
- <CAK8P3a0T0Ku-2GOY8fT38LVy4GpvVSsx=szi0ZNEUq8Z_hZweQ@mail.gmail.com>
- <CAKv+Gu8uD4NNS9SaWdSST7n+984ybTBLhGDpq3k5GG4o1+PMWA@mail.gmail.com>
- <5d0bb72c-862e-63be-3cc5-83ed02b9a575@huawei.com>
- <CAKv+Gu-hvEUyOOh_xpYsSj2WTcbM1FwRnJ1DkTGH1UjxkppNMQ@mail.gmail.com>
- <20180719155026.GF27938@sirena.org.uk>
- <CAKv+Gu_mb26HRi==5oeQyZ7ZOgifg7RUNt2c2V=tTqvFrMYq5g@mail.gmail.com>
+        Fri, 20 Jul 2018 08:33:44 -0400
+Received: by mail-yb0-f196.google.com with SMTP id s1-v6so4509601ybk.3;
+        Fri, 20 Jul 2018 04:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6sEETIyfIWdZRxqCxHBW0J9SmgRvXDxvZJWaFQVYhbs=;
+        b=SoTwqdmEbMmonRN971Cup0y96sOq+fVjiBQwt8k5GQW3n/CY3/uphhAc+dbm0ZQHbC
+         WRvSknKlP5dMGiyUdna2lEg1NrNp369STOC6hvl0EjNFAdz0UCqezggg524ncXMC4R4o
+         O8CHWpfqaQUpje/dSk3IQf7z1vU3XhVwFntucnj5TAPxJItXnBeC63IqvR+fbxqdaeGn
+         ZgsLgpFeeWocjSdcNiPbyOJFE8RItgazlBaNJ04oTs8Ffu5BnKndtIjFDhOQsa3Zyb7K
+         7zjV6jLgnqoW2itWkpjHi7sDcKn7qIaEnOmBpxCmnf79JoyTNcH1aVQDLhdVT0m1MoWf
+         7DUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6sEETIyfIWdZRxqCxHBW0J9SmgRvXDxvZJWaFQVYhbs=;
+        b=l2CbcaUi92IuR9bzQJofvNw9Xo6rkI2QUJ90EiRROAgHM25WEsVxr0oAtdquVd9sFA
+         mEb8pBhziq5zywPcRikYKHwn1XG2lB3xzYnux01Ihsu/FpIJ7KHn00NWGTJdNsSIM9c1
+         yx54t5Gbftf0aZwnDuKy6ieiqAo5nJRDpLtqQu05UaPVrS2FsCYiCvPvg9+7KS3SmkCu
+         W8Zkw9E2Bgjj9t1pnCdkRf1JYJm3bptY+UEasyAhCDZaRpM+SR/gS0pgiRWCoRa9BVwk
+         pLEsjvv7EFsrf7TQEHCPlSj/4h8opJGwojBII2KuH3Fd3oGOxp27B4x+wPDfZSWS0xKT
+         eqIA==
+X-Gm-Message-State: AOUpUlFloULn3EwClmCVgN81pMODfKcGUYtUqRg0SSnzYhrfnr4JH0+6
+        2nOIJrvE+XnyigenncvlIvs=
+X-Google-Smtp-Source: AAOMgpev4EXLS5twupEoWktG+YliRX/QAgf52IxrD6AxT2x1DSOZJ83Gr+NRsRmcKDzYtb40euMCGw==
+X-Received: by 2002:a25:63d6:: with SMTP id x205-v6mr789287ybb.248.1532087152044;
+        Fri, 20 Jul 2018 04:45:52 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:180::1:5c80])
+        by smtp.gmail.com with ESMTPSA id 141-v6sm757374ywj.65.2018.07.20.04.45.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 04:45:51 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 04:45:49 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+Message-ID: <20180720114549.GY72677@devbig577.frc2.facebook.com>
+References: <1529825440-9574-8-git-send-email-longman@redhat.com>
+ <20180702165322.GI533219@devbig577.frc2.facebook.com>
+ <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
+ <20180703155823.GS533219@devbig577.frc2.facebook.com>
+ <20180719135224.GE2494@hirez.programming.kicks-ass.net>
+ <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
+ <20180719153045.GT72677@devbig577.frc2.facebook.com>
+ <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
+ <20180719165201.GU72677@devbig577.frc2.facebook.com>
+ <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_mb26HRi==5oeQyZ7ZOgifg7RUNt2c2V=tTqvFrMYq5g@mail.gmail.com>
-X-Cookie: This unit... must... survive.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---0F1p//8PRICkK4MW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Jul 20, 2018 at 01:31:21PM +0200, Peter Zijlstra wrote:
+> On Thu, Jul 19, 2018 at 09:52:01AM -0700, Tejun Heo wrote:
+> > On Thu, Jul 19, 2018 at 11:52:46AM -0400, Waiman Long wrote:
+> > > BTW, the way the partition is currently implemented right now is that a
+> > > child cannot be a partition root unless its parent is a partition root
+> > > itself. That is to avoid turning on partition to affect ancestors
+> > > further up the hierarchy than just the parent. So in the case of a
+> > > container, it cannot allocate sub-partitions underneath it unless it is
+> > > a partition itself. Will that solve your concern?
+> > 
+> > Hmm... so a given ancestor must be able to both
+> > 
+> > 1. control which cpus are moved into a partition in all of its
+> >    subtree.
+> 
+> By virtue of the partition file being owned by the parent, this is
+> already achived, no?
 
-On Fri, Jul 20, 2018 at 10:02:21AM +0900, Ard Biesheuvel wrote:
-> On 20 July 2018 at 00:50, Mark Brown <broonie@kernel.org> wrote:
+The currently proposed implementation is somewhere in the middle.  It
+kinda gets there by restricting a partition to be a child of another
+partition, which may be okay but it does make the whole delegation
+mechanism less useful.
 
-> > Existing hardware can definitely do the IV generation and I believe that
-> > it can chain multiple sectors together though I'd need to confirm this,
-> > as mentioned elsewhere in the thread the ccree driver is for one of
-> > the relevant devices.  I've poked some relevant people.
+> > 2. take away any given cpu from ist subtree.
+> 
+> I really hate this obsession of yours and doubly so for partitions. But
+> why would this currently not be allowed?
 
-> As far as I can infer from the ccree driver source, IV generation and
-> en/decryption are separate operations, and given that each sector
-> requires both operations to be applied in sequence, letting the crypto
-> layer handle an entire bio does not have any benefit *at the moment*.
+Well, sorry that you hate it.  It's a fundamental architectural
+constraint.  If it can't satisfy that, it should't be in cgroup.
 
-Interesting...  they were reporting some benefits from that with their
-out of tree driver prior to upstreaming (and there are other
-implementations out there, that's the only one I definitely know about).
-I have to confess I didn't look at their in tree driver, looking briefly
-now it looks awfully like the hardware should be able to chain IV
-generation together with encryption without bothering the CPU which
-would be good enough.
+Thanks.
 
-> In fact, it seems to me that the ability to use protected AES keys is
-> much more appealing than any performance argument (including 'it may
-> be slower but at least it does not load the CPU'), so some background
-> on how such a change would enable this use case would be beneficial as
-> well to getting this adopted.
-
-Right, that's another benefit which was on the radar for followup work.
-
-> So my recommendation would be to focus on moving the IV generation
-> into the crypto layer, but conservatively, and not confuse people by
-> making additional changes that could theoretically improve
-> performance, but only on hardware that does not exist.
-
-It certainly seems like splitting things up will at least allow things
-to progress.
-
---0F1p//8PRICkK4MW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltRy0UACgkQJNaLcl1U
-h9D4cAf/UeA1QxAG8k/NTSGp51av2cdaz/Een7dRZFxOJcXArVrBiJFvNIT//4OX
-F7vKF9RFwOFi+okI30UvaLKslVPryr3wi7cLubcwsrJnCgPvYFTcrfkOwZu1FCs3
-BmT+w+eSiUIrd2dy+Lobb8rzSQPIJDPW5mo6zvAPK8Ml1mpNyrAgbg4AgH2KkCWm
-oLBEYxhg7348vL65RrYEbYNDvIpZ54chIrxwFsknVK1iSEm+orJR0k9EFMhw7wmZ
-XSie3/248JCKl0A/poweBaGXoxjRJM9ilSD2HICwodFJImwfmtiH6+XPMaibheTY
-Q6gEEiIPvz+o6snHzsD4qKSBOwRJQA==
-=5nTD
------END PGP SIGNATURE-----
-
---0F1p//8PRICkK4MW--
+-- 
+tejun
