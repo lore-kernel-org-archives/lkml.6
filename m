@@ -2,101 +2,86 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8E2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCAEECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 886AB206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="qcS4GNuI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 886AB206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 534A7206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534A7206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388859AbeGTNWr (ORCPT
+        id S2388870AbeGTNWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:22:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34626 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388096AbeGTNWr (ORCPT
+        Fri, 20 Jul 2018 09:22:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42372 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387912AbeGTNWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:22:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=euSAR+bRP7OCYWwwc/+ZIg0WbYHgukaJbpeJf/zoP5M=; b=qcS4GNuIayNnH4M+7BGw+nb5q
-        ep6hv/VaesrU4/OYZ3HWZZIaruwfkRYddMp/aT7gDetZPGZ/vP92GGLK2Vdng8yElEmnN12P+VYv1
-        OVTFRVTS+0TPg5/+N8absgakiuXsxz4pOtYFMrz3ZzrK5LQZo6m+uGC/J6OFf+EvveoT8=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fgUcN-0008O4-Jg; Fri, 20 Jul 2018 12:34:43 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fgUcN-0006hv-5s; Fri, 20 Jul 2018 13:34:43 +0100
-Date:   Fri, 20 Jul 2018 13:34:43 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: Re: [PATCH 4.9 11/66] spi/bcm63xx: make spi subsystem aware of
- message size limits
-Message-ID: <20180720123443.GF10784@sirena.org.uk>
-References: <20180720121407.228772286@linuxfoundation.org>
- <20180720121407.910738439@linuxfoundation.org>
+        Fri, 20 Jul 2018 09:22:49 -0400
+Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D94BEC93;
+        Fri, 20 Jul 2018 12:32:43 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 34/92] net_sched: blackhole: tell upper qdisc about dropped packets
+Date:   Fri, 20 Jul 2018 14:13:38 +0200
+Message-Id: <20180720121420.010338322@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
+References: <20180720121417.206337808@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0rSojgWGcpz+ezC3"
-Content-Disposition: inline
-In-Reply-To: <20180720121407.910738439@linuxfoundation.org>
-X-Cookie: This unit... must... survive.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
---0rSojgWGcpz+ezC3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+------------------
 
-On Fri, Jul 20, 2018 at 02:13:28PM +0200, Greg Kroah-Hartman wrote:
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-> The bcm63xx SPI controller does not allow manual control of the CS
-> lines and will toggle it automatically before and after sending data,
-> so we are limited to messages that fit in the FIFO buffer. Since the CS
-> lines aren't available as GPIOs either, we will need to make slave
-> drivers aware of this limitation so they can handle them accordingly.
+[ Upstream commit 7e85dc8cb35abf16455f1511f0670b57c1a84608 ]
 
-Same review comment as before: this will ask other code (which
-presumably never worked?) to change how they use the hardware in order
-to cope with the limiations which seems a bit risky to me given that
-limits like this are fairly rare so that code isn't super well exercised
-in general.
+When blackhole is used on top of classful qdisc like hfsc it breaks
+qlen and backlog counters because packets are disappear without notice.
 
---0rSojgWGcpz+ezC3
-Content-Type: application/pgp-signature; name="signature.asc"
+In HFSC non-zero qlen while all classes are inactive triggers warning:
+WARNING: ... at net/sched/sch_hfsc.c:1393 hfsc_dequeue+0xba4/0xe90 [sch_hfsc]
+and schedules watchdog work endlessly.
 
------BEGIN PGP SIGNATURE-----
+This patch return __NET_XMIT_BYPASS in addition to NET_XMIT_SUCCESS,
+this flag tells upper layer: this packet is gone and isn't queued.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltR1uIACgkQJNaLcl1U
-h9BUTQf/d9C242WURaroIWlDWbaqS4s4kDexU4sgw1nFDtCjcM+10kd56l4iHrNE
-Zcm268MzVlXa938Bs4d9EkdOBhPyHFyl8Za0xehy9rXJTsTe5Io7VdzGoWwrhRHD
-UZlmVLkEFx0XZouwODlGedGff8UY0CqswZKjyNHI7axhg6NmSyllI6CCRL1ELecL
-JwT6VvAjfCkAMnfyYUgU64Kp4K91RIfuT+p5u4wrbKuqbuLbafO4tGPV4L2gebaR
-Q+i+a6bem4Os2ellWkvsmHWeQW2kW1tNnz8UFK488aL+dx+ntQFzmEkF92egFq6S
-UMpvLLhFGYhjykFVAY480YUnsmMRBg==
-=f27K
------END PGP SIGNATURE-----
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/sched/sch_blackhole.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---0rSojgWGcpz+ezC3--
+--- a/net/sched/sch_blackhole.c
++++ b/net/sched/sch_blackhole.c
+@@ -21,7 +21,7 @@ static int blackhole_enqueue(struct sk_b
+ 			     struct sk_buff **to_free)
+ {
+ 	qdisc_drop(skb, sch, to_free);
+-	return NET_XMIT_SUCCESS;
++	return NET_XMIT_SUCCESS | __NET_XMIT_BYPASS;
+ }
+ 
+ static struct sk_buff *blackhole_dequeue(struct Qdisc *sch)
+
+
