@@ -2,132 +2,163 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF339ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FF9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4C820652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:25:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4C820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E7BDD206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:30:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BDD206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbeGTLNa (ORCPT
+        id S1728249AbeGTLRx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:13:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32934 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727303AbeGTLNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:13:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07B2A7A9;
-        Fri, 20 Jul 2018 03:25:56 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE75D3F5B3;
-        Fri, 20 Jul 2018 03:25:54 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 11:25:52 +0100
-From:   Morten Rasmussen <morten.rasmussen@arm.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Qais Yousef <Qais.Yousef@arm.com>
-Subject: Re: arm: v4.18-rc5 with cpuidle on TC2 (A7 boot) spectre v2 issue
-Message-ID: <20180720102552.GC19287@e105550-lin.cambridge.arm.com>
-References: <2abc6c11-2e8c-a4ea-6911-0f495d90ace6@arm.com>
- <20180719100109.GH17271@n2100.armlinux.org.uk>
- <20180719133222.GL17271@n2100.armlinux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180719133222.GL17271@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 20 Jul 2018 07:17:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38708 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727216AbeGTLRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 07:17:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D4963ADA7;
+        Fri, 20 Jul 2018 10:30:15 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] fs/seq_file: remove kmalloc(ops) for single_open seqfiles
+Date:   Fri, 20 Jul 2018 12:29:52 +0200
+Message-Id: <20180720102952.30935-1-vbabka@suse.cz>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 02:32:22PM +0100, Russell King - ARM Linux wrote:
-> On Thu, Jul 19, 2018 at 11:01:10AM +0100, Russell King - ARM Linux wrote:
-> > On Thu, Jul 19, 2018 at 11:42:50AM +0200, Dietmar Eggemann wrote:
-> > > Hi,
-> > > 
-> > > running v4.18-rc5 (plus still missing "power: vexpress: fix corruption in
-> > > notifier registration", otherwise I get this rcu_sched stall issue) on TC2
-> > > (A7 boot) with vanilla multi_v7_defconfig plus
-> > > CONFIG_ARM_BIG_LITTLE_CPUIDLE=y gives me continuous:
-> > > 
-> > > ...
-> > >  CPUX: Spectre v2: incorrect context switching function, system vulnerable
-> > > ...
-> > > 
-> > > messages.
-> > > 
-> > > Work around is to disable CONFIG_HARDEN_BRANCH_PREDICTOR.
-> > 
-> > or disable big.Little if you want the hardening.
-> > 
-> > The choices are currently either protection against Spectre or big.Little
-> > support since the two are mutually exclusive at the moment.
-> 
-> An alternative would be to give the patches in the attachment a test.
-> They're not finished yet, so I haven't sent them out, but still worth
-> testing.
+single_open() currently allocates seq_operations with kmalloc(). This is
+suboptimal, because that's four pointers, of which three are constant, and
+only the 'show' op differs. We also have to be careful to use single_release()
+to avoid leaking the ops structure.
 
-Thanks for sharing. I can confirm that your patches do cure the flood of warnings.
+Instead of this we can have a fixed single_show() function and constant ops
+structure for these seq_files. We can store the pointer to the 'show' op as
+a new field of struct seq_file. That's also not terribly elegant, because the
+field is there also for non-single_open() seq files, but it's a single pointer
+in an already existing (and already relatively large) structure instead of
+an extra kmalloc of four pointers, so the tradeoff is OK.
 
-TC2 booting on A7:
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ Documentation/filesystems/seq_file.txt |  5 +++-
+ fs/seq_file.c                          | 40 ++++++++++++--------------
+ include/linux/seq_file.h               |  5 ++--
+ 3 files changed, 25 insertions(+), 25 deletions(-)
 
-[    0.002922] CPU: Testing write buffer coherency: ok
-[    0.003347] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
-[    0.004022] Setting up static identity map for 0x80100000 - 0x80100060
-[    0.004265] ARM CCI driver probed
-[    0.004648] TC2 power management initialized
-[    0.004930] Hierarchical SRCU implementation.
-[    0.006956] smp: Bringing up secondary CPUs ...
-[    0.008712] CPU1: thread -1, cpu 0, socket 0, mpidr 80000000
-[    0.008720] CPU1: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
-[    0.009934] CPU2: thread -1, cpu 1, socket 0, mpidr 80000001
-[    0.009940] CPU2: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
-[    0.011147] CPU3: thread -1, cpu 1, socket 1, mpidr 80000101
-[    0.012350] CPU4: thread -1, cpu 2, socket 1, mpidr 80000102
-[    0.012468] smp: Brought up 1 node, 5 CPUs
-[    0.012490] SMP: Total of 5 processors activated (240.00 BogoMIPS).
-[    0.012499] CPU: All CPU(s) started in SVC mode.
+diff --git a/Documentation/filesystems/seq_file.txt b/Documentation/filesystems/seq_file.txt
+index 9de4303201e1..ed61495abee8 100644
+--- a/Documentation/filesystems/seq_file.txt
++++ b/Documentation/filesystems/seq_file.txt
+@@ -335,4 +335,7 @@ When output time comes, the show() function will be called once. The data
+ value given to single_open() can be found in the private field of the
+ seq_file structure. When using single_open(), the programmer should use
+ single_release() instead of seq_release() in the file_operations structure
+-to avoid a memory leak.
++to avoid a memory leak. Note that the implementation has changed and current
++kernels will not leak anymore, but it's better to keep using single_release()
++in case the implementation details change again.
++
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index 4cc090b50cc5..3fd2ded04d93 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -563,22 +563,27 @@ static void single_stop(struct seq_file *p, void *v)
+ {
+ }
+ 
++static int single_show(struct seq_file *p, void *v)
++{
++	return p->single_show_op(p, v);
++}
++
++static const struct seq_operations single_seq_op = {
++	.start	= single_start,
++	.next	= single_next,
++	.stop	= single_stop,
++	.show	= single_show
++};
++
+ int single_open(struct file *file, int (*show)(struct seq_file *, void *),
+ 		void *data)
+ {
+-	struct seq_operations *op = kmalloc(sizeof(*op), GFP_KERNEL_ACCOUNT);
+-	int res = -ENOMEM;
+-
+-	if (op) {
+-		op->start = single_start;
+-		op->next = single_next;
+-		op->stop = single_stop;
+-		op->show = show;
+-		res = seq_open(file, op);
+-		if (!res)
+-			((struct seq_file *)file->private_data)->private = data;
+-		else
+-			kfree(op);
++	int res;
++
++	res = seq_open(file, &single_seq_op);
++	if (!res) {
++		((struct seq_file *)file->private_data)->private = data;
++		((struct seq_file *)file->private_data)->single_show_op = show;
+ 	}
+ 	return res;
+ }
+@@ -602,15 +607,6 @@ int single_open_size(struct file *file, int (*show)(struct seq_file *, void *),
+ }
+ EXPORT_SYMBOL(single_open_size);
+ 
+-int single_release(struct inode *inode, struct file *file)
+-{
+-	const struct seq_operations *op = ((struct seq_file *)file->private_data)->op;
+-	int res = seq_release(inode, file);
+-	kfree(op);
+-	return res;
+-}
+-EXPORT_SYMBOL(single_release);
+-
+ int seq_release_private(struct inode *inode, struct file *file)
+ {
+ 	struct seq_file *seq = file->private_data;
+diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
+index a121982af0f5..c9a70c584a7d 100644
+--- a/include/linux/seq_file.h
++++ b/include/linux/seq_file.h
+@@ -24,9 +24,10 @@ struct seq_file {
+ 	u64 version;
+ 	struct mutex lock;
+ 	const struct seq_operations *op;
+-	int poll_event;
++	int (*single_show_op)(struct seq_file *, void *);
+ 	const struct file *file;
+ 	void *private;
++	int poll_event;
+ };
+ 
+ struct seq_operations {
+@@ -140,7 +141,7 @@ int seq_path_root(struct seq_file *m, const struct path *path,
+ 
+ int single_open(struct file *, int (*)(struct seq_file *, void *), void *);
+ int single_open_size(struct file *, int (*)(struct seq_file *, void *), void *, size_t);
+-int single_release(struct inode *, struct file *);
++#define single_release	seq_release
+ void *__seq_open_private(struct file *, const struct seq_operations *, int);
+ int seq_open_private(struct file *, const struct seq_operations *, int);
+ int seq_release_private(struct inode *, struct file *);
+-- 
+2.18.0
 
-TC2 booting on A15:
-
-[    0.002045] CPU0: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
-[    0.002311] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
-[    0.002809] Setting up static identity map for 0x80100000 - 0x80100060
-[    0.003000] ARM CCI driver probed
-[    0.003408] TC2 power management initialized
-[    0.003637] Hierarchical SRCU implementation.
-[    0.005177] smp: Bringing up secondary CPUs ...
-[    0.006170] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
-[    0.006176] CPU1: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
-[    0.008137] CPU2: thread -1, cpu 0, socket 1, mpidr 80000100
-[    0.009304] CPU3: thread -1, cpu 1, socket 1, mpidr 80000101
-[    0.010405] CPU4: thread -1, cpu 2, socket 1, mpidr 80000102
-[    0.010537] smp: Brought up 1 node, 5 CPUs
-[    0.010562] SMP: Total of 5 processors activated (240.00 BogoMIPS).
-[    0.010572] CPU: All CPU(s) started in SVC mode.
-
-No further warnings for either configuration.
-
-For reference, this a partial output from later in the boot process when
-booting on A7 with 4.18-rc5 _without_ your patches:
-
-[    5.576176] device-mapper: ioctl: 4.39.0-ioctl (2018-04-03) initialised: dm-devel@redhat.com
-[    5.601689] cpu cpu0: bL_cpufreq_init: CPU 0 initialized
-[    5.618670] cpu cpu1: bL_cpufreq_init: CPU 1 initialized
-[    5.635583] arm_big_little: bL_cpufreq_register: Registered platform driver: vexpress-spc
-[    5.661112] mmci-pl18x 1c050000.mmci: Got CD GPIO
-[    5.675235] mmci-pl18x 1c050000.mmci: Got WP GPIO
-[    5.687783] CPU2: Spectre v2: incorrect context switching function, system vulnerable
-[    5.689623] mmci-pl18x 1c050000.mmci: mmc0: PL180 manf 41 rev0 at 0x1c050000 irq 26,27 (pio)
-[    5.713217] CPU1: Spectre v2: incorrect context switching function, system vulnerable
-[    5.718044] CPU2: Spectre v2: incorrect context switching function, system vulnerable
-[    5.727896] CPU2: Spectre v2: incorrect context switching function, system vulnerable
