@@ -2,202 +2,207 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0E8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 195A9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65F96206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBCA320661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:50:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPPClxwT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65F96206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kxoxz9Fs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCA320661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732163AbeGTPiB (ORCPT
+        id S1732175AbeGTPiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 11:38:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731314AbeGTPiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 11:38:01 -0400
-Received: from linux-8ccs (nat.nue.novell.com [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6D8D20661;
-        Fri, 20 Jul 2018 14:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532098162;
-        bh=C6PPGI7+rfksOAEL7bp56W+kY9aPEF9hLNt6IMyDdGo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FPPClxwTJNq0tTm9lNUpwqcGkQKjXfemwJJ7F0HW9MTbbbiJULQcDkbkjTwsbxyqq
-         akFpUQQ4Ggq7jaFwgw0K4O5QKCTY+6yOZRH6wAPpZ5keaHMs1a011LPxE5guOBqddp
-         d59iFgrMKhXhcWeGp/ydS98Q/mUrw5/WQU9MyUs8=
-Date:   Fri, 20 Jul 2018 16:49:16 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Martijn Coenen <maco@android.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Oliver Neukum <oneukum@suse.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        USB Storage list <usb-storage@lists.one-eyed-alien.net>,
-        linux-scsi@vger.kernel.org,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Martijn Coenen <maco@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Iliyan Malchev <malchev@google.com>,
-        Joel Fernandes <joelaf@google.com>
-Subject: Re: [PATCH 2/6] module: add support for symbol namespaces.
-Message-ID: <20180720144916.fyqpmrtgt23sax6n@linux-8ccs>
-References: <20180716122125.175792-1-maco@android.com>
- <20180716122125.175792-3-maco@android.com>
- <20180719163208.5xvrafugpcbhh7kj@linux-8ccs>
- <CAB0TPYFVSWtJ6RPRUZ1bpS-rBaV7YyPR-4B2Ogxs+FNAbiScNw@mail.gmail.com>
+        Fri, 20 Jul 2018 11:38:51 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44669 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728409AbeGTPiu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 11:38:50 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r16-v6so11557706wrt.11
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 07:50:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NqTubvQD7oLVcS1+64zkm8Axm3ZSq8UguOl6NavgE6E=;
+        b=kxoxz9FsfKyeTDDUl0kEgal8WAdsCaGQdjkbSmhTJrPlP4MimcQd/JtR9wjW2PNSWJ
+         7ZRIpVUpEekUbkSJAOeNGj59OFNVJPxA8qtLTg8Jlb4tfYZsvlEEwQE3jXZxU6IhWQQF
+         K6rVlVw03Yyhx/swTknq4ZsNXe4Wry5weEPLo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NqTubvQD7oLVcS1+64zkm8Axm3ZSq8UguOl6NavgE6E=;
+        b=V2UUpxbSCv5zNIcCUW2SgAllS9qZqMDC6Kie0rAgQhsRowF3t/6xf+PxHhdIAYd9LR
+         ej7ywZAClCqwLdX1YH5gJSbMZEyQkJRtqLr10GwvWqiPN6BITtbRWoh3y3ONOg6NJZZU
+         KkZhoT4o4SExKswk7PXc7L7NErpFEi9JB/jOh6q4Bfeg5TZIXlrYh3LYfQiqVAvTDrNW
+         NVkcKvJtSAzO3CmrLPJbg30IXc6Sf6S/ch8YE72JhXapDQD93dhuAeI2FqePT4sEVNGX
+         tRjSH+GlPMhgQ72R0wj3A9GC80J5421FUgVMWzhZtmx+Lto+TflYfrIajrjnFH0T+ham
+         fVQA==
+X-Gm-Message-State: AOUpUlG+6qwjVCnXtYWb0dmoZsYdsu06AISsxAaZ7jKMrP3OYvCYXUeq
+        3uHD6PiLi+rD8KBuCtRqODANkgr2eoc=
+X-Google-Smtp-Source: AAOMgpeILLmvZ/a6XJPwQpOJXB2d60lYlLT8AAojHj5SBav0/OXz9fFKy5Mq03GNKXo31e0SSEtDPQ==
+X-Received: by 2002:a5d:5641:: with SMTP id j1-v6mr1809449wrw.209.1532098210859;
+        Fri, 20 Jul 2018 07:50:10 -0700 (PDT)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id i125-v6sm2555914wmd.11.2018.07.20.07.50.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 07:50:10 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v6 6/8] interconnect: qcom: Add msm8916 interconnect
+ provider driver
+To:     Evan Green <evgreen@chromium.org>
+Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, robh+dt@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        khilman@baylibre.com, Alexandre Bailon <abailon@baylibre.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, mka@chromium.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, tfiga@chromium.org
+References: <20180709155104.25528-1-georgi.djakov@linaro.org>
+ <20180709155104.25528-7-georgi.djakov@linaro.org>
+ <CAE=gft4YR27-ZyR5GXVxbiRbGycw=ydHu182LfwaLD=M+a8CNw@mail.gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <6bc5a4bc-5b66-7cfa-8820-4cd1053c6f8e@linaro.org>
+Date:   Fri, 20 Jul 2018 17:50:08 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAB0TPYFVSWtJ6RPRUZ1bpS-rBaV7YyPR-4B2Ogxs+FNAbiScNw@mail.gmail.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.11-default x86_64
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <CAE=gft4YR27-ZyR5GXVxbiRbGycw=ydHu182LfwaLD=M+a8CNw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Martijn Coenen [20/07/18 09:54 +0200]:
->Hi Jessica,
->
->On Thu, Jul 19, 2018 at 6:32 PM, Jessica Yu <jeyu@kernel.org> wrote:
->> First, thanks a lot for the patchset. This is definitely something that
->> will help distros as well to declutter the exported symbol space and
->> provide a more cleanly defined kernel interface.
->
->Thanks, that's good to hear!
->
->
->> Hm, I'm wondering if we could avoid all this extra module-ns-dependency
->> checking work if we just put the import stuff as a modinfo tag, like
->> have MODULE_IMPORT_NS() insert an "import:" tag like we already do for
->> module parameters, author, license, aliases, etc. Then we'd have that
->> information pretty much from the start of load_module() and we don't
->> need to wait for relocations to be applied to __knsimport. Then you
->> could do the namespace checking right at resolve_symbol() instead of
->> going through the extra step of building a dependency list to be
->> verified later.
->
->I believe I did consider modinfo when I started with this a while
->back, but don't recall right now why I didn't decide to use it;
->perhaps it was the lack of support for multiple identical tags. Since
->both modpost and the module loader have access to them, I don't see
->why it wouldn't work, and indeed I suspect it would make the module
->loader a bit simpler. I'll rework this and see what it looks like.
+Hi,
 
-Thanks. Also, it looks like we're currently just warning (in both
-modpost and on module load) if a module uses symbols from a namespace
-it doesn't import. Are you also planning to eventually introduce
-namespace enforcement?  It'd be trivial to fail the module build in
-modpost as well as reject the module on load if it uses an exported
-symbol belonging to a namespace it doesn't import. Although, I'd go
-with the warnings for a development cycle or two, to gently introduce
-the change in API and let other subsystems as well as out-of-tree
-module developers catch up.
+On 07/11/2018 01:34 AM, Evan Green wrote:
+> On Mon, Jul 9, 2018 at 8:51 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>
+>> Add driver for the Qualcomm interconnect buses found in msm8916 based
+>> platforms.
+>>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> ---
+>>  drivers/interconnect/Kconfig        |   5 +
+>>  drivers/interconnect/Makefile       |   1 +
+>>  drivers/interconnect/qcom/Kconfig   |  10 +
+>>  drivers/interconnect/qcom/Makefile  |   2 +
+>>  drivers/interconnect/qcom/msm8916.c | 499 ++++++++++++++++++++++++++++
+>>  5 files changed, 517 insertions(+)
+>>  create mode 100644 drivers/interconnect/qcom/msm8916.c
+>>
+>> diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
+>> index a261c7d41deb..07a8276fa35a 100644
+>> --- a/drivers/interconnect/Kconfig
+>> +++ b/drivers/interconnect/Kconfig
+>> @@ -8,3 +8,8 @@ menuconfig INTERCONNECT
+>>
+>>           If unsure, say no.
+>>
+>> +if INTERCONNECT
+>> +
+>> +source "drivers/interconnect/qcom/Kconfig"
+>> +
+>> +endif
+>> diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
+>> index 97fca2e09d24..7944cbca0527 100644
+>> --- a/drivers/interconnect/Makefile
+>> +++ b/drivers/interconnect/Makefile
+>> @@ -1,2 +1,3 @@
+>>  # SPDX-License-Identifier: GPL-2.0
+>>  obj-$(CONFIG_INTERCONNECT)             += core.o
+>> +obj-$(CONFIG_INTERCONNECT_QCOM)                += qcom/
+>> diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
+>> index b0c2ff928d88..a87afdef1bf7 100644
+>> --- a/drivers/interconnect/qcom/Kconfig
+>> +++ b/drivers/interconnect/qcom/Kconfig
+>> @@ -2,6 +2,8 @@ config INTERCONNECT_QCOM
+>>         bool "Qualcomm Network-on-Chip interconnect drivers"
+>>         depends on INTERCONNECT
+>>         depends on ARCH_QCOM || COMPILE_TEST
+>> +       help
+>> +         Support for Qualcomm's Network-on-Chip interconnect hardware.
+>>
+>>  config INTERCONNECT_QCOM_SMD_RPM
+>>         tristate "Qualcomm SMD RPM interconnect driver"
+>> @@ -9,3 +11,11 @@ config INTERCONNECT_QCOM_SMD_RPM
+>>         help
+>>           This is a driver for communicating interconnect related configuration
+>>           details with a remote processor (RPM) on Qualcomm platforms.
+>> +
+>> +config INTERCONNECT_QCOM_MSM8916
+>> +       tristate "Qualcomm MSM8916 interconnect driver"
+>> +       depends on INTERCONNECT_QCOM
+>> +       select INTERCONNECT_QCOM_SMD_RPM
+> 
+> I'm not a kconfig expert, maybe someone else could chime in. I have
+> this impression that folks don't like select. Is there a way to do
+> this with depends instead? If I'm way off here, ignore me.
 
+It could be done with depends, but i think that it would be easier for
+the user to choose only the SoC driver, without having to look into what
+dependencies need to be enabled for each. Here we are using select only
+locally and if there are any dependencies on other subsystems (like the
+QCOM_SMD_RPM), they should be put under the interconnect platform
+driver. Of course i am open for other arguments and suggestions.
 
-Jessica
-
->> Also, this would get rid of the extra __knsimport section, the extra
->> ns_dependencies field in struct module, and all those helper functions that
->> manage it. In addition, having the modinfo tag may potentially help with
->> debugging as we have the namespace imports clearly listed if we don't have
->> the source code for a module. We'd probably need to modify get_modinfo() to
->> handle multiple import: tags though. Luis [1] had written some code a while
->> ago to handle multiple (of the same) modinfo tags.
->>
->> Thoughts on this?
->>
->> Thanks,
->>
->> Jessica
->>
->> [1] https://lkml.kernel.org/r/20171130023605.29568-3-mcgrof@kernel.org
->>
->>
->>> getname:
->>>         /* We must make copy under the lock if we failed to get ref. */
->>>         strncpy(ownername, module_name(owner), MODULE_NAME_LEN);
->>> @@ -3061,6 +3118,11 @@ static int find_module_sections(struct module *mod,
->>> struct load_info *info)
->>>                                      sizeof(*mod->gpl_syms),
->>>                                      &mod->num_gpl_syms);
->>>         mod->gpl_crcs = section_addr(info, "__kcrctab_gpl");
->>> +
->>> +       mod->ns_imports = section_objs(info, "__knsimport",
->>> +                                      sizeof(*mod->ns_imports),
->>> +                                      &mod->num_ns_imports);
->>> +
->>>         mod->gpl_future_syms = section_objs(info,
->>>                                             "__ksymtab_gpl_future",
->>>                                             sizeof(*mod->gpl_future_syms),
->>> @@ -3381,6 +3443,19 @@ static int post_relocation(struct module *mod,
->>> const struct load_info *info)
->>>         return module_finalize(info->hdr, info->sechdrs, mod);
->>> }
->>>
->>> +static void verify_namespace_dependencies(struct module *mod)
->>> +{
->>> +       struct module_ns_dep *ns_dep;
->>> +
->>> +       list_for_each_entry(ns_dep, &mod->ns_dependencies, ns_dep) {
->>> +               if (!module_imports_ns(mod, ns_dep->namespace)) {
->>> +                       pr_warn("%s: module uses symbols from namespace
->>> %s,"
->>> +                               " but does not import it.\n",
->>> +                               mod->name, ns_dep->namespace);
->>> +               }
->>> +       }
->>> +}
->>> +
->>> /* Is this module of this name done loading?  No locks held. */
->>> static bool finished_loading(const char *name)
->>> {
->>> @@ -3682,6 +3757,8 @@ static int load_module(struct load_info *info, const
->>> char __user *uargs,
->>>         if (err)
->>>                 goto free_module;
->>>
->>> +       INIT_LIST_HEAD(&mod->ns_dependencies);
->>> +
->>> #ifdef CONFIG_MODULE_SIG
->>>         mod->sig_ok = info->sig_ok;
->>>         if (!mod->sig_ok) {
->>> @@ -3730,6 +3807,8 @@ static int load_module(struct load_info *info, const
->>> char __user *uargs,
->>>         if (err < 0)
->>>                 goto free_modinfo;
->>>
->>> +       verify_namespace_dependencies(mod);
->>> +
->>>         flush_module_icache(mod);
->>>
->>>         /* Now copy in args */
->>> --
->>> 2.18.0.203.gfac676dfb9-goog
->>>
->>
+Thanks,
+Georgi
