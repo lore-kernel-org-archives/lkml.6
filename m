@@ -3,101 +3,280 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B11ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 22:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E88FECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 22:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CFE52084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 22:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2512E20671
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 22:13:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="AR68WDd3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFE52084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="wbd5GwCd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2512E20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbeGTXBl (ORCPT
+        id S1729070AbeGTXDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 19:01:41 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45262 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728170AbeGTXBl (ORCPT
+        Fri, 20 Jul 2018 19:03:51 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45329 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728353AbeGTXDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 19:01:41 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f1-v6so7906894pgq.12
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 15:11:28 -0700 (PDT)
+        Fri, 20 Jul 2018 19:03:51 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j143-v6so2744823lfj.12
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 15:13:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aHUKqxSNTAflsjSWWuhnAgKuyCboelcgZNLTqVgs9qc=;
-        b=AR68WDd3jtfN+Z4pi8cQ1BQnmxp1ZhuEZPXURIe3BTr9vpvOS8VRecoBpOkLjbYfw2
-         4n5/ElDuDAD5cauBBflTYg3xkQKOzGT/ec1zasTJepBJKmFBKa0rOKIZT16oKFbQP2a7
-         GCq76U9bdgVShWWJi1Qb+x03jp1PiMY2EEZ+XqSxMNa3fxiWYfr3QBPZ9yaced6IhPHQ
-         Uixn5l/qaVyjr+8pO9JPkFs5ho9YcaO4+yc66nCkZ7UV1CocxPHRp/LnJcrMssSqLG5F
-         T8XygIT/9RaihlcKm9ifFqisq7RqE+Hj6z76ElxYCP4BRL+N7qh4yw0jtlMwHVYynhBb
-         6gVA==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=cpj4TteIj4lg6hmNVWaPOb7UncWVCgMvhTBcNa3hRqM=;
+        b=wbd5GwCdY+8NEUNN8wN9JfHRk/fSNsb7QWWPU/0R5rdn/c+eblb11ulNUm4iIhLRcq
+         FpPCnAkv45yr8CJwdR4QQ8pbbiqu9FtmQHcpbENoAUR/iiKZrN86UeMtwI8ZuStuA0+t
+         ZnV3qOSJ0HSf8ABDF3Vro+zfcvISQhwwH59aXL0+eFGvpYVlQWBAMS7ylF29zhWdWrIN
+         cfmPBh2nXccQi7uBdfGac2K0yM7oy24Zv+Gw5KKTSyUeIr6oVBCCB1rArBsdudoF+WC9
+         +YWXVRK5GYUiXu+y2+GQ/qgsG7YF90tELHeOKZjC5MC5o4GdGEMzrdXXNe6kEoq6MDGb
+         n6AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aHUKqxSNTAflsjSWWuhnAgKuyCboelcgZNLTqVgs9qc=;
-        b=TIvvxUufYfjcIq3sGF4eIu3YcRIwxubpRJs8prNi/z6o4JhF0G+qjErafz8uIlwxUz
-         RzQWufQXAvBTHvo0PMjI/j9UHYtp5A0U2SZIrTlFvNhMUx7rcJWFCGS7uJ9JzrohAuGP
-         zVIrbEP4rRlY5Y03czUFB8t+D27wPPWTFoTvi6V+FzsavwI1OdLBa34UZIq2DY525IPo
-         cwVbE8MW1QrKbMiIambbzCp8xh+3yRyRZ50rmaYoyv0SdkQzQkvvxwuZNfpdaPG6Mr9h
-         05XTjn4eytp2V0xZM9C8pEnZLel9h1xA/iI4YKf2n3zk6kWUzH5tlhmLhAkprNpFahVX
-         ZJhQ==
-X-Gm-Message-State: AOUpUlHmgud6swpQSYGb5xebD1OmO1dqq+3JAPeh995cZ3Iz38xiJMm3
-        qG72DELVSZpSGhq9Lt1hQ3gQxg==
-X-Google-Smtp-Source: AAOMgpdB5MfMaITZ/ilO1AcyAIpb0JJTn+1At+X20wQYkR1iQfZtusxJrlK5pW16QXpRJmYdfvDZKw==
-X-Received: by 2002:a63:788b:: with SMTP id t133-v6mr3576897pgc.329.1532124688389;
-        Fri, 20 Jul 2018 15:11:28 -0700 (PDT)
-Received: from xeon-e3 (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id r64-v6sm6154742pfk.157.2018.07.20.15.11.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Jul 2018 15:11:28 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 15:11:26 -0700
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] uio: add SPDX license tag
-Message-ID: <20180720151126.5e62a2ec@xeon-e3>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cpj4TteIj4lg6hmNVWaPOb7UncWVCgMvhTBcNa3hRqM=;
+        b=C/6vSj92qiXgD6X142pCbnDIKO6GLMaqCVhkzo+iB+7xC3ABJsjE+IBcyJMdCJAVpT
+         VGel297A12m+0Rku5GEkKkqVZYgJsvYwYlTQJv1/lMmv8CaFVDmHFG92p1Po0+J7okoU
+         pB+MDlRMrzYD1WysUuPvscj2c0+9F+F71rLN9ry/pvI4SHJcCzCYVHykxEXp+jIiuSJe
+         Oxz5q2j4gE9ncZJHR1aDZKq/XKMY/Z1jHLZduUGlXbRORnyb966bRaFNOklpL1YvzWfT
+         azKJQyMcV2H3U7uuhCXILxMMd5DpPxex0HNDw2qzSNAgzxc+lSVYrwAVN0t879W8BnsG
+         xbWA==
+X-Gm-Message-State: AOUpUlGnkkBre67SbsvNEyOKrWY6lqcOiDleQFvBg3WBeC8+psJWfq3j
+        9UCZR+ttDSIST4XuPPSJy8LaoiWwHiNo5I9iHaEN
+X-Google-Smtp-Source: AAOMgpfMJESrQ/W1pfTZrOv2OFEgHUfsNHkKoXhx2CXH44RRNllXcD44UEYL6eEQy1CplD472oSJwgTYX7gs+GOZWIs=
+X-Received: by 2002:a19:dd5c:: with SMTP id u89-v6mr2275891lfg.83.1532124815140;
+ Fri, 20 Jul 2018 15:13:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1528304203.git.rgb@redhat.com> <0377c3ced6bdbc44fe17f9a5679cb6eda4304024.1528304203.git.rgb@redhat.com>
+In-Reply-To: <0377c3ced6bdbc44fe17f9a5679cb6eda4304024.1528304203.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 20 Jul 2018 18:13:24 -0400
+Message-ID: <CAHC9VhRk+qLAyizM9i8D+cjKxyhruuj_Z9N0QRmjM-fjm4hgRw@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 01/10] audit: add container id
+To:     rgb@redhat.com
+Cc:     cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
+        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace short statement in comment with proper SPDX
-license tag.
+On Wed, Jun 6, 2018 at 1:00 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> Implement the proc fs write to set the audit container identifier of a
+> process, emitting an AUDIT_CONTAINER_ID record to document the event.
+>
+> This is a write from the container orchestrator task to a proc entry of
+> the form /proc/PID/audit_containerid where PID is the process ID of the
+> newly created task that is to become the first task in a container, or
+> an additional task added to a container.
+>
+> The write expects up to a u64 value (unset: 18446744073709551615).
+>
+> The writer must have capability CAP_AUDIT_CONTROL.
+>
+> This will produce a record such as this:
+>   type=3DCONTAINER_ID msg=3Daudit(2018-06-06 12:39:29.636:26949) : op=3Ds=
+et opid=3D2209 old-contid=3D18446744073709551615 contid=3D123456 pid=3D628 =
+auid=3Droot uid=3Droot tty=3DttyS0 ses=3D1 subj=3Dunconfined_u:unconfined_r=
+:unconfined_t:s0-s0:c0.c1023 comm=3Dbash exe=3D/usr/bin/bash res=3Dyes
+>
+> The "op" field indicates an initial set.  The "pid" to "ses" fields are
+> the orchestrator while the "opid" field is the object's PID, the process
+> being "contained".  Old and new audit container identifier values are
+> given in the "contid" fields, while res indicates its success.
+>
+> It is not permitted to unset or re-set the audit container identifier.
+> A child inherits its parent's audit container identifier, but then can
+> be set only once after.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/90
+> See: https://github.com/linux-audit/audit-userspace/issues/51
+> See: https://github.com/linux-audit/audit-testsuite/issues/64
+> See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container=
+-ID
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  fs/proc/base.c             | 37 ++++++++++++++++++++++++
+>  include/linux/audit.h      | 25 ++++++++++++++++
+>  include/uapi/linux/audit.h |  2 ++
+>  kernel/auditsc.c           | 71 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 135 insertions(+)
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/uio/uio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+...
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 5d421d7e8904..f63967c8e95a 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * drivers/uio/uio.c
-  *
-@@ -9,8 +10,6 @@
-  * Userspace IO
-  *
-  * Base Functions
-- *
-- * Licensed under the GPLv2 only.
-  */
- 
- #include <linux/module.h>
--- 
-2.18.0
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -606,6 +621,16 @@ static inline bool audit_loginuid_set(struct task_st=
+ruct *tsk)
+>        return uid_valid(audit_get_loginuid(tsk));
+> }
+>
+> +static inline bool cid_valid(u64 contid)
+> +{
+> +       return contid !=3D AUDIT_CID_UNSET;
+> +}
+> +
+> +static inline bool audit_contid_set(struct task_struct *tsk)
+> +{
+> +       return cid_valid(audit_get_contid(tsk));
+> +}
 
+For the sake of consistency I think we should rename cid_valid() to
+audit_contid_valid().
+
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 59ef7a81..611e926 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -956,6 +956,8 @@ int audit_alloc(struct task_struct *tsk)
+>                 return -ENOMEM;
+>         info->loginuid =3D audit_get_loginuid(current);
+>         info->sessionid =3D audit_get_sessionid(current);
+> +       info->contid =3D audit_get_contid(current);
+> +       info->inherited =3D true;
+
+First see my others comments in this patch about inheritence, but if
+we decide that flagging inherited values is important we should
+probably rename the "inherited" field to indicate that it applies to
+just the "contid" field.
+
+>         tsk->audit =3D info;
+>
+>         if (likely(!audit_ever_enabled))
+> @@ -985,6 +987,8 @@ int audit_alloc(struct task_struct *tsk)
+>  struct audit_task_info init_struct_audit =3D {
+>         .loginuid =3D INVALID_UID,
+>         .sessionid =3D AUDIT_SID_UNSET,
+> +       .contid =3D AUDIT_CID_UNSET,
+> +       .inherited =3D true,
+>         .ctx =3D NULL,
+>  };
+>
+> @@ -2112,6 +2116,73 @@ int audit_set_loginuid(kuid_t loginuid)
+>  }
+>
+>  /**
+> + * audit_set_contid - set current task's audit_context contid
+> + * @contid: contid value
+> + *
+> + * Returns 0 on success, -EPERM on permission failure.
+> + *
+> + * Called (set) from fs/proc/base.c::proc_contid_write().
+> + */
+> +int audit_set_contid(struct task_struct *task, u64 contid)
+> +{
+> +       u64 oldcontid;
+> +       int rc =3D 0;
+> +       struct audit_buffer *ab;
+> +       uid_t uid;
+> +       struct tty_struct *tty;
+> +       char comm[sizeof(current->comm)];
+> +
+> +       /* Can't set if audit disabled */
+> +       if (!task->audit)
+> +               return -ENOPROTOOPT;
+> +       oldcontid =3D audit_get_contid(task);
+> +       /* Don't allow the audit containerid to be unset */
+> +       if (!cid_valid(contid))
+> +               rc =3D -EINVAL;
+> +       /* if we don't have caps, reject */
+> +       else if (!capable(CAP_AUDIT_CONTROL))
+> +               rc =3D -EPERM;
+> +       /* if task has children or is not single-threaded, deny */
+> +       else if (!list_empty(&task->children))
+> +               rc =3D -EBUSY;
+
+Is this safe without holding tasklist_lock?  I worry we might be
+vulnerable to a race with fork().
+
+> +       else if (!(thread_group_leader(task) && thread_group_empty(task))=
+)
+> +               rc =3D -EALREADY;
+
+Similar concern here as well, although related to threads.
+
+> +       /* it is already set, and not inherited from the parent, reject *=
+/
+> +       else if (cid_valid(oldcontid) && !task->audit->inherited)
+> +               rc =3D -EEXIST;
+
+Maybe I'm missing something, but why do we care about preventing
+reassigning the audit container ID in this case?  The task is single
+threaded and has no descendants at this point so it should be safe,
+yes?  So long as the task changing the audit container ID has
+capable(CAP_AUDIT_CONTOL) it shouldn't matter, right?
+
+Related, I'm questioning if we would ever care if the audit container
+ID was inherited or not?
+
+> +       if (!rc) {
+> +               task_lock(task);
+> +               task->audit->contid =3D contid;
+> +               task->audit->inherited =3D false;
+> +               task_unlock(task);
+
+I suspect the task_lock() may not be what we want here, but if we are
+using task_lock() to protect the audit fields two things come to mind:
+
+1. We should update the header comments for task_lock() in task.h to
+indicate that it also protects ->audit.
+2. Where else do we need to worry about taking this lock?  At the very
+least we should take this lock near the top of this function before we
+check task->audit and not drop it until after we have set it, or
+failed the operation for one of the reasons above.
+
+> +       }
+> +
+> +       if (!audit_enabled)
+> +               return rc;
+> +
+> +       ab =3D audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAIN=
+ER_ID);
+> +       if (!ab)
+> +               return rc;
+> +
+> +       uid =3D from_kuid(&init_user_ns, task_uid(current));
+> +       tty =3D audit_get_tty(current);
+> +       audit_log_format(ab, "op=3Dset opid=3D%d old-contid=3D%llu contid=
+=3D%llu pid=3D%d uid=3D%u auid=3D%u tty=3D%s ses=3D%u",
+> +                        task_tgid_nr(task), oldcontid, contid,
+> +                        task_tgid_nr(current), uid
+> +                        from_kuid(&init_user_ns, audit_get_loginuid(curr=
+ent)),
+> +                        tty ? tty_name(tty) : "(none)",
+> +                        audit_get_sessionid(current));
+> +       audit_put_tty(tty);
+> +       audit_log_task_context(ab);
+> +       audit_log_format(ab, " comm=3D");
+> +       audit_log_untrustedstring(ab, get_task_comm(comm, current));
+> +       audit_log_d_path_exe(ab, current->mm);
+> +       audit_log_format(ab, " res=3D%d", !rc);
+> +       audit_log_end(ab);
+> +       return rc;
+> +}
+> +
+> +/**
+>   * __audit_mq_open - record audit data for a POSIX MQ open
+>   * @oflag: open flag
+>   * @mode: mode bits
+
+--
+paul moore
+www.paul-moore.com
