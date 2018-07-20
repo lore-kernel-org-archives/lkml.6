@@ -2,206 +2,145 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF684ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C649ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D91F20671
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:43:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D91F20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 22D1720671
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:43:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nWLQzpll"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D1720671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbeGTVdZ (ORCPT
+        id S1728371AbeGTVd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 17:33:25 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:49553 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727974AbeGTVdZ (ORCPT
+        Fri, 20 Jul 2018 17:33:29 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:32998 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728258AbeGTVd2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 17:33:25 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6KKhI0I015477;
-        Sat, 21 Jul 2018 05:43:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Sat, 21 Jul 2018 05:43:18 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6KKhD0B015461
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 21 Jul 2018 05:43:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [patch v4] mm, oom: fix unnecessary killing of additional
- processes
-To:     David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <alpine.DEB.2.21.1806211434420.51095@chino.kir.corp.google.com>
- <d19d44c3-c8cf-70a1-9b15-c98df233d5f0@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1807181317540.49359@chino.kir.corp.google.com>
- <a78fb992-ad59-0cdb-3c38-8284b2245f21@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1807200133310.119737@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1807201314230.231119@chino.kir.corp.google.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <ca34b123-5c81-569f-85ea-4851bc569962@i-love.sakura.ne.jp>
-Date:   Sat, 21 Jul 2018 05:43:15 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1807201314230.231119@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 20 Jul 2018 17:33:28 -0400
+Received: by mail-yw0-f195.google.com with SMTP id c135-v6so4818741ywa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 13:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=9/MsawOHQLPrgqHNmYuxB6NQ2v1q/U889Lmn9RF2P9c=;
+        b=nWLQzpllj9NNn2XB9Xp+PYTWNfEXmhJf3WlWmeD5Y4RziLKFtnujKK09UrlqlUaDhj
+         Agu31GUBgl87lDCBmxi99qElDQCRs3kqnMVI2sYinhc7k8z05+Jb4srceo1tV2hdfqEV
+         520pyrDF86AHbxGPuti/3d0pKj+z6+fqmAFu0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=9/MsawOHQLPrgqHNmYuxB6NQ2v1q/U889Lmn9RF2P9c=;
+        b=t3eBTuLS05qMmYQoYzo0cVElwv/b/+HRHKEOLysW8l3FsI5SBV8qJFeqF9k0L2zrnf
+         zIfLE6OnhdT3c9pYGBInuCnVB+hPEEmhpsCtEiDaFk4+t6lxZimoj/nfqQ/W2SWcX7yn
+         vg7r530RQ35lUi0Q4P9d12tfjDKC8aaig/hV8SU0xdkU/eF/H6VVfHLEMDYeDcHLgHVk
+         uSVkYYGbs0dCY61RNTzextPuSU8waN6mQhESDOAWPsaVvYaxD3K9sDrFkkkF1lgX3MGf
+         /asSPTmoRjFwleyvx/LT+P/6ZbeR0j8MhPzB0J9qUyiN04+CeEYbgqb+kFUD4jL3srU0
+         tjng==
+X-Gm-Message-State: AOUpUlFhRy8tehdfY8T/nUf5ub/vv8Z+oc8FemywuSjQpESfD2VcI2Bv
+        dVyxWraBIC/BPBxihbZZW8bpHQ==
+X-Google-Smtp-Source: AAOMgpd8KPw6M1CROsI/Ql90w4o1DinRn+zASycFcEu5FdulBT9ipEUdbwxZ9aFPVGKCDTflNl72bw==
+X-Received: by 2002:a0d:e742:: with SMTP id q63-v6mr1808188ywe.432.1532119411974;
+        Fri, 20 Jul 2018 13:43:31 -0700 (PDT)
+Received: from rosewood.cam.corp.google.com ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id a2-v6sm2453831ywm.7.2018.07.20.13.43.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 13:43:31 -0700 (PDT)
+From:   Sean Paul <seanpaul@chromium.org>
+To:     abhinavk@codeaurora.org, architt@codeaurora.org,
+        chandanu@codeaurora.org, jsanka@codeaurora.org,
+        jcrouse@codeaurora.org, ryadav@codeaurora.org,
+        seanpaul@chromium.org, skolluku@codeaurora.org,
+        dri-devel@lists.freedesktop.org, robdclark@gmail.com,
+        airlied@linux.ie, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, nganji@codeaurora.org,
+        hoegsberg@chromium.org, dovizu@chromium.org, robh+dt@kernel.org
+Cc:     vkorjani <vikas.korjani@intel.com>,
+        Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3 02/19] drm: Add support for pps and compression mode command packet
+Date:   Fri, 20 Jul 2018 16:42:53 -0400
+Message-Id: <20180720204315.19054-3-seanpaul@chromium.org>
+X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
+In-Reply-To: <20180720204315.19054-1-seanpaul@chromium.org>
+References: <20180720204315.19054-1-seanpaul@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/21 5:14, David Rientjes wrote:
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -3066,25 +3066,27 @@ void exit_mmap(struct mm_struct *mm)
->  	if (unlikely(mm_is_oom_victim(mm))) {
->  		/*
->  		 * Manually reap the mm to free as much memory as possible.
-> -		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
-> -		 * this mm from further consideration.  Taking mm->mmap_sem for
-> -		 * write after setting MMF_OOM_SKIP will guarantee that the oom
-> -		 * reaper will not run on this mm again after mmap_sem is
-> -		 * dropped.
-> -		 *
->  		 * Nothing can be holding mm->mmap_sem here and the above call
->  		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
->  		 * __oom_reap_task_mm() will not block.
->  		 *
-> +		 * This sets MMF_UNSTABLE to avoid racing with the oom reaper.
->  		 * This needs to be done before calling munlock_vma_pages_all(),
->  		 * which clears VM_LOCKED, otherwise the oom reaper cannot
-> -		 * reliably test it.
-> +		 * reliably test for it.  If the oom reaper races with
-> +		 * munlock_vma_pages_all(), this can result in a kernel oops if
-> +		 * a pmd is zapped, for example, after follow_page_mask() has
-> +		 * checked pmd_none().
->  		 */
->  		mutex_lock(&oom_lock);
->  		__oom_reap_task_mm(mm);
->  		mutex_unlock(&oom_lock);
+From: vkorjani <vikas.korjani@intel.com>
 
-I don't like holding oom_lock for full teardown of an mm, for an OOM victim's mm
-might have multiple TB memory which could take long time.
+After enabling DSC we need to send compression mode command packet
+and pps data packet, for which 2 new data types are added
+07h  Compression Mode Data Type Write , short write, 2 parameters
+0Ah  PPS Long Write (word count determines number of bytes)
+This patch adds support to send these packets.
 
-Of course, forcing someone who triggered __mmput() to pay the full cost is
-not nice though, for it even can be a /proc/$pid/ reader, can't it?
+Cc: David Airlie <airlied@linux.ie>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fbdev@vger.kernel.org
 
->  
-> -		set_bit(MMF_OOM_SKIP, &mm->flags);
-> +		/*
-> +		 * Taking mm->mmap_sem for write after setting MMF_UNSTABLE will
-> +		 * guarantee that the oom reaper will not run on this mm again
-> +		 * after mmap_sem is dropped.
-> +		 */
->  		down_write(&mm->mmap_sem);
->  		up_write(&mm->mmap_sem);
->  	}
+Changes in v3:
+- None
 
+Signed-off-by: vkorjani <vikas.korjani@intel.com>
+[seanpaul removed pps_write_buffer fn, added types to packet_format helpers]
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+---
+ drivers/gpu/drm/drm_mipi_dsi.c | 2 ++
+ include/video/mipi_display.h   | 3 +++
+ 2 files changed, 5 insertions(+)
 
-
-> -#define MAX_OOM_REAP_RETRIES 10
->  static void oom_reap_task(struct task_struct *tsk)
->  {
-> -	int attempts = 0;
->  	struct mm_struct *mm = tsk->signal->oom_mm;
->  
-> -	/* Retry the down_read_trylock(mmap_sem) a few times */
-> -	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
-> -		schedule_timeout_idle(HZ/10);
-> +	/*
-> +	 * If this mm has either been fully unmapped, or the oom reaper has
-> +	 * given up on it, nothing left to do except drop the refcount.
-> +	 */
-> +	if (test_bit(MMF_OOM_SKIP, &mm->flags))
-> +		goto drop;
->  
-> -	if (attempts <= MAX_OOM_REAP_RETRIES ||
-> -	    test_bit(MMF_OOM_SKIP, &mm->flags))
-> -		goto done;
-> +	/*
-> +	 * If this mm has already been reaped, doing so again will not likely
-> +	 * free additional memory.
-> +	 */
-> +	if (!test_bit(MMF_UNSTABLE, &mm->flags))
-> +		oom_reap_task_mm(tsk, mm);
-
-This is still wrong. If preempted immediately after set_bit(MMF_UNSTABLE, &mm->flags) from
-__oom_reap_task_mm() from exit_mmap(), oom_reap_task() can give up before reclaiming any memory.
-test_bit(MMF_UNSTABLE, &mm->flags) has to be done under oom_lock serialization, and
-I don't like holding oom_lock while calling __oom_reap_task_mm(mm).
-
->  
-> -	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
-> -		task_pid_nr(tsk), tsk->comm);
-> -	debug_show_all_locks();
-> +	if (time_after_eq(jiffies, mm->oom_free_expire)) {
-> +		if (!test_bit(MMF_OOM_SKIP, &mm->flags)) {
-> +			pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
-> +				task_pid_nr(tsk), tsk->comm);
-> +			debug_show_all_locks();
->  
-> -done:
-> -	tsk->oom_reaper_list = NULL;
-> +			/*
-> +			 * Reaping has failed for the timeout period, so give up
-> +			 * and allow additional processes to be oom killed.
-> +			 */
-> +			set_bit(MMF_OOM_SKIP, &mm->flags);
-> +		}
-> +		goto drop;
-> +	}
-
-
-
-> @@ -645,25 +657,60 @@ static int oom_reaper(void *unused)
->  	return 0;
->  }
->  
-> +/*
-> + * Millisecs to wait for an oom mm to free memory before selecting another
-> + * victim.
-> + */
-> +static u64 oom_free_timeout_ms = 1000;
->  static void wake_oom_reaper(struct task_struct *tsk)
->  {
-> -	/* tsk is already queued? */
-> -	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
-> +	unsigned long expire = jiffies + msecs_to_jiffies(oom_free_timeout_ms);
-> +
-> +	if (!expire)
-> +		expire++;
-> +	/*
-> +	 * Set the reap timeout; if it's already set, the mm is enqueued and
-> +	 * this tsk can be ignored.
-> +	 */
-> +	if (cmpxchg(&tsk->signal->oom_mm->oom_free_expire, 0UL, expire))
->  		return;
-
-We don't need this if we do from mark_oom_victim() like my series does.
-
->  
->  	get_task_struct(tsk);
->  
->  	spin_lock(&oom_reaper_lock);
-> -	tsk->oom_reaper_list = oom_reaper_list;
-> -	oom_reaper_list = tsk;
-> +	list_add(&tsk->oom_reap_list, &oom_reaper_list);
->  	spin_unlock(&oom_reaper_lock);
->  	trace_wake_reaper(tsk->pid);
->  	wake_up(&oom_reaper_wait);
->  }
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index bc73b7f5b9fc..80b75501f5c6 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -392,6 +392,7 @@ bool mipi_dsi_packet_format_is_short(u8 type)
+ 	case MIPI_DSI_DCS_SHORT_WRITE:
+ 	case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
+ 	case MIPI_DSI_DCS_READ:
++	case MIPI_DSI_DCS_COMPRESSION_MODE:
+ 	case MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE:
+ 		return true;
+ 	}
+@@ -410,6 +411,7 @@ EXPORT_SYMBOL(mipi_dsi_packet_format_is_short);
+ bool mipi_dsi_packet_format_is_long(u8 type)
+ {
+ 	switch (type) {
++	case MIPI_DSI_PPS_LONG_WRITE:
+ 	case MIPI_DSI_NULL_PACKET:
+ 	case MIPI_DSI_BLANKING_PACKET:
+ 	case MIPI_DSI_GENERIC_LONG_WRITE:
+diff --git a/include/video/mipi_display.h b/include/video/mipi_display.h
+index 19aa65a35546..49a53ef8da96 100644
+--- a/include/video/mipi_display.h
++++ b/include/video/mipi_display.h
+@@ -38,6 +38,9 @@ enum {
+ 
+ 	MIPI_DSI_DCS_READ				= 0x06,
+ 
++	MIPI_DSI_DCS_COMPRESSION_MODE                   = 0x07,
++	MIPI_DSI_PPS_LONG_WRITE                         = 0x0A,
++
+ 	MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE		= 0x37,
+ 
+ 	MIPI_DSI_END_OF_TRANSMISSION			= 0x08,
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
 
