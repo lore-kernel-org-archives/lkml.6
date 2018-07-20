@@ -3,109 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36183ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725FEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3E2320856
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:07:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3E2320856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D1822084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:09:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D1822084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbeGTFxj (ORCPT
+        id S1727243AbeGTF4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 01:53:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45526 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726879AbeGTFxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 01:53:39 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 89E0372643;
-        Fri, 20 Jul 2018 05:07:13 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-74.pek2.redhat.com [10.72.12.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 16D5F7C3C;
-        Fri, 20 Jul 2018 05:07:03 +0000 (UTC)
-Subject: Re: [PATCH 1/5 V5] Add a function(ioremap_encrypted) for kdump when
- AMD sme enabled
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, ebiederm@xmission.com, joro@8bytes.org,
-        thomas.lendacky@amd.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, iommu@lists.linux-foundation.org,
-        bhe@redhat.com
-References: <20180702072639.10110-1-lijiang@redhat.com>
- <20180702072639.10110-2-lijiang@redhat.com> <20180702101451.GB28730@zn.tnic>
- <4ae1cfb5-0a4b-2aac-2575-024e2c74826f@redhat.com>
- <895db996-febd-d50c-91af-4f1ef3d27bd8@redhat.com>
- <20180703111428.GB5748@zn.tnic>
- <4fbb843b-9597-a48b-8b6f-00e354b91950@redhat.com>
- <e7357038-08bd-7ba8-5357-7c91d21d10fe@redhat.com>
- <20180709092901.GA22182@nazgul.tnic>
- <fc6a47ca-1b16-eba5-d15e-ca294e01af93@redhat.com>
- <20180713170857.GB17896@nazgul.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <33453712-9b0b-e8b9-08a6-de09e0806dd6@redhat.com>
-Date:   Fri, 20 Jul 2018 13:06:59 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Fri, 20 Jul 2018 01:56:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53371 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbeGTF4T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 01:56:19 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6K59o2Q2538298
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 19 Jul 2018 22:09:50 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6K59m8D2538290;
+        Thu, 19 Jul 2018 22:09:48 -0700
+Date:   Thu, 19 Jul 2018 22:09:48 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiang Biao <tipbot@zytor.com>
+Message-ID: <tip-b2b7d986a89b6c94b1331a909de1217214fb08c1@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+        tglx@linutronix.de, jiang.biao2@zte.com.cn
+Reply-To: jiang.biao2@zte.com.cn, linux-kernel@vger.kernel.org,
+          hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de
+In-Reply-To: <1532045192-49622-1-git-send-email-jiang.biao2@zte.com.cn>
+References: <1532045192-49622-1-git-send-email-jiang.biao2@zte.com.cn>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/pti: Check the return value of
+ pti_user_pagetable_walk_p4d()
+Git-Commit-ID: b2b7d986a89b6c94b1331a909de1217214fb08c1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180713170857.GB17896@nazgul.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 05:07:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 05:07:13 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年07月14日 01:08, Borislav Petkov 写道:
-> On Mon, Jul 09, 2018 at 09:55:35PM +0800, lijiang wrote:
->> About this issue, i want to use an example to describe it.
->> /* drivers/iommu/amd_iommu_init.c */
->> static u8 __iomem * __init iommu_map_mmio_space(u64 address, u64 end)
-> 
-> Those addresses come from the IVHD header which is an ACPI table. So the
-> dump kernel can find that out too.
-> Sure. I might understand your means, that will have to find all address out in
-order to cover any cases in kdump kernel, those address  might include MMIO
-space, HPET, ACPI device table, ERST, and so on... 
+Commit-ID:  b2b7d986a89b6c94b1331a909de1217214fb08c1
+Gitweb:     https://git.kernel.org/tip/b2b7d986a89b6c94b1331a909de1217214fb08c1
+Author:     Jiang Biao <jiang.biao2@zte.com.cn>
+AuthorDate: Fri, 20 Jul 2018 08:06:31 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 20 Jul 2018 07:07:39 +0200
 
->> Obviously, the iommu mmio space is not encrypted, and the device
->> mmio space is outside kdump kernel. We know that the old memory is
->> encrypted, and the old memory is also outside kdump kernel. For the
->> current case, e820__get_entry_type() and walk_iomem_res_desc() can't
->> get the desired result, so we can't also decide whether encryption
->> or not according to this result(rules). If we want to know whether
->> encryption or not by deducing the address, we will need to read the
->> content of memory and have a reference value for comparison, then
->> what's a reference value? Sometimes we don't know that.
-> 
-> Again, if we don't know that how is the *caller* supposed to know
-> whether the memory is encrypted or not? Because
-> 
-> "we" == "caller"
-> 
-> in the kdump kernel.
-> 
-> And the more important question is, why are we dumping MMIO space of the
-> previous kernel *at* *all*? That doesn't make any sense to me.
-> 
-Sorry for my late reply.
-Here, it doesn't need to dump MMIO space of the previous kernel, when the
-kdump kernel boot, the MMIO address will be remapped in decryption manners,
-but the MMIO address don't belong to the range of the crash reserved memory,
-for the kdump kernel, the MMIO space(address) and IOMMU device table(address)
-are outside address, whereas, the IOMMU device table is encrypted in the first
-kernel, the kdump kernel will need to copy the content of IOMMU device table
-from the first kernel when the kdump kernel boot, so the IOMMU device table will
-be remapped in encryption manners.
-So some of them require to be remapped in encryption manners, and some(address)
-require to be remapped in decryption manners.
+x86/pti: Check the return value of pti_user_pagetable_walk_p4d()
 
+pti_user_pagetable_walk_p4d() can return NULL, so the return value should
+be checked to prevent a NULL pointer dereference.
+
+Add the check and a warning when the P4D allocation fails.
+
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: dave.hansen@linux.intel.com
+Cc: luto@kernel.org
+Cc: hpa@zytor.com
+Cc: albcamus@gmail.com
+Cc: zhong.weidong@zte.com.cn
+Link: https://lkml.kernel.org/r/1532045192-49622-1-git-send-email-jiang.biao2@zte.com.cn
+
+---
+ arch/x86/mm/pti.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 7b1c85759005..001ee6b0619e 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -176,7 +176,7 @@ static p4d_t *pti_user_pagetable_walk_p4d(unsigned long address)
+ 
+ 	if (pgd_none(*pgd)) {
+ 		unsigned long new_p4d_page = __get_free_page(gfp);
+-		if (!new_p4d_page)
++		if (WARN_ON_ONCE(!new_p4d_page))
+ 			return NULL;
+ 
+ 		set_pgd(pgd, __pgd(_KERNPG_TABLE | __pa(new_p4d_page)));
+@@ -195,9 +195,13 @@ static p4d_t *pti_user_pagetable_walk_p4d(unsigned long address)
+ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
+ {
+ 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
+-	p4d_t *p4d = pti_user_pagetable_walk_p4d(address);
++	p4d_t *p4d;
+ 	pud_t *pud;
+ 
++	p4d = pti_user_pagetable_walk_p4d(address);
++	if (!p4d)
++		return NULL;
++
+ 	BUILD_BUG_ON(p4d_large(*p4d) != 0);
+ 	if (p4d_none(*p4d)) {
+ 		unsigned long new_pud_page = __get_free_page(gfp);
+@@ -359,6 +363,9 @@ static void __init pti_clone_p4d(unsigned long addr)
+ 	pgd_t *kernel_pgd;
+ 
+ 	user_p4d = pti_user_pagetable_walk_p4d(addr);
++	if (!user_p4d)
++		return;
++
+ 	kernel_pgd = pgd_offset_k(addr);
+ 	kernel_p4d = p4d_offset(kernel_pgd, addr);
+ 	*user_p4d = *kernel_p4d;
