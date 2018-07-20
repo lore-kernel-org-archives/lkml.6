@@ -2,77 +2,161 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C47E9ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E9CECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87B672084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:51:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87B672084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 524D320661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:58:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="f2UKr3kj";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RDZMVxAd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524D320661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbeGUAmW (ORCPT
+        id S1728582AbeGUAsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 20:42:22 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:39770 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727224AbeGUAmV (ORCPT
+        Fri, 20 Jul 2018 20:48:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49416 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727429AbeGUAsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 20:42:21 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07402;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T50TJur_1532130692;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T50TJur_1532130692)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 21 Jul 2018 07:51:34 +0800
-Subject: Re: [PATCH] mm: thp: remove use_zero_page sysfs knob
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     hughd@google.com, rientjes@google.com, aaron.lu@intel.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1532110430-115278-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180720210626.5bnyddmn4avp2l3x@kshutemo-mobl1>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <3118b646-681e-a2aa-dc7b-71d4821fa50f@linux.alibaba.com>
-Date:   Fri, 20 Jul 2018 16:51:31 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Fri, 20 Jul 2018 20:48:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 480D360AD9; Fri, 20 Jul 2018 23:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532131091;
+        bh=w+N1vvmsFGCyx7f11akNobq3VX7otg6fj5BzfrN0hSI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=f2UKr3kjsQcjcshij3yYcqYozZaQ4otsFKYjaPNgil7Y+MvKR0kc9+b49is+I3S5C
+         IjdS1dMv1N6NEgr93WN3yeiQsOWiGjuOyJSxrjlT4AS3AQKMRU7LmRGPGW8YDxy8Wy
+         uqrewkcxBGHJmxCKD46SlDX1ru5GKraO/iL7B+vo=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id C00C160274;
+        Fri, 20 Jul 2018 23:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532131089;
+        bh=w+N1vvmsFGCyx7f11akNobq3VX7otg6fj5BzfrN0hSI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RDZMVxAdnepsqNCiKwKu64laWQ/UKjKWHEQn4yYxUWOlGUhR1L/iVjTpueQhtcY2x
+         GOLi6g4BxZ4SJlBZPpzq6L7J9NS3N6CJpPMZgsCCxV7Ly8cyueqrSpIeqNkeCrkgei
+         phMSZaj0wv8JMrNej66P04M0OV8ifEFpyMHddKs0=
 MIME-Version: 1.0
-In-Reply-To: <20180720210626.5bnyddmn4avp2l3x@kshutemo-mobl1>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Date:   Fri, 20 Jul 2018 16:58:09 -0700
+From:   Subhash Jadavani <subhashj@codeaurora.org>
+To:     Asutosh Das <asutoshd@codeaurora.org>
+Cc:     cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 7/9] scsi: ufs: add UFS power collapse support during
+ hibern8
+In-Reply-To: <13f4fbc290b5e3cfea95f49d65ddb2bf99a15cdb.1530880007.git.asutoshd@codeaurora.org>
+References: <cover.1530880006.git.asutoshd@codeaurora.org>
+ <13f4fbc290b5e3cfea95f49d65ddb2bf99a15cdb.1530880007.git.asutoshd@codeaurora.org>
+Message-ID: <e14fff20f9464677967fac6d9c5b905c@codeaurora.org>
+X-Sender: subhashj@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-07-06 05:30, Asutosh Das wrote:
+> From: Subhash Jadavani <subhashj@codeaurora.org>
+> 
+> UFS host controller hardware may allow the host controller
+> to be power collapsed when UFS link is hibern8 state, this
+> change allows the UFS host controller to be power collapsed
+> during hibern8.
+> 
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufshcd.c |  8 ++++++--
+>  drivers/scsi/ufs/ufshcd.h | 13 ++++++++++++-
+>  2 files changed, 18 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 40d9c35..50588cf 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -7673,13 +7673,17 @@ static int ufshcd_vreg_set_hpm(struct ufs_hba 
+> *hba)
+> 
+>  static void ufshcd_hba_vreg_set_lpm(struct ufs_hba *hba)
+>  {
+> -	if (ufshcd_is_link_off(hba))
+> +	if (ufshcd_is_link_off(hba) ||
+> +	    (ufshcd_is_link_hibern8(hba)
+> +	     && ufshcd_is_power_collapse_during_hibern8_allowed(hba)))
+>  		ufshcd_setup_hba_vreg(hba, false);
 
+I guess we have to handle the UFS host controller power collapse via 
+"power-domains" which would requires us to specify the "power-domains" 
+attribute under UFS controller's DT node and then linux core power 
+framework should automatically collapse the UFS controller post runtime 
+suspend. This also means we can't power collapse UFS controller 
+aggressively (as part of clock gating) but it should still be fine from 
+power point of view.
 
-On 7/20/18 2:06 PM, Kirill A. Shutemov wrote:
-> On Sat, Jul 21, 2018 at 02:13:50AM +0800, Yang Shi wrote:
->> By digging into the original review, it looks use_zero_page sysfs knob
->> was added to help ease-of-testing and give user a way to mitigate
->> refcounting overhead.
->>
->> It has been a few years since the knob was added at the first place, I
->> think we are confident that it is stable enough. And, since commit
->> 6fcb52a56ff60 ("thp: reduce usage of huge zero page's atomic counter"),
->> it looks refcounting overhead has been reduced significantly.
->>
->> Other than the above, the value of the knob is always 1 (enabled by
->> default), I'm supposed very few people turn it off by default.
->>
->> So, it sounds not worth to still keep this knob around.
-> I don't think that having the knob around is huge maintenance burden.
-> And since it helped to workaround a security bug relative recently I would
-> rather keep it.
+>  }
+> 
+>  static void ufshcd_hba_vreg_set_hpm(struct ufs_hba *hba)
+>  {
+> -	if (ufshcd_is_link_off(hba))
+> +	if (ufshcd_is_link_off(hba) ||
+> +	    (ufshcd_is_link_hibern8(hba)
+> +	     && ufshcd_is_power_collapse_during_hibern8_allowed(hba)))
+>  		ufshcd_setup_hba_vreg(hba, true);
+>  }
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index f79a639..8c5f987 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -728,7 +728,12 @@ struct ufs_hba {
+>  	 * to do background operation when it's active but it might degrade
+>  	 * the performance of ongoing read/write operations.
+>  	 */
+> -#define UFSHCD_CAP_KEEP_AUTO_BKOPS_ENABLED_EXCEPT_SUSPEND (1 << 5)
+> +#define UFSHCD_CAP_KEEP_AUTO_BKOPS_ENABLED_EXCEPT_SUSPEND (1 << 6)
+> +	/*
+> +	 * If host controller hardware can be power collapsed when UFS link 
+> is
+> +	 * in hibern8 then enable this cap.
+> +	 */
+> +#define UFSHCD_CAP_POWER_COLLAPSE_DURING_HIBERN8 (1 << 7)
+> 
+>  	struct devfreq *devfreq;
+>  	struct ufs_clk_scaling clk_scaling;
+> @@ -764,6 +769,12 @@ static inline bool
+> ufshcd_is_hibern8_on_idle_allowed(struct ufs_hba *hba)
+>  	return hba->caps & UFSHCD_CAP_HIBERN8_ENTER_ON_IDLE;
+>  }
+> 
+> +static inline bool ufshcd_is_power_collapse_during_hibern8_allowed(
+> +						struct ufs_hba *hba)
+> +{
+> +	return !!(hba->caps & UFSHCD_CAP_POWER_COLLAPSE_DURING_HIBERN8);
+> +}
+> +
+>  static inline bool ufshcd_is_intr_aggr_allowed(struct ufs_hba *hba)
+>  {
+>  /* DWC UFS Core has the Interrupt aggregation feature but is not 
+> detectable*/
 
-I agree to keep it for a while to let that security bug cool down, 
-however, if there is no user anymore, it sounds pointless to still keep 
-a dead knob.
-
->
-
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
