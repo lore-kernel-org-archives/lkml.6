@@ -6,55 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B1AEECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2F1ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4FC20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4FC20854
+	by mail.kernel.org (Postfix) with ESMTP id BEF4820854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF4820854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388190AbeGTNT2 (ORCPT
+        id S2388401AbeGTNTa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:19:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39186 "EHLO
+        Fri, 20 Jul 2018 09:19:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39214 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732980AbeGTNT2 (ORCPT
+        with ESMTP id S1732980AbeGTNTa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:19:28 -0400
+        Fri, 20 Jul 2018 09:19:30 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 589B7C84;
-        Fri, 20 Jul 2018 12:29:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81639C37;
+        Fri, 20 Jul 2018 12:30:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Peter Anvin" <hpa@linux.intel.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, acme@redhat.com,
-        akataria@vmware.com, akpm@linux-foundation.org,
-        andrea.parri@amarulasolutions.com, ard.biesheuvel@linaro.org,
-        arnd@arndb.de, aryabinin@virtuozzo.com, astrachan@google.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        caoj.fnst@cn.fujitsu.com, geert@linux-m68k.org,
-        ghackmann@google.com, jan.kiszka@siemens.com,
-        jarkko.sakkinen@linux.intel.com, joe@perches.com,
-        jpoimboe@redhat.com, keescook@google.com,
-        kirill.shutemov@linux.intel.com, kstewart@linuxfoundation.org,
-        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        manojgupta@google.com, mawilcox@microsoft.com,
-        michal.lkml@markovi.net, mjg59@google.com, mka@chromium.org,
-        pombredanne@nexb.com, rientjes@google.com, rostedt@goodmis.org,
-        thomas.lendacky@amd.com, tstellar@redhat.com, tweek@google.com,
-        virtualization@lists.linux-foundation.org, will.deacon@arm.com,
-        yamada.masahiro@socionext.com, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 06/66] x86/asm: Add _ASM_ARG* constants for argument registers to <asm/asm.h>
-Date:   Fri, 20 Jul 2018 14:13:23 +0200
-Message-Id: <20180720121407.614332883@linuxfoundation.org>
+        Julien Grall <julien.grall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.9 55/66] arm64: Add ARCH_WORKAROUND_2 probing
+Date:   Fri, 20 Jul 2018 14:14:12 +0200
+Message-Id: <20180720121411.210869718@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -71,134 +54,144 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: H. Peter Anvin <hpa@linux.intel.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 0e2e160033283e20f688d8bad5b89460cc5bfcc4 upstream.
+commit a725e3dda1813ed306734823ac4c65ca04e38500 upstream.
 
-i386 and x86-64 uses different registers for arguments; make them
-available so we don't have to #ifdef in the actual code.
+As for Spectre variant-2, we rely on SMCCC 1.1 to provide the
+discovery mechanism for detecting the SSBD mitigation.
 
-Native size and specified size (q, l, w, b) versions are provided.
+A new capability is also allocated for that purpose, and a
+config option.
 
-Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
-Acked-by: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: acme@redhat.com
-Cc: akataria@vmware.com
-Cc: akpm@linux-foundation.org
-Cc: andrea.parri@amarulasolutions.com
-Cc: ard.biesheuvel@linaro.org
-Cc: arnd@arndb.de
-Cc: aryabinin@virtuozzo.com
-Cc: astrachan@google.com
-Cc: boris.ostrovsky@oracle.com
-Cc: brijesh.singh@amd.com
-Cc: caoj.fnst@cn.fujitsu.com
-Cc: geert@linux-m68k.org
-Cc: ghackmann@google.com
-Cc: gregkh@linuxfoundation.org
-Cc: jan.kiszka@siemens.com
-Cc: jarkko.sakkinen@linux.intel.com
-Cc: joe@perches.com
-Cc: jpoimboe@redhat.com
-Cc: keescook@google.com
-Cc: kirill.shutemov@linux.intel.com
-Cc: kstewart@linuxfoundation.org
-Cc: linux-efi@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org
-Cc: manojgupta@google.com
-Cc: mawilcox@microsoft.com
-Cc: michal.lkml@markovi.net
-Cc: mjg59@google.com
-Cc: mka@chromium.org
-Cc: pombredanne@nexb.com
-Cc: rientjes@google.com
-Cc: rostedt@goodmis.org
-Cc: thomas.lendacky@amd.com
-Cc: tstellar@redhat.com
-Cc: tweek@google.com
-Cc: virtualization@lists.linux-foundation.org
-Cc: will.deacon@arm.com
-Cc: yamada.masahiro@socionext.com
-Link: http://lkml.kernel.org/r/20180621162324.36656-3-ndesaulniers@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Julien Grall <julien.grall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/include/asm/asm.h |   59 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ arch/arm64/Kconfig               |    9 +++++
+ arch/arm64/include/asm/cpucaps.h |    3 +
+ arch/arm64/kernel/cpu_errata.c   |   69 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -45,6 +45,65 @@
- #define _ASM_SI		__ASM_REG(si)
- #define _ASM_DI		__ASM_REG(di)
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -776,6 +776,15 @@ config HARDEN_BRANCH_PREDICTOR
  
-+#ifndef __x86_64__
-+/* 32 bit */
+ 	  If unsure, say Y.
+ 
++config ARM64_SSBD
++	bool "Speculative Store Bypass Disable" if EXPERT
++	default y
++	help
++	  This enables mitigation of the bypassing of previous stores
++	  by speculative loads.
 +
-+#define _ASM_ARG1	_ASM_AX
-+#define _ASM_ARG2	_ASM_DX
-+#define _ASM_ARG3	_ASM_CX
++	  If unsure, say Y.
 +
-+#define _ASM_ARG1L	eax
-+#define _ASM_ARG2L	edx
-+#define _ASM_ARG3L	ecx
+ menuconfig ARMV8_DEPRECATED
+ 	bool "Emulate deprecated/obsolete ARMv8 instructions"
+ 	depends on COMPAT
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -36,7 +36,8 @@
+ #define ARM64_MISMATCHED_CACHE_LINE_SIZE	15
+ #define ARM64_UNMAP_KERNEL_AT_EL0		16
+ #define ARM64_HARDEN_BRANCH_PREDICTOR		17
++#define ARM64_SSBD				18
+ 
+-#define ARM64_NCAPS				18
++#define ARM64_NCAPS				19
+ 
+ #endif /* __ASM_CPUCAPS_H */
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -211,6 +211,67 @@ void __init arm64_update_smccc_conduit(s
+ 
+ 	*updptr = cpu_to_le32(insn);
+ }
 +
-+#define _ASM_ARG1W	ax
-+#define _ASM_ARG2W	dx
-+#define _ASM_ARG3W	cx
++static void arm64_set_ssbd_mitigation(bool state)
++{
++	switch (psci_ops.conduit) {
++	case PSCI_CONDUIT_HVC:
++		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_2, state, NULL);
++		break;
 +
-+#define _ASM_ARG1B	al
-+#define _ASM_ARG2B	dl
-+#define _ASM_ARG3B	cl
++	case PSCI_CONDUIT_SMC:
++		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, state, NULL);
++		break;
 +
-+#else
-+/* 64 bit */
++	default:
++		WARN_ON_ONCE(1);
++		break;
++	}
++}
 +
-+#define _ASM_ARG1	_ASM_DI
-+#define _ASM_ARG2	_ASM_SI
-+#define _ASM_ARG3	_ASM_DX
-+#define _ASM_ARG4	_ASM_CX
-+#define _ASM_ARG5	r8
-+#define _ASM_ARG6	r9
++static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
++				    int scope)
++{
++	struct arm_smccc_res res;
++	bool supported = true;
 +
-+#define _ASM_ARG1Q	rdi
-+#define _ASM_ARG2Q	rsi
-+#define _ASM_ARG3Q	rdx
-+#define _ASM_ARG4Q	rcx
-+#define _ASM_ARG5Q	r8
-+#define _ASM_ARG6Q	r9
++	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
 +
-+#define _ASM_ARG1L	edi
-+#define _ASM_ARG2L	esi
-+#define _ASM_ARG3L	edx
-+#define _ASM_ARG4L	ecx
-+#define _ASM_ARG5L	r8d
-+#define _ASM_ARG6L	r9d
++	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
++		return false;
 +
-+#define _ASM_ARG1W	di
-+#define _ASM_ARG2W	si
-+#define _ASM_ARG3W	dx
-+#define _ASM_ARG4W	cx
-+#define _ASM_ARG5W	r8w
-+#define _ASM_ARG6W	r9w
++	/*
++	 * The probe function return value is either negative
++	 * (unsupported or mitigated), positive (unaffected), or zero
++	 * (requires mitigation). We only need to do anything in the
++	 * last case.
++	 */
++	switch (psci_ops.conduit) {
++	case PSCI_CONDUIT_HVC:
++		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
++				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
++		if ((int)res.a0 != 0)
++			supported = false;
++		break;
 +
-+#define _ASM_ARG1B	dil
-+#define _ASM_ARG2B	sil
-+#define _ASM_ARG3B	dl
-+#define _ASM_ARG4B	cl
-+#define _ASM_ARG5B	r8b
-+#define _ASM_ARG6B	r9b
++	case PSCI_CONDUIT_SMC:
++		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
++				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
++		if ((int)res.a0 != 0)
++			supported = false;
++		break;
 +
++	default:
++		supported = false;
++	}
++
++	if (supported) {
++		__this_cpu_write(arm64_ssbd_callback_required, 1);
++		arm64_set_ssbd_mitigation(true);
++	}
++
++	return supported;
++}
+ #endif	/* CONFIG_ARM64_SSBD */
+ 
+ #define MIDR_RANGE(model, min, max) \
+@@ -336,6 +397,14 @@ const struct arm64_cpu_capabilities arm6
+ 		.enable = enable_smccc_arch_workaround_1,
+ 	},
+ #endif
++#ifdef CONFIG_ARM64_SSBD
++	{
++		.desc = "Speculative Store Bypass Disable",
++		.def_scope = SCOPE_LOCAL_CPU,
++		.capability = ARM64_SSBD,
++		.matches = has_ssbd_mitigation,
++	},
 +#endif
-+
- /*
-  * Macros to generate condition code outputs from inline assembly,
-  * The output operand must be type "bool".
+ 	{
+ 	}
+ };
 
 
