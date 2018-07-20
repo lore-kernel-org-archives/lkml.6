@@ -2,101 +2,103 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D28ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A4CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C0B20671
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:43:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="xgvSFt/j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C0B20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 11A0D20671
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:44:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A0D20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbeGTVdt (ORCPT
+        id S1729179AbeGTVe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 17:33:49 -0400
-Received: from imap.thunk.org ([74.207.234.97]:39860 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727736AbeGTVdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 17:33:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=aBpIiEuf+EAeo/WY63YvLs5OyNSDKcW7QK2+8NFT1PY=; b=xgvSFt/jX6yTzD+++f9Vf2cUu2
-        CL3BbrMhQ2z4krLn3RaBz8VdTifdIIHYcN3cYczB4FOKndOnNY7bjvfn03P7tVsPudQd1Am1wEe5n
-        EsFeb5SSo/O+DXbWHWKqxrCU0ZCQ2kknFeFLQSURmcfInuVOMgeJhEudTPGmBFkFKGms=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fgcFg-00072h-Fn; Fri, 20 Jul 2018 20:43:48 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 8DD1C7A6419; Fri, 20 Jul 2018 16:43:43 -0400 (EDT)
-Date:   Fri, 20 Jul 2018 16:43:43 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Markus Heiser <markus.heiser@darmarit.de>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Sphinx version dependencies?
-Message-ID: <20180720204343.GC27862@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Markus Heiser <markus.heiser@darmarit.de>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180719181556.GA21435@thunk.org>
- <20180719190400.GB4800@magnolia>
- <44d73cd9926f58976a1269ff3cd3afb845ec84fa.camel@darmarit.de>
- <20180720131206.GM30706@thunk.org>
- <d064f468ab9fc60a02242331e0dddc185d6556ba.camel@darmarit.de>
- <20180720145235.GA27862@thunk.org>
- <cd31ba58ac24851698e06628ceebce4648345ff6.camel@darmarit.de>
- <20180720164421.GG4800@magnolia>
- <93aa59853a491a5ba3d5c3bcc0c991a1b815a67d.camel@darmarit.de>
- <20180720171020.GI4800@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180720171020.GI4800@magnolia>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        Fri, 20 Jul 2018 17:34:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53532 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbeGTVe2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 17:34:28 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98DDEC83;
+        Fri, 20 Jul 2018 20:44:31 +0000 (UTC)
+Date:   Fri, 20 Jul 2018 13:44:29 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH -next 0/2] fs/epoll: loosen irq safety when possible
+Message-Id: <20180720134429.1ba61018934b084bb2e17bdb@linux-foundation.org>
+In-Reply-To: <20180720200559.27nc7j2rrxpy5p3n@linux-r8p5>
+References: <20180720172956.2883-1-dave@stgolabs.net>
+        <20180720124212.7260d76d83e2b8e5e3349ea5@linux-foundation.org>
+        <20180720200559.27nc7j2rrxpy5p3n@linux-r8p5>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 10:10:20AM -0700, Darrick J. Wong wrote:
+On Fri, 20 Jul 2018 13:05:59 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
+
+> On Fri, 20 Jul 2018, Andrew Morton wrote:
 > 
-> Well yes, but it's the virtualenv workflow that produced build errors
-> for Ted; that's what would seem to need fixing?
+> >On Fri, 20 Jul 2018 10:29:54 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
+> >
+> >> Hi,
+> >>
+> >> Both patches replace saving+restoring interrupts when taking the
+> >> ep->lock (now the waitqueue lock), with just disabling local irqs.
+> >> This shows immediate performance benefits in patch 1 for an epoll
+> >> workload running on Xen.
+> >
+> >I'm surprised.  Is spin_lock_irqsave() significantly more expensive
+> >than spin_lock_irq()?  Relative to all the other stuff those functions
+> >are doing?  If so, how come?  Some architectural thing makes
+> >local_irq_save() much more costly than local_irq_disable()?
+> 
+> For example, if you compare x86 native_restore_fl() to xen_restore_fl(),
+> the cost of Xen is much higher.
+> 
+> And at least considering ep_scan_ready_list(), the lock is taken/released
+> twice, to deal with the ovflist when the ep->wq.lock is not held. To the
+> point that it yields measurable results (see patch 1) across incremental
+> thread counts.
 
-What would delight me if there was a fixed docutils and Sphinx version
-which is the **only** thing which subsystem maintainers need to test
-against.  If it fails for that version, then I reject the patch; and
-if it works on that version (say, 1.4.9), and it fails on some other
-version that a Distro wants to use for its hermetic build environment
-(say, 1.7.5), I can tell them, "not my problem, feel free to send me a
-patch that makes things work for 1.7.5, and doesn't break on 1.4.9 ---
-or package 1.4.9 for your distro build systems."
+Did you try measuring it on bare hardware?
 
-I don't really care what the mandated version is --- although given
-that Fedora and Debian seem to be using 1.7.5, maybe that's the right
-answer, and too bad for the enterprise distro build systems --- that's
-why they get paid the big bucks.  I just want to know what I'm obliged
-to test against.
+> >
+> >> The main concern we need to have with this
+> >> sort of changes in epoll is the ep_poll_callback() which is passed
+> >> to the wait queue wakeup and is done very often under irq context,
+> >> this patch does not touch this call.
+> >
+> >Yeah, these changes are scary.  For the code as it stands now, and for
+> >the code as it evolves.
+> 
+> Yes which is why I've been throwing lots of epoll workloads at it.
 
-So if Documentation/sphinx/requirements.txt is the only thing which is
-guaranteed to work, that's fine.  But it might be good to document
-that somewhere.
+I'm sure.  It's the "as it evolves" that is worrisome, and has caught
+us in the past.
 
-						- Ted
+> >
+> >I'd have more confidence if we had some warning mechanism if we run
+> >spin_lock_irq() when IRQs are disabled, which is probably-a-bug.  But
+> >afaict we don't have that.  Probably for good reasons - I wonder what
+> >they are?
+
+Well ignored ;)
+
+We could open-code it locally.  Add a couple of
+WARN_ON_ONCE(irqs_disabled())?  That might need re-benchmarking with
+Xen but surely just reading the thing isn't too expensive?
+
+
