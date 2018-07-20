@@ -2,41 +2,39 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE30ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B204ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 125A4206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125A4206B7
+	by mail.kernel.org (Postfix) with ESMTP id 19849206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19849206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389367AbeGTNZx (ORCPT
+        id S2389375AbeGTN0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:25:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45932 "EHLO
+        Fri, 20 Jul 2018 09:26:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46060 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388351AbeGTNZw (ORCPT
+        with ESMTP id S2388351AbeGTNZ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:25:52 -0400
+        Fri, 20 Jul 2018 09:25:59 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF0EBBE1;
-        Fri, 20 Jul 2018 12:33:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD7A4CA1;
+        Fri, 20 Jul 2018 12:33:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
         Eric Biggers <ebiggers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 61/92] reiserfs: fix buffer overflow with long warning messages
-Date:   Fri, 20 Jul 2018 14:14:05 +0200
-Message-Id: <20180720121421.379485552@linuxfoundation.org>
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 62/92] KEYS: DNS: fix parsing multiple options
+Date:   Fri, 20 Jul 2018 14:14:06 +0200
+Message-Id: <20180720121421.424566990@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -55,250 +53,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit fe10e398e860955bac4d28ec031b701d358465e4 upstream.
+commit c604cb767049b78b3075497b80ebb8fd530ea2cc upstream.
 
-ReiserFS prepares log messages into a 1024-byte buffer with no bounds
-checks.  Long messages, such as the "unknown mount option" warning when
-userspace passes a crafted mount options string, overflow this buffer.
-This causes KASAN to report a global-out-of-bounds write.
+My recent fix for dns_resolver_preparse() printing very long strings was
+incomplete, as shown by syzbot which still managed to hit the
+WARN_ONCE() in set_precision() by adding a crafted "dns_resolver" key:
 
-Fix it by truncating messages to the buffer size.
+    precision 50001 too large
+    WARNING: CPU: 7 PID: 864 at lib/vsprintf.c:2164 vsnprintf+0x48a/0x5a0
 
-Link: http://lkml.kernel.org/r/20180707203621.30922-1-ebiggers3@gmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com
+The bug this time isn't just a printing bug, but also a logical error
+when multiple options ("#"-separated strings) are given in the key
+payload.  Specifically, when separating an option string into name and
+value, if there is no value then the name is incorrectly considered to
+end at the end of the key payload, rather than the end of the current
+option.  This bypasses validation of the option length, and also means
+that specifying multiple options is broken -- which presumably has gone
+unnoticed as there is currently only one valid option anyway.
+
+A similar problem also applied to option values, as the kstrtoul() when
+parsing the "dnserror" option will read past the end of the current
+option and into the next option.
+
+Fix these bugs by correctly computing the length of the option name and
+by copying the option value, null-terminated, into a temporary buffer.
+
+Reproducer for the WARN_ONCE() that syzbot hit:
+
+    perl -e 'print "#A#", "\0" x 50000' | keyctl padd dns_resolver desc @s
+
+Reproducer for "dnserror" option being parsed incorrectly (expected
+behavior is to fail when seeing the unknown option "foo", actual
+behavior was to read the dnserror value as "1#foo" and fail there):
+
+    perl -e 'print "#dnserror=1#foo\0"' | keyctl padd dns_resolver desc @s
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 4a2d789267e0 ("DNS: If the DNS server returns an error, allow that to be cached [ver #2]")
 Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/reiserfs/prints.c |  141 +++++++++++++++++++++++++++++----------------------
- 1 file changed, 81 insertions(+), 60 deletions(-)
+ net/dns_resolver/dns_key.c |   30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
---- a/fs/reiserfs/prints.c
-+++ b/fs/reiserfs/prints.c
-@@ -76,83 +76,99 @@ static char *le_type(struct reiserfs_key
- }
+--- a/net/dns_resolver/dns_key.c
++++ b/net/dns_resolver/dns_key.c
+@@ -87,35 +87,39 @@ dns_resolver_preparse(struct key_prepars
+ 		opt++;
+ 		kdebug("options: '%s'", opt);
+ 		do {
++			int opt_len, opt_nlen;
+ 			const char *eq;
+-			int opt_len, opt_nlen, opt_vlen, tmp;
++			char optval[128];
  
- /* %k */
--static void sprintf_le_key(char *buf, struct reiserfs_key *key)
-+static int scnprintf_le_key(char *buf, size_t size, struct reiserfs_key *key)
- {
- 	if (key)
--		sprintf(buf, "[%d %d %s %s]", le32_to_cpu(key->k_dir_id),
--			le32_to_cpu(key->k_objectid), le_offset(key),
--			le_type(key));
-+		return scnprintf(buf, size, "[%d %d %s %s]",
-+				 le32_to_cpu(key->k_dir_id),
-+				 le32_to_cpu(key->k_objectid), le_offset(key),
-+				 le_type(key));
- 	else
--		sprintf(buf, "[NULL]");
-+		return scnprintf(buf, size, "[NULL]");
- }
+ 			next_opt = memchr(opt, '#', end - opt) ?: end;
+ 			opt_len = next_opt - opt;
+-			if (opt_len <= 0 || opt_len > 128) {
++			if (opt_len <= 0 || opt_len > sizeof(optval)) {
+ 				pr_warn_ratelimited("Invalid option length (%d) for dns_resolver key\n",
+ 						    opt_len);
+ 				return -EINVAL;
+ 			}
  
- /* %K */
--static void sprintf_cpu_key(char *buf, struct cpu_key *key)
-+static int scnprintf_cpu_key(char *buf, size_t size, struct cpu_key *key)
- {
- 	if (key)
--		sprintf(buf, "[%d %d %s %s]", key->on_disk_key.k_dir_id,
--			key->on_disk_key.k_objectid, reiserfs_cpu_offset(key),
--			cpu_type(key));
-+		return scnprintf(buf, size, "[%d %d %s %s]",
-+				 key->on_disk_key.k_dir_id,
-+				 key->on_disk_key.k_objectid,
-+				 reiserfs_cpu_offset(key), cpu_type(key));
- 	else
--		sprintf(buf, "[NULL]");
-+		return scnprintf(buf, size, "[NULL]");
- }
- 
--static void sprintf_de_head(char *buf, struct reiserfs_de_head *deh)
-+static int scnprintf_de_head(char *buf, size_t size,
-+			     struct reiserfs_de_head *deh)
- {
- 	if (deh)
--		sprintf(buf,
--			"[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
--			deh_offset(deh), deh_dir_id(deh), deh_objectid(deh),
--			deh_location(deh), deh_state(deh));
-+		return scnprintf(buf, size,
-+				 "[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
-+				 deh_offset(deh), deh_dir_id(deh),
-+				 deh_objectid(deh), deh_location(deh),
-+				 deh_state(deh));
- 	else
--		sprintf(buf, "[NULL]");
-+		return scnprintf(buf, size, "[NULL]");
- 
- }
- 
--static void sprintf_item_head(char *buf, struct item_head *ih)
-+static int scnprintf_item_head(char *buf, size_t size, struct item_head *ih)
- {
- 	if (ih) {
--		strcpy(buf,
--		       (ih_version(ih) == KEY_FORMAT_3_6) ? "*3.6* " : "*3.5*");
--		sprintf_le_key(buf + strlen(buf), &(ih->ih_key));
--		sprintf(buf + strlen(buf), ", item_len %d, item_location %d, "
--			"free_space(entry_count) %d",
--			ih_item_len(ih), ih_location(ih), ih_free_space(ih));
-+		char *p = buf;
-+		char * const end = buf + size;
+-			eq = memchr(opt, '=', opt_len) ?: end;
+-			opt_nlen = eq - opt;
+-			eq++;
+-			opt_vlen = next_opt - eq; /* will be -1 if no value */
+-
+-			tmp = opt_vlen >= 0 ? opt_vlen : 0;
+-			kdebug("option '%*.*s' val '%*.*s'",
+-			       opt_nlen, opt_nlen, opt, tmp, tmp, eq);
++			eq = memchr(opt, '=', opt_len);
++			if (eq) {
++				opt_nlen = eq - opt;
++				eq++;
++				memcpy(optval, eq, next_opt - eq);
++				optval[next_opt - eq] = '\0';
++			} else {
++				opt_nlen = opt_len;
++				optval[0] = '\0';
++			}
 +
-+		p += scnprintf(p, end - p, "%s",
-+			       (ih_version(ih) == KEY_FORMAT_3_6) ?
-+			       "*3.6* " : "*3.5*");
-+
-+		p += scnprintf_le_key(p, end - p, &ih->ih_key);
-+
-+		p += scnprintf(p, end - p,
-+			       ", item_len %d, item_location %d, free_space(entry_count) %d",
-+			       ih_item_len(ih), ih_location(ih),
-+			       ih_free_space(ih));
-+		return p - buf;
- 	} else
--		sprintf(buf, "[NULL]");
-+		return scnprintf(buf, size, "[NULL]");
- }
++			kdebug("option '%*.*s' val '%s'",
++			       opt_nlen, opt_nlen, opt, optval);
  
--static void sprintf_direntry(char *buf, struct reiserfs_dir_entry *de)
-+static int scnprintf_direntry(char *buf, size_t size,
-+			      struct reiserfs_dir_entry *de)
- {
- 	char name[20];
+ 			/* see if it's an error number representing a DNS error
+ 			 * that's to be recorded as the result in this key */
+ 			if (opt_nlen == sizeof(DNS_ERRORNO_OPTION) - 1 &&
+ 			    memcmp(opt, DNS_ERRORNO_OPTION, opt_nlen) == 0) {
+ 				kdebug("dns error number option");
+-				if (opt_vlen <= 0)
+-					goto bad_option_value;
  
- 	memcpy(name, de->de_name, de->de_namelen > 19 ? 19 : de->de_namelen);
- 	name[de->de_namelen > 19 ? 19 : de->de_namelen] = 0;
--	sprintf(buf, "\"%s\"==>[%d %d]", name, de->de_dir_id, de->de_objectid);
-+	return scnprintf(buf, size, "\"%s\"==>[%d %d]",
-+			 name, de->de_dir_id, de->de_objectid);
- }
+-				ret = kstrtoul(eq, 10, &derrno);
++				ret = kstrtoul(optval, 10, &derrno);
+ 				if (ret < 0)
+ 					goto bad_option_value;
  
--static void sprintf_block_head(char *buf, struct buffer_head *bh)
-+static int scnprintf_block_head(char *buf, size_t size, struct buffer_head *bh)
- {
--	sprintf(buf, "level=%d, nr_items=%d, free_space=%d rdkey ",
--		B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
-+	return scnprintf(buf, size,
-+			 "level=%d, nr_items=%d, free_space=%d rdkey ",
-+			 B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
- }
- 
--static void sprintf_buffer_head(char *buf, struct buffer_head *bh)
-+static int scnprintf_buffer_head(char *buf, size_t size, struct buffer_head *bh)
- {
--	sprintf(buf,
--		"dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
--		bh->b_bdev, bh->b_size,
--		(unsigned long long)bh->b_blocknr, atomic_read(&(bh->b_count)),
--		bh->b_state, bh->b_page,
--		buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
--		buffer_dirty(bh) ? "DIRTY" : "CLEAN",
--		buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
-+	return scnprintf(buf, size,
-+			 "dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
-+			 bh->b_bdev, bh->b_size,
-+			 (unsigned long long)bh->b_blocknr,
-+			 atomic_read(&(bh->b_count)),
-+			 bh->b_state, bh->b_page,
-+			 buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
-+			 buffer_dirty(bh) ? "DIRTY" : "CLEAN",
-+			 buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
- }
- 
--static void sprintf_disk_child(char *buf, struct disk_child *dc)
-+static int scnprintf_disk_child(char *buf, size_t size, struct disk_child *dc)
- {
--	sprintf(buf, "[dc_number=%d, dc_size=%u]", dc_block_number(dc),
--		dc_size(dc));
-+	return scnprintf(buf, size, "[dc_number=%d, dc_size=%u]",
-+			 dc_block_number(dc), dc_size(dc));
- }
- 
- static char *is_there_reiserfs_struct(char *fmt, int *what)
-@@ -189,55 +205,60 @@ static void prepare_error_buf(const char
- 	char *fmt1 = fmt_buf;
- 	char *k;
- 	char *p = error_buf;
-+	char * const end = &error_buf[sizeof(error_buf)];
- 	int what;
- 
- 	spin_lock(&error_lock);
- 
--	strcpy(fmt1, fmt);
-+	if (WARN_ON(strscpy(fmt_buf, fmt, sizeof(fmt_buf)) < 0)) {
-+		strscpy(error_buf, "format string too long", end - error_buf);
-+		goto out_unlock;
-+	}
- 
- 	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
- 		*k = 0;
- 
--		p += vsprintf(p, fmt1, args);
-+		p += vscnprintf(p, end - p, fmt1, args);
- 
- 		switch (what) {
- 		case 'k':
--			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
-+			p += scnprintf_le_key(p, end - p,
-+					      va_arg(args, struct reiserfs_key *));
- 			break;
- 		case 'K':
--			sprintf_cpu_key(p, va_arg(args, struct cpu_key *));
-+			p += scnprintf_cpu_key(p, end - p,
-+					       va_arg(args, struct cpu_key *));
- 			break;
- 		case 'h':
--			sprintf_item_head(p, va_arg(args, struct item_head *));
-+			p += scnprintf_item_head(p, end - p,
-+						 va_arg(args, struct item_head *));
- 			break;
- 		case 't':
--			sprintf_direntry(p,
--					 va_arg(args,
--						struct reiserfs_dir_entry *));
-+			p += scnprintf_direntry(p, end - p,
-+						va_arg(args, struct reiserfs_dir_entry *));
- 			break;
- 		case 'y':
--			sprintf_disk_child(p,
--					   va_arg(args, struct disk_child *));
-+			p += scnprintf_disk_child(p, end - p,
-+						  va_arg(args, struct disk_child *));
- 			break;
- 		case 'z':
--			sprintf_block_head(p,
--					   va_arg(args, struct buffer_head *));
-+			p += scnprintf_block_head(p, end - p,
-+						  va_arg(args, struct buffer_head *));
- 			break;
- 		case 'b':
--			sprintf_buffer_head(p,
--					    va_arg(args, struct buffer_head *));
-+			p += scnprintf_buffer_head(p, end - p,
-+						   va_arg(args, struct buffer_head *));
- 			break;
- 		case 'a':
--			sprintf_de_head(p,
--					va_arg(args,
--					       struct reiserfs_de_head *));
-+			p += scnprintf_de_head(p, end - p,
-+					       va_arg(args, struct reiserfs_de_head *));
- 			break;
- 		}
- 
--		p += strlen(p);
- 		fmt1 = k + 2;
- 	}
--	vsprintf(p, fmt1, args);
-+	p += vscnprintf(p, end - p, fmt1, args);
-+out_unlock:
- 	spin_unlock(&error_lock);
- 
- }
 
 
