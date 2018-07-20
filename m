@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB416ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61014ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99BB62084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99BB62084A
+	by mail.kernel.org (Postfix) with ESMTP id 22A592084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A592084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387732AbeGTNPa (ORCPT
+        id S2387769AbeGTNPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35040 "EHLO
+        Fri, 20 Jul 2018 09:15:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35048 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731662AbeGTNP3 (ORCPT
+        with ESMTP id S1731708AbeGTNPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:29 -0400
+        Fri, 20 Jul 2018 09:15:32 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD99CA95;
-        Fri, 20 Jul 2018 12:27:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B28E41C;
+        Fri, 20 Jul 2018 12:27:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 24/31] net: cxgb3_main: fix potential Spectre v1
-Date:   Fri, 20 Jul 2018 14:13:54 +0200
-Message-Id: <20180720121341.027300543@linuxfoundation.org>
+        stable@vger.kernel.org, Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.4 25/31] rtlwifi: rtl8821ae: fix firmware is not ready to run
+Date:   Fri, 20 Jul 2018 14:13:55 +0200
+Message-Id: <20180720121341.060920827@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -51,53 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Ping-Ke Shih <pkshih@realtek.com>
 
-commit 676bcfece19f83621e905aa55b5ed2d45cc4f2d3 upstream.
+commit 9a98302de19991d51e067b88750585203b2a3ab6 upstream.
 
-t.qset_idx can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Without this patch, firmware will not run properly on rtl8821ae, and it
+causes bad user experience. For example, bad connection performance with
+low rate, higher power consumption, and so on.
 
-This issue was detected with the help of Smatch:
+rtl8821ae uses two kinds of firmwares for normal and WoWlan cases, and
+each firmware has firmware data buffer and size individually. Original
+code always overwrite size of normal firmware rtlpriv->rtlhal.fwsize, and
+this mismatch causes firmware checksum error, then firmware can't start.
 
-drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:2286 cxgb_extension_ioctl()
-warn: potential spectre issue 'adapter->msix_info'
+In this situation, driver gives message "Firmware is not ready to run!".
 
-Fix this by sanitizing t.qset_idx before using it to index
-adapter->msix_info
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: fe89707f0afa ("rtlwifi: rtl8821ae: Simplify loading of WOWLAN firmware")
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Stable <stable@vger.kernel.org> # 4.0+
+Reviewed-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/realtek/rtlwifi/core.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-@@ -50,6 +50,7 @@
- #include <linux/stringify.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
-+#include <linux/nospec.h>
- #include <asm/uaccess.h>
+--- a/drivers/net/wireless/realtek/rtlwifi/core.c
++++ b/drivers/net/wireless/realtek/rtlwifi/core.c
+@@ -135,7 +135,6 @@ found_alt:
+ 		       firmware->size);
+ 		rtlpriv->rtlhal.wowlan_fwsize = firmware->size;
+ 	}
+-	rtlpriv->rtlhal.fwsize = firmware->size;
+ 	release_firmware(firmware);
+ }
  
- #include "common.h"
-@@ -2256,6 +2257,7 @@ static int cxgb_extension_ioctl(struct n
- 
- 		if (t.qset_idx >= nqsets)
- 			return -EINVAL;
-+		t.qset_idx = array_index_nospec(t.qset_idx, nqsets);
- 
- 		q = &adapter->params.sge.qset[q1 + t.qset_idx];
- 		t.rspq_size = q->rspq_size;
 
 
