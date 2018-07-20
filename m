@@ -2,192 +2,134 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3C3ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A748ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7147E20856
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7147E20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3DF0F20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:08:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="fk2qS6gv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Whx79zcG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DF0F20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aj.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731034AbeGTAww (ORCPT
+        id S1731069AbeGTAxb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:52:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36716 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730687AbeGTAwv (ORCPT
+        Thu, 19 Jul 2018 20:53:31 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:34953 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729215AbeGTAxa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:52:51 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB02141C;
-        Fri, 20 Jul 2018 00:07:19 +0000 (UTC)
-Date:   Thu, 19 Jul 2018 17:07:18 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     syzbot <syzbot+b173e77096a8ba815511@syzkaller.appspotmail.com>
-Cc:     jack@suse.cz, jlayton@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org,
-        v9fs-developer@lists.sourceforge.net
-Subject: Re: KASAN: use-after-free Read in generic_perform_write
-Message-Id: <20180719170718.8d4e7344fe79b2ad411dde98@linux-foundation.org>
-In-Reply-To: <00000000000047116205715df655@google.com>
-References: <00000000000047116205715df655@google.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 19 Jul 2018 20:53:30 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4D3942104C;
+        Thu, 19 Jul 2018 20:07:58 -0400 (EDT)
+Received: from web5 ([10.202.2.215])
+  by compute4.internal (MEProxy); Thu, 19 Jul 2018 20:07:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=cc
+        :content-transfer-encoding:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=eGMzywVPQ7r7zEjVlJrRyAzk9WT3C
+        BlsmFp2qjntQ/s=; b=fk2qS6gvH8KEUUWC9iUTbxAjowEmBZcIEg+uQYaqLxQai
+        pZpBIFMUB3MilccYDk8uf712IHR1v1UN0LzCQ7pvwuwDfnVmMnvRoUgKjDJ6ooW1
+        wgZ5AMT53EuijExCzgpnH1+f8rrUBhJfhrGdd52XNLRJsiYIPXIJfQgi4+Zs54zk
+        48Nfd5pDOEzDeILWzKh/kdRjRqj80bOAZlT7DEJYFXgKz19ICD7Q+z0e9nvS+eT/
+        MbOjOQiWazJWBWWgNbQKRLZChyF9A+QSZIodJdurDW158qhJRdXWxedm5NdyBAjK
+        HnH7kk81nFyrAXbbMYwwpfqOKR5UOILdxRLQRBGmg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=eGMzyw
+        VPQ7r7zEjVlJrRyAzk9WT3CBlsmFp2qjntQ/s=; b=Whx79zcGjf+0m1p1dL/TIR
+        KPOZwqRPXoY/Ktp7EqBFrEzKqJJaISsa9xoGE2cWuvL9bNTXLkgooIRTBOy5fD5b
+        4rmGJNw9UFWYXBo/9qTabEth+cXF0Ena4gzUFoHYUVofgOx6MloypSSWtTZVbBGF
+        906Fcm+qOuNqbO00of9Qx9q+s07G/p0NnFyM4Rzfz/iShA5CrabhoVwUv5jXp9Cz
+        G6YgjQ2LwCyZL5U8meq7KFtNe6ALadgEGAbYcnrerHsXCNNb465uHj7tv4Oj/iQi
+        mgcVNKkq1bVTmfjrryzL6JKae6ft8pHatD69J8HrV/UJmF7F6oKqgX7gDgcMw/cw
+        ==
+X-ME-Proxy: <xmx:3CdRW7i9vpgP84_S-CDUjCgqqDBrkil23CXHttwhcRZMV1JEPm7zVQ>
+    <xmx:3CdRW8q4eFI3Qz0jAZ2wWMYtxPL5-WTbem3Bp-mMycdL-PuLj2UBmw>
+    <xmx:3CdRWzPBNNW11v0vh_Yj1gkbEmj6yhdUD2VCNXRoUk8_hVQam-_BYQ>
+    <xmx:3CdRWyYj69WOCcvCk54Ru70SX-J7-_dL6dIdnZyIRmm1N9Q9r6Ez9A>
+    <xmx:3CdRW9kv8408cIJYEmjxEHVaj6e373rnxVSZyQ6yOJ8qX7Gqj6EMFA>
+    <xmx:3idRW-mNP5EGedi_ki8Uw4A3BCS3GVmUqK0qgWS0rCg8u0naoXFcjw>
+X-ME-Sender: <xms:3CdRW0Rq3Q6klLQQkZaLU6aZqGv8JkqwapTGKChfd9islhRhCDJZAw>
+Received: by mailuser.nyi.internal (Postfix, from userid 99)
+        id 9AE899E100; Thu, 19 Jul 2018 20:07:56 -0400 (EDT)
+Message-Id: <1532045276.1219110.1446722072.546C1F9D@webmail.messagingengine.com>
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Rob Herring <robh@kernel.org>, Eugene.Cho@dell.com,
+        a.amelkin@yadro.com
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        stewart@linux.ibm.com, OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-e74bb3a0
+References: <20180711053122.30773-1-andrew@aj.id.au>
+ <20180711053122.30773-2-andrew@aj.id.au>
+ <20180711200450.GB17291@rob-hp-laptop>
+ <1531356830.3551458.1437853280.551CA8C5@webmail.messagingengine.com>
+ <CAL_JsqKpXxR4t_-3BOy-0mFePXkaSck_4PfHRD=OZQ-_-T5P=w@mail.gmail.com>
+ <b6ced4cad4d7ff78330181b2c893855c23103953.camel@kernel.crashing.org>
+ <1531463489.747186.1439263128.075AECE1@webmail.messagingengine.com>
+ <CAL_JsqLZo-=7UkuvvUFYdCR4asBBiWyC=Q1ryH=-HLU6vzf9tA@mail.gmail.com>
+ <ece91112ecfdc7218184c4c4519e455cf9397e11.camel@kernel.crashing.org>
+ <CAL_JsqL_bMXLAA0091-g8PmhXR5g5Pf2y2=ey7Ss5ofHm46sWw@mail.gmail.com>
+ <c69d0e7c3a95d83da87b566a62619462671a233b.camel@kernel.crashing.org>
+ <1531967302.2140539.1445583600.0F5ED287@webmail.messagingengine.com>
+ <9787b471abc49c0b3db60e3471473a7a5b45ade7.camel@kernel.crashing.org>
+Subject: Re: [RFC PATCH v2 1/4] dt-bindings: misc: Add bindings for misc. BMC
+ control fields
+Date:   Fri, 20 Jul 2018 09:37:56 +0930
+In-Reply-To: <9787b471abc49c0b3db60e3471473a7a5b45ade7.camel@kernel.crashing.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 11:01:01 -0700 syzbot <syzbot+b173e77096a8ba815511@syzkaller.appspotmail.com> wrote:
+> 
+> Andrew, can you start with a list that shows what you expect us to need
+> on our systems ?
+> 
 
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    1c34981993da Add linux-next specific files for 20180719
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16e6ac44400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7002497517b09aec
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b173e77096a8ba815511
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
+Okay, our Witherspoon and Romulus platforms containing the ASPEED AST2500 currently need the following tuneables exposed:
 
-Thanks.  I cc'ed v9fs-developer, optimistically.  That list manager is
-weird :(
+From the SCU:
+- Debug UART enable
+- VGA DAC mux
+- VGA scratch registers 0-7
+- LPC SuperIO decode enable
+- VGA MMIO decode enable
 
-I'm suspecting v9fs.  Does that fs attempt to write to the fs from a
-kmalloced buffer?
+From the LPC controller:
+- iLPC2AHB enable
+- SuperIO scratch registers 0x20-0x2f
 
-Full report below...
+(The LPC controller is just as much of a collection of random bits as the SCU)
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+b173e77096a8ba815511@syzkaller.appspotmail.com
-> 
-> IPVS: length: 141 != 24
-> XFS (loop5): Invalid superblock magic number
-> ==================================================================
-> BUG: KASAN: use-after-free in memcpy include/linux/string.h:345 [inline]
-> BUG: KASAN: use-after-free in iov_iter_copy_from_user_atomic+0xb8d/0xfa0  
-> lib/iov_iter.c:916
-> Read of size 21 at addr ffff880190103660 by task kworker/0:3/4927
-> 
-> CPU: 0 PID: 4927 Comm: kworker/0:3 Not tainted 4.18.0-rc5-next-20180719+ #11
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Workqueue: events p9_write_work
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->   print_address_description+0x6c/0x20b mm/kasan/report.c:256
->   kasan_report_error mm/kasan/report.c:354 [inline]
->   kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
->   check_memory_region_inline mm/kasan/kasan.c:260 [inline]
->   check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
->   memcpy+0x23/0x50 mm/kasan/kasan.c:302
->   memcpy include/linux/string.h:345 [inline]
->   iov_iter_copy_from_user_atomic+0xb8d/0xfa0 lib/iov_iter.c:916
->   generic_perform_write+0x469/0x6c0 mm/filemap.c:3058
->   __generic_file_write_iter+0x26e/0x630 mm/filemap.c:3175
->   ext4_file_write_iter+0x390/0x1450 fs/ext4/file.c:266
->   call_write_iter include/linux/fs.h:1826 [inline]
->   new_sync_write fs/read_write.c:474 [inline]
->   __vfs_write+0x6af/0x9d0 fs/read_write.c:487
->   vfs_write+0x1fc/0x560 fs/read_write.c:549
->   kernel_write+0xab/0x120 fs/read_write.c:526
->   p9_fd_write net/9p/trans_fd.c:427 [inline]
->   p9_write_work+0x6f1/0xd50 net/9p/trans_fd.c:476
->   process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
->   worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
->   kthread+0x345/0x410 kernel/kthread.c:246
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-> 
-> Allocated by task 13072:
->   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->   set_track mm/kasan/kasan.c:460 [inline]
->   kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->   __do_kmalloc mm/slab.c:3718 [inline]
->   __kmalloc+0x14e/0x760 mm/slab.c:3727
->   kmalloc include/linux/slab.h:518 [inline]
->   p9_fcall_alloc+0x1e/0x90 net/9p/client.c:237
->   p9_tag_alloc net/9p/client.c:266 [inline]
->   p9_client_prepare_req.part.8+0x107/0xa00 net/9p/client.c:640
->   p9_client_prepare_req net/9p/client.c:675 [inline]
->   p9_client_rpc+0x242/0x1330 net/9p/client.c:675
->   p9_client_version net/9p/client.c:890 [inline]
->   p9_client_create+0xca4/0x1537 net/9p/client.c:974
->   v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
->   v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
->   legacy_get_tree+0x131/0x460 fs/fs_context.c:674
->   vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
->   do_new_mount fs/namespace.c:2603 [inline]
->   do_mount+0x6f2/0x1e20 fs/namespace.c:2927
->   ksys_mount+0x12d/0x140 fs/namespace.c:3143
->   __do_sys_mount fs/namespace.c:3157 [inline]
->   __se_sys_mount fs/namespace.c:3154 [inline]
->   __x64_sys_mount+0xbe/0x150 fs/namespace.c:3154
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Freed by task 13072:
->   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->   set_track mm/kasan/kasan.c:460 [inline]
->   __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->   __cache_free mm/slab.c:3498 [inline]
->   kfree+0xd9/0x260 mm/slab.c:3813
->   p9_free_req+0xb5/0x120 net/9p/client.c:338
->   p9_client_rpc+0xa8e/0x1330 net/9p/client.c:739
->   p9_client_version net/9p/client.c:890 [inline]
->   p9_client_create+0xca4/0x1537 net/9p/client.c:974
->   v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
->   v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
->   legacy_get_tree+0x131/0x460 fs/fs_context.c:674
->   vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
->   do_new_mount fs/namespace.c:2603 [inline]
->   do_mount+0x6f2/0x1e20 fs/namespace.c:2927
->   ksys_mount+0x12d/0x140 fs/namespace.c:3143
->   __do_sys_mount fs/namespace.c:3157 [inline]
->   __se_sys_mount fs/namespace.c:3154 [inline]
->   __x64_sys_mount+0xbe/0x150 fs/namespace.c:3154
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> The buggy address belongs to the object at ffff880190103640
->   which belongs to the cache kmalloc-16384 of size 16384
-> The buggy address is located 32 bytes inside of
->   16384-byte region [ffff880190103640, ffff880190107640)
-> The buggy address belongs to the page:
-> page:ffffea0006404000 count:1 mapcount:0 mapping:ffff8801da802200 index:0x0  
-> compound_mapcount: 0
-> flags: 0x2fffc0000010200(slab|head)
-> raw: 02fffc0000010200 ffffea000643b808 ffffea0006452c08 ffff8801da802200
-> raw: 0000000000000000 ffff880190103640 0000000100000001 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->   ffff880190103500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff880190103580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > ffff880190103600: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
->                                                         ^
->   ffff880190103680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff880190103700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-> syzbot.
+Lastly, our Palmetto platform uses an AST2400 which has fewer features compared to the AST2500. Its tuneable list is the same as the above with the exception of "Debug UART enable".
+
+Tuneables that we may need to expose in the future include:
+
+From the SCU:
+- PCI VID/DID for the BMC PCIe device
+- VGA device enable (may need to be disabled if the platform contains a discrete graphics processor)
+
+From the LPC controller:
+- UART mux
+
+Alexander, Eugene, can you chime in with your platforms' needs?
+
+Cheers,
+
+Andrew
