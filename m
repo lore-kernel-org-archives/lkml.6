@@ -6,37 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E2EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB1FECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2A720856
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B2A720856
+	by mail.kernel.org (Postfix) with ESMTP id 6369D20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6369D20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387775AbeGTNRk (ORCPT
+        id S2388196AbeGTNRt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:17:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37542 "EHLO
+        Fri, 20 Jul 2018 09:17:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37710 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728409AbeGTNRk (ORCPT
+        with ESMTP id S1728409AbeGTNRt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:17:40 -0400
+        Fri, 20 Jul 2018 09:17:49 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8275BCF;
-        Fri, 20 Jul 2018 12:29:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF79BBD4;
+        Fri, 20 Jul 2018 12:29:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Meelis Roos <mroos@linux.ee>,
-        Mathieu Malaterre <malat@debian.org>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 24/66] net: sungem: fix rx checksum support
-Date:   Fri, 20 Jul 2018 14:13:41 +0200
-Message-Id: <20180720121408.683386215@linuxfoundation.org>
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Sodagudi Prasad <psodagud@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 04/66] compiler, clang: always inline when CONFIG_OPTIMIZE_INLINING is disabled
+Date:   Fri, 20 Jul 2018 14:13:21 +0200
+Message-Id: <20180720121407.493796538@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -53,109 +58,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: David Rientjes <rientjes@google.com>
 
-[ Upstream commit 12b03558cef6d655d0d394f5e98a6fd07c1f6c0f ]
+commit 9a04dbcfb33b4012d0ce8c0282f1e3ca694675b1 upstream.
 
-After commit 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE
-are friends"), sungem owners reported the infamous "eth0: hw csum failure"
-message.
+The motivation for commit abb2ea7dfd82 ("compiler, clang: suppress
+warning for unused static inline functions") was to suppress clang's
+warnings about unused static inline functions.
 
-CHECKSUM_COMPLETE has in fact never worked for this driver, but this
-was masked by the fact that upper stacks had to strip the FCS, and
-therefore skb->ip_summed was set back to CHECKSUM_NONE before
-my recent change.
+For configs without CONFIG_OPTIMIZE_INLINING enabled, such as any non-x86
+architecture, `inline' in the kernel implies that
+__attribute__((always_inline)) is used.
 
-Driver configures a number of bytes to skip when the chip computes
-the checksum, and for some reason only half of the Ethernet header
-was skipped.
+Some code depends on that behavior, see
+  https://lkml.org/lkml/2017/6/13/918:
 
-Then a second problem is that we should strip the FCS by default,
-unless the driver is updated to eventually support NETIF_F_RXFCS in
-the future.
+  net/built-in.o: In function `__xchg_mb':
+  arch/arm64/include/asm/cmpxchg.h:99: undefined reference to `__compiletime_assert_99'
+  arch/arm64/include/asm/cmpxchg.h:99: undefined reference to `__compiletime_assert_99
 
-Finally, a driver should check if NETIF_F_RXCSUM feature is enabled
-or not, so that the admin can turn off rx checksum if wanted.
+The full fix would be to identify these breakages and annotate the
+functions with __always_inline instead of `inline'.  But since we are
+late in the 4.12-rc cycle, simply carry forward the forced inlining
+behavior and work toward moving arm64, and other architectures, toward
+CONFIG_OPTIMIZE_INLINING behavior.
 
-Many thanks to Andreas Schwab and Mathieu Malaterre for their
-help in debugging this issue.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Meelis Roos <mroos@linux.ee>
-Reported-by: Mathieu Malaterre <malat@debian.org>
-Reported-by: Andreas Schwab <schwab@linux-m68k.org>
-Tested-by: Andreas Schwab <schwab@linux-m68k.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1706261552200.1075@chino.kir.corp.google.com
+Signed-off-by: David Rientjes <rientjes@google.com>
+Reported-by: Sodagudi Prasad <psodagud@codeaurora.org>
+Tested-by: Sodagudi Prasad <psodagud@codeaurora.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/sun/sungem.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/sun/sungem.c
-+++ b/drivers/net/ethernet/sun/sungem.c
-@@ -59,8 +59,7 @@
- #include <linux/sungem_phy.h>
- #include "sungem.h"
+---
+ include/linux/compiler-clang.h |    8 --------
+ include/linux/compiler-gcc.h   |   18 +++++++++++-------
+ 2 files changed, 11 insertions(+), 15 deletions(-)
+
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -16,14 +16,6 @@
+  */
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
  
--/* Stripping FCS is causing problems, disabled for now */
--#undef STRIP_FCS
-+#define STRIP_FCS
+-/*
+- * GCC does not warn about unused static inline functions for
+- * -Wunused-function.  This turns out to avoid the need for complex #ifdef
+- * directives.  Suppress the warning in clang as well.
+- */
+-#undef inline
+-#define inline inline __attribute__((unused)) notrace
+-
+ /* Clang doesn't have a way to turn it off per-function, yet. */
+ #ifdef __noretpoline
+ #undef __noretpoline
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -66,18 +66,22 @@
  
- #define DEFAULT_MSG	(NETIF_MSG_DRV		| \
- 			 NETIF_MSG_PROBE	| \
-@@ -434,7 +433,7 @@ static int gem_rxmac_reset(struct gem *g
- 	writel(desc_dma & 0xffffffff, gp->regs + RXDMA_DBLOW);
- 	writel(RX_RING_SIZE - 4, gp->regs + RXDMA_KICK);
- 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
--	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
-+	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
- 	writel(val, gp->regs + RXDMA_CFG);
- 	if (readl(gp->regs + GREG_BIFCFG) & GREG_BIFCFG_M66EN)
- 		writel(((5 & RXDMA_BLANK_IPKTS) |
-@@ -759,7 +758,6 @@ static int gem_rx(struct gem *gp, int wo
- 	struct net_device *dev = gp->dev;
- 	int entry, drops, work_done = 0;
- 	u32 done;
--	__sum16 csum;
+ /*
+  * Force always-inline if the user requests it so via the .config,
+- * or if gcc is too old:
++ * or if gcc is too old.
++ * GCC does not warn about unused static inline functions for
++ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
++ * directives.  Suppress the warning in clang as well by using "unused"
++ * function attribute, which is redundant but not harmful for gcc.
+  */
+ #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
+     !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
+-#define inline		inline		__attribute__((always_inline)) notrace
+-#define __inline__	__inline__	__attribute__((always_inline)) notrace
+-#define __inline	__inline	__attribute__((always_inline)) notrace
++#define inline inline		__attribute__((always_inline,unused)) notrace
++#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
++#define __inline __inline	__attribute__((always_inline,unused)) notrace
+ #else
+ /* A lot of inline functions can cause havoc with function tracing */
+-#define inline		inline		notrace
+-#define __inline__	__inline__	notrace
+-#define __inline	__inline	notrace
++#define inline inline		__attribute__((unused)) notrace
++#define __inline__ __inline__	__attribute__((unused)) notrace
++#define __inline __inline	__attribute__((unused)) notrace
+ #endif
  
- 	if (netif_msg_rx_status(gp))
- 		printk(KERN_DEBUG "%s: rx interrupt, done: %d, rx_new: %d\n",
-@@ -854,9 +852,13 @@ static int gem_rx(struct gem *gp, int wo
- 			skb = copy_skb;
- 		}
- 
--		csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
--		skb->csum = csum_unfold(csum);
--		skb->ip_summed = CHECKSUM_COMPLETE;
-+		if (likely(dev->features & NETIF_F_RXCSUM)) {
-+			__sum16 csum;
-+
-+			csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
-+			skb->csum = csum_unfold(csum);
-+			skb->ip_summed = CHECKSUM_COMPLETE;
-+		}
- 		skb->protocol = eth_type_trans(skb, gp->dev);
- 
- 		napi_gro_receive(&gp->napi, skb);
-@@ -1754,7 +1756,7 @@ static void gem_init_dma(struct gem *gp)
- 	writel(0, gp->regs + TXDMA_KICK);
- 
- 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
--	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
-+	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
- 	writel(val, gp->regs + RXDMA_CFG);
- 
- 	writel(desc_dma >> 32, gp->regs + RXDMA_DBHI);
-@@ -2972,8 +2974,8 @@ static int gem_init_one(struct pci_dev *
- 	pci_set_drvdata(pdev, dev);
- 
- 	/* We can do scatter/gather and HW checksum */
--	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM;
--	dev->features |= dev->hw_features | NETIF_F_RXCSUM;
-+	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
-+	dev->features = dev->hw_features;
- 	if (pci_using_dac)
- 		dev->features |= NETIF_F_HIGHDMA;
- 
+ #define __always_inline	inline __attribute__((always_inline))
 
 
