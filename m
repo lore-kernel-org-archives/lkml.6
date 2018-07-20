@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF92ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A006ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAEFD206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAEFD206B7
+	by mail.kernel.org (Postfix) with ESMTP id E34F0206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34F0206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389276AbeGTNZZ (ORCPT
+        id S2389284AbeGTNZ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:25:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45286 "EHLO
+        Fri, 20 Jul 2018 09:25:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45348 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387815AbeGTNZY (ORCPT
+        with ESMTP id S1731782AbeGTNZ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:25:24 -0400
+        Fri, 20 Jul 2018 09:25:26 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85C72CAB;
-        Fri, 20 Jul 2018 12:34:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 47C9941C;
+        Fri, 20 Jul 2018 12:33:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morse <james.morse@arm.com>,
-        Christoffer Dall <cdall@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.14 73/92] arm64: alternatives: use tpidr_el2 on VHE hosts
-Date:   Fri, 20 Jul 2018 14:14:17 +0200
-Message-Id: <20180720121421.921246491@linuxfoundation.org>
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 4.14 59/92] PCI: hv: Disable/enable IRQs rather than BH in hv_compose_msi_msg()
+Date:   Fri, 20 Jul 2018 14:14:03 +0200
+Message-Id: <20180720121421.298790227@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -52,193 +54,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-Commit 6d99b68933fbcf51f84fcbba49246ce1209ec193 upstream.
+commit 35a88a18d7ea58600e11590405bc93b08e16e7f5 upstream.
 
-Now that KVM uses tpidr_el2 in the same way as Linux's cpu_offset in
-tpidr_el1, merge the two. This saves KVM from save/restoring tpidr_el1
-on VHE hosts, and allows future code to blindly access per-cpu variables
-without triggering world-switch.
+Commit de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in hv_compose_msi_msg()")
+uses local_bh_disable()/enable(), because hv_pci_onchannelcallback() can
+also run in tasklet context as the channel event callback, so bottom halves
+should be disabled to prevent a race condition.
 
-Signed-off-by: James Morse <james.morse@arm.com>
-Reviewed-by: Christoffer Dall <cdall@linaro.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+With CONFIG_PROVE_LOCKING=y in the recent mainline, or old kernels that
+don't have commit f71b74bca637 ("irq/softirqs: Use lockdep to assert IRQs
+are disabled/enabled"), when the upper layer IRQ code calls
+hv_compose_msi_msg() with local IRQs disabled, we'll see a warning at the
+beginning of __local_bh_enable_ip():
+
+  IRQs not enabled as expected
+    WARNING: CPU: 0 PID: 408 at kernel/softirq.c:162 __local_bh_enable_ip
+
+The warning exposes an issue in de0aa7b2f97d: local_bh_enable() can
+potentially call do_softirq(), which is not supposed to run when local IRQs
+are disabled. Let's fix this by using local_irq_save()/restore() instead.
+
+Note: hv_pci_onchannelcallback() is not a hot path because it's only called
+when the PCI device is hot added and removed, which is infrequent.
+
+Fixes: de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in hv_compose_msi_msg()")
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: stable@vger.kernel.org
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/alternative.h |    2 ++
- arch/arm64/include/asm/assembler.h   |    8 ++++++++
- arch/arm64/include/asm/percpu.h      |   11 +++++++++--
- arch/arm64/kernel/alternative.c      |    9 +++++----
- arch/arm64/kernel/cpufeature.c       |   17 +++++++++++++++++
- arch/arm64/mm/proc.S                 |    8 ++++++++
- 6 files changed, 49 insertions(+), 6 deletions(-)
 
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -12,6 +12,8 @@
- #include <linux/stddef.h>
- #include <linux/stringify.h>
+---
+ drivers/pci/host/pci-hyperv.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -1091,6 +1091,7 @@ static void hv_compose_msi_msg(struct ir
+ 	struct pci_bus *pbus;
+ 	struct pci_dev *pdev;
+ 	struct cpumask *dest;
++	unsigned long flags;
+ 	struct compose_comp_ctxt comp;
+ 	struct tran_int_desc *int_desc;
+ 	struct {
+@@ -1182,14 +1183,15 @@ static void hv_compose_msi_msg(struct ir
+ 		 * the channel callback directly when channel->target_cpu is
+ 		 * the current CPU. When the higher level interrupt code
+ 		 * calls us with interrupt enabled, let's add the
+-		 * local_bh_disable()/enable() to avoid race.
++		 * local_irq_save()/restore() to avoid race:
++		 * hv_pci_onchannelcallback() can also run in tasklet.
+ 		 */
+-		local_bh_disable();
++		local_irq_save(flags);
  
-+extern int alternatives_applied;
-+
- struct alt_instr {
- 	s32 orig_offset;	/* offset to original instruction */
- 	s32 alt_offset;		/* offset to replacement instruction */
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -260,7 +260,11 @@ lr	.req	x30		// link register
- #else
- 	adr_l	\dst, \sym
- #endif
-+alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
- 	mrs	\tmp, tpidr_el1
-+alternative_else
-+	mrs	\tmp, tpidr_el2
-+alternative_endif
- 	add	\dst, \dst, \tmp
- 	.endm
+ 		if (hbus->hdev->channel->target_cpu == smp_processor_id())
+ 			hv_pci_onchannelcallback(hbus);
  
-@@ -271,7 +275,11 @@ lr	.req	x30		// link register
- 	 */
- 	.macro ldr_this_cpu dst, sym, tmp
- 	adr_l	\dst, \sym
-+alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
- 	mrs	\tmp, tpidr_el1
-+alternative_else
-+	mrs	\tmp, tpidr_el2
-+alternative_endif
- 	ldr	\dst, [\dst, \tmp]
- 	.endm
+-		local_bh_enable();
++		local_irq_restore(flags);
  
---- a/arch/arm64/include/asm/percpu.h
-+++ b/arch/arm64/include/asm/percpu.h
-@@ -16,11 +16,15 @@
- #ifndef __ASM_PERCPU_H
- #define __ASM_PERCPU_H
- 
-+#include <asm/alternative.h>
- #include <asm/stack_pointer.h>
- 
- static inline void set_my_cpu_offset(unsigned long off)
- {
--	asm volatile("msr tpidr_el1, %0" :: "r" (off) : "memory");
-+	asm volatile(ALTERNATIVE("msr tpidr_el1, %0",
-+				 "msr tpidr_el2, %0",
-+				 ARM64_HAS_VIRT_HOST_EXTN)
-+			:: "r" (off) : "memory");
- }
- 
- static inline unsigned long __my_cpu_offset(void)
-@@ -31,7 +35,10 @@ static inline unsigned long __my_cpu_off
- 	 * We want to allow caching the value, so avoid using volatile and
- 	 * instead use a fake stack read to hazard against barrier().
- 	 */
--	asm("mrs %0, tpidr_el1" : "=r" (off) :
-+	asm(ALTERNATIVE("mrs %0, tpidr_el1",
-+			"mrs %0, tpidr_el2",
-+			ARM64_HAS_VIRT_HOST_EXTN)
-+		: "=r" (off) :
- 		"Q" (*(const unsigned long *)current_stack_pointer));
- 
- 	return off;
---- a/arch/arm64/kernel/alternative.c
-+++ b/arch/arm64/kernel/alternative.c
-@@ -32,6 +32,8 @@
- #define ALT_ORIG_PTR(a)		__ALT_PTR(a, orig_offset)
- #define ALT_REPL_PTR(a)		__ALT_PTR(a, alt_offset)
- 
-+int alternatives_applied;
-+
- struct alt_region {
- 	struct alt_instr *begin;
- 	struct alt_instr *end;
-@@ -143,7 +145,6 @@ static void __apply_alternatives(void *a
-  */
- static int __apply_alternatives_multi_stop(void *unused)
- {
--	static int patched = 0;
- 	struct alt_region region = {
- 		.begin	= (struct alt_instr *)__alt_instructions,
- 		.end	= (struct alt_instr *)__alt_instructions_end,
-@@ -151,14 +152,14 @@ static int __apply_alternatives_multi_st
- 
- 	/* We always have a CPU 0 at this point (__init) */
- 	if (smp_processor_id()) {
--		while (!READ_ONCE(patched))
-+		while (!READ_ONCE(alternatives_applied))
- 			cpu_relax();
- 		isb();
- 	} else {
--		BUG_ON(patched);
-+		BUG_ON(alternatives_applied);
- 		__apply_alternatives(&region, true);
- 		/* Barriers provided by the cache flushing */
--		WRITE_ONCE(patched, 1);
-+		WRITE_ONCE(alternatives_applied, 1);
- 	}
- 
- 	return 0;
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -880,6 +880,22 @@ static int __init parse_kpti(char *str)
- early_param("kpti", parse_kpti);
- #endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
- 
-+static int cpu_copy_el2regs(void *__unused)
-+{
-+	/*
-+	 * Copy register values that aren't redirected by hardware.
-+	 *
-+	 * Before code patching, we only set tpidr_el1, all CPUs need to copy
-+	 * this value to tpidr_el2 before we patch the code. Once we've done
-+	 * that, freshly-onlined CPUs will set tpidr_el2, so we don't need to
-+	 * do anything here.
-+	 */
-+	if (!alternatives_applied)
-+		write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
-+
-+	return 0;
-+}
-+
- static const struct arm64_cpu_capabilities arm64_features[] = {
- 	{
- 		.desc = "GIC system register CPU interface",
-@@ -949,6 +965,7 @@ static const struct arm64_cpu_capabiliti
- 		.capability = ARM64_HAS_VIRT_HOST_EXTN,
- 		.def_scope = SCOPE_SYSTEM,
- 		.matches = runs_at_el2,
-+		.enable = cpu_copy_el2regs,
- 	},
- 	{
- 		.desc = "32-bit EL0 Support",
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -70,7 +70,11 @@ ENTRY(cpu_do_suspend)
- 	mrs	x8, mdscr_el1
- 	mrs	x9, oslsr_el1
- 	mrs	x10, sctlr_el1
-+alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
- 	mrs	x11, tpidr_el1
-+alternative_else
-+	mrs	x11, tpidr_el2
-+alternative_endif
- 	mrs	x12, sp_el0
- 	stp	x2, x3, [x0]
- 	stp	x4, xzr, [x0, #16]
-@@ -116,7 +120,11 @@ ENTRY(cpu_do_resume)
- 	msr	mdscr_el1, x10
- 
- 	msr	sctlr_el1, x12
-+alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
- 	msr	tpidr_el1, x13
-+alternative_else
-+	msr	tpidr_el2, x13
-+alternative_endif
- 	msr	sp_el0, x14
- 	/*
- 	 * Restore oslsr_el1 by writing oslar_el1
+ 		if (hpdev->state == hv_pcichild_ejecting) {
+ 			dev_err_once(&hbus->hdev->device,
 
 
