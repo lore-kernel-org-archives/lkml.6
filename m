@@ -2,144 +2,127 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B574ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F78ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C45B22084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB7DF20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:10:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="urqhv9Hf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C45B22084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G6q8mcFl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB7DF20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388153AbeGTR7A (ORCPT
+        id S2388164AbeGTR7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:59:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731556AbeGTR7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:59:00 -0400
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C5D72086D
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 17:09:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532106588;
-        bh=sBw5Hd+gWC18fpJE8J4gLAQMCg1CCO4ZvoLRrhiV45c=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=urqhv9HfpnuGzoN92MmhUQp05gLb8EjSVazmIV6GSnhH1vSh61MwohLsLkJYQkHw5
-         ElPVTulJkUvsxyWmyd9+1Pb/sh/DX7ypOiNXBs6vbZQ2tHxVkQzB8SA0+76w2tamLg
-         xl799WWQiFr7flGF6HBgplVABN58+wVkrIALiSes=
-Received: by mail-wr1-f53.google.com with SMTP id q10-v6so11953894wrd.4
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 10:09:48 -0700 (PDT)
-X-Gm-Message-State: AOUpUlG8UicjSCdWHLnkGn0ktCUWx6ppMx1JYJkeZi0w1Ls5LnqfMpH5
-        WslHXOR/xa2rchXNHbfqQoqrfafqHdrnLbDJ3lZmRw==
-X-Google-Smtp-Source: AAOMgpdwEZ+0NtNKrKeLGbrSjFOZ4h2Ag9gyjvTCfou5pKJ3lM/jryn0MUczIRFi/5mFk6k+KmTK007fpMfxi3dtwIM=
-X-Received: by 2002:adf:8325:: with SMTP id 34-v6mr2007828wrd.67.1532106586541;
- Fri, 20 Jul 2018 10:09:46 -0700 (PDT)
+        Fri, 20 Jul 2018 13:59:40 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:52430 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387989AbeGTR7k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:59:40 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6KHANIi021673;
+        Fri, 20 Jul 2018 17:10:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=VW3eyL7VOjae76jaBzJHeNtb2cwVmVP3u57kQ4jgfJg=;
+ b=G6q8mcFlqnxsB2ylKcDUYV0PCiGSTN2J036dHfArO2+kjnZVvvG9JEAniV+n2J0dZpdb
+ CREV6AlTHNMohdQtdoPx1itQIhbbDGBaVYdZjAl6M2Ok7ZSvrTXcOOwl7TBbsHlsa+2H
+ XQdsQXGLl30cSIZbaX/JW446/GdKnejk2nJr3ZKNOyv8YhAnOvhgiASAanV/MrKwBD2+
+ FTIxJgPj5zCFaJx88ilEJfKGj1xlu6l9u5OSLF5ZspV6mS8xLl0Y/Vrl0awDS9CO28Y6
+ aWrzDm1w7zic0ReSrWTkJmvINJ1v13Mgx1lDXAzCmZIjN0ZKlF0I4fV/d6zzcVm/kcuO yQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2k9yjxc4h1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Jul 2018 17:10:23 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6KHAMOi020686
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Jul 2018 17:10:22 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6KHALVI021165;
+        Fri, 20 Jul 2018 17:10:22 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 20 Jul 2018 10:10:21 -0700
+Date:   Fri, 20 Jul 2018 10:10:20 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Markus Heiser <markus.heiser@darmarit.de>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Sphinx version dependencies?
+Message-ID: <20180720171020.GI4800@magnolia>
+References: <20180719181556.GA21435@thunk.org>
+ <20180719190400.GB4800@magnolia>
+ <44d73cd9926f58976a1269ff3cd3afb845ec84fa.camel@darmarit.de>
+ <20180720131206.GM30706@thunk.org>
+ <d064f468ab9fc60a02242331e0dddc185d6556ba.camel@darmarit.de>
+ <20180720145235.GA27862@thunk.org>
+ <cd31ba58ac24851698e06628ceebce4648345ff6.camel@darmarit.de>
+ <20180720164421.GG4800@magnolia>
+ <93aa59853a491a5ba3d5c3bcc0c991a1b815a67d.camel@darmarit.de>
 MIME-Version: 1.0
-Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 10:09:26
- -0700 (PDT)
-In-Reply-To: <1532103744-31902-4-git-send-email-joro@8bytes.org>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org> <1532103744-31902-4-git-send-email-joro@8bytes.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 20 Jul 2018 10:09:26 -0700
-X-Gmail-Original-Message-ID: <CALCETrWmd3arHdkTzAS7reLRjm96jrJC-1O5dYAPwbh2EqKMSA@mail.gmail.com>
-Message-ID: <CALCETrWmd3arHdkTzAS7reLRjm96jrJC-1O5dYAPwbh2EqKMSA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/entry/32: Copy only ptregs on paranoid entry/exit path
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93aa59853a491a5ba3d5c3bcc0c991a1b815a67d.camel@darmarit.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8960 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807200190
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 9:22 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> From: Joerg Roedel <jroedel@suse.de>
->
-> The code that switches from entry- to task-stack when we
-> enter from kernel-mode copies the full entry-stack contents
-> to the task-stack.
->
-> That is because we don't trust that the entry-stack
-> contents. But actually we can trust its contents if we are
-> not scheduled between entry and exit.
->
-> So do less copying and move only the ptregs over to the
-> task-stack in this code-path.
->
-> Suggested-by: Andy Lutomirski <luto@amacapital.net>
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->  arch/x86/entry/entry_32.S | 70 +++++++++++++++++++++++++----------------------
->  1 file changed, 38 insertions(+), 32 deletions(-)
->
-> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-> index 2767c62..90166b2 100644
-> --- a/arch/x86/entry/entry_32.S
-> +++ b/arch/x86/entry/entry_32.S
-> @@ -469,33 +469,48 @@
->          * segment registers on the way back to user-space or when the
->          * sysenter handler runs with eflags.tf set.
->          *
-> -        * When we switch to the task-stack here, we can't trust the
-> -        * contents of the entry-stack anymore, as the exception handler
-> -        * might be scheduled out or moved to another CPU. Therefore we
-> -        * copy the complete entry-stack to the task-stack and set a
-> -        * marker in the iret-frame (bit 31 of the CS dword) to detect
-> -        * what we've done on the iret path.
-> +        * When we switch to the task-stack here, we extend the
-> +        * stack-frame we copy to include the entry-stack %esp and a
-> +        * pseudo %ss value so that we have a full ptregs struct on the
-> +        * stack. We set a marker in the frame (bit 31 of the CS dword).
->          *
-> -        * On the iret path we copy everything back and switch to the
-> -        * entry-stack, so that the interrupted kernel code-path
-> -        * continues on the same stack it was interrupted with.
-> +        * On the iret path we read %esp from the PT_OLDESP slot on the
-> +        * stack and copy ptregs (except oldesp and oldss) to it, when
-> +        * we find the marker set. Then we switch to the %esp we read,
-> +        * so that the interrupted kernel code-path continues on the
-> +        * same stack it was interrupted with.
+On Fri, Jul 20, 2018 at 06:58:57PM +0200, Markus Heiser wrote:
+> Am Freitag, den 20.07.2018, 09:44 -0700 schrieb Darrick J. Wong:
+> > and now I'm just confused since 16.04 has the same version of docutils
+> > and an older sphinx and runs fine; but 18.04 has newer docutils and
+> > newer sphinx and runs fine.
+> 
+> Same here .. I'am completely confused by distros etc. .. I will never be able to
+> control that. Thats why I recommend the virtualenv workflow (as I wrote Christoph):
 
+Well yes, but it's the virtualenv workflow that produced build errors
+for Ted; that's what would seem to need fixing?
 
-Can you give an example of the exact scenario in which any of this
-copying happens and why it's needed?  IMO you should just be able to
-*run* on the entry stack without copying anything at all.
+--D
+
+> $ sudo apt install python3-virtualenv
+> 
+> To setup up a environment for building htmldocs:
+> 
+> $ python3 -m virtualenv py3env
+> $ ./py3env/bin/pip install -r ./Documentation/sphinx/requirements.txt
+> 
+> To build htmldocs with:
+> 
+>  $ SPHINXBUILD=./py3env/bin/sphinx-build make htmldocs
+> 
+> If the env is no longer needed:
+> 
+>  $ rm -r py3env
+> 
+> Am Freitag, den 20.07.2018, 09:44 -0700 schrieb Darrick J. Wong:
+> > Yes.  This makes writing broadly portable markup difficult -- originally
+> > I did not take the '=' all the way to the right edge of the table
+> > because I saw that last example in the above document and assumed that
+> > it wasn't necessary to extend the '=' all the way to the right edge.
+> > Neither Ubuntu system choked on it, so is this a bug in upstream?  Some
+> > strange patch added by the distro?  Something that ended up in the
+> > python wheel?  Or a bug in the spec?
+> 
+> I guess in the version history of docutils ;) .. use workflow above to escape
+> from distro chaos. Even missing '=' will be OK.
+> 
+> -- Markus --
