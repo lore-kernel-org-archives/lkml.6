@@ -2,105 +2,160 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 272A7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A539CECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E1420652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B0D720652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:30:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PPbp7Sao"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1E1420652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="iq9rY602"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0D720652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbeGTJRm (ORCPT
+        id S1728362AbeGTJSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 05:17:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51674 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbeGTJRm (ORCPT
+        Fri, 20 Jul 2018 05:18:00 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:26351 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727630AbeGTJSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:17:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=s6dxkB0haAhsj4RtLapHFb+z/mLPPQaN3JNr93HIAIo=; b=PPbp7SaozxFGqNW0jIMqQ9BuX
-        EmHDPSqPJd7fZwcRWq3JVjQJ6DoMuud2Qnj5YY4DfC6VY9L/pvNXWk4BblB+RcMW7VefAWPGEGbDj
-        c8HmsXT3sPT5nfoB1UObCPFe18iDrQl/awDtVyLP6BWKbQo5U289FbcV6iT00mx6LfCXRkMmWtFxN
-        C29vJu0b9vPenuBJd2Z6rcd1gcGGmgoNZvQ8mvbjbbpvA9bkLRk2otbITPvob7CzEcHExqH86fKMP
-        mQRgH6VjikQDkayDN3xGLYPFcW5d+tMAlA7MHmku2FNoreASMDFNC4BpLgucuA+Y2yD5iSEngHwdA
-        xo00Go3XA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fgQnq-0005CI-AN; Fri, 20 Jul 2018 08:30:18 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A165120275F47; Fri, 20 Jul 2018 10:30:16 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 10:30:16 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Rik van Riel <riel@surriel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-s390@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Mike Galbraith <efault@gmx.de>,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
-Message-ID: <20180720083016.GN2494@hirez.programming.kicks-ass.net>
-References: <20180716190337.26133-1-riel@surriel.com>
- <20180716190337.26133-5-riel@surriel.com>
- <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com>
- <B6566AA4-2E8A-43BD-A224-0F6D4747B8FB@surriel.com>
- <F93A3335-4830-4E36-9179-D0FA5D640C8A@amacapital.net>
- <B976CC13-D014-433A-83DE-F8DF9AB4F421@surriel.com>
- <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
- <CALCETrXLMsSBChDvrms-omwYV4LHT30GenDjbnD-+LTg55yPow@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXLMsSBChDvrms-omwYV4LHT30GenDjbnD-+LTg55yPow@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Fri, 20 Jul 2018 05:18:00 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie2.idc.renesas.com with ESMTP; 20 Jul 2018 17:30:48 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id DB69088704;
+        Fri, 20 Jul 2018 17:30:47 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,377,1526310000"; 
+   d="scan'208";a="285901905"
+Received: from mail-ty1jpn01lp0178.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.178])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 20 Jul 2018 17:30:47 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=91J9qjob0koBj7+1jHzByLciZKgvIZJp5jFWhIgkego=;
+ b=iq9rY602W0JOHJk6OU9wFYrGcM+OqvQt5vqYIxTijfsEMoRwqFT0C0WqgAjeW9tAoTDVqizQ87TncAyy4Bd9bGwvPqYi/+jX7mJvuZrrjCZmOt6qwpqJkWy21dOHsa+VEXG2GCuFa8lM5+egFnWWpmCQZbCoHmisdO1CYSUR1Mo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ OSBPR01MB1861.jpnprd01.prod.outlook.com (2603:1096:603:2::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.21; Fri, 20 Jul 2018 08:30:41 +0000
+Message-ID: <87effy48lz.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        <linux-mips@linux-mips.org>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        James Hogan <jhogan@kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Manuel Lauss <manuel.lauss@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
+        Han Xu <han.xu@nxp.com>, Donglin Peng <dolinux.peng@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH] ASoC: wm9712: fix replace codec to component
+In-Reply-To: <20180720075148.14648-1-marcel@ziswiler.com>
+References: <20180720075148.14648-1-marcel@ziswiler.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Fri, 20 Jul 2018 08:30:41 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: OSAPR01CA0040.jpnprd01.prod.outlook.com
+ (2603:1096:603:14::28) To OSBPR01MB1861.jpnprd01.prod.outlook.com
+ (2603:1096:603:2::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ab03ee38-0d65-454a-90ee-08d5ee1b14ed
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600067)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1861;
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;3:PXEG5E40yYQzAi9e0NOTTXaSykxoy0mmkPyAQdTLtX+Lml4BUHlo7Rk+DAi6+NoljHJSaXw01R9p+Fg5Cp5H9rdfcEldQUW9ntqVAUaJcp3rMHz8GdB/myO7LCVIMUx1H3Tj31dmtBau5ex/seW0+K3peJOkH0wKMYiQOWwNU/1ERW2dF6RLFxUniW8uWknEv2/MJS4clAxP5ivTpP/6aDU1Sy8iNbYWdPBymzDRGQPsL0gwzH7HQENsk15K9+Ff;25:TV2cZdxbr4w5bteZ4jwtNaa5ikfV2rS7bOgIgKKBcNk/sMMFLFka2yMrwRbxLQ2dWfB3vAhIwEPoCi1h8FM2I8bhG0WYOmOhCNV7jNdWDU80ILk/NKb7b6AHlZmrKiN5W6jtSi1Lh6vcORskp8FgYm5lBDVwrADdaJ9lslQOlZseeslwsYdQ0hyHjOTjAMzY/n3JEDLa4PuoCryxv+Q43whyaTt7QxMikT7xyc0MTmbiTWJ4mET6b/3YInmlsLrS6vTsdeO0fTOVYrEIUpDmIf8B67d3P0M95KporDK/k8xj9QgcchGRKBF4yuZX/Il6k+wk2ZjrSTjnzLBuMViixQ==;31:HNjRJxYBs98qWCFbAULCaYtrI5MMRXfx0bU6s/FhYAG1/CRZ2l1tDOYtZX3nDLBRq3GaFao9qpr9ILY4jAl1x9eoBVTYs2Nc0kQcgLNnUX+KuJAegphJIQqEcyPc6/DF78dYACSPstSLnjXAG0VMQEiltI/xcl+JwMsNArJwlUFC1E2xmsk/m26/ZKv92aSkQNuoe/MZx0CWpJQmSfi1JJbwfFoCr70RG5BBiSHAv5g=
+X-MS-TrafficTypeDiagnostic: OSBPR01MB1861:
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;20:WF3+ShFCrZpFOpML8gR3cU9Z0HR/n0GK06mNhuKMSRVo/wc1ZeDDGqqUvdbyD0h4/u9BQCjVexjQejegLKE45YPCZRHkiZ9dKCkoRmuDEL0WCDUl2ofsBG+Am8BMELHbZXqrFJ7gySIhaJ5A3EbeCBfI/14Mt8MYSPV2kOOEMxca9hQ7bSYoNugxObyzgTpNgUz7NO6q5LzXjzRL0BIssDB9jormKAUj4/MxPbSxZ0fiaiRMkal8rOIHQ65NhITeThgGUJA1roVlZlhZ8HS3Szd5wjXbAYraChckcgkm4DMB8bOIhlPGHdiHCZRAptkOPCplcRA/FG15ftSxkvH23Js+Xn2OoqNqlZ54THy1f1W8MMx0k8Lw8hU7ZQeDrcirO1Z4CMiJ67vYvrws52vs3oI1oUVkkaEZTYXrcOU5rz63Jd0Rxstn0Uy78xP/+kxMa0yMn3+EjLK6tMLaurmnu/sGYl5ZraxUgWhv59SQ2HT0Q4sEWZNAOfwGgveSljyO;4:8+l0ZxHc1UvXPOj/e5Z7n2Zvv7mUBbtKDrifOjQBuZZyMw0hKsnePLt8VibQPtWp9m4JqKxX7XI+Y1yyiLRQuRXs7v8rcfW9CX7oKdcJ8iTFwkBUmv/YGCj03pp8oYmo2UNkY3pp9MiNgnwptovhPYISYY7V0PN7rHOh3tZijMiPFM9rsQQAsdxmuMFPjS3s2S/FFubTYAVDtZ3t+rPkfdm1zgGIKf3rmwBZWI6pA0kODbS9OLXaiDCfAueyWzaGtoMYKK+6d4QBy9lDir7+feTxB8onI2ybXw6vt+YTgca89fyLqP4eY23VOa9dSH5Q
+X-Microsoft-Antispam-PRVS: <OSBPR01MB186187A515A1B7CE0D923FF7D4510@OSBPR01MB1861.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(788757137089);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:OSBPR01MB1861;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1861;
+X-Forefront-PRVS: 073966E86B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(396003)(136003)(39860400002)(189003)(199004)(16586007)(54906003)(76176011)(58126008)(316002)(86362001)(7696005)(52116002)(386003)(105586002)(26005)(956004)(11346002)(53416004)(186003)(68736007)(16526019)(106356001)(7406005)(476003)(2616005)(36756003)(14444005)(7416002)(5660300001)(486006)(446003)(23726003)(6116002)(478600001)(3846002)(47776003)(229853002)(66066001)(6486002)(6916009)(6246003)(69596002)(50466002)(81156014)(39060400002)(305945005)(97736004)(8936002)(8676002)(2906002)(4326008)(81166006)(7736002)(53936002)(25786009)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1861;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB1861;23:+U4luL6LmchtNJls/CGpWgBZYjcH/9uIeP4Yatkd4?=
+ =?us-ascii?Q?3PgDBkdd7G/usG8tJmAr6/0GfWC6FMUgBDqcwT7i3oy7+j6s0rGoDRLItWOR?=
+ =?us-ascii?Q?L4PePwWFDKu1BGthhgpupDCAQQEHmkReywTtnfhzvYH8Eay9njjplPfZYKru?=
+ =?us-ascii?Q?bOpobCJraFg0Pj1ku93+kPu05Gedd3dMtgZhHF11W2+G7YuNhVtiosWOjNc2?=
+ =?us-ascii?Q?y/cPXu+G4gFG96Jx+yB39o3wK+gUmq0ZOLyuhv9ubTWVqQrtXsHEyPcsG8MY?=
+ =?us-ascii?Q?smm6kDZpE/pq9LcfR/xRWCaPXakTElyEoT/gicKSE1Tel40rXFQaVEWe8BtB?=
+ =?us-ascii?Q?avDHibmZ3MF4RlX25kPP/c9LiTVSnDOs9qyW6uza2Pl9kAkabyOYwxSSDFK+?=
+ =?us-ascii?Q?sy/cL11le0H+Fs57VDD5J/ctrECak0yIsrVaKXARVZ3RgnlQ49ABaPnyfmVa?=
+ =?us-ascii?Q?f1WYlM/7u5LRz7/wor1bLbMXe6rpkg3skqYLMeevZX1t8gD8ztEulABMSC0H?=
+ =?us-ascii?Q?tvmfe/b/ywO/B7BQHyxLvYQ0p5StXTkL8HO50nvErhVlFeDcUyzdi6vpoaLT?=
+ =?us-ascii?Q?+oHqhgwNYl/FEz9e7N5SWUJXSxiP75h/7gRHgy1oMwcbjXwIN8C3K01JkVRs?=
+ =?us-ascii?Q?gBJIV9vfW6niwLzhGsIphDpC7x10NzeGlpjBbmQiMcwHeopODMt8waXl5LN1?=
+ =?us-ascii?Q?2ypBY+GWbqt1clCaeBerJqH2aD/TYpwhvIljxZmNzS5Ky0i2ghznD1+DNcJA?=
+ =?us-ascii?Q?zIZLaJ9OI53l6Tu+8h9tQmK8WvuIDi9es+fGQmLNmzsRhW/DbWq3R0ckWH8D?=
+ =?us-ascii?Q?MHIaK1WpoGOwcW4KP6dU5d14hNvf2h18aPj8QJh3zumNbyIkV7/fNI4Dl3X6?=
+ =?us-ascii?Q?BB2zBufef04FnQJtHNAxHx1bXtd7TsfZFdGFNFdTHHS6nQsjcO+zDBxVuL/8?=
+ =?us-ascii?Q?2a8eo9WVE3i41IH5Y6H7XOTKIWw92mADIwUrEcyWPjILZYpucSGSGVO7frfh?=
+ =?us-ascii?Q?NVR8XNzbiOr2JMo16RtI7iLc/ax/nEW27u4SOfhJ2DCvJggeTnNYCKR34e1q?=
+ =?us-ascii?Q?ZeW+Avkm4aESdV0RRTqDUEEKId3st6wUAUD+2s8BGUkOGNytdzVCboKSa/qP?=
+ =?us-ascii?Q?qJMWRm2XLVpIsYkvkKX2vbUzj6E4lxDChLpNgHJaELj9DPP2rMzHfMnGb2C/?=
+ =?us-ascii?Q?W3IbqsZVpFnR4uZVgfJIWzyFRmjnvrAGdLm9Ro9RZ39Ob91e+ouhGDZMBe3U?=
+ =?us-ascii?Q?KAEN+aZH1LBobuc615Xtg1Fi+ap4yFGfHVXmm0SqDvSZbb4dhq2SuhjbyfYw?=
+ =?us-ascii?Q?b8WwNlOuKpDzX45+eFzx30=3D?=
+X-Microsoft-Antispam-Message-Info: 0mWirEbGxFpcZDjEGTmacdrp6b9JRf0Yjf9Tg7J6Fm8zRMmuPKQkSSDnEV/NvlEIPBCQTAfuiCshg8cp1LwLE13a7d1vVgUg8me1xfunJEAHyaJ5p8inbVAOu1qiExlt2O8oSTatjWUqW9kKmlMkcXx8E3E2BddRwTswELEtYmXM7anb0YMMzscKqHzWt5f/j02YpQG6T9s5CyhW+F9s96WKWWfiGLKd+U467DPtqo9qQqGC/jM5cVFsFRJY0GA1jTjKYnvz2BRblQ7aiybIhnC3HGjo0ifvGUxz3AY2IcvMrQDYj9yA12c1/3AVYR5g/Nd/6RcLT9jernAgbBoCeRb6m4uoNikLXZBDzc858JQ=
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;6:leU6nvs7UTOqmoqpL3O9lbUbDDcwun4JgmUpgCIYfiTkBfewVIaOT0xRUWIdskR8dNfSoz8YjWuHM1d6NLKAraZTkyWMQ3UFTgOARrcAiD7OS4yHJQ2K9mD2NXT3FKw/6HFJVSwmaZ3oxSgNNGsI6O5INN9PLybk1TSMR71WHMfg037NrQs6Zb4nM5UGfjn8yBQ1Z/KeXv83DU6BiWG4Rqn/C3Rlwp6G09xCeVDsTCpsIc/A9ehMVeOeiL32y75gM78QdGwJpwuajnlrhTbmIhwUAyb59dPna6L9dgw2eb7TYjG+KXWOYwbEG2NnvvCPzU4VyBdSlDT79dwdoa5cKnadI9QG2EWG5PZVPMO9Tab3t9nKP5p0vX6BakZqSOticdbRYTXLxmsllmurGSjGm5v/fovi0ij10Up7xknH41ZajOpX0UppG8XxdgyoLHgKd4mU2aiZI+sXr0x1VbPHDQ==;5:f9LHBGG3BRbS2gJE28g7rsO4FeAOrG5TpGTRl3HZx1ENt0WPriiroWsAUYNItuLzlWhjzhRWL7xV0DUZ9XEnK6C8ry8Gp/CuGpbj03tWydOTs2+5Zy6nCb03yTxMr7LNNq/GD4bs++NtjC0rNRUpfsRvTuQ0xXrnN5tGaVPF/Cc=;7:t5t1JNu7zQ8nzFkKL2jmfkni5c3mV2qzy1KHoP3rg6dkce9hiiMpalB0WxooHyW+VzmU9vMMMczBuQ9SPcArc7cjan62ThwQanZ+/TOUW+JbQyOTN4QEcyV8ThQaKRFvVm5HB8LXC0EwlGtjxwFffXZgSP3ie6Iss0J8vaAHH5/jiaYgPqHfPKErqoqV8eu0NvDtWTZSLDxDySrQbot+ttdHGm4MtO09aBJ8G04wFEc0JIGBVE7AiH5tw5kJ4QX2
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;20:d/iy5rV4rZsf/i8tnV49P91NCOdtyRR1hUEuSlWJFdcDsFZA5cuv5wG+GHqdD7IXDsjziUzD6HTDkXvVyre4qBWFIOTn1+7ioeOTmkb0CP6XjmYF73r5CMNbQnc9TNEJjHlfQ2VDhc9AuNVsfd8XBvay6/kxUIvk81EkhumPsQ0=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2018 08:30:41.7309 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab03ee38-0d65-454a-90ee-08d5ee1b14ed
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1861
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 10:04:09AM -0700, Andy Lutomirski wrote:
-> I added some more arch maintainers.  The idea here is that, on x86 at
-> least, task->active_mm and all its refcounting is pure overhead.  When
-> a process exits, __mmput() gets called, but the core kernel has a
-> longstanding "optimization" in which other tasks (kernel threads and
-> idle tasks) may have ->active_mm pointing at this mm.  This is nasty,
-> complicated, and hurts performance on large systems, since it requires
-> extra atomic operations whenever a CPU switches between real users
-> threads and idle/kernel threads.
+
+Hi Marcel
+
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> It's also almost completely worthless on x86 at least, since __mmput()
-> frees pagetables, and that operation *already* forces a remote TLB
-> flush, so we might as well zap all the active_mm references at the
-> same time.
+> Since commit 143b44845d87 ("ASoC: wm9712: replace codec to component")
+> "wm9712-codec" got renamed to "wm9712-component", however, this change
+> never got propagated down to the actual board/platform drivers. E.g. on
+> Colibri T20 this lead to the following spew upon boot with sound/touch
+> being broken:
 
-So I disagree that active_mm is complicated (the code is less than ideal
-but that is actually fixable). And aside from the process exit case, it
-does avoid CR3 writes when switching between user and kernel threads
-(which can be far more often than exit if you have longer running
-tasks).
+Oops, my bad...
+The platform_driver name is not important,
+how about simply rename back it to "wm9712-codec" ?
 
-Now agreed, recent x86 work has made that less important.
-
-And I of course also agree that not doing those refcount atomics is
-better.
+Best regards
+---
+Kuninori Morimoto
