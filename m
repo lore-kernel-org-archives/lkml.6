@@ -2,177 +2,132 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8CFECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3348BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B5D206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:11:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ss5SecYa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B5D206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AF8E8206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:11:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF8E8206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388435AbeGTUAx (ORCPT
+        id S2388464AbeGTUBB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 16:00:53 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33480 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388334AbeGTUAx (ORCPT
+        Fri, 20 Jul 2018 16:01:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60068 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388292AbeGTUBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 16:00:53 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z6-v6so4928335wma.0;
-        Fri, 20 Jul 2018 12:11:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zA7SueiGRMYRlTvyb4Cak8oxv9oaPgjG1QFn7sLnpfE=;
-        b=Ss5SecYaKgWzxU4qbp3U6DOHiJJ7RN+lFa7bkFOpIDpTlFPwZb07DCwRr5eN9gLyMC
-         qzXPkNSJJOP1G51B3BG/ReJqyJFk56MqoV3mjnnBxgwzyFdm7imw31JbcOwKuWBWTFUG
-         0Uf0LXBfanQ+xPuYBlOk4u+TVhIyz7dkeu8LuBsxYxPh1C6LqPRj3o49p+MMhxCPD+eX
-         8kXZ61ehXZuhPt8fZIX5H08ZZzaAHpNXdenFJ6Vo2FK0YaSbK3MMshJH/Oy2on+lka8y
-         neIVe/kbQQ95/1JaZl++eEOcITG6l8HoF/qX4hAP9dguPCvjwiOIcYE1Ixvc0Zw2a5tS
-         QUaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zA7SueiGRMYRlTvyb4Cak8oxv9oaPgjG1QFn7sLnpfE=;
-        b=AgF63jiYNZgmZisv/GOGrjPlsEY+57SlGRaUBGqywxabrlQ7TEMq6i0vtsSiz3xmw4
-         QTCjMiD8OE5gkeYmBv1qNZmWEoRSI5/PGKrwJxWXiYjSRY6bYL5UiI0eORGFsKZtmnTa
-         pz0G5bbNBH+WASorQOnyeaSGn1AZCOSi2IadX/4zngeLi/rYJUDov8FgmxAEalhLb7ef
-         q6ykJ5vVTfLd2/9z/wWEgqFjA/qDqtpO09oXlxdDzOPu5Ctk+hqAVMXg1kzmNY1AEEGq
-         I1/r4YlC/jxTX/9z1FRocF+LoaTbyqB511tumAs5i1bS2EzrctFkPuqF0DiNldnOvGfb
-         2wwA==
-X-Gm-Message-State: AOUpUlEkn4rdiV9nb+UeQNOS2nDjD8kGjJx4Ib4oHfSpo5o/4lcLAock
-        6maor0zz/3ToZgCTXjnehAXYkToI
-X-Google-Smtp-Source: AAOMgpeJXJHj49mDKVr7uuxI5YYACE90BTPZsQX6qsdMCQvQ03EXkiFTRQ1bCNINm8N4DsVC1Qy1YA==
-X-Received: by 2002:a1c:7c13:: with SMTP id x19-v6mr2367425wmc.27.1532113873977;
-        Fri, 20 Jul 2018 12:11:13 -0700 (PDT)
-Received: from [192.168.1.18] (chg252.neoplus.adsl.tpnet.pl. [83.31.4.252])
-        by smtp.gmail.com with ESMTPSA id b123-v6sm3646377wma.24.2018.07.20.12.11.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 12:11:13 -0700 (PDT)
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-To:     David Lechner <david@lechnology.com>, Pavel Machek <pavel@ucw.cz>,
-        Baolin Wang <baolin.wang@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
- <20180714212033.GA31950@amd> <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
- <20180714222924.GA2776@amd> <20180714223907.GB2776@amd>
- <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
- <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
- <68996338-a902-2b57-0bb9-df274a496b06@gmail.com> <20180718075637.GA10279@amd>
- <CAMz4kuJa=s19q7wQFQT1giUe0AN4hpux4PG2koUcnE7q_x7LCQ@mail.gmail.com>
- <20180718120836.GB23157@amd>
- <47b1b143-48dd-a265-c2af-254dda53a2cc@lechnology.com>
-Message-ID: <8e51d2f1-0fc0-a968-4f97-3a4e09dd99e0@gmail.com>
-Date:   Fri, 20 Jul 2018 21:11:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 20 Jul 2018 16:01:00 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6KJ3aPt103356
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 15:11:23 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kbnj2rafb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 15:11:23 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 20 Jul 2018 15:11:22 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 20 Jul 2018 15:11:21 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6KJBK9j9896282
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 20 Jul 2018 19:11:20 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 38A63B2064;
+        Fri, 20 Jul 2018 15:11:08 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 19D59B2066;
+        Fri, 20 Jul 2018 15:11:08 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Jul 2018 15:11:08 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id A5D0D16CA229; Fri, 20 Jul 2018 12:11:21 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 12:11:21 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH RFC tip/core/rcu] rcutorture: Limit reader duration if irq or
+ bh disabled
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
-In-Reply-To: <47b1b143-48dd-a265-c2af-254dda53a2cc@lechnology.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18072019-0068-0000-0000-0000031B462F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009399; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01063656; UDB=6.00546225; IPR=6.00841507;
+ MB=3.00022234; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-20 19:11:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072019-0069-0000-0000-0000451A1B53
+Message-Id: <20180720191121.GA18061@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-20_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807200211
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+Hello, Thomas,
 
-On 07/18/2018 07:00 PM, David Lechner wrote:
-> 
-> 
-> On 7/18/18 7:08 AM, Pavel Machek wrote:
->> On Wed 2018-07-18 19:32:01, Baolin Wang wrote:
->>> On 18 July 2018 at 15:56, Pavel Machek <pavel@ucw.cz> wrote:
->>>> Hi!
->>>>
->>>>>>>>> I believe I meant "changing patterns from kernel in response to 
->>>>>>>>> events
->>>>>>>>> is probably overkill"... or something like that.
->>>>>>>>
->>>>>>>> Anyway -- to clean up the confusion -- I'd like to see
->>>>>>>>
->>>>>>>> echo pattern > trigger
->>>>>>>> echo "1 2 3 4 5 6 7 8" > somewhere
->>>>>>>
->>>>>>> s/somewhere/pattern/
->>>>>>>
->>>>>>> pattern trigger should create "pattern" file similarly how 
->>>>>>> ledtrig-timer
->>>>>>> creates delay_{on|off} files.
->>>>
->>>> Yes, that sounds reasonable. v5 still says
->>>>
->>>> +               Writing non-empty string to this file will activate 
->>>> the pattern,
->>>> +               and empty string will disable the pattern.
->>>>
->>>> I'd deactivate the pattern by simply writing something else to the
->>>> trigger file.
->>>
->>> For the case we met in patch 2, it is not related with trigger things.
->>> We just set some series of tuples including brightness and duration
->>> (ms) to the hardware to enable the breath mode of the LED, we did not
->>> trigger anything. So it is weird to write something to trigger file to
->>> deactive the pattern.
->>
->> Confused. I thought that "breathing mode" would be handled similar way
->> to hardware blinking: userland selects pattern trigger, pattern file
->> appears (similar way to delay_on/delay_off files with blinking), he
->> configures it, hardware brightness follows the pattern ("breathing
->> mode"). If pattern is no longer required, echo none > trigger stops
->> it.
->>                                     Pavel
->>
-> 
-> I was confused too when I first read this thread. But after reviewing 
-> v5, it is clear that this is _not_ a trigger (and it should not be a 
-> trigger). This is basically the equivalent the brightness attribute - 
-> except that now the brightness changes over time instead of being a 
-> constant value.
+As discussed on IRC.  Thoughts?
 
-Pattern trigger would be just more flexible version of existing
-ledtrig-timer.c, which also changes brightness over time.
+							Thanx, Paul
 
-Trigger, by definition, is a kernel based source of LED events,
-so timer trigger falls under this definition, same way as pattern
-trigger would.
 
-What may cause confusion is the possibility of exploiting hardware
-capabilities, in case the requested settings fit in.
-ledtrig-timer fathom the hardware capabilities using blink_set op,
-and pattern trigger would use pattern_set op for that purpose.
+commit 6ba3f37d31b614d7a41c3a1eb472dfc4e44944af
+Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Date:   Fri Jul 20 12:04:12 2018 -0700
 
-> This way, the pattern can be used in conjunction with 
-> triggers.
-> 
-> For example, one might want to set the _pattern_ to something like a 
-> "breathe" pattern and set the _trigger_ to the power supply charging 
-> full trigger. This way, the LED will be off until the battery is full 
-> and then the LED will "breath" when the battery is full.
+    rcutorture: Limit reader duration if irq or bh disabled
+    
+    There are debug checks in some environments that will complain if the
+    duration of a bh-disabled region of code exceeds about 50 milliseconds.
+    Because rcu_read_delay() can produce a 50-millisecond delay and because
+    there could be up to eight reader segments with such delays, this commit
+    limits the maximum delay to 10 milliseconds if either interrupts or
+    softirqs are disabled.
+    
+    Reported-by: Thomas Gleixner <tglx@linutronix.de>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-AFAICS you comprehend "pattern trigger" notion as a LED trigger that
-activates pattern functionality. I'd say that you'd need a specialized
-"battery" trigger for that purpose, that instead of calling
-led_set_brightness_nosleep() would schedule call to
-led_trigger_set(led_cdev "pattern"), assuming that pattern trigger
-would be implemented as I explained above.
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 28af5db3e7d1..16735a3545d2 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -341,7 +341,7 @@ rcu_read_delay(struct torture_random_state *rrsp, struct rt_read_seg * rtrsp)
+ 	unsigned long started;
+ 	unsigned long completed;
+ 	const unsigned long shortdelay_us = 200;
+-	const unsigned long longdelay_ms = 300;
++	unsigned long longdelay_ms = 300;
+ 	unsigned long long ts;
+ 
+ 	/* We want a short delay sometimes to make a reader delay the grace
+@@ -351,6 +351,8 @@ rcu_read_delay(struct torture_random_state *rrsp, struct rt_read_seg * rtrsp)
+ 	if (!(torture_random(rrsp) % (nrealreaders * 2000 * longdelay_ms))) {
+ 		started = cur_ops->get_gp_seq();
+ 		ts = rcu_trace_clock_local();
++		if (preempt_count() & (SOFTIRQ_MASK | HARDIRQ_MASK))
++			longdelay_ms = 5; /* Avoid triggering BH limits. */
+ 		mdelay(longdelay_ms);
+ 		rtrsp->rt_delay_ms = longdelay_ms;
+ 		completed = cur_ops->get_gp_seq();
 
--- 
-Best regards,
-Jacek Anaszewski
