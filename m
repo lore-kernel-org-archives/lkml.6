@@ -2,129 +2,102 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F47AECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAD7ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF54206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:51:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AF54206B7
+	by mail.kernel.org (Postfix) with ESMTP id EFF3120661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:53:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF3120661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389884AbeGTNjr (ORCPT
+        id S2388300AbeGTNlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:39:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41578 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389601AbeGTNjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:39:46 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C1D974021CC2;
-        Fri, 20 Jul 2018 12:51:37 +0000 (UTC)
-Received: from redhat.com (ovpn-121-184.rdu2.redhat.com [10.10.121.184])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 694AE2156700;
-        Fri, 20 Jul 2018 12:51:33 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 15:51:32 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com
-Subject: Re: [PATCH v36 0/5] Virtio-balloon: support free page reporting
-Message-ID: <20180720154922-mutt-send-email-mst@kernel.org>
-References: <1532075585-39067-1-git-send-email-wei.w.wang@intel.com>
+        Fri, 20 Jul 2018 09:41:42 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33244 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731833AbeGTNll (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 09:41:41 -0400
+Received: by mail-wr1-f67.google.com with SMTP id g6-v6so11259615wrp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 05:53:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hO9gjRcwiUHt7lNNOrFkiM04cvKbGj0Bp/sIbfZ5wU0=;
+        b=oZpbYSfkI54ykqR7B1I9MQIJuZIOQGiGey6w252cjHLe6MYmx8Dq6m2TYM8cOJqn5V
+         EL09IR9pN8zT4in/LGUkFaGYLE1O5kobuXwp2YhjWU3W7K8hLhPj7ILkYzdDtYKw/9fX
+         WQj3yYbENmQzr3pGfuSMvtWqZmFz/IROxwGHQTTJ5ngTAmreadG/Qjgvm5fh5ARWzNyF
+         M9olqnSzVjv38cEWGo8Su4AZHfC2BGEbfOvi1015AiVi3hOKQ0abfCswYLVB7ETkJ9LM
+         sMVyuK8GhWv0pP6ptQu2UtZSqjyvZBQSuefm+b/hLE+d+D8RKmamgj+3blslMlVwZwwH
+         lfNg==
+X-Gm-Message-State: AOUpUlF135YQNyHBKSXbDi9j7rJcmuLdNROWqZ5LpKJHhPAQa7zurKJl
+        B3/sYE1qvgAqYF5WGzfSPiBm4g==
+X-Google-Smtp-Source: AAOMgpes0TToMc60XNNn6nZYK1/Gw4yxlGzug2tU8ecxEzXQ8ti120f7csEZyOsEkRXaUQSQirkWeQ==
+X-Received: by 2002:adf:fa45:: with SMTP id y5-v6mr1552008wrr.138.1532091212753;
+        Fri, 20 Jul 2018 05:53:32 -0700 (PDT)
+Received: from localhost.localdomain ([151.15.255.159])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm1889299wra.62.2018.07.20.05.53.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 20 Jul 2018 05:53:32 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 14:53:29 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
+        linux-kernel@vger.kernel.org, Clark Williams <williams@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH V3] sched/deadline: Update rq_clock of later_rq when
+ pushing a task
+Message-ID: <20180720125329.GD3642@localhost.localdomain>
+References: <ca31d073a4788acf0684a8b255f14fea775ccf20.1532077269.git.bristot@redhat.com>
+ <20180720124615.GM2476@hirez.programming.kicks-ass.net>
+ <20180720124821.GB2512@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1532075585-39067-1-git-send-email-wei.w.wang@intel.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 12:51:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 12:51:37 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180720124821.GB2512@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 04:33:00PM +0800, Wei Wang wrote:
-> This patch series is separated from the previous "Virtio-balloon
-> Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,  
-> implemented by this series enables the virtio-balloon driver to report
-> hints of guest free pages to the host. It can be used to accelerate live
-> migration of VMs. Here is an introduction of this usage:
+On 20/07/18 14:48, Peter Zijlstra wrote:
+> On Fri, Jul 20, 2018 at 02:46:15PM +0200, Peter Zijlstra wrote:
+> > On Fri, Jul 20, 2018 at 11:16:30AM +0200, Daniel Bristot de Oliveira wrote:
+> > > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> > > index fbfc3f1d368a..8b50eea4b607 100644
+> > > --- a/kernel/sched/deadline.c
+> > > +++ b/kernel/sched/deadline.c
+> > > @@ -2090,8 +2090,14 @@ static int push_dl_task(struct rq *rq)
+> > >  	sub_rq_bw(&next_task->dl, &rq->dl);
+> > >  	set_task_cpu(next_task, later_rq->cpu);
+> > >  	add_rq_bw(&next_task->dl, &later_rq->dl);
+> > > +
+> > > +	/*
+> > > +	 * Update the later_rq clock here, because the clock is used
+> > > +	 * by the cpufreq_update_util() inside __add_running_bw().
+> > > +	 */
+> > > +	update_rq_clock(later_rq);
+> > >  	add_running_bw(&next_task->dl, &later_rq->dl);
+> > > -	activate_task(later_rq, next_task, 0);
+> > > +	activate_task(later_rq, next_task, ENQUEUE_NOCLOCK);
+> > >  	ret = 1;
+> > >  
+> > >  	resched_curr(later_rq);
+> > 
+> > Why isn't push_rt_task() affected by the very same issue?
 > 
-> Live migration needs to transfer the VM's memory from the source machine
-> to the destination round by round. For the 1st round, all the VM's memory
-> is transferred. From the 2nd round, only the pieces of memory that were
-> written by the guest (after the 1st round) are transferred. One method
-> that is popularly used by the hypervisor to track which part of memory is
-> written is to write-protect all the guest memory.
-> 
-> This feature enables the optimization by skipping the transfer of guest
-> free pages during VM live migration. It is not concerned that the memory
-> pages are used after they are given to the hypervisor as a hint of the
-> free pages, because they will be tracked by the hypervisor and transferred
-> in the subsequent round if they are used and written.
-> 
-> * Tests
-> - Test Environment
->     Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
->     Guest: 8G RAM, 4 vCPU
->     Migration setup: migrate_set_speed 100G, migrate_set_downtime 2 second
+> Aah, I see, its the add_running_bw() think; for which RT doesn't have a
+> counter-part.
 
-Can we split out patches 1 and 2? They seem appropriate for this
-release ...
-
-> - Test Results
->     - Idle Guest Live Migration Time (results are averaged over 10 runs):
->         - Optimization v.s. Legacy = 409ms vs 1757ms --> ~77% reduction
-> 	(setting page poisoning zero and enabling ksm don't affect the
->          comparison result)
->     - Guest with Linux Compilation Workload (make bzImage -j4):
->         - Live Migration Time (average)
->           Optimization v.s. Legacy = 1407ms v.s. 2528ms --> ~44% reduction
->         - Linux Compilation Time
->           Optimization v.s. Legacy = 5min4s v.s. 5min12s
->           --> no obvious difference
-> 
-> ChangeLog:
-> v35->v36:
->     - remove the mm patch, as Linus has a suggestion to get free page
->       addresses via allocation, instead of reading from the free page
->       list.
->     - virtio-balloon:
->         - replace oom notifier with shrinker;
->         - the guest to host communication interface remains the same as
->           v32.
-> 	- allocate free page blocks and send to host one by one, and free
->           them after sending all the pages.
-> 
-> For ChangeLogs from v22 to v35, please reference
-> https://lwn.net/Articles/759413/
-> 
-> For ChangeLogs before v21, please reference
-> https://lwn.net/Articles/743660/
-> 
-> Wei Wang (5):
->   virtio-balloon: remove BUG() in init_vqs
->   virtio_balloon: replace oom notifier with shrinker
->   virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
->   mm/page_poison: expose page_poisoning_enabled to kernel modules
->   virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
-> 
->  drivers/virtio/virtio_balloon.c     | 456 ++++++++++++++++++++++++++++++------
->  include/uapi/linux/virtio_balloon.h |   7 +
->  mm/page_poison.c                    |   6 +
->  3 files changed, 394 insertions(+), 75 deletions(-)
-> 
-> -- 
-> 2.7.4
+Right, but doesn't enqueue_top_rt_rq end-up being called by activate_
+task on lowest_rq? Mmm.
