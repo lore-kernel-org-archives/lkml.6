@@ -2,124 +2,111 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F65BECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82916ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE8A120652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3256820850
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:07:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8dXV0gO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE8A120652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v3s23Plf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3256820850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388134AbeGTRw0 (ORCPT
+        id S2388061AbeGTR41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:52:26 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43886 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388004AbeGTRw0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:52:26 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r13-v6so11701969ljg.10;
-        Fri, 20 Jul 2018 10:03:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=xUAu5sIE/ZjJIVh1T+PTuFKDwyzOt3dYHd/EtyMYNY8=;
-        b=H8dXV0gOwqdHpkENdgOqhmfuBWrnA/2g4mlRGY8w2btSmpx2gjpydELnx0QhRhMCtP
-         9Yu1O8QeakurgSvBV8gxLXlMZdumaSVb4I9a8prDGqy0EpyThoVsseS1AbUAM36uuqB3
-         Rs5cnCy3XrZEzF+2muPWyEVBmR4fRza8fOqI5VQYTbFJSmbgVJ5leIfAHqButsGiv1Nz
-         J+PgverSEBrRCWfqe25xBqE51hr1qIPlGNUYqtvJOdMdQ1xtGN0n5soz39DvMRD2BdZl
-         3Fcqn+i7H3dnffqBP2nYxhu6B2bxh89KL5XIgxjbw06Ph1FxFzERkNzZjeZFJlHa2KNY
-         bV2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=xUAu5sIE/ZjJIVh1T+PTuFKDwyzOt3dYHd/EtyMYNY8=;
-        b=Ptv+1zuxkyN9fPeM22WsitgAXzhg7JgEfrz5unyMUywzL98V2TSNUL+EpEmpIHC2xp
-         K+tJiCO3sO29dUtLo0EXm1ACCfjqT/77lcsK2Ty28jFNCF5Je9OayMeWLRiE8mrNRf60
-         3CaUYBbHajnS3Uy+Mqk2ykOw0SuNnSUUXJ7DQ8XaC2A90JfJ5Eay/DAmKtpz5VMl+oTb
-         LMAa2BD13jay6t2Jp4Cdk+bjiG0Ev+58vINyujXNxf+q1zTwLtaT7xXq9QgP0YdDwhh3
-         eeRPz3dcOSlR2FaxS8XJCgtuf7e8SUcRg6chPoB4+F+nkNZyNIjnIjS42CU2pwY9J7if
-         IR+g==
-X-Gm-Message-State: AOUpUlGXShzCz2WDmXj79E9eSVtruwgaVV9uuvik9/xiQfGjWhwF4RPR
-        6YLyI6ImhBixERVt2L9Tat0=
-X-Google-Smtp-Source: AAOMgpeQd6y9tUAwtXJdXrNqZ8QgDlME9Aa3JtGBsxCnGs+sM+jRypeHXgK4ihlOyHfaVj8LyNyJWA==
-X-Received: by 2002:a2e:9105:: with SMTP id m5-v6mr2176137ljg.121.1532106195072;
-        Fri, 20 Jul 2018 10:03:15 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id 97-v6sm368329lfw.13.2018.07.20.10.03.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 10:03:14 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1fgYo0-0000ue-W6; Fri, 20 Jul 2018 19:03:01 +0200
-Date:   Fri, 20 Jul 2018 19:03:00 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Martyn Welch <martyn.welch@collabora.co.uk>
-Cc:     Karoly Pados <pados@pados.hu>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] USB: serial: cp210x: Implement GPIO support for
- CP2102N
-Message-ID: <20180720170300.GH19245@localhost>
-References: <20180720105240.24680-1-johan@kernel.org>
- <444431dd30f45f753644e2ea80dbe0c0@pados.hu>
- <1532100137.6926.10.camel@collabora.co.uk>
+        Fri, 20 Jul 2018 13:56:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731939AbeGTR41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:56:27 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5241E20858
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 17:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532106436;
+        bh=+pX2XRouS9SwWpu4ilvc/t4Fjx4URm7cKVPnPh2z8/8=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=v3s23Plf8n3vgWfginoABK+/I3Yrtf1sFncDddl+rpMVgiS9oNRKYoBfSjhj5exje
+         wP+nau5Dqjffi530+TxgOrEQP5kL2t5b6V/+2gj6hicy9Msosx4GDrlMAtPCKw3pgg
+         5dn7IyvNxxoMIdXbBtZ66MoEIkLJAVYR99B5Auf4=
+Received: by mail-wr1-f44.google.com with SMTP id a3-v6so11957451wrt.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 10:07:16 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGG4/2IO+KJWs4BDaQ2nx6zlvQMpMcdDXa6yx+f3xsn68+LXUQj
+        y8+RHcNOfiGpCdV2RIQKCAZF4eGv5A07Y3GjXwbHAQ==
+X-Google-Smtp-Source: AAOMgpfu3Rr5xqpXhloknaXApkZII0SwQYeBOsEoqwadHqsdA7s6DnJz7jwBnfuwAZoy/gvvY+yJt4c/W/xtUtUwSYM=
+X-Received: by 2002:adf:fe42:: with SMTP id m2-v6mr1984651wrs.171.1532106434752;
+ Fri, 20 Jul 2018 10:07:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1532100137.6926.10.camel@collabora.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 10:06:54
+ -0700 (PDT)
+In-Reply-To: <1532103744-31902-2-git-send-email-joro@8bytes.org>
+References: <1532103744-31902-1-git-send-email-joro@8bytes.org> <1532103744-31902-2-git-send-email-joro@8bytes.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 20 Jul 2018 10:06:54 -0700
+X-Gmail-Original-Message-ID: <CALCETrXJX8tPVgD=Ce41534uneAAobm-HyjeGwVYgJDJ_+-bDw@mail.gmail.com>
+Message-ID: <CALCETrXJX8tPVgD=Ce41534uneAAobm-HyjeGwVYgJDJ_+-bDw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] perf/core: Make sure the ring-buffer is mapped in all page-tables
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 04:22:17PM +0100, Martyn Welch wrote:
-> On Fri, 2018-07-20 at 12:35 +0000, Karoly Pados wrote:
-> > This patch adds GPIO support for CP2102N devices.
-> > 
-> > It introduces new generic code to support emulating separate
-> > input and outputs directions even though these devices
-> > only know output modes (open-drain and pushpull). Existing
-> > GPIO support for CP2105 has been migrated over to the new
-> > code structure.
-> > 
-> > Only limitation is that for the QFN28 variant, only 4 out of
-> > 7 GPIOs are supported. This is because the config array
-> > locations of the last 3 pins are not documented, and reverse
-> > engineering revealed offsets that conflicted with other
-> > documented functions. Hence we'll play it safe instead
-> > until somebody clears this up further.
-> > 
-> > Signed-off-by: Karoly Pados <pados@pados.hu>
+> On Jul 20, 2018, at 6:22 AM, Joerg Roedel <joro@8bytes.org> wrote:
+>
+> From: Joerg Roedel <jroedel@suse.de>
+>
+> The ring-buffer is accessed in the NMI handler, so we better
+> avoid faulting on it. Sync the vmalloc range with all
+> page-tables in system to make sure everyone has it mapped.
+>
+> This fixes a WARN_ON_ONCE() that can be triggered with PTI
+> enabled on x86-32:
+>
+>    WARNING: CPU: 4 PID: 0 at arch/x86/mm/fault.c:320 vmalloc_fault+0x220/0x230
+>
+> This triggers because with PTI enabled on an PAE kernel the
+> PMDs are no longer shared between the page-tables, so the
+> vmalloc changes do not propagate automatically.
 
-Thanks for the updated commit message, looks goods now.
-
-> As Johan made some changes, I think his Signed-off-by should be here
-> as is in v3.
-
-Right. I actually just replaced the commit message in v3 which had a
-note about what I had changed.
-
-> Other than that:
-> 
-> Acked-by: Martyn Welch <martyn.welch@collabora.co.uk>
-
-Thanks for the ack.
-
-And again, thanks to both of you for getting this useful functionality
-in place.
-
-Johan
+It seems like it would be much more robust to fix the vmalloc_fault()
+code instead.
