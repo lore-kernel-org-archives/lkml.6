@@ -2,84 +2,181 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49972ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C29ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F232720661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08B2920661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XZlvmesn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F232720661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLhjwj6U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B2920661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388043AbeGTRRS (ORCPT
+        id S2388071AbeGTRRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:17:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36036 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733198AbeGTRRR (ORCPT
+        Fri, 20 Jul 2018 13:17:51 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44710 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387868AbeGTRRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:17:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7TkS7vJ5aDo9SRQNB8CE+XoDUmFdaAedTozThE0sc0g=; b=XZlvmesnOBomu4AHNrzclz4fQ
-        XFVoVHknimR7WK2lvnsSiJzevsbaoSqDovu8MEfvqo7md8Jr2NWx5YIlZVxcE/XxEUa/WajHWndQJ
-        /c7leFXwJqWwYFH85DwxhZbuY8r1jREHEk5qgehSZ+uTT/E0C6golqVsUJRDFrWVFAcoyaLUz1e0x
-        /+uuOCmP4RclsNtm2Aac7Hw5nnD8T9MHvrsTpzTml7wKTzIz99EMqx3eDITmwK9X/HMBk4WOvX4ui
-        67HOMtKEkxGLnG7sT2O2h4Udo+8owg5ZBbh5pGO4LVD0uBWc4aBX/ddZw5BoQrSdUGPWE/ey5Vai6
-        I0Yi0zDoA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fgYGN-00053B-OE; Fri, 20 Jul 2018 16:28:15 +0000
-Subject: Re: linux-next: Tree for Jul 20 (drivers/memory/jz4780_nemc)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alex Smith <alex.smith@imgtec.com>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-References: <20180720183212.6bc3477a@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <bb6cccb4-5e5c-b5dc-170d-f878af1374f1@infradead.org>
-Date:   Fri, 20 Jul 2018 09:28:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 20 Jul 2018 13:17:50 -0400
+Received: by mail-pl0-f66.google.com with SMTP id m16-v6so5405291pls.11;
+        Fri, 20 Jul 2018 09:28:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kw6302ch86pg258GLepkuZEk2pw2bUxOqBJi45V/0IA=;
+        b=gLhjwj6UZJEAr6IzTtisNyFyw/DsV4X+Da0JcUyO4RGbHOR5hOcaKNZ0PJwQ7Ph3HR
+         qHHc7p7uKObIBEn1qatKiUZVBahCl1Z3cMTeGSUvvwryIif8ZUVQdMrzeQtZeadIwH4w
+         UyIuDbhVX/0T8VDN79bvcIMhI6m6x4UwbBNIJkyYmZqrnk3Dg47g/WGcgdtNq7MFTWzV
+         i/i9hhsxnjzqN9GvvgR8va+IBprVzayBnlQmzppNN5HdD5M9745dDgwEP/j3EdHxlppi
+         9uTNmW/q6tl/lCqx36Ku2AppcPkTiBNgZB5Jr6n+kQj077p7CLAKf3Re/BtuobUhtZD5
+         Xs8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kw6302ch86pg258GLepkuZEk2pw2bUxOqBJi45V/0IA=;
+        b=iM2QRpSShqneOap9qKZNRDVL4ufj5FEk2tNeZ5Jhy4PHs+tqvSog+XinRv9Hh6wByw
+         oNgrufsOZX1SrpsyREU1PyUlDJ6NOMBdY9igHJR85Ol+C/I+ISqSotucLuh9OZaC3ya8
+         jV/qIfVE9ZPV+FGG556Qi0Flix9cbLs9ndzE834MHhsZUdVBu2RIRM19Tg20N6kFvc76
+         HaVmHR+vyu6Cn/bHJSKcj+369/+2XrG4Wjy3FnFSAy8iLW80QClFXSTeBuZwMCenv1RK
+         DYmPrUz7TB5EYOsABjwTykiTkEF6V8bW0e4TNrk86gVdBZHT57fjPACAJsPtdN/z/Nm1
+         Npsw==
+X-Gm-Message-State: AOUpUlHlVbeiqvGcJbP5KELUS2aWcnTMW2AB3MrsU3QRLalDJJS5zl9v
+        GXQ0OsAxwAVA9AvPEidhDparTmlqm44=
+X-Google-Smtp-Source: AAOMgpc5rMZr2P1wV5nwUkJzog0sGR47qKViwq6heAmkTQK4NzCleEVgAoNi46r9esDTlKQZQoL6wQ==
+X-Received: by 2002:a17:902:7683:: with SMTP id m3-v6mr2692575pll.255.1532104129104;
+        Fri, 20 Jul 2018 09:28:49 -0700 (PDT)
+Received: from localhost ([223.72.65.191])
+        by smtp.gmail.com with ESMTPSA id a25-v6sm2701640pgv.51.2018.07.20.09.28.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 09:28:48 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH v4 3/6] KVM: X86: Fallback to original apic hooks when bad happens
+Date:   Sat, 21 Jul 2018 00:28:43 +0800
+Message-Id: <1532104123-15727-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180720183212.6bc3477a@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/20/2018 01:32 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20180719:
-> 
+From: Wanpeng Li <wanpengli@tencent.com>
 
-on i386 or x86_64:
+Fallback to original apic hooks when unlikely kvm fails to add the 
+pending IRQ to lapic.
 
-when CONFIG_OF is not enabled, COMPILE_TEST is set:
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ arch/x86/kernel/kvm.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-../drivers/memory/jz4780-nemc.c: In function 'jz4780_nemc_num_banks':
-../drivers/memory/jz4780-nemc.c:72:3: error: implicit declaration of function 'of_read_number' [-Werror=implicit-function-declaration]
-   bank = of_read_number(prop, 1);
-   ^
-
-<linux/of.h> does not have a stub for of_read_number() when CONFIG_OF is not set
-(it has no way to return an error).
-
-
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index eed6046..57eb4a2 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -47,6 +47,7 @@
+ #include <asm/hypervisor.h>
+ #include <asm/kvm_guest.h>
+ 
++static struct apic orig_apic;
+ static int kvmapf = 1;
+ 
+ static int __init parse_no_kvmapf(char *arg)
+@@ -454,10 +455,10 @@ static void __init sev_map_percpu_data(void)
+ }
+ 
+ #ifdef CONFIG_SMP
+-static void __send_ipi_mask(const struct cpumask *mask, int vector)
++static int __send_ipi_mask(const struct cpumask *mask, int vector)
+ {
+ 	unsigned long flags;
+-	int cpu, apic_id, min = 0, max = 0;
++	int cpu, apic_id, min = 0, max = 0, ret = 0;
+ #ifdef CONFIG_X86_64
+ 	__uint128_t ipi_bitmap = 0;
+ 	int cluster_size = 128;
+@@ -467,7 +468,7 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
+ #endif
+ 
+ 	if (cpumask_empty(mask))
+-		return;
++		return 0;
+ 
+ 	local_irq_save(flags);
+ 
+@@ -481,7 +482,7 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
+ 		} else if (apic_id < min + cluster_size) {
+ 			max = apic_id < max ? max : apic_id;
+ 		} else {
+-			kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
++			ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
+ 				(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, vector);
+ 			min = max = apic_id;
+ 			ipi_bitmap = 0;
+@@ -490,11 +491,12 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
+ 	}
+ 
+ 	if (ipi_bitmap) {
+-		kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
++		ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
+ 			(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, vector);
+ 	}
+ 
+ 	local_irq_restore(flags);
++	return ret;
+ }
+ 
+ static void kvm_send_ipi_mask(const struct cpumask *mask, int vector)
+@@ -511,7 +513,8 @@ static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
+ 	cpumask_copy(&new_mask, mask);
+ 	cpumask_clear_cpu(this_cpu, &new_mask);
+ 	local_mask = &new_mask;
+-	__send_ipi_mask(local_mask, vector);
++	if (__send_ipi_mask(local_mask, vector))
++		orig_apic.send_IPI_mask_allbutself(mask, vector);
+ }
+ 
+ static void kvm_send_ipi_allbutself(int vector)
+@@ -521,7 +524,8 @@ static void kvm_send_ipi_allbutself(int vector)
+ 
+ static void kvm_send_ipi_all(int vector)
+ {
+-	__send_ipi_mask(cpu_online_mask, vector);
++	if (__send_ipi_mask(cpu_online_mask, vector))
++		orig_apic.send_IPI_all(vector);
+ }
+ 
+ /*
+@@ -529,6 +533,8 @@ static void kvm_send_ipi_all(int vector)
+  */
+ static void kvm_setup_pv_ipi(void)
+ {
++	orig_apic = *apic;
++
+ 	apic->send_IPI_mask = kvm_send_ipi_mask;
+ 	apic->send_IPI_mask_allbutself = kvm_send_ipi_mask_allbutself;
+ 	apic->send_IPI_allbutself = kvm_send_ipi_allbutself;
 -- 
-~Randy
+2.7.4
+
