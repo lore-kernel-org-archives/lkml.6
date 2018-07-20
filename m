@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 668B7ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C98ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC5F206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC5F206B7
+	by mail.kernel.org (Postfix) with ESMTP id C47B9206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47B9206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389138AbeGTNYt (ORCPT
+        id S2389157AbeGTNYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:24:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44578 "EHLO
+        Fri, 20 Jul 2018 09:24:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44748 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387847AbeGTNYr (ORCPT
+        with ESMTP id S2387847AbeGTNYx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:24:47 -0400
+        Fri, 20 Jul 2018 09:24:53 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE706CAE;
-        Fri, 20 Jul 2018 12:34:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9997BBD;
+        Fri, 20 Jul 2018 12:33:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 79/92] arm64: Call ARCH_WORKAROUND_2 on transitions between EL0 and EL1
-Date:   Fri, 20 Jul 2018 14:14:23 +0200
-Message-Id: <20180720121422.266514737@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 48/92] VSOCK: fix loopback on big-endian systems
+Date:   Fri, 20 Jul 2018 14:13:52 +0200
+Message-Id: <20180720121420.784562665@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -53,129 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
 
-commit 8e2906245f1e3b0d027169d9f2e55ce0548cb96e upstream.
+[ Upstream commit e5ab564c9ebee77794842ca7d7476147b83d6a27 ]
 
-In order for the kernel to protect itself, let's call the SSBD mitigation
-implemented by the higher exception level (either hypervisor or firmware)
-on each transition between userspace and kernel.
+The dst_cid and src_cid are 64 bits, therefore 64 bit accessors should be
+used, and in fact in virtio_transport_common.c only 64 bit accessors are
+used. Using 32 bit accessors for 64 bit values breaks big endian systems.
 
-We must take the PSCI conduit into account in order to target the
-right exception level, hence the introduction of a runtime patching
-callback.
+This patch fixes a wrong use of le32_to_cpu in virtio_transport_send_pkt.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Julien Grall <julien.grall@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: b9116823189e85ccf384 ("VSOCK: add loopback to virtio_transport")
+
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpu_errata.c |   24 ++++++++++++++++++++++++
- arch/arm64/kernel/entry.S      |   22 ++++++++++++++++++++++
- include/linux/arm-smccc.h      |    5 +++++
- 3 files changed, 51 insertions(+)
+ net/vmw_vsock/virtio_transport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -228,6 +228,30 @@ static int qcom_enable_link_stack_saniti
- }
- #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+--- a/net/vmw_vsock/virtio_transport.c
++++ b/net/vmw_vsock/virtio_transport.c
+@@ -201,7 +201,7 @@ virtio_transport_send_pkt(struct virtio_
+ 		return -ENODEV;
+ 	}
  
-+#ifdef CONFIG_ARM64_SSBD
-+void __init arm64_update_smccc_conduit(struct alt_instr *alt,
-+				       __le32 *origptr, __le32 *updptr,
-+				       int nr_inst)
-+{
-+	u32 insn;
-+
-+	BUG_ON(nr_inst != 1);
-+
-+	switch (psci_ops.conduit) {
-+	case PSCI_CONDUIT_HVC:
-+		insn = aarch64_insn_get_hvc_value();
-+		break;
-+	case PSCI_CONDUIT_SMC:
-+		insn = aarch64_insn_get_smc_value();
-+		break;
-+	default:
-+		return;
-+	}
-+
-+	*updptr = cpu_to_le32(insn);
-+}
-+#endif	/* CONFIG_ARM64_SSBD */
-+
- #define MIDR_RANGE(model, min, max) \
- 	.def_scope = SCOPE_LOCAL_CPU, \
- 	.matches = is_affected_midr_range, \
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -18,6 +18,7 @@
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
+-	if (le32_to_cpu(pkt->hdr.dst_cid) == vsock->guest_cid)
++	if (le64_to_cpu(pkt->hdr.dst_cid) == vsock->guest_cid)
+ 		return virtio_transport_send_pkt_loopback(vsock, pkt);
  
-+#include <linux/arm-smccc.h>
- #include <linux/init.h>
- #include <linux/linkage.h>
- 
-@@ -137,6 +138,18 @@ alternative_else_nop_endif
- 	add	\dst, \dst, #(\sym - .entry.tramp.text)
- 	.endm
- 
-+	// This macro corrupts x0-x3. It is the caller's duty
-+	// to save/restore them if required.
-+	.macro	apply_ssbd, state
-+#ifdef CONFIG_ARM64_SSBD
-+	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
-+	mov	w1, #\state
-+alternative_cb	arm64_update_smccc_conduit
-+	nop					// Patched to SMC/HVC #0
-+alternative_cb_end
-+#endif
-+	.endm
-+
- 	.macro	kernel_entry, el, regsize = 64
- 	.if	\regsize == 32
- 	mov	w0, w0				// zero upper 32 bits of x0
-@@ -163,6 +176,13 @@ alternative_else_nop_endif
- 	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
- 	disable_step_tsk x19, x20		// exceptions when scheduling.
- 
-+	apply_ssbd 1
-+
-+#ifdef CONFIG_ARM64_SSBD
-+	ldp	x0, x1, [sp, #16 * 0]
-+	ldp	x2, x3, [sp, #16 * 1]
-+#endif
-+
- 	mov	x29, xzr			// fp pointed to user-space
- 	.else
- 	add	x21, sp, #S_FRAME_SIZE
-@@ -301,6 +321,8 @@ alternative_if ARM64_WORKAROUND_845719
- alternative_else_nop_endif
- #endif
- 3:
-+	apply_ssbd 0
-+
- 	.endif
- 
- 	msr	elr_el1, x21			// set up the return data
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -80,6 +80,11 @@
- 			   ARM_SMCCC_SMC_32,				\
- 			   0, 0x8000)
- 
-+#define ARM_SMCCC_ARCH_WORKAROUND_2					\
-+	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
-+			   ARM_SMCCC_SMC_32,				\
-+			   0, 0x7fff)
-+
- #ifndef __ASSEMBLY__
- 
- #include <linux/linkage.h>
+ 	if (pkt->reply)
 
 
