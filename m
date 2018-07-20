@@ -3,41 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E30F8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1DCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7EB620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7EB620652
+	by mail.kernel.org (Postfix) with ESMTP id 83E6D20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E6D20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389936AbeGTN3S (ORCPT
+        id S2389944AbeGTN3Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:29:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51272 "EHLO
+        Fri, 20 Jul 2018 09:29:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51488 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389077AbeGTN3R (ORCPT
+        with ESMTP id S2389077AbeGTN3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:29:17 -0400
+        Fri, 20 Jul 2018 09:29:24 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEDD4CD2;
-        Fri, 20 Jul 2018 12:37:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97A98A80;
+        Fri, 20 Jul 2018 12:39:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pieter Jansen van Vuuren 
-        <pieter.jansenvanvuuren@netronome.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 047/101] nfp: flower: fix mpls ether type detection
-Date:   Fri, 20 Jul 2018 14:13:53 +0200
-Message-Id: <20180720121425.018481590@linuxfoundation.org>
+        Mark Rutland <mark.rutland@arm.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.17 086/101] arm64: Call ARCH_WORKAROUND_2 on transitions between EL0 and EL1
+Date:   Fri, 20 Jul 2018 14:14:32 +0200
+Message-Id: <20180720121426.894473384@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -54,77 +53,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-[ Upstream commit a64119415ff248efa61301783bc26551df5dabf6 ]
+commit 8e2906245f1e3b0d027169d9f2e55ce0548cb96e upstream.
 
-Previously it was not possible to distinguish between mpls ether types and
-other ether types. This leads to incorrect classification of offloaded
-filters that match on mpls ether type. For example the following two
-filters overlap:
+In order for the kernel to protect itself, let's call the SSBD mitigation
+implemented by the higher exception level (either hypervisor or firmware)
+on each transition between userspace and kernel.
 
- # tc filter add dev eth0 parent ffff: \
-    protocol 0x8847 flower \
-    action mirred egress redirect dev eth1
+We must take the PSCI conduit into account in order to target the
+right exception level, hence the introduction of a runtime patching
+callback.
 
- # tc filter add dev eth0 parent ffff: \
-    protocol 0x0800 flower \
-    action mirred egress redirect dev eth2
-
-The driver now correctly includes the mac_mpls layer where HW stores mpls
-fields, when it detects an mpls ether type. It also sets the MPLS_Q bit to
-indicate that the filter should match mpls packets.
-
-Fixes: bb055c198d9b ("nfp: add mpls match offloading support")
-Signed-off-by: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Julien Grall <julien.grall@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/flower/match.c   |   14 ++++++++++++++
- drivers/net/ethernet/netronome/nfp/flower/offload.c |    8 ++++++++
- 2 files changed, 22 insertions(+)
+ arch/arm64/kernel/cpu_errata.c |   24 ++++++++++++++++++++++++
+ arch/arm64/kernel/entry.S      |   22 ++++++++++++++++++++++
+ include/linux/arm-smccc.h      |    5 +++++
+ 3 files changed, 51 insertions(+)
 
---- a/drivers/net/ethernet/netronome/nfp/flower/match.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/match.c
-@@ -123,6 +123,20 @@ nfp_flower_compile_mac(struct nfp_flower
- 			 NFP_FLOWER_MASK_MPLS_Q;
- 
- 		frame->mpls_lse = cpu_to_be32(t_mpls);
-+	} else if (dissector_uses_key(flow->dissector,
-+				      FLOW_DISSECTOR_KEY_BASIC)) {
-+		/* Check for mpls ether type and set NFP_FLOWER_MASK_MPLS_Q
-+		 * bit, which indicates an mpls ether type but without any
-+		 * mpls fields.
-+		 */
-+		struct flow_dissector_key_basic *key_basic;
-+
-+		key_basic = skb_flow_dissector_target(flow->dissector,
-+						      FLOW_DISSECTOR_KEY_BASIC,
-+						      flow->key);
-+		if (key_basic->n_proto == cpu_to_be16(ETH_P_MPLS_UC) ||
-+		    key_basic->n_proto == cpu_to_be16(ETH_P_MPLS_MC))
-+			frame->mpls_lse = cpu_to_be32(NFP_FLOWER_MASK_MPLS_Q);
- 	}
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -232,6 +232,30 @@ enable_smccc_arch_workaround_1(const str
  }
+ #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
  
---- a/drivers/net/ethernet/netronome/nfp/flower/offload.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/offload.c
-@@ -264,6 +264,14 @@ nfp_flower_calculate_key_layers(struct n
- 		case cpu_to_be16(ETH_P_ARP):
- 			return -EOPNOTSUPP;
- 
-+		case cpu_to_be16(ETH_P_MPLS_UC):
-+		case cpu_to_be16(ETH_P_MPLS_MC):
-+			if (!(key_layer & NFP_FLOWER_LAYER_MAC)) {
-+				key_layer |= NFP_FLOWER_LAYER_MAC;
-+				key_size += sizeof(struct nfp_flower_mac_mpls);
-+			}
-+			break;
++#ifdef CONFIG_ARM64_SSBD
++void __init arm64_update_smccc_conduit(struct alt_instr *alt,
++				       __le32 *origptr, __le32 *updptr,
++				       int nr_inst)
++{
++	u32 insn;
 +
- 		/* Will be included in layer 2. */
- 		case cpu_to_be16(ETH_P_8021Q):
- 			break;
++	BUG_ON(nr_inst != 1);
++
++	switch (psci_ops.conduit) {
++	case PSCI_CONDUIT_HVC:
++		insn = aarch64_insn_get_hvc_value();
++		break;
++	case PSCI_CONDUIT_SMC:
++		insn = aarch64_insn_get_smc_value();
++		break;
++	default:
++		return;
++	}
++
++	*updptr = cpu_to_le32(insn);
++}
++#endif	/* CONFIG_ARM64_SSBD */
++
+ #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
+ 	.matches = is_affected_midr_range,			\
+ 	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -18,6 +18,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <linux/arm-smccc.h>
+ #include <linux/init.h>
+ #include <linux/linkage.h>
+ 
+@@ -137,6 +138,18 @@ alternative_else_nop_endif
+ 	add	\dst, \dst, #(\sym - .entry.tramp.text)
+ 	.endm
+ 
++	// This macro corrupts x0-x3. It is the caller's duty
++	// to save/restore them if required.
++	.macro	apply_ssbd, state
++#ifdef CONFIG_ARM64_SSBD
++	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
++	mov	w1, #\state
++alternative_cb	arm64_update_smccc_conduit
++	nop					// Patched to SMC/HVC #0
++alternative_cb_end
++#endif
++	.endm
++
+ 	.macro	kernel_entry, el, regsize = 64
+ 	.if	\regsize == 32
+ 	mov	w0, w0				// zero upper 32 bits of x0
+@@ -163,6 +176,13 @@ alternative_else_nop_endif
+ 	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
+ 	disable_step_tsk x19, x20		// exceptions when scheduling.
+ 
++	apply_ssbd 1
++
++#ifdef CONFIG_ARM64_SSBD
++	ldp	x0, x1, [sp, #16 * 0]
++	ldp	x2, x3, [sp, #16 * 1]
++#endif
++
+ 	mov	x29, xzr			// fp pointed to user-space
+ 	.else
+ 	add	x21, sp, #S_FRAME_SIZE
+@@ -303,6 +323,8 @@ alternative_if ARM64_WORKAROUND_845719
+ alternative_else_nop_endif
+ #endif
+ 3:
++	apply_ssbd 0
++
+ 	.endif
+ 
+ 	msr	elr_el1, x21			// set up the return data
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -80,6 +80,11 @@
+ 			   ARM_SMCCC_SMC_32,				\
+ 			   0, 0x8000)
+ 
++#define ARM_SMCCC_ARCH_WORKAROUND_2					\
++	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
++			   ARM_SMCCC_SMC_32,				\
++			   0, 0x7fff)
++
+ #ifndef __ASSEMBLY__
+ 
+ #include <linux/linkage.h>
 
 
