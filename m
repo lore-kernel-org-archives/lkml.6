@@ -2,97 +2,103 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5177FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E43ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E83E420850
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:34:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E83E420850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C4E320850
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:34:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C4E320850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388135AbeGTRXj (ORCPT
+        id S2388147AbeGTRXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:23:39 -0400
-Received: from mga06.intel.com ([134.134.136.31]:51959 "EHLO mga06.intel.com"
+        Fri, 20 Jul 2018 13:23:45 -0400
+Received: from mout.perfora.net ([74.208.4.196]:58303 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728409AbeGTRXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:23:39 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 09:34:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,380,1526367600"; 
-   d="scan'208";a="66224835"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Jul 2018 09:34:20 -0700
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1fgYMG-0007lx-20; Fri, 20 Jul 2018 19:34:20 +0300
-Date:   Fri, 20 Jul 2018 19:34:20 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Subject: [GIT PULL] platform-drivers-x86 for 4.18-2
-Message-ID: <20180720163420.GA29856@smile.fi.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1731305AbeGTRXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:23:45 -0400
+Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MLPtc-1fg0880osc-000c3K; Fri, 20 Jul 2018 18:34:34 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 2/2] ARM: dts: tegra20/tegra30: add pmu interrupt-affinity
+Date:   Fri, 20 Jul 2018 18:34:26 +0200
+Message-Id: <20180720163426.4410-2-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180720163426.4410-1-marcel@ziswiler.com>
+References: <20180720163426.4410-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:H6sW2qsS9vq8+E9sAdrYECle5NHmLmJdKWN4fsVrxxjNnNmiam8
+ OA/q8FarsQNEZvblDFYTUNeRaqAQiVam0Zk78EB9eZ3uf8H4+Rh+7K0Nc3G+D+igyeG1KSy
+ zoyyWqZHi3buuKm0Qw8TdBVyv2ccXMj9D7gttHgbQb8mTRBhMrmaBPdfymMId4x0K125T89
+ 6kDx8All9/WsdAg3HX3Pg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Saf7fdN5HWk=:vDJXLqbB52F47icrStZR8y
+ 4rYI6clHA7XCzrKTTQHtpS24GgeiCLtfWWYXbb3kCPasXw0CerSJStu9NwYFlYSsMWStnz1Qh
+ lR23AOHJCzL+WnhYx/j8GO7q0R5xreDNGqMU9E4vepkxMhiidrQWVBQkrgStxzOPreEUcgnJb
+ QJgHiMwHb8ZkAXCoZikyb+eRgmXtQVZqyEjrHaaFrzX9E8Ea5Nv4bhNp24IolW3z5eRQ3sYYB
+ v+B+EOeOVI3RiSstbChWgRyUuPvsTQ5l+jG3jhhrVfXIy37JEfJfJ+W99HC1hYAvl2/Pu46cj
+ /lxAr4gglbpGHHYtApWlrhRk5RRK5Ps36RRK3LSmJZB3QHx5IEkavDTU9T9+vhBMstr1gQsd4
+ tOhnylCeUIWlztyTehvGRDHo2EUmeVSvEf72Uz93f0lI2I4vfFJO4oSJ7vMK6dXeZYki2H3hf
+ RijNPW4dGm1R2jyxuscb1LlrJsJSxj8gsJVR6nL0Keh5314MCh75p5irCDsmXhI11oDyghpDq
+ Sej72li0m+x9zorbrWRfBpufyMBY0VqdKpCpbRQeQ5Uq/kzrzim0oMfQXm4dXa361c/GgPezw
+ j1bNn8kS6nzurlL7WVgamCJXUDNv+wm8HQcu2xVzaaUgxA7rw7LWEp+B0er1Ewiv+DxNODvVf
+ 6pCWPsHJGLYhh4Rj/moZlpqx1ipC2MdAqPqFv4OmLevJst68hYc60MjnFoL6ddWSQgWk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Simple one liner regression fix which has no conflicts with current master.
+This is similar to tegra124 and avoids the following being reported
+upon boot:
 
-Thanks,
+hw perfevents: no interrupt-affinity property for /pmu, guessing.
 
-With Best Regards,
-Andy Shevchenko
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-The following changes since commit 9d3cce1e8b8561fed5f383d22a4d6949db4eadbe:
+---
 
-  Linux 4.18-rc5 (2018-07-15 12:49:31 -0700)
+ arch/arm/boot/dts/tegra20.dtsi | 2 ++
+ arch/arm/boot/dts/tegra30.dtsi | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-are available in the Git repository at:
-
-  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v4.18-2
-
-for you to fetch changes up to 2502e5a025935b7b476b69eda4959b3c4022c72b:
-
-  platform/x86: dell-laptop: Fix backlight detection (2018-07-20 15:29:59 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v4.18-2
-
-The Dell laptop ACPI video brightness control is now back
-after fixing a regression brought by SMM refactoring.
-
-The following is an automated git shortlog grouped by driver:
-
-dell-laptop:
- -  Fix backlight detection
-
-----------------------------------------------------------------
-Damien Thébault (1):
-      platform/x86: dell-laptop: Fix backlight detection
-
- drivers/platform/x86/dell-laptop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index a22c6a8f8f83..dcad6d6128cf 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -867,5 +867,7 @@
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&{/cpus/cpu@0}>,
++				     <&{/cpus/cpu@1}>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index a6781f653310..1de10f0d1da7 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -1013,5 +1013,9 @@
+ 			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&{/cpus/cpu@0}>,
++				     <&{/cpus/cpu@1}>,
++				     <&{/cpus/cpu@2}>,
++				     <&{/cpus/cpu@3}>;
+ 	};
+ };
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.14.4
 
