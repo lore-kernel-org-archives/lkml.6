@@ -2,199 +2,89 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB54ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9C8ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AF78205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:27:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AF78205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9055220652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:32:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BEGi/dXd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9055220652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbeGTVR0 (ORCPT
+        id S1728342AbeGTVWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 17:17:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42494 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728110AbeGTVRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 17:17:25 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 62703308A972;
-        Fri, 20 Jul 2018 20:27:31 +0000 (UTC)
-Received: from t450s.home (ovpn-116-105.phx2.redhat.com [10.3.116.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DBDEA5C20D;
-        Fri, 20 Jul 2018 20:27:29 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 14:27:28 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     Ray Jui <ray.jui@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        kvm@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        aik@ozlabs.ru, David Gibson <david@gibson.dropbear.id.au>,
-        benh@kernel.crashing.org
-Subject: Re: [RFC PATCH] vfio/pci: map prefetchble bars as writecombine
-Message-ID: <20180720142728.572dd2d7@t450s.home>
-In-Reply-To: <CABe79T7A2ud3jbm9B43S9RQvOdJ0b29NUb3s9yKNTv257sfEMw@mail.gmail.com>
-References: <1531457777-11825-1-git-send-email-srinath.mannam@broadcom.com>
-        <20180717092207.775e381c@t450s.home>
-        <CABe79T7eVS5Z5+CkNRfWik=jFeejq54xheUOS=Jc9oU6qX8=kA@mail.gmail.com>
-        <20180718152531.60f7df6b@t450s.home>
-        <CABe79T6G2_eegbQ_SOy4W38xXngQE3b4RBPys-tO+yBd2jq_fQ@mail.gmail.com>
-        <20180719091252.749f2433@t450s.home>
-        <CABe79T7A2ud3jbm9B43S9RQvOdJ0b29NUb3s9yKNTv257sfEMw@mail.gmail.com>
+        Fri, 20 Jul 2018 17:22:02 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:51526 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728142AbeGTVWC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 17:22:02 -0400
+Received: by mail-it0-f68.google.com with SMTP id h2-v6so16392956itj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 13:32:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cL/zNQffEbfWplGlqTueC7W+niUlPrnN8FmgiBSSyKY=;
+        b=BEGi/dXdVA+Eqr9BVF1mQDse9fuc/cg/SU5Mn4WjxKVEXMcBba1PCAUJaoHMAUSrMe
+         +T3Qv0KMdwcdrhZRRoyzz/F+QZFfKIbXJbsJ0AF6Kz+qzstWzqtGnAcAGh80zOWBbCub
+         +4NaTeW31J1iH5wwQf7TXyDVgSpFXsqU2LeA0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cL/zNQffEbfWplGlqTueC7W+niUlPrnN8FmgiBSSyKY=;
+        b=TQqD9sOVxeNX4NtoxiHEsC38X+O7+9mVBiqArCWrgKGkKyVwzcXY1+2mo8Zk+68FjV
+         ZnLpiVBgOJPZpQ4TeIEXOZdxrsq9FpAbBsW/gz2+wtUAUQbWtHroJkygRaFEE/dbllf5
+         C6nJmtpHDkuL6j6OqABX+IsqUPnU2hwAZVgS6pW4xmphoXPfo2JfhIbs0LYnIS2MM6U4
+         z1+zJks2NhNVqWTKFrrRPThn1sWnyGMgFrpIgiuem7uCMvA4Pw1KbHpPGqtE0uElv29R
+         TtbxghnR2EL7X09hrP6RiK6UpDJR7577WCjNi7FhiuRVg/qubYmpIDavlwBEnEAMlrqW
+         HSRA==
+X-Gm-Message-State: AOUpUlGjqnCaM0PEhsddgb6o1wrwsddRjpaS8SIR94+mumMXlMJT3F4Y
+        4FD/IHruuOoX9iXIsot/jzxKgELH/rfRjKjLuqdFYLfv
+X-Google-Smtp-Source: AAOMgpcaYddzVIg18Qi4rA2EdciszFAIIxcI+4KzHUx1pHa7L1ZyNM0qIVRsRNUPkJxKYDztphNBDfgpyl4oST0iTV8=
+X-Received: by 2002:a24:5004:: with SMTP id m4-v6mr3119667itb.38.1532118728878;
+ Fri, 20 Jul 2018 13:32:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 20 Jul 2018 20:27:33 +0000 (UTC)
+References: <20180719114027.2722d075@canb.auug.org.au>
+In-Reply-To: <20180719114027.2722d075@canb.auug.org.au>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 20 Jul 2018 22:31:56 +0200
+Message-ID: <CACRpkdZffsC0RsX9Q72+AwWZynjBfTZ4=RE+o=HVd3H0yCdAgA@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 21:49:48 +0530
-Srinath Mannam <srinath.mannam@broadcom.com> wrote:
+On Thu, Jul 19, 2018 at 3:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> HI Alex,
-> 
-> On Thu, Jul 19, 2018 at 8:42 PM, Alex Williamson
-> <alex.williamson@redhat.com> wrote:
-> > On Thu, 19 Jul 2018 20:17:11 +0530
-> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
-> >  
-> >> HI Alex,
-> >>
-> >> On Thu, Jul 19, 2018 at 2:55 AM, Alex Williamson
-> >> <alex.williamson@redhat.com> wrote:  
-> >> > On Thu, 19 Jul 2018 00:05:18 +0530
-> >> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
-> >> >  
-> >> >> Hi Alex,
-> >> >>
-> >> >> On Tue, Jul 17, 2018 at 8:52 PM, Alex Williamson
-> >> >> <alex.williamson@redhat.com> wrote:  
-> >> >> > On Fri, 13 Jul 2018 10:26:17 +0530
-> >> >> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
-> >> >> >  
-> >> >> >> By default all BARs map with VMA access permissions
-> >> >> >> as pgprot_noncached.
-> >> >> >>
-> >> >> >> In ARM64 pgprot_noncached is MT_DEVICE_nGnRnE which
-> >> >> >> is strongly ordered and allows aligned access.
-> >> >> >> This type of mapping works for NON-PREFETCHABLE bars
-> >> >> >> containing EP controller registers.
-> >> >> >> But it restricts PREFETCHABLE bars from doing
-> >> >> >> unaligned access.
-> >> >> >>
-> >> >> >> In CMB NVMe drives PREFETCHABLE bars are required to
-> >> >> >> map as MT_NORMAL_NC to do unaligned access.
-> >> >> >>
-> >> >> >> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> >> >> >> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> >> >> >> Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
-> >> >> >> ---  
-> >> >> >
-> >> >> > This has been discussed before:
-> >> >> >
-> >> >> > https://www.spinics.net/lists/kvm/msg156548.html  
-> >> >> Thank you for inputs.. I have gone through the long list of mail chain
-> >> >> discussion.  
-> >> >> >
-> >> >> > CC'ing the usual suspects from the previous thread.  I'm not convinced
-> >> >> > that the patch here has considered anything other than the ARM64
-> >> >> > implications and it's not clear that it considers compatibility with
-> >> >> > existing users or devices at all.  Can we guarantee for all devices and
-> >> >> > use cases that WC is semantically equivalent and preferable to UC?  If
-> >> >> > not then we need to device an extension to the interface that allows
-> >> >> > the user to specify WC.  Thanks,
-> >> >> >  
-> >> >> To implement with user specified WC flags, many changes need to be done.
-> >> >> Suppose In DPDK, prefetcable BARs map using WC flag, then also same
-> >> >> question comes
-> >> >> that WC may be different for different CPUs.
-> >> >> As per functionality, both WC and PREFETCHABLE are same, like merging writes and
-> >> >> typically WC is uncached.
-> >> >> So, based on prefetchable BARs behavior and usage we need to map bar memory.
-> >> >> Is it right to map prefetchable BARs as strongly ordered, aligned
-> >> >> access and uncached?  
-> >> >
-> >> > Is it possible to answer that question generically?  Whether to map a
-> >> > BAR as UC or WC is generally a question for the driver.  Does the
-> >> > device handle unaligned accesses?  Does the device need strong memory
-> >> > ordering?  If this is a driver level question then the driver that
-> >> > needs to make that decision is the userspace driver.  VFIO is just a
-> >> > pass-through here and since we don't offer the user a choice of
-> >> > mappings, we take the safer and more conservative mapping, ie. UC.
-> >> >  
-> >> Yes, you are right, driver should make the decision based on its requirement.
-> >> In my case, user space driver is part of SPDK, so SPDK should request DPDK
-> >> and DPDK should request VFIO to map BAR for its choice of mapping.
-> >> So to implement this we need code changes in VFIO, DPDK and SPDK.
-> >>  
-> >> > You're suggesting that there are many changes to be done if we modify
-> >> > the vfio interface to expose WC under the user's control rather than
-> >> > simply transparently impose WC for all mappings, but is that really the
-> >> > case?  Most devices on most platforms seem to work fine now.  Perhaps WC
-> >> > is a performance optimization, but this is the first instance I've seen
-> >> > of it as a functional issue.  Does that suggest that the imposed
-> >> > alignment on your platform is perhaps unique and the relaxed alignment
-> >> > should be implemented at the architecture specific memory flags for UC
-> >> > mappings?  For instance, does x86 require this change for the same
-> >> > device?  The chance for regressions of other devices on other platforms
-> >> > seems rather high as proposed. Thanks,  
-> >> This issue is not specific to platform or device. this is the requirement of
-> >> CMB enabled NVMe cards.
-> >> NVMe kernel driver already has support to map CMB bar as WC using
-> >> ioremap_wc function.
-> >> File: drivers/nvme/host/pci.c
-> >> Function: nvme_map_cmb
-> >> code: dev->cmb = ioremap_wc(pci_resource_start(pdev, bar) + offset, size);
-> >> It means ioremap_wc is working with all platforms and WC map of
-> >> perfetchable BARs does not harm.
-> >> Same is required in SPDK NVMe driver also, without WC map it may work
-> >> in x86 platform, but it does not work in ARM platforms.  
-> >
-> > Doesn't this contradict your assertion that it's not specific to
-> > platform or device?  The device requires support for unaligned
-> > accesses.  The platform chooses to restrict unaligned accesses for
-> > non-WC mappings while other platforms do not.  The native driver can
-> > still clearly have performance considerations for choosing to use WC
-> > mappings, but it's still not clear to me that the functionality issue
-> > isn't self inflicted by the platform definition of UC vs WC.  Thanks,
-> >  
-> Device allows both aligned and unaligned access.. so software have
-> flexibility can do unaligned access.
-> As per ARM64 platform, with UC map, memory access should be un-cached,
-> aligned access and strongly order mapping.
-> with WC map, memory access can be aligned/unaligned and un-cached. I
-> thought this is the property of platform not issue.
-> To allow software to do unaligned access of device memory, we need to
-> use WC map of ARM64 platform case.
-> In ARM platforms UC mapping is used to map controller registers which
-> are 4 byte aligned exposed by non-prefetchable bars.
-> Also prefetchable BARs allows write merging so I thought using WC map
-> fulfills both write merging (add performance) and unaligned
-> access.
-> Can I modify the code as below to enable only for ARM platforms.
->         vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-> +#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-> +       if (pci_resource_flags(pdev, index) & IORESOURCE_PREFETCH)
-> +               vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
-> +#endif
->         vma->vm_pgoff = (pci_resource_start(pdev, index) >> PAGE_SHIFT) + pgoff;
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/net/dsa/realtek.o
+> see include/linux/module.h for more information
+>
+> Introduced by commit
+>
+>   d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
 
-While the risk of regression is smaller by restricting this to ARM, I
-don't think it's the right solution.  What happens when a device
-requires strict ordering?  ARM now behaves differently than any other
-architecture, that's not acceptable.  Thanks,
+Thanks, there is already a patch for it.
 
-Alex
+I'm pretty grateful that this was the worst the integration testing
+could find :) new drivers always make me nervous.
+
+Yours,
+Linus Walleij
