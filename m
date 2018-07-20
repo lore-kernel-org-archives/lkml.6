@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32AAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3178ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 872A6204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:18:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 872A6204EC
+	by mail.kernel.org (Postfix) with ESMTP id 99D88204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:18:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99D88204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388245AbeGTQHP (ORCPT
+        id S2387910AbeGTQEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:07:15 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54250 "EHLO mail.bootlin.com"
+        Fri, 20 Jul 2018 12:04:35 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54178 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387892AbeGTQEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732829AbeGTQEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Jul 2018 12:04:35 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6971920908; Fri, 20 Jul 2018 17:15:50 +0200 (CEST)
+        id 4FAB5209D8; Fri, 20 Jul 2018 17:15:49 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B5DB72091A;
-        Fri, 20 Jul 2018 17:15:33 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 05B0B20893;
+        Fri, 20 Jul 2018 17:15:32 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 09/35] mtd: rawnand: hisi504: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 17:15:01 +0200
-Message-Id: <20180720151527.16038-10-miquel.raynal@bootlin.com>
+Subject: [PATCH v4 06/35] mtd: rawnand: fsl_ifc: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 17:14:58 +0200
+Message-Id: <20180720151527.16038-7-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180720151527.16038-1-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
@@ -73,110 +73,54 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/hisi504_nand.c | 78 +++++++++++++++++++++----------------
- 1 file changed, 44 insertions(+), 34 deletions(-)
+ drivers/mtd/nand/raw/fsl_ifc_nand.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/hisi504_nand.c b/drivers/mtd/nand/raw/hisi504_nand.c
-index a1e009c8e556..950dc7789296 100644
---- a/drivers/mtd/nand/raw/hisi504_nand.c
-+++ b/drivers/mtd/nand/raw/hisi504_nand.c
-@@ -709,9 +709,50 @@ static int hisi_nfc_ecc_probe(struct hinfc_host *host)
+diff --git a/drivers/mtd/nand/raw/fsl_ifc_nand.c b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+index 96130d91e32c..24f59d0066af 100644
+--- a/drivers/mtd/nand/raw/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+@@ -714,9 +714,9 @@ static int fsl_ifc_write_page(struct mtd_info *mtd, struct nand_chip *chip,
+ 	return nand_prog_page_end_op(chip);
+ }
+ 
+-static int fsl_ifc_chip_init_tail(struct mtd_info *mtd)
++static int fsl_ifc_attach_chip(struct nand_chip *chip)
+ {
+-	struct nand_chip *chip = mtd_to_nand(mtd);
++	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	struct fsl_ifc_mtd *priv = nand_get_controller_data(chip);
+ 
+ 	dev_dbg(priv->dev, "%s: nand->numchips = %d\n", __func__,
+@@ -757,6 +757,10 @@ static int fsl_ifc_chip_init_tail(struct mtd_info *mtd)
  	return 0;
  }
  
-+static int hisi_nfc_attach_chip(struct nand_chip *chip)
-+{
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct hinfc_host *host = nand_get_controller_data(chip);
-+	int flag;
-+
-+	host->buffer = dmam_alloc_coherent(host->dev,
-+					   mtd->writesize + mtd->oobsize,
-+					   &host->dma_buffer, GFP_KERNEL);
-+	if (!host->buffer)
-+		return -ENOMEM;
-+
-+	host->dma_oob = host->dma_buffer + mtd->writesize;
-+	memset(host->buffer, 0xff, mtd->writesize + mtd->oobsize);
-+
-+	flag = hinfc_read(host, HINFC504_CON);
-+	flag &= ~(HINFC504_CON_PAGESIZE_MASK << HINFC504_CON_PAGEISZE_SHIFT);
-+	switch (mtd->writesize) {
-+	case 2048:
-+		flag |= (0x001 << HINFC504_CON_PAGEISZE_SHIFT);
-+		break;
-+	/*
-+	 * TODO: add more pagesize support,
-+	 * default pagesize has been set in hisi_nfc_host_init
-+	 */
-+	default:
-+		dev_err(host->dev, "NON-2KB page size nand flash\n");
-+		return -EINVAL;
-+	}
-+	hinfc_write(host, flag, HINFC504_CON);
-+
-+	if (chip->ecc.mode == NAND_ECC_HW)
-+		hisi_nfc_ecc_probe(host);
-+
-+	return 0;
-+}
-+
-+static const struct nand_controller_ops hisi_nfc_controller_ops = {
-+	.attach_chip = hisi_nfc_attach_chip,
++static const struct nand_controller_ops fsl_ifc_controller_ops = {
++	.attach_chip = fsl_ifc_attach_chip,
 +};
 +
- static int hisi_nfc_probe(struct platform_device *pdev)
+ static void fsl_ifc_sram_init(struct fsl_ifc_mtd *priv)
  {
--	int ret = 0, irq, flag, max_chips = HINFC504_MAX_CHIP;
-+	int ret = 0, irq, max_chips = HINFC504_MAX_CHIP;
- 	struct device *dev = &pdev->dev;
- 	struct hinfc_host *host;
- 	struct nand_chip  *chip;
-@@ -769,42 +810,11 @@ static int hisi_nfc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = nand_scan_ident(mtd, max_chips, NULL);
-+	chip->dummy_controller.ops = &hisi_nfc_controller_ops;
-+	ret = nand_scan(mtd, max_chips);
+ 	struct fsl_ifc_ctrl *ctrl = priv->ctrl;
+@@ -1046,15 +1050,8 @@ static int fsl_ifc_nand_probe(struct platform_device *dev)
  	if (ret)
- 		return ret;
+ 		goto err;
  
--	host->buffer = dmam_alloc_coherent(dev, mtd->writesize + mtd->oobsize,
--		&host->dma_buffer, GFP_KERNEL);
--	if (!host->buffer)
--		return -ENOMEM;
+-	ret = nand_scan_ident(mtd, 1, NULL);
+-	if (ret)
+-		goto err;
 -
--	host->dma_oob = host->dma_buffer + mtd->writesize;
--	memset(host->buffer, 0xff, mtd->writesize + mtd->oobsize);
--
--	flag = hinfc_read(host, HINFC504_CON);
--	flag &= ~(HINFC504_CON_PAGESIZE_MASK << HINFC504_CON_PAGEISZE_SHIFT);
--	switch (mtd->writesize) {
--	case 2048:
--		flag |= (0x001 << HINFC504_CON_PAGEISZE_SHIFT); break;
--	/*
--	 * TODO: add more pagesize support,
--	 * default pagesize has been set in hisi_nfc_host_init
--	 */
--	default:
--		dev_err(dev, "NON-2KB page size nand flash\n");
--		return -EINVAL;
--	}
--	hinfc_write(host, flag, HINFC504_CON);
--
--	if (chip->ecc.mode == NAND_ECC_HW)
--		hisi_nfc_ecc_probe(host);
+-	ret = fsl_ifc_chip_init_tail(mtd);
+-	if (ret)
+-		goto err;
 -
 -	ret = nand_scan_tail(mtd);
--	if (ret) {
--		dev_err(dev, "nand_scan_tail failed: %d\n", ret);
--		return ret;
--	}
--
- 	ret = mtd_device_register(mtd, NULL, 0);
- 	if (ret) {
- 		dev_err(dev, "Err MTD partition=%d\n", ret);
++	priv->chip.controller->ops = &fsl_ifc_controller_ops;
++	ret = nand_scan(mtd, 1);
+ 	if (ret)
+ 		goto err;
+ 
 -- 
 2.14.1
 
