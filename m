@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E536ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C95ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF4C206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF4C206B7
+	by mail.kernel.org (Postfix) with ESMTP id E24F5206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24F5206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389351AbeGTNZo (ORCPT
+        id S2389361AbeGTNZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:25:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45788 "EHLO
+        Fri, 20 Jul 2018 09:25:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45842 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388356AbeGTNZm (ORCPT
+        with ESMTP id S2388356AbeGTNZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:25:42 -0400
+        Fri, 20 Jul 2018 09:25:46 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BBF1C9D;
-        Fri, 20 Jul 2018 12:35:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03EFDCA6;
+        Fri, 20 Jul 2018 12:34:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 90/92] arm64: KVM: Handle guests ARCH_WORKAROUND_2 requests
-Date:   Fri, 20 Jul 2018 14:14:34 +0200
-Message-Id: <20180720121422.854223739@linuxfoundation.org>
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.14 75/92] arm64: alternatives: Add dynamic patching feature
+Date:   Fri, 20 Jul 2018 14:14:19 +0200
+Message-Id: <20180720121422.034694295@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -53,84 +53,210 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit b4f18c063a13dfb33e3a63fe1844823e19c2265e upstream.
+Commit dea5e2a4c5bcf196f879a66cebdcca07793e8ba4 upstream.
 
-In order to forward the guest's ARCH_WORKAROUND_2 calls to EL3,
-add a small(-ish) sequence to handle it at EL2. Special care must
-be taken to track the state of the guest itself by updating the
-workaround flags. We also rely on patching to enable calls into
-the firmware.
+We've so far relied on a patching infrastructure that only gave us
+a single alternative, without any way to provide a range of potential
+replacement instructions. For a single feature, this is an all or
+nothing thing.
 
-Note that since we need to execute branches, this always executes
-after the Spectre-v2 mitigation has been applied.
+It would be interesting to have a more flexible grained way of patching
+the kernel though, where we could dynamically tune the code that gets
+injected.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+In order to achive this, let's introduce a new form of dynamic patching,
+assiciating a callback to a patching site. This callback gets source and
+target locations of the patching request, as well as the number of
+instructions to be patched.
+
+Dynamic patching is declared with the new ALTERNATIVE_CB and alternative_cb
+directives:
+
+	asm volatile(ALTERNATIVE_CB("mov %0, #0\n", callback)
+		     : "r" (v));
+or
+	alternative_cb callback
+		mov	x0, #0
+	alternative_cb_end
+
+where callback is the C function computing the alternative.
+
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/asm-offsets.c |    1 +
- arch/arm64/kvm/hyp/hyp-entry.S  |   38 +++++++++++++++++++++++++++++++++++++-
- 2 files changed, 38 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/alternative.h |   41 ++++++++++++++++++++++++++++++---
+ arch/arm64/kernel/alternative.c      |   43 ++++++++++++++++++++++++++---------
+ 2 files changed, 69 insertions(+), 15 deletions(-)
 
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -131,6 +131,7 @@ int main(void)
-   BLANK();
- #ifdef CONFIG_KVM_ARM_HOST
-   DEFINE(VCPU_CONTEXT,		offsetof(struct kvm_vcpu, arch.ctxt));
-+  DEFINE(VCPU_WORKAROUND_FLAGS,	offsetof(struct kvm_vcpu, arch.workaround_flags));
-   DEFINE(CPU_GP_REGS,		offsetof(struct kvm_cpu_context, gp_regs));
-   DEFINE(CPU_USER_PT_REGS,	offsetof(struct kvm_regs, regs));
-   DEFINE(CPU_FP_REGS,		offsetof(struct kvm_regs, fp_regs));
---- a/arch/arm64/kvm/hyp/hyp-entry.S
-+++ b/arch/arm64/kvm/hyp/hyp-entry.S
-@@ -106,8 +106,44 @@ el1_hvc_guest:
- 	 */
- 	ldr	x1, [sp]				// Guest's x0
- 	eor	w1, w1, #ARM_SMCCC_ARCH_WORKAROUND_1
-+	cbz	w1, wa_epilogue
-+
-+	/* ARM_SMCCC_ARCH_WORKAROUND_2 handling */
-+	eor	w1, w1, #(ARM_SMCCC_ARCH_WORKAROUND_1 ^ \
-+			  ARM_SMCCC_ARCH_WORKAROUND_2)
- 	cbnz	w1, el1_trap
--	mov	x0, x1
-+
-+#ifdef CONFIG_ARM64_SSBD
-+alternative_cb	arm64_enable_wa2_handling
-+	b	wa2_end
-+alternative_cb_end
-+	get_vcpu_ptr	x2, x0
-+	ldr	x0, [x2, #VCPU_WORKAROUND_FLAGS]
-+
-+	// Sanitize the argument and update the guest flags
-+	ldr	x1, [sp, #8]			// Guest's x1
-+	clz	w1, w1				// Murphy's device:
-+	lsr	w1, w1, #5			// w1 = !!w1 without using
-+	eor	w1, w1, #1			// the flags...
-+	bfi	x0, x1, #VCPU_WORKAROUND_2_FLAG_SHIFT, #1
-+	str	x0, [x2, #VCPU_WORKAROUND_FLAGS]
-+
-+	/* Check that we actually need to perform the call */
-+	hyp_ldr_this_cpu x0, arm64_ssbd_callback_required, x2
-+	cbz	x0, wa2_end
-+
-+	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
-+	smc	#0
-+
-+	/* Don't leak data from the SMC call */
-+	mov	x3, xzr
-+wa2_end:
-+	mov	x2, xzr
-+	mov	x1, xzr
-+#endif
-+
-+wa_epilogue:
-+	mov	x0, xzr
- 	add	sp, sp, #16
- 	eret
+--- a/arch/arm64/include/asm/alternative.h
++++ b/arch/arm64/include/asm/alternative.h
+@@ -5,6 +5,8 @@
+ #include <asm/cpucaps.h>
+ #include <asm/insn.h>
  
++#define ARM64_CB_PATCH ARM64_NCAPS
++
+ #ifndef __ASSEMBLY__
+ 
+ #include <linux/init.h>
+@@ -22,12 +24,19 @@ struct alt_instr {
+ 	u8  alt_len;		/* size of new instruction(s), <= orig_len */
+ };
+ 
++typedef void (*alternative_cb_t)(struct alt_instr *alt,
++				 __le32 *origptr, __le32 *updptr, int nr_inst);
++
+ void __init apply_alternatives_all(void);
+ void apply_alternatives(void *start, size_t length);
+ 
+-#define ALTINSTR_ENTRY(feature)						      \
++#define ALTINSTR_ENTRY(feature,cb)					      \
+ 	" .word 661b - .\n"				/* label           */ \
++	" .if " __stringify(cb) " == 0\n"				      \
+ 	" .word 663f - .\n"				/* new instruction */ \
++	" .else\n"							      \
++	" .word " __stringify(cb) "- .\n"		/* callback */	      \
++	" .endif\n"							      \
+ 	" .hword " __stringify(feature) "\n"		/* feature bit     */ \
+ 	" .byte 662b-661b\n"				/* source len      */ \
+ 	" .byte 664f-663f\n"				/* replacement len */
+@@ -45,15 +54,18 @@ void apply_alternatives(void *start, siz
+  * but most assemblers die if insn1 or insn2 have a .inst. This should
+  * be fixed in a binutils release posterior to 2.25.51.0.2 (anything
+  * containing commit 4e4d08cf7399b606 or c1baaddf8861).
++ *
++ * Alternatives with callbacks do not generate replacement instructions.
+  */
+-#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled)	\
++#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled, cb)	\
+ 	".if "__stringify(cfg_enabled)" == 1\n"				\
+ 	"661:\n\t"							\
+ 	oldinstr "\n"							\
+ 	"662:\n"							\
+ 	".pushsection .altinstructions,\"a\"\n"				\
+-	ALTINSTR_ENTRY(feature)						\
++	ALTINSTR_ENTRY(feature,cb)					\
+ 	".popsection\n"							\
++	" .if " __stringify(cb) " == 0\n"				\
+ 	".pushsection .altinstr_replacement, \"a\"\n"			\
+ 	"663:\n\t"							\
+ 	newinstr "\n"							\
+@@ -61,11 +73,17 @@ void apply_alternatives(void *start, siz
+ 	".popsection\n\t"						\
+ 	".org	. - (664b-663b) + (662b-661b)\n\t"			\
+ 	".org	. - (662b-661b) + (664b-663b)\n"			\
++	".else\n\t"							\
++	"663:\n\t"							\
++	"664:\n\t"							\
++	".endif\n"							\
+ 	".endif\n"
+ 
+ #define _ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg, ...)	\
+-	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg))
++	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
+ 
++#define ALTERNATIVE_CB(oldinstr, cb) \
++	__ALTERNATIVE_CFG(oldinstr, "NOT_AN_INSTRUCTION", ARM64_CB_PATCH, 1, cb)
+ #else
+ 
+ #include <asm/assembler.h>
+@@ -132,6 +150,14 @@ void apply_alternatives(void *start, siz
+ 661:
+ .endm
+ 
++.macro alternative_cb cb
++	.set .Lasm_alt_mode, 0
++	.pushsection .altinstructions, "a"
++	altinstruction_entry 661f, \cb, ARM64_CB_PATCH, 662f-661f, 0
++	.popsection
++661:
++.endm
++
+ /*
+  * Provide the other half of the alternative code sequence.
+  */
+@@ -158,6 +184,13 @@ void apply_alternatives(void *start, siz
+ .endm
+ 
+ /*
++ * Callback-based alternative epilogue
++ */
++.macro alternative_cb_end
++662:
++.endm
++
++/*
+  * Provides a trivial alternative or default sequence consisting solely
+  * of NOPs. The number of NOPs is chosen automatically to match the
+  * previous case.
+--- a/arch/arm64/kernel/alternative.c
++++ b/arch/arm64/kernel/alternative.c
+@@ -107,32 +107,53 @@ static u32 get_alt_insn(struct alt_instr
+ 	return insn;
+ }
+ 
++static void patch_alternative(struct alt_instr *alt,
++			      __le32 *origptr, __le32 *updptr, int nr_inst)
++{
++	__le32 *replptr;
++	int i;
++
++	replptr = ALT_REPL_PTR(alt);
++	for (i = 0; i < nr_inst; i++) {
++		u32 insn;
++
++		insn = get_alt_insn(alt, origptr + i, replptr + i);
++		updptr[i] = cpu_to_le32(insn);
++	}
++}
++
+ static void __apply_alternatives(void *alt_region, bool use_linear_alias)
+ {
+ 	struct alt_instr *alt;
+ 	struct alt_region *region = alt_region;
+-	__le32 *origptr, *replptr, *updptr;
++	__le32 *origptr, *updptr;
++	alternative_cb_t alt_cb;
+ 
+ 	for (alt = region->begin; alt < region->end; alt++) {
+-		u32 insn;
+-		int i, nr_inst;
++		int nr_inst;
+ 
+-		if (!cpus_have_cap(alt->cpufeature))
++		/* Use ARM64_CB_PATCH as an unconditional patch */
++		if (alt->cpufeature < ARM64_CB_PATCH &&
++		    !cpus_have_cap(alt->cpufeature))
+ 			continue;
+ 
+-		BUG_ON(alt->alt_len != alt->orig_len);
++		if (alt->cpufeature == ARM64_CB_PATCH)
++			BUG_ON(alt->alt_len != 0);
++		else
++			BUG_ON(alt->alt_len != alt->orig_len);
+ 
+ 		pr_info_once("patching kernel code\n");
+ 
+ 		origptr = ALT_ORIG_PTR(alt);
+-		replptr = ALT_REPL_PTR(alt);
+ 		updptr = use_linear_alias ? lm_alias(origptr) : origptr;
+-		nr_inst = alt->alt_len / sizeof(insn);
++		nr_inst = alt->orig_len / AARCH64_INSN_SIZE;
++
++		if (alt->cpufeature < ARM64_CB_PATCH)
++			alt_cb = patch_alternative;
++		else
++			alt_cb  = ALT_REPL_PTR(alt);
+ 
+-		for (i = 0; i < nr_inst; i++) {
+-			insn = get_alt_insn(alt, origptr + i, replptr + i);
+-			updptr[i] = cpu_to_le32(insn);
+-		}
++		alt_cb(alt, origptr, updptr, nr_inst);
+ 
+ 		flush_icache_range((uintptr_t)origptr,
+ 				   (uintptr_t)(origptr + nr_inst));
 
 
