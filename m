@@ -3,96 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A8DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E627EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2ED620673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:16:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2ED620673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8320120673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:16:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8320120673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731613AbeGTBBe (ORCPT
+        id S1731673AbeGTBBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 21:01:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48168 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727615AbeGTBBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 21:01:33 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D64EE400225D;
-        Fri, 20 Jul 2018 00:15:59 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-42.pek2.redhat.com [10.72.12.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A325B2026D6B;
-        Fri, 20 Jul 2018 00:15:56 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com, netdev@vger.kernel.org
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 8/9] vhost_net: rename VHOST_RX_BATCH to VHOST_NET_BATCH
-Date:   Fri, 20 Jul 2018 08:15:20 +0800
-Message-Id: <1532045721-4958-9-git-send-email-jasowang@redhat.com>
-In-Reply-To: <1532045721-4958-1-git-send-email-jasowang@redhat.com>
-References: <1532045721-4958-1-git-send-email-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 00:15:59 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 00:15:59 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+        Thu, 19 Jul 2018 21:01:38 -0400
+Received: from mail03.asahi-net.or.jp ([202.224.55.15]:44000 "EHLO
+        mail03.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731618AbeGTBBi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 21:01:38 -0400
+Received: from h61-195-96-97.vps.ablenet.jp (h61-195-96-97.vps.ablenet.jp [61.195.96.97])
+        (Authenticated sender: PQ4Y-STU)
+        by mail03.asahi-net.or.jp (Postfix) with ESMTPA id 3D914EBCC9;
+        Fri, 20 Jul 2018 09:16:02 +0900 (JST)
+Received: from yo-satoh-debian.ysato.ml (pw126033022183.23.panda-world.ne.jp [126.33.22.183])
+        by h61-195-96-97.vps.ablenet.jp (Postfix) with ESMTPSA id B75B124006D;
+        Fri, 20 Jul 2018 09:16:01 +0900 (JST)
+Date:   Fri, 20 Jul 2018 09:15:58 +0900
+Message-ID: <87in5arcch.wl-ysato@users.sourceforge.jp>
+From:   Yoshinori Sato <ysato@users.sourceforge.jp>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        uclinux-h8-devel@lists.sourceforge.jp
+Subject: Re: [PATCH] arch/h8300: add a defconfig target
+In-Reply-To: <84ff16cd-2549-56f2-9e26-60b70188c9f2@infradead.org>
+References: <84ff16cd-2549-56f2-9e26-60b70188c9f2@infradead.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A more generic name which could be used for TX as well.
+On Thu, 19 Jul 2018 15:04:29 +0900,
+Randy Dunlap wrote:
+> 
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Make the "defconfig" target valid for arch/h8300.  Currently
+> "make ARCH=h8300 defconfig" produces:
+> 
+> *** Can't find default configuration "arch/h8300/defconfig"!
+> ../scripts/kconfig/Makefile:87: recipe for target 'defconfig' failed
+> 
+> By adding a value for KBUILD_DEFCONFIG, "make ARCH=h8300 defconfig"
+> successfully produces a kernel .config file:
+> 
+> *** Default configuration is based on 'edosk2674_defconfig'
+> 
+> This is useful for Kconfig editing/testing.
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Cc: uclinux-h8-devel@lists.sourceforge.jp (moderated for non-subscribers)
+> ---
+>  arch/h8300/Makefile |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> --- linux-next-20180717.orig/arch/h8300/Makefile
+> +++ linux-next-20180717/arch/h8300/Makefile
+> @@ -8,6 +8,8 @@
+>  # (C) Copyright 2002-2015 Yoshinori Sato <ysato@users.sourceforge.jp>
+>  #
+>  
+> +KBUILD_DEFCONFIG := edosk2674_defconfig
+> +
+>  cflags-$(CONFIG_CPU_H8300H)	:= -mh
+>  aflags-$(CONFIG_CPU_H8300H)	:= -mh -Wa,--mach=h8300h
+>  ldflags-$(CONFIG_CPU_H8300H)	:= -mh8300helf_linux
+> 
+> 
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Applied for h8300-next.
+Thanks.
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 53d305b..2fd2f0e3 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -94,7 +94,7 @@ struct vhost_net_ubuf_ref {
- 	struct vhost_virtqueue *vq;
- };
- 
--#define VHOST_RX_BATCH 64
-+#define VHOST_NET_BATCH 64
- struct vhost_net_buf {
- 	void **queue;
- 	int tail;
-@@ -168,7 +168,7 @@ static int vhost_net_buf_produce(struct vhost_net_virtqueue *nvq)
- 
- 	rxq->head = 0;
- 	rxq->tail = ptr_ring_consume_batched(nvq->rx_ring, rxq->queue,
--					      VHOST_RX_BATCH);
-+					      VHOST_NET_BATCH);
- 	return rxq->tail;
- }
- 
-@@ -1007,7 +1007,7 @@ static void handle_rx(struct vhost_net *net)
- 			goto out;
- 		}
- 		nvq->done_idx += headcount;
--		if (nvq->done_idx > VHOST_RX_BATCH)
-+		if (nvq->done_idx > VHOST_NET_BATCH)
- 			vhost_net_signal_used(nvq);
- 		if (unlikely(vq_log))
- 			vhost_log_write(vq, vq_log, log, vhost_len);
-@@ -1075,7 +1075,7 @@ static int vhost_net_open(struct inode *inode, struct file *f)
- 		return -ENOMEM;
- 	}
- 
--	queue = kmalloc_array(VHOST_RX_BATCH, sizeof(void *),
-+	queue = kmalloc_array(VHOST_NET_BATCH, sizeof(void *),
- 			      GFP_KERNEL);
- 	if (!queue) {
- 		kfree(vqs);
 -- 
-2.7.4
-
+Yosinori Sato
