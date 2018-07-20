@@ -6,40 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 550D7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC83ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0875D20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0875D20854
+	by mail.kernel.org (Postfix) with ESMTP id A467420854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A467420854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388596AbeGTNUg (ORCPT
+        id S2388607AbeGTNUo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:20:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40238 "EHLO
+        Fri, 20 Jul 2018 09:20:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40360 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732807AbeGTNUg (ORCPT
+        with ESMTP id S1732807AbeGTNUn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:20:36 -0400
+        Fri, 20 Jul 2018 09:20:43 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D09ABC7D;
-        Fri, 20 Jul 2018 12:31:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4846BCDE;
+        Fri, 20 Jul 2018 12:31:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.9 58/66] arm64: ssbd: Skip apply_ssbd if not using dynamic mitigation
-Date:   Fri, 20 Jul 2018 14:14:15 +0200
-Message-Id: <20180720121411.792237365@linuxfoundation.org>
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 14/92] alx: take rtnl before calling __alx_open from resume
+Date:   Fri, 20 Jul 2018 14:13:18 +0200
+Message-Id: <20180720121418.144294450@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
-References: <20180720121407.228772286@linuxfoundation.org>
+In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
+References: <20180720121417.206337808@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -49,67 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-commit 986372c4367f46b34a3c0f6918d7fb95cbdf39d6 upstream.
+[ Upstream commit bc800e8b39bad60ccdb83be828da63af71ab87b3 ]
 
-In order to avoid checking arm64_ssbd_callback_required on each
-kernel entry/exit even if no mitigation is required, let's
-add yet another alternative that by default jumps over the mitigation,
-and that gets nop'ed out if we're doing dynamic mitigation.
+The __alx_open function can be called from ndo_open, which is called
+under RTNL, or from alx_resume, which isn't. Since commit d768319cd427,
+we're calling the netif_set_real_num_{tx,rx}_queues functions, which
+need to be called under RTNL.
 
-Think of it as a poor man's static key...
+This is similar to commit 0c2cc02e571a ("igb: Move the calls to set the
+Tx and Rx queues into igb_open").
 
-Reviewed-by: Julien Grall <julien.grall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: d768319cd427 ("alx: enable multiple tx queues")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpu_errata.c |   14 ++++++++++++++
- arch/arm64/kernel/entry.S      |    3 +++
- 2 files changed, 17 insertions(+)
+ drivers/net/ethernet/atheros/alx/main.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -244,6 +244,20 @@ void __init arm64_update_smccc_conduit(s
- 	*updptr = cpu_to_le32(insn);
+--- a/drivers/net/ethernet/atheros/alx/main.c
++++ b/drivers/net/ethernet/atheros/alx/main.c
+@@ -1897,13 +1897,19 @@ static int alx_resume(struct device *dev
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct alx_priv *alx = pci_get_drvdata(pdev);
+ 	struct alx_hw *hw = &alx->hw;
++	int err;
+ 
+ 	alx_reset_phy(hw);
+ 
+ 	if (!netif_running(alx->dev))
+ 		return 0;
+ 	netif_device_attach(alx->dev);
+-	return __alx_open(alx, true);
++
++	rtnl_lock();
++	err = __alx_open(alx, true);
++	rtnl_unlock();
++
++	return err;
  }
  
-+void __init arm64_enable_wa2_handling(struct alt_instr *alt,
-+				      __le32 *origptr, __le32 *updptr,
-+				      int nr_inst)
-+{
-+	BUG_ON(nr_inst != 1);
-+	/*
-+	 * Only allow mitigation on EL1 entry/exit and guest
-+	 * ARCH_WORKAROUND_2 handling if the SSBD state allows it to
-+	 * be flipped.
-+	 */
-+	if (arm64_get_ssbd_state() == ARM64_SSBD_KERNEL)
-+		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
-+}
-+
- static void arm64_set_ssbd_mitigation(bool state)
- {
- 	switch (psci_ops.conduit) {
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -100,6 +100,9 @@ alternative_else_nop_endif
- 	// to save/restore them if required.
- 	.macro	apply_ssbd, state, targ, tmp1, tmp2
- #ifdef CONFIG_ARM64_SSBD
-+alternative_cb	arm64_enable_wa2_handling
-+	b	\targ
-+alternative_cb_end
- 	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
- 	cbz	\tmp2, \targ
- 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
+ static SIMPLE_DEV_PM_OPS(alx_pm_ops, alx_suspend, alx_resume);
 
 
