@@ -3,82 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D55ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F91AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46A6D20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:52:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A6D20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shmanahar.org
+	by mail.kernel.org (Postfix) with ESMTP id 58A9A20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:53:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A9A20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731774AbeGTWm0 (ORCPT
+        id S1731798AbeGTWn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 18:42:26 -0400
-Received: from avasout06.plus.net ([212.159.14.18]:48150 "EHLO
-        avasout06.plus.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731402AbeGTWmZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 18:42:25 -0400
-Received: from hairyalien ([80.229.148.18])
-        by smtp with SMTP
-        id gdJtfIgPjWLW2gdJvf5XG8; Fri, 20 Jul 2018 22:52:16 +0100
-X-CM-Score: 0.00
-X-CNFS-Analysis: v=2.3 cv=fJUXI6Se c=1 sm=1 tr=0
- a=o7Djd4SkmPXITDn8qH+ssQ==:117 a=o7Djd4SkmPXITDn8qH+ssQ==:17
- a=R9QF1RCXAYgA:10 a=V0UhwjhiAAAA:8 a=i_WjPEPfpYfp5gNgJU8A:9
- a=6G8YB_76TE7o_SSv:21 a=CHZDZPwrg5D3xYBf:21 a=_UVLBGXn8Au_dgoMdIS7:22
-Received: by hairyalien (sSMTP sendmail emulation); Fri, 20 Jul 2018 22:52:13 +0100
-From:   Nick Dyer <nick@shmanahar.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        Chris Healy <cphealy@gmail.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Nick Dyer <nick.dyer@itdev.co.uk>
-Subject: [PATCH v1 10/10] Input: atmel_mxt_ts - move completion to after config crc is updated
-Date:   Fri, 20 Jul 2018 22:51:22 +0100
-Message-Id: <20180720215122.23558-10-nick@shmanahar.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180720215122.23558-1-nick@shmanahar.org>
-References: <20180720215122.23558-1-nick@shmanahar.org>
-X-CMAE-Envelope: MS4wfJcR/YNZbKArKmLhk1ylzNmMZAZAScM+C94n5lAqK1bNe72Pj6Iz3btxpPyEo+Pgt10c+WdhppQ2++0g9mP8EFJc14BH/mT5Xvy+ZkZljqk4Rc9nzn1k
- r3W0qU8th2gY+OoR9KpjSRmmJZxf/9qrbjzZMlql3wP3MeD61RWMI5G7rluLy5axie3LKodzf+fEfg==
+        Fri, 20 Jul 2018 18:43:56 -0400
+Received: from sauhun.de ([88.99.104.3]:59570 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728326AbeGTWn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 18:43:56 -0400
+Received: from localhost (p54B33241.dip0.t-ipconnect.de [84.179.50.65])
+        by pokefinder.org (Postfix) with ESMTPSA id B607A5E000F;
+        Fri, 20 Jul 2018 23:53:44 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 23:53:44 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>, linux-media@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: Re: [PATCH -next v4 1/3] regmap: add SCCB support
+Message-ID: <20180720215344.6it2k5wckxvwx25p@ninjato>
+References: <1531756070-8560-1-git-send-email-akinobu.mita@gmail.com>
+ <1531756070-8560-2-git-send-email-akinobu.mita@gmail.com>
+ <20180718152832.ylu6rlcsaom2q4xm@ninjato>
+ <20180718153140.GP5700@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="thlbihjlzr3hfduh"
+Content-Disposition: inline
+In-Reply-To: <20180718153140.GP5700@sirena.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Dyer <nick.dyer@itdev.co.uk>
 
-Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--thlbihjlzr3hfduh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index c31af790ef84..9f296a66c94e 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -728,13 +728,13 @@ static void mxt_proc_t6_messages(struct mxt_data *data, u8 *msg)
- 	u8 status = msg[1];
- 	u32 crc = msg[2] | (msg[3] << 8) | (msg[4] << 16);
- 
--	complete(&data->crc_completion);
--
- 	if (crc != data->config_crc) {
- 		data->config_crc = crc;
- 		dev_dbg(dev, "T6 Config Checksum: 0x%06X\n", crc);
- 	}
- 
-+	complete(&data->crc_completion);
-+
- 	/* Detect reset */
- 	if (status & MXT_T6_STATUS_RESET)
- 		complete(&data->reset_completion);
--- 
-2.17.1
+On Wed, Jul 18, 2018 at 04:31:40PM +0100, Mark Brown wrote:
+> On Wed, Jul 18, 2018 at 05:28:32PM +0200, Wolfram Sang wrote:
+> > On Tue, Jul 17, 2018 at 12:47:48AM +0900, Akinobu Mita wrote:
+>=20
+> > > +	ret =3D __i2c_smbus_xfer(i2c->adapter, i2c->addr, i2c->flags,
+> > > +			       I2C_SMBUS_WRITE, reg, I2C_SMBUS_BYTE, NULL);
+>=20
+> > Mark: __i2c_smbus_xfer is a dependency on i2c/for-next. Do you want an
+> > immutable branch for that?
+>=20
+> Oh dear, that dependency wasn't mentioned anywhere I can see in the
+> submissions and I already applied this and created a signed tag :( .
+> I'll need a branch to pull in if I'm going to apply this (which I'd
+> prefer, it tends to make life easier).
 
+Here is it:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/smbus_xfer_=
+unlock-immutable
+
+
+--thlbihjlzr3hfduh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltSWeQACgkQFA3kzBSg
+KbalqQ//eXO5qwL/dvh6/tCimdspOB4VsuYGxqQTNHnaUpio9dbQRB7SWETV4Rrb
+2PGkl9lMXEuiDe2HcWACPOXEYdrS9O/vit6T1QS5iLuiGfuY2GCyR9B2VbiACvQn
++yMy81wZ5wS8MKB+QbyFjvxzzVt67+nYPvQioQdLsWK/y/ZyqT9a4IZFBJeFyvPN
+v2MPGcpNcQ0Ea5mPNsrpadILrwrZBXsUfnmvGwhu/qG+lTOAx+GCR7LlQmsM/e7+
+d8oR3doGcYkRVmQYELhqVnamGsWGARub4ex8ijsUCNb9IrXiMo30IIW9xEnpUs5P
+bTeJOoL+S6NVpthAaTF4ghAzlTSS4eYYKa03xjSXA/+jFJ4jKa7dQI4Lr1xyGuiJ
+Mx1i9fA+wEh84eG5LzVfKH5833R6L/ye3CY0OdyWB3XYjNw8a+jF5JCW1cfoe6n+
+YSq4Cn14PHuqyVYJeWoU3BqbcRwtJnYYwHwMeJzzis+poutBsyttamT+sbWKX29E
+zIlLX91HDH9Iz9fiTiPN12xnQpdxpOf3sCJl4Y3+KPOIrtG+0wr1KoBm6knDoBzg
+It+F0MtXzDCzO+mnU4DdwsB7DZugIklpfSKFvgaLaiudijOqa9clE0bkIqdQo9mY
+iwLcbQnAExnszZSwSl9Kk580Tg2RcoWsrNr2IjQeghPUdngpSbY=
+=wFYq
+-----END PGP SIGNATURE-----
+
+--thlbihjlzr3hfduh--
