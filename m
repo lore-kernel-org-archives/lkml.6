@@ -6,42 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB1FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A73DECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6369D20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6369D20854
+	by mail.kernel.org (Postfix) with ESMTP id 4A3AC20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A3AC20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388196AbeGTNRt (ORCPT
+        id S2387939AbeGTNSH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:17:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37710 "EHLO
+        Fri, 20 Jul 2018 09:18:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37928 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728409AbeGTNRt (ORCPT
+        with ESMTP id S1728384AbeGTNSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:17:49 -0400
+        Fri, 20 Jul 2018 09:18:07 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF79BBD4;
-        Fri, 20 Jul 2018 12:29:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D621BBD;
+        Fri, 20 Jul 2018 12:29:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
-        Sodagudi Prasad <psodagud@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 04/66] compiler, clang: always inline when CONFIG_OPTIMIZE_INLINING is disabled
-Date:   Fri, 20 Jul 2018 14:13:21 +0200
-Message-Id: <20180720121407.493796538@linuxfoundation.org>
+        stable@vger.kernel.org, Floris Bos <bos@je-eigen-domein.nl>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 36/66] net: lan78xx: Fix race in tx pending skb size calculation
+Date:   Fri, 20 Jul 2018 14:13:53 +0200
+Message-Id: <20180720121409.339076517@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -58,99 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rientjes <rientjes@google.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-commit 9a04dbcfb33b4012d0ce8c0282f1e3ca694675b1 upstream.
+commit dea39aca1d7aef1e2b95b07edeacf04cc8863a2e upstream.
 
-The motivation for commit abb2ea7dfd82 ("compiler, clang: suppress
-warning for unused static inline functions") was to suppress clang's
-warnings about unused static inline functions.
+The skb size calculation in lan78xx_tx_bh is in race with the start_xmit,
+which could lead to rare kernel oopses. So protect the whole skb walk with
+a spin lock. As a benefit we can unlink the skb directly.
 
-For configs without CONFIG_OPTIMIZE_INLINING enabled, such as any non-x86
-architecture, `inline' in the kernel implies that
-__attribute__((always_inline)) is used.
+This patch was tested on Raspberry Pi 3B+
 
-Some code depends on that behavior, see
-  https://lkml.org/lkml/2017/6/13/918:
-
-  net/built-in.o: In function `__xchg_mb':
-  arch/arm64/include/asm/cmpxchg.h:99: undefined reference to `__compiletime_assert_99'
-  arch/arm64/include/asm/cmpxchg.h:99: undefined reference to `__compiletime_assert_99
-
-The full fix would be to identify these breakages and annotate the
-functions with __always_inline instead of `inline'.  But since we are
-late in the 4.12-rc cycle, simply carry forward the forced inlining
-behavior and work toward moving arm64, and other architectures, toward
-CONFIG_OPTIMIZE_INLINING behavior.
-
-Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1706261552200.1075@chino.kir.corp.google.com
-Signed-off-by: David Rientjes <rientjes@google.com>
-Reported-by: Sodagudi Prasad <psodagud@codeaurora.org>
-Tested-by: Sodagudi Prasad <psodagud@codeaurora.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://github.com/raspberrypi/linux/issues/2608
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Floris Bos <bos@je-eigen-domein.nl>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/compiler-clang.h |    8 --------
- include/linux/compiler-gcc.h   |   18 +++++++++++-------
- 2 files changed, 11 insertions(+), 15 deletions(-)
+ drivers/net/usb/lan78xx.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -16,14 +16,6 @@
-  */
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2964,6 +2964,7 @@ static void lan78xx_tx_bh(struct lan78xx
+ 	pkt_cnt = 0;
+ 	count = 0;
+ 	length = 0;
++	spin_lock_irqsave(&tqp->lock, flags);
+ 	for (skb = tqp->next; pkt_cnt < tqp->qlen; skb = skb->next) {
+ 		if (skb_is_gso(skb)) {
+ 			if (pkt_cnt) {
+@@ -2972,7 +2973,8 @@ static void lan78xx_tx_bh(struct lan78xx
+ 			}
+ 			count = 1;
+ 			length = skb->len - TX_OVERHEAD;
+-			skb2 = skb_dequeue(tqp);
++			__skb_unlink(skb, tqp);
++			spin_unlock_irqrestore(&tqp->lock, flags);
+ 			goto gso_skb;
+ 		}
  
--/*
-- * GCC does not warn about unused static inline functions for
-- * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-- * directives.  Suppress the warning in clang as well.
-- */
--#undef inline
--#define inline inline __attribute__((unused)) notrace
--
- /* Clang doesn't have a way to turn it off per-function, yet. */
- #ifdef __noretpoline
- #undef __noretpoline
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -66,18 +66,22 @@
+@@ -2981,6 +2983,7 @@ static void lan78xx_tx_bh(struct lan78xx
+ 		skb_totallen = skb->len + roundup(skb_totallen, sizeof(u32));
+ 		pkt_cnt++;
+ 	}
++	spin_unlock_irqrestore(&tqp->lock, flags);
  
- /*
-  * Force always-inline if the user requests it so via the .config,
-- * or if gcc is too old:
-+ * or if gcc is too old.
-+ * GCC does not warn about unused static inline functions for
-+ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-+ * directives.  Suppress the warning in clang as well by using "unused"
-+ * function attribute, which is redundant but not harmful for gcc.
-  */
- #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
-     !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
--#define inline		inline		__attribute__((always_inline)) notrace
--#define __inline__	__inline__	__attribute__((always_inline)) notrace
--#define __inline	__inline	__attribute__((always_inline)) notrace
-+#define inline inline		__attribute__((always_inline,unused)) notrace
-+#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
-+#define __inline __inline	__attribute__((always_inline,unused)) notrace
- #else
- /* A lot of inline functions can cause havoc with function tracing */
--#define inline		inline		notrace
--#define __inline__	__inline__	notrace
--#define __inline	__inline	notrace
-+#define inline inline		__attribute__((unused)) notrace
-+#define __inline__ __inline__	__attribute__((unused)) notrace
-+#define __inline __inline	__attribute__((unused)) notrace
- #endif
- 
- #define __always_inline	inline __attribute__((always_inline))
+ 	/* copy to a single skb */
+ 	skb = alloc_skb(skb_totallen, GFP_ATOMIC);
 
 
