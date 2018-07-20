@@ -2,220 +2,124 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BA1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED9DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F89120661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:42:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F89120661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CE8720661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:42:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="OiRyLp1y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE8720661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729070AbeGTWcN (ORCPT
+        id S1729848AbeGTWcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 18:32:13 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:35514 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727749AbeGTWcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 18:32:12 -0400
-Received: by mail-qt0-f196.google.com with SMTP id a5-v6so11582701qtp.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 14:42:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/Ld8wjs7KxCcl4zSvDzg4dEg33msapg+r54ggPPmxJE=;
-        b=EXGjTE3dv6v6+5VGRI8o8lIjRFY+SB5W8jqOUdi3z/UQK7K6Mt1Y36TceAGycpDSL9
-         T08eLATpSbTaC6+ktRlCt+1R1IvlX3UKYh3jpleUM8MmJQjt9H/4YuHmhg75tgX6jyj8
-         yYWpYP0GCNSsnlMvy75W82WGqRu1gpdpnEqXXMQoeCekekGCLp8OGbk1KiV+ZwrqeshK
-         oIbTyngZ1v3eVWeFg+Egc/E3ch9rfXexPFkRvLuDUZDrM9wQU12GXZjkaCdua4OZNFbw
-         T02fL/ZoMLObyrISzf/0DlQhHfM2sCtbS6DpNbtiSQD+aWtMKOJ+svRLB/j8ITpAKe+s
-         MRhQ==
-X-Gm-Message-State: AOUpUlH39J8gXSd8cX605YEPZQjR+h8o4g6TXMox3kxj9TodRsgxdAOI
-        ZcFn0f9r4iBfUXWGPylDI1Ioyw==
-X-Google-Smtp-Source: AAOMgpdx042QU1GVq03zrlVrCyYBd8zFqUiWqivAoWS4XAt63fvec3sIQj334MqaUS78TFAVLa0QNg==
-X-Received: by 2002:ac8:42b:: with SMTP id v43-v6mr3455714qtg.319.1532122924952;
-        Fri, 20 Jul 2018 14:42:04 -0700 (PDT)
-Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc:4eb2:6dae:ab32:e5b0])
-        by smtp.gmail.com with ESMTPSA id r4-v6sm1617385qtm.10.2018.07.20.14.42.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Jul 2018 14:42:03 -0700 (PDT)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Fri, 20 Jul 2018 18:32:50 -0400
+Received: from 8bytes.org ([81.169.241.247]:41324 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728326AbeGTWct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 18:32:49 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 872B5450; Fri, 20 Jul 2018 23:42:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1532122957; bh=ZhC2aNozxwWqpuXFgfDAGyBpSgf58kVKJyUVakwZebo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OiRyLp1yg0EVByxbxY83B1BWiWBa2kDncZLNsBeAJ/ug03UzRsMlKZnKNhayZ/dRs
+         I9yvcshNIrzgPskkXF0AwJtUE1tJxhYEp11bDRwCgNPdAJtqHmbZuTdC7lUN0EEqW2
+         PRKCCopoaEVn9Bx47fXSKZS+62JzUPA5fdOVEUNX6YCFEyTq2djXv+jSKtaStoJnLv
+         zqB19+SjpBPWI/XS/+hqUyRB2dw2KO6+foxoRRv97oY8ibXfeSDZNfIk0uBG9PTlZw
+         K8ICMhh6Vfqwbhj6r0US+h+/XoRB4LJS1uwoLzdN+MTMUZU9ERWJnwyEntQSjeMdwt
+         x/PfAf3WjP5dA==
+Date:   Fri, 20 Jul 2018 23:42:37 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
         Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCHv3 2/2] arm64: Add support for STACKLEAK gcc plugin
-Date:   Fri, 20 Jul 2018 14:41:54 -0700
-Message-Id: <20180720214154.2940-3-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180720214154.2940-1-labbott@redhat.com>
-References: <20180720214154.2940-1-labbott@redhat.com>
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH 3/3] x86/entry/32: Copy only ptregs on paranoid
+ entry/exit path
+Message-ID: <20180720214237.GI18541@8bytes.org>
+References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
+ <1532103744-31902-4-git-send-email-joro@8bytes.org>
+ <CALCETrWmd3arHdkTzAS7reLRjm96jrJC-1O5dYAPwbh2EqKMSA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWmd3arHdkTzAS7reLRjm96jrJC-1O5dYAPwbh2EqKMSA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[ Re-sending because I accidentially replied only to Andy ]
 
-This adds support for the STACKLEAK gcc plugin to arm64 by implementing
-stackleak_check_alloca(), based heavily on the x86 version, and adding the
-two helpers used by the stackleak common code: current_top_of_stack() and
-on_thread_stack(). The stack erasure calls are made at syscall returns.
-Additionally, this disables the plugin in hypervisor and EFI stub code,
-which are out of scope for the protection.
+On Fri, Jul 20, 2018 at 10:09:26AM -0700, Andy Lutomirski wrote:
+> Can you give an example of the exact scenario in which any of this
+> copying happens and why it's needed?  IMO you should just be able to
+> *run* on the entry stack without copying anything at all.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-v3: Actual commit text courtesy of Kees. A comment explaining why we
-panic
----
- arch/arm64/Kconfig                    |  1 +
- arch/arm64/include/asm/processor.h    | 15 +++++++++++++++
- arch/arm64/kernel/entry.S             |  7 +++++++
- arch/arm64/kernel/process.c           | 22 ++++++++++++++++++++++
- arch/arm64/kvm/hyp/Makefile           |  3 ++-
- drivers/firmware/efi/libstub/Makefile |  3 ++-
- 6 files changed, 49 insertions(+), 2 deletions(-)
+So for example when we execute RESTORE_REGS on the path back to
+user-space and get an exception while loading the user segment
+registers.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 42c090cf0292..216d36a49ab5 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -96,6 +96,7 @@ config ARM64
- 	select HAVE_ARCH_MMAP_RND_BITS
- 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
- 	select HAVE_ARCH_SECCOMP_FILTER
-+	select HAVE_ARCH_STACKLEAK
- 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index a73ae1e49200..0061450a793b 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -266,5 +266,20 @@ extern void __init minsigstksz_setup(void);
- #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
- #define SVE_GET_VL()	sve_get_current_vl()
- 
-+/*
-+ * For CONFIG_GCC_PLUGIN_STACKLEAK
-+ *
-+ * These need to be macros because otherwise we get stuck in a nightmare
-+ * of header definitions for the use of task_stack_page.
-+ */
-+
-+#define current_top_of_stack()							\
-+({										\
-+	struct stack_info _info;						\
-+	BUG_ON(!on_accessible_stack(current, current_stack_pointer, &_info));	\
-+	_info.high;								\
-+})
-+#define on_thread_stack()	(on_task_stack(current, current_stack_pointer, NULL))
-+
- #endif /* __ASSEMBLY__ */
- #endif /* __ASM_PROCESSOR_H */
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 28ad8799406f..67d12016063d 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -431,6 +431,11 @@ tsk	.req	x28		// current thread_info
- 
- 	.text
- 
-+	.macro	stackleak_erase
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	bl	stackleak_erase
-+#endif
-+	.endm
- /*
-  * Exception vectors.
-  */
-@@ -910,6 +915,7 @@ ret_fast_syscall:
- 	and	x2, x1, #_TIF_WORK_MASK
- 	cbnz	x2, work_pending
- 	enable_step_tsk x1, x2
-+	stackleak_erase
- 	kernel_exit 0
- ret_fast_syscall_trace:
- 	enable_daif
-@@ -936,6 +942,7 @@ ret_to_user:
- 	cbnz	x2, work_pending
- finish_ret_to_user:
- 	enable_step_tsk x1, x2
-+	stackleak_erase
- 	kernel_exit 0
- ENDPROC(ret_to_user)
- 
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index e10bc363f533..f0ad00fb6a71 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -493,3 +493,25 @@ void arch_setup_new_exec(void)
- {
- 	current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
- }
-+
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+void __used stackleak_check_alloca(unsigned long size)
-+{
-+	unsigned long stack_left;
-+	unsigned long current_sp = current_stack_pointer;
-+	struct stack_info info;
-+
-+	BUG_ON(!on_accessible_stack(current, current_sp, &info));
-+
-+	stack_left = current_sp - info.low;
-+
-+	/*
-+	 * There's a good chance we're almost out of stack space if this
-+	 * is true. Using panic() over BUG() is more likely to give
-+	 * reliable debugging output.
-+	 */
-+	if (size >= stack_left)
-+		panic("alloca() over the kernel stack boundary\n");
-+}
-+EXPORT_SYMBOL(stackleak_check_alloca);
-+#endif
-diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-index 4313f7475333..2fabc2dc1966 100644
---- a/arch/arm64/kvm/hyp/Makefile
-+++ b/arch/arm64/kvm/hyp/Makefile
-@@ -3,7 +3,8 @@
- # Makefile for Kernel-based Virtual Machine module, HYP part
- #
- 
--ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING
-+ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING \
-+		$(DISABLE_STACKLEAK_PLUGIN)
- 
- KVM=../../../../virt/kvm
- 
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index a34e9290a699..25dd2a14560d 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
- KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
- 				   -D__NO_FORTIFY \
- 				   $(call cc-option,-ffreestanding) \
--				   $(call cc-option,-fno-stack-protector)
-+				   $(call cc-option,-fno-stack-protector) \
-+				   $(DISABLE_STACKLEAK_PLUGIN)
- 
- GCOV_PROFILE			:= n
- KASAN_SANITIZE			:= n
--- 
-2.17.1
+When that happens we are already on the entry-stack and on user-cr3.
+There is no question that when we return from the exception we need to
+get back to entry-stack and user-cr3, despite we are returning to kernel
+mode. Otherwise we enter user-space with kernel-cr3 or get a page-fault
+and panic.
 
+The exception runs through the common_exception path, and finally ends
+up calling C code. And correct me if I am wrong, but calling into C code
+from the entry-stack is a bad idea for multiple reasons.
+
+First reason is the size of the stack. We can make it larger, but how
+large does it need to be?
+
+Next problem is that current_pt_regs doesn't work in the C code when
+pt_regs are on the entry-stack.
+
+These problems can all be solved, but it wouldn't be a robust solution
+because when changes to the C code are made they are usually not tested
+while on the entry-stack. That case is hard to trigger, so it can easily
+break again.
+
+For me, only the x86 selftests triggered all these corner-cases, but not
+all developers run them on 32 bit when making changes to generic x86
+code.
+
+Regards,
+
+	Joerg
