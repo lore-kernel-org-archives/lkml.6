@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAAAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457C8ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88B9820854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B9820854
+	by mail.kernel.org (Postfix) with ESMTP id 08A6B20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A6B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388684AbeGTNVR (ORCPT
+        id S2388695AbeGTNVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:21:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40896 "EHLO
+        Fri, 20 Jul 2018 09:21:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731883AbeGTNVQ (ORCPT
+        with ESMTP id S1731623AbeGTNVT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:21:16 -0400
+        Fri, 20 Jul 2018 09:21:19 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8281DA80;
-        Fri, 20 Jul 2018 12:31:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A113BD1;
+        Fri, 20 Jul 2018 12:32:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 18/92] ipv6: sr: fix passing wrong flags to crypto_alloc_shash()
-Date:   Fri, 20 Jul 2018 14:13:22 +0200
-Message-Id: <20180720121418.441683079@linuxfoundation.org>
+        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
+        Eli Cohen <eli@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 25/92] net/mlx5e: Avoid dealing with vport representors if not being e-switch manager
+Date:   Fri, 20 Jul 2018 14:13:29 +0200
+Message-Id: <20180720121418.987710307@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -50,31 +51,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Or Gerlitz <ogerlitz@mellanox.com>
 
-[ Upstream commit fc9c2029e37c3ae9efc28bf47045e0b87e09660c ]
+[ Upstream commit 733d3e5497070d05971352ca5087bac83c197c3d ]
 
-The 'mask' argument to crypto_alloc_shash() uses the CRYPTO_ALG_* flags,
-not 'gfp_t'.  So don't pass GFP_KERNEL to it.
+In smartnic env, the host (PF) driver might not be an e-switch
+manager, hence the switchdev mode representors are running on
+the embedded cpu (EC) and not at the host.
 
-Fixes: bf355b8d2c30 ("ipv6: sr: add core files for SR HMAC support")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+As such, we should avoid dealing with vport representors if
+not being esw manager.
+
+While here, make sure to disallow eswitch switchdev related
+setups through devlink if we are not esw managers.
+
+Fixes: cb67b832921c ('net/mlx5e: Introduce SRIOV VF representors')
+Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
+Reviewed-by: Eli Cohen <eli@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/seg6_hmac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c          |   12 ++++++------
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c           |    2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c |    4 ++--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
---- a/net/ipv6/seg6_hmac.c
-+++ b/net/ipv6/seg6_hmac.c
-@@ -373,7 +373,7 @@ static int seg6_hmac_init_algo(void)
- 			return -ENOMEM;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -2626,7 +2626,7 @@ void mlx5e_activate_priv_channels(struct
+ 	mlx5e_activate_channels(&priv->channels);
+ 	netif_tx_start_all_queues(priv->netdev);
  
- 		for_each_possible_cpu(cpu) {
--			tfm = crypto_alloc_shash(algo->name, 0, GFP_KERNEL);
-+			tfm = crypto_alloc_shash(algo->name, 0, 0);
- 			if (IS_ERR(tfm))
- 				return PTR_ERR(tfm);
- 			p_tfm = per_cpu_ptr(algo->tfms, cpu);
+-	if (MLX5_VPORT_MANAGER(priv->mdev))
++	if (MLX5_ESWITCH_MANAGER(priv->mdev))
+ 		mlx5e_add_sqs_fwd_rules(priv);
+ 
+ 	mlx5e_wait_channels_min_rx_wqes(&priv->channels);
+@@ -2637,7 +2637,7 @@ void mlx5e_deactivate_priv_channels(stru
+ {
+ 	mlx5e_redirect_rqts_to_drop(priv);
+ 
+-	if (MLX5_VPORT_MANAGER(priv->mdev))
++	if (MLX5_ESWITCH_MANAGER(priv->mdev))
+ 		mlx5e_remove_sqs_fwd_rules(priv);
+ 
+ 	/* FIXME: This is a W/A only for tx timeout watch dog false alarm when
+@@ -4127,7 +4127,7 @@ static void mlx5e_build_nic_netdev(struc
+ 	mlx5e_set_netdev_dev_addr(netdev);
+ 
+ #if IS_ENABLED(CONFIG_MLX5_ESWITCH)
+-	if (MLX5_VPORT_MANAGER(mdev))
++	if (MLX5_ESWITCH_MANAGER(mdev))
+ 		netdev->switchdev_ops = &mlx5e_switchdev_ops;
+ #endif
+ 
+@@ -4273,7 +4273,7 @@ static void mlx5e_nic_enable(struct mlx5
+ 
+ 	mlx5e_enable_async_events(priv);
+ 
+-	if (MLX5_VPORT_MANAGER(priv->mdev))
++	if (MLX5_ESWITCH_MANAGER(priv->mdev))
+ 		mlx5e_register_vport_reps(priv);
+ 
+ 	if (netdev->reg_state != NETREG_REGISTERED)
+@@ -4300,7 +4300,7 @@ static void mlx5e_nic_disable(struct mlx
+ 
+ 	queue_work(priv->wq, &priv->set_rx_mode_work);
+ 
+-	if (MLX5_VPORT_MANAGER(priv->mdev))
++	if (MLX5_ESWITCH_MANAGER(priv->mdev))
+ 		mlx5e_unregister_vport_reps(priv);
+ 
+ 	mlx5e_disable_async_events(priv);
+@@ -4483,7 +4483,7 @@ static void *mlx5e_add(struct mlx5_core_
+ 		return NULL;
+ 
+ #ifdef CONFIG_MLX5_ESWITCH
+-	if (MLX5_VPORT_MANAGER(mdev)) {
++	if (MLX5_ESWITCH_MANAGER(mdev)) {
+ 		rpriv = mlx5e_alloc_nic_rep_priv(mdev);
+ 		if (!rpriv) {
+ 			mlx5_core_warn(mdev, "Failed to alloc NIC rep priv data\n");
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -710,7 +710,7 @@ bool mlx5e_is_uplink_rep(struct mlx5e_pr
+ 	struct mlx5e_rep_priv *rpriv = priv->ppriv;
+ 	struct mlx5_eswitch_rep *rep;
+ 
+-	if (!MLX5_CAP_GEN(priv->mdev, vport_group_manager))
++	if (!MLX5_ESWITCH_MANAGER(priv->mdev))
+ 		return false;
+ 
+ 	rep = rpriv->rep;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+@@ -912,8 +912,8 @@ static int mlx5_devlink_eswitch_check(st
+ 	if (MLX5_CAP_GEN(dev, port_type) != MLX5_CAP_PORT_TYPE_ETH)
+ 		return -EOPNOTSUPP;
+ 
+-	if (!MLX5_CAP_GEN(dev, vport_group_manager))
+-		return -EOPNOTSUPP;
++	if(!MLX5_ESWITCH_MANAGER(dev))
++		return -EPERM;
+ 
+ 	if (dev->priv.eswitch->mode == SRIOV_NONE)
+ 		return -EOPNOTSUPP;
 
 
