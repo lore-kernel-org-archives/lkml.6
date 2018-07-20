@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB4CECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA522ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7222120652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7222120652
+	by mail.kernel.org (Postfix) with ESMTP id 8FE1920652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:49:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE1920652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390588AbeGTNgw (ORCPT
+        id S2390501AbeGTNgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:36:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58596 "EHLO
+        Fri, 20 Jul 2018 09:36:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58478 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390370AbeGTNgu (ORCPT
+        with ESMTP id S2390222AbeGTNgk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:36:50 -0400
+        Fri, 20 Jul 2018 09:36:40 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1768ED9B;
-        Fri, 20 Jul 2018 12:40:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B30BFCB6;
+        Fri, 20 Jul 2018 12:38:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a4eb8c7766952a1ca872@syzkaller.appspotmail.com,
-        syzbot+d866d1925855328eac3b@syzkaller.appspotmail.com,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.17 101/101] bpf: undo prog rejection on read-only lock failure
-Date:   Fri, 20 Jul 2018 14:14:47 +0200
-Message-Id: <20180720121427.510590058@linuxfoundation.org>
+        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
+        Ian Kent <raven@themaw.net>,
+        syzbot+60c837b428dc84e83a93@syzkaller.appspotmail.com,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 072/101] autofs: fix slab out of bounds read in getname_kernel()
+Date:   Fri, 20 Jul 2018 14:14:18 +0200
+Message-Id: <20180720121426.364579104@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -55,218 +54,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Tomas Bortoli <tomasbortoli@gmail.com>
 
-commit 85782e037f8aba8922dadb24a1523ca0b82ab8bc upstream.
+commit 02f51d45937f7bc7f4dee21e9f85b2d5eac37104 upstream.
 
-Partially undo commit 9facc336876f ("bpf: reject any prog that failed
-read-only lock") since it caused a regression, that is, syzkaller was
-able to manage to cause a panic via fault injection deep in set_memory_ro()
-path by letting an allocation fail: In x86's __change_page_attr_set_clr()
-it was able to change the attributes of the primary mapping but not in
-the alias mapping via cpa_process_alias(), so the second, inner call
-to the __change_page_attr() via __change_page_attr_set_clr() had to split
-a larger page and failed in the alloc_pages() with the artifically triggered
-allocation error which is then propagated down to the call site.
+The autofs subsystem does not check that the "path" parameter is present
+for all cases where it is required when it is passed in via the "param"
+struct.
 
-Thus, for set_memory_ro() this means that it returned with an error, but
-from debugging a probe_kernel_write() revealed EFAULT on that memory since
-the primary mapping succeeded to get changed. Therefore the subsequent
-hdr->locked = 0 reset triggered the panic as it was performed on read-only
-memory, so call-site assumptions were infact wrong to assume that it would
-either succeed /or/ not succeed at all since there's no such rollback in
-set_memory_*() calls from partial change of mappings, in other words, we're
-left in a state that is "half done". A later undo via set_memory_rw() is
-succeeding though due to matching permissions on that part (aka due to the
-try_preserve_large_page() succeeding). While reproducing locally with
-explicitly triggering this error, the initial splitting only happens on
-rare occasions and in real world it would additionally need oom conditions,
-but that said, it could partially fail. Therefore, it is definitely wrong
-to bail out on set_memory_ro() error and reject the program with the
-set_memory_*() semantics we have today. Shouldn't have gone the extra mile
-since no other user in tree today infact checks for any set_memory_*()
-errors, e.g. neither module_enable_ro() / module_disable_ro() for module
-RO/NX handling which is mostly default these days nor kprobes core with
-alloc_insn_page() / free_insn_page() as examples that could be invoked long
-after bootup and original 314beb9bcabf ("x86: bpf_jit_comp: secure bpf jit
-against spraying attacks") did neither when it got first introduced to BPF
-so "improving" with bailing out was clearly not right when set_memory_*()
-cannot handle it today.
+In particular it isn't checked for the AUTOFS_DEV_IOCTL_OPENMOUNT_CMD
+ioctl command.
 
-Kees suggested that if set_memory_*() can fail, we should annotate it with
-__must_check, and all callers need to deal with it gracefully given those
-set_memory_*() markings aren't "advisory", but they're expected to actually
-do what they say. This might be an option worth to move forward in future
-but would at the same time require that set_memory_*() calls from supporting
-archs are guaranteed to be "atomic" in that they provide rollback if part
-of the range fails, once that happened, the transition from RW -> RO could
-be made more robust that way, while subsequent RO -> RW transition /must/
-continue guaranteeing to always succeed the undo part.
+To solve it, modify validate_dev_ioctl(function to check that a path has
+been provided for ioctl commands that require it.
 
-Reported-by: syzbot+a4eb8c7766952a1ca872@syzkaller.appspotmail.com
-Reported-by: syzbot+d866d1925855328eac3b@syzkaller.appspotmail.com
-Fixes: 9facc336876f ("bpf: reject any prog that failed read-only lock")
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Link: http://lkml.kernel.org/r/153060031527.26631.18306637892746301555.stgit@pluto.themaw.net
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Signed-off-by: Ian Kent <raven@themaw.net>
+Reported-by: syzbot+60c837b428dc84e83a93@syzkaller.appspotmail.com
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/filter.h |   56 +++++++------------------------------------------
- kernel/bpf/core.c      |   28 ------------------------
- 2 files changed, 8 insertions(+), 76 deletions(-)
+ fs/autofs4/dev-ioctl.c |   22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -453,9 +453,7 @@ struct sock_fprog_kern {
- };
+--- a/fs/autofs4/dev-ioctl.c
++++ b/fs/autofs4/dev-ioctl.c
+@@ -148,6 +148,15 @@ static int validate_dev_ioctl(int cmd, s
+ 				cmd);
+ 			goto out;
+ 		}
++	} else {
++		unsigned int inr = _IOC_NR(cmd);
++
++		if (inr == AUTOFS_DEV_IOCTL_OPENMOUNT_CMD ||
++		    inr == AUTOFS_DEV_IOCTL_REQUESTER_CMD ||
++		    inr == AUTOFS_DEV_IOCTL_ISMOUNTPOINT_CMD) {
++			err = -EINVAL;
++			goto out;
++		}
+ 	}
  
- struct bpf_binary_header {
--	u16 pages;
--	u16 locked:1;
--
-+	u32 pages;
- 	/* Some arches need word alignment for their instructions */
- 	u8 image[] __aligned(4);
- };
-@@ -464,7 +462,7 @@ struct bpf_prog {
- 	u16			pages;		/* Number of allocated pages */
- 	u16			jited:1,	/* Is our filter JIT'ed? */
- 				jit_requested:1,/* archs need to JIT the prog */
--				locked:1,	/* Program image locked? */
-+				undo_set_mem:1,	/* Passed set_memory_ro() checkpoint */
- 				gpl_compatible:1, /* Is filter GPL compatible? */
- 				cb_access:1,	/* Is control block accessed? */
- 				dst_needed:1,	/* Do we need dst entry? */
-@@ -649,46 +647,24 @@ bpf_ctx_narrow_access_ok(u32 off, u32 si
+ 	err = 0;
+@@ -284,7 +293,8 @@ static int autofs_dev_ioctl_openmount(st
+ 	dev_t devid;
+ 	int err, fd;
  
- static inline void bpf_prog_lock_ro(struct bpf_prog *fp)
- {
--#ifdef CONFIG_ARCH_HAS_SET_MEMORY
--	fp->locked = 1;
--	if (set_memory_ro((unsigned long)fp, fp->pages))
--		fp->locked = 0;
--#endif
-+	fp->undo_set_mem = 1;
-+	set_memory_ro((unsigned long)fp, fp->pages);
- }
+-	/* param->path has already been checked */
++	/* param->path has been checked in validate_dev_ioctl() */
++
+ 	if (!param->openmount.devid)
+ 		return -EINVAL;
  
- static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
- {
--#ifdef CONFIG_ARCH_HAS_SET_MEMORY
--	if (fp->locked) {
--		WARN_ON_ONCE(set_memory_rw((unsigned long)fp, fp->pages));
--		/* In case set_memory_rw() fails, we want to be the first
--		 * to crash here instead of some random place later on.
--		 */
--		fp->locked = 0;
+@@ -446,10 +456,7 @@ static int autofs_dev_ioctl_requester(st
+ 	dev_t devid;
+ 	int err = -ENOENT;
+ 
+-	if (param->size <= AUTOFS_DEV_IOCTL_SIZE) {
+-		err = -EINVAL;
+-		goto out;
 -	}
--#endif
-+	if (fp->undo_set_mem)
-+		set_memory_rw((unsigned long)fp, fp->pages);
- }
++	/* param->path has been checked in validate_dev_ioctl() */
  
- static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
- {
--#ifdef CONFIG_ARCH_HAS_SET_MEMORY
--	hdr->locked = 1;
--	if (set_memory_ro((unsigned long)hdr, hdr->pages))
--		hdr->locked = 0;
--#endif
-+	set_memory_ro((unsigned long)hdr, hdr->pages);
- }
+ 	devid = sbi->sb->s_dev;
  
- static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
- {
--#ifdef CONFIG_ARCH_HAS_SET_MEMORY
--	if (hdr->locked) {
--		WARN_ON_ONCE(set_memory_rw((unsigned long)hdr, hdr->pages));
--		/* In case set_memory_rw() fails, we want to be the first
--		 * to crash here instead of some random place later on.
--		 */
--		hdr->locked = 0;
+@@ -534,10 +541,7 @@ static int autofs_dev_ioctl_ismountpoint
+ 	unsigned int devid, magic;
+ 	int err = -ENOENT;
+ 
+-	if (param->size <= AUTOFS_DEV_IOCTL_SIZE) {
+-		err = -EINVAL;
+-		goto out;
 -	}
--#endif
-+	set_memory_rw((unsigned long)hdr, hdr->pages);
- }
++	/* param->path has been checked in validate_dev_ioctl() */
  
- static inline struct bpf_binary_header *
-@@ -700,22 +676,6 @@ bpf_jit_binary_hdr(const struct bpf_prog
- 	return (void *)addr;
- }
- 
--#ifdef CONFIG_ARCH_HAS_SET_MEMORY
--static inline int bpf_prog_check_pages_ro_single(const struct bpf_prog *fp)
--{
--	if (!fp->locked)
--		return -ENOLCK;
--	if (fp->jited) {
--		const struct bpf_binary_header *hdr = bpf_jit_binary_hdr(fp);
--
--		if (!hdr->locked)
--			return -ENOLCK;
--	}
--
--	return 0;
--}
--#endif
--
- int sk_filter_trim_cap(struct sock *sk, struct sk_buff *skb, unsigned int cap);
- static inline int sk_filter(struct sock *sk, struct sk_buff *skb)
- {
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -583,8 +583,6 @@ bpf_jit_binary_alloc(unsigned int progle
- 	bpf_fill_ill_insns(hdr, size);
- 
- 	hdr->pages = size / PAGE_SIZE;
--	hdr->locked = 0;
--
- 	hole = min_t(unsigned int, size - (proglen + sizeof(*hdr)),
- 		     PAGE_SIZE - sizeof(*hdr));
- 	start = (get_random_int() % hole) & ~(alignment - 1);
-@@ -1515,22 +1513,6 @@ static int bpf_check_tail_call(const str
- 	return 0;
- }
- 
--static int bpf_prog_check_pages_ro_locked(const struct bpf_prog *fp)
--{
--#ifdef CONFIG_ARCH_HAS_SET_MEMORY
--	int i, err;
--
--	for (i = 0; i < fp->aux->func_cnt; i++) {
--		err = bpf_prog_check_pages_ro_single(fp->aux->func[i]);
--		if (err)
--			return err;
--	}
--
--	return bpf_prog_check_pages_ro_single(fp);
--#endif
--	return 0;
--}
--
- static void bpf_prog_select_func(struct bpf_prog *fp)
- {
- #ifndef CONFIG_BPF_JIT_ALWAYS_ON
-@@ -1589,17 +1571,7 @@ finalize:
- 	 * all eBPF JITs might immediately support all features.
- 	 */
- 	*err = bpf_check_tail_call(fp);
--	if (*err)
--		return fp;
- 
--	/* Checkpoint: at this point onwards any cBPF -> eBPF or
--	 * native eBPF program is read-only. If we failed to change
--	 * the page attributes (e.g. allocation failure from
--	 * splitting large pages), then reject the whole program
--	 * in order to guarantee not ending up with any W+X pages
--	 * from BPF side in kernel.
--	 */
--	*err = bpf_prog_check_pages_ro_locked(fp);
- 	return fp;
- }
- EXPORT_SYMBOL_GPL(bpf_prog_select_runtime);
+ 	name = param->path;
+ 	type = param->ismountpoint.in.type;
 
 
