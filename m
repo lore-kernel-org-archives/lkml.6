@@ -2,250 +2,186 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E89DDECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 157B5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D6E205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:32:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TX9zYBvD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D6E205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 91C33205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:33:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C33205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbeGTGSp (ORCPT
+        id S1727221AbeGTGUO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 02:18:45 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34883 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727043AbeGTGSo (ORCPT
+        Fri, 20 Jul 2018 02:20:14 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:47714
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726415AbeGTGUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 02:18:44 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e6-v6so5837349pgv.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 22:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yOqVsRsZHwXKAUys0UHc5JykXoaLhJo/WgNsVsffsQ0=;
-        b=TX9zYBvDf5LDFLSp2L2CfWGTPiHGZu7MzdKpqcjAn43j6/8/tnIh/+MYTagVIQzkoG
-         IV/jel/ZQ0lztC4spANLfN+B3oH46Ph/xGhsz5FsAIhgYXrhrRA0QuObSqaQNKrfcWJJ
-         gNTeEyW4pjDBDhPZdALkU+G3uSceOasXBF2uY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=yOqVsRsZHwXKAUys0UHc5JykXoaLhJo/WgNsVsffsQ0=;
-        b=FPB32X/n9AQVsoF7tbETm7vpMYiPcSPjIX3uVRImmMr7dkSq6O5wAODdXYLzbL/Aj1
-         ecmsaWnTNkNSWjmY6DEAS10Yzk8v6sSjI5955jjg9+Np6sUHi398zcQvoA02Bh88D1t4
-         rmv5h2gviqZ6kQIFYPwZvijHM1H4CmVrhCQfByAZ68t3ZwacjDmQDO56pZjrPALuuUyZ
-         AVqk+sZNMCfLbS5rVt5YIlvSQmi2kgjQNE15BBCuJE7yOwwADF07zfCJU/KtKWGq2vsm
-         oA+jMK5RleRjtp0GwW/QsIbg/Lw+JVkEk8DSI/X8FU0t4PEI/pEoGLw9YvjX3Y9lz4O/
-         bapw==
-X-Gm-Message-State: AOUpUlEC92s8lRuH+Vpw+BbGm7+VlB65Q7hVj4IGNjrGp76FCEJnl4KS
-        qgHy+tYguWsWsDqvrNUhdF96ZQ==
-X-Google-Smtp-Source: AAOMgpdIIDsHSINp94F+L4rNbOd6RC5+EPTrKiQaAZ1p7pOo8hG1IX9CDjJ1nrybUcjaTk9g647K9Q==
-X-Received: by 2002:a63:4c56:: with SMTP id m22-v6mr645849pgl.299.1532064735271;
-        Thu, 19 Jul 2018 22:32:15 -0700 (PDT)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id q21-v6sm1189932pfl.156.2018.07.19.22.32.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 22:32:14 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 14:33:34 +0900
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, bhe@redhat.com,
-        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH v11 03/15] powerpc, kexec_file: factor out memblock-based
- arch_kexec_walk_mem()
-Message-ID: <20180720053333.GJ11258@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Dave Young <dyoung@redhat.com>, James Morse <james.morse@arm.com>,
-        catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        bhsharma@redhat.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-References: <20180711074203.3019-4-takahiro.akashi@linaro.org>
- <20180714015223.GA2745@dhcp-128-65.nay.redhat.com>
- <2a4ec965-5258-5835-3022-8f403a2f6bdd@arm.com>
- <20180716122412.GA7160@dhcp-128-65.nay.redhat.com>
- <20180717053104.GB11258@linaro.org>
- <20180717074923.GA8591@dhcp-128-65.nay.redhat.com>
- <20180718053818.GF11258@linaro.org>
- <20180718061350.GA5086@dhcp-128-65.nay.redhat.com>
- <20180718064041.GI11258@linaro.org>
- <20180718064519.GB5324@dhcp-128-65.nay.redhat.com>
+        Fri, 20 Jul 2018 02:20:14 -0400
+X-IronPort-AV: E=Sophos;i="5.51,377,1526335200"; 
+   d="scan'208";a="273561336"
+Received: from abo-214-111-68.mrs.modulonet.fr (HELO [192.168.0.15]) ([85.68.111.214])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 07:33:42 +0200
+Date:   Fri, 20 Jul 2018 07:33:42 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Dominique Martinet <asmadeus@codewreck.org>
+cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        =?ISO-8859-15?Q?Ville_Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] coccinelle: suggest replacing strncpy+truncation by
+ strscpy
+In-Reply-To: <1532047018-23754-1-git-send-email-asmadeus@codewreck.org>
+Message-ID: <alpine.DEB.2.20.1807200731240.2349@hadrien>
+References: <1531555951-9627-1-git-send-email-asmadeus@codewreck.org> <1532047018-23754-1-git-send-email-asmadeus@codewreck.org>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718064519.GB5324@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/mixed; BOUNDARY="8323329-370443579-1532064822=:2349"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave,
-
-On Wed, Jul 18, 2018 at 02:45:19PM +0800, Dave Young wrote:
-> On 07/18/18 at 03:40pm, AKASHI Takahiro wrote:
-> > On Wed, Jul 18, 2018 at 02:13:50PM +0800, Dave Young wrote:
-> > > Hi AKASHI,
-> > > 
-> > > On 07/18/18 at 02:38pm, AKASHI Takahiro wrote:
-> > > > Dave,
-> > > > 
-> > > > On Tue, Jul 17, 2018 at 03:49:23PM +0800, Dave Young wrote:
-> > > > > Hi AKASHI,
-> > > > > On 07/17/18 at 02:31pm, AKASHI Takahiro wrote:
-> > > > > > Hi Dave,
-> > > > > > 
-> > > > > > On Mon, Jul 16, 2018 at 08:24:12PM +0800, Dave Young wrote:
-> > > > > > > On 07/16/18 at 12:04pm, James Morse wrote:
-> > > > > > > > Hi Dave,
-> > > > > > > > 
-> > > > > > > > On 14/07/18 02:52, Dave Young wrote:
-> > > > > > > > > On 07/11/18 at 04:41pm, AKASHI Takahiro wrote:
-> > > > > > > > >> Memblock list is another source for usable system memory layout.
-> > > > > > > > >> So powerpc's arch_kexec_walk_mem() is moved to kexec_file.c so that
-> > > > > > > > >> other memblock-based architectures, particularly arm64, can also utilise
-> > > > > > > > >> it. A moved function is now renamed to kexec_walk_memblock() and merged
-> > > > > > > > >> into the existing arch_kexec_walk_mem() for general use, either resource
-> > > > > > > > >> list or memblock list.
-> > > > > > > > >>
-> > > > > > > > >> A consequent function will not work for kdump with memblock list, but
-> > > > > > > > >> this will be fixed in the next patch.
-> > > > > > > > 
-> > > > > > > > >> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > > > > > > > 
-> > > > > > > > >> @@ -513,6 +563,10 @@ static int locate_mem_hole_callback(struct resource *res, void *arg)
-> > > > > > > > >>  int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
-> > > > > > > > >>  			       int (*func)(struct resource *, void *))
-> > > > > > > > >>  {
-> > > > > > > > >> +	if (IS_ENABLED(CONFIG_HAVE_MEMBLOCK) &&
-> > > > > > > > >> +			!IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK))
-> > > > > > > > >> +		return kexec_walk_memblock(kbuf, func);
-> > > > > > > > > 
-> > > > > > > > > AKASHI, I'm not sure if this works on all arches, for example I chekced
-> > > > > > > > > the .config on my Nokia N900 kernel tree, there is HAVE_MEMBLOCK=y and
-> > > > > > > > > no CONFIG_ARCH_DISCARD_MEMBLOCK, in 32bit arm code no arch_kexec_walk_mem()
-> > > > > > > > By doesn't work you mean it's a change in behaviour?
-> > > > > > > > I think this is fine because 32bit arm doesn't support KEXEC_FILE, (this file is
-> > > > > > > > kexec_file specific right?).
-> > > > > > > 
-> > > > > > > Ah, replied on a train, I forgot this is only for kexec_file, sorry
-> > > > > > > about that.  Please ignore the comment.
-> > > > > > > 
-> > > > > > > But since we have a weak function arch_kexec_walk_mem, adding another
-> > > > > > > condition branch within this weak function looks not good.
-> > > > > > > Something like below would be better:
-> > > > > > 
-> > > > > > I see your concern here, but
-> > > > > > 
-> > > > > > 
-> > > > > > > int kexec_locate_mem_hole(struct kexec_buf *kbuf)
-> > > > > > > {
-> > > > > > >         int ret;
-> > > > > > > 
-> > > > > > > 	+ if use memblock
-> > > > > > > 	+	ret = kexec_walk_memblock()
-> > > > > > > 	+ else
-> > > > > > >         	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
-> > > > > > > 
-> > > > > > >         return ret == 1 ? 0 : -EADDRNOTAVAIL;
-> > > > > > > }
-> > > > > > 
-> > > > > > what if yet another architecture comes to kexec_file and wanna
-> > > > > > take a third approach? How can it override those functions?
-> > > > > > Depending on kernel configuration, it might re-define either
-> > > > > > kexec_walk_memblock() or arch_kexec_walk_mem(). It sounds weird to me.
-> > > > > 
-> > > > > I also feel this weird, but it is slightly better because currently no
-> > > > > user need another overriding requirement, and I feel it is not expected to have in
-> > > > > the future for the memblock use.
-> > > > > 
-> > > > > Rethinking about this issue, we can just remove the weak function and
-> > > > > just use general function.
-> > > > 
-> > > > Do you really want to remove "weak" attribute?
-> > > > 
-> > > > > Currently with your patch applied only s390 use arch_kexec_walk_mem like
-> > > > > below:
-> > > > > /*
-> > > > >  * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
-> > > > >  * and provide kbuf->mem by hand.
-> > > > >  */
-> > > > > int arch_kexec_walk_mem(struct kexec_buf *kbuf,
-> > > > >                         int (*func)(struct resource *, void *))
-> > > > > {
-> > > > >         return 1;
-> > > > > }
-> > > > > 
-> > > > > AFAIK, all other users initialize kbuf->mem as NULL, so we can check
-> > > > 
-> > > > As a matter of fact, nobody initializes kbuf->mem before calling
-> > > > kexec_add_buffer (in turn, kexec_locate_mem_hole()).
-> > > 
-> > > Not sure we understand each other..
-> > > Let's take an example in arch/x86/kernel/kexec-bzimage64.c:
-> > > bzImage64_load() :
-> > > 	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
-> > > 				.top_down = true };
-> > > 
-> > > Except the three fields above other members will be initialized as zero
-> > > when compiling including the kbuf->mem
-> > 
-> > Ah, you're right.
-> > (My armr64 patch doesn't use struct initializer, though.)
-> > 
-> > > > 
-> > > > > kbuf->mem in int kexec_locate_mem_hole:
-> > > > > 
-> > > > > if (kbuf->mem)
-> > > > > 	return 0;
-> > > > > 
-> > > > > if use memblock
-> > > > > 	kexec_walk_memblock
-> > > > > else
-> > > > > 	kexec_walk_mem
-> > > 
-> > > kexec_walk_resource will be better than kexec_walk_mem
-> > > 
-> > > > 
-> > > > I think that your solution will work for existing architectures
-> > > > with appropriate patches, but to take your approach, as I said above,
-> > > > we will have to modify every call site on all kexec_file-capable architectures.
-> > > > 
-> > > > If this is what you expect, I will work on it, but I don't think
-> > > > that it would be a better idea.
-> > 
-> > So you would expect me to modify my own arm64 code as well as s390.
-> 
-> Yes :)  But I had not get time to read all your patches so I was not
-> aware the struct initialization in arm64 code so I assumed only s390
-> need a change..
-
-Okay, but I don't want to mix cross-arch changes into a single patch,
-prefer to leave the current patch as it is and add an additional patch
-as you suggested here.
-
-Is that OK for you?
-
-Thanks,
--Takahiro AKASHI
+--8323329-370443579-1532064822=:2349
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
 
-> Thanks
-> Dave
+
+On Fri, 20 Jul 2018, Dominique Martinet wrote:
+
+> Using strscpy instead of strncpy+truncation is simpler and fixes part
+> of the following class of new gcc warnings:
+>
+>     drivers/gpu/drm/i915/intel_tv.c: In function ‘intel_tv_get_modes’:
+>     drivers/gpu/drm/i915/intel_tv.c:1358:3: error: ‘strncpy’ specified bound 32 equals
+>     destination size [-Werror=stringop-truncation]
+>        strncpy(mode_ptr->name, input->name, DRM_DISPLAY_MODE_LEN);
+>        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     cc1: all warnings being treated as errors
+>
+> Note that this is not a proper fix for this warning. The warning was
+> intended to have developers check the return code of strncpy and
+> act in case of truncation (print a warning, abort the function or
+> something similar if the original string was not nul terminated);
+> the change to strscpy only works because gcc does not handle the
+> function the same way.
+>
+> A previous version of this patch suggested to use strlcpy instead,
+> but strscpy is preferred because it does not read more than the given
+> length of the source string unlike strlcpy, which could read after the
+> end of the buffer in case of unterminated string.
+>
+> strscpy does however not clear the end of the destination buffer, so
+> there is a risk of information leak if the full buffer is copied as is
+> out of the kernel - this needs manual checking.
+
+As fasr as I can tell from lkml, only one of these patches has been
+accepted?  There was also a concern about an information leak that there
+was no response to.  Actually, I would prefer that more of the generated
+patches are accepted before accepting the semantic patch, for something
+that is not quite so obviously correct.
+
+julia
+
+
+
+>
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> ---
+> v2:
+>  - Use strscpy instead of strlcpy, as strlcpy can read after the number
+> of requested bytes in the source string, and none of the replaced users
+> want to know the source string size length
+>  - Add longer semantic patch information, warning in particular for
+> information leak
+>  - Lowered Confidence level to medium because of the possibility of
+> information leak, that needs manual checking
+>  - Fix spacing of the diff section and removed unused virtual context
+>
+> v3:
+>  - Add license/copyright
+>  - Rewording of commit message
+>
+> I didn't see many other remarks, but kept SUGGESTION as discussed.
+> I didn't move all virtuals in a single line because none of the other
+> kernel patch do it, and still do not see any advantage of moving the
+> string to not use a variable so kept that as well.
+>
+> This should hopefully be the last version :)
+>
+>  .../coccinelle/misc/strncpy_truncation.cocci  | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 scripts/coccinelle/misc/strncpy_truncation.cocci
+>
+> diff --git a/scripts/coccinelle/misc/strncpy_truncation.cocci b/scripts/coccinelle/misc/strncpy_truncation.cocci
+> new file mode 100644
+> index 000000000000..7732cde23a85
+> --- /dev/null
+> +++ b/scripts/coccinelle/misc/strncpy_truncation.cocci
+> @@ -0,0 +1,52 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/// Use strscpy rather than strncpy(dest,..,sz) + dest[sz-1] = '\0'
+> +///
+> +//# This makes an effort to find occurences of strncpy followed by forced
+> +//# truncation, which can generate gcc stringop-truncation warnings when
+> +//# source and destination buffers are the same size.
+> +//# Using strscpy will always do that nul-termination for us and not read
+> +//# more than the maximum bytes requested in src, use that instead.
+> +//#
+> +//# The result needs checking that the destination buffer does not need
+> +//# its tail zeroed (either cleared beforehand or will never leave the
+> +//# kernel) so as not to leak information
+> +//
+> +// Confidence: Medium
+> +// Copyright: (C) 2018  Dominique Martinet
+> +// Comments:
+> +// Options: --no-includes --include-headers
+> +
+> +virtual patch
+> +virtual report
+> +virtual org
+> +
+> +@r@
+> +expression dest, src, sz;
+> +position p;
+> +@@
+> +
+> +strncpy@p(dest, src, sz);
+> +dest[sz - 1] = '\0';
+> +
+> +@script:python depends on org@
+> +p << r.p;
+> +@@
+> +
+> +msg = "strncpy followed by truncation can be strscpy, if the destination buffer does not need to be fully overwritten"
+> +cocci.print_main(msg, p)
+> +
+> +@script:python depends on report@
+> +p << r.p;
+> +@@
+> +
+> +msg = "SUGGESTION: strncpy followed by truncation can be strscpy, if the destination buffer does not need to be fully overwritten"
+> +coccilib.report.print_report(p[0], msg)
+> +
+> +@ok depends on patch@
+> +expression r.dest, r.src, r.sz;
+> +@@
+> +
+> +- strncpy
+> ++ strscpy
+> +   (dest, src, sz);
+> +- dest[sz - 1] = '\0';
+> --
+> 2.17.1
+>
+>
+--8323329-370443579-1532064822=:2349--
