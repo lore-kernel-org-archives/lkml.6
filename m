@@ -2,94 +2,144 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41912ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B574ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 077C220661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077C220661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C45B22084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="urqhv9Hf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C45B22084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388114AbeGTR6j convert rfc822-to-8bit (ORCPT
+        id S2388153AbeGTR7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:58:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39358 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731556AbeGTR6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:58:38 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 20 Jul 2018 13:59:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57344 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731556AbeGTR7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:59:00 -0400
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 072FC402347F;
-        Fri, 20 Jul 2018 17:09:27 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A2C77C2B;
-        Fri, 20 Jul 2018 17:09:23 +0000 (UTC)
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <20180719135224.GE2494@hirez.programming.kicks-ass.net>
- <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
- <20180719153045.GT72677@devbig577.frc2.facebook.com>
- <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
- <20180719165201.GU72677@devbig577.frc2.facebook.com>
- <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
- <20180720114549.GY72677@devbig577.frc2.facebook.com>
- <20180720154454.GR2494@hirez.programming.kicks-ass.net>
- <20180720155613.GB1934745@devbig577.frc2.facebook.com>
- <4857a9db-ebf5-24f8-c42d-d795f5c75854@redhat.com>
- <20180720163712.GU2494@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <8c655adc-6d9e-b767-1024-5d6941c995a9@redhat.com>
-Date:   Fri, 20 Jul 2018 13:09:23 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C5D72086D
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 17:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532106588;
+        bh=sBw5Hd+gWC18fpJE8J4gLAQMCg1CCO4ZvoLRrhiV45c=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=urqhv9HfpnuGzoN92MmhUQp05gLb8EjSVazmIV6GSnhH1vSh61MwohLsLkJYQkHw5
+         ElPVTulJkUvsxyWmyd9+1Pb/sh/DX7ypOiNXBs6vbZQ2tHxVkQzB8SA0+76w2tamLg
+         xl799WWQiFr7flGF6HBgplVABN58+wVkrIALiSes=
+Received: by mail-wr1-f53.google.com with SMTP id q10-v6so11953894wrd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 10:09:48 -0700 (PDT)
+X-Gm-Message-State: AOUpUlG8UicjSCdWHLnkGn0ktCUWx6ppMx1JYJkeZi0w1Ls5LnqfMpH5
+        WslHXOR/xa2rchXNHbfqQoqrfafqHdrnLbDJ3lZmRw==
+X-Google-Smtp-Source: AAOMgpdwEZ+0NtNKrKeLGbrSjFOZ4h2Ag9gyjvTCfou5pKJ3lM/jryn0MUczIRFi/5mFk6k+KmTK007fpMfxi3dtwIM=
+X-Received: by 2002:adf:8325:: with SMTP id 34-v6mr2007828wrd.67.1532106586541;
+ Fri, 20 Jul 2018 10:09:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180720163712.GU2494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 20 Jul 2018 17:09:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 20 Jul 2018 17:09:27 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 10:09:26
+ -0700 (PDT)
+In-Reply-To: <1532103744-31902-4-git-send-email-joro@8bytes.org>
+References: <1532103744-31902-1-git-send-email-joro@8bytes.org> <1532103744-31902-4-git-send-email-joro@8bytes.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 20 Jul 2018 10:09:26 -0700
+X-Gmail-Original-Message-ID: <CALCETrWmd3arHdkTzAS7reLRjm96jrJC-1O5dYAPwbh2EqKMSA@mail.gmail.com>
+Message-ID: <CALCETrWmd3arHdkTzAS7reLRjm96jrJC-1O5dYAPwbh2EqKMSA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] x86/entry/32: Copy only ptregs on paranoid entry/exit path
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/20/2018 12:37 PM, Peter Zijlstra wrote:
-> On Fri, Jul 20, 2018 at 12:19:29PM -0400, Waiman Long wrote:
->> I am not against the idea of making it hierarchical eventually. I am
->> just hoping to get thing going by merging the patchset in its current
->> form and then we can make it hierarchical in a followup patch.
-> Where's the rush? Why can't we do this right in one go?
+On Fri, Jul 20, 2018 at 9:22 AM, Joerg Roedel <joro@8bytes.org> wrote:
+> From: Joerg Roedel <jroedel@suse.de>
+>
+> The code that switches from entry- to task-stack when we
+> enter from kernel-mode copies the full entry-stack contents
+> to the task-stack.
+>
+> That is because we don't trust that the entry-stack
+> contents. But actually we can trust its contents if we are
+> not scheduled between entry and exit.
+>
+> So do less copying and move only the ptregs over to the
+> task-stack in this code-path.
+>
+> Suggested-by: Andy Lutomirski <luto@amacapital.net>
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>  arch/x86/entry/entry_32.S | 70 +++++++++++++++++++++++++----------------------
+>  1 file changed, 38 insertions(+), 32 deletions(-)
+>
+> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+> index 2767c62..90166b2 100644
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -469,33 +469,48 @@
+>          * segment registers on the way back to user-space or when the
+>          * sysenter handler runs with eflags.tf set.
+>          *
+> -        * When we switch to the task-stack here, we can't trust the
+> -        * contents of the entry-stack anymore, as the exception handler
+> -        * might be scheduled out or moved to another CPU. Therefore we
+> -        * copy the complete entry-stack to the task-stack and set a
+> -        * marker in the iret-frame (bit 31 of the CS dword) to detect
+> -        * what we've done on the iret path.
+> +        * When we switch to the task-stack here, we extend the
+> +        * stack-frame we copy to include the entry-stack %esp and a
+> +        * pseudo %ss value so that we have a full ptregs struct on the
+> +        * stack. We set a marker in the frame (bit 31 of the CS dword).
+>          *
+> -        * On the iret path we copy everything back and switch to the
+> -        * entry-stack, so that the interrupted kernel code-path
+> -        * continues on the same stack it was interrupted with.
+> +        * On the iret path we read %esp from the PT_OLDESP slot on the
+> +        * stack and copy ptregs (except oldesp and oldss) to it, when
+> +        * we find the marker set. Then we switch to the %esp we read,
+> +        * so that the interrupted kernel code-path continues on the
+> +        * same stack it was interrupted with.
 
-For me, the rush comes from RHEL8 as it is a goal to have a fully
-functioning cgroup v2 in that release.
 
-I also believe that most of the use cases of partition can be satisfied
-with partitions at the first level children. Getting hierarchical
-partition right may drag on for half a year, maybe, giving our history
-with cpu v2 controller. No matter what we do to enable hierarchical
-partition in the future, the current model of using a partition flag is
-intuitive enough that it won't be changed at least for the first level
-children.
-
-Cheers,
-Longman
-
-
+Can you give an example of the exact scenario in which any of this
+copying happens and why it's needed?  IMO you should just be able to
+*run* on the entry stack without copying anything at all.
