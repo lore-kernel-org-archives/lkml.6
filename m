@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BFCECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 550D7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B90520854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B90520854
+	by mail.kernel.org (Postfix) with ESMTP id 0875D20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0875D20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388594AbeGTNUc (ORCPT
+        id S2388596AbeGTNUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:20:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40178 "EHLO
+        Fri, 20 Jul 2018 09:20:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40238 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732091AbeGTNUb (ORCPT
+        with ESMTP id S1732807AbeGTNUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:20:31 -0400
+        Fri, 20 Jul 2018 09:20:36 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BA6C41C;
-        Fri, 20 Jul 2018 12:31:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D09ABC7D;
+        Fri, 20 Jul 2018 12:31:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 26/66] qed: Limit msix vectors in kdump kernel to the minimum required count.
-Date:   Fri, 20 Jul 2018 14:13:43 +0200
-Message-Id: <20180720121408.792124901@linuxfoundation.org>
+        Julien Grall <julien.grall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.9 58/66] arm64: ssbd: Skip apply_ssbd if not using dynamic mitigation
+Date:   Fri, 20 Jul 2018 14:14:15 +0200
+Message-Id: <20180720121411.792237365@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -52,49 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-[ Upstream commit bb7858ba1102f82470a917e041fd23e6385c31be ]
+commit 986372c4367f46b34a3c0f6918d7fb95cbdf39d6 upstream.
 
-Memory size is limited in the kdump kernel environment. Allocation of more
-msix-vectors (or queues) consumes few tens of MBs of memory, which might
-lead to the kdump kernel failure.
-This patch adds changes to limit the number of MSI-X vectors in kdump
-kernel to minimum required value (i.e., 2 per engine).
+In order to avoid checking arm64_ssbd_callback_required on each
+kernel entry/exit even if no mitigation is required, let's
+add yet another alternative that by default jumps over the mitigation,
+and that gets nop'ed out if we're doing dynamic mitigation.
 
-Fixes: fe56b9e6a ("qed: Add module with basic common support")
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Think of it as a poor man's static key...
+
+Reviewed-by: Julien Grall <julien.grall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_main.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/kernel/cpu_errata.c |   14 ++++++++++++++
+ arch/arm64/kernel/entry.S      |    3 +++
+ 2 files changed, 17 insertions(+)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_main.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
-@@ -23,6 +23,7 @@
- #include <linux/vmalloc.h>
- #include <linux/qed/qed_if.h>
- #include <linux/qed/qed_ll2_if.h>
-+#include <linux/crash_dump.h>
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -244,6 +244,20 @@ void __init arm64_update_smccc_conduit(s
+ 	*updptr = cpu_to_le32(insn);
+ }
  
- #include "qed.h"
- #include "qed_sriov.h"
-@@ -701,6 +702,14 @@ static int qed_slowpath_setup_int(struct
- 	/* We want a minimum of one slowpath and one fastpath vector per hwfn */
- 	cdev->int_params.in.min_msix_cnt = cdev->num_hwfns * 2;
- 
-+	if (is_kdump_kernel()) {
-+		DP_INFO(cdev,
-+			"Kdump kernel: Limit the max number of requested MSI-X vectors to %hd\n",
-+			cdev->int_params.in.min_msix_cnt);
-+		cdev->int_params.in.num_vectors =
-+			cdev->int_params.in.min_msix_cnt;
-+	}
++void __init arm64_enable_wa2_handling(struct alt_instr *alt,
++				      __le32 *origptr, __le32 *updptr,
++				      int nr_inst)
++{
++	BUG_ON(nr_inst != 1);
++	/*
++	 * Only allow mitigation on EL1 entry/exit and guest
++	 * ARCH_WORKAROUND_2 handling if the SSBD state allows it to
++	 * be flipped.
++	 */
++	if (arm64_get_ssbd_state() == ARM64_SSBD_KERNEL)
++		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
++}
 +
- 	rc = qed_set_int_mode(cdev, false);
- 	if (rc)  {
- 		DP_ERR(cdev, "qed_slowpath_setup_int ERR\n");
+ static void arm64_set_ssbd_mitigation(bool state)
+ {
+ 	switch (psci_ops.conduit) {
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -100,6 +100,9 @@ alternative_else_nop_endif
+ 	// to save/restore them if required.
+ 	.macro	apply_ssbd, state, targ, tmp1, tmp2
+ #ifdef CONFIG_ARM64_SSBD
++alternative_cb	arm64_enable_wa2_handling
++	b	\targ
++alternative_cb_end
+ 	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
+ 	cbz	\tmp2, \targ
+ 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
 
 
