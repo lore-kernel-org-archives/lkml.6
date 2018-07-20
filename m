@@ -2,115 +2,75 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB80EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 708D3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B78320833
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:53:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kB65w3QB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B78320833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BD70320833
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:53:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD70320833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbeGTEjM (ORCPT
+        id S1727234AbeGTEjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 00:39:12 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:38767 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbeGTEjM (ORCPT
+        Fri, 20 Jul 2018 00:39:48 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:38884 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725737AbeGTEjs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 00:39:12 -0400
-Received: by mail-oi0-f66.google.com with SMTP id v8-v6so18946620oie.5;
-        Thu, 19 Jul 2018 20:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=iQJ2v1VcvfRskDsOmblVQ/8125dz0NV4YPdiNwUJl0g=;
-        b=kB65w3QB+j1vIjCItCJ36YhLjE3U66bt5aj/nLzoDyJfx5sSEy2gAYvjOeov5zbeAJ
-         Wp9PBqPnkD9aFQPafmrs9dlAiPRydrF60TBbJW962tY/sUSaZIfofLZsq5LQdxxAGSSc
-         thWAktI6P8Z5JdSUpZ6XvVPe4THJ+/toIUzySHJRPqWp3SLAPlpzdBABrgdJhXK6b4X8
-         whni825nQV5xbmfI6KslrZpvT5tFc936IF4Q6dAlfelmGAhSF88c4F2Yig7OadmrK4GZ
-         h49EHeCdbU5bM0DUOTCFFNzPFVQfE1V7xYGsnsR+6m5do5G7u9mE9cnKEJr1gPG/30Cz
-         6yzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=iQJ2v1VcvfRskDsOmblVQ/8125dz0NV4YPdiNwUJl0g=;
-        b=d28ypP8qsSFZIMnHkhhel+LJMVe5lw1DVsNWSjb1ytM6z2m4kTiRiJop6rBRMB/S2T
-         KqVqBw4oJ16yS01q6BeJqff+W1ZyIegzooDq5oE9sr1RHeY8DQruHuK2Cva4UZaEO6r+
-         FLKsXfwW9IVdoy9OICFe0sFUGeekV/PbAjyTGiUVuVk/HuqcpBdO0ydp/kcJ81kIwxlh
-         yXNT/4ZlY1Rr8WkLWO4fOMUfBT8w+vHrXuPzin1I9wEWqr0qe3BJHtF1CzPP50JuRxYp
-         24QijFZ39D6t01+vBUnU4/yYYc5DTjVe2MYPPJoPKw/BrYP/5Z5daNyMEE5FlX157T9w
-         WWAg==
-X-Gm-Message-State: AOUpUlEdmjk4eKxwsR/vsymbhb+phG9JuP7JgefVqEZ9ZpE5j2A6ILox
-        dOJp9fZtjQEBFZnKrZaQqqZ8/N0ywiIKRmprBeQ=
-X-Google-Smtp-Source: AAOMgpd5mBHKne2OFhmsNDt75ceLOZilKwrVHuFejcuJout4ccIrwqANkoEHeqPjrKlC46INL4EH/7ccQW1jTJpkkic=
-X-Received: by 2002:aca:4ec6:: with SMTP id c189-v6mr432202oib.186.1532058780740;
- Thu, 19 Jul 2018 20:53:00 -0700 (PDT)
+        Fri, 20 Jul 2018 00:39:48 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fgMU1-0004uo-SV; Fri, 20 Jul 2018 11:53:33 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fgMTt-0007Sd-7x; Fri, 20 Jul 2018 11:53:25 +0800
+Date:   Fri, 20 Jul 2018 11:53:25 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Megha Dey <megha.dey@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        megha.dey@intel.com
+Subject: Re: [RFC] crypto: Remove mcryptd
+Message-ID: <20180720035325.m5tzeuqsfej3y6wd@gondor.apana.org.au>
+References: <1526089453-6542-1-git-send-email-megha.dey@linux.intel.com>
 MIME-Version: 1.0
-References: <1530598891-21370-1-git-send-email-wanpengli@tencent.com>
- <1530598891-21370-6-git-send-email-wanpengli@tencent.com> <20180719163138.GC11749@flask>
-In-Reply-To: <20180719163138.GC11749@flask>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Fri, 20 Jul 2018 11:53:05 +0800
-Message-ID: <CANRm+CwzG8jcsVhhGa2w55KcCTpwm-yokFR2Oi6LYaoS0ameqQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] KVM: X86: Add NMI support to PV IPIs
-To:     Radim Krcmar <rkrcmar@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526089453-6542-1-git-send-email-megha.dey@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 at 00:31, Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.c=
-om> wrote:
+On Fri, May 11, 2018 at 06:44:13PM -0700, Megha Dey wrote:
 >
-> 2018-07-03 14:21+0800, Wanpeng Li:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > The NMI delivery mode of ICR is used to deliver an NMI to the processor=
-,
-> > and the vector information is ignored.
-> >
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> > @@ -479,7 +479,16 @@ static int __send_ipi_mask(const struct cpumask *m=
-ask, int vector)
-> >               }
-> >       }
-> >
-> > -     ret =3D kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitma=
-p_high, vector);
-> > +     switch (vector) {
-> > +     default:
-> > +             icr =3D APIC_DM_FIXED | vector;
-> > +             break;
-> > +     case NMI_VECTOR:
-> > +             icr =3D APIC_DM_NMI;
->
-> I think it would be better to say that KVM interprets NMI_VECTOR and
-> sends the interrupt as APIC_DM_NMI.
+> +static struct ahash_alg *simd_ahash_create_compat(const char *algname,
+> +						       const char *drvname,
+> +						       const char *basename)
+> +{
+> +	struct ahash_alg *alg;
+> +	struct ahash_alg *ialg;
+> +	int err;
 
-Yeah, in addition, SDM 10.6.1 also mentioned that:
-Delivery mode:
-    100 (NMI) Delivers an NMI interrupt to the target processor or
-processors. The vector information is ignored.
+I think there has been a misunderstsanding.  You're not actually
+using the simd wrapper here.  All you're doing is creating a function
+with the word simd in its name.  In all other respects this is just
+exposing the underlying algorithm to users directly, which cannot
+work because the underlying algorithm requires SIMD.
 
-Regards,
-Wanpeng Li
+What you need to do is create an actual simd wrapper with cryptd
+and all the functions that may do SIMD work needs to invoke cryptd
+if may_use_simd() (and other conditions) is false.
+
+This wrapper should live in crypto/simd.c.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
