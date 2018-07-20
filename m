@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D87AEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58010ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96C8320652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96C8320652
+	by mail.kernel.org (Postfix) with ESMTP id 1A62B20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A62B20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390211AbeGTNbV (ORCPT
+        id S2390218AbeGTNbY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:31:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53844 "EHLO
+        Fri, 20 Jul 2018 09:31:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389849AbeGTNbU (ORCPT
+        with ESMTP id S2389610AbeGTNbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:31:20 -0400
+        Fri, 20 Jul 2018 09:31:24 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8EC7FD7E;
-        Fri, 20 Jul 2018 12:40:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8B201BBD;
+        Fri, 20 Jul 2018 12:36:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.17 098/101] arm64: KVM: Add ARCH_WORKAROUND_2 discovery through ARCH_FEATURES_FUNC_ID
-Date:   Fri, 20 Jul 2018 14:14:44 +0200
-Message-Id: <20180720121427.373009798@linuxfoundation.org>
+        stable@vger.kernel.org, Lou Berger <lberger@labn.net>,
+        Renato Westphal <renato@opensourcerouting.org>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 032/101] net/tcp: Fix socket lookups with SO_BINDTODEVICE
+Date:   Fri, 20 Jul 2018 14:13:38 +0200
+Message-Id: <20180720121424.316292960@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -52,125 +52,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: David Ahern <dsahern@gmail.com>
 
-commit 5d81f7dc9bca4f4963092433e27b508cbe524a32 upstream.
+[ Upstream commit 8c43bd1706885ba1acfa88da02bc60a2ec16f68c ]
 
-Now that all our infrastructure is in place, let's expose the
-availability of ARCH_WORKAROUND_2 to guests. We take this opportunity
-to tidy up a couple of SMCCC constants.
+Similar to 69678bcd4d2d ("udp: fix SO_BINDTODEVICE"), TCP socket lookups
+need to fail if dev_match is not true. Currently, a packet to a given port
+can match a socket bound to device when it should not. In the VRF case,
+this causes the lookup to hit a VRF socket and not a global socket
+resulting in a response trying to go through the VRF when it should not.
 
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 3fa6f616a7a4d ("net: ipv4: add second dif to inet socket lookups")
+Fixes: 4297a0ef08572 ("net: ipv6: add second dif to inet6 socket lookups")
+Reported-by: Lou Berger <lberger@labn.net>
+Diagnosed-by: Renato Westphal <renato@opensourcerouting.org>
+Tested-by: Renato Westphal <renato@opensourcerouting.org>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/kvm_host.h   |   12 ++++++++++++
- arch/arm64/include/asm/kvm_host.h |   23 +++++++++++++++++++++++
- arch/arm64/kvm/reset.c            |    4 ++++
- virt/kvm/arm/psci.c               |   18 ++++++++++++++++--
- 4 files changed, 55 insertions(+), 2 deletions(-)
+ net/ipv4/inet_hashtables.c  |    4 ++--
+ net/ipv6/inet6_hashtables.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/arm/include/asm/kvm_host.h
-+++ b/arch/arm/include/asm/kvm_host.h
-@@ -315,6 +315,18 @@ static inline bool kvm_arm_harden_branch
- 	return false;
- }
+--- a/net/ipv4/inet_hashtables.c
++++ b/net/ipv4/inet_hashtables.c
+@@ -243,9 +243,9 @@ static inline int compute_score(struct s
+ 			bool dev_match = (sk->sk_bound_dev_if == dif ||
+ 					  sk->sk_bound_dev_if == sdif);
  
-+#define KVM_SSBD_UNKNOWN		-1
-+#define KVM_SSBD_FORCE_DISABLE		0
-+#define KVM_SSBD_KERNEL		1
-+#define KVM_SSBD_FORCE_ENABLE		2
-+#define KVM_SSBD_MITIGATED		3
-+
-+static inline int kvm_arm_have_ssbd(void)
-+{
-+	/* No way to detect it yet, pretend it is not there. */
-+	return KVM_SSBD_UNKNOWN;
-+}
-+
- static inline void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu) {}
- static inline void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu) {}
- 
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -455,6 +455,29 @@ static inline bool kvm_arm_harden_branch
- 	return cpus_have_const_cap(ARM64_HARDEN_BRANCH_PREDICTOR);
- }
- 
-+#define KVM_SSBD_UNKNOWN		-1
-+#define KVM_SSBD_FORCE_DISABLE		0
-+#define KVM_SSBD_KERNEL		1
-+#define KVM_SSBD_FORCE_ENABLE		2
-+#define KVM_SSBD_MITIGATED		3
-+
-+static inline int kvm_arm_have_ssbd(void)
-+{
-+	switch (arm64_get_ssbd_state()) {
-+	case ARM64_SSBD_FORCE_DISABLE:
-+		return KVM_SSBD_FORCE_DISABLE;
-+	case ARM64_SSBD_KERNEL:
-+		return KVM_SSBD_KERNEL;
-+	case ARM64_SSBD_FORCE_ENABLE:
-+		return KVM_SSBD_FORCE_ENABLE;
-+	case ARM64_SSBD_MITIGATED:
-+		return KVM_SSBD_MITIGATED;
-+	case ARM64_SSBD_UNKNOWN:
-+	default:
-+		return KVM_SSBD_UNKNOWN;
-+	}
-+}
-+
- void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu);
- void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu);
- 
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -122,6 +122,10 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu
- 	/* Reset PMU */
- 	kvm_pmu_vcpu_reset(vcpu);
- 
-+	/* Default workaround setup is enabled (if supported) */
-+	if (kvm_arm_have_ssbd() == KVM_SSBD_KERNEL)
-+		vcpu->arch.workaround_flags |= VCPU_WORKAROUND_2_FLAG;
-+
- 	/* Reset timer */
- 	return kvm_timer_vcpu_reset(vcpu);
- }
---- a/virt/kvm/arm/psci.c
-+++ b/virt/kvm/arm/psci.c
-@@ -405,7 +405,7 @@ static int kvm_psci_call(struct kvm_vcpu
- int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
- {
- 	u32 func_id = smccc_get_function(vcpu);
--	u32 val = PSCI_RET_NOT_SUPPORTED;
-+	u32 val = SMCCC_RET_NOT_SUPPORTED;
- 	u32 feature;
- 
- 	switch (func_id) {
-@@ -417,7 +417,21 @@ int kvm_hvc_call_handler(struct kvm_vcpu
- 		switch(feature) {
- 		case ARM_SMCCC_ARCH_WORKAROUND_1:
- 			if (kvm_arm_harden_branch_predictor())
--				val = 0;
-+				val = SMCCC_RET_SUCCESS;
-+			break;
-+		case ARM_SMCCC_ARCH_WORKAROUND_2:
-+			switch (kvm_arm_have_ssbd()) {
-+			case KVM_SSBD_FORCE_DISABLE:
-+			case KVM_SSBD_UNKNOWN:
-+				break;
-+			case KVM_SSBD_KERNEL:
-+				val = SMCCC_RET_SUCCESS;
-+				break;
-+			case KVM_SSBD_FORCE_ENABLE:
-+			case KVM_SSBD_MITIGATED:
-+				val = SMCCC_RET_NOT_REQUIRED;
-+				break;
-+			}
- 			break;
+-			if (exact_dif && !dev_match)
++			if (!dev_match)
+ 				return -1;
+-			if (sk->sk_bound_dev_if && dev_match)
++			if (sk->sk_bound_dev_if)
+ 				score += 4;
  		}
- 		break;
+ 		if (sk->sk_incoming_cpu == raw_smp_processor_id())
+--- a/net/ipv6/inet6_hashtables.c
++++ b/net/ipv6/inet6_hashtables.c
+@@ -113,9 +113,9 @@ static inline int compute_score(struct s
+ 			bool dev_match = (sk->sk_bound_dev_if == dif ||
+ 					  sk->sk_bound_dev_if == sdif);
+ 
+-			if (exact_dif && !dev_match)
++			if (!dev_match)
+ 				return -1;
+-			if (sk->sk_bound_dev_if && dev_match)
++			if (sk->sk_bound_dev_if)
+ 				score++;
+ 		}
+ 		if (sk->sk_incoming_cpu == raw_smp_processor_id())
 
 
