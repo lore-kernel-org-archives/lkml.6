@@ -7,138 +7,230 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7ED7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 264B2ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56DA5206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:16:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9EE1206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:17:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkHRZxAJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56DA5206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="c8+CbP7i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9EE1206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388422AbeGTUFo (ORCPT
+        id S2388369AbeGTUHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 16:05:44 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:40069 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388373AbeGTUFo (ORCPT
+        Fri, 20 Jul 2018 16:07:20 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:45980 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387989AbeGTUHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 16:05:44 -0400
-Received: by mail-qt0-f194.google.com with SMTP id h4-v6so11233512qtj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 12:16:06 -0700 (PDT)
+        Fri, 20 Jul 2018 16:07:19 -0400
+Received: by mail-oi0-f67.google.com with SMTP id q11-v6so23142760oic.12;
+        Fri, 20 Jul 2018 12:17:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=K5aKN1twt3OsHprz478h6YmMek7/P6D1hjsb8sftGjg=;
-        b=fkHRZxAJwWg+oFBuCC7yQyngrM6nNSwq8paCYPH2BMONgp5GvyxJB0iQaJicqPmykC
-         fakcb/UR8dwwf0/bG/HYwYGx6Ei39O8iRnXF5md0JQ/ZB9QhQa5W8roDCdLdfjuaNA4C
-         FMrz5T5FA9SzlD9c4mAtX2GDB++ePi46VgRxcC5MS9s82QpkjsecrRWhv+/FXQTsbhCp
-         W7plJdbSNWoOa1ran80fO97EuIS5IyLDGA4mVFzBLks8l4NbuM7UiH6N658kbbBHaqCU
-         g76LAnLstoDfSDlqiToiVggy8B3xnNGj+Bn+CEvsw9oVU0ZfZnMYiDXTspAezwFV0PZ4
-         kjkw==
+        bh=a/s2we44IIrUH6HU0tgIpSfq9SZIdt8kn647fLx8LZ4=;
+        b=c8+CbP7iUSmYDDVeGm6VjGgAbKxGQG/peKeJvnDct8szKGul5LA89TYGr33RtOalHN
+         86SFxn88ig2sLuizaFrElp1zUd5YjRD0N512n/mwrYTFTT/bLVzgJxpEJMdtaZLaFt89
+         ohQxb3b2lUYaYB7SmFgLIOQCOO0/aqsaWXESR3ICj6aMvKo0fOsB9JsTwFQ8MrQ3N4v1
+         l6pISuLtAq4twKGHRbVE4TaXGBLx1hBaEclxNLLxcON+wc+hhSmbVwyqjCBduxZ/fZtO
+         gWJ/rwOQuERF9JdpInl4XjT48WGpTrFZg3qtu4YadRmVzqwcJGgb5C1F7+WjEAKNSKUx
+         SaYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=K5aKN1twt3OsHprz478h6YmMek7/P6D1hjsb8sftGjg=;
-        b=uN9hHXjRfrJ4eFFPUZxHtoANrswpi1S/Q2ibCv7ptUdos8cjwHgMsfLokosITe0O6N
-         6+qFP+MnzBVRYd4QOOnMGerRECbDGdQo2hyFZ8k2SP2n6OkFDG4P6H11AqiEqCn4JUpb
-         XnYMtF+SjK4Wm38k/knDHbE3ugS9hPmhFkC8so4A/woM0qIHD+jNzjmWkPBwI7MlKcAb
-         LzZhZeX6g1rdJ7N+btYbR4e4ey71wb4N7NhxUI/ql0CBUb7fG+7LWkaMb1XV5ngVSz/4
-         SA3Eqnce7rduv68rL0BQjWCDGwfTusnvn1Ll/LS8X402EosB3JFSS/Ry7LR7ft7l8TMI
-         4lIg==
-X-Gm-Message-State: AOUpUlFI4a2F+DtZyquOkDMVKFqcjdJKvk5SRf+aHRpsM/DFwBlcCfdb
-        vy1MIw00oylcFjJAy+fOgl2afrQy4VaOd932Dqo=
-X-Google-Smtp-Source: AAOMgpf/zCiC9/MpF5fUT/ktNBpGNkZtVYFxYK5XHbXEz/G7+DI+q+rW84sw6ak/juPkmU2L4RDpjWNfie350QVa0u4=
-X-Received: by 2002:ac8:8f0:: with SMTP id y45-v6mr3267317qth.408.1532114165886;
- Fri, 20 Jul 2018 12:16:05 -0700 (PDT)
+        bh=a/s2we44IIrUH6HU0tgIpSfq9SZIdt8kn647fLx8LZ4=;
+        b=W9mrnUACRGg0qskTqum9DUqzf6Iy05EfBXH0qhZ/GjZFn6t9tVPUR8E7tmmJBlUDAO
+         iKiRzn30e7hKHnpqjxkJJ6tXtGT6ZqLA2mNj23XA3t6rbiWnNFNwJvHEnba0aj4O2cxt
+         lkPla5Tu60TJpKbTjLV9+f42RUOxIvjiySoFi+z6HljGsHSJLs1i8axrVVr2L/qBjej0
+         7dz9FWwiRNcAjPV/iLMfXB9phjepEiYtRRDUdD/y5mrz4loHtMYUQZjAFvV6kZDRjJT6
+         OQ+v2HvzJAEVHXGchmH+cn/YV3AXPy4qfATrT0/sAbf7dsuP63Vm0b7GmTqDBiSZ5ZQh
+         peuw==
+X-Gm-Message-State: AOUpUlEbeP8ATYka8AjaoqJ9z3JFoSWlkJj77lLO8+oQGH8j3mvDUinN
+        8HRRo93mJGUCKliLUcYJ6kMpK0SdzUsoLfX4DGE=
+X-Google-Smtp-Source: AAOMgpezyVlqzrD9SB8nBRegPU5YoCY2ch96M5s+VZE4jCsTvbDqqWJllMNQPGwUnny8Rv7L3XUfo+IDAEDHJqNMTWc=
+X-Received: by 2002:aca:68a2:: with SMTP id o34-v6mr1019oik.267.1532114261433;
+ Fri, 20 Jul 2018 12:17:41 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:aed:3fc6:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 12:16:05
- -0700 (PDT)
-In-Reply-To: <20180626184422.24974-1-malat@debian.org>
-References: <20180625171513.31845-1-malat@debian.org> <20180626184422.24974-1-malat@debian.org>
-From:   Tony Luck <tony.luck@gmail.com>
-Date:   Fri, 20 Jul 2018 12:16:05 -0700
-Message-ID: <CA+8MBbLB5JTdcgS3yJRR12doMgEiofD8NNXedyYyj4c7AcDnMg@mail.gmail.com>
-Subject: Re: [PATCH v3] mm/memblock: add missing include <linux/bootmem.h>
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Stefan Agner <stefan@agner.ch>, Joe Perches <joe@perches.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1532079581-978-1-git-send-email-narmstrong@baylibre.com> <1532079581-978-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1532079581-978-2-git-send-email-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Fri, 20 Jul 2018 21:17:30 +0200
+Message-ID: <CAFBinCCbzJ3Un3Naqc1ONq6gK3gDsAY+pSyHabaivjySFuzbZw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: meson: Add vid_pll divider driver
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 11:44 AM, Mathieu Malaterre <malat@debian.org> wrote:
-> Because Makefile already does:
->
->   obj-$(CONFIG_HAVE_MEMBLOCK) += memblock.o
->
-> The #ifdef has been simplified from:
->
->   #if defined(CONFIG_HAVE_MEMBLOCK) && defined(CONFIG_NO_BOOTMEM)
->
-> to simply:
->
->   #if defined(CONFIG_NO_BOOTMEM)
+Hi Neil,
 
-Is this sitting in a queue somewhere ready to go to Linus?
-
-I don't see it upstream yet.
-
+On Fri, Jul 20, 2018 at 11:40 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
-> Suggested-by: Tony Luck <tony.luck@intel.com>
-> Suggested-by: Michal Hocko <mhocko@kernel.org>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> Add support the VID_PLL fully programmable divider used right after the
+> HDMI PLL clock source. It is used to achieve complex fractional division
+> with a programmble bitfield.
+I assume you have no other information that the S912 datasheet, pages
+64 and 77 which describe the HHI_VID_PLL_CLK_DIV register?
+
+more comments inline
+
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>
 > ---
-> v3: Add missing reference to commit 6cc22dc08a24
-> v2: Simplify #ifdef
+>  drivers/clk/meson/Makefile      |  2 +-
+>  drivers/clk/meson/clkc.h        |  6 +++
+>  drivers/clk/meson/vid-pll-div.c | 90 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 97 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/meson/vid-pll-div.c
 >
->  mm/memblock.c | 3 +++
->  1 file changed, 3 insertions(+)
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 72ec8c4..0234767 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -2,7 +2,7 @@
+>  # Makefile for Meson specific clk
+>  #
 >
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 03d48d8835ba..611a970ac902 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -20,6 +20,7 @@
->  #include <linux/kmemleak.h>
->  #include <linux/seq_file.h>
->  #include <linux/memblock.h>
-> +#include <linux/bootmem.h>
+> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
+> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o vid-pll-div.o
+>  obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO) += clk-triphase.o sclk-div.o
+>  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+> index 6b96d55..9166605 100644
+> --- a/drivers/clk/meson/clkc.h
+> +++ b/drivers/clk/meson/clkc.h
+> @@ -90,6 +90,11 @@ struct meson_clk_phase_data {
+>  int meson_clk_degrees_from_val(unsigned int val, unsigned int width);
+>  unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width);
 >
->  #include <asm/sections.h>
->  #include <linux/io.h>
-> @@ -1224,6 +1225,7 @@ phys_addr_t __init memblock_alloc_try_nid(phys_addr_t size, phys_addr_t align, i
->         return memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
->  }
+> +struct meson_vid_pll_div_data {
+> +       struct parm val;
+> +       struct parm sel;
+> +};
+> +
+>  #define MESON_GATE(_name, _reg, _bit)                                  \
+>  struct clk_regmap _name = {                                            \
+>         .data = &(struct clk_regmap_gate_data){                         \
+> @@ -112,5 +117,6 @@ extern const struct clk_ops meson_clk_cpu_ops;
+>  extern const struct clk_ops meson_clk_mpll_ro_ops;
+>  extern const struct clk_ops meson_clk_mpll_ops;
+>  extern const struct clk_ops meson_clk_phase_ops;
+> +extern const struct clk_ops meson_vid_pll_div_ro_ops;
 >
-> +#if defined(CONFIG_NO_BOOTMEM)
->  /**
->   * memblock_virt_alloc_internal - allocate boot memory block
->   * @size: size of memory block to be allocated in bytes
-> @@ -1431,6 +1433,7 @@ void * __init memblock_virt_alloc_try_nid(
->               (u64)max_addr);
->         return NULL;
->  }
-> +#endif
->
->  /**
->   * __memblock_free_early - free boot memory block
-> --
-> 2.11.0
->
+>  #endif /* __CLKC_H */
+> diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
+> new file mode 100644
+> index 0000000..5f267be
+> --- /dev/null
+> +++ b/drivers/clk/meson/vid-pll-div.c
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 BayLibre, SAS.
+> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include "clkc.h"
+> +
+> +static inline struct meson_vid_pll_div_data *
+> +meson_vid_pll_div_data(struct clk_regmap *clk)
+> +{
+> +       return (struct meson_vid_pll_div_data *)clk->data;
+> +}
+> +
+> +/*
+> + * This vid_pll divided is a fully programmable fractionnal divider to
+> + * achieve complex video clock rates.
+> + *
+> + * Here are provided the commonly used fraction values provided by Amlogic.
+> + */
+> +
+> +struct vid_pll_div {
+> +       unsigned int shift_val;
+> +       unsigned int shift_sel;
+> +       unsigned int frac_top;
+maybe call it divider?
+
+> +       unsigned int frac_bot;
+maybe call it multiplier?
+
+> +};
+> +
+> +#define VID_PLL_DIV(_val, _sel, _ft, _fb)                              \
+> +       {                                                               \
+> +               .shift_val = (_val),                                    \
+> +               .shift_sel = (_sel),                                    \
+> +               .frac_top = (_ft),                                      \
+> +               .frac_bot = (_fb),                                      \
+> +       }
+> +
+> +static const struct vid_pll_div vid_pll_div_table[] = {
+> +       VID_PLL_DIV(0x0aaa, 0, 2, 1),   /* 2/1  => /2 */
+> +       VID_PLL_DIV(0x5294, 2, 5, 2),   /* 5/2  => /2.5 */
+> +       VID_PLL_DIV(0x0db6, 0, 3, 1),   /* 3/1  => /3 */
+> +       VID_PLL_DIV(0x36cc, 1, 7, 2),   /* 7/2  => /3.5 */
+> +       VID_PLL_DIV(0x6666, 2, 15, 4),  /* 15/4 => /3.75 */
+> +       VID_PLL_DIV(0x0ccc, 4, 4, 1),   /* 4/1  => /4 */
+is the shift_sel (second parameter) correct here? the public S912
+datasheet, page 77 states that CLK_SEL is only 2 bit wide (and "4"
+exceeds that)
+
+> +       VID_PLL_DIV(0x739c, 2, 5, 1),   /* 5/1  => /5 */
+> +       VID_PLL_DIV(0x0e38, 0, 6, 1),   /* 6/1  => /6 */
+> +       VID_PLL_DIV(0x0000, 3, 25, 4),  /* 25/4 => /6.25 */
+> +       VID_PLL_DIV(0x3c78, 1, 7, 1),   /* 7/1  => /7 */
+> +       VID_PLL_DIV(0x78f0, 2, 15, 2),  /* 15/2 => /7.5 */
+> +       VID_PLL_DIV(0x0fc0, 0, 12, 1),  /* 12/1 => /12 */
+> +       VID_PLL_DIV(0x3f80, 1, 14, 1),  /* 14/1 => /14 */
+> +       VID_PLL_DIV(0x7f80, 2, 15, 1),  /* 15/1 => /15 */
+> +};
+> +
+> +#define to_meson_vid_pll_div(_hw) container_of(_hw, struct meson_vid_pll_div, hw)
+> +
+> +const struct vid_pll_div *_get_table_val(unsigned int shift_val,
+> +                                        unsigned int shift_sel)
+> +{
+> +       int i;
+> +
+> +       for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
+> +               if (vid_pll_div_table[i].shift_val == shift_val &&
+> +                   vid_pll_div_table[i].shift_sel == shift_sel)
+> +                       return &vid_pll_div_table[i];
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
+> +                                                  unsigned long parent_rate)
+> +{
+> +       struct clk_regmap *clk = to_clk_regmap(hw);
+> +       struct meson_vid_pll_div_data *pll_div = meson_vid_pll_div_data(clk);
+> +       const struct vid_pll_div *div;
+> +
+> +       div = _get_table_val(meson_parm_read(clk->map, &pll_div->val),
+> +                            meson_parm_read(clk->map, &pll_div->sel));
+> +       if (!div || !div->frac_top) {
+> +               pr_info("%s: Invalid config value for vid_pll_div\n", __func__);
+> +               return parent_rate;
+> +       }
+> +
+> +       return DIV_ROUND_UP_ULL(parent_rate * div->frac_bot, div->frac_top);
+with the rename above this would read:
+return DIV_ROUND_UP_ULL(parent_rate * div->multiplier, div->divider);
+
+
+Regards
+Martin
