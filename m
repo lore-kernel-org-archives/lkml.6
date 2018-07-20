@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA45ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1633EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3CCC20857
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3CCC20857
+	by mail.kernel.org (Postfix) with ESMTP id CFB2120854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFB2120854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388177AbeGTNRU (ORCPT
+        id S2388184AbeGTNRZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:17:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37284 "EHLO
+        Fri, 20 Jul 2018 09:17:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731919AbeGTNRT (ORCPT
+        with ESMTP id S1731923AbeGTNRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:17:19 -0400
+        Fri, 20 Jul 2018 09:17:25 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 237C0BBF;
-        Fri, 20 Jul 2018 12:28:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5BCBEBB6;
+        Fri, 20 Jul 2018 12:29:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 23/66] net_sched: blackhole: tell upper qdisc about dropped packets
-Date:   Fri, 20 Jul 2018 14:13:40 +0200
-Message-Id: <20180720121408.626007245@linuxfoundation.org>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 03/66] compiler, clang: properly override inline for clang
+Date:   Fri, 20 Jul 2018 14:13:20 +0200
+Message-Id: <20180720121407.443168631@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -51,37 +50,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 7e85dc8cb35abf16455f1511f0670b57c1a84608 ]
+commit 6d53cefb18e4646fb4bf62ccb6098fb3808486df upstream.
 
-When blackhole is used on top of classful qdisc like hfsc it breaks
-qlen and backlog counters because packets are disappear without notice.
+Commit abb2ea7dfd82 ("compiler, clang: suppress warning for unused
+static inline functions") just caused more warnings due to re-defining
+the 'inline' macro.
 
-In HFSC non-zero qlen while all classes are inactive triggers warning:
-WARNING: ... at net/sched/sch_hfsc.c:1393 hfsc_dequeue+0xba4/0xe90 [sch_hfsc]
-and schedules watchdog work endlessly.
+So undef it before re-defining it, and also add the 'notrace' attribute
+like the gcc version that this is overriding does.
 
-This patch return __NET_XMIT_BYPASS in addition to NET_XMIT_SUCCESS,
-this flag tells upper layer: this packet is gone and isn't queued.
+Maybe this makes clang happier.
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/sch_blackhole.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sched/sch_blackhole.c
-+++ b/net/sched/sch_blackhole.c
-@@ -21,7 +21,7 @@ static int blackhole_enqueue(struct sk_b
- 			     struct sk_buff **to_free)
- {
- 	qdisc_drop(skb, sch, to_free);
--	return NET_XMIT_SUCCESS;
-+	return NET_XMIT_SUCCESS | __NET_XMIT_BYPASS;
- }
+---
+ include/linux/compiler-clang.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -21,7 +21,8 @@
+  * -Wunused-function.  This turns out to avoid the need for complex #ifdef
+  * directives.  Suppress the warning in clang as well.
+  */
+-#define inline inline __attribute__((unused))
++#undef inline
++#define inline inline __attribute__((unused)) notrace
  
- static struct sk_buff *blackhole_dequeue(struct Qdisc *sch)
+ /* Clang doesn't have a way to turn it off per-function, yet. */
+ #ifdef __noretpoline
 
 
