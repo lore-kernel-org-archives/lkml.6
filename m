@@ -6,80 +6,108 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C83EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E118ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9BB20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:05:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E9BB20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id EAA3020661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:06:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAA3020661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbeGTKwx (ORCPT
+        id S1731055AbeGTKyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 06:52:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41296 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729816AbeGTKwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 06:52:53 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7633220766; Fri, 20 Jul 2018 12:05:20 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CA09B203EC;
-        Fri, 20 Jul 2018 12:05:19 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 12:05:18 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>
-Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
-Message-ID: <20180720120518.445b947b@bbrezillon>
-In-Reply-To: <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
-        <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 20 Jul 2018 06:54:12 -0400
+Received: from smtprelay0029.hostedemail.com ([216.40.44.29]:53124 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729999AbeGTKyM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 06:54:12 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 69156182CED5B;
+        Fri, 20 Jul 2018 10:06:40 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: brake65_1cfc47466d431
+X-Filterd-Recvd-Size: 3144
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 20 Jul 2018 10:06:39 +0000 (UTC)
+Message-ID: <01cfa83d2e29667d311d679c904b1648cd35c614.camel@perches.com>
+Subject: Re: [PATCH v2] checkpatch: kbuild: if_changed: check for multiple
+ calls in targets
+From:   Joe Perches <joe@perches.com>
+To:     Dirk Gouders <dirk@gouders.net>
+Cc:     Andy Whitcroft <apw@canonical.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 20 Jul 2018 03:06:37 -0700
+In-Reply-To: <20180720074804.4160-1-dirk@gouders.net>
+References: <ghy3eafbrf.fsf@lena.gouders.net>
+         <20180720074804.4160-1-dirk@gouders.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 11:57:56 +0200
-Peter Rosin <peda@axentia.se> wrote:
-
+On Fri, 2018-07-20 at 09:48 +0200, Dirk Gouders wrote:
+> The kbuild function if_changed should not be called more than once for
+> a target.
 > 
-> Maybe a bit-bang I3C master isn't feasible for some fundamental
-> reason?
+> Because that function writes the command line to a .cmd file for later
+> tests, multiple calls of it within a target would result in overwrites
+> of previous values and effectively render the command line test
+> meaningless, resulting in flip-flop behaviour.
+> 
+> Add a check for makefiles and kbuild files and produce an error for
+> targets with multiple calls to if_changed.
+> 
+> Three examples that now could be detected:
+> 
+> 98f78525371b55ccd (x86/boot: Refuse to build with data relocations)
+> 6a8dfe1cac5c591ae (microblaze: support U-BOOT image format)
+> 684151a75bf25f5ae (sparc32: added U-Boot build target: uImage)
+> 
+> Reviewed-by: Joe Perches <joe@perches.com>
 
-No, it's clearly not. The way an I3C master is supposed to switch from
-open-drain to push-pull during a transaction or the concept of IBIs
-are the first things that come to mind, but I guess you have plenty of
-other reasons preventing you from implementing a i3c-bit-bang master.
+I didn't review this.  I gave you feedback
+but didn't add a signature.
+
+For anything other than "Suggested-by:",
+please don't add signatures to patches unless
+the person gives directly gives you one.
+
+> Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Dirk Gouders <dirk@gouders.net>
+> ---
+> v2: rework commit message and regular expression
+> ---
+>  scripts/checkpatch.pl | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 447857ffaf6b..437e98414f74 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -2911,6 +2911,14 @@ sub process {
+>  			     "Use of $flag is deprecated, please use \`$replacement->{$flag} instead.\n" . $herecurr) if ($replacement->{$flag});
+>  		}
+>  
+> +		# Check for multiple calls of if_changed within a target in Makefiles
+> +		if (($realfile =~ /Makefile.*/ || $realfile =~ /Kbuild.*/) &&
+
+The uses of .* here are superfluous.
+
+> +		    ($prevline =~ /^[ +]\t\s*\$\(call\s+if_changed,/) &&
+> +		    ($line =~ /^[ +]\t\s*\$\(call\s+if_changed,/)) {
+> +				ERROR("MULTIPLE_IF_CHANGED",
+> +				      "Multiple calls of if_changed within a target.\n" . $herecurr);
+> +		}
+> +
+>  # check for DT compatible documentation
+>  		if (defined $root &&
+>  			(($realfile =~ /\.dtsi?$/ && $line =~ /^\+\s*compatible\s*=\s*\"/) ||
