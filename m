@@ -2,184 +2,150 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B66ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0244CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E89E62084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:17:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E89E62084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 959DB2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:19:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="gGku0lKG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 959DB2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbeGTIEi convert rfc822-to-8bit (ORCPT
+        id S1727333AbeGTIGA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:04:38 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36688 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727061AbeGTIEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:04:37 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 961BF207B4; Fri, 20 Jul 2018 09:17:46 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E9C0120728;
-        Fri, 20 Jul 2018 09:17:45 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 09:17:45 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Han Xu <han.xu@nxp.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Xiaolei Li <xiaolei.li@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 28/33] mtd: rawnand: docg4: convert driver to
- nand_scan()
-Message-ID: <20180720091745.7b1de031@xps13>
-In-Reply-To: <20180720012732.3753e0ef@bbrezillon>
-References: <20180719230026.8741-1-miquel.raynal@bootlin.com>
-        <20180719230026.8741-29-miquel.raynal@bootlin.com>
-        <20180720012732.3753e0ef@bbrezillon>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 20 Jul 2018 04:06:00 -0400
+Received: from mail-eopbgr00042.outbound.protection.outlook.com ([40.107.0.42]:22784
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727179AbeGTIGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:06:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YSJ+uZ9/rdxDPPoy3BLp9iq5JTIeDaT5kWpFwLw5lkc=;
+ b=gGku0lKGP5JFw1c5ZP8IgYhN3POXktZdU0KkzXLYLf3pTdoMcdPXzhqNicfh+wjPBX/5GQylSU8gUWgAFdEsJN3ZIbsBHG9M84aXHoyMezjzHx5qhaEn6JilooU0lT4Ar3cqgnT1mPnw4QkF9ICb7g8Fx/5NXgZQIKCCt/0QCSU=
+Received: from AM0PR05MB4260.eurprd05.prod.outlook.com (52.134.91.25) by
+ AM0PR05MB4371.eurprd05.prod.outlook.com (52.134.91.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.18; Fri, 20 Jul 2018 07:19:07 +0000
+Received: from AM0PR05MB4260.eurprd05.prod.outlook.com
+ ([fe80::6182:6453:c4f4:d83b]) by AM0PR05MB4260.eurprd05.prod.outlook.com
+ ([fe80::6182:6453:c4f4:d83b%3]) with mapi id 15.20.0973.018; Fri, 20 Jul 2018
+ 07:19:07 +0000
+From:   Meir Lichtinger <meirl@mellanox.com>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "Ofer Levi(SW)" <oferle@mellanox.com>
+CC:     Leon Romanovsky <leonro@mellanox.com>
+Subject: RE: arch/arc/ allmodconfig
+Thread-Topic: arch/arc/ allmodconfig
+Thread-Index: AQHUHyKW1M3GsAcZr0iuL832AquqnKSXtOGg
+Date:   Fri, 20 Jul 2018 07:19:07 +0000
+Message-ID: <AM0PR05MB42600653CF591791731CCCD8DA510@AM0PR05MB4260.eurprd05.prod.outlook.com>
+References: <e074d0ae-6d79-d21a-2278-15d516bb943e@infradead.org>
+ <C2D7FE5348E1B147BCA15975FBA23075012B0724EB@US01WEMBX2.internal.synopsys.com>
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B0724EB@US01WEMBX2.internal.synopsys.com>
+Accept-Language: en-GB, en-US, he-IL
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=meirl@mellanox.com; 
+x-originating-ip: [87.71.73.236]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR05MB4371;7:1JpmzKJw7l5tJi/HVUEEtdJickEjebh0fgiM8W681pRKlTWAY/SKm22ZFhdWBtBB0fa7X7hn7UfXzffTYzx3HkAwbnOfc2Hw4BlZDEclE7YpYtDDeK7U50dF2c27gAUzWDmKqUKDGwFpkNjEK8plAKsvIiCGc7Xb7FoeY2f3HHEFJp/s+NWmHb2FXzHL/RCvMGgXsOYJ/ctyUC00WwvCskbubQSwniUzhImGoCyfOycovcJSknYVvPfjxoXnCWW9
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: bc02908e-c98a-412a-dca4-08d5ee111505
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600067)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR05MB4371;
+x-ms-traffictypediagnostic: AM0PR05MB4371:
+x-microsoft-antispam-prvs: <AM0PR05MB43717DCF38AEDB60069030F9DA510@AM0PR05MB4371.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM0PR05MB4371;BCL:0;PCL:0;RULEID:;SRVR:AM0PR05MB4371;
+x-forefront-prvs: 073966E86B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(396003)(346002)(376002)(136003)(13464003)(43544003)(189003)(199004)(55016002)(6506007)(14444005)(110136005)(2501003)(6246003)(478600001)(3846002)(6116002)(81156014)(256004)(74316002)(5660300001)(76176011)(8936002)(81166006)(102836004)(316002)(8676002)(106356001)(86362001)(305945005)(107886003)(2906002)(6636002)(7736002)(33656002)(97736004)(26005)(6436002)(229853002)(25786009)(446003)(186003)(68736007)(7696005)(2900100001)(105586002)(53546011)(5250100002)(11346002)(4326008)(9686003)(53936002)(486006)(476003)(14454004)(66066001)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB4371;H:AM0PR05MB4260.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: EbSChfUMB+ovWpj7vPRkAUGeeToQDSqbGr+KjzPrREfKus+hqf1XLSJqSOM1cyqsBG2QSqtrrprfxLPYw1WfY/9efQpIXZDizHA/2g4ZJetVqfdzgFna12Nx5pnpcocJTHqqzz690DktctGEcxJTav4pHDGL7TfbDSH9OmTQ7Ka8wIW7Q/gA71gthiISE4T59aL9LvgSXrsQ6TLvK9zYLw/Qgzi6adxi/uvbqtuEsFWRwbQ2M383ucFNqw1wcOP4Q3uKYtZIv4fPgZ1VPzX41yMbywPX0pF7ZuDA924eXI2bVRKPSmY+MSQmSByDiqEky2o9Q/TaaMSMM2TDUH2iNkvQS4ssra8cHdXhqY9o2a0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc02908e-c98a-412a-dca4-08d5ee111505
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jul 2018 07:19:07.6259
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB4371
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Hi Vineet,
+Ofer Levi is now the maintainer of arch/arc/plat-eznps
 
-Boris Brezillon <boris.brezillon@bootlin.com> wrote on Fri, 20 Jul 2018
-01:27:32 +0200:
+Ofer,
+Please take care of the issue below
 
-> On Fri, 20 Jul 2018 01:00:21 +0200
-> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> 
-> > Two helpers have been added to the core to make ECC-related
-> > configuration between the detection phase and the final NAND scan. Use
-> > these hooks and convert the driver to just use nand_scan() instead of
-> > both nand_scan_ident() and nand_scan_tail().
-> > 
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > ---
-> >  drivers/mtd/nand/raw/docg4.c | 55 ++++++++++++++++++++++++++------------------
-> >  1 file changed, 32 insertions(+), 23 deletions(-)
-> > 
-> > diff --git a/drivers/mtd/nand/raw/docg4.c b/drivers/mtd/nand/raw/docg4.c
-> > index 4dccdfba6140..2f6fcd4efab2 100644
-> > --- a/drivers/mtd/nand/raw/docg4.c
-> > +++ b/drivers/mtd/nand/raw/docg4.c
-> > @@ -1227,10 +1227,9 @@ static void __init init_mtd_structs(struct mtd_info *mtd)
-> >  	 * required within a nand driver because they are performed by the nand
-> >  	 * infrastructure code as part of nand_scan().  In this case they need
-> >  	 * to be initialized here because we skip call to nand_scan_ident() (the
-> > -	 * first half of nand_scan()).  The call to nand_scan_ident() is skipped
-> > -	 * because for this device the chip id is not read in the manner of a
-> > -	 * standard nand device.  Unfortunately, nand_scan_ident() does other
-> > -	 * things as well, such as call nand_set_defaults().
-> > +	 * first half of nand_scan()).  The call to nand_scan_ident() could be
-> > +	 * skipped because for this device the chip id is not read in the manner
-> > +	 * of a standard nand device.
-> >  	 */
-> >  
-> >  	struct nand_chip *nand = mtd_to_nand(mtd);
-> > @@ -1315,6 +1314,27 @@ static int __init read_id_reg(struct mtd_info *mtd)
-> >  
-> >  static char const *part_probes[] = { "cmdlinepart", "saftlpart", NULL };
-> >  
-> > +static int docg4_attach_chip(struct nand_chip *chip)
-> > +{
-> > +	struct mtd_info *mtd = nand_to_mtd(chip);
-> > +	struct docg4_priv *doc = (struct docg4_priv *)(chip + 1);
-> > +
-> > +	init_mtd_structs(mtd);
-> > +
-> > +	/* Initialize kernel BCH algorithm */
-> > +	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
-> > +	if (!doc->bch)
-> > +		return -EINVAL;
-> > +
-> > +	reset(mtd);
-> > +
-> > +	return read_id_reg(mtd);
-> > +}
-> > +
-> > +static struct nand_controller_ops docg4_controller_ops = {
-> > +	.attach_chip = docg4_attach_chip,
-> > +};
-> > +
-> >  static int __init probe_docg4(struct platform_device *pdev)
-> >  {
-> >  	struct mtd_info *mtd;
-> > @@ -1350,26 +1370,16 @@ static int __init probe_docg4(struct platform_device *pdev)
-> >  	mtd->dev.parent = &pdev->dev;
-> >  	doc->virtadr = virtadr;
-> >  	doc->dev = dev;
-> > -
-> > -	init_mtd_structs(mtd);
-> > -
-> > -	/* initialize kernel bch algorithm */
-> > -	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
-> > -	if (doc->bch == NULL) {
-> > -		retval = -EINVAL;
-> > -		goto free_nand;
-> > -	}
-> > -
-> >  	platform_set_drvdata(pdev, doc);
-> >  
-> > -	reset(mtd);
-> > -	retval = read_id_reg(mtd);
-> > -	if (retval == -ENODEV) {
-> > -		dev_warn(dev, "No diskonchip G4 device found.\n");
-> > -		goto free_bch;
-> > -	}
-> > -
-> > -	retval = nand_scan_tail(mtd);
-> > +	/*
-> > +	 * Asking for 0 chips is useless here but it warns the user that the use
-> > +	 * of the nand_scan() function is a bit abused here because the
-> > +	 * initialization is actually a bit specific and re-handled again in the
-> > +	 * ->attach_chip() hook. It will probably leak some memory though.
-> > +	 */
-> > +	nand->dummy_controller.ops = &docg4_controller_ops;
-> > +	retval = nand_scan(mtd, 0);
-> >  	if (retval)
-> >  		goto free_bch;  
-> 
-> Hm, not sure this works. The driver only calls nand_scan_tail(), but
-> you replace that by a call to nand_scan(), which will call both
-> nand_scan_ident() and nand_scan_tail(), and I'm pretty sure
-> nand_scan_ident() will fail here.
+Thanks
+=20
 
-I know docg4 is a bit specific and could maybe be moved out of the raw/
-subdirectory. But in the meantime I don't want to block the series for
-this. The better I can propose right now (open to other ideas as
-well) would be to return 0 in nand_scan_ident() if the maxchip parameter
-is 0 which is the case only in this driver AFAIS.
+-----Original Message-----
+From: Vineet Gupta [mailto:Vineet.Gupta1@synopsys.com]=20
+Sent: Thursday, July 19, 2018 19:22
+To: Randy Dunlap <rdunlap@infradead.org>; LKML <linux-kernel@vger.kernel.or=
+g>; Vineet Gupta <Vineet.Gupta1@synopsys.com>; linux-snps-arc@lists.infrade=
+ad.org
+Cc: Elad Kanfi <eladkan@mellanox.com>; Leon Romanovsky <leonro@mellanox.com=
+>
+Subject: Re: arch/arc/ allmodconfig
 
-Miquèl
++CC some folks from Mellanox
+
+On 07/18/2018 10:37 PM, Randy Dunlap wrote:
+> Hi,
+>
+> When I try to (cross-)build arch/arc/ allmodconfig, I get a syntax error =
+here:
+>
+> ./arch/arc/plat-eznps/mtm.c: In function 'mtm_enable_core':
+> ../arch/arc/plat-eznps/mtm.c:113:30: error: storage size of 'dpc' isn't k=
+nown
+>   struct nps_host_reg_aux_dpc dpc;
+>                               ^~~
+>
+> There is no struct nps_host_reg_aux_dpc in the kernel tree.
+>
+> Can you do something about this, please?
+
+Thx for the report Randy. I'm calling out Mellanox folks to see if they can=
+ provide a fixup, else we will revert the corresponding change.
+
+@Elad, upstream commit 3f9cd874dcc8705 "ARC: [plat-eznps] avoid toggling of=
+ DPC register" added reference to struct nps_host_reg_aux_dpc but the defin=
+ition is missing. Can you please provide a fixup as I have no idea of that =
+platform specific struct.
+
+@ Leon, reaching our to you, since it seems you removed Elad from MAINTAINE=
+RS file, so I'm not sure if he is still at Mellanox.
+The two folks I worked with on EZCHiip Linux port Noam Camus and Gilad have=
+ left Mellanox.
+If you or someone from Mellanox are interested in maintaining this platform=
+, please update the arch/arc/plat-eznps section of MAINTAINERS file.
+
+
+Thx,
+-Vineet
