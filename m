@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B1CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9E1ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B86C620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B6C620652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:48:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="D49FMcwu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86C620652
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="nBTc1P3j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6C620652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeGTIfA (ORCPT
+        id S1727675AbeGTIe7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:35:00 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:28448 "EHLO
+        Fri, 20 Jul 2018 04:34:59 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:28453 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbeGTIe6 (ORCPT
+        with ESMTP id S1727290AbeGTIe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Jul 2018 04:34:58 -0400
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w6K7kdj0008048;
-        Fri, 20 Jul 2018 16:46:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w6K7kdj0008048
+        by conuserg-08.nifty.com with ESMTP id w6K7kdiw008048;
+        Fri, 20 Jul 2018 16:46:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w6K7kdiw008048
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1532072804;
-        bh=0+xfs+t9qw6M2tt8q3cWVLKoBU4NgX/D4N4D58QqJ4g=;
+        s=dec2015msa; t=1532072803;
+        bh=TqBqVF6vt5N89XqqLGehnhoV0W4cuLDMGfMaQ668pc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D49FMcwuuk7iycUF/XCYQiqBAMTZrXLhcgFAIHMgOovnwMGGrUgYR7Y3/AQGT87fj
-         Vk4qkmOQ02ds/NGvIqCAVKSr58k4riskgXXbHnUTfADhd8ScXivgrulvE+rtJMTN1l
-         7bhUUpvfggXeRoOXgURzwfkYoPS9t9kjAyOEI3QkJc6H7tvZofBuhE3MUIcoWaFG80
-         CC2sf0ybBfYelp04VRYUW4rxLTZOEAPYZmHAFBHMCV3cYRUMMbEWh9bL5hLXleiIMw
-         t5icg3xDpHCxadlvtpbsdu9U+Xog0yxr4IS/z9pfGfZ37RqAAVoZolXeIJ8XRCIQ78
-         w4SZFSj/IV8qg==
+        b=nBTc1P3jKlwfjB9TR/2ueKdxQfxrql8DgHcQ8gafD9TBCv81UP0mWzhdFr12KCqrZ
+         kKBLMSkm6HbA7q3q6SISAKCYzXmeEzRDf/E5lTVE5KNVYiEOCSx8MWm32YpogVGl+9
+         tm2RNrcnjFS01zc3bN92o4ffPlY/O4VOWDjBN6IDU/zmL14LQ/xSraHxGNwSzjmFbo
+         r5ILg1yIdFzyGTvSe8fBrDltbcfZN2Ipvdr7xQb/Frx3n8GgQm+2dFWyvqNHYSG4fA
+         H91bkiiN6aX4S8Mw6zQWR3Jubf/+zjsYMebjjtNYL6q9ZGd8UTUBdaMYHc3sHsq5ry
+         DuhWL0kK/fhWA==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -46,80 +46,250 @@ Cc:     Dirk Gouders <dirk@gouders.net>,
         Ulf Magnusson <ulfalizer@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 08/11] kbuild: add .DELETE_ON_ERROR special target
-Date:   Fri, 20 Jul 2018 16:46:33 +0900
-Message-Id: <1532072796-7947-9-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v4 06/11] kconfig: allow all config targets to write auto.conf if missing
+Date:   Fri, 20 Jul 2018 16:46:31 +0900
+Message-Id: <1532072796-7947-7-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532072796-7947-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1532072796-7947-1-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If Make gets a fatal signal while a shell is executing, it may delete
-the target file that the recipe was supposed to update.  This is needed
-to make sure that it is remade from scratch when Make is next run; if
-Make is interrupted after the recipe has begun to write the target file,
-it results in an incomplete file whose time stamp is newer than that
-of the prerequisites files.  Make automatically deletes the incomplete
-file on interrupt unless the target is marked .PRECIOUS.
+Currently, only syncconfig creates or updates include/config/auto.conf
+and some other files.  Other config targets create or update only the
+.config file.
 
-The situation is just the same as when the shell fails for some reasons.
-Usually when a recipe line fails, if it has changed the target file at
-all, the file is corrupted, or at least it is not completely updated.
-Yet the file’s time stamp says that it is now up to date, so the next
-time Make runs, it will not try to update that file.
+When you configure and build the kernel from a pristine source tree,
+any config target is followed by syncconfig in the build stage since
+include/config/auto.conf is missing.
 
-However, Make does not cater to delete the incomplete target file in
-this case.  We need to add .DELETE_ON_ERROR somewhere in the Makefile
-to request it.
+We are moving compiler tests from Makefile to Kconfig.  It means that
+parsing Kconfig files will be more costly since Kconfig invokes the
+compiler commands internally.  Thus, we want to avoid invoking Kconfig
+twice (one for *config to create the .config, and one for syncconfig
+to synchronize the auto.conf).  If auto.conf does not exist, we can
+generate all configuration files in the first configuration stage,
+which will save the syncconfig in the build stage.
 
-scripts/Kbuild.include seems a suitable place to add it because it is
-included from almost all sub-makes.
+Please note this should be done only when auto.conf is missing.  If
+*config blindly did this, time stamp files under include/config/ would
+be unnecessarily touched, triggering unneeded rebuild of objects.
 
-Please note .DELETE_ON_ERROR is not effective for phony targets.
+I assume a scenario like this:
 
-The external module building should never ever touch the kernel tree.
-The following recipe fails if include/generated/autoconf.h is missing.
-However, include/config/auto.conf is not deleted since it is a phony
-target.
+ 1. You have a source tree that has already been built
+    with CONFIG_FOO disabled
 
- PHONY += include/config/auto.conf
+ 2. Run "make menuconfig" to enable CONFIG_FOO
 
- include/config/auto.conf:
-         $(Q)test -e include/generated/autoconf.h -a -e $@ || (          \
-         echo >&2;                                                       \
-         echo >&2 "  ERROR: Kernel configuration is invalid.";           \
-         echo >&2 "         include/generated/autoconf.h or $@ are missing.";\
-         echo >&2 "         Run 'make oldconfig && make prepare' on kernel src to fix it."; \
-         echo >&2 ;                                                      \
-         /bin/false)
+ 3. CONFIG_FOO turns out to be unnecessary.
+    Run "make menuconfig" again to disable CONFIG_FOO
+
+ 4. Run "make"
+
+In this case, include/config/foo.h should not be touched since there
+is no change in CONFIG_FOO.  The sync process should be delayed until
+the user really attempts to build the kernel.
+
+This commit has another motivation; I want to suppress the 'No such
+file or directory' warning from the 'include' directive.
+
+The top-level Makefile includes auto.conf with '-include' directive,
+like this:
+
+  ifeq ($(dot-config),1)
+  -include include/config/auto.conf
+  endif
+
+This looks strange because auto.conf is mandatory when dot-config is 1.
+I guess only the reason of using '-include' is to suppress the warning
+'include/config/auto.conf: No such file or directory' when building
+from a clean tree.  However, this has a side-effect; Make considers
+the files included by '-include' are optional.  Hence, Make continues
+to build even if it fails to generate include/config/auto.conf.  I will
+change this in the next commit, but the warning message is annoying.
+(At least, kbuild test robot reports it as a regression.)
+
+With this commit, Kconfig will generate all configuration files together
+with the .config and I guess it is a solution good enough to suppress
+the warning.
+
+Note:
+GNU Make 4.2 or later does not display the warning from the 'include'
+directive if include files are successfully generated.  See GNU Make
+commit 87a5f98d248f ("[SV 102] Don't show unnecessary include file
+errors.")  However, older GNU Make versions are still widely used.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
 Changes in v4: None
 
- scripts/Kbuild.include | 3 +++
- 1 file changed, 3 insertions(+)
+ scripts/kconfig/conf.c      | 31 +++++++++++++++++--------------
+ scripts/kconfig/confdata.c  | 11 +++++++----
+ scripts/kconfig/gconf.c     |  1 +
+ scripts/kconfig/lkc_proto.h |  2 +-
+ scripts/kconfig/mconf.c     |  1 +
+ scripts/kconfig/nconf.c     |  1 +
+ scripts/kconfig/qconf.cc    |  2 ++
+ 7 files changed, 30 insertions(+), 19 deletions(-)
 
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index 3d14d0e..7f4b1db 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -400,3 +400,6 @@ endif
- endef
- #
- ###############################################################################
+diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+index 5af8991..b35cc93 100644
+--- a/scripts/kconfig/conf.c
++++ b/scripts/kconfig/conf.c
+@@ -686,29 +686,32 @@ int main(int ac, char **av)
+ 		break;
+ 	}
+ 
+-	if (sync_kconfig) {
+-		/* syncconfig is used during the build so we shall update autoconf.
+-		 * All other commands are only used to generate a config.
+-		 */
+-		if (!no_conf_write && conf_write(NULL)) {
+-			fprintf(stderr, "\n*** Error during writing of the configuration.\n\n");
+-			exit(1);
+-		}
+-		if (conf_write_autoconf()) {
+-			fprintf(stderr, "\n*** Error during update of the configuration.\n\n");
+-			return 1;
+-		}
+-	} else if (input_mode == savedefconfig) {
++	if (input_mode == savedefconfig) {
+ 		if (conf_write_defconfig(defconfig_file)) {
+ 			fprintf(stderr, "n*** Error while saving defconfig to: %s\n\n",
+ 				defconfig_file);
+ 			return 1;
+ 		}
+ 	} else if (input_mode != listnewconfig) {
+-		if (conf_write(NULL)) {
++		if (!no_conf_write && conf_write(NULL)) {
+ 			fprintf(stderr, "\n*** Error during writing of the configuration.\n\n");
+ 			exit(1);
+ 		}
 +
-+# delete partially updated (i.e. corrupted) files on error
-+.DELETE_ON_ERROR:
++		/*
++		 * Create auto.conf if it does not exist.
++		 * This prevents GNU Make 4.1 or older from emitting
++		 * "include/config/auto.conf: No such file or directory"
++		 * in the top-level Makefile
++		 *
++		 * syncconfig always creates or updates auto.conf because it is
++		 * used during the build.
++		 */
++		if (conf_write_autoconf(sync_kconfig) && sync_kconfig) {
++			fprintf(stderr,
++				"\n*** Error during sync of the configuration.\n\n");
++			return 1;
++		}
+ 	}
+ 	return 0;
+ }
+diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+index 029ab16..620b50d 100644
+--- a/scripts/kconfig/confdata.c
++++ b/scripts/kconfig/confdata.c
+@@ -1008,13 +1008,17 @@ static int conf_split_config(void)
+ 	return res;
+ }
+ 
+-int conf_write_autoconf(void)
++int conf_write_autoconf(int overwrite)
+ {
+ 	struct symbol *sym;
+ 	const char *name;
++	const char *autoconf_name = conf_get_autoconfig_name();
+ 	FILE *out, *tristate, *out_h;
+ 	int i;
+ 
++	if (!overwrite && is_present(autoconf_name))
++		return 0;
++
+ 	sym_clear_all_valid();
+ 
+ 	conf_write_dep("include/config/auto.conf.cmd");
+@@ -1077,14 +1081,13 @@ int conf_write_autoconf(void)
+ 	if (rename(".tmpconfig_tristate", name))
+ 		return 1;
+ 
+-	name = conf_get_autoconfig_name();
+-	if (make_parent_dir(name))
++	if (make_parent_dir(autoconf_name))
+ 		return 1;
+ 	/*
+ 	 * This must be the last step, kbuild has a dependency on auto.conf
+ 	 * and this marks the successful completion of the previous steps.
+ 	 */
+-	if (rename(".tmpconfig", name))
++	if (rename(".tmpconfig", autoconf_name))
+ 		return 1;
+ 
+ 	return 0;
+diff --git a/scripts/kconfig/gconf.c b/scripts/kconfig/gconf.c
+index 610c4ab..f16ed51 100644
+--- a/scripts/kconfig/gconf.c
++++ b/scripts/kconfig/gconf.c
+@@ -525,6 +525,7 @@ void on_save_activate(GtkMenuItem * menuitem, gpointer user_data)
+ {
+ 	if (conf_write(NULL))
+ 		text_insert_msg("Error", "Unable to save configuration !");
++	conf_write_autoconf(0);
+ }
+ 
+ 
+diff --git a/scripts/kconfig/lkc_proto.h b/scripts/kconfig/lkc_proto.h
+index a8b7a33..b0cd52f 100644
+--- a/scripts/kconfig/lkc_proto.h
++++ b/scripts/kconfig/lkc_proto.h
+@@ -7,7 +7,7 @@ int conf_read(const char *name);
+ int conf_read_simple(const char *name, int);
+ int conf_write_defconfig(const char *name);
+ int conf_write(const char *name);
+-int conf_write_autoconf(void);
++int conf_write_autoconf(int overwrite);
+ bool conf_get_changed(void);
+ void conf_set_changed_callback(void (*fn)(void));
+ void conf_set_message_callback(void (*fn)(const char *fmt, va_list ap));
+diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
+index 5294ed1..82b27a0 100644
+--- a/scripts/kconfig/mconf.c
++++ b/scripts/kconfig/mconf.c
+@@ -977,6 +977,7 @@ static int handle_exit(void)
+ 					  "\n\n");
+ 			return 1;
+ 		}
++		conf_write_autoconf(0);
+ 		/* fall through */
+ 	case -1:
+ 		if (!silent)
+diff --git a/scripts/kconfig/nconf.c b/scripts/kconfig/nconf.c
+index 97b7844..208f7be 100644
+--- a/scripts/kconfig/nconf.c
++++ b/scripts/kconfig/nconf.c
+@@ -674,6 +674,7 @@ static int do_exit(void)
+ 				  "Your configuration changes were NOT saved.",
+ 				  1,
+ 				  "<OK>");
++		conf_write_autoconf(0);
+ 		break;
+ 	default:
+ 		btn_dialog(
+diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
+index ad9c22d..62261b3 100644
+--- a/scripts/kconfig/qconf.cc
++++ b/scripts/kconfig/qconf.cc
+@@ -1535,6 +1535,8 @@ bool ConfigMainWindow::saveConfig(void)
+ 		QMessageBox::information(this, "qconf", "Unable to save configuration!");
+ 		return false;
+ 	}
++	conf_write_autoconf(0);
++
+ 	return true;
+ }
+ 
 -- 
 2.7.4
 
