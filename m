@@ -2,115 +2,93 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABB6ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A490ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFC6B20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:24:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFC6B20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FCA320652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:26:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FCA320652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731591AbeGTONH (ORCPT
+        id S1731660AbeGTOOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 10:13:07 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:49710 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728335AbeGTONH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 10:13:07 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6KDIxZK009824;
-        Fri, 20 Jul 2018 08:23:03 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2kbg2301br-1;
-        Fri, 20 Jul 2018 08:23:03 -0500
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id 8E608611CE60;
-        Fri, 20 Jul 2018 08:24:13 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.301.0; Fri, 20 Jul 2018
- 14:23:02 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w6KDMwCn011246; Fri,
- 20 Jul 2018 14:22:58 +0100
-Date:   Fri, 20 Jul 2018 14:22:58 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     Marcel Ziswiler <marcel@ziswiler.com>,
-        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Marcel Ziswiler" <marcel.ziswiler@toradex.com>,
-        <linux-mips@linux-mips.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        James Hogan <jhogan@kernel.org>,
-        "Philippe Ombredanne" <pombredanne@nexb.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Burton <paul.burton@mips.com>,
-        "Liam Girdwood" <lgirdwood@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Daniel Mack" <daniel@zonque.org>,
-        Manuel Lauss <manuel.lauss@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "Jaroslav Kysela" <perex@perex.cz>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
-        Han Xu <han.xu@nxp.com>, Donglin Peng <dolinux.peng@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH] ASoC: wm9712: fix replace codec to component
-Message-ID: <20180720132258.GD18740@imbe.wolfsonmicro.main>
-References: <20180720075148.14648-1-marcel@ziswiler.com>
- <87effy48lz.wl-kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <87effy48lz.wl-kuninori.morimoto.gx@renesas.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=495 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1806210000
- definitions=main-1807200152
+        Fri, 20 Jul 2018 10:14:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42736 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730825AbeGTOOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 10:14:47 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 55B6181A4EA6;
+        Fri, 20 Jul 2018 13:26:29 +0000 (UTC)
+Received: from vitty.brq.redhat.com (ovpn-204-189.brq.redhat.com [10.40.204.189])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E77CF2026D69;
+        Fri, 20 Jul 2018 13:26:27 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RFC 0/7] x86/kvm/nVMX: optimize MMU switch between L1 and L2
+Date:   Fri, 20 Jul 2018 15:26:19 +0200
+Message-Id: <20180720132626.5975-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 13:26:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 13:26:29 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 08:30:41AM +0000, Kuninori Morimoto wrote:
-> 
-> Hi Marcel
-> 
-> > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > 
-> > Since commit 143b44845d87 ("ASoC: wm9712: replace codec to component")
-> > "wm9712-codec" got renamed to "wm9712-component", however, this change
-> > never got propagated down to the actual board/platform drivers. E.g. on
-> > Colibri T20 this lead to the following spew upon boot with sound/touch
-> > being broken:
-> 
-> Oops, my bad...
-> The platform_driver name is not important,
-> how about simply rename back it to "wm9712-codec" ?
-> 
+Currently, when we switch from L1 to L2 we do the following:
+- Re-initialize L1 MMU as shadow EPT MMU (nested_ept_init_mmu_context())
+- Re-initialize 'nested' MMU (nested_vmx_load_cr3() -> init_kvm_nested_mmu())
+- Reload MMU root upon guest entry.
 
-Yeah I would agree here wm9712-component isn't great as a name
-for board files etc. Lets rename back to wm9712-codec for these
-specific bits.
+When we switch back we do:
+- Re-initialize L1 MMU (nested_vmx_load_cr3() -> init_kvm_tdp_mmu())
+- Reload MMU root upon guest entry.
 
-Thanks,
-Charles
+This seems to be sub-optimal. Initializing MMU is expensive (thanks to
+update_permission_bitmask(), update_pkru_bitmask(),..) and reloading MMU
+root doesn't come for free.
+
+Try to approach the issue by splitting L1-normal and L1-nested MMUs and
+checking if MMU reset is really needed. This spares us about 1000 cpu
+cycles on nested vmexit.
+
+RFC part:
+- Does this look like a plausible solution?
+- SVM nested can probably be optimized in the same way.
+- Doesn mmu_update_needed() cover everything?
+
+Vitaly Kuznetsov (7):
+  x86/kvm/mmu: make vcpu->mmu a pointer to the current MMU
+  x86/kvm/mmu.c: set get_pdptr hook in kvm_init_shadow_ept_mmu()
+  x86/kvm/mmu.c: add kvm_mmu parameter to kvm_mmu_free_roots()
+  x86/kvm/mmu: introduce guest_mmu
+  x86/kvm/mmu: get rid of redundant kvm_mmu_setup()
+  x86/kvm/nVMX: introduce scache for kvm_init_shadow_ept_mmu
+  x86/kvm/nVMX: optimize MMU switch from nested_vmx_load_cr3()
+
+ arch/x86/include/asm/kvm_host.h |  36 ++++-
+ arch/x86/kvm/cpuid.c            |   2 +-
+ arch/x86/kvm/mmu.c              | 282 ++++++++++++++++++++++++++--------------
+ arch/x86/kvm/mmu.h              |   2 +-
+ arch/x86/kvm/mmu_audit.c        |  12 +-
+ arch/x86/kvm/paging_tmpl.h      |  17 +--
+ arch/x86/kvm/svm.c              |  20 +--
+ arch/x86/kvm/vmx.c              |  52 +++++---
+ arch/x86/kvm/x86.c              |  34 ++---
+ 9 files changed, 292 insertions(+), 165 deletions(-)
+
+-- 
+2.14.4
+
