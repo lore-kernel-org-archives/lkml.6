@@ -6,55 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC73BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13585ECDFBD
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D99020652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D99020652
+	by mail.kernel.org (Postfix) with ESMTP id C9B6520652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9B6520652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390283AbeGTNdE (ORCPT
+        id S2390297AbeGTNdF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:33:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55490 "EHLO
+        Fri, 20 Jul 2018 09:33:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731629AbeGTNdD (ORCPT
+        with ESMTP id S2389964AbeGTNdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:33:03 -0400
+        Fri, 20 Jul 2018 09:33:04 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D37AD2E;
-        Fri, 20 Jul 2018 12:36:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDF1ACFE;
+        Fri, 20 Jul 2018 12:40:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Peter Anvin" <hpa@linux.intel.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, acme@redhat.com,
-        akataria@vmware.com, akpm@linux-foundation.org,
-        andrea.parri@amarulasolutions.com, ard.biesheuvel@linaro.org,
-        arnd@arndb.de, aryabinin@virtuozzo.com, astrachan@google.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        caoj.fnst@cn.fujitsu.com, geert@linux-m68k.org,
-        ghackmann@google.com, jan.kiszka@siemens.com,
-        jarkko.sakkinen@linux.intel.com, joe@perches.com,
-        jpoimboe@redhat.com, keescook@google.com,
-        kirill.shutemov@linux.intel.com, kstewart@linuxfoundation.org,
-        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        manojgupta@google.com, mawilcox@microsoft.com,
-        michal.lkml@markovi.net, mjg59@google.com, mka@chromium.org,
-        pombredanne@nexb.com, rientjes@google.com, rostedt@goodmis.org,
-        thomas.lendacky@amd.com, tstellar@redhat.com, tweek@google.com,
-        virtualization@lists.linux-foundation.org, will.deacon@arm.com,
-        yamada.masahiro@socionext.com, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 002/101] x86/asm: Add _ASM_ARG* constants for argument registers to <asm/asm.h>
-Date:   Fri, 20 Jul 2018 14:13:08 +0200
-Message-Id: <20180720121422.978206102@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 4.17 100/101] bpf, arm32: fix to use bpf_jit_binary_lock_ro api
+Date:   Fri, 20 Jul 2018 14:14:46 +0200
+Message-Id: <20180720121427.468225807@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -71,134 +50,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: H. Peter Anvin <hpa@linux.intel.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 0e2e160033283e20f688d8bad5b89460cc5bfcc4 upstream.
+commit 18d405af30bf6506bf2fc49056de7691c949812e upstream.
 
-i386 and x86-64 uses different registers for arguments; make them
-available so we don't have to #ifdef in the actual code.
+Any eBPF JIT that where its underlying arch supports ARCH_HAS_SET_MEMORY
+would need to use bpf_jit_binary_{un,}lock_ro() pair instead of the
+set_memory_{ro,rw}() pair directly as otherwise changes to the former
+might break. arm32's eBPF conversion missed to change it, so fix this
+up here.
 
-Native size and specified size (q, l, w, b) versions are provided.
-
-Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
-Acked-by: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: acme@redhat.com
-Cc: akataria@vmware.com
-Cc: akpm@linux-foundation.org
-Cc: andrea.parri@amarulasolutions.com
-Cc: ard.biesheuvel@linaro.org
-Cc: arnd@arndb.de
-Cc: aryabinin@virtuozzo.com
-Cc: astrachan@google.com
-Cc: boris.ostrovsky@oracle.com
-Cc: brijesh.singh@amd.com
-Cc: caoj.fnst@cn.fujitsu.com
-Cc: geert@linux-m68k.org
-Cc: ghackmann@google.com
-Cc: gregkh@linuxfoundation.org
-Cc: jan.kiszka@siemens.com
-Cc: jarkko.sakkinen@linux.intel.com
-Cc: joe@perches.com
-Cc: jpoimboe@redhat.com
-Cc: keescook@google.com
-Cc: kirill.shutemov@linux.intel.com
-Cc: kstewart@linuxfoundation.org
-Cc: linux-efi@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org
-Cc: manojgupta@google.com
-Cc: mawilcox@microsoft.com
-Cc: michal.lkml@markovi.net
-Cc: mjg59@google.com
-Cc: mka@chromium.org
-Cc: pombredanne@nexb.com
-Cc: rientjes@google.com
-Cc: rostedt@goodmis.org
-Cc: thomas.lendacky@amd.com
-Cc: tstellar@redhat.com
-Cc: tweek@google.com
-Cc: virtualization@lists.linux-foundation.org
-Cc: will.deacon@arm.com
-Cc: yamada.masahiro@socionext.com
-Link: http://lkml.kernel.org/r/20180621162324.36656-3-ndesaulniers@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 39c13c204bb1 ("arm: eBPF JIT compiler")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/asm.h |   59 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ arch/arm/net/bpf_jit_32.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -46,6 +46,65 @@
- #define _ASM_SI		__ASM_REG(si)
- #define _ASM_DI		__ASM_REG(di)
+--- a/arch/arm/net/bpf_jit_32.c
++++ b/arch/arm/net/bpf_jit_32.c
+@@ -1928,7 +1928,7 @@ struct bpf_prog *bpf_int_jit_compile(str
+ 		/* there are 2 passes here */
+ 		bpf_jit_dump(prog->len, image_size, 2, ctx.target);
  
-+#ifndef __x86_64__
-+/* 32 bit */
-+
-+#define _ASM_ARG1	_ASM_AX
-+#define _ASM_ARG2	_ASM_DX
-+#define _ASM_ARG3	_ASM_CX
-+
-+#define _ASM_ARG1L	eax
-+#define _ASM_ARG2L	edx
-+#define _ASM_ARG3L	ecx
-+
-+#define _ASM_ARG1W	ax
-+#define _ASM_ARG2W	dx
-+#define _ASM_ARG3W	cx
-+
-+#define _ASM_ARG1B	al
-+#define _ASM_ARG2B	dl
-+#define _ASM_ARG3B	cl
-+
-+#else
-+/* 64 bit */
-+
-+#define _ASM_ARG1	_ASM_DI
-+#define _ASM_ARG2	_ASM_SI
-+#define _ASM_ARG3	_ASM_DX
-+#define _ASM_ARG4	_ASM_CX
-+#define _ASM_ARG5	r8
-+#define _ASM_ARG6	r9
-+
-+#define _ASM_ARG1Q	rdi
-+#define _ASM_ARG2Q	rsi
-+#define _ASM_ARG3Q	rdx
-+#define _ASM_ARG4Q	rcx
-+#define _ASM_ARG5Q	r8
-+#define _ASM_ARG6Q	r9
-+
-+#define _ASM_ARG1L	edi
-+#define _ASM_ARG2L	esi
-+#define _ASM_ARG3L	edx
-+#define _ASM_ARG4L	ecx
-+#define _ASM_ARG5L	r8d
-+#define _ASM_ARG6L	r9d
-+
-+#define _ASM_ARG1W	di
-+#define _ASM_ARG2W	si
-+#define _ASM_ARG3W	dx
-+#define _ASM_ARG4W	cx
-+#define _ASM_ARG5W	r8w
-+#define _ASM_ARG6W	r9w
-+
-+#define _ASM_ARG1B	dil
-+#define _ASM_ARG2B	sil
-+#define _ASM_ARG3B	dl
-+#define _ASM_ARG4B	cl
-+#define _ASM_ARG5B	r8b
-+#define _ASM_ARG6B	r9b
-+
-+#endif
-+
- /*
-  * Macros to generate condition code outputs from inline assembly,
-  * The output operand must be type "bool".
+-	set_memory_ro((unsigned long)header, header->pages);
++	bpf_jit_binary_lock_ro(header);
+ 	prog->bpf_func = (void *)ctx.target;
+ 	prog->jited = 1;
+ 	prog->jited_len = image_size;
 
 
