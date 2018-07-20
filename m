@@ -2,66 +2,37 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01D0ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908D3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4654E20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:56:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVOgsdah"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4654E20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 53A7620652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:57:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53A7620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387807AbeGTQpL (ORCPT
+        id S2387843AbeGTQqS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:45:11 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:41280 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731203AbeGTQpL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 12:45:11 -0400
-Received: by mail-yw0-f195.google.com with SMTP id q129-v6so4510714ywg.8;
-        Fri, 20 Jul 2018 08:56:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=K2eMCmaQOK7Kd62z2r1yCYs9jaqhAA7oLspxsoU77Gg=;
-        b=ZVOgsdahfHcd3U74MwqjB/eRBcdxTKYmZiH5e23UjiJeMhkDTNUH+O56imkGcg1GIJ
-         mi6SOh7LrYKQxMSVCzxogwzvvpmDA/NRtV8JQRMaF8n2bli69zUPPoNBrDWan/dmNsc1
-         vipZrh/31yWBvR8n7/hCia5NxbRF2HbIwEVEn9kQ8NSoV3wVExa1602tbLuxc6WtLMrl
-         txMk7mOuhk2F+PmD0xAkY1bZc/zZ7KOcG/XOMdeqvYyieMtj2l7KyjcsZV3/9+MN28Xt
-         Sk/x0UJcLoLYIcKfUX/Jr4bjY5mL31jj42f6gmwoZC8igZrzv6XrAhthel5BcvoZu+L9
-         9NLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=K2eMCmaQOK7Kd62z2r1yCYs9jaqhAA7oLspxsoU77Gg=;
-        b=Ipnve2Yb84XeVxDqddM8ZC3yqKZXLELrOTfohrRHPpw6XGlkZkmq4Lf/jHRQhZ7xEn
-         5qsXiptz8JY41MSOHeI7kPfZqFdXxz1IwDDxOxNhCOCRJT1vkGGHwmVpJy54SRzqtl7c
-         jaD54lGh3ngv8XY4tgnjYARiwU7J9kEIajjDBbq2KG3EBuaoEyDfaqIWlLK8kCEWdxJz
-         8txD6PwmwTP4pHMIFJoLxBWR+wFLd0wsxRoGLnhWZoKkiUp/8+3ImAGYhZ7E/mV4iOi2
-         kHCIZ6hfUQYFMBF7q3luwC+I/+hKX36g8WVWXPRQEqNla/ep87VEcexTZz6mHtUG1JGs
-         yWOA==
-X-Gm-Message-State: AOUpUlHsOK/CgQovTeFMA5ArcjhdZ0DPFYWQcyPPP5aqthYqUnNDCVnV
-        hqS/eHYGLvHp8MIqB0YVJpg=
-X-Google-Smtp-Source: AAOMgpfRtmx0BWSVyqj9VVxqyVsuK3BHSpnupNH+/0sxAdPX8PjE4C/l0vkQSyrZPPiZ/htt9SsA/A==
-X-Received: by 2002:a81:82c7:: with SMTP id s190-v6mr1315350ywf.329.1532102176030;
-        Fri, 20 Jul 2018 08:56:16 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:e55b])
-        by smtp.gmail.com with ESMTPSA id r3-v6sm2569621ywr.80.2018.07.20.08.56.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 08:56:14 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 08:56:13 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
+        Fri, 20 Jul 2018 12:46:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44470 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731608AbeGTQqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 12:46:17 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D6FA97A7E7;
+        Fri, 20 Jul 2018 15:57:21 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BEE8C1C5B7;
+        Fri, 20 Jul 2018 15:57:18 +0000 (UTC)
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+To:     Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>
+Cc:     Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
@@ -70,10 +41,8 @@ Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
         Roman Gushchin <guro@fb.com>,
         Juri Lelli <juri.lelli@redhat.com>,
         Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-Message-ID: <20180720155613.GB1934745@devbig577.frc2.facebook.com>
-References: <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
+References: <20180702165322.GI533219@devbig577.frc2.facebook.com>
+ <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
  <20180703155823.GS533219@devbig577.frc2.facebook.com>
  <20180719135224.GE2494@hirez.programming.kicks-ass.net>
  <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
@@ -83,57 +52,62 @@ References: <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
  <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
  <20180720114549.GY72677@devbig577.frc2.facebook.com>
  <20180720154454.GR2494@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <b7649676-b9cf-8b78-da84-ca0b7ed03a38@redhat.com>
+Date:   Fri, 20 Jul 2018 11:57:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180720154454.GR2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 15:57:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 15:57:21 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Peter.
-
-On Fri, Jul 20, 2018 at 05:44:54PM +0200, Peter Zijlstra wrote:
-> > The currently proposed implementation is somewhere in the middle.  It
-> > kinda gets there by restricting a partition to be a child of another
-> > partition, which may be okay but it does make the whole delegation
-> > mechanism less useful.
-> 
+On 07/20/2018 11:44 AM, Peter Zijlstra wrote:
+> On Fri, Jul 20, 2018 at 04:45:49AM -0700, Tejun Heo wrote:
+>
+>>>> Hmm... so a given ancestor must be able to both
+>>>>
+>>>> 1. control which cpus are moved into a partition in all of its
+>>>>    subtree.
+>>> By virtue of the partition file being owned by the parent, this is
+>>> already achived, no?
+>> The currently proposed implementation is somewhere in the middle.  It
+>> kinda gets there by restricting a partition to be a child of another
+>> partition, which may be okay but it does make the whole delegation
+>> mechanism less useful.
 > So the implementation does not set ownership of the 'partition' file to
 > that of the parent directory? Because _that_ is what I understood from
 > Waiman (many versions ago). And that _does_ allow delegation to work
 > nicely.
-
-So, that part isn't the problem.  The problem is that if we allow
-partitioning nested further away from ancestor, the descendant would
-be able to take away reources from the removed ancestor.  Waiman
-avoids this problem by only allowing partitions to nest but then it's
-kinda weird cuz it's just a separate tree.
-
-> > > > 2. take away any given cpu from ist subtree.
-> > > 
-> > > I really hate this obsession of yours and doubly so for partitions. But
-> > > why would this currently not be allowed?
-> > 
-> > Well, sorry that you hate it.  It's a fundamental architectural
-> > constraint.  If it can't satisfy that, it should't be in cgroup.
-> 
+>
+>>>> 2. take away any given cpu from ist subtree.
+>>> I really hate this obsession of yours and doubly so for partitions. But
+>>> why would this currently not be allowed?
+>> Well, sorry that you hate it.  It's a fundamental architectural
+>> constraint.  If it can't satisfy that, it should't be in cgroup.
 > So is hierarchical behaviour; but you seem willing to forgo that.
-
-Well, we do have root or first-level only things.  Things just need to
-be properly delegatable when they're hierarchical (and things should
-be hierarchical only when that actually means something).  While not
-desirable, considering the history, accomodating this specific usage
-that way seems acceptable to me.
-
+>
 > Still, the question was, how is this (dispicable or not) behaviour not
 > allowed by the current implementation?
 
-I'm not quite sure what you're trying to ask.  Can you elaborate?
+The taking CPUs away part is not functioning yet in the current
+patchset. It is certainly doable. I just need more time to work on that.
 
-Thanks.
+The current patchset is fine if partition is restricted to the first
+level children as CPU online/offline is properly handled by the
+patchset. It is in the non-root level that taking CPUs away from a
+partition can be problematic.
 
--- 
-tejun
+Cheers,
+Longman
+
+
