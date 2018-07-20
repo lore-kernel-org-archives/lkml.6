@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77312ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0AEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF0820856
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:51:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21FDA20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:51:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="bjQU0+ao"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EF0820856
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="U8IBI5Mu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21FDA20673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbeGTJjB (ORCPT
+        id S1727558AbeGTJjB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 20 Jul 2018 05:39:01 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:40368 "EHLO
+Received: from conuserg-07.nifty.com ([210.131.2.74]:40367 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbeGTJjA (ORCPT
+        with ESMTP id S1727198AbeGTJjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:39:00 -0400
+        Fri, 20 Jul 2018 05:39:01 -0400
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id w6K8ovEI003659;
-        Fri, 20 Jul 2018 17:50:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w6K8ovEI003659
+        by conuserg-07.nifty.com with ESMTP id w6K8ovEH003659;
+        Fri, 20 Jul 2018 17:50:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w6K8ovEH003659
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1532076659;
-        bh=+GnWeTGMhTuXzAahaXcxKYC72mrpNXaL4W1DzGd3qOo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bjQU0+aooD4IHGIlRXas7ec/LQr5T9rQ8t2W9M8oMTkvqvbHhFQAW60v3s/JNipHI
-         Pi0B27dCD8Tn89ZxOW7vdHRd9TeqoRBIKbrZ7TwwTAbu7+QRkVlLLzsKvIdGhGoOWC
-         PlJ7cOuEhJzyUVL7puhP6gF62k9UF4UKfr5jOS0DeprNJsWgqkdRcH+ZOnhma38Hi4
-         hYBY0YasECxLHsqu5TTNN1f8jTNI4SRicX62m5JbQVGydcym39Hl86Ph0K855NA/OE
-         fmttW6NUkZhX4i2R/2hekiCF4rQe1mnX1FVYCkmdgqzJ3J1p66+Dg8Kvh7atvzIU2F
-         Oa65AsfHHJFdA==
+        s=dec2015msa; t=1532076658;
+        bh=ElVTfAtpF+Li2o7JcJGIcbW42IpderFSv7LmvIkB7V4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=U8IBI5Mums7rZTsD9ar+/0TpL2nFJO6SjeLk4asAFr66B89FjGXmMOx7XUGnhZKLV
+         clc5OT+lv2QpveFFe1hNM/cCKYUjmP+T6IxaUR4KrPpNnm58BplN9Dn7708E76oyUW
+         dE+DOvC3cg/Ql5jphGBAOo8l3sCbB22Nkt5uE25/mStZR+Y0qV3/B+/Os4YNL9Dira
+         gm6muI8714AGZF2Y1pW1JemzI9O8yicHGSoxnCpnKLav366jSnQX9nMffiVGJnb/1V
+         UwAJttCNFo5JAoytdS+m9A7owm7lKIfgjlGUT+D+i0Y8mtnkpU2jrH6INn3MXkernB
+         BVtVZ+nI2sKeg==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-arm-kernel@lists.infradead.org
@@ -48,15 +48,11 @@ Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 2/2] arm64: uniphier: dts: add more clocks to Denali NAND controller node
-Date:   Fri, 20 Jul 2018 17:50:45 +0900
-Message-Id: <1532076645-10769-2-git-send-email-yamada.masahiro@socionext.com>
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 1/2] ARM: uniphier: dts: add more clocks to Denali NAND controller node
+Date:   Fri, 20 Jul 2018 17:50:44 +0900
+Message-Id: <1532076645-10769-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532076645-10769-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1532076645-10769-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -71,16 +67,32 @@ are both 200MHz.
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi | 3 ++-
- arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi | 3 ++-
- arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/uniphier-ld4.dtsi  | 3 ++-
+ arch/arm/boot/dts/uniphier-pro4.dtsi | 3 ++-
+ arch/arm/boot/dts/uniphier-pro5.dtsi | 3 ++-
+ arch/arm/boot/dts/uniphier-pxs2.dtsi | 3 ++-
+ arch/arm/boot/dts/uniphier-sld8.dtsi | 3 ++-
+ 5 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
-index d63b56e..5640dac 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
-@@ -571,7 +571,8 @@
+diff --git a/arch/arm/boot/dts/uniphier-ld4.dtsi b/arch/arm/boot/dts/uniphier-ld4.dtsi
+index 37950ad..2a17066 100644
+--- a/arch/arm/boot/dts/uniphier-ld4.dtsi
++++ b/arch/arm/boot/dts/uniphier-ld4.dtsi
+@@ -347,7 +347,8 @@
+ 			interrupts = <0 65 4>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&pinctrl_nand2cs>;
+-			clocks = <&sys_clk 2>;
++			clock-names = "nand", "nand_x", "ecc";
++			clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
+ 			resets = <&sys_rst 2>;
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/uniphier-pro4.dtsi b/arch/arm/boot/dts/uniphier-pro4.dtsi
+index 49539f0..da88ccc 100644
+--- a/arch/arm/boot/dts/uniphier-pro4.dtsi
++++ b/arch/arm/boot/dts/uniphier-pro4.dtsi
+@@ -394,7 +394,8 @@
  			interrupts = <0 65 4>;
  			pinctrl-names = "default";
  			pinctrl-0 = <&pinctrl_nand>;
@@ -90,28 +102,42 @@ index d63b56e..5640dac 100644
  			resets = <&sys_rst 2>;
  		};
  	};
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-index 0298bd0..a8964c0 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-@@ -626,7 +626,8 @@
+diff --git a/arch/arm/boot/dts/uniphier-pro5.dtsi b/arch/arm/boot/dts/uniphier-pro5.dtsi
+index 06c2cef..40a84f2 100644
+--- a/arch/arm/boot/dts/uniphier-pro5.dtsi
++++ b/arch/arm/boot/dts/uniphier-pro5.dtsi
+@@ -439,7 +439,8 @@
  			interrupts = <0 65 4>;
  			pinctrl-names = "default";
- 			pinctrl-0 = <&pinctrl_nand>;
+ 			pinctrl-0 = <&pinctrl_nand2cs>;
 -			clocks = <&sys_clk 2>;
 +			clock-names = "nand", "nand_x", "ecc";
 +			clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
  			resets = <&sys_rst 2>;
  		};
  	};
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-index 2a4cf42..fd2bcd4 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-@@ -455,7 +455,8 @@
+diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+index 641d961..1903752 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
++++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+@@ -528,7 +528,8 @@
  			interrupts = <0 65 4>;
  			pinctrl-names = "default";
- 			pinctrl-0 = <&pinctrl_nand>;
+ 			pinctrl-0 = <&pinctrl_nand2cs>;
+-			clocks = <&sys_clk 2>;
++			clock-names = "nand", "nand_x", "ecc";
++			clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
+ 			resets = <&sys_rst 2>;
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/uniphier-sld8.dtsi b/arch/arm/boot/dts/uniphier-sld8.dtsi
+index e9b9b4f..dc723bf 100644
+--- a/arch/arm/boot/dts/uniphier-sld8.dtsi
++++ b/arch/arm/boot/dts/uniphier-sld8.dtsi
+@@ -351,7 +351,8 @@
+ 			interrupts = <0 65 4>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&pinctrl_nand2cs>;
 -			clocks = <&sys_clk 2>;
 +			clock-names = "nand", "nand_x", "ecc";
 +			clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
