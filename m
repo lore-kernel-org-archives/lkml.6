@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E77ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1735ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 257B620856
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257B620856
+	by mail.kernel.org (Postfix) with ESMTP id A20D820854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20D820854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388569AbeGTNUW (ORCPT
+        id S2388580AbeGTNUZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:20:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39860 "EHLO
+        Fri, 20 Jul 2018 09:20:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40086 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388531AbeGTNUV (ORCPT
+        with ESMTP id S1732091AbeGTNUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:20:21 -0400
+        Fri, 20 Jul 2018 09:20:24 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CD894BB6;
-        Fri, 20 Jul 2018 12:30:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93001C22;
+        Fri, 20 Jul 2018 12:31:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 34/66] net: cxgb3_main: fix potential Spectre v1
-Date:   Fri, 20 Jul 2018 14:13:51 +0200
-Message-Id: <20180720121409.238473816@linuxfoundation.org>
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.9 64/66] arm64: KVM: Handle guests ARCH_WORKAROUND_2 requests
+Date:   Fri, 20 Jul 2018 14:14:21 +0200
+Message-Id: <20180720121412.399011226@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -51,53 +51,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 676bcfece19f83621e905aa55b5ed2d45cc4f2d3 upstream.
+commit b4f18c063a13dfb33e3a63fe1844823e19c2265e upstream.
 
-t.qset_idx can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+In order to forward the guest's ARCH_WORKAROUND_2 calls to EL3,
+add a small(-ish) sequence to handle it at EL2. Special care must
+be taken to track the state of the guest itself by updating the
+workaround flags. We also rely on patching to enable calls into
+the firmware.
 
-This issue was detected with the help of Smatch:
+Note that since we need to execute branches, this always executes
+after the Spectre-v2 mitigation has been applied.
 
-drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:2286 cxgb_extension_ioctl()
-warn: potential spectre issue 'adapter->msix_info'
-
-Fix this by sanitizing t.qset_idx before using it to index
-adapter->msix_info
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/kernel/asm-offsets.c |    1 +
+ arch/arm64/kvm/hyp/hyp-entry.S  |   38 +++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 38 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-@@ -50,6 +50,7 @@
- #include <linux/stringify.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
-+#include <linux/nospec.h>
- #include <asm/uaccess.h>
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -127,6 +127,7 @@ int main(void)
+   BLANK();
+ #ifdef CONFIG_KVM_ARM_HOST
+   DEFINE(VCPU_CONTEXT,		offsetof(struct kvm_vcpu, arch.ctxt));
++  DEFINE(VCPU_WORKAROUND_FLAGS,	offsetof(struct kvm_vcpu, arch.workaround_flags));
+   DEFINE(CPU_GP_REGS,		offsetof(struct kvm_cpu_context, gp_regs));
+   DEFINE(CPU_USER_PT_REGS,	offsetof(struct kvm_regs, regs));
+   DEFINE(CPU_FP_REGS,		offsetof(struct kvm_regs, fp_regs));
+--- a/arch/arm64/kvm/hyp/hyp-entry.S
++++ b/arch/arm64/kvm/hyp/hyp-entry.S
+@@ -107,8 +107,44 @@ el1_hvc_guest:
+ 	 */
+ 	ldr	x1, [sp]				// Guest's x0
+ 	eor	w1, w1, #ARM_SMCCC_ARCH_WORKAROUND_1
++	cbz	w1, wa_epilogue
++
++	/* ARM_SMCCC_ARCH_WORKAROUND_2 handling */
++	eor	w1, w1, #(ARM_SMCCC_ARCH_WORKAROUND_1 ^ \
++			  ARM_SMCCC_ARCH_WORKAROUND_2)
+ 	cbnz	w1, el1_trap
+-	mov	x0, x1
++
++#ifdef CONFIG_ARM64_SSBD
++alternative_cb	arm64_enable_wa2_handling
++	b	wa2_end
++alternative_cb_end
++	get_vcpu_ptr	x2, x0
++	ldr	x0, [x2, #VCPU_WORKAROUND_FLAGS]
++
++	// Sanitize the argument and update the guest flags
++	ldr	x1, [sp, #8]			// Guest's x1
++	clz	w1, w1				// Murphy's device:
++	lsr	w1, w1, #5			// w1 = !!w1 without using
++	eor	w1, w1, #1			// the flags...
++	bfi	x0, x1, #VCPU_WORKAROUND_2_FLAG_SHIFT, #1
++	str	x0, [x2, #VCPU_WORKAROUND_FLAGS]
++
++	/* Check that we actually need to perform the call */
++	hyp_ldr_this_cpu x0, arm64_ssbd_callback_required, x2
++	cbz	x0, wa2_end
++
++	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
++	smc	#0
++
++	/* Don't leak data from the SMC call */
++	mov	x3, xzr
++wa2_end:
++	mov	x2, xzr
++	mov	x1, xzr
++#endif
++
++wa_epilogue:
++	mov	x0, xzr
+ 	add	sp, sp, #16
+ 	eret
  
- #include "common.h"
-@@ -2259,6 +2260,7 @@ static int cxgb_extension_ioctl(struct n
- 
- 		if (t.qset_idx >= nqsets)
- 			return -EINVAL;
-+		t.qset_idx = array_index_nospec(t.qset_idx, nqsets);
- 
- 		q = &adapter->params.sge.qset[q1 + t.qset_idx];
- 		t.rspq_size = q->rspq_size;
 
 
