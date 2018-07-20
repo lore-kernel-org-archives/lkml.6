@@ -2,102 +2,163 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F1CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD05BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB2D9206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:18:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2D9206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8ACCD20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:25:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACCD20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbeGTLGG (ORCPT
+        id S1728029AbeGTLNT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:06:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36926 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727179AbeGTLGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:06:06 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A93A081A4EB7;
-        Fri, 20 Jul 2018 10:18:32 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (ovpn-204-189.brq.redhat.com [10.40.204.189])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 723CA1C5B4;
-        Fri, 20 Jul 2018 10:18:29 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Rik van Riel <riel@surriel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Mike Galbraith <efault@gmx.de>,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
-References: <20180716190337.26133-1-riel@surriel.com>
-        <20180716190337.26133-5-riel@surriel.com>
-        <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com>
-        <B6566AA4-2E8A-43BD-A224-0F6D4747B8FB@surriel.com>
-        <F93A3335-4830-4E36-9179-D0FA5D640C8A@amacapital.net>
-        <B976CC13-D014-433A-83DE-F8DF9AB4F421@surriel.com>
-        <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
-        <87muumtjwd.fsf@vitty.brq.redhat.com>
-        <20180720094906.GP2494@hirez.programming.kicks-ass.net>
-Date:   Fri, 20 Jul 2018 12:18:28 +0200
-In-Reply-To: <20180720094906.GP2494@hirez.programming.kicks-ass.net> (Peter
-        Zijlstra's message of "Fri, 20 Jul 2018 11:49:06 +0200")
-Message-ID: <87fu0etdl7.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 20 Jul 2018 07:13:19 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49622 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbeGTLNT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 07:13:19 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id E32FC804DE; Fri, 20 Jul 2018 12:25:40 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 12:25:32 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Yu Chen <yu.c.chen@intel.com>
+Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>,
+        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gu, Kookoo" <kookoo.gu@intel.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180720102532.GA20284@amd>
+References: <cover.1531924968.git.yu.c.chen@intel.com>
+ <20180718202235.GA4132@amd>
+ <20180718235851.GA22170@sandybridge-desktop>
+ <20180719110149.GA4679@amd>
+ <20180719132003.GA30981@sandybridge-desktop>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 10:18:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 10:18:32 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+Content-Disposition: inline
+In-Reply-To: <20180719132003.GA30981@sandybridge-desktop>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Zijlstra <peterz@infradead.org> writes:
 
-> On Fri, Jul 20, 2018 at 10:02:10AM +0200, Vitaly Kuznetsov wrote:
->> Andy Lutomirski <luto@amacapital.net> writes:
->> 
->> > [I added PeterZ and Vitaly -- can you see any way in which this would
->> > break something obscure?  I don't.]
->> 
->> Thanks for CCing me,
->> 
->> I don't see how this can break things either. At first glance, however,
->> I'm afraid we can add performance penalty to virtualized guests which
->> don't use native_flush_tlb_others() (Hyper-V, KVM): we will be reloading
->> CR3 without a need as we don't look at lazy mode in PV tlb flush
->> functions.
->> 
->> We can either check to switch_mm_irqs_off() that
->> native_flush_tlb_others() is in use or teach PV tlb flush functions to
->> look at lazy mode too.
->
-> As Rik noted elsewhere in the thread, kvm_flush_tlb_others() ends up
-> calling native_tlb_flush_others() for all running vcpu threads.
+--0F1p//8PRICkK4MW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah, right!
+Hi!
 
->
-> The Hyper-V thing is magical, we can't really do anything about it
-> there. Let them worry about it.
+> > > > > As security becomes more and more important, we add the in-kernel
+> > > > > encryption support for hibernation.
+> > > >=20
+> > > > Sorry, this does not really explain what security benefit it is
+> > > > supposed have to against what attack scenarios.
+> > > >=20
+> > > > Which unfortunately means it can not reviewed.
+> > > >=20
+> > > > Note that uswsusp already provides encryption. If this is supposed =
+to
+> > > > have advantages over it, please say so.
+> > > >=20
+> > > The advantages are described in detail in=20
+> > > [PATCH 1/4]'s log, please refer to that.
+> >=20
+> > Are you refering to this?
+> >
+> Not this one. I've sent v2 of this patch set which
+> explain more on this:
+> https://patchwork.kernel.org/patch/10532935/
 
-Well, we kinda know how this magic works: we just ask the hypervisor to
-flush TLB for us (if the particular vCPU is running) :-) Anyway, nothing
-stops us from duplicating the logic regarding lazy mode from
-native_flush_tlb_others() to hyperv_flush_tlb_others(): if TLB state is
-lazy omit TLB flush.
+Aha, sorry about that.
 
--- 
-  Vitaly
+> Let me paste the log here:
+>=20
+> 1. (This is not to compare with uswsusp but other
+>     tools) One advantage is: Users do not have to
+>     encrypt the whole swap partition as other tools.
+
+Well.. encrypting the partition seems like good idea anyway.=20
+
+> 2. Ideally kernel memory should be encrypted by the
+>    kernel itself. We have uswsusp to support user
+>    space hibernation, however doing the encryption
+>    in kernel space has more advantages:
+>    2.1 Not having to transfer plain text kernel memory to
+>        user space. Per Lee, Chun-Yi, uswsusp is disabled
+>        when the kernel is locked down:
+>        https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/
+>        linux-fs.git/commit/?h=3Dlockdown-20180410&
+>        id=3D8732c1663d7c0305ae01ba5a1ee4d2299b7b4612
+>        due to:
+>        "There have some functions be locked-down because
+>        there have no appropriate mechanisms to check the
+>        integrity of writing data."
+>        https://patchwork.kernel.org/patch/10476751/
+
+So your goal is to make hibernation compatible with kernel
+lockdown? Do your patches provide sufficient security that hibernation
+can be enabled with kernel lockdown?
+
+>    2.2 Not having to copy each page to user space
+>        one by one not in parallel, which might introduce
+>        significant amount of copy_to_user() and it might
+>        not be efficient on servers having large amount of DRAM.
+
+So how big speedup can be attributed by not doing copy_to_user?
+
+>    2.3 Distribution has requirement to do snapshot
+>        signature for verification, which can be built
+>        by leveraging this patch set.
+
+Signatures can be done by uswsusp, too, right?
+
+>    2.4 The encryption is in the kernel, so it doesn't
+>        have to worry too much about bugs in user space
+>        utilities and similar, for example.
+
+Answer to bugs in userspace is _not_ to move code from userspace to kernel.
+
+> > Also note that joeyli <jlee@suse.com> has patch series which encrypts
+> > both in-kernel and uswsusp hibernation methods. His motivation is
+> > secure boot. How does this compare to his work?
+> >
+> Joey Lee and I had a discussion on his previous work at
+> https://patchwork.kernel.org/patch/10476751
+> We collaborate on this task and his snapshot signature
+> feature can be based on this patch set.
+
+Well, his work can also work without your patchset, right?
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--0F1p//8PRICkK4MW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltRuJwACgkQMOfwapXb+vKoLwCeNp7X2wxMaONvzvgt9uMDavdt
+k+0An2rCHACwENvM76lCmYBRfo+H+9h2
+=giC4
+-----END PGP SIGNATURE-----
+
+--0F1p//8PRICkK4MW--
