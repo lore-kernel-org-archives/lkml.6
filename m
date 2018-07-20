@@ -2,188 +2,181 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E317ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7860ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53D3820647
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:40:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53D3820647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3428B20647
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:40:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Dx4FZiTt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3428B20647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387807AbeGTQ2u (ORCPT
+        id S2387864AbeGTQ2x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:28:50 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:54282 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731892AbeGTQ2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 12:28:49 -0400
-Received: by mail-it0-f68.google.com with SMTP id s7-v6so15229696itb.4;
-        Fri, 20 Jul 2018 08:39:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=K+rZ+/GJJVbWHN2J07qJuEJedXc/x/tmVZY4ahtZqZQ=;
-        b=RDaA08CQI6y5Uq+VPcc4pTHOu+/9Nj5UCJ4B+/i5XxihBPkwSmTm9w8QZTHHioqkZZ
-         7GI3OAbe52d2nZ7c3YtT4wP6CPtk+5agKevZ2MSki8A92iO589bSbspVPkI9qSPg8iOb
-         Bg7D+/NfyELrQIyQEXpFUpOQirdm8oASxCVnNLFKusy6nQAABXiaGt2qpUbu6RS1W5I8
-         xtU8vwA+kyqGmNF6CAtfHiGO6RTpSQchRHU/vQlxndQxm4ZVyr4lZAlcMU+rP3Diwf3y
-         IuFXMj1+nRsY+MnTA11vTcRwFAPGL/BtUwKiqaloHaaQ6qZfo62Q+1hJUwlKfIKudi/j
-         Dg2A==
-X-Gm-Message-State: AOUpUlH6zS75JE8yJm+TGxVheP5czCU/RaqnlAwt4sHhGJKZuWrkwnpe
-        PvKwHAK2va0MPWFiPFdPBa45Cf0=
-X-Google-Smtp-Source: AAOMgpc2mf0cPjpFmhtad2xb0kGTJF6+RC7engBguUBbbj0d6erLBZnSW9M3IyxQRFRYpfqjWvaxvw==
-X-Received: by 2002:a24:2b86:: with SMTP id h128-v6mr2327131ita.14.1532101198301;
-        Fri, 20 Jul 2018 08:39:58 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id h14-v6sm641637ioj.21.2018.07.20.08.39.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Jul 2018 08:39:57 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 09:39:56 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Rutland <mark.rutland@arm.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: jz4740: Add support for the JZ4725B, JZ4760, JZ4770
-Message-ID: <20180720153956.GA18135@rob-hp-laptop>
-References: <20180713151424.13000-1-paul@crapouillou.net>
- <20180714131920.GU16084@piout.net>
- <1531574734.2831.0@smtp.crapouillou.net>
- <20180714133250.GW16084@piout.net>
- <1531576208.2831.1@smtp.crapouillou.net>
+        Fri, 20 Jul 2018 12:28:53 -0400
+Received: from mail-sn1nam02on0084.outbound.protection.outlook.com ([104.47.36.84]:35664
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731892AbeGTQ2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 12:28:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fz7R2yZ0IRGZAWBYe0XfT3bQjhEXYsM/JzYNH9tXCGc=;
+ b=Dx4FZiTt1GArsxd6CFlXJSWvFAntcj9nL5rjjh7G/rcwmJvP3KyBfHmkvqSYe3UKtwrU2gTI8gDVKtiQ2GL4bynfcHm5WFWhFIn7JG8AlmO94T29hc+8rTm76UT63SUm7cwmukVZoqFEbxxYOaZUi82vz0DydgkKh+iGuc7tXno=
+Received: from MWHPR02MB2816.namprd02.prod.outlook.com (10.175.50.14) by
+ MWHPR02MB2416.namprd02.prod.outlook.com (10.168.244.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.20; Fri, 20 Jul 2018 15:39:56 +0000
+Received: from MWHPR02MB2816.namprd02.prod.outlook.com
+ ([fe80::8453:d61e:5ced:a726]) by MWHPR02MB2816.namprd02.prod.outlook.com
+ ([fe80::8453:d61e:5ced:a726%3]) with mapi id 15.20.0973.018; Fri, 20 Jul 2018
+ 15:39:56 +0000
+From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] usb: host: xhci-plat: Iterate over parent nodes for
+ finding quirks
+Thread-Topic: [PATCH] usb: host: xhci-plat: Iterate over parent nodes for
+ finding quirks
+Thread-Index: AQHT/OD63PyU9kIWfE6vMX/XM+YDdqSYdgMAgAAE67A=
+Date:   Fri, 20 Jul 2018 15:39:56 +0000
+Message-ID: <MWHPR02MB281619CD8CFDA93B9ADB3D89A7510@MWHPR02MB2816.namprd02.prod.outlook.com>
+References: <1528212056-28390-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <b819a5fc-82aa-dc9c-4272-fecdacbd5880@intel.com>
+In-Reply-To: <b819a5fc-82aa-dc9c-4272-fecdacbd5880@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anuragku@xilinx.com; 
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB2416;6:OO7VbsEYTh4s+7CzyRen5vlvTqGzUuxKo/08+rSBq9OCsfmEDMfeqfW0UmGn3fM/7eLx0AaZrA89vzsZcqMt4fWjnpRwlvBq3l/P68rdSiQIdt2WovC98IyO+Q7mduBsxW62PMWoW1E+o/r4hACJoJFyzHEIaf27Azr0yQ2Q0mSORZhfus9fiXeokAdYO45u+RYqoDCtfV0i6YwPeV6LPCLPSL+YL0/zp92wxgUCrL0DOvSPh8jTFJxiQNFm9GXbv2Q5c2Uvnz+ujPPxkqs4PuGlkzBgepmUyXNvNGhKTtWOukecVD8NKbW7fJiVwFREMfRB8mWtvsSUkaCUPH7UAhfodaTC6aM9KFMet1O9zyxZEORHovjzrJCdy1UHSgxRZwmhLi+LnB4lPS6ynPOhSWFrJvNCU4wGeetJOfPyLIx5MQFAYWli0mgv+O0Z3uoXKQqGz/7Mzpru2kgHoxiN/w==;5:XfyuIIeLlm/+FZr6btXIu4sdHNuAYopXxPgu2J6Y8/uRgkNEZdfT6hni0YTZV8ggAxGc+WSb1GyjHbp5dhaVBXEmvcxr4GAcuP2O5vt4YH4i+TEwHxrIR0WNKza6axt9QostMgKpSOc9V6Im3eMphUkO11fWG7AIU1/XaJ7n3Fc=;7:sCMSmhFPgvN58uIUHcz4jctLmQkNZki66a6t1M/9LVCtxFp8nF1kkvCxC2CM0QCA3etFxZVPeHF4M5f72c5KNoa+cumnp16XAfOfj8TUnzNEJTKjVfNMEpm+1S0YFGaYseimPj6lTL0o5jn7+g+OECqDjOf+UfBAsnp4LvP+r581E073RKtJt2e0J/pNhxihmy7MwjfsYSz/PHS9Q+XhhycizVQRZ037pc5ViC+4J8fFe/EiMyMtSfC8lw5K7pkY
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 625e47ae-4106-4fe5-27e2-08d5ee570b63
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2416;
+x-ms-traffictypediagnostic: MWHPR02MB2416:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <MWHPR02MB2416A0DD30C19F719AE94A5FA7510@MWHPR02MB2416.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(192813158149592)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB2416;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2416;
+x-forefront-prvs: 073966E86B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(366004)(13464003)(199004)(189003)(305945005)(4326008)(476003)(486006)(110136005)(54906003)(99286004)(5660300001)(5250100002)(25786009)(316002)(229853002)(6436002)(186003)(26005)(14454004)(55016002)(11346002)(76176011)(74316002)(446003)(6506007)(7696005)(256004)(86362001)(9686003)(55236004)(102836004)(478600001)(33656002)(105586002)(3846002)(106356001)(2900100001)(97736004)(2906002)(8936002)(81166006)(53936002)(81156014)(6246003)(6116002)(68736007)(66066001)(8676002)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2416;H:MWHPR02MB2816.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Rm8kLYb0Ybr1+kf9NIcTbq7cH3y5uzpIJyZwS79OxnTsfn33MWhzyIaNsEcP0nu9ANVy7u7AVP2wuhXbsK8sN9m8KYjKJglhi+4/NbCif/NIY+2bCW3oqJgHyaJbKhzdEozCC0da26nEI7lhl7Tsk5P5RfPZbsQTPE0CQ5/25KlrtHOd1gOX2pJ+hna4cEKQk0cI0B7pIra1CSbh8NwtNZUnMfza6erTW0ZHVcAiw1l7P6sEHI5Ykou7b9IRuDks1MHw7k/N/vGrEF7UQUG9474xorzbLFFIFua4aA6bf38ohjKQW8IblHEI77IeAZEEl3xm1CGvoZhgVHu686EWZNfCymd/5CNoiO35ok7xYAs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1531576208.2831.1@smtp.crapouillou.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 625e47ae-4106-4fe5-27e2-08d5ee570b63
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jul 2018 15:39:56.1843
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2416
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 03:50:08PM +0200, Paul Cercueil wrote:
-> 
-> 
-> Le sam. 14 juil. 2018 à 15:32, Alexandre Belloni
-> <alexandre.belloni@bootlin.com> a écrit :
-> > On 14/07/2018 15:25:33+0200, Paul Cercueil wrote:
-> > >  Hi Alexandre,
-> > > 
-> > >  Le sam. 14 juil. 2018 à 15:19, Alexandre Belloni
-> > >  <alexandre.belloni@bootlin.com> a écrit :
-> > >  > Hello,
-> > >  >
-> > >  > On 13/07/2018 17:14:24+0200, Paul Cercueil wrote:
-> > >  > >  The RTC in the JZ4725B works just like the one in the JZ4740.
-> > >  > >
-> > >  > >  The RTC in the JZ4760 and JZ4770 work just like the one in the
-> > >  > > JZ4780.
-> > >  > >
-> > >  > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > >  > >  ---
-> > >  > >   Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
-> > > |  3
-> > >  > > +++
-> > >  > >   drivers/rtc/rtc-jz4740.c
-> > > | 11
-> > >  > > ++++++++++-
-> > >  > >   2 files changed, 13 insertions(+), 1 deletion(-)
-> > >  > >
-> > >  > >  diff --git
-> > >  > > a/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
-> > >  > > b/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
-> > >  > >  index 41c7ae18fd7b..a9e821de84f2 100644
-> > >  > >  ---
-> > > a/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
-> > >  > >  +++
-> > > b/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
-> > >  > >  @@ -4,6 +4,9 @@ Required properties:
-> > >  > >
-> > >  > >   - compatible: One of:
-> > >  > >     - "ingenic,jz4740-rtc" - for use with the JZ4740 SoC
-> > >  > >  +  - "ingenic,jz4725b-rtc" - for use with the JZ4725B SoC
-> > >  > >  +  - "ingenic,jz4760-rtc" - for use with the JZ4760 SoC
-> > >  > >  +  - "ingenic,jz4770-rtc" - for use with the JZ4770 SoC
-> > >  > >     - "ingenic,jz4780-rtc" - for use with the JZ4780 SoC
-> > >  > >   - reg: Address range of rtc register set
-> > >  > >   - interrupts: IRQ number for the alarm interrupt
-> > >  > >  diff --git a/drivers/rtc/rtc-jz4740.c
-> > > b/drivers/rtc/rtc-jz4740.c
-> > >  > >  index d0a891777f44..1c867e3a0ea5 100644
-> > >  > >  --- a/drivers/rtc/rtc-jz4740.c
-> > >  > >  +++ b/drivers/rtc/rtc-jz4740.c
-> > >  > >  @@ -54,6 +54,9 @@
-> > >  > >
-> > >  > >   enum jz4740_rtc_type {
-> > >  > >   	ID_JZ4740,
-> > >  > >  +	ID_JZ4725B,
-> > >  > >  +	ID_JZ4760,
-> > >  > >  +	ID_JZ4770,
-> > >  >
-> > >  > I wouldn't introduce those ids unless there are handling
-> > > differences at
-> > >  > some point.
-> > > 
-> > >  Well there are handling differences, see below.
-> > > 
-> > >  > >   	ID_JZ4780,
-> > >  > >   };
-> > >  > >
-> > >  > >  @@ -114,7 +117,7 @@ static inline int
-> > > jz4740_rtc_reg_write(struct
-> > >  > > jz4740_rtc *rtc, size_t reg,
-> > >  > >   {
-> > >  > >   	int ret = 0;
-> > >  > >
-> > >  > >  -	if (rtc->type >= ID_JZ4780)
-> > >  > >  +	if (rtc->type >= ID_JZ4760)
-> > >  >
-> > >  > This would avoid that change (and the test would preferably be
-> > >  > (rtc->type == ID_JZ4780))
-> > > 
-> > >  That branch should be taken if the SoC is JZ4760, JZ4770 or JZ4780.
-> > >  It should not be taken if the SoC is JZ4740 or JZ4725B.
-> > 
-> > Sure but you can achieve that with only 2 ids...
-> > 
-> > > 
-> > >  > >   		ret = jz4780_rtc_enable_write(rtc);
-> > >  > >   	if (ret == 0)
-> > >  > >   		ret = jz4740_rtc_wait_write_ready(rtc);
-> > >  > >  @@ -300,6 +303,9 @@ static void jz4740_rtc_power_off(void)
-> > >  > >
-> > >  > >   static const struct of_device_id jz4740_rtc_of_match[] = {
-> > >  > >   	{ .compatible = "ingenic,jz4740-rtc", .data = (void
-> > > *)ID_JZ4740 },
-> > >  > >  +	{ .compatible = "ingenic,jz4725b-rtc", .data = (void
-> > > *)ID_JZ4725B
-> > >  > > },
-> > >  > >  +	{ .compatible = "ingenic,jz4760-rtc", .data = (void
-> > > *)ID_JZ4760 },
-> > >  > >  +	{ .compatible = "ingenic,jz4770-rtc", .data = (void
-> > > *)ID_JZ4770 },
-> > 
-> > By doing the correct mapping here e.g:
-> > 
-> > { .compatible = "ingenic,jz4725b-rtc", .data = (void *)ID_JZ4740 },
-> 
-> Not very pretty and future-proof if you ask me...
-
-Looks to me like this can be handled entirely in DT without driver 
-changes like the other patches. Correct usage of compatible strings is 
-what gives you future-proofing. And no driver change is better than 
-needless changing.
-
-It may look a bit wierd if 4780 is the fallback for 4770, but if the 
-4780 is older, then that actually makes sense.
-
-Rob
+DQpIaSBNYXRoaWFzLA0KDQpUaGFua3MgZm9yIHByb3ZpZGluZyB5b3VyIGNvbW1lbnRzLCBwbGVh
+c2UgZmluZCBteSBjb21tZW50cyBpbmxpbmUNCg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0t
+DQo+RnJvbTogTWF0aGlhcyBOeW1hbiBbbWFpbHRvOm1hdGhpYXMubnltYW5AaW50ZWwuY29tXQ0K
+PlNlbnQ6IEZyaWRheSwgSnVseSAyMCwgMjAxOCA4OjEzIFBNDQo+VG86IEFudXJhZyBLdW1hciBW
+dWxpc2hhIDxhbnVyYWdrdUB4aWxpbnguY29tPjsgR3JlZyBLcm9haC1IYXJ0bWFuDQo+PGdyZWdr
+aEBsaW51eGZvdW5kYXRpb24ub3JnPg0KPkNjOiBsaW51eC11c2JAdmdlci5rZXJuZWwub3JnOyBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+U3ViamVjdDogUmU6IFtQQVRDSF0gdXNiOiBo
+b3N0OiB4aGNpLXBsYXQ6IEl0ZXJhdGUgb3ZlciBwYXJlbnQgbm9kZXMgZm9yIGZpbmRpbmcgcXVp
+cmtzDQo+DQo+SGkNCj4NCj5Tb3JyeSBhYm91dCB0aGUgZGVsYXkgd2l0aCB0aGlzIHBhdGNoLA0K
+PkkgaGF2ZSBhIGNvdXBsZSBjb21tZW50cyBpbmxpbmUuDQo+DQoNCk5vIHByb2JzLCBJICBjYW4g
+dW5kZXJzdGFuZC4gSSB3YXMgaGF2aW5nIHNvbWUgaW50ZXJuYWwgZGVwZW5kZW5jeSBvbiB0aGlz
+IHBhdGNoLA0Kc28gcGluZ2VkIGFnYWluLiBTb3JyeSBmb3IgdHJvdWJsaW5nIHlvdS4NCg0KPk9u
+IDA1LjA2LjIwMTggMTg6MjAsIEFudXJhZyBLdW1hciBWdWxpc2hhIHdyb3RlOg0KPj4gSW4geGhj
+aV9wbGF0X3Byb2JlKCkgYm90aCBzeXNkZXYgYW5kIHBkZXYtPmRldiBhcmUgYmVpbmcgdXNlZCBm
+b3INCj4+IGZpbmRpbmcgcXVpcmtzLiBUaGVyZSBhcmUgc29tZSBkcml2ZXJzKGxpa2UgZHdjMyBo
+b3N0LmMpIHdoaWNoIGFkZHMNCj4+IHF1aXJrcyhsaWtlIHVzYjMtbHBtLWNhcGFibGUpIGludG8g
+cGRldiBhbmQgdGhlIGxvZ2ljIHByZXNlbnQgaW4NCj4+IHhoY2lfcGxhdF9wcm9iZSgpIGNoZWNr
+cyBmb3IgcXVpcmtzIGluIGVpdGhlciBzeXNkZXYgb3IgcGRldiBmb3INCj4+IGZpbmRpbmcgdGhl
+IHF1aXJrcy4gQmVjYXVzZSBvZiB0aGlzIGxvZ2ljLCBzb21lIG9mIHRoZSBxdWlya3MgYXJlDQo+
+PiBnZXR0aW5nIG1pc3NlZCh1c2IzLWxwbS1jYXBhYmxlIHF1aXJrIGFkZGVkIGJ5IGR3YzMgaG9z
+dC5jIGRyaXZlciBpcw0KPj4gZ2V0dGluZyBtaXNzZWQpLlRoaXMgcGF0Y2ggZml4ZXMgdGhpcyBi
+eSBpdGVyYXRpbmcgb3ZlciBhbGwgdGhlDQo+PiBhdmFpbGFibGUgcGFyZW50cyBmb3IgZmluZGlu
+ZyB0aGUgcXVpcmtzLiBJbiB0aGlzIHdheSBhbGwgdGhlIHF1aXJrcw0KPj4gd2hpY2ggYXJlIHBy
+ZXNlbnQgaW4gY2hpbGQgb3IgcGFyZW50IGFyZSBjb3JyZWN0bHkgdXBkYXRlZC4NCj4+DQo+PiBT
+aWduZWQtb2ZmLWJ5OiBBbnVyYWcgS3VtYXIgVnVsaXNoYSA8YW51cmFnLmt1bWFyLnZ1bGlzaGFA
+eGlsaW54LmNvbT4NCj4+IC0tLQ0KPj4gICBkcml2ZXJzL3VzYi9ob3N0L3hoY2ktcGxhdC5jIHwg
+MjkgKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0NCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDE4
+IGluc2VydGlvbnMoKyksIDExIGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL3VzYi9ob3N0L3hoY2ktcGxhdC5jDQo+PiBiL2RyaXZlcnMvdXNiL2hvc3QveGhjaS1wbGF0
+LmMgaW5kZXggYzFiMjJmYy4uMGNkMDQ4OSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvdXNiL2hv
+c3QveGhjaS1wbGF0LmMNCj4+ICsrKyBiL2RyaXZlcnMvdXNiL2hvc3QveGhjaS1wbGF0LmMNCj4+
+IEBAIC0xNTIsNyArMTUyLDcgQEAgc3RhdGljIGludCB4aGNpX3BsYXRfcHJvYmUoc3RydWN0IHBs
+YXRmb3JtX2RldmljZSAqcGRldikNCj4+ICAgew0KPj4gICAJY29uc3Qgc3RydWN0IHhoY2lfcGxh
+dF9wcml2ICpwcml2X21hdGNoOw0KPj4gICAJY29uc3Qgc3RydWN0IGhjX2RyaXZlcgkqZHJpdmVy
+Ow0KPj4gLQlzdHJ1Y3QgZGV2aWNlCQkqc3lzZGV2Ow0KPj4gKwlzdHJ1Y3QgZGV2aWNlCQkqc3lz
+ZGV2LCAqdG1wZGV2Ow0KPj4gICAJc3RydWN0IHhoY2lfaGNkCQkqeGhjaTsNCj4+ICAgCXN0cnVj
+dCByZXNvdXJjZSAgICAgICAgICpyZXM7DQo+PiAgIAlzdHJ1Y3QgdXNiX2hjZAkJKmhjZDsNCj4+
+IEBAIC0yNzIsMTkgKzI3MiwyNiBAQCBzdGF0aWMgaW50IHhoY2lfcGxhdF9wcm9iZShzdHJ1Y3Qg
+cGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPj4gICAJCWdvdG8gZGlzYWJsZV9jbGs7DQo+PiAgIAl9
+DQo+Pg0KPj4gLQlpZiAoZGV2aWNlX3Byb3BlcnR5X3JlYWRfYm9vbChzeXNkZXYsICJ1c2IyLWxw
+bS1kaXNhYmxlIikpDQo+PiAtCQl4aGNpLT5xdWlya3MgfD0gWEhDSV9IV19MUE1fRElTQUJMRTsN
+Cj4+ICsJLyogSXRlcmF0ZSBvdmVyIGFsbCBwYXJlbnQgbm9kZXMgZm9yIGZpbmRpbmcgcXVpcmtz
+ICovDQo+PiArCWZvciAodG1wZGV2ID0gJnBkZXYtPmRldjsgdG1wZGV2OyB0bXBkZXYgPSB0bXBk
+ZXYtPnBhcmVudCkgew0KPg0KPklzbid0IHN5c2RldiBhdCB0aGlzIHBvaW50IHRoZSB0b3Btb3N0
+IGRldmljZSB0aGF0IGNhbiBoYXZlIGFueSBvZiB0aG9zZSBkZXZpY2UNCj5wcm9wZXJ0aWVzIHNl
+dD8NCj5XZSBjb3VsZCBsb29wIGZyb20gJnBkZXYtPmRldiB1cCB0byBhbmQgaW5jbHVkaW5nIHN5
+c2Rldi4NCj4NCj5JdCBkb2Vzbid0IG1hdHRlciBtdWNoIGJ1dCBtYXliZSBhdm9pZCB3YWxraW5n
+IHNvbWUgZXh0cmEgcGFyZW50cy4NCj4NCg0KSSBoYXZlIHNlZW4gc29tZSBkcml2ZXJzICggbGlr
+ZSBkd2MzIGhvc3QuYykgd2hpY2ggY3JlYXRlIGEgY2hpbGQgZGV2LCB3aGljaCBpcw0KdGhlIHBk
+ZXYgdGhhdCBpcyBiZWluZyBwYXNzZWQgdG8geGhjaV9wbGF0X3Byb2JlKCkuIFNvLCBzeXNkZXYg
+bWF5IG5vdCBiZSB0aGUNCnRvcG1vc3QgcGFyZW50LiBUaGVyZSBjb3VsZCBiZSBzb21lIHByb3Bl
+cnRpZXMgd2hpY2ggbWF5IGJlIHByZXNlbnQgaW4gcGFyZW50DQphbmQgbWF5IG5vdCBiZSBwb3B1
+bGF0ZWQgaW4gdGhlIGNoaWxkLiBTbywgSSBtYWRlIHRoaXMgY2hhbmdlIHRvIHNlYXJjaCBvbiBh
+bGwNCmF2YWlsYWJsZSBwYXJlbnRzIGZvciBmaW5kaW5nIGEgdmFsaWQgcHJvcGVydHkNCg0KPj4N
+Cj4+IC0JaWYgKGRldmljZV9wcm9wZXJ0eV9yZWFkX2Jvb2woc3lzZGV2LCAidXNiMy1scG0tY2Fw
+YWJsZSIpKQ0KPj4gLQkJeGhjaS0+cXVpcmtzIHw9IFhIQ0lfTFBNX1NVUFBPUlQ7DQo+PiArCQlp
+ZiAoZGV2aWNlX3Byb3BlcnR5X3JlYWRfYm9vbCh0bXBkZXYsICJ1c2IyLWxwbS1kaXNhYmxlIikp
+DQo+PiArCQkJeGhjaS0+cXVpcmtzIHw9IFhIQ0lfSFdfTFBNX0RJU0FCTEU7DQo+Pg0KPj4gLQlp
+ZiAoZGV2aWNlX3Byb3BlcnR5X3JlYWRfYm9vbCgmcGRldi0+ZGV2LCAicXVpcmstYnJva2VuLXBv
+cnQtcGVkIikpDQo+PiAtCQl4aGNpLT5xdWlya3MgfD0gWEhDSV9CUk9LRU5fUE9SVF9QRUQ7DQo+
+PiArCQlpZiAoZGV2aWNlX3Byb3BlcnR5X3JlYWRfYm9vbCh0bXBkZXYsICJ1c2IzLWxwbS1jYXBh
+YmxlIikpDQo+PiArCQkJeGhjaS0+cXVpcmtzIHw9IFhIQ0lfTFBNX1NVUFBPUlQ7DQo+Pg0KPj4g
+LQkvKiBpbW9kX2ludGVydmFsIGlzIHRoZSBpbnRlcnJ1cHQgbW9kZXJhdGlvbiB2YWx1ZSBpbiBu
+YW5vc2Vjb25kcy4gKi8NCj4+IC0JeGhjaS0+aW1vZF9pbnRlcnZhbCA9IDQwMDAwOw0KPg0KPlNl
+dHRpbmcgdGhlIGRlZmF1bHQgaW1vZF9pbnRlcnZhbCBjb3VsZCBiZSBtb3ZlZCBiZWZvcmUgdGhl
+IGZvcigpIGxvb3ANCj4NCg0KSSB0aG91Z2h0IGl0IHdvdWxkIGJlIGJldHRlciBpZiBldmVyeXRo
+aW5nIHJlbGF0ZWQgdG8gaW1vZF9pbnRlcnZhbCBpcyBpbiBvbmUgcGxhY2UsIA0Kc28ga2VwdCBp
+dCBhcyBpcy4gSSBjYW4gZml4IHRoaXMgaW4gdjIgaWYgeW91IHN1Z2dlc3QuDQoNCj4+IC0JZGV2
+aWNlX3Byb3BlcnR5X3JlYWRfdTMyKHN5c2RldiwgImltb2QtaW50ZXJ2YWwtbnMiLA0KPj4gLQkJ
+CQkgJnhoY2ktPmltb2RfaW50ZXJ2YWwpOw0KPj4gKwkJaWYgKGRldmljZV9wcm9wZXJ0eV9yZWFk
+X2Jvb2wodG1wZGV2LCAicXVpcmstYnJva2VuLXBvcnQtcGVkIikpDQo+PiArCQkJeGhjaS0+cXVp
+cmtzIHw9IFhIQ0lfQlJPS0VOX1BPUlRfUEVEOw0KPj4gKw0KPj4gKwkJLyoNCj4+ICsJCSAqIGlt
+b2RfaW50ZXJ2YWwgaXMgdGhlIGludGVycnVwdCBtb2RlcmF0aW9uDQo+PiArCQkgKiB2YWx1ZSBp
+biBuYW5vc2Vjb25kcy4NCj4+ICsJCSAqLw0KPj4gKwkJeGhjaS0+aW1vZF9pbnRlcnZhbCA9IDQw
+MDAwOw0KPj4gKwkJZGV2aWNlX3Byb3BlcnR5X3JlYWRfdTMyKHRtcGRldiwgImltb2QtaW50ZXJ2
+YWwtbnMiLA0KPj4gKwkJCQkJICZ4aGNpLT5pbW9kX2ludGVydmFsKTsNCj4+ICsJfQ0KPj4NCj4+
+ICAgCWhjZC0+dXNiX3BoeSA9IGRldm1fdXNiX2dldF9waHlfYnlfcGhhbmRsZShzeXNkZXYsICJ1
+c2ItcGh5IiwgMCk7DQo+PiAgIAlpZiAoSVNfRVJSKGhjZC0+dXNiX3BoeSkpIHsNCj4+DQo+DQo+
+T3RoZXJ3aXNlIGV2ZXJ5dGhpbmcgbG9va3MgZmluZS4NCj5JIHdpbGwgdW5mb3J0dW5hdGVseSBi
+ZSBhd2F5IGFnYWluIGZvciBhbm90aGVyIHR3byB3ZWVrcy4NCg0KTm8gcHJvYnMuIElmIHlvdSBm
+ZWVsIHRoZXJlIGlzIG5vIGhhcm0gaW4gYXBwbHlpbmcgYW5kIHNhdGlzZmllZCB3aXRoIHRoZSBj
+aGFuZ2VzLCBpdA0Kd291bGQgYmUgaGVscGZ1bCBpZiB5b3UgY2FuIGFwcGx5IHRoaXMgcGF0Y2gu
+IFRoaXMgaXMgYmVjYXVzZSBJIGhhdmUgc29tZSBkZXBlbmRlbmN5DQpvbiB0aGlzIHBhdGNoIHdh
+aXRpbmcgIHRvIGJlIGFwcGxpZWQuIFNvcnJ5IGZvciB0cm91YmxpbmcgeW91IGFnYWluLg0KDQpU
+aGFua3MsDQpBbnVyYWcgS3VtYXIgVnVsaXNoYQ0KDQo+DQo+LU1hdGhpYXMNCg==
