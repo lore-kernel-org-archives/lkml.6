@@ -2,265 +2,496 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF90CECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 04:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E41BBECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 04:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DE9B2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 04:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 686CA206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 04:50:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="A2nhLu0O";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eqLE02AK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DE9B2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="KjvxFIZx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686CA206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeGTFTv (ORCPT
+        id S1727130AbeGTFbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 01:19:51 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:34620 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeGTFTv (ORCPT
+        Fri, 20 Jul 2018 01:31:02 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:57150 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbeGTFbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 01:19:51 -0400
-Received: by mail-yb0-f193.google.com with SMTP id e9-v6so4177090ybq.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 21:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=QX4j5EnSMQma6MyGAsOQQfN1sdVicpAuMN1T1GCkkzQ=;
-        b=A2nhLu0OFZ1WFEwluz5kYVpeegMvsTk+8Cu0NoBh8tmdB3wvkxmyxuUSMDBFazu92+
-         V/T33O+UE6cLJgBeJ02qaWynt3KeNw4vjM74pW1GSW1+xjNyfA0pNEU45+ikMXCaejkk
-         aRWr4FFgkFV1eDt04/hosL4nP8VRT9UXr9peZPnQkRtLgSu+tF9G4ChR+MESbavzKwaQ
-         Q7vQSC9tZQfj7NF4VvAhKs7fgfUjIh9UX8Xs2SRzQnSRxojYHaTaMq/pWINORxLA6as8
-         ic+yiKr3P3pbhZ7mALEzWgP6TSEiTbJow7j70afSINNAqsV7NbQbTq0KLWnNze/MeGG9
-         2FAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=QX4j5EnSMQma6MyGAsOQQfN1sdVicpAuMN1T1GCkkzQ=;
-        b=eqLE02AKBBNdwAYLsCqe7+jiLEMebdj4uH/qeawJWwFaV6bVn23dh2lor+tViSv2dx
-         eQUhbO8YELGHzx5uTcPwOWeW9E7ju4E3Kcpz8cog+G2yKsZPd53E/IIUXYzst7YrM0Ld
-         bBk5zxm/8qPAXIzhf5/44tqDTddQLQx3Hea/U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=QX4j5EnSMQma6MyGAsOQQfN1sdVicpAuMN1T1GCkkzQ=;
-        b=cFSi4enM/UYjE1J9K5cJttfrIfe7T5mcmZ1JNseeOKpoF2SJSB0sbsASlw8ES+2KpC
-         AAPkUkbh+iOvxFsMEE7JQnb1i1LbSYNjnXGNqKeZG+dtOhoPQbi8GpIHIGJXbDJdE7GR
-         vW8J6sltNsxUZCP2ovrUk5ShOYN4GZzfyBUT76mmY4tojfIo6EA+Q40vmTCESL3qHfJn
-         PK0VJhXIfPY99cmVhNcbh/cXq+Ap427kQevyCmJuclVV1+mx9RfXHKVzRL38Vt2P6fOQ
-         6LCBSp8fUZqNshe6a9e+mXmlY7dNQPlWTq/Bb0HYllT36YaAo20wZ6FzPAVG0C6oaqoA
-         JZqQ==
-X-Gm-Message-State: AOUpUlF3hr+UuOacFksG5k7sHpWzzZbNgRTiKUzL9SecV0gNecB+6O3R
-        MrCRB8txnH/Ny81wcGYyqHBFUgi1u4LlKTZenQ+iWg==
-X-Google-Smtp-Source: AAOMgpdKGHokcgJ5evx3mqzJ2etE6L1ZSviHTuV01TDSansAPw8DwIRYMKlVfTiObOYTreV74vhKv7FojPTpcvr6EBg=
-X-Received: by 2002:a25:15ca:: with SMTP id 193-v6mr222551ybv.484.1532061212151;
- Thu, 19 Jul 2018 21:33:32 -0700 (PDT)
+        Fri, 20 Jul 2018 01:31:02 -0400
+Received: from mail-ua0-f169.google.com (mail-ua0-f169.google.com [209.85.217.169]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w6K4iErA031323;
+        Fri, 20 Jul 2018 13:44:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w6K4iErA031323
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1532061856;
+        bh=7MW5QGFW7ANa7tqqpUX4pf0ARA9DN6Nu1ozUEEN0enk=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=KjvxFIZxKp5yM3xaDIbLYMQjXX0p+Vrsc8ElvjtknDTCdXLNOSL/G3DFFs58dusbi
+         X9b8U8T/njNBZ5Ll2Scg59KLBXI/TjHgb8NADEqOh/hE5U93f+nwDK3zFNhfg6smPk
+         gYvzsPIPpH5L5uz5AK2jipbD1UbzaPVVAI1hyHmOMRqh6qUclyt7Jivu53NGFOcx68
+         Cj6Zn/yNSX/rwbTSC9qIVMmg3K5z1b2CxqLnqIDL5wDGIvWClrr1isbY6UsO7DJzpS
+         7wd55Jx3ETPkmATH3BOcVEu6VGURWpP6UMpbUP6i1xqrO0eLuOxBafcGnPXiz2erTa
+         p/tnpZK7Esofg==
+X-Nifty-SrcIP: [209.85.217.169]
+Received: by mail-ua0-f169.google.com with SMTP id r18-v6so6670272ual.13;
+        Thu, 19 Jul 2018 21:44:15 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFUWWVKYdFUPEk4w+DmIGiFzIiEXNcTp5GX16CuAGvrtiqo8sng
+        q7gFVfIIIZKqPPIdE3t/IX7kfpbVQSIr2uNfWUQ=
+X-Google-Smtp-Source: AAOMgpdaXN3P7VX2U4A013kaGffEDHUrySFYCdLNXzLHdeRLb4WM8KM42Yh24ALF8PkGxGyYc3hr4eaXfdtlkGtkpZ4=
+X-Received: by 2002:ab0:290:: with SMTP id 16-v6mr279804uah.144.1532061854043;
+ Thu, 19 Jul 2018 21:44:14 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 21:33:31
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 21:43:33
  -0700 (PDT)
-In-Reply-To: <20180719232806.3397-3-labbott@redhat.com>
-References: <20180719232806.3397-1-labbott@redhat.com> <20180719232806.3397-3-labbott@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 19 Jul 2018 21:33:31 -0700
-X-Google-Sender-Auth: jCJbtYKaLnCJ3Pxi8J4Hmudf8B0
-Message-ID: <CAGXu5jJ5vAduN=nVVEZkrG4Lb-qSQF2Kk9GtBDb3YkkP+_u67Q@mail.gmail.com>
-Subject: Re: [PATCHv2 2/2] arm64: Clear the stack
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+In-Reply-To: <1531991136-1179-1-git-send-email-hayashibara.keiji@socionext.com>
+References: <1531991136-1179-1-git-send-email-hayashibara.keiji@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 20 Jul 2018 13:43:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQoE7JPn3jJqTknLpngiAYAMGiHT7OgXGVMwQGYqoy5Ng@mail.gmail.com>
+Message-ID: <CAK7LNAQoE7JPn3jJqTknLpngiAYAMGiHT7OgXGVMwQGYqoy5Ng@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: uniphier: add spi pin-mux settings
+To:     Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 4:28 PM, Laura Abbott <labbott@redhat.com> wrote:
+2018-07-19 18:05 GMT+09:00 Keiji Hayashibara <hayashibara.keiji@socionext.com>:
+> From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 >
-> Implementation of stackleak based heavily on the x86 version
+> Add pin-mux settings for spi controller.
 >
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-
-This is the commit message I wrote when I was using an earlier
-version, which I think is more descriptive:
-
-    arm64: Add support for STACKLEAK gcc plugin
-
-    This adds support for the STACKLEAK gcc plugin to arm64 by implementing
-    stackleak_check_alloca(), based heavily on the x86 version, and adding the
-    two helpers used by the stackleak common code: current_top_of_stack() and
-    on_thread_stack(). The stack erasure calls are made at syscall returns.
-    Additionally, this disables the plugin in hypervisor and EFI stub code,
-    which are out of scope for the protection.
-
-Either way:
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
-Thanks for getting this hammered out!
-
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
 > ---
-> v2: Convert to adjusted on_acessible_stack APIs. Fixed alloca check to
-> just panic. Dropped the extra include per Kees. I also didn't add the
-> Reviewed-by since the APIs did change and I wanted another pass.
 
-Maybe the panic() should get a comment above it to describe why it's
-there (i.e. summarize the thread where that change was discussed?) Or
-maybe mention it in the commit log (instead of being only below the
---- line?)
 
--Kees
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> ---
->  arch/arm64/Kconfig                    |  1 +
->  arch/arm64/include/asm/processor.h    | 15 +++++++++++++++
->  arch/arm64/kernel/entry.S             |  7 +++++++
->  arch/arm64/kernel/process.c           | 17 +++++++++++++++++
->  arch/arm64/kvm/hyp/Makefile           |  3 ++-
->  drivers/firmware/efi/libstub/Makefile |  3 ++-
->  6 files changed, 44 insertions(+), 2 deletions(-)
+
+
+>  Changes since v1:
+>  - Fix build error of "pinctrl-uniphier-sld8.c".
 >
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 42c090cf0292..216d36a49ab5 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -96,6 +96,7 @@ config ARM64
->         select HAVE_ARCH_MMAP_RND_BITS
->         select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
->         select HAVE_ARCH_SECCOMP_FILTER
-> +       select HAVE_ARCH_STACKLEAK
->         select HAVE_ARCH_THREAD_STRUCT_WHITELIST
->         select HAVE_ARCH_TRACEHOOK
->         select HAVE_ARCH_TRANSPARENT_HUGEPAGE
-> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-> index a73ae1e49200..0061450a793b 100644
-> --- a/arch/arm64/include/asm/processor.h
-> +++ b/arch/arm64/include/asm/processor.h
-> @@ -266,5 +266,20 @@ extern void __init minsigstksz_setup(void);
->  #define SVE_SET_VL(arg)        sve_set_current_vl(arg)
->  #define SVE_GET_VL()   sve_get_current_vl()
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 20 ++++++++++++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  |  5 +++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 15 +++++++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c |  5 +++++
+>  9 files changed, 95 insertions(+)
 >
-> +/*
-> + * For CONFIG_GCC_PLUGIN_STACKLEAK
-> + *
-> + * These need to be macros because otherwise we get stuck in a nightmare
-> + * of header definitions for the use of task_stack_page.
-> + */
-> +
-> +#define current_top_of_stack()                                                 \
-> +({                                                                             \
-> +       struct stack_info _info;                                                \
-> +       BUG_ON(!on_accessible_stack(current, current_stack_pointer, &_info));   \
-> +       _info.high;                                                             \
-> +})
-> +#define on_thread_stack()      (on_task_stack(current, current_stack_pointer, NULL))
-> +
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ASM_PROCESSOR_H */
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index 28ad8799406f..67d12016063d 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -431,6 +431,11 @@ tsk        .req    x28             // current thread_info
->
->         .text
->
-> +       .macro  stackleak_erase
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +       bl      stackleak_erase
-> +#endif
-> +       .endm
->  /*
->   * Exception vectors.
->   */
-> @@ -910,6 +915,7 @@ ret_fast_syscall:
->         and     x2, x1, #_TIF_WORK_MASK
->         cbnz    x2, work_pending
->         enable_step_tsk x1, x2
-> +       stackleak_erase
->         kernel_exit 0
->  ret_fast_syscall_trace:
->         enable_daif
-> @@ -936,6 +942,7 @@ ret_to_user:
->         cbnz    x2, work_pending
->  finish_ret_to_user:
->         enable_step_tsk x1, x2
-> +       stackleak_erase
->         kernel_exit 0
->  ENDPROC(ret_to_user)
->
-> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> index e10bc363f533..2724e4d31b16 100644
-> --- a/arch/arm64/kernel/process.c
-> +++ b/arch/arm64/kernel/process.c
-> @@ -493,3 +493,20 @@ void arch_setup_new_exec(void)
->  {
->         current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
->  }
-> +
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +void __used stackleak_check_alloca(unsigned long size)
-> +{
-> +       unsigned long stack_left;
-> +       unsigned long current_sp = current_stack_pointer;
-> +       struct stack_info info;
-> +
-> +       BUG_ON(!on_accessible_stack(current, current_sp, &info));
-> +
-> +       stack_left = current_sp - info.low;
-> +
-> +       if (size >= stack_left)
-> +               panic("alloca() over the kernel stack boundary\n");
-> +}
-> +EXPORT_SYMBOL(stackleak_check_alloca);
-> +#endif
-> diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-> index 4313f7475333..2fabc2dc1966 100644
-> --- a/arch/arm64/kvm/hyp/Makefile
-> +++ b/arch/arm64/kvm/hyp/Makefile
-> @@ -3,7 +3,8 @@
->  # Makefile for Kernel-based Virtual Machine module, HYP part
->  #
->
-> -ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING
-> +ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING \
-> +               $(DISABLE_STACKLEAK_PLUGIN)
->
->  KVM=../../../../virt/kvm
->
-> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> index a34e9290a699..25dd2a14560d 100644
-> --- a/drivers/firmware/efi/libstub/Makefile
-> +++ b/drivers/firmware/efi/libstub/Makefile
-> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)  += -I$(srctree)/scripts/dtc/libfdt
->  KBUILD_CFLAGS                  := $(cflags-y) -DDISABLE_BRANCH_PROFILING \
->                                    -D__NO_FORTIFY \
->                                    $(call cc-option,-ffreestanding) \
-> -                                  $(call cc-option,-fno-stack-protector)
-> +                                  $(call cc-option,-fno-stack-protector) \
-> +                                  $(DISABLE_STACKLEAK_PLUGIN)
->
->  GCOV_PROFILE                   := n
->  KASAN_SANITIZE                 := n
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+> index 58825f6..bce533f 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+> @@ -517,6 +517,10 @@ static const int i2c4_muxvals[] = {1, 1};
+>  static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+>                                      15, 16, 17};
+>  static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {56, 57, 58, 59};
+> +static const int spi0_muxvals[] = {0, 0, 0, 0};
+> +static const unsigned spi1_pins[] = {169, 170, 171, 172};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
+>                                            14, 15, 16, 17};
+>  static const int system_bus_muxvals[] = {0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+> @@ -596,6 +600,8 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(i2c3),
+>         UNIPHIER_PINCTRL_GROUP(i2c4),
+>         UNIPHIER_PINCTRL_GROUP(nand),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(uart0),
+> @@ -632,6 +638,8 @@ static const char * const i2c1_groups[] = {"i2c1"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const i2c4_groups[] = {"i2c4"};
+>  static const char * const nand_groups[] = {"nand"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1"};
+>  static const char * const uart0_groups[] = {"uart0"};
+> @@ -657,6 +665,8 @@ static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(i2c4),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+> index 9f449b3..99f06fe 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+> @@ -606,6 +606,14 @@ static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+>  static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+>  static const unsigned sd_pins[] = {10, 11, 12, 13, 14, 15, 16, 17};
+>  static const int sd_muxvals[] = {3, 3, 3, 3, 3, 3, 3, 3};  /* No SDVOLC */
+> +static const unsigned spi0_pins[] = {56, 57, 58, 59};
+> +static const int spi0_muxvals[] = {0, 0, 0, 0};
+> +static const unsigned spi1_pins[] = {169, 170, 171, 172};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+> +static const unsigned spi2_pins[] = {86, 87, 88, 89};
+> +static const int spi2_muxvals[] = {1, 1, 1, 1};
+> +static const unsigned spi3_pins[] = {74, 75, 76, 77};
+> +static const int spi3_muxvals[] = {1, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
+>                                            14, 15, 16, 17};
+>  static const int system_bus_muxvals[] = {0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+> @@ -685,6 +693,10 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(i2c4),
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+> +       UNIPHIER_PINCTRL_GROUP(spi2),
+> +       UNIPHIER_PINCTRL_GROUP(spi3),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(uart0),
+> @@ -722,6 +734,10 @@ static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const i2c4_groups[] = {"i2c4"};
+>  static const char * const nand_groups[] = {"nand"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+> +static const char * const spi2_groups[] = {"spi2"};
+> +static const char * const spi3_groups[] = {"spi3"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1"};
+>  static const char * const uart0_groups[] = {"uart0"};
+> @@ -751,6 +767,10 @@ static const struct uniphier_pinmux_function uniphier_ld20_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c4),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+> +       UNIPHIER_PINMUX_FUNCTION(spi2),
+> +       UNIPHIER_PINMUX_FUNCTION(spi3),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+> index 0b10ebc..b247011 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+> @@ -576,6 +576,8 @@ static const unsigned nand_cs1_pins[] = {22, 23};
+>  static const int nand_cs1_muxvals[] = {0, 0};
+>  static const unsigned sd_pins[] = {44, 45, 46, 47, 48, 49, 50, 51, 52};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {135, 136, 137, 138};
+> +static const int spi0_muxvals[] = {12, 12, 12, 12};
+>  static const unsigned system_bus_pins[] = {16, 17, 18, 19, 20, 165, 166, 167,
+>                                            168, 169, 170, 171, 172, 173};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1,
+> @@ -640,6 +642,7 @@ static const struct uniphier_pinctrl_group uniphier_ld4_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+> @@ -667,6 +670,7 @@ static const char * const i2c2_groups[] = {"i2c2"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs0",
+>                                                  "system_bus_cs1",
+> @@ -690,6 +694,7 @@ static const struct uniphier_pinmux_function uniphier_ld4_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+> index 8e4d45fe..cb58797 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+> @@ -769,6 +769,10 @@ static const unsigned nand_cs1_pins[] = {37, 38};
+>  static const int nand_cs1_muxvals[] = {0, 0};
+>  static const unsigned sd_pins[] = {47, 48, 49, 50, 51, 52, 53, 54, 55};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {199, 200, 201, 202};
+> +static const int spi0_muxvals[] = {8, 8, 8, 8};
+> +static const unsigned spi1_pins[] = {93, 94, 95, 96};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+>                                            11, 12, 13};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+> @@ -851,6 +855,8 @@ static const struct uniphier_pinctrl_group uniphier_ld6b_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs2),
+> @@ -882,6 +888,8 @@ static const char * const i2c2_groups[] = {"i2c2"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1",
+>                                                  "system_bus_cs2",
+> @@ -907,6 +915,8 @@ static const struct uniphier_pinmux_function uniphier_ld6b_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+> index 24788a7..89148f8 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+> @@ -1050,6 +1050,10 @@ static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+>  static const unsigned sd1_pins[] = {319, 320, 321, 322, 323, 324, 325, 326,
+>                                     327};
+>  static const int sd1_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {199, 200, 201, 202};
+> +static const int spi0_muxvals[] = {11, 11, 11, 11};
+> +static const unsigned spi1_pins[] = {195, 196, 197, 198, 235, 238, 239};
+> +static const int spi1_muxvals[] = {11, 11, 11, 11, 11, 11, 11};
+>  static const unsigned system_bus_pins[] = {25, 26, 27, 28, 29, 30, 31, 32, 33,
+>                                            34, 35, 36, 37, 38};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+> @@ -1138,6 +1142,8 @@ static const struct uniphier_pinctrl_group uniphier_pro4_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+>         UNIPHIER_PINCTRL_GROUP(sd1),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+> @@ -1171,6 +1177,8 @@ static const char * const i2c6_groups[] = {"i2c6"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+>  static const char * const sd1_groups[] = {"sd1"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs0",
+>                                                  "system_bus_cs1",
+> @@ -1202,6 +1210,8 @@ static const struct uniphier_pinmux_function uniphier_pro4_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+>         UNIPHIER_PINMUX_FUNCTION(sd1),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+> index d5d5e57..d77d6b37 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+> @@ -818,6 +818,12 @@ static const unsigned nand_cs1_pins[] = {26, 27};
+>  static const int nand_cs1_muxvals[] = {0, 0};
+>  static const unsigned sd_pins[] = {250, 251, 252, 253, 254, 255, 256, 257, 258};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {120, 121, 122, 123};
+> +static const int spi0_muxvals[] = {0, 0, 0, 0};
+> +static const unsigned spi1_pins[] = {134, 139, 85, 86};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+> +static const unsigned spi2_pins[] = {55, 56, 57, 58, 82, 83, 84};
+> +static const int spi2_muxvals[] = {0, 0, 0, 0, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+>                                            14, 15, 16, 17};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+> @@ -904,6 +910,9 @@ static const struct uniphier_pinctrl_group uniphier_pro5_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(i2c5c),
+>         UNIPHIER_PINCTRL_GROUP(i2c6),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+> +       UNIPHIER_PINCTRL_GROUP(spi2),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+> @@ -934,6 +943,9 @@ static const char * const i2c5_groups[] = {"i2c5", "i2c5b", "i2c5c"};
+>  static const char * const i2c6_groups[] = {"i2c6"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+> +static const char * const spi2_groups[] = {"spi2"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs0",
+>                                                  "system_bus_cs1",
+> @@ -961,6 +973,9 @@ static const struct uniphier_pinmux_function uniphier_pro5_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c6),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+> +       UNIPHIER_PINMUX_FUNCTION(spi2),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+> index 032619a..90199da 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+> @@ -778,6 +778,10 @@ static const unsigned nand_cs1_pins[] = {37, 38};
+>  static const int nand_cs1_muxvals[] = {8, 8};
+>  static const unsigned sd_pins[] = {47, 48, 49, 50, 51, 52, 53, 54, 55};
+>  static const int sd_muxvals[] = {8, 8, 8, 8, 8, 8, 8, 8, 8};
+> +static const unsigned spi0_pins[] = {199, 200, 201, 202};
+> +static const int spi0_muxvals[] = {8, 8, 8, 8};
+> +static const unsigned spi1_pins[] = {93, 94, 95, 96};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+>                                            11, 12, 13};
+>  static const int system_bus_muxvals[] = {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+> @@ -861,6 +865,8 @@ static const struct uniphier_pinctrl_group uniphier_pxs2_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(uart0),
+> @@ -897,6 +903,8 @@ static const char * const i2c5_groups[] = {"i2c5"};
+>  static const char * const i2c6_groups[] = {"i2c6"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1"};
+>  static const char * const uart0_groups[] = {"uart0", "uart0b", "uart0b_ctsrts"};
+> @@ -928,6 +936,8 @@ static const struct uniphier_pinmux_function uniphier_pxs2_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c6),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+> index 535bb2e..3b860da 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+> @@ -808,6 +808,10 @@ static const unsigned int nand_pins[] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+>  static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+>  static const unsigned int sd_pins[] = {43, 44, 45, 46, 47, 48, 49, 50, 51};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {100, 101, 102, 103};
+> +static const int spi0_muxvals[] = {0, 0, 0, 0};
+> +static const unsigned spi1_pins[] = {112, 113, 114, 115};
+> +static const int spi1_muxvals[] = {2, 2, 2, 2};
+>  static const unsigned int system_bus_pins[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+>                                                11, 12, 13, 14};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+> @@ -886,6 +890,8 @@ static const struct uniphier_pinctrl_group uniphier_pxs3_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(i2c3),
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(uart0),
+> @@ -913,6 +919,8 @@ static const char * const i2c2_groups[] = {"i2c2"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const nand_groups[] = {"nand"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1"};
+>  static const char * const uart0_groups[] = {"uart0", "uart0_ctsrts"};
+> @@ -936,6 +944,8 @@ static const struct uniphier_pinmux_function uniphier_pxs3_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+> index 0f921a6..f086083 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+> @@ -504,6 +504,8 @@ static const unsigned nand_cs1_pins[] = {22, 23};
+>  static const int nand_cs1_muxvals[] = {0, 0};
+>  static const unsigned sd_pins[] = {32, 33, 34, 35, 36, 37, 38, 39, 40};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {118, 119, 120, 121};
+> +static const int spi0_muxvals[] = {3, 3, 3, 3};
+>  static const unsigned system_bus_pins[] = {136, 137, 138, 139, 140, 141, 142,
+>                                            143, 144, 145, 146, 147, 148, 149};
+>  static const int system_bus_muxvals[] = {-1, -1, -1, -1, -1, -1, -1, -1, -1,
+> @@ -570,6 +572,7 @@ static const struct uniphier_pinctrl_group uniphier_sld8_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs2),
+> @@ -598,6 +601,7 @@ static const char * const i2c2_groups[] = {"i2c2"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1",
+>                                                  "system_bus_cs2",
+> @@ -622,6 +626,7 @@ static const struct uniphier_pinmux_function uniphier_sld8_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
 > --
-> 2.17.1
+> 2.7.4
 >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
 
 -- 
-Kees Cook
-Pixel Security
+Best Regards
+Masahiro Yamada
