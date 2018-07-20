@@ -2,166 +2,151 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E9EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F54CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBB8220652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:32:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBB8220652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 01E3020652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:33:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Apk/gl20"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E3020652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbeGTLTk (ORCPT
+        id S1728328AbeGTLVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:19:40 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55598 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbeGTLTk (ORCPT
+        Fri, 20 Jul 2018 07:21:15 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:59646 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727216AbeGTLVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:19:40 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1fgShc-0008Hj-3h; Fri, 20 Jul 2018 10:32:00 +0000
-Subject: Re: [PATCH] apparmor: remove redundant pointer 'info'
-To:     Colin King <colin.king@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180714161905.5403-1-colin.king@canonical.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <5702474d-5215-cdea-8d77-24f45fef92cc@canonical.com>
-Date:   Fri, 20 Jul 2018 03:31:57 -0700
+        Fri, 20 Jul 2018 07:21:14 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6KAXNfv013932;
+        Fri, 20 Jul 2018 05:33:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1532082804;
+        bh=jpuVWm2ZSlJkfuD+lpF7czFQD6EGGKPcpMbShz06U8g=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=Apk/gl20kCHqVbV+7nJUHYF0WJSAuZBOC/YCznLZr316HG2kYqQWYdpu9LV56wgqq
+         vRDShoP/0IRbt0Vb1J834vEomD8gZ4BuFnMjmokxIGK03O8t1foYQkU1KlhEt/QF/x
+         n98+aOr3wkf0ORZufREGuMz5p2suHZ5aXIGOw6z0=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6KAXNwb007500;
+        Fri, 20 Jul 2018 05:33:23 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 20
+ Jul 2018 05:33:23 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 20 Jul 2018 05:33:23 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6KAXKsB019501;
+        Fri, 20 Jul 2018 05:33:21 -0500
+Subject: Re: [PATCH v4 1/4] rtc: omap: Cut down the shutdown time from 2
+ seconds to 1 sec
+From:   Keerthy <j-keerthy@ti.com>
+To:     Johan Hovold <johan@kernel.org>
+CC:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
+        <t-kristo@ti.com>, <linux-rtc@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1531372060-10532-1-git-send-email-j-keerthy@ti.com>
+ <1531372060-10532-2-git-send-email-j-keerthy@ti.com>
+ <20180719100229.GQ10204@localhost>
+ <ed335c7a-f079-082d-d572-93632087fd8f@ti.com>
+ <a6930aca-f475-5b53-ce9d-d45fbc75d69c@ti.com>
+ <20180719123617.GV10204@localhost>
+ <e3841afa-fe18-84c0-e5b6-520365c5e4a1@ti.com>
+Message-ID: <28f0d002-f05e-b4dc-f0dd-d0bc0fc5616d@ti.com>
+Date:   Fri, 20 Jul 2018 16:03:20 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180714161905.5403-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <e3841afa-fe18-84c0-e5b6-520365c5e4a1@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/14/2018 09:19 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+
+
+On Thursday 19 July 2018 06:16 PM, Keerthy wrote:
 > 
-> Pointer 'info' is being assigned but is never used hence it is
-> redundant and can be removed.
 > 
-> Cleans up clang warning:
-> warning: variable 'info' set but not used [-Wunused-but-set-variable]
+> On Thursday 19 July 2018 06:06 PM, Johan Hovold wrote:
+>> On Thu, Jul 19, 2018 at 05:52:17PM +0530, Keerthy wrote:
+>>> On Thursday 19 July 2018 05:23 PM, Keerthy wrote:
+>>>> On Thursday 19 July 2018 03:32 PM, Johan Hovold wrote:
+>>>>> On Thu, Jul 12, 2018 at 10:37:37AM +0530, Keerthy wrote:
+>>
+>>>>>> @@ -470,6 +476,9 @@ static void omap_rtc_power_off(void)
+>>>>>>  	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+>>>>>>  	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
+>>>>>>  			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
+>>
+>>>>>> +	/* Our calculations started right before the rollover, try again */
+>>
+>>>>>> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
+>>>>>> +		goto again;
+>>>>>
+>>>>> Here the alarm may have gone off as part of the roll over, in which case
+>>>>> you shouldn't retry.
+>>>>
+>>>> Ex: We programmed at Sec = 2 and we expect ALARM2 to fire at sec = 3.
+>>>>
+>>>> In the event of Roll over before setting the
+>>>> OMAP_RTC_INTERRUPTS_IT_ALARM2 bit in the OMAP_RTC_INTERRUPTS_REG will we
+>>>> not miss the ALARM2 event? Then poweroff would fail right?
+>>
+>> Right, that would fail.
+>>
+>>>> Hence the attempt to retry the next second. This sequence would begin
+>>>> right at the beginning of a new second and we expect the full sequence
+>>>> to get over without having to retry again.
+>>>>
+>>>> Hope i am clear.
+>>
+>> Yes, sure, but my point is that could end up retrying also after the
+>> alarm has fired correctly (e.g. due to latencies in turning of the
+>> power)>
+>> It may be enough to check OMAP_RTC_STATUS_REG before retrying.
+
+On a second thought. Status gets set only after the next second.
+
+if ALARM2 status bit is set that surely means interrupt has fired but if
+it is not set then there are 2 possibilities
+
+1) ALARM2 is missed as the roll over happened
+2) ALARM2 yet to fire as we are yet to get to the next second.
+
+On the other hand Seconds gives me clear indication if we missed the
+interrupt or we are about to get one.
+
 > 
-NAK,
-
-real problem wrong fix, instead of deleting the additional context info
-we need to be auditing it
-
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 098d546d8253..08c88de0ffda 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -1036,7 +1036,7 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
- audit:
- 	aa_audit_file(profile, &nullperms, OP_CHANGE_HAT, AA_MAY_CHANGEHAT,
- 		      name, hat ? hat->base.hname : NULL,
--		      hat ? &hat->label : NULL, GLOBAL_ROOT_UID, NULL,
-+		      hat ? &hat->label : NULL, GLOBAL_ROOT_UID, info,
- 		      error);
- 	if (!hat || (error && error != -ENOENT))
- 		return ERR_PTR(error);
-
-I pushed this fix into apparmor-next
-
-
-
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  security/apparmor/domain.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+> Ah okay. Yes this makes sense. I will use the status to retry.
 > 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 098d546d8253..410d9ce09861 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -1006,7 +1006,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
->  					 const char *name, bool sibling)
->  {
->  	struct aa_profile *root, *hat = NULL;
-> -	const char *info = NULL;
->  	int error = 0;
->  
->  	if (sibling && PROFILE_IS_HAT(profile)) {
-> @@ -1014,7 +1013,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
->  	} else if (!sibling && !PROFILE_IS_HAT(profile)) {
->  		root = aa_get_profile(profile);
->  	} else {
-> -		info = "conflicting target types";
->  		error = -EPERM;
->  		goto audit;
->  	}
-> @@ -1025,10 +1023,8 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
->  		if (COMPLAIN_MODE(profile)) {
->  			hat = aa_new_null_profile(profile, true, name,
->  						  GFP_KERNEL);
-> -			if (!hat) {
-> -				info = "failed null profile create";
-> +			if (!hat)
->  				error = -ENOMEM;
-> -			}
->  		}
->  	}
->  	aa_put_profile(root);
+>>
+>>> I tried to program the interrupt for the same second on the hardware and
+>>> it does not fire. So to take care of roll over corner case one attempt
+>>> to retry is needed.
+>>
+>> Yes, that's expected.
+>>
+>> Thanks,
+>> Johan
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-
