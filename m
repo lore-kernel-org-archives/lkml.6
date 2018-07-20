@@ -2,140 +2,107 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0204AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 124E9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACBF920857
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:17:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fo1TENXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACBF920857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BC9F120661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:20:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC9F120661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388138AbeGTSHF (ORCPT
+        id S2388155AbeGTSKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 14:07:05 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40441 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387950AbeGTSHE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 14:07:04 -0400
-Received: by mail-ed1-f68.google.com with SMTP id e19-v6so10336176edq.7
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 10:17:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ntO2/xlatDe+AJ970d8qzxQ9sQdiWauCDTfQ9G3zCH0=;
-        b=fo1TENXOBgY7z7jzl9ECsTpaZlFWNhSF8WRVJ7PpXisTOSeK73WHyIARrtGUvMeiSj
-         uydP03Pi7NTWGaYbHThv1dD1zmD7/l2pXiY92s5pahY8TP7Wv7MSriHFYVeGOmA6/zSW
-         KCFv71NMF+79bitDIvf3NCZXKiPWUpDuCw0aYFhbRUIY6mfW0nt2CD1wzRECP5m3t2bN
-         5jcaf7WDRLWxPvZRTrELW7FLM4cZQzj3QMfJfj6AioAuh/LAM+aDCJapmz1HZ7+RC6nc
-         SXiteKGwUfVJxR1O5Q1ye0Z7AYgBbo0DhME+0xLXNtNdUNDbw4o1ckhT+5CvtoAueEDw
-         IzMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ntO2/xlatDe+AJ970d8qzxQ9sQdiWauCDTfQ9G3zCH0=;
-        b=Af6qYgNd0oQoGid9Vm6IfEzRCSnSyKObu9/ZRDkvIhUkIi+vvFr9D1ZsrrvJaD7AkX
-         4CYcGTemB+oTzFHahorBfW4Ieu1mGmVhoHdajcgRdm6RRnZ79Uhd0aSFKEwU61Tj/FXR
-         ZNNaP4vCXX5U96+E1lHPZHYUqiqlhP8dFc36W5p+l7MIoyePOYcAGGUs34XBJ+VywcoA
-         soLrwk17uAXHLqXwnKE9I2U9KCMBPezdmiLMS3ItTX9nVMJnbm526/LYIzPDNUVqCzt0
-         UNGFxMnr/CioMGLUY5+vXkgrJuAqOFsIWIkL2QLO1m4gW38U5+kWCbmi9D+z+nu5mtzV
-         C2dw==
-X-Gm-Message-State: AOUpUlF89wzPnNTqCBbGLcNgA8pMdXkhaYiSzXxCSIO4zTyy9Grnkff9
-        KSUpc1Cpy/OUmYHM7G2nyfg=
-X-Google-Smtp-Source: AAOMgpcAmRrluqyo+oUwZ/KLhPPOD9JCJUMZRHfeCAmvo5juVXVIZeFr42PC1i9Agq5SqrQNMgyTzQ==
-X-Received: by 2002:a50:d65e:: with SMTP id c30-v6mr3637531edj.178.1532107070801;
-        Fri, 20 Jul 2018 10:17:50 -0700 (PDT)
-Received: from mappy.world.mentorg.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.googlemail.com with ESMTPSA id i10-v6sm1498475edk.56.2018.07.20.10.17.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 20 Jul 2018 10:17:50 -0700 (PDT)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
-To:     devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org
-Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Cihangir Akturk <cakturk@gmail.com>,
-        Peter Rosin <peda@axentia.se>,
-        Paolo Cretaro <paolocretaro@gmail.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] staging: vboxvideo: Add page-flip support
-Date:   Fri, 20 Jul 2018 10:17:31 -0700
-Message-Id: <1532107051-31102-3-git-send-email-steve_longerbeam@mentor.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532107051-31102-1-git-send-email-steve_longerbeam@mentor.com>
-References: <1532107051-31102-1-git-send-email-steve_longerbeam@mentor.com>
+        Fri, 20 Jul 2018 14:10:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49910 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387950AbeGTSKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 14:10:07 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8DD1281663EE;
+        Fri, 20 Jul 2018 17:20:53 +0000 (UTC)
+Received: from treble (ovpn-120-158.rdu2.redhat.com [10.10.120.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2E1132026D69;
+        Fri, 20 Jul 2018 17:20:53 +0000 (UTC)
+Date:   Fri, 20 Jul 2018 12:20:51 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc:     Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
+        Jiri Kosina <jikos@kernel.org>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] livepatch: Validate module/old func name length
+Message-ID: <20180720172051.jkgm3txclbon2bsy@treble>
+References: <1532080002-10724-1-git-send-email-kamalesh@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1532080002-10724-1-git-send-email-kamalesh@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20180323
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 17:20:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 17:20:53 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds crtc page-flip support by passing the new requested framebuffer
-to vbox_crtc_do_set_base().
+On Fri, Jul 20, 2018 at 03:16:42PM +0530, Kamalesh Babulal wrote:
+> livepatch module author can pass module name/old function name with more
+> than the defined character limit. With obj->name length greater than
+> MODULE_NAME_LEN, the livepatch module gets loaded but waits forever on
+> the module specified by obj->name to be loaded. It also populates a /sys
+> directory with an untruncated object name.
+> 
+> In the case of funcs->old_name length greater then KSYM_NAME_LEN, it
+> would not match against any of the symbol table entries. Instead loop
+> through the symbol table comparing them against a nonexisting function,
+> which can be avoided.
+> 
+> The same issues apply, to misspelled/incorrect names. At least gatekeep
+> the modules with over the limit string length, by checking for their
+> length during livepatch module registration.
+> 
+> Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 
-Note there is no attempt to support vblank interrupts, it's not
-not known how to do this in VBOX or if it is even possible. Since
-this page-flip implementation does not try to sync the page-flip
-to vertical blanking, tearing effects are possible.
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
----
- drivers/staging/vboxvideo/vbox_mode.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+> ---
+>  kernel/livepatch/core.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> index 3a4656fb7047..5b77a7314e01 100644
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -678,6 +678,9 @@ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+>  	if (!func->old_name || !func->new_func)
+>  		return -EINVAL;
+>  
+> +	if (strlen(func->old_name) >= KSYM_NAME_LEN)
+> +		return -EINVAL;
+> +
+>  	INIT_LIST_HEAD(&func->stack_node);
+>  	func->patched = false;
+>  	func->transition = false;
+> @@ -751,6 +754,9 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
+>  	if (!obj->funcs)
+>  		return -EINVAL;
+>  
+> +	if (klp_is_module(obj) && strlen(obj->name) >= MODULE_NAME_LEN)
+> +		return -EINVAL;
+> +
+>  	obj->patched = false;
+>  	obj->mod = NULL;
+>  
+> -- 
+> 2.7.4
+> 
 
-diff --git a/drivers/staging/vboxvideo/vbox_mode.c b/drivers/staging/vboxvideo/vbox_mode.c
-index 688e80d..285d8ad 100644
---- a/drivers/staging/vboxvideo/vbox_mode.c
-+++ b/drivers/staging/vboxvideo/vbox_mode.c
-@@ -308,6 +308,31 @@ static int vbox_crtc_mode_set(struct drm_crtc *crtc,
- 	return ret;
- }
- 
-+static int vbox_crtc_page_flip(struct drm_crtc *crtc,
-+			       struct drm_framebuffer *fb,
-+			       struct drm_pending_vblank_event *event,
-+			       uint32_t page_flip_flags,
-+			       struct drm_modeset_acquire_ctx *ctx)
-+{
-+	struct vbox_private *vbox = crtc->dev->dev_private;
-+	struct drm_device *drm = vbox->dev;
-+	unsigned long flags;
-+	int rc;
-+
-+	rc = vbox_crtc_do_set_base(crtc, CRTC_FB(crtc), fb, 0, 0);
-+	if (rc)
-+		return rc;
-+
-+	spin_lock_irqsave(&drm->event_lock, flags);
-+
-+	if (event)
-+		drm_crtc_send_vblank_event(crtc, event);
-+
-+	spin_unlock_irqrestore(&drm->event_lock, flags);
-+
-+	return 0;
-+}
-+
- static void vbox_crtc_disable(struct drm_crtc *crtc)
- {
- }
-@@ -346,6 +371,7 @@ static const struct drm_crtc_funcs vbox_crtc_funcs = {
- 	.reset = vbox_crtc_reset,
- 	.set_config = drm_crtc_helper_set_config,
- 	/* .gamma_set = vbox_crtc_gamma_set, */
-+	.page_flip = vbox_crtc_page_flip,
- 	.destroy = vbox_crtc_destroy,
- };
- 
 -- 
-2.7.4
-
+Josh
