@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C29ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCEAECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B2920661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0E9B20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:29:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLhjwj6U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B2920661
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4B//pQ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E9B20661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388071AbeGTRRv (ORCPT
+        id S2388102AbeGTRSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:17:51 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44710 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387868AbeGTRRu (ORCPT
+        Fri, 20 Jul 2018 13:18:09 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35795 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387918AbeGTRSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:17:50 -0400
-Received: by mail-pl0-f66.google.com with SMTP id m16-v6so5405291pls.11;
-        Fri, 20 Jul 2018 09:28:49 -0700 (PDT)
+        Fri, 20 Jul 2018 13:18:08 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e6-v6so7311931pgv.2;
+        Fri, 20 Jul 2018 09:29:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=kw6302ch86pg258GLepkuZEk2pw2bUxOqBJi45V/0IA=;
-        b=gLhjwj6UZJEAr6IzTtisNyFyw/DsV4X+Da0JcUyO4RGbHOR5hOcaKNZ0PJwQ7Ph3HR
-         qHHc7p7uKObIBEn1qatKiUZVBahCl1Z3cMTeGSUvvwryIif8ZUVQdMrzeQtZeadIwH4w
-         UyIuDbhVX/0T8VDN79bvcIMhI6m6x4UwbBNIJkyYmZqrnk3Dg47g/WGcgdtNq7MFTWzV
-         i/i9hhsxnjzqN9GvvgR8va+IBprVzayBnlQmzppNN5HdD5M9745dDgwEP/j3EdHxlppi
-         9uTNmW/q6tl/lCqx36Ku2AppcPkTiBNgZB5Jr6n+kQj077p7CLAKf3Re/BtuobUhtZD5
-         Xs8g==
+        bh=zAj0wpkzMgjSjcinyt8YwVCTAp82w+xoQBngFo020p8=;
+        b=W4B//pQ+KMg/ujAltT8lso352WpKYTUYiXyHNfqG4Jd7ycKmJrxSN42ulbvZ7GA8yo
+         Bgd/qApP0d8Ppp7838q0L9y4u55CQ2iqQkm6/7pWV6/F562jze7kzqpA8HGN1EAOnFne
+         M2GctN9ofKiMszyS5hkoBxSLSfBf9U1uw4C31HuQV6zYm+NxOtpHUOk/M3r3yOro+6jv
+         0rhNSzPPnejVUMcq9PsDyH4VFDLRLSmQ0jtvsvz/Je1hewIqE9LHs9AjzJ6C48e/veCV
+         PT274gcKvzBYRL0YrJtnQqY5qLv5HO3bfz7PX1bJMLuOmXYdzyjRi6LSYASvqvI5reWZ
+         Dtog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=kw6302ch86pg258GLepkuZEk2pw2bUxOqBJi45V/0IA=;
-        b=iM2QRpSShqneOap9qKZNRDVL4ufj5FEk2tNeZ5Jhy4PHs+tqvSog+XinRv9Hh6wByw
-         oNgrufsOZX1SrpsyREU1PyUlDJ6NOMBdY9igHJR85Ol+C/I+ISqSotucLuh9OZaC3ya8
-         jV/qIfVE9ZPV+FGG556Qi0Flix9cbLs9ndzE834MHhsZUdVBu2RIRM19Tg20N6kFvc76
-         HaVmHR+vyu6Cn/bHJSKcj+369/+2XrG4Wjy3FnFSAy8iLW80QClFXSTeBuZwMCenv1RK
-         DYmPrUz7TB5EYOsABjwTykiTkEF6V8bW0e4TNrk86gVdBZHT57fjPACAJsPtdN/z/Nm1
-         Npsw==
-X-Gm-Message-State: AOUpUlHlVbeiqvGcJbP5KELUS2aWcnTMW2AB3MrsU3QRLalDJJS5zl9v
-        GXQ0OsAxwAVA9AvPEidhDparTmlqm44=
-X-Google-Smtp-Source: AAOMgpc5rMZr2P1wV5nwUkJzog0sGR47qKViwq6heAmkTQK4NzCleEVgAoNi46r9esDTlKQZQoL6wQ==
-X-Received: by 2002:a17:902:7683:: with SMTP id m3-v6mr2692575pll.255.1532104129104;
-        Fri, 20 Jul 2018 09:28:49 -0700 (PDT)
+        bh=zAj0wpkzMgjSjcinyt8YwVCTAp82w+xoQBngFo020p8=;
+        b=cbBQxLcskaQo6OzJsmwjG7Iw2t7ri3D2vYj4EDQ2l0Y4b/yPz81dOUkKEABhlIK6xs
+         Cqd3hyGhqtLVwBCXlVsg/7bDzX4YkrLSrHLEUIFK3rOxDLniuVqYWx9OA3trqIhS5Deu
+         Wl962MyVo17AMpsCqtiU9VxKxvrPlj+OYbGSRe/yAzPcPJZJuPzMhluqbHyQ6ZJi2hdu
+         3jLVYYrmaBsY1oPWzCwWdPlRpU/eHf939EfFhtjC5ovWrbuu/Cv4zSJsosPv6sM00tMp
+         tzDgIkk1PoFvWyKWjtfDuR7FVZxHph6KUymXoMQws+73DXaIZ6d0Up59M0t93ypMjLng
+         lLfw==
+X-Gm-Message-State: AOUpUlHhWpT/+LH8/j6Lwwq5sE4UMBpsrnF2jwc3K9EkAaO9eCwejUOL
+        k01/JpI3Qs6IHxLjvi8uEn1urLmJA0k=
+X-Google-Smtp-Source: AAOMgpdh9z7IO61io9Lnp55aw32SBXWPFVZxEfB6tXSeNwzLFGQ347ueN32XwGKkN8V8QrDX4Itm+Q==
+X-Received: by 2002:a63:1b5c:: with SMTP id b28-v6mr2791928pgm.204.1532104146899;
+        Fri, 20 Jul 2018 09:29:06 -0700 (PDT)
 Received: from localhost ([223.72.65.191])
-        by smtp.gmail.com with ESMTPSA id a25-v6sm2701640pgv.51.2018.07.20.09.28.47
+        by smtp.gmail.com with ESMTPSA id m15-v6sm6381930pfj.171.2018.07.20.09.29.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 09:28:48 -0700 (PDT)
+        Fri, 20 Jul 2018 09:29:06 -0700 (PDT)
 From:   Wanpeng Li <kernellwp@gmail.com>
 X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
@@ -66,9 +66,9 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
         Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH v4 3/6] KVM: X86: Fallback to original apic hooks when bad happens
-Date:   Sat, 21 Jul 2018 00:28:43 +0800
-Message-Id: <1532104123-15727-1-git-send-email-wanpengli@tencent.com>
+Subject: [PATCH v4 5/6] KVM: X86: Add NMI support to PV IPIs
+Date:   Sat, 21 Jul 2018 00:29:02 +0800
+Message-Id: <1532104142-15821-1-git-send-email-wanpengli@tencent.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -80,103 +80,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Wanpeng Li <wanpengli@tencent.com>
 
-Fallback to original apic hooks when unlikely kvm fails to add the 
-pending IRQ to lapic.
+The NMI delivery mode of ICR is used to deliver an NMI to the processor, 
+and the vector information is ignored.
 
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- arch/x86/kernel/kvm.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ arch/x86/kernel/kvm.c | 15 ++++++++++++---
+ arch/x86/kvm/x86.c    | 16 +++++++++++-----
+ 2 files changed, 23 insertions(+), 8 deletions(-)
 
 diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index eed6046..57eb4a2 100644
+index 57eb4a2..3456531 100644
 --- a/arch/x86/kernel/kvm.c
 +++ b/arch/x86/kernel/kvm.c
-@@ -47,6 +47,7 @@
- #include <asm/hypervisor.h>
- #include <asm/kvm_guest.h>
- 
-+static struct apic orig_apic;
- static int kvmapf = 1;
- 
- static int __init parse_no_kvmapf(char *arg)
-@@ -454,10 +455,10 @@ static void __init sev_map_percpu_data(void)
- }
- 
- #ifdef CONFIG_SMP
--static void __send_ipi_mask(const struct cpumask *mask, int vector)
-+static int __send_ipi_mask(const struct cpumask *mask, int vector)
+@@ -458,7 +458,7 @@ static void __init sev_map_percpu_data(void)
+ static int __send_ipi_mask(const struct cpumask *mask, int vector)
  {
  	unsigned long flags;
--	int cpu, apic_id, min = 0, max = 0;
-+	int cpu, apic_id, min = 0, max = 0, ret = 0;
+-	int cpu, apic_id, min = 0, max = 0, ret = 0;
++	int cpu, apic_id, min = 0, max = 0, ret = 0, icr = 0;
  #ifdef CONFIG_X86_64
  	__uint128_t ipi_bitmap = 0;
  	int cluster_size = 128;
-@@ -467,7 +468,7 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
- #endif
- 
- 	if (cpumask_empty(mask))
--		return;
-+		return 0;
+@@ -472,6 +472,15 @@ static int __send_ipi_mask(const struct cpumask *mask, int vector)
  
  	local_irq_save(flags);
  
-@@ -481,7 +482,7 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
- 		} else if (apic_id < min + cluster_size) {
++	switch (vector) {
++	default:
++		icr = APIC_DM_FIXED | vector;
++		break;
++	case NMI_VECTOR:
++		icr = APIC_DM_NMI;
++		break;
++	}
++
+ 	for_each_cpu(cpu, mask) {
+ 		apic_id = per_cpu(x86_cpu_to_apicid, cpu);
+ 		if (!ipi_bitmap) {
+@@ -483,7 +492,7 @@ static int __send_ipi_mask(const struct cpumask *mask, int vector)
  			max = apic_id < max ? max : apic_id;
  		} else {
--			kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
-+			ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
- 				(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, vector);
+ 			ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
+-				(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, vector);
++				(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, icr);
  			min = max = apic_id;
  			ipi_bitmap = 0;
-@@ -490,11 +491,12 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
- 	}
+ 		}
+@@ -492,7 +501,7 @@ static int __send_ipi_mask(const struct cpumask *mask, int vector)
  
  	if (ipi_bitmap) {
--		kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
-+		ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
- 			(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, vector);
+ 		ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
+-			(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, vector);
++			(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, icr);
  	}
  
  	local_irq_restore(flags);
-+	return ret;
- }
- 
- static void kvm_send_ipi_mask(const struct cpumask *mask, int vector)
-@@ -511,7 +513,8 @@ static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
- 	cpumask_copy(&new_mask, mask);
- 	cpumask_clear_cpu(this_cpu, &new_mask);
- 	local_mask = &new_mask;
--	__send_ipi_mask(local_mask, vector);
-+	if (__send_ipi_mask(local_mask, vector))
-+		orig_apic.send_IPI_mask_allbutself(mask, vector);
- }
- 
- static void kvm_send_ipi_allbutself(int vector)
-@@ -521,7 +524,8 @@ static void kvm_send_ipi_allbutself(int vector)
- 
- static void kvm_send_ipi_all(int vector)
- {
--	__send_ipi_mask(cpu_online_mask, vector);
-+	if (__send_ipi_mask(cpu_online_mask, vector))
-+		orig_apic.send_IPI_all(vector);
- }
- 
- /*
-@@ -529,6 +533,8 @@ static void kvm_send_ipi_all(int vector)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 016c7e2..c9dbc2c 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6695,15 +6695,21 @@ static void kvm_pv_kick_cpu_op(struct kvm *kvm, unsigned long flags, int apicid)
+  * Return 0 if successfully added and 1 if discarded.
   */
- static void kvm_setup_pv_ipi(void)
+ static int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+-		unsigned long ipi_bitmap_high, int min, int vector, int op_64_bit)
++		unsigned long ipi_bitmap_high, int min, unsigned long icr, int op_64_bit)
  {
-+	orig_apic = *apic;
+ 	int i;
+ 	struct kvm_apic_map *map;
+ 	struct kvm_vcpu *vcpu;
+-	struct kvm_lapic_irq irq = {
+-		.delivery_mode = APIC_DM_FIXED,
+-		.vector = vector,
+-	};
++	struct kvm_lapic_irq irq = {0};
 +
- 	apic->send_IPI_mask = kvm_send_ipi_mask;
- 	apic->send_IPI_mask_allbutself = kvm_send_ipi_mask_allbutself;
- 	apic->send_IPI_allbutself = kvm_send_ipi_allbutself;
++	switch (icr & APIC_VECTOR_MASK) {
++	default:
++		irq.vector = icr & APIC_VECTOR_MASK;
++		break;
++	case NMI_VECTOR:
++		break;
++	}
++	irq.delivery_mode = icr & APIC_MODE_MASK;
+ 
+ 	rcu_read_lock();
+ 	map = rcu_dereference(kvm->arch.apic_map);
 -- 
 2.7.4
 
