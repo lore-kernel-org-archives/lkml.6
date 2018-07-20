@@ -2,235 +2,154 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9695EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC37ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 443EA20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:36:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLOZqlLy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443EA20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
+	by mail.kernel.org (Postfix) with ESMTP id 62F9D206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:37:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62F9D206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbeGTKXe (ORCPT
+        id S1728395AbeGTKYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 06:23:34 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:38460 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbeGTKXd (ORCPT
+        Fri, 20 Jul 2018 06:24:42 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:32640 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727243AbeGTKYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 06:23:33 -0400
-Received: by mail-oi0-f66.google.com with SMTP id v8-v6so20234988oie.5;
-        Fri, 20 Jul 2018 02:36:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=0WCvZ/UwTuSTOy/hE5dovvSALzhVcvXV0ItuU1I71fY=;
-        b=FLOZqlLyG2EheiodwW9/3/qpUErSzGln893aC9YKuj+dvXpfYyn22Z3F8OHLio1g0l
-         8wRS5xSenJPCdB37/WKA1VIBBjVWzxPf7dwXSVJI5lPQVEkZQId8vRlfqCasLtL+Cg/1
-         H1DtfZ2tql80SRojaX0M0TrOAkIHGcStjYFMA8C10ZeR/gXpsBOoFQtSJaeZS4faOz8V
-         k0PHxuDlODrlcfT89aVR7z6LdWC6uBLR25U/XIirjdCXQLrmSskUhhx0L0GWbLG/nnUZ
-         hN6xu+bGjMC5ogxgQtDABTRetU/0OUB+ymaw5urhVU8s7a0xuoPcuEY9pmq7z4DhBrWe
-         0PUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=0WCvZ/UwTuSTOy/hE5dovvSALzhVcvXV0ItuU1I71fY=;
-        b=o6UHOuTE06YXDfdc1L9e8ArNB6Anu+C3j35bn02aqAFHcsbfWWKXLFHkaop+nr9Mt8
-         PBhfnxsLot1T0N3hZfOI+TJbBjZpxFGP6Sl8UhM7sZqbILDqXFkpB3hZzB/rfvZTL9J1
-         GdVZG2p2o2hJH72S15A407HAPqeUXwJ1XjPqUzvGNZ0iLDOSzSf0aJt/cFu0iIfHUcKz
-         lWwpPYS/fCjTt+HPevMvOvIKNEG1yLgCNAviLrZk36LeHKfInVcKpcG3tq4v+rvLDRz+
-         MF6H9ObFMfMOKN4swe+Plj+y45NPmCqCDx78ZTB55XtgEzMNif7UJU+QGAw7blSHm0f2
-         Q2Ng==
-X-Gm-Message-State: AOUpUlFWEQ04Pf2Fxn3fMv1YCS3rD9XA4Ae7Ll5xnFkMM+jiBvEYcf2R
-        d7OGDHLvkllcxJmaWRpr0kcMfnPDcVi1EtdMJpMjvbnW
-X-Google-Smtp-Source: AAOMgpcOtlwTz28Az83CMyOPFS7fg7DkRQFX13ExX6+vZtswesdnZTFu86ex54Vc6KOg+yeueAaBve2cekQ7ek8ggFI=
-X-Received: by 2002:aca:c514:: with SMTP id v20-v6mr1386677oif.153.1532079369443;
- Fri, 20 Jul 2018 02:36:09 -0700 (PDT)
+        Fri, 20 Jul 2018 06:24:42 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42477030"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 20 Jul 2018 17:37:13 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 48E964B625E5;
+        Fri, 20 Jul 2018 17:37:12 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Fri, 20 Jul 2018 17:37:11 +0800
+Date:   Fri, 20 Jul 2018 17:35:24 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
+        <mingo@redhat.com>, <bhe@redhat.com>, <keescook@chromium.org>,
+        <yasu.isimatu@gmail.com>, <indou.takao@jp.fujitsu.com>,
+        <lcapitulino@redhat.com>, <caoj.fnst@cn.fujitsu.com>,
+        <douly.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v3 1/4] x86/boot: Add acpitb.h to help parse acpi tables
+Message-ID: <20180720093524.GB6739@localhost.localdomain>
+References: <20180717100409.10547-1-fanc.fnst@cn.fujitsu.com>
+ <20180717100409.10547-2-fanc.fnst@cn.fujitsu.com>
+ <alpine.DEB.2.21.1807191717330.1693@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 02:35:49 -0700 (PDT)
-In-Reply-To: <31826cf1b99fa2372cd4cf0b6cee8ba0ba4288f1.camel@collabora.com>
-References: <20180617143625.32133-1-matwey@sai.msu.ru> <20180617143625.32133-2-matwey@sai.msu.ru>
- <c02f92a8998fc62d3e3d48aa154fbaa7e223dd10.camel@collabora.com>
- <CAJs94EavBDcFHpd0KcCZJTgWf0JC=AEDY=X8b3P2nZvt8mBCPA@mail.gmail.com>
- <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com>
- <CAJs94EZjTLLCN=oy3aapMsbLEHU69iO9yq=hXdm4_G1H2UMcyQ@mail.gmail.com> <31826cf1b99fa2372cd4cf0b6cee8ba0ba4288f1.camel@collabora.com>
-From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Date:   Fri, 20 Jul 2018 12:35:49 +0300
-X-Google-Sender-Auth: HRtKaj3nVgFRNXKo-ixNR_tXo_8
-Message-ID: <CAJs94EZgww6Ez+O74=qL8g0HdpbfTPjZbcoikcnzUtBOk2-Vxw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Hans de Goede <hdegoede@redhat.com>, hverkuil@xs4all.nl,
-        mchehab@kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        linux-media@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807191717330.1693@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 48E964B625E5.A9DBD
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-20 2:36 GMT+03:00 Ezequiel Garcia <ezequiel@collabora.com>:
-> On Wed, 2018-07-18 at 15:10 +0300, Matwey V. Kornilov wrote:
->> 2018-07-17 23:10 GMT+03:00 Ezequiel Garcia <ezequiel@collabora.com>:
->> > Hi Matwey,
->> >
->> > First of all, sorry for the delay.
->> >
->> > Adding Alan and Hans. Guys, do you have any feedback here?
->> >
->> > See below for some feedback on my side.
->> >
->> > On Mon, 2018-06-18 at 10:10 +0300, Matwey V. Kornilov wrote:
->> > > Hi Ezequiel,
->> > >
->> > > 2018-06-18 8:11 GMT+03:00 Ezequiel Garcia <ezequiel@collabora.com>:
->> > > > + Laurent
->> > > >
->> > > > On Sun, 2018-06-17 at 17:36 +0300, Matwey V. Kornilov wrote:
->> > > > > DMA cocherency slows the transfer down on systems without hardware
->> > > > > coherent DMA.
->> > > > >
->> > > > > Based on previous commit the following performance benchmarks have been
->> > > > > carried out. Average memcpy() data transfer rate (rate) and handler
->> > > > > completion time (time) have been measured when running video stream at
->> > > > > 640x480 resolution at 10fps.
->> > > > >
->> > > > > x86_64 based system (Intel Core i5-3470). This platform has hardware
->> > > > > coherent DMA support and proposed change doesn't make big difference here.
->> > > > >
->> > > > >  * kmalloc:            rate = (4.4 +- 1.0) GBps
->> > > > >                        time = (2.4 +- 1.2) usec
->> > > > >  * usb_alloc_coherent: rate = (4.1 +- 0.9) GBps
->> > > > >                        time = (2.5 +- 1.0) usec
->> > > > >
->> > > > > We see that the measurements agree well within error ranges in this case.
->> > > > > So no performance downgrade is introduced.
->> > > > >
->> > > > > armv7l based system (TI AM335x BeagleBone Black). This platform has no
->> > > > > hardware coherent DMA support. DMA coherence is implemented via disabled
->> > > > > page caching that slows down memcpy() due to memory controller behaviour.
->> > > > >
->> > > > >  * kmalloc:            rate =  (190 +-  30) MBps
->> > > > >                        time =   (50 +-  10) usec
->> > > > >  * usb_alloc_coherent: rate =   (33 +-   4) MBps
->> > > > >                        time = (3000 +- 400) usec
->> > > > >
->> > > > > Note, that quantative difference leads (this commit leads to 5 times
->> > > > > acceleration) to qualitative behavior change in this case. As it was
->> > > > > stated before, the video stream can not be successfully received at AM335x
->> > > > > platforms with MUSB based USB host controller due to performance issues
->> > > > > [1].
->> > > > >
->> > > > > [1] https://www.spinics.net/lists/linux-usb/msg165735.html
->> > > > >
->> > > >
->> > > > This is quite interesting! I have receive similar complaints
->> > > > from users wanting to use stk1160 on BBB and Raspberrys,
->> > > > without much luck on either, due to insufficient isoc bandwidth.
->> > > >
->> > > > I'm guessing other ARM platforms could be suffering
->> > > > from the same issue.
->> > > >
->> > > > Note that stk1160 and uvcvideo drivers use kmalloc on platforms
->> > > > where DMA_NONCOHERENT is defined, but this is not the case
->> > > > on ARM platforms.
->> > >
->> > > There are some ARMv7 platforms that have coherent DMA (for instance
->> > > Broadcome Horthstar Plus series), but the most of them don't have. It
->> > > is defined in device tree file, and there is no way to recover this
->> > > information at runtime in USB perepherial driver.
->> > >
->> > > >
->> > > > So, what is the benefit of using consistent
->> > > > for these URBs, as opposed to streaming?
->> > >
->> > > I don't know, I think there is no real benefit and all we see is a
->> > > consequence of copy-pasta when some webcam drivers were inspired by
->> > > others and development priparily was going at x86 platforms.
->> >
->> > You are probably right about the copy-pasta.
->> >
->> > >  It would
->> > > be great if somebody corrected me here. DMA Coherence is quite strong
->> > > property and I cannot figure out how can it help when streaming video.
->> > > The CPU host always reads from the buffer and never writes to.
->> > > Hardware perepherial always writes to and never reads from. Moreover,
->> > > buffer access is mutually exclusive and separated in time by Interrupt
->> > > fireing and URB starting (when we reuse existing URB for new request).
->> > > Only single one memory barrier is really required here.
->> > >
->> >
->> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
->> > create DMA mappings and use the streaming API. Which makes more
->> > sense in hardware without hardware coherency.
->> >
->> > The only thing that bothers me with this patch is that it's not
->> > really something specific to this driver. If this fix is valid
->> > for pwc, then it's valid for all the drivers allocating coherent
->> > memory.
->> >
->> > And also, this path won't prevent further copy-paste spread
->> > of the coherent allocation.
->> >
->> > Is there any chance we can introduce a helper to allocate
->> > isoc URBs, and then change all drivers to use it? No need
->> > to do all of them now, but it would be good to at least have
->> > a plan for it.
->>
->> Well, basically I am agree with you.
->> However, I don't have all possible hardware to test, so I can't fix
->> all possible drivers.
+On Thu, Jul 19, 2018 at 05:19:43PM +0200, Thomas Gleixner wrote:
+>On Tue, 17 Jul 2018, Chao Fan wrote:
 >
-> Sure. And keep in mind this is more about the USB host controller,
-> than about this specific driver. So it's the controller what we
-> would have to test!
+>> In order to parse ACPI tables, reuse the head file linux/acpi.h,
+>> so that the files in 'compressed' directory can read ACPI table
+>> by including this head file.
+>> 
+>> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+>> ---
+>>  arch/x86/boot/compressed/acpitb.h | 50 +++++++++++++++++++++++++++++++
+>>  1 file changed, 50 insertions(+)
+>>  create mode 100644 arch/x86/boot/compressed/acpitb.h
+>> 
+>> diff --git a/arch/x86/boot/compressed/acpitb.h b/arch/x86/boot/compressed/acpitb.h
+>> new file mode 100644
+>> index 000000000000..fd2bba23f447
+>> --- /dev/null
+>> +++ b/arch/x86/boot/compressed/acpitb.h
+>> @@ -0,0 +1,50 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#include <linux/acpi.h>
+>> +
+>> +#define ACPI_MAX_TABLES                128
+>> +
+>> +/* Function to get ACPI SRAT table pointer. */
+>> +struct acpi_table_header *get_acpi_srat_table(void);
+>> +
+>> +#ifdef ACPI_BIG_ENDIAN
+>> +
+>> +#define ACPI_MOVE_64_TO_64(d, s) \
+>> +{((u8 *)(void *)(d))[0] = ((u8 *)(void *)(s))[7]; \
+>> +((u8 *)(void *)(d))[1] = ((u8 *)(void *)(s))[6]; \
+>> +((u8 *)(void *)(d))[2] = ((u8 *)(void *)(s))[5]; \
+>> +((u8 *)(void *)(d))[3] = ((u8 *)(void *)(s))[4]; \
+>> +((u8 *)(void *)(d))[4] = ((u8 *)(void *)(s))[3]; \
+>> +((u8 *)(void *)(d))[5] = ((u8 *)(void *)(s))[2]; \
+>> +((u8 *)(void *)(d))[6] = ((u8 *)(void *)(s))[1]; \
+>> +((u8 *)(void *)(d))[7] = ((u8 *)(void *)(s))[0]; }
 >
->> Also I can not figure out how could the helper looked like. What do
->> you think about usb_alloc() (c.f. usb_alloc_coherent()) ?
->>
->
-> I do not know that either. But it's something we can think about.
->
-> Meanwhile, it would be a shame to loose or stall this excellent
-> effort (which is effectively enabling a cameras on a bunch of devices).
->
-> How about you introduce a driver parameter (or device attribute),
-> to avoid changing the behavior for USB host controllers we don't know
-> about?
+>Whats wrong with be64_to_cpu() ?
 
-It would be fine for me, if there are no objections. I know that some
-maintainers don't like module parameters per se.
+Hi tglx,
+
+Thanks for your review.
+ACPI_MOVE_64_TO_64 and ACPI_MOVE_16_TO_32 are copied from arch/x86/boot/compressed/acpitb.h
+cause I though copying the old code is reliable.
+I will delete these two definitions and only using le64_to_cpu and
+le16_to_cpu may be enough(since ACPI table is in little endian).
+And also add more comments in next version.
+
+Thanks,
+Chao Fan
 
 >
-> Something like 'alloc_coherent_urbs=y/n'. Perhaps set that
-> to 'yes' by default in x86, and 'no' by default in the rest?
+>> +
+>> +#define ACPI_MOVE_16_TO_32(d, s) \
+>> +{(*(u32 *)(void *)(d)) = 0; \
+>> +((u8 *)(void *)(d))[2] = ((u8 *)(void *)(s))[1]; \
+>> +((u8 *)(void *)(d))[3] = ((u8 *)(void *)(s))[0]; }
 >
-> We can think about a generic solution later.
+>Huch? 
 >
-> Thanks,
-> Eze
+>> +
+>> +#else
+>> +#ifndef ACPI_MISALIGNMENT_NOT_SUPPORTED
+>> +
+>> +#define ACPI_MOVE_64_TO_64(d, s) \
+>> +{*(u64 *)(void *)(d) = *(u64 *)(void *)(s); }
+>> +
+>> +#define ACPI_MOVE_16_TO_32(d, s) \
+>> +{*(u32 *)(void *)(d) = *(u16 *)(void *)(s); }
+>> +
+>> +#else
+>> +#define ACPI_MOVE_64_TO_64(d, s) \
+>> +{((u8 *)(void *)(d))[0] = ((u8 *)(void *)(s))[0]; \
+>> +((u8 *)(void *)(d))[1] = ((u8 *)(void *)(s))[1]; \
+>> +((u8 *)(void *)(d))[2] = ((u8 *)(void *)(s))[2]; \
+>> +((u8 *)(void *)(d))[3] = ((u8 *)(void *)(s))[3]; \
+>> +((u8 *)(void *)(d))[4] = ((u8 *)(void *)(s))[4]; \
+>> +((u8 *)(void *)(d))[5] = ((u8 *)(void *)(s))[5]; \
+>> +((u8 *)(void *)(d))[6] = ((u8 *)(void *)(s))[6]; \
+>> +((u8 *)(void *)(d))[7] = ((u8 *)(void *)(s))[7]; }
+>
+>And why doees this have to be done bytewise? Some comments would be
+>helpful.
+>
+>Thanks,
+>
+>	tglx
+>
 >
 
 
-
--- 
-With best regards,
-Matwey V. Kornilov.
-Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
-119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
