@@ -6,39 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55925ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4EEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DAFB20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DAFB20652
+	by mail.kernel.org (Postfix) with ESMTP id D8E1D20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8E1D20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389650AbeGTN1z (ORCPT
+        id S2389661AbeGTN2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:27:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48934 "EHLO
+        Fri, 20 Jul 2018 09:28:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49054 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389438AbeGTN1y (ORCPT
+        with ESMTP id S2388907AbeGTN2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:27:54 -0400
+        Fri, 20 Jul 2018 09:28:00 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7C3ACFB;
-        Fri, 20 Jul 2018 12:35:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1257BCAF;
+        Fri, 20 Jul 2018 12:34:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Walker <Thomas.Walker@twosigma.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 011/101] hv_netvsc: split sub-channel setup into async and sync
-Date:   Fri, 20 Jul 2018 14:13:17 +0200
-Message-Id: <20180720121423.408231336@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+        John Sperbeck <jsperbeck@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 66/92] netfilter: ipv6: nf_defrag: drop skb dst before queueing
+Date:   Fri, 20 Jul 2018 14:14:10 +0200
+Message-Id: <20180720121421.598096914@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
-References: <20180720121422.837870592@linuxfoundation.org>
+In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
+References: <20180720121417.206337808@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -48,234 +50,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Stephen Hemminger <sthemmin@microsoft.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 3ffe64f1a641b80a82d9ef4efa7a05ce69049871 ]
+commit 84379c9afe011020e797e3f50a662b08a6355dcf upstream.
 
-When doing device hotplug the sub channel must be async to avoid
-deadlock issues because device is discovered in softirq context.
+Eric Dumazet reports:
+ Here is a reproducer of an annoying bug detected by syzkaller on our production kernel
+ [..]
+ ./b78305423 enable_conntrack
+ Then :
+ sleep 60
+ dmesg | tail -10
+ [  171.599093] unregister_netdevice: waiting for lo to become free. Usage count = 2
+ [  181.631024] unregister_netdevice: waiting for lo to become free. Usage count = 2
+ [  191.687076] unregister_netdevice: waiting for lo to become free. Usage count = 2
+ [  201.703037] unregister_netdevice: waiting for lo to become free. Usage count = 2
+ [  211.711072] unregister_netdevice: waiting for lo to become free. Usage count = 2
+ [  221.959070] unregister_netdevice: waiting for lo to become free. Usage count = 2
 
-When doing changes to MTU and number of channels, the setup
-must be synchronous to avoid races such as when MTU and device
-settings are done in a single ip command.
+Reproducer sends ipv6 fragment that hits nfct defrag via LOCAL_OUT hook.
+skb gets queued until frag timer expiry -- 1 minute.
 
-Reported-by: Thomas Walker <Thomas.Walker@twosigma.com>
-Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
-Fixes: 732e49850c5e ("netvsc: fix race on sub channel creation")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Normally nf_conntrack_reasm gets called during prerouting, so skb has
+no dst yet which might explain why this wasn't spotted earlier.
+
+Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+Reported-by: John Sperbeck <jsperbeck@google.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Tested-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/hyperv/hyperv_net.h   |    2 -
- drivers/net/hyperv/netvsc.c       |   37 ++++++++++++++++++++++-
- drivers/net/hyperv/netvsc_drv.c   |   17 +++++++++-
- drivers/net/hyperv/rndis_filter.c |   61 +++++++-------------------------------
- 4 files changed, 65 insertions(+), 52 deletions(-)
 
---- a/drivers/net/hyperv/hyperv_net.h
-+++ b/drivers/net/hyperv/hyperv_net.h
-@@ -211,7 +211,7 @@ int netvsc_recv_callback(struct net_devi
- void netvsc_channel_cb(void *context);
- int netvsc_poll(struct napi_struct *napi, int budget);
+---
+ net/ipv6/netfilter/nf_conntrack_reasm.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -618,6 +618,8 @@ int nf_ct_frag6_gather(struct net *net,
+ 	    fq->q.meat == fq->q.len &&
+ 	    nf_ct_frag6_reasm(fq, skb, dev))
+ 		ret = 0;
++	else
++		skb_dst_drop(skb);
  
--void rndis_set_subchannel(struct work_struct *w);
-+int rndis_set_subchannel(struct net_device *ndev, struct netvsc_device *nvdev);
- int rndis_filter_open(struct netvsc_device *nvdev);
- int rndis_filter_close(struct netvsc_device *nvdev);
- struct netvsc_device *rndis_filter_device_add(struct hv_device *dev,
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -66,6 +66,41 @@ void netvsc_switch_datapath(struct net_d
- 			       VM_PKT_DATA_INBAND, 0);
- }
- 
-+/* Worker to setup sub channels on initial setup
-+ * Initial hotplug event occurs in softirq context
-+ * and can't wait for channels.
-+ */
-+static void netvsc_subchan_work(struct work_struct *w)
-+{
-+	struct netvsc_device *nvdev =
-+		container_of(w, struct netvsc_device, subchan_work);
-+	struct rndis_device *rdev;
-+	int i, ret;
-+
-+	/* Avoid deadlock with device removal already under RTNL */
-+	if (!rtnl_trylock()) {
-+		schedule_work(w);
-+		return;
-+	}
-+
-+	rdev = nvdev->extension;
-+	if (rdev) {
-+		ret = rndis_set_subchannel(rdev->ndev, nvdev);
-+		if (ret == 0) {
-+			netif_device_attach(rdev->ndev);
-+		} else {
-+			/* fallback to only primary channel */
-+			for (i = 1; i < nvdev->num_chn; i++)
-+				netif_napi_del(&nvdev->chan_table[i].napi);
-+
-+			nvdev->max_chn = 1;
-+			nvdev->num_chn = 1;
-+		}
-+	}
-+
-+	rtnl_unlock();
-+}
-+
- static struct netvsc_device *alloc_net_device(void)
- {
- 	struct netvsc_device *net_device;
-@@ -82,7 +117,7 @@ static struct netvsc_device *alloc_net_d
- 
- 	init_completion(&net_device->channel_init_wait);
- 	init_waitqueue_head(&net_device->subchan_open);
--	INIT_WORK(&net_device->subchan_work, rndis_set_subchannel);
-+	INIT_WORK(&net_device->subchan_work, netvsc_subchan_work);
- 
- 	return net_device;
- }
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -905,8 +905,20 @@ static int netvsc_attach(struct net_devi
- 	if (IS_ERR(nvdev))
- 		return PTR_ERR(nvdev);
- 
--	/* Note: enable and attach happen when sub-channels setup */
-+	if (nvdev->num_chn > 1) {
-+		ret = rndis_set_subchannel(ndev, nvdev);
-+
-+		/* if unavailable, just proceed with one queue */
-+		if (ret) {
-+			nvdev->max_chn = 1;
-+			nvdev->num_chn = 1;
-+		}
-+	}
- 
-+	/* In any case device is now ready */
-+	netif_device_attach(ndev);
-+
-+	/* Note: enable and attach happen when sub-channels setup */
- 	netif_carrier_off(ndev);
- 
- 	if (netif_running(ndev)) {
-@@ -2064,6 +2076,9 @@ static int netvsc_probe(struct hv_device
- 
- 	memcpy(net->dev_addr, device_info.mac_adr, ETH_ALEN);
- 
-+	if (nvdev->num_chn > 1)
-+		schedule_work(&nvdev->subchan_work);
-+
- 	/* hw_features computed in rndis_netdev_set_hwcaps() */
- 	net->features = net->hw_features |
- 		NETIF_F_HIGHDMA | NETIF_F_SG |
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -1061,29 +1061,15 @@ static void netvsc_sc_open(struct vmbus_
-  * This breaks overlap of processing the host message for the
-  * new primary channel with the initialization of sub-channels.
-  */
--void rndis_set_subchannel(struct work_struct *w)
-+int rndis_set_subchannel(struct net_device *ndev, struct netvsc_device *nvdev)
- {
--	struct netvsc_device *nvdev
--		= container_of(w, struct netvsc_device, subchan_work);
- 	struct nvsp_message *init_packet = &nvdev->channel_init_pkt;
--	struct net_device_context *ndev_ctx;
--	struct rndis_device *rdev;
--	struct net_device *ndev;
--	struct hv_device *hv_dev;
-+	struct net_device_context *ndev_ctx = netdev_priv(ndev);
-+	struct hv_device *hv_dev = ndev_ctx->device_ctx;
-+	struct rndis_device *rdev = nvdev->extension;
- 	int i, ret;
- 
--	if (!rtnl_trylock()) {
--		schedule_work(w);
--		return;
--	}
--
--	rdev = nvdev->extension;
--	if (!rdev)
--		goto unlock;	/* device was removed */
--
--	ndev = rdev->ndev;
--	ndev_ctx = netdev_priv(ndev);
--	hv_dev = ndev_ctx->device_ctx;
-+	ASSERT_RTNL();
- 
- 	memset(init_packet, 0, sizeof(struct nvsp_message));
- 	init_packet->hdr.msg_type = NVSP_MSG5_TYPE_SUBCHANNEL;
-@@ -1099,13 +1085,13 @@ void rndis_set_subchannel(struct work_st
- 			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- 	if (ret) {
- 		netdev_err(ndev, "sub channel allocate send failed: %d\n", ret);
--		goto failed;
-+		return ret;
- 	}
- 
- 	wait_for_completion(&nvdev->channel_init_wait);
- 	if (init_packet->msg.v5_msg.subchn_comp.status != NVSP_STAT_SUCCESS) {
- 		netdev_err(ndev, "sub channel request failed\n");
--		goto failed;
-+		return -EIO;
- 	}
- 
- 	nvdev->num_chn = 1 +
-@@ -1124,21 +1110,7 @@ void rndis_set_subchannel(struct work_st
- 	for (i = 0; i < VRSS_SEND_TAB_SIZE; i++)
- 		ndev_ctx->tx_table[i] = i % nvdev->num_chn;
- 
--	netif_device_attach(ndev);
--	rtnl_unlock();
--	return;
--
--failed:
--	/* fallback to only primary channel */
--	for (i = 1; i < nvdev->num_chn; i++)
--		netif_napi_del(&nvdev->chan_table[i].napi);
--
--	nvdev->max_chn = 1;
--	nvdev->num_chn = 1;
--
--	netif_device_attach(ndev);
--unlock:
--	rtnl_unlock();
-+	return 0;
- }
- 
- static int rndis_netdev_set_hwcaps(struct rndis_device *rndis_device,
-@@ -1329,21 +1301,12 @@ struct netvsc_device *rndis_filter_devic
- 		netif_napi_add(net, &net_device->chan_table[i].napi,
- 			       netvsc_poll, NAPI_POLL_WEIGHT);
- 
--	if (net_device->num_chn > 1)
--		schedule_work(&net_device->subchan_work);
-+	return net_device;
- 
- out:
--	/* if unavailable, just proceed with one queue */
--	if (ret) {
--		net_device->max_chn = 1;
--		net_device->num_chn = 1;
--	}
--
--	/* No sub channels, device is ready */
--	if (net_device->num_chn == 1)
--		netif_device_attach(net);
--
--	return net_device;
-+	/* setting up multiple channels failed */
-+	net_device->max_chn = 1;
-+	net_device->num_chn = 1;
- 
- err_dev_remv:
- 	rndis_filter_device_remove(dev, net_device);
+ out_unlock:
+ 	spin_unlock_bh(&fq->q.lock);
 
 
