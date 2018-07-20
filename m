@@ -2,89 +2,97 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F43ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91E7ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE24320652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:40:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE24320652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B25020673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:59:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B25020673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbeGTB0e (ORCPT
+        id S1730635AbeGTBov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 21:26:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37862 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728018AbeGTB0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 21:26:34 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1D19ECE1D6;
-        Fri, 20 Jul 2018 00:40:55 +0000 (UTC)
-Received: from [10.72.12.194] (ovpn-12-194.pek2.redhat.com [10.72.12.194])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D6AD92026D6B;
-        Fri, 20 Jul 2018 00:40:52 +0000 (UTC)
-Subject: Re: [PATCH] uio: fix wrong return value from uio_mmap()
-To:     Hailong Liu <liu.hailong6@zte.com.cn>, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, jiang.biao2@zte.com.cn,
-        zhong.weidong@zte.com.cn
-References: <1532046716-49792-1-git-send-email-liu.hailong6@zte.com.cn>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <8ff360ff-1b0b-9c29-177d-4a025da58d04@redhat.com>
-Date:   Fri, 20 Jul 2018 08:40:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 21:44:51 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:53489 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730266AbeGTBov (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 21:44:51 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42451814"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 20 Jul 2018 08:59:08 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 060FC4B5CF67;
+        Fri, 20 Jul 2018 08:59:07 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Fri, 20 Jul 2018 08:59:06 +0800
+Date:   Fri, 20 Jul 2018 08:57:18 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
+        <mingo@redhat.com>, <bhe@redhat.com>, <keescook@chromium.org>,
+        <yasu.isimatu@gmail.com>, <indou.takao@jp.fujitsu.com>,
+        <lcapitulino@redhat.com>, <caoj.fnst@cn.fujitsu.com>,
+        <douly.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v3 2/4] x86/boot: Add acpitb.c to parse acpi tables
+Message-ID: <20180720005717.GA6914@localhost.localdomain>
+References: <20180717100409.10547-1-fanc.fnst@cn.fujitsu.com>
+ <20180717100409.10547-3-fanc.fnst@cn.fujitsu.com>
+ <alpine.DEB.2.21.1807191720270.1693@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <1532046716-49792-1-git-send-email-liu.hailong6@zte.com.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 00:40:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 00:40:55 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807191720270.1693@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 060FC4B5CF67.AB599
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/20 8:31, Hailong Liu wrote:
-> uio_mmap has multiple fail paths to set return value to nonzero then
-> goto out. However, it always returns *0* from the *out* at end, and
-> this will mislead callers who check the return value of this function.
+On Thu, Jul 19, 2018 at 05:22:35PM +0200, Thomas Gleixner wrote:
+>On Tue, 17 Jul 2018, Chao Fan wrote:
+>> +
+>> +/* Search efi table for rsdp table. */
+>> +static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+>> +{
+>> +	efi_system_table_t *systab;
+>> +	bool find_rsdp = false;
+>> +	bool acpi_20 = false;
+>> +	bool efi_64 = false;
+>> +	void *config_tables;
+>> +	struct efi_info *e;
+>> +	char *sig;
+>> +	int size;
+>> +	int i;
+>> +
+>> +#ifndef CONFIG_EFI
+>> +	return false;
+>> +#endif
 >
-> Fixes: 57c5f4df0a5a0ee ("uio: fix crash after the device is unregistered")
-> CC: Xiubo Li <xiubli@redhat.com>
-> Signed-off-by: Hailong Liu <liu.hailong6@zte.com.cn>
-> Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
-> ---
->   drivers/uio/uio.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>Please no. Wrap the whole function into CONFIG_EFI annd have a stub for the
+>non EFI case returning false.
+
+Yes, you are right. Will change it in the next version.
+
+Thanks,
+Chao Fan
+
 >
-> diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-> index 5d421d7..0ddfda2 100644
-> --- a/drivers/uio/uio.c
-> +++ b/drivers/uio/uio.c
-> @@ -814,7 +814,7 @@ static int uio_mmap(struct file *filep, struct vm_area_struct *vma)
->   
->   out:
->   	mutex_unlock(&idev->info_lock);
-> -	return 0;
-> +	return ret;
-Hi Hailong,
-
-Good catch, Thanks.
-
-BRs
-
-
->   }
->   
->   static const struct file_operations uio_fops = {
+>Thanks,
+>
+>	tglx
+>
+>
 
 
