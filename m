@@ -6,199 +6,86 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AD1ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A23ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B4B2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B4B2084A
+	by mail.kernel.org (Postfix) with ESMTP id 4C83A2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C83A2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732026AbeGTNOl (ORCPT
+        id S1732042AbeGTNOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:14:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34874 "EHLO
+        Fri, 20 Jul 2018 09:14:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34882 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729816AbeGTNOk (ORCPT
+        with ESMTP id S1729816AbeGTNOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:14:40 -0400
+        Fri, 20 Jul 2018 09:14:43 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A3A0BBD;
-        Fri, 20 Jul 2018 12:26:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64E4FBC1;
+        Fri, 20 Jul 2018 12:26:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 3.18 00/29] 3.18.116-stable review
-Date:   Fri, 20 Jul 2018 14:10:55 +0200
-Message-Id: <20180720115158.974693829@linuxfoundation.org>
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 01/31] compiler, clang: suppress warning for unused static inline functions
+Date:   Fri, 20 Jul 2018 14:13:31 +0200
+Message-Id: <20180720121340.208690374@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
+In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
+References: <20180720121340.158484922@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-3.18.116-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-3.18.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 3.18.116-rc1
-X-KernelTest-Deadline: 2018-07-22T11:52+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 3.18.116 release.
-There are 29 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sun Jul 22 11:51:47 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.116-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-and the diffstat can be found below.
+From: David Rientjes <rientjes@google.com>
 
-thanks,
+commit abb2ea7dfd82451d85ce669b811310c05ab5ca46 upstream.
 
-greg k-h
+GCC explicitly does not warn for unused static inline functions for
+-Wunused-function.  The manual states:
 
--------------
-Pseudo-Shortlog of commits:
+	Warn whenever a static function is declared but not defined or
+	a non-inline static function is unused.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 3.18.116-rc1
+Clang does warn for static inline functions that are unused.
 
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    net/nfc: Avoid stalls when nfc_alloc_send_skb() returned NULL.
+It turns out that suppressing the warnings avoids potentially complex
+#ifdef directives, which also reduces LOC.
 
-Santosh Shilimkar <santosh.shilimkar@oracle.com>
-    rds: avoid unenecessary cong_update in loop transport
+Suppress the warning for clang.
 
-Eric Biggers <ebiggers@google.com>
-    KEYS: DNS: fix parsing multiple options
+Signed-off-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Florian Westphal <fw@strlen.de>
-    netfilter: ebtables: reject non-bridge targets
+---
+ include/linux/compiler-clang.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Alex Vesker <valex@mellanox.com>
-    net/mlx5: Fix command interface race in polling mode
-
-Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-    net_sched: blackhole: tell upper qdisc about dropped packets
-
-Jason Wang <jasowang@redhat.com>
-    vhost_net: validate sock before trying to put its fd
-
-Ilpo Järvinen <ilpo.jarvinen@helsinki.fi>
-    tcp: prevent bogus FRTO undos with non-SACK flows
-
-Yuchung Cheng <ycheng@google.com>
-    tcp: fix Fast Open key endianness
-
-Eric Dumazet <edumazet@google.com>
-    net: sungem: fix rx checksum support
-
-Alex Vesker <valex@mellanox.com>
-    net/mlx5: Fix incorrect raw command length parsing
-
-Eric Dumazet <edumazet@google.com>
-    net: dccp: switch rx_tstamp_last_feedback to monotonic clock
-
-Eric Dumazet <edumazet@google.com>
-    net: dccp: avoid crash in ccid3_hc_rx_send_feedback()
-
-Christian Lamparter <chunkeey@googlemail.com>
-    crypto: crypto4xx - fix crypto4xx_build_pdr, crypto4xx_build_sdr leak
-
-Christian Lamparter <chunkeey@googlemail.com>
-    crypto: crypto4xx - remove bad list_del
-
-Jonas Gorski <jonas.gorski@gmail.com>
-    bcm63xx_enet: do not write to random DMA channel on BCM6345
-
-Jonas Gorski <jonas.gorski@gmail.com>
-    bcm63xx_enet: correct clock usage
-
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    loop: remember whether sysfs_create_group() was done
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/ucm: Mark UCM interface as BROKEN
-
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    PM / hibernate: Fix oops at snapshot_write()
-
-Theodore Ts'o <tytso@mit.edu>
-    loop: add recursion validation to LOOP_CHANGE_FD
-
-Florian Westphal <fw@strlen.de>
-    netfilter: x_tables: initialise match/target check parameter struct
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    Fix up non-directory creation in SGID directories
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    xhci: xhci-mem: off by one in xhci_stream_id_to_ring()
-
-Nico Sneck <snecknico@gmail.com>
-    usb: quirks: add delay quirks for Corsair Strafe
-
-Johan Hovold <johan@kernel.org>
-    USB: serial: mos7840: fix status-register error handling
-
-Jann Horn <jannh@google.com>
-    USB: yurex: fix out-of-bounds uaccess in read handler
-
-Johan Hovold <johan@kernel.org>
-    USB: serial: keyspan_pda: fix modem-status error handling
-
-Jann Horn <jannh@google.com>
-    ibmasm: don't write out of bounds in read handler
-
-
--------------
-
-Diffstat:
-
- Makefile                                      |  4 +-
- drivers/block/loop.c                          | 79 +++++++++++++++------------
- drivers/block/loop.h                          |  1 +
- drivers/crypto/amcc/crypto4xx_core.c          | 23 ++++----
- drivers/infiniband/Kconfig                    | 12 ++++
- drivers/infiniband/core/Makefile              |  4 +-
- drivers/misc/ibmasm/ibmasmfs.c                | 27 +--------
- drivers/net/ethernet/broadcom/bcm63xx_enet.c  | 34 +++++++++---
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |  8 +--
- drivers/net/ethernet/sun/sungem.c             | 22 ++++----
- drivers/usb/core/quirks.c                     |  4 ++
- drivers/usb/host/xhci-mem.c                   |  2 +-
- drivers/usb/misc/yurex.c                      | 23 ++------
- drivers/usb/serial/keyspan_pda.c              |  4 +-
- drivers/usb/serial/mos7840.c                  |  3 +
- drivers/vhost/net.c                           |  3 +-
- fs/inode.c                                    |  6 ++
- kernel/power/user.c                           |  5 ++
- net/bridge/netfilter/ebtables.c               | 15 +++++
- net/dccp/ccids/ccid3.c                        | 16 +++---
- net/dns_resolver/dns_key.c                    | 28 ++++++----
- net/ipv4/netfilter/ip_tables.c                |  1 +
- net/ipv4/sysctl_net_ipv4.c                    | 18 ++++--
- net/ipv4/tcp_input.c                          |  9 +++
- net/ipv6/netfilter/ip6_tables.c               |  1 +
- net/nfc/llcp_commands.c                       |  9 ++-
- net/rds/loop.c                                |  1 +
- net/rds/rds.h                                 |  5 ++
- net/rds/recv.c                                |  5 ++
- net/sched/sch_blackhole.c                     |  2 +-
- 30 files changed, 228 insertions(+), 146 deletions(-)
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -15,3 +15,10 @@
+  * with any version that can compile the kernel
+  */
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
++
++/*
++ * GCC does not warn about unused static inline functions for
++ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
++ * directives.  Suppress the warning in clang as well.
++ */
++#define inline inline __attribute__((unused))
 
 
