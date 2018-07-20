@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D97ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8703ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F0D20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F0D20854
+	by mail.kernel.org (Postfix) with ESMTP id ADD6A206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD6A206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388714AbeGTNVb (ORCPT
+        id S2388720AbeGTNVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:21:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41138 "EHLO
+        Fri, 20 Jul 2018 09:21:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41218 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731623AbeGTNVa (ORCPT
+        with ESMTP id S2387979AbeGTNVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:21:30 -0400
+        Fri, 20 Jul 2018 09:21:37 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01168CD1;
-        Fri, 20 Jul 2018 12:31:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E65D3C83;
+        Fri, 20 Jul 2018 12:32:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 20/92] ixgbe: split XDP_TX tail and XDP_REDIRECT map flushing
-Date:   Fri, 20 Jul 2018 14:13:24 +0200
-Message-Id: <20180720121418.560185816@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 28/92] net/mlx5: Fix command interface race in polling mode
+Date:   Fri, 20 Jul 2018 14:13:32 +0200
+Message-Id: <20180720121419.373139032@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -50,89 +50,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jesper Dangaard Brouer <brouer@redhat.com>
+From: Alex Vesker <valex@mellanox.com>
 
-[ Upstream commit ad088ec480768850db019a5cc543685e868a513d ]
+[ Upstream commit d412c31dae053bf30a1bc15582a9990df297a660 ]
 
-The driver was combining the XDP_TX tail flush and XDP_REDIRECT
-map flushing (xdp_do_flush_map).  This is suboptimal, these two
-flush operations should be kept separate.
+The command interface can work in two modes: Events and Polling.
+In the general case, each time we invoke a command, a work is
+queued to handle it.
 
-Fixes: 11393cc9b9be ("xdp: Add batching support to redirect map")
-Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+When working in events, the interrupt handler completes the
+command execution. On the other hand, when working in polling
+mode, the work itself completes it.
+
+Due to a bug in the work handler, a command could have been
+completed by the interrupt handler, while the work handler
+hasn't finished yet, causing the it to complete once again
+if the command interface mode was changed from Events to
+polling after the interrupt handler was called.
+
+mlx5_unload_one()
+        mlx5_stop_eqs()
+                // Destroy the EQ before cmd EQ
+                ...cmd_work_handler()
+                        write_doorbell()
+                        --> EVENT_TYPE_CMD
+                                mlx5_cmd_comp_handler() // First free
+                                        free_ent(cmd, ent->idx)
+                                        complete(&ent->done)
+
+        <-- mlx5_stop_eqs //cmd was complete
+                // move to polling before destroying the last cmd EQ
+                mlx5_cmd_use_polling()
+                        cmd->mode = POLL;
+
+                --> cmd_work_handler (continues)
+                        if (cmd->mode == POLL)
+                                mlx5_cmd_comp_handler() // Double free
+
+The solution is to store the cmd->mode before writing the doorbell.
+
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Alex Vesker <valex@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |   24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -2211,9 +2211,10 @@ static struct sk_buff *ixgbe_build_skb(s
- 	return skb;
- }
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -801,6 +801,7 @@ static void cmd_work_handler(struct work
+ 	unsigned long flags;
+ 	bool poll_cmd = ent->polling;
+ 	int alloc_ret;
++	int cmd_mode;
  
--#define IXGBE_XDP_PASS 0
--#define IXGBE_XDP_CONSUMED 1
--#define IXGBE_XDP_TX 2
-+#define IXGBE_XDP_PASS		0
-+#define IXGBE_XDP_CONSUMED	BIT(0)
-+#define IXGBE_XDP_TX		BIT(1)
-+#define IXGBE_XDP_REDIR		BIT(2)
+ 	sem = ent->page_queue ? &cmd->pages_sem : &cmd->sem;
+ 	down(sem);
+@@ -847,6 +848,7 @@ static void cmd_work_handler(struct work
+ 	set_signature(ent, !cmd->checksum_disabled);
+ 	dump_command(dev, ent, 1);
+ 	ent->ts1 = ktime_get_ns();
++	cmd_mode = cmd->mode;
  
- static int ixgbe_xmit_xdp_ring(struct ixgbe_adapter *adapter,
- 			       struct xdp_buff *xdp);
-@@ -2242,7 +2243,7 @@ static struct sk_buff *ixgbe_run_xdp(str
- 	case XDP_REDIRECT:
- 		err = xdp_do_redirect(adapter->netdev, xdp, xdp_prog);
- 		if (!err)
--			result = IXGBE_XDP_TX;
-+			result = IXGBE_XDP_REDIR;
- 		else
- 			result = IXGBE_XDP_CONSUMED;
- 		break;
-@@ -2302,7 +2303,7 @@ static int ixgbe_clean_rx_irq(struct ixg
- 	unsigned int mss = 0;
- #endif /* IXGBE_FCOE */
- 	u16 cleaned_count = ixgbe_desc_unused(rx_ring);
--	bool xdp_xmit = false;
-+	unsigned int xdp_xmit = 0;
- 
- 	while (likely(total_rx_packets < budget)) {
- 		union ixgbe_adv_rx_desc *rx_desc;
-@@ -2342,8 +2343,10 @@ static int ixgbe_clean_rx_irq(struct ixg
- 		}
- 
- 		if (IS_ERR(skb)) {
--			if (PTR_ERR(skb) == -IXGBE_XDP_TX) {
--				xdp_xmit = true;
-+			unsigned int xdp_res = -PTR_ERR(skb);
-+
-+			if (xdp_res & (IXGBE_XDP_TX | IXGBE_XDP_REDIR)) {
-+				xdp_xmit |= xdp_res;
- 				ixgbe_rx_buffer_flip(rx_ring, rx_buffer, size);
- 			} else {
- 				rx_buffer->pagecnt_bias++;
-@@ -2415,7 +2418,10 @@ static int ixgbe_clean_rx_irq(struct ixg
- 		total_rx_packets++;
- 	}
- 
--	if (xdp_xmit) {
-+	if (xdp_xmit & IXGBE_XDP_REDIR)
-+		xdp_do_flush_map();
-+
-+	if (xdp_xmit & IXGBE_XDP_TX) {
- 		struct ixgbe_ring *ring = adapter->xdp_ring[smp_processor_id()];
- 
- 		/* Force memory writes to complete before letting h/w
-@@ -2423,8 +2429,6 @@ static int ixgbe_clean_rx_irq(struct ixg
- 		 */
- 		wmb();
- 		writel(ring->next_to_use, ring->tail);
--
--		xdp_do_flush_map();
- 	}
- 
- 	u64_stats_update_begin(&rx_ring->syncp);
+ 	if (ent->callback)
+ 		schedule_delayed_work(&ent->cb_timeout_work, cb_timeout);
+@@ -871,7 +873,7 @@ static void cmd_work_handler(struct work
+ 	iowrite32be(1 << ent->idx, &dev->iseg->cmd_dbell);
+ 	mmiowb();
+ 	/* if not in polling don't use ent after this point */
+-	if (cmd->mode == CMD_MODE_POLLING || poll_cmd) {
++	if (cmd_mode == CMD_MODE_POLLING || poll_cmd) {
+ 		poll_timeout(ent);
+ 		/* make sure we read the descriptor after ownership is SW */
+ 		rmb();
 
 
