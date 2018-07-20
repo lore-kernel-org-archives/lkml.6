@@ -2,85 +2,81 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 322FCECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:45 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC67E206B7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F81ECDFB8
 	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC67E206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id C74FB20833
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74FB20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388847AbeGTNWo (ORCPT
+        id S2388833AbeGTNWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:22:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42294 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388096AbeGTNWo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:22:44 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CBC3CBC8;
-        Fri, 20 Jul 2018 12:32:12 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 24/92] net: macb: Fix ptp time adjustment for large negative delta
-Date:   Fri, 20 Jul 2018 14:13:28 +0200
-Message-Id: <20180720121418.930391941@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
-References: <20180720121417.206337808@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Fri, 20 Jul 2018 09:22:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58424 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388096AbeGTNWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 09:22:42 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 91BA1401DEC0;
+        Fri, 20 Jul 2018 12:34:40 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-17.ams2.redhat.com [10.36.116.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 94C58111AF1D;
+        Fri, 20 Jul 2018 12:34:38 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: [PATCH v1 2/2] kdump: include PG_reserved value in VMCOREINFO
+Date:   Fri, 20 Jul 2018 14:34:22 +0200
+Message-Id: <20180720123422.10127-3-david@redhat.com>
+In-Reply-To: <20180720123422.10127-1-david@redhat.com>
+References: <20180720123422.10127-1-david@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 20 Jul 2018 12:34:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 20 Jul 2018 12:34:40 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+PG_reserved pages should never be touched by enybody except their owner.
+Let's allow dumping tools to skip these pages.
 
-------------------
-
-From: Harini Katakam <harini.katakam@xilinx.com>
-
-[ Upstream commit 64d7839af8c8f67daaf9bf387135052c55d85f90 ]
-
-When delta passed to gem_ptp_adjtime is negative, the sign is
-maintained in the ns_to_timespec64 conversion. Hence timespec_add
-should be used directly. timespec_sub will just subtract the negative
-value thus increasing the time difference.
-
-Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Hari Bathini <hbathini@linux.vnet.ibm.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/net/ethernet/cadence/macb_ptp.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ kernel/crash_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/cadence/macb_ptp.c
-+++ b/drivers/net/ethernet/cadence/macb_ptp.c
-@@ -170,10 +170,7 @@ static int gem_ptp_adjtime(struct ptp_cl
- 
- 	if (delta > TSU_NSEC_MAX_VAL) {
- 		gem_tsu_get_time(&bp->ptp_clock_info, &now);
--		if (sign)
--			now = timespec64_sub(now, then);
--		else
--			now = timespec64_add(now, then);
-+		now = timespec64_add(now, then);
- 
- 		gem_tsu_set_time(&bp->ptp_clock_info,
- 				 (const struct timespec64 *)&now);
-
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index b66aced5e8c2..ab216accf96a 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -451,6 +451,7 @@ static int __init crash_save_vmcoreinfo_init(void)
+ 	log_buf_vmcoreinfo_setup();
+ 	VMCOREINFO_LENGTH(free_area.free_list, MIGRATE_TYPES);
+ 	VMCOREINFO_NUMBER(NR_FREE_PAGES);
++	VMCOREINFO_NUMBER(PG_reserved);
+ 	VMCOREINFO_NUMBER(PG_lru);
+ 	VMCOREINFO_NUMBER(PG_private);
+ 	VMCOREINFO_NUMBER(PG_swapcache);
+-- 
+2.17.1
 
