@@ -2,37 +2,41 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB629ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC73ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90222206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90222206B7
+	by mail.kernel.org (Postfix) with ESMTP id 5544F206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5544F206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731674AbeGTNNr (ORCPT
+        id S1731695AbeGTNNu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:13:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34706 "EHLO
+        Fri, 20 Jul 2018 09:13:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34716 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730183AbeGTNNq (ORCPT
+        with ESMTP id S1730183AbeGTNNu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:13:46 -0400
+        Fri, 20 Jul 2018 09:13:50 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D54B0BBF;
-        Fri, 20 Jul 2018 12:25:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89C2CBBD;
+        Fri, 20 Jul 2018 12:25:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 3.18 02/29] USB: serial: keyspan_pda: fix modem-status error handling
-Date:   Fri, 20 Jul 2018 14:10:57 +0200
-Message-Id: <20180720115159.058355347@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Meelis Roos <mroos@linux.ee>,
+        Mathieu Malaterre <malat@debian.org>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 20/29] net: sungem: fix rx checksum support
+Date:   Fri, 20 Jul 2018 14:11:15 +0200
+Message-Id: <20180720115159.700367601@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720115158.974693829@linuxfoundation.org>
 References: <20180720115158.974693829@linuxfoundation.org>
@@ -49,35 +53,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 01b3cdfca263a17554f7b249d20a247b2a751521 upstream.
+[ Upstream commit 12b03558cef6d655d0d394f5e98a6fd07c1f6c0f ]
 
-Fix broken modem-status error handling which could lead to bits of slab
-data leaking to user space.
+After commit 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE
+are friends"), sungem owners reported the infamous "eth0: hw csum failure"
+message.
 
-Fixes: 3b36a8fd6777 ("usb: fix uninitialized variable warning in keyspan_pda")
-Cc: stable <stable@vger.kernel.org>     # 2.6.27
-Signed-off-by: Johan Hovold <johan@kernel.org>
+CHECKSUM_COMPLETE has in fact never worked for this driver, but this
+was masked by the fact that upper stacks had to strip the FCS, and
+therefore skb->ip_summed was set back to CHECKSUM_NONE before
+my recent change.
+
+Driver configures a number of bytes to skip when the chip computes
+the checksum, and for some reason only half of the Ethernet header
+was skipped.
+
+Then a second problem is that we should strip the FCS by default,
+unless the driver is updated to eventually support NETIF_F_RXFCS in
+the future.
+
+Finally, a driver should check if NETIF_F_RXCSUM feature is enabled
+or not, so that the admin can turn off rx checksum if wanted.
+
+Many thanks to Andreas Schwab and Mathieu Malaterre for their
+help in debugging this issue.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Meelis Roos <mroos@linux.ee>
+Reported-by: Mathieu Malaterre <malat@debian.org>
+Reported-by: Andreas Schwab <schwab@linux-m68k.org>
+Tested-by: Andreas Schwab <schwab@linux-m68k.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/keyspan_pda.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/sun/sungem.c |   22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
---- a/drivers/usb/serial/keyspan_pda.c
-+++ b/drivers/usb/serial/keyspan_pda.c
-@@ -373,8 +373,10 @@ static int keyspan_pda_get_modem_info(st
- 			     3, /* get pins */
- 			     USB_TYPE_VENDOR|USB_RECIP_INTERFACE|USB_DIR_IN,
- 			     0, 0, data, 1, 2000);
--	if (rc >= 0)
-+	if (rc == 1)
- 		*value = *data;
-+	else if (rc >= 0)
-+		rc = -EIO;
+--- a/drivers/net/ethernet/sun/sungem.c
++++ b/drivers/net/ethernet/sun/sungem.c
+@@ -60,8 +60,7 @@
+ #include <linux/sungem_phy.h>
+ #include "sungem.h"
  
- 	kfree(data);
- 	return rc;
+-/* Stripping FCS is causing problems, disabled for now */
+-#undef STRIP_FCS
++#define STRIP_FCS
+ 
+ #define DEFAULT_MSG	(NETIF_MSG_DRV		| \
+ 			 NETIF_MSG_PROBE	| \
+@@ -435,7 +434,7 @@ static int gem_rxmac_reset(struct gem *g
+ 	writel(desc_dma & 0xffffffff, gp->regs + RXDMA_DBLOW);
+ 	writel(RX_RING_SIZE - 4, gp->regs + RXDMA_KICK);
+ 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
+-	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
++	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
+ 	writel(val, gp->regs + RXDMA_CFG);
+ 	if (readl(gp->regs + GREG_BIFCFG) & GREG_BIFCFG_M66EN)
+ 		writel(((5 & RXDMA_BLANK_IPKTS) |
+@@ -760,7 +759,6 @@ static int gem_rx(struct gem *gp, int wo
+ 	struct net_device *dev = gp->dev;
+ 	int entry, drops, work_done = 0;
+ 	u32 done;
+-	__sum16 csum;
+ 
+ 	if (netif_msg_rx_status(gp))
+ 		printk(KERN_DEBUG "%s: rx interrupt, done: %d, rx_new: %d\n",
+@@ -855,9 +853,13 @@ static int gem_rx(struct gem *gp, int wo
+ 			skb = copy_skb;
+ 		}
+ 
+-		csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
+-		skb->csum = csum_unfold(csum);
+-		skb->ip_summed = CHECKSUM_COMPLETE;
++		if (likely(dev->features & NETIF_F_RXCSUM)) {
++			__sum16 csum;
++
++			csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
++			skb->csum = csum_unfold(csum);
++			skb->ip_summed = CHECKSUM_COMPLETE;
++		}
+ 		skb->protocol = eth_type_trans(skb, gp->dev);
+ 
+ 		napi_gro_receive(&gp->napi, skb);
+@@ -1755,7 +1757,7 @@ static void gem_init_dma(struct gem *gp)
+ 	writel(0, gp->regs + TXDMA_KICK);
+ 
+ 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
+-	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
++	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
+ 	writel(val, gp->regs + RXDMA_CFG);
+ 
+ 	writel(desc_dma >> 32, gp->regs + RXDMA_DBHI);
+@@ -2973,8 +2975,8 @@ static int gem_init_one(struct pci_dev *
+ 	pci_set_drvdata(pdev, dev);
+ 
+ 	/* We can do scatter/gather and HW checksum */
+-	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM;
+-	dev->features |= dev->hw_features | NETIF_F_RXCSUM;
++	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
++	dev->features = dev->hw_features;
+ 	if (pci_using_dac)
+ 		dev->features |= NETIF_F_HIGHDMA;
+ 
 
 
