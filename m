@@ -2,122 +2,104 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53133ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F4AECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D65220850
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:10:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D65220850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id B9C0A2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:12:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C0A2084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbeGTF4u (ORCPT
+        id S1727725AbeGTF7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 01:56:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43709 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbeGTF4u (ORCPT
+        Fri, 20 Jul 2018 01:59:08 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:9175 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727177AbeGTF7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 01:56:50 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6K5ALAj2538379
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 22:10:21 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6K5ALV52538376;
-        Thu, 19 Jul 2018 22:10:21 -0700
-Date:   Thu, 19 Jul 2018 22:10:21 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiang Biao <tipbot@zytor.com>
-Message-ID: <tip-8c934e01a7ce685d98e970880f5941d79272c654@git.kernel.org>
-Cc:     mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, jiang.biao2@zte.com.cn
-Reply-To: linux-kernel@vger.kernel.org, jiang.biao2@zte.com.cn,
-          hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de
-In-Reply-To: <1532045192-49622-2-git-send-email-jiang.biao2@zte.com.cn>
-References: <1532045192-49622-2-git-send-email-jiang.biao2@zte.com.cn>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/pti: Check the return value of
- pti_user_pagetable_walk_pmd()
-Git-Commit-ID: 8c934e01a7ce685d98e970880f5941d79272c654
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 20 Jul 2018 01:59:07 -0400
+X-UUID: 1f676073f95a45d4b0f4c0688c1f2081-20180720
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1411473296; Fri, 20 Jul 2018 13:12:34 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 20 Jul 2018 13:12:32 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 20 Jul 2018 13:12:33 +0800
+From:   <sean.wang@mediatek.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <marcel@holtmann.org>, <johan.hedberg@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v6 2/4] Bluetooth: Add new quirk for non-persistent setup settings
+Date:   Fri, 20 Jul 2018 13:12:28 +0800
+Message-ID: <d20e070679bb40bff011f5a74f531e1b662d08a5.1532060309.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1532060309.git.sean.wang@mediatek.com>
+References: <cover.1532060309.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8c934e01a7ce685d98e970880f5941d79272c654
-Gitweb:     https://git.kernel.org/tip/8c934e01a7ce685d98e970880f5941d79272c654
-Author:     Jiang Biao <jiang.biao2@zte.com.cn>
-AuthorDate: Fri, 20 Jul 2018 08:06:32 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 07:07:39 +0200
+From: Sean Wang <sean.wang@mediatek.com>
 
-x86/pti: Check the return value of pti_user_pagetable_walk_pmd()
+Add a new quirk HCI_QUIRK_NON_PERSISTENT_SETUP allowing that a quirk that
+runs setup() after every open() and not just after the first open().
 
-pti_user_pagetable_walk_pmd() can return NULL, so the return value should
-be checked to prevent a NULL pointer dereference.
-
-Add the check and a warning when the PMD allocation fails.
-
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: hpa@zytor.com
-Cc: albcamus@gmail.com
-Cc: zhong.weidong@zte.com.cn
-Link: https://lkml.kernel.org/r/1532045192-49622-2-git-send-email-jiang.biao2@zte.com.cn
-
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- arch/x86/mm/pti.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ include/net/bluetooth/hci.h | 9 +++++++++
+ net/bluetooth/hci_core.c    | 3 ++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 001ee6b0619e..bcf35dac1920 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -205,7 +205,7 @@ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
- 	BUILD_BUG_ON(p4d_large(*p4d) != 0);
- 	if (p4d_none(*p4d)) {
- 		unsigned long new_pud_page = __get_free_page(gfp);
--		if (!new_pud_page)
-+		if (WARN_ON_ONCE(!new_pud_page))
- 			return NULL;
- 
- 		set_p4d(p4d, __p4d(_KERNPG_TABLE | __pa(new_pud_page)));
-@@ -219,7 +219,7 @@ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
- 	}
- 	if (pud_none(*pud)) {
- 		unsigned long new_pmd_page = __get_free_page(gfp);
--		if (!new_pmd_page)
-+		if (WARN_ON_ONCE(!new_pmd_page))
- 			return NULL;
- 
- 		set_pud(pud, __pud(_KERNPG_TABLE | __pa(new_pmd_page)));
-@@ -241,9 +241,13 @@ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
- static __init pte_t *pti_user_pagetable_walk_pte(unsigned long address)
- {
- 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
--	pmd_t *pmd = pti_user_pagetable_walk_pmd(address);
-+	pmd_t *pmd;
- 	pte_t *pte;
- 
-+	pmd = pti_user_pagetable_walk_pmd(address);
-+	if (!pmd)
-+		return NULL;
+diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+index 1668211..b37d973 100644
+--- a/include/net/bluetooth/hci.h
++++ b/include/net/bluetooth/hci.h
+@@ -183,6 +183,15 @@ enum {
+ 	 * during the hdev->setup vendor callback.
+ 	 */
+ 	HCI_QUIRK_NON_PERSISTENT_DIAG,
 +
- 	/* We can't do anything sensible if we hit a large mapping. */
- 	if (pmd_large(*pmd)) {
- 		WARN_ON(1);
++	/* When this quirk is set, setup() would be run after every
++	 * open() and not just after the first open().
++	 *
++	 * This quirk can be set before hci_register_dev is called or
++	 * during the hdev->setup vendor callback.
++	 *
++	 */
++	HCI_QUIRK_NON_PERSISTENT_SETUP,
+ };
+ 
+ /* HCI device flags */
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index 40d260f..7de712e2 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -1377,7 +1377,8 @@ static int hci_dev_do_open(struct hci_dev *hdev)
+ 	atomic_set(&hdev->cmd_cnt, 1);
+ 	set_bit(HCI_INIT, &hdev->flags);
+ 
+-	if (hci_dev_test_flag(hdev, HCI_SETUP)) {
++	if (hci_dev_test_flag(hdev, HCI_SETUP) ||
++	    test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
+ 		hci_sock_dev_event(hdev, HCI_DEV_SETUP);
+ 
+ 		if (hdev->setup)
+-- 
+2.7.4
+
