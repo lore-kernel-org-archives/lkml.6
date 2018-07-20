@@ -2,127 +2,76 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2913FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8773ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5F6920661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:54:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F6920661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E29C20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:54:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E29C20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389051AbeGTNmH (ORCPT
+        id S2389210AbeGTNmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:42:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44578 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388276AbeGTNYt (ORCPT
+        Fri, 20 Jul 2018 09:42:11 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:33924 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388276AbeGTNmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:24:49 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A80DCF7;
-        Fri, 20 Jul 2018 12:34:52 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 80/92] arm64: Add per-cpu infrastructure to call ARCH_WORKAROUND_2
-Date:   Fri, 20 Jul 2018 14:14:24 +0200
-Message-Id: <20180720121422.318080625@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
-References: <20180720121417.206337808@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 20 Jul 2018 09:42:10 -0400
+Received: by mail-io0-f197.google.com with SMTP id f9-v6so8290928ioh.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 05:54:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Pt5Sa5jKmJSi4m3g4t58eZpDglKILk1Yn5jlz9pCJf0=;
+        b=Tk3C5wW2Lau4WB0kkawzAN3BVVEmBehcP3JDUujm8RCrcqHC4ht+6DEvINlmpr7lX8
+         Q0o1/I+eDZ9+Q/+QtYXGPFxgYs0W/Hpyvv/Ii5kdM2anDVm9zZr4PX8qTwjZkg7jBu5K
+         RzFgBYXKvgMCwD4DYVo/TsSQZjclAtT9ag6gNpIDzdT/63hAlWE7sSWyiDTQUbkQxMaX
+         37/HDjLNBsxqcE9T+N9ae1uZElyrvsDfQobKaFa+M3BdBWzwNLmTlAWZLvn/5P4uJzOs
+         yCH7UixrNcpBUTaaiMRPJk1AIYmFlBaWXcJhLlAwGTUi08dwucYWNQudSS89Y9oRWp+y
+         b11w==
+X-Gm-Message-State: AOUpUlE4du/dF+lxCiCjAcC7Q6xm7+WKJ94hmwhZYlFZB9l1xyAEizko
+        bgwLO3ut7vkc91ah9NgzQialmTe0k6/rLAWZjmWotn9nPLD+
+X-Google-Smtp-Source: AAOMgpeJEzKrN2/RFuj2SueVXigppkk9jkGgUABScW52TvL/MNykhABEiJl0vSUj4cZ0fNE2Qw2SDoVGYeOENNul9HvualrBdMNr
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Received: by 2002:a24:419d:: with SMTP id b29-v6mr896858itd.48.1532091242515;
+ Fri, 20 Jul 2018 05:54:02 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 05:54:02 -0700
+In-Reply-To: <20180720121421.151182440@linuxfoundation.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004611dc05716dca53@google.com>
+Subject: Re: KMSAN: uninit-value in af_alg_free_areq_sgls
+From:   syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>
+To:     gregkh@linuxfoundation.org, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, smueller@chronox.de,
+        stable@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hello,
 
-------------------
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+Reported-and-tested-by:  
+syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
 
-commit 5cf9ce6e5ea50f805c6188c04ed0daaec7b6887d upstream.
+Tested on:
 
-In a heterogeneous system, we can end up with both affected and
-unaffected CPUs. Let's check their status before calling into the
-firmware.
+commit:         cf8cd3cd03e2 kmsan: fix CONFIG_KMSAN=n build
+git tree:       https://github.com/google/kmsan.git/master
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c21487206316bcc3
+compiler:       clang version 7.0.0 (trunk 334104)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11fec658400000
 
-Reviewed-by: Julien Grall <julien.grall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpu_errata.c |    2 ++
- arch/arm64/kernel/entry.S      |   11 +++++++----
- 2 files changed, 9 insertions(+), 4 deletions(-)
-
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -229,6 +229,8 @@ static int qcom_enable_link_stack_saniti
- #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
- 
- #ifdef CONFIG_ARM64_SSBD
-+DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
-+
- void __init arm64_update_smccc_conduit(struct alt_instr *alt,
- 				       __le32 *origptr, __le32 *updptr,
- 				       int nr_inst)
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -140,8 +140,10 @@ alternative_else_nop_endif
- 
- 	// This macro corrupts x0-x3. It is the caller's duty
- 	// to save/restore them if required.
--	.macro	apply_ssbd, state
-+	.macro	apply_ssbd, state, targ, tmp1, tmp2
- #ifdef CONFIG_ARM64_SSBD
-+	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
-+	cbz	\tmp2, \targ
- 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
- 	mov	w1, #\state
- alternative_cb	arm64_update_smccc_conduit
-@@ -176,12 +178,13 @@ alternative_cb_end
- 	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
- 	disable_step_tsk x19, x20		// exceptions when scheduling.
- 
--	apply_ssbd 1
-+	apply_ssbd 1, 1f, x22, x23
- 
- #ifdef CONFIG_ARM64_SSBD
- 	ldp	x0, x1, [sp, #16 * 0]
- 	ldp	x2, x3, [sp, #16 * 1]
- #endif
-+1:
- 
- 	mov	x29, xzr			// fp pointed to user-space
- 	.else
-@@ -321,8 +324,8 @@ alternative_if ARM64_WORKAROUND_845719
- alternative_else_nop_endif
- #endif
- 3:
--	apply_ssbd 0
--
-+	apply_ssbd 0, 5f, x0, x1
-+5:
- 	.endif
- 
- 	msr	elr_el1, x21			// set up the return data
-
-
+Note: testing is done by a robot and is best-effort only.
