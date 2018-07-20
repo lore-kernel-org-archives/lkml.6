@@ -3,202 +3,205 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B950ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D672AECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD37720850
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD37720850
+	by mail.kernel.org (Postfix) with ESMTP id 975F620854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975F620854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387897AbeGTNP4 (ORCPT
+        id S2387913AbeGTNQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35704 "EHLO
+        Fri, 20 Jul 2018 09:16:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731803AbeGTNP4 (ORCPT
+        with ESMTP id S1731850AbeGTNP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:56 -0400
+        Fri, 20 Jul 2018 09:15:59 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0389BBF;
-        Fri, 20 Jul 2018 12:27:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA361BB6;
+        Fri, 20 Jul 2018 12:27:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Peter Anvin" <hpa@linux.intel.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, acme@redhat.com,
-        akataria@vmware.com, akpm@linux-foundation.org,
-        andrea.parri@amarulasolutions.com, ard.biesheuvel@linaro.org,
-        arnd@arndb.de, aryabinin@virtuozzo.com, astrachan@google.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        caoj.fnst@cn.fujitsu.com, geert@linux-m68k.org,
-        ghackmann@google.com, jan.kiszka@siemens.com,
-        jarkko.sakkinen@linux.intel.com, joe@perches.com,
-        jpoimboe@redhat.com, keescook@google.com,
-        kirill.shutemov@linux.intel.com, kstewart@linuxfoundation.org,
-        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        manojgupta@google.com, mawilcox@microsoft.com,
-        michal.lkml@markovi.net, mjg59@google.com, mka@chromium.org,
-        pombredanne@nexb.com, rientjes@google.com, rostedt@goodmis.org,
-        thomas.lendacky@amd.com, tstellar@redhat.com, tweek@google.com,
-        virtualization@lists.linux-foundation.org, will.deacon@arm.com,
-        yamada.masahiro@socionext.com, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 05/31] x86/asm: Add _ASM_ARG* constants for argument registers to <asm/asm.h>
-Date:   Fri, 20 Jul 2018 14:13:35 +0200
-Message-Id: <20180720121340.351022699@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/31] 4.4.143-stable review
+Date:   Fri, 20 Jul 2018 14:13:30 +0200
+Message-Id: <20180720121340.158484922@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
-References: <20180720121340.158484922@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.143-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.143-rc1
+X-KernelTest-Deadline: 2018-07-22T12:13+00:00
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.4.143 release.
+There are 31 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sun Jul 22 12:13:28 UTC 2018.
+Anything received after that time might be too late.
 
-From: H. Peter Anvin <hpa@linux.intel.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.143-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-commit 0e2e160033283e20f688d8bad5b89460cc5bfcc4 upstream.
+thanks,
 
-i386 and x86-64 uses different registers for arguments; make them
-available so we don't have to #ifdef in the actual code.
+greg k-h
 
-Native size and specified size (q, l, w, b) versions are provided.
+-------------
+Pseudo-Shortlog of commits:
 
-Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
-Acked-by: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: acme@redhat.com
-Cc: akataria@vmware.com
-Cc: akpm@linux-foundation.org
-Cc: andrea.parri@amarulasolutions.com
-Cc: ard.biesheuvel@linaro.org
-Cc: arnd@arndb.de
-Cc: aryabinin@virtuozzo.com
-Cc: astrachan@google.com
-Cc: boris.ostrovsky@oracle.com
-Cc: brijesh.singh@amd.com
-Cc: caoj.fnst@cn.fujitsu.com
-Cc: geert@linux-m68k.org
-Cc: ghackmann@google.com
-Cc: gregkh@linuxfoundation.org
-Cc: jan.kiszka@siemens.com
-Cc: jarkko.sakkinen@linux.intel.com
-Cc: joe@perches.com
-Cc: jpoimboe@redhat.com
-Cc: keescook@google.com
-Cc: kirill.shutemov@linux.intel.com
-Cc: kstewart@linuxfoundation.org
-Cc: linux-efi@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org
-Cc: manojgupta@google.com
-Cc: mawilcox@microsoft.com
-Cc: michal.lkml@markovi.net
-Cc: mjg59@google.com
-Cc: mka@chromium.org
-Cc: pombredanne@nexb.com
-Cc: rientjes@google.com
-Cc: rostedt@goodmis.org
-Cc: thomas.lendacky@amd.com
-Cc: tstellar@redhat.com
-Cc: tweek@google.com
-Cc: virtualization@lists.linux-foundation.org
-Cc: will.deacon@arm.com
-Cc: yamada.masahiro@socionext.com
-Link: http://lkml.kernel.org/r/20180621162324.36656-3-ndesaulniers@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.143-rc1
 
----
- arch/x86/include/asm/asm.h |   59 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    net/nfc: Avoid stalls when nfc_alloc_send_skb() returned NULL.
 
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -44,6 +44,65 @@
- #define _ASM_SI		__ASM_REG(si)
- #define _ASM_DI		__ASM_REG(di)
- 
-+#ifndef __x86_64__
-+/* 32 bit */
-+
-+#define _ASM_ARG1	_ASM_AX
-+#define _ASM_ARG2	_ASM_DX
-+#define _ASM_ARG3	_ASM_CX
-+
-+#define _ASM_ARG1L	eax
-+#define _ASM_ARG2L	edx
-+#define _ASM_ARG3L	ecx
-+
-+#define _ASM_ARG1W	ax
-+#define _ASM_ARG2W	dx
-+#define _ASM_ARG3W	cx
-+
-+#define _ASM_ARG1B	al
-+#define _ASM_ARG2B	dl
-+#define _ASM_ARG3B	cl
-+
-+#else
-+/* 64 bit */
-+
-+#define _ASM_ARG1	_ASM_DI
-+#define _ASM_ARG2	_ASM_SI
-+#define _ASM_ARG3	_ASM_DX
-+#define _ASM_ARG4	_ASM_CX
-+#define _ASM_ARG5	r8
-+#define _ASM_ARG6	r9
-+
-+#define _ASM_ARG1Q	rdi
-+#define _ASM_ARG2Q	rsi
-+#define _ASM_ARG3Q	rdx
-+#define _ASM_ARG4Q	rcx
-+#define _ASM_ARG5Q	r8
-+#define _ASM_ARG6Q	r9
-+
-+#define _ASM_ARG1L	edi
-+#define _ASM_ARG2L	esi
-+#define _ASM_ARG3L	edx
-+#define _ASM_ARG4L	ecx
-+#define _ASM_ARG5L	r8d
-+#define _ASM_ARG6L	r9d
-+
-+#define _ASM_ARG1W	di
-+#define _ASM_ARG2W	si
-+#define _ASM_ARG3W	dx
-+#define _ASM_ARG4W	cx
-+#define _ASM_ARG5W	r8w
-+#define _ASM_ARG6W	r9w
-+
-+#define _ASM_ARG1B	dil
-+#define _ASM_ARG2B	sil
-+#define _ASM_ARG3B	dl
-+#define _ASM_ARG4B	cl
-+#define _ASM_ARG5B	r8b
-+#define _ASM_ARG6B	r9b
-+
-+#endif
-+
- /* Exception table entry */
- #ifdef __ASSEMBLY__
- # define _ASM_EXTABLE(from,to)					\
+Santosh Shilimkar <santosh.shilimkar@oracle.com>
+    rds: avoid unenecessary cong_update in loop transport
+
+Eric Biggers <ebiggers@google.com>
+    KEYS: DNS: fix parsing multiple options
+
+Florian Westphal <fw@strlen.de>
+    netfilter: ebtables: reject non-bridge targets
+
+Paul Burton <paul.burton@mips.com>
+    MIPS: Use async IPIs for arch_trigger_cpumask_backtrace()
+
+Paul Burton <paul.burton@mips.com>
+    MIPS: Call dump_stack() from show_regs()
+
+Ping-Ke Shih <pkshih@realtek.com>
+    rtlwifi: rtl8821ae: fix firmware is not ready to run
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    net: cxgb3_main: fix potential Spectre v1
+
+Alex Vesker <valex@mellanox.com>
+    net/mlx5: Fix command interface race in polling mode
+
+Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+    net_sched: blackhole: tell upper qdisc about dropped packets
+
+Jason Wang <jasowang@redhat.com>
+    vhost_net: validate sock before trying to put its fd
+
+Ilpo Järvinen <ilpo.jarvinen@helsinki.fi>
+    tcp: prevent bogus FRTO undos with non-SACK flows
+
+Yuchung Cheng <ycheng@google.com>
+    tcp: fix Fast Open key endianness
+
+Jiri Slaby <jslaby@suse.cz>
+    r8152: napi hangup fix after disconnect
+
+Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+    qed: Limit msix vectors in kdump kernel to the minimum required count.
+
+Eric Dumazet <edumazet@google.com>
+    net: sungem: fix rx checksum support
+
+Alex Vesker <valex@mellanox.com>
+    net/mlx5: Fix incorrect raw command length parsing
+
+Eric Dumazet <edumazet@google.com>
+    net: dccp: switch rx_tstamp_last_feedback to monotonic clock
+
+Eric Dumazet <edumazet@google.com>
+    net: dccp: avoid crash in ccid3_hc_rx_send_feedback()
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    atm: zatm: Fix potential Spectre v1
+
+Christian Lamparter <chunkeey@googlemail.com>
+    crypto: crypto4xx - fix crypto4xx_build_pdr, crypto4xx_build_sdr leak
+
+Christian Lamparter <chunkeey@googlemail.com>
+    crypto: crypto4xx - remove bad list_del
+
+Jonas Gorski <jonas.gorski@gmail.com>
+    bcm63xx_enet: do not write to random DMA channel on BCM6345
+
+Jonas Gorski <jonas.gorski@gmail.com>
+    bcm63xx_enet: correct clock usage
+
+alex chen <alex.chen@huawei.com>
+    ocfs2: subsystem.su_mutex is required while accessing the item->ci_parent
+
+David S. Miller <davem@davemloft.net>
+    Revert "sit: reload iphdr in ipip6_rcv"
+
+H. Peter Anvin <hpa@linux.intel.com>
+    x86/asm: Add _ASM_ARG* constants for argument registers to <asm/asm.h>
+
+Nick Desaulniers <ndesaulniers@google.com>
+    compiler-gcc.h: Add __attribute__((gnu_inline)) to all inline declarations
+
+David Rientjes <rientjes@google.com>
+    compiler, clang: always inline when CONFIG_OPTIMIZE_INLINING is disabled
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    compiler, clang: properly override 'inline' for clang
+
+David Rientjes <rientjes@google.com>
+    compiler, clang: suppress warning for unused static inline functions
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                        |  4 +-
+ arch/mips/kernel/process.c                      | 31 +++++++++++-
+ arch/mips/kernel/traps.c                        |  1 +
+ arch/x86/include/asm/asm.h                      | 59 +++++++++++++++++++++++
+ drivers/atm/zatm.c                              |  2 +
+ drivers/crypto/amcc/crypto4xx_core.c            | 23 +++++----
+ drivers/net/ethernet/broadcom/bcm63xx_enet.c    | 34 +++++++++----
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |  2 +
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c   |  8 ++--
+ drivers/net/ethernet/qlogic/qed/qed_main.c      |  9 ++++
+ drivers/net/ethernet/sun/sungem.c               | 22 +++++----
+ drivers/net/usb/r8152.c                         |  3 +-
+ drivers/net/wireless/realtek/rtlwifi/core.c     |  1 -
+ drivers/vhost/net.c                             |  3 +-
+ fs/ocfs2/cluster/nodemanager.c                  | 63 +++++++++++++++++++++----
+ include/linux/compiler-gcc.h                    | 35 ++++++++++----
+ net/bridge/netfilter/ebtables.c                 | 13 +++++
+ net/dccp/ccids/ccid3.c                          | 16 ++++---
+ net/dns_resolver/dns_key.c                      | 28 ++++++-----
+ net/ipv4/sysctl_net_ipv4.c                      | 18 +++++--
+ net/ipv4/tcp_input.c                            |  9 ++++
+ net/ipv6/sit.c                                  |  1 -
+ net/nfc/llcp_commands.c                         |  9 ++--
+ net/rds/loop.c                                  |  1 +
+ net/rds/rds.h                                   |  5 ++
+ net/rds/recv.c                                  |  5 ++
+ net/sched/sch_blackhole.c                       |  2 +-
+ 27 files changed, 320 insertions(+), 87 deletions(-)
 
 
