@@ -2,131 +2,76 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 781BCECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AF6ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26ECC20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:06:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="rNRndj/+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26ECC20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	by mail.kernel.org (Postfix) with ESMTP id 9193620661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:08:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9193620661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731336AbeGTNy0 (ORCPT
+        id S1731390AbeGTN4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:54:26 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:50690 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730183AbeGTNy0 (ORCPT
+        Fri, 20 Jul 2018 09:56:14 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:35212 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731109AbeGTN4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:54:26 -0400
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id 79B42B009B0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 15:06:12 +0200 (CEST)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=content-transfer-encoding:content-language:content-type
-        :content-type:in-reply-to:mime-version:user-agent:date:date
-        :message-id:from:from:references:to:subject:subject; s=dkim; t=
-        1532091971; x=1532955972; bh=7jn3/sOfQlBRzUAuLmkj4+GboTSWI6y14K0
-        VUDUMdxI=; b=rNRndj/+Y989Sr8P+XZA1mXdD7p8naeCRX+u6adtktQ5kZrylrO
-        pnQy6m5SHtj23kw2GxUw2h4e5VoAjdrQBM7zk2cH2Ck77BeawzCQysveKOxROPER
-        btC7IH9hfS83ch/vm4IQyfRMf3zUTR/VmdIqBwJw5rNs9X1gqIFFDMuU=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id EFQYtI4KmZj7 for <linux-kernel@vger.kernel.org>;
-        Fri, 20 Jul 2018 15:06:11 +0200 (CEST)
-Received: from [192.168.2.133] (62-11-51-166.dialup.tiscali.it [62.11.51.166])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id 223EBB004A5;
-        Fri, 20 Jul 2018 15:06:11 +0200 (CEST)
-Subject: Re: [PATCH v9 4/4] rtc: ds1307: add frequency_test_enable sysfs
- attribute to check tick on m41txx
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180718094006.105675-1-giulio.benetti@micronovasrl.com>
- <20180718094006.105675-3-giulio.benetti@micronovasrl.com>
- <CAHp75VcaALb8fYJExnZ=Ye=GcNHc3aPXgFihVK+rAu_a1A01Sg@mail.gmail.com>
- <30d6b568-b785-ae93-9f56-d0a8b7e82901@micronovasrl.com>
- <CAHp75VchXfm6J+PPcB8ekoXcDktsPUNok3KKBMFyyk9XV=AUyQ@mail.gmail.com>
- <d03aec28-a33a-5a07-4305-246508185b2b@micronovasrl.com>
- <CAHp75VdSHdtJA5E=KvkUyij8CcgpyVO1b63-XBR7MnhVeWDpWA@mail.gmail.com>
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <27a1d79b-7651-4896-58f7-73ff73b14c22@micronovasrl.com>
-Date:   Fri, 20 Jul 2018 15:06:10 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 20 Jul 2018 09:56:14 -0400
+Received: by mail-io0-f198.google.com with SMTP id y4-v6so2380179iol.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 06:08:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=H5/HsSzPj1N1lI5mmq+NAHsjyo20tDq+h3cwTzuHkRs=;
+        b=IPosEL+KKXGv182kLF3eXk3AZxNw7sKFc9jwnm6PFnpLjg9fqePtV2X5s1z4A9LY7y
+         gw0gNy9+688+zFBXNVQorJtj/Ou6BwfwXx/PH+Crd+c3fbmsG6dEFGI/M5we+W4agsBj
+         K0kjd+BbZ72BTExO222ncgYdrMe5kF0G9Bn63ZKLYOT3uolQyZ66S0eEL4OIlVvmfhlF
+         PFgTgJmeQgDm2olYaRkN1uV9NcLCSacbV5+J2ejkO7FcPzYEgWJsiTyK3tfj0lfxW2ij
+         VsOuR9ZhIjIwhHp6zRIC16XkEGokuRq2lZQVMjmREmHcu/x19SYZ8slw+xm6Jv03Trwu
+         zj0w==
+X-Gm-Message-State: AOUpUlGuE3Uz6uPCjC1J6cV86zRBSaM4MOncIPXqX7InvEIbb7us43w5
+        5oOJpF6S7aNXscwZgfBr/GaqqtwMb5yQ04mxb1hS1yzRkhx5
+X-Google-Smtp-Source: AAOMgpfsAvG19+98cev5whjk9Fv1s4iYdhG8kmL7AzvAYEZ2BjfyfBMbcGYj+RSUgfCZj7j7lGMLlXWLFV+UFmOC7jlyPY7CMbPW
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VdSHdtJA5E=KvkUyij8CcgpyVO1b63-XBR7MnhVeWDpWA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a24:5a14:: with SMTP id v20-v6mr928186ita.41.1532092081966;
+ Fri, 20 Jul 2018 06:08:01 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 06:08:01 -0700
+In-Reply-To: <20180720121426.110184758@linuxfoundation.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004f13b305716dfc98@google.com>
+Subject: Re: KMSAN: uninit-value in af_alg_free_areq_sgls
+From:   syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>
+To:     gregkh@linuxfoundation.org, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, smueller@chronox.de,
+        stable@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Il 20/07/2018 14:53, Andy Shevchenko ha scritto:
-> On Thu, Jul 19, 2018 at 9:19 PM, Giulio Benetti
-> <giulio.benetti@micronovasrl.com> wrote:
->> Hi Andy,
->>
->> Il 18/07/2018 18:26, Andy Shevchenko ha scritto:
->>>
->>> On Wed, Jul 18, 2018 at 5:06 PM, Giulio Benetti
->>> <giulio.benetti@micronovasrl.com> wrote:
->>>
->>>>>> +       int ret;
->>>>>> +
->>>>>> +       ret = kstrtobool(buf, &freq_test_en);
->>>>>> +       if (ret == -EINVAL) {
->>>
->>>
->>>>> What kind of other error code you may expect and why they are not
->>>>> considered as no error?
->>>
->>>
->>>> According to documentation, kstrtobool can only fail with -EINVAL.
->>>> See:
->>>> https://elixir.bootlin.com/linux/v4.18-rc5/source/lib/kstrtox.c#L332
->>>
->>>
->>> That's correct. So, what do you want to show by explicitly mentioned
->>> an error code in the condition?
->>>
->>
->> So you mean I should check for negative values instead of specific error,
->> right?
-> 
-> Learn from the existing code.
-> 
-> As you found kstrtobool() returns either 0 (no error), or -EINVAL (the
-> only possible error code for now).
-> Checking ret for non-zero is enough.
-> Thus,
-> 
-> if (ret) {
->   ...
->   return ret;
-> }
-> 
-> should do a job.
-> 
+Hello,
 
-Oh, I was pretty sure I've found an example of kstrtobool() in the way 
-I've used, instead no.
-Thanks for pointing me.
-I correct it.
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
-Best regards
-Giulio
+Reported-and-tested-by:  
+syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         cf8cd3cd03e2 kmsan: fix CONFIG_KMSAN=n build
+git tree:       https://github.com/google/kmsan.git/master
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c21487206316bcc3
+compiler:       clang version 7.0.0 (trunk 334104)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15fec658400000
+
+Note: testing is done by a robot and is best-effort only.
