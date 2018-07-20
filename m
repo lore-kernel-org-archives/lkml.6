@@ -6,96 +6,79 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 424B9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F6DECDFBD
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE1620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA93520652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:38:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UNDK6PHr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE1620652
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jf2R5AZm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA93520652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730678AbeGTBYc (ORCPT
+        id S1730926AbeGTBYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 21:24:32 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38424 "EHLO
+        Thu, 19 Jul 2018 21:24:34 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33138 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729215AbeGTBYb (ORCPT
+        with ESMTP id S1729215AbeGTBYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 21:24:31 -0400
-Received: by mail-pg1-f194.google.com with SMTP id k3-v6so5233780pgq.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 17:38:53 -0700 (PDT)
+        Thu, 19 Jul 2018 21:24:33 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r5-v6so5233821pgv.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 17:38:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=lN+BQizDiaU/xxsUxNcuZqX2DHX+3x/hV4He9YMUa6A=;
-        b=UNDK6PHrDe8ufw/XyW5sfZ9fAOoaC/KbyrJSVamWEGE4p23Kc7J1JOGvRnuiTSqwjd
-         zEv0R989yfIWqwfSZ/VYSvMr4duiGisKZxFWIazJyp+jhpG4aBNUPjCJEoqtVTFUCedr
-         CaQztW8K4A0+Bzy6ZmG4HJYycdK+9mD6o5aVM=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Dw/oxzW8/jxmVrKujqloAZWpXoumHLdiLMxwHNKgBis=;
+        b=Jf2R5AZmRlR1FrKf0N8PUA60L9fHAFGCMl+kwD9C5lcKya1wGSGf4qfQepewreL+M+
+         1oVSk1Nid2kSvQCCPW0R9Z72a1cYhUhwzBmShS591/Pt3zhqSlTcPT8LH4RQxFavlCHb
+         Cl+aKB4h9pn7BWnTyD9ePGP8+t2lB7iHB2KtU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lN+BQizDiaU/xxsUxNcuZqX2DHX+3x/hV4He9YMUa6A=;
-        b=agvlQQsjsBm0Fa5RwtBbkdff+d4unzXIY7XEAy0+PxFgwSLbe3MrKOiB3i/8jmDg9U
-         pzHUzAfMHFYxZT6AyH8B9yJLxfQdUYxWkeWyhRcwCGPQPeFKmcIe6aofQBWeasO2eJlQ
-         UwSf+efS7HENg0ZPdrr7ni2sdlhAKVGhoIZtTIl4DJpdGnQGi/y9tJaBOVNj4RFvWf4g
-         4VB7hJ4sAtcxHa1CBJt1/GBzDGCh5d52+tKwakNMdweDrduXJYolJGkzhaO71kINsZ7R
-         diEFkElmiTtHRInQnqG/Tw5q+/Imx/dFf3Vfu7YGzE1GO9/djqzn3YHxf2WePoNb/5PC
-         BcBQ==
-X-Gm-Message-State: AOUpUlGIggusLl3Xv59jCMCQdYNKiLGePl/C3hgdYJr0MVnL/tIoKcQc
-        UEvSBJR8G42oaDNScqK83gQadKqyIQs=
-X-Google-Smtp-Source: AAOMgpfV+2Q4pjp3t8UWh5ery7qNTFbrqQ4PggHDKtJd1beGwySQBtqqa2/aei2zwOPoq0CR6eUX8g==
-X-Received: by 2002:a63:cd02:: with SMTP id i2-v6mr11733019pgg.93.1532047132766;
-        Thu, 19 Jul 2018 17:38:52 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Dw/oxzW8/jxmVrKujqloAZWpXoumHLdiLMxwHNKgBis=;
+        b=IyeJ2V+nrpwzVq5WxtWK8NZ/kSMm9MVPX9BfLKxfvQ/xUDYR4LTPWeOp0CXwCmqA4D
+         MokZhQK/Hj7EK8kKJvdol2Mva7sDTIcZtq93AGrtdczJYXi+CHcckME8ZrUprt9LktdJ
+         rCX4JnNXldhoKRMxn+qNEjc7Mh4D+QRuL0dpp9iAOVmIUnm5Zbd5gQ7tcoY6ofMGXivH
+         0zPkgtWriVfeK+X5tc9ySIlrtTZA8y9arm6SVnsFQbd09jltblV/85FHkHaLF3NdECtm
+         48MyNvIyQFo4aH8/lkHs2OvA/IXcJJtVzHXQQZOXbEMenceAHYzMs56bw5YYHawzNtjI
+         5heg==
+X-Gm-Message-State: AOUpUlFjzosaaqYF53AkPN9b2WEU5hyN2flO0EgvQZU0iw7Cg9wMP1W1
+        hfp9wcBmoJEhajlxfID0K+MvGMqZ6no=
+X-Google-Smtp-Source: AAOMgpcz3LrcLWbk5etGyhitDy3l5l4zsrpDn1Vex0AgNVP/l+K+YkkpkE/cIOBnwymGSxH2sPPcgg==
+X-Received: by 2002:a63:195e:: with SMTP id 30-v6mr11843169pgz.192.1532047134389;
+        Thu, 19 Jul 2018 17:38:54 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:600:5100:4e72:b9ff:fe99:466a])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm383881pfh.67.2018.07.19.17.38.51
+        by smtp.gmail.com with ESMTPSA id x5-v6sm383881pfh.67.2018.07.19.17.38.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 19 Jul 2018 17:38:51 -0700 (PDT)
+        Thu, 19 Jul 2018 17:38:53 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         Miroslav Lichvar <mlichvar@redhat.com>,
         Richard Cochran <richardcochran@gmail.com>,
         Prarit Bhargava <prarit@redhat.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [GIT PULL][PATCH 0/5] A few more timekeeping items for 4.19
-Date:   Thu, 19 Jul 2018 17:38:42 -0700
-Message-Id: <1532047127-26699-1-git-send-email-john.stultz@linaro.org>
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH 1/5] ntp: Remove redundant arguments
+Date:   Thu, 19 Jul 2018 17:38:43 -0700
+Message-Id: <1532047127-26699-2-git-send-email-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1532047127-26699-1-git-send-email-john.stultz@linaro.org>
+References: <1532047127-26699-1-git-send-email-john.stultz@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit c6bb11147eb09bd39f316c6062455b88c905ab6e:
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-  Merge branch 'fortglx/4.19/time' of https://git.linaro.org/people/john.stultz/linux into timers/core (2018-07-12 22:19:58 +0200)
-
-are available in the git repository at:
-
-  https://git.linaro.org/people/john.stultz/linux.git tags/fortglx/4.19/time-part2
-
-for you to fetch changes up to 39232ed5a1793f67b11430c43ed8a9ed6e96c6eb:
-
-  time: Introduce one suspend clocksource to compensate the suspend time (2018-07-19 17:08:52 -0700)
-
-----------------------------------------------------------------
-Just a second set of timekeeping things for 4.19
-
-* NTP argument clenaups and constification from Ondrej Mosnacek
-* Fix to avoid RTC injecting sleeptime when suspend fails from
-  Mukesh Ojha
-* Broading suspsend-timing to include non-stop clocksources that
-  aren't currently used for timekeeping from Baolin Wang
-
+The 'ts' argument of process_adj_status() and process_adjtimex_modes()
+is unused and can be safely removed.
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
@@ -103,32 +86,49 @@ Cc: Miroslav Lichvar <mlichvar@redhat.com>
 Cc: Richard Cochran <richardcochran@gmail.com>
 Cc: Prarit Bhargava <prarit@redhat.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Baolin Wang <baolin.wang@linaro.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>
-----------------------------------------------------------------
-Baolin Wang (1):
-      time: Introduce one suspend clocksource to compensate the suspend time
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+---
+ kernel/time/ntp.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Mukesh Ojha (1):
-      time: Fix extra sleeptime injection when suspend fails
-
-Ondrej Mosnacek (3):
-      ntp: Remove redundant arguments
-      ntp: Use kstrtos64 for s64 variable
-      timekeeping/ntp: Constify some function arguments
-
- include/linux/clocksource.h        |   3 ++
- include/linux/timekeeping.h        |   2 +-
- kernel/time/clocksource.c          | 149 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- kernel/time/ntp.c                  |  17 +++++------
- kernel/time/ntp_internal.h         |   4 +--
- kernel/time/timekeeping.c          |  83 +++++++++++++++++++++++++++++++++------------------
- kernel/time/timekeeping_debug.c    |   2 +-
- kernel/time/timekeeping_internal.h |   2 +-
- 8 files changed, 218 insertions(+), 44 deletions(-)
-
+diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
+index 10a7905..3eddac2 100644
+--- a/kernel/time/ntp.c
++++ b/kernel/time/ntp.c
+@@ -642,7 +642,7 @@ void ntp_notify_cmos_timer(void)
+ /*
+  * Propagate a new txc->status value into the NTP state:
+  */
+-static inline void process_adj_status(struct timex *txc, struct timespec64 *ts)
++static inline void process_adj_status(struct timex *txc)
+ {
+ 	if ((time_status & STA_PLL) && !(txc->status & STA_PLL)) {
+ 		time_state = TIME_OK;
+@@ -665,12 +665,10 @@ static inline void process_adj_status(struct timex *txc, struct timespec64 *ts)
+ }
+ 
+ 
+-static inline void process_adjtimex_modes(struct timex *txc,
+-						struct timespec64 *ts,
+-						s32 *time_tai)
++static inline void process_adjtimex_modes(struct timex *txc, s32 *time_tai)
+ {
+ 	if (txc->modes & ADJ_STATUS)
+-		process_adj_status(txc, ts);
++		process_adj_status(txc);
+ 
+ 	if (txc->modes & ADJ_NANO)
+ 		time_status |= STA_NANO;
+@@ -735,7 +733,7 @@ int __do_adjtimex(struct timex *txc, struct timespec64 *ts, s32 *time_tai)
+ 
+ 		/* If there are input parameters, then process them: */
+ 		if (txc->modes)
+-			process_adjtimex_modes(txc, ts, time_tai);
++			process_adjtimex_modes(txc, time_tai);
+ 
+ 		txc->offset = shift_right(time_offset * NTP_INTERVAL_FREQ,
+ 				  NTP_SCALE_SHIFT);
 -- 
 2.7.4
 
