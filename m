@@ -2,109 +2,202 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F07ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0E8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B79E206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:46:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B79E206B7
+	by mail.kernel.org (Postfix) with ESMTP id 65F96206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:49:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPPClxwT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65F96206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732267AbeGTPfN (ORCPT
+        id S1732163AbeGTPiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 11:35:13 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:50410 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731771AbeGTPfN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 11:35:13 -0400
-Received: by mail-it0-f66.google.com with SMTP id w16-v6so15017068ita.0;
-        Fri, 20 Jul 2018 07:46:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sJm2PFDb6Z/IQNk+y/u4me7y2e5tJwZjkkq6UlMRv8k=;
-        b=lz0MN698bfZrKLUX5JLT14/o0vsHfGBNGBfoX6GidxWy3iI/2g/IYLrqFfZ5xXoeja
-         eazkSE8jNAMrtmyt9roOYPLBIAOCTiOn5VFDF/ZoeVm0EUoGd2Rvy8gaCHDKkSRdyrtS
-         uLOsLZVEq7FTfJrxmmRT7IknFpqgcQgFHzZFfoH+WUiUk9XGS1h1dlTk5ZrAHT1eGNqD
-         zc0d18HwxgrNfcM8cq0OYr5hD2mbXnDGwITnTLc9B5krCkaZo+JssdTD5Tz//n02xibQ
-         OYrlc2MylCimWvTk1VxRXD5Km4e7qap13V+JNrZPN1SItwSaWIki3mfsAjth43/J4U45
-         HK/w==
-X-Gm-Message-State: AOUpUlEP7LLJOqyhb3jgKIuD9I7t77fxk5gYzDPxDMAIV0u7/qVwLDWx
-        TUwTAUkiAdpy5UfXuWGRAQ==
-X-Google-Smtp-Source: AAOMgpdMX4/8KULOssHT7WeeTMoI0frCGsEzOjUto34dIrkNpERMiPgAH1PS+69aMilGM0ZMrUDKJg==
-X-Received: by 2002:a24:b101:: with SMTP id o1-v6mr2020999itf.121.1532097995762;
-        Fri, 20 Jul 2018 07:46:35 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id p134-v6sm1527969ita.20.2018.07.20.07.46.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Jul 2018 07:46:35 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 08:46:34 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, mark.rutland@arm.com,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] iio:adxl372: Add FIFO and interrupts support
-Message-ID: <20180720144634.GB25713@rob-hp-laptop>
-References: <1531409760-20070-1-git-send-email-stefan.popa@analog.com>
+        Fri, 20 Jul 2018 11:38:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57422 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731314AbeGTPiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 11:38:01 -0400
+Received: from linux-8ccs (nat.nue.novell.com [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6D8D20661;
+        Fri, 20 Jul 2018 14:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532098162;
+        bh=C6PPGI7+rfksOAEL7bp56W+kY9aPEF9hLNt6IMyDdGo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FPPClxwTJNq0tTm9lNUpwqcGkQKjXfemwJJ7F0HW9MTbbbiJULQcDkbkjTwsbxyqq
+         akFpUQQ4Ggq7jaFwgw0K4O5QKCTY+6yOZRH6wAPpZ5keaHMs1a011LPxE5guOBqddp
+         d59iFgrMKhXhcWeGp/ydS98Q/mUrw5/WQU9MyUs8=
+Date:   Fri, 20 Jul 2018 16:49:16 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Martijn Coenen <maco@android.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oliver Neukum <oneukum@suse.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        USB Storage list <usb-storage@lists.one-eyed-alien.net>,
+        linux-scsi@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Iliyan Malchev <malchev@google.com>,
+        Joel Fernandes <joelaf@google.com>
+Subject: Re: [PATCH 2/6] module: add support for symbol namespaces.
+Message-ID: <20180720144916.fyqpmrtgt23sax6n@linux-8ccs>
+References: <20180716122125.175792-1-maco@android.com>
+ <20180716122125.175792-3-maco@android.com>
+ <20180719163208.5xvrafugpcbhh7kj@linux-8ccs>
+ <CAB0TPYFVSWtJ6RPRUZ1bpS-rBaV7YyPR-4B2Ogxs+FNAbiScNw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1531409760-20070-1-git-send-email-stefan.popa@analog.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAB0TPYFVSWtJ6RPRUZ1bpS-rBaV7YyPR-4B2Ogxs+FNAbiScNw@mail.gmail.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.11-default x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 06:36:00PM +0300, Stefan Popa wrote:
-> This patch adds support for the adxl372 FIFO. In order to accomplish this,
-> triggered buffers were used.
-> 
-> The number of FIFO samples which trigger the watermark interrupt can be
-> configured by using the buffer watermark, while the format depends on the
-> selected channels.The FIFO data along with the timestamp is pushed to the
-> IIO device's buffer.
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-> ---
->  .../devicetree/bindings/iio/accel/adxl372.txt      |   7 +
++++ Martijn Coenen [20/07/18 09:54 +0200]:
+>Hi Jessica,
+>
+>On Thu, Jul 19, 2018 at 6:32 PM, Jessica Yu <jeyu@kernel.org> wrote:
+>> First, thanks a lot for the patchset. This is definitely something that
+>> will help distros as well to declutter the exported symbol space and
+>> provide a more cleanly defined kernel interface.
+>
+>Thanks, that's good to hear!
+>
+>
+>> Hm, I'm wondering if we could avoid all this extra module-ns-dependency
+>> checking work if we just put the import stuff as a modinfo tag, like
+>> have MODULE_IMPORT_NS() insert an "import:" tag like we already do for
+>> module parameters, author, license, aliases, etc. Then we'd have that
+>> information pretty much from the start of load_module() and we don't
+>> need to wait for relocations to be applied to __knsimport. Then you
+>> could do the namespace checking right at resolve_symbol() instead of
+>> going through the extra step of building a dependency list to be
+>> verified later.
+>
+>I believe I did consider modinfo when I started with this a while
+>back, but don't recall right now why I didn't decide to use it;
+>perhaps it was the lack of support for multiple identical tags. Since
+>both modpost and the module loader have access to them, I don't see
+>why it wouldn't work, and indeed I suspect it would make the module
+>loader a bit simpler. I'll rework this and see what it looks like.
 
-This belongs in patch 2. Bindings should reflect the h/w, not driver 
-features.
+Thanks. Also, it looks like we're currently just warning (in both
+modpost and on module load) if a module uses symbols from a namespace
+it doesn't import. Are you also planning to eventually introduce
+namespace enforcement?  It'd be trivial to fail the module build in
+modpost as well as reject the module on load if it uses an exported
+symbol belonging to a namespace it doesn't import. Although, I'd go
+with the warnings for a development cycle or two, to gently introduce
+the change in API and let other subsystems as well as out-of-tree
+module developers catch up.
 
->  drivers/iio/accel/adxl372.c                        | 346 ++++++++++++++++++++-
->  2 files changed, 352 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/accel/adxl372.txt b/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-> index fea4baf..73d7e03 100644
-> --- a/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-> +++ b/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-> @@ -7,10 +7,17 @@ Required properties:
->   - reg: SPI chip select number for the device
->   - spi-max-frequency: Max SPI frequency to use
->  
-> +Optional properties:
-> + - interrupt-parent: phandle to the parent interrupt controller
 
-Don't need to put this in the binding. 
+Jessica
 
-> + - interrupts: interrupt mapping for GPIO IRQ, it should by configured with
-> + 		flag IRQ_TYPE_EDGE_FALLING
-> +
->  Example:
->  
->  	accelerometer@0 {
->  		compatible = "adi,adxl372";
->  		reg = <0>;
->  		spi-max-frequency = <1000000>;
-> +		interrupt-parent = <&gpio>;
-> +		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
->  	};
+>> Also, this would get rid of the extra __knsimport section, the extra
+>> ns_dependencies field in struct module, and all those helper functions that
+>> manage it. In addition, having the modinfo tag may potentially help with
+>> debugging as we have the namespace imports clearly listed if we don't have
+>> the source code for a module. We'd probably need to modify get_modinfo() to
+>> handle multiple import: tags though. Luis [1] had written some code a while
+>> ago to handle multiple (of the same) modinfo tags.
+>>
+>> Thoughts on this?
+>>
+>> Thanks,
+>>
+>> Jessica
+>>
+>> [1] https://lkml.kernel.org/r/20171130023605.29568-3-mcgrof@kernel.org
+>>
+>>
+>>> getname:
+>>>         /* We must make copy under the lock if we failed to get ref. */
+>>>         strncpy(ownername, module_name(owner), MODULE_NAME_LEN);
+>>> @@ -3061,6 +3118,11 @@ static int find_module_sections(struct module *mod,
+>>> struct load_info *info)
+>>>                                      sizeof(*mod->gpl_syms),
+>>>                                      &mod->num_gpl_syms);
+>>>         mod->gpl_crcs = section_addr(info, "__kcrctab_gpl");
+>>> +
+>>> +       mod->ns_imports = section_objs(info, "__knsimport",
+>>> +                                      sizeof(*mod->ns_imports),
+>>> +                                      &mod->num_ns_imports);
+>>> +
+>>>         mod->gpl_future_syms = section_objs(info,
+>>>                                             "__ksymtab_gpl_future",
+>>>                                             sizeof(*mod->gpl_future_syms),
+>>> @@ -3381,6 +3443,19 @@ static int post_relocation(struct module *mod,
+>>> const struct load_info *info)
+>>>         return module_finalize(info->hdr, info->sechdrs, mod);
+>>> }
+>>>
+>>> +static void verify_namespace_dependencies(struct module *mod)
+>>> +{
+>>> +       struct module_ns_dep *ns_dep;
+>>> +
+>>> +       list_for_each_entry(ns_dep, &mod->ns_dependencies, ns_dep) {
+>>> +               if (!module_imports_ns(mod, ns_dep->namespace)) {
+>>> +                       pr_warn("%s: module uses symbols from namespace
+>>> %s,"
+>>> +                               " but does not import it.\n",
+>>> +                               mod->name, ns_dep->namespace);
+>>> +               }
+>>> +       }
+>>> +}
+>>> +
+>>> /* Is this module of this name done loading?  No locks held. */
+>>> static bool finished_loading(const char *name)
+>>> {
+>>> @@ -3682,6 +3757,8 @@ static int load_module(struct load_info *info, const
+>>> char __user *uargs,
+>>>         if (err)
+>>>                 goto free_module;
+>>>
+>>> +       INIT_LIST_HEAD(&mod->ns_dependencies);
+>>> +
+>>> #ifdef CONFIG_MODULE_SIG
+>>>         mod->sig_ok = info->sig_ok;
+>>>         if (!mod->sig_ok) {
+>>> @@ -3730,6 +3807,8 @@ static int load_module(struct load_info *info, const
+>>> char __user *uargs,
+>>>         if (err < 0)
+>>>                 goto free_modinfo;
+>>>
+>>> +       verify_namespace_dependencies(mod);
+>>> +
+>>>         flush_module_icache(mod);
+>>>
+>>>         /* Now copy in args */
+>>> --
+>>> 2.18.0.203.gfac676dfb9-goog
+>>>
+>>
