@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C74ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1AFECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A66F206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A66F206B7
+	by mail.kernel.org (Postfix) with ESMTP id F258B20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F258B20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389900AbeGTN3K (ORCPT
+        id S2389913AbeGTN3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:29:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50974 "EHLO
+        Fri, 20 Jul 2018 09:29:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51072 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389096AbeGTN3K (ORCPT
+        with ESMTP id S2389096AbeGTN3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:29:10 -0400
+        Fri, 20 Jul 2018 09:29:12 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A626CF5;
-        Fri, 20 Jul 2018 12:36:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1DFD3C22;
+        Fri, 20 Jul 2018 12:37:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 028/101] net/sched: act_ife: fix recursive lock and idr leak
-Date:   Fri, 20 Jul 2018 14:13:34 +0200
-Message-Id: <20180720121424.165412633@linuxfoundation.org>
+Subject: [PATCH 4.17 046/101] hinic: reset irq affinity before freeing irq
+Date:   Fri, 20 Jul 2018 14:13:52 +0200
+Message-Id: <20180720121424.969914179@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -51,198 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-[ Upstream commit 0a889b9404c084c6fd145020c939a8f688b3e058 ]
+[ Upstream commit 82be2ab159a3a0ae4024b946a31f12b221f6c8ff ]
 
-a recursive lock warning [1] can be observed with the following script,
+Following warning is seen when rmmod hinic. This is because affinity
+value is not reset before calling free_irq(). This patch fixes it.
 
- # $TC actions add action ife encode allow prio pass index 42
- IFE type 0xED3E
- # $TC actions replace action ife encode allow tcindex pass index 42
+[   55.181232] WARNING: CPU: 38 PID: 19589 at kernel/irq/manage.c:1608
+__free_irq+0x2aa/0x2c0
 
-in case the kernel was unable to run the last command (e.g. because of
-the impossibility to load 'act_meta_skbtcindex'). For a similar reason,
-the kernel can leak idr in the error path of tcf_ife_init(), because
-tcf_idr_release() is not called after successful idr reservation:
-
- # $TC actions add action ife encode allow tcindex index 47
- IFE type 0xED3E
- RTNETLINK answers: No such file or directory
- We have an error talking to the kernel
- # $TC actions add action ife encode allow tcindex index 47
- IFE type 0xED3E
- RTNETLINK answers: No space left on device
- We have an error talking to the kernel
- # $TC actions add action ife encode use mark 7 type 0xfefe pass index 47
- IFE type 0xFEFE
- RTNETLINK answers: No space left on device
- We have an error talking to the kernel
-
-Since tcfa_lock is already taken when the action is being edited, a call
-to tcf_idr_release() wrongly makes tcf_idr_cleanup() take the same lock
-again. On the other hand, tcf_idr_release() needs to be called in the
-error path of tcf_ife_init(), to undo the last tcf_idr_create() invocation.
-Fix both problems in tcf_ife_init().
-Since the cleanup() routine can now be called when ife->params is NULL,
-also add a NULL pointer check to avoid calling kfree_rcu(NULL, rcu).
-
- [1]
- ============================================
- WARNING: possible recursive locking detected
- 4.17.0-rc4.kasan+ #417 Tainted: G            E
- --------------------------------------------
- tc/3932 is trying to acquire lock:
- 000000005097c9a6 (&(&p->tcfa_lock)->rlock){+...}, at: tcf_ife_cleanup+0x19/0x80 [act_ife]
-
- but task is already holding lock:
- 000000005097c9a6 (&(&p->tcfa_lock)->rlock){+...}, at: tcf_ife_init+0xf6d/0x13c0 [act_ife]
-
- other info that might help us debug this:
-  Possible unsafe locking scenario:
-
-        CPU0
-        ----
-   lock(&(&p->tcfa_lock)->rlock);
-   lock(&(&p->tcfa_lock)->rlock);
-
-  *** DEADLOCK ***
-
-  May be due to missing lock nesting notation
-
- 2 locks held by tc/3932:
-  #0: 000000007ca8e990 (rtnl_mutex){+.+.}, at: tcf_ife_init+0xf61/0x13c0 [act_ife]
-  #1: 000000005097c9a6 (&(&p->tcfa_lock)->rlock){+...}, at: tcf_ife_init+0xf6d/0x13c0 [act_ife]
-
- stack backtrace:
- CPU: 3 PID: 3932 Comm: tc Tainted: G            E     4.17.0-rc4.kasan+ #417
- Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
- Call Trace:
-  dump_stack+0x9a/0xeb
-  __lock_acquire+0xf43/0x34a0
-  ? debug_check_no_locks_freed+0x2b0/0x2b0
-  ? debug_check_no_locks_freed+0x2b0/0x2b0
-  ? debug_check_no_locks_freed+0x2b0/0x2b0
-  ? __mutex_lock+0x62f/0x1240
-  ? kvm_sched_clock_read+0x1a/0x30
-  ? sched_clock+0x5/0x10
-  ? sched_clock_cpu+0x18/0x170
-  ? find_held_lock+0x39/0x1d0
-  ? lock_acquire+0x10b/0x330
-  lock_acquire+0x10b/0x330
-  ? tcf_ife_cleanup+0x19/0x80 [act_ife]
-  _raw_spin_lock_bh+0x38/0x70
-  ? tcf_ife_cleanup+0x19/0x80 [act_ife]
-  tcf_ife_cleanup+0x19/0x80 [act_ife]
-  __tcf_idr_release+0xff/0x350
-  tcf_ife_init+0xdde/0x13c0 [act_ife]
-  ? ife_exit_net+0x290/0x290 [act_ife]
-  ? __lock_is_held+0xb4/0x140
-  tcf_action_init_1+0x67b/0xad0
-  ? tcf_action_dump_old+0xa0/0xa0
-  ? sched_clock+0x5/0x10
-  ? sched_clock_cpu+0x18/0x170
-  ? kvm_sched_clock_read+0x1a/0x30
-  ? sched_clock+0x5/0x10
-  ? sched_clock_cpu+0x18/0x170
-  ? memset+0x1f/0x40
-  tcf_action_init+0x30f/0x590
-  ? tcf_action_init_1+0xad0/0xad0
-  ? memset+0x1f/0x40
-  tc_ctl_action+0x48e/0x5e0
-  ? mutex_lock_io_nested+0x1160/0x1160
-  ? tca_action_gd+0x990/0x990
-  ? sched_clock+0x5/0x10
-  ? find_held_lock+0x39/0x1d0
-  rtnetlink_rcv_msg+0x4da/0x990
-  ? validate_linkmsg+0x680/0x680
-  ? sched_clock_cpu+0x18/0x170
-  ? find_held_lock+0x39/0x1d0
-  netlink_rcv_skb+0x127/0x350
-  ? validate_linkmsg+0x680/0x680
-  ? netlink_ack+0x970/0x970
-  ? __kmalloc_node_track_caller+0x304/0x3a0
-  netlink_unicast+0x40f/0x5d0
-  ? netlink_attachskb+0x580/0x580
-  ? _copy_from_iter_full+0x187/0x760
-  ? import_iovec+0x90/0x390
-  netlink_sendmsg+0x67f/0xb50
-  ? netlink_unicast+0x5d0/0x5d0
-  ? copy_msghdr_from_user+0x206/0x340
-  ? netlink_unicast+0x5d0/0x5d0
-  sock_sendmsg+0xb3/0xf0
-  ___sys_sendmsg+0x60a/0x8b0
-  ? copy_msghdr_from_user+0x340/0x340
-  ? lock_downgrade+0x5e0/0x5e0
-  ? tty_write_lock+0x18/0x50
-  ? kvm_sched_clock_read+0x1a/0x30
-  ? sched_clock+0x5/0x10
-  ? sched_clock_cpu+0x18/0x170
-  ? find_held_lock+0x39/0x1d0
-  ? lock_downgrade+0x5e0/0x5e0
-  ? lock_acquire+0x10b/0x330
-  ? __audit_syscall_entry+0x316/0x690
-  ? current_kernel_time64+0x6b/0xd0
-  ? __fget_light+0x55/0x1f0
-  ? __sys_sendmsg+0xd2/0x170
-  __sys_sendmsg+0xd2/0x170
-  ? __ia32_sys_shutdown+0x70/0x70
-  ? syscall_trace_enter+0x57a/0xd60
-  ? rcu_read_lock_sched_held+0xdc/0x110
-  ? __bpf_trace_sys_enter+0x10/0x10
-  ? do_syscall_64+0x22/0x480
-  do_syscall_64+0xa5/0x480
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
- RIP: 0033:0x7fd646988ba0
- RSP: 002b:00007fffc9fab3c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
- RAX: ffffffffffffffda RBX: 00007fffc9fab4f0 RCX: 00007fd646988ba0
- RDX: 0000000000000000 RSI: 00007fffc9fab440 RDI: 0000000000000003
- RBP: 000000005b28c8b3 R08: 0000000000000002 R09: 0000000000000000
- R10: 00007fffc9faae20 R11: 0000000000000246 R12: 0000000000000000
- R13: 00007fffc9fab504 R14: 0000000000000001 R15: 000000000066c100
-
-Fixes: 4e8c86155010 ("net sched: net sched: ife action fix late binding")
-Fixes: ef6980b6becb ("introduce IFE action")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 352f58b0d9f2 ("net-next/hinic: Set Rxq irq to specific cpu for NUMA")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_ife.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/huawei/hinic/hinic_rx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/sched/act_ife.c
-+++ b/net/sched/act_ife.c
-@@ -415,7 +415,8 @@ static void tcf_ife_cleanup(struct tc_ac
- 	spin_unlock_bh(&ife->tcf_lock);
+--- a/drivers/net/ethernet/huawei/hinic/hinic_rx.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
+@@ -439,6 +439,7 @@ static void rx_free_irq(struct hinic_rxq
+ {
+ 	struct hinic_rq *rq = rxq->rq;
  
- 	p = rcu_dereference_protected(ife->params, 1);
--	kfree_rcu(p, rcu);
-+	if (p)
-+		kfree_rcu(p, rcu);
++	irq_set_affinity_hint(rq->irq, NULL);
+ 	free_irq(rq->irq, rxq);
+ 	rx_del_napi(rxq);
  }
- 
- /* under ife->tcf_lock for existing action */
-@@ -543,10 +544,8 @@ static int tcf_ife_init(struct net *net,
- 				       NULL, NULL);
- 		if (err) {
- metadata_parse_err:
--			if (exists)
--				tcf_idr_release(*a, bind);
- 			if (ret == ACT_P_CREATED)
--				_tcf_ife_cleanup(*a);
-+				tcf_idr_release(*a, bind);
- 
- 			if (exists)
- 				spin_unlock_bh(&ife->tcf_lock);
-@@ -567,7 +566,7 @@ metadata_parse_err:
- 		err = use_all_metadata(ife);
- 		if (err) {
- 			if (ret == ACT_P_CREATED)
--				_tcf_ife_cleanup(*a);
-+				tcf_idr_release(*a, bind);
- 
- 			if (exists)
- 				spin_unlock_bh(&ife->tcf_lock);
 
 
