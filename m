@@ -2,159 +2,94 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BBEECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41912ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FBDD20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zdi8Ny66"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FBDD20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 077C220661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:09:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077C220661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388011AbeGTR6X (ORCPT
+        id S2388114AbeGTR6j convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:58:23 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46464 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731556AbeGTR6X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:58:23 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6KH4ELl049419;
-        Fri, 20 Jul 2018 17:08:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=DKK+vKjxUuhgOdbPj51faVVilUdoTCDEcgp3bK978t0=;
- b=zdi8Ny668WAKZgXnQ6nslMOIqdbzf0gJPO/JaGOEqeoRvIhZLmed7XuAezE+G0rx5/dt
- 9GlA78TY9WUwFQT+nZp5sGJY5MDoEMo4aIA1PW7/4t6rlV2qS6MrMBtuLHyRCjrx0o1g
- Vy6ZnLrXKhryyUo8DWSqwfjODC6LZrv+aXgruKqbozN93FFAjOjlYeJW7uFhvxriJroV
- PKtfh4xQrrjj0TfKoWEvnx4Ft+/pJJJ99JwZb3z0kQLNjqL9pmh0KAvFNIUGRPJbjvGC
- zMy77RZYr4wf5hLWaL83hv/ouSipAiTvxngFYoyGv6iOUbWHHrHCQ1AeP7AuYvmq6150 xw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2k9yjgv3bv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Jul 2018 17:08:39 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6KH8cjF027440
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Jul 2018 17:08:38 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6KH8b8d022708;
-        Fri, 20 Jul 2018 17:08:37 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 20 Jul 2018 10:08:37 -0700
-Date:   Fri, 20 Jul 2018 10:08:35 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Markus Heiser <markus.heiser@darmarit.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Sphinx version dependencies?
-Message-ID: <20180720170835.GH4800@magnolia>
-References: <20180719181556.GA21435@thunk.org>
- <20180719190400.GB4800@magnolia>
- <44d73cd9926f58976a1269ff3cd3afb845ec84fa.camel@darmarit.de>
- <20180720150402.GA32320@infradead.org>
- <1cc801608a1e71b54fe97aae6f5ad2a0024e8e5d.camel@darmarit.de>
+        Fri, 20 Jul 2018 13:58:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39358 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731556AbeGTR6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:58:38 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 072FC402347F;
+        Fri, 20 Jul 2018 17:09:27 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A2C77C2B;
+        Fri, 20 Jul 2018 17:09:23 +0000 (UTC)
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <20180719135224.GE2494@hirez.programming.kicks-ass.net>
+ <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
+ <20180719153045.GT72677@devbig577.frc2.facebook.com>
+ <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
+ <20180719165201.GU72677@devbig577.frc2.facebook.com>
+ <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
+ <20180720114549.GY72677@devbig577.frc2.facebook.com>
+ <20180720154454.GR2494@hirez.programming.kicks-ass.net>
+ <20180720155613.GB1934745@devbig577.frc2.facebook.com>
+ <4857a9db-ebf5-24f8-c42d-d795f5c75854@redhat.com>
+ <20180720163712.GU2494@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <8c655adc-6d9e-b767-1024-5d6941c995a9@redhat.com>
+Date:   Fri, 20 Jul 2018 13:09:23 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1cc801608a1e71b54fe97aae6f5ad2a0024e8e5d.camel@darmarit.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8959 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807200189
+In-Reply-To: <20180720163712.GU2494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 20 Jul 2018 17:09:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 20 Jul 2018 17:09:27 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 06:28:09PM +0200, Markus Heiser wrote:
-> Am Freitag, den 20.07.2018, 08:04 -0700 schrieb Christoph Hellwig:
-> > On Fri, Jul 20, 2018 at 09:30:33AM +0200, Markus Heiser wrote:
-> > > We have this discussion over and over again an I believe we will have it again
-> > > and again, as long as we do not change our POV .. building viewing formats is
-> > > an application not a part of the Kernel.
-> > 
-> > Sorry, but this is complete and utter bullshit.
-> 
-> Maybe .. I'am not a Kernel developer .. I only try to help with the doc tool-
+On 07/20/2018 12:37 PM, Peter Zijlstra wrote:
+> On Fri, Jul 20, 2018 at 12:19:29PM -0400, Waiman Long wrote:
+>> I am not against the idea of making it hierarchical eventually. I am
+>> just hoping to get thing going by merging the patchset in its current
+>> form and then we can make it hierarchical in a followup patch.
+> Where's the rush? Why can't we do this right in one go?
 
-It is (broken, that is, not bulls*).  Building the documentation as part
-of the kernel build *is* an application.
+For me, the rush comes from RHEL8 as it is a goal to have a fully
+functioning cgroup v2 in that release.
 
-The point of documentation is that we record knowledge and then anyone
-ought to be able to read it, no matter what platform they choose, right?
-So that means that for any given user, if their Linux distro packages
-the doc build tools they ought to be able to build the fancy html stuff
-and read it.  If they're more accustomed to virtualenv and pip, they
-ought to be able to build the fancy html and read it too.
+I also believe that most of the use cases of partition can be satisfied
+with partitions at the first level children. Getting hierarchical
+partition right may drag on for half a year, maybe, giving our history
+with cpu v2 controller. No matter what we do to enable hierarchical
+partition in the future, the current model of using a partition flag is
+intuitive enough that it won't be changed at least for the first level
+children.
 
-Anyway, this whole thread got started because Ted followed the
-instructions, applied my Documentation/ patches, and the build broke.
-From my POV this is just brokenness wrt to the rst spec in the docutils
-egg/wheel/whatever python calls it now.
+Cheers,
+Longman
 
-> chain. But if I don't want to install anything from the web, the plain text
-> is not as bad.
 
-It will be once we start uploading filesystem format documentation
-that's full of juicy tables and diagrams...
-
-> > 
-> > If that was the case we could skip all that RST stuff and just stick
-> > to text files.  If we want fancy docs it better behave like the rest
-> > of the kernel and just works.  python virtual environments are just
-> > not going to cut it as they lead to a long-term maintainance nightmare.
-> 
-> Really a nightmare? This is what I do on my ubuntu/debian box ... I do
-> prefer py3 so I installed *virtualenv-py3* once from distro's package
-> manager:
-> 
-> $ sudo apt install python3-virtualenv
-> 
-> To setup up a environment for building htmldocs:
-> 
-> $ python3 -m virtualenv py3env
-> $ ./py3env/bin/pip install -r ./Documentation/sphinx/requirements.txt
-
-This isn't going to fly in $corporate hermetically sealed kernel build
-environment.  It's ok to add things to the list of packages pulled in by
-the provisioning system prior to a kernel build, but we cannot support
-downloading python wheels for kernel builds.  Therefore the distro
-packages have to work.
-
-Which is fine, because the problem here is that whatever pip installs is
-less forgiving than the distro packaged versions. :)
-
---D
-
-> 
-> now I have all installed in the in the py3env folder. To build htmldocs
-> with:
-> 
->  $ SPHINXBUILD=./py3env/bin/sphinx-build make htmldocs
-> 
-> If the env is no longer needed:
-> 
->  $ rm -r py3env
-> 
->  -- Markus --
-> 
-> 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-doc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
