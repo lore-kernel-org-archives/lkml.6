@@ -2,138 +2,82 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79580ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A598AECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2699420652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:00:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2699420652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darmarit.de
+	by mail.kernel.org (Postfix) with ESMTP id 5294920652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:16:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XT8iD52l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5294920652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387763AbeGTQt3 (ORCPT
+        id S2387884AbeGTRFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:49:29 -0400
-Received: from smtp3-1.goneo.de ([85.220.129.38]:32781 "EHLO smtp3-1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728409AbeGTQt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 12:49:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 85C4723F7DE;
-        Fri, 20 Jul 2018 18:00:30 +0200 (CEST)
-X-Virus-Scanned: by goneo
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0YsKOzmgi-Yg; Fri, 20 Jul 2018 18:00:29 +0200 (CEST)
-Received: from ryzen (dyndsl-091-248-138-213.ewe-ip-backbone.de [91.248.138.213])
-        by smtp3.goneo.de (Postfix) with ESMTPSA id ED4FD23F6B7;
-        Fri, 20 Jul 2018 18:00:28 +0200 (CEST)
-Message-ID: <cd31ba58ac24851698e06628ceebce4648345ff6.camel@darmarit.de>
-Subject: Re: Sphinx version dependencies?
-From:   Markus Heiser <markus.heiser@darmarit.de>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 20 Jul 2018 18:00:28 +0200
-In-Reply-To: <20180720145235.GA27862@thunk.org>
-References: <20180719181556.GA21435@thunk.org>
-         <20180719190400.GB4800@magnolia>
-         <44d73cd9926f58976a1269ff3cd3afb845ec84fa.camel@darmarit.de>
-         <20180720131206.GM30706@thunk.org>
-         <d064f468ab9fc60a02242331e0dddc185d6556ba.camel@darmarit.de>
-         <20180720145235.GA27862@thunk.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Fri, 20 Jul 2018 13:05:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60350 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387807AbeGTRFD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:05:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/hCaKrGcwlM/RMUZgDXtXvLke0J6eGhaagHu7P9kYkQ=; b=XT8iD52lvoFrYuPFcNwuDHOTM
+        /GvlNUUSuxU6kPM/6Eo0aN6VEl0I6SMS6uspYvvlaHBEYRGohDDpqkiCmU+v12qcRjIvHlRtOyNpG
+        z6cBC1hPBrR6Xj/gFOQ40tT6hgj4Fj0s3oZu8U+hAOv4QL6nrGjgZX8+tK9wnO5R5hHvK3j3N/BAK
+        Wbxy+PrB3xBqTN3quUDvnCgcNMXs5B0nXXppI4+e18YSbsCTsnE+KtTuij+Jt7J8x6uvM59i5TNxn
+        Z3xLmwCbusbmBy0cQllNjyZtLfHGLr3CbHWCVS7nZzylgTW/XyWfQtDh4dfzrCxhTTBqI9WDemNJX
+        zHBgMXjDg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fgY4b-0000Zl-0k; Fri, 20 Jul 2018 16:16:05 +0000
+To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] net/dsa/realtek: add MODULE_LICENSE()
+Message-ID: <3502c393-e098-241b-c361-4e5069486d71@infradead.org>
+Date:   Fri, 20 Jul 2018 09:16:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, den 20.07.2018, 10:52 -0400 schrieb Theodore Y. Ts'o:
-> On Fri, Jul 20, 2018 at 03:45:37PM +0200, Markus Heiser wrote:
-> > Am Freitag, den 20.07.2018, 09:12 -0400 schrieb Theodore Y. Ts'o:
-> > > I'm not entirely sure what's the best approach.  Right now I just want
-> > > to understand --- do I have to make ext4.rst work against one, or many
-> > > versions of Sphinx?  And which version(s) of Sphinx do I need to
-> > > concern myself with?  If that turns out to be an onerous burden, I'm
-> > > sure I won't be the only person complaining.  :-)
-> > 
-> > In that case ...
-> > 
-> > > But when I did that, Sphinx had heartburn over the ext4.rst file.
-> > > 
-> > >     ./include/linux/spi/spi.h:373: ERROR: Unexpected indentation.
-> > >     /usr/projects/linux/ext4/Documentation/filesystems/ext4/ext4.rst:139: ERROR: Malformed table.
-> > >     Column span alignment problem in table line 5.
-> > 
-> > ... its clear; the table was malformed. A markup error which is not detected
-> > by older versions of docutils (very special case).
-> 
-> ... except that newer verions are A-OK with it.  Apparently 1.3.x was
-> OK with it, and 1.6.x and 1.7.x were ok with it.  ***ONLY*** Sphinx
-> 1.4.9 blew up on the "malformed table".
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Are you sure that it was not due to the docutils version?
-I can't reproduce it but the table parser is a part of docutils.
+Add MODULE_LICENSE() to net/dsa/realtek.o to fix build warning message.
 
-> 
-> So in this case, Darrick has come up with a patch that is makes it OK
-> with 1.4.9 without breaking on 1.7.5 --- and obviously, doing
-> something that makes it broadly portable is the right thing.
+WARNING: modpost: missing MODULE_LICENSE() in drivers/net/dsa/realtek.o
 
-Right, fix it by the markup .. is what I recommend.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/net/dsa/realtek-smi.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-> I'm asking a larger question, which is moving forward, which is more
-> important?  Make it work with Sphinx 1.4.9?  Or making it Sphinx work
-> with Sphinx 1.7.5?
-> 
-> And should we change Documentation/sphinx/requirements.txt to require
-> something newer, such as Sphinx 1.7.5?  And should we require that
-> Ubuntu 18.04 which is using Sphinx 1.6.8 use a virtualenv and use
-> download Sphinx 1.6.8?
-
-The requirements.txt came from commit fb947f3f47 [1] (inital 24071ac1a6).
-Where Jon and Mauro decided to tag explicit versions ...
-
-docutils==0.12
-Sphinx==1.4.9
-sphinx_rtd_theme
-
-Maybe it is time to switch to something like .. ?
-
-Sphinx>=1.4.9
-sphinx_rtd_theme
-
-I don't know. Mauro has tested on many distros, he has more experience with
-the wide range of distros then I.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fb947f3f47
-
-> 
-> My understanding that the Sphinx developers make no guarantees that if
-> we follow some external, version-indepedent spec, that it will work on
-> Sphinx version N, as well as Sphinx version N+1.  (In the ideal world,
-> if there was such an independent spec for .rst format files, and a
-> compliant .rst file doesn't work for Sphinx version N, it's a bug, and
-> we should expect somebody --- perhaps the Distro's --- to backport the
-> fix from Sphinx version N+1 to Sphinx version N.)  E.g., is there an
-> equivalent for ANSI C 1999 standard for .rst files?
-
-The reST markup is specified here:
-
- http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
-
-but the (last) example of the simple table does not match your "1.4.9"
-experience.
-
--- Markus --
+--- linux-next-20180720.orig/drivers/net/dsa/realtek-smi.c
++++ linux-next-20180720/drivers/net/dsa/realtek-smi.c
+@@ -485,3 +485,5 @@ static struct platform_driver realtek_sm
+ 	.remove = realtek_smi_remove,
+ };
+ module_platform_driver(realtek_smi_driver);
++
++MODULE_LICENSE("GPL");
 
 
-> 
-> 		       	      	   	    - Ted
