@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1218ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAEA9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 833D920854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 833D920854
+	by mail.kernel.org (Postfix) with ESMTP id 6466C20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6466C20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388258AbeGTNSc (ORCPT
+        id S2388267AbeGTNSg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:18:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38336 "EHLO
+        Fri, 20 Jul 2018 09:18:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38410 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeGTNSc (ORCPT
+        with ESMTP id S1727518AbeGTNSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:18:32 -0400
+        Fri, 20 Jul 2018 09:18:35 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A0E03CBB;
-        Fri, 20 Jul 2018 12:29:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 602F8C18;
+        Fri, 20 Jul 2018 12:30:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Christoffer Dall <cdall@linaro.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.9 44/66] KVM: arm64: Store vcpu on the stack during __guest_enter()
-Date:   Fri, 20 Jul 2018 14:14:01 +0200
-Message-Id: <20180720121409.781488694@linuxfoundation.org>
+Subject: [PATCH 4.9 45/66] KVM: arm/arm64: Convert kvm_host_cpu_state to a static per-cpu allocation
+Date:   Fri, 20 Jul 2018 14:14:02 +0200
+Message-Id: <20180720121409.830853381@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -54,92 +54,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: James Morse <james.morse@arm.com>
 
-Commit 32b03d1059667a39e089c45ee38ec9c16332430f upstream.
+Commit 36989e7fd386a9a5822c48691473863f8fbb404d upstream.
 
-KVM uses tpidr_el2 as its private vcpu register, which makes sense for
-non-vhe world switch as only KVM can access this register. This means
-vhe Linux has to use tpidr_el1, which KVM has to save/restore as part
-of the host context.
+kvm_host_cpu_state is a per-cpu allocation made from kvm_arch_init()
+used to store the host EL1 registers when KVM switches to a guest.
 
-If the SDEI handler code runs behind KVMs back, it mustn't access any
-per-cpu variables. To allow this on systems with vhe we need to make
-the host use tpidr_el2, saving KVM from save/restoring it.
-
-__guest_enter() stores the host_ctxt on the stack, do the same with
-the vcpu.
+Make it easier for ASM to generate pointers into this per-cpu memory
+by making it a static allocation.
 
 Signed-off-by: James Morse <james.morse@arm.com>
-Reviewed-by: Christoffer Dall <cdall@linaro.org>
+Acked-by: Christoffer Dall <cdall@linaro.org>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kvm/hyp/entry.S     |   10 +++++++---
- arch/arm64/kvm/hyp/hyp-entry.S |    6 +++---
- 2 files changed, 10 insertions(+), 6 deletions(-)
+ arch/arm/kvm/arm.c |   18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
---- a/arch/arm64/kvm/hyp/entry.S
-+++ b/arch/arm64/kvm/hyp/entry.S
-@@ -62,8 +62,8 @@ ENTRY(__guest_enter)
- 	// Store the host regs
- 	save_callee_saved_regs x1
+--- a/arch/arm/kvm/arm.c
++++ b/arch/arm/kvm/arm.c
+@@ -51,8 +51,8 @@
+ __asm__(".arch_extension	virt");
+ #endif
  
--	// Store the host_ctxt for use at exit time
--	str	x1, [sp, #-16]!
-+	// Store host_ctxt and vcpu for use at exit time
-+	stp	x1, x0, [sp, #-16]!
++DEFINE_PER_CPU(kvm_cpu_context_t, kvm_host_cpu_state);
+ static DEFINE_PER_CPU(unsigned long, kvm_arm_hyp_stack_page);
+-static kvm_cpu_context_t __percpu *kvm_host_cpu_state;
+ static unsigned long hyp_default_vectors;
  
- 	add	x18, x0, #VCPU_CONTEXT
+ /* Per-CPU variable containing the currently running vcpu. */
+@@ -338,7 +338,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu
+ 	}
  
-@@ -159,6 +159,10 @@ abort_guest_exit_end:
- ENDPROC(__guest_exit)
+ 	vcpu->cpu = cpu;
+-	vcpu->arch.host_cpu_context = this_cpu_ptr(kvm_host_cpu_state);
++	vcpu->arch.host_cpu_context = this_cpu_ptr(&kvm_host_cpu_state);
  
- ENTRY(__fpsimd_guest_restore)
-+	// x0: esr
-+	// x1: vcpu
-+	// x2-x29,lr: vcpu regs
-+	// vcpu x0-x1 on the stack
- 	stp	x2, x3, [sp, #-16]!
- 	stp	x4, lr, [sp, #-16]!
+ 	kvm_arm_set_running_vcpu(vcpu);
+ }
+@@ -1199,19 +1199,8 @@ static inline void hyp_cpu_pm_exit(void)
+ }
+ #endif
  
-@@ -173,7 +177,7 @@ alternative_else
- alternative_endif
- 	isb
+-static void teardown_common_resources(void)
+-{
+-	free_percpu(kvm_host_cpu_state);
+-}
+-
+ static int init_common_resources(void)
+ {
+-	kvm_host_cpu_state = alloc_percpu(kvm_cpu_context_t);
+-	if (!kvm_host_cpu_state) {
+-		kvm_err("Cannot allocate host CPU state\n");
+-		return -ENOMEM;
+-	}
+-
+ 	/* set size of VMID supported by CPU */
+ 	kvm_vmid_bits = kvm_get_vmid_bits();
+ 	kvm_info("%d-bit VMID\n", kvm_vmid_bits);
+@@ -1369,7 +1358,7 @@ static int init_hyp_mode(void)
+ 	for_each_possible_cpu(cpu) {
+ 		kvm_cpu_context_t *cpu_ctxt;
  
--	mrs	x3, tpidr_el2
-+	mov	x3, x1
+-		cpu_ctxt = per_cpu_ptr(kvm_host_cpu_state, cpu);
++		cpu_ctxt = per_cpu_ptr(&kvm_host_cpu_state, cpu);
+ 		err = create_hyp_mappings(cpu_ctxt, cpu_ctxt + 1, PAGE_HYP);
  
- 	ldr	x0, [x3, #VCPU_HOST_CONTEXT]
- 	kern_hyp_va x0
---- a/arch/arm64/kvm/hyp/hyp-entry.S
-+++ b/arch/arm64/kvm/hyp/hyp-entry.S
-@@ -121,24 +121,24 @@ el1_trap:
- 	/*
- 	 * x0: ESR_EC
- 	 */
-+	ldr	x1, [sp, #16 + 8]	// vcpu stored by __guest_enter
- 
- 	/* Guest accessed VFP/SIMD registers, save host, restore Guest */
- 	cmp	x0, #ESR_ELx_EC_FP_ASIMD
- 	b.eq	__fpsimd_guest_restore
- 
--	mrs	x1, tpidr_el2
- 	mov	x0, #ARM_EXCEPTION_TRAP
- 	b	__guest_exit
- 
- el1_irq:
- 	stp     x0, x1, [sp, #-16]!
--	mrs	x1, tpidr_el2
-+	ldr	x1, [sp, #16 + 8]
- 	mov	x0, #ARM_EXCEPTION_IRQ
- 	b	__guest_exit
- 
- el1_error:
- 	stp     x0, x1, [sp, #-16]!
--	mrs	x1, tpidr_el2
-+	ldr	x1, [sp, #16 + 8]
- 	mov	x0, #ARM_EXCEPTION_EL1_SERROR
- 	b	__guest_exit
+ 		if (err) {
+@@ -1447,7 +1436,6 @@ int kvm_arch_init(void *opaque)
+ out_hyp:
+ 	teardown_hyp_mode();
+ out_err:
+-	teardown_common_resources();
+ 	return err;
+ }
  
 
 
