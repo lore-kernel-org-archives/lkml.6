@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29445ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432D5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E369520833
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E369520833
+	by mail.kernel.org (Postfix) with ESMTP id 03B5C206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B5C206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389054AbeGTNYK (ORCPT
+        id S2389066AbeGTNYO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:24:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43998 "EHLO
+        Fri, 20 Jul 2018 09:24:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388386AbeGTNYJ (ORCPT
+        with ESMTP id S2388378AbeGTNYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:24:09 -0400
+        Fri, 20 Jul 2018 09:24:14 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C885CDE;
-        Fri, 20 Jul 2018 12:32:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C529ACF5;
+        Fri, 20 Jul 2018 12:34:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lou Berger <lberger@labn.net>,
-        Renato Westphal <renato@opensourcerouting.org>,
-        David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 36/92] net/tcp: Fix socket lookups with SO_BINDTODEVICE
-Date:   Fri, 20 Jul 2018 14:13:40 +0200
-Message-Id: <20180720121420.124441046@linuxfoundation.org>
+Subject: [PATCH 4.14 49/92] net: cxgb3_main: fix potential Spectre v1
+Date:   Fri, 20 Jul 2018 14:13:53 +0200
+Message-Id: <20180720121420.833475867@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -52,56 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit 8c43bd1706885ba1acfa88da02bc60a2ec16f68c ]
+commit 676bcfece19f83621e905aa55b5ed2d45cc4f2d3 upstream.
 
-Similar to 69678bcd4d2d ("udp: fix SO_BINDTODEVICE"), TCP socket lookups
-need to fail if dev_match is not true. Currently, a packet to a given port
-can match a socket bound to device when it should not. In the VRF case,
-this causes the lookup to hit a VRF socket and not a global socket
-resulting in a response trying to go through the VRF when it should not.
+t.qset_idx can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Fixes: 3fa6f616a7a4d ("net: ipv4: add second dif to inet socket lookups")
-Fixes: 4297a0ef08572 ("net: ipv6: add second dif to inet6 socket lookups")
-Reported-by: Lou Berger <lberger@labn.net>
-Diagnosed-by: Renato Westphal <renato@opensourcerouting.org>
-Tested-by: Renato Westphal <renato@opensourcerouting.org>
-Signed-off-by: David Ahern <dsahern@gmail.com>
+This issue was detected with the help of Smatch:
+
+drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:2286 cxgb_extension_ioctl()
+warn: potential spectre issue 'adapter->msix_info'
+
+Fix this by sanitizing t.qset_idx before using it to index
+adapter->msix_info
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/inet_hashtables.c  |    4 ++--
- net/ipv6/inet6_hashtables.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/ipv4/inet_hashtables.c
-+++ b/net/ipv4/inet_hashtables.c
-@@ -188,9 +188,9 @@ static inline int compute_score(struct s
- 			bool dev_match = (sk->sk_bound_dev_if == dif ||
- 					  sk->sk_bound_dev_if == sdif);
+---
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -51,6 +51,7 @@
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
++#include <linux/nospec.h>
  
--			if (exact_dif && !dev_match)
-+			if (!dev_match)
- 				return -1;
--			if (sk->sk_bound_dev_if && dev_match)
-+			if (sk->sk_bound_dev_if)
- 				score += 4;
- 		}
- 		if (sk->sk_incoming_cpu == raw_smp_processor_id())
---- a/net/ipv6/inet6_hashtables.c
-+++ b/net/ipv6/inet6_hashtables.c
-@@ -113,9 +113,9 @@ static inline int compute_score(struct s
- 			bool dev_match = (sk->sk_bound_dev_if == dif ||
- 					  sk->sk_bound_dev_if == sdif);
+ #include "common.h"
+ #include "cxgb3_ioctl.h"
+@@ -2268,6 +2269,7 @@ static int cxgb_extension_ioctl(struct n
  
--			if (exact_dif && !dev_match)
-+			if (!dev_match)
- 				return -1;
--			if (sk->sk_bound_dev_if && dev_match)
-+			if (sk->sk_bound_dev_if)
- 				score++;
- 		}
- 		if (sk->sk_incoming_cpu == raw_smp_processor_id())
+ 		if (t.qset_idx >= nqsets)
+ 			return -EINVAL;
++		t.qset_idx = array_index_nospec(t.qset_idx, nqsets);
+ 
+ 		q = &adapter->params.sge.qset[q1 + t.qset_idx];
+ 		t.rspq_size = q->rspq_size;
 
 
