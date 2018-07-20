@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0E9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C097ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8585620854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8585620854
+	by mail.kernel.org (Postfix) with ESMTP id EB23120854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB23120854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388110AbeGTNQs (ORCPT
+        id S2388119AbeGTNQ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:16:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36892 "EHLO
+        Fri, 20 Jul 2018 09:16:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36936 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732110AbeGTNQr (ORCPT
+        with ESMTP id S1731701AbeGTNQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:16:47 -0400
+        Fri, 20 Jul 2018 09:16:55 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A97FA95;
-        Fri, 20 Jul 2018 12:28:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81B6FBBF;
+        Fri, 20 Jul 2018 12:28:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 18/66] ipvlan: fix IFLA_MTU ignored on NEWLINK
-Date:   Fri, 20 Jul 2018 14:13:35 +0200
-Message-Id: <20180720121408.306149451@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.9 21/66] net/mlx5: Fix incorrect raw command length parsing
+Date:   Fri, 20 Jul 2018 14:13:38 +0200
+Message-Id: <20180720121408.480609446@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -51,38 +50,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Alex Vesker <valex@mellanox.com>
 
-[ Upstream commit 30877961b1cdd6fdca783c2e8c4f0f47e95dc58c ]
+[ Upstream commit 603b7bcff824740500ddfa001d7a7168b0b38542 ]
 
-Commit 296d48568042 ("ipvlan: inherit MTU from master device") adjusted
-the mtu from the master device when creating a ipvlan device, but it
-would also override the mtu value set in rtnl_create_link. It causes
-IFLA_MTU param not to take effect.
+The NULL character was not set correctly for the string containing
+the command length, this caused failures reading the output of the
+command due to a random length. The fix is to initialize the output
+length string.
 
-So this patch is to not adjust the mtu if IFLA_MTU param is set when
-creating a ipvlan device.
-
-Fixes: 296d48568042 ("ipvlan: inherit MTU from master device")
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Alex Vesker <valex@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ipvlan/ipvlan_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/ipvlan/ipvlan_main.c
-+++ b/drivers/net/ipvlan/ipvlan_main.c
-@@ -525,7 +525,8 @@ static int ipvlan_link_new(struct net *s
- 	ipvlan->dev = dev;
- 	ipvlan->port = port;
- 	ipvlan->sfeatures = IPVLAN_FEATURES;
--	ipvlan_adjust_mtu(ipvlan, phy_dev);
-+	if (!tb[IFLA_MTU])
-+		ipvlan_adjust_mtu(ipvlan, phy_dev);
- 	INIT_LIST_HEAD(&ipvlan->addrs);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -1256,7 +1256,7 @@ static ssize_t outlen_write(struct file
+ {
+ 	struct mlx5_core_dev *dev = filp->private_data;
+ 	struct mlx5_cmd_debug *dbg = &dev->cmd.dbg;
+-	char outlen_str[8];
++	char outlen_str[8] = {0};
+ 	int outlen;
+ 	void *ptr;
+ 	int err;
+@@ -1271,8 +1271,6 @@ static ssize_t outlen_write(struct file
+ 	if (copy_from_user(outlen_str, buf, count))
+ 		return -EFAULT;
  
- 	/* TODO Probably put random address here to be presented to the
+-	outlen_str[7] = 0;
+-
+ 	err = sscanf(outlen_str, "%d", &outlen);
+ 	if (err < 0)
+ 		return err;
 
 
