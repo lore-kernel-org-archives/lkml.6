@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 127E8ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E766ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93B220856
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93B220856
+	by mail.kernel.org (Postfix) with ESMTP id 16FB320854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16FB320854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388346AbeGTNTD (ORCPT
+        id S2388357AbeGTNTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:19:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38874 "EHLO
+        Fri, 20 Jul 2018 09:19:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38954 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387823AbeGTNTD (ORCPT
+        with ESMTP id S2387823AbeGTNTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:19:03 -0400
+        Fri, 20 Jul 2018 09:19:08 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF21BCB8;
-        Fri, 20 Jul 2018 12:29:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E188CCBA;
+        Fri, 20 Jul 2018 12:30:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Christoffer Dall <cdall@linaro.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.9 43/66] arm64: assembler: introduce ldr_this_cpu
-Date:   Fri, 20 Jul 2018 14:14:00 +0200
-Message-Id: <20180720121409.713670182@linuxfoundation.org>
+Subject: [PATCH 4.9 47/66] arm64: alternatives: use tpidr_el2 on VHE hosts
+Date:   Fri, 20 Jul 2018 14:14:04 +0200
+Message-Id: <20180720121409.948580976@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -55,76 +52,165 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: James Morse <james.morse@arm.com>
 
-Commit 1b7e2296a822dfd2349960addc42a139360ce769 upstream.
+Commit 6d99b68933fbcf51f84fcbba49246ce1209ec193 upstream.
 
-Shortly we will want to load a percpu variable in the return from
-userspace path. We can save an instruction by folding the addition of
-the percpu offset into the load instruction, and this patch adds a new
-helper to do so.
+Now that KVM uses tpidr_el2 in the same way as Linux's cpu_offset in
+tpidr_el1, merge the two. This saves KVM from save/restoring tpidr_el1
+on VHE hosts, and allows future code to blindly access per-cpu variables
+without triggering world-switch.
 
-At the same time, we clean up this_cpu_ptr for consistency. As with
-{adr,ldr,str}_l, we change the template to take the destination register
-first, and name this dst. Secondly, we rename the macro to adr_this_cpu,
-following the scheme of adr_l, and matching the newly added
-ldr_this_cpu.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Laura Abbott <labbott@redhat.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: James Morse <james.morse@arm.com>
+Reviewed-by: Christoffer Dall <cdall@linaro.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/assembler.h |   19 +++++++++++++++----
- arch/arm64/kernel/entry.S          |    2 +-
- 2 files changed, 16 insertions(+), 5 deletions(-)
+ arch/arm64/include/asm/alternative.h |    2 ++
+ arch/arm64/include/asm/assembler.h   |    8 ++++++++
+ arch/arm64/include/asm/percpu.h      |   12 ++++++++++--
+ arch/arm64/kernel/alternative.c      |    9 +++++----
+ arch/arm64/kernel/cpufeature.c       |   17 +++++++++++++++++
+ 5 files changed, 42 insertions(+), 6 deletions(-)
 
+--- a/arch/arm64/include/asm/alternative.h
++++ b/arch/arm64/include/asm/alternative.h
+@@ -11,6 +11,8 @@
+ #include <linux/stddef.h>
+ #include <linux/stringify.h>
+ 
++extern int alternatives_applied;
++
+ struct alt_instr {
+ 	s32 orig_offset;	/* offset to original instruction */
+ 	s32 alt_offset;		/* offset to replacement instruction */
 --- a/arch/arm64/include/asm/assembler.h
 +++ b/arch/arm64/include/asm/assembler.h
-@@ -239,14 +239,25 @@ lr	.req	x30		// link register
- 	.endm
- 
- 	/*
-+	 * @dst: Result of per_cpu(sym, smp_processor_id())
- 	 * @sym: The name of the per-cpu variable
--	 * @reg: Result of per_cpu(sym, smp_processor_id())
- 	 * @tmp: scratch register
+@@ -245,7 +245,11 @@ lr	.req	x30		// link register
  	 */
--	.macro this_cpu_ptr, sym, reg, tmp
--	adr_l	\reg, \sym
-+	.macro adr_this_cpu, dst, sym, tmp
-+	adr_l	\dst, \sym
+ 	.macro adr_this_cpu, dst, sym, tmp
+ 	adr_l	\dst, \sym
++alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
  	mrs	\tmp, tpidr_el1
--	add	\reg, \reg, \tmp
-+	add	\dst, \dst, \tmp
-+	.endm
-+
-+	/*
-+	 * @dst: Result of READ_ONCE(per_cpu(sym, smp_processor_id()))
-+	 * @sym: The name of the per-cpu variable
-+	 * @tmp: scratch register
-+	 */
-+	.macro ldr_this_cpu dst, sym, tmp
-+	adr_l	\dst, \sym
-+	mrs	\tmp, tpidr_el1
-+	ldr	\dst, [\dst, \tmp]
++alternative_else
++	mrs	\tmp, tpidr_el2
++alternative_endif
+ 	add	\dst, \dst, \tmp
  	.endm
  
- /*
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -243,7 +243,7 @@ alternative_insn eret, nop, ARM64_UNMAP_
- 	cmp	x25, tsk
- 	b.ne	9998f
+@@ -256,7 +260,11 @@ lr	.req	x30		// link register
+ 	 */
+ 	.macro ldr_this_cpu dst, sym, tmp
+ 	adr_l	\dst, \sym
++alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
+ 	mrs	\tmp, tpidr_el1
++alternative_else
++	mrs	\tmp, tpidr_el2
++alternative_endif
+ 	ldr	\dst, [\dst, \tmp]
+ 	.endm
  
--	this_cpu_ptr irq_stack, x25, x26
-+	adr_this_cpu x25, irq_stack, x26
- 	mov	x26, #IRQ_STACK_START_SP
- 	add	x26, x25, x26
+--- a/arch/arm64/include/asm/percpu.h
++++ b/arch/arm64/include/asm/percpu.h
+@@ -16,9 +16,14 @@
+ #ifndef __ASM_PERCPU_H
+ #define __ASM_PERCPU_H
  
++#include <asm/alternative.h>
++
+ static inline void set_my_cpu_offset(unsigned long off)
+ {
+-	asm volatile("msr tpidr_el1, %0" :: "r" (off) : "memory");
++	asm volatile(ALTERNATIVE("msr tpidr_el1, %0",
++				 "msr tpidr_el2, %0",
++				 ARM64_HAS_VIRT_HOST_EXTN)
++			:: "r" (off) : "memory");
+ }
+ 
+ static inline unsigned long __my_cpu_offset(void)
+@@ -29,7 +34,10 @@ static inline unsigned long __my_cpu_off
+ 	 * We want to allow caching the value, so avoid using volatile and
+ 	 * instead use a fake stack read to hazard against barrier().
+ 	 */
+-	asm("mrs %0, tpidr_el1" : "=r" (off) :
++	asm(ALTERNATIVE("mrs %0, tpidr_el1",
++			"mrs %0, tpidr_el2",
++			ARM64_HAS_VIRT_HOST_EXTN)
++		: "=r" (off) :
+ 		"Q" (*(const unsigned long *)current_stack_pointer));
+ 
+ 	return off;
+--- a/arch/arm64/kernel/alternative.c
++++ b/arch/arm64/kernel/alternative.c
+@@ -32,6 +32,8 @@
+ #define ALT_ORIG_PTR(a)		__ALT_PTR(a, orig_offset)
+ #define ALT_REPL_PTR(a)		__ALT_PTR(a, alt_offset)
+ 
++int alternatives_applied;
++
+ struct alt_region {
+ 	struct alt_instr *begin;
+ 	struct alt_instr *end;
+@@ -142,7 +144,6 @@ static void __apply_alternatives(void *a
+  */
+ static int __apply_alternatives_multi_stop(void *unused)
+ {
+-	static int patched = 0;
+ 	struct alt_region region = {
+ 		.begin	= (struct alt_instr *)__alt_instructions,
+ 		.end	= (struct alt_instr *)__alt_instructions_end,
+@@ -150,14 +151,14 @@ static int __apply_alternatives_multi_st
+ 
+ 	/* We always have a CPU 0 at this point (__init) */
+ 	if (smp_processor_id()) {
+-		while (!READ_ONCE(patched))
++		while (!READ_ONCE(alternatives_applied))
+ 			cpu_relax();
+ 		isb();
+ 	} else {
+-		BUG_ON(patched);
++		BUG_ON(alternatives_applied);
+ 		__apply_alternatives(&region);
+ 		/* Barriers provided by the cache flushing */
+-		WRITE_ONCE(patched, 1);
++		WRITE_ONCE(alternatives_applied, 1);
+ 	}
+ 
+ 	return 0;
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -829,6 +829,22 @@ static int __init parse_kpti(char *str)
+ early_param("kpti", parse_kpti);
+ #endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
+ 
++static int cpu_copy_el2regs(void *__unused)
++{
++	/*
++	 * Copy register values that aren't redirected by hardware.
++	 *
++	 * Before code patching, we only set tpidr_el1, all CPUs need to copy
++	 * this value to tpidr_el2 before we patch the code. Once we've done
++	 * that, freshly-onlined CPUs will set tpidr_el2, so we don't need to
++	 * do anything here.
++	 */
++	if (!alternatives_applied)
++		write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
++
++	return 0;
++}
++
+ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 	{
+ 		.desc = "GIC system register CPU interface",
+@@ -895,6 +911,7 @@ static const struct arm64_cpu_capabiliti
+ 		.capability = ARM64_HAS_VIRT_HOST_EXTN,
+ 		.def_scope = SCOPE_SYSTEM,
+ 		.matches = runs_at_el2,
++		.enable = cpu_copy_el2regs,
+ 	},
+ 	{
+ 		.desc = "32-bit EL0 Support",
 
 
