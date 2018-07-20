@@ -2,126 +2,122 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E61ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 18:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F26CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 18:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F5220673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 18:56:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34F5220673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id BC2C420647
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 18:58:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="FMzsqSIo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2C420647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388257AbeGTTqA (ORCPT
+        id S2388386AbeGTTrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 15:46:00 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:46023 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388043AbeGTTqA (ORCPT
+        Fri, 20 Jul 2018 15:47:53 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:46174 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388212AbeGTTrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 15:46:00 -0400
-Received: from [148.252.241.226] (helo=xylophone)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fgaZk-0001Cp-PI; Fri, 20 Jul 2018 19:56:24 +0100
-Message-ID: <1532112984.21552.39.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 089/105] media: dvb_frontend: fix locking issues at
- dvb_frontend_get_event()
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc:     stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Fri, 20 Jul 2018 19:56:24 +0100
-In-Reply-To: <20180701153155.855633462@linuxfoundation.org>
-References: <20180701153149.382300170@linuxfoundation.org>
-         <20180701153155.855633462@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Jul 2018 15:47:53 -0400
+Date:   Fri, 20 Jul 2018 20:58:08 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] serial: 8250_ingenic: Add support for the JZ4725B SoC
+To:     Rob Herring <robh@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <1532113088.2309.0@smtp.crapouillou.net>
+In-Reply-To: <20180720153027.GA11978@rob-hp-laptop>
+References: <20180713143840.9721-1-paul@crapouillou.net>
+        <20180720153027.GA11978@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1532113096; bh=noGxpj1/96O+CqOPZKl3PFvnJEXE/W2MVqYzhUqJlRA=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=FMzsqSIojRwtmkGINWjvdr9iHlLf9ai5fbfqqjfeEDHK132zJ2os+1tQ568LYQmtA1bHPNZFmSAORBoKucw11QiH8g3yFJgZs8o7tEFbzmNfHSqVBNQUSWcDPbHIlr/eg/dTSXEOGtdMsr8mUG0k0hG9mSX57n9IDAcL0pGkiBc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-07-01 at 18:02 +0200, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> 
-> commit 76d81243a487c09619822ef8e7201a756e58a87d upstream.
-> 
-> As warned by smatch:
-> 	drivers/media/dvb-core/dvb_frontend.c:314 dvb_frontend_get_event() warn: inconsistent returns 'sem:&fepriv->sem'.
-> 	  Locked on:   line 288
-> 	               line 295
-> 	               line 306
-> 	               line 314
-> 	  Unlocked on: line 303
-> 
-> The lock implementation for get event is wrong, as, if an
-> interrupt occurs, down_interruptible() will fail, and the
-> routine will call up() twice when userspace calls the ioctl
-> again.
-> 
-> The bad code is there since when Linux migrated to git, in
-> 2005.
-[...] 
-> --- a/drivers/media/dvb-core/dvb_frontend.c
-> +++ b/drivers/media/dvb-core/dvb_frontend.c
-[...]
-> +static int dvb_frontend_test_event(struct dvb_frontend_private *fepriv,
-> +				   struct dvb_fe_events *events)
-> +{
-> +	int ret;
-> +
-> +	up(&fepriv->sem);
-> +	ret = events->eventw != events->eventr;
-> +	down(&fepriv->sem);
-> +
-> +	return ret;
-> +}
+Hi Rob,
 
-This is broken.  You must not wait inside a wait condition.  (It would
-be nice if this rule was explicitly documented.)
+Le ven. 20 juil. 2018 =E0 17:30, Rob Herring <robh@kernel.org> a =E9crit :
+> On Fri, Jul 13, 2018 at 04:38:40PM +0200, Paul Cercueil wrote:
+>>  The UART in the jz4725b works just like in the other JZ SoCs, so=20
+>> this
+>>  commit simply adds a new compatible string.
+>>=20
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>>   Documentation/devicetree/bindings/serial/ingenic,uart.txt | 1 +
+>>   drivers/tty/serial/8250/8250_ingenic.c                    | 5 +++++
+>>   2 files changed, 6 insertions(+)
+>>=20
+>>  diff --git=20
+>> a/Documentation/devicetree/bindings/serial/ingenic,uart.txt=20
+>> b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+>>  index c3c6406d5cfe..a0b34fd3b602 100644
+>>  --- a/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+>>  +++ b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+>>  @@ -3,6 +3,7 @@
+>>   Required properties:
+>>   - compatible : One of:
+>>     - "ingenic,jz4740-uart",
+>>  +  - "ingenic,jz4725b-uart",
+>>     - "ingenic,jz4760-uart",
+>>     - "ingenic,jz4770-uart",
+>>     - "ingenic,jz4775-uart",
+>>  diff --git a/drivers/tty/serial/8250/8250_ingenic.c=20
+>> b/drivers/tty/serial/8250/8250_ingenic.c
+>>  index 15a8c8dfa92b..760266559a5a 100644
+>>  --- a/drivers/tty/serial/8250/8250_ingenic.c
+>>  +++ b/drivers/tty/serial/8250/8250_ingenic.c
+>>  @@ -133,6 +133,10 @@ EARLYCON_DECLARE(jz4740_uart,=20
+>> ingenic_early_console_setup);
+>>   OF_EARLYCON_DECLARE(jz4740_uart, "ingenic,jz4740-uart",
+>>   		    ingenic_early_console_setup);
+>>=20
+>>  +EARLYCON_DECLARE(jz4725b_uart, ingenic_early_console_setup);
+>>  +OF_EARLYCON_DECLARE(jz4725b_uart, "ingenic,jz4725b-uart",
+>>  +		    ingenic_early_console_setup);
+>>  +
+>=20
+> This shouldn't be necessary. Looks like it should be compatible with
+> ingenic,jz4740-uart.
+>=20
+>>   EARLYCON_DECLARE(jz4770_uart, ingenic_early_console_setup);
+>>   OF_EARLYCON_DECLARE(jz4770_uart, "ingenic,jz4770-uart",
+>>   		    ingenic_early_console_setup);
+>>  @@ -330,6 +334,7 @@ static const struct ingenic_uart_config=20
+>> jz4780_uart_config =3D {
+>>=20
+>>   static const struct of_device_id of_match[] =3D {
+>>   	{ .compatible =3D "ingenic,jz4740-uart", .data =3D=20
+>> &jz4740_uart_config },
+>>  +	{ .compatible =3D "ingenic,jz4725b-uart", .data =3D=20
+>> &jz4740_uart_config },
+>=20
+> And this too.
 
-Why not leave the condition as it was and only change the
-down_interruptible() to down()?
+Well, I'm confused, the driver already uses multiple compatible strings=20
+for SoCs that
+work the exact same, so that was wrong?
 
-Ben.
+>>   	{ .compatible =3D "ingenic,jz4760-uart", .data =3D=20
+>> &jz4760_uart_config },
+>>   	{ .compatible =3D "ingenic,jz4770-uart", .data =3D=20
+>> &jz4760_uart_config },
+>>   	{ .compatible =3D "ingenic,jz4775-uart", .data =3D=20
+>> &jz4760_uart_config },
+>>  --
+>>  2.11.0
+>>=20
+=
 
->  static int dvb_frontend_get_event(struct dvb_frontend *fe,
-> -			    struct dvb_frontend_event *event, int flags)
-> +			          struct dvb_frontend_event *event, int flags)
->  {
->  	struct dvb_frontend_private *fepriv = fe->frontend_priv;
->  	struct dvb_fe_events *events = &fepriv->events;
-> @@ -249,13 +261,8 @@ static int dvb_frontend_get_event(struct
->  		if (flags & O_NONBLOCK)
->  			return -EWOULDBLOCK;
->  
-> -		up(&fepriv->sem);
-> -
-> -		ret = wait_event_interruptible (events->wait_queue,
-> -						events->eventw != events->eventr);
-> -
-> -		if (down_interruptible (&fepriv->sem))
-> -			return -ERESTARTSYS;
-> +		ret = wait_event_interruptible(events->wait_queue,
-> +					       dvb_frontend_test_event(fepriv, events));
->  
->  		if (ret < 0)
->  			return ret;
-> 
-> 
-> 
--- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
