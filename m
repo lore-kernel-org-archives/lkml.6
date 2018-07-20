@@ -6,202 +6,110 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D672AECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C596ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975F620854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975F620854
+	by mail.kernel.org (Postfix) with ESMTP id 42F2620857
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42F2620857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387913AbeGTNQA (ORCPT
+        id S2387928AbeGTNQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:16:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35812 "EHLO
+        Fri, 20 Jul 2018 09:16:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35910 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731850AbeGTNP7 (ORCPT
+        with ESMTP id S1731878AbeGTNQC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:59 -0400
+        Fri, 20 Jul 2018 09:16:02 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA361BB6;
-        Fri, 20 Jul 2018 12:27:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AFD7ABCF;
+        Fri, 20 Jul 2018 12:28:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 00/31] 4.4.143-stable review
-Date:   Fri, 20 Jul 2018 14:13:30 +0200
-Message-Id: <20180720121340.158484922@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+2b43f681169a2a0d306a@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.4 28/31] netfilter: ebtables: reject non-bridge targets
+Date:   Fri, 20 Jul 2018 14:13:58 +0200
+Message-Id: <20180720121341.171183780@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
+In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
+References: <20180720121340.158484922@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.143-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.143-rc1
-X-KernelTest-Deadline: 2018-07-22T12:13+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.4.143 release.
-There are 31 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sun Jul 22 12:13:28 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.143-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
+From: Florian Westphal <fw@strlen.de>
 
-thanks,
+commit 11ff7288beb2b7da889a014aff0a7b80bf8efcf3 upstream.
 
-greg k-h
+the ebtables evaluation loop expects targets to return
+positive values (jumps), or negative values (absolute verdicts).
 
--------------
-Pseudo-Shortlog of commits:
+This is completely different from what xtables does.
+In xtables, targets are expected to return the standard netfilter
+verdicts, i.e. NF_DROP, NF_ACCEPT, etc.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.143-rc1
+ebtables will consider these as jumps.
 
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    net/nfc: Avoid stalls when nfc_alloc_send_skb() returned NULL.
+Therefore reject any target found due to unspec fallback.
+v2: also reject watchers.  ebtables ignores their return value, so
+a target that assumes skb ownership (and returns NF_STOLEN) causes
+use-after-free.
 
-Santosh Shilimkar <santosh.shilimkar@oracle.com>
-    rds: avoid unenecessary cong_update in loop transport
+The only watchers in the 'ebtables' front-end are log and nflog;
+both have AF_BRIDGE specific wrappers on kernel side.
 
-Eric Biggers <ebiggers@google.com>
-    KEYS: DNS: fix parsing multiple options
+Reported-by: syzbot+2b43f681169a2a0d306a@syzkaller.appspotmail.com
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Florian Westphal <fw@strlen.de>
-    netfilter: ebtables: reject non-bridge targets
+---
+ net/bridge/netfilter/ebtables.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Paul Burton <paul.burton@mips.com>
-    MIPS: Use async IPIs for arch_trigger_cpumask_backtrace()
-
-Paul Burton <paul.burton@mips.com>
-    MIPS: Call dump_stack() from show_regs()
-
-Ping-Ke Shih <pkshih@realtek.com>
-    rtlwifi: rtl8821ae: fix firmware is not ready to run
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    net: cxgb3_main: fix potential Spectre v1
-
-Alex Vesker <valex@mellanox.com>
-    net/mlx5: Fix command interface race in polling mode
-
-Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-    net_sched: blackhole: tell upper qdisc about dropped packets
-
-Jason Wang <jasowang@redhat.com>
-    vhost_net: validate sock before trying to put its fd
-
-Ilpo Järvinen <ilpo.jarvinen@helsinki.fi>
-    tcp: prevent bogus FRTO undos with non-SACK flows
-
-Yuchung Cheng <ycheng@google.com>
-    tcp: fix Fast Open key endianness
-
-Jiri Slaby <jslaby@suse.cz>
-    r8152: napi hangup fix after disconnect
-
-Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
-    qed: Limit msix vectors in kdump kernel to the minimum required count.
-
-Eric Dumazet <edumazet@google.com>
-    net: sungem: fix rx checksum support
-
-Alex Vesker <valex@mellanox.com>
-    net/mlx5: Fix incorrect raw command length parsing
-
-Eric Dumazet <edumazet@google.com>
-    net: dccp: switch rx_tstamp_last_feedback to monotonic clock
-
-Eric Dumazet <edumazet@google.com>
-    net: dccp: avoid crash in ccid3_hc_rx_send_feedback()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    atm: zatm: Fix potential Spectre v1
-
-Christian Lamparter <chunkeey@googlemail.com>
-    crypto: crypto4xx - fix crypto4xx_build_pdr, crypto4xx_build_sdr leak
-
-Christian Lamparter <chunkeey@googlemail.com>
-    crypto: crypto4xx - remove bad list_del
-
-Jonas Gorski <jonas.gorski@gmail.com>
-    bcm63xx_enet: do not write to random DMA channel on BCM6345
-
-Jonas Gorski <jonas.gorski@gmail.com>
-    bcm63xx_enet: correct clock usage
-
-alex chen <alex.chen@huawei.com>
-    ocfs2: subsystem.su_mutex is required while accessing the item->ci_parent
-
-David S. Miller <davem@davemloft.net>
-    Revert "sit: reload iphdr in ipip6_rcv"
-
-H. Peter Anvin <hpa@linux.intel.com>
-    x86/asm: Add _ASM_ARG* constants for argument registers to <asm/asm.h>
-
-Nick Desaulniers <ndesaulniers@google.com>
-    compiler-gcc.h: Add __attribute__((gnu_inline)) to all inline declarations
-
-David Rientjes <rientjes@google.com>
-    compiler, clang: always inline when CONFIG_OPTIMIZE_INLINING is disabled
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    compiler, clang: properly override 'inline' for clang
-
-David Rientjes <rientjes@google.com>
-    compiler, clang: suppress warning for unused static inline functions
-
-
--------------
-
-Diffstat:
-
- Makefile                                        |  4 +-
- arch/mips/kernel/process.c                      | 31 +++++++++++-
- arch/mips/kernel/traps.c                        |  1 +
- arch/x86/include/asm/asm.h                      | 59 +++++++++++++++++++++++
- drivers/atm/zatm.c                              |  2 +
- drivers/crypto/amcc/crypto4xx_core.c            | 23 +++++----
- drivers/net/ethernet/broadcom/bcm63xx_enet.c    | 34 +++++++++----
- drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |  2 +
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c   |  8 ++--
- drivers/net/ethernet/qlogic/qed/qed_main.c      |  9 ++++
- drivers/net/ethernet/sun/sungem.c               | 22 +++++----
- drivers/net/usb/r8152.c                         |  3 +-
- drivers/net/wireless/realtek/rtlwifi/core.c     |  1 -
- drivers/vhost/net.c                             |  3 +-
- fs/ocfs2/cluster/nodemanager.c                  | 63 +++++++++++++++++++++----
- include/linux/compiler-gcc.h                    | 35 ++++++++++----
- net/bridge/netfilter/ebtables.c                 | 13 +++++
- net/dccp/ccids/ccid3.c                          | 16 ++++---
- net/dns_resolver/dns_key.c                      | 28 ++++++-----
- net/ipv4/sysctl_net_ipv4.c                      | 18 +++++--
- net/ipv4/tcp_input.c                            |  9 ++++
- net/ipv6/sit.c                                  |  1 -
- net/nfc/llcp_commands.c                         |  9 ++--
- net/rds/loop.c                                  |  1 +
- net/rds/rds.h                                   |  5 ++
- net/rds/recv.c                                  |  5 ++
- net/sched/sch_blackhole.c                       |  2 +-
- 27 files changed, 320 insertions(+), 87 deletions(-)
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -404,6 +404,12 @@ ebt_check_watcher(struct ebt_entry_watch
+ 	watcher = xt_request_find_target(NFPROTO_BRIDGE, w->u.name, 0);
+ 	if (IS_ERR(watcher))
+ 		return PTR_ERR(watcher);
++
++	if (watcher->family != NFPROTO_BRIDGE) {
++		module_put(watcher->me);
++		return -ENOENT;
++	}
++
+ 	w->u.watcher = watcher;
+ 
+ 	par->target   = watcher;
+@@ -724,6 +730,13 @@ ebt_check_entry(struct ebt_entry *e, str
+ 		goto cleanup_watchers;
+ 	}
+ 
++	/* Reject UNSPEC, xtables verdicts/return values are incompatible */
++	if (target->family != NFPROTO_BRIDGE) {
++		module_put(target->me);
++		ret = -ENOENT;
++		goto cleanup_watchers;
++	}
++
+ 	t->u.target = target;
+ 	if (t->u.target == &ebt_standard_target) {
+ 		if (gap < sizeof(struct ebt_standard_target)) {
 
 
