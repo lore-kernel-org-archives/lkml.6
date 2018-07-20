@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7A1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0DBECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C03020854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C03020854
+	by mail.kernel.org (Postfix) with ESMTP id 5EDCF20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EDCF20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388381AbeGTNTQ (ORCPT
+        id S2388389AbeGTNTT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:19:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39062 "EHLO
+        Fri, 20 Jul 2018 09:19:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39110 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387921AbeGTNTP (ORCPT
+        with ESMTP id S1732980AbeGTNTS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:19:15 -0400
+        Fri, 20 Jul 2018 09:19:18 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A1D9FC22;
-        Fri, 20 Jul 2018 12:30:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BFA0BC34;
+        Fri, 20 Jul 2018 12:30:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morse <james.morse@arm.com>,
-        Christoffer Dall <cdall@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.9 48/66] KVM: arm64: Stop save/restoring host tpidr_el1 on VHE
-Date:   Fri, 20 Jul 2018 14:14:05 +0200
-Message-Id: <20180720121410.006124024@linuxfoundation.org>
+        Julien Grall <julien.grall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.9 54/66] arm64: Add per-cpu infrastructure to call ARCH_WORKAROUND_2
+Date:   Fri, 20 Jul 2018 14:14:11 +0200
+Message-Id: <20180720121410.909465433@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -52,120 +53,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-Commit 1f742679c33bc083722cb0b442a95d458c491b56 upstream.
+commit 5cf9ce6e5ea50f805c6188c04ed0daaec7b6887d upstream.
 
-Now that a VHE host uses tpidr_el2 for the cpu offset we no longer
-need KVM to save/restore tpidr_el1. Move this from the 'common' code
-into the non-vhe code. While we're at it, on VHE we don't need to
-save the ELR or SPSR as kernel_entry in entry.S will have pushed these
-onto the kernel stack, and will restore them from there. Move these
-to the non-vhe code as we need them to get back to the host.
+In a heterogeneous system, we can end up with both affected and
+unaffected CPUs. Let's check their status before calling into the
+firmware.
 
-Finally remove the always-copy-tpidr we hid in the stage2 setup
-code, cpufeature's enable callback will do this for VHE, we only
-need KVM to do it for non-vhe. Add the copy into kvm-init instead.
-
-Signed-off-by: James Morse <james.morse@arm.com>
-Reviewed-by: Christoffer Dall <cdall@linaro.org>
+Reviewed-by: Julien Grall <julien.grall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kvm/hyp-init.S      |    4 ++++
- arch/arm64/kvm/hyp/s2-setup.c  |    3 ---
- arch/arm64/kvm/hyp/sysreg-sr.c |   16 ++++++++--------
- 3 files changed, 12 insertions(+), 11 deletions(-)
+ arch/arm64/kernel/cpu_errata.c |    2 ++
+ arch/arm64/kernel/entry.S      |   11 +++++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
---- a/arch/arm64/kvm/hyp-init.S
-+++ b/arch/arm64/kvm/hyp-init.S
-@@ -118,6 +118,10 @@ CPU_BE(	orr	x4, x4, #SCTLR_ELx_EE)
- 	kern_hyp_va	x2
- 	msr	vbar_el2, x2
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -188,6 +188,8 @@ static int enable_smccc_arch_workaround_
+ #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
  
-+	/* copy tpidr_el1 into tpidr_el2 for use by HYP */
-+	mrs	x1, tpidr_el1
-+	msr	tpidr_el2, x1
+ #ifdef CONFIG_ARM64_SSBD
++DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
 +
- 	/* Hello, World! */
- 	eret
- ENDPROC(__kvm_hyp_init)
---- a/arch/arm64/kvm/hyp/s2-setup.c
-+++ b/arch/arm64/kvm/hyp/s2-setup.c
-@@ -84,8 +84,5 @@ u32 __hyp_text __init_stage2_translation
+ void __init arm64_update_smccc_conduit(struct alt_instr *alt,
+ 				       __le32 *origptr, __le32 *updptr,
+ 				       int nr_inst)
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -98,8 +98,10 @@ alternative_else_nop_endif
  
- 	write_sysreg(val, vtcr_el2);
+ 	// This macro corrupts x0-x3. It is the caller's duty
+ 	// to save/restore them if required.
+-	.macro	apply_ssbd, state
++	.macro	apply_ssbd, state, targ, tmp1, tmp2
+ #ifdef CONFIG_ARM64_SSBD
++	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
++	cbz	\tmp2, \targ
+ 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
+ 	mov	w1, #\state
+ alternative_cb	arm64_update_smccc_conduit
+@@ -135,12 +137,13 @@ alternative_cb_end
+ 	ldr	x19, [tsk, #TI_FLAGS]		// since we can unmask debug
+ 	disable_step_tsk x19, x20		// exceptions when scheduling.
  
--	/* copy tpidr_el1 into tpidr_el2 for use by HYP */
--	write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
+-	apply_ssbd 1
++	apply_ssbd 1, 1f, x22, x23
+ 
+ #ifdef CONFIG_ARM64_SSBD
+ 	ldp	x0, x1, [sp, #16 * 0]
+ 	ldp	x2, x3, [sp, #16 * 1]
+ #endif
++1:
+ 
+ 	mov	x29, xzr			// fp pointed to user-space
+ 	.else
+@@ -210,8 +213,8 @@ alternative_if ARM64_WORKAROUND_845719
+ alternative_else_nop_endif
+ #endif
+ 3:
+-	apply_ssbd 0
 -
- 	return parange;
- }
---- a/arch/arm64/kvm/hyp/sysreg-sr.c
-+++ b/arch/arm64/kvm/hyp/sysreg-sr.c
-@@ -27,8 +27,8 @@ static void __hyp_text __sysreg_do_nothi
- /*
-  * Non-VHE: Both host and guest must save everything.
-  *
-- * VHE: Host must save tpidr*_el[01], actlr_el1, mdscr_el1, sp0, pc,
-- * pstate, and guest must save everything.
-+ * VHE: Host must save tpidr*_el0, actlr_el1, mdscr_el1, sp_el0,
-+ * and guest must save everything.
-  */
- 
- static void __hyp_text __sysreg_save_common_state(struct kvm_cpu_context *ctxt)
-@@ -36,11 +36,8 @@ static void __hyp_text __sysreg_save_com
- 	ctxt->sys_regs[ACTLR_EL1]	= read_sysreg(actlr_el1);
- 	ctxt->sys_regs[TPIDR_EL0]	= read_sysreg(tpidr_el0);
- 	ctxt->sys_regs[TPIDRRO_EL0]	= read_sysreg(tpidrro_el0);
--	ctxt->sys_regs[TPIDR_EL1]	= read_sysreg(tpidr_el1);
- 	ctxt->sys_regs[MDSCR_EL1]	= read_sysreg(mdscr_el1);
- 	ctxt->gp_regs.regs.sp		= read_sysreg(sp_el0);
--	ctxt->gp_regs.regs.pc		= read_sysreg_el2(elr);
--	ctxt->gp_regs.regs.pstate	= read_sysreg_el2(spsr);
- }
- 
- static void __hyp_text __sysreg_save_state(struct kvm_cpu_context *ctxt)
-@@ -62,10 +59,13 @@ static void __hyp_text __sysreg_save_sta
- 	ctxt->sys_regs[AMAIR_EL1]	= read_sysreg_el1(amair);
- 	ctxt->sys_regs[CNTKCTL_EL1]	= read_sysreg_el1(cntkctl);
- 	ctxt->sys_regs[PAR_EL1]		= read_sysreg(par_el1);
-+	ctxt->sys_regs[TPIDR_EL1]	= read_sysreg(tpidr_el1);
- 
- 	ctxt->gp_regs.sp_el1		= read_sysreg(sp_el1);
- 	ctxt->gp_regs.elr_el1		= read_sysreg_el1(elr);
- 	ctxt->gp_regs.spsr[KVM_SPSR_EL1]= read_sysreg_el1(spsr);
-+	ctxt->gp_regs.regs.pc		= read_sysreg_el2(elr);
-+	ctxt->gp_regs.regs.pstate	= read_sysreg_el2(spsr);
- }
- 
- static hyp_alternate_select(__sysreg_call_save_host_state,
-@@ -89,11 +89,8 @@ static void __hyp_text __sysreg_restore_
- 	write_sysreg(ctxt->sys_regs[ACTLR_EL1],	  actlr_el1);
- 	write_sysreg(ctxt->sys_regs[TPIDR_EL0],	  tpidr_el0);
- 	write_sysreg(ctxt->sys_regs[TPIDRRO_EL0], tpidrro_el0);
--	write_sysreg(ctxt->sys_regs[TPIDR_EL1],	  tpidr_el1);
- 	write_sysreg(ctxt->sys_regs[MDSCR_EL1],	  mdscr_el1);
- 	write_sysreg(ctxt->gp_regs.regs.sp,	  sp_el0);
--	write_sysreg_el2(ctxt->gp_regs.regs.pc,	  elr);
--	write_sysreg_el2(ctxt->gp_regs.regs.pstate, spsr);
- }
- 
- static void __hyp_text __sysreg_restore_state(struct kvm_cpu_context *ctxt)
-@@ -115,10 +112,13 @@ static void __hyp_text __sysreg_restore_
- 	write_sysreg_el1(ctxt->sys_regs[AMAIR_EL1],	amair);
- 	write_sysreg_el1(ctxt->sys_regs[CNTKCTL_EL1], 	cntkctl);
- 	write_sysreg(ctxt->sys_regs[PAR_EL1],		par_el1);
-+	write_sysreg(ctxt->sys_regs[TPIDR_EL1],		tpidr_el1);
- 
- 	write_sysreg(ctxt->gp_regs.sp_el1,		sp_el1);
- 	write_sysreg_el1(ctxt->gp_regs.elr_el1,		elr);
- 	write_sysreg_el1(ctxt->gp_regs.spsr[KVM_SPSR_EL1],spsr);
-+	write_sysreg_el2(ctxt->gp_regs.regs.pc,		elr);
-+	write_sysreg_el2(ctxt->gp_regs.regs.pstate,	spsr);
- }
- 
- static hyp_alternate_select(__sysreg_call_restore_host_state,
++	apply_ssbd 0, 5f, x0, x1
++5:
+ 	.endif
+ 	msr	elr_el1, x21			// set up the return data
+ 	msr	spsr_el1, x22
 
 
