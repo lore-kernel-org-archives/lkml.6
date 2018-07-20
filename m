@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47694ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D139DECDFBD
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CCD320652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CCD320652
+	by mail.kernel.org (Postfix) with ESMTP id 9274F20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9274F20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389575AbeGTN1k (ORCPT
+        id S2389604AbeGTN1o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:27:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48416 "EHLO
+        Fri, 20 Jul 2018 09:27:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48484 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730130AbeGTN1j (ORCPT
+        with ESMTP id S2389409AbeGTN1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:27:39 -0400
+        Fri, 20 Jul 2018 09:27:43 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09771CC2;
-        Fri, 20 Jul 2018 12:36:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79752CC4;
+        Fri, 20 Jul 2018 12:36:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.17 006/101] pinctrl: mt7622: stop using the deprecated pinctrl_add_gpio_range
-Date:   Fri, 20 Jul 2018 14:13:12 +0200
-Message-Id: <20180720121423.156839140@linuxfoundation.org>
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 008/101] alx: take rtnl before calling __alx_open from resume
+Date:   Fri, 20 Jul 2018 14:13:14 +0200
+Message-Id: <20180720121423.250305609@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -50,54 +50,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Wang <sean.wang@mediatek.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-commit de227ed7965d06dcfcd06376e03c107004a4881c upstream.
+[ Upstream commit bc800e8b39bad60ccdb83be828da63af71ab87b3 ]
 
-If the pinctrl node has the gpio-ranges property, the range will be added
-by the gpio core and doesn't need to be added by the pinctrl driver.
+The __alx_open function can be called from ndo_open, which is called
+under RTNL, or from alx_resume, which isn't. Since commit d768319cd427,
+we're calling the netif_set_real_num_{tx,rx}_queues functions, which
+need to be called under RTNL.
 
-But for keeping backward compatibility, an explicit pinctrl_add_gpio_range
-is still needed to be called when there is a missing gpio-ranges in pinctrl
-node in old dts files.
+This is similar to commit 0c2cc02e571a ("igb: Move the calls to set the
+Tx and Rx queues into igb_open").
 
-Cc: stable@vger.kernel.org
-Fixes: d6ed93551320 ("pinctrl: mediatek: add pinctrl driver for MT7622 SoC")
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: d768319cd427 ("alx: enable multiple tx queues")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/pinctrl/mediatek/pinctrl-mt7622.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/atheros/alx/main.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-@@ -1463,11 +1463,20 @@ static int mtk_build_gpiochip(struct mtk
- 	if (ret < 0)
- 		return ret;
+--- a/drivers/net/ethernet/atheros/alx/main.c
++++ b/drivers/net/ethernet/atheros/alx/main.c
+@@ -1897,13 +1897,19 @@ static int alx_resume(struct device *dev
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct alx_priv *alx = pci_get_drvdata(pdev);
+ 	struct alx_hw *hw = &alx->hw;
++	int err;
  
--	ret = gpiochip_add_pin_range(chip, dev_name(hw->dev), 0, 0,
--				     chip->ngpio);
--	if (ret < 0) {
--		gpiochip_remove(chip);
--		return ret;
-+	/* Just for backward compatible for these old pinctrl nodes without
-+	 * "gpio-ranges" property. Otherwise, called directly from a
-+	 * DeviceTree-supported pinctrl driver is DEPRECATED.
-+	 * Please see Section 2.1 of
-+	 * Documentation/devicetree/bindings/gpio/gpio.txt on how to
-+	 * bind pinctrl and gpio drivers via the "gpio-ranges" property.
-+	 */
-+	if (!of_find_property(np, "gpio-ranges", NULL)) {
-+		ret = gpiochip_add_pin_range(chip, dev_name(hw->dev), 0, 0,
-+					     chip->ngpio);
-+		if (ret < 0) {
-+			gpiochip_remove(chip);
-+			return ret;
-+		}
- 	}
+ 	alx_reset_phy(hw);
  
- 	return 0;
+ 	if (!netif_running(alx->dev))
+ 		return 0;
+ 	netif_device_attach(alx->dev);
+-	return __alx_open(alx, true);
++
++	rtnl_lock();
++	err = __alx_open(alx, true);
++	rtnl_unlock();
++
++	return err;
+ }
+ 
+ static SIMPLE_DEV_PM_OPS(alx_pm_ops, alx_suspend, alx_resume);
 
 
