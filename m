@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20A3ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09578ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB42E20850
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB42E20850
+	by mail.kernel.org (Postfix) with ESMTP id AAB882084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAB882084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732176AbeGTNPI (ORCPT
+        id S1732550AbeGTNPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34972 "EHLO
+        Fri, 20 Jul 2018 09:15:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34982 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730130AbeGTNPH (ORCPT
+        with ESMTP id S1730130AbeGTNPK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:07 -0400
+        Fri, 20 Jul 2018 09:15:10 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA57F41C;
-        Fri, 20 Jul 2018 12:27:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE44341C;
+        Fri, 20 Jul 2018 12:27:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 17/31] qed: Limit msix vectors in kdump kernel to the minimum required count.
-Date:   Fri, 20 Jul 2018 14:13:47 +0200
-Message-Id: <20180720121340.778732596@linuxfoundation.org>
+Subject: [PATCH 4.4 18/31] r8152: napi hangup fix after disconnect
+Date:   Fri, 20 Jul 2018 14:13:48 +0200
+Message-Id: <20180720121340.812996969@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -52,49 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Jiri Slaby <jslaby@suse.cz>
 
-[ Upstream commit bb7858ba1102f82470a917e041fd23e6385c31be ]
+[ Upstream commit 0ee1f4734967af8321ecebaf9c74221ace34f2d5 ]
 
-Memory size is limited in the kdump kernel environment. Allocation of more
-msix-vectors (or queues) consumes few tens of MBs of memory, which might
-lead to the kdump kernel failure.
-This patch adds changes to limit the number of MSI-X vectors in kdump
-kernel to minimum required value (i.e., 2 per engine).
+When unplugging an r8152 adapter while the interface is UP, the NIC
+becomes unusable.  usb->disconnect (aka rtl8152_disconnect) deletes
+napi. Then, rtl8152_disconnect calls unregister_netdev and that invokes
+netdev->ndo_stop (aka rtl8152_close). rtl8152_close tries to
+napi_disable, but the napi is already deleted by disconnect above. So
+the first while loop in napi_disable never finishes. This results in
+complete deadlock of the network layer as there is rtnl_mutex held by
+unregister_netdev.
 
-Fixes: fe56b9e6a ("qed: Add module with basic common support")
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+So avoid the call to napi_disable in rtl8152_close when the device is
+already gone.
+
+The other calls to usb_kill_urb, cancel_delayed_work_sync,
+netif_stop_queue etc. seem to be fine. The urb and netdev is not
+destroyed yet.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: linux-usb@vger.kernel.org
+Cc: netdev@vger.kernel.org
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_main.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/usb/r8152.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_main.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
-@@ -22,6 +22,7 @@
- #include <linux/etherdevice.h>
- #include <linux/vmalloc.h>
- #include <linux/qed/qed_if.h>
-+#include <linux/crash_dump.h>
- 
- #include "qed.h"
- #include "qed_sp.h"
-@@ -634,6 +635,14 @@ static int qed_slowpath_setup_int(struct
- 	/* We want a minimum of one slowpath and one fastpath vector per hwfn */
- 	cdev->int_params.in.min_msix_cnt = cdev->num_hwfns * 2;
- 
-+	if (is_kdump_kernel()) {
-+		DP_INFO(cdev,
-+			"Kdump kernel: Limit the max number of requested MSI-X vectors to %hd\n",
-+			cdev->int_params.in.min_msix_cnt);
-+		cdev->int_params.in.num_vectors =
-+			cdev->int_params.in.min_msix_cnt;
-+	}
-+
- 	rc = qed_set_int_mode(cdev, false);
- 	if (rc)  {
- 		DP_ERR(cdev, "qed_slowpath_setup_int ERR\n");
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -3139,7 +3139,8 @@ static int rtl8152_close(struct net_devi
+ #ifdef CONFIG_PM_SLEEP
+ 	unregister_pm_notifier(&tp->pm_notifier);
+ #endif
+-	napi_disable(&tp->napi);
++	if (!test_bit(RTL8152_UNPLUG, &tp->flags))
++		napi_disable(&tp->napi);
+ 	clear_bit(WORK_ENABLE, &tp->flags);
+ 	usb_kill_urb(tp->intr_urb);
+ 	cancel_delayed_work_sync(&tp->schedule);
 
 
