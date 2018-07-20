@@ -2,176 +2,244 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3B3ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E12ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1859C206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:41:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1859C206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 09D0020833
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:42:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zh871wMu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D0020833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731989AbeGTPac (ORCPT
+        id S1732035AbeGTPbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 11:30:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46048 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731591AbeGTPac (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 11:30:32 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6KEd8sX112413
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 10:41:55 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kbhaa9btr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 10:41:55 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 20 Jul 2018 10:41:54 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 20 Jul 2018 10:41:52 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6KEfpiT6095546
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Jul 2018 14:41:51 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AC676B206B;
-        Fri, 20 Jul 2018 10:41:39 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7CF76B2064;
-        Fri, 20 Jul 2018 10:41:39 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 20 Jul 2018 10:41:39 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9684F16C3E69; Fri, 20 Jul 2018 07:41:52 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 07:41:52 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     NeilBrown <neilb@suse.com>, Thomas Graf <tgraf@suug.ch>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] rhashtable: don't hold lock on first table
- throughout insertion.
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <153086169828.24852.10332573315056854948.stgit@noble>
- <153086175009.24852.7782466383056542839.stgit@noble>
- <20180720075409.kfckhodsnvktift7@gondor.apana.org.au>
+        Fri, 20 Jul 2018 11:31:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731390AbeGTPba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 11:31:30 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02D47206B7;
+        Fri, 20 Jul 2018 14:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532097774;
+        bh=VN8eX64lPBOLoSrvoFkWP7wNU1vBOFH0OIVusdxHI/A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Zh871wMu8fZniFw8ZCfyphTRQYP92h0InK3CcyojgzjxSrmIEZK6+n6jSpsdzvTUK
+         sZVwsWgag7SPL40JuwNiozuAIAk42B/o40cqZxf2g5rnpgXjqIIk/wAOHSrxpyHZ4Y
+         eKVdpsVKV7XSlxcwNId4/9oBq/Zz+PjfHriC+9CI=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 885B0140260; Fri, 20 Jul 2018 11:42:47 -0300 (-03)
+Date:   Fri, 20 Jul 2018 11:42:47 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kan Liang <kan.liang@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Lukasz Odzioba <lukasz.odzioba@intel.com>,
+        Wang Nan <wangnan0@huawei.com>, kernel-team@lge.com
+Subject: Re: [PATCHv3 4/4] perf tools: Fix struct comm_str removal crash
+Message-ID: <20180720144247.GA4329@kernel.org>
+References: <20180719143345.12963-1-jolsa@kernel.org>
+ <20180719143345.12963-5-jolsa@kernel.org>
+ <20180719182843.GA2812@kernel.org>
+ <20180719183114.GB2812@kernel.org>
+ <20180720012055.GA8457@sejong>
+ <20180720101740.GA27176@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180720075409.kfckhodsnvktift7@gondor.apana.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18072014-0040-0000-0000-00000451C0BC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009398; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01063566; UDB=6.00546171; IPR=6.00841417;
- MB=3.00022230; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-20 14:41:53
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072014-0041-0000-0000-00000857EEDE
-Message-Id: <20180720144152.GW12945@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-20_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807200165
+In-Reply-To: <20180720101740.GA27176@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 03:54:09PM +0800, Herbert Xu wrote:
-> On Fri, Jul 06, 2018 at 05:22:30PM +1000, NeilBrown wrote:
-> > rhashtable_try_insert() currently hold a lock on the bucket in
-> > the first table, while also locking buckets in subsequent tables.
-> > This is unnecessary and looks like a hold-over from some earlier
-> > version of the implementation.
+Em Fri, Jul 20, 2018 at 12:17:40PM +0200, Jiri Olsa escreveu:
+> On Fri, Jul 20, 2018 at 10:20:55AM +0900, Namhyung Kim wrote:
+> > Hi Arnaldo,
 > > 
-> > As insert and remove always lock a bucket in each table in turn, and
-> > as insert only inserts in the final table, there cannot be any races
-> > that are not covered by simply locking a bucket in each table in turn.
+> > On Thu, Jul 19, 2018 at 03:31:14PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > Em Thu, Jul 19, 2018 at 03:28:43PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > > > Em Thu, Jul 19, 2018 at 04:33:45PM +0200, Jiri Olsa escreveu:
+> > > > > +++ b/tools/perf/util/comm.c
+> > > > > @@ -18,11 +18,9 @@ struct comm_str {
+> > > > >  static struct rb_root comm_str_root;
+> > > > >  static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,};
+> > > > >  
+> > > > > -static struct comm_str *comm_str__get(struct comm_str *cs)
+> > > > > +static bool comm_str__get(struct comm_str *cs)
+> > > > >  {
+> > > > > -	if (cs)
+> > > > > -		refcount_inc(&cs->refcnt);
+> > > > > -	return cs;
+> > > > > +	return cs ? refcount_inc_not_zero(&cs->refcnt) : false;
+> > > > >  }
+> > > > 
+> > > > I don't like changing the semantics of a __get() operation this way, I
+> > > > think it should stay like all the others, i.e. return the object with
+> > > > the desired refcount or return NULL if that is not possible.
+> > > > 
+> > > > Otherwise we'll have to switch gears when debugging refcounts in various
+> > > > objects, that start having slightly different semantics for reference
+> > > > counting.
+> > > > 
+> > > > We should try to find a fix that maintains the semantics of refcounting.
+> > > 
+> > > After looking at the code, this refcount_inc_not_zero returns bool comes
+> > > from the kernel, trying to see how this is used with __get() operations
+> > > there, if at all.
 > > 
-> > When an insert call reaches that last table it can be sure that there
-> > is no match entry in any other table as it has searched them all, and
-> > insertion never happens anywhere but in the last table.  The fact that
-> > code tests for the existence of future_tbl while holding a lock on
-> > the relevant bucket ensures that two threads inserting the same key
-> > will make compatible decisions about which is the "last" table.
+> > Something like this?
 > > 
-> > This simplifies the code and allows the ->rehash field to be
-> > discarded.
+> > static struct comm_str *comm_str__get(struct comm_str *cs)
+> > {
+> >     if (cs && refcount_inc_not_zero(&cs->refcnt))
+> >         return cs;
+> >     return NULL;
+> > }
 > > 
-> > We still need a way to ensure that a dead bucket_table is never
-> > re-linked by rhashtable_walk_stop().  This can be achieved by
-> > calling call_rcu() inside the locked region, and checking
-> > ->rcu.func in rhashtable_walk_stop().  If it is not NULL, then
-> > the bucket table is empty and dead.
 > > 
-> > Signed-off-by: NeilBrown <neilb@suse.com>
+> > Other than that I don't have better idea, so
+> > 
+> > Acked-by: Namhyung Kim <namhyung@kernel.org>
+> > 
+> > Thanks,
+> > Namhyung
 > 
-> ...
+> righ, we can change comm_str__get like that, attached v3
+
+Thanks, glad it was so easy. :-)
+
+- Arnaldo
+ 
+> thanks,
+> jirka
 > 
-> > @@ -339,13 +338,16 @@ static int rhashtable_rehash_table(struct rhashtable *ht)
-> >  	spin_lock(&ht->lock);
-> >  	list_for_each_entry(walker, &old_tbl->walkers, list)
-> >  		walker->tbl = NULL;
-> > -	spin_unlock(&ht->lock);
-> >  
-> >  	/* Wait for readers. All new readers will see the new
-> >  	 * table, and thus no references to the old table will
-> >  	 * remain.
-> > +	 * We do this inside the locked region so that
-> > +	 * rhashtable_walk_stop() can check ->rcu.func and know
-> > +	 * not to re-link the table.
-> >  	 */
-> >  	call_rcu(&old_tbl->rcu, bucket_table_free_rcu);
-> > +	spin_unlock(&ht->lock);
-> >  
-> >  	return rht_dereference(new_tbl->future_tbl, ht) ? -EAGAIN : 0;
-> >  }
 > 
-> ...
+> ---
+> We occasionaly hit following assert failure in perf top,
+> when processing the /proc info in multiple threads.
 > 
-> > @@ -964,7 +942,7 @@ void rhashtable_walk_stop(struct rhashtable_iter *iter)
-> >  	ht = iter->ht;
-> >  
-> >  	spin_lock(&ht->lock);
-> > -	if (tbl->rehash < tbl->size)
-> > +	if (tbl->rcu.func == NULL)
-> >  		list_add(&iter->walker.list, &tbl->walkers);
-> >  	else
-> >  		iter->walker.tbl = NULL;
+>   perf: ...include/linux/refcount.h:109: refcount_inc:
+>         Assertion `!(!refcount_inc_not_zero(r))' failed.
 > 
-> This appears to be relying on implementation details within RCU.
-> Paul, are you OK with rhashtable doing this trick?
-
-The notion of accessing objects that are already on RCU's callback lists
-makes me -very- nervous because this sort of thing is not easy to
-get right.  After all, if you are accessing something that is already
-on one of RCU's callback lists, RCU might invoke the callback it at any
-time (thus freeing it in this case), and because it is already on RCU's
-callback lists, rcu_read_lock() is going to be of no help whatsoever.
-
-In addition, RCU does no ordering on its store to ->func, but the ht->lock
-compensates in this case.  But suppose rhashtable_walk_stop() sees the
-pointer as non-NULL.  What prevents RCU from freeing the bucket table out
-from under rhashtable_walk_stop()?  In v4.17, bucket_table_free_rcu()
-just does some calls to various deallocators, which does not provide
-the necessary synchronization.
-
-Does the rhashtable_iter structure use some trick to make this safe?
-Or has synchronization been added to bucket_table_free_rcu()?  Or is
-some other trick in use?
-
-							Thanx, Paul
-
+> The gdb backtrace looks like this:
+> 
+>   [Switching to Thread 0x7ffff11ba700 (LWP 13749)]
+>   0x00007ffff50839fb in raise () from /lib64/libc.so.6
+>   (gdb)
+>   #0  0x00007ffff50839fb in raise () from /lib64/libc.so.6
+>   #1  0x00007ffff5085800 in abort () from /lib64/libc.so.6
+>   #2  0x00007ffff507c0da in __assert_fail_base () from /lib64/libc.so.6
+>   #3  0x00007ffff507c152 in __assert_fail () from /lib64/libc.so.6
+>   #4  0x0000000000535373 in refcount_inc (r=0x7fffdc009be0)
+>       at ...include/linux/refcount.h:109
+>   #5  0x00000000005354f1 in comm_str__get (cs=0x7fffdc009bc0)
+>       at util/comm.c:24
+>   #6  0x00000000005356bd in __comm_str__findnew (str=0x7fffd000b260 ":2",
+>       root=0xbed5c0 <comm_str_root>) at util/comm.c:72
+>   #7  0x000000000053579e in comm_str__findnew (str=0x7fffd000b260 ":2",
+>       root=0xbed5c0 <comm_str_root>) at util/comm.c:95
+>   #8  0x000000000053582e in comm__new (str=0x7fffd000b260 ":2",
+>       timestamp=0, exec=false) at util/comm.c:111
+>   #9  0x00000000005363bc in thread__new (pid=2, tid=2) at util/thread.c:57
+>   #10 0x0000000000523da0 in ____machine__findnew_thread (machine=0xbfde38,
+>       threads=0xbfdf28, pid=2, tid=2, create=true) at util/machine.c:457
+>   #11 0x0000000000523eb4 in __machine__findnew_thread (machine=0xbfde38,
+>   ...
+> 
+> The failing assertion is this one:
+> 
+>   REFCOUNT_WARN(!refcount_inc_not_zero(r), ...
+> 
+> The problem is that we keep global comm_str_root list, which
+> is accessed by multiple threads during the perf top startup
+> and following 2 paths can race:
+> 
+>   thread 1:
+>     ...
+>     thread__new
+>       comm__new
+>         comm_str__findnew
+>           down_write(&comm_str_lock);
+>           __comm_str__findnew
+>             comm_str__get
+> 
+>   thread 2:
+>     ...
+>     comm__override or comm__free
+>       comm_str__put
+>         refcount_dec_and_test
+>           down_write(&comm_str_lock);
+>           rb_erase(&cs->rb_node, &comm_str_root);
+> 
+> Because thread 2 first decrements the refcnt and only after then it
+> removes the struct comm_str from the list, the thread 1 can find this
+> object on the list with refcnt equls to 0 and hit the assert.
+> 
+> This patch fixes the thread 1 __comm_str__findnew path, by ignoring
+> objects that already dropped the refcnt to 0. For the rest of the
+> objects we take the refcnt before comparing its name and release
+> it afterwards with comm_str__put, which can also release the object
+> completely.
+> 
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
+> Link: http://lkml.kernel.org/n/tip-vrizt6sw1lu1ybsrl9l0wwln@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/util/comm.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
+> index 7798a2cc8a86..31279a7bd919 100644
+> --- a/tools/perf/util/comm.c
+> +++ b/tools/perf/util/comm.c
+> @@ -20,9 +20,10 @@ static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,}
+>  
+>  static struct comm_str *comm_str__get(struct comm_str *cs)
+>  {
+> -	if (cs)
+> -		refcount_inc(&cs->refcnt);
+> -	return cs;
+> +	if (cs && refcount_inc_not_zero(&cs->refcnt))
+> +		return cs;
+> +
+> +	return NULL;
+>  }
+>  
+>  static void comm_str__put(struct comm_str *cs)
+> @@ -67,9 +68,14 @@ struct comm_str *__comm_str__findnew(const char *str, struct rb_root *root)
+>  		parent = *p;
+>  		iter = rb_entry(parent, struct comm_str, rb_node);
+>  
+> +		/*
+> +		 * If we race with comm_str__put, iter->refcnt is 0
+> +		 * and it will be removed within comm_str__put call
+> +		 * shortly, ignore it in this search.
+> +		 */
+>  		cmp = strcmp(str, iter->str);
+> -		if (!cmp)
+> -			return comm_str__get(iter);
+> +		if (!cmp && comm_str__get(iter))
+> +			return iter;
+>  
+>  		if (cmp < 0)
+>  			p = &(*p)->rb_left;
+> -- 
+> 2.17.1
