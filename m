@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B32A5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA75ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED7F2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ED7F2084A
+	by mail.kernel.org (Postfix) with ESMTP id 61C482084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C482084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733110AbeGTNPY (ORCPT
+        id S2387410AbeGTNP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35024 "EHLO
+        Fri, 20 Jul 2018 09:15:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731667AbeGTNPY (ORCPT
+        with ESMTP id S1731662AbeGTNP0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:24 -0400
+        Fri, 20 Jul 2018 09:15:26 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 973CFBB6;
-        Fri, 20 Jul 2018 12:27:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 823C441C;
+        Fri, 20 Jul 2018 12:27:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 22/31] net_sched: blackhole: tell upper qdisc about dropped packets
-Date:   Fri, 20 Jul 2018 14:13:52 +0200
-Message-Id: <20180720121340.953486016@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.4 23/31] net/mlx5: Fix command interface race in polling mode
+Date:   Fri, 20 Jul 2018 14:13:53 +0200
+Message-Id: <20180720121340.992365177@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -51,37 +50,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Alex Vesker <valex@mellanox.com>
 
-[ Upstream commit 7e85dc8cb35abf16455f1511f0670b57c1a84608 ]
+[ Upstream commit d412c31dae053bf30a1bc15582a9990df297a660 ]
 
-When blackhole is used on top of classful qdisc like hfsc it breaks
-qlen and backlog counters because packets are disappear without notice.
+The command interface can work in two modes: Events and Polling.
+In the general case, each time we invoke a command, a work is
+queued to handle it.
 
-In HFSC non-zero qlen while all classes are inactive triggers warning:
-WARNING: ... at net/sched/sch_hfsc.c:1393 hfsc_dequeue+0xba4/0xe90 [sch_hfsc]
-and schedules watchdog work endlessly.
+When working in events, the interrupt handler completes the
+command execution. On the other hand, when working in polling
+mode, the work itself completes it.
 
-This patch return __NET_XMIT_BYPASS in addition to NET_XMIT_SUCCESS,
-this flag tells upper layer: this packet is gone and isn't queued.
+Due to a bug in the work handler, a command could have been
+completed by the interrupt handler, while the work handler
+hasn't finished yet, causing the it to complete once again
+if the command interface mode was changed from Events to
+polling after the interrupt handler was called.
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+mlx5_unload_one()
+        mlx5_stop_eqs()
+                // Destroy the EQ before cmd EQ
+                ...cmd_work_handler()
+                        write_doorbell()
+                        --> EVENT_TYPE_CMD
+                                mlx5_cmd_comp_handler() // First free
+                                        free_ent(cmd, ent->idx)
+                                        complete(&ent->done)
+
+        <-- mlx5_stop_eqs //cmd was complete
+                // move to polling before destroying the last cmd EQ
+                mlx5_cmd_use_polling()
+                        cmd->mode = POLL;
+
+                --> cmd_work_handler (continues)
+                        if (cmd->mode == POLL)
+                                mlx5_cmd_comp_handler() // Double free
+
+The solution is to store the cmd->mode before writing the doorbell.
+
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Alex Vesker <valex@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_blackhole.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/sched/sch_blackhole.c
-+++ b/net/sched/sch_blackhole.c
-@@ -20,7 +20,7 @@
- static int blackhole_enqueue(struct sk_buff *skb, struct Qdisc *sch)
- {
- 	qdisc_drop(skb, sch);
--	return NET_XMIT_SUCCESS;
-+	return NET_XMIT_SUCCESS | __NET_XMIT_BYPASS;
- }
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -643,6 +643,7 @@ static void cmd_work_handler(struct work
+ 	struct semaphore *sem;
+ 	unsigned long flags;
+ 	int alloc_ret;
++	int cmd_mode;
  
- static struct sk_buff *blackhole_dequeue(struct Qdisc *sch)
+ 	sem = ent->page_queue ? &cmd->pages_sem : &cmd->sem;
+ 	down(sem);
+@@ -688,6 +689,7 @@ static void cmd_work_handler(struct work
+ 	set_signature(ent, !cmd->checksum_disabled);
+ 	dump_command(dev, ent, 1);
+ 	ent->ts1 = ktime_get_ns();
++	cmd_mode = cmd->mode;
+ 
+ 	/* ring doorbell after the descriptor is valid */
+ 	mlx5_core_dbg(dev, "writing 0x%x to command doorbell\n", 1 << ent->idx);
+@@ -695,7 +697,7 @@ static void cmd_work_handler(struct work
+ 	iowrite32be(1 << ent->idx, &dev->iseg->cmd_dbell);
+ 	mmiowb();
+ 	/* if not in polling don't use ent after this point */
+-	if (cmd->mode == CMD_MODE_POLLING) {
++	if (cmd_mode == CMD_MODE_POLLING) {
+ 		poll_timeout(ent);
+ 		/* make sure we read the descriptor after ownership is SW */
+ 		rmb();
 
 
