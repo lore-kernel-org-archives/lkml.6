@@ -2,84 +2,67 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 913AEECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB944ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3706C20647
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:19:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3706C20647
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 39D0320647
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:21:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39D0320647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbeGTHGV (ORCPT
+        id S1727423AbeGTHH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 03:06:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34214 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeGTHGV (ORCPT
+        Fri, 20 Jul 2018 03:07:58 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:39006 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbeGTHH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 03:06:21 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03A1941C;
-        Fri, 20 Jul 2018 06:19:43 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 07:43:00 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Todd Poynor <toddpoynor@gmail.com>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
-        Zhongze Hu <frankhu@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH 17/32] staging: gasket: annotate ioctl arg with __user
-Message-ID: <20180720054300.GA26447@kroah.com>
-References: <20180717205712.29495-1-toddpoynor@gmail.com>
- <20180717205712.29495-18-toddpoynor@gmail.com>
- <20180719093743.GC14301@kroah.com>
- <CAO3upoYdSkDqyLtD8cQh4kws5gdOcAEPSUHnsru23Uo=3c-uMQ@mail.gmail.com>
+        Fri, 20 Jul 2018 03:07:57 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fgONv-00066d-37; Fri, 20 Jul 2018 13:55:23 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fgONu-0007eA-VE; Fri, 20 Jul 2018 13:55:22 +0800
+Date:   Fri, 20 Jul 2018 13:55:22 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     davem@davemloft.net, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, oferh@marvell.com,
+        igall@marvell.com
+Subject: Re: [PATCH] crypto: inside-secure - initialize first_rdesc to make
+ GCC happy
+Message-ID: <20180720055522.desdmpxm2o7hpiqs@gondor.apana.org.au>
+References: <20180713154316.15689-1-antoine.tenart@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAO3upoYdSkDqyLtD8cQh4kws5gdOcAEPSUHnsru23Uo=3c-uMQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180713154316.15689-1-antoine.tenart@bootlin.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 07:44:53PM -0700, Todd Poynor wrote:
-> >>  /* Type of the ioctl permissions check callback. See below. */
-> >>  typedef int (*gasket_ioctl_permissions_cb_t)(
-> >> -     struct file *filp, uint cmd, ulong arg);
-> >> +     struct file *filp, uint cmd, void __user *arg);
-> >>
-> >>  /*
-> >>   * Device type descriptor.
-> >> @@ -549,7 +549,7 @@ struct gasket_driver_desc {
-> >>        * return -EINVAL. Should return an error status (either -EINVAL or
-> >>        * the error result of the ioctl being handled).
-> >>        */
-> >> -     long (*ioctl_handler_cb)(struct file *filp, uint cmd, ulong arg);
-> >> +     long (*ioctl_handler_cb)(struct file *filp, uint cmd, void __user *arg);
-> >
-> > Why are you not using the typedef above?
+On Fri, Jul 13, 2018 at 05:43:16PM +0200, Antoine Tenart wrote:
+> In the cipher safexcel_send_req function, GCC warns that
+> first_rdesc may be used uninitialized. While this should never
+> happen, this patch removes the warning by initializing this
+> variable to NULL to make GCC happy.
 > 
-> There's a typedef for the permissions check callback, but not for the
-> handler callback.  It's a bit confusing, so I tried adding a typedef
-> for the handler, but now checkpatch is spanking me for adding new
-> typedefs -- maybe I should drop the existing typedef?
+> This was reported by the kbuild test robot.
+> 
+> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 
-No, typedefs for function pointers is just fine, checkpatch should not
-be complaining about that.  And even if it is, it's just a guideline,
-not a hard rule that you have to abide by everything it says :)
-
-thanks,
-
-greg k-h
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
