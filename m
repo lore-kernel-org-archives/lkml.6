@@ -6,97 +6,104 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F06A1ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151E9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B84020850
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:20:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B84020850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B83C4206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:27:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B83C4206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbeGTIHd (ORCPT
+        id S1727271AbeGTIOp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:07:33 -0400
-Received: from mga05.intel.com ([192.55.52.43]:13644 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbeGTIGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:06:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 00:19:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,377,1526367600"; 
-   d="scan'208";a="68652042"
-Received: from yhuang6-ux31a.sh.intel.com ([10.239.198.6])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Jul 2018 00:18:57 -0700
-From:   Huang Ying <ying.huang@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Huang Ying <ying.huang@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH v4 3/8] swap: Use swap_count() in swap_page_trans_huge_swapped()
-Date:   Fri, 20 Jul 2018 15:18:40 +0800
-Message-Id: <20180720071845.17920-4-ying.huang@intel.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180720071845.17920-1-ying.huang@intel.com>
-References: <20180720071845.17920-1-ying.huang@intel.com>
+        Fri, 20 Jul 2018 04:14:45 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:40783 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726779AbeGTIOp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:14:45 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6K7O1fn024661;
+        Fri, 20 Jul 2018 09:27:31 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2kasntc9mr-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 20 Jul 2018 09:27:31 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5E40234;
+        Fri, 20 Jul 2018 07:27:30 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2A0011A41;
+        Fri, 20 Jul 2018 07:27:30 +0000 (GMT)
+Received: from localhost (10.75.127.51) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 20 Jul 2018 09:27:29
+ +0200
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <thierry.reding@gmail.com>, <stefan.wahren@i2se.com>,
+        <gohai@sukzessiv.net>
+CC:     <hsweeten@visionengravers.com>, <gottfried.haider@gmail.com>,
+        <loic.pallardy@st.com>, <broonie@kernel.org>,
+        <fabrice.gasnier@st.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+Subject: [RESEND PATCH] Revert "pwm: Set class for exported channels in sysfs"
+Date:   Fri, 20 Jul 2018 09:27:25 +0200
+Message-ID: <1532071645-17718-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-20_02:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In swap_page_trans_huge_swapped(), to identify whether there's any
-page table mapping for a 4k sized swap entry, "si->swap_map[i] !=
-SWAP_HAS_CACHE" is used.  This works correctly now, because all users
-of the function will only call it after checking SWAP_HAS_CACHE.  But
-as pointed out by Daniel, it is better to use "swap_count(map[i])"
-here, because it works for "map[i] == 0" case too.
+This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it causes
+regression with multiple pwm chip. It creates a new entry in
+'/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export':
+- 1st time export will create an entry in /sys/class/pwm/pwmX
+- when another export happens on another pwmchip, it can't be created
+(e.g. -EEXIST)
 
-And this makes the implementation more consistent between normal and
-huge swap entry.
+This also changes existing ABI (Documentation/ABI/testing/sysfs-class-pwm):
+- pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Suggested-and-reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Shaohua Li <shli@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
+Example on stm32 (stm32429i-eval) platform:
+$ ls /sys/class/pwm
+pwmchip0 pwmchip4
+
+$ cd /sys/class/pwm/pwmchip0/
+$ echo 0 > export
+$ ls /sys/class/pwm
+pwm0 pwmchip0 pwmchip4
+
+$ cd /sys/class/pwm/pwmchip4/
+$ echo 0 > export
+sysfs: cannot create duplicate filename '/class/pwm/pwm0'
+...Exception stack follows...
+
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 ---
- mm/swapfile.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pwm/sysfs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 7283104bfafa..833613e59ef7 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1497,12 +1497,12 @@ static bool swap_page_trans_huge_swapped(struct swap_info_struct *si,
+diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
+index 7c71cdb..4726d43 100644
+--- a/drivers/pwm/sysfs.c
++++ b/drivers/pwm/sysfs.c
+@@ -263,7 +263,6 @@ static int pwm_export_child(struct device *parent, struct pwm_device *pwm)
+ 	export->pwm = pwm;
+ 	mutex_init(&export->lock);
  
- 	ci = lock_cluster_or_swap_info(si, offset);
- 	if (!ci || !cluster_is_huge(ci)) {
--		if (map[roffset] != SWAP_HAS_CACHE)
-+		if (swap_count(map[roffset]))
- 			ret = true;
- 		goto unlock_out;
- 	}
- 	for (i = 0; i < SWAPFILE_CLUSTER; i++) {
--		if (map[offset + i] != SWAP_HAS_CACHE) {
-+		if (swap_count(map[offset + i])) {
- 			ret = true;
- 			break;
- 		}
+-	export->child.class = parent->class;
+ 	export->child.release = pwm_export_release;
+ 	export->child.parent = parent;
+ 	export->child.devt = MKDEV(0, 0);
 -- 
-2.16.4
+1.9.1
 
