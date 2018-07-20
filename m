@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49D4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCA8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A3F420652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A3F420652
+	by mail.kernel.org (Postfix) with ESMTP id 2617520652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2617520652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390358AbeGTNdm (ORCPT
+        id S2390368AbeGTNdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:33:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56200 "EHLO
+        Fri, 20 Jul 2018 09:33:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56282 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389194AbeGTNdl (ORCPT
+        with ESMTP id S2389194AbeGTNdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:33:41 -0400
+        Fri, 20 Jul 2018 09:33:46 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57CC5D80;
-        Fri, 20 Jul 2018 12:40:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89ADDCA0;
+        Fri, 20 Jul 2018 12:40:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ping-Ke Shih <pkshih@realtek.com>,
         Larry Finger <Larry.Finger@lwfinger.net>,
         Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.17 063/101] rtlwifi: Fix kernel Oops "Fw download fail!!"
-Date:   Fri, 20 Jul 2018 14:14:09 +0200
-Message-Id: <20180720121425.951256297@linuxfoundation.org>
+Subject: [PATCH 4.17 064/101] rtlwifi: rtl8821ae: fix firmware is not ready to run
+Date:   Fri, 20 Jul 2018 14:14:10 +0200
+Message-Id: <20180720121426.005802004@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -53,163 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ping-Ke Shih <pkshih@realtek.com>
 
-commit 12dfa2f68ab659636e092db13b5d17cf9aac82af upstream.
+commit 9a98302de19991d51e067b88750585203b2a3ab6 upstream.
 
-When connecting to AP, mac80211 asks driver to enter and leave PS quickly,
-but driver deinit doesn't wait for delayed work complete when entering PS,
-then driver reinit procedure and delay work are running simultaneously.
-This will cause unpredictable kernel oops or crash like
+Without this patch, firmware will not run properly on rtl8821ae, and it
+causes bad user experience. For example, bad connection performance with
+low rate, higher power consumption, and so on.
 
-rtl8723be: error H2C cmd because of Fw download fail!!!
-WARNING: CPU: 3 PID: 159 at drivers/net/wireless/realtek/rtlwifi/
-	 rtl8723be/fw.c:227 rtl8723be_fill_h2c_cmd+0x182/0x510 [rtl8723be]
-CPU: 3 PID: 159 Comm: kworker/3:2 Tainted: G       O     4.16.13-2-ARCH #1
-Hardware name: ASUSTeK COMPUTER INC. X556UF/X556UF, BIOS X556UF.406
-	       10/21/2016
-Workqueue: rtl8723be_pci rtl_c2hcmd_wq_callback [rtlwifi]
-RIP: 0010:rtl8723be_fill_h2c_cmd+0x182/0x510 [rtl8723be]
-RSP: 0018:ffffa6ab01e1bd70 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffffa26069071520 RCX: 0000000000000001
-RDX: 0000000080000001 RSI: ffffffff8be70e9c RDI: 00000000ffffffff
-RBP: 0000000000000000 R08: 0000000000000048 R09: 0000000000000348
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: ffffa26069071520 R14: 0000000000000000 R15: ffffa2607d205f70
-FS:  0000000000000000(0000) GS:ffffa26081d80000(0000) knlGS:000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000443b39d3000 CR3: 000000037700a005 CR4: 00000000003606e0
-Call Trace:
- ? halbtc_send_bt_mp_operation.constprop.17+0xd5/0xe0 [btcoexist]
- ? ex_btc8723b1ant_bt_info_notify+0x3b8/0x820 [btcoexist]
- ? rtl_c2hcmd_launcher+0xab/0x110 [rtlwifi]
- ? process_one_work+0x1d1/0x3b0
- ? worker_thread+0x2b/0x3d0
- ? process_one_work+0x3b0/0x3b0
- ? kthread+0x112/0x130
- ? kthread_create_on_node+0x60/0x60
- ? ret_from_fork+0x35/0x40
-Code: 00 76 b4 e9 e2 fe ff ff 4c 89 ee 4c 89 e7 e8 56 22 86 ca e9 5e ...
+rtl8821ae uses two kinds of firmwares for normal and WoWlan cases, and
+each firmware has firmware data buffer and size individually. Original
+code always overwrite size of normal firmware rtlpriv->rtlhal.fwsize, and
+this mismatch causes firmware checksum error, then firmware can't start.
 
-This patch ensures all delayed works done before entering PS to satisfy
-our expectation, so use cancel_delayed_work_sync() instead. An exception
-is delayed work ips_nic_off_wq because running task may be itself, so add
-a parameter ips_wq to deinit function to handle this case.
+In this situation, driver gives message "Firmware is not ready to run!".
 
-This issue is reported and fixed in below threads:
-https://github.com/lwfinger/rtlwifi_new/issues/367
-https://github.com/lwfinger/rtlwifi_new/issues/366
-
-Tested-by: Evgeny Kapun <abacabadabacaba@gmail.com> # 8723DE
-Tested-by: Shivam Kakkar <shivam543@gmail.com> # 8723BE on 4.18-rc1
+Fixes: fe89707f0afa ("rtlwifi: rtl8821ae: Simplify loading of WOWLAN firmware")
 Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Fixes: cceb0a597320 ("rtlwifi: Add work queue for c2h cmd.")
-Cc: Stable <stable@vger.kernel.org> # 4.11+
+Cc: Stable <stable@vger.kernel.org> # 4.0+
 Reviewed-by: Larry Finger <Larry.Finger@lwfinger.net>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/base.c |   17 ++++++++++-------
- drivers/net/wireless/realtek/rtlwifi/base.h |    2 +-
- drivers/net/wireless/realtek/rtlwifi/core.c |    2 +-
- drivers/net/wireless/realtek/rtlwifi/pci.c  |    2 +-
- drivers/net/wireless/realtek/rtlwifi/ps.c   |    4 ++--
- drivers/net/wireless/realtek/rtlwifi/usb.c  |    2 +-
- 6 files changed, 16 insertions(+), 13 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/core.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/base.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/base.c
-@@ -485,18 +485,21 @@ static void _rtl_init_deferred_work(stru
- 
- }
- 
--void rtl_deinit_deferred_work(struct ieee80211_hw *hw)
-+void rtl_deinit_deferred_work(struct ieee80211_hw *hw, bool ips_wq)
- {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 
- 	del_timer_sync(&rtlpriv->works.watchdog_timer);
- 
--	cancel_delayed_work(&rtlpriv->works.watchdog_wq);
--	cancel_delayed_work(&rtlpriv->works.ips_nic_off_wq);
--	cancel_delayed_work(&rtlpriv->works.ps_work);
--	cancel_delayed_work(&rtlpriv->works.ps_rfon_wq);
--	cancel_delayed_work(&rtlpriv->works.fwevt_wq);
--	cancel_delayed_work(&rtlpriv->works.c2hcmd_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.watchdog_wq);
-+	if (ips_wq)
-+		cancel_delayed_work(&rtlpriv->works.ips_nic_off_wq);
-+	else
-+		cancel_delayed_work_sync(&rtlpriv->works.ips_nic_off_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.ps_work);
-+	cancel_delayed_work_sync(&rtlpriv->works.ps_rfon_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.fwevt_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.c2hcmd_wq);
- }
- EXPORT_SYMBOL_GPL(rtl_deinit_deferred_work);
- 
---- a/drivers/net/wireless/realtek/rtlwifi/base.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/base.h
-@@ -121,7 +121,7 @@ void rtl_init_rfkill(struct ieee80211_hw
- void rtl_deinit_rfkill(struct ieee80211_hw *hw);
- 
- void rtl_watch_dog_timer_callback(struct timer_list *t);
--void rtl_deinit_deferred_work(struct ieee80211_hw *hw);
-+void rtl_deinit_deferred_work(struct ieee80211_hw *hw, bool ips_wq);
- 
- bool rtl_action_proc(struct ieee80211_hw *hw, struct sk_buff *skb, u8 is_tx);
- int rtlwifi_rate_mapping(struct ieee80211_hw *hw, bool isht,
 --- a/drivers/net/wireless/realtek/rtlwifi/core.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/core.c
-@@ -196,7 +196,7 @@ static void rtl_op_stop(struct ieee80211
- 		/* reset sec info */
- 		rtl_cam_reset_sec_info(hw);
- 
--		rtl_deinit_deferred_work(hw);
-+		rtl_deinit_deferred_work(hw, false);
+@@ -130,7 +130,6 @@ found_alt:
+ 		       firmware->size);
+ 		rtlpriv->rtlhal.wowlan_fwsize = firmware->size;
  	}
- 	rtlpriv->intf_ops->adapter_stop(hw);
+-	rtlpriv->rtlhal.fwsize = firmware->size;
+ 	release_firmware(firmware);
+ }
  
---- a/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -2375,7 +2375,7 @@ void rtl_pci_disconnect(struct pci_dev *
- 		ieee80211_unregister_hw(hw);
- 		rtlmac->mac80211_registered = 0;
- 	} else {
--		rtl_deinit_deferred_work(hw);
-+		rtl_deinit_deferred_work(hw, false);
- 		rtlpriv->intf_ops->adapter_stop(hw);
- 	}
- 	rtlpriv->cfg->ops->disable_interrupt(hw);
---- a/drivers/net/wireless/realtek/rtlwifi/ps.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/ps.c
-@@ -71,7 +71,7 @@ bool rtl_ps_disable_nic(struct ieee80211
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 
- 	/*<1> Stop all timer */
--	rtl_deinit_deferred_work(hw);
-+	rtl_deinit_deferred_work(hw, true);
- 
- 	/*<2> Disable Interrupt */
- 	rtlpriv->cfg->ops->disable_interrupt(hw);
-@@ -292,7 +292,7 @@ void rtl_ips_nic_on(struct ieee80211_hw
- 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
- 	enum rf_pwrstate rtstate;
- 
--	cancel_delayed_work(&rtlpriv->works.ips_nic_off_wq);
-+	cancel_delayed_work_sync(&rtlpriv->works.ips_nic_off_wq);
- 
- 	mutex_lock(&rtlpriv->locks.ips_mutex);
- 	if (ppsc->inactiveps) {
---- a/drivers/net/wireless/realtek/rtlwifi/usb.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/usb.c
-@@ -1132,7 +1132,7 @@ void rtl_usb_disconnect(struct usb_inter
- 		ieee80211_unregister_hw(hw);
- 		rtlmac->mac80211_registered = 0;
- 	} else {
--		rtl_deinit_deferred_work(hw);
-+		rtl_deinit_deferred_work(hw, false);
- 		rtlpriv->intf_ops->adapter_stop(hw);
- 	}
- 	/*deinit rfkill */
 
 
