@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C20ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C47ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B698620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B698620652
+	by mail.kernel.org (Postfix) with ESMTP id 9B5CD20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5CD20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389875AbeGTN3F (ORCPT
+        id S2389889AbeGTN3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:29:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50860 "EHLO
+        Fri, 20 Jul 2018 09:29:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50932 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389097AbeGTN3E (ORCPT
+        with ESMTP id S2389097AbeGTN3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:29:04 -0400
+        Fri, 20 Jul 2018 09:29:07 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0932D32;
-        Fri, 20 Jul 2018 12:38:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1FF9D6B;
+        Fri, 20 Jul 2018 12:39:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shay Agroskin <shayag@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.17 025/101] net/mlx5: Fix wrong size allocation for QoS ETC TC regitster
-Date:   Fri, 20 Jul 2018 14:13:31 +0200
-Message-Id: <20180720121424.038178630@linuxfoundation.org>
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.17 085/101] arm/arm64: smccc: Add SMCCC-specific return codes
+Date:   Fri, 20 Jul 2018 14:14:31 +0200
+Message-Id: <20180720121426.854177452@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -50,40 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shay Agroskin <shayag@mellanox.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-[ Upstream commit d14fcb8d877caf1b8d6bd65d444bf62b21f2070c ]
+commit eff0e9e1078ea7dc1d794dc50e31baef984c46d7 upstream.
 
-The driver allocates wrong size (due to wrong struct name) when issuing
-a query/set request to NIC's register.
+We've so far used the PSCI return codes for SMCCC because they
+were extremely similar. But with the new ARM DEN 0070A specification,
+"NOT_REQUIRED" (-2) is clashing with PSCI's "PSCI_RET_INVALID_PARAMS".
 
-Fixes: d8880795dabf ("net/mlx5e: Implement DCBNL IEEE max rate")
-Signed-off-by: Shay Agroskin <shayag@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Let's bite the bullet and add SMCCC specific return codes. Users
+can be repainted as and when required.
+
+Acked-by: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/port.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/arm-smccc.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/port.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/port.c
-@@ -701,7 +701,7 @@ EXPORT_SYMBOL_GPL(mlx5_query_port_prio_t
- static int mlx5_set_port_qetcr_reg(struct mlx5_core_dev *mdev, u32 *in,
- 				   int inlen)
- {
--	u32 out[MLX5_ST_SZ_DW(qtct_reg)];
-+	u32 out[MLX5_ST_SZ_DW(qetc_reg)];
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -291,5 +291,10 @@ asmlinkage void __arm_smccc_hvc(unsigned
+  */
+ #define arm_smccc_1_1_hvc(...)	__arm_smccc_1_1(SMCCC_HVC_INST, __VA_ARGS__)
  
- 	if (!MLX5_CAP_GEN(mdev, ets))
- 		return -EOPNOTSUPP;
-@@ -713,7 +713,7 @@ static int mlx5_set_port_qetcr_reg(struc
- static int mlx5_query_port_qetcr_reg(struct mlx5_core_dev *mdev, u32 *out,
- 				     int outlen)
- {
--	u32 in[MLX5_ST_SZ_DW(qtct_reg)];
-+	u32 in[MLX5_ST_SZ_DW(qetc_reg)];
- 
- 	if (!MLX5_CAP_GEN(mdev, ets))
- 		return -EOPNOTSUPP;
++/* Return codes defined in ARM DEN 0070A */
++#define SMCCC_RET_SUCCESS			0
++#define SMCCC_RET_NOT_SUPPORTED			-1
++#define SMCCC_RET_NOT_REQUIRED			-2
++
+ #endif /*__ASSEMBLY__*/
+ #endif /*__LINUX_ARM_SMCCC_H*/
 
 
