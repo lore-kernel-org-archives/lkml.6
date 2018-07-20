@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F7EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43276ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE5A206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE5A206B7
+	by mail.kernel.org (Postfix) with ESMTP id 0853D206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0853D206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388792AbeGTNWc (ORCPT
+        id S2388813AbeGTNWi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:22:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42146 "EHLO
+        Fri, 20 Jul 2018 09:22:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42208 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728029AbeGTNWc (ORCPT
+        with ESMTP id S1733077AbeGTNWh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:22:32 -0400
+        Fri, 20 Jul 2018 09:22:37 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53291C96;
-        Fri, 20 Jul 2018 12:32:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55744CEF;
+        Fri, 20 Jul 2018 12:32:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        Stefano Brivio <sbrivio@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 32/92] net: mvneta: fix the Rx desc DMA address in the Rx path
-Date:   Fri, 20 Jul 2018 14:13:36 +0200
-Message-Id: <20180720121419.853291413@linuxfoundation.org>
+Subject: [PATCH 4.14 23/92] net: fix use-after-free in GRO with ESP
+Date:   Fri, 20 Jul 2018 14:13:27 +0200
+Message-Id: <20180720121418.875696486@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -51,38 +51,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 271f7ff5aa5a73488b7a9d8b84b5205fb5b2f7cc ]
+[ Upstream commit 603d4cf8fe095b1ee78f423d514427be507fb513 ]
 
-When using s/w buffer management, buffers are allocated and DMA mapped.
-When doing so on an arm64 platform, an offset correction is applied on
-the DMA address, before storing it in an Rx descriptor. The issue is
-this DMA address is then used later in the Rx path without removing the
-offset correction. Thus the DMA address is wrong, which can led to
-various issues.
+Since the addition of GRO for ESP, gro_receive can consume the skb and
+return -EINPROGRESS. In that case, the lower layer GRO handler cannot
+touch the skb anymore.
 
-This patch fixes this by removing the offset correction from the DMA
-address retrieved from the Rx descriptor before using it in the Rx path.
+Commit 5f114163f2f5 ("net: Add a skb_gro_flush_final helper.") converted
+some of the gro_receive handlers that can lead to ESP's gro_receive so
+that they wouldn't access the skb when -EINPROGRESS is returned, but
+missed other spots, mainly in tunneling protocols.
 
-Fixes: 8d5047cf9ca2 ("net: mvneta: Convert to be 64 bits compatible")
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+This patch finishes the conversion to using skb_gro_flush_final(), and
+adds a new helper, skb_gro_flush_final_remcsum(), used in VXLAN and
+GUE.
+
+Fixes: 5f114163f2f5 ("net: Add a skb_gro_flush_final helper.")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvneta.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/geneve.c      |    2 +-
+ drivers/net/vxlan.c       |    4 +---
+ include/linux/netdevice.h |   20 ++++++++++++++++++++
+ net/8021q/vlan.c          |    2 +-
+ net/ipv4/fou.c            |    4 +---
+ net/ipv4/gre_offload.c    |    2 +-
+ net/ipv4/udp_offload.c    |    2 +-
+ 7 files changed, 26 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -1959,7 +1959,7 @@ static int mvneta_rx_swbm(struct mvneta_
- 		rx_bytes = rx_desc->data_size - (ETH_FCS_LEN + MVNETA_MH_SIZE);
- 		index = rx_desc - rxq->descs;
- 		data = rxq->buf_virt_addr[index];
--		phys_addr = rx_desc->buf_phys_addr;
-+		phys_addr = rx_desc->buf_phys_addr - pp->rx_offset_correction;
+--- a/drivers/net/geneve.c
++++ b/drivers/net/geneve.c
+@@ -474,7 +474,7 @@ static struct sk_buff **geneve_gro_recei
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final(skb, pp, flush);
  
- 		if (!mvneta_rxq_desc_is_first_last(rx_status) ||
- 		    (rx_status & MVNETA_RXD_ERR_SUMMARY)) {
+ 	return pp;
+ }
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -623,9 +623,7 @@ static struct sk_buff **vxlan_gro_receiv
+ 	flush = 0;
+ 
+ out:
+-	skb_gro_remcsum_cleanup(skb, &grc);
+-	skb->remcsum_offload = 0;
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final_remcsum(skb, pp, flush, &grc);
+ 
+ 	return pp;
+ }
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -2668,11 +2668,31 @@ static inline void skb_gro_flush_final(s
+ 	if (PTR_ERR(pp) != -EINPROGRESS)
+ 		NAPI_GRO_CB(skb)->flush |= flush;
+ }
++static inline void skb_gro_flush_final_remcsum(struct sk_buff *skb,
++					       struct sk_buff **pp,
++					       int flush,
++					       struct gro_remcsum *grc)
++{
++	if (PTR_ERR(pp) != -EINPROGRESS) {
++		NAPI_GRO_CB(skb)->flush |= flush;
++		skb_gro_remcsum_cleanup(skb, grc);
++		skb->remcsum_offload = 0;
++	}
++}
+ #else
+ static inline void skb_gro_flush_final(struct sk_buff *skb, struct sk_buff **pp, int flush)
+ {
+ 	NAPI_GRO_CB(skb)->flush |= flush;
+ }
++static inline void skb_gro_flush_final_remcsum(struct sk_buff *skb,
++					       struct sk_buff **pp,
++					       int flush,
++					       struct gro_remcsum *grc)
++{
++	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_remcsum_cleanup(skb, grc);
++	skb->remcsum_offload = 0;
++}
+ #endif
+ 
+ static inline int dev_hard_header(struct sk_buff *skb, struct net_device *dev,
+--- a/net/8021q/vlan.c
++++ b/net/8021q/vlan.c
+@@ -664,7 +664,7 @@ static struct sk_buff **vlan_gro_receive
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final(skb, pp, flush);
+ 
+ 	return pp;
+ }
+--- a/net/ipv4/fou.c
++++ b/net/ipv4/fou.c
+@@ -448,9 +448,7 @@ next_proto:
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
+-	skb_gro_remcsum_cleanup(skb, &grc);
+-	skb->remcsum_offload = 0;
++	skb_gro_flush_final_remcsum(skb, pp, flush, &grc);
+ 
+ 	return pp;
+ }
+--- a/net/ipv4/gre_offload.c
++++ b/net/ipv4/gre_offload.c
+@@ -223,7 +223,7 @@ static struct sk_buff **gre_gro_receive(
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final(skb, pp, flush);
+ 
+ 	return pp;
+ }
+--- a/net/ipv4/udp_offload.c
++++ b/net/ipv4/udp_offload.c
+@@ -295,7 +295,7 @@ unflush:
+ out_unlock:
+ 	rcu_read_unlock();
+ out:
+-	NAPI_GRO_CB(skb)->flush |= flush;
++	skb_gro_flush_final(skb, pp, flush);
+ 	return pp;
+ }
+ EXPORT_SYMBOL(udp_gro_receive);
 
 
