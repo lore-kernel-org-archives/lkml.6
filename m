@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAD7ECDFBD
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D9AECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80E20206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:17:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80E20206B7
+	by mail.kernel.org (Postfix) with ESMTP id BE1CE204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:17:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE1CE204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388349AbeGTQGI (ORCPT
+        id S2388334AbeGTQGH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:06:08 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54496 "EHLO mail.bootlin.com"
+        Fri, 20 Jul 2018 12:06:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54498 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388050AbeGTQEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388052AbeGTQEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Jul 2018 12:04:46 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EB73B203EC; Fri, 20 Jul 2018 17:15:59 +0200 (CEST)
+        id 87E81209AB; Fri, 20 Jul 2018 17:16:00 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 08D662073D;
-        Fri, 20 Jul 2018 17:15:40 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id BE80D209A4;
+        Fri, 20 Jul 2018 17:15:41 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 20/35] mtd: rawnand: sh_flctl: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 17:15:12 +0200
-Message-Id: <20180720151527.16038-21-miquel.raynal@bootlin.com>
+Subject: [PATCH v4 23/35] mtd: rawnand: txx9ndfmc: rename nand controller internal structure
+Date:   Fri, 20 Jul 2018 17:15:15 +0200
+Message-Id: <20180720151527.16038-24-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180720151527.16038-1-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
@@ -66,62 +66,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two helpers have been added to the core to make ECC-related
-configuration between the detection phase and the final NAND scan. Use
-these hooks and convert the driver to just use nand_scan() instead of
-both nand_scan_ident() and nand_scan_tail().
+As already done in the core, calling a struct nand_controller
+'hw_control' is misleading. Use the same name as in nand_base.c:
+'controller'.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/sh_flctl.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ drivers/mtd/nand/raw/txx9ndfmc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/sh_flctl.c b/drivers/mtd/nand/raw/sh_flctl.c
-index d37d1d3ccbf9..663c75005ac9 100644
---- a/drivers/mtd/nand/raw/sh_flctl.c
-+++ b/drivers/mtd/nand/raw/sh_flctl.c
-@@ -1002,10 +1002,10 @@ static void flctl_read_buf(struct mtd_info *mtd, uint8_t *buf, int len)
- 	flctl->index += len;
- }
+diff --git a/drivers/mtd/nand/raw/txx9ndfmc.c b/drivers/mtd/nand/raw/txx9ndfmc.c
+index 8f5bbbac4612..9019022774f7 100644
+--- a/drivers/mtd/nand/raw/txx9ndfmc.c
++++ b/drivers/mtd/nand/raw/txx9ndfmc.c
+@@ -73,7 +73,7 @@ struct txx9ndfmc_drvdata {
+ 	void __iomem *base;
+ 	unsigned char hold;	/* in gbusclock */
+ 	unsigned char spw;	/* in gbusclock */
+-	struct nand_controller hw_control;
++	struct nand_controller controller;
+ };
  
--static int flctl_chip_init_tail(struct mtd_info *mtd)
-+static int flctl_chip_attach_chip(struct nand_chip *chip)
- {
-+	struct mtd_info *mtd = nand_to_mtd(chip);
- 	struct sh_flctl *flctl = mtd_to_flctl(mtd);
--	struct nand_chip *chip = &flctl->chip;
+ static struct platform_device *mtd_to_platdev(struct mtd_info *mtd)
+@@ -303,7 +303,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
+ 	dev_info(&dev->dev, "CLK:%ldMHz HOLD:%d SPW:%d\n",
+ 		 (gbusclk + 500000) / 1000000, hold, spw);
  
- 	if (chip->options & NAND_BUSWIDTH_16) {
- 		/*
-@@ -1073,6 +1073,10 @@ static int flctl_chip_init_tail(struct mtd_info *mtd)
- 	return 0;
- }
+-	nand_controller_init(&drvdata->hw_control);
++	nand_controller_init(&drvdata->controller);
  
-+static const struct nand_controller_ops flctl_nand_controller_ops = {
-+	.attach_chip = flctl_chip_attach_chip,
-+};
-+
- static irqreturn_t flctl_handle_flste(int irq, void *dev_id)
- {
- 	struct sh_flctl *flctl = dev_id;
-@@ -1200,15 +1204,8 @@ static int flctl_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(dev, drvdata);
+ 	txx9ndfmc_initialize(dev);
+@@ -337,7 +337,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
+ 		chip->ecc.bytes = 3;
+ 		chip->ecc.strength = 1;
+ 		chip->chip_delay = 100;
+-		chip->controller = &drvdata->hw_control;
++		chip->controller = &drvdata->controller;
  
- 	flctl_setup_dma(flctl);
- 
--	ret = nand_scan_ident(flctl_mtd, 1, NULL);
--	if (ret)
--		goto err_chip;
--
--	ret = flctl_chip_init_tail(flctl_mtd);
--	if (ret)
--		goto err_chip;
--
--	ret = nand_scan_tail(flctl_mtd);
-+	nand->dummy_controller.ops = &flctl_nand_controller_ops;
-+	ret = nand_scan(flctl_mtd, 1);
- 	if (ret)
- 		goto err_chip;
- 
+ 		nand_set_controller_data(chip, txx9_priv);
+ 		txx9_priv->dev = dev;
 -- 
 2.14.1
 
