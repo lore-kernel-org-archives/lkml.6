@@ -3,95 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEF8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2062ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41C1720652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:58:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41C1720652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 67254206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:58:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67254206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732033AbeGTWsO (ORCPT
+        id S1731492AbeGTWrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 18:48:14 -0400
-Received: from sauhun.de ([88.99.104.3]:59642 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728214AbeGTWsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 18:48:13 -0400
-Received: from localhost (p54B33241.dip0.t-ipconnect.de [84.179.50.65])
-        by pokefinder.org (Postfix) with ESMTPSA id 35C425E000F;
-        Fri, 20 Jul 2018 23:58:02 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 23:58:01 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Vitor soares <Vitor.Soares@synopsys.com>
-Cc:     boris.brezillon@bootlin.com, linux-i2c@vger.kernel.org,
-        corbet@lwn.net, linux-doc@vger.kernel.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com,
-        agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com,
-        dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com,
-        sureshp@cadence.com, rafalc@cadence.com,
-        thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org,
-        pawel.moll@arm.com, mark.rutland@arm.com,
-        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org, linus.walleij@linaro.org,
-        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
-        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
-        Joao.Pinto@synopsys.com
-Subject: Re: [PATCH 0/3] Add driver for Synopsys DesignWare I3C master IP
-Message-ID: <20180720215801.dmklhwxsgakj4exd@ninjato>
-References: <1532120272-17157-1-git-send-email-soares@synopsys.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="x2lspxohbhnfcm6l"
-Content-Disposition: inline
-In-Reply-To: <1532120272-17157-1-git-send-email-soares@synopsys.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 20 Jul 2018 18:47:51 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37635 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728214AbeGTWru (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 18:47:50 -0400
+Received: from 2.general.tyhicks.us.vpn ([10.172.64.53] helo=sec.l.tihix.com)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <tyhicks@canonical.com>)
+        id 1fgdP6-0004ZT-G8; Fri, 20 Jul 2018 21:57:36 +0000
+From:   Tyler Hicks <tyhicks@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stephen Hemminger <stephen@networkplumber.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bridge@lists.linux-foundation.org,
+        Linux Containers <containers@lists.linux-foundation.org>
+Subject: [PATCH net-next v3 4/8] driver core: set up ownership of class devices in sysfs
+Date:   Fri, 20 Jul 2018 21:56:50 +0000
+Message-Id: <1532123814-1109-5-git-send-email-tyhicks@canonical.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
+References: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
---x2lspxohbhnfcm6l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Plumb in get_ownership() callback for devices belonging to a class so that
+they can be created with uid/gid different from global root. This will
+allow network devices in a container to belong to container's root and not
+global root.
 
-On Fri, Jul 20, 2018 at 09:57:49PM +0100, Vitor soares wrote:
-> This patch series is a proposal for the I3C master driver for Synopsys IP.
-> This patch is to be applied on top of I3C subsystem RFC V6 submitted
-> by Boris Brezillon.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+---
+ drivers/base/core.c    | 9 +++++++++
+ include/linux/device.h | 5 +++++
+ 2 files changed, 14 insertions(+)
 
-Nice! More users will help the subsystem evolve.
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index df3e1a44707a..276c7e3f754c 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -866,10 +866,19 @@ static const void *device_namespace(struct kobject *kobj)
+ 	return ns;
+ }
+ 
++static void device_get_ownership(struct kobject *kobj, kuid_t *uid, kgid_t *gid)
++{
++	struct device *dev = kobj_to_dev(kobj);
++
++	if (dev->class && dev->class->get_ownership)
++		dev->class->get_ownership(dev, uid, gid);
++}
++
+ static struct kobj_type device_ktype = {
+ 	.release	= device_release,
+ 	.sysfs_ops	= &dev_sysfs_ops,
+ 	.namespace	= device_namespace,
++	.get_ownership	= device_get_ownership,
+ };
+ 
+ 
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 055a69dbcd18..fe6ccb6dc119 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -384,6 +384,9 @@ int subsys_virtual_register(struct bus_type *subsys,
+  * @shutdown_pre: Called at shut-down time before driver shutdown.
+  * @ns_type:	Callbacks so sysfs can detemine namespaces.
+  * @namespace:	Namespace of the device belongs to this class.
++ * @get_ownership: Allows class to specify uid/gid of the sysfs directories
++ *		for the devices belonging to the class. Usually tied to
++ *		device's namespace.
+  * @pm:		The default device power management operations of this class.
+  * @p:		The private data of the driver core, no one other than the
+  *		driver core can touch this.
+@@ -413,6 +416,8 @@ struct class {
+ 	const struct kobj_ns_type_operations *ns_type;
+ 	const void *(*namespace)(struct device *dev);
+ 
++	void (*get_ownership)(struct device *dev, kuid_t *uid, kgid_t *gid);
++
+ 	const struct dev_pm_ops *pm;
+ 
+ 	struct subsys_private *p;
+-- 
+2.7.4
 
-Yet, I also think this may be a good timing for a seperate I3C mailing
-list? We can always cross-post if I2C is relevant, but I guess new I3C
-masters usually are very I3C specific. I think a seperate mailing list
-would also look good in the MAINTAINERS entry.
-
-
---x2lspxohbhnfcm6l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltSWukACgkQFA3kzBSg
-KbY5ig/9EK7rk7249vzONpuTF/gM8ZBE6c+8Bxu8bxp0fhItU6oF/+FoNigAUO/x
-U2uRGxUChHNyQXeT89+TRC0Hc7IDmUMw5fnLfgUBORinA5IdzYMHZ3TMuT6HMQbR
-+8O9wiK4MQMvTQLvWO9Zfeqq+cG8Ra5Ff2/Ahgg3Kh1yNsilspEDeVfCMXc0/Vao
-WC2Gam+W70ZaYizAH7PnWgDsB/AP25MC9VKaQqsl7UhGBNKidB+oogPknUm72ePO
-Uhq8S3+3uvF98zpGE7dX49+6fm4KYkRj1Y2u1riVUvwrlw+ACJLeCotUqvq71KZH
-D6Tb5EcPz+1MIxz5f/ZS7LubxLAmclRvXsYqhF0UcCCGpy0Ppf1hhMGoYEU3gTWf
-mFQAlPEY12j/mmqIWGh58LQlMTjH8WW5ns1jz0UHxECu0o8yIAXFIn+QgEgKC1Ap
-s1MpAsMotU2keQ+ZZe+iZu+RSjMYhHMl5RPHt8yAqm6fk5kHjitlPVAnwuIEfGrR
-xSaAPmFF9BLXZKWHU7nGWJrxcJC1s9SEEinZrNN/p0wezKyRjCTr8u+/WeF6kNWS
-fe3MMSF/xrEE2pHSNyRc3lW/rNh9ii7igo8wL5kSyaRvtA9qb6bro8AODZMsz84E
-60HCFjRFT7WSK1nb6OlXkjn0R0byc939hZjo/r0voplsChncgmM=
-=lZ8H
------END PGP SIGNATURE-----
-
---x2lspxohbhnfcm6l--
