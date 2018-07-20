@@ -2,86 +2,84 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA91ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C83EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E4C20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:05:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sRt8hjO2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E4C20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E9BB20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:05:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E9BB20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730207AbeGTKwp (ORCPT
+        id S1730829AbeGTKwx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 06:52:45 -0400
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:39350 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728920AbeGTKwp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 06:52:45 -0400
-Received: by mail-ed1-f46.google.com with SMTP id w14-v6so9323120eds.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 03:05:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1pKiJL3XTjY3WG10AcWexLxucV0JNmkIYGLvOBdo5xk=;
-        b=sRt8hjO2uJkkvUvs3jODCWLpPPKXyBgWVRghekZ9c+xkJEJD0WFlGjJgNtDHMkYsxS
-         w/Qpg8bOHx7wX0syRPaskHLKJwXKqZS22gww9cLoB6QTlv4LHPEd2qdAlVHo0i3UrS43
-         L63js6n25FqMdgvRCWjkCzHpVrQnBoZlW9tk0UQ2P1TAnNTUboyzT/0rk9MRa/s7lPuT
-         1hVk7zfYATNgDtZomkJWkngtnJrJIu7rmP8TvKvnrwOLLFVjjgM8uKXlw3+44dENU/aB
-         gywE+e2p40nplfpwL17KWQTyqn0Tx88yaKNtt1qrxCasv/7PbqYcHf6nv+F2aox/S87S
-         rQcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1pKiJL3XTjY3WG10AcWexLxucV0JNmkIYGLvOBdo5xk=;
-        b=to2bKRs5vqPFXOHSnny9hIyHwhtQTsWM7KAUiPr+8TzDfyngimMP00gxHlBKkXFIuT
-         p2TluOm1ozYOrSnko7/fmEZkL/QGMrdU/fdmu0VqSlrCqOsEa/eg/lDVH/LmTPqBocTp
-         arw7aasc6zPb6ZKDIcWlnGtxSDz0WuHTJQISpDzkqCnr1EJvLrHSP1f1xOQVPPjaQ8bh
-         gBrCq1jWI+iY/AXf4BBsB/al/q/jM0P8nN3+Nyffyv07YSCtnsMPqp6XakpSPjKjAp5h
-         lRH0cFHgyhlLk1JK9FHIfWgsyQ862QEJ/9O8l/mOtB8Fzt/0OHNeVkJygYnTTaFnRHf+
-         uQ8w==
-X-Gm-Message-State: AOUpUlHMZQohTqOIyc+bVqgMJEN6Te1rG21rN8EixL/uKChRuD2TlTm5
-        EVNyb0qxie24CTUSCqC/xg==
-X-Google-Smtp-Source: AAOMgpeUYyMtSL97i8nv+Bl2M3NkW719CS+0XSACz7jtqOlfC8HIZ0f+/rfp/JpZtO70BI5NZLigVA==
-X-Received: by 2002:a50:a0c5:: with SMTP id 63-v6mr1833155edo.47.1532081113569;
-        Fri, 20 Jul 2018 03:05:13 -0700 (PDT)
-Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id a53-v6sm1634521edd.35.2018.07.20.03.05.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 03:05:12 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 13:05:10 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
-        n-horiguchi@ah.jp.nec.com, pdhamdhe@redhat.com
-Subject: Re: +
- documentation-proctxt-adding-hardwarecorrupted-field-and-description.patch
- added to -mm tree
-Message-ID: <20180720100510.GA6044@avx2>
-References: <20180720000108.Q6IZympcp%akpm@linux-foundation.org>
+        Fri, 20 Jul 2018 06:52:53 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41296 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729816AbeGTKwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 06:52:53 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7633220766; Fri, 20 Jul 2018 12:05:20 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CA09B203EC;
+        Fri, 20 Jul 2018 12:05:19 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 12:05:18 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>
+Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
+Message-ID: <20180720120518.445b947b@bbrezillon>
+In-Reply-To: <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+        <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
+        <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180720000108.Q6IZympcp%akpm@linux-foundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 05:01:08PM -0700, akpm@linux-foundation.org wrote:
-> +HardwareCorrupted: The amount of RAM/memory in KB, the kernel identifies as
-> +	      corrupted.
+On Fri, 20 Jul 2018 11:57:56 +0200
+Peter Rosin <peda@axentia.se> wrote:
 
-This is quite vague as the line doesn't say which criteria kernel uses
-to identify memory as corrupted.
+> 
+> Maybe a bit-bang I3C master isn't feasible for some fundamental
+> reason?
+
+No, it's clearly not. The way an I3C master is supposed to switch from
+open-drain to push-pull during a transaction or the concept of IBIs
+are the first things that come to mind, but I guess you have plenty of
+other reasons preventing you from implementing a i3c-bit-bang master.
