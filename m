@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97173ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF96ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CCE02084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C48D22084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 23:51:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kiTuJVGa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kiTuJVGa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CCE02084A
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JYa+XnNc";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JYa+XnNc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C48D22084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbeGUAlE (ORCPT
+        id S1729300AbeGUAmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 20:41:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47468 "EHLO
+        Fri, 20 Jul 2018 20:42:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47810 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727845AbeGUAlD (ORCPT
+        with ESMTP id S1727224AbeGUAmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 20:41:03 -0400
+        Fri, 20 Jul 2018 20:42:15 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E505360274; Fri, 20 Jul 2018 23:50:31 +0000 (UTC)
+        id 91E9360274; Fri, 20 Jul 2018 23:51:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532130631;
-        bh=EYgZyTY+JquTfc47QVg5BvacMMAmkIZyxARhjeVgKjU=;
+        s=default; t=1532130702;
+        bh=kdjpIjxztyui1/JPdYl+iBdjCETDLIgmjpFaFOJSf5w=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kiTuJVGa9wj3ja1WSgOVf6l6Zii0x+glZ7Czwhq2HCNkEo0yKMfKGTKaT8hN7X4/l
-         faDrViCi6N6RW/u9MsG7qRzG1d+RwvbRPA2UAxnJw5RFOMH39Pk+zEmDG5Y5sb6NXc
-         5kLyy7Gl4xge5ugnlS/zgSux/1re/J2t6H3dHgrk=
+        b=JYa+XnNcQOpi39nC+0zbLyKfngXlvoOpj+Ftc4gCBDOFI+UZ3/Z/muNYBI3VnZLYQ
+         7mIkPWVYyqJh4ZT7HsjT23hLj0iw5KMx8XPyQYw62mW857En552gt6+cEp8PVGlU0i
+         XMlQ7r+kJkj74GoiAFDFU4lvbpNboqw1ap7ltDIk=
 Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 15AED60274;
-        Fri, 20 Jul 2018 23:50:31 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTP id EADFA6071B;
+        Fri, 20 Jul 2018 23:51:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532130631;
-        bh=EYgZyTY+JquTfc47QVg5BvacMMAmkIZyxARhjeVgKjU=;
+        s=default; t=1532130702;
+        bh=kdjpIjxztyui1/JPdYl+iBdjCETDLIgmjpFaFOJSf5w=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kiTuJVGa9wj3ja1WSgOVf6l6Zii0x+glZ7Czwhq2HCNkEo0yKMfKGTKaT8hN7X4/l
-         faDrViCi6N6RW/u9MsG7qRzG1d+RwvbRPA2UAxnJw5RFOMH39Pk+zEmDG5Y5sb6NXc
-         5kLyy7Gl4xge5ugnlS/zgSux/1re/J2t6H3dHgrk=
+        b=JYa+XnNcQOpi39nC+0zbLyKfngXlvoOpj+Ftc4gCBDOFI+UZ3/Z/muNYBI3VnZLYQ
+         7mIkPWVYyqJh4ZT7HsjT23hLj0iw5KMx8XPyQYw62mW857En552gt6+cEp8PVGlU0i
+         XMlQ7r+kJkj74GoiAFDFU4lvbpNboqw1ap7ltDIk=
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 20 Jul 2018 16:50:31 -0700
+Date:   Fri, 20 Jul 2018 16:51:41 -0700
 From:   Subhash Jadavani <subhashj@codeaurora.org>
 To:     Asutosh Das <asutoshd@codeaurora.org>
 Cc:     cang@codeaurora.org, vivek.gautam@codeaurora.org,
@@ -57,13 +57,14 @@ Cc:     cang@codeaurora.org, vivek.gautam@codeaurora.org,
         jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
         linux-scsi@vger.kernel.org,
         Sujit Reddy Thumma <sthumma@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/9] scsi: Allow auto suspend override by low-level
- driver
-In-Reply-To: <8135b00502f7e089478c9b988806ed40b7d5d40b.1530880006.git.asutoshd@codeaurora.org>
+        linux-arm-msm@vger.kernel.org,
+        Gilad Broner <gbroner@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-scsi-owner@vger.kernel.org
+Subject: Re: [PATCH v1 3/9] scsi: ufs: Override auto suspend tunables for ufs
+In-Reply-To: <6981189193244970a912c8b3f390a00bc37ed14a.1530880006.git.asutoshd@codeaurora.org>
 References: <cover.1530880006.git.asutoshd@codeaurora.org>
- <8135b00502f7e089478c9b988806ed40b7d5d40b.1530880006.git.asutoshd@codeaurora.org>
-Message-ID: <2c51ab099a01e17163bc219b1c4a135b@codeaurora.org>
+ <6981189193244970a912c8b3f390a00bc37ed14a.1530880006.git.asutoshd@codeaurora.org>
+Message-ID: <0dc1fca230941323aa6c904cc88713e5@codeaurora.org>
 X-Sender: subhashj@codeaurora.org
 User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,94 +75,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 2018-07-06 05:30, Asutosh Das wrote:
 > From: Sujit Reddy Thumma <sthumma@codeaurora.org>
 > 
-> Until now the scsi mid-layer forbids runtime suspend till userspace
-> enables it. This is mainly to quarantine some disks with broken
-> runtime power management or have high latencies executing suspend
-> resume callbacks. If the userspace doesn't enable the runtime suspend
-> the underlying hardware will be always on even when it is not doing
-> any useful work and thus wasting power.
-> 
-> Some low-level drivers for the controllers can efficiently use runtime
-> power management to reduce power consumption and improve battery life.
-> Allow runtime suspend parameters override within the LLD itself
-> instead of waiting for userspace to control the power management.
+> Override auto suspend tunables for UFS device LUNs during
+> initialization so as to efficiently manage background operations
+> and the power consumption.
 > 
 > Signed-off-by: Sujit Reddy Thumma <sthumma@codeaurora.org>
-> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Gilad Broner <gbroner@codeaurora.org>
 > Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 > ---
->  drivers/scsi/scsi_scan.c   | 4 ++++
->  drivers/scsi/scsi_sysfs.c  | 3 ++-
->  drivers/scsi/sd.c          | 2 ++
->  include/scsi/scsi_device.h | 3 +++
->  4 files changed, 11 insertions(+), 1 deletion(-)
+>  drivers/scsi/ufs/ufshcd.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
-> index 0880d97..5b7232a 100644
-> --- a/drivers/scsi/scsi_scan.c
-> +++ b/drivers/scsi/scsi_scan.c
-> @@ -969,6 +969,10 @@ static int scsi_add_lun(struct scsi_device *sdev,
-> unsigned char *inq_result,
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 77e2b3e..b03f3ea 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -89,6 +89,9 @@
+>  /* Interrupt aggregation default timeout, unit: 40us */
+>  #define INT_AGGR_DEF_TO	0x02
 > 
->  	transport_configure_device(&sdev->sdev_gendev);
-> 
-> +	/* The LLD can override auto suspend tunables in ->slave_configure() 
-> */
-> +	sdev->use_rpm_auto = 0;
-> +	sdev->autosuspend_delay = SCSI_DEFAULT_AUTOSUSPEND_DELAY;
+> +/* default value of auto suspend is 3 seconds */
+> +#define UFSHCD_AUTO_SUSPEND_DELAY_MS 3000 /* millisecs */
 > +
->  	if (sdev->host->hostt->slave_configure) {
->  		ret = sdev->host->hostt->slave_configure(sdev);
->  		if (ret) {
-> diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
-> index 7943b76..706e778 100644
-> --- a/drivers/scsi/scsi_sysfs.c
-> +++ b/drivers/scsi/scsi_sysfs.c
-> @@ -1266,7 +1266,8 @@ int scsi_sysfs_add_sdev(struct scsi_device *sdev)
->  	device_enable_async_suspend(&sdev->sdev_gendev);
->  	scsi_autopm_get_target(starget);
->  	pm_runtime_set_active(&sdev->sdev_gendev);
-> -	pm_runtime_forbid(&sdev->sdev_gendev);
-> +	if (!sdev->use_rpm_auto)
-> +		pm_runtime_forbid(&sdev->sdev_gendev);
->  	pm_runtime_enable(&sdev->sdev_gendev);
->  	scsi_autopm_put_target(starget);
+>  #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
+>  	({                                                              \
+>  		int _ret;                                               \
+> @@ -4528,6 +4531,9 @@ static int ufshcd_slave_configure(struct
+> scsi_device *sdev)
+>  	blk_queue_update_dma_pad(q, PRDT_DATA_BYTE_COUNT_PAD - 1);
+>  	blk_queue_max_segment_size(q, PRDT_DATA_BYTE_COUNT_MAX);
 > 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index a6201e6..205624f 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -3269,6 +3269,8 @@ static void sd_probe_async(void *data,
-> async_cookie_t cookie)
->  	}
-> 
->  	blk_pm_runtime_init(sdp->request_queue, dev);
-> +	if (sdp->autosuspend_delay >= 0)
-> +		pm_runtime_set_autosuspend_delay(dev, sdp->autosuspend_delay);
->  	device_add_disk(dev, gd);
->  	if (sdkp->capacity)
->  		sd_dif_config_host(sdkp);
-> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
-> index 4c36af6..1d5ae90 100644
-> --- a/include/scsi/scsi_device.h
-> +++ b/include/scsi/scsi_device.h
-> @@ -197,7 +197,10 @@ struct scsi_device {
->  	unsigned broken_fua:1;		/* Don't set FUA bit */
->  	unsigned lun_in_cdb:1;		/* Store LUN bits in CDB[1] */
->  	unsigned unmap_limit_for_ws:1;	/* Use the UNMAP limit for WRITE SAME 
-> */
-> +	unsigned use_rpm_auto:1; /* Enable runtime PM auto suspend */
-> 
-> +#define SCSI_DEFAULT_AUTOSUSPEND_DELAY  -1
-> +	int autosuspend_delay;
->  	atomic_t disk_events_disable_depth; /* disable depth for disk events 
-> */
-> 
->  	DECLARE_BITMAP(supported_events, SDEV_EVT_MAXBITS); /* supported 
-> events */
+> +	sdev->autosuspend_delay = UFSHCD_AUTO_SUSPEND_DELAY_MS;
+> +	sdev->use_rpm_auto = 1;
+> +
+>  	return 0;
+>  }
 
 Looks good to me.
 Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+
 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
