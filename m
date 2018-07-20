@@ -2,131 +2,100 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E462ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F4FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5798C206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8A61206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:52:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoTwqdmE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5798C206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GvTu2EvY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A61206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729922AbeGTMdo (ORCPT
+        id S1728834AbeGTMkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 08:33:44 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:36361 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727408AbeGTMdo (ORCPT
+        Fri, 20 Jul 2018 08:40:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55648 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727736AbeGTMkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:33:44 -0400
-Received: by mail-yb0-f196.google.com with SMTP id s1-v6so4509601ybk.3;
-        Fri, 20 Jul 2018 04:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6sEETIyfIWdZRxqCxHBW0J9SmgRvXDxvZJWaFQVYhbs=;
-        b=SoTwqdmEbMmonRN971Cup0y96sOq+fVjiBQwt8k5GQW3n/CY3/uphhAc+dbm0ZQHbC
-         WRvSknKlP5dMGiyUdna2lEg1NrNp369STOC6hvl0EjNFAdz0UCqezggg524ncXMC4R4o
-         O8CHWpfqaQUpje/dSk3IQf7z1vU3XhVwFntucnj5TAPxJItXnBeC63IqvR+fbxqdaeGn
-         ZgsLgpFeeWocjSdcNiPbyOJFE8RItgazlBaNJ04oTs8Ffu5BnKndtIjFDhOQsa3Zyb7K
-         7zjV6jLgnqoW2itWkpjHi7sDcKn7qIaEnOmBpxCmnf79JoyTNcH1aVQDLhdVT0m1MoWf
-         7DUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6sEETIyfIWdZRxqCxHBW0J9SmgRvXDxvZJWaFQVYhbs=;
-        b=l2CbcaUi92IuR9bzQJofvNw9Xo6rkI2QUJ90EiRROAgHM25WEsVxr0oAtdquVd9sFA
-         mEb8pBhziq5zywPcRikYKHwn1XG2lB3xzYnux01Ihsu/FpIJ7KHn00NWGTJdNsSIM9c1
-         yx54t5Gbftf0aZwnDuKy6ieiqAo5nJRDpLtqQu05UaPVrS2FsCYiCvPvg9+7KS3SmkCu
-         W8Zkw9E2Bgjj9t1pnCdkRf1JYJm3bptY+UEasyAhCDZaRpM+SR/gS0pgiRWCoRa9BVwk
-         pLEsjvv7EFsrf7TQEHCPlSj/4h8opJGwojBII2KuH3Fd3oGOxp27B4x+wPDfZSWS0xKT
-         eqIA==
-X-Gm-Message-State: AOUpUlFloULn3EwClmCVgN81pMODfKcGUYtUqRg0SSnzYhrfnr4JH0+6
-        2nOIJrvE+XnyigenncvlIvs=
-X-Google-Smtp-Source: AAOMgpev4EXLS5twupEoWktG+YliRX/QAgf52IxrD6AxT2x1DSOZJ83Gr+NRsRmcKDzYtb40euMCGw==
-X-Received: by 2002:a25:63d6:: with SMTP id x205-v6mr789287ybb.248.1532087152044;
-        Fri, 20 Jul 2018 04:45:52 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:5c80])
-        by smtp.gmail.com with ESMTPSA id 141-v6sm757374ywj.65.2018.07.20.04.45.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 04:45:51 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 04:45:49 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-Message-ID: <20180720114549.GY72677@devbig577.frc2.facebook.com>
-References: <1529825440-9574-8-git-send-email-longman@redhat.com>
- <20180702165322.GI533219@devbig577.frc2.facebook.com>
- <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
- <20180703155823.GS533219@devbig577.frc2.facebook.com>
- <20180719135224.GE2494@hirez.programming.kicks-ass.net>
- <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
- <20180719153045.GT72677@devbig577.frc2.facebook.com>
- <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
- <20180719165201.GU72677@devbig577.frc2.facebook.com>
- <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
+        Fri, 20 Jul 2018 08:40:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OhwZMbh3gtfvdEsTwO4aH7CsfYi4+4DNW2aGjJ+np9g=; b=GvTu2EvYS6Zl13rmIvbn0R59n
+        h9kDY8DeKA8S8PuTPBwxfEsF6Tk6bla6iSdoOaIwKxZrcO8CyvOsH5pFZdHzXVQB+gu3nnd/LltZr
+        QtNS+Euouz3TXXiWzRVYMvyeYTX0JuctrYGng5TsYVDZz4gYtAhT9X+L8C5mxdwCHNG9l1E7j3Woh
+        wKQ+zFIyc7o2mmvCIlS/zxc4PZaf//7bTML1OXleho1cKM05+Pht96mY24W7kktLXSdfvcfZWE3N9
+        ZmoctWMtzmkil2A6Qm3fzG9NmT32jZa2rzx5D31VD6yBK/HbfKGXabDgBJRS8Qo2w5GC0Uu7QAGH5
+        /PWdt8/mQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fgTxK-00029b-Ad; Fri, 20 Jul 2018 11:52:18 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1D02220275F38; Fri, 20 Jul 2018 13:52:17 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 13:52:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] perf/core: fix a possible deadlock scenario
+Message-ID: <20180720115217.GQ2494@hirez.programming.kicks-ass.net>
+References: <20180719132834.GF18667@krava>
+ <20180719191253.3843-1-xiyou.wangcong@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180719191253.3843-1-xiyou.wangcong@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Jul 19, 2018 at 12:12:53PM -0700, Cong Wang wrote:
+> hrtimer_cancel() busy-waits for the hrtimer callback to stop,
+> pretty much like del_timer_sync(). This creates a possible deadlock
+> scenario where we hold a spinlock before calling hrtimer_cancel()
+> while in trying to acquire the same spinlock in the callback.
 
-On Fri, Jul 20, 2018 at 01:31:21PM +0200, Peter Zijlstra wrote:
-> On Thu, Jul 19, 2018 at 09:52:01AM -0700, Tejun Heo wrote:
-> > On Thu, Jul 19, 2018 at 11:52:46AM -0400, Waiman Long wrote:
-> > > BTW, the way the partition is currently implemented right now is that a
-> > > child cannot be a partition root unless its parent is a partition root
-> > > itself. That is to avoid turning on partition to affect ancestors
-> > > further up the hierarchy than just the parent. So in the case of a
-> > > container, it cannot allocate sub-partitions underneath it unless it is
-> > > a partition itself. Will that solve your concern?
-> > 
-> > Hmm... so a given ancestor must be able to both
-> > 
-> > 1. control which cpus are moved into a partition in all of its
-> >    subtree.
+Has this actually been observed?
+
+> cpu_clock_event_init():
+>   perf_swevent_init_hrtimer():
+>     hwc->hrtimer.function = perf_swevent_hrtimer;
 > 
-> By virtue of the partition file being owned by the parent, this is
-> already achived, no?
+> perf_swevent_hrtimer():
+>   __perf_event_overflow():
+>     __perf_event_account_interrupt():
+>       perf_adjust_period():
+>         pmu->stop():
+>         cpu_clock_event_stop():
+>           perf_swevent_cancel():
+>             hrtimer_cancel()
 
-The currently proposed implementation is somewhere in the middle.  It
-kinda gets there by restricting a partition to be a child of another
-partition, which may be okay but it does make the whole delegation
-mechanism less useful.
+Please explain how a hrtimer event ever gets to perf_adjust_period().
+Last I checked perf_swevent_init_hrtimer() results in attr.freq=0.
 
-> > 2. take away any given cpu from ist subtree.
-> 
-> I really hate this obsession of yours and doubly so for partitions. But
-> why would this currently not be allowed?
+> Getting stuck in an hrtimer is a disaster:
 
-Well, sorry that you hate it.  It's a fundamental architectural
-constraint.  If it can't satisfy that, it should't be in cgroup.
+You'll get NMI watchdog splats. Getting stuck in NMI context is far more
+'interesting :-)
 
-Thanks.
+> +#define PERF_EF_NO_WAIT	0x08		/* do not wait when stopping, for
+> +					 * example, waiting for a timer
+> +					 */
 
--- 
-tejun
+That's a broken comment style.
