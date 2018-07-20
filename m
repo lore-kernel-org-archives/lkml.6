@@ -2,354 +2,1507 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F577ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AEFECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C38782084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03A332084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:15:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BR4aMgOn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C38782084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="dABDWm6P";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tfx+Y2YY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A332084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbeGTF7g (ORCPT
+        id S1727333AbeGTGBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 01:59:36 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46805 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727243AbeGTF7f (ORCPT
+        Fri, 20 Jul 2018 02:01:45 -0400
+Received: from mail-yw0-f175.google.com ([209.85.161.175]:46044 "EHLO
+        mail-yw0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbeGTGBp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 01:59:35 -0400
-Received: by mail-pl0-f66.google.com with SMTP id t17-v6so2096170ply.13
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 22:13:09 -0700 (PDT)
+        Fri, 20 Jul 2018 02:01:45 -0400
+Received: by mail-yw0-f175.google.com with SMTP id 139-v6so3943846ywg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 22:15:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VDvFgMstMNS3GXulb34tKX2Tg2FRGvbBABdEy9AMBx0=;
-        b=BR4aMgOnI8VRnFtYQNSPf6bxtRHAkzr9+p9c4LnHiuBsAkUP0BanKn7GxmqV9Huhdp
-         NTSqakNVijn9Y6hDkJpH/96EWOBAzZnB5+uGxDFSKBJKbcVPJkYLbfzeyU486M/1dRk0
-         gm2q1B2wRcYPBSeCZcsjFPGXCRTQH+2B4TWtI=
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ejd+Ap5U7NDr3unxxE9s0g4mQ+byI+FZTRq/pOUADFw=;
+        b=dABDWm6PyD0Shxe9Zd2oORe1ZFsxCuMUZiHBr25McqxtIa6LvDegdiAwpH+qlVjgLk
+         4yIBxUp3jvJbJK4BAeutVSv+ArAvPQ9dLkXcDq0dn4dx3+KalgpIXG2MT2QPW/Nvqy95
+         rMdDEKbUBRglKoxqB46PZQsMJyPj+OdwjcqL08y1NCUPiDDVvVcqC9xdHwv8a0kw9XaX
+         fuc66okskXkKNY1M66JATWwANIIngK2wxZpf7PywbQUDi7/aEY8sAYuWU74DWF54Z0wT
+         YtPSNQHvFaNbRTDxHhtr11oTVRNRiEMXpelzeiWcc5RX3AOvAuspgktZb8TXuXl/cMUu
+         292Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ejd+Ap5U7NDr3unxxE9s0g4mQ+byI+FZTRq/pOUADFw=;
+        b=Tfx+Y2YYyJzLBRUKsWbG7j0qQbQzkM1+sw7DkYJR5YDMrifmM66lZqO50rhlwB0VAQ
+         3JzeFjhkuAerZySrWeXGuAxOHGO6ZkW6QKEJu3pzgeCllvhvTFSNAG/4SXKWXO5Qmfye
+         RLRFm2nIET8YSoFENacxl0kFZGt9qk0jOmt9k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VDvFgMstMNS3GXulb34tKX2Tg2FRGvbBABdEy9AMBx0=;
-        b=unLZI+VdbvhRqkfIKruXFi88iWf4wiWGsR9vspSB5W6W9sp3GQUMGkXfCi++92+YKA
-         8yQi/j5xBXyf52Z/vvDaviMeWM72fMPZV1bnpZ5//X5PZNRHPwYzWo+vK85rAZaUnbuY
-         vxIo+4L/R5PBTlIAR5MaGd4E7R4Ak25Hkhu8vGTvS7U+1FlWXAO4cWzaR23kj9QWN4QB
-         dOTXdm1b+RxXUgkoUrXaes2eSX06i7WYn0JSXoHsVEjd3IA72i36qmc7qReEAFcPfKam
-         mUDTpzwV9C6YRwdUQ5acRZs8y4TIk3xMmbDll99fn3QNJ9jBbESKOtUXBSLmkuPP82AZ
-         XQVw==
-X-Gm-Message-State: AOUpUlF8jdq5tKMl8Qrjb76A+280qsyv9XauCaRe3KcHTuLEVfAGl7y5
-        ShSqQlAqXSdfDud1HnTIt7r/xA==
-X-Google-Smtp-Source: AAOMgpdHE3u+YgfCdFdsMBp1dG4nY7m2tvCcx0rILFr4FNyff6ZZZaIzAsbdww47mIyAk7yV3HFblA==
-X-Received: by 2002:a17:902:2d24:: with SMTP id o33-v6mr680395plb.14.1532063588699;
-        Thu, 19 Jul 2018 22:13:08 -0700 (PDT)
-Received: from localhost ([122.171.235.75])
-        by smtp.gmail.com with ESMTPSA id d187-v6sm999466pfc.41.2018.07.19.22.13.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 22:13:08 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 10:43:06 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Jiada Wang <jiada_wang@mentor.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: potential deadlock in cpufreq-dt
-Message-ID: <20180720051306.w4gmhvgabcj4svkf@vireshk-i7>
-References: <9e5c2419-a3c4-45fa-75c4-dcc6d9e12d86@mentor.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=ejd+Ap5U7NDr3unxxE9s0g4mQ+byI+FZTRq/pOUADFw=;
+        b=RKcUJdGWwJrEG+PWbFoxIxDU6r6LMoLyvQmiyJNyUkQuy1Y1UT5h5S2GGSDANCsfQ6
+         rM7SXeNA9NnKcvIfgdgGm5l4XMIIvcS3++ABiUvmxPDNd8PVCgbu1zdbhYhtqQlN+T1g
+         CkkyiOCfYm3KPCmSAVmzoOaXV+8fYAxmI6+sc4sen6M/yWbZlhqAfK+khSaSelLuPF5l
+         fILv6ExjUOfO/Q7y1FpSHSGS3uYuy4Rn+hmG012HhnvMlybu8el+j9g6FC2crnmIYqQf
+         5DG1fCc2B6OeJHXPInphIVnn3L1e3gwYZfH4IhVZyDkMbYz7X0/1HX3Og1OO5tNx0rO4
+         32bA==
+X-Gm-Message-State: AOUpUlGD2vhGT7EPgyebLIU8RQISKp4h7Gg7K3hJNzMOumFm8SR16BHw
+        7xSg/iRgAguhuJ1QKDSFAWJsvoYDEubDZZXY7uHbLA==
+X-Google-Smtp-Source: AAOMgpd8BqYlWsO1YPm253x42MmMLDBsvBmBHBWbwZGcKhUH3rMSnvxzwkvTr8L6BoOZFI0PuCf0DQgltKyhUcbAXyI=
+X-Received: by 2002:a81:39d7:: with SMTP id g206-v6mr262159ywa.416.1532063716631;
+ Thu, 19 Jul 2018 22:15:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e5c2419-a3c4-45fa-75c4-dcc6d9e12d86@mentor.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 22:15:15
+ -0700 (PDT)
+In-Reply-To: <1531935483-30784-1-git-send-email-s.mesoraca16@gmail.com>
+References: <1531935483-30784-1-git-send-email-s.mesoraca16@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 19 Jul 2018 22:15:15 -0700
+X-Google-Sender-Auth: 3_3suFBYH302PODEi7bWy0bqS7U
+Message-ID: <CAGXu5jK4q6HLDZ6jokTeDABbzVasY85Jo0HFNKYeaKWZYPjPKg@mail.gmail.com>
+Subject: Re: [RFC] kconfig: add hardened defconfig helpers
+To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Laura Abbott <labbott@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ linux-pm list.
++lkml, Masahiro, and linux-doc, just for wider review/thoughts.
 
-On 19-07-18, 16:44, Jiada Wang wrote:
-> Hello all
-> 
-> After enable lockdep, by poking /sys/kernel/debug/sched_features,
-> I triggered the following lockdep report:
-> 
-> [   34.410559] ======================================================
-> [   34.416766] WARNING: possible circular locking dependency detected
-> [   34.422987] 4.14.50-03493-g65adcd3b74c9-dirty #203 Tainted: G C
-> [   34.450785] ------------------------------------------------------
-> [   34.457001] systemd-udevd/1490 is trying to acquire lock:
-> [   34.462432]  (
-> [   34.464102] opp_table_lock
-> [   34.466814] ){+.+.}
-> [   34.468932] , at: [<ffff0000084c3328>]
-> dev_pm_opp_get_opp_table+0x2c/0x140
-> [   34.475819]
->                but task is already holding lock:
-> [   34.481689]  (
-> [   34.483359] subsys mutex
-> [   34.485914] #6
-> [   34.487587] ){+.+.}
-> [   34.489701] , at: [<ffff0000084adc1c>]
-> subsys_interface_register+0x68/0x118
-> [   34.496677]
->                which lock already depends on the new lock.
-> 
-> [   34.504890]
->                the existing dependency chain (in reverse order) is:
-> [   34.512406]
->                -> #3
-> [   34.515836]  (
-> [   34.517505] subsys mutex
-> [   34.520045] #6
-> [   34.521715] ){+.+.}linux-kernel@vger.kernel.org
-> [   34.523819] :
-> [   34.525412]        __mutex_lock+0x94/0x840
-> [   34.529543]        mutex_lock_nested+0x1c/0x24
-> [   34.534022]        subsys_interface_register+0x68/0x118
-> [   34.539284]        cpufreq_register_driver+0x10c/0x1d8
-> [   34.544464]        dt_cpufreq_probe+0xcc/0x108 [cpufreq_dt]
-> [   34.550074]        platform_drv_probe+0x58/0xa8
-> [   34.554637]        driver_probe_device+0x200/0x2b4
-> [   34.559463]        __driver_attach+0x7c/0xac
-> [   34.563768]        bus_for_each_dev+0xa0/0xb8
-> [   34.568169]        driver_attach+0x20/0x28
-> [   34.568173]        bus_add_driver+0x19c/0x1d8
-> [   34.568177]        driver_register+0x98/0xd0
-> [   34.568187]        __platform_driver_register+0x48/0x50
-> [   34.568198]        dt_cpufreq_platdrv_init+0x18/0x1000 [cpufreq_dt]
-> [   34.568205]        do_one_initcall+0x120/0x13c
-> [   34.568212]        do_init_module+0x5c/0x1c8
-> [   34.568215]        load_module+0x20f0/0x2150
-> [   34.568218]        SyS_finit_module+0xd4/0xe8
-> [   34.568220]        el0_svc_naked+0x34/0x38
-> [   34.568224]
->                -> #2
-> [   34.568225]  (
-> [   34.568228] cpu_hotplug_lock.rw_sem
-> [   34.568229] ){++++}
-> [   34.568230] :
-> [   34.568236]        cpus_read_lock+0x54/0xcc
-> [   34.568241]        static_key_enable+0x14/0x2c
-> [   34.568247]        sched_feat_write+0xd0/0x1c4
-> [   34.568252]        full_proxy_write+0x6c/0xac
-> [   34.568257]        __vfs_write+0x34/0x138
-> [   34.568260]        vfs_write+0xc0/0x17c
-> [   34.568262]        SyS_write+0x60/0xb8
-> [   34.568265]        el0_svc_naked+0x34/0x38
-> [   34.568266]
->                -> #1
-> [   34.568267]  (
-> [   34.568269] &sb->s_type->i_mutex_key
-> [   34.568271] #3
-> [   34.568272] ){+.+.}
-> [   34.568273] :
-> [   34.568279]        down_write+0x48/0x84
-> [   34.568282]        start_creating+0x7c/0xd0
-> [   34.568284]        debugfs_create_dir+0x14/0xbc
-> [   34.568289]        opp_debug_register+0x68/0xa8
-> [   34.568293]        _add_opp_dev+0x78/0xb4
-> [   34.568296]        dev_pm_opp_get_opp_table+0x7c/0x140
-> [   34.568300]        dev_pm_opp_of_add_table+0x1e0/0x4a4
-> [   34.568306]        InitDVFS+0x7c/0x37c
-> [   34.568314]        PVRSRVDeviceCreate+0x324/0x610
-> [   34.568317]        pvr_drm_load+0x64/0x128
-> [   34.568322]        pvr_probe+0x70/0xa0
-> [   34.568325]        platform_drv_probe+0x58/0xa8
-> [   34.568328]        driver_probe_device+0x200/0x2b4
-> [   34.568331]        __driver_attach+0x7c/0xac
-> [   34.568334]        bus_for_each_dev+0xa0/0xb8
-> [   34.568337]        driver_attach+0x20/0x28
-> [   34.568340]        bus_add_driver+0x19c/0x1d8
-> [   34.568343]        driver_register+0x98/0xd0
-> [   34.568346]        __platform_driver_register+0x48/0x50
-> [   34.568352]        pvr_init+0x50/0x58
-> [   34.568355]        do_one_initcall+0x120/0x13c
-> [   34.568360]        kernel_init_freeable+0x26c/0x270
-> [   34.568366]        kernel_init+0x10/0xfc
-> [   34.568369]        ret_from_fork+0x10/0x18
-> [   34.568370]
->                -> #0
-> [   34.568372]  (
-> [   34.568373] opp_table_lock
-> [   34.568375] ){+.+.}
-> [   34.568376] :
-> [   34.568381]        lock_acquire+0x224/0x250
-> [   34.568384]        __mutex_lock+0x94/0x840
-> [   34.568387]        mutex_lock_nested+0x1c/0x24
-> [   34.568391]        dev_pm_opp_get_opp_table+0x2c/0x140
-> [   34.568394]        dev_pm_opp_set_regulators+0x30/0x190
-> [   34.568400]        cpufreq_init+0xe4/0x304 [cpufreq_dt]
-> [   34.568405]        cpufreq_online+0x174/0x5d8
-> [   34.568408]        cpufreq_add_dev+0x60/0x78linux-kernel@vger.kernel.org
-> [   34.568411]        subsys_interface_register+0x100/0x118
-> [   34.568414]        cpufreq_register_driver+0x10c/0x1d8
-> [   34.568419]        dt_cpufreq_probe+0xcc/0x108 [cpufreq_dt]
-> [   34.568422]        platform_drv_probe+0x58/0xa8
-> [   34.568425]        driver_probe_device+0x200/0x2b4
-> [   34.568428]        __driver_attach+0x7c/0xac
-> [   34.568431]        bus_for_each_dev+0xa0/0xb8
-> [   34.568433]        driver_attach+0x20/0x28
-> [   34.568436]        bus_add_driver+0x19c/0x1d8
-> [   34.568439]        driver_register+0x98/0xd0
-> [   34.568442]        __platform_driver_register+0x48/0x50
-> [   34.568448]        dt_cpufreq_platdrv_init+0x18/0x1000 [cpufreq_dt]
-> [   34.568450]        do_one_initcall+0x120/0x13c
-> [   34.568454]        do_init_module+0x5c/0x1c8
-> [   34.568457]        load_module+0x20f0/0x2150
-> [   34.568460]        SyS_finit_module+0xd4/0xe8
-> [   34.568462]        el0_svc_naked+0x34/0x38
-> [   34.568463]
->                other info that might help us debug this:
-> 
-> [   34.568465] Chain exists of:
-> 
-> [   34.568466] opp_table_lock
-> [   34.568468]  -->
-> [   34.568469] cpu_hotplug_lock.rw_sem
-> [   34.568470]  -->
-> [   34.568472] subsys mutex
-> [   34.568473] #6
-> [   34.568474]
-> 
-> [   34.568476]  Possible unsafe locking scenario:
-> 
-> [   34.568478]        CPU0                    CPU1
-> [   34.568479]        ----                    ----
-> [   34.568481]   lock(
-> [   34.568482] subsys mutex
-> [   34.568483] #6
-> [   34.568484] );
-> [   34.568485]                                lock(
-> [   34.568487] cpu_hotplug_lock.rw_sem
-> [   34.568488] );
-> [   34.568489]                                lock(
-> [   34.568490] subsys mutex
-> [   34.568491] #6
-> [   34.568492] );
-> [   34.568493]   lock(
-> [   34.568495] opp_table_lock
-> [   34.568496] );
-> [   34.568497]
->                 *** DEADLOCK ***
-> 
-> [   34.568500] 4 locks held by systemd-udevd/1490:
-> [   34.568501]  #0:
-> [   34.568503]  (
-> [   34.568504] &dev->mutex
-> [   34.568506] ){....}
-> [   34.568510] , at: [<ffff0000084aefd0>] __driver_attach+0x58/0xac
-> [   34.568511]  #1:
-> [   34.568512]  (
-> [   34.568513] &dev->mutex
-> [   34.568514] ){....}
-> [   34.568518] , at: [<ffff0000084aefe0>] __driver_attach+0x68/0xac
-> [   34.568519]  #2:
-> [   34.568520]  (
-> [   34.568522] cpu_hotplug_lock.rw_sem
-> [   34.568523] ){++++}
-> [   34.568526] , at: [<ffff00000857e728>] cpufreq_register_driver+0xa8/0x1d8
-> [   34.568527]  #3:
-> [   34.568528]  (
-> [   34.568530] subsys mutex
-> [   34.568531] #6
-> [   34.568532] ){+.+.}
-> [   34.568535] , at: [<ffff0000084adc1c>]
-> subsys_interface_register+0x68/0x118
-> [   34.568537]
->                stack backtrace:
-> [   34.568542] CPU: 1 PID: 1490 Comm: systemd-udevd Tainted: G         C
-> 4.14.50-03493-g65adcd3b3
-> [   34.568544] Hardware name: Renesas H3ULCB Kingfisher board based on
-> r8a7795 ES2.0+ (DT)
-> [   34.568548] Call trace:
-> [   34.568552] [<ffff000008089f20>] dump_backtrace+0x0/0x39c
-> [   34.568556] [<ffff00000808a2d0>] show_stack+0x14/0x1c
-> [   34.568561] [<ffff0000087774c0>] dump_stack+0xb0/0xf0
-> [   34.568565] [<ffff0000080f3c94>] print_circular_bug.isra.17+0x1e4/0x2c0
-> [   34.568568] [<ffff0000080f613c>] __lock_acquire+0xd0c/0x1750
-> [   34.568572] [<ffff0000080f73d0>] lock_acquire+0x224/0x250
-> [   34.568575] [<ffff00000878b24c>] __mutex_lock+0x94/0x840
-> [   34.568579] [<ffff00000878ba14>] mutex_lock_nested+0x1c/0x24
-> [   34.568583] [<ffff0000084c3328>] dev_pm_opp_get_opp_table+0x2c/0x140
-> [   34.568586] [<ffff0000084c35bc>] dev_pm_opp_set_regulators+0x30/0x190
-> [   34.568592] [<ffff000000979348>] cpufreq_init+0xe4/0x304 [cpufreq_dt]
-> [   34.568595] [<ffff00000857f1bc>] cpufreq_online+0x174/0x5d8
-> [   34.568599] [<ffff00000857f698>] cpufreq_add_dev+0x60/0x78
-> [   34.568602] [<ffff0000084adcb4>] subsys_interface_register+0x100/0x118
-> [   34.568605] [<ffff00000857e78c>] cpufreq_register_driver+0x10c/0x1d8
-> [   34.568610] [<ffff000000979634>] dt_cpufreq_probe+0xcc/0x108 [cpufreq_dt]
-> [   34.568614] [<ffff0000084b0f74>] platform_drv_probe+0x58/0xa8
-> [   34.568617] [<ffff0000084aeec4>] driver_probe_device+0x200/0x2b4
-> [   34.568620] [<ffff0000084aeff4>] __driver_attach+0x7c/0xac
-> [   34.568623] [<ffff0000084acfcc>] bus_for_each_dev+0xa0/0xb8
-> [   34.568626] [<ffff0000084ae748>] driver_attach+0x20/0x28
-> [   34.568629] [<ffff0000084ae2b8>] bus_add_driver+0x19c/0x1d8
-> [   34.568632] [<ffff0000084affb4>] driver_register+0x98/0xd0
-> [   34.568636] [<ffff0000084b0ecc>] __platform_driver_register+0x48/0x50
-> [   34.568641] [<ffff00000097e018>] dt_cpufreq_platdrv_init+0x18/0x1000
-> [cpufreq_dt]
-> [   34.568644] [<ffff000008083358>] do_one_initcall+0x120/0x13c
-> [   34.568648] [<ffff00000813cd1c>] do_init_module+0x5c/0x1c8
-> [   34.568651] [<ffff00000813c0ac>] load_module+0x20f0/0x2150
-> [   34.568654] [<ffff00000813c3d4>] SyS_finit_module+0xd4/0xe8
-> [   34.568656] Exception stack(0xffff00001eaf3ec0 to 0xffff00001eaf4000)
-> [   34.568661] 3ec0: 000000000000000f 0000ffff829aff78 0000000000000000
-> 000000000000000f
-> [   34.568664] 3ee0: 0000000000000000 0000000000041a40 ffffffffffffffff
-> ffffffffffffffff
-> [   34.568667] 3f00: 0000000000000111 0000000000000038 4f5e424aff524446
-> 0000000000000001
-> [   34.568670] 3f20: 0000000000000000 ffffffffffff0000 0000000000000001
-> 0000000000000020
-> [   34.568674] 3f40: 0000ffff829c0f80 0000ffff82aef440 0000000000000000
-> 0000aaab1c5e1cf0
-> [   34.568676] 3f60: 0000ffff829aff78 0000000000000000 0000000000020000
-> 0000aaab1c5d7940
-> [   34.568679] 3f80: 0000aaaae9f0c000 0000000000000000 0000000000000000
-> 0000aaaae9ed6e50
-> [   34.568682] 3fa0: 0000000000000000 0000ffffcbeec410 0000ffff829a98ac
-> 0000ffffcbeec410
-> [   34.568685] 3fc0: 0000ffff82aef464 0000000040000000 000000000000000f
-> 0000000000000111
-> [   34.568688] 3fe0: 0000000000000000 0000000000000000 0000000000000000
-> 0000000000000000
-> [   34.568691] [<ffff000008083080>] el0_svc_naked+0x34/0x38
-> 
-> 
-> the deadlock occurs between load of cpufreq-dt module and write to
-> /sys/kernel/debug/sched_features
-> 
-> in cpufreq-dt module, it acquires cpu_hotplug_lock.rw_sem then calls
-> subsys_interface_register()
-> which in turns will hold &sb->s_type->i_mutex_key.
+On Wed, Jul 18, 2018 at 10:38 AM, Salvatore Mesoraca
+<s.mesoraca16@gmail.com> wrote:
+> Adds 4 new defconfig helpers (hardenedlowconfig,
+> hardenedmediumconfig, hardenedhighconfig,
+> hardenedextremeconfig) to enable various hardening
+> features.
+> The list of config options to enable is based on
+> KSPP's Recommended Settings[1] and on
+> kconfig-hardened-check[2], with some modifications.
+> These options are divided into 4 levels (low, medium,
+> high, extreme) based on their negative side effects, not
+> on their usefulness.
+> 'Low' level collects all those protections that have
+> (almost) no negative side effects.
 
-That is done by cpufreq core actually and not cpufreq-dt and that
-makes me wondering on why only you are facing this issue and no one
-else reported it yet.
+Likely the "Low" should be on-by-default already, but it's easier to
+bike-shed that separately. :)
 
-> while write to sched_features,
-> firstly acquires &sb->s_type->i_mutex_key, then
-> hold cpu_hotplug_lock.rw_sem.
+> 'Extreme' level collects those protections that may have
+> some many negative side effects that most people
+> wouldn't want to enable them.
+> Every feature in each level is briefly documented in
+> Documentation/security/hardenedconfig.rst, this file
+> also contain a better explanation of what every level
+> means.
+> To prevent this file from drifting from what the various
+> defconfigs actually do, it is used to dynamically
+> generate the config fragments.
 
-I do see some OPP lock stuff in the logs. And I am not sure of what
-the real problem is as of now.
+I like that the configs are generated from the docs! This makes things
+very sane to update.
 
-> IMO, driver should not try to acquire &sb->s_type->i_mutex_key while holding
-> cpu_hotplug_lock.rw_sem.
+>
+> [1] http://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project/Recommended_Settings
+> [2] https://github.com/a13xp0p0v/kconfig-hardened-check
+>
+> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+> ---
+>  .gitignore                                 |    6 +
+>  Documentation/security/hardenedconfig.rst  | 1027 ++++++++++++++++++++++++++++
+>  Documentation/security/index.rst           |    1 +
+>  Makefile                                   |    6 +-
+>  scripts/kconfig/Makefile                   |   72 +-
+>  scripts/kconfig/build_hardened_fragment.sh |   54 ++
+>  6 files changed, 1143 insertions(+), 23 deletions(-)
+>  create mode 100644 Documentation/security/hardenedconfig.rst
+>  create mode 100755 scripts/kconfig/build_hardened_fragment.sh
+>
+> diff --git a/.gitignore b/.gitignore
+> index 97ba6b7..9141f85 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -132,3 +132,9 @@ all.config
+>
+>  # Kdevelop4
+>  *.kdev4
+> +
+> +# Generated config fragments
+> +kernel/configs/hardenedlow.config
+> +kernel/configs/hardenedmedium.config
+> +kernel/configs/hardenedhigh.config
+> +kernel/configs/hardenedextreme.config
 
-It has been well tested to be honest and everyone is using that. I
-really don't believe that it is the race that you mentioned.
+I wonder if there should be an explicit "generated/" subdirectory in
+kernel/configs/ ?
 
-You get it only when cpufreq-dt is a module ? what about built in
-driver ?
+> diff --git a/Documentation/security/hardenedconfig.rst b/Documentation/security/hardenedconfig.rst
+> new file mode 100644
+> index 0000000..04ae0d9
+> --- /dev/null
+> +++ b/Documentation/security/hardenedconfig.rst
+
+And thank you for doing this in .rst!
+
+> @@ -0,0 +1,1027 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +===============================
+> +Hardening Configuration Options
+> +===============================
+> +
+> +This is a list of configuration options that are useful for hardening purposes.
+> +These options are divided in 4 levels based on the magnitude of their negative
+> +side effects, not on their importance or usefulness:
+> +
+> +       - **Low**: Negligible performance impact. No user-space breakage.
+> +       - **Medium**: Some performance impact and/or user-space breakage for
+> +         few users.
+> +       - **High**: Notable performance impact and/or user-space breakage for
+> +         many users.
+> +       - **Extreme**: Big performance impact and/or user-space breakage for
+> +         most users.
+> +
+> +In other words: **Low** level contains protections that *everybody* can and
+> +should use; **Medium** level should be usable by *most people* without issues;
+> +**High** level may cause *some trouble*, especially from a *performance*
+> +perspective; **Extreme** level contains protections that *few people* may want
+> +to enable, some people will probably *cherry-pick* some options from here based
+> +on their needs.
+> +
+> +For further details about which option is included in each level, please read
+> +the description below, for more information on any particular option refer to
+> +their help page.
+> +
+> +The content of this list is automatically translated into *config fragments*
+> +that can be used to apply the suggested hardening options to your current
+> +configuration.
+> +To use them you just need to run ``make hardened$LEVELconfig`` (e.g.
+> +``make hardenedhighconfig``).
+> +
+> +
+> +
+> +CONFIG_ACPI_CUSTOM_METHOD=n
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+
+Rather than "self-protection", this is really about blocking direct
+kernel memory writing from userspace. Maybe "Kernel memory integrity"?
+
+> +
+> +This debug facility allows ACPI AML methods to be inserted and/or replaced
+> +without rebooting the system.
+> +This option is security sensitive, because it allows arbitrary kernel
+> +memory to be written to by root (uid=0) users, allowing them to bypass
+> +certain security measures (e.g. if root is not allowed to load additional
+> +kernel modules after boot, this feature may be used to override that
+> +restriction).
+> +
+> +
+> +CONFIG_BPF_JIT=n
+> +~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** Attack surface reduction
+
+This maybe should be clarified to "Kernel attack surface reduction"?
+
+> +
+> +Berkeley Packet Filter filtering capabilities are normally handled
+> +by an interpreter. This option allows kernel to generate a native
+> +code when filter is loaded in memory. This should speedup
+> +packet sniffing (libpcap/tcpdump).
+> +
+> +Note, admin should enable this feature changing:
+> +/proc/sys/net/core/bpf_jit_enable
+> +/proc/sys/net/core/bpf_jit_harden   (optional)
+> +/proc/sys/net/core/bpf_jit_kallsyms (optional)
+> +
+> +
+> +CONFIG_BPF_SYSCALL=n
+> +~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Attack surface reduction
+
+Same.
+
+> +
+> +Enable the bpf() system call that allows to manipulate eBPF
+> +programs and maps via file descriptors.
+> +
+> +
+> +CONFIG_BUG=y
+> +~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+
+This was a left-over mistaken prerequisite for hardened-usercopy.
+Without CONFIG_BUG, things will still stop kernel thread execution.
+It's just much less pretty. :P Perhaps, if kept, this should be listed
+as "Improved crash analysis" or "prerequisite"?
+
+> +
+> +Report BUG() conditions and kill the offending process.
+> +There are very few cases in which this won't be desirable.
+> +
+> +
+> +CONFIG_BUG_ON_DATA_CORRUPTION=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** Self-protection
+> +
+> +Select this option if the kernel should BUG when it encounters
+> +data corruption in kernel memory structures when they get checked
+> +for validity.
+> +
+> +
+> +CONFIG_CC_STACKPROTECTOR=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+
+"probabilistic kernel stack buffer overflow detection"?
+
+There are a lot of "buffer overflow detection" things, so naming which
+is which seems helpful, but is maybe overkill? "Self-protection" or
+"kernel memory integrity" covers it too... hmmm
+
+> +
+> +Turns on the "stack-protector" GCC feature. This feature puts,
+> +at the beginning of functions, a canary value on
+> +the stack just before the return address, and validates
+> +the value just before actually returning.  Stack based buffer
+> +overflows (that need to overwrite this return address) now also
+> +overwrite the canary, which gets detected and the attack is then
+> +neutralized via a kernel panic.
+> +
+> +
+> +CONFIG_CC_STACKPROTECTOR_STRONG=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+> +
+> +Functions will have the stack-protector canary logic added in any
+> +of the following conditions:
+> +
+> +- local variable's address used as part of the right hand side of an
+> +assignment or function argument
+> +- local variable is an array (or union containing an array),
+> +regardless of array type or length
+> +- uses register local variables
+> +
+> +This feature requires gcc version 4.9 or above, or a distribution
+> +gcc with the feature backported ("-fstack-protector-strong").
+> +
+> +On an x86 "defconfig" build, this feature adds canary checks to
+> +about 20% of all kernel functions, which increases the kernel code
+> +size by about 2%.
+
+bikeshed: I think both stack protector items should be "Low", but
+that's just me.
+
+> +
+> +
+> +CONFIG_COMPAT_BRK=n
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+
+This is a userspace defense. "Userspace brk ASLR"?
+
+> +
+> +Randomizing heap placement makes heap exploits harder, but it
+> +also breaks ancient binaries (including anything libc5 based).
+> +This option changes the bootup default to heap randomization
+> +disabled, and can be overridden at runtime by setting
+> +/proc/sys/kernel/randomize_va_space to 2.
+> +
+> +On non-ancient distros (post-2000 ones) N is usually a safe choice.
+> +
+> +
+> +CONFIG_COMPAT_VDSO=n
+> +~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** User space protection
+> +
+> +
+> +Map the VDSO to the predictable old-style address too.
+> +Glibc 2.3.3 is the only version that needs it, but
+> +OpenSUSE 9 contains a buggy "glibc 2.3.2".
+> +
+> +
+> +CONFIG_DEBUG_CREDENTIALS=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+> +
+> +Turn on some debug checking for credential management.
+> +These structs are often abused by attackers.
+> +
+> +
+> +CONFIG_DEBUG_LIST=y
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+
+bikeshed: Low
+
+> +**- Protection type:** Self-protection
+> +
+> +Turn on extended checks in the linked-list walking routines.
+> +These structs are often abused by attackers.
+> +
+> +
+> +CONFIG_DEBUG_NOTIFIERS=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+> +
+> +Turn on sanity checking for notifier call chains.
+> +These structs are often abused by attackers.
+> +
+> +
+> +CONFIG_DEBUG_SG=y
+> +~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+> +
+> +Turn on checks on scatter-gather tables.
+> +These structs could be abused by attackers.
+> +
+> +
+> +CONFIG_DEBUG_WX=y
+> +~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Generate a warning if any W+X mappings are found at boot.
+> +This is useful for discovering cases where the kernel is leaving W+X
+> +mappings after applying NX, as such mappings are a security risk.
+> +There is no runtime or memory usage effect of this option once the
+> +kernel has booted up - it's a one time check.
+> +
+> +
+> +CONFIG_DEFAULT_MMAP_MIN_ADDR=65536
+
+This is, unfortunately, architecture-specific. I'm not sure the best
+way to deal with that with the make target...
+
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +This is the portion of low virtual memory which should be protected
+> +from userspace allocation.  Keeping a user from writing to low pages
+> +can help reduce the impact of kernel NULL pointer bugs.
+> +
+> +This value can be changed after boot using the
+> +/proc/sys/vm/mmap_min_addr tunable.
+> +
+> +
+> +CONFIG_DEVKMEM=n
+> +~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +The /dev/kmem device can be used by root to access kernel virtual memory.
+> +It is rarely used, but can be used for certain kind of kernel debugging
+> +operations.
+> +
+> +
+> +CONFIG_DEVMEM=n
+> +~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+
+Why is this extreme?
+
+> +**- Protection type:** Self-protection
+> +
+> +The /dev/mem device is used to access areas of physical
+> +memory.
+> +
+> +
+> +CONFIG_FORTIFY_SOURCE=y
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Detect overflows of buffers in common string and memory functions
+> +where the compiler can determine and validate the buffer sizes.
+> +
+> +
+> +CONFIG_FTRACE=n
+> +~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Self-protection
+
+bikeshed: Kernel attack surface reduction
+
+> +
+> +Enable the kernel tracing infrastructure.
+> +
+> +
+> +CONFIG_GCC_PLUGINS=y
+> +~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+
+"prerequisite"
+
+> +
+> +GCC plugins are loadable modules that provide extra features to the
+> +compiler. They are useful for runtime instrumentation and static analysis.
+> +
+> +See Documentation/gcc-plugins.txt for details.
+> +
+> +
+> +CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** Self-protection
+> +
+> +With this pluging, the kernel will instrument some kernel code to
+> +extract some entropy from both original and artificially created
+> +program state. This will help especially embedded systems where
+> +there is little 'natural' source of entropy normally.  The cost
+> +is some slowdown of the boot process (about 0.5%) and fork and
+
+This doesn't feel like "high" to me.
+
+> +irq processing.
+> +Note that entropy extracted this way is not cryptographically
+> +secure!
+> +
+> +
+> +CONFIG_GCC_PLUGIN_RANDSTRUCT=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+
+This should surely be High or Extreme. It creates (nondeterministic)
+performance impact and makes crashes undebuggable.
+
+> +**- Protection type:** Self-protection
+> +
+> +With this pluging, the layouts of structures that are entirely
+> +function pointers (and have not been manually annotated with
+> +__no_randomize_layout), or structures that have been explicitly
+> +marked with __randomize_layout, will be randomized at compile-time.
+> +This can introduce the requirement of an additional information
+> +exposure vulnerability for exploits targeting these structure
+> +types.
+> +Enabling this feature will introduce some performance impact,
+> +slightly increase memory usage, and prevent the use of forensic
+> +tools like Volatility against the system (unless the kernel
+> +source tree isn't cleaned after kernel installation).
+> +
+> +
+> +CONFIG_GCC_PLUGIN_STRUCTLEAK=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+
+bikeshed: Low
+
+> +**- Protection type:** Self-protection
+> +
+> +This plugin zero-initializes any structures containing a
+> +__user attribute. This can prevent some classes of information
+> +exposures.
+> +
+> +
+> +CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+> +
+> +Zero initialize any struct type local variable that may be passed by
+> +reference without having been initialized.
+> +
+> +
+> +CONFIG_HARDENED_USERCOPY=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+
+bikeshed: Low (all distros have this enabled already)
+
+> +**- Protection type:** Self-protection
+> +
+> +This option checks for obviously wrong memory regions when
+> +copying memory to/from the kernel (via copy_to_user() and
+> +copy_from_user() functions) by rejecting memory ranges that
+> +are larger than the specified heap object, span multiple
+> +separately allocated pages, are not on the process stack,
+> +or are part of the kernel text. This kills entire classes
+> +of heap overflow exploits and similar kernel memory exposures.
+> +
+> +
+> +CONFIG_HARDENED_USERCOPY_FALLBACK=n
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** None / Aesthetical
+
+This is still self-protection (or "kernel memory integrity"). I would
+classify this as Low, but I could see an argument for Medium if
+someone trips over a missing whitelist.
+
+> +
+> +This is a temporary option that allows missing usercopy whitelists
+> +to be discovered via a WARN() to the kernel log, instead of
+> +rejecting the copy, falling back to non-whitelisted hardened
+> +usercopy that checks the slab allocation size instead of the
+> +whitelist size. This option will be removed once it seems like
+> +all missing usercopy whitelists have been identified and fixed.
+> +Booting with "slab_common.usercopy_fallback=Y/N" can change
+> +this setting.
+> +
+> +
+> +CONFIG_HIBERNATION=n
+> +~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Self-protection
+> +
+> +Enabling suspend to disk (STD) functionality (hibernation)
+> +allows replacement of running kernel.
+> +
+> +
+> +CONFIG_IA32_EMULATION=n
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Attack surface reduction
+> +
+> +Include code to run legacy 32-bit programs under a 64-bit kernel.
+> +
+> +
+> +CONFIG_INET_DIAG=n
+> +~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Attack surface reduction
+> +
+> +Support for INET (TCP, DCCP, etc) socket monitoring interface used by
+> +native Linux tools such as ss. ss is included in iproute2.
+> +In the past, this was used to help heap memory attacks.
+> +
+> +
+> +CONFIG_IO_STRICT_DEVMEM=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+
+bikeshed: Low (distros enable this already)
+
+> +**- Protection type:** Self-protection
+> +
+> +If this option is disabled, you allow userspace (root) access to
+> +all io-memory regardless of whether a driver is actively using that
+> +range. Accidental access to this is obviously disastrous, but
+> +specific access can be used by people debugging kernel drivers.
+> +If this option is switched on, the /dev/mem file only allows
+> +userspace access to *idle* io-memory ranges (see /proc/iomem)
+> +This may break traditional users of /dev/mem (dosemu, legacy X, etc...)
+> +if the driver using a given range cannot be disabled.
+> +
+> +
+> +CONFIG_KEXEC=n
+> +~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Attack surface reduction
+> +
+> +kexec is a system call that implements the ability to shutdown your
+> +current kernel, and to start another kernel.
+> +
+> +
+> +CONFIG_KEXEC_FILE=n
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Attack surface reduction
+> +
+> +Enable the kexec file based system call. In contrast to the normal
+> +kexec system call this system call takes file descriptors for the
+> +kernel and initramfs as arguments.
+> +
+> +
+> +CONFIG_KPROBES=n
+> +~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+> +
+> +Kprobes allows you to trap at almost any kernel address and
+> +execute a callback function.
+> +
+> +
+> +CONFIG_LEGACY_PTYS=n
+> +~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** User space protection
+> +
+> +Linux has traditionally used the BSD-like names /dev/ptyxx
+> +for masters and /dev/ttyxx for slaves of pseudo
+> +terminals. This scheme has a number of problems, including
+> +security. This option enables these legacy devices.
+> +
+> +
+> +CONFIG_LEGACY_VSYSCALL_NONE=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+
+A rapidly diminishing argument could be made for Medium here.
+
+> +**- Protection type:** User space protection
+> +
+> +There will be no vsyscall mapping at all. This will
+> +eliminate any risk of ASLR bypass due to the vsyscall
+> +fixed address mapping. Attempts to use the vsyscalls
+> +will be reported to dmesg, so that either old or
+> +malicious userspace programs can be identified.
+> +
+> +
+> +CONFIG_LIVEPATCH=n
+> +~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Self-protection
+> +
+> +Kernel live patching support allows root to modify the running
+> +kernel. This is mainly used to apply security updates without
+> +rebooting, but it might be abused.
+> +
+> +
+> +CONFIG_EXPERT=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** None
+
+"prerequisite"?
+
+> +
+> +Needed to change CONFIG_MODIFY_LDT_SYSCALL.
+> +
+> +
+> +CONFIG_MODIFY_LDT_SYSCALL=n
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Attack surface reduction
+> +
+> +Linux can allow user programs to install a per-process x86
+> +Local Descriptor Table (LDT) using the modify_ldt(2) system
+> +call. This is required to run 16-bit or segmented code such as
+> +DOSEMU or some Wine programs. It is also used by some very old
+> +threading libraries.
+> +
+> +
+> +CONFIG_MODULES=n
+> +~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Self-protection
+> +
+> +Kernel modules are small pieces of compiled code which can
+> +be inserted in the running kernel, rather than being
+> +permanently built into the kernel.
+> +
+> +
+> +CONFIG_MODULE_SIG=y
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Check modules for valid signatures upon load: the signature
+> +is simply appended to the module.
+> +
+> +
+> +CONFIG_MODULE_SIG_ALL=y
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Sign all modules during make modules_install. Without this option,
+> +modules must be signed manually, using the scripts/sign-file tool.
+> +
+> +
+> +CONFIG_MODULE_SIG_FORCE=n
+> +~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Reject unsigned modules or signed modules for which we don't have a
+> +key. Without this, such modules will simply taint the kernel.
+> +
+> +
+> +CONFIG_MODULE_SIG_FORCE=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** Self-protection
+> +
+> +Reject unsigned modules or signed modules for which we don't have a
+> +key. Without this, such modules will simply taint the kernel.
+> +
+> +
+> +CONFIG_MODULE_SIG_HASH="sha512"
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +This determines which sort of hashing algorithm will be used during
+> +signature generation.
+> +
+> +
+> +CONFIG_MODULE_SIG_SHA512=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +This determines which sort of hashing algorithm will be used during
+> +signature generation.
+> +
+> +
+> +CONFIG_PAGE_POISONING=y
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** Self-protection
+> +
+> +Fill the pages with poison patterns after free_pages() and verify
+> +the patterns before alloc_pages. The filling of the memory helps
+> +reduce the risk of information leaks from freed data. This does
+> +have a potential performance impact.
+> +Needs "page_poison=1" command line.
+> +
+> +
+> +CONFIG_PAGE_POISONING_NO_SANITY=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** Self-protection
+> +
+> +Skip the sanity checking on alloc, only fill the pages with
+> +poison on free. This reduces some of the overhead of the
+> +poisoning feature.
+> +
+> +
+> +CONFIG_PAGE_POISONING_NO_SANITY=n
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Self-protection
+> +
+> +Skip the sanity checking on alloc, only fill the pages with
+> +poison on free. This reduces some of the overhead of the
+> +poisoning feature.
+> +
+> +
+> +CONFIG_PAGE_POISONING_ZERO=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** Self-protection
+> +
+> +Instead of using the existing poison value, fill the pages with
+> +zeros. This makes it harder to detect when errors are occurring
+> +due to sanitization but the zeroing at free means that it is
+> +no longer necessary to write zeros when GFP_ZERO is used on
+> +allocation.
+> +
+> +
+> +CONFIG_PAGE_TABLE_ISOLATION=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+
+Oof. This needs to always be on... but it does have a high cost.
+
+> +**- Protection type:** Self-protection
+> +
+> +This feature reduces the number of hardware side channels by
+> +ensuring that the majority of kernel addresses are not mapped
+> +into userspace.
+> +
+> +See Documentation/x86/pti.txt for more details.
+> +
+> +
+> +CONFIG_PANIC_ON_OOPS=y
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Self-protection
+> +
+> +Say Y here to enable the kernel to panic when it oopses. This
+> +has the same effect as setting oops=panic on the kernel command
+> +line.
+> +
+> +
+> +CONFIG_PANIC_TIMEOUT=-1
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Self-protection
+> +
+> +Set the timeout value (in seconds) until a reboot occurs when the
+> +the kernel panics. If n = 0, then we wait forever. A timeout
+> +value n > 0 will wait n seconds before rebooting, while a timeout
+> +value n < 0 will reboot immediately.
+> +
+> +
+> +CONFIG_PROC_KCORE=n
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+> +
+> +Provides a virtual ELF core file of the live kernel. This can
+> +be read with gdb and other ELF tools, exposing kernel layout.
+> +
+> +
+> +CONFIG_PROFILING=n
+> +~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+> +**- Protection type:** Attack surface reduction
+> +
+> +Enable the extended profiling support mechanisms used
+> +by profilers such as OProfile.
+> +
+> +
+> +CONFIG_RANDOMIZE_BASE=y
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Randomizes the physical and virtual address at which the
+> +kernel image is loaded, as a security feature that
+> +deters exploit attempts relying on knowledge of the location
+> +of kernel internals.
+> +
+> +
+> +CONFIG_RANDOMIZE_MEMORY=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Randomizes the base virtual address of kernel memory sections
+> +(physical memory mapping, vmalloc & vmemmap). This security feature
+> +makes exploits relying on predictable memory locations less reliable.
+> +
+> +
+> +CONFIG_REFCOUNT_FULL=y
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+
+I'd put this Medium. Though some architectures use this by default (arm64, arm).
+
+> +**- Protection type:** Self-protection
+> +
+> +Enabling this switches the refcounting infrastructure from a fast
+> +unchecked atomic_t implementation to a fully state checked
+> +implementation, which can be (slightly) slower but provides protections
+> +against various use-after-free conditions that can be used in
+> +security flaw exploits.
+> +
+> +
+> +CONFIG_RETPOLINE=y
+> +~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** Self-protection
+> +
+> +Compile kernel with the retpoline compiler options to guard against
+> +kernel-to-user data leaks by avoiding speculative indirect
+> +branches. Requires a compiler with -mindirect-branch=thunk-extern
+> +support for full protection. The kernel may run slower.
+> +
+> +Without compiler support, at least indirect branches in assembler
+> +code are eliminated. Since this includes the syscall entry path,
+> +it is not entirely pointless.
+> +
+> +
+> +CONFIG_SCHED_STACK_END_CHECK=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +This option checks for a stack overrun on calls to schedule().
+> +If the stack end location is found to be over written always panic as
+> +the content of the corrupted region can no longer be trusted.
+> +This is to ensure no erroneous behaviour occurs which could result in
+> +data corruption or a sporadic crash at a later stage once the region
+> +is examined. The runtime overhead introduced is minimal.
+> +
+> +
+> +CONFIG_SECCOMP=y
+> +~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** User space protection / Attack surface reduction
+> +
+> +This kernel feature is useful for number crunching applications
+> +that may need to compute untrusted bytecode during their
+> +execution.
+> +
+> +
+> +CONFIG_SECCOMP_FILTER=y
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** User space protection / Attack surface reduction
+> +
+> +Enable tasks to build secure computing environments defined
+> +in terms of Berkeley Packet Filter programs which implement
+> +task-defined system call filtering polices.
+> +
+> +See Documentation/prctl/seccomp_filter.txt for details.
+> +
+> +
+> +CONFIG_SECURITY=y
+> +~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Generic
+> +
+> +This allows you to choose different security modules to be
+> +configured into your kernel.
+> +
+> +
+> +CONFIG_SECURITY_DMESG_RESTRICT=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** Self-protection
+> +
+> +This enforces restrictions on unprivileged users reading the kernel
+> +syslog via dmesg(8).
+> +
+> +
+> +CONFIG_SECURITY_SELINUX_DISABLE=n
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Generic
+> +
+> +This option enables writing to a selinuxfs node 'disable', which
+> +allows SELinux to be disabled at runtime prior to the policy load.
+> +SELinux will then remain disabled until the next boot.
+> +
+> +
+> +CONFIG_SECURITY_YAMA=y
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** User space protection
+> +
+> +This selects Yama, which extends DAC support with additional
+> +system-wide security settings beyond regular Linux discretionary
+> +access controls. Currently available is ptrace scope restriction.
+> +
+> +
+> +CONFIG_SLAB_FREELIST_HARDENED=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+
+I think this is Low.
+
+> +**- Protection type:** Self-protection
+> +
+> +Many kernel heap attacks try to target slab cache metadata and
+> +other infrastructure. This options makes minor performance
+> +sacrifies to harden the kernel slab allocator against common
+> +freelist exploit methods.
+> +
+> +
+> +CONFIG_SLAB_FREELIST_RANDOM=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+
+Low
+
+> +**- Protection type:** Self-protection
+> +
+> +Randomizes the freelist order used on creating new pages. This
+> +security feature reduces the predictability of the kernel slab
+> +allocator against heap overflows.
+> +
+> +
+> +CONFIG_SLUB_DEBUG=y
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+
+This should be Low, since it doesn't actually do anything until you
+enable features on the cmdline.
+
+> +**- Protection type:** Self-protection
+> +
+> +Enalbe SLUB debug support features.
+> +
+> +
+> +CONFIG_SLUB_DEBUG_ON=y
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** Self-protection
+> +
+> +Boot with debugging on by default. SLUB debugging may be switched
+> +off in a kernel built with CONFIG_SLUB_DEBUG_ON by specifying
+> +"slub_debug=-".
+> +
+> +
+> +CONFIG_STATIC_USERMODEHELPER=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Extreme
+
+I mean, this SHOULD be Low but no distro has actually implemented a
+helper to do this yet.
+
+> +**- Protection type:** Attack surface reduction
+> +
+> +By default, the kernel can call many different userspace
+> +binary programs through the "usermode helper" kernel
+> +interface.  Some of these binaries are statically defined
+> +either in the kernel code itself, or as a kernel configuration
+> +option.  However, some of these are dynamically created at
+> +runtime, or can be modified after the kernel has started up.
+> +To provide an additional layer of security, route all of these
+> +calls through a single executable that can not have its name
+> +changed.
+> +
+> +Note, it is up to this single binary to then call the relevant
+> +"real" usermode helper binary, based on the first argument
+> +passed to it.  If desired, this program can filter and pick
+> +and choose what real programs are called.
+> +
+> +If you wish for all usermode helper programs are to be
+> +disabled, choose this option and then set
+> +STATIC_USERMODEHELPER_PATH to an empty string.
+> +
+> +
+> +CONFIG_STRICT_DEVMEM=y
+
+I feel like this should be near IO_DEVMEM and DEVMEM
+
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +If this option is disabled, you allow userspace (root) access
+> +to all of memory, including kernel and userspace memory.
+> +Accidental access to this is obviously disastrous, but specific
+> +access can be used by people debugging the kernel.
+> +If this option is switched on, the /dev/mem file only allows
+> +userspace access to memory mapped peripherals.
+> +
+> +
+> +CONFIG_STRICT_KERNEL_RWX=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Kernel text and rodata memory will be made read-only, and non-text memory will
+> +be made non-executable. This provides protection against certain security
+> +exploits (e.g. executing the heap or modifying text).
+> +These features are considered standard security practice these days.
+> +
+> +
+> +CONFIG_STRICT_MODULE_RWX=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +If this is set, module text and rodata memory will be made read-only,
+> +and non-text memory will be made non-executable. This provides
+> +protection against certain security exploits (e.g. writing to text)
+> +
+> +
+> +CONFIG_SYN_COOKIES=y
+> +~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** User space protection
+> +
+> +Normal TCP/IP networking is open to an attack known as "SYN flooding".
+> +This denial-of-service attack prevents legitimate remote users from being
+> +able to connect to your computer during an ongoing attack and requires very
+> +little work from the attacker, who can operate from anywhere on the Internet.
+> +SYN cookies provide protection against this type of attack.
+> +SYN cookies may prevent correct error reporting on clients when the server is
+> +really overloaded. If this happens frequently better turn them off.
+> +Note that SYN cookies aren't enabled by default; you can enable them by saying
+> +Y to "/proc file system support" and "Sysctl support" below and executing the
+> +command:
+> +
+> +echo 1 >/proc/sys/net/ipv4/tcp_syncookies
+> +
+> +at boot time after the /proc file system has been mounted.
+> +
+> +
+> +CONFIG_THREAD_INFO_IN_TASK=y
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Move thread_info off the stack into task_struct.
+> +
+> +
+> +CONFIG_UPROBES=n
+> +~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** High
+> +**- Protection type:** User space protection
+> +
+> +Uprobes is the user-space counterpart to kprobes: they
+> +enable instrumentation applications (such as 'perf probe')
+> +to establish unintrusive probes in user-space binaries and
+> +libraries, by executing handler functions when the probes
+> +are hit by user-space applications.
+> +
+> +
+> +CONFIG_USER_NS=n
+> +~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+
+Unfortunately I think this is High or Extreme. USER_NS gets a lot of use.
+
+> +**- Protection type:** Attack surface reduction
+> +
+> +This allows containers to use user namespaces to provide different
+> +user info for different servers.
+> +User namespaces have been abused in the past for privilege
+> +escalation.
+> +
+> +
+> +CONFIG_VMAP_STACK=y
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Low
+> +**- Protection type:** Self-protection
+> +
+> +Enable this if you want the use virtually-mapped kernel stacks
+> +with guard pages. This causes kernel stack overflows to be
+> +caught immediately rather than causing difficult-to-diagnose
+> +corruption.
+> +This is presently incompatible with KASAN.
+> +
+> +
+> +CONFIG_X86_SMAP=y
+> +~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+
+This is Low.
+
+> +**- Protection type:** Self-protection
+> +
+> +Supervisor Mode Access Prevention (SMAP) is a security feature in newer
+> +Intel processors. There is a small performance cost if this enabled and
+> +turned on; there is also a small increase in the kernel size if this is
+> +enabled.
+> +
+> +
+> +CONFIG_X86_INTEL_MPX=y
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+> +**- Protection type:** User space protection
+
+No idea what to do with this one. Support is being removed, etc.
+
+> +
+> +MPX provides hardware features that can be used in conjunction with
+> +compiler-instrumented code to check memory references. It is designed
+> +to detect buffer overflow or underflow bugs.
+> +This option enables running applications which are instrumented or
+> +otherwise use MPX. It does not use MPX itself inside the kernel or to
+> +protect the kernel against bad memory references.
+> +
+> +
+> +CONFIG_X86_INTEL_UMIP=y
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +**Negative side effects level:** Medium
+
+Low?
+
+> +**- Protection type:** Information leak prevention
+> +
+> +The User Mode Instruction Prevention (UMIP) is a security feature in newer
+> +Intel processors. If enabled, a general protection fault is issued if the
+> +SGDT, SLDT, SIDT, SMSW or STR instructions are executed in user mode.
+> +These instructions unnecessarily expose information about the hardware state.
+> +The vast majority of applications do not use these instructions. For the very
+> +few that do, software emulation is provided in specific cases in protected and
+> +virtual-8086 modes. Emulated results are dummy.
+> diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
+> index 85492bf..01b8265 100644
+> --- a/Documentation/security/index.rst
+> +++ b/Documentation/security/index.rst
+> @@ -13,3 +13,4 @@ Security Documentation
+>     SELinux-sctp
+>     self-protection
+>     tpm/index
+> +   hardenedconfig
+> diff --git a/Makefile b/Makefile
+> index a89d8a0..e967504 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1282,7 +1282,11 @@ MRPROPER_FILES += .config .config.old .version \
+>                   Module.symvers tags TAGS cscope* GPATH GTAGS GRTAGS GSYMS \
+>                   signing_key.pem signing_key.priv signing_key.x509     \
+>                   x509.genkey extra_certificates signing_key.x509.keyid \
+> -                 signing_key.x509.signer vmlinux-gdb.py
+> +                 signing_key.x509.signer vmlinux-gdb.py        \
+> +                 kernel/configs/hardenedlow.config     \
+> +                 kernel/configs/hardenedmedium.config  \
+> +                 kernel/configs/hardenedhigh.config    \
+> +                 kernel/configs/hardenedextreme.config
+>
+>  # clean - Delete most, but leave enough to build external modules
+>  #
+> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+> index a3ac2c9..b5ebb13 100644
+> --- a/scripts/kconfig/Makefile
+> +++ b/scripts/kconfig/Makefile
+> @@ -100,6 +100,16 @@ endif
+>
+>  configfiles=$(wildcard $(srctree)/kernel/configs/$@ $(srctree)/arch/$(SRCARCH)/configs/$@)
+>
+> +hardened%.config:
+> +       $(srctree)/scripts/kconfig/build_hardened_fragment.sh \
+
+I think this needs explicit execution (as you do a few lines later) with:
+
+    $(CONFIG_SHELL) $(srctree)/scripts/kconfig/build_hardened_fragment.sh \
+...
+
+since the execute bit regularly gets lost in vcs, bundles, etc.
+
+> +       $* $(srctree)/Documentation/security/hardenedconfig.rst > \
+> +       $(srctree)/kernel/configs/hardened$*.config
+> +       $(eval configfiles += $(srctree)/kernel/configs/hardened$*.config)
+> +
+> +       $(if $(call configfiles),, $(error No configuration exists for this target on this architecture))
+> +       $(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh -m .config $(configfiles)
+> +       +$(Q)yes "" | $(MAKE) -f $(srctree)/Makefile oldconfig
+> +
+>  %.config: $(obj)/conf
+>         $(if $(call configfiles),, $(error No configuration exists for this target on this architecture))
+>         $(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh -m .config $(configfiles)
+> @@ -117,6 +127,16 @@ PHONY += tinyconfig
+>  tinyconfig:
+>         $(Q)$(MAKE) -f $(srctree)/Makefile allnoconfig tiny.config
+>
+> +PHONY += hardenedlowconfig hardenedmediumconfig hardenedhighconfig hardenedextremeconfig
+> +hardenedlowconfig: hardenedlow.config
+> +       @:
+> +hardenedmediumconfig: hardenedmedium.config
+> +       @:
+> +hardenedhighconfig: hardenedhigh.config
+> +       @:
+> +hardenedextremeconfig: hardenedextreme.config
+> +       @:
+> +
+>  # CHECK: -o cache_dir=<path> working?
+>  PHONY += testconfig
+>  testconfig: $(obj)/conf
+> @@ -127,28 +147,36 @@ clean-dirs += tests/.cache
+>
+>  # Help text used by make help
+>  help:
+> -       @echo  '  config          - Update current config utilising a line-oriented program'
+> -       @echo  '  nconfig         - Update current config utilising a ncurses menu based program'
+> -       @echo  '  menuconfig      - Update current config utilising a menu based program'
+> -       @echo  '  xconfig         - Update current config utilising a Qt based front-end'
+> -       @echo  '  gconfig         - Update current config utilising a GTK+ based front-end'
+> -       @echo  '  oldconfig       - Update current config utilising a provided .config as base'
+> -       @echo  '  localmodconfig  - Update current config disabling modules not loaded'
+> -       @echo  '  localyesconfig  - Update current config converting local mods to core'
+> -       @echo  '  defconfig       - New config with default from ARCH supplied defconfig'
+> -       @echo  '  savedefconfig   - Save current config as ./defconfig (minimal config)'
+> -       @echo  '  allnoconfig     - New config where all options are answered with no'
+> -       @echo  '  allyesconfig    - New config where all options are accepted with yes'
+> -       @echo  '  allmodconfig    - New config selecting modules when possible'
+> -       @echo  '  alldefconfig    - New config with all symbols set to default'
+> -       @echo  '  randconfig      - New config with random answer to all options'
+> -       @echo  '  listnewconfig   - List new options'
+> -       @echo  '  olddefconfig    - Same as oldconfig but sets new symbols to their'
+> -       @echo  '                    default value without prompting'
+> -       @echo  '  kvmconfig       - Enable additional options for kvm guest kernel support'
+> -       @echo  '  xenconfig       - Enable additional options for xen dom0 and guest kernel support'
+> -       @echo  '  tinyconfig      - Configure the tiniest possible kernel'
+> -       @echo  '  testconfig      - Run Kconfig unit tests (requires python3 and pytest)'
+
+Can these whitespace changes be avoided?
+
+> +       @echo  '  config                - Update current config utilising a line-oriented program'
+> +       @echo  '  nconfig               - Update current config utilising a ncurses menu based program'
+> +       @echo  '  menuconfig            - Update current config utilising a menu based program'
+> +       @echo  '  xconfig               - Update current config utilising a Qt based front-end'
+> +       @echo  '  gconfig               - Update current config utilising a GTK+ based front-end'
+> +       @echo  '  oldconfig             - Update current config utilising a provided .config as base'
+> +       @echo  '  localmodconfig        - Update current config disabling modules not loaded'
+> +       @echo  '  localyesconfig        - Update current config converting local mods to core'
+> +       @echo  '  defconfig             - New config with default from ARCH supplied defconfig'
+> +       @echo  '  savedefconfig         - Save current config as ./defconfig (minimal config)'
+> +       @echo  '  allnoconfig           - New config where all options are answered with no'
+> +       @echo  '  allyesconfig          - New config where all options are accepted with yes'
+> +       @echo  '  allmodconfig          - New config selecting modules when possible'
+> +       @echo  '  alldefconfig          - New config with all symbols set to default'
+> +       @echo  '  randconfig            - New config with random answer to all options'
+> +       @echo  '  listnewconfig         - List new options'
+> +       @echo  '  olddefconfig          - Same as oldconfig but sets new symbols to their'
+> +       @echo  '                          default value without prompting'
+> +       @echo  '  kvmconfig             - Enable additional options for kvm guest kernel support'
+> +       @echo  '  xenconfig             - Enable additional options for xen dom0 and guest kernel support'
+> +       @echo  '  tinyconfig            - Configure the tiniest possible kernel'
+> +       @echo  '  testconfig            - Run Kconfig unit tests (requires python3 and pytest)'
+> +       @echo  '  hardenedlowconfig     - Update current config using hardened features with'
+> +       @echo  '                          few negative side effects'
+> +       @echo  '  hardenedmediumconfig  - Update current config using hardened features with'
+> +       @echo  '                          some negative side effects'
+> +       @echo  '  hardenedhighconfig    - Update current config using hardened features with'
+> +       @echo  '                          many negative side effects'
+> +       @echo  '  hardenedextremeconfig - Update current config using hardened features with'
+> +       @echo  '                          even more negative side effects'
+>
+>  # ===========================================================================
+>  # Shared Makefile for the various kconfig executables:
+> diff --git a/scripts/kconfig/build_hardened_fragment.sh b/scripts/kconfig/build_hardened_fragment.sh
+> new file mode 100755
+> index 0000000..92c589a
+> --- /dev/null
+> +++ b/scripts/kconfig/build_hardened_fragment.sh
+> @@ -0,0 +1,54 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +#  build_hardened_fragment.sh - Generate a config fragment from an .rst
+> +#  file for the specified level.
+> +#
+> +#  Copyright 2018 Salvatore Mesoraca <s.mesoraca16@gmail.com>
+> +#
+> +#  This program is free software; you can redistribute it and/or modify
+> +#  it under the terms of the GNU General Public License version 2 as
+> +#  published by the Free Software Foundation.
+> +#
+> +#  This program is distributed in the hope that it will be useful,
+> +#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+> +#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+> +#  See the GNU General Public License for more details.
+> +
+> +usage() {
+> +       echo "Usage: $0 <level> <file.rst>"
+> +       echo "Level must be one of: low, medium, high, extreme."
+
+I would send these to stderr:   >&2
+
+> +       exit 1
+> +}
+> +
+> +if [ "$#" -ne 2 ]; then
+> +       usage
+> +fi
+> +
+> +LEVEL="$(echo $1 | tr [A-Z] [a-z])"
+> +INPUT="$2"
+> +
+> +if [ "$LEVEL" != "low" ] && \
+> +   [ "$LEVEL" != "medium" ] && \
+> +   [ "$LEVEL" != "high" ] && \
+> +   [ "$LEVEL" != "extreme" ]; then
+> +       usage
+> +fi
+> +
+> +if ! [ -f "$INPUT" ]; then
+> +       usage
+> +fi
+> +
+> +if [ "$LEVEL" = "medium" ]; then
+> +       LEVEL="(low|medium)"
+> +elif [ "$LEVEL" = "high" ]; then
+> +       LEVEL="(low|medium|high)"
+> +elif [ "$LEVEL" = "extreme" ]; then
+> +       LEVEL="(low|medium|high|extreme)"
+> +fi
+> +
+> +egrep -B3 -i "^\*\*Negative side effects level:\*\* $LEVEL$" "$INPUT" | \
+> +grep "^CONFIG_" | \
+> +sed 's/^\(.*\)=[nN]/# \1 is not set/'
+> +
+> +exit 0
+> --
+> 1.9.1
+>
+
+Cool! I think being able to point into this document from the
+self-protection.rst will be nice.
+
+-Kees
 
 -- 
-viresh
+Kees Cook
+Pixel Security
