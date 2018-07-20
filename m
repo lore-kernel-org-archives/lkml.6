@@ -2,234 +2,102 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E666ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F1CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4253B20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:17:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4253B20673
+	by mail.kernel.org (Postfix) with ESMTP id EB2D9206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:18:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2D9206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbeGTLFS (ORCPT
+        id S1728384AbeGTLGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:05:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47178 "EHLO mx1.redhat.com"
+        Fri, 20 Jul 2018 07:06:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36926 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727179AbeGTLFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:05:18 -0400
+        id S1727179AbeGTLGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 07:06:06 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DF23E87A75;
-        Fri, 20 Jul 2018 10:17:43 +0000 (UTC)
-Received: from krava (unknown [10.43.17.196])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A01101C5B4;
-        Fri, 20 Jul 2018 10:17:40 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 12:17:40 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Lukasz Odzioba <lukasz.odzioba@intel.com>,
-        Wang Nan <wangnan0@huawei.com>, kernel-team@lge.com
-Subject: [PATCHv3 4/4] perf tools: Fix struct comm_str removal crash
-Message-ID: <20180720101740.GA27176@krava>
-References: <20180719143345.12963-1-jolsa@kernel.org>
- <20180719143345.12963-5-jolsa@kernel.org>
- <20180719182843.GA2812@kernel.org>
- <20180719183114.GB2812@kernel.org>
- <20180720012055.GA8457@sejong>
+        by mx1.redhat.com (Postfix) with ESMTPS id A93A081A4EB7;
+        Fri, 20 Jul 2018 10:18:32 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (ovpn-204-189.brq.redhat.com [10.40.204.189])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 723CA1C5B4;
+        Fri, 20 Jul 2018 10:18:29 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Rik van Riel <riel@surriel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Mike Galbraith <efault@gmx.de>,
+        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
+References: <20180716190337.26133-1-riel@surriel.com>
+        <20180716190337.26133-5-riel@surriel.com>
+        <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com>
+        <B6566AA4-2E8A-43BD-A224-0F6D4747B8FB@surriel.com>
+        <F93A3335-4830-4E36-9179-D0FA5D640C8A@amacapital.net>
+        <B976CC13-D014-433A-83DE-F8DF9AB4F421@surriel.com>
+        <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
+        <87muumtjwd.fsf@vitty.brq.redhat.com>
+        <20180720094906.GP2494@hirez.programming.kicks-ass.net>
+Date:   Fri, 20 Jul 2018 12:18:28 +0200
+In-Reply-To: <20180720094906.GP2494@hirez.programming.kicks-ass.net> (Peter
+        Zijlstra's message of "Fri, 20 Jul 2018 11:49:06 +0200")
+Message-ID: <87fu0etdl7.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180720012055.GA8457@sejong>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 20 Jul 2018 10:17:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 20 Jul 2018 10:17:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 10:18:32 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 20 Jul 2018 10:18:32 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 10:20:55AM +0900, Namhyung Kim wrote:
-> Hi Arnaldo,
-> 
-> On Thu, Jul 19, 2018 at 03:31:14PM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Thu, Jul 19, 2018 at 03:28:43PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > > Em Thu, Jul 19, 2018 at 04:33:45PM +0200, Jiri Olsa escreveu:
-> > > > +++ b/tools/perf/util/comm.c
-> > > > @@ -18,11 +18,9 @@ struct comm_str {
-> > > >  static struct rb_root comm_str_root;
-> > > >  static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,};
-> > > >  
-> > > > -static struct comm_str *comm_str__get(struct comm_str *cs)
-> > > > +static bool comm_str__get(struct comm_str *cs)
-> > > >  {
-> > > > -	if (cs)
-> > > > -		refcount_inc(&cs->refcnt);
-> > > > -	return cs;
-> > > > +	return cs ? refcount_inc_not_zero(&cs->refcnt) : false;
-> > > >  }
-> > > 
-> > > I don't like changing the semantics of a __get() operation this way, I
-> > > think it should stay like all the others, i.e. return the object with
-> > > the desired refcount or return NULL if that is not possible.
-> > > 
-> > > Otherwise we'll have to switch gears when debugging refcounts in various
-> > > objects, that start having slightly different semantics for reference
-> > > counting.
-> > > 
-> > > We should try to find a fix that maintains the semantics of refcounting.
-> > 
-> > After looking at the code, this refcount_inc_not_zero returns bool comes
-> > from the kernel, trying to see how this is used with __get() operations
-> > there, if at all.
-> 
-> Something like this?
-> 
-> static struct comm_str *comm_str__get(struct comm_str *cs)
-> {
->     if (cs && refcount_inc_not_zero(&cs->refcnt))
->         return cs;
->     return NULL;
-> }
-> 
-> 
-> Other than that I don't have better idea, so
-> 
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
-> 
-> Thanks,
-> Namhyung
+Peter Zijlstra <peterz@infradead.org> writes:
 
-righ, we can change comm_str__get like that, attached v3
+> On Fri, Jul 20, 2018 at 10:02:10AM +0200, Vitaly Kuznetsov wrote:
+>> Andy Lutomirski <luto@amacapital.net> writes:
+>> 
+>> > [I added PeterZ and Vitaly -- can you see any way in which this would
+>> > break something obscure?  I don't.]
+>> 
+>> Thanks for CCing me,
+>> 
+>> I don't see how this can break things either. At first glance, however,
+>> I'm afraid we can add performance penalty to virtualized guests which
+>> don't use native_flush_tlb_others() (Hyper-V, KVM): we will be reloading
+>> CR3 without a need as we don't look at lazy mode in PV tlb flush
+>> functions.
+>> 
+>> We can either check to switch_mm_irqs_off() that
+>> native_flush_tlb_others() is in use or teach PV tlb flush functions to
+>> look at lazy mode too.
+>
+> As Rik noted elsewhere in the thread, kvm_flush_tlb_others() ends up
+> calling native_tlb_flush_others() for all running vcpu threads.
 
-thanks,
-jirka
+Ah, right!
 
+>
+> The Hyper-V thing is magical, we can't really do anything about it
+> there. Let them worry about it.
 
----
-We occasionaly hit following assert failure in perf top,
-when processing the /proc info in multiple threads.
+Well, we kinda know how this magic works: we just ask the hypervisor to
+flush TLB for us (if the particular vCPU is running) :-) Anyway, nothing
+stops us from duplicating the logic regarding lazy mode from
+native_flush_tlb_others() to hyperv_flush_tlb_others(): if TLB state is
+lazy omit TLB flush.
 
-  perf: ...include/linux/refcount.h:109: refcount_inc:
-        Assertion `!(!refcount_inc_not_zero(r))' failed.
-
-The gdb backtrace looks like this:
-
-  [Switching to Thread 0x7ffff11ba700 (LWP 13749)]
-  0x00007ffff50839fb in raise () from /lib64/libc.so.6
-  (gdb)
-  #0  0x00007ffff50839fb in raise () from /lib64/libc.so.6
-  #1  0x00007ffff5085800 in abort () from /lib64/libc.so.6
-  #2  0x00007ffff507c0da in __assert_fail_base () from /lib64/libc.so.6
-  #3  0x00007ffff507c152 in __assert_fail () from /lib64/libc.so.6
-  #4  0x0000000000535373 in refcount_inc (r=0x7fffdc009be0)
-      at ...include/linux/refcount.h:109
-  #5  0x00000000005354f1 in comm_str__get (cs=0x7fffdc009bc0)
-      at util/comm.c:24
-  #6  0x00000000005356bd in __comm_str__findnew (str=0x7fffd000b260 ":2",
-      root=0xbed5c0 <comm_str_root>) at util/comm.c:72
-  #7  0x000000000053579e in comm_str__findnew (str=0x7fffd000b260 ":2",
-      root=0xbed5c0 <comm_str_root>) at util/comm.c:95
-  #8  0x000000000053582e in comm__new (str=0x7fffd000b260 ":2",
-      timestamp=0, exec=false) at util/comm.c:111
-  #9  0x00000000005363bc in thread__new (pid=2, tid=2) at util/thread.c:57
-  #10 0x0000000000523da0 in ____machine__findnew_thread (machine=0xbfde38,
-      threads=0xbfdf28, pid=2, tid=2, create=true) at util/machine.c:457
-  #11 0x0000000000523eb4 in __machine__findnew_thread (machine=0xbfde38,
-  ...
-
-The failing assertion is this one:
-
-  REFCOUNT_WARN(!refcount_inc_not_zero(r), ...
-
-The problem is that we keep global comm_str_root list, which
-is accessed by multiple threads during the perf top startup
-and following 2 paths can race:
-
-  thread 1:
-    ...
-    thread__new
-      comm__new
-        comm_str__findnew
-          down_write(&comm_str_lock);
-          __comm_str__findnew
-            comm_str__get
-
-  thread 2:
-    ...
-    comm__override or comm__free
-      comm_str__put
-        refcount_dec_and_test
-          down_write(&comm_str_lock);
-          rb_erase(&cs->rb_node, &comm_str_root);
-
-Because thread 2 first decrements the refcnt and only after then it
-removes the struct comm_str from the list, the thread 1 can find this
-object on the list with refcnt equls to 0 and hit the assert.
-
-This patch fixes the thread 1 __comm_str__findnew path, by ignoring
-objects that already dropped the refcnt to 0. For the rest of the
-objects we take the refcnt before comparing its name and release
-it afterwards with comm_str__put, which can also release the object
-completely.
-
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/n/tip-vrizt6sw1lu1ybsrl9l0wwln@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/comm.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
-index 7798a2cc8a86..31279a7bd919 100644
---- a/tools/perf/util/comm.c
-+++ b/tools/perf/util/comm.c
-@@ -20,9 +20,10 @@ static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,}
- 
- static struct comm_str *comm_str__get(struct comm_str *cs)
- {
--	if (cs)
--		refcount_inc(&cs->refcnt);
--	return cs;
-+	if (cs && refcount_inc_not_zero(&cs->refcnt))
-+		return cs;
-+
-+	return NULL;
- }
- 
- static void comm_str__put(struct comm_str *cs)
-@@ -67,9 +68,14 @@ struct comm_str *__comm_str__findnew(const char *str, struct rb_root *root)
- 		parent = *p;
- 		iter = rb_entry(parent, struct comm_str, rb_node);
- 
-+		/*
-+		 * If we race with comm_str__put, iter->refcnt is 0
-+		 * and it will be removed within comm_str__put call
-+		 * shortly, ignore it in this search.
-+		 */
- 		cmp = strcmp(str, iter->str);
--		if (!cmp)
--			return comm_str__get(iter);
-+		if (!cmp && comm_str__get(iter))
-+			return iter;
- 
- 		if (cmp < 0)
- 			p = &(*p)->rb_left;
 -- 
-2.17.1
-
+  Vitaly
