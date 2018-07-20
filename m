@@ -3,162 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD05BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF339ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ACCD20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:25:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACCD20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 6F4C820652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:25:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4C820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeGTLNT (ORCPT
+        id S1728258AbeGTLNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:13:19 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49622 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727303AbeGTLNT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:13:19 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id E32FC804DE; Fri, 20 Jul 2018 12:25:40 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 12:25:32 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Yu Chen <yu.c.chen@intel.com>
-Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>,
-        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gu, Kookoo" <kookoo.gu@intel.com>,
-        "Zhang, Rui" <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180720102532.GA20284@amd>
-References: <cover.1531924968.git.yu.c.chen@intel.com>
- <20180718202235.GA4132@amd>
- <20180718235851.GA22170@sandybridge-desktop>
- <20180719110149.GA4679@amd>
- <20180719132003.GA30981@sandybridge-desktop>
+        Fri, 20 Jul 2018 07:13:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32934 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727303AbeGTLNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 07:13:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07B2A7A9;
+        Fri, 20 Jul 2018 03:25:56 -0700 (PDT)
+Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE75D3F5B3;
+        Fri, 20 Jul 2018 03:25:54 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 11:25:52 +0100
+From:   Morten Rasmussen <morten.rasmussen@arm.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Qais Yousef <Qais.Yousef@arm.com>
+Subject: Re: arm: v4.18-rc5 with cpuidle on TC2 (A7 boot) spectre v2 issue
+Message-ID: <20180720102552.GC19287@e105550-lin.cambridge.arm.com>
+References: <2abc6c11-2e8c-a4ea-6911-0f495d90ace6@arm.com>
+ <20180719100109.GH17271@n2100.armlinux.org.uk>
+ <20180719133222.GL17271@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180719132003.GA30981@sandybridge-desktop>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180719133222.GL17271@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 19, 2018 at 02:32:22PM +0100, Russell King - ARM Linux wrote:
+> On Thu, Jul 19, 2018 at 11:01:10AM +0100, Russell King - ARM Linux wrote:
+> > On Thu, Jul 19, 2018 at 11:42:50AM +0200, Dietmar Eggemann wrote:
+> > > Hi,
+> > > 
+> > > running v4.18-rc5 (plus still missing "power: vexpress: fix corruption in
+> > > notifier registration", otherwise I get this rcu_sched stall issue) on TC2
+> > > (A7 boot) with vanilla multi_v7_defconfig plus
+> > > CONFIG_ARM_BIG_LITTLE_CPUIDLE=y gives me continuous:
+> > > 
+> > > ...
+> > >  CPUX: Spectre v2: incorrect context switching function, system vulnerable
+> > > ...
+> > > 
+> > > messages.
+> > > 
+> > > Work around is to disable CONFIG_HARDEN_BRANCH_PREDICTOR.
+> > 
+> > or disable big.Little if you want the hardening.
+> > 
+> > The choices are currently either protection against Spectre or big.Little
+> > support since the two are mutually exclusive at the moment.
+> 
+> An alternative would be to give the patches in the attachment a test.
+> They're not finished yet, so I haven't sent them out, but still worth
+> testing.
 
---0F1p//8PRICkK4MW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for sharing. I can confirm that your patches do cure the flood of warnings.
 
-Hi!
+TC2 booting on A7:
 
-> > > > > As security becomes more and more important, we add the in-kernel
-> > > > > encryption support for hibernation.
-> > > >=20
-> > > > Sorry, this does not really explain what security benefit it is
-> > > > supposed have to against what attack scenarios.
-> > > >=20
-> > > > Which unfortunately means it can not reviewed.
-> > > >=20
-> > > > Note that uswsusp already provides encryption. If this is supposed =
-to
-> > > > have advantages over it, please say so.
-> > > >=20
-> > > The advantages are described in detail in=20
-> > > [PATCH 1/4]'s log, please refer to that.
-> >=20
-> > Are you refering to this?
-> >
-> Not this one. I've sent v2 of this patch set which
-> explain more on this:
-> https://patchwork.kernel.org/patch/10532935/
+[    0.002922] CPU: Testing write buffer coherency: ok
+[    0.003347] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
+[    0.004022] Setting up static identity map for 0x80100000 - 0x80100060
+[    0.004265] ARM CCI driver probed
+[    0.004648] TC2 power management initialized
+[    0.004930] Hierarchical SRCU implementation.
+[    0.006956] smp: Bringing up secondary CPUs ...
+[    0.008712] CPU1: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.008720] CPU1: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
+[    0.009934] CPU2: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.009940] CPU2: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
+[    0.011147] CPU3: thread -1, cpu 1, socket 1, mpidr 80000101
+[    0.012350] CPU4: thread -1, cpu 2, socket 1, mpidr 80000102
+[    0.012468] smp: Brought up 1 node, 5 CPUs
+[    0.012490] SMP: Total of 5 processors activated (240.00 BogoMIPS).
+[    0.012499] CPU: All CPU(s) started in SVC mode.
 
-Aha, sorry about that.
+TC2 booting on A15:
 
-> Let me paste the log here:
->=20
-> 1. (This is not to compare with uswsusp but other
->     tools) One advantage is: Users do not have to
->     encrypt the whole swap partition as other tools.
+[    0.002045] CPU0: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
+[    0.002311] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.002809] Setting up static identity map for 0x80100000 - 0x80100060
+[    0.003000] ARM CCI driver probed
+[    0.003408] TC2 power management initialized
+[    0.003637] Hierarchical SRCU implementation.
+[    0.005177] smp: Bringing up secondary CPUs ...
+[    0.006170] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.006176] CPU1: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
+[    0.008137] CPU2: thread -1, cpu 0, socket 1, mpidr 80000100
+[    0.009304] CPU3: thread -1, cpu 1, socket 1, mpidr 80000101
+[    0.010405] CPU4: thread -1, cpu 2, socket 1, mpidr 80000102
+[    0.010537] smp: Brought up 1 node, 5 CPUs
+[    0.010562] SMP: Total of 5 processors activated (240.00 BogoMIPS).
+[    0.010572] CPU: All CPU(s) started in SVC mode.
 
-Well.. encrypting the partition seems like good idea anyway.=20
+No further warnings for either configuration.
 
-> 2. Ideally kernel memory should be encrypted by the
->    kernel itself. We have uswsusp to support user
->    space hibernation, however doing the encryption
->    in kernel space has more advantages:
->    2.1 Not having to transfer plain text kernel memory to
->        user space. Per Lee, Chun-Yi, uswsusp is disabled
->        when the kernel is locked down:
->        https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/
->        linux-fs.git/commit/?h=3Dlockdown-20180410&
->        id=3D8732c1663d7c0305ae01ba5a1ee4d2299b7b4612
->        due to:
->        "There have some functions be locked-down because
->        there have no appropriate mechanisms to check the
->        integrity of writing data."
->        https://patchwork.kernel.org/patch/10476751/
+For reference, this a partial output from later in the boot process when
+booting on A7 with 4.18-rc5 _without_ your patches:
 
-So your goal is to make hibernation compatible with kernel
-lockdown? Do your patches provide sufficient security that hibernation
-can be enabled with kernel lockdown?
-
->    2.2 Not having to copy each page to user space
->        one by one not in parallel, which might introduce
->        significant amount of copy_to_user() and it might
->        not be efficient on servers having large amount of DRAM.
-
-So how big speedup can be attributed by not doing copy_to_user?
-
->    2.3 Distribution has requirement to do snapshot
->        signature for verification, which can be built
->        by leveraging this patch set.
-
-Signatures can be done by uswsusp, too, right?
-
->    2.4 The encryption is in the kernel, so it doesn't
->        have to worry too much about bugs in user space
->        utilities and similar, for example.
-
-Answer to bugs in userspace is _not_ to move code from userspace to kernel.
-
-> > Also note that joeyli <jlee@suse.com> has patch series which encrypts
-> > both in-kernel and uswsusp hibernation methods. His motivation is
-> > secure boot. How does this compare to his work?
-> >
-> Joey Lee and I had a discussion on his previous work at
-> https://patchwork.kernel.org/patch/10476751
-> We collaborate on this task and his snapshot signature
-> feature can be based on this patch set.
-
-Well, his work can also work without your patchset, right?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---0F1p//8PRICkK4MW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltRuJwACgkQMOfwapXb+vKoLwCeNp7X2wxMaONvzvgt9uMDavdt
-k+0An2rCHACwENvM76lCmYBRfo+H+9h2
-=giC4
------END PGP SIGNATURE-----
-
---0F1p//8PRICkK4MW--
+[    5.576176] device-mapper: ioctl: 4.39.0-ioctl (2018-04-03) initialised: dm-devel@redhat.com
+[    5.601689] cpu cpu0: bL_cpufreq_init: CPU 0 initialized
+[    5.618670] cpu cpu1: bL_cpufreq_init: CPU 1 initialized
+[    5.635583] arm_big_little: bL_cpufreq_register: Registered platform driver: vexpress-spc
+[    5.661112] mmci-pl18x 1c050000.mmci: Got CD GPIO
+[    5.675235] mmci-pl18x 1c050000.mmci: Got WP GPIO
+[    5.687783] CPU2: Spectre v2: incorrect context switching function, system vulnerable
+[    5.689623] mmci-pl18x 1c050000.mmci: mmc0: PL180 manf 41 rev0 at 0x1c050000 irq 26,27 (pio)
+[    5.713217] CPU1: Spectre v2: incorrect context switching function, system vulnerable
+[    5.718044] CPU2: Spectre v2: incorrect context switching function, system vulnerable
+[    5.727896] CPU2: Spectre v2: incorrect context switching function, system vulnerable
