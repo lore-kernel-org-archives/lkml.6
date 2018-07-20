@@ -2,85 +2,127 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C56ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCFDECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C879920652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:38:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C879920652
+	by mail.kernel.org (Postfix) with ESMTP id 76EA120652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:41:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pl5o/+18"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76EA120652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388199AbeGTS1p (ORCPT
+        id S2388164AbeGTSaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 14:27:45 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44273 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731747AbeGTS1p (ORCPT
+        Fri, 20 Jul 2018 14:30:21 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:37430 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731305AbeGTSaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 14:27:45 -0400
-Received: by mail-io0-f194.google.com with SMTP id q19-v6so10557233ioh.11;
-        Fri, 20 Jul 2018 10:38:28 -0700 (PDT)
+        Fri, 20 Jul 2018 14:30:21 -0400
+Received: by mail-yw0-f196.google.com with SMTP id w76-v6so4631198ywg.4;
+        Fri, 20 Jul 2018 10:41:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cwFuLmY72f0ORSsZ9OAumVPGmBV/AQlH7QKLVGd2oNA=;
+        b=Pl5o/+18GRH9i/WZPjrEHnH3xfrmbYm7BON6a7jmSq5sF3+GRLSTqbeeqtYn+3iXLE
+         IlYlR8zTN1r4vyBHxlYGZSNvFBykG51Bnj1Sn+O0+K8r86OBfJYnEOqVAdidxjwLaSF7
+         /O+pkY8WVMC+jLpTh/8Rlpb5/1cXey/xMa7tdqZkZdF4BBlFtBeVSxecbxl+N5vgsF0/
+         Sd7Wctlehg/wrpySRhUo8TFRdgFM77UjoUIN9/gCh/EC4fNpb1s7IBFC3B0Rfd3G8pV9
+         OPQ4D1rrhh1DsyY5Bp+fe1ZZzXLgBSUx4h/Ztm2QxNWIGbG8+lkxT70JSSJXJH+UvYWf
+         sMvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4uNkKfF2wQYspT1T79e8ha0T9ssudHsWh7oapPYfOcM=;
-        b=iWaWsHNtF2Nvy5O38XiaMmKJKnzofXly+6ZheI+vrBt3TdbwktwdJFAqH9vINC/10W
-         ACsfrkV0ltrutXi68W5T4aaspv023RZ4gY+hY3qMWK6zLYcVVNTkQ5F4eIdU4iClmG7M
-         Ru09TohpfuzCA9t2M4gpGJOh9ANKVAJGYzxsJjas52DuU8irf9Qh8zSrqIAwGWHZY5sK
-         QftrF2YqyIPIhgglewmVmpZW+OQADDRyUQcFmSkIugg+9BzgUz+T9LaEk3mNW3+l/A7R
-         vn3NelBsj7561ahHw5dia9uTOfKXcHfzZonU+VEaZmpHD1uM1/5340zlSEQPPB8oGmaE
-         c0Hg==
-X-Gm-Message-State: AOUpUlHDhNQYKM9JzqJaQqk0TNEZljXrePY6yIQE97P/2g1ZD5TA7jNk
-        C0JHaG0fhe/c2TogNUtovA==
-X-Google-Smtp-Source: AAOMgpdSt/vpEmEWfBxMMEcYuCBqPHLb5YsWG2GO/anbR5vk3kbzn+95dxpoRq749tMnEGG99I0e0w==
-X-Received: by 2002:a6b:1491:: with SMTP id 139-v6mr2449055iou.103.1532108307930;
-        Fri, 20 Jul 2018 10:38:27 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id m126-v6sm962267ioa.79.2018.07.20.10.38.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Jul 2018 10:38:27 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 11:38:26 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     jic23@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
-        fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com,
-        drew.paterson@ams.com
-Subject: Re: [PATCH v2 5/7] iio: tsl2772: add support for regulator framework
-Message-ID: <20180720173826.GA24398@rob-hp-laptop>
-References: <20180717084158.23532-1-masneyb@onstation.org>
- <20180717084158.23532-6-masneyb@onstation.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cwFuLmY72f0ORSsZ9OAumVPGmBV/AQlH7QKLVGd2oNA=;
+        b=PNhsYo19rcTCOiJF3ftKr08PRnAEaRzk2ZtToeW4TN47PzBk+AjW7NDNmrk3uADdoF
+         fOlHl8gPqyJjhkM97M5InJWD16vHwpQezxmZepOWav1GZwtur+0cj318kGi8kX+2L1y7
+         nKe7SXGI+Xnk1EXmeOCQHebPnpnbajEt1Z1lyc5Vk3t5DtEC75ViKBLz2b9StoD0hh0r
+         s0rniSn+Q6qFz/KH6T06GdFXXt/WY9EVZXcbcmmxHVpvZvgRZyPN3/5R7DZiTmJ43iQd
+         3WewqgRsiXKv08Mbwv+kUBhdBqu+V9kwBfFYLz92LItfToqmF1yddahzsrXf4WONMOAV
+         cBSA==
+X-Gm-Message-State: AOUpUlHRo0zXnplmOjUzaBLzoKoAuN5AciCbTU5lPGz6Q2RCRfc3xriN
+        NkNNAoD5xuJ9mJr1MlXSezs=
+X-Google-Smtp-Source: AAOMgpd7HeKVK5z9xo3iYYL1DI1ScsG9/UjoUEIkcyEGmefRU3FJ/PPqhO54/eeO8dQRmM9nK7nzfA==
+X-Received: by 2002:a0d:ddc8:: with SMTP id g191-v6mr1549773ywe.145.1532108463068;
+        Fri, 20 Jul 2018 10:41:03 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:180::1:b56b])
+        by smtp.gmail.com with ESMTPSA id x69-v6sm2384166ywx.105.2018.07.20.10.41.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 10:41:02 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 10:41:00 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+Message-ID: <20180720174100.GC1934745@devbig577.frc2.facebook.com>
+References: <20180719153045.GT72677@devbig577.frc2.facebook.com>
+ <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
+ <20180719165201.GU72677@devbig577.frc2.facebook.com>
+ <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
+ <20180720114549.GY72677@devbig577.frc2.facebook.com>
+ <20180720154454.GR2494@hirez.programming.kicks-ass.net>
+ <20180720155613.GB1934745@devbig577.frc2.facebook.com>
+ <4857a9db-ebf5-24f8-c42d-d795f5c75854@redhat.com>
+ <20180720163712.GU2494@hirez.programming.kicks-ass.net>
+ <8c655adc-6d9e-b767-1024-5d6941c995a9@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180717084158.23532-6-masneyb@onstation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <8c655adc-6d9e-b767-1024-5d6941c995a9@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 04:41:56AM -0400, Brian Masney wrote:
-> This patch adds support for the regulator framework to the tsl2772
-> driver. Driver was tested using a LG Nexus 5 (hammerhead) phone with
-> the two regulators and on a Raspberry Pi 2 without any regulators
-> controlling the power to the sensor.
+Hello,
+
+On Fri, Jul 20, 2018 at 01:09:23PM -0400, Waiman Long wrote:
+> On 07/20/2018 12:37 PM, Peter Zijlstra wrote:
+> > On Fri, Jul 20, 2018 at 12:19:29PM -0400, Waiman Long wrote:
+> >> I am not against the idea of making it hierarchical eventually. I am
+> >> just hoping to get thing going by merging the patchset in its current
+> >> form and then we can make it hierarchical in a followup patch.
+> > Where's the rush? Why can't we do this right in one go?
 > 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
->  .../devicetree/bindings/iio/light/tsl2772.txt |  4 +
+> For me, the rush comes from RHEL8 as it is a goal to have a fully
+> functioning cgroup v2 in that release.
+> 
+> I also believe that most of the use cases of partition can be satisfied
+> with partitions at the first level children. Getting hierarchical
+> partition right may drag on for half a year, maybe, giving our history
+> with cpu v2 controller. No matter what we do to enable hierarchical
+> partition in the future, the current model of using a partition flag is
+> intuitive enough that it won't be changed at least for the first level
+> children.
 
-This belongs with the binding patch. Bindings should be complete, not 
-extended as a driver changes. 
+I'm fully with Waiman here.  There are people wanting to use it and
+the part most people isn't controversial at all.  I don't see what'd
+be gained by further delaying the whole thing.  If the first level
+partition thing isn't acceptable to everyone, we can even strip down
+further.  We can get .cpus and .mems merged first, which is what most
+people want anyway.
 
->  drivers/iio/light/tsl2772.c                   | 82 ++++++++++++++++++-
->  2 files changed, 85 insertions(+), 1 deletion(-)
+Thanks.
+
+-- 
+tejun
