@@ -6,55 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C57ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01962ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072CF20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072CF20854
+	by mail.kernel.org (Postfix) with ESMTP id AF33D20856
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:30:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF33D20856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388201AbeGTNSO (ORCPT
+        id S2388210AbeGTNSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:18:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38020 "EHLO
+        Fri, 20 Jul 2018 09:18:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38038 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732150AbeGTNSO (ORCPT
+        with ESMTP id S1731644AbeGTNSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:18:14 -0400
+        Fri, 20 Jul 2018 09:18:17 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7F14BD8;
-        Fri, 20 Jul 2018 12:29:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C5DEBBDB;
+        Fri, 20 Jul 2018 12:29:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Joe Perches <joe@perches.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, acme@redhat.com,
-        akataria@vmware.com, akpm@linux-foundation.org,
-        andrea.parri@amarulasolutions.com, ard.biesheuvel@linaro.org,
-        aryabinin@virtuozzo.com, astrachan@google.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        caoj.fnst@cn.fujitsu.com, geert@linux-m68k.org,
-        ghackmann@google.com, jan.kiszka@siemens.com,
-        jarkko.sakkinen@linux.intel.com, jpoimboe@redhat.com,
-        keescook@google.com, kirill.shutemov@linux.intel.com,
-        kstewart@linuxfoundation.org, linux-efi@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, manojgupta@google.com,
-        mawilcox@microsoft.com, michal.lkml@markovi.net, mjg59@google.com,
-        mka@chromium.org, pombredanne@nexb.com, rientjes@google.com,
-        rostedt@goodmis.org, sedat.dilek@gmail.com,
-        thomas.lendacky@amd.com, tstellar@redhat.com, tweek@google.com,
-        virtualization@lists.linux-foundation.org, will.deacon@arm.com,
-        yamada.masahiro@socionext.com, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 05/66] compiler-gcc.h: Add __attribute__((gnu_inline)) to all inline declarations
-Date:   Fri, 20 Jul 2018 14:13:22 +0200
-Message-Id: <20180720121407.556231581@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+2b43f681169a2a0d306a@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.9 37/66] netfilter: ebtables: reject non-bridge targets
+Date:   Fri, 20 Jul 2018 14:13:54 +0200
+Message-Id: <20180720121409.395501035@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -71,121 +52,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit d03db2bc26f0e4a6849ad649a09c9c73fccdc656 upstream.
+commit 11ff7288beb2b7da889a014aff0a7b80bf8efcf3 upstream.
 
-Functions marked extern inline do not emit an externally visible
-function when the gnu89 C standard is used. Some KBUILD Makefiles
-overwrite KBUILD_CFLAGS. This is an issue for GCC 5.1+ users as without
-an explicit C standard specified, the default is gnu11. Since c99, the
-semantics of extern inline have changed such that an externally visible
-function is always emitted. This can lead to multiple definition errors
-of extern inline functions at link time of compilation units whose build
-files have removed an explicit C standard compiler flag for users of GCC
-5.1+ or Clang.
+the ebtables evaluation loop expects targets to return
+positive values (jumps), or negative values (absolute verdicts).
 
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Acked-by: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: acme@redhat.com
-Cc: akataria@vmware.com
-Cc: akpm@linux-foundation.org
-Cc: andrea.parri@amarulasolutions.com
-Cc: ard.biesheuvel@linaro.org
-Cc: aryabinin@virtuozzo.com
-Cc: astrachan@google.com
-Cc: boris.ostrovsky@oracle.com
-Cc: brijesh.singh@amd.com
-Cc: caoj.fnst@cn.fujitsu.com
-Cc: geert@linux-m68k.org
-Cc: ghackmann@google.com
-Cc: gregkh@linuxfoundation.org
-Cc: jan.kiszka@siemens.com
-Cc: jarkko.sakkinen@linux.intel.com
-Cc: jpoimboe@redhat.com
-Cc: keescook@google.com
-Cc: kirill.shutemov@linux.intel.com
-Cc: kstewart@linuxfoundation.org
-Cc: linux-efi@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org
-Cc: manojgupta@google.com
-Cc: mawilcox@microsoft.com
-Cc: michal.lkml@markovi.net
-Cc: mjg59@google.com
-Cc: mka@chromium.org
-Cc: pombredanne@nexb.com
-Cc: rientjes@google.com
-Cc: rostedt@goodmis.org
-Cc: sedat.dilek@gmail.com
-Cc: thomas.lendacky@amd.com
-Cc: tstellar@redhat.com
-Cc: tweek@google.com
-Cc: virtualization@lists.linux-foundation.org
-Cc: will.deacon@arm.com
-Cc: yamada.masahiro@socionext.com
-Link: http://lkml.kernel.org/r/20180621162324.36656-2-ndesaulniers@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+This is completely different from what xtables does.
+In xtables, targets are expected to return the standard netfilter
+verdicts, i.e. NF_DROP, NF_ACCEPT, etc.
+
+ebtables will consider these as jumps.
+
+Therefore reject any target found due to unspec fallback.
+v2: also reject watchers.  ebtables ignores their return value, so
+a target that assumes skb ownership (and returns NF_STOLEN) causes
+use-after-free.
+
+The only watchers in the 'ebtables' front-end are log and nflog;
+both have AF_BRIDGE specific wrappers on kernel side.
+
+Reported-by: syzbot+2b43f681169a2a0d306a@syzkaller.appspotmail.com
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/compiler-gcc.h |   29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+ net/bridge/netfilter/ebtables.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -65,25 +65,40 @@
- #endif
- 
- /*
-+ * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
-+ * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
-+ * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
-+ * defined so the gnu89 semantics are the default.
-+ */
-+#ifdef __GNUC_STDC_INLINE__
-+# define __gnu_inline	__attribute__((gnu_inline))
-+#else
-+# define __gnu_inline
-+#endif
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -406,6 +406,12 @@ ebt_check_watcher(struct ebt_entry_watch
+ 	watcher = xt_request_find_target(NFPROTO_BRIDGE, w->u.name, 0);
+ 	if (IS_ERR(watcher))
+ 		return PTR_ERR(watcher);
 +
-+/*
-  * Force always-inline if the user requests it so via the .config,
-  * or if gcc is too old.
-  * GCC does not warn about unused static inline functions for
-  * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-  * directives.  Suppress the warning in clang as well by using "unused"
-  * function attribute, which is redundant but not harmful for gcc.
-+ * Prefer gnu_inline, so that extern inline functions do not emit an
-+ * externally visible function. This makes extern inline behave as per gnu89
-+ * semantics rather than c99. This prevents multiple symbol definition errors
-+ * of extern inline functions at link time.
-+ * A lot of inline functions can cause havoc with function tracing.
-  */
- #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
-     !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
--#define inline inline		__attribute__((always_inline,unused)) notrace
--#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
--#define __inline __inline	__attribute__((always_inline,unused)) notrace
-+#define inline \
-+	inline __attribute__((always_inline, unused)) notrace __gnu_inline
- #else
--/* A lot of inline functions can cause havoc with function tracing */
--#define inline inline		__attribute__((unused)) notrace
--#define __inline__ __inline__	__attribute__((unused)) notrace
--#define __inline __inline	__attribute__((unused)) notrace
-+#define inline inline		__attribute__((unused)) notrace __gnu_inline
- #endif
++	if (watcher->family != NFPROTO_BRIDGE) {
++		module_put(watcher->me);
++		return -ENOENT;
++	}
++
+ 	w->u.watcher = watcher;
  
-+#define __inline__ inline
-+#define __inline inline
- #define __always_inline	inline __attribute__((always_inline))
- #define  noinline	__attribute__((noinline))
+ 	par->target   = watcher;
+@@ -727,6 +733,13 @@ ebt_check_entry(struct ebt_entry *e, str
+ 		goto cleanup_watchers;
+ 	}
  
++	/* Reject UNSPEC, xtables verdicts/return values are incompatible */
++	if (target->family != NFPROTO_BRIDGE) {
++		module_put(target->me);
++		ret = -ENOENT;
++		goto cleanup_watchers;
++	}
++
+ 	t->u.target = target;
+ 	if (t->u.target == &ebt_standard_target) {
+ 		if (gap < sizeof(struct ebt_standard_target)) {
 
 
