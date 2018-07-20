@@ -2,106 +2,101 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F884ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB794ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:06:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D059720661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8679E20671
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:06:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vMzrjkWn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D059720661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="mnR+9dLr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8679E20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbeGTVzy (ORCPT
+        id S1728459AbeGTV4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 17:55:54 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40892 "EHLO
+        Fri, 20 Jul 2018 17:56:31 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41544 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728064AbeGTVzy (ORCPT
+        with ESMTP id S1727749AbeGTV4b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 17:55:54 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x5-v6so7808036pgp.7
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 14:05:53 -0700 (PDT)
+        Fri, 20 Jul 2018 17:56:31 -0400
+Received: by mail-pg1-f194.google.com with SMTP id z8-v6so7812729pgu.8
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 14:06:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=WscAVpu58+ou8ZOorAhxC0hNnnYoLr5A61YjmVp/rkk=;
-        b=vMzrjkWnC5N7KrNSvMWGl47F8yyDyTFRu9iYBbCsNrB1KbdJMfj9GwA8zxodiM8tQq
-         6JomXilJP8QxLHaUh5Sv5PHgTcbtS9uOka4yegW53tje/SR1OxATRjR1kcYVloEjqR98
-         42hEj0UYVhjbog44Z5oz2ohBh9sw3kCoxIJUYQhJv7fhT8LImko2ye9ExK+lB+X0P7XN
-         RvJhkWoLvb05B1hpQkb8GZFzKpBo6p9Q3mBDs4yMalVsTknYH6isdpEYcGGRuWKH6heG
-         hwTJDKsR7VeiP9sAGSYmIoawv2nfjSkG31RjyvpQNTyS6YXDDRewg5INV2EAvXsUcZbE
-         E7bA==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1lSBfmdyStY+qeBaFCgSb+R+TLH/5rDIp+TRXUtl+ls=;
+        b=mnR+9dLrvHCdDN5gXwzlMCk2BKSY/zQADiR6bz3jTOIcUTgb31B6tqDwxmEsCWRsF0
+         FXvhjJ1lMUdy5n39LcYWgybTA+rk9VTBNFuw9vTX2PEuffMsVgFv5poZ34ETmyDhTX+n
+         VCe8QLU3T3MN+/pz/zKMf9C8/7yXp7QQHcAMd0TCHM69UyMlXrkYdCqkf30/oAwz52+K
+         mwLeLSkXIZFCt41Tx148ih5uPUJVUYzJn6LCGD26ZxEEvkhMe+slhwEGal/CcNuDNaLU
+         bn4TkzxvKvzt3qDWzK4oBNNE492Zqz0jvS07KEcFm9SDxsRzzNVTEeK9043O4cB7jxV3
+         6Qpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=WscAVpu58+ou8ZOorAhxC0hNnnYoLr5A61YjmVp/rkk=;
-        b=fEfzM4ZD6mlnLwhM8ziL87pWnngyrPrU7x7tj+c06/kSyKjoWDrSpj7ipeuIfuPEzW
-         HllHUR+/Va44Vp2oPTG/Rpj0cQKFyZ2r+qY0HStnL3PBUR/olzqClUebJ3XLKM6s3jh4
-         +hWhC+uS+kAzdtMY4FFf3v2g4KR6idNChLFg92gbNurAWyna0jBagle8SUjbuCZtv29Q
-         cp2h1nf7kddcJqdXsikhglzaAUFqjcRFjMNd2n5mfdTtee6KegW7pbZmTUtGcjiN+VUc
-         2Zc5hNtgAsMTNnes7XZiNxUW7dJ/htB9QI0PxjDem9uEqWsCjpIdpC+EpOewpUKsWxso
-         QhIg==
-X-Gm-Message-State: AOUpUlGPQhDf5yMpDvrqSdy+Nmselm9ugXtjIng4iL8IbdvcDCmXiHVg
-        6qW7TgFNrg/Rh51a80upsTg2uQ==
-X-Google-Smtp-Source: AAOMgpfdhlwPNVaTX6TcVezlN1inpfdGwiuM271soKfRYIjWYE5veLtyJHB+UMDLrxmWczh9bCJz4w==
-X-Received: by 2002:a62:fc5:: with SMTP id 66-v6mr3660161pfp.237.1532120753307;
-        Fri, 20 Jul 2018 14:05:53 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id m26-v6sm4046089pfg.61.2018.07.20.14.05.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Jul 2018 14:05:52 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 14:05:52 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1lSBfmdyStY+qeBaFCgSb+R+TLH/5rDIp+TRXUtl+ls=;
+        b=caNTGPXPqZ6D26cyShxKOaM6t7ZkVBFrToxXdFTZan/r0LCeAZdX+79OjruWSvKzS7
+         by2H7vcdkBikcp9cL6rD3K4uuyRKtWjFPPLg7vYjrnacGGNs8tHXOgUPzpB6wffNTxhN
+         jybEER7qi+x56PJmQ9ALPuVUTOxA1jmF6lD4YPF2Y0iNDwU+cMiJ49jVepG/icIV+GKe
+         3SK8LOQgmglKiT8EXG76jnxdS8EVU3BMlsDZ2PclsFX28YLaCynlInFqdHooL/rZMYPp
+         6rorCh/GM9a1cSm0+qOaPpcMnxuMH6A0FHk/w5NMciLf4t9AOVNt4AlCzpp138bQiDgG
+         l/lw==
+X-Gm-Message-State: AOUpUlFlB67+SEPXZ6PZEz3Gx9C1WuuyQfZl9PhAPbmFqdAFg6ss8N5w
+        3Ku6FSUCnU0eoYyc0Hy3JAEUNQ==
+X-Google-Smtp-Source: AAOMgpdaKFcz2DPWSAPD0DvVj6kXKg42crJpv5hde8j71pGCrrhYb17gm74e2zpIXdq8lSV+EmkLEg==
+X-Received: by 2002:a62:c98e:: with SMTP id l14-v6mr3682602pfk.10.1532120790564;
+        Fri, 20 Jul 2018 14:06:30 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id v17-v6sm3539787pfn.177.2018.07.20.14.06.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 14:06:29 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 7321B300254; Sat, 21 Jul 2018 00:06:26 +0300 (+03)
+Date:   Sat, 21 Jul 2018 00:06:26 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     Yang Shi <yang.shi@linux.alibaba.com>
-cc:     Andrew Morton <akpm@linux-foundation.org>, kirill@shutemov.name,
-        hughd@google.com, aaron.lu@intel.com, linux-mm@kvack.org,
+Cc:     hughd@google.com, rientjes@google.com, aaron.lu@intel.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] mm: thp: remove use_zero_page sysfs knob
-In-Reply-To: <3238b5d2-fd89-a6be-0382-027a24a4d3ad@linux.alibaba.com>
-Message-ID: <alpine.DEB.2.21.1807201401390.231119@chino.kir.corp.google.com>
-References: <1532110430-115278-1-git-send-email-yang.shi@linux.alibaba.com> <20180720123243.6dfc95ba061cd06e05c0262e@linux-foundation.org> <alpine.DEB.2.21.1807201300290.224013@chino.kir.corp.google.com>
- <3238b5d2-fd89-a6be-0382-027a24a4d3ad@linux.alibaba.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Message-ID: <20180720210626.5bnyddmn4avp2l3x@kshutemo-mobl1>
+References: <1532110430-115278-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532110430-115278-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018, Yang Shi wrote:
-
-> > We disable the huge zero page through this interface, there were issues
-> > related to the huge zero page shrinker (probably best to never free a
-> > per-node huge zero page after allocated) and CVE-2017-1000405 for huge
-> > dirty COW.
+On Sat, Jul 21, 2018 at 02:13:50AM +0800, Yang Shi wrote:
+> By digging into the original review, it looks use_zero_page sysfs knob
+> was added to help ease-of-testing and give user a way to mitigate
+> refcounting overhead.
 > 
-> Thanks for the information. It looks the CVE has been resolved by commit
-> a8f97366452ed491d13cf1e44241bc0b5740b1f0 ("mm, thp: Do not make page table
-> dirty unconditionally in touch_p[mu]d()"), which is in 4.15 already.
+> It has been a few years since the knob was added at the first place, I
+> think we are confident that it is stable enough. And, since commit
+> 6fcb52a56ff60 ("thp: reduce usage of huge zero page's atomic counter"),
+> it looks refcounting overhead has been reduced significantly.
 > 
-
-For users who run kernels earlier than 4.15 they may choose to mitigate 
-the CVE by using this tunable.  It's not something we permanently need to 
-have, but it may likely be too early.
-
-> What was the shrinker related issue? I'm supposed it has been resolved, right?
+> Other than the above, the value of the knob is always 1 (enabled by
+> default), I'm supposed very few people turn it off by default.
 > 
+> So, it sounds not worth to still keep this knob around.
 
-The huge zero page can be reclaimed under memory pressure and, if it is, 
-it is attempted to be allocted again with gfp flags that attempt memory 
-compaction that can become expensive.  If we are constantly under memory 
-pressure, it gets freed and reallocated millions of times always trying to 
-compact memory both directly and by kicking kcompactd in the background.
+I don't think that having the knob around is huge maintenance burden.
+And since it helped to workaround a security bug relative recently I would
+rather keep it.
 
-It likely should also be per node.
+-- 
+ Kirill A. Shutemov
