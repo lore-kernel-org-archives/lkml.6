@@ -6,40 +6,59 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E77ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6207ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B8D920661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:54:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8D920661
+	by mail.kernel.org (Postfix) with ESMTP id AB1D120661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB1D120661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388968AbeGTNXX (ORCPT
+        id S2388924AbeGTNXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:23:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42938 "EHLO
+        Fri, 20 Jul 2018 09:23:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42814 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733097AbeGTNXV (ORCPT
+        with ESMTP id S1729837AbeGTNXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:23:21 -0400
+        Fri, 20 Jul 2018 09:23:17 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B99B1CEF;
-        Fri, 20 Jul 2018 12:34:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68C97C7F;
+        Fri, 20 Jul 2018 12:31:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.14 76/92] KVM: arm/arm64: Do not use kern_hyp_va() with kvm_vgic_global_state
-Date:   Fri, 20 Jul 2018 14:14:20 +0200
-Message-Id: <20180720121422.096996967@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Joe Perches <joe@perches.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, acme@redhat.com,
+        akataria@vmware.com, akpm@linux-foundation.org,
+        andrea.parri@amarulasolutions.com, ard.biesheuvel@linaro.org,
+        aryabinin@virtuozzo.com, astrachan@google.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, geert@linux-m68k.org,
+        ghackmann@google.com, jan.kiszka@siemens.com,
+        jarkko.sakkinen@linux.intel.com, jpoimboe@redhat.com,
+        keescook@google.com, kirill.shutemov@linux.intel.com,
+        kstewart@linuxfoundation.org, linux-efi@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, manojgupta@google.com,
+        mawilcox@microsoft.com, michal.lkml@markovi.net, mjg59@google.com,
+        mka@chromium.org, pombredanne@nexb.com, rientjes@google.com,
+        rostedt@goodmis.org, sedat.dilek@gmail.com,
+        thomas.lendacky@amd.com, tstellar@redhat.com, tweek@google.com,
+        virtualization@lists.linux-foundation.org, will.deacon@arm.com,
+        yamada.masahiro@socionext.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 01/92] compiler-gcc.h: Add __attribute__((gnu_inline)) to all inline declarations
+Date:   Fri, 20 Jul 2018 14:13:05 +0200
+Message-Id: <20180720121417.271717768@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,85 +70,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-Commit 44a497abd621a71c645f06d3d545ae2f46448830 upstream.
+commit d03db2bc26f0e4a6849ad649a09c9c73fccdc656 upstream.
 
-kvm_vgic_global_state is part of the read-only section, and is
-usually accessed using a PC-relative address generation (adrp + add).
+Functions marked extern inline do not emit an externally visible
+function when the gnu89 C standard is used. Some KBUILD Makefiles
+overwrite KBUILD_CFLAGS. This is an issue for GCC 5.1+ users as without
+an explicit C standard specified, the default is gnu11. Since c99, the
+semantics of extern inline have changed such that an externally visible
+function is always emitted. This can lead to multiple definition errors
+of extern inline functions at link time of compilation units whose build
+files have removed an explicit C standard compiler flag for users of GCC
+5.1+ or Clang.
 
-It is thus useless to use kern_hyp_va() on it, and actively problematic
-if kern_hyp_va() becomes non-idempotent. On the other hand, there is
-no way that the compiler is going to guarantee that such access is
-always PC relative.
-
-So let's bite the bullet and provide our own accessor.
-
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: acme@redhat.com
+Cc: akataria@vmware.com
+Cc: akpm@linux-foundation.org
+Cc: andrea.parri@amarulasolutions.com
+Cc: ard.biesheuvel@linaro.org
+Cc: aryabinin@virtuozzo.com
+Cc: astrachan@google.com
+Cc: boris.ostrovsky@oracle.com
+Cc: brijesh.singh@amd.com
+Cc: caoj.fnst@cn.fujitsu.com
+Cc: geert@linux-m68k.org
+Cc: ghackmann@google.com
+Cc: gregkh@linuxfoundation.org
+Cc: jan.kiszka@siemens.com
+Cc: jarkko.sakkinen@linux.intel.com
+Cc: jpoimboe@redhat.com
+Cc: keescook@google.com
+Cc: kirill.shutemov@linux.intel.com
+Cc: kstewart@linuxfoundation.org
+Cc: linux-efi@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: manojgupta@google.com
+Cc: mawilcox@microsoft.com
+Cc: michal.lkml@markovi.net
+Cc: mjg59@google.com
+Cc: mka@chromium.org
+Cc: pombredanne@nexb.com
+Cc: rientjes@google.com
+Cc: rostedt@goodmis.org
+Cc: sedat.dilek@gmail.com
+Cc: thomas.lendacky@amd.com
+Cc: tstellar@redhat.com
+Cc: tweek@google.com
+Cc: virtualization@lists.linux-foundation.org
+Cc: will.deacon@arm.com
+Cc: yamada.masahiro@socionext.com
+Link: http://lkml.kernel.org/r/20180621162324.36656-2-ndesaulniers@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/include/asm/kvm_mmu.h   |    7 +++++++
- arch/arm64/include/asm/kvm_mmu.h |   20 ++++++++++++++++++++
- virt/kvm/arm/hyp/vgic-v2-sr.c    |    2 +-
- 3 files changed, 28 insertions(+), 1 deletion(-)
 
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -28,6 +28,13 @@
-  */
- #define kern_hyp_va(kva)	(kva)
- 
-+/* Contrary to arm64, there is no need to generate a PC-relative address */
-+#define hyp_symbol_addr(s)						\
-+	({								\
-+		typeof(s) *addr = &(s);					\
-+		addr;							\
-+	})
-+
- /*
-  * KVM_MMU_CACHE_MIN_PAGES is the number of stage2 page table translation levels.
-  */
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -131,6 +131,26 @@ static inline unsigned long __kern_hyp_v
- #define kern_hyp_va(v) 	((typeof(v))(__kern_hyp_va((unsigned long)(v))))
+---
+ include/linux/compiler-gcc.h |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
+
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -66,25 +66,40 @@
+ #endif
  
  /*
-+ * Obtain the PC-relative address of a kernel symbol
-+ * s: symbol
-+ *
-+ * The goal of this macro is to return a symbol's address based on a
-+ * PC-relative computation, as opposed to a loading the VA from a
-+ * constant pool or something similar. This works well for HYP, as an
-+ * absolute VA is guaranteed to be wrong. Only use this if trying to
-+ * obtain the address of a symbol (i.e. not something you obtained by
-+ * following a pointer).
++ * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
++ * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
++ * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
++ * defined so the gnu89 semantics are the default.
 + */
-+#define hyp_symbol_addr(s)						\
-+	({								\
-+		typeof(s) *addr;					\
-+		asm("adrp	%0, %1\n"				\
-+		    "add	%0, %0, :lo12:%1\n"			\
-+		    : "=r" (addr) : "S" (&s));				\
-+		addr;							\
-+	})
++#ifdef __GNUC_STDC_INLINE__
++# define __gnu_inline	__attribute__((gnu_inline))
++#else
++# define __gnu_inline
++#endif
 +
 +/*
-  * We currently only support a 40bit IPA.
+  * Force always-inline if the user requests it so via the .config,
+  * or if gcc is too old.
+  * GCC does not warn about unused static inline functions for
+  * -Wunused-function.  This turns out to avoid the need for complex #ifdef
+  * directives.  Suppress the warning in clang as well by using "unused"
+  * function attribute, which is redundant but not harmful for gcc.
++ * Prefer gnu_inline, so that extern inline functions do not emit an
++ * externally visible function. This makes extern inline behave as per gnu89
++ * semantics rather than c99. This prevents multiple symbol definition errors
++ * of extern inline functions at link time.
++ * A lot of inline functions can cause havoc with function tracing.
   */
- #define KVM_PHYS_SHIFT	(40)
---- a/virt/kvm/arm/hyp/vgic-v2-sr.c
-+++ b/virt/kvm/arm/hyp/vgic-v2-sr.c
-@@ -139,7 +139,7 @@ int __hyp_text __vgic_v2_perform_cpuif_a
- 		return -1;
+ #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
+     !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
+-#define inline inline		__attribute__((always_inline,unused)) notrace
+-#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
+-#define __inline __inline	__attribute__((always_inline,unused)) notrace
++#define inline \
++	inline __attribute__((always_inline, unused)) notrace __gnu_inline
+ #else
+-/* A lot of inline functions can cause havoc with function tracing */
+-#define inline inline		__attribute__((unused)) notrace
+-#define __inline__ __inline__	__attribute__((unused)) notrace
+-#define __inline __inline	__attribute__((unused)) notrace
++#define inline inline		__attribute__((unused)) notrace __gnu_inline
+ #endif
  
- 	rd = kvm_vcpu_dabt_get_rd(vcpu);
--	addr  = kern_hyp_va((kern_hyp_va(&kvm_vgic_global_state))->vcpu_base_va);
-+	addr  = kern_hyp_va(hyp_symbol_addr(kvm_vgic_global_state)->vcpu_base_va);
- 	addr += fault_ipa - vgic->vgic_cpu_base;
++#define __inline__ inline
++#define __inline inline
+ #define __always_inline	inline __attribute__((always_inline))
+ #define  noinline	__attribute__((noinline))
  
- 	if (kvm_vcpu_dabt_iswrite(vcpu)) {
 
 
