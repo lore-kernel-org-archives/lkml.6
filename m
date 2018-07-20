@@ -2,133 +2,75 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DA9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EB8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F98720647
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="dxIecCWe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F98720647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0B4E220647
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:49:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4E220647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388261AbeGTReh (ORCPT
+        id S2387996AbeGTRiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:34:37 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60104 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388011AbeGTReg (ORCPT
+        Fri, 20 Jul 2018 13:38:11 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:41198 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731305AbeGTRiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:34:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=/gH7mohjlCeqGcVa6bbG0ecL2jmWgoTjOAkOp6RB+g4=; b=dxIecCWeM8g3
-        ISll9xZZ/aVJ+BeKpaYuadw0zBCTxu+kiRgQUsaYGJOU+Gc5mwlPB9PNu3USRVJ3pn0K4/cJP+bGr
-        y+EZWAb5JubIiAubwpPGWSOYljxUBouMn2AcDd5ClH5o0vAvKmGQ0YjPatJgGUKgtYEjbjRNJUxRu
-        c8EZY=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fgYWn-000062-0W; Fri, 20 Jul 2018 16:45:13 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fgYWm-00010r-J8; Fri, 20 Jul 2018 17:45:12 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: meson: add axg tdm interface DT bindings documentation" to the asoc tree
-In-Reply-To:  <20180717153643.8806-11-jbrunet@baylibre.com>
-Message-Id: <E1fgYWm-00010r-J8@debutante>
-Date:   Fri, 20 Jul 2018 17:45:12 +0100
+        Fri, 20 Jul 2018 13:38:11 -0400
+X-IronPort-AV: E=Sophos;i="5.51,380,1526342400"; 
+   d="scan'208";a="60748126"
+Subject: Re: [PATCH net-next] xen-netfront: fix queue name setting
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>, <netdev@vger.kernel.org>
+CC:     <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+References: <20180720163359.28187-1-vkuznets@redhat.com>
+From:   Ross Lagerwall <ross.lagerwall@citrix.com>
+Message-ID: <566f2c29-a7c0-efee-444c-c51a632bfeee@citrix.com>
+Date:   Fri, 20 Jul 2018 17:49:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
+MIME-Version: 1.0
+In-Reply-To: <20180720163359.28187-1-vkuznets@redhat.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 07/20/2018 05:33 PM, Vitaly Kuznetsov wrote:
+> Commit f599c64fdf7d ("xen-netfront: Fix race between device setup and
+> open") changed the initialization order: xennet_create_queues() now
+> happens before we do register_netdev() so using netdev->name in
+> xennet_init_queue() is incorrect, we end up with the following in
+> /proc/interrupts:
+> 
+>   60:        139          0   xen-dyn    -event     eth%d-q0-tx
+>   61:        265          0   xen-dyn    -event     eth%d-q0-rx
+>   62:        234          0   xen-dyn    -event     eth%d-q1-tx
+>   63:          1          0   xen-dyn    -event     eth%d-q1-rx
+> 
+> and this looks ugly. Actually, using early netdev name (even when it's
+> already set) is also not ideal: nowadays we tend to rename eth devices
+> and queue name may end up not corresponding to the netdev name.
+> 
+> Use nodename from xenbus device for queue naming: this can't change in VM's
+> lifetime. Now /proc/interrupts looks like
+> 
+>   62:        202          0   xen-dyn    -event     device/vif/0-q0-tx
+>   63:        317          0   xen-dyn    -event     device/vif/0-q0-rx
+>   64:        262          0   xen-dyn    -event     device/vif/0-q1-tx
+>   65:         17          0   xen-dyn    -event     device/vif/0-q1-rx
+> 
+> Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
 
-   ASoC: meson: add axg tdm interface DT bindings documentation
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 9e960c0298b5811e5a2c1ebceea6aa3b7bbc61c6 Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 17 Jul 2018 17:42:57 +0200
-Subject: [PATCH] ASoC: meson: add axg tdm interface DT bindings documentation
-
-Add the DT bindings documentation for axg's TDM interfaces
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../bindings/sound/amlogic,axg-tdm-iface.txt  | 22 +++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.txt
-
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.txt
-new file mode 100644
-index 000000000000..cabfb26a5f22
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.txt
-@@ -0,0 +1,22 @@
-+* Amlogic Audio TDM Interfaces
-+
-+Required properties:
-+- compatible: 'amlogic,axg-tdm-iface'
-+- clocks: list of clock phandle, one for each entry clock-names.
-+- clock-names: should contain the following:
-+  * "sclk" : bit clock.
-+  * "lrclk": sample clock
-+  * "mclk" : master clock
-+	     -> optional if the interface is in clock slave mode.
-+- #sound-dai-cells: must be 0.
-+
-+Example of TDM_A on the A113 SoC:
-+
-+tdmif_a: audio-controller@0 {
-+	compatible = "amlogic,axg-tdm-iface";
-+	#sound-dai-cells = <0>;
-+	clocks = <&clkc_audio AUD_CLKID_MST_A_MCLK>,
-+		 <&clkc_audio AUD_CLKID_MST_A_SCLK>,
-+		 <&clkc_audio AUD_CLKID_MST_A_LRCLK>;
-+	clock-names = "mclk", "sclk", "lrclk";
-+};
--- 
-2.18.0
-
+Reviewed-by: Ross Lagerwall <ross.lagerwall@citrix.com>
