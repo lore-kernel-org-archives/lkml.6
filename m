@@ -3,38 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 768CBECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2BCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1FE20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1FE20854
+	by mail.kernel.org (Postfix) with ESMTP id 6566820854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:31:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6566820854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388414AbeGTNTd (ORCPT
+        id S2388424AbeGTNTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:19:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39264 "EHLO
+        Fri, 20 Jul 2018 09:19:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39324 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732931AbeGTNTc (ORCPT
+        with ESMTP id S1732109AbeGTNTg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:19:32 -0400
+        Fri, 20 Jul 2018 09:19:36 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64913CBE;
-        Fri, 20 Jul 2018 12:30:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0485BC18;
+        Fri, 20 Jul 2018 12:30:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.9 49/66] arm64: alternatives: Add dynamic patching feature
-Date:   Fri, 20 Jul 2018 14:14:06 +0200
-Message-Id: <20180720121410.074383586@linuxfoundation.org>
+        Julien Grall <julien.grall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.9 56/66] arm64: Add ssbd command-line option
+Date:   Fri, 20 Jul 2018 14:14:13 +0200
+Message-Id: <20180720121411.471924890@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -53,218 +55,210 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-Commit dea5e2a4c5bcf196f879a66cebdcca07793e8ba4 upstream.
+commit a43ae4dfe56a01f5b98ba0cb2f784b6a43bafcc6 upstream.
 
-We've so far relied on a patching infrastructure that only gave us
-a single alternative, without any way to provide a range of potential
-replacement instructions. For a single feature, this is an all or
-nothing thing.
+On a system where the firmware implements ARCH_WORKAROUND_2,
+it may be useful to either permanently enable or disable the
+workaround for cases where the user decides that they'd rather
+not get a trap overhead, and keep the mitigation permanently
+on or off instead of switching it on exception entry/exit.
 
-It would be interesting to have a more flexible grained way of patching
-the kernel though, where we could dynamically tune the code that gets
-injected.
+In any case, default to the mitigation being enabled.
 
-In order to achive this, let's introduce a new form of dynamic patching,
-assiciating a callback to a patching site. This callback gets source and
-target locations of the patching request, as well as the number of
-instructions to be patched.
-
-Dynamic patching is declared with the new ALTERNATIVE_CB and alternative_cb
-directives:
-
-	asm volatile(ALTERNATIVE_CB("mov %0, #0\n", callback)
-		     : "r" (v));
-or
-	alternative_cb callback
-		mov	x0, #0
-	alternative_cb_end
-
-where callback is the C function computing the alternative.
-
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Julien Grall <julien.grall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/alternative.h |   41 ++++++++++++++++++++++++++++---
- arch/arm64/kernel/alternative.c      |   45 +++++++++++++++++++++++++----------
- 2 files changed, 70 insertions(+), 16 deletions(-)
+ Documentation/kernel-parameters.txt |   17 +++++
+ arch/arm64/include/asm/cpufeature.h |    6 ++
+ arch/arm64/kernel/cpu_errata.c      |  103 ++++++++++++++++++++++++++++++------
+ 3 files changed, 110 insertions(+), 16 deletions(-)
 
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -4,6 +4,8 @@
- #include <asm/cpucaps.h>
- #include <asm/insn.h>
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -4023,6 +4023,23 @@ bytes respectively. Such letter suffixes
+ 	spia_pedr=
+ 	spia_peddr=
  
-+#define ARM64_CB_PATCH ARM64_NCAPS
++	ssbd=		[ARM64,HW]
++			Speculative Store Bypass Disable control
 +
- #ifndef __ASSEMBLY__
- 
- #include <linux/init.h>
-@@ -21,12 +23,19 @@ struct alt_instr {
- 	u8  alt_len;		/* size of new instruction(s), <= orig_len */
- };
- 
-+typedef void (*alternative_cb_t)(struct alt_instr *alt,
-+				 __le32 *origptr, __le32 *updptr, int nr_inst);
++			On CPUs that are vulnerable to the Speculative
++			Store Bypass vulnerability and offer a
++			firmware based mitigation, this parameter
++			indicates how the mitigation should be used:
 +
- void __init apply_alternatives_all(void);
- void apply_alternatives(void *start, size_t length);
- 
--#define ALTINSTR_ENTRY(feature)						      \
-+#define ALTINSTR_ENTRY(feature,cb)					      \
- 	" .word 661b - .\n"				/* label           */ \
-+	" .if " __stringify(cb) " == 0\n"				      \
- 	" .word 663f - .\n"				/* new instruction */ \
-+	" .else\n"							      \
-+	" .word " __stringify(cb) "- .\n"		/* callback */	      \
-+	" .endif\n"							      \
- 	" .hword " __stringify(feature) "\n"		/* feature bit     */ \
- 	" .byte 662b-661b\n"				/* source len      */ \
- 	" .byte 664f-663f\n"				/* replacement len */
-@@ -44,15 +53,18 @@ void apply_alternatives(void *start, siz
-  * but most assemblers die if insn1 or insn2 have a .inst. This should
-  * be fixed in a binutils release posterior to 2.25.51.0.2 (anything
-  * containing commit 4e4d08cf7399b606 or c1baaddf8861).
-+ *
-+ * Alternatives with callbacks do not generate replacement instructions.
-  */
--#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled)	\
-+#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled, cb)	\
- 	".if "__stringify(cfg_enabled)" == 1\n"				\
- 	"661:\n\t"							\
- 	oldinstr "\n"							\
- 	"662:\n"							\
- 	".pushsection .altinstructions,\"a\"\n"				\
--	ALTINSTR_ENTRY(feature)						\
-+	ALTINSTR_ENTRY(feature,cb)					\
- 	".popsection\n"							\
-+	" .if " __stringify(cb) " == 0\n"				\
- 	".pushsection .altinstr_replacement, \"a\"\n"			\
- 	"663:\n\t"							\
- 	newinstr "\n"							\
-@@ -60,11 +72,17 @@ void apply_alternatives(void *start, siz
- 	".popsection\n\t"						\
- 	".org	. - (664b-663b) + (662b-661b)\n\t"			\
- 	".org	. - (662b-661b) + (664b-663b)\n"			\
-+	".else\n\t"							\
-+	"663:\n\t"							\
-+	"664:\n\t"							\
-+	".endif\n"							\
- 	".endif\n"
- 
- #define _ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg, ...)	\
--	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg))
-+	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
- 
-+#define ALTERNATIVE_CB(oldinstr, cb) \
-+	__ALTERNATIVE_CFG(oldinstr, "NOT_AN_INSTRUCTION", ARM64_CB_PATCH, 1, cb)
- #else
- 
- #include <asm/assembler.h>
-@@ -131,6 +149,14 @@ void apply_alternatives(void *start, siz
- 661:
- .endm
- 
-+.macro alternative_cb cb
-+	.set .Lasm_alt_mode, 0
-+	.pushsection .altinstructions, "a"
-+	altinstruction_entry 661f, \cb, ARM64_CB_PATCH, 662f-661f, 0
-+	.popsection
-+661:
-+.endm
++			force-on:  Unconditionally enable mitigation for
++				   for both kernel and userspace
++			force-off: Unconditionally disable mitigation for
++				   for both kernel and userspace
++			kernel:    Always enable mitigation in the
++				   kernel, and offer a prctl interface
++				   to allow userspace to register its
++				   interest in being mitigated too.
 +
- /*
-  * Provide the other half of the alternative code sequence.
-  */
-@@ -157,6 +183,13 @@ void apply_alternatives(void *start, siz
- .endm
- 
- /*
-+ * Callback-based alternative epilogue
-+ */
-+.macro alternative_cb_end
-+662:
-+.endm
-+
-+/*
-  * Provides a trivial alternative or default sequence consisting solely
-  * of NOPs. The number of NOPs is chosen automatically to match the
-  * previous case.
---- a/arch/arm64/kernel/alternative.c
-+++ b/arch/arm64/kernel/alternative.c
-@@ -28,7 +28,7 @@
- #include <asm/sections.h>
- #include <linux/stop_machine.h>
- 
--#define __ALT_PTR(a,f)		(u32 *)((void *)&(a)->f + (a)->f)
-+#define __ALT_PTR(a,f)		((void *)&(a)->f + (a)->f)
- #define ALT_ORIG_PTR(a)		__ALT_PTR(a, orig_offset)
- #define ALT_REPL_PTR(a)		__ALT_PTR(a, alt_offset)
- 
-@@ -107,31 +107,52 @@ static u32 get_alt_insn(struct alt_instr
- 	return insn;
+ 	stack_guard_gap=	[MM]
+ 			override the default stack gap protection. The value
+ 			is in page units and it defines how many pages prior
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -221,6 +221,12 @@ static inline bool system_supports_mixed
+ 	return id_aa64mmfr0_mixed_endian_el0(read_system_reg(SYS_ID_AA64MMFR0_EL1));
  }
  
-+static void patch_alternative(struct alt_instr *alt,
-+			      __le32 *origptr, __le32 *updptr, int nr_inst)
++#define ARM64_SSBD_UNKNOWN		-1
++#define ARM64_SSBD_FORCE_DISABLE	0
++#define ARM64_SSBD_KERNEL		1
++#define ARM64_SSBD_FORCE_ENABLE		2
++#define ARM64_SSBD_MITIGATED		3
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -190,6 +190,38 @@ static int enable_smccc_arch_workaround_
+ #ifdef CONFIG_ARM64_SSBD
+ DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
+ 
++int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
++
++static const struct ssbd_options {
++	const char	*str;
++	int		state;
++} ssbd_options[] = {
++	{ "force-on",	ARM64_SSBD_FORCE_ENABLE, },
++	{ "force-off",	ARM64_SSBD_FORCE_DISABLE, },
++	{ "kernel",	ARM64_SSBD_KERNEL, },
++};
++
++static int __init ssbd_cfg(char *buf)
 +{
-+	__le32 *replptr;
 +	int i;
 +
-+	replptr = ALT_REPL_PTR(alt);
-+	for (i = 0; i < nr_inst; i++) {
-+		u32 insn;
++	if (!buf || !buf[0])
++		return -EINVAL;
 +
-+		insn = get_alt_insn(alt, origptr + i, replptr + i);
-+		updptr[i] = cpu_to_le32(insn);
++	for (i = 0; i < ARRAY_SIZE(ssbd_options); i++) {
++		int len = strlen(ssbd_options[i].str);
++
++		if (strncmp(buf, ssbd_options[i].str, len))
++			continue;
++
++		ssbd_state = ssbd_options[i].state;
++		return 0;
 +	}
++
++	return -EINVAL;
 +}
++early_param("ssbd", ssbd_cfg);
 +
- static void __apply_alternatives(void *alt_region)
+ void __init arm64_update_smccc_conduit(struct alt_instr *alt,
+ 				       __le32 *origptr, __le32 *updptr,
+ 				       int nr_inst)
+@@ -233,44 +265,83 @@ static bool has_ssbd_mitigation(const st
+ 				    int scope)
  {
- 	struct alt_instr *alt;
- 	struct alt_region *region = alt_region;
--	u32 *origptr, *replptr;
-+	__le32 *origptr;
-+	alternative_cb_t alt_cb;
+ 	struct arm_smccc_res res;
+-	bool supported = true;
++	bool required = true;
++	s32 val;
  
- 	for (alt = region->begin; alt < region->end; alt++) {
--		u32 insn;
--		int i, nr_inst;
-+		int nr_inst;
+ 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
  
--		if (!cpus_have_cap(alt->cpufeature))
-+		/* Use ARM64_CB_PATCH as an unconditional patch */
-+		if (alt->cpufeature < ARM64_CB_PATCH &&
-+		    !cpus_have_cap(alt->cpufeature))
- 			continue;
+-	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
++	if (psci_ops.smccc_version == SMCCC_VERSION_1_0) {
++		ssbd_state = ARM64_SSBD_UNKNOWN;
+ 		return false;
++	}
  
--		BUG_ON(alt->alt_len != alt->orig_len);
-+		if (alt->cpufeature == ARM64_CB_PATCH)
-+			BUG_ON(alt->alt_len != 0);
-+		else
-+			BUG_ON(alt->alt_len != alt->orig_len);
+-	/*
+-	 * The probe function return value is either negative
+-	 * (unsupported or mitigated), positive (unaffected), or zero
+-	 * (requires mitigation). We only need to do anything in the
+-	 * last case.
+-	 */
+ 	switch (psci_ops.conduit) {
+ 	case PSCI_CONDUIT_HVC:
+ 		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
+-		if ((int)res.a0 != 0)
+-			supported = false;
+ 		break;
  
- 		pr_info_once("patching kernel code\n");
+ 	case PSCI_CONDUIT_SMC:
+ 		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
+-		if ((int)res.a0 != 0)
+-			supported = false;
+ 		break;
  
- 		origptr = ALT_ORIG_PTR(alt);
--		replptr = ALT_REPL_PTR(alt);
--		nr_inst = alt->alt_len / sizeof(insn);
-+		nr_inst = alt->orig_len / AARCH64_INSN_SIZE;
- 
--		for (i = 0; i < nr_inst; i++) {
--			insn = get_alt_insn(alt, origptr + i, replptr + i);
--			*(origptr + i) = cpu_to_le32(insn);
--		}
-+		if (alt->cpufeature < ARM64_CB_PATCH)
-+			alt_cb = patch_alternative;
-+		else
-+			alt_cb  = ALT_REPL_PTR(alt);
+ 	default:
+-		supported = false;
++		ssbd_state = ARM64_SSBD_UNKNOWN;
++		return false;
++	}
 +
-+		alt_cb(alt, origptr, origptr, nr_inst);
++	val = (s32)res.a0;
++
++	switch (val) {
++	case SMCCC_RET_NOT_SUPPORTED:
++		ssbd_state = ARM64_SSBD_UNKNOWN;
++		return false;
++
++	case SMCCC_RET_NOT_REQUIRED:
++		pr_info_once("%s mitigation not required\n", entry->desc);
++		ssbd_state = ARM64_SSBD_MITIGATED;
++		return false;
++
++	case SMCCC_RET_SUCCESS:
++		required = true;
++		break;
++
++	case 1:	/* Mitigation not required on this CPU */
++		required = false;
++		break;
++
++	default:
++		WARN_ON(1);
++		return false;
+ 	}
  
- 		flush_icache_range((uintptr_t)origptr,
- 				   (uintptr_t)(origptr + nr_inst));
+-	if (supported) {
+-		__this_cpu_write(arm64_ssbd_callback_required, 1);
++	switch (ssbd_state) {
++	case ARM64_SSBD_FORCE_DISABLE:
++		pr_info_once("%s disabled from command-line\n", entry->desc);
++		arm64_set_ssbd_mitigation(false);
++		required = false;
++		break;
++
++	case ARM64_SSBD_KERNEL:
++		if (required) {
++			__this_cpu_write(arm64_ssbd_callback_required, 1);
++			arm64_set_ssbd_mitigation(true);
++		}
++		break;
++
++	case ARM64_SSBD_FORCE_ENABLE:
++		pr_info_once("%s forced from command-line\n", entry->desc);
+ 		arm64_set_ssbd_mitigation(true);
++		required = true;
++		break;
++
++	default:
++		WARN_ON(1);
++		break;
+ 	}
+ 
+-	return supported;
++	return required;
+ }
+ #endif	/* CONFIG_ARM64_SSBD */
+ 
 
 
