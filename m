@@ -3,84 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93333ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 075E5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EEE820856
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:35:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EEE820856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9608520856
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:37:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9608520856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732090AbeGTOXY (ORCPT
+        id S1731720AbeGTOZf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 10:23:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46784 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730996AbeGTOXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 10:23:24 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B2E0A402B03F;
-        Fri, 20 Jul 2018 13:35:04 +0000 (UTC)
-Received: from pdhamdhe.redhat.com (unknown [10.76.0.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 518592026D69;
-        Fri, 20 Jul 2018 13:35:03 +0000 (UTC)
-From:   Prashant Dhamdhere <pdhamdhe@redhat.com>
-To:     corbet@lwn.net
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pdhamdhe@redhat.com
-Subject: [PATCH v2] Documentation: vm.txt: Adding 'nr_hugepages_mempolicy' parameter description.
-Date:   Fri, 20 Jul 2018 19:05:00 +0530
-Message-Id: <20180720133500.10475-1-pdhamdhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 13:35:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 13:35:04 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pdhamdhe@redhat.com' RCPT:''
+        Fri, 20 Jul 2018 10:25:35 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:36962 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727693AbeGTOZf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 10:25:35 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fgVar-0003U7-6u; Fri, 20 Jul 2018 07:37:13 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fgVaq-0005gt-LB; Fri, 20 Jul 2018 07:37:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Laura Abbott <labbott@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-doc@vger.kernel.org, Kees Cook <keescook@chromium.org>
+References: <1531935483-30784-1-git-send-email-s.mesoraca16@gmail.com>
+        <CAGXu5jK4q6HLDZ6jokTeDABbzVasY85Jo0HFNKYeaKWZYPjPKg@mail.gmail.com>
+Date:   Fri, 20 Jul 2018 08:37:04 -0500
+In-Reply-To: <CAGXu5jK4q6HLDZ6jokTeDABbzVasY85Jo0HFNKYeaKWZYPjPKg@mail.gmail.com>
+        (Kees Cook's message of "Thu, 19 Jul 2018 22:15:15 -0700")
+Message-ID: <87effy9gfz.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fgVaq-0005gt-LB;;;mid=<87effy9gfz.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/hahftwkIP0ZjnYet3ZaYXea+PRQt0Z6I=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [RFC] kconfig: add hardened defconfig helpers
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds 'nr_hugepages_mempolicy' parameter which is currently missing
-in 'vm.txt' file. It also contains a short description of 'nr_hugepages_mempolicy'
-parameter.
+Kees Cook <keescook@chromium.org> writes:
 
-Signed-off-by: Prashant Dhamdhere <pdhamdhe@redhat.com>
----
- Documentation/sysctl/vm.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+>> +CONFIG_USER_NS=n
+>> +~~~~~~~~~~~~~~~~
+>> +
+>> +**Negative side effects level:** Medium
+>
+> Unfortunately I think this is High or Extreme. USER_NS gets a lot of use.
+>
+>> +**- Protection type:** Attack surface reduction
+>> +
+>> +This allows containers to use user namespaces to provide different
+>> +user info for different servers.
+>> +User namespaces have been abused in the past for privilege
+>> +escalation.
 
-diff --git a/Documentation/sysctl/vm.txt b/Documentation/sysctl/vm.txt
-index 697ef8c225df..b17ceb0e5a47 100644
---- a/Documentation/sysctl/vm.txt
-+++ b/Documentation/sysctl/vm.txt
-@@ -44,6 +44,7 @@ Currently, these files are in /proc/sys/vm:
- - mmap_rnd_bits
- - mmap_rnd_compat_bits
- - nr_hugepages
-+- nr_hugepages_mempolicy
- - nr_overcommit_hugepages
- - nr_trim_pages         (only if CONFIG_MMU=n)
- - numa_zonelist_order
-@@ -519,6 +520,15 @@ See Documentation/admin-guide/mm/hugetlbpage.rst
- 
- ==============================================================
- 
-+nr_hugepages_mempolicy
-+
-+Change the size of the hugepage pool at run-time on a specific
-+set of NUMA nodes.
-+
-+See Documentation/admin-guide/mm/hugetlbpage.rst
-+
-+==============================================================
-+
- nr_overcommit_hugepages
- 
- Change the maximum size of the hugepage pool. The maximum is
--- 
-2.17.1
+This is not a particularly good description.
 
+User namespaces do indeed increase the attack surface of programs that
+don't use them.
+
+User namespaces when used to build ``unprivileged containers'' remove or
+at least drastically reduce the need to run as root when setting up
+containers.  Which is attack surface reduction.
+
+User namespaces make available tools that are commonly used to build
+sandboxes.  Chrome for example uses users namespaces if they are
+available as part of setting up it's sandbox.
+
+User namespaces are not limited to containers.
+
+The bugs in the attack surface that user namespaces expose that have
+been used for privilege escalation have to the best of my knowledge
+closed.  So while there is some danger in the increased attack surface
+we are looking at implementation defects rather than design defects.
+
+Eric
