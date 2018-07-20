@@ -2,149 +2,357 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CD0ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 02:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD04ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 02:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F07BD20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 02:41:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F07BD20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neuling.org
+	by mail.kernel.org (Postfix) with ESMTP id D341620673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 02:45:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tfhh2lAU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D341620673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731053AbeGTD1v convert rfc822-to-8bit (ORCPT
+        id S1731095AbeGTDaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 23:27:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:36999 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730524AbeGTD1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 23:27:51 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by ozlabs.org (Postfix) with ESMTP id 41WwBj0cCyz9s4V;
-        Fri, 20 Jul 2018 12:41:49 +1000 (AEST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id 09833EE78BF; Fri, 20 Jul 2018 12:41:49 +1000 (AEST)
-Message-ID: <dd4a5526966b9b24b7eb52efadf3b9bcd4a94bd1.camel@neuling.org>
-Subject: Re: [RESEND][PATCH] powerpc/powernv : Save/Restore SPRG3 on
- entry/exit from stop.
-From:   Michael Neuling <mikey@neuling.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>, ego@linux.vnet.ibm.com
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Florian Weimer <fweimer@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Date:   Fri, 20 Jul 2018 12:41:48 +1000
-In-Reply-To: <87tvoubpro.fsf@concordia.ellerman.id.au>
-References: <1531826849-31838-1-git-send-email-ego@linux.vnet.ibm.com>
-         <1531843216-22209-1-git-send-email-ego@linux.vnet.ibm.com>
-         <80bbdf47081e3e302ab5f28b5ddc9e2faabba842.camel@neuling.org>
-         <20180718081249.GA17700@in.ibm.com>
-         <1205bfc10c62986b4345fa258cf37e820c08226b.camel@neuling.org>
-         <87tvoubpro.fsf@concordia.ellerman.id.au>
+        Thu, 19 Jul 2018 23:30:55 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:34642 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730763AbeGTDaz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 23:30:55 -0400
+Received: by mail-yb0-f193.google.com with SMTP id e9-v6so4106174ybq.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 19:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=YjBp1fZI2B0hZ/Jq/mAFr0aWUwtn99NicIyIcGZqrf0=;
+        b=Tfhh2lAUqY+SlEmR/anZMh8ZLEnWOjD0kCr4ik9onFLrv9NgXG1tWY2BjdbEuYRGvl
+         KAOFG4/Fdj/xP47Uam19JQH9wLqGppVZkUY1ElYtkO2wNxWmPRPOMYyez8HqgsFgulJf
+         Gwxnu6QbaEIBgqADjs1sY0HC1dWmIN6DGoPZ06/WrfQaX0yuuX6bjLZC3aW2Px9HyQQm
+         A8wc7dbcvbcMBMlAXHJ3sTe1s0dxOuN+xDZNUa3OK7l+ZkbQ4ValgGdoUj8bo8DKeEMh
+         5Q4aXefD+ZGsHyaVUSBXgl63tpRY9veTMUbflpEbQ+0yvhToYLGh6cUUxq3QOEhoj31G
+         O86w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=YjBp1fZI2B0hZ/Jq/mAFr0aWUwtn99NicIyIcGZqrf0=;
+        b=ZvabFQPkaF0CgSSW6j/tTiJV+dSkcwMfKZtiU4+duXtR9dDhb1wvMBw44pOSZyyVO5
+         ACcgb6ag1MK9j/ju68pSQSfssQJ5gAb4RU2PziGA+snPcfGVeUwleZ2vZ+JgD9BcsB2t
+         W9HoTSD0McSXfu/Pzs4DzAmX8c05Bj1fsxIw5PJHefmqvOr1h8et3xxAuN+/00oU/xrX
+         SuDAm9YhnXw6Tx4noxt4xM87hzRKlaZysJ3C1Eoh72lVq7i8A9Azmlck8/IZ9PBTjlFA
+         p/+eSVbXEplXwxKDbTyIkMkXXemGvvdG8/za4EucG1eCkBpvvieTUVA91rkprmCgNuqd
+         /dDg==
+X-Gm-Message-State: AOUpUlHlnHrH5jAsA+khSGYrpLOPyOa0gP/WlXUPBsILpYECdVbgr/6T
+        WfAUCvmegu+Axx+P2/Dl0mcObH2/1ym3PZvw7N0=
+X-Google-Smtp-Source: AAOMgpdxukv6UnxQM8JxGYlVS5HRrdNHDpVZDvc1jqoUfbs4yWA8I5eZs2e9qrYOZPL4RcMOzh2lcMOsZ1BfnWF519E=
+X-Received: by 2002:a25:e406:: with SMTP id b6-v6mr89988ybh.397.1532054694503;
+ Thu, 19 Jul 2018 19:44:54 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 19:44:53
+ -0700 (PDT)
+In-Reply-To: <20180719093743.GC14301@kroah.com>
+References: <20180717205712.29495-1-toddpoynor@gmail.com> <20180717205712.29495-18-toddpoynor@gmail.com>
+ <20180719093743.GC14301@kroah.com>
+From:   Todd Poynor <toddpoynor@gmail.com>
+Date:   Thu, 19 Jul 2018 19:44:53 -0700
+Message-ID: <CAO3upoYdSkDqyLtD8cQh4kws5gdOcAEPSUHnsru23Uo=3c-uMQ@mail.gmail.com>
+Subject: Re: [PATCH 17/32] staging: gasket: annotate ioctl arg with __user
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        Zhongze Hu <frankhu@chromium.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Simon Que <sque@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Todd Poynor <toddpoynor@google.com>,
+        Dmitry Torokhov <dtor@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-20 at 12:32 +1000, Michael Ellerman wrote:
-> Michael Neuling <mikey@neuling.org> writes:
-> > On Wed, 2018-07-18 at 13:42 +0530, Gautham R Shenoy wrote:
-> > > On Wed, Jul 18, 2018 at 09:24:19AM +1000, Michael Neuling wrote:
-> > > > 
-> > > > >  	DEFINE(PPC_DBELL_SERVER, PPC_DBELL_SERVER);
-> > > > > diff --git a/arch/powerpc/kernel/idle_book3s.S
-> > > > > b/arch/powerpc/kernel/idle_book3s.S
-> > > > > index d85d551..5069d42 100644
-> > > > > --- a/arch/powerpc/kernel/idle_book3s.S
-> > > > > +++ b/arch/powerpc/kernel/idle_book3s.S
-> > > > > @@ -120,6 +120,9 @@ power9_save_additional_sprs:
-> > > > >  	mfspr	r4, SPRN_MMCR2
-> > > > >  	std	r3, STOP_MMCR1(r13)
-> > > > >  	std	r4, STOP_MMCR2(r13)
-> > > > > +
-> > > > > +	mfspr	r3, SPRN_SPRG3
-> > > > > +	std	r3, STOP_SPRG3(r13)
-> > > > 
-> > > > We don't need to save it.  Just restore it from paca->sprg_vdso which
-> > > > should
-> > > > never change.
-> > > 
-> > > Ok. I will respin a patch to restore SPRG3 from paca->sprg_vdso.
-> > > 
-> > > > 
-> > > > How can we do better at catching these missing SPRGs?
-> > > 
-> > > We can go through the list of SPRs from the POWER9 User Manual and
-> > > document explicitly why we don't have to save/restore certain SPRs
-> > > during the execution of the stop instruction. Does this sound ok ?
-> > > 
-> > > (Ref: Table 4-8, Section 4.7.3.4 from the POWER9 User Manual
-> > > accessible from
-> > > https://openpowerfoundation.org/?resource_lib=power9-processor-users-manua
-> > > l)
-> > 
-> > I was thinking of a boot time test case built into linux. linux has some
-> > boot
-> > time test cases which you can enable via CONFIG options.
-> > 
-> > Firstly you could see if an SPR exists using the same trick xmon does in
-> > dump_one_spr(). Then once you have a list of usable SPRs, you could write
-> > all
-> > the known ones (I assume you'd have to leave out some, like the PSSCR), then
-> > set
-> 
-> Write what value?
-> 
-> Ideally you want to write a random bit pattern to reduce the chance
-> that only some bits are being restored.
+On Thu, Jul 19, 2018 at 2:37 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Tue, Jul 17, 2018 at 01:56:57PM -0700, Todd Poynor wrote:
+>> From: Todd Poynor <toddpoynor@google.com>
+>>
+>> For sparse checking.
+>
+> Close, but you can do better :)
+>
+>>
+>> Reported-by: Dmitry Torokhov <dtor@chromium.org>
+>> Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+>> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+>> Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+>> ---
+>>  drivers/staging/gasket/apex_driver.c  | 11 ++--
+>>  drivers/staging/gasket/gasket_core.c  |  6 ++-
+>>  drivers/staging/gasket/gasket_core.h  |  4 +-
+>>  drivers/staging/gasket/gasket_ioctl.c | 72 ++++++++++++++-------------
+>>  drivers/staging/gasket/gasket_ioctl.h |  4 +-
+>>  5 files changed, 52 insertions(+), 45 deletions(-)
+>>
+>> diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+>> index 612b3ab803196..c91c5aff5ab9c 100644
+>> --- a/drivers/staging/gasket/apex_driver.c
+>> +++ b/drivers/staging/gasket/apex_driver.c
+>> @@ -5,6 +5,7 @@
+>>   * Copyright (C) 2018 Google, Inc.
+>>   */
+>>
+>> +#include <linux/compiler.h>
+>>  #include <linux/delay.h>
+>>  #include <linux/fs.h>
+>>  #include <linux/init.h>
+>> @@ -142,9 +143,9 @@ static int apex_get_status(struct gasket_dev *gasket_dev);
+>>
+>>  static uint apex_ioctl_check_permissions(struct file *file, uint cmd);
+>>
+>> -static long apex_ioctl(struct file *file, uint cmd, ulong arg);
+>> +static long apex_ioctl(struct file *file, uint cmd, void __user *arg);
+>>
+>> -static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg);
+>> +static long apex_clock_gating(struct gasket_dev *gasket_dev, void __user *arg);
+>
+> Make this a __user pointer to the correct struct type you are handling
+> here.  You know what the type is, use it.
 
-The xmon dump_one_spr() trick tries to work around that by writing one random
-value and then a different one to see if it really is a nop.
+Got it.
 
-> But you can't do that because writing a value to an SPRs has an effect.
+>
+>>  static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type);
+>>
+>> @@ -635,7 +636,7 @@ static uint apex_ioctl_check_permissions(struct file *filp, uint cmd)
+>>  /*
+>>   * Apex-specific ioctl handler.
+>>   */
+>> -static long apex_ioctl(struct file *filp, uint cmd, ulong arg)
+>> +static long apex_ioctl(struct file *filp, uint cmd, void __user *arg)
+>>  {
+>>       struct gasket_dev *gasket_dev = filp->private_data;
+>>
+>> @@ -655,7 +656,7 @@ static long apex_ioctl(struct file *filp, uint cmd, ulong arg)
+>>   * @gasket_dev: Gasket device pointer.
+>>   * @arg: User ioctl arg, in this case to a apex_gate_clock_ioctl struct.
+>>   */
+>> -static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg)
+>> +static long apex_clock_gating(struct gasket_dev *gasket_dev, void __user *arg)
+>
+> As above, this should be a different type.
+>
+>>  {
+>>       struct apex_gate_clock_ioctl ibuf;
+>>
+>> @@ -663,7 +664,7 @@ static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg)
+>>               return 0;
+>>
+>>       if (allow_sw_clock_gating) {
+>> -             if (copy_from_user(&ibuf, (void __user *)arg, sizeof(ibuf)))
+>> +             if (copy_from_user(&ibuf, arg, sizeof(ibuf)))
+>>                       return -EFAULT;
+>>
+>>               gasket_log_error(
+>> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+>> index 947b4fcc76970..ff34af42bbe7c 100644
+>> --- a/drivers/staging/gasket/gasket_core.c
+>> +++ b/drivers/staging/gasket/gasket_core.c
+>> @@ -14,6 +14,7 @@
+>>  #include "gasket_page_table.h"
+>>  #include "gasket_sysfs.h"
+>>
+>> +#include <linux/compiler.h>
+>>  #include <linux/delay.h>
+>>  #include <linux/fs.h>
+>>  #include <linux/init.h>
+>> @@ -1823,14 +1824,15 @@ static long gasket_ioctl(struct file *filp, uint cmd, ulong arg)
+>>                * check_and_invoke_callback.
+>>                */
+>>               if (driver_desc->ioctl_handler_cb)
+>> -                     return driver_desc->ioctl_handler_cb(filp, cmd, arg);
+>> +                     return driver_desc->ioctl_handler_cb(
+>> +                         filp, cmd, (void __user *)arg);
+>
+> You can use a temp variable and then only have to cast things once then,
+> instead of twice, if you care.  Not a big deal.
 
-Sure that's a concern but xmon seems to get away with it.
+But then I have to name it, and I suck at that. :P  I'm trying
+switching to "arg" for ulong/int arguments and "argp" for pointer
+arguments.
 
-> Some of them might even need to be zero, in which case you can't really
-> distinguish that from a non-restored zero.
+>
+>>
+>>               gasket_log_error(
+>>                       gasket_dev, "Received unknown ioctl 0x%x", cmd);
+>
+> This is a fun way to cause a DoS on your system, you should fix this up
+> in later changes.
 
-It doesn't need to be perfect. It just needs to catch more than we have now.
+Yeah there's another patch coming soon that converts a bunch of errors
+and infos to debugs.
 
-> > the appropriate stop level, make sure you got into that stop level, and then
-> > see
-> > if that register was changed. Then you'd have an automated list of registers
-> > you
-> > need to make sure you save/restore at each stop level.
-> > 
-> > Could something like that work?
-> 
-> Maybe.
-> 
-> Ignoring the problem of whether you can write a meaningful value to some
-> of the SPRs, I'm not entirely convinced it's going to work. But maybe
-> I'm wrong.
+>
+>>               return -EINVAL;
+>>       }
+>>
+>> -     return gasket_handle_ioctl(filp, cmd, arg);
+>> +     return gasket_handle_ioctl(filp, cmd, (void __user *)arg);
+>>  }
+>>
+>>  int gasket_reset(struct gasket_dev *gasket_dev, uint reset_type)
+>> diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+>> index 50ad0c8853183..68b4d2ac9fd6c 100644
+>> --- a/drivers/staging/gasket/gasket_core.h
+>> +++ b/drivers/staging/gasket/gasket_core.h
+>> @@ -315,7 +315,7 @@ struct gasket_dev {
+>>
+>>  /* Type of the ioctl permissions check callback. See below. */
+>>  typedef int (*gasket_ioctl_permissions_cb_t)(
+>> -     struct file *filp, uint cmd, ulong arg);
+>> +     struct file *filp, uint cmd, void __user *arg);
+>>
+>>  /*
+>>   * Device type descriptor.
+>> @@ -549,7 +549,7 @@ struct gasket_driver_desc {
+>>        * return -EINVAL. Should return an error status (either -EINVAL or
+>>        * the error result of the ioctl being handled).
+>>        */
+>> -     long (*ioctl_handler_cb)(struct file *filp, uint cmd, ulong arg);
+>> +     long (*ioctl_handler_cb)(struct file *filp, uint cmd, void __user *arg);
+>
+> Why are you not using the typedef above?
 
-Yeah, I'm not convinced it'll work either but it would be a nice piece of test
-infrastructure to have if it does work.
+There's a typedef for the permissions check callback, but not for the
+handler callback.  It's a bit confusing, so I tried adding a typedef
+for the handler, but now checkpatch is spanking me for adding new
+typedefs -- maybe I should drop the existing typedef?
 
-We'd still need to marry up the SPR numbers we get from the test to what's
-actually being restored in Linux.
+>
+>>
+>>       /*
+>>        * device_status_cb: Callback to determine device health.
+>> diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+>> index d0fa05b8bf1d3..ab2376c32c00b 100644
+>> --- a/drivers/staging/gasket/gasket_ioctl.c
+>> +++ b/drivers/staging/gasket/gasket_ioctl.c
+>> @@ -7,6 +7,7 @@
+>>  #include "gasket_interrupt.h"
+>>  #include "gasket_logging.h"
+>>  #include "gasket_page_table.h"
+>> +#include <linux/compiler.h>
+>>  #include <linux/fs.h>
+>>  #include <linux/uaccess.h>
+>>
+>> @@ -23,17 +24,18 @@
+>>  #endif
+>>
+>>  static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd);
+>> -static int gasket_set_event_fd(struct gasket_dev *dev, ulong arg);
+>> +static int gasket_set_event_fd(struct gasket_dev *dev, void __user *arg);
+>>  static int gasket_read_page_table_size(
+>> -     struct gasket_dev *gasket_dev, ulong arg);
+>> +     struct gasket_dev *gasket_dev, void __user *arg);
+>>  static int gasket_read_simple_page_table_size(
+>> -     struct gasket_dev *gasket_dev, ulong arg);
+>> +     struct gasket_dev *gasket_dev, void __user *arg);
+>>  static int gasket_partition_page_table(
+>> -     struct gasket_dev *gasket_dev, ulong arg);
+>> -static int gasket_map_buffers(struct gasket_dev *gasket_dev, ulong arg);
+>> -static int gasket_unmap_buffers(struct gasket_dev *gasket_dev, ulong arg);
+>> +     struct gasket_dev *gasket_dev, void __user *arg);
+>> +static int gasket_map_buffers(struct gasket_dev *gasket_dev, void __user *arg);
+>> +static int gasket_unmap_buffers(struct gasket_dev *gasket_dev,
+>> +                             void __user *arg);
+>>  static int gasket_config_coherent_allocator(
+>> -     struct gasket_dev *gasket_dev, ulong arg);
+>> +     struct gasket_dev *gasket_dev, void __user *arg);
+>
+>
+> For most of these you know the real type, please just use it.
 
-> But there's a much simpler solution, we should 1) have a selftest for
-> getcpu() and 2) we should be running the glibc (I think?) test suite
-> that found this in the first place. It's frankly embarrassing that we
-> didn't find this.
+Roger.
 
-Yeah, we should do that also, but how do we catch the next SPR we are missing.
-I'd like some systematic way of doing that rather than wack-a-mole.
+>
+>>  /*
+>>   * standard ioctl dispatch function.
+>> @@ -43,9 +45,10 @@ static int gasket_config_coherent_allocator(
+>>   *
+>>   * Standard ioctl dispatcher; forwards operations to individual handlers.
+>>   */
+>> -long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
+>> +long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *arg)
+>>  {
+>>       struct gasket_dev *gasket_dev;
+>> +     ulong intarg = (ulong)arg;
+>
+> Ick, really?  That's a horrible name for a variable, especially as it
+> doesn't describe what it is...
+>
+> and "unsigned long" please, ulong is not a "real" kernel type.
+>
+>>       int retval;
+>>
+>>       gasket_dev = (struct gasket_dev *)filp->private_data;
+>> @@ -74,16 +77,16 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
+>>        */
+>>       switch (cmd) {
+>>       case GASKET_IOCTL_RESET:
+>> -             trace_gasket_ioctl_integer_data(arg);
+>> -             retval = gasket_reset(gasket_dev, arg);
+>> +             trace_gasket_ioctl_integer_data(intarg);
+>> +             retval = gasket_reset(gasket_dev, intarg);
+>>               break;
+>>       case GASKET_IOCTL_SET_EVENTFD:
+>>               retval = gasket_set_event_fd(gasket_dev, arg);
+>>               break;
+>>       case GASKET_IOCTL_CLEAR_EVENTFD:
+>> -             trace_gasket_ioctl_integer_data(arg);
+>> +             trace_gasket_ioctl_integer_data(intarg);
+>>               retval = gasket_interrupt_clear_eventfd(
+>> -                     gasket_dev->interrupt_data, (int)arg);
+>> +                     gasket_dev->interrupt_data, (int)intarg);
+>
+> See, look at that cast, why would you ever think to cast a variabled
+> with "int" in the name of it, to an int?  Naming is hard :(
 
-Mikey
+Yeah now that I look at it that was a pretty horrible name.  I hate
+naming things.
 
+>
+>
+>>               break;
+>>       case GASKET_IOCTL_PARTITION_PAGE_TABLE:
+>>               trace_gasket_ioctl_integer_data(arg);
+>> @@ -91,7 +94,7 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
+>>               break;
+>>       case GASKET_IOCTL_NUMBER_PAGE_TABLES:
+>>               trace_gasket_ioctl_integer_data(gasket_dev->num_page_tables);
+>> -             if (copy_to_user((void __user *)arg,
+>> +             if (copy_to_user(arg,
+>>                                &gasket_dev->num_page_tables,
+>
+> Nit, you can move this line up one now.
+
+OK.
+
+>
+> I'll stop now, you get the idea.  This should be broken up a lot.
+
+I'll split up in some fashion.
+
+Thanks -- Todd
+
+>
+> thanks,
+>
+> greg k-h
