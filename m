@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4367FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BE1ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F03D206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F03D206B7
+	by mail.kernel.org (Postfix) with ESMTP id BC08420652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC08420652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390325AbeGTNdM (ORCPT
+        id S2390339AbeGTNdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:33:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55746 "EHLO
+        Fri, 20 Jul 2018 09:33:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55816 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389836AbeGTNdL (ORCPT
+        with ESMTP id S2389719AbeGTNdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:33:11 -0400
+        Fri, 20 Jul 2018 09:33:15 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2FB39D69;
-        Fri, 20 Jul 2018 12:39:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DAF90CB5;
+        Fri, 20 Jul 2018 12:39:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+d464d2c20c717ef5a6a8@syzkaller.appspotmail.com,
-        John Fastabend <john.fastabend@gmail.com>,
+        syzbot+7d427828b2ea6e592804@syzkaller.appspotmail.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.17 080/101] bpf: sockmap, consume_skb in close path
-Date:   Fri, 20 Jul 2018 14:14:26 +0200
-Message-Id: <20180720121426.660871694@linuxfoundation.org>
+Subject: [PATCH 4.17 081/101] bpf: dont leave partial mangled prog in jit_subprogs error path
+Date:   Fri, 20 Jul 2018 14:14:27 +0200
+Message-Id: <20180720121426.701350320@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -52,44 +52,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Fastabend <john.fastabend@gmail.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 7ebc14d507b4b55105da8d1a1eda323381529cc7 upstream.
+commit c7a897843224a92209f306c984975b704969b89d upstream.
 
-Currently, when a sock is closed and the bpf_tcp_close() callback is
-used we remove memory but do not free the skb. Call consume_skb() if
-the skb is attached to the buffer.
+syzkaller managed to trigger the following bug through fault injection:
 
-Reported-by: syzbot+d464d2c20c717ef5a6a8@syzkaller.appspotmail.com
-Fixes: 1aa12bdf1bfb ("bpf: sockmap, add sock close() hook to remove socks")
-Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+  [...]
+  [  141.043668] verifier bug. No program starts at insn 3
+  [  141.044648] WARNING: CPU: 3 PID: 4072 at kernel/bpf/verifier.c:1613
+                 get_callee_stack_depth kernel/bpf/verifier.c:1612 [inline]
+  [  141.044648] WARNING: CPU: 3 PID: 4072 at kernel/bpf/verifier.c:1613
+                 fixup_call_args kernel/bpf/verifier.c:5587 [inline]
+  [  141.044648] WARNING: CPU: 3 PID: 4072 at kernel/bpf/verifier.c:1613
+                 bpf_check+0x525e/0x5e60 kernel/bpf/verifier.c:5952
+  [  141.047355] CPU: 3 PID: 4072 Comm: a.out Not tainted 4.18.0-rc4+ #51
+  [  141.048446] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),BIOS 1.10.2-1 04/01/2014
+  [  141.049877] Call Trace:
+  [  141.050324]  __dump_stack lib/dump_stack.c:77 [inline]
+  [  141.050324]  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  [  141.050950]  ? dump_stack_print_info.cold.2+0x52/0x52 lib/dump_stack.c:60
+  [  141.051837]  panic+0x238/0x4e7 kernel/panic.c:184
+  [  141.052386]  ? add_taint.cold.5+0x16/0x16 kernel/panic.c:385
+  [  141.053101]  ? __warn.cold.8+0x148/0x1ba kernel/panic.c:537
+  [  141.053814]  ? __warn.cold.8+0x117/0x1ba kernel/panic.c:530
+  [  141.054506]  ? get_callee_stack_depth kernel/bpf/verifier.c:1612 [inline]
+  [  141.054506]  ? fixup_call_args kernel/bpf/verifier.c:5587 [inline]
+  [  141.054506]  ? bpf_check+0x525e/0x5e60 kernel/bpf/verifier.c:5952
+  [  141.055163]  __warn.cold.8+0x163/0x1ba kernel/panic.c:538
+  [  141.055820]  ? get_callee_stack_depth kernel/bpf/verifier.c:1612 [inline]
+  [  141.055820]  ? fixup_call_args kernel/bpf/verifier.c:5587 [inline]
+  [  141.055820]  ? bpf_check+0x525e/0x5e60 kernel/bpf/verifier.c:5952
+  [...]
+
+What happens in jit_subprogs() is that kcalloc() for the subprog func
+buffer is failing with NULL where we then bail out. Latter is a plain
+return -ENOMEM, and this is definitely not okay since earlier in the
+loop we are walking all subprogs and temporarily rewrite insn->off to
+remember the subprog id as well as insn->imm to temporarily point the
+call to __bpf_call_base + 1 for the initial JIT pass. Thus, bailing
+out in such state and handing this over to the interpreter is troublesome
+since later/subsequent e.g. find_subprog() lookups are based on wrong
+insn->imm.
+
+Therefore, once we hit this point, we need to jump to out_free path
+where we undo all changes from earlier loop, so that interpreter can
+work on unmodified insn->{off,imm}.
+
+Another point is that should find_subprog() fail in jit_subprogs() due
+to a verifier bug, then we also should not simply defer the program to
+the interpreter since also here we did partial modifications. Instead
+we should just bail out entirely and return an error to the user who is
+trying to load the program.
+
+Fixes: 1c2a088a6626 ("bpf: x64: add JIT support for multi-function programs")
+Reported-by: syzbot+7d427828b2ea6e592804@syzkaller.appspotmail.com
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/sockmap.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/bpf/verifier.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -471,7 +471,8 @@ static int free_sg(struct sock *sk, int
- 	while (sg[i].length) {
- 		free += sg[i].length;
- 		sk_mem_uncharge(sk, sg[i].length);
--		put_page(sg_page(&sg[i]));
-+		if (!md->skb)
-+			put_page(sg_page(&sg[i]));
- 		sg[i].length = 0;
- 		sg[i].page_link = 0;
- 		sg[i].offset = 0;
-@@ -480,6 +481,8 @@ static int free_sg(struct sock *sk, int
- 		if (i == MAX_SKB_FRAGS)
- 			i = 0;
- 	}
-+	if (md->skb)
-+		consume_skb(md->skb);
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -5349,6 +5349,10 @@ static int jit_subprogs(struct bpf_verif
+ 		if (insn->code != (BPF_JMP | BPF_CALL) ||
+ 		    insn->src_reg != BPF_PSEUDO_CALL)
+ 			continue;
++		/* Upon error here we cannot fall back to interpreter but
++		 * need a hard reject of the program. Thus -EFAULT is
++		 * propagated in any case.
++		 */
+ 		subprog = find_subprog(env, i + insn->imm + 1);
+ 		if (subprog < 0) {
+ 			WARN_ONCE(1, "verifier bug. No program starts at insn %d\n",
+@@ -5369,7 +5373,7 @@ static int jit_subprogs(struct bpf_verif
  
- 	return free;
- }
+ 	func = kzalloc(sizeof(prog) * (env->subprog_cnt + 1), GFP_KERNEL);
+ 	if (!func)
+-		return -ENOMEM;
++		goto out_undo_insn;
+ 
+ 	for (i = 0; i <= env->subprog_cnt; i++) {
+ 		subprog_start = subprog_end;
+@@ -5424,7 +5428,7 @@ static int jit_subprogs(struct bpf_verif
+ 		tmp = bpf_int_jit_compile(func[i]);
+ 		if (tmp != func[i] || func[i]->bpf_func != old_bpf_func) {
+ 			verbose(env, "JIT doesn't support bpf-to-bpf calls\n");
+-			err = -EFAULT;
++			err = -ENOTSUPP;
+ 			goto out_free;
+ 		}
+ 		cond_resched();
+@@ -5466,6 +5470,7 @@ out_free:
+ 		if (func[i])
+ 			bpf_jit_free(func[i]);
+ 	kfree(func);
++out_undo_insn:
+ 	/* cleanup main prog to be interpreted */
+ 	prog->jit_requested = 0;
+ 	for (i = 0, insn = prog->insnsi; i < prog->len; i++, insn++) {
+@@ -5492,6 +5497,8 @@ static int fixup_call_args(struct bpf_ve
+ 		err = jit_subprogs(env);
+ 		if (err == 0)
+ 			return 0;
++		if (err == -EFAULT)
++			return err;
+ 	}
+ #ifndef CONFIG_BPF_JIT_ALWAYS_ON
+ 	for (i = 0; i < prog->len; i++, insn++) {
 
 
