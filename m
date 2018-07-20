@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C995BECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5B9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84D2820850
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12D8620858
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YApQzTFH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D2820850
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2XfjQmg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D8620858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbeGTEgM (ORCPT
+        id S1728094AbeGTEgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 00:36:12 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:47044 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727666AbeGTEgK (ORCPT
+        Fri, 20 Jul 2018 00:36:15 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42463 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727761AbeGTEgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 00:36:10 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p23-v6so5604151pgv.13
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 20:50:00 -0700 (PDT)
+        Fri, 20 Jul 2018 00:36:13 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y4-v6so5609418pgp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 20:50:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hiW2Dbr3eUgq/g4Rbn6WYhxli/PT+BDktrtcY4Ukais=;
-        b=YApQzTFHDjs6cm/G0DEKbQQicq4z7RjvxVCrvRyVYW3PKDWYTHq5Cg+h2Xo/AgHmVb
-         KS7bhChazNrX3B64greBUwGxyHKbmv5kSsHlgfTTwH2OeEr5JpqHNpYZVoRTS0zRFvZp
-         rjfcvOxVp7zsdrh8UxbipNfnSRKlsR6hmRGh8OPxBqEmcI5GR/qk4qYiwhzTE0dWZmrp
-         jegWzPCgB0nphK9TAOKH4A3H2Jt1K8GveyeB5/V7W2WtAuQbJiGy4hewKAwPcY1qCd9p
-         Db7HwNB2EzCcL/IV4JlpPFIncXqDgeMIdir0oXnw+PexsoUXIcINUSpFLjY0w6CzC1sd
-         +tfQ==
+        bh=bCg8UsGV6aNVlTYOKQwHQHZXXvhtfFcoKJs1IsSv0wo=;
+        b=Z2XfjQmgbsDZIAWkQUqVglliosSStlLuMoC2pWp/AB7tp/ejaDSgeO6PBkO8girblf
+         70frS86/PSMFWViWQfLrWOysQCjoRhmAz1xLpuV6as4Q8fPMW2QMg65MrS5EW0bWNRAr
+         u7G4C0kJMcVgEChaRoOnQmb5IrC06UBAIMWXHT/eIqi/KNi/a3KbZ9o0PORoP5LppxcB
+         nSXGL1ggfwBbk/zMu0qqwtumoQNiIz6PORuolGTHinSFL4+D5guxy93Pbv0qbGh6QXZW
+         An+IvN6PLyIeCzWHN6nqVfPBHoIzQaZrsqcP18q+0jWUxkeK1O7X+MpYv/js+gFBzYtA
+         qoRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hiW2Dbr3eUgq/g4Rbn6WYhxli/PT+BDktrtcY4Ukais=;
-        b=hwlR3uJ8w+mFrhK+jtpervcb1ryrgDd7jEr8MaU5Yy05lp10LFMlde9qA9HPoDlnek
-         LVa/FfVh1J/joMAaYea5MjHlM+kvpK1KR8pcK9mWA39RL8VKjdKTS/jnSkQAHN/DKohl
-         Z0z6yIyVqPgtCpywCRBMfmNzD5w8kkeac+9T6cvDQa+6fg7SFd+5wCo65x4liTdRAdYz
-         7KwLr4KhGqhYvkP5eLcd0JtlqV3X928s/C3EGLNAbe4SX/MFz9xM0c1IHgoWIM1OTMPe
-         fcSjGPUDmrFAJeEi9hGe3CVkCKMorxrBdqcS0EOHT6/YHetnAxVwuUJnag6OCfg76ig2
-         19aw==
-X-Gm-Message-State: AOUpUlFo4ADCpYx2ifvnD6gh5lJNzwJjm2Wodh7ZYwB09DeuvM1kaOrR
-        x20chdV9zu9Ud9q4o6Kdjwg=
-X-Google-Smtp-Source: AAOMgpcLsPf+ehtp3p/ylY8aSGhMIoCOVw2vUXbi+7565KZJeMniCh/erJHH6fUBYgg/HB696pbsSA==
-X-Received: by 2002:a62:4c0f:: with SMTP id z15-v6mr476694pfa.110.1532058599937;
-        Thu, 19 Jul 2018 20:49:59 -0700 (PDT)
+        bh=bCg8UsGV6aNVlTYOKQwHQHZXXvhtfFcoKJs1IsSv0wo=;
+        b=b4KzDQmrVJg5RVnJEMcMQQxjCmBjdZN/2hTX2CjNwKUhcNBZI4DHah2gw6IVC0WOvS
+         roVn9u92tuXe/6XRkjmTMRgbFo0J+MFgbHWeVpyrPtbQnDc3c44bBvTB179vgXbo77jF
+         erj/udrdOZF23G4EQRsIYJNCT3weg/HzD0T0lt8epfP+WZrELAc1+PR0OAltf2HM1Z1L
+         kAofE3BATxZ+IImZA17aUBAyMIWQpLTwU8/6muSBPpxI4uC+bCfgKz2wrrkisHmAFbpr
+         bF2Dywy57rrKJbB46iJdOhep2/mQoNJTuAQ+0aDuGCvM2rG32W2J+eRK2SU8FWL+0xtB
+         mKqQ==
+X-Gm-Message-State: AOUpUlEapaTZrDZFrQZaqsoh3jydIrF/sIuVYNO5Gg2XLSf2fnSPNFI5
+        W44rqh1T/hyvCdRqK18OE0E=
+X-Google-Smtp-Source: AAOMgpdbxC0AqOaedIU8thfsIGLKjn4svPAbaDBaae32UaxlVlAeZVzQS+GswzlMF8j4M6mJRUbR3Q==
+X-Received: by 2002:a62:1a4a:: with SMTP id a71-v6mr473764pfa.190.1532058602555;
+        Thu, 19 Jul 2018 20:50:02 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id x66-v6sm864255pff.123.2018.07.19.20.49.59
+        by smtp.gmail.com with ESMTPSA id x66-v6sm864255pff.123.2018.07.19.20.50.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 20:49:59 -0700 (PDT)
+        Thu, 19 Jul 2018 20:50:02 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 11/20] staging: gasket: fix comment syntax in apex.h
-Date:   Thu, 19 Jul 2018 20:49:11 -0700
-Message-Id: <20180720034920.77320-12-toddpoynor@gmail.com>
+Subject: [PATCH 14/20] staging: gasket: remove extra parens in gasket_write_mappable_regions
+Date:   Thu, 19 Jul 2018 20:49:14 -0700
+Message-Id: <20180720034920.77320-15-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 In-Reply-To: <20180720034920.77320-1-toddpoynor@gmail.com>
 References: <20180720034920.77320-1-toddpoynor@gmail.com>
@@ -81,33 +81,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Use kernel-style multi-line comment syntax.
+Remove unneeded parentheses around subexpressions.
 
 Reported-by: Guenter Roeck <groeck@chromium.org>
 Signed-off-by: Simon Que <sque@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/apex.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/staging/gasket/gasket_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/gasket/apex.h b/drivers/staging/gasket/apex.h
-index 4ef264106f503..d89cc2387b7d4 100644
---- a/drivers/staging/gasket/apex.h
-+++ b/drivers/staging/gasket/apex.h
-@@ -22,9 +22,10 @@
- 
- #define APEX_EXTENDED_SHIFT 63 /* Extended address bit position. */
- 
--/* Addresses are 2^3=8 bytes each. */
--/* page in second level page table */
--/* holds APEX_PAGE_SIZE/8 addresses  */
-+/*
-+ * Addresses are 2^3=8 bytes each. Page in second level page table holds
-+ * APEX_PAGE_SIZE/8 addresses.
-+ */
- #define APEX_ADDR_SHIFT 3
- #define APEX_LEVEL_SHIFT (APEX_PAGE_SHIFT - APEX_ADDR_SHIFT)
- #define APEX_LEVEL_SIZE BIT(APEX_LEVEL_SHIFT)
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index ae5febec8844c..ba48a379b0ada 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1889,7 +1889,7 @@ static ssize_t gasket_write_mappable_regions(
+ 	if (bar_desc.permissions == GASKET_NOMAP)
+ 		return 0;
+ 	for (i = 0;
+-	     (i < bar_desc.num_mappable_regions) && (total_written < PAGE_SIZE);
++	     i < bar_desc.num_mappable_regions && total_written < PAGE_SIZE;
+ 	     i++) {
+ 		min_addr = bar_desc.mappable_regions[i].start -
+ 			   driver_desc->legacy_mmap_address_offset;
 -- 
 2.18.0.233.g985f88cf7e-goog
 
