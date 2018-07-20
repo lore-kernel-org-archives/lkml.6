@@ -2,154 +2,158 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC37ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88300ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62F9D206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:37:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62F9D206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F02B20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:37:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F02B20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbeGTKYm (ORCPT
+        id S1728635AbeGTKYs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 06:24:42 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:32640 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727243AbeGTKYm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 06:24:42 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="42477030"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 20 Jul 2018 17:37:13 +0800
-Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
-        by cn.fujitsu.com (Postfix) with ESMTP id 48E964B625E5;
-        Fri, 20 Jul 2018 17:37:12 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Fri, 20 Jul 2018 17:37:11 +0800
-Date:   Fri, 20 Jul 2018 17:35:24 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
-        <mingo@redhat.com>, <bhe@redhat.com>, <keescook@chromium.org>,
-        <yasu.isimatu@gmail.com>, <indou.takao@jp.fujitsu.com>,
-        <lcapitulino@redhat.com>, <caoj.fnst@cn.fujitsu.com>,
-        <douly.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v3 1/4] x86/boot: Add acpitb.h to help parse acpi tables
-Message-ID: <20180720093524.GB6739@localhost.localdomain>
-References: <20180717100409.10547-1-fanc.fnst@cn.fujitsu.com>
- <20180717100409.10547-2-fanc.fnst@cn.fujitsu.com>
- <alpine.DEB.2.21.1807191717330.1693@nanos.tec.linutronix.de>
+        Fri, 20 Jul 2018 06:24:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59256 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727243AbeGTKYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 06:24:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B50DFAD12;
+        Fri, 20 Jul 2018 09:37:22 +0000 (UTC)
+Subject: Re: [PATCH v3 2/7] mm, slab/slub: introduce kmalloc-reclaimable
+ caches
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>
+References: <20180718133620.6205-1-vbabka@suse.cz>
+ <20180718133620.6205-3-vbabka@suse.cz>
+ <20180719181613.GA26595@castle.DHCP.thefacebook.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <32c05b49-6703-08c2-bacf-ee070082d5ae@suse.cz>
+Date:   Fri, 20 Jul 2018 11:35:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1807191717330.1693@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 48E964B625E5.A9DBD
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <20180719181613.GA26595@castle.DHCP.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 05:19:43PM +0200, Thomas Gleixner wrote:
->On Tue, 17 Jul 2018, Chao Fan wrote:
->
->> In order to parse ACPI tables, reuse the head file linux/acpi.h,
->> so that the files in 'compressed' directory can read ACPI table
->> by including this head file.
->> 
->> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->> ---
->>  arch/x86/boot/compressed/acpitb.h | 50 +++++++++++++++++++++++++++++++
->>  1 file changed, 50 insertions(+)
->>  create mode 100644 arch/x86/boot/compressed/acpitb.h
->> 
->> diff --git a/arch/x86/boot/compressed/acpitb.h b/arch/x86/boot/compressed/acpitb.h
->> new file mode 100644
->> index 000000000000..fd2bba23f447
->> --- /dev/null
->> +++ b/arch/x86/boot/compressed/acpitb.h
->> @@ -0,0 +1,50 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#include <linux/acpi.h>
+On 07/19/2018 08:16 PM, Roman Gushchin wrote:
+>>  	is_dma = !!(flags & __GFP_DMA);
+>>  #endif
+>>  
+>> -	return is_dma;
+>> +	is_reclaimable = !!(flags & __GFP_RECLAIMABLE);
 >> +
->> +#define ACPI_MAX_TABLES                128
->> +
->> +/* Function to get ACPI SRAT table pointer. */
->> +struct acpi_table_header *get_acpi_srat_table(void);
->> +
->> +#ifdef ACPI_BIG_ENDIAN
->> +
->> +#define ACPI_MOVE_64_TO_64(d, s) \
->> +{((u8 *)(void *)(d))[0] = ((u8 *)(void *)(s))[7]; \
->> +((u8 *)(void *)(d))[1] = ((u8 *)(void *)(s))[6]; \
->> +((u8 *)(void *)(d))[2] = ((u8 *)(void *)(s))[5]; \
->> +((u8 *)(void *)(d))[3] = ((u8 *)(void *)(s))[4]; \
->> +((u8 *)(void *)(d))[4] = ((u8 *)(void *)(s))[3]; \
->> +((u8 *)(void *)(d))[5] = ((u8 *)(void *)(s))[2]; \
->> +((u8 *)(void *)(d))[6] = ((u8 *)(void *)(s))[1]; \
->> +((u8 *)(void *)(d))[7] = ((u8 *)(void *)(s))[0]; }
->
->Whats wrong with be64_to_cpu() ?
+>> +	/*
+>> +	 * If an allocation is botth __GFP_DMA and __GFP_RECLAIMABLE, return
+>                                  ^^
+> 			       typo
+>> +	 * KMALLOC_DMA and effectively ignore __GFP_RECLAIMABLE
+>> +	 */
+>> +	return (is_dma * 2) + (is_reclaimable & !is_dma);
+> 
+> Maybe
+> is_dma * KMALLOC_DMA + (is_reclaimable && !is_dma) * KMALLOC_RECLAIM
+> looks better?
 
-Hi tglx,
+I think I meant to do that but forgot, thanks.
 
-Thanks for your review.
-ACPI_MOVE_64_TO_64 and ACPI_MOVE_16_TO_32 are copied from arch/x86/boot/compressed/acpitb.h
-cause I though copying the old code is reliable.
-I will delete these two definitions and only using le64_to_cpu and
-le16_to_cpu may be enough(since ACPI table is in little endian).
-And also add more comments in next version.
+>>  }
+>>  
+>>  /*
+>> diff --git a/mm/slab_common.c b/mm/slab_common.c
+>> index 4614248ca381..614fb7ab8312 100644
+>> --- a/mm/slab_common.c
+>> +++ b/mm/slab_common.c
+>> @@ -1107,10 +1107,21 @@ void __init setup_kmalloc_cache_index_table(void)
+>>  	}
+>>  }
+>>  
+>> -static void __init new_kmalloc_cache(int idx, slab_flags_t flags)
+>> +static void __init
+>> +new_kmalloc_cache(int idx, int type, slab_flags_t flags)
+>>  {
+>> -	kmalloc_caches[KMALLOC_NORMAL][idx] = create_kmalloc_cache(
+>> -					kmalloc_info[idx].name,
+>> +	const char *name;
+>> +
+>> +	if (type == KMALLOC_RECLAIM) {
+>> +		flags |= SLAB_RECLAIM_ACCOUNT;
+>> +		name = kasprintf(GFP_NOWAIT, "kmalloc-rcl-%u",
+>> +						kmalloc_info[idx].size);
+>> +		BUG_ON(!name);
+> 
+> I'd replace this with WARN_ON() and falling back to kmalloc_info[idx].name.
 
-Thanks,
-Chao Fan
+It's basically a copy/paste of the dma-kmalloc code. If that triggers,
+it means somebody was changing the code and introduced a wrong order (as
+Mel said). A system that genuinely has no memory for that printf at this
+point, would not get very far anyway...
 
->
+>> +	} else {
+>> +		name = kmalloc_info[idx].name;
+>> +	}
 >> +
->> +#define ACPI_MOVE_16_TO_32(d, s) \
->> +{(*(u32 *)(void *)(d)) = 0; \
->> +((u8 *)(void *)(d))[2] = ((u8 *)(void *)(s))[1]; \
->> +((u8 *)(void *)(d))[3] = ((u8 *)(void *)(s))[0]; }
->
->Huch? 
->
->> +
->> +#else
->> +#ifndef ACPI_MISALIGNMENT_NOT_SUPPORTED
->> +
->> +#define ACPI_MOVE_64_TO_64(d, s) \
->> +{*(u64 *)(void *)(d) = *(u64 *)(void *)(s); }
->> +
->> +#define ACPI_MOVE_16_TO_32(d, s) \
->> +{*(u32 *)(void *)(d) = *(u16 *)(void *)(s); }
->> +
->> +#else
->> +#define ACPI_MOVE_64_TO_64(d, s) \
->> +{((u8 *)(void *)(d))[0] = ((u8 *)(void *)(s))[0]; \
->> +((u8 *)(void *)(d))[1] = ((u8 *)(void *)(s))[1]; \
->> +((u8 *)(void *)(d))[2] = ((u8 *)(void *)(s))[2]; \
->> +((u8 *)(void *)(d))[3] = ((u8 *)(void *)(s))[3]; \
->> +((u8 *)(void *)(d))[4] = ((u8 *)(void *)(s))[4]; \
->> +((u8 *)(void *)(d))[5] = ((u8 *)(void *)(s))[5]; \
->> +((u8 *)(void *)(d))[6] = ((u8 *)(void *)(s))[6]; \
->> +((u8 *)(void *)(d))[7] = ((u8 *)(void *)(s))[7]; }
->
->And why doees this have to be done bytewise? Some comments would be
->helpful.
->
->Thanks,
->
->	tglx
->
->
-
+>> +	kmalloc_caches[type][idx] = create_kmalloc_cache(name,
+>>  					kmalloc_info[idx].size, flags, 0,
+>>  					kmalloc_info[idx].size);
+>>  }
 
