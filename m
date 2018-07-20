@@ -6,36 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07249ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03502ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B436A206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B436A206B7
+	by mail.kernel.org (Postfix) with ESMTP id AC0AF206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC0AF206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389243AbeGTNZO (ORCPT
+        id S2389255AbeGTNZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:25:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45150 "EHLO
+        Fri, 20 Jul 2018 09:25:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45228 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387815AbeGTNZN (ORCPT
+        with ESMTP id S2387921AbeGTNZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:25:13 -0400
+        Fri, 20 Jul 2018 09:25:19 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF72DB14;
-        Fri, 20 Jul 2018 12:34:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EBFAECD4;
+        Fri, 20 Jul 2018 12:31:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morse <james.morse@arm.com>,
-        Christoffer Dall <cdall@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.14 72/92] KVM: arm64: Change hyp_panic()s dependency on tpidr_el2
-Date:   Fri, 20 Jul 2018 14:14:16 +0200
-Message-Id: <20180720121421.860470726@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Stellar <tstellar@redhat.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, acme@redhat.com,
+        akataria@vmware.com, akpm@linux-foundation.org,
+        andrea.parri@amarulasolutions.com, ard.biesheuvel@linaro.org,
+        aryabinin@virtuozzo.com, astrachan@google.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, geert@linux-m68k.org,
+        ghackmann@google.com, jan.kiszka@siemens.com,
+        jarkko.sakkinen@linux.intel.com, joe@perches.com,
+        jpoimboe@redhat.com, keescook@google.com,
+        kirill.shutemov@linux.intel.com, kstewart@linuxfoundation.org,
+        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        manojgupta@google.com, mawilcox@microsoft.com,
+        michal.lkml@markovi.net, mjg59@google.com, mka@chromium.org,
+        pombredanne@nexb.com, rientjes@google.com, rostedt@goodmis.org,
+        thomas.lendacky@amd.com, tweek@google.com,
+        virtualization@lists.linux-foundation.org, will.deacon@arm.com,
+        yamada.masahiro@socionext.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 03/92] x86/paravirt: Make native_save_fl() extern inline
+Date:   Fri, 20 Jul 2018 14:13:07 +0200
+Message-Id: <20180720121417.392142477@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -52,162 +73,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-Commit c97e166e54b662717d20ec2e36761758d2b6a7c2 upstream.
+commit d0a8d9378d16eb3c69bd8e6d23779fbdbee3a8c7 upstream.
 
-Make tpidr_el2 a cpu-offset for per-cpu variables in the same way the
-host uses tpidr_el1. This lets tpidr_el{1,2} have the same value, and
-on VHE they can be the same register.
+native_save_fl() is marked static inline, but by using it as
+a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
 
-KVM calls hyp_panic() when anything unexpected happens. This may occur
-while a guest owns the EL1 registers. KVM stashes the vcpu pointer in
-tpidr_el2, which it uses to find the host context in order to restore
-the host EL1 registers before parachuting into the host's panic().
+paravirt's use of native_save_fl() also requires that no GPRs other than
+%rax are clobbered.
 
-The host context is a struct kvm_cpu_context allocated in the per-cpu
-area, and mapped to hyp. Given the per-cpu offset for this CPU, this is
-easy to find. Change hyp_panic() to take a pointer to the
-struct kvm_cpu_context. Wrap these calls with an asm function that
-retrieves the struct kvm_cpu_context from the host's per-cpu area.
+Compilers have different heuristics which they use to emit stack guard
+code, the emittance of which can break paravirt's callee saved assumption
+by clobbering %rcx.
 
-Copy the per-cpu offset from the hosts tpidr_el1 into tpidr_el2 during
-kvm init. (Later patches will make this unnecessary for VHE hosts)
+Marking a function definition extern inline means that if this version
+cannot be inlined, then the out-of-line version will be preferred. By
+having the out-of-line version be implemented in assembly, it cannot be
+instrumented with a stack protector, which might violate custom calling
+conventions that code like paravirt rely on.
 
-We print out the vcpu pointer as part of the panic message. Add a back
-reference to the 'running vcpu' in the host cpu context to preserve this.
+The semantics of extern inline has changed since gnu89. This means that
+folks using GCC versions >= 5.1 may see symbol redefinition errors at
+link time for subdirs that override KBUILD_CFLAGS (making the C standard
+used implicit) regardless of this patch. This has been cleaned up
+earlier in the patch set, but is left as a note in the commit message
+for future travelers.
 
-Signed-off-by: James Morse <james.morse@arm.com>
-Reviewed-by: Christoffer Dall <cdall@linaro.org>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Reports:
+ https://lkml.org/lkml/2018/5/7/534
+ https://github.com/ClangBuiltLinux/linux/issues/16
+
+Discussion:
+ https://bugs.llvm.org/show_bug.cgi?id=37512
+ https://lkml.org/lkml/2018/5/24/1371
+
+Thanks to the many folks that participated in the discussion.
+
+Debugged-by: Alistair Strachan <astrachan@google.com>
+Debugged-by: Matthias Kaehlcke <mka@chromium.org>
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Suggested-by: Tom Stellar <tstellar@redhat.com>
+Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: acme@redhat.com
+Cc: akataria@vmware.com
+Cc: akpm@linux-foundation.org
+Cc: andrea.parri@amarulasolutions.com
+Cc: ard.biesheuvel@linaro.org
+Cc: aryabinin@virtuozzo.com
+Cc: astrachan@google.com
+Cc: boris.ostrovsky@oracle.com
+Cc: brijesh.singh@amd.com
+Cc: caoj.fnst@cn.fujitsu.com
+Cc: geert@linux-m68k.org
+Cc: ghackmann@google.com
+Cc: gregkh@linuxfoundation.org
+Cc: jan.kiszka@siemens.com
+Cc: jarkko.sakkinen@linux.intel.com
+Cc: joe@perches.com
+Cc: jpoimboe@redhat.com
+Cc: keescook@google.com
+Cc: kirill.shutemov@linux.intel.com
+Cc: kstewart@linuxfoundation.org
+Cc: linux-efi@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: manojgupta@google.com
+Cc: mawilcox@microsoft.com
+Cc: michal.lkml@markovi.net
+Cc: mjg59@google.com
+Cc: mka@chromium.org
+Cc: pombredanne@nexb.com
+Cc: rientjes@google.com
+Cc: rostedt@goodmis.org
+Cc: thomas.lendacky@amd.com
+Cc: tweek@google.com
+Cc: virtualization@lists.linux-foundation.org
+Cc: will.deacon@arm.com
+Cc: yamada.masahiro@socionext.com
+Link: http://lkml.kernel.org/r/20180621162324.36656-4-ndesaulniers@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/kvm_host.h |    2 ++
- arch/arm64/kvm/hyp/hyp-entry.S    |   12 ++++++++++++
- arch/arm64/kvm/hyp/s2-setup.c     |    3 +++
- arch/arm64/kvm/hyp/switch.c       |   25 +++++++++++++------------
- 4 files changed, 30 insertions(+), 12 deletions(-)
 
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -194,6 +194,8 @@ struct kvm_cpu_context {
- 		u64 sys_regs[NR_SYS_REGS];
- 		u32 copro[NR_COPRO_REGS];
- 	};
-+
-+	struct kvm_vcpu *__hyp_running_vcpu;
- };
+---
+ arch/x86/include/asm/irqflags.h |    2 +-
+ arch/x86/kernel/Makefile        |    1 +
+ arch/x86/kernel/irqflags.S      |   26 ++++++++++++++++++++++++++
+ 3 files changed, 28 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -13,7 +13,7 @@
+  * Interrupt control:
+  */
  
- typedef struct kvm_cpu_context kvm_cpu_context_t;
---- a/arch/arm64/kvm/hyp/hyp-entry.S
-+++ b/arch/arm64/kvm/hyp/hyp-entry.S
-@@ -179,6 +179,18 @@ ENTRY(__hyp_do_panic)
- 	eret
- ENDPROC(__hyp_do_panic)
- 
-+ENTRY(__hyp_panic)
-+	/*
-+	 * '=kvm_host_cpu_state' is a host VA from the constant pool, it may
-+	 * not be accessible by this address from EL2, hyp_panic() converts
-+	 * it with kern_hyp_va() before use.
-+	 */
-+	ldr	x0, =kvm_host_cpu_state
-+	mrs	x1, tpidr_el2
-+	add	x0, x0, x1
-+	b	hyp_panic
-+ENDPROC(__hyp_panic)
-+
- .macro invalid_vector	label, target = __hyp_panic
- 	.align	2
- \label:
---- a/arch/arm64/kvm/hyp/s2-setup.c
-+++ b/arch/arm64/kvm/hyp/s2-setup.c
-@@ -84,5 +84,8 @@ u32 __hyp_text __init_stage2_translation
- 
- 	write_sysreg(val, vtcr_el2);
- 
-+	/* copy tpidr_el1 into tpidr_el2 for use by HYP */
-+	write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
-+
- 	return parange;
- }
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -289,9 +289,9 @@ int __hyp_text __kvm_vcpu_run(struct kvm
- 	u64 exit_code;
- 
- 	vcpu = kern_hyp_va(vcpu);
--	write_sysreg(vcpu, tpidr_el2);
- 
- 	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-+	host_ctxt->__hyp_running_vcpu = vcpu;
- 	guest_ctxt = &vcpu->arch.ctxt;
- 
- 	__sysreg_save_host_state(host_ctxt);
-@@ -406,7 +406,8 @@ again:
- 
- static const char __hyp_panic_string[] = "HYP panic:\nPS:%08llx PC:%016llx ESR:%08llx\nFAR:%016llx HPFAR:%016llx PAR:%016llx\nVCPU:%p\n";
- 
--static void __hyp_text __hyp_call_panic_nvhe(u64 spsr, u64 elr, u64 par)
-+static void __hyp_text __hyp_call_panic_nvhe(u64 spsr, u64 elr, u64 par,
-+					     struct kvm_vcpu *vcpu)
+-static inline unsigned long native_save_fl(void)
++extern inline unsigned long native_save_fl(void)
  {
- 	unsigned long str_va;
+ 	unsigned long flags;
  
-@@ -420,35 +421,35 @@ static void __hyp_text __hyp_call_panic_
- 	__hyp_do_panic(str_va,
- 		       spsr,  elr,
- 		       read_sysreg(esr_el2),   read_sysreg_el2(far),
--		       read_sysreg(hpfar_el2), par,
--		       (void *)read_sysreg(tpidr_el2));
-+		       read_sysreg(hpfar_el2), par, vcpu);
- }
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -58,6 +58,7 @@ obj-y			+= alternative.o i8253.o pci-nom
+ obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
+ obj-y			+= pci-iommu_table.o
+ obj-y			+= resource.o
++obj-y			+= irqflags.o
  
--static void __hyp_text __hyp_call_panic_vhe(u64 spsr, u64 elr, u64 par)
-+static void __hyp_text __hyp_call_panic_vhe(u64 spsr, u64 elr, u64 par,
-+					    struct kvm_vcpu *vcpu)
- {
- 	panic(__hyp_panic_string,
- 	      spsr,  elr,
- 	      read_sysreg_el2(esr),   read_sysreg_el2(far),
--	      read_sysreg(hpfar_el2), par,
--	      (void *)read_sysreg(tpidr_el2));
-+	      read_sysreg(hpfar_el2), par, vcpu);
- }
- 
- static hyp_alternate_select(__hyp_call_panic,
- 			    __hyp_call_panic_nvhe, __hyp_call_panic_vhe,
- 			    ARM64_HAS_VIRT_HOST_EXTN);
- 
--void __hyp_text __noreturn __hyp_panic(void)
-+void __hyp_text __noreturn hyp_panic(struct kvm_cpu_context *__host_ctxt)
- {
-+	struct kvm_vcpu *vcpu = NULL;
+ obj-y				+= process.o
+ obj-y				+= fpu/
+--- /dev/null
++++ b/arch/x86/kernel/irqflags.S
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
- 	u64 spsr = read_sysreg_el2(spsr);
- 	u64 elr = read_sysreg_el2(elr);
- 	u64 par = read_sysreg(par_el1);
- 
- 	if (read_sysreg(vttbr_el2)) {
--		struct kvm_vcpu *vcpu;
- 		struct kvm_cpu_context *host_ctxt;
- 
--		vcpu = (struct kvm_vcpu *)read_sysreg(tpidr_el2);
--		host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-+		host_ctxt = kern_hyp_va(__host_ctxt);
-+		vcpu = host_ctxt->__hyp_running_vcpu;
- 		__timer_save_state(vcpu);
- 		__deactivate_traps(vcpu);
- 		__deactivate_vm(vcpu);
-@@ -456,7 +457,7 @@ void __hyp_text __noreturn __hyp_panic(v
- 	}
- 
- 	/* Call panic for real */
--	__hyp_call_panic()(spsr, elr, par);
-+	__hyp_call_panic()(spsr, elr, par, vcpu);
- 
- 	unreachable();
- }
++#include <asm/asm.h>
++#include <asm/export.h>
++#include <linux/linkage.h>
++
++/*
++ * unsigned long native_save_fl(void)
++ */
++ENTRY(native_save_fl)
++	pushf
++	pop %_ASM_AX
++	ret
++ENDPROC(native_save_fl)
++EXPORT_SYMBOL(native_save_fl)
++
++/*
++ * void native_restore_fl(unsigned long flags)
++ * %eax/%rdi: flags
++ */
++ENTRY(native_restore_fl)
++	push %_ASM_ARG1
++	popf
++	ret
++ENDPROC(native_restore_fl)
++EXPORT_SYMBOL(native_restore_fl)
 
 
