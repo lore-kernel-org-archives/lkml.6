@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1DCECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22092ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E6D20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E6D20652
+	by mail.kernel.org (Postfix) with ESMTP id CAFC520850
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAFC520850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389944AbeGTN3Y (ORCPT
+        id S2389668AbeGTN30 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:29:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51488 "EHLO
+        Fri, 20 Jul 2018 09:29:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51528 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389077AbeGTN3Y (ORCPT
+        with ESMTP id S2389077AbeGTN3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:29:24 -0400
+        Fri, 20 Jul 2018 09:29:25 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97A98A80;
-        Fri, 20 Jul 2018 12:39:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DECDBBF;
+        Fri, 20 Jul 2018 12:37:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.17 086/101] arm64: Call ARCH_WORKAROUND_2 on transitions between EL0 and EL1
-Date:   Fri, 20 Jul 2018 14:14:32 +0200
-Message-Id: <20180720121426.894473384@linuxfoundation.org>
+        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
+        Guy Kushnir <guyk@mellanox.com>, Eli Cohen <eli@melloanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.17 021/101] net/mlx5: E-Switch, Avoid setup attempt if not being e-switch manager
+Date:   Fri, 20 Jul 2018 14:13:27 +0200
+Message-Id: <20180720121423.864322367@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -53,128 +51,154 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Or Gerlitz <ogerlitz@mellanox.com>
 
-commit 8e2906245f1e3b0d027169d9f2e55ce0548cb96e upstream.
+[ Upstream commit 0efc8562491b7d36f6bbc4fbc8f3348cb6641e9c ]
 
-In order for the kernel to protect itself, let's call the SSBD mitigation
-implemented by the higher exception level (either hypervisor or firmware)
-on each transition between userspace and kernel.
+In smartnic env, the host (PF) driver might not be an e-switch
+manager, hence the FW will err on driver attempts to deal with
+setting/unsetting the eswitch and as a result the overall setup
+of sriov will fail.
 
-We must take the PSCI conduit into account in order to target the
-right exception level, hence the introduction of a runtime patching
-callback.
+Fix that by avoiding the operation if e-switch management is not
+allowed for this driver instance. While here, move to use the
+correct name for the esw manager capability name.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Julien Grall <julien.grall@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 81848731ff40 ('net/mlx5: E-Switch, Add SR-IOV (FDB) support')
+Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
+Reported-by: Guy Kushnir <guyk@mellanox.com>
+Reviewed-by: Eli Cohen <eli@melloanox.com>
+Tested-by: Eli Cohen <eli@melloanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpu_errata.c |   24 ++++++++++++++++++++++++
- arch/arm64/kernel/entry.S      |   22 ++++++++++++++++++++++
- include/linux/arm-smccc.h      |    5 +++++
- 3 files changed, 51 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c  |    2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |    3 ++-
+ drivers/net/ethernet/mellanox/mlx5/core/fw.c      |    5 +++--
+ drivers/net/ethernet/mellanox/mlx5/core/sriov.c   |    7 ++++++-
+ include/linux/mlx5/eswitch.h                      |    2 ++
+ include/linux/mlx5/mlx5_ifc.h                     |    2 +-
+ 7 files changed, 16 insertions(+), 7 deletions(-)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -232,6 +232,30 @@ enable_smccc_arch_workaround_1(const str
- }
- #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -806,7 +806,7 @@ static bool mlx5e_is_vf_vport_rep(struct
+ 	struct mlx5e_rep_priv *rpriv = priv->ppriv;
+ 	struct mlx5_eswitch_rep *rep;
  
-+#ifdef CONFIG_ARM64_SSBD
-+void __init arm64_update_smccc_conduit(struct alt_instr *alt,
-+				       __le32 *origptr, __le32 *updptr,
-+				       int nr_inst)
-+{
-+	u32 insn;
-+
-+	BUG_ON(nr_inst != 1);
-+
-+	switch (psci_ops.conduit) {
-+	case PSCI_CONDUIT_HVC:
-+		insn = aarch64_insn_get_hvc_value();
-+		break;
-+	case PSCI_CONDUIT_SMC:
-+		insn = aarch64_insn_get_smc_value();
-+		break;
-+	default:
-+		return;
-+	}
-+
-+	*updptr = cpu_to_le32(insn);
-+}
-+#endif	/* CONFIG_ARM64_SSBD */
-+
- #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
- 	.matches = is_affected_midr_range,			\
- 	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -18,6 +18,7 @@
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
+-	if (!MLX5_CAP_GEN(priv->mdev, eswitch_flow_table))
++	if (!MLX5_ESWITCH_MANAGER(priv->mdev))
+ 		return false;
  
-+#include <linux/arm-smccc.h>
- #include <linux/init.h>
- #include <linux/linkage.h>
+ 	rep = rpriv->rep;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -1604,7 +1604,7 @@ int mlx5_eswitch_enable_sriov(struct mlx
+ 	if (!ESW_ALLOWED(esw))
+ 		return 0;
  
-@@ -137,6 +138,18 @@ alternative_else_nop_endif
- 	add	\dst, \dst, #(\sym - .entry.tramp.text)
- 	.endm
+-	if (!MLX5_CAP_GEN(esw->dev, eswitch_flow_table) ||
++	if (!MLX5_ESWITCH_MANAGER(esw->dev) ||
+ 	    !MLX5_CAP_ESW_FLOWTABLE_FDB(esw->dev, ft_support)) {
+ 		esw_warn(esw->dev, "E-Switch FDB is not supported, aborting ...\n");
+ 		return -EOPNOTSUPP;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -32,6 +32,7 @@
  
-+	// This macro corrupts x0-x3. It is the caller's duty
-+	// to save/restore them if required.
-+	.macro	apply_ssbd, state
-+#ifdef CONFIG_ARM64_SSBD
-+	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
-+	mov	w1, #\state
-+alternative_cb	arm64_update_smccc_conduit
-+	nop					// Patched to SMC/HVC #0
-+alternative_cb_end
-+#endif
-+	.endm
+ #include <linux/mutex.h>
+ #include <linux/mlx5/driver.h>
++#include <linux/mlx5/eswitch.h>
+ 
+ #include "mlx5_core.h"
+ #include "fs_core.h"
+@@ -2631,7 +2632,7 @@ int mlx5_init_fs(struct mlx5_core_dev *d
+ 			goto err;
+ 	}
+ 
+-	if (MLX5_CAP_GEN(dev, eswitch_flow_table)) {
++	if (MLX5_ESWITCH_MANAGER(dev)) {
+ 		if (MLX5_CAP_ESW_FLOWTABLE_FDB(dev, ft_support)) {
+ 			err = init_fdb_root_ns(steering);
+ 			if (err)
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fw.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fw.c
+@@ -32,6 +32,7 @@
+ 
+ #include <linux/mlx5/driver.h>
+ #include <linux/mlx5/cmd.h>
++#include <linux/mlx5/eswitch.h>
+ #include <linux/module.h>
+ #include "mlx5_core.h"
+ #include "../../mlxfw/mlxfw.h"
+@@ -159,13 +160,13 @@ int mlx5_query_hca_caps(struct mlx5_core
+ 	}
+ 
+ 	if (MLX5_CAP_GEN(dev, vport_group_manager) &&
+-	    MLX5_CAP_GEN(dev, eswitch_flow_table)) {
++	    MLX5_ESWITCH_MANAGER(dev)) {
+ 		err = mlx5_core_get_caps(dev, MLX5_CAP_ESWITCH_FLOW_TABLE);
+ 		if (err)
+ 			return err;
+ 	}
+ 
+-	if (MLX5_CAP_GEN(dev, eswitch_flow_table)) {
++	if (MLX5_ESWITCH_MANAGER(dev)) {
+ 		err = mlx5_core_get_caps(dev, MLX5_CAP_ESWITCH);
+ 		if (err)
+ 			return err;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/sriov.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/sriov.c
+@@ -88,6 +88,9 @@ static int mlx5_device_enable_sriov(stru
+ 		return -EBUSY;
+ 	}
+ 
++	if (!MLX5_ESWITCH_MANAGER(dev))
++		goto enable_vfs_hca;
 +
- 	.macro	kernel_entry, el, regsize = 64
- 	.if	\regsize == 32
- 	mov	w0, w0				// zero upper 32 bits of x0
-@@ -163,6 +176,13 @@ alternative_else_nop_endif
- 	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
- 	disable_step_tsk x19, x20		// exceptions when scheduling.
+ 	err = mlx5_eswitch_enable_sriov(dev->priv.eswitch, num_vfs, SRIOV_LEGACY);
+ 	if (err) {
+ 		mlx5_core_warn(dev,
+@@ -95,6 +98,7 @@ static int mlx5_device_enable_sriov(stru
+ 		return err;
+ 	}
  
-+	apply_ssbd 1
-+
-+#ifdef CONFIG_ARM64_SSBD
-+	ldp	x0, x1, [sp, #16 * 0]
-+	ldp	x2, x3, [sp, #16 * 1]
-+#endif
-+
- 	mov	x29, xzr			// fp pointed to user-space
- 	.else
- 	add	x21, sp, #S_FRAME_SIZE
-@@ -303,6 +323,8 @@ alternative_if ARM64_WORKAROUND_845719
- alternative_else_nop_endif
- #endif
- 3:
-+	apply_ssbd 0
-+
- 	.endif
++enable_vfs_hca:
+ 	for (vf = 0; vf < num_vfs; vf++) {
+ 		err = mlx5_core_enable_hca(dev, vf + 1);
+ 		if (err) {
+@@ -140,7 +144,8 @@ static void mlx5_device_disable_sriov(st
+ 	}
  
- 	msr	elr_el1, x21			// set up the return data
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -80,6 +80,11 @@
- 			   ARM_SMCCC_SMC_32,				\
- 			   0, 0x8000)
+ out:
+-	mlx5_eswitch_disable_sriov(dev->priv.eswitch);
++	if (MLX5_ESWITCH_MANAGER(dev))
++		mlx5_eswitch_disable_sriov(dev->priv.eswitch);
  
-+#define ARM_SMCCC_ARCH_WORKAROUND_2					\
-+	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
-+			   ARM_SMCCC_SMC_32,				\
-+			   0, 0x7fff)
+ 	if (mlx5_wait_for_vf_pages(dev))
+ 		mlx5_core_warn(dev, "timeout reclaiming VFs pages\n");
+--- a/include/linux/mlx5/eswitch.h
++++ b/include/linux/mlx5/eswitch.h
+@@ -8,6 +8,8 @@
+ 
+ #include <linux/mlx5/driver.h>
+ 
++#define MLX5_ESWITCH_MANAGER(mdev) MLX5_CAP_GEN(mdev, eswitch_manager)
 +
- #ifndef __ASSEMBLY__
- 
- #include <linux/linkage.h>
+ enum {
+ 	SRIOV_NONE,
+ 	SRIOV_LEGACY,
+--- a/include/linux/mlx5/mlx5_ifc.h
++++ b/include/linux/mlx5/mlx5_ifc.h
+@@ -905,7 +905,7 @@ struct mlx5_ifc_cmd_hca_cap_bits {
+ 	u8         vnic_env_queue_counters[0x1];
+ 	u8         ets[0x1];
+ 	u8         nic_flow_table[0x1];
+-	u8         eswitch_flow_table[0x1];
++	u8         eswitch_manager[0x1];
+ 	u8         device_memory[0x1];
+ 	u8         mcam_reg[0x1];
+ 	u8         pcam_reg[0x1];
 
 
