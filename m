@@ -2,69 +2,159 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9AAECDE5F
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 02:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A8BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 313AA2084E
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 02:48:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4xOQxjU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 313AA2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 521B32084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:15:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521B32084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731251AbeGTDea (ORCPT
+        id S1731183AbeGTD70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 23:34:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46082 "EHLO mail.kernel.org"
+        Thu, 19 Jul 2018 23:59:26 -0400
+Received: from gate.crashing.org ([63.228.1.57]:55868 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730816AbeGTDea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 23:34:30 -0400
-Received: from dragon (unknown [45.56.152.101])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE55920673;
-        Fri, 20 Jul 2018 02:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532054909;
-        bh=9HpIh4ySe4xPfYED7zTJqKEIAJxv2tTcT5kdnL3K2vc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R4xOQxjU+Mvmb3rIrYtcNflUvRR4a7n+Camr6ypDRmn9crCH7Ie0ahImo6qfcJkMj
-         SxIzKRVg2Sa4UqiFVNTIOY4uGFHH7LLS8qrWp41juJuCP5/Veh9k90m+F+W+M78+wJ
-         I3s/RGF0RfeLeX6/MB8rCgPIYI46RrQS763eFdzQ=
-Date:   Fri, 20 Jul 2018 10:48:09 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viresh.kumar@linaro.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH] ARM: dts: imx7d: remove "operating-points" property for
- cpu1
-Message-ID: <20180720024808.GZ4576@dragon>
-References: <1531988659-9466-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531988659-9466-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1730811AbeGTD70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 23:59:26 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6K3CvRJ010227;
+        Thu, 19 Jul 2018 22:12:58 -0500
+Message-ID: <97be22364c8b90ca6caba7e2596d6cf90f28136f.camel@kernel.crashing.org>
+Subject: Re: DMA mappings and crossing boundaries
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>
+Cc:     Russell Currey <ruscur@au1.ibm.com>,
+        iommu@lists.linux-foundation.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jens Axboe <jens.axboe@oracle.com>
+Date:   Fri, 20 Jul 2018 13:12:56 +1000
+In-Reply-To: <dad4fa57254e30d99c930e2788eef7f1ce18c17b.camel@kernel.crashing.org>
+References: <2d752386b82481bc53080fcee1a3dcd474dbeef2.camel@au1.ibm.com>
+         <82688fc5-c294-1db3-9a05-fecf9b9b5e17@arm.com>
+         <5f31e833851f5b9a58ca4ed9b5f0a1958cca0efd.camel@au1.ibm.com>
+         <2786eaad-f359-c88c-a42c-ff1b93e78c21@arm.com>
+         <dad4fa57254e30d99c930e2788eef7f1ce18c17b.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 04:24:19PM +0800, Anson Huang wrote:
-> Commit b97872d4eb22 ("ARM: dts: imx: Add missing OPP properties for CPUs")
-> added "operating-points" property for all CPUs, but i.MX7D already has
-> "operating-points-v2" property on both CPUs, so no need to add
-> "operating-points" property again, this patch removes it.
+On Wed, 2018-07-11 at 14:51 +1000, Benjamin Herrenschmidt wrote:
+> On Wed, 2018-07-04 at 13:57 +0100, Robin Murphy wrote:
+> > 
+> > > Could it ? I wouldn't think dma_map_page is allows to cross page
+> > > boundaries ... what about single() ? The main worry is people using
+> > > these things on kmalloc'ed memory
+> > 
+> > Oh, absolutely - the underlying operation is just "prepare for DMA 
+> > to/from this physically-contiguous region"; the only real difference 
+> > between map_page and map_single is for the sake of the usual "might be 
+> > highmem" vs. "definitely lowmem" dichotomy. Nobody's policing any limits 
+> > on the size and offset parameters (in fact, if anyone asks I would say 
+> > the outcome of the big "offset > PAGE_SIZE" debate for dma_map_sg a few 
+> > months back is valid for dma_map_page too, however silly it may seem).
 > 
-> Fixes: b97872d4eb22 ("ARM: dts: imx: Add missing OPP properties for CPUs")
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> I think this is a very bad idea though. We should thrive to avoid
+> coalescing before the iommu layer and we should avoid creating sglists
+> that cross natural alignment boundaries.
 
-Applied, thanks.
+Ping ? Jens, Christoph ?
+
+I really really don't like how sg_alloc_table_from_pages() coalesces
+the sglist before it gets mapped. This will potentially create huge
+constraints and fragmentation in the IOMMU allocator by passing large
+chunks to it.
+
+> I had a look at sg_alloc_table_from_pages() and it basically freaks me
+> out.
+> 
+> Back in the old days, we used to have the block layer aggressively
+> coalesce requests iirc, but that was changed to let the iommu layer do
+> it.
+> 
+> If you pass to dma_map_sg() something already heavily coalesced, such
+> as what sg_alloc_table_from_pages() can do since it seems to have
+> absolutely no limits there, you will create a significant fragmentation
+> problem in the iommu allocator.
+> 
+> Instead, we should probably avoid such coalescing at that level and
+> instead let the iommu opportunistically coalesce at the point of
+> mapping which it does just fine.
+> 
+> We've been racking our brains here and we can't find a way to implement
+> something we want that is both very performance efficient (no global
+> locks etc...) and works with boundary crossing mappings.
+> 
+> We could always fallback to classic small page mappings but that is
+> quite suboptimal.
+> 
+> I also notice that sg_alloc_table_from_pages() doesn't try to prevent
+> crossing the 4G boundary. I remember pretty clearly that it was
+> explicitely forbidden to create such a crossing.
+> 
+> > Of course, given that the allocators tend to give out size/order-aligned 
+> > chunks, I think you'd have to be pretty tricksy to get two allocations 
+> > to line up either side of a large power-of-two boundary *and* go out of 
+> > your way to then make a single request spanning both, but it's certainly 
+> > not illegal. Realistically, the kind of "scrape together a large buffer 
+> > from smaller pieces" code which is liable to hit a boundary-crossing 
+> > case by sheer chance is almost certainly going to be taking the 
+> > sg_alloc_table_from_pages() + dma_map_sg() route for convenience, rather 
+> > than implementing its own merging and piecemeal mapping.
+> 
+> Yes and I  think what sg_alloc_table_from_pages() does is quite wrong.
+> 
+> > > > Conceptually it looks pretty easy to extend the allocation constraints
+> > > > to cope with that - even the pathological worst case would have an
+> > > > absolute upper bound of 3 IOMMU entries for any one physical region -
+> > > > but if in practice it's a case of mapping arbitrary CPU pages to 32-bit
+> > > > DMA addresses having only 4 1GB slots to play with, I can't really see a
+> > > > way to make that practical :(
+> > > 
+> > > No we are talking about 40-ish-bits of address space, so there's a bit
+> > > of leeway. Of course no scheme will work if the user app tries to map
+> > > more than the GPU can possibly access.
+> > > 
+> > > But with newer AMD adding a few more bits and nVidia being at 47-bits,
+> > > I think we have some margin, it's just that they can't reach our
+> > > discontiguous memory with a normal 'bypass' mapping and I'd rather not
+> > > teach Linux about every single way our HW can scatter memory accross
+> > > nodes, so an "on demand" mechanism is by far the most flexible way to
+> > > deal with all configurations.
+> > > 
+> > > > Maybe the best compromise would be some sort of hybrid scheme which
+> > > > makes sure that one of the IOMMU entries always covers the SWIOTLB
+> > > > buffer, and invokes software bouncing for the awkward cases.
+> > > 
+> > > Hrm... not too sure about that. I'm happy to limit that scheme to well
+> > > known GPU vendor/device IDs, and SW bouncing is pointless in these
+> > > cases. It would be nice if we could have some kind of guarantee that a
+> > > single mapping or sglist entry never crossed a specific boundary
+> > > though... We more/less have that for 4G already (well, we are supposed
+> > > to at least). Who are the main potential problematic subsystems here ?
+> > > I'm thinking network skb allocation pools ... and page cache if it
+> > > tries to coalesce entries before issuing the map request, does it ?
+> > 
+> > I don't know of anything definite off-hand, but my hunch is to be most 
+> > wary of anything wanting to do zero-copy access to large buffers in 
+> > userspace pages. In particular, sg_alloc_table_from_pages() lacks any 
+> > kind of boundary enforcement (and most all users don't even use the 
+> > segment-length-limiting variant either), so I'd say any caller of that 
+> > currently has a very small, but nonzero, probability of spoiling your day.
+> 
+> And I'm starting to think we should just fix them.
+> 
+> Cheers,
+> Ben.
+> 
+> > Robin.
+> > 
