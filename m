@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 871AEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1CCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B52D206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B52D206B7
+	by mail.kernel.org (Postfix) with ESMTP id 717A5206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:39:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 717A5206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389520AbeGTN1K (ORCPT
+        id S2389534AbeGTN1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:27:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47854 "EHLO
+        Fri, 20 Jul 2018 09:27:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47906 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388565AbeGTN1J (ORCPT
+        with ESMTP id S2388565AbeGTN1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:27:09 -0400
+        Fri, 20 Jul 2018 09:27:13 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DB73C9A;
-        Fri, 20 Jul 2018 12:38:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A4EFCB5;
+        Fri, 20 Jul 2018 12:35:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
-        Eli Cohen <eli@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.17 055/101] IB/mlx5: Avoid dealing with vport representors if not being e-switch manager
-Date:   Fri, 20 Jul 2018 14:14:01 +0200
-Message-Id: <20180720121425.420082736@linuxfoundation.org>
+        stable@vger.kernel.org, Floris Bos <bos@je-eigen-domein.nl>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 52/92] net: lan78xx: Fix race in tx pending skb size calculation
+Date:   Fri, 20 Jul 2018 14:13:56 +0200
+Message-Id: <20180720121420.984831373@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
-References: <20180720121422.837870592@linuxfoundation.org>
+In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
+References: <20180720121417.206337808@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,40 +47,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Or Gerlitz <ogerlitz@mellanox.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-[ Upstream commit aff2252a2ad3844ca47bf2f18af071101baace40 ]
+commit dea39aca1d7aef1e2b95b07edeacf04cc8863a2e upstream.
 
-In smartnic env, the host (PF) driver might not be an e-switch
-manager, hence the switchdev mode representors are running on
-the embedded cpu (EC) and not at the host.
+The skb size calculation in lan78xx_tx_bh is in race with the start_xmit,
+which could lead to rare kernel oopses. So protect the whole skb walk with
+a spin lock. As a benefit we can unlink the skb directly.
 
-As such, we should avoid dealing with vport representors if
-not being esw manager.
+This patch was tested on Raspberry Pi 3B+
 
-Fixes: b5ca15ad7e61 ('IB/mlx5: Add proper representors support')
-Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
-Reviewed-by: Eli Cohen <eli@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Link: https://github.com/raspberrypi/linux/issues/2608
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Floris Bos <bos@je-eigen-domein.nl>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/infiniband/hw/mlx5/main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -5736,7 +5736,7 @@ static void *mlx5_ib_add(struct mlx5_cor
- 	dev->num_ports = max(MLX5_CAP_GEN(mdev, num_ports),
- 			     MLX5_CAP_GEN(mdev, num_vhca_ports));
+---
+ drivers/net/usb/lan78xx.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -3197,6 +3197,7 @@ static void lan78xx_tx_bh(struct lan78xx
+ 	pkt_cnt = 0;
+ 	count = 0;
+ 	length = 0;
++	spin_lock_irqsave(&tqp->lock, flags);
+ 	for (skb = tqp->next; pkt_cnt < tqp->qlen; skb = skb->next) {
+ 		if (skb_is_gso(skb)) {
+ 			if (pkt_cnt) {
+@@ -3205,7 +3206,8 @@ static void lan78xx_tx_bh(struct lan78xx
+ 			}
+ 			count = 1;
+ 			length = skb->len - TX_OVERHEAD;
+-			skb2 = skb_dequeue(tqp);
++			__skb_unlink(skb, tqp);
++			spin_unlock_irqrestore(&tqp->lock, flags);
+ 			goto gso_skb;
+ 		}
  
--	if (MLX5_VPORT_MANAGER(mdev) &&
-+	if (MLX5_ESWITCH_MANAGER(mdev) &&
- 	    mlx5_ib_eswitch_mode(mdev->priv.eswitch) == SRIOV_OFFLOADS) {
- 		dev->rep = mlx5_ib_vport_rep(mdev->priv.eswitch, 0);
+@@ -3214,6 +3216,7 @@ static void lan78xx_tx_bh(struct lan78xx
+ 		skb_totallen = skb->len + roundup(skb_totallen, sizeof(u32));
+ 		pkt_cnt++;
+ 	}
++	spin_unlock_irqrestore(&tqp->lock, flags);
  
+ 	/* copy to a single skb */
+ 	skb = alloc_skb(skb_totallen, GFP_ATOMIC);
 
 
