@@ -2,160 +2,207 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A539CECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B34ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B0D720652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:30:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4BE120652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:31:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="iq9rY602"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0D720652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PzjFmphu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4BE120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbeGTJSA (ORCPT
+        id S1728377AbeGTJSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 05:18:00 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:26351 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727630AbeGTJSA (ORCPT
+        Fri, 20 Jul 2018 05:18:45 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33799 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727630AbeGTJSo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:18:00 -0400
-Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
-  by relmlie2.idc.renesas.com with ESMTP; 20 Jul 2018 17:30:48 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir1.idc.renesas.com (Postfix) with ESMTP id DB69088704;
-        Fri, 20 Jul 2018 17:30:47 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.51,377,1526310000"; 
-   d="scan'208";a="285901905"
-Received: from mail-ty1jpn01lp0178.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.178])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 20 Jul 2018 17:30:47 +0900
+        Fri, 20 Jul 2018 05:18:44 -0400
+Received: by mail-wr1-f66.google.com with SMTP id c13-v6so10492893wrt.1;
+        Fri, 20 Jul 2018 01:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=91J9qjob0koBj7+1jHzByLciZKgvIZJp5jFWhIgkego=;
- b=iq9rY602W0JOHJk6OU9wFYrGcM+OqvQt5vqYIxTijfsEMoRwqFT0C0WqgAjeW9tAoTDVqizQ87TncAyy4Bd9bGwvPqYi/+jX7mJvuZrrjCZmOt6qwpqJkWy21dOHsa+VEXG2GCuFa8lM5+egFnWWpmCQZbCoHmisdO1CYSUR1Mo=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
-Received: from morimoto-PC.renesas.com (211.11.155.130) by
- OSBPR01MB1861.jpnprd01.prod.outlook.com (2603:1096:603:2::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.21; Fri, 20 Jul 2018 08:30:41 +0000
-Message-ID: <87effy48lz.wl-kuninori.morimoto.gx@renesas.com>
-From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        <linux-mips@linux-mips.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        James Hogan <jhogan@kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Manuel Lauss <manuel.lauss@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
-        Han Xu <han.xu@nxp.com>, Donglin Peng <dolinux.peng@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH] ASoC: wm9712: fix replace codec to component
-In-Reply-To: <20180720075148.14648-1-marcel@ziswiler.com>
-References: <20180720075148.14648-1-marcel@ziswiler.com>
-User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Date:   Fri, 20 Jul 2018 08:30:41 +0000
-X-Originating-IP: [211.11.155.130]
-X-ClientProxiedBy: OSAPR01CA0040.jpnprd01.prod.outlook.com
- (2603:1096:603:14::28) To OSBPR01MB1861.jpnprd01.prod.outlook.com
- (2603:1096:603:2::14)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ab03ee38-0d65-454a-90ee-08d5ee1b14ed
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600067)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1861;
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;3:PXEG5E40yYQzAi9e0NOTTXaSykxoy0mmkPyAQdTLtX+Lml4BUHlo7Rk+DAi6+NoljHJSaXw01R9p+Fg5Cp5H9rdfcEldQUW9ntqVAUaJcp3rMHz8GdB/myO7LCVIMUx1H3Tj31dmtBau5ex/seW0+K3peJOkH0wKMYiQOWwNU/1ERW2dF6RLFxUniW8uWknEv2/MJS4clAxP5ivTpP/6aDU1Sy8iNbYWdPBymzDRGQPsL0gwzH7HQENsk15K9+Ff;25:TV2cZdxbr4w5bteZ4jwtNaa5ikfV2rS7bOgIgKKBcNk/sMMFLFka2yMrwRbxLQ2dWfB3vAhIwEPoCi1h8FM2I8bhG0WYOmOhCNV7jNdWDU80ILk/NKb7b6AHlZmrKiN5W6jtSi1Lh6vcORskp8FgYm5lBDVwrADdaJ9lslQOlZseeslwsYdQ0hyHjOTjAMzY/n3JEDLa4PuoCryxv+Q43whyaTt7QxMikT7xyc0MTmbiTWJ4mET6b/3YInmlsLrS6vTsdeO0fTOVYrEIUpDmIf8B67d3P0M95KporDK/k8xj9QgcchGRKBF4yuZX/Il6k+wk2ZjrSTjnzLBuMViixQ==;31:HNjRJxYBs98qWCFbAULCaYtrI5MMRXfx0bU6s/FhYAG1/CRZ2l1tDOYtZX3nDLBRq3GaFao9qpr9ILY4jAl1x9eoBVTYs2Nc0kQcgLNnUX+KuJAegphJIQqEcyPc6/DF78dYACSPstSLnjXAG0VMQEiltI/xcl+JwMsNArJwlUFC1E2xmsk/m26/ZKv92aSkQNuoe/MZx0CWpJQmSfi1JJbwfFoCr70RG5BBiSHAv5g=
-X-MS-TrafficTypeDiagnostic: OSBPR01MB1861:
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;20:WF3+ShFCrZpFOpML8gR3cU9Z0HR/n0GK06mNhuKMSRVo/wc1ZeDDGqqUvdbyD0h4/u9BQCjVexjQejegLKE45YPCZRHkiZ9dKCkoRmuDEL0WCDUl2ofsBG+Am8BMELHbZXqrFJ7gySIhaJ5A3EbeCBfI/14Mt8MYSPV2kOOEMxca9hQ7bSYoNugxObyzgTpNgUz7NO6q5LzXjzRL0BIssDB9jormKAUj4/MxPbSxZ0fiaiRMkal8rOIHQ65NhITeThgGUJA1roVlZlhZ8HS3Szd5wjXbAYraChckcgkm4DMB8bOIhlPGHdiHCZRAptkOPCplcRA/FG15ftSxkvH23Js+Xn2OoqNqlZ54THy1f1W8MMx0k8Lw8hU7ZQeDrcirO1Z4CMiJ67vYvrws52vs3oI1oUVkkaEZTYXrcOU5rz63Jd0Rxstn0Uy78xP/+kxMa0yMn3+EjLK6tMLaurmnu/sGYl5ZraxUgWhv59SQ2HT0Q4sEWZNAOfwGgveSljyO;4:8+l0ZxHc1UvXPOj/e5Z7n2Zvv7mUBbtKDrifOjQBuZZyMw0hKsnePLt8VibQPtWp9m4JqKxX7XI+Y1yyiLRQuRXs7v8rcfW9CX7oKdcJ8iTFwkBUmv/YGCj03pp8oYmo2UNkY3pp9MiNgnwptovhPYISYY7V0PN7rHOh3tZijMiPFM9rsQQAsdxmuMFPjS3s2S/FFubTYAVDtZ3t+rPkfdm1zgGIKf3rmwBZWI6pA0kODbS9OLXaiDCfAueyWzaGtoMYKK+6d4QBy9lDir7+feTxB8onI2ybXw6vt+YTgca89fyLqP4eY23VOa9dSH5Q
-X-Microsoft-Antispam-PRVS: <OSBPR01MB186187A515A1B7CE0D923FF7D4510@OSBPR01MB1861.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(788757137089);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:OSBPR01MB1861;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1861;
-X-Forefront-PRVS: 073966E86B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(396003)(136003)(39860400002)(189003)(199004)(16586007)(54906003)(76176011)(58126008)(316002)(86362001)(7696005)(52116002)(386003)(105586002)(26005)(956004)(11346002)(53416004)(186003)(68736007)(16526019)(106356001)(7406005)(476003)(2616005)(36756003)(14444005)(7416002)(5660300001)(486006)(446003)(23726003)(6116002)(478600001)(3846002)(47776003)(229853002)(66066001)(6486002)(6916009)(6246003)(69596002)(50466002)(81156014)(39060400002)(305945005)(97736004)(8936002)(8676002)(2906002)(4326008)(81166006)(7736002)(53936002)(25786009)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1861;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB1861;23:+U4luL6LmchtNJls/CGpWgBZYjcH/9uIeP4Yatkd4?=
- =?us-ascii?Q?3PgDBkdd7G/usG8tJmAr6/0GfWC6FMUgBDqcwT7i3oy7+j6s0rGoDRLItWOR?=
- =?us-ascii?Q?L4PePwWFDKu1BGthhgpupDCAQQEHmkReywTtnfhzvYH8Eay9njjplPfZYKru?=
- =?us-ascii?Q?bOpobCJraFg0Pj1ku93+kPu05Gedd3dMtgZhHF11W2+G7YuNhVtiosWOjNc2?=
- =?us-ascii?Q?y/cPXu+G4gFG96Jx+yB39o3wK+gUmq0ZOLyuhv9ubTWVqQrtXsHEyPcsG8MY?=
- =?us-ascii?Q?smm6kDZpE/pq9LcfR/xRWCaPXakTElyEoT/gicKSE1Tel40rXFQaVEWe8BtB?=
- =?us-ascii?Q?avDHibmZ3MF4RlX25kPP/c9LiTVSnDOs9qyW6uza2Pl9kAkabyOYwxSSDFK+?=
- =?us-ascii?Q?sy/cL11le0H+Fs57VDD5J/ctrECak0yIsrVaKXARVZ3RgnlQ49ABaPnyfmVa?=
- =?us-ascii?Q?f1WYlM/7u5LRz7/wor1bLbMXe6rpkg3skqYLMeevZX1t8gD8ztEulABMSC0H?=
- =?us-ascii?Q?tvmfe/b/ywO/B7BQHyxLvYQ0p5StXTkL8HO50nvErhVlFeDcUyzdi6vpoaLT?=
- =?us-ascii?Q?+oHqhgwNYl/FEz9e7N5SWUJXSxiP75h/7gRHgy1oMwcbjXwIN8C3K01JkVRs?=
- =?us-ascii?Q?gBJIV9vfW6niwLzhGsIphDpC7x10NzeGlpjBbmQiMcwHeopODMt8waXl5LN1?=
- =?us-ascii?Q?2ypBY+GWbqt1clCaeBerJqH2aD/TYpwhvIljxZmNzS5Ky0i2ghznD1+DNcJA?=
- =?us-ascii?Q?zIZLaJ9OI53l6Tu+8h9tQmK8WvuIDi9es+fGQmLNmzsRhW/DbWq3R0ckWH8D?=
- =?us-ascii?Q?MHIaK1WpoGOwcW4KP6dU5d14hNvf2h18aPj8QJh3zumNbyIkV7/fNI4Dl3X6?=
- =?us-ascii?Q?BB2zBufef04FnQJtHNAxHx1bXtd7TsfZFdGFNFdTHHS6nQsjcO+zDBxVuL/8?=
- =?us-ascii?Q?2a8eo9WVE3i41IH5Y6H7XOTKIWw92mADIwUrEcyWPjILZYpucSGSGVO7frfh?=
- =?us-ascii?Q?NVR8XNzbiOr2JMo16RtI7iLc/ax/nEW27u4SOfhJ2DCvJggeTnNYCKR34e1q?=
- =?us-ascii?Q?ZeW+Avkm4aESdV0RRTqDUEEKId3st6wUAUD+2s8BGUkOGNytdzVCboKSa/qP?=
- =?us-ascii?Q?qJMWRm2XLVpIsYkvkKX2vbUzj6E4lxDChLpNgHJaELj9DPP2rMzHfMnGb2C/?=
- =?us-ascii?Q?W3IbqsZVpFnR4uZVgfJIWzyFRmjnvrAGdLm9Ro9RZ39Ob91e+ouhGDZMBe3U?=
- =?us-ascii?Q?KAEN+aZH1LBobuc615Xtg1Fi+ap4yFGfHVXmm0SqDvSZbb4dhq2SuhjbyfYw?=
- =?us-ascii?Q?b8WwNlOuKpDzX45+eFzx30=3D?=
-X-Microsoft-Antispam-Message-Info: 0mWirEbGxFpcZDjEGTmacdrp6b9JRf0Yjf9Tg7J6Fm8zRMmuPKQkSSDnEV/NvlEIPBCQTAfuiCshg8cp1LwLE13a7d1vVgUg8me1xfunJEAHyaJ5p8inbVAOu1qiExlt2O8oSTatjWUqW9kKmlMkcXx8E3E2BddRwTswELEtYmXM7anb0YMMzscKqHzWt5f/j02YpQG6T9s5CyhW+F9s96WKWWfiGLKd+U467DPtqo9qQqGC/jM5cVFsFRJY0GA1jTjKYnvz2BRblQ7aiybIhnC3HGjo0ifvGUxz3AY2IcvMrQDYj9yA12c1/3AVYR5g/Nd/6RcLT9jernAgbBoCeRb6m4uoNikLXZBDzc858JQ=
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;6:leU6nvs7UTOqmoqpL3O9lbUbDDcwun4JgmUpgCIYfiTkBfewVIaOT0xRUWIdskR8dNfSoz8YjWuHM1d6NLKAraZTkyWMQ3UFTgOARrcAiD7OS4yHJQ2K9mD2NXT3FKw/6HFJVSwmaZ3oxSgNNGsI6O5INN9PLybk1TSMR71WHMfg037NrQs6Zb4nM5UGfjn8yBQ1Z/KeXv83DU6BiWG4Rqn/C3Rlwp6G09xCeVDsTCpsIc/A9ehMVeOeiL32y75gM78QdGwJpwuajnlrhTbmIhwUAyb59dPna6L9dgw2eb7TYjG+KXWOYwbEG2NnvvCPzU4VyBdSlDT79dwdoa5cKnadI9QG2EWG5PZVPMO9Tab3t9nKP5p0vX6BakZqSOticdbRYTXLxmsllmurGSjGm5v/fovi0ij10Up7xknH41ZajOpX0UppG8XxdgyoLHgKd4mU2aiZI+sXr0x1VbPHDQ==;5:f9LHBGG3BRbS2gJE28g7rsO4FeAOrG5TpGTRl3HZx1ENt0WPriiroWsAUYNItuLzlWhjzhRWL7xV0DUZ9XEnK6C8ry8Gp/CuGpbj03tWydOTs2+5Zy6nCb03yTxMr7LNNq/GD4bs++NtjC0rNRUpfsRvTuQ0xXrnN5tGaVPF/Cc=;7:t5t1JNu7zQ8nzFkKL2jmfkni5c3mV2qzy1KHoP3rg6dkce9hiiMpalB0WxooHyW+VzmU9vMMMczBuQ9SPcArc7cjan62ThwQanZ+/TOUW+JbQyOTN4QEcyV8ThQaKRFvVm5HB8LXC0EwlGtjxwFffXZgSP3ie6Iss0J8vaAHH5/jiaYgPqHfPKErqoqV8eu0NvDtWTZSLDxDySrQbot+ttdHGm4MtO09aBJ8G04wFEc0JIGBVE7AiH5tw5kJ4QX2
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;20:d/iy5rV4rZsf/i8tnV49P91NCOdtyRR1hUEuSlWJFdcDsFZA5cuv5wG+GHqdD7IXDsjziUzD6HTDkXvVyre4qBWFIOTn1+7ioeOTmkb0CP6XjmYF73r5CMNbQnc9TNEJjHlfQ2VDhc9AuNVsfd8XBvay6/kxUIvk81EkhumPsQ0=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2018 08:30:41.7309 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab03ee38-0d65-454a-90ee-08d5ee1b14ed
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1861
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=p+ejuoEdngHXJfLFPT2qz0KtZYqN3838ZQcpWEB/698=;
+        b=PzjFmphubPdZidEIOjWJlYpDQy0Iir4dpJJHXiVbpm4/vgpjbG60FUkONf8X7TheDS
+         oOfBzYfAkQFvqCxofjmYPxkceloofkgnqsxbzdGtA4/UWXHKTxMgQFHYgjxWuDUOG6q7
+         X9R0q+SkR1MYtysGjGuV4uzafjD58DDByNHnqQIWhKuGcG8xh8Uz//a3iXESCIt39IcQ
+         2gUP89l4lQuYaWtCQbev+BGOv9jjYs/6bWlQ2ViJjXcg48JrYLCKD0J1bMr0DurJfDRO
+         NRVc/4dDyv6XY8NxLWU0ynn+qluJ9lg69XSzbiIns7lJe36LhkALw19qIaWoxxW8zfFj
+         Fe2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=p+ejuoEdngHXJfLFPT2qz0KtZYqN3838ZQcpWEB/698=;
+        b=dpN8XlR1fQ7LWHC4Y3mUMKjb1RcyYDGklrPmBNN+E0kUs0f/uyw/JckrvYXIHnMGGe
+         iFfFwDrTzULWEOBzPfHhHDxl1pk0gAbwfQ95pSJwpUO4nKhKoQXN4gRmLTiyf2wAL8/5
+         rScYtNWBt7+o/QTkB05W0py1ysIhutFIKJK2oc3q53C8TiZKJJE0DrNm1JJX7TV/CTXZ
+         iywWfG4b4qv771tuoMAF1vk05Ol81b8or24eabGMy6jeHd0kihS0olt90L3wzv9NRm1B
+         aIQ2SV6Yp6olsC/KAZ2ET7YOOQV0QmgHYmU8f1z6e9N+fFWim9Dhx0yRnmxyyhgRu+RZ
+         S2dw==
+X-Gm-Message-State: AOUpUlHzusjZELomi1lrkf4GJR0UaYKrTP2heu+jRRoQ/onGiBAMNSSR
+        BdCxKCA1TiEZKVdm4exLx/w=
+X-Google-Smtp-Source: AAOMgpdPZyU7t3PAySpqI+6gDFzQsegkfwzMvhVthrAScKAs7/qh01FJ2lAHUuCAzUNq0Bwcpy9N7g==
+X-Received: by 2002:adf:dc8e:: with SMTP id r14-v6mr766785wrj.166.1532075492843;
+        Fri, 20 Jul 2018 01:31:32 -0700 (PDT)
+Received: from [192.168.10.150] (dynamic-adsl-78-12-156-57.clienti.tiscali.it. [78.12.156.57])
+        by smtp.googlemail.com with ESMTPSA id b198-v6sm1125248wme.11.2018.07.20.01.31.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 01:31:32 -0700 (PDT)
+Subject: Re: [PATCH V3 0/4] KVM/x86/hyper-V: Introduce PV guest address space
+ mapping flush support
+To:     KY Srinivasan <kys@microsoft.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>
+Cc:     "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>
+References: <20180719083946.121493-1-Tianyu.Lan@microsoft.com>
+ <MW2PR2101MB1113BF48AF4E3802CC29A10EA0510@MW2PR2101MB1113.namprd21.prod.outlook.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+Message-ID: <a51f8e18-5592-5dbd-87e2-9cf42c1af16a@redhat.com>
+Date:   Fri, 20 Jul 2018 10:31:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <MW2PR2101MB1113BF48AF4E3802CC29A10EA0510@MW2PR2101MB1113.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi Marcel
-
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 20/07/2018 05:58, KY Srinivasan wrote:
 > 
-> Since commit 143b44845d87 ("ASoC: wm9712: replace codec to component")
-> "wm9712-codec" got renamed to "wm9712-component", however, this change
-> never got propagated down to the actual board/platform drivers. E.g. on
-> Colibri T20 this lead to the following spew upon boot with sound/touch
-> being broken:
+> 
+>> -----Original Message-----
+>> From: Tianyu Lan
+>> Sent: Thursday, July 19, 2018 1:40 AM
+>> Cc: Tianyu Lan <Tianyu.Lan@microsoft.com>; devel@linuxdriverproject.org;
+>> Haiyang Zhang <haiyangz@microsoft.com>; hpa@zytor.com;
+>> kvm@vger.kernel.org; KY Srinivasan <kys@microsoft.com>; linux-
+>> kernel@vger.kernel.org; mingo@redhat.com; pbonzini@redhat.com;
+>> rkrcmar@redhat.com; Stephen Hemminger <sthemmin@microsoft.com>;
+>> tglx@linutronix.de; x86@kernel.org; Michael Kelley (EOSG)
+>> <Michael.H.Kelley@microsoft.com>; vkuznets@redhat.com
+>> Subject: [PATCH V3 0/4] KVM/x86/hyper-V: Introduce PV guest address
+>> space mapping flush support
+>>
+>> Hyper-V provides a para-virtualization hypercall
+>> HvFlushGuestPhysicalAddressSpace
+>> to flush nested VM address space mapping in l1 hypervisor and it's to reduce
+>> overhead
+>> of flushing ept tlb among vcpus. The tradition way is to send IPIs to all
+>> affected
+>> vcpus and executes INVEPT on each vcpus. It will trigger several vmexits for
+>> IPI and
+>> INVEPT emulation. The pv hypercall can help to flush specified ept table on all
+>> vcpus
+>> via one single hypercall.
+>>
+>> Change since v2:
+>>        - Make ept_pointers_match as tristate "check", "match" and "mismatch".
+>>        Set "check" in vmx_set_cr3(), check all ept table pointers in
+>> hv_remote_flush_tlb()
+>>        and call hypercall when all ept pointers are same.
+>>        - Rename kvm_arch_hv_flush_remote_tlb with
+>> kvm_arch_flush_remote_tlb and
+>>        Rename kvm_x86_ops->hv_tlb_remote_flush with kvm_x86_ops-
+>>> tlb_remote_flush
+>>        - Fix issue that ignore updating tlbs_dirty during calling
+>> kvm_arch_flush_remote_tlbs()
+>>        - Merge patch "KVM/VMX: Add identical ept table pointer check" and
+>>        patch "KVM/x86: Add tlb_remote_flush callback support for vmx"
+>>
+>> Change since v1:
+>>        - Fix compilation error for non-x86 platform.
+>>        - Use ept_pointers_match to check condition of identical ept
+>>             table pointer and get ept pointer from struct vcpu_vmx->ept_pointer.
+>>        - Add hyperv_nested_flush_guest_mapping ftrace support
+>>
+>>
+>>
+>> Lan Tianyu (4):
+>>   X86/Hyper-V: Add flush HvFlushGuestPhysicalAddressSpace hypercall
+>>     support
+>>   X86/Hyper-V: Add hyperv_nested_flush_guest_mapping ftrace support
+>>   KVM: Add tlb remote flush callback in kvm_x86_ops.
+>>   KVM/x86: Add tlb_remote_flush callback support for vmx
+>>
+>>  arch/x86/hyperv/Makefile            |  2 +-
+>>  arch/x86/hyperv/nested.c            | 67
+>> ++++++++++++++++++++++++++++++++++
+>>  arch/x86/include/asm/hyperv-tlfs.h  |  8 +++++
+>>  arch/x86/include/asm/kvm_host.h     | 11 ++++++
+>>  arch/x86/include/asm/mshyperv.h     |  2 ++
+>>  arch/x86/include/asm/trace/hyperv.h | 14 ++++++++
+>>  arch/x86/kvm/vmx.c                  | 72
+>> ++++++++++++++++++++++++++++++++++++-
+>>  include/linux/kvm_host.h            |  7 ++++
+>>  virt/kvm/kvm_main.c                 |  3 +-
+>>  9 files changed, 183 insertions(+), 3 deletions(-)
+>>  create mode 100644 arch/x86/hyperv/nested.c
+> 
+> Acked-by: K. Y. Srinivasan <kys@microsoft.com>
 
-Oops, my bad...
-The platform_driver name is not important,
-how about simply rename back it to "wm9712-codec" ?
+Queued, thanks!
 
-Best regards
----
-Kuninori Morimoto
+Paolo
+
