@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E51DEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84FCECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7B1D206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7B1D206B7
+	by mail.kernel.org (Postfix) with ESMTP id 6C107206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C107206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389333AbeGTNZg (ORCPT
+        id S2389340AbeGTNZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:25:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45496 "EHLO
+        Fri, 20 Jul 2018 09:25:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45720 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388862AbeGTNZg (ORCPT
+        with ESMTP id S2388356AbeGTNZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:25:36 -0400
+        Fri, 20 Jul 2018 09:25:40 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11D86C22;
-        Fri, 20 Jul 2018 12:33:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E386BBF;
+        Fri, 20 Jul 2018 12:35:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+2b43f681169a2a0d306a@syzkaller.appspotmail.com,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 60/92] netfilter: ebtables: reject non-bridge targets
-Date:   Fri, 20 Jul 2018 14:14:04 +0200
-Message-Id: <20180720121421.342969565@linuxfoundation.org>
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.14 89/92] arm64: KVM: Add ARCH_WORKAROUND_2 support for guests
+Date:   Fri, 20 Jul 2018 14:14:33 +0200
+Message-Id: <20180720121422.801790529@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -52,64 +52,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 11ff7288beb2b7da889a014aff0a7b80bf8efcf3 upstream.
+commit 55e3748e8902ff641e334226bdcb432f9a5d78d3 upstream.
 
-the ebtables evaluation loop expects targets to return
-positive values (jumps), or negative values (absolute verdicts).
+In order to offer ARCH_WORKAROUND_2 support to guests, we need
+a bit of infrastructure.
 
-This is completely different from what xtables does.
-In xtables, targets are expected to return the standard netfilter
-verdicts, i.e. NF_DROP, NF_ACCEPT, etc.
+Let's add a flag indicating whether or not the guest uses
+SSBD mitigation. Depending on the state of this flag, allow
+KVM to disable ARCH_WORKAROUND_2 before entering the guest,
+and enable it when exiting it.
 
-ebtables will consider these as jumps.
-
-Therefore reject any target found due to unspec fallback.
-v2: also reject watchers.  ebtables ignores their return value, so
-a target that assumes skb ownership (and returns NF_STOLEN) causes
-use-after-free.
-
-The only watchers in the 'ebtables' front-end are log and nflog;
-both have AF_BRIDGE specific wrappers on kernel side.
-
-Reported-by: syzbot+2b43f681169a2a0d306a@syzkaller.appspotmail.com
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/bridge/netfilter/ebtables.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/include/asm/kvm_mmu.h    |    5 +++++
+ arch/arm64/include/asm/kvm_asm.h  |    3 +++
+ arch/arm64/include/asm/kvm_host.h |    3 +++
+ arch/arm64/include/asm/kvm_mmu.h  |   24 ++++++++++++++++++++++++
+ arch/arm64/kvm/hyp/switch.c       |   38 ++++++++++++++++++++++++++++++++++++++
+ virt/kvm/arm/arm.c                |    4 ++++
+ 6 files changed, 77 insertions(+)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -398,6 +398,12 @@ ebt_check_watcher(struct ebt_entry_watch
- 	watcher = xt_request_find_target(NFPROTO_BRIDGE, w->u.name, 0);
- 	if (IS_ERR(watcher))
- 		return PTR_ERR(watcher);
-+
-+	if (watcher->family != NFPROTO_BRIDGE) {
-+		module_put(watcher->me);
-+		return -ENOENT;
-+	}
-+
- 	w->u.watcher = watcher;
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@ -254,6 +254,11 @@ static inline int kvm_map_vectors(void)
+ 	return 0;
+ }
  
- 	par->target   = watcher;
-@@ -719,6 +725,13 @@ ebt_check_entry(struct ebt_entry *e, str
- 		goto cleanup_watchers;
++static inline int hyp_map_aux_data(void)
++{
++	return 0;
++}
++
+ #endif	/* !__ASSEMBLY__ */
+ 
+ #endif /* __ARM_KVM_MMU_H__ */
+--- a/arch/arm64/include/asm/kvm_asm.h
++++ b/arch/arm64/include/asm/kvm_asm.h
+@@ -33,6 +33,9 @@
+ #define KVM_ARM64_DEBUG_DIRTY_SHIFT	0
+ #define KVM_ARM64_DEBUG_DIRTY		(1 << KVM_ARM64_DEBUG_DIRTY_SHIFT)
+ 
++#define	VCPU_WORKAROUND_2_FLAG_SHIFT	0
++#define	VCPU_WORKAROUND_2_FLAG		(_AC(1, UL) << VCPU_WORKAROUND_2_FLAG_SHIFT)
++
+ /* Translate a kernel address of @sym into its equivalent linear mapping */
+ #define kvm_ksym_ref(sym)						\
+ 	({								\
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -210,6 +210,9 @@ struct kvm_vcpu_arch {
+ 	/* Exception Information */
+ 	struct kvm_vcpu_fault_info fault;
+ 
++	/* State of various workarounds, see kvm_asm.h for bit assignment */
++	u64 workaround_flags;
++
+ 	/* Guest debug state */
+ 	u64 debug_flags;
+ 
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -383,5 +383,29 @@ static inline int kvm_map_vectors(void)
+ }
+ #endif
+ 
++#ifdef CONFIG_ARM64_SSBD
++DECLARE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
++
++static inline int hyp_map_aux_data(void)
++{
++	int cpu, err;
++
++	for_each_possible_cpu(cpu) {
++		u64 *ptr;
++
++		ptr = per_cpu_ptr(&arm64_ssbd_callback_required, cpu);
++		err = create_hyp_mappings(ptr, ptr + 1, PAGE_HYP);
++		if (err)
++			return err;
++	}
++	return 0;
++}
++#else
++static inline int hyp_map_aux_data(void)
++{
++	return 0;
++}
++#endif
++
+ #endif /* __ASSEMBLY__ */
+ #endif /* __ARM64_KVM_MMU_H__ */
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -15,6 +15,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <linux/arm-smccc.h>
+ #include <linux/types.h>
+ #include <linux/jump_label.h>
+ #include <uapi/linux/psci.h>
+@@ -281,6 +282,39 @@ static void __hyp_text __skip_instr(stru
+ 	write_sysreg_el2(*vcpu_pc(vcpu), elr);
+ }
+ 
++static inline bool __hyp_text __needs_ssbd_off(struct kvm_vcpu *vcpu)
++{
++	if (!cpus_have_const_cap(ARM64_SSBD))
++		return false;
++
++	return !(vcpu->arch.workaround_flags & VCPU_WORKAROUND_2_FLAG);
++}
++
++static void __hyp_text __set_guest_arch_workaround_state(struct kvm_vcpu *vcpu)
++{
++#ifdef CONFIG_ARM64_SSBD
++	/*
++	 * The host runs with the workaround always present. If the
++	 * guest wants it disabled, so be it...
++	 */
++	if (__needs_ssbd_off(vcpu) &&
++	    __hyp_this_cpu_read(arm64_ssbd_callback_required))
++		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 0, NULL);
++#endif
++}
++
++static void __hyp_text __set_host_arch_workaround_state(struct kvm_vcpu *vcpu)
++{
++#ifdef CONFIG_ARM64_SSBD
++	/*
++	 * If the guest has disabled the workaround, bring it back on.
++	 */
++	if (__needs_ssbd_off(vcpu) &&
++	    __hyp_this_cpu_read(arm64_ssbd_callback_required))
++		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 1, NULL);
++#endif
++}
++
+ int __hyp_text __kvm_vcpu_run(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_cpu_context *host_ctxt;
+@@ -311,6 +345,8 @@ int __hyp_text __kvm_vcpu_run(struct kvm
+ 	__sysreg_restore_guest_state(guest_ctxt);
+ 	__debug_restore_state(vcpu, kern_hyp_va(vcpu->arch.debug_ptr), guest_ctxt);
+ 
++	__set_guest_arch_workaround_state(vcpu);
++
+ 	/* Jump in the fire! */
+ again:
+ 	exit_code = __guest_enter(vcpu, host_ctxt);
+@@ -367,6 +403,8 @@ again:
+ 		/* 0 falls through to be handled out of EL2 */
  	}
  
-+	/* Reject UNSPEC, xtables verdicts/return values are incompatible */
-+	if (target->family != NFPROTO_BRIDGE) {
-+		module_put(target->me);
-+		ret = -ENOENT;
-+		goto cleanup_watchers;
-+	}
++	__set_host_arch_workaround_state(vcpu);
 +
- 	t->u.target = target;
- 	if (t->u.target == &ebt_standard_target) {
- 		if (gap < sizeof(struct ebt_standard_target)) {
+ 	if (cpus_have_const_cap(ARM64_HARDEN_BP_POST_GUEST_EXIT)) {
+ 		u32 midr = read_cpuid_id();
+ 
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1411,6 +1411,10 @@ static int init_hyp_mode(void)
+ 		}
+ 	}
+ 
++	err = hyp_map_aux_data();
++	if (err)
++		kvm_err("Cannot map host auxilary data: %d\n", err);
++
+ 	return 0;
+ 
+ out_err:
 
 
