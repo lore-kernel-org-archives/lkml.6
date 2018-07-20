@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F51BECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDC9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1975D20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B587A20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:56:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r6bOIV/Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1975D20661
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8On4HoH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B587A20661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388277AbeGTSoY (ORCPT
+        id S2388302AbeGTSpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 14:44:24 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42424 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388131AbeGTSoY (ORCPT
+        Fri, 20 Jul 2018 14:45:54 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37193 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387950AbeGTSpx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 14:44:24 -0400
-Received: by mail-lj1-f196.google.com with SMTP id f1-v6so10155930ljc.9;
-        Fri, 20 Jul 2018 10:55:01 -0700 (PDT)
+        Fri, 20 Jul 2018 14:45:53 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j8-v6so2354528lfb.4;
+        Fri, 20 Jul 2018 10:56:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OhnPoVfzDLkfUO+KQ56PnXFtuslLKy1xij0YG9E5eAA=;
-        b=r6bOIV/ZuacXRoh52AUn3XF+de5ehfDAT3nT4j8D58t/FujD679QmsAGj4ZbzUKo3L
-         nLfx+QelR99K2jKfL8sbUvZe2K1Nddcf5f02AzLw1AFcaFwg2PQxyAY3cA27ZSyRSgSn
-         rJarojbD/ZlDatW3qeAx7UmkGd/P2OLKySLAewJ6LoAZs0JY4S2v+QU3x0eagAsGEfwA
-         wJsrKgSXFla+sS2yikq6oPTUZ0LyjQww8F28dOqJjL+FFNgFhNYUkroJOu4+VPy3n3Pl
-         hHKyDkhALcyDmozht/HpId618TJx8NSz0YdPnbYOjf6QZMixITUXYXmDI+lpC9MZ/U9o
-         Ychw==
+        bh=Psgn7FKoFGrtQZQ6Ijpq8PkNv74rzZlWBmpuohue/qg=;
+        b=J8On4HoHYFrYntkev9Y2Nmna+wG+JScr8oLvm/ISN0jmvYksissT/yAmSNtltUxjjN
+         e+AowKvQ8ysNh6s0w5YqZTGBvaQAALluVEG5WrwBoR05ebOAdumSRA0aZviKjUHSDJ4d
+         7DimjoN+b7PIqPkRHWu8T7UHcayvv3uLL3mrPLV49Z8Y+ka/bNJYLjGjdtizn9tQAhxK
+         O/3NW4+46j3hG+/lclQ9112ZtPRMrFudO3JUK4/2zIbW1+co/YG2XQGd9tKDcL2d1Vb7
+         oYtoDZ/UlbNpm7fk9qk6jRluvQ5nLwW9FnqtYVa+2rQ5SYlNp5PjiUByJPKhi3A76mvB
+         FoDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OhnPoVfzDLkfUO+KQ56PnXFtuslLKy1xij0YG9E5eAA=;
-        b=Ej6KKt+wFWbMwi4umSZZyJQB89wOToBXqGa0Z5JKHyoIWSz/clE1W91LBLS3t0CJa2
-         Viv5JfW5uvLS18NncCH3bQdYqFY3qpXkWPBg6qTYGka2tHdH9eH8DWvPxEXVVG01ovsH
-         w7uI1+D6FiPIRkA+OmSLBs1ujyK9/XrAAVHjI0oi5T5fTkRBVtA4lMxK61/wiJliW8+Z
-         z1I5LWOQvhq7gd53e+33qcu/axEbAxk0rWARyngJkTBijdXrFVmK0qxVoS9nMBFoW04R
-         RgIpl2BjQU4SeQl6sUZgA3uwuzYsHp46ZlSVo94CQCnm6b+i1gbM/I8w2qOiKSA0NOgS
-         y9xQ==
-X-Gm-Message-State: AOUpUlGkCl43kqEwGwkVnXMW6za70Zt+zmr3lVW0pNG7hDQ0Y+/yIy5x
-        qQYWWViRsC+SG/YiLeNhRto=
-X-Google-Smtp-Source: AAOMgpdBQypamzkjzkJWZAwmeY18cZjmCd7EYjwv7s4AsDLvY7IKB6ubQUzrl33m1PaTL08LGRYwAA==
-X-Received: by 2002:a2e:8950:: with SMTP id b16-v6mr2472372ljk.111.1532109301292;
-        Fri, 20 Jul 2018 10:55:01 -0700 (PDT)
+        bh=Psgn7FKoFGrtQZQ6Ijpq8PkNv74rzZlWBmpuohue/qg=;
+        b=JVt1OUlNiHa3HgbYNcFUf/cvu37I/h+JqPu3SzDmA859SmBFXooxfKEY4k7zaG0vyx
+         utitWsxTvSAtsWcjl/l17rImWnta/twKpk+bwXWXkKFZZH3jkf1EogsCsFT/lzaVGfkA
+         MezzvCCLjw0w1cSmrQi+9mv0uIkuCCFfJgJyRDOe5gn4NdlAb6TVklL3Oe1ks0PtpgiE
+         aLjK8azRM4jATh0Dyhi4sR2YFVV9YUO0z66tslPQKOYhBH5Pq7Np/2sNpohma/2W54fD
+         iJmKrH0gJvn/HNvpRiTGmOnXWlxjoLx3c1XZ7rnExLIlDjGd1qErxrka23YPM6yCuFBF
+         Zc7A==
+X-Gm-Message-State: AOUpUlE6XqUWvNrVMmTPVJ87x3b8LQIn/KH47VUPb663JtBhUTUIZisL
+        mILhjlEkkKmh+Mu83BUBkg8=
+X-Google-Smtp-Source: AAOMgpfWr4feNRxWJlwq7TTFDxHnGNf6fY5j4T0Dv4RMEy/h84Lso2MKK9FBwMwWrnrq+VEiplNC+A==
+X-Received: by 2002:a19:5d54:: with SMTP id p20-v6mr1908342lfj.143.1532109390614;
+        Fri, 20 Jul 2018 10:56:30 -0700 (PDT)
 Received: from z50.localnet ([31.0.82.186])
-        by smtp.gmail.com with ESMTPSA id m66-v6sm383354lfi.17.2018.07.20.10.54.57
+        by smtp.gmail.com with ESMTPSA id p65-v6sm455730lja.44.2018.07.20.10.56.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 10:55:00 -0700 (PDT)
+        Fri, 20 Jul 2018 10:56:29 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Boris Brezillon <boris.brezillon@bootlin.com>
 Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -76,11 +76,11 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Subject: Re: [RFC PATCH 0/8] mtd: rawnand: ams-delta: Use gpio-omap accessors for data I/O
-Date:   Fri, 20 Jul 2018 19:55:42 +0200
-Message-ID: <6335220.Jscgez8sxx@z50>
-In-Reply-To: <20180719081508.5dafebde@bbrezillon>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180719081508.5dafebde@bbrezillon>
+Subject: Re: [RFC PATCH 1/8] mtd: rawnand: ams-delta: Use private structure
+Date:   Fri, 20 Jul 2018 19:57:12 +0200
+Message-ID: <1763213.HC3d3VW7aF@z50>
+In-Reply-To: <20180719081728.46eb7ab5@bbrezillon>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180718235710.18242-2-jmkrzyszt@gmail.com> <20180719081728.46eb7ab5@bbrezillon>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -89,34 +89,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
-
-On Thursday, July 19, 2018 8:15:08 AM CEST Boris Brezillon wrote:
-> Hi Janusz,
-> 
-> On Thu, 19 Jul 2018 01:57:02 +0200
+On Thursday, July 19, 2018 8:17:28 AM CEST Boris Brezillon wrote:
+> On Thu, 19 Jul 2018 01:57:03 +0200
 > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 > 
-> > Implement the idea suggested by Artem Bityutskiy and Tony Lindgren
-> > described in commit b027274d2e3a ("mtd: ams-delta: fix
-> > request_mem_region() failure").
+> > Introduce a driver private structure and allocate it on device probe.
+> > Use it for storing nand_chip structure, GPIO descriptors prevoiusly
+> > stored in static variables as well as io_base pointer previously passed
+> > as nand controller data or platform driver data.
 > 
-> Thanks for doing that. I'll review the patches, but I already have a
-> extra request: can you convert this driver to ->exec_op()? It does not
-> necessarily have to be done in this patchset, but, that'd be great to
-> have one more driver converted to the new interface.
+> That's a good thing. Thanks for doing that.
+> 
+> > Subsequent patches
+> > may populate the structure with more members as needed.
+> > 
+> > While at it, fix missing mtd->dev.parent and drop useless mtd->owner.
+> 
+> I'd prefer to have it done in a separate patch if you don't mind.
 
-OK, I'll have a look as my free time permits.
-
-> BTW, there seems to be a nand_gpio driver, maybe we should merge
-> ams-delta code into nand_gpio after it's been patched to use the GPIO
-> consumer API.
-
-nand_gpio uses a form of read()/write() on a single bidirectional register for 
-data transfer, not GPIO, and it does not make use of NRE / NWE signals.  Maybe 
-the two drivers could be merged to some extent but not entirely, I think.
+No problem, I'll split it.
 
 Thanks,
 Janusz
+
+
+
 
 
