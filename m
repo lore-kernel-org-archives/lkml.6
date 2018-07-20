@@ -2,109 +2,148 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DCAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A45E1ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3778620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:49:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1srvT4mZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3778620652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 622B32084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:49:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 622B32084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeGTIe7 (ORCPT
+        id S1727666AbeGTIgm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:34:59 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:28450 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727222AbeGTIe6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:34:58 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w6K7kdix008048;
-        Fri, 20 Jul 2018 16:46:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w6K7kdix008048
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1532072804;
-        bh=96arycp4z8LOgD9Xj6LUTt+Z6oY7DhyU5UyNBMuQ0w0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1srvT4mZkHbAn2ue+MaX0Ocz4P4BnmHNtrG8Y8UkCWfQCdbLPP/j0JiA+wENfnsON
-         BzVhGAJY98pcw2l9RBVpvNJD2lgQBSaBqsGC3OdlCtpjq0X+J/CeLvLrjV2+6HvhSa
-         C38N9YBRD+cbKmFKtJsTh6ZuPbmx6Z7LLT4xo58717WOMf1PtZdB/vxTlehqe0Upya
-         3r42jGvgUONf3AayBLT8uBlrxRpxmLIj1Qh0X4qEja7AP3kcgSCzNeEyMHEyQ2icKw
-         zHrNXuvscVwbNmv5Cy4XPkSZ37/jwbfrUKL5hZhfnqdkFxOJiZgXJv7NpY4MgtbCDI
-         2CvhGlQAlQrGQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Dirk Gouders <dirk@gouders.net>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 07/11] kbuild: use 'include' directive to load auto.conf from top Makefile
-Date:   Fri, 20 Jul 2018 16:46:32 +0900
-Message-Id: <1532072796-7947-8-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532072796-7947-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1532072796-7947-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 20 Jul 2018 04:36:42 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:33379 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727160AbeGTIgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:36:42 -0400
+Received: from [192.168.0.5] (ip5f5bd29d.dynamic.kabel-deutschland.de [95.91.210.157])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 062422012BA076;
+        Fri, 20 Jul 2018 09:49:41 +0200 (CEST)
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
+From:   Paul Menzel <pmenzel+linux-x86@molgen.mpg.de>
+Subject: UBSAN: Undefined behaviour in arch/x86/events/amd/ibs.c:582:24:
+ member access within null pointer of type 'struct perf_event'
+Message-ID: <eb1d1d7d-7ca6-677d-2ae5-911935706516@molgen.mpg.de>
+Date:   Fri, 20 Jul 2018 09:49:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When you build targets that require the kernel configuration, dot-config
-is set to 1, then the top-level Makefile includes auto.conf.  However,
-Make considers its inclusion is optional because the '-include' directive
-is used here.
+Dear Linux folks,
 
-If a necessary configuration file is missing for the external module
-building, the following error message is displayed:
 
-  ERROR: Kernel configuration is invalid.
-         include/generated/autoconf.h or include/config/auto.conf are missing.
-         Run 'make oldconfig && make prepare' on kernel src to fix it.
+Enabling the undefined behavior sanitizer and building GNU/Linux 
+4.18-rc5+ (with some unrelated commits) with GCC 8.1.0 from Debian 
+Sid/unstable, the warning below is shown.
 
-However, Make still continues building; /bin/false let the creation of
-'include/config/auto.config' fail, but Make can ignore the error since
-it is included by the '-include' directive.
+> [    2.111913] ================================================================================
+> [    2.111917] UBSAN: Undefined behaviour in arch/x86/events/amd/ibs.c:582:24
+> [    2.111919] member access within null pointer of type 'struct perf_event'
+> [    2.111926] CPU: 0 PID: 144 Comm: udevadm Not tainted 4.18.0-rc5-00316-g4864b68cedf2 #104
+> [    2.111928] Hardware name: ASROCK E350M1/E350M1, BIOS TIMELESS 01/01/1970
+> [    2.111930] Call Trace:
+> [    2.111943]  dump_stack+0x55/0x89
+> [    2.111949]  ubsan_epilogue+0xb/0x33
+> [    2.111953]  handle_null_ptr_deref+0x7f/0x90
+> [    2.111958]  __ubsan_handle_type_mismatch_v1+0x55/0x60
+> [    2.111964]  perf_ibs_handle_irq+0x596/0x620
+> [    2.111968]  ? perf_output_sample+0x771/0xa90
+> [    2.111971]  ? perf_prepare_sample+0x48a/0x8b0
+> [    2.111976]  ? sched_clock_cpu+0x13/0x200
+> [    2.111978]  ? perf_prepare_sample+0x8b0/0x8b0
+> [    2.111982]  ? perf_output_end+0xd/0x10
+> [    2.111985]  ? perf_event_output_forward+0x4e/0x70
+> [    2.111990]  ? __perf_event_overflow+0x7b/0x1a0
+> [    2.111993]  ? perf_event_overflow+0x15/0x20
+> [    2.111996]  ? x86_pmu_handle_irq+0x180/0x230
+> [    2.112001]  ? x86_pmu_enable_all+0x6c/0x1b0
+> [    2.112005]  ? x86_pmu_commit_txn+0xc1/0x190
+> [    2.112012]  ? native_sched_clock+0x32/0x120
+> [    2.112017]  perf_ibs_nmi_handler+0x2b/0x65
+> [    2.112020]  nmi_handle+0x8f/0x240
+> [    2.112025]  default_do_nmi+0x4e/0x2e0
+> [    2.112028]  do_nmi+0xb7/0x100
+> [    2.112032]  nmi+0x51/0x6c
+> [    2.112036] EIP: x86_pmu_enable_all+0x6c/0x1b0
+> [    2.112037] Code: 10 01 00 00 8b 45 e8 8b 75 e4 81 ca 00 00 40 00 f7 d0 21 d0 8b 93 14 01 00 00 f7 d6 8b 9b 20 01 00 00 21 d6 89 d9 89 f2 0f 30 <0f> 1f 44 00 00 47 39 3d 08 cd 40 d6 0f 8e a1 00 00 00 83 ff 3f 0f 
+> [    2.112079] EAX: 00530076 EBX: c0010000 ECX: c0010000 EDX: 00000000
+> [    2.112081] ESI: 00000000 EDI: 00000000 EBP: f2cffaf0 ESP: f2cffacc
+> [    2.112083] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00000046
+> [    2.112089]  x86_pmu_enable+0x162/0x480
+> [    2.112094]  perf_pmu_enable.part.39+0x14/0x30
+> [    2.112097]  ctx_resched+0xa4/0x130
+> [    2.112101]  __perf_event_enable+0x1d0/0x390
+> [    2.112104]  ? ctx_resched+0x130/0x130
+> [    2.112107]  event_function+0xb2/0x1b0
+> [    2.112111]  ? task_function_call+0x80/0x80
+> [    2.112113]  remote_function+0x45/0x60
+> [    2.112118]  flush_smp_call_function_queue+0x6c/0x1e0
+> [    2.112123]  generic_smp_call_function_single_interrupt+0x12/0x2a
+> [    2.112126]  smp_call_function_single_interrupt+0x3c/0x1c0
+> [    2.112129]  call_function_single_interrupt+0x3c/0x44
+> [    2.112134] EIP: kmem_cache_alloc+0x65/0x3e0
+> [    2.112135] Code: 45 e4 89 da e8 1c d8 f9 ff 85 c0 0f 85 eb 01 00 00 e9 ef 00 00 00 8b 45 e4 89 45 e8 8b 75 e8 85 f6 0f 84 d5 01 00 00 8b 45 e8 <8b> 30 64 8b 4e 04 64 03 35 28 71 51 d6 85 f6 0f 84 e9 02 00 00 8b 
+> [    2.112172] EAX: f4c60300 EBX: 00000000 ECX: 00000001 EDX: 00611ac0
+> [    2.112174] ESI: f4c60300 EDI: f4c60300 EBP: f2cffc5c ESP: f2cffc28
+> [    2.112177] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00000286
+> [    2.112183]  ? create_object+0x3a/0x3a0
+> [    2.112186]  create_object+0x3a/0x3a0
+> [    2.112190]  ? create_object+0x270/0x3a0
+> [    2.112194]  kmemleak_alloc+0x9b/0xb0
+> [    2.112199]  __kmalloc_track_caller+0x18c/0x420
+> [    2.112203]  ? __alloc_skb+0x6c/0x2b0
+> [    2.112208]  __kmalloc_reserve.isra.16+0x28/0x80
+> [    2.112211]  __alloc_skb+0x6c/0x2b0
+> [    2.112215]  alloc_uevent_skb+0x4a/0x160
+> [    2.112218]  ? add_uevent_var+0x57/0x130
+> [    2.112222]  kobject_uevent_env+0x599/0xa10
+> [    2.112228]  ? device_get_devnode+0x1a0/0x1a0
+> [    2.112231]  kobject_synth_uevent+0x36e/0x515
+> [    2.112234]  ? mntput+0x2f/0x60
+> [    2.112239]  uevent_store+0x2b/0x70
+> [    2.112241]  ? __check_heap_object+0x4c/0x190
+> [    2.112244]  ? dev_err+0x50/0x50
+> [    2.112247]  dev_attr_store+0x33/0x60
+> [    2.112249]  ? dev_uevent_name+0x40/0x40
+> [    2.112254]  sysfs_kf_write+0x5e/0x100
+> [    2.112257]  ? mutex_lock+0x2a/0x80
+> [    2.112260]  ? sysfs_kf_bin_read+0x170/0x170
+> [    2.112263]  kernfs_fop_write+0x132/0x250
+> [    2.112266]  ? kernfs_fop_open+0x660/0x660
+> [    2.112270]  __vfs_write+0x52/0x2d0
+> [    2.112273]  ? kmemleak_free+0x6d/0x90
+> [    2.112277]  ? kmem_cache_free+0xc6/0x440
+> [    2.112281]  vfs_write+0xb0/0x2b0
+> [    2.112284]  ? do_sys_open+0x174/0x2a0
+> [    2.112287]  ksys_write+0x51/0xc0
+> [    2.112291]  sys_write+0x16/0x20
+> [    2.112294]  do_fast_syscall_32+0xce/0x3e0
+> [    2.112298]  entry_SYSENTER_32+0x4e/0x7c
+> [    2.112301] EIP: 0xb7f0fbb5
+> [    2.112302] Code: 89 e5 8b 55 08 85 d2 8b 80 5c cd ff ff 74 02 89 02 5d c3 8b 04 24 c3 8b 1c 24 c3 8b 3c 24 c3 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76 
+> [    2.112339] EAX: ffffffda EBX: 00000003 ECX: bfadbf54 EDX: 00000003
+> [    2.112341] ESI: 01f0a640 EDI: 00000003 EBP: bfadaf0c ESP: bfadae80
+> [    2.112344] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000246
+> [    2.112347] ================================================================================
 
-I guess the reason of using '-include' directive was to suppress
-the warning when you build the kernel from a pristine source tree:
 
-  Makefile:605: include/config/auto.conf: No such file or directory
+Kind regards,
 
-The previous commit made sure include/config/auto.conf exists after
-the 'make *config' stage.  Now, we can use the 'include' directive
-without showing the warning.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v4: None
-
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Makefile b/Makefile
-index 5c8e9a3..2fa9830 100644
---- a/Makefile
-+++ b/Makefile
-@@ -585,7 +585,7 @@ virt-y		:= virt/
- endif # KBUILD_EXTMOD
- 
- ifeq ($(dot-config),1)
---include include/config/auto.conf
-+include include/config/auto.conf
- endif
- 
- # The all: target is the default when no target is given on the
--- 
-2.7.4
-
+Paul
