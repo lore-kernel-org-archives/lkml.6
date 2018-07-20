@@ -3,45 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFD3ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BDFECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D63C72084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63C72084A
+	by mail.kernel.org (Postfix) with ESMTP id 15DA420850
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15DA420850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387807AbeGTNPk (ORCPT
+        id S2387824AbeGTNPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35084 "EHLO
+        Fri, 20 Jul 2018 09:15:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731662AbeGTNPk (ORCPT
+        with ESMTP id S1731662AbeGTNPn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:40 -0400
+        Fri, 20 Jul 2018 09:15:43 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43A9ABB6;
-        Fri, 20 Jul 2018 12:27:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 06B2AA95;
+        Fri, 20 Jul 2018 12:27:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
-        Sodagudi Prasad <psodagud@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Joe Perches <joe@perches.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 03/31] compiler, clang: always inline when CONFIG_OPTIMIZE_INLINING is disabled
-Date:   Fri, 20 Jul 2018 14:13:33 +0200
-Message-Id: <20180720121340.280711659@linuxfoundation.org>
+        Thomas Gleixner <tglx@linutronix.de>, acme@redhat.com,
+        akataria@vmware.com, akpm@linux-foundation.org,
+        andrea.parri@amarulasolutions.com, ard.biesheuvel@linaro.org,
+        aryabinin@virtuozzo.com, astrachan@google.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, geert@linux-m68k.org,
+        ghackmann@google.com, jan.kiszka@siemens.com,
+        jarkko.sakkinen@linux.intel.com, jpoimboe@redhat.com,
+        keescook@google.com, kirill.shutemov@linux.intel.com,
+        kstewart@linuxfoundation.org, linux-efi@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, manojgupta@google.com,
+        mawilcox@microsoft.com, michal.lkml@markovi.net, mjg59@google.com,
+        mka@chromium.org, pombredanne@nexb.com, rientjes@google.com,
+        rostedt@goodmis.org, sedat.dilek@gmail.com,
+        thomas.lendacky@amd.com, tstellar@redhat.com, tweek@google.com,
+        virtualization@lists.linux-foundation.org, will.deacon@arm.com,
+        yamada.masahiro@socionext.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 04/31] compiler-gcc.h: Add __attribute__((gnu_inline)) to all inline declarations
+Date:   Fri, 20 Jul 2018 14:13:34 +0200
+Message-Id: <20180720121340.315434780@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -58,96 +71,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rientjes <rientjes@google.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-commit 9a04dbcfb33b4012d0ce8c0282f1e3ca694675b1 upstream.
+commit d03db2bc26f0e4a6849ad649a09c9c73fccdc656 upstream.
 
-The motivation for commit abb2ea7dfd82 ("compiler, clang: suppress
-warning for unused static inline functions") was to suppress clang's
-warnings about unused static inline functions.
+Functions marked extern inline do not emit an externally visible
+function when the gnu89 C standard is used. Some KBUILD Makefiles
+overwrite KBUILD_CFLAGS. This is an issue for GCC 5.1+ users as without
+an explicit C standard specified, the default is gnu11. Since c99, the
+semantics of extern inline have changed such that an externally visible
+function is always emitted. This can lead to multiple definition errors
+of extern inline functions at link time of compilation units whose build
+files have removed an explicit C standard compiler flag for users of GCC
+5.1+ or Clang.
 
-For configs without CONFIG_OPTIMIZE_INLINING enabled, such as any non-x86
-architecture, `inline' in the kernel implies that
-__attribute__((always_inline)) is used.
-
-Some code depends on that behavior, see
-  https://lkml.org/lkml/2017/6/13/918:
-
-  net/built-in.o: In function `__xchg_mb':
-  arch/arm64/include/asm/cmpxchg.h:99: undefined reference to `__compiletime_assert_99'
-  arch/arm64/include/asm/cmpxchg.h:99: undefined reference to `__compiletime_assert_99
-
-The full fix would be to identify these breakages and annotate the
-functions with __always_inline instead of `inline'.  But since we are
-late in the 4.12-rc cycle, simply carry forward the forced inlining
-behavior and work toward moving arm64, and other architectures, toward
-CONFIG_OPTIMIZE_INLINING behavior.
-
-Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1706261552200.1075@chino.kir.corp.google.com
-Signed-off-by: David Rientjes <rientjes@google.com>
-Reported-by: Sodagudi Prasad <psodagud@codeaurora.org>
-Tested-by: Sodagudi Prasad <psodagud@codeaurora.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: acme@redhat.com
+Cc: akataria@vmware.com
+Cc: akpm@linux-foundation.org
+Cc: andrea.parri@amarulasolutions.com
+Cc: ard.biesheuvel@linaro.org
+Cc: aryabinin@virtuozzo.com
+Cc: astrachan@google.com
+Cc: boris.ostrovsky@oracle.com
+Cc: brijesh.singh@amd.com
+Cc: caoj.fnst@cn.fujitsu.com
+Cc: geert@linux-m68k.org
+Cc: ghackmann@google.com
+Cc: gregkh@linuxfoundation.org
+Cc: jan.kiszka@siemens.com
+Cc: jarkko.sakkinen@linux.intel.com
+Cc: jpoimboe@redhat.com
+Cc: keescook@google.com
+Cc: kirill.shutemov@linux.intel.com
+Cc: kstewart@linuxfoundation.org
+Cc: linux-efi@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: manojgupta@google.com
+Cc: mawilcox@microsoft.com
+Cc: michal.lkml@markovi.net
+Cc: mjg59@google.com
+Cc: mka@chromium.org
+Cc: pombredanne@nexb.com
+Cc: rientjes@google.com
+Cc: rostedt@goodmis.org
+Cc: sedat.dilek@gmail.com
+Cc: thomas.lendacky@amd.com
+Cc: tstellar@redhat.com
+Cc: tweek@google.com
+Cc: virtualization@lists.linux-foundation.org
+Cc: will.deacon@arm.com
+Cc: yamada.masahiro@socionext.com
+Link: http://lkml.kernel.org/r/20180621162324.36656-2-ndesaulniers@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/compiler-clang.h |    8 --------
- include/linux/compiler-gcc.h   |   18 +++++++++++-------
- 2 files changed, 11 insertions(+), 15 deletions(-)
+ include/linux/compiler-gcc.h |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -15,11 +15,3 @@
-  * with any version that can compile the kernel
-  */
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
--
--/*
-- * GCC does not warn about unused static inline functions for
-- * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-- * directives.  Suppress the warning in clang as well.
-- */
--#undef inline
--#define inline inline __attribute__((unused)) notrace
 --- a/include/linux/compiler-gcc.h
 +++ b/include/linux/compiler-gcc.h
-@@ -66,18 +66,22 @@
+@@ -65,25 +65,40 @@
+ #endif
  
  /*
++ * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
++ * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
++ * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
++ * defined so the gnu89 semantics are the default.
++ */
++#ifdef __GNUC_STDC_INLINE__
++# define __gnu_inline	__attribute__((gnu_inline))
++#else
++# define __gnu_inline
++#endif
++
++/*
   * Force always-inline if the user requests it so via the .config,
-- * or if gcc is too old:
-+ * or if gcc is too old.
-+ * GCC does not warn about unused static inline functions for
-+ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-+ * directives.  Suppress the warning in clang as well by using "unused"
-+ * function attribute, which is redundant but not harmful for gcc.
+  * or if gcc is too old.
+  * GCC does not warn about unused static inline functions for
+  * -Wunused-function.  This turns out to avoid the need for complex #ifdef
+  * directives.  Suppress the warning in clang as well by using "unused"
+  * function attribute, which is redundant but not harmful for gcc.
++ * Prefer gnu_inline, so that extern inline functions do not emit an
++ * externally visible function. This makes extern inline behave as per gnu89
++ * semantics rather than c99. This prevents multiple symbol definition errors
++ * of extern inline functions at link time.
++ * A lot of inline functions can cause havoc with function tracing.
   */
  #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
      !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
--#define inline		inline		__attribute__((always_inline)) notrace
--#define __inline__	__inline__	__attribute__((always_inline)) notrace
--#define __inline	__inline	__attribute__((always_inline)) notrace
-+#define inline inline		__attribute__((always_inline,unused)) notrace
-+#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
-+#define __inline __inline	__attribute__((always_inline,unused)) notrace
+-#define inline inline		__attribute__((always_inline,unused)) notrace
+-#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
+-#define __inline __inline	__attribute__((always_inline,unused)) notrace
++#define inline \
++	inline __attribute__((always_inline, unused)) notrace __gnu_inline
  #else
- /* A lot of inline functions can cause havoc with function tracing */
--#define inline		inline		notrace
--#define __inline__	__inline__	notrace
--#define __inline	__inline	notrace
-+#define inline inline		__attribute__((unused)) notrace
-+#define __inline__ __inline__	__attribute__((unused)) notrace
-+#define __inline __inline	__attribute__((unused)) notrace
+-/* A lot of inline functions can cause havoc with function tracing */
+-#define inline inline		__attribute__((unused)) notrace
+-#define __inline__ __inline__	__attribute__((unused)) notrace
+-#define __inline __inline	__attribute__((unused)) notrace
++#define inline inline		__attribute__((unused)) notrace __gnu_inline
  #endif
  
++#define __inline__ inline
++#define __inline inline
  #define __always_inline	inline __attribute__((always_inline))
+ #define  noinline	__attribute__((noinline))
+ 
 
 
