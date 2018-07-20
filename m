@@ -6,37 +6,55 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F55ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC73BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39ED420652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:44:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39ED420652
+	by mail.kernel.org (Postfix) with ESMTP id 6D99020652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D99020652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389916AbeGTNc6 (ORCPT
+        id S2390283AbeGTNdE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:32:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55422 "EHLO
+        Fri, 20 Jul 2018 09:33:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55490 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731629AbeGTNc6 (ORCPT
+        with ESMTP id S1731629AbeGTNdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:32:58 -0400
+        Fri, 20 Jul 2018 09:33:03 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89AD7D66;
-        Fri, 20 Jul 2018 12:38:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D37AD2E;
+        Fri, 20 Jul 2018 12:36:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 077/101] rds: avoid unenecessary cong_update in loop transport
-Date:   Fri, 20 Jul 2018 14:14:23 +0200
-Message-Id: <20180720121426.552753935@linuxfoundation.org>
+        stable@vger.kernel.org, "H. Peter Anvin" <hpa@linux.intel.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, acme@redhat.com,
+        akataria@vmware.com, akpm@linux-foundation.org,
+        andrea.parri@amarulasolutions.com, ard.biesheuvel@linaro.org,
+        arnd@arndb.de, aryabinin@virtuozzo.com, astrachan@google.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, geert@linux-m68k.org,
+        ghackmann@google.com, jan.kiszka@siemens.com,
+        jarkko.sakkinen@linux.intel.com, joe@perches.com,
+        jpoimboe@redhat.com, keescook@google.com,
+        kirill.shutemov@linux.intel.com, kstewart@linuxfoundation.org,
+        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        manojgupta@google.com, mawilcox@microsoft.com,
+        michal.lkml@markovi.net, mjg59@google.com, mka@chromium.org,
+        pombredanne@nexb.com, rientjes@google.com, rostedt@goodmis.org,
+        thomas.lendacky@amd.com, tstellar@redhat.com, tweek@google.com,
+        virtualization@lists.linux-foundation.org, will.deacon@arm.com,
+        yamada.masahiro@socionext.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.17 002/101] x86/asm: Add _ASM_ARG* constants for argument registers to <asm/asm.h>
+Date:   Fri, 20 Jul 2018 14:13:08 +0200
+Message-Id: <20180720121422.978206102@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -53,61 +71,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+From: H. Peter Anvin <hpa@linux.intel.com>
 
-commit f1693c63ab133d16994cc50f773982b5905af264 upstream.
+commit 0e2e160033283e20f688d8bad5b89460cc5bfcc4 upstream.
 
-Loop transport which is self loopback, remote port congestion
-update isn't relevant. Infact the xmit path already ignores it.
-Receive path needs to do the same.
+i386 and x86-64 uses different registers for arguments; make them
+available so we don't have to #ifdef in the actual code.
 
-Reported-by: syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com
-Reviewed-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Signed-off-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Native size and specified size (q, l, w, b) versions are provided.
+
+Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
+Acked-by: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: acme@redhat.com
+Cc: akataria@vmware.com
+Cc: akpm@linux-foundation.org
+Cc: andrea.parri@amarulasolutions.com
+Cc: ard.biesheuvel@linaro.org
+Cc: arnd@arndb.de
+Cc: aryabinin@virtuozzo.com
+Cc: astrachan@google.com
+Cc: boris.ostrovsky@oracle.com
+Cc: brijesh.singh@amd.com
+Cc: caoj.fnst@cn.fujitsu.com
+Cc: geert@linux-m68k.org
+Cc: ghackmann@google.com
+Cc: gregkh@linuxfoundation.org
+Cc: jan.kiszka@siemens.com
+Cc: jarkko.sakkinen@linux.intel.com
+Cc: joe@perches.com
+Cc: jpoimboe@redhat.com
+Cc: keescook@google.com
+Cc: kirill.shutemov@linux.intel.com
+Cc: kstewart@linuxfoundation.org
+Cc: linux-efi@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: manojgupta@google.com
+Cc: mawilcox@microsoft.com
+Cc: michal.lkml@markovi.net
+Cc: mjg59@google.com
+Cc: mka@chromium.org
+Cc: pombredanne@nexb.com
+Cc: rientjes@google.com
+Cc: rostedt@goodmis.org
+Cc: thomas.lendacky@amd.com
+Cc: tstellar@redhat.com
+Cc: tweek@google.com
+Cc: virtualization@lists.linux-foundation.org
+Cc: will.deacon@arm.com
+Cc: yamada.masahiro@socionext.com
+Link: http://lkml.kernel.org/r/20180621162324.36656-3-ndesaulniers@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/rds/loop.c |    1 +
- net/rds/rds.h  |    5 +++++
- net/rds/recv.c |    5 +++++
- 3 files changed, 11 insertions(+)
+ arch/x86/include/asm/asm.h |   59 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
---- a/net/rds/loop.c
-+++ b/net/rds/loop.c
-@@ -193,4 +193,5 @@ struct rds_transport rds_loop_transport
- 	.inc_copy_to_user	= rds_message_inc_copy_to_user,
- 	.inc_free		= rds_loop_inc_free,
- 	.t_name			= "loopback",
-+	.t_type			= RDS_TRANS_LOOP,
- };
---- a/net/rds/rds.h
-+++ b/net/rds/rds.h
-@@ -479,6 +479,11 @@ struct rds_notifier {
- 	int			n_status;
- };
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -46,6 +46,65 @@
+ #define _ASM_SI		__ASM_REG(si)
+ #define _ASM_DI		__ASM_REG(di)
  
-+/* Available as part of RDS core, so doesn't need to participate
-+ * in get_preferred transport etc
-+ */
-+#define	RDS_TRANS_LOOP	3
++#ifndef __x86_64__
++/* 32 bit */
 +
- /**
-  * struct rds_transport -  transport specific behavioural hooks
-  *
---- a/net/rds/recv.c
-+++ b/net/rds/recv.c
-@@ -103,6 +103,11 @@ static void rds_recv_rcvbuf_delta(struct
- 		rds_stats_add(s_recv_bytes_added_to_socket, delta);
- 	else
- 		rds_stats_add(s_recv_bytes_removed_from_socket, -delta);
++#define _ASM_ARG1	_ASM_AX
++#define _ASM_ARG2	_ASM_DX
++#define _ASM_ARG3	_ASM_CX
 +
-+	/* loop transport doesn't send/recv congestion updates */
-+	if (rs->rs_transport->t_type == RDS_TRANS_LOOP)
-+		return;
++#define _ASM_ARG1L	eax
++#define _ASM_ARG2L	edx
++#define _ASM_ARG3L	ecx
 +
- 	now_congested = rs->rs_rcv_bytes > rds_sk_rcvbuf(rs);
- 
- 	rdsdebug("rs %p (%pI4:%u) recv bytes %d buf %d "
++#define _ASM_ARG1W	ax
++#define _ASM_ARG2W	dx
++#define _ASM_ARG3W	cx
++
++#define _ASM_ARG1B	al
++#define _ASM_ARG2B	dl
++#define _ASM_ARG3B	cl
++
++#else
++/* 64 bit */
++
++#define _ASM_ARG1	_ASM_DI
++#define _ASM_ARG2	_ASM_SI
++#define _ASM_ARG3	_ASM_DX
++#define _ASM_ARG4	_ASM_CX
++#define _ASM_ARG5	r8
++#define _ASM_ARG6	r9
++
++#define _ASM_ARG1Q	rdi
++#define _ASM_ARG2Q	rsi
++#define _ASM_ARG3Q	rdx
++#define _ASM_ARG4Q	rcx
++#define _ASM_ARG5Q	r8
++#define _ASM_ARG6Q	r9
++
++#define _ASM_ARG1L	edi
++#define _ASM_ARG2L	esi
++#define _ASM_ARG3L	edx
++#define _ASM_ARG4L	ecx
++#define _ASM_ARG5L	r8d
++#define _ASM_ARG6L	r9d
++
++#define _ASM_ARG1W	di
++#define _ASM_ARG2W	si
++#define _ASM_ARG3W	dx
++#define _ASM_ARG4W	cx
++#define _ASM_ARG5W	r8w
++#define _ASM_ARG6W	r9w
++
++#define _ASM_ARG1B	dil
++#define _ASM_ARG2B	sil
++#define _ASM_ARG3B	dl
++#define _ASM_ARG4B	cl
++#define _ASM_ARG5B	r8b
++#define _ASM_ARG6B	r9b
++
++#endif
++
+ /*
+  * Macros to generate condition code outputs from inline assembly,
+  * The output operand must be type "bool".
 
 
