@@ -2,122 +2,112 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A2BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 369B7ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1BDB20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1BDB20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DF3A220652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:41:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF3A220652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389958AbeGTN3g (ORCPT
+        id S2389970AbeGTN3i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:29:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51718 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388863AbeGTN3f (ORCPT
+        Fri, 20 Jul 2018 09:29:38 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:36754 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388863AbeGTN3i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:29:35 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63A8CCCC;
-        Fri, 20 Jul 2018 12:37:49 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Hurley <john.hurley@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 050/101] nfp: reject binding to shared blocks
-Date:   Fri, 20 Jul 2018 14:13:56 +0200
-Message-Id: <20180720121425.160187897@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
-References: <20180720121422.837870592@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 20 Jul 2018 09:29:38 -0400
+Received: by mail-ua0-f194.google.com with SMTP id y8-v6so7378992uan.3;
+        Fri, 20 Jul 2018 05:41:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jTfpafMlco3ewluiNtKxVRpaSEkeF9WHkab90rrrCmY=;
+        b=SNrgkx5E5nl2HvHMOfebDnquXAOIxCZSB1AUQRKNcq4bJ+B7m+bbhnvpVjw4k2hGjF
+         jytaEDkNS99VP330lSr6jZXzpnawnNkroep/zXUNezK7sM/lRd5j4RYdAlgVyxzUCsEQ
+         dmtRBA2Hc9JNRRbJMOJT9+OnxhVeHQY+CKpMVisv/XY7T3V7kpjw//CfrB9E7yynp7Nz
+         RUGbxKr3ORJHMkqiIRA7KBdhWu5u+QY8GlwNY6Qd5cAmOduuSRBlUMvOf3HGz2/WLo7J
+         7k9EO675x8YD/KbPLGhaQdyNFYSX01R2WtT7HDyyOLdI68D9oSeOZ22snP1NXPjM+XzK
+         eFcA==
+X-Gm-Message-State: AOUpUlF6hd9heff1Z0KYUk8GJkkfKmveD82JYQaf+lFB0BYmZk4522Vm
+        o+uoHFu+UP7kIEZWjGPV9SfV8+9aHEgx+zGqg+Dc/+3v
+X-Google-Smtp-Source: AAOMgpcvRLIHlOHwn0Ag4gWd8DxHNetdMtyjQtf9VXWh9+Pe+ALCdZ7GdjDIf2OKnsgEOyq5B9HAcDfzlI0vwMSw4XQ=
+X-Received: by 2002:ab0:221:: with SMTP id 30-v6mr1334284uas.26.1532090493119;
+ Fri, 20 Jul 2018 05:41:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
+ <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com> <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 20 Jul 2018 14:41:20 +0200
+Message-ID: <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Simon Horman <horms@verge.net.au>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Hi Phil,
 
-------------------
+On Fri, Jul 20, 2018 at 2:26 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> On 20 July 2018 13:12, Geert Uytterhoeven wrote:
+> > On Fri, Jul 20, 2018 at 2:06 PM Phil Edworthy  wrote:
+> > > On 20 July 2018 12:21, Geert Uytterhoeven wrote:
+> > > > On Wed, Jul 18, 2018 at 4:34 PM Phil Edworthy wrote:
+> > > > > To avoid all SoC peripheral drivers deferring their probes, both
+> > > > > clock and pinctrl drivers should already be probed. Since the
+> > > > > pinctrl driver requires a clock to access the registers, the clock
+> > > > > driver should be probed before the pinctrl driver.
+> > > > >
+> > > > > Therefore, move the clock driver from subsys_initcall to core_initcall.
+> > > > >
+> > > > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > > >
+> > > > Thanks for your patch!
+> > > Thanks for your review!
+> > >
+> > > > The (not yet upstreamed) pinctrl driver uses postcore_initcall(), right?
+> > > No, the pinctrl driver uses subsys_initcall, but postcore_initcall or
+> > > arch_initcall may be better to make it clear about the dependencies.
+> >
+> > if the pinctrl driver uses subsys_initcall(), ...
 
-From: John Hurley <john.hurley@netronome.com>
+> > > > > -subsys_initcall(r9a06g032_clocks_init);
+> > > > > +core_initcall(r9a06g032_clocks_init);
+> >
+> > ... using postcore_initcall() or arch_initcall() here, should work with
+> > platform_driver_probe()?
+> Nope, you have to use platform_driver_register() for DT based drivers.
+> subsys_initcall is the earliest you can use platform_driver_probe().
 
-[ Upstream commit 951a8ee6def39e25d0e60b9394e5a249ba8b2390 ]
+So drivers/misc/atmel_tclib.c and drivers/pinctrl/pinctrl-coh901.c, which
+use arch_initcall(), cannot work?
 
-TC shared blocks allow multiple qdiscs to be grouped together and filters
-shared between them. Currently the chains of filters attached to a block
-are only flushed when the block is removed. If a qdisc is removed from a
-block but the block still exists, flow del messages are not passed to the
-callback registered for that qdisc. For the NFP, this presents the
-possibility of rules still existing in hw when they should be removed.
+If that is really true, you can still use subsys_initcall() in the clock driver,
+and subsys_initcall_sync() in the pinctrl driver.
 
-Prevent binding to shared blocks until the kernel can send per qdisc del
-messages when block unbinds occur.
+Gr{oetje,eeting}s,
 
-tcf_block_shared() was not used outside of the core until now, so also
-add an empty implementation for builds with CONFIG_NET_CLS=n.
+                        Geert
 
-Fixes: 4861738775d7 ("net: sched: introduce shared filter blocks infrastructure")
-Signed-off-by: John Hurley <john.hurley@netronome.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/netronome/nfp/bpf/main.c       |    3 +++
- drivers/net/ethernet/netronome/nfp/flower/offload.c |    3 +++
- include/net/pkt_cls.h                               |    5 +++++
- 3 files changed, 11 insertions(+)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---- a/drivers/net/ethernet/netronome/nfp/bpf/main.c
-+++ b/drivers/net/ethernet/netronome/nfp/bpf/main.c
-@@ -194,6 +194,9 @@ static int nfp_bpf_setup_tc_block(struct
- 	if (f->binder_type != TCF_BLOCK_BINDER_TYPE_CLSACT_INGRESS)
- 		return -EOPNOTSUPP;
- 
-+	if (tcf_block_shared(f->block))
-+		return -EOPNOTSUPP;
-+
- 	switch (f->command) {
- 	case TC_BLOCK_BIND:
- 		return tcf_block_cb_register(f->block,
---- a/drivers/net/ethernet/netronome/nfp/flower/offload.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/offload.c
-@@ -601,6 +601,9 @@ static int nfp_flower_setup_tc_block(str
- 	if (f->binder_type != TCF_BLOCK_BINDER_TYPE_CLSACT_INGRESS)
- 		return -EOPNOTSUPP;
- 
-+	if (tcf_block_shared(f->block))
-+		return -EOPNOTSUPP;
-+
- 	switch (f->command) {
- 	case TC_BLOCK_BIND:
- 		return tcf_block_cb_register(f->block,
---- a/include/net/pkt_cls.h
-+++ b/include/net/pkt_cls.h
-@@ -111,6 +111,11 @@ void tcf_block_put_ext(struct tcf_block
- {
- }
- 
-+static inline bool tcf_block_shared(struct tcf_block *block)
-+{
-+	return false;
-+}
-+
- static inline struct Qdisc *tcf_block_q(struct tcf_block *block)
- {
- 	return NULL;
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
