@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0921ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 744DEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C54B206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C54B206B7
+	by mail.kernel.org (Postfix) with ESMTP id 388AA20833
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388AA20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389423AbeGTN02 (ORCPT
+        id S2389436AbeGTN0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:26:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46670 "EHLO
+        Fri, 20 Jul 2018 09:26:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46790 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388568AbeGTN01 (ORCPT
+        with ESMTP id S2389238AbeGTN03 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:26:27 -0400
+        Fri, 20 Jul 2018 09:26:29 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BA5ECB1;
-        Fri, 20 Jul 2018 12:32:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 129AAD1F;
+        Fri, 20 Jul 2018 12:35:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Meelis Roos <mroos@linux.ee>,
-        Mathieu Malaterre <malat@debian.org>,
-        Andreas Schwab <schwab@linux-m68k.org>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 35/92] net: sungem: fix rx checksum support
-Date:   Fri, 20 Jul 2018 14:13:39 +0200
-Message-Id: <20180720121420.049804993@linuxfoundation.org>
+Subject: [PATCH 4.17 010/101] atm: zatm: Fix potential Spectre v1
+Date:   Fri, 20 Jul 2018 14:13:16 +0200
+Message-Id: <20180720121423.355112056@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
-References: <20180720121417.206337808@linuxfoundation.org>
+In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
+References: <20180720121422.837870592@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -49,113 +47,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 12b03558cef6d655d0d394f5e98a6fd07c1f6c0f ]
+[ Upstream commit ced9e191501e52b95e1b57b8e0db00943869eed0 ]
 
-After commit 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE
-are friends"), sungem owners reported the infamous "eth0: hw csum failure"
-message.
+pool can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-CHECKSUM_COMPLETE has in fact never worked for this driver, but this
-was masked by the fact that upper stacks had to strip the FCS, and
-therefore skb->ip_summed was set back to CHECKSUM_NONE before
-my recent change.
+This issue was detected with the help of Smatch:
 
-Driver configures a number of bytes to skip when the chip computes
-the checksum, and for some reason only half of the Ethernet header
-was skipped.
+drivers/atm/zatm.c:1491 zatm_ioctl() warn: potential spectre issue
+'zatm_dev->pool_info' (local cap)
 
-Then a second problem is that we should strip the FCS by default,
-unless the driver is updated to eventually support NETIF_F_RXFCS in
-the future.
+Fix this by sanitizing pool before using it to index
+zatm_dev->pool_info
 
-Finally, a driver should check if NETIF_F_RXCSUM feature is enabled
-or not, so that the admin can turn off rx checksum if wanted.
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-Many thanks to Andreas Schwab and Mathieu Malaterre for their
-help in debugging this issue.
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Meelis Roos <mroos@linux.ee>
-Reported-by: Mathieu Malaterre <malat@debian.org>
-Reported-by: Andreas Schwab <schwab@linux-m68k.org>
-Tested-by: Andreas Schwab <schwab@linux-m68k.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/sun/sungem.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/atm/zatm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/sun/sungem.c
-+++ b/drivers/net/ethernet/sun/sungem.c
-@@ -59,8 +59,7 @@
- #include <linux/sungem_phy.h>
- #include "sungem.h"
- 
--/* Stripping FCS is causing problems, disabled for now */
--#undef STRIP_FCS
-+#define STRIP_FCS
- 
- #define DEFAULT_MSG	(NETIF_MSG_DRV		| \
- 			 NETIF_MSG_PROBE	| \
-@@ -434,7 +433,7 @@ static int gem_rxmac_reset(struct gem *g
- 	writel(desc_dma & 0xffffffff, gp->regs + RXDMA_DBLOW);
- 	writel(RX_RING_SIZE - 4, gp->regs + RXDMA_KICK);
- 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
--	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
-+	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
- 	writel(val, gp->regs + RXDMA_CFG);
- 	if (readl(gp->regs + GREG_BIFCFG) & GREG_BIFCFG_M66EN)
- 		writel(((5 & RXDMA_BLANK_IPKTS) |
-@@ -759,7 +758,6 @@ static int gem_rx(struct gem *gp, int wo
- 	struct net_device *dev = gp->dev;
- 	int entry, drops, work_done = 0;
- 	u32 done;
--	__sum16 csum;
- 
- 	if (netif_msg_rx_status(gp))
- 		printk(KERN_DEBUG "%s: rx interrupt, done: %d, rx_new: %d\n",
-@@ -854,9 +852,13 @@ static int gem_rx(struct gem *gp, int wo
- 			skb = copy_skb;
- 		}
- 
--		csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
--		skb->csum = csum_unfold(csum);
--		skb->ip_summed = CHECKSUM_COMPLETE;
-+		if (likely(dev->features & NETIF_F_RXCSUM)) {
-+			__sum16 csum;
-+
-+			csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
-+			skb->csum = csum_unfold(csum);
-+			skb->ip_summed = CHECKSUM_COMPLETE;
-+		}
- 		skb->protocol = eth_type_trans(skb, gp->dev);
- 
- 		napi_gro_receive(&gp->napi, skb);
-@@ -1760,7 +1762,7 @@ static void gem_init_dma(struct gem *gp)
- 	writel(0, gp->regs + TXDMA_KICK);
- 
- 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
--	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
-+	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
- 	writel(val, gp->regs + RXDMA_CFG);
- 
- 	writel(desc_dma >> 32, gp->regs + RXDMA_DBHI);
-@@ -2986,8 +2988,8 @@ static int gem_init_one(struct pci_dev *
- 	pci_set_drvdata(pdev, dev);
- 
- 	/* We can do scatter/gather and HW checksum */
--	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM;
--	dev->features |= dev->hw_features | NETIF_F_RXCSUM;
-+	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
-+	dev->features = dev->hw_features;
- 	if (pci_using_dac)
- 		dev->features |= NETIF_F_HIGHDMA;
- 
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -1483,6 +1483,8 @@ static int zatm_ioctl(struct atm_dev *de
+ 					return -EFAULT;
+ 				if (pool < 0 || pool > ZATM_LAST_POOL)
+ 					return -EINVAL;
++				pool = array_index_nospec(pool,
++							  ZATM_LAST_POOL + 1);
+ 				if (copy_from_user(&info,
+ 				    &((struct zatm_pool_req __user *) arg)->info,
+ 				    sizeof(info))) return -EFAULT;
 
 
