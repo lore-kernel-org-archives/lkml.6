@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C034ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E2A1ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC31520833
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:58:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC31520833
+	by mail.kernel.org (Postfix) with ESMTP id 609DD20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:58:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 609DD20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388040AbeGTNQf (ORCPT
+        id S1731749AbeGTNql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:16:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36692 "EHLO
+        Fri, 20 Jul 2018 09:46:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35718 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730720AbeGTNQe (ORCPT
+        with ESMTP id S2387878AbeGTNP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:16:34 -0400
+        Fri, 20 Jul 2018 09:15:56 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5FEC5BBF;
-        Fri, 20 Jul 2018 12:28:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22E21C7A;
+        Fri, 20 Jul 2018 12:27:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 13/66] bcm63xx_enet: correct clock usage
-Date:   Fri, 20 Jul 2018 14:13:30 +0200
-Message-Id: <20180720121408.033329916@linuxfoundation.org>
+Subject: [PATCH 4.4 09/31] bcm63xx_enet: do not write to random DMA channel on BCM6345
+Date:   Fri, 20 Jul 2018 14:13:39 +0200
+Message-Id: <20180720121340.494128055@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
-References: <20180720121407.228772286@linuxfoundation.org>
+In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
+References: <20180720121340.158484922@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,17 +47,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
 From: Jonas Gorski <jonas.gorski@gmail.com>
 
-commit 9c86b846ce02f7e35d7234cf090b80553eba5389 upstream.
+commit d6213c1f2ad54a964b77471690264ed685718928 upstream.
 
-Check the return code of prepare_enable and change one last instance of
-enable only to prepare_enable. Also properly disable and release the
-clock in error paths and on remove for enetsw.
+The DMA controller regs actually point to DMA channel 0, so the write to
+ENETDMA_CFG_REG will actually modify a random DMA channel.
+
+Since DMA controller registers do not exist on BCM6345, guard the write
+with the usual check for dma_has_sram.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
@@ -65,95 +67,20 @@ Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/broadcom/bcm63xx_enet.c |   31 ++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/broadcom/bcm63xx_enet.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
 +++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-@@ -1790,7 +1790,9 @@ static int bcm_enet_probe(struct platfor
- 		ret = PTR_ERR(priv->mac_clk);
- 		goto out;
- 	}
--	clk_prepare_enable(priv->mac_clk);
-+	ret = clk_prepare_enable(priv->mac_clk);
-+	if (ret)
-+		goto out_put_clk_mac;
+@@ -1063,7 +1063,8 @@ static int bcm_enet_open(struct net_devi
+ 	val = enet_readl(priv, ENET_CTL_REG);
+ 	val |= ENET_CTL_ENABLE_MASK;
+ 	enet_writel(priv, val, ENET_CTL_REG);
+-	enet_dma_writel(priv, ENETDMA_CFG_EN_MASK, ENETDMA_CFG_REG);
++	if (priv->dma_has_sram)
++		enet_dma_writel(priv, ENETDMA_CFG_EN_MASK, ENETDMA_CFG_REG);
+ 	enet_dmac_writel(priv, priv->dma_chan_en_mask,
+ 			 ENETDMAC_CHANCFG, priv->rx_chan);
  
- 	/* initialize default and fetch platform data */
- 	priv->rx_ring_size = BCMENET_DEF_RX_DESC;
-@@ -1822,9 +1824,11 @@ static int bcm_enet_probe(struct platfor
- 		if (IS_ERR(priv->phy_clk)) {
- 			ret = PTR_ERR(priv->phy_clk);
- 			priv->phy_clk = NULL;
--			goto out_put_clk_mac;
-+			goto out_disable_clk_mac;
- 		}
--		clk_prepare_enable(priv->phy_clk);
-+		ret = clk_prepare_enable(priv->phy_clk);
-+		if (ret)
-+			goto out_put_clk_phy;
- 	}
- 
- 	/* do minimal hardware init to be able to probe mii bus */
-@@ -1915,13 +1919,16 @@ out_free_mdio:
- out_uninit_hw:
- 	/* turn off mdc clock */
- 	enet_writel(priv, 0, ENET_MIISC_REG);
--	if (priv->phy_clk) {
-+	if (priv->phy_clk)
- 		clk_disable_unprepare(priv->phy_clk);
-+
-+out_put_clk_phy:
-+	if (priv->phy_clk)
- 		clk_put(priv->phy_clk);
--	}
- 
--out_put_clk_mac:
-+out_disable_clk_mac:
- 	clk_disable_unprepare(priv->mac_clk);
-+out_put_clk_mac:
- 	clk_put(priv->mac_clk);
- out:
- 	free_netdev(dev);
-@@ -2766,7 +2773,9 @@ static int bcm_enetsw_probe(struct platf
- 		ret = PTR_ERR(priv->mac_clk);
- 		goto out_unmap;
- 	}
--	clk_enable(priv->mac_clk);
-+	ret = clk_prepare_enable(priv->mac_clk);
-+	if (ret)
-+		goto out_put_clk;
- 
- 	priv->rx_chan = 0;
- 	priv->tx_chan = 1;
-@@ -2787,7 +2796,7 @@ static int bcm_enetsw_probe(struct platf
- 
- 	ret = register_netdev(dev);
- 	if (ret)
--		goto out_put_clk;
-+		goto out_disable_clk;
- 
- 	netif_carrier_off(dev);
- 	platform_set_drvdata(pdev, dev);
-@@ -2796,6 +2805,9 @@ static int bcm_enetsw_probe(struct platf
- 
- 	return 0;
- 
-+out_disable_clk:
-+	clk_disable_unprepare(priv->mac_clk);
-+
- out_put_clk:
- 	clk_put(priv->mac_clk);
- 
-@@ -2827,6 +2839,9 @@ static int bcm_enetsw_remove(struct plat
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	release_mem_region(res->start, resource_size(res));
- 
-+	clk_disable_unprepare(priv->mac_clk);
-+	clk_put(priv->mac_clk);
-+
- 	free_netdev(dev);
- 	return 0;
- }
 
 
