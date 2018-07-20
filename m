@@ -2,128 +2,122 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDE1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5898ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4691320661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80BBC20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:23:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PGixs3qL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4691320661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="sUm8O6XE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80BBC20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731000AbeGTNLP (ORCPT
+        id S1731095AbeGTNLT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:11:15 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40195 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729816AbeGTNLP (ORCPT
+        Fri, 20 Jul 2018 09:11:19 -0400
+Received: from mail-pg1-f170.google.com ([209.85.215.170]:35911 "EHLO
+        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729816AbeGTNLS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:11:15 -0400
-Received: by mail-it0-f66.google.com with SMTP id 188-v6so14277495ita.5
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 05:23:16 -0700 (PDT)
+        Fri, 20 Jul 2018 09:11:18 -0400
+Received: by mail-pg1-f170.google.com with SMTP id s7-v6so3333853pgv.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 05:23:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=n8mrHQPBY5Gw6SwHS5W9CQR1blsNuEO7RNcy69tdUHs=;
-        b=PGixs3qLiT5xID0DlRnsQUV+uwnls3vBeKwNMwG9tlyw2YnYU9APHwIoqFOCIyIUtT
-         collODsQzTtKEAX9G5hNEvbIL3U5FlUUt37gjuhnnxeJeBi1bB4X70FfkOIeQg0yK2aF
-         J4m/1RiKPtUB0oeANT+83Q3VI8qwoqffWngk8=
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sJ3rGLoIUD7X7oBGR8Xn6/uTGdSMGiFVkeFzv/1mG80=;
+        b=sUm8O6XEJZzLYt3hFNK4mw/6T45eyIiVhRqubbJ4SLg/J7US8UL+yO7kOsNsGgVq+c
+         HzonsUKui2UfTX8fNRE9MUuFFGySR8hwWxfR9KY7uY+OYLUZXz4IkggB5gbdYg7arSfQ
+         zjZmMZXwS/15jFqXAwXabsnqcwuYlT0AqnTQEV0Bi1ePF3ZRPp8jVd5XHF79Ji/WqpE/
+         vycG+ZF/oe5MJrdCTwPxdfqiRwT0U6akQRvEunFiOj94SRNVeQrLYipGI7DIDeJZghKc
+         1V8dpfXCgmXP/dSJ/TVCjrcx9AKAHfz8wL0ISAyi1ReVkZt/BuQQz3HcVDVO1t1A2Jd9
+         6pYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=n8mrHQPBY5Gw6SwHS5W9CQR1blsNuEO7RNcy69tdUHs=;
-        b=ad977UoT3+PBke3GtLDkPGnNVrszVOxepRWBaYM41I7mQfq8j2U1GHiAEJWaOSOPYd
-         BdgycCzVc0+PRD2XTovA7ZdD8K3g6xH1IS6D2OEulayrRiB2Oeh64EfFol1A5nmYPaWP
-         U3gjBf2GSFYQ8IqAsGW/Vj6GdJ/pxJPH8P8K0zVSjZ4QiA20lYzCvLt6XY/tuQ3gfKn1
-         k3wP2gqtFuEeLNtpI0KCxR3HxaVSO1RBn+6r9egT23pyUbSJNkVKtb+ypModMWfPD4WV
-         S2hN+hTJJ6J1jPiyS8em0hPwW2dcKt2fkbbPJSVBHLuqtS4ZFfGzWeiQCm/azAdIRDBn
-         oC1A==
-X-Gm-Message-State: AOUpUlFAb2fcKQVyRcCF8PRxeRV/TOmFGFwIvQO2qPAly6bgyj3dIbaN
-        GVpHGSOTbxAUaclekT6MU5VgZG5ByU/Uvf1qF99tFg==
-X-Google-Smtp-Source: AAOMgpcNc9qI0rsB1GJi/YPiScKI6bWBigPVpXkv9Bi9alAO+b/0Hfl1OA4PrP+mqSEFiVJYJmQRR43rJrj8C//tCIc=
-X-Received: by 2002:a02:35a:: with SMTP id y87-v6mr1588357jad.2.1532089395757;
- Fri, 20 Jul 2018 05:23:15 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sJ3rGLoIUD7X7oBGR8Xn6/uTGdSMGiFVkeFzv/1mG80=;
+        b=TUXjSDCUBsbE6NqqgU0Bs9YciqI87Q6WLX79z4ahtudTB5JqjCqUQIm2WdS42ZBcCY
+         6mbYvUIUDELu1LBn6gfhTBYtp2B1TUW9sos0+T6Fe/FvutIFaDvOaK1i5gjeCr/W7XiW
+         IAG0tIM2xowX3/uDVUMEwcHkkibMac8vefT4r9wcSdPl4iWMppjOIggeqlgXVvt+Kew/
+         WapfHUjTjLnY4zDl7NqWpuaWePRC95MeundDDLE6/a4gBIsozRBIdBpOMFmmDVZEBbZI
+         4Rq8HLT5WPi+er5ZaiOwLI6pFhxbdPG0PjLutLyypjAUhS/h3pWHDKyYib5row3007xp
+         df8Q==
+X-Gm-Message-State: AOUpUlEcWrk2hU791V027CZvncsXQd/Ou2xN9Okzd3ELg+bnpt+ZXFEE
+        PIee+A1fwn+KtHQZdxFlMUVueA==
+X-Google-Smtp-Source: AAOMgpdCi9jreyJZ3HcipOk1CuHTu0kxXQ1Cgp8jqpNpQs6kbGYOofkTYuCPMXEfo+67ylY4Ec6cyQ==
+X-Received: by 2002:a65:6699:: with SMTP id b25-v6mr1916917pgw.426.1532089399750;
+        Fri, 20 Jul 2018 05:23:19 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr03-ext.fm.intel.com. [192.55.54.38])
+        by smtp.gmail.com with ESMTPSA id s195-v6sm6994407pgs.76.2018.07.20.05.23.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 05:23:18 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 45A91300254; Fri, 20 Jul 2018 15:23:15 +0300 (+03)
+Date:   Fri, 20 Jul 2018 15:23:15 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv5 03/19] mm/ksm: Do not merge pages with different KeyIDs
+Message-ID: <20180720122315.5lue3trrmvewvxg2@kshutemo-mobl1>
+References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
+ <20180717112029.42378-4-kirill.shutemov@linux.intel.com>
+ <a6fc50f2-b0c2-32db-cbef-3de57d5e6b16@intel.com>
+ <20180719073240.autom4g4cdm3jgd6@kshutemo-mobl1>
+ <3045c925-f5a8-ae68-8f77-4cddaf040f9f@intel.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 05:23:15
- -0700 (PDT)
-In-Reply-To: <20180720114509.GA10784@sirena.org.uk>
-References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
- <CAK8P3a0T0Ku-2GOY8fT38LVy4GpvVSsx=szi0ZNEUq8Z_hZweQ@mail.gmail.com>
- <CAKv+Gu8uD4NNS9SaWdSST7n+984ybTBLhGDpq3k5GG4o1+PMWA@mail.gmail.com>
- <5d0bb72c-862e-63be-3cc5-83ed02b9a575@huawei.com> <CAKv+Gu-hvEUyOOh_xpYsSj2WTcbM1FwRnJ1DkTGH1UjxkppNMQ@mail.gmail.com>
- <20180719155026.GF27938@sirena.org.uk> <CAKv+Gu_mb26HRi==5oeQyZ7ZOgifg7RUNt2c2V=tTqvFrMYq5g@mail.gmail.com>
- <20180720114509.GA10784@sirena.org.uk>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 20 Jul 2018 21:23:15 +0900
-Message-ID: <CAKv+Gu8=M-EE11dZwcAzy1ZrnEoz=nF++v9bneY2SUq+e217Rg@mail.gmail.com>
-Subject: Re: [PATCH 0/5] crypto: add IV generation templates
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3045c925-f5a8-ae68-8f77-4cddaf040f9f@intel.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20 July 2018 at 20:45, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Jul 20, 2018 at 10:02:21AM +0900, Ard Biesheuvel wrote:
->> On 20 July 2018 at 00:50, Mark Brown <broonie@kernel.org> wrote:
->
->> > Existing hardware can definitely do the IV generation and I believe that
->> > it can chain multiple sectors together though I'd need to confirm this,
->> > as mentioned elsewhere in the thread the ccree driver is for one of
->> > the relevant devices.  I've poked some relevant people.
->
->> As far as I can infer from the ccree driver source, IV generation and
->> en/decryption are separate operations, and given that each sector
->> requires both operations to be applied in sequence, letting the crypto
->> layer handle an entire bio does not have any benefit *at the moment*.
->
-> Interesting...  they were reporting some benefits from that with their
-> out of tree driver prior to upstreaming (and there are other
-> implementations out there, that's the only one I definitely know about).
-> I have to confess I didn't look at their in tree driver, looking briefly
-> now it looks awfully like the hardware should be able to chain IV
-> generation together with encryption without bothering the CPU which
-> would be good enough.
->
+On Thu, Jul 19, 2018 at 07:02:34AM -0700, Dave Hansen wrote:
+> On 07/19/2018 12:32 AM, Kirill A. Shutemov wrote:
+> > On Wed, Jul 18, 2018 at 10:38:27AM -0700, Dave Hansen wrote:
+> >> On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
+> >>> Pages encrypted with different encryption keys are not allowed to be
+> >>> merged by KSM. Otherwise it would cross security boundary.
+> >> Let's say I'm using plain AES (not AES-XTS).  I use the same key in two
+> >> keyid slots.  I map a page with the first keyid and another with the
+> >> other keyid.
+> >>
+> >> Won't they have the same cipertext?  Why shouldn't we KSM them?
+> > We compare plain text, not ciphertext. And for good reason.
+> 
+> What's the reason?  Probably good to talk about it for those playing
+> along at home.
 
-Indeed interesting. But afaict, that would still mean that the IV
-generation transform and the payload transform would be expressed as a
-single crypto algorithm, e.g., 'dm(essiv-foo(aes),gcm(aes)), or the DM
-layer would still need to be involved in sequencing one operation
-after the other, and I don't think any of that support is in the
-current series. But I'm just a drive by reviewer here, so please
-correct me if I am wrong.
+I'll update commit message.
 
->> In fact, it seems to me that the ability to use protected AES keys is
->> much more appealing than any performance argument (including 'it may
->> be slower but at least it does not load the CPU'), so some background
->> on how such a change would enable this use case would be beneficial as
->> well to getting this adopted.
->
-> Right, that's another benefit which was on the radar for followup work.
->
->> So my recommendation would be to focus on moving the IV generation
->> into the crypto layer, but conservatively, and not confuse people by
->> making additional changes that could theoretically improve
->> performance, but only on hardware that does not exist.
->
-> It certainly seems like splitting things up will at least allow things
-> to progress.
+> > Comparing ciphertext would only make KSM successful for AES-ECB that
+> > doesn't dependent on physical address of the page.
+> > 
+> > MKTME only supports AES-XTS (no plans to support AES-ECB). It effectively
+> > disables KSM if we go with comparing ciphertext.
+> 
+> But what's the security boundary that is violated?  You are talking
+> about some practical concerns (KSM scanning inefficiency) which is a far
+> cry from being any kind of security issue.
 
-Indeed.
+As with zero page, my initial reasoning was that mixing pages from
+different secrutiy domains is bad idea.
+
+-- 
+ Kirill A. Shutemov
