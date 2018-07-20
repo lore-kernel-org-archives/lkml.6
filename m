@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43881ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A38EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3127204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:18:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3127204EC
+	by mail.kernel.org (Postfix) with ESMTP id 5E716206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:18:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E716206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387996AbeGTQEj (ORCPT
+        id S2388260AbeGTQHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:04:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54275 "EHLO mail.bootlin.com"
+        Fri, 20 Jul 2018 12:07:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54232 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732981AbeGTQEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 12:04:38 -0400
+        id S2387890AbeGTQEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 12:04:36 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 15974209FC; Fri, 20 Jul 2018 17:15:51 +0200 (CEST)
+        id D4953208FF; Fri, 20 Jul 2018 17:15:49 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D56A920935;
-        Fri, 20 Jul 2018 17:15:34 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 28A2F20908;
+        Fri, 20 Jul 2018 17:15:33 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 11/35] mtd: rawnand: lpc32xx_mlc: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 17:15:03 +0200
-Message-Id: <20180720151527.16038-12-miquel.raynal@bootlin.com>
+Subject: [PATCH v4 08/35] mtd: rawnand: gpmi: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 17:15:00 +0200
+Message-Id: <20180720151527.16038-9-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180720151527.16038-1-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
@@ -73,161 +73,90 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/lpc32xx_mlc.c | 109 ++++++++++++++++++++-----------------
- 1 file changed, 59 insertions(+), 50 deletions(-)
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c | 56 ++++++++++++++++++------------
+ 1 file changed, 33 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/lpc32xx_mlc.c b/drivers/mtd/nand/raw/lpc32xx_mlc.c
-index 052d123a8304..6f73136fa863 100644
---- a/drivers/mtd/nand/raw/lpc32xx_mlc.c
-+++ b/drivers/mtd/nand/raw/lpc32xx_mlc.c
-@@ -184,6 +184,7 @@ static struct nand_bbt_descr lpc32xx_nand_bbt_mirror = {
- };
- 
- struct lpc32xx_nand_host {
-+	struct platform_device	*pdev;
- 	struct nand_chip	nand_chip;
- 	struct lpc32xx_mlc_platform_data *pdata;
- 	struct clk		*clk;
-@@ -653,6 +654,58 @@ static struct lpc32xx_nand_cfg_mlc *lpc32xx_parse_dt(struct device *dev)
- 	return ncfg;
+diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+index 6294d018df65..1c1ebbc82824 100644
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+@@ -744,9 +744,9 @@ static int gpmi_alloc_dma_buffer(struct gpmi_nand_data *this)
+ 	 * [2] Allocate a read/write data buffer.
+ 	 *     The gpmi_alloc_dma_buffer can be called twice.
+ 	 *     We allocate a PAGE_SIZE length buffer if gpmi_alloc_dma_buffer
+-	 *     is called before the nand_scan_ident; and we allocate a buffer
+-	 *     of the real NAND page size when the gpmi_alloc_dma_buffer is
+-	 *     called after the nand_scan_ident.
++	 *     is called before the NAND identification; and we allocate a
++	 *     buffer of the real NAND page size when the gpmi_alloc_dma_buffer
++	 *     is called after.
+ 	 */
+ 	this->data_buffer_dma = kzalloc(mtd->writesize ?: PAGE_SIZE,
+ 					GFP_DMA | GFP_KERNEL);
+@@ -1865,6 +1865,34 @@ static int gpmi_init_last(struct gpmi_nand_data *this)
+ 	return 0;
  }
  
-+static int lpc32xx_nand_attach_chip(struct nand_chip *chip)
++static int gpmi_nand_attach_chip(struct nand_chip *chip)
 +{
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
-+	struct device *dev = &host->pdev->dev;
++	struct gpmi_nand_data *this = nand_get_controller_data(chip);
++	int ret;
 +
-+	host->dma_buf = devm_kzalloc(dev, mtd->writesize, GFP_KERNEL);
-+	if (!host->dma_buf)
-+		return -ENOMEM;
++	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
++		chip->bbt_options |= NAND_BBT_NO_OOB;
 +
-+	host->dummy_buf = devm_kzalloc(dev, mtd->writesize, GFP_KERNEL);
-+	if (!host->dummy_buf)
-+		return -ENOMEM;
-+
-+	chip->ecc.mode = NAND_ECC_HW;
-+	chip->ecc.size = 512;
-+	mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
-+	host->mlcsubpages = mtd->writesize / 512;
-+
-+	/* initially clear interrupt status */
-+	readb(MLC_IRQ_SR(host->io_base));
-+
-+	init_completion(&host->comp_nand);
-+	init_completion(&host->comp_controller);
-+
-+	host->irq = platform_get_irq(host->pdev, 0);
-+	if (host->irq < 0) {
-+		dev_err(dev, "failed to get platform irq\n");
-+		return -EINVAL;
++		if (of_property_read_bool(this->dev->of_node,
++					  "fsl,no-blockmark-swap"))
++			this->swap_block_mark = false;
 +	}
++	dev_dbg(this->dev, "Blockmark swapping %sabled\n",
++		this->swap_block_mark ? "en" : "dis");
 +
-+	if (request_irq(host->irq, (irq_handler_t)&lpc3xxx_nand_irq,
-+			IRQF_TRIGGER_HIGH, DRV_NAME, host)) {
-+		dev_err(dev, "Error requesting NAND IRQ\n");
-+		return -ENXIO;
-+	}
++	ret = gpmi_init_last(this);
++	if (ret)
++		return ret;
++
++	chip->options |= NAND_SKIP_BBTSCAN;
 +
 +	return 0;
 +}
 +
-+static void lpc32xx_nand_detach_chip(struct nand_chip *chip)
-+{
-+	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
-+
-+	free_irq(host->irq, host);
-+}
-+
-+static const struct nand_controller_ops lpc32xx_nand_controller_ops = {
-+	.attach_chip = lpc32xx_nand_attach_chip,
-+	.detach_chip = lpc32xx_nand_detach_chip,
++static const struct nand_controller_ops gpmi_nand_controller_ops = {
++	.attach_chip = gpmi_nand_attach_chip,
 +};
 +
- /*
-  * Probe for NAND controller
-  */
-@@ -669,6 +722,8 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
- 	if (!host)
- 		return -ENOMEM;
+ static int gpmi_nand_init(struct gpmi_nand_data *this)
+ {
+ 	struct nand_chip *chip = &this->nand;
+@@ -1905,26 +1933,8 @@ static int gpmi_nand_init(struct gpmi_nand_data *this)
+ 	if (ret)
+ 		goto err_out;
  
-+	host->pdev = pdev;
-+
- 	rc = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	host->io_base = devm_ioremap_resource(&pdev->dev, rc);
- 	if (IS_ERR(host->io_base))
-@@ -749,58 +804,14 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
- 	}
- 
- 	/*
--	 * Scan to find existance of the device and
--	 * Get the type of NAND device SMALL block or LARGE block
-+	 * Scan to find existence of the device and get the type of NAND device:
-+	 * SMALL block or LARGE block.
- 	 */
--	res = nand_scan_ident(mtd, 1, NULL);
-+	nand_chip->dummy_controller.ops = &lpc32xx_nand_controller_ops;
-+	res = nand_scan(mtd, 1);
- 	if (res)
- 		goto release_dma_chan;
- 
--	host->dma_buf = devm_kzalloc(&pdev->dev, mtd->writesize, GFP_KERNEL);
--	if (!host->dma_buf) {
--		res = -ENOMEM;
--		goto release_dma_chan;
+-	ret = nand_scan_ident(mtd, GPMI_IS_MX6(this) ? 2 : 1, NULL);
+-	if (ret)
+-		goto err_out;
+-
+-	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
+-		chip->bbt_options |= NAND_BBT_NO_OOB;
+-
+-		if (of_property_read_bool(this->dev->of_node,
+-						"fsl,no-blockmark-swap"))
+-			this->swap_block_mark = false;
 -	}
+-	dev_dbg(this->dev, "Blockmark swapping %sabled\n",
+-		this->swap_block_mark ? "en" : "dis");
 -
--	host->dummy_buf = devm_kzalloc(&pdev->dev, mtd->writesize, GFP_KERNEL);
--	if (!host->dummy_buf) {
--		res = -ENOMEM;
--		goto release_dma_chan;
--	}
+-	ret = gpmi_init_last(this);
+-	if (ret)
+-		goto err_out;
 -
--	nand_chip->ecc.mode = NAND_ECC_HW;
--	nand_chip->ecc.size = 512;
--	mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
--	host->mlcsubpages = mtd->writesize / 512;
--
--	/* initially clear interrupt status */
--	readb(MLC_IRQ_SR(host->io_base));
--
--	init_completion(&host->comp_nand);
--	init_completion(&host->comp_controller);
--
--	host->irq = platform_get_irq(pdev, 0);
--	if (host->irq < 0) {
--		dev_err(&pdev->dev, "failed to get platform irq\n");
--		res = -EINVAL;
--		goto release_dma_chan;
--	}
--
--	if (request_irq(host->irq, (irq_handler_t)&lpc3xxx_nand_irq,
--			IRQF_TRIGGER_HIGH, DRV_NAME, host)) {
--		dev_err(&pdev->dev, "Error requesting NAND IRQ\n");
--		res = -ENXIO;
--		goto release_dma_chan;
--	}
--
--	/*
--	 * Fills out all the uninitialized function pointers with the defaults
--	 * And scans for a bad block table if appropriate.
--	 */
--	res = nand_scan_tail(mtd);
--	if (res)
--		goto free_irq;
--
- 	mtd->name = DRV_NAME;
+-	chip->options |= NAND_SKIP_BBTSCAN;
+-	ret = nand_scan_tail(mtd);
++	chip->dummy_controller.ops = &gpmi_nand_controller_ops;
++	ret = nand_scan(mtd, GPMI_IS_MX6(this) ? 2 : 1);
+ 	if (ret)
+ 		goto err_out;
  
- 	res = mtd_device_register(mtd, host->ncfg->parts,
-@@ -812,8 +823,6 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
- 
- cleanup_nand:
- 	nand_cleanup(nand_chip);
--free_irq:
--	free_irq(host->irq, host);
- release_dma_chan:
- 	if (use_dma)
- 		dma_release_channel(host->dma_chan);
 -- 
 2.14.1
 
