@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C27C2ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CC8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87F4920652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F4920652
+	by mail.kernel.org (Postfix) with ESMTP id 087C020652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087C020652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389818AbeGTN2u (ORCPT
+        id S2389833AbeGTN2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:28:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50370 "EHLO
+        Fri, 20 Jul 2018 09:28:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389044AbeGTN2s (ORCPT
+        with ESMTP id S2389044AbeGTN2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:28:48 -0400
+        Fri, 20 Jul 2018 09:28:50 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F6C1C93;
-        Fri, 20 Jul 2018 12:37:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A32DCBB;
+        Fri, 20 Jul 2018 12:37:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        stable@vger.kernel.org, Bhadram Varka <vbhadram@nvidia.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 039/101] s390/qeth: dont clobber buffer on async TX completion
-Date:   Fri, 20 Jul 2018 14:13:45 +0200
-Message-Id: <20180720121424.643443631@linuxfoundation.org>
+Subject: [PATCH 4.17 040/101] stmmac: fix DMA channel hang in half-duplex mode
+Date:   Fri, 20 Jul 2018 14:13:46 +0200
+Message-Id: <20180720121424.692142183@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -50,112 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Bhadram Varka <vbhadram@nvidia.com>
 
-[ Upstream commit ce28867fd20c23cd769e78b4d619c4755bf71a1c ]
+[ Upstream commit b6cfffa7ad923c73f317ea50fd4ebcb3b4b6669c ]
 
-If qeth_qdio_output_handler() detects that a transmit requires async
-completion, it replaces the pending buffer's metadata object
-(qeth_qdio_out_buffer) so that this queue buffer can be re-used while
-the data is pending completion.
+HW does not support Half-duplex mode in multi-queue
+scenario. Fix it by not advertising the Half-Duplex
+mode if multi-queue enabled.
 
-Later when the CQ indicates async completion of such a metadata object,
-qeth_qdio_cq_handler() tries to free any data associated with this
-object (since HW has now completed the transfer). By calling
-qeth_clear_output_buffer(), it erronously operates on the queue buffer
-that _previously_ belonged to this transfer ... but which has been
-potentially re-used several times by now.
-This results in double-free's of the buffer's data, and failing
-transmits as the buffer descriptor is scrubbed in mid-air.
-
-The correct way of handling this situation is to
-1. scrub the queue buffer when it is prepared for re-use, and
-2. later obtain the data addresses from the async-completion notifier
-   (ie. the AOB), instead of the queue buffer.
-
-All this only affects qeth devices used for af_iucv HiperTransport.
-
-Fixes: 0da9581ddb0f ("qeth: exploit asynchronous delivery of storage blocks")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core.h      |   11 +++++++++++
- drivers/s390/net/qeth_core_main.c |   22 ++++++++++++++++------
- 2 files changed, 27 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -831,6 +831,17 @@ struct qeth_trap_id {
- /*some helper functions*/
- #define QETH_CARD_IFNAME(card) (((card)->dev)? (card)->dev->name : "")
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -927,6 +927,7 @@ static void stmmac_check_pcs_mode(struct
+ static int stmmac_init_phy(struct net_device *dev)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
++	u32 tx_cnt = priv->plat->tx_queues_to_use;
+ 	struct phy_device *phydev;
+ 	char phy_id_fmt[MII_BUS_ID_SIZE + 3];
+ 	char bus_id[MII_BUS_ID_SIZE];
+@@ -968,6 +969,15 @@ static int stmmac_init_phy(struct net_de
+ 					 SUPPORTED_1000baseT_Full);
  
-+static inline void qeth_scrub_qdio_buffer(struct qdio_buffer *buf,
-+					  unsigned int elements)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < elements; i++)
-+		memset(&buf->element[i], 0, sizeof(struct qdio_buffer_element));
-+	buf->element[14].sflags = 0;
-+	buf->element[15].sflags = 0;
-+}
-+
- /**
-  * qeth_get_elements_for_range() -	find number of SBALEs to cover range.
-  * @start:				Start of the address range.
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -73,9 +73,6 @@ static void qeth_notify_skbs(struct qeth
- 		struct qeth_qdio_out_buffer *buf,
- 		enum iucv_tx_notify notification);
- static void qeth_release_skbs(struct qeth_qdio_out_buffer *buf);
--static void qeth_clear_output_buffer(struct qeth_qdio_out_q *queue,
--		struct qeth_qdio_out_buffer *buf,
--		enum qeth_qdio_buffer_states newbufstate);
- static int qeth_init_qdio_out_buf(struct qeth_qdio_out_q *, int);
- 
- struct workqueue_struct *qeth_wq;
-@@ -488,6 +485,7 @@ static void qeth_qdio_handle_aob(struct
- 	struct qaob *aob;
- 	struct qeth_qdio_out_buffer *buffer;
- 	enum iucv_tx_notify notification;
-+	unsigned int i;
- 
- 	aob = (struct qaob *) phys_to_virt(phys_aob_addr);
- 	QETH_CARD_TEXT(card, 5, "haob");
-@@ -512,10 +510,18 @@ static void qeth_qdio_handle_aob(struct
- 	qeth_notify_skbs(buffer->q, buffer, notification);
- 
- 	buffer->aob = NULL;
--	qeth_clear_output_buffer(buffer->q, buffer,
--				 QETH_QDIO_BUF_HANDLED_DELAYED);
-+	/* Free dangling allocations. The attached skbs are handled by
-+	 * qeth_cleanup_handled_pending().
+ 	/*
++	 * Half-duplex mode not supported with multiqueue
++	 * half-duplex can only works with single queue
 +	 */
-+	for (i = 0;
-+	     i < aob->sb_count && i < QETH_MAX_BUFFER_ELEMENTS(card);
-+	     i++) {
-+		if (aob->sba[i] && buffer->is_header[i])
-+			kmem_cache_free(qeth_core_header_cache,
-+					(void *) aob->sba[i]);
-+	}
-+	atomic_set(&buffer->state, QETH_QDIO_BUF_HANDLED_DELAYED);
- 
--	/* from here on: do not touch buffer anymore */
- 	qdio_release_aob(aob);
- }
- 
-@@ -3759,6 +3765,10 @@ void qeth_qdio_output_handler(struct ccw
- 			QETH_CARD_TEXT(queue->card, 5, "aob");
- 			QETH_CARD_TEXT_(queue->card, 5, "%lx",
- 					virt_to_phys(buffer->aob));
++	if (tx_cnt > 1)
++		phydev->supported &= ~(SUPPORTED_1000baseT_Half |
++				       SUPPORTED_100baseT_Half |
++				       SUPPORTED_10baseT_Half);
 +
-+			/* prepare the queue slot for re-use: */
-+			qeth_scrub_qdio_buffer(buffer->buffer,
-+					       QETH_MAX_BUFFER_ELEMENTS(card));
- 			if (qeth_init_qdio_out_buf(queue, bidx)) {
- 				QETH_CARD_TEXT(card, 2, "outofbuf");
- 				qeth_schedule_recovery(card);
++	/*
+ 	 * Broken HW is sometimes missing the pull-up resistor on the
+ 	 * MDIO line, which results in reads to non-existent devices returning
+ 	 * 0 rather than 0xffff. Catch this here and treat 0 as a non-existent
 
 
