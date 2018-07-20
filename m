@@ -2,133 +2,119 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1656DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B84ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C69F820673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:38:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="gqMMoC3D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C69F820673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B7FC20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:38:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B7FC20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbeGTJZz (ORCPT
+        id S1728384AbeGTJ0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 05:25:55 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:18157 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727347AbeGTJZy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:25:54 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id w6K8bg69025961;
-        Fri, 20 Jul 2018 17:37:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w6K8bg69025961
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1532075863;
-        bh=kZelxrNbnkFsoSoacE5LeX3IuKxIkJo7Gpnk/hgVBCQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gqMMoC3D+NHJ+1XZU4ln9XWX6GoR8AGDjlsh84VH2NNDOdpnxLyk9BU8Sfgp+tzmD
-         Gd+SjXNccsKgYWhbmRBcnRLt1I6WWz92K2wlYnJpW0gYsaKkA9nxxrt7UBPf/qbykB
-         cSY3i1lzsKfjKhdEHuDkM8aT4P/dhgNTZAyTu8OUQTSR4cplvd2O1nhttI8lI1x/6k
-         8Ev61DM1G1jWQsFGnOsGPLtCZ9pkd2KlOtLkqSZMnNXZ5MzryJSv6Y/AmI5jeapPvC
-         NWKKkx63rf6bz2WJE6KAkrmEGjTJzDvYVFcBrBk5Yt3IZwnGD34G8d6QneHFxmgv+e
-         Oik8kQUrw0/lQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] clk: uniphier: add more USB3 PHY clocks
-Date:   Fri, 20 Jul 2018 17:37:36 +0900
-Message-Id: <1532075856-1723-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532075856-1723-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1532075856-1723-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 20 Jul 2018 05:26:06 -0400
+Received: from mga02.intel.com ([134.134.136.20]:32574 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727347AbeGTJ0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 05:26:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 01:38:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,378,1526367600"; 
+   d="scan'208";a="76370846"
+Received: from dazhang1-z97x.sh.intel.com (HELO [10.239.13.115]) ([10.239.13.115])
+  by orsmga002.jf.intel.com with ESMTP; 20 Jul 2018 01:38:44 -0700
+Subject: Re: [PATCH V2 0/4] Fix kvm misconceives NVDIMM pages as reserved mmio
+To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        dan.j.williams@intel.com, jack@suse.cz, hch@lst.de,
+        yu.c.zhang@intel.com, dave.jiang@intel.com
+Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, yi.z.zhang@intel.com
+References: <cover.1531241281.git.yi.z.zhang@linux.intel.com>
+ <c4e1c527-a372-bd6a-a101-5a8e9026e7c1@linux.intel.com>
+ <25569674-2d8f-8b54-4ba7-478b57067325@redhat.com>
+From:   "Zhang,Yi" <yi.z.zhang@linux.intel.com>
+Message-ID: <3e822509-dc66-0fe8-bad6-d4e4ef9eb528@linux.intel.com>
+Date:   Sat, 21 Jul 2018 00:24:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <25569674-2d8f-8b54-4ba7-478b57067325@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add USB3 PHY clocks where missing.  Use fixed-factor clocks for those
-without gating.
+Thanks Paolo, let's wait Jan&Dan 's comments.
 
-For clarification, prefix clock names with 'ss' or 'hs'.
+Thank you, Paolo.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Regards
+Yi
 
- drivers/clk/uniphier/clk-uniphier-sys.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index a582446..1c5a998 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -122,6 +122,9 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
- 	UNIPHIER_PRO4_SYS_CLK_GIO(12),			/* Ether, SATA, USB3 */
- 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
- 	UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
-+	UNIPHIER_CLK_FACTOR("usb30-hsphy0", 16, "upll", 1, 12),
-+	UNIPHIER_CLK_FACTOR("usb30-ssphy0", 17, "ref", 1, 1),
-+	UNIPHIER_CLK_FACTOR("usb31-ssphy0", 20, "ref", 1, 1),
- 	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x2104, 18),
- 	UNIPHIER_CLK_GATE("sata1", 29, NULL, 0x2104, 19),
- 	UNIPHIER_PRO4_SYS_CLK_AIO(40),
-@@ -173,8 +176,11 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
- 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
- 	UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
- 	/* The document mentions 0x2104 bit 18, but not functional */
--	UNIPHIER_CLK_GATE("usb30-phy", 16, NULL, 0x2104, 19),
--	UNIPHIER_CLK_GATE("usb31-phy", 20, NULL, 0x2104, 20),
-+	UNIPHIER_CLK_GATE("usb30-hsphy0", 16, NULL, 0x2104, 19),
-+	UNIPHIER_CLK_FACTOR("usb30-ssphy0", 17, "ref", 1, 1),
-+	UNIPHIER_CLK_FACTOR("usb30-ssphy1", 18, "ref", 1, 1),
-+	UNIPHIER_CLK_GATE("usb31-hsphy0", 20, NULL, 0x2104, 20),
-+	UNIPHIER_CLK_FACTOR("usb31-ssphy0", 21, "ref", 1, 1),
- 	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x2104, 22),
- 	UNIPHIER_PRO5_SYS_CLK_AIO(40),
- 	{ /* sentinel */ }
-@@ -235,8 +241,10 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
- 	 * We do not use bit 15 here.
- 	 */
- 	UNIPHIER_CLK_GATE("usb30", 14, NULL, 0x210c, 14),
--	UNIPHIER_CLK_GATE("usb30-phy0", 16, NULL, 0x210c, 12),
--	UNIPHIER_CLK_GATE("usb30-phy1", 17, NULL, 0x210c, 13),
-+	UNIPHIER_CLK_GATE("usb30-hsphy0", 16, NULL, 0x210c, 12),
-+	UNIPHIER_CLK_GATE("usb30-hsphy1", 17, NULL, 0x210c, 13),
-+	UNIPHIER_CLK_FACTOR("usb30-ssphy0", 18, "ref", 1, 1),
-+	UNIPHIER_CLK_FACTOR("usb30-ssphy1", 19, "ref", 1, 1),
- 	UNIPHIER_CLK_GATE("pcie", 24, NULL, 0x210c, 4),
- 	UNIPHIER_LD11_SYS_CLK_AIO(40),
- 	UNIPHIER_LD11_SYS_CLK_EVEA(41),
-@@ -272,11 +280,11 @@ const struct uniphier_clk_data uniphier_pxs3_sys_clk_data[] = {
- 	UNIPHIER_CLK_GATE("usb30", 12, NULL, 0x210c, 4),	/* =GIO0 */
- 	UNIPHIER_CLK_GATE("usb31-0", 13, NULL, 0x210c, 5),	/* =GIO1 */
- 	UNIPHIER_CLK_GATE("usb31-1", 14, NULL, 0x210c, 6),	/* =GIO1-1 */
--	UNIPHIER_CLK_GATE("usb30-phy0", 16, NULL, 0x210c, 16),
--	UNIPHIER_CLK_GATE("usb30-phy1", 17, NULL, 0x210c, 18),
--	UNIPHIER_CLK_GATE("usb30-phy2", 18, NULL, 0x210c, 20),
--	UNIPHIER_CLK_GATE("usb31-phy0", 20, NULL, 0x210c, 17),
--	UNIPHIER_CLK_GATE("usb31-phy1", 21, NULL, 0x210c, 19),
-+	UNIPHIER_CLK_GATE("usb30-hsphy0", 16, NULL, 0x210c, 16),
-+	UNIPHIER_CLK_GATE("usb30-ssphy0", 17, NULL, 0x210c, 18),
-+	UNIPHIER_CLK_GATE("usb30-ssphy1", 18, NULL, 0x210c, 20),
-+	UNIPHIER_CLK_GATE("usb31-hsphy0", 20, NULL, 0x210c, 17),
-+	UNIPHIER_CLK_GATE("usb31-ssphy0", 21, NULL, 0x210c, 19),
- 	UNIPHIER_CLK_GATE("pcie", 24, NULL, 0x210c, 3),
- 	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x210c, 7),
- 	UNIPHIER_CLK_GATE("sata1", 29, NULL, 0x210c, 8),
--- 
-2.7.4
+On 2018年07月20日 16:32, Paolo Bonzini wrote:
+> On 20/07/2018 16:11, Zhang,Yi wrote:
+>> Added Jiang,Dave,
+>>
+>> Ping for further review, comments.
+> I need an Acked-by from the MM people to merge this.  Jan, Dan?
+>
+> Paolo
+>
+>> Thanks All
+>>
+>> Regards
+>> Yi.
+>>
+>>
+>> On 2018年07月11日 01:01, Zhang Yi wrote:
+>>> For device specific memory space, when we move these area of pfn to
+>>> memory zone, we will set the page reserved flag at that time, some of
+>>> these reserved for device mmio, and some of these are not, such as
+>>> NVDIMM pmem.
+>>>
+>>> Now, we map these dev_dax or fs_dax pages to kvm for DIMM/NVDIMM
+>>> backend, since these pages are reserved. the check of
+>>> kvm_is_reserved_pfn() misconceives those pages as MMIO. Therefor, we
+>>> introduce 2 page map types, MEMORY_DEVICE_FS_DAX/MEMORY_DEVICE_DEV_DAX,
+>>> to indentify these pages are from NVDIMM pmem. and let kvm treat these
+>>> as normal pages.
+>>>
+>>> Without this patch, Many operations will be missed due to this
+>>> mistreatment to pmem pages. For example, a page may not have chance to
+>>> be unpinned for KVM guest(in kvm_release_pfn_clean); not able to be
+>>> marked as dirty/accessed(in kvm_set_pfn_dirty/accessed) etc.
+>>>
+>>> V1:
+>>> https://lkml.org/lkml/2018/7/4/91
+>>>
+>>> V2:
+>>> *Add documentation for MEMORY_DEVICE_DEV_DAX memory type in comment block
+>>> *Add is_dax_page() in mm.h to differentiate the pages is from DAX device.
+>>> *Remove the function kvm_is_nd_pfn().
+>>>
+>>> Zhang Yi (4):
+>>>   kvm: remove redundant reserved page check
+>>>   mm: introduce memory type MEMORY_DEVICE_DEV_DAX
+>>>   mm: add a function to differentiate the pages is from DAX device
+>>>     memory
+>>>   kvm: add a check if pfn is from NVDIMM pmem.
+>>>
+>>>  drivers/dax/pmem.c       |  1 +
+>>>  include/linux/memremap.h |  9 +++++++++
+>>>  include/linux/mm.h       | 12 ++++++++++++
+>>>  virt/kvm/kvm_main.c      | 16 ++++++++--------
+>>>  4 files changed, 30 insertions(+), 8 deletions(-)
+>>>
+>>
 
