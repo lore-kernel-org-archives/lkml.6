@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D948ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6006ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44DB20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44DB20854
+	by mail.kernel.org (Postfix) with ESMTP id 5FE5120854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE5120854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388487AbeGTNUD (ORCPT
+        id S2388496AbeGTNUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:20:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39666 "EHLO
+        Fri, 20 Jul 2018 09:20:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39732 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731848AbeGTNUC (ORCPT
+        with ESMTP id S1731780AbeGTNUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:20:02 -0400
+        Fri, 20 Jul 2018 09:20:07 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 459AACAE;
-        Fri, 20 Jul 2018 12:30:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE0E9CBF;
+        Fri, 20 Jul 2018 12:30:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniele Iamartino <danielei@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 29/66] tcp: fix Fast Open key endianness
-Date:   Fri, 20 Jul 2018 14:13:46 +0200
-Message-Id: <20180720121408.957610653@linuxfoundation.org>
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>
+Subject: [PATCH 4.9 51/66] KVM: arm64: Avoid storing the vcpu pointer on the stack
+Date:   Fri, 20 Jul 2018 14:14:08 +0200
+Message-Id: <20180720121410.208640803@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -53,74 +52,244 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Christoffer Dall <christoffer.dall@linaro.org>
 
-[ Upstream commit c860e997e9170a6d68f9d1e6e2cf61f572191aaf ]
+Commit 4464e210de9e80e38de59df052fe09ea2ff80b1b upstream.
 
-Fast Open key could be stored in different endian based on the CPU.
-Previously hosts in different endianness in a server farm using
-the same key config (sysctl value) would produce different cookies.
-This patch fixes it by always storing it as little endian to keep
-same API for LE hosts.
+We already have the percpu area for the host cpu state, which points to
+the VCPU, so there's no need to store the VCPU pointer on the stack on
+every context switch.  We can be a little more clever and just use
+tpidr_el2 for the percpu offset and load the VCPU pointer from the host
+context.
 
-Reported-by: Daniele Iamartino <danielei@google.com>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This has the benefit of being able to retrieve the host context even
+when our stack is corrupted, and it has a potential performance benefit
+because we trade a store plus a load for an mrs and a load on a round
+trip to the guest.
+
+This does require us to calculate the percpu offset without including
+the offset from the kernel mapping of the percpu array to the linear
+mapping of the array (which is what we store in tpidr_el1), because a
+PC-relative generated address in EL2 is already giving us the hyp alias
+of the linear mapping of a kernel address.  We do this in
+__cpu_init_hyp_mode() by using kvm_ksym_ref().
+
+The code that accesses ESR_EL2 was previously using an alternative to
+use the _EL1 accessor on VHE systems, but this was actually unnecessary
+as the _EL1 accessor aliases the ESR_EL2 register on VHE, and the _EL2
+accessor does the same thing on both systems.
+
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Reviewed-by: Andrew Jones <drjones@redhat.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/sysctl_net_ipv4.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ arch/arm64/include/asm/kvm_asm.h  |   15 +++++++++++++++
+ arch/arm64/include/asm/kvm_host.h |   15 +++++++++++++++
+ arch/arm64/kernel/asm-offsets.c   |    1 +
+ arch/arm64/kvm/hyp/entry.S        |    6 +-----
+ arch/arm64/kvm/hyp/hyp-entry.S    |   28 ++++++++++------------------
+ arch/arm64/kvm/hyp/switch.c       |    5 +----
+ arch/arm64/kvm/hyp/sysreg-sr.c    |    5 +++++
+ 7 files changed, 48 insertions(+), 27 deletions(-)
 
---- a/net/ipv4/sysctl_net_ipv4.c
-+++ b/net/ipv4/sysctl_net_ipv4.c
-@@ -212,8 +212,9 @@ static int proc_tcp_fastopen_key(struct
+--- a/arch/arm64/include/asm/kvm_asm.h
++++ b/arch/arm64/include/asm/kvm_asm.h
+@@ -33,6 +33,7 @@
+ #define KVM_ARM64_DEBUG_DIRTY_SHIFT	0
+ #define KVM_ARM64_DEBUG_DIRTY		(1 << KVM_ARM64_DEBUG_DIRTY_SHIFT)
+ 
++/* Translate a kernel address of @sym into its equivalent linear mapping */
+ #define kvm_ksym_ref(sym)						\
+ 	({								\
+ 		void *val = &sym;					\
+@@ -65,6 +66,20 @@ extern u32 __kvm_get_mdcr_el2(void);
+ 
+ extern u32 __init_stage2_translation(void);
+ 
++#else /* __ASSEMBLY__ */
++
++.macro get_host_ctxt reg, tmp
++	adr_l	\reg, kvm_host_cpu_state
++	mrs	\tmp, tpidr_el2
++	add	\reg, \reg, \tmp
++.endm
++
++.macro get_vcpu_ptr vcpu, ctxt
++	get_host_ctxt \ctxt, \vcpu
++	ldr	\vcpu, [\ctxt, #HOST_CONTEXT_VCPU]
++	kern_hyp_va	\vcpu
++.endm
++
+ #endif
+ 
+ #endif /* __ARM_KVM_ASM_H__ */
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -356,10 +356,15 @@ int kvm_perf_teardown(void);
+ 
+ struct kvm_vcpu *kvm_mpidr_to_vcpu(struct kvm *kvm, unsigned long mpidr);
+ 
++void __kvm_set_tpidr_el2(u64 tpidr_el2);
++DECLARE_PER_CPU(kvm_cpu_context_t, kvm_host_cpu_state);
++
+ static inline void __cpu_init_hyp_mode(phys_addr_t pgd_ptr,
+ 				       unsigned long hyp_stack_ptr,
+ 				       unsigned long vector_ptr)
  {
- 	struct ctl_table tbl = { .maxlen = (TCP_FASTOPEN_KEY_LENGTH * 2 + 10) };
- 	struct tcp_fastopen_context *ctxt;
--	int ret;
- 	u32  user_key[4]; /* 16 bytes, matching TCP_FASTOPEN_KEY_LENGTH */
-+	__le32 key[4];
-+	int ret, i;
- 
- 	tbl.data = kmalloc(tbl.maxlen, GFP_KERNEL);
- 	if (!tbl.data)
-@@ -222,11 +223,14 @@ static int proc_tcp_fastopen_key(struct
- 	rcu_read_lock();
- 	ctxt = rcu_dereference(tcp_fastopen_ctx);
- 	if (ctxt)
--		memcpy(user_key, ctxt->key, TCP_FASTOPEN_KEY_LENGTH);
-+		memcpy(key, ctxt->key, TCP_FASTOPEN_KEY_LENGTH);
- 	else
--		memset(user_key, 0, sizeof(user_key));
-+		memset(key, 0, sizeof(key));
- 	rcu_read_unlock();
- 
-+	for (i = 0; i < ARRAY_SIZE(key); i++)
-+		user_key[i] = le32_to_cpu(key[i]);
++	u64 tpidr_el2;
 +
- 	snprintf(tbl.data, tbl.maxlen, "%08x-%08x-%08x-%08x",
- 		user_key[0], user_key[1], user_key[2], user_key[3]);
- 	ret = proc_dostring(&tbl, write, buffer, lenp, ppos);
-@@ -242,12 +246,16 @@ static int proc_tcp_fastopen_key(struct
- 		 * first invocation of tcp_fastopen_cookie_gen
- 		 */
- 		tcp_fastopen_init_key_once(false);
--		tcp_fastopen_reset_cipher(user_key, TCP_FASTOPEN_KEY_LENGTH);
+ 	/*
+ 	 * Call initialization code, and switch to the full blown HYP code.
+ 	 * If the cpucaps haven't been finalized yet, something has gone very
+@@ -368,6 +373,16 @@ static inline void __cpu_init_hyp_mode(p
+ 	 */
+ 	BUG_ON(!static_branch_likely(&arm64_const_caps_ready));
+ 	__kvm_call_hyp((void *)pgd_ptr, hyp_stack_ptr, vector_ptr);
 +
-+		for (i = 0; i < ARRAY_SIZE(user_key); i++)
-+			key[i] = cpu_to_le32(user_key[i]);
++	/*
++	 * Calculate the raw per-cpu offset without a translation from the
++	 * kernel's mapping to the linear mapping, and store it in tpidr_el2
++	 * so that we can use adr_l to access per-cpu variables in EL2.
++	 */
++	tpidr_el2 = (u64)this_cpu_ptr(&kvm_host_cpu_state)
++		- (u64)kvm_ksym_ref(kvm_host_cpu_state);
 +
-+		tcp_fastopen_reset_cipher(key, TCP_FASTOPEN_KEY_LENGTH);
- 	}
++	kvm_call_hyp(__kvm_set_tpidr_el2, tpidr_el2);
+ }
  
- bad_key:
- 	pr_debug("proc FO key set 0x%x-%x-%x-%x <- 0x%s: %u\n",
--	       user_key[0], user_key[1], user_key[2], user_key[3],
-+		 user_key[0], user_key[1], user_key[2], user_key[3],
- 	       (char *)tbl.data, ret);
- 	kfree(tbl.data);
- 	return ret;
+ void __kvm_hyp_teardown(void);
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -132,6 +132,7 @@ int main(void)
+   DEFINE(CPU_FP_REGS,		offsetof(struct kvm_regs, fp_regs));
+   DEFINE(VCPU_FPEXC32_EL2,	offsetof(struct kvm_vcpu, arch.ctxt.sys_regs[FPEXC32_EL2]));
+   DEFINE(VCPU_HOST_CONTEXT,	offsetof(struct kvm_vcpu, arch.host_cpu_context));
++  DEFINE(HOST_CONTEXT_VCPU,	offsetof(struct kvm_cpu_context, __hyp_running_vcpu));
+ #endif
+ #ifdef CONFIG_CPU_PM
+   DEFINE(CPU_SUSPEND_SZ,	sizeof(struct cpu_suspend_ctx));
+--- a/arch/arm64/kvm/hyp/entry.S
++++ b/arch/arm64/kvm/hyp/entry.S
+@@ -62,9 +62,6 @@ ENTRY(__guest_enter)
+ 	// Store the host regs
+ 	save_callee_saved_regs x1
+ 
+-	// Store host_ctxt and vcpu for use at exit time
+-	stp	x1, x0, [sp, #-16]!
+-
+ 	add	x18, x0, #VCPU_CONTEXT
+ 
+ 	// Restore guest regs x0-x17
+@@ -118,8 +115,7 @@ ENTRY(__guest_exit)
+ 	// Store the guest regs x19-x29, lr
+ 	save_callee_saved_regs x1
+ 
+-	// Restore the host_ctxt from the stack
+-	ldr	x2, [sp], #16
++	get_host_ctxt	x2, x3
+ 
+ 	// Now restore the host regs
+ 	restore_callee_saved_regs x2
+--- a/arch/arm64/kvm/hyp/hyp-entry.S
++++ b/arch/arm64/kvm/hyp/hyp-entry.S
+@@ -72,13 +72,8 @@ ENDPROC(__kvm_hyp_teardown)
+ el1_sync:				// Guest trapped into EL2
+ 	stp	x0, x1, [sp, #-16]!
+ 
+-alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
+-	mrs	x1, esr_el2
+-alternative_else
+-	mrs	x1, esr_el1
+-alternative_endif
+-	lsr	x0, x1, #ESR_ELx_EC_SHIFT
+-
++	mrs	x0, esr_el2
++	lsr	x0, x0, #ESR_ELx_EC_SHIFT
+ 	cmp	x0, #ESR_ELx_EC_HVC64
+ 	ccmp	x0, #ESR_ELx_EC_HVC32, #4, ne
+ 	b.ne	el1_trap
+@@ -118,10 +113,14 @@ el1_hvc_guest:
+ 	eret
+ 
+ el1_trap:
++	get_vcpu_ptr	x1, x0
++
++	mrs		x0, esr_el2
++	lsr		x0, x0, #ESR_ELx_EC_SHIFT
+ 	/*
+ 	 * x0: ESR_EC
++	 * x1: vcpu pointer
+ 	 */
+-	ldr	x1, [sp, #16 + 8]	// vcpu stored by __guest_enter
+ 
+ 	/* Guest accessed VFP/SIMD registers, save host, restore Guest */
+ 	cmp	x0, #ESR_ELx_EC_FP_ASIMD
+@@ -132,13 +131,13 @@ el1_trap:
+ 
+ el1_irq:
+ 	stp     x0, x1, [sp, #-16]!
+-	ldr	x1, [sp, #16 + 8]
++	get_vcpu_ptr	x1, x0
+ 	mov	x0, #ARM_EXCEPTION_IRQ
+ 	b	__guest_exit
+ 
+ el1_error:
+ 	stp     x0, x1, [sp, #-16]!
+-	ldr	x1, [sp, #16 + 8]
++	get_vcpu_ptr	x1, x0
+ 	mov	x0, #ARM_EXCEPTION_EL1_SERROR
+ 	b	__guest_exit
+ 
+@@ -174,14 +173,7 @@ ENTRY(__hyp_do_panic)
+ ENDPROC(__hyp_do_panic)
+ 
+ ENTRY(__hyp_panic)
+-	/*
+-	 * '=kvm_host_cpu_state' is a host VA from the constant pool, it may
+-	 * not be accessible by this address from EL2, hyp_panic() converts
+-	 * it with kern_hyp_va() before use.
+-	 */
+-	ldr	x0, =kvm_host_cpu_state
+-	mrs	x1, tpidr_el2
+-	add	x0, x0, x1
++	get_host_ctxt x0, x1
+ 	b	hyp_panic
+ ENDPROC(__hyp_panic)
+ 
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -395,7 +395,7 @@ static hyp_alternate_select(__hyp_call_p
+ 			    __hyp_call_panic_nvhe, __hyp_call_panic_vhe,
+ 			    ARM64_HAS_VIRT_HOST_EXTN);
+ 
+-void __hyp_text __noreturn hyp_panic(struct kvm_cpu_context *__host_ctxt)
++void __hyp_text __noreturn hyp_panic(struct kvm_cpu_context *host_ctxt)
+ {
+ 	struct kvm_vcpu *vcpu = NULL;
+ 
+@@ -404,9 +404,6 @@ void __hyp_text __noreturn hyp_panic(str
+ 	u64 par = read_sysreg(par_el1);
+ 
+ 	if (read_sysreg(vttbr_el2)) {
+-		struct kvm_cpu_context *host_ctxt;
+-
+-		host_ctxt = kern_hyp_va(__host_ctxt);
+ 		vcpu = host_ctxt->__hyp_running_vcpu;
+ 		__timer_save_state(vcpu);
+ 		__deactivate_traps(vcpu);
+--- a/arch/arm64/kvm/hyp/sysreg-sr.c
++++ b/arch/arm64/kvm/hyp/sysreg-sr.c
+@@ -183,3 +183,8 @@ void __hyp_text __sysreg32_restore_state
+ 	if (vcpu->arch.debug_flags & KVM_ARM64_DEBUG_DIRTY)
+ 		write_sysreg(sysreg[DBGVCR32_EL2], dbgvcr32_el2);
+ }
++
++void __hyp_text __kvm_set_tpidr_el2(u64 tpidr_el2)
++{
++	asm("msr tpidr_el2, %0": : "r" (tpidr_el2));
++}
 
 
