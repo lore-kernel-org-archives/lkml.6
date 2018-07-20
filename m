@@ -6,121 +6,96 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99811ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C0CECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB0120652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:46:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB0120652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DCDF5206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:46:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCDF5206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390448AbeGTNeO (ORCPT
+        id S2390464AbeGTNeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:34:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56570 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389332AbeGTNeN (ORCPT
+        Fri, 20 Jul 2018 09:34:15 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:6237 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389332AbeGTNeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:34:13 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DDAC8D93;
-        Fri, 20 Jul 2018 12:40:24 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 4.17 067/101] PCI: hv: Disable/enable IRQs rather than BH in hv_compose_msi_msg()
-Date:   Fri, 20 Jul 2018 14:14:13 +0200
-Message-Id: <20180720121426.160586921@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
-References: <20180720121422.837870592@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 20 Jul 2018 09:34:15 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b51d9980000>; Fri, 20 Jul 2018 05:46:16 -0700
+Received: from HQMAIL104.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 20 Jul 2018 05:46:09 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 20 Jul 2018 05:46:09 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 20 Jul
+ 2018 12:46:08 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Fri, 20 Jul 2018 12:46:08 +0000
+Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b51d98e0000>; Fri, 20 Jul 2018 05:46:08 -0700
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+CC:     <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH 5/7] arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
+Date:   Fri, 20 Jul 2018 15:45:44 +0300
+Message-ID: <1532090746-15863-6-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1532090746-15863-1-git-send-email-avienamo@nvidia.com>
+References: <1532090746-15863-1-git-send-email-avienamo@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Set regulator-min-microvolt property of ldo2 to 1.8 V in
+tegra210-p2180.dtsi. ldo2 is used by the sdmmc1 SDHCI controller and its
+voltage needs to be adjusted down to 1.8 V to support faster signaling
+modes. It appears that the comment about the SDHCI driver requesting
+invalid voltages no longer applies.
 
-------------------
-
-From: Dexuan Cui <decui@microsoft.com>
-
-commit 35a88a18d7ea58600e11590405bc93b08e16e7f5 upstream.
-
-Commit de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in hv_compose_msi_msg()")
-uses local_bh_disable()/enable(), because hv_pci_onchannelcallback() can
-also run in tasklet context as the channel event callback, so bottom halves
-should be disabled to prevent a race condition.
-
-With CONFIG_PROVE_LOCKING=y in the recent mainline, or old kernels that
-don't have commit f71b74bca637 ("irq/softirqs: Use lockdep to assert IRQs
-are disabled/enabled"), when the upper layer IRQ code calls
-hv_compose_msi_msg() with local IRQs disabled, we'll see a warning at the
-beginning of __local_bh_enable_ip():
-
-  IRQs not enabled as expected
-    WARNING: CPU: 0 PID: 408 at kernel/softirq.c:162 __local_bh_enable_ip
-
-The warning exposes an issue in de0aa7b2f97d: local_bh_enable() can
-potentially call do_softirq(), which is not supposed to run when local IRQs
-are disabled. Let's fix this by using local_irq_save()/restore() instead.
-
-Note: hv_pci_onchannelcallback() is not a hot path because it's only called
-when the PCI device is hot added and removed, which is infrequent.
-
-Fixes: de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in hv_compose_msi_msg()")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: stable@vger.kernel.org
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 ---
- drivers/pci/host/pci-hyperv.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -1077,6 +1077,7 @@ static void hv_compose_msi_msg(struct ir
- 	struct pci_bus *pbus;
- 	struct pci_dev *pdev;
- 	struct cpumask *dest;
-+	unsigned long flags;
- 	struct compose_comp_ctxt comp;
- 	struct tran_int_desc *int_desc;
- 	struct {
-@@ -1168,14 +1169,15 @@ static void hv_compose_msi_msg(struct ir
- 		 * the channel callback directly when channel->target_cpu is
- 		 * the current CPU. When the higher level interrupt code
- 		 * calls us with interrupt enabled, let's add the
--		 * local_bh_disable()/enable() to avoid race.
-+		 * local_irq_save()/restore() to avoid race:
-+		 * hv_pci_onchannelcallback() can also run in tasklet.
- 		 */
--		local_bh_disable();
-+		local_irq_save(flags);
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 212e663..8496101 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -178,16 +178,7 @@
  
- 		if (hbus->hdev->channel->target_cpu == smp_processor_id())
- 			hv_pci_onchannelcallback(hbus);
- 
--		local_bh_enable();
-+		local_irq_restore(flags);
- 
- 		if (hpdev->state == hv_pcichild_ejecting) {
- 			dev_err_once(&hbus->hdev->device,
-
+ 				vddio_sdmmc: ldo2 {
+ 					regulator-name = "VDDIO_SDMMC";
+-					/*
+-					 * Technically this supply should have
+-					 * a supported range from 1.8 - 3.3 V.
+-					 * However, that would cause the SDHCI
+-					 * driver to request 2.7 V upon access
+-					 * and that in turn will cause traffic
+-					 * to be broken. Leave it at 3.3 V for
+-					 * now.
+-					 */
+-					regulator-min-microvolt = <3300000>;
++					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <3300000>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+-- 
+2.7.4
 
