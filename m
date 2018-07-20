@@ -2,123 +2,100 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237D0ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EC7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD30B20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKWDzWg4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD30B20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D27F520661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:28:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D27F520661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darmarit.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387974AbeGTRRF (ORCPT
+        id S2388020AbeGTRRP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:17:05 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34218 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733198AbeGTRRF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:17:05 -0400
-Received: by mail-pl0-f66.google.com with SMTP id f6-v6so5410746plo.1;
-        Fri, 20 Jul 2018 09:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DDljZacJxZG2OWdhiAliNYhkc3j//3d2iZVEuKfWFo4=;
-        b=VKWDzWg4BP3O0Vna+Lbn6/drPlGNHhZqLOeBmsdmN8nYRyNabC/gGIpHqvXx4cI5if
-         DW5zZXiRHXqG9R5Z3JEFDTmZ8WMJsS0AEcTSdIWyE3AyTYq4ptWi7glmRuYkJqfPueuD
-         HFnLUOGnQQwXajCJ7swrzqK2VnvqEUfj/Wm3uimJXEUJYXpOQXT6au5VUArfah5SFlZ2
-         cY4qrsMYgTjSyCKlfta5QBoE3G64kiViySRDyhCEEHenModjl41UO5IARMvmpsj/hqxM
-         EZrwc7RZ86MdSefaJx1PaG+WwRtqrw5acFyyt83cgorCoMUZPCeGyeGxSdNis6QFSEEk
-         FKzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DDljZacJxZG2OWdhiAliNYhkc3j//3d2iZVEuKfWFo4=;
-        b=dcqj8Xa62s7/Kkm8jgCHyguZff3YPCJxgKj72efdFe+Vi6suPSkOHbBdVyx9JUpZWD
-         ibJgYDdRO8jAnS21uehLv0VGF7vBmf9TVbMfbWBBHK6ENfr/KIeSyZMkpiut2+J2u1A8
-         jVOtJ0M6ssDIoz9pvbgWshFYUB9s4u2h1pfVFYtq6t5at1104k8teW4kmTUpjG/I92tl
-         EI/zLSRuzIyZXRhfTMrs2cWmWCC9wmeTZq8NxJx3BeAc1dDM6ynkgFZZ9bUAVMnuCk2p
-         cz4Dbhj7VWZizse++0iaduLfJaP1/11kWGK4Xeb7TW65BaUobKryGOOmuryno8jaZ/Xr
-         xRWQ==
-X-Gm-Message-State: AOUpUlGVQolCuGudjhc9pwbcNmWBb4XTi+jgtlMvmjcyQEt/jBMPPYyg
-        M1pV8a8wZqXK9hS1AqY4WC1bAlhNFvk=
-X-Google-Smtp-Source: AAOMgpf6W8lpgxf3Vhppst+YlAlrOOXmH7Zk8DecoUCoGUtVPVEatgoxgx8Wpcp6Cejt9mAgi2rGSw==
-X-Received: by 2002:a17:902:143:: with SMTP id 61-v6mr2708528plb.171.1532104084028;
-        Fri, 20 Jul 2018 09:28:04 -0700 (PDT)
-Received: from localhost ([223.72.65.191])
-        by smtp.gmail.com with ESMTPSA id w5-v6sm3035061pfn.44.2018.07.20.09.28.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 09:28:03 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH v4 1/6] KVM: X86: Add kvm hypervisor init time platform setup callback
-Date:   Sat, 21 Jul 2018 00:25:33 +0800
-Message-Id: <1532103933-15617-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Jul 2018 13:17:15 -0400
+Received: from smtp2-2.goneo.de ([85.220.129.34]:50822 "EHLO smtp2-2.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733198AbeGTRRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:17:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.goneo.de (Postfix) with ESMTP id 241A323F3C4;
+        Fri, 20 Jul 2018 18:28:11 +0200 (CEST)
+X-Virus-Scanned: by goneo
+Received: from smtp2.goneo.de ([127.0.0.1])
+        by localhost (smtp2.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id RSnng9x4hlVA; Fri, 20 Jul 2018 18:28:10 +0200 (CEST)
+Received: from ryzen (dyndsl-091-248-138-213.ewe-ip-backbone.de [91.248.138.213])
+        by smtp2.goneo.de (Postfix) with ESMTPSA id BA8ED23EFCC;
+        Fri, 20 Jul 2018 18:28:09 +0200 (CEST)
+Message-ID: <1cc801608a1e71b54fe97aae6f5ad2a0024e8e5d.camel@darmarit.de>
+Subject: Re: Sphinx version dependencies?
+From:   Markus Heiser <markus.heiser@darmarit.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 20 Jul 2018 18:28:09 +0200
+In-Reply-To: <20180720150402.GA32320@infradead.org>
+References: <20180719181556.GA21435@thunk.org>
+         <20180719190400.GB4800@magnolia>
+         <44d73cd9926f58976a1269ff3cd3afb845ec84fa.camel@darmarit.de>
+         <20180720150402.GA32320@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Am Freitag, den 20.07.2018, 08:04 -0700 schrieb Christoph Hellwig:
+> On Fri, Jul 20, 2018 at 09:30:33AM +0200, Markus Heiser wrote:
+> > We have this discussion over and over again an I believe we will have it again
+> > and again, as long as we do not change our POV .. building viewing formats is
+> > an application not a part of the Kernel.
+> 
+> Sorry, but this is complete and utter bullshit.
 
-Add kvm hypervisor init time platform setup callback which
-will be used to replace native apic hooks by pararvirtual
-hooks.
+Maybe .. I'am not a Kernel developer .. I only try to help with the doc tool-
+chain. But if I don't want to install anything from the web, the plain text
+is not as bad.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kernel/kvm.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> 
+> If that was the case we could skip all that RST stuff and just stick
+> to text files.  If we want fancy docs it better behave like the rest
+> of the kernel and just works.  python virtual environments are just
+> not going to cut it as they lead to a long-term maintainance nightmare.
 
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 5b2300b..591bcf2 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -624,12 +624,22 @@ static uint32_t __init kvm_detect(void)
- 	return kvm_cpuid_base();
- }
- 
-+static void __init kvm_apic_init(void)
-+{
-+}
-+
-+static void __init kvm_init_platform(void)
-+{
-+	x86_platform.apic_post_init = kvm_apic_init;
-+}
-+
- const __initconst struct hypervisor_x86 x86_hyper_kvm = {
- 	.name			= "KVM",
- 	.detect			= kvm_detect,
- 	.type			= X86_HYPER_KVM,
- 	.init.guest_late_init	= kvm_guest_init,
- 	.init.x2apic_available	= kvm_para_available,
-+	.init.init_platform	= kvm_init_platform,
- };
- 
- static __init int activate_jump_labels(void)
--- 
-2.7.4
+Really a nightmare? This is what I do on my ubuntu/debian box ... I do
+prefer py3 so I installed *virtualenv-py3* once from distro's package
+manager:
 
+$ sudo apt install python3-virtualenv
+
+To setup up a environment for building htmldocs:
+
+$ python3 -m virtualenv py3env
+$ ./py3env/bin/pip install -r ./Documentation/sphinx/requirements.txt
+
+now I have all installed in the in the py3env folder. To build htmldocs
+with:
+
+ $ SPHINXBUILD=./py3env/bin/sphinx-build make htmldocs
+
+If the env is no longer needed:
+
+ $ rm -r py3env
+
+ -- Markus --
+
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-doc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
