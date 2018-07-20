@@ -6,92 +6,83 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6D4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B194ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89A79206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:02:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A79206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A99C206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:02:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A99C206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728125AbeGTItM (ORCPT
+        id S1728155AbeGTItS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:49:12 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9465 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbeGTItL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:49:11 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b5197080000>; Fri, 20 Jul 2018 01:02:16 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 20 Jul 2018 01:02:05 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 20 Jul 2018 01:02:05 -0700
-Received: from [10.21.132.122] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 20 Jul
- 2018 08:02:06 +0000
-Subject: Re: [PATCH v1] memory: tegra: Don't invoke Tegra30+ specific memory
- timing setup on Tegra20
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180719132453.16860-1-digetx@gmail.com>
- <39607791-3e71-7784-37db-4e05a316d7a8@nvidia.com>
- <31916977.CHrX6e343J@dimapc>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <b0403eb2-2494-1924-dbe6-7a6019b6364d@nvidia.com>
-Date:   Fri, 20 Jul 2018 09:02:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 20 Jul 2018 04:49:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37558 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727176AbeGTItS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:49:18 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0D983401EF2E;
+        Fri, 20 Jul 2018 08:02:15 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (ovpn-204-189.brq.redhat.com [10.40.204.189])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 264207C52;
+        Fri, 20 Jul 2018 08:02:11 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Rik van Riel <riel@surriel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Mike Galbraith <efault@gmx.de>,
+        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
+References: <20180716190337.26133-1-riel@surriel.com>
+        <20180716190337.26133-5-riel@surriel.com>
+        <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com>
+        <B6566AA4-2E8A-43BD-A224-0F6D4747B8FB@surriel.com>
+        <F93A3335-4830-4E36-9179-D0FA5D640C8A@amacapital.net>
+        <B976CC13-D014-433A-83DE-F8DF9AB4F421@surriel.com>
+        <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
+Date:   Fri, 20 Jul 2018 10:02:10 +0200
+In-Reply-To: <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
+        (Andy Lutomirski's message of "Thu, 19 Jul 2018 09:45:47 -0700")
+Message-ID: <87muumtjwd.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <31916977.CHrX6e343J@dimapc>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 08:02:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 08:02:15 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Andy Lutomirski <luto@amacapital.net> writes:
 
-On 19/07/18 16:38, Dmitry Osipenko wrote:
-> On Thursday, 19 July 2018 18:30:48 MSK Jon Hunter wrote:
->> On 19/07/18 14:24, Dmitry Osipenko wrote:
->>> This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
->>> timings for RAM code 0 registered" warning message during of kernels
->>> boot-up on Tegra20.
->>
->> Looking at the tegra20-emc.txt bindings doc [0], the 'nvidia,ram-code'
->> property is also valid for Tegra20. In fact, I see this warning on the
->> Tegra30 Cardhu because this property is not populated. So I think that
->> this warning is valid and harmless.
->>
->> Cheers
->> Jon
->>
->> [0] Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-> 
-> That is the irrelevant binding, the relevant one for this driver is [0]. The 
-> warning is valid for T30+, but not for T20.
-> 
-> [0] Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+> [I added PeterZ and Vitaly -- can you see any way in which this would
+> break something obscure?  I don't.]
 
-Yes indeed, looks like we never supported this for Tegra20. OK, fine with me
-I guess this was introduced during the consolidation of the MC drivers. Can
-you add the appropriate fixes tag?
+Thanks for CCing me,
 
-Otherwise ...
+I don't see how this can break things either. At first glance, however,
+I'm afraid we can add performance penalty to virtualized guests which
+don't use native_flush_tlb_others() (Hyper-V, KVM): we will be reloading
+CR3 without a need as we don't look at lazy mode in PV tlb flush
+functions.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+We can either check to switch_mm_irqs_off() that
+native_flush_tlb_others() is in use or teach PV tlb flush functions to
+look at lazy mode too.
 
-Cheers
-Jon
+(Sorry if I'm missing something important here or if this was already
+discussed. I just became aware of this work)
+
+[...]
 
 -- 
-nvpublic
+  Vitaly
