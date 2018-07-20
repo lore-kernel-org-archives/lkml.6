@@ -4,234 +4,184 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56424ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5DBECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA82C206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29477205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:08:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jQdy7/ki"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA82C206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Q7FJMDbH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29477205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731678AbeGTOzt (ORCPT
+        id S1731797AbeGTO4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 10:55:49 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35965 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731000AbeGTOzt (ORCPT
+        Fri, 20 Jul 2018 10:56:52 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:48188 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731251AbeGTO4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 10:55:49 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h9-v6so11483992wro.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 07:07:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3aBH3Auw0nDb/jP2lXlkT5e9tLD44GenlLCmj5VqHQw=;
-        b=jQdy7/kiGqbnV93zCW3Yf+Y8GbMt5ozKJWV7Kjx0qG5gMzOrxBhsOTU4M0ryG01JoV
-         Cavr14LGnusNqsZonp8s9PnFvHzTupAmKVBmL21pRAhlgI74juO6J05dj9yHGoJc35B9
-         1qiQGvhAo62ssMle1vDiKxvFv7bs0Hw7OyDBU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3aBH3Auw0nDb/jP2lXlkT5e9tLD44GenlLCmj5VqHQw=;
-        b=rutnBISG6Fwk5Dkjk9tBAbJ9x9FskhryHC/Vs31hagxfdjWwIOov65VhVFjnUmLiZH
-         MZE2aV55g92u3yNpZ7mCBuMEl73GqCJcE2uAK7jjir0T1TKXJtBW3qBMhAPF1jVEPkJb
-         xoIOCMnOe5R2zhVblelqOGJzbhCSh2BibPUTS958WmUfvRc1tBf5J/SPxgLD+jr70CgT
-         LI3TgTgXmekcLQjElegPh1DUDofo6Dgf/EagAg4qgNh0xPgE3YSyR4wTBanIqqaCYkdk
-         2vdtkiPRLfs03a1JxC6REVUXQzQu8rZtFnFOYjyx4/Ef8zX8sI4fBUW6nulHHV2YTmwH
-         tSYA==
-X-Gm-Message-State: AOUpUlE0OehqOqPRvNXyL5T/9lT/CSFCmcbPSJsL/szon3P3sdYcIc6H
-        cmiLqcetBjtRe77SSCDrsnaPNw==
-X-Google-Smtp-Source: AAOMgpc/YK4bb/PvFhjN5mTVO6kJSc6+XdJCuzJeG4rGgGjBm7NmZL1+U9Ugc6BFfCRycWJxoxqA5w==
-X-Received: by 2002:a5d:4643:: with SMTP id j3-v6mr1592938wrs.52.1532095639973;
-        Fri, 20 Jul 2018 07:07:19 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.googlemail.com with ESMTPSA id o8-v6sm2050255wro.68.2018.07.20.07.07.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 07:07:18 -0700 (PDT)
-Subject: Re: [PATCH V4 7/8] backlight: qcom-wled: add support for short
- circuit handling
-To:     Kiran Gunda <kgunda@codeaurora.org>, bjorn.andersson@linaro.org,
-        jingoohan1@gmail.com, lee.jones@linaro.org,
-        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org
-References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
- <1531131741-19971-8-git-send-email-kgunda@codeaurora.org>
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <1a708fea-0759-fcd0-d169-a36e21c31c28@linaro.org>
-Date:   Fri, 20 Jul 2018 15:07:17 +0100
+        Fri, 20 Jul 2018 10:56:51 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6KE4IRg104068;
+        Fri, 20 Jul 2018 14:08:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=iLLuDLqOBleWQw8lW1mHtAl/90RlX3P7S2MHp+OPSTs=;
+ b=Q7FJMDbHje0L5vf/G56rOBYOj2x0CR9nQ1Z84Jpst5LcWJqVOIG3YRZ7Ch8WiOqRjjds
+ GfeovjNnDqBalLUFvfpixJaIDxxh+FPVgc0sr7HeSTysll480SeDgxo+ieQuhRSQQzhm
+ iFw7uWBhXA4TsQkZS9E095h46spXRCIPut6EzfCRneelA0ogC5d1Ehv8zWsrZhfb4Cux
+ 2kEGsOiVK421DRp6TgObI9QU8AM5ac2IVHZV4MatCrg8ydEn24tXLFpjYGh8OYUHJHUC
+ GEJnSKUjKd9SNIIpQBl4fXd7jLEPKNSpJTU1L79WeTFXbhhACI9sRBMk3bGuINk+QSkF gQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2k7a3tew61-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Jul 2018 14:08:11 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6KE8AMo006686
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Jul 2018 14:08:10 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6KE89Dh028894;
+        Fri, 20 Jul 2018 14:08:09 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 20 Jul 2018 07:08:09 -0700
+Subject: Re: [PATCH v5 0/8] xen: dma-buf support for grant device
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180720090150.24560-1-andr2000@gmail.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <019c0eb6-8185-d888-ae6f-305ea2d44124@oracle.com>
+Date:   Fri, 20 Jul 2018 10:08:36 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1531131741-19971-8-git-send-email-kgunda@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180720090150.24560-1-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8959 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807200160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/18 11:22, Kiran Gunda wrote:
-> Handle the short circuit interrupt and check if the short circuit
-> interrupt is valid. Re-enable the module to check if it goes
-> away. Disable the module altogether if the short circuit event
-> persists.
-> 
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> Changes from V3:
-> 	- Added Reviewed by tag.
-> 	- Addressed minor comments from Vinod
-> 
->   drivers/video/backlight/qcom-wled.c | 132 ++++++++++++++++++++++++++++++++++--
->   1 file changed, 128 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-> index 362d254..a14f1a6 100644
-> --- a/drivers/video/backlight/qcom-wled.c
-> +++ b/drivers/video/backlight/qcom-wled.c
-> @@ -10,6 +10,9 @@
->    * GNU General Public License for more details.
->    */
->   
-> +#include <linux/delay.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/ktime.h>
->   #include <linux/kernel.h>
->   #include <linux/backlight.h>
->   #include <linux/module.h>
-> @@ -64,6 +67,16 @@
->   #define WLED3_SINK_REG_STR_CABC(n)			(0x66 + (n * 0x10))
->   #define  WLED3_SINK_REG_STR_CABC_MASK			BIT(7)
->   
-> +/* WLED4 specific control registers */
-> +#define WLED4_CTRL_REG_SHORT_PROTECT			0x5e
-> +#define  WLED4_CTRL_REG_SHORT_EN_MASK			BIT(7)
-> +
-> +#define WLED4_CTRL_REG_SEC_ACCESS			0xd0
-> +#define  WLED4_CTRL_REG_SEC_UNLOCK			0xa5
-> +
-> +#define WLED4_CTRL_REG_TEST1				0xe2
-> +#define  WLED4_CTRL_REG_TEST1_EXT_FET_DTEST2		0x09
-> +
->   /* WLED4 specific sink registers */
->   #define WLED4_SINK_REG_CURR_SINK			0x46
->   #define  WLED4_SINK_REG_CURR_SINK_MASK			GENMASK(7, 4)
-> @@ -113,17 +126,23 @@ struct wled_config {
->   	bool cs_out_en;
->   	bool ext_gen;
->   	bool cabc;
-> +	bool external_pfet;
->   };
->   
->   struct wled {
->   	const char *name;
->   	struct device *dev;
->   	struct regmap *regmap;
-> +	struct mutex lock;	/* Lock to avoid race from thread irq handler */
-> +	ktime_t last_short_event;
->   	u16 ctrl_addr;
->   	u16 sink_addr;
->   	u16 max_string_count;
->   	u32 brightness;
->   	u32 max_brightness;
-> +	u32 short_count;
-> +	bool disabled_by_short;
-> +	bool has_short_detect;
->   
->   	struct wled_config cfg;
->   	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
-> @@ -174,6 +193,9 @@ static int wled_module_enable(struct wled *wled, int val)
->   {
->   	int rc;
->   
-> +	if (wled->disabled_by_short)
-> +		return -EFAULT;
-
-EFAULT means bad address (memory fault). Perhaps EIO or maybe even 
-something more exotic like ENXIO might be more appropriate?
+On 07/20/2018 05:01 AM, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>
+> This work is in response to my previous attempt to introduce Xen/DRM
+> zero-copy driver [1] to enable Linux dma-buf API [2] for Xen based
+> frontends/backends. There is also an existing hyper_dmabuf approach
+> available [3] which, if reworked to utilize the proposed solution,
+> can greatly benefit as well.
 
 
-> +
->   	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
->   				WLED_CTRL_REG_MOD_EN,
->   				WLED_CTRL_REG_MOD_EN_MASK,
-> @@ -210,18 +232,19 @@ static int wled_update_status(struct backlight_device *bl)
->   	    bl->props.state & BL_CORE_FBBLANK)
->   		brightness = 0;
->   
-> +	mutex_lock(&wled->lock);
->   	if (brightness) {
->   		rc = wled->wled_set_brightness(wled, brightness);
->   		if (rc < 0) {
->   			dev_err(wled->dev, "wled failed to set brightness rc:%d\n",
->   				rc);
-> -			return rc;
-> +			goto unlock_mutex;
->   		}
->   
->   		rc = wled_sync_toggle(wled);
->   		if (rc < 0) {
->   			dev_err(wled->dev, "wled sync failed rc:%d\n", rc);
-> -			return rc;
-> +			goto unlock_mutex;
->   		}
->   	}
->   
-> @@ -229,15 +252,61 @@ static int wled_update_status(struct backlight_device *bl)
->   		rc = wled_module_enable(wled, !!brightness);
->   		if (rc < 0) {
->   			dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
-> -			return rc;
-> +			goto unlock_mutex;
->   		}
->   	}
->   
->   	wled->brightness = brightness;
->   
-> +unlock_mutex:
-> +	mutex_unlock(&wled->lock);
-> +
->   	return rc;
->   }
->   
-> +#define WLED_SHORT_DLY_MS			20
-> +#define WLED_SHORT_CNT_MAX			5
-> +#define WLED_SHORT_RESET_CNT_DLY_US		USEC_PER_SEC
-> +
-> +static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
-> +{
-> +	struct wled *wled = _wled;
-> +	int rc;
-> +	s64 elapsed_time;
-> +
-> +	wled->short_count++;
-> +	mutex_lock(&wled->lock);
-> +	rc = wled_module_enable(wled, false);
-> +	if (rc < 0) {
-> +		dev_err(wled->dev, "wled disable failed rc:%d\n", rc);
-> +		goto unlock_mutex;
-> +	}
-> +
-> +	elapsed_time = ktime_us_delta(ktime_get(),
-> +				      wled->last_short_event);
-> +	if (elapsed_time > WLED_SHORT_RESET_CNT_DLY_US)
-> +		wled->short_count = 0;
+Lot of warnings on  i386 build:
 
-Shouldn't this reset to 1 (e.g. we have just seen a short).
+In file included from
+/data/upstream/linux-xen/drivers/gpu/drm/xen/xen_drm_front.c:24:
+/data/upstream/linux-xen/drivers/gpu/drm/xen/xen_drm_front.h: In
+function ‘xen_drm_front_fb_to_cookie’:
+/data/upstream/linux-xen/drivers/gpu/drm/xen/xen_drm_front.h:129:9:
+warning: cast from pointer to integer of different size
+[-Wpointer-to-int-cast]
+  return (u64)fb;
+         ^
+/data/upstream/linux-xen/drivers/gpu/drm/xen/xen_drm_front.h: In
+function ‘xen_drm_front_dbuf_to_cookie’:
+/data/upstream/linux-xen/drivers/gpu/drm/xen/xen_drm_front.h:134:9:
+warning: cast from pointer to integer of different size
+[-Wpointer-to-int-cast]
+  return (u64)gem_obj;
+         ^
+  CC [M]  net/netfilter/ipset/ip_set_hash_ipport.o
+  CC      drivers/media/rc/keymaps/rc-tango.o
+  CC [M]  drivers/gpu/drm/vmwgfx/vmwgfx_fifo.o
+  AR      drivers/misc/built-in.a
+In file included from
+/data/upstream/linux-xen/drivers/gpu/drm/xen/xen_drm_front_kms.c:20:
+/data/upstream/linux-xen/drivers/gpu/drm/xen/xen_drm_front.h: In
+function ‘xen_drm_front_fb_to_cookie’:
+  CC [M]  drivers/gpu/drm/xen/xen_drm_front_conn.o
+/data/upstream/linux-xen/drivers/gpu/drm/xen/xen_drm_front.h:129:9:
+warning: cast from pointer to integer of different size
+[-Wpointer-to-int-cast]
+  return (u64)fb;
+(and more)
 
 
-Daniel.
+
+and then
+
+data/upstream/linux-xen/drivers/xen/gntdev-dmabuf.c: In function
+‘gntdev_ioctl_dmabuf_exp_from_refs’:
+/data/upstream/linux-xen/drivers/xen/gntdev-dmabuf.c:503:6: warning:
+‘args.fd’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  *fd = args.fd;
+  ~~~~^~~~~~~~~
+/data/upstream/linux-xen/drivers/xen/gntdev-dmabuf.c:467:35: note:
+‘args.fd’ was declared here
+  struct gntdev_dmabuf_export_args args;
+                                   ^~~~
+
+
+-boris
