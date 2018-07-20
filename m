@@ -3,138 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD89ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BD1ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C2EC20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:23:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2EC20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 37A3520652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:24:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A3520652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbeGTJKt (ORCPT
+        id S1728368AbeGTJLK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 05:10:49 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38283 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728236AbeGTJKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:10:49 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 831A8207AD; Fri, 20 Jul 2018 10:23:39 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 33EF420618;
-        Fri, 20 Jul 2018 10:23:39 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 10:23:39 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
-Subject: Re: [PATCH 2/2] sparc64: add reads{b,w,l}/writes{b,w,l}
-Message-ID: <20180720102339.22c9aa57@bbrezillon>
-In-Reply-To: <20180711120824.3882108-2-arnd@arndb.de>
-References: <20180711120824.3882108-1-arnd@arndb.de>
-        <20180711120824.3882108-2-arnd@arndb.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 20 Jul 2018 05:11:10 -0400
+Received: from www62.your-server.de ([213.133.104.62]:32904 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727383AbeGTJLK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 05:11:10 -0400
+Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fgQhj-0002Xc-He; Fri, 20 Jul 2018 10:23:59 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fgQhj-0002QW-9c; Fri, 20 Jul 2018 10:23:59 +0200
+Subject: Re: [PATCH v3 1/2] tools/bpftool: ignore build products
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Taeung Song <treeze.taeung@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180719121005.12018-1-treeze.taeung@gmail.com>
+ <20180719112357.4fd6c6ce@cakuba.netronome.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <d6234684-03ff-ca7e-589f-458bf3b098b9@iogearbox.net>
+Date:   Fri, 20 Jul 2018 10:23:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180719112357.4fd6c6ce@cakuba.netronome.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24765/Fri Jul 20 02:42:13 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Miquel who's in charge of the NAND tree for this release
-
-On Wed, 11 Jul 2018 14:08:06 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> Some drivers need these for compile-testing. On most architectures
-> they come from asm-generic/io.h, but not on sparc64, which has its
-> own definitions.
+On 07/19/2018 08:23 PM, Jakub Kicinski wrote:
+> On Thu, 19 Jul 2018 21:10:04 +0900, Taeung Song wrote:
+>> For untracked things of tools/bpf, add this.
+>>
+>> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
+>> ---
+>>  tools/bpf/.gitignore         | 5 +++++
+>>  tools/bpf/bpftool/.gitignore | 1 +
+>>  2 files changed, 6 insertions(+)
+>>  create mode 100644 tools/bpf/.gitignore
+>>
+>> diff --git a/tools/bpf/.gitignore b/tools/bpf/.gitignore
+>> new file mode 100644
+>> index 000000000000..dfe2bd5a4b95
+>> --- /dev/null
+>> +++ b/tools/bpf/.gitignore
+>> @@ -0,0 +1,5 @@
+>> +FEATURE-DUMP.bpf
+>> +bpf_asm
+>> +bpf_dbg
+>> +bpf_exp.yacc.*
+>> +bpf_jit_disasm
+>> diff --git a/tools/bpf/bpftool/.gitignore b/tools/bpf/bpftool/.gitignore
+>> index d7e678c2d396..103cc5b5b446 100644
+>> --- a/tools/bpf/bpftool/.gitignore
+>> +++ b/tools/bpf/bpftool/.gitignore
+>> @@ -1,3 +1,4 @@
+>>  *.d
+>>  bpftool
+>> +bpftool*.8
+>>  FEATURE-DUMP.bpftool
 > 
-> Since we already have ioread*_rep()/iowrite*_rep() that have the
-> same behavior on sparc64 (i.e. all PCI I/O space is memory mapped),
-> we can rename the existing helpers and add macros to define them
-> to the same implementation.
+> This patch is going to be merged to the bpf-next tree, I presume, and
+> there is more man pages there:
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> $ make -C tools/bpf/bpftool/ doc 
+> make: Entering directory 'linux/tools/bpf/bpftool'
+>   DESCEND  Documentation
+> make[1]: Entering directory '/linux/tools/bpf/bpftool/Documentation'
+>   GEN      bpftool-perf.8
+>   GEN      bpftool-map.8
+>   GEN      bpftool.8
+>   GEN      bpftool-prog.8
+>   GEN      bpftool-cgroup.8
+>   GEN      bpf-helpers.rst
+> Parsed description of 80 helper function(s)
+>   GEN      bpf-helpers.7
+> make[1]: Leaving directory 'linux/tools/bpf/bpftool/Documentation'
+> make: Leaving directory 'linux/tools/bpf/bpftool'
+> $ git status 
+> On branch work
+> Your branch is ahead of 'pending' by 10 commits.
+>   (use "git push" to publish your local commits)
+> 
+> Untracked files:
+>   (use "git add <file>..." to include in what will be committed)
+> 
+> 	tools/bpf/bpftool/Documentation/bpf-helpers.7
+> 	tools/bpf/bpftool/Documentation/bpf-helpers.rst
+> 	tools/bpf/bpftool/Documentation/bpftool-cgroup.8
+> 	tools/bpf/bpftool/Documentation/bpftool-map.8
+> 	tools/bpf/bpftool/Documentation/bpftool-perf.8
+> 	tools/bpf/bpftool/Documentation/bpftool-prog.8
+> 	tools/bpf/bpftool/Documentation/bpftool.8
+> 
+> nothing added to commit but untracked files present (use "git add" to track)
+> 
+> See the bpf-helpers.* files?  Those are all auto-generated.
+> 
+> If you respin for -next please split the series and put [PATCH bpf-next
+> v4] as prefix of first patch, and [PATCH bpf v4] as prefix for the
+> second, as one of them is an improvement, and second a bug fix.
 
-I tried to compile a sparc64 kernel with COMPILE_TEST=y plus the
-orion and s3c2410 NAND drivers enabled and it compiles fine (it does
-without this patch). So it seems to fix the compilation error reported
-by kbuild robots.
-
-Tested-by: Boris Brezillon <boris.brezillon@bootlin>
-(only compile-tested)
-
-Dave gave his A-b, so, if everyone is okay with that, I'd like this
-patch to go trough the NAND tree.
+I've just applied patch 2/2 to bpf tree, thanks Taeung! I think best for
+patch 1/2 would be if you rebase this against bpf-next tree as Jakub
+mentioned so wouldn't need an immediate follow-up due to incomplete
+.gitignore then.
 
 Thanks,
-
-Boris
-
-> ---
->  arch/sparc/include/asm/io_64.h | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/sparc/include/asm/io_64.h b/arch/sparc/include/asm/io_64.h
-> index 9a1e9cbc7e6d..b162c23ae8c2 100644
-> --- a/arch/sparc/include/asm/io_64.h
-> +++ b/arch/sparc/include/asm/io_64.h
-> @@ -243,35 +243,42 @@ void insb(unsigned long, void *, unsigned long);
->  void insw(unsigned long, void *, unsigned long);
->  void insl(unsigned long, void *, unsigned long);
->  
-> -static inline void ioread8_rep(void __iomem *port, void *buf, unsigned long count)
-> +static inline void readsb(void __iomem *port, void *buf, unsigned long count)
->  {
->  	insb((unsigned long __force)port, buf, count);
->  }
-> -static inline void ioread16_rep(void __iomem *port, void *buf, unsigned long count)
-> +static inline void readsw(void __iomem *port, void *buf, unsigned long count)
->  {
->  	insw((unsigned long __force)port, buf, count);
->  }
->  
-> -static inline void ioread32_rep(void __iomem *port, void *buf, unsigned long count)
-> +static inline void readsl(void __iomem *port, void *buf, unsigned long count)
->  {
->  	insl((unsigned long __force)port, buf, count);
->  }
->  
-> -static inline void iowrite8_rep(void __iomem *port, const void *buf, unsigned long count)
-> +static inline void writesb(void __iomem *port, const void *buf, unsigned long count)
->  {
->  	outsb((unsigned long __force)port, buf, count);
->  }
->  
-> -static inline void iowrite16_rep(void __iomem *port, const void *buf, unsigned long count)
-> +static inline void writesw(void __iomem *port, const void *buf, unsigned long count)
->  {
->  	outsw((unsigned long __force)port, buf, count);
->  }
->  
-> -static inline void iowrite32_rep(void __iomem *port, const void *buf, unsigned long count)
-> +static inline void writesl(void __iomem *port, const void *buf, unsigned long count)
->  {
->  	outsl((unsigned long __force)port, buf, count);
->  }
->  
-> +#define ioread8_rep(p,d,l)	readsb(p,d,l)
-> +#define ioread16_rep(p,d,l)	readsw(p,d,l)
-> +#define ioread32_rep(p,d,l)	readsl(p,d,l)
-> +#define iowrite8_rep(p,d,l)	writesb(p,d,l)
-> +#define iowrite16_rep(p,d,l)	writesw(p,d,l)
-> +#define iowrite32_rep(p,d,l)	writesl(p,d,l)
-> +
->  /* Valid I/O Space regions are anywhere, because each PCI bus supported
->   * can live in an arbitrary area of the physical address range.
->   */
-
+Daniel
