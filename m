@@ -2,39 +2,40 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D691BECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB4CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80F2520652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80F2520652
+	by mail.kernel.org (Postfix) with ESMTP id DFB3D20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:40:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFB3D20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389723AbeGTN2S (ORCPT
+        id S2389737AbeGTN2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:28:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49572 "EHLO
+        Fri, 20 Jul 2018 09:28:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49774 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728252AbeGTN2R (ORCPT
+        with ESMTP id S1728252AbeGTN2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:28:17 -0400
+        Fri, 20 Jul 2018 09:28:20 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D674BCA0;
-        Fri, 20 Jul 2018 12:36:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 026B1BCF;
+        Fri, 20 Jul 2018 12:36:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 016/101] net: dccp: switch rx_tstamp_last_feedback to monotonic clock
-Date:   Fri, 20 Jul 2018 14:13:22 +0200
-Message-Id: <20180720121423.628405497@linuxfoundation.org>
+Subject: [PATCH 4.17 034/101] qed: Fix setting of incorrect eswitch mode.
+Date:   Fri, 20 Jul 2018 14:13:40 +0200
+Message-Id: <20180720121424.395987218@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -51,65 +52,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 0ce4e70ff00662ad7490e545ba0cd8c1fa179fca ]
+[ Upstream commit 538f8d00ba8bb417c4d9e76c61dee59d812d8287 ]
 
-To compute delays, better not use time of the day which can
-be changed by admins or malicious programs.
+By default, driver sets the eswitch mode incorrectly as VEB (virtual
+Ethernet bridging).
+Need to set VEB eswitch mode only when sriov is enabled, and it should be
+to set NONE by default. The patch incorporates this change.
 
-Also change ccid3_first_li() to use s64 type for delta variable
-to avoid potential overflows.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
-Cc: dccp@vger.kernel.org
+Fixes: 0fefbfbaa ("qed*: Management firmware - notifications and defaults")
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/ccids/ccid3.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_dev.c   |    2 +-
+ drivers/net/ethernet/qlogic/qed/qed_sriov.c |   19 +++++++++++++++++--
+ 2 files changed, 18 insertions(+), 3 deletions(-)
 
---- a/net/dccp/ccids/ccid3.c
-+++ b/net/dccp/ccids/ccid3.c
-@@ -600,7 +600,7 @@ static void ccid3_hc_rx_send_feedback(st
- {
- 	struct ccid3_hc_rx_sock *hc = ccid3_hc_rx_sk(sk);
- 	struct dccp_sock *dp = dccp_sk(sk);
--	ktime_t now = ktime_get_real();
-+	ktime_t now = ktime_get();
- 	s64 delta = 0;
+--- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+@@ -1789,7 +1789,7 @@ int qed_hw_init(struct qed_dev *cdev, st
+ 			DP_INFO(p_hwfn, "Failed to update driver state\n");
  
- 	switch (fbtype) {
-@@ -632,7 +632,7 @@ static void ccid3_hc_rx_send_feedback(st
- 		return;
+ 		rc = qed_mcp_ov_update_eswitch(p_hwfn, p_hwfn->p_main_ptt,
+-					       QED_OV_ESWITCH_VEB);
++					       QED_OV_ESWITCH_NONE);
+ 		if (rc)
+ 			DP_INFO(p_hwfn, "Failed to update eswitch mode\n");
+ 	}
+--- a/drivers/net/ethernet/qlogic/qed/qed_sriov.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
+@@ -4400,6 +4400,8 @@ static void qed_sriov_enable_qid_config(
+ static int qed_sriov_enable(struct qed_dev *cdev, int num)
+ {
+ 	struct qed_iov_vf_init_params params;
++	struct qed_hwfn *hwfn;
++	struct qed_ptt *ptt;
+ 	int i, j, rc;
+ 
+ 	if (num >= RESC_NUM(&cdev->hwfns[0], QED_VPORT)) {
+@@ -4412,8 +4414,8 @@ static int qed_sriov_enable(struct qed_d
+ 
+ 	/* Initialize HW for VF access */
+ 	for_each_hwfn(cdev, j) {
+-		struct qed_hwfn *hwfn = &cdev->hwfns[j];
+-		struct qed_ptt *ptt = qed_ptt_acquire(hwfn);
++		hwfn = &cdev->hwfns[j];
++		ptt = qed_ptt_acquire(hwfn);
+ 
+ 		/* Make sure not to use more than 16 queues per VF */
+ 		params.num_queues = min_t(int,
+@@ -4449,6 +4451,19 @@ static int qed_sriov_enable(struct qed_d
+ 		goto err;
  	}
  
--	ccid3_pr_debug("Interval %ldusec, X_recv=%u, 1/p=%u\n", (long)delta,
-+	ccid3_pr_debug("Interval %lldusec, X_recv=%u, 1/p=%u\n", delta,
- 		       hc->rx_x_recv, hc->rx_pinv);
++	hwfn = QED_LEADING_HWFN(cdev);
++	ptt = qed_ptt_acquire(hwfn);
++	if (!ptt) {
++		DP_ERR(hwfn, "Failed to acquire ptt\n");
++		rc = -EBUSY;
++		goto err;
++	}
++
++	rc = qed_mcp_ov_update_eswitch(hwfn, ptt, QED_OV_ESWITCH_VEB);
++	if (rc)
++		DP_INFO(cdev, "Failed to update eswitch mode\n");
++	qed_ptt_release(hwfn, ptt);
++
+ 	return num;
  
- 	hc->rx_tstamp_last_feedback = now;
-@@ -679,7 +679,8 @@ static int ccid3_hc_rx_insert_options(st
- static u32 ccid3_first_li(struct sock *sk)
- {
- 	struct ccid3_hc_rx_sock *hc = ccid3_hc_rx_sk(sk);
--	u32 x_recv, p, delta;
-+	u32 x_recv, p;
-+	s64 delta;
- 	u64 fval;
- 
- 	if (hc->rx_rtt == 0) {
-@@ -687,7 +688,9 @@ static u32 ccid3_first_li(struct sock *s
- 		hc->rx_rtt = DCCP_FALLBACK_RTT;
- 	}
- 
--	delta  = ktime_to_us(net_timedelta(hc->rx_tstamp_last_feedback));
-+	delta = ktime_us_delta(ktime_get(), hc->rx_tstamp_last_feedback);
-+	if (delta <= 0)
-+		delta = 1;
- 	x_recv = scaled_div32(hc->rx_bytes_recv, delta);
- 	if (x_recv == 0) {		/* would also trigger divide-by-zero */
- 		DCCP_WARN("X_recv==0\n");
+ err:
 
 
