@@ -2,238 +2,105 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E3BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BBFECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42322206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BF4E206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:01:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="azU6IMz9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42322206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILifPTdi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BF4E206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeGTIr6 (ORCPT
+        id S1727410AbeGTIsz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:47:58 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40045 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbeGTIr6 (ORCPT
+        Fri, 20 Jul 2018 04:48:55 -0400
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:40120 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727103AbeGTIsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:47:58 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x5-v6so6172327pgp.7
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 01:00:55 -0700 (PDT)
+        Fri, 20 Jul 2018 04:48:55 -0400
+Received: by mail-oi0-f49.google.com with SMTP id w126-v6so19802287oie.7;
+        Fri, 20 Jul 2018 01:01:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=9OrkAI2WCqnErQDMqjriKhlNmhH9el594q9+DOMfd2Y=;
-        b=azU6IMz9xFpvLRxfbv80ZWRF5PLTUCeKHD4Jrj5XAwlfuxPJznLZDufoOqWS7jTBXk
-         Fr842uNIgLPROzx29VIqOJldoStybNLfLm4Botw84cnuw9d3b/AmdgWUZpMlOQI97pC4
-         A9VZ8KjXQkop5dJAtdskHv0AoEAWfsvhYR69L9Xo/lxLziU5YRWYOD0CHeV/KacdRJll
-         mwjhwvD1p4wq4plyUY7XwjNpJQyCfi0eRYfhm8O3F0MaKXYe8zfXYixSPqMwKfNs7yBg
-         QzaZeKQBzFyEJ9RRf9bR1ydUcsnl3o55TVN/mRLXr6CKaxCi5U7dbVWypRaRH2J+jJu8
-         hiIA==
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to:cc;
+        bh=ogD+Lg+qAMaHxvoC+TqOdEihZIqrOhD38wa70LMibaY=;
+        b=ILifPTdiKl7BsvjbQu5Vx7/kr1HV1M+Vb7SHBOLPzijeQA/JK+mcQfAA1jedODCRB9
+         FC6jbsp1HOVY9cfR0qbfufDjpPN5goknhrqdsW2ES5h832VM6jqS0thf0kvc6SICTGme
+         B0IFjO1aMjwwQoK8HJi2OOopVxLzQD40EvNU//R6iNzhT0bC7Gqtip5MgBLsBqpKmMvV
+         73/MwahKdFo64iL5fdBbTx2cAHNuhHIHjSEPXpxuYFciSsr0lgOFmHtUcndRinzQm7Gd
+         pyFn75hkSlmuxPHpgpyIAtgddv4D2VVpWDS4cZnqBPYP/ySUBWGzGoYzAaQLZMr/Azmg
+         vv8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9OrkAI2WCqnErQDMqjriKhlNmhH9el594q9+DOMfd2Y=;
-        b=tPXqVMpz/2OVzI6B8ZldSK/azFSvBWW5HKbHNJGHO0MR7DN4LsGBcMHKktuXGinoKj
-         9ahnxQ5AAfNx0xXTq8cB6893+2o3TcXcKE3+8lQX8w+9NoSpMX9xOE6TlMKN1CIe5xxy
-         rJtW2jYZ+v30BpDFUt+EcRDlLlYO+9b3cCgfaTcwEUYuCHuioaOW88eKYKhQpu4N9DAP
-         A6s8bhUDp+bsPPJ3+9Xd8PYHZbVseZR7UNviO22W7V7Xxkq9xOfFYxbPJf9FixsXqgkS
-         1nlVNePluZm6Em1o4v/BIbFDiYGDjX8R99FY9zs/0oBhVAPbk6+jJkWzvXU1GRAFdjZv
-         s5MA==
-X-Gm-Message-State: AOUpUlFVqMYt13T21BjF84YeKR9ShnmOK/SkLp89CLCLsAroJHgqc4Y8
-        tPW0DZgpSLhSiXX/kzxhuPcr+AtTwrxsMcPD1IYMxw==
-X-Google-Smtp-Source: AAOMgpfuTDmWPmaSoyYiZYq60mkKVoTlMOrYDfBwyfx/vTthk+1zpefFKABt5xjy6Yu3uieAtMuwPfOptX1cWXTsRP8=
-X-Received: by 2002:a65:58c8:: with SMTP id e8-v6mr1071104pgu.96.1532073654704;
- Fri, 20 Jul 2018 01:00:54 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:cc;
+        bh=ogD+Lg+qAMaHxvoC+TqOdEihZIqrOhD38wa70LMibaY=;
+        b=XtrFLB7Sgivb3e8FU7KHdbe4+y/LsxZx95yo/dWDRASPtySWteTFtdwYscS1/3HWcp
+         Qo/y+MlNjIajkjkoN1HYPlkD4jA18jz5dyHRxR02QSpU201nG4VVbodSF2Iuc1Wr09vg
+         uOcemYr8++sKa6g6TXrVcqG7rhS2AAwC6DruArxEJvatxHyP4PEhnl6wRXuyyWzsof58
+         TkHP4esbD2i5MN1aSUE8G5ItqyYuStHb7bYcw+ayQrG/TG/F3sf33qCHOuz0XCv9zDva
+         WjZsF0OvSrfsPI5gV2g4sNw7OOje+nEAWRCWkOQQO81bz9SJqzAR7SFO/w/q1Q1sFqZY
+         Y+MA==
+X-Gm-Message-State: AOUpUlEk8p9sZr6eF0h982xroYo084m7lP4S9L3NUpB9kquCwqVhF/uo
+        59UNiTBaUWj7VuJ2DAfd2ZePI9mNuYg50QAXZ/4=
+X-Google-Smtp-Source: AAOMgpe7v5dcoZWc64bXTozFOlq45fJVTQS9wdR7BMMygkAvEN3W8te4Hy5IMtt6peEfv2hgUPSlUT5ZAYVtJqX8+M8=
+X-Received: by 2002:aca:5b0b:: with SMTP id p11-v6mr1132946oib.116.1532073712198;
+ Fri, 20 Jul 2018 01:01:52 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Fri, 20 Jul 2018 01:00:34
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 01:01:51
  -0700 (PDT)
-In-Reply-To: <5308835b-b5ef-51e4-2e4f-05a9636dff55@katalix.com>
-References: <001a11405130a984300562e8e7b3@google.com> <CACT4Y+Y1ZskrqsmhWoHWXOigMHX5eyG5nGGyuU6cZ0uNnChSiQ@mail.gmail.com>
- <5308835b-b5ef-51e4-2e4f-05a9636dff55@katalix.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 20 Jul 2018 10:00:34 +0200
-Message-ID: <CACT4Y+YRmX2ROxWZcT4w-NHR76cVV4_U6-Y0T=x4on67r8dNzQ@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in l2tp_session_create
-To:     James Chapman <jchapman@katalix.com>
-Cc:     David Miller <davem@davemloft.net>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Hans Liljestrand <ishkamiel@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        syzbot <syzbot+065d0fc357520c8f6039@syzkaller.appspotmail.com>,
-        Guillaume Nault <g.nault@alphalink.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 20 Jul 2018 10:01:51 +0200
+X-Google-Sender-Auth: PKMKc84X7RAA4mxuUwLAHmggI60
+Message-ID: <CAJZ5v0hBVRAQCbD33RYRCBL-Qmx2OW1x4tqiLo5C_r5Qjvbp5A@mail.gmail.com>
+Subject: [GIT PULL] ACPI fix for v4.18-rc6
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 9:53 AM, James Chapman <jchapman@katalix.com> wrote:
-> On 18/07/18 12:00, Dmitry Vyukov wrote:
->> On Tue, Jan 16, 2018 at 7:29 PM, syzbot
->> <syzbot+065d0fc357520c8f6039@syzkaller.appspotmail.com> wrote:
->>> Hello,
->>>
->>> syzkaller hit the following crash on
->>> a8750ddca918032d6349adbf9a4b6555e7db20da
->>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
->>> compiler: gcc (GCC) 7.1.1 20170620
->>> .config is attached
->>> Raw console output is attached.
->>> Unfortunately, I don't have any reproducer for this bug yet.
->>>
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+065d0fc357520c8f6039@syzkaller.appspotmail.com
->>> It will help syzbot understand when the bug is fixed. See footer for
->>> details.
->>> If you forward the report, please keep this part and the footer.
->>
->> James,
->>
->> Did you fix this? You asked syzbot to test a fix for this bug some time ago.
->> If yes, did you include the Reported-by tag in the commit? This bug is
->> still considered open by syzbot. But it stopped happening ~4 months
->> ago:
->
-> Yes, I think this has been fixed now. I think it was fixed by
-> Guillaume's 6b9f34239b00e6956a267abed2bc559ede556ad6 that was actually
-> to fix another syzbot bug fbeeb5c3b538e8545644 which looks similar to
-> this one.
->
->> https://syzkaller.appspot.com/bug?id=6fed0854381422329e78d7e16fb9cf4af8c9aef1
->> We are also seeing these crashes in 4.4 and 4.9, it would be good to
->> backport the fix.
->
-> It looks like 6b9f34239b00e6956a267abed2bc559ede556ad6 hasn't made it to
-> 4.9 or 4.4.
+Hi Linus,
 
-Thanks for the update!
+Please pull from the tag
 
-Let's tell syzbot that this is fixed:
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-4.18-rc6
 
-#syz fix: l2tp: fix races in tunnel creation
+with top-most commit 2c4d6baf1bc4f7729773ffcee9ba2a9781578633
 
-Greg H: so this is probably the patch we need.
+ ACPI / EC: Use ec_no_wakeup on more Thinkpad X1 Carbon 6th systems
 
-+Greg KH: I think we need this in stable, we hit this in both 4.4 and 4.9.
+on top of commit 9d3cce1e8b8561fed5f383d22a4d6949db4eadbe
+
+ Linux 4.18-rc5
+
+to receive an ACPI fix for 4.18-rc6.
+
+This extends the recently added suspend-to-idle quirk for Thinkpad
+X1 Carbon 6th to other systems from that family which turned out to
+need it too (Robin Johnson).
+
+Thanks!
 
 
->>> ==================================================================
->>> BUG: KASAN: use-after-free in l2tp_session_create+0xa6d/0xc60
->>> net/l2tp/l2tp_core.c:1757
->>> Read of size 4 at addr ffff8801d80ad868 by task syz-executor3/5462
->>>
->>> CPU: 0 PID: 5462 Comm: syz-executor3 Not tainted 4.15.0-rc8+ #263
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->>> Google 01/01/2011
->>> Call Trace:
->>>  __dump_stack lib/dump_stack.c:17 [inline]
->>>  dump_stack+0x194/0x257 lib/dump_stack.c:53
->>>  print_address_description+0x73/0x250 mm/kasan/report.c:252
->>>  kasan_report_error mm/kasan/report.c:351 [inline]
->>>  kasan_report+0x25b/0x340 mm/kasan/report.c:409
->>>  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:429
->>>  l2tp_session_create+0xa6d/0xc60 net/l2tp/l2tp_core.c:1757
->>>  pppol2tp_connect+0xed7/0x1dd0 net/l2tp/l2tp_ppp.c:748
->>>  SYSC_connect+0x213/0x4a0 net/socket.c:1621
->>>  SyS_connect+0x24/0x30 net/socket.c:1602
->>>  entry_SYSCALL_64_fastpath+0x29/0xa0
->>> RIP: 0033:0x452df9
->>> RSP: 002b:00007f93ec47fc58 EFLAGS: 00000212 ORIG_RAX: 000000000000002a
->>> RAX: ffffffffffffffda RBX: 000000000071bea0 RCX: 0000000000452df9
->>> RDX: 000000000000002e RSI: 00000000205fafd2 RDI: 0000000000000018
->>> RBP: 00000000000005a9 R08: 0000000000000000 R09: 0000000000000000
->>> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006f6878
->>> R13: 00000000ffffffff R14: 00007f93ec4806d4 R15: 0000000000000000
->>>
->>> Allocated by task 5462:
->>>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->>>  set_track mm/kasan/kasan.c:459 [inline]
->>>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
->>>  kmem_cache_alloc_trace+0x136/0x750 mm/slab.c:3610
->>>  kmalloc include/linux/slab.h:499 [inline]
->>>  kzalloc include/linux/slab.h:688 [inline]
->>>  l2tp_tunnel_create+0x5e1/0x17f0 net/l2tp/l2tp_core.c:1554
->>>  pppol2tp_connect+0x14b7/0x1dd0 net/l2tp/l2tp_ppp.c:707
->>>  SYSC_connect+0x213/0x4a0 net/socket.c:1621
->>>  SyS_connect+0x24/0x30 net/socket.c:1602
->>>  entry_SYSCALL_64_fastpath+0x29/0xa0
->>>
->>> Freed by task 5484:
->>>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->>>  set_track mm/kasan/kasan.c:459 [inline]
->>>  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
->>>  __cache_free mm/slab.c:3488 [inline]
->>>  kfree+0xd6/0x260 mm/slab.c:3803
->>>  __rcu_reclaim kernel/rcu/rcu.h:190 [inline]
->>>  rcu_do_batch kernel/rcu/tree.c:2758 [inline]
->>>  invoke_rcu_callbacks kernel/rcu/tree.c:3012 [inline]
->>>  __rcu_process_callbacks kernel/rcu/tree.c:2979 [inline]
->>>  rcu_process_callbacks+0xe94/0x17f0 kernel/rcu/tree.c:2996
->>>  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
->>>
->>> The buggy address belongs to the object at ffff8801d80ad780
->>>  which belongs to the cache kmalloc-512 of size 512
->>> The buggy address is located 232 bytes inside of
->>>  512-byte region [ffff8801d80ad780, ffff8801d80ad980)
->>> The buggy address belongs to the page:
->>> page:ffffea0007602b40 count:1 mapcount:0 mapping:ffff8801d80ad000 index:0x0
->>> flags: 0x2fffc0000000100(slab)
->>> raw: 02fffc0000000100 ffff8801d80ad000 0000000000000000 0000000100000006
->>> raw: ffffea00070e8760 ffffea00070f8ca0 ffff8801dac00940 0000000000000000
->>> page dumped because: kasan: bad access detected
->>>
->>> Memory state around the buggy address:
->>>  ffff8801d80ad700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->>>  ffff8801d80ad780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>>> ffff8801d80ad800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>>                                                           ^
->>>  ffff8801d80ad880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>>  ffff8801d80ad900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>> ==================================================================
->>>
->>>
->>> ---
->>> This bug is generated by a dumb bot. It may contain errors.
->>> See https://goo.gl/tpsmEJ for details.
->>> Direct all questions to syzkaller@googlegroups.com.
->>>
->>> syzbot will keep track of this bug report.
->>> If you forgot to add the Reported-by tag, once the fix for this bug is
->>> merged
->>> into any tree, please reply to this email with:
->>> #syz fix: exact-commit-title
->>> To mark this as a duplicate of another syzbot report, please reply with:
->>> #syz dup: exact-subject-of-another-report
->>> If it's a one-off invalid bug report, please reply with:
->>> #syz invalid
->>> Note: if the crash happens again, it will cause creation of a new bug
->>> report.
->>> Note: all commands must start from beginning of the line in the email body.
->>>
->>> --
->>> You received this message because you are subscribed to the Google Groups
->>> "syzkaller-bugs" group.
->>> To unsubscribe from this group and stop receiving emails from it, send an
->>> email to syzkaller-bugs+unsubscribe@googlegroups.com.
->>> To view this discussion on the web visit
->>> https://groups.google.com/d/msgid/syzkaller-bugs/001a11405130a984300562e8e7b3%40google.com.
->>> For more options, visit https://groups.google.com/d/optout.
->
->
+---------------
+
+Robin H. Johnson (1):
+      ACPI / EC: Use ec_no_wakeup on more Thinkpad X1 Carbon 6th systems
+
+---------------
+
+ drivers/acpi/ec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
