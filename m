@@ -2,38 +2,37 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D5FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB629ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87F09206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F09206B7
+	by mail.kernel.org (Postfix) with ESMTP id 90222206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90222206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbeGTNNo (ORCPT
+        id S1731674AbeGTNNr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:13:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34698 "EHLO
+        Fri, 20 Jul 2018 09:13:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34706 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730183AbeGTNNo (ORCPT
+        with ESMTP id S1730183AbeGTNNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:13:44 -0400
+        Fri, 20 Jul 2018 09:13:46 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B865BBD;
-        Fri, 20 Jul 2018 12:25:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D54B0BBF;
+        Fri, 20 Jul 2018 12:25:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 3.18 19/29] net/mlx5: Fix incorrect raw command length parsing
-Date:   Fri, 20 Jul 2018 14:11:14 +0200
-Message-Id: <20180720115159.665608484@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 3.18 02/29] USB: serial: keyspan_pda: fix modem-status error handling
+Date:   Fri, 20 Jul 2018 14:10:57 +0200
+Message-Id: <20180720115159.058355347@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720115158.974693829@linuxfoundation.org>
 References: <20180720115158.974693829@linuxfoundation.org>
@@ -50,42 +49,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Vesker <valex@mellanox.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 603b7bcff824740500ddfa001d7a7168b0b38542 ]
+commit 01b3cdfca263a17554f7b249d20a247b2a751521 upstream.
 
-The NULL character was not set correctly for the string containing
-the command length, this caused failures reading the output of the
-command due to a random length. The fix is to initialize the output
-length string.
+Fix broken modem-status error handling which could lead to bits of slab
+data leaking to user space.
 
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Signed-off-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 3b36a8fd6777 ("usb: fix uninitialized variable warning in keyspan_pda")
+Cc: stable <stable@vger.kernel.org>     # 2.6.27
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -933,7 +933,7 @@ static ssize_t outlen_write(struct file
- {
- 	struct mlx5_core_dev *dev = filp->private_data;
- 	struct mlx5_cmd_debug *dbg = &dev->cmd.dbg;
--	char outlen_str[8];
-+	char outlen_str[8] = {0};
- 	int outlen;
- 	void *ptr;
- 	int err;
-@@ -948,8 +948,6 @@ static ssize_t outlen_write(struct file
- 	if (copy_from_user(outlen_str, buf, count))
- 		return -EFAULT;
+---
+ drivers/usb/serial/keyspan_pda.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/serial/keyspan_pda.c
++++ b/drivers/usb/serial/keyspan_pda.c
+@@ -373,8 +373,10 @@ static int keyspan_pda_get_modem_info(st
+ 			     3, /* get pins */
+ 			     USB_TYPE_VENDOR|USB_RECIP_INTERFACE|USB_DIR_IN,
+ 			     0, 0, data, 1, 2000);
+-	if (rc >= 0)
++	if (rc == 1)
+ 		*value = *data;
++	else if (rc >= 0)
++		rc = -EIO;
  
--	outlen_str[7] = 0;
--
- 	err = sscanf(outlen_str, "%d", &outlen);
- 	if (err < 0)
- 		return err;
+ 	kfree(data);
+ 	return rc;
 
 
