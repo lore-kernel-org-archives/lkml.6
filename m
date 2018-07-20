@@ -3,40 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86419ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA02ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DDA720833
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DDA720833
+	by mail.kernel.org (Postfix) with ESMTP id 8B05A206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B05A206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389181AbeGTNY4 (ORCPT
+        id S2389195AbeGTNY7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:24:56 -0400
+        Fri, 20 Jul 2018 09:24:59 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:44842 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389159AbeGTNY4 (ORCPT
+        with ESMTP id S2388582AbeGTNY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:24:56 -0400
+        Fri, 20 Jul 2018 09:24:58 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6B06C74;
-        Fri, 20 Jul 2018 12:35:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5DCADBCF;
+        Fri, 20 Jul 2018 12:34:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 83/92] arm64: ssbd: Add global mitigation state accessor
-Date:   Fri, 20 Jul 2018 14:14:27 +0200
-Message-Id: <20180720121422.466034051@linuxfoundation.org>
+        James Morse <james.morse@arm.com>,
+        Christoffer Dall <cdall@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.14 70/92] KVM: arm64: Store vcpu on the stack during __guest_enter()
+Date:   Fri, 20 Jul 2018 14:14:14 +0200
+Message-Id: <20180720121421.766905653@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -53,45 +52,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: James Morse <james.morse@arm.com>
 
-commit c32e1736ca03904c03de0e4459a673be194f56fd upstream.
+Commit 32b03d1059667a39e089c45ee38ec9c16332430f upstream.
 
-We're about to need the mitigation state in various parts of the
-kernel in order to do the right thing for userspace and guests.
+KVM uses tpidr_el2 as its private vcpu register, which makes sense for
+non-vhe world switch as only KVM can access this register. This means
+vhe Linux has to use tpidr_el1, which KVM has to save/restore as part
+of the host context.
 
-Let's expose an accessor that will let other subsystems know
-about the state.
+If the SDEI handler code runs behind KVMs back, it mustn't access any
+per-cpu variables. To allow this on systems with vhe we need to make
+the host use tpidr_el2, saving KVM from save/restoring it.
 
-Reviewed-by: Julien Grall <julien.grall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+__guest_enter() stores the host_ctxt on the stack, do the same with
+the vcpu.
+
+Signed-off-by: James Morse <james.morse@arm.com>
+Reviewed-by: Christoffer Dall <cdall@linaro.org>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/cpufeature.h |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/kvm/hyp/entry.S     |   10 +++++++---
+ arch/arm64/kvm/hyp/hyp-entry.S |    6 +++---
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -268,6 +268,16 @@ static inline bool system_uses_ttbr0_pan
- #define ARM64_SSBD_FORCE_ENABLE		2
- #define ARM64_SSBD_MITIGATED		3
+--- a/arch/arm64/kvm/hyp/entry.S
++++ b/arch/arm64/kvm/hyp/entry.S
+@@ -62,8 +62,8 @@ ENTRY(__guest_enter)
+ 	// Store the host regs
+ 	save_callee_saved_regs x1
  
-+static inline int arm64_get_ssbd_state(void)
-+{
-+#ifdef CONFIG_ARM64_SSBD
-+	extern int ssbd_state;
-+	return ssbd_state;
-+#else
-+	return ARM64_SSBD_UNKNOWN;
-+#endif
-+}
-+
- #endif /* __ASSEMBLY__ */
+-	// Store the host_ctxt for use at exit time
+-	str	x1, [sp, #-16]!
++	// Store host_ctxt and vcpu for use at exit time
++	stp	x1, x0, [sp, #-16]!
  
- #endif
+ 	add	x18, x0, #VCPU_CONTEXT
+ 
+@@ -159,6 +159,10 @@ abort_guest_exit_end:
+ ENDPROC(__guest_exit)
+ 
+ ENTRY(__fpsimd_guest_restore)
++	// x0: esr
++	// x1: vcpu
++	// x2-x29,lr: vcpu regs
++	// vcpu x0-x1 on the stack
+ 	stp	x2, x3, [sp, #-16]!
+ 	stp	x4, lr, [sp, #-16]!
+ 
+@@ -173,7 +177,7 @@ alternative_else
+ alternative_endif
+ 	isb
+ 
+-	mrs	x3, tpidr_el2
++	mov	x3, x1
+ 
+ 	ldr	x0, [x3, #VCPU_HOST_CONTEXT]
+ 	kern_hyp_va x0
+--- a/arch/arm64/kvm/hyp/hyp-entry.S
++++ b/arch/arm64/kvm/hyp/hyp-entry.S
+@@ -120,6 +120,7 @@ el1_trap:
+ 	/*
+ 	 * x0: ESR_EC
+ 	 */
++	ldr	x1, [sp, #16 + 8]	// vcpu stored by __guest_enter
+ 
+ 	/*
+ 	 * We trap the first access to the FP/SIMD to save the host context
+@@ -132,19 +133,18 @@ alternative_if_not ARM64_HAS_NO_FPSIMD
+ 	b.eq	__fpsimd_guest_restore
+ alternative_else_nop_endif
+ 
+-	mrs	x1, tpidr_el2
+ 	mov	x0, #ARM_EXCEPTION_TRAP
+ 	b	__guest_exit
+ 
+ el1_irq:
+ 	stp     x0, x1, [sp, #-16]!
+-	mrs	x1, tpidr_el2
++	ldr	x1, [sp, #16 + 8]
+ 	mov	x0, #ARM_EXCEPTION_IRQ
+ 	b	__guest_exit
+ 
+ el1_error:
+ 	stp     x0, x1, [sp, #-16]!
+-	mrs	x1, tpidr_el2
++	ldr	x1, [sp, #16 + 8]
+ 	mov	x0, #ARM_EXCEPTION_EL1_SERROR
+ 	b	__guest_exit
+ 
 
 
