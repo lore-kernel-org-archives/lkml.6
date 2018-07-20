@@ -2,39 +2,39 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E067EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA45ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A465C20857
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A465C20857
+	by mail.kernel.org (Postfix) with ESMTP id D3CCC20857
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3CCC20857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388169AbeGTNRO (ORCPT
+        id S2388177AbeGTNRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:17:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37200 "EHLO
+        Fri, 20 Jul 2018 09:17:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37284 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388142AbeGTNRN (ORCPT
+        with ESMTP id S1731919AbeGTNRT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:17:13 -0400
+        Fri, 20 Jul 2018 09:17:19 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CA59CA95;
-        Fri, 20 Jul 2018 12:28:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 237C0BBF;
+        Fri, 20 Jul 2018 12:28:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 20/66] net: dccp: switch rx_tstamp_last_feedback to monotonic clock
-Date:   Fri, 20 Jul 2018 14:13:37 +0200
-Message-Id: <20180720121408.422815413@linuxfoundation.org>
+Subject: [PATCH 4.9 23/66] net_sched: blackhole: tell upper qdisc about dropped packets
+Date:   Fri, 20 Jul 2018 14:13:40 +0200
+Message-Id: <20180720121408.626007245@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -51,65 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit 0ce4e70ff00662ad7490e545ba0cd8c1fa179fca ]
+[ Upstream commit 7e85dc8cb35abf16455f1511f0670b57c1a84608 ]
 
-To compute delays, better not use time of the day which can
-be changed by admins or malicious programs.
+When blackhole is used on top of classful qdisc like hfsc it breaks
+qlen and backlog counters because packets are disappear without notice.
 
-Also change ccid3_first_li() to use s64 type for delta variable
-to avoid potential overflows.
+In HFSC non-zero qlen while all classes are inactive triggers warning:
+WARNING: ... at net/sched/sch_hfsc.c:1393 hfsc_dequeue+0xba4/0xe90 [sch_hfsc]
+and schedules watchdog work endlessly.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
-Cc: dccp@vger.kernel.org
+This patch return __NET_XMIT_BYPASS in addition to NET_XMIT_SUCCESS,
+this flag tells upper layer: this packet is gone and isn't queued.
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/ccids/ccid3.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ net/sched/sch_blackhole.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/dccp/ccids/ccid3.c
-+++ b/net/dccp/ccids/ccid3.c
-@@ -599,7 +599,7 @@ static void ccid3_hc_rx_send_feedback(st
+--- a/net/sched/sch_blackhole.c
++++ b/net/sched/sch_blackhole.c
+@@ -21,7 +21,7 @@ static int blackhole_enqueue(struct sk_b
+ 			     struct sk_buff **to_free)
  {
- 	struct ccid3_hc_rx_sock *hc = ccid3_hc_rx_sk(sk);
- 	struct dccp_sock *dp = dccp_sk(sk);
--	ktime_t now = ktime_get_real();
-+	ktime_t now = ktime_get();
- 	s64 delta = 0;
+ 	qdisc_drop(skb, sch, to_free);
+-	return NET_XMIT_SUCCESS;
++	return NET_XMIT_SUCCESS | __NET_XMIT_BYPASS;
+ }
  
- 	switch (fbtype) {
-@@ -631,7 +631,7 @@ static void ccid3_hc_rx_send_feedback(st
- 		return;
- 	}
- 
--	ccid3_pr_debug("Interval %ldusec, X_recv=%u, 1/p=%u\n", (long)delta,
-+	ccid3_pr_debug("Interval %lldusec, X_recv=%u, 1/p=%u\n", delta,
- 		       hc->rx_x_recv, hc->rx_pinv);
- 
- 	hc->rx_tstamp_last_feedback = now;
-@@ -678,7 +678,8 @@ static int ccid3_hc_rx_insert_options(st
- static u32 ccid3_first_li(struct sock *sk)
- {
- 	struct ccid3_hc_rx_sock *hc = ccid3_hc_rx_sk(sk);
--	u32 x_recv, p, delta;
-+	u32 x_recv, p;
-+	s64 delta;
- 	u64 fval;
- 
- 	if (hc->rx_rtt == 0) {
-@@ -686,7 +687,9 @@ static u32 ccid3_first_li(struct sock *s
- 		hc->rx_rtt = DCCP_FALLBACK_RTT;
- 	}
- 
--	delta  = ktime_to_us(net_timedelta(hc->rx_tstamp_last_feedback));
-+	delta = ktime_us_delta(ktime_get(), hc->rx_tstamp_last_feedback);
-+	if (delta <= 0)
-+		delta = 1;
- 	x_recv = scaled_div32(hc->rx_bytes_recv, delta);
- 	if (x_recv == 0) {		/* would also trigger divide-by-zero */
- 		DCCP_WARN("X_recv==0\n");
+ static struct sk_buff *blackhole_dequeue(struct Qdisc *sch)
 
 
