@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F937ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C01ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 493E120854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 493E120854
+	by mail.kernel.org (Postfix) with ESMTP id 4F6A420856
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6A420856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387943AbeGTNQG (ORCPT
+        id S2387962AbeGTNQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:16:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35992 "EHLO
+        Fri, 20 Jul 2018 09:16:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36098 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731878AbeGTNQF (ORCPT
+        with ESMTP id S1731878AbeGTNQI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:16:05 -0400
+        Fri, 20 Jul 2018 09:16:08 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7174BC7A;
-        Fri, 20 Jul 2018 12:28:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 315A6BCF;
+        Fri, 20 Jul 2018 12:28:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Eric Biggers <ebiggers@google.com>,
+        stable@vger.kernel.org,
+        syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 29/31] KEYS: DNS: fix parsing multiple options
-Date:   Fri, 20 Jul 2018 14:13:59 +0200
-Message-Id: <20180720121341.208054139@linuxfoundation.org>
+Subject: [PATCH 4.4 30/31] rds: avoid unenecessary cong_update in loop transport
+Date:   Fri, 20 Jul 2018 14:14:00 +0200
+Message-Id: <20180720121341.242698051@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -51,107 +53,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 
-commit c604cb767049b78b3075497b80ebb8fd530ea2cc upstream.
+commit f1693c63ab133d16994cc50f773982b5905af264 upstream.
 
-My recent fix for dns_resolver_preparse() printing very long strings was
-incomplete, as shown by syzbot which still managed to hit the
-WARN_ONCE() in set_precision() by adding a crafted "dns_resolver" key:
+Loop transport which is self loopback, remote port congestion
+update isn't relevant. Infact the xmit path already ignores it.
+Receive path needs to do the same.
 
-    precision 50001 too large
-    WARNING: CPU: 7 PID: 864 at lib/vsprintf.c:2164 vsnprintf+0x48a/0x5a0
-
-The bug this time isn't just a printing bug, but also a logical error
-when multiple options ("#"-separated strings) are given in the key
-payload.  Specifically, when separating an option string into name and
-value, if there is no value then the name is incorrectly considered to
-end at the end of the key payload, rather than the end of the current
-option.  This bypasses validation of the option length, and also means
-that specifying multiple options is broken -- which presumably has gone
-unnoticed as there is currently only one valid option anyway.
-
-A similar problem also applied to option values, as the kstrtoul() when
-parsing the "dnserror" option will read past the end of the current
-option and into the next option.
-
-Fix these bugs by correctly computing the length of the option name and
-by copying the option value, null-terminated, into a temporary buffer.
-
-Reproducer for the WARN_ONCE() that syzbot hit:
-
-    perl -e 'print "#A#", "\0" x 50000' | keyctl padd dns_resolver desc @s
-
-Reproducer for "dnserror" option being parsed incorrectly (expected
-behavior is to fail when seeing the unknown option "foo", actual
-behavior was to read the dnserror value as "1#foo" and fail there):
-
-    perl -e 'print "#dnserror=1#foo\0"' | keyctl padd dns_resolver desc @s
-
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Fixes: 4a2d789267e0 ("DNS: If the DNS server returns an error, allow that to be cached [ver #2]")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reported-by: syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com
+Reviewed-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Signed-off-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/dns_resolver/dns_key.c |   30 +++++++++++++++++-------------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+ net/rds/loop.c |    1 +
+ net/rds/rds.h  |    5 +++++
+ net/rds/recv.c |    5 +++++
+ 3 files changed, 11 insertions(+)
 
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -87,35 +87,39 @@ dns_resolver_preparse(struct key_prepars
- 		opt++;
- 		kdebug("options: '%s'", opt);
- 		do {
-+			int opt_len, opt_nlen;
- 			const char *eq;
--			int opt_len, opt_nlen, opt_vlen, tmp;
-+			char optval[128];
+--- a/net/rds/loop.c
++++ b/net/rds/loop.c
+@@ -191,4 +191,5 @@ struct rds_transport rds_loop_transport
+ 	.inc_copy_to_user	= rds_message_inc_copy_to_user,
+ 	.inc_free		= rds_loop_inc_free,
+ 	.t_name			= "loopback",
++	.t_type			= RDS_TRANS_LOOP,
+ };
+--- a/net/rds/rds.h
++++ b/net/rds/rds.h
+@@ -401,6 +401,11 @@ struct rds_notifier {
+ 	int			n_status;
+ };
  
- 			next_opt = memchr(opt, '#', end - opt) ?: end;
- 			opt_len = next_opt - opt;
--			if (opt_len <= 0 || opt_len > 128) {
-+			if (opt_len <= 0 || opt_len > sizeof(optval)) {
- 				pr_warn_ratelimited("Invalid option length (%d) for dns_resolver key\n",
- 						    opt_len);
- 				return -EINVAL;
- 			}
- 
--			eq = memchr(opt, '=', opt_len) ?: end;
--			opt_nlen = eq - opt;
--			eq++;
--			opt_vlen = next_opt - eq; /* will be -1 if no value */
--
--			tmp = opt_vlen >= 0 ? opt_vlen : 0;
--			kdebug("option '%*.*s' val '%*.*s'",
--			       opt_nlen, opt_nlen, opt, tmp, tmp, eq);
-+			eq = memchr(opt, '=', opt_len);
-+			if (eq) {
-+				opt_nlen = eq - opt;
-+				eq++;
-+				memcpy(optval, eq, next_opt - eq);
-+				optval[next_opt - eq] = '\0';
-+			} else {
-+				opt_nlen = opt_len;
-+				optval[0] = '\0';
-+			}
++/* Available as part of RDS core, so doesn't need to participate
++ * in get_preferred transport etc
++ */
++#define	RDS_TRANS_LOOP	3
 +
-+			kdebug("option '%*.*s' val '%s'",
-+			       opt_nlen, opt_nlen, opt, optval);
+ /**
+  * struct rds_transport -  transport specific behavioural hooks
+  *
+--- a/net/rds/recv.c
++++ b/net/rds/recv.c
+@@ -76,6 +76,11 @@ static void rds_recv_rcvbuf_delta(struct
+ 		return;
  
- 			/* see if it's an error number representing a DNS error
- 			 * that's to be recorded as the result in this key */
- 			if (opt_nlen == sizeof(DNS_ERRORNO_OPTION) - 1 &&
- 			    memcmp(opt, DNS_ERRORNO_OPTION, opt_nlen) == 0) {
- 				kdebug("dns error number option");
--				if (opt_vlen <= 0)
--					goto bad_option_value;
+ 	rs->rs_rcv_bytes += delta;
++
++	/* loop transport doesn't send/recv congestion updates */
++	if (rs->rs_transport->t_type == RDS_TRANS_LOOP)
++		return;
++
+ 	now_congested = rs->rs_rcv_bytes > rds_sk_rcvbuf(rs);
  
--				ret = kstrtoul(eq, 10, &derrno);
-+				ret = kstrtoul(optval, 10, &derrno);
- 				if (ret < 0)
- 					goto bad_option_value;
- 
+ 	rdsdebug("rs %p (%pI4:%u) recv bytes %d buf %d "
 
 
