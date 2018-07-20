@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4C5ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D26ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC44620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC44620652
+	by mail.kernel.org (Postfix) with ESMTP id 305E020673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 305E020673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbeGTWrl (ORCPT
+        id S1730799AbeGTWrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 18:47:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37609 "EHLO
+        Fri, 20 Jul 2018 18:47:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37617 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728214AbeGTWrl (ORCPT
+        with ESMTP id S1728214AbeGTWrp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 18:47:41 -0400
+        Fri, 20 Jul 2018 18:47:45 -0400
 Received: from 2.general.tyhicks.us.vpn ([10.172.64.53] helo=sec.l.tihix.com)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <tyhicks@canonical.com>)
-        id 1fgdOv-0004ZT-RK; Fri, 20 Jul 2018 21:57:26 +0000
+        id 1fgdP1-0004ZT-09; Fri, 20 Jul 2018 21:57:31 +0000
 From:   Tyler Hicks <tyhicks@canonical.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tejun Heo <tj@kernel.org>,
@@ -38,9 +38,9 @@ Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         bridge@lists.linux-foundation.org,
         Linux Containers <containers@lists.linux-foundation.org>
-Subject: [PATCH net-next v3 1/8] kernfs: allow creating kernfs objects with arbitrary uid/gid
-Date:   Fri, 20 Jul 2018 21:56:47 +0000
-Message-Id: <1532123814-1109-2-git-send-email-tyhicks@canonical.com>
+Subject: [PATCH net-next v3 2/8] sysfs, kobject: allow creating kobject belonging to arbitrary users
+Date:   Fri, 20 Jul 2018 21:56:48 +0000
+Message-Id: <1532123814-1109-3-git-send-email-tyhicks@canonical.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
 References: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
@@ -51,374 +51,305 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-This change allows creating kernfs files and directories with arbitrary
-uid/gid instead of always using GLOBAL_ROOT_UID/GID by extending
-kernfs_create_dir_ns() and kernfs_create_file_ns() with uid/gid arguments.
-The "simple" kernfs_create_file() and kernfs_create_dir() are left alone
-and always create objects belonging to the global root.
+Normally kobjects and their sysfs representation belong to global root,
+however it is not necessarily the case for objects in separate namespaces.
+For example, objects in separate network namespace logically belong to the
+container's root and not global root.
 
-When creating symlinks ownership (uid/gid) is taken from the target kernfs
-object.
+This change lays groundwork for allowing network namespace objects
+ownership to be transferred to container's root user by defining
+get_ownership() callback in ktype structure and using it in sysfs code to
+retrieve desired uid/gid when creating sysfs objects for given kobject.
 
 Co-Developed-by: Tyler Hicks <tyhicks@canonical.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c |  4 +++-
- fs/kernfs/dir.c                          | 29 ++++++++++++++++++++++++++---
- fs/kernfs/file.c                         |  8 ++++++--
- fs/kernfs/inode.c                        |  2 +-
- fs/kernfs/kernfs-internal.h              |  2 ++
- fs/kernfs/symlink.c                      | 11 ++++++++++-
- fs/sysfs/dir.c                           |  4 +++-
- fs/sysfs/file.c                          |  5 +++--
- include/linux/kernfs.h                   | 28 +++++++++++++++++++---------
- kernel/cgroup/cgroup.c                   |  4 +++-
- 10 files changed, 76 insertions(+), 21 deletions(-)
+ fs/sysfs/dir.c          |  7 +++++--
+ fs/sysfs/file.c         | 32 ++++++++++++++++++++------------
+ fs/sysfs/group.c        | 23 +++++++++++++++++------
+ fs/sysfs/sysfs.h        |  5 ++---
+ include/linux/kobject.h |  4 ++++
+ lib/kobject.c           | 19 +++++++++++++++++++
+ 6 files changed, 67 insertions(+), 23 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 749856a2e736..9af1a21265d3 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -146,6 +146,7 @@ static int rdtgroup_add_file(struct kernfs_node *parent_kn, struct rftype *rft)
- 	int ret;
- 
- 	kn = __kernfs_create_file(parent_kn, rft->name, rft->mode,
-+				  GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
- 				  0, rft->kf_ops, rft, NULL, NULL);
- 	if (IS_ERR(kn))
- 		return PTR_ERR(kn);
-@@ -1503,7 +1504,8 @@ static int mon_addfile(struct kernfs_node *parent_kn, const char *name,
- 	struct kernfs_node *kn;
- 	int ret = 0;
- 
--	kn = __kernfs_create_file(parent_kn, name, 0444, 0,
-+	kn = __kernfs_create_file(parent_kn, name, 0444,
-+				  GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, 0,
- 				  &kf_mondata_ops, priv, NULL, NULL);
- 	if (IS_ERR(kn))
- 		return PTR_ERR(kn);
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index d66cc0777303..4ca0b5c18192 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -619,6 +619,7 @@ struct kernfs_node *kernfs_node_from_dentry(struct dentry *dentry)
- 
- static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
- 					     const char *name, umode_t mode,
-+					     kuid_t uid, kgid_t gid,
- 					     unsigned flags)
- {
- 	struct kernfs_node *kn;
-@@ -661,8 +662,22 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
- 	kn->mode = mode;
- 	kn->flags = flags;
- 
-+	if (!uid_eq(uid, GLOBAL_ROOT_UID) || !gid_eq(gid, GLOBAL_ROOT_GID)) {
-+		struct iattr iattr = {
-+			.ia_valid = ATTR_UID | ATTR_GID,
-+			.ia_uid = uid,
-+			.ia_gid = gid,
-+		};
-+
-+		ret = __kernfs_setattr(kn, &iattr);
-+		if (ret < 0)
-+			goto err_out3;
-+	}
-+
- 	return kn;
- 
-+ err_out3:
-+	idr_remove(&root->ino_idr, kn->id.ino);
-  err_out2:
- 	kmem_cache_free(kernfs_node_cache, kn);
-  err_out1:
-@@ -672,11 +687,13 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
- 
- struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
- 				    const char *name, umode_t mode,
-+				    kuid_t uid, kgid_t gid,
- 				    unsigned flags)
- {
- 	struct kernfs_node *kn;
- 
--	kn = __kernfs_new_node(kernfs_root(parent), name, mode, flags);
-+	kn = __kernfs_new_node(kernfs_root(parent),
-+			       name, mode, uid, gid, flags);
- 	if (kn) {
- 		kernfs_get(parent);
- 		kn->parent = parent;
-@@ -946,6 +963,7 @@ struct kernfs_root *kernfs_create_root(struct kernfs_syscall_ops *scops,
- 	root->next_generation = 1;
- 
- 	kn = __kernfs_new_node(root, "", S_IFDIR | S_IRUGO | S_IXUGO,
-+			       GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
- 			       KERNFS_DIR);
- 	if (!kn) {
- 		idr_destroy(&root->ino_idr);
-@@ -984,6 +1002,8 @@ void kernfs_destroy_root(struct kernfs_root *root)
-  * @parent: parent in which to create a new directory
-  * @name: name of the new directory
-  * @mode: mode of the new directory
-+ * @uid: uid of the new directory
-+ * @gid: gid of the new directory
-  * @priv: opaque data associated with the new directory
-  * @ns: optional namespace tag of the directory
-  *
-@@ -991,13 +1011,15 @@ void kernfs_destroy_root(struct kernfs_root *root)
-  */
- struct kernfs_node *kernfs_create_dir_ns(struct kernfs_node *parent,
- 					 const char *name, umode_t mode,
-+					 kuid_t uid, kgid_t gid,
- 					 void *priv, const void *ns)
- {
- 	struct kernfs_node *kn;
- 	int rc;
- 
- 	/* allocate */
--	kn = kernfs_new_node(parent, name, mode | S_IFDIR, KERNFS_DIR);
-+	kn = kernfs_new_node(parent, name, mode | S_IFDIR,
-+			     uid, gid, KERNFS_DIR);
- 	if (!kn)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -1028,7 +1050,8 @@ struct kernfs_node *kernfs_create_empty_dir(struct kernfs_node *parent,
- 	int rc;
- 
- 	/* allocate */
--	kn = kernfs_new_node(parent, name, S_IRUGO|S_IXUGO|S_IFDIR, KERNFS_DIR);
-+	kn = kernfs_new_node(parent, name, S_IRUGO|S_IXUGO|S_IFDIR,
-+			     GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, KERNFS_DIR);
- 	if (!kn)
- 		return ERR_PTR(-ENOMEM);
- 
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index 2015d8c45e4a..dbf5bc250bfd 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -965,6 +965,8 @@ const struct file_operations kernfs_file_fops = {
-  * @parent: directory to create the file in
-  * @name: name of the file
-  * @mode: mode of the file
-+ * @uid: uid of the file
-+ * @gid: gid of the file
-  * @size: size of the file
-  * @ops: kernfs operations for the file
-  * @priv: private data for the file
-@@ -975,7 +977,8 @@ const struct file_operations kernfs_file_fops = {
-  */
- struct kernfs_node *__kernfs_create_file(struct kernfs_node *parent,
- 					 const char *name,
--					 umode_t mode, loff_t size,
-+					 umode_t mode, kuid_t uid, kgid_t gid,
-+					 loff_t size,
- 					 const struct kernfs_ops *ops,
- 					 void *priv, const void *ns,
- 					 struct lock_class_key *key)
-@@ -986,7 +989,8 @@ struct kernfs_node *__kernfs_create_file(struct kernfs_node *parent,
- 
- 	flags = KERNFS_FILE;
- 
--	kn = kernfs_new_node(parent, name, (mode & S_IALLUGO) | S_IFREG, flags);
-+	kn = kernfs_new_node(parent, name, (mode & S_IALLUGO) | S_IFREG,
-+			     uid, gid, flags);
- 	if (!kn)
- 		return ERR_PTR(-ENOMEM);
- 
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index 3d73fe9d56e2..80cebcd94c90 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -63,7 +63,7 @@ static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
- 	return ret;
- }
- 
--static int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr)
-+int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr)
- {
- 	struct kernfs_iattrs *attrs;
- 	struct iattr *iattrs;
-diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-index 0f260dcca177..3d83b114bb08 100644
---- a/fs/kernfs/kernfs-internal.h
-+++ b/fs/kernfs/kernfs-internal.h
-@@ -90,6 +90,7 @@ int kernfs_iop_setattr(struct dentry *dentry, struct iattr *iattr);
- int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
- 		       u32 request_mask, unsigned int query_flags);
- ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size);
-+int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
- 
- /*
-  * dir.c
-@@ -104,6 +105,7 @@ void kernfs_put_active(struct kernfs_node *kn);
- int kernfs_add_one(struct kernfs_node *kn);
- struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
- 				    const char *name, umode_t mode,
-+				    kuid_t uid, kgid_t gid,
- 				    unsigned flags);
- struct kernfs_node *kernfs_find_and_get_node_by_ino(struct kernfs_root *root,
- 						    unsigned int ino);
-diff --git a/fs/kernfs/symlink.c b/fs/kernfs/symlink.c
-index 08ccabd7047f..5ffed48f3d0e 100644
---- a/fs/kernfs/symlink.c
-+++ b/fs/kernfs/symlink.c
-@@ -21,6 +21,7 @@
-  * @target: target node for the symlink to point to
-  *
-  * Returns the created node on success, ERR_PTR() value on error.
-+ * Ownership of the link matches ownership of the target.
-  */
- struct kernfs_node *kernfs_create_link(struct kernfs_node *parent,
- 				       const char *name,
-@@ -28,8 +29,16 @@ struct kernfs_node *kernfs_create_link(struct kernfs_node *parent,
- {
- 	struct kernfs_node *kn;
- 	int error;
-+	kuid_t uid = GLOBAL_ROOT_UID;
-+	kgid_t gid = GLOBAL_ROOT_GID;
- 
--	kn = kernfs_new_node(parent, name, S_IFLNK|S_IRWXUGO, KERNFS_LINK);
-+	if (target->iattr) {
-+		uid = target->iattr->ia_iattr.ia_uid;
-+		gid = target->iattr->ia_iattr.ia_gid;
-+	}
-+
-+	kn = kernfs_new_node(parent, name, S_IFLNK|S_IRWXUGO, uid, gid,
-+			     KERNFS_LINK);
- 	if (!kn)
- 		return ERR_PTR(-ENOMEM);
- 
 diff --git a/fs/sysfs/dir.c b/fs/sysfs/dir.c
-index 58eba92a0e41..e39b884f0867 100644
+index e39b884f0867..feeae8081c22 100644
 --- a/fs/sysfs/dir.c
 +++ b/fs/sysfs/dir.c
-@@ -52,7 +52,9 @@ int sysfs_create_dir_ns(struct kobject *kobj, const void *ns)
+@@ -40,6 +40,8 @@ void sysfs_warn_dup(struct kernfs_node *parent, const char *name)
+ int sysfs_create_dir_ns(struct kobject *kobj, const void *ns)
+ {
+ 	struct kernfs_node *parent, *kn;
++	kuid_t uid;
++	kgid_t gid;
+ 
+ 	BUG_ON(!kobj);
+ 
+@@ -51,9 +53,10 @@ int sysfs_create_dir_ns(struct kobject *kobj, const void *ns)
+ 	if (!parent)
  		return -ENOENT;
  
++	kobject_get_ownership(kobj, &uid, &gid);
++
  	kn = kernfs_create_dir_ns(parent, kobject_name(kobj),
--				  S_IRWXU | S_IRUGO | S_IXUGO, kobj, ns);
-+				  S_IRWXU | S_IRUGO | S_IXUGO,
-+				  GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
-+				  kobj, ns);
+-				  S_IRWXU | S_IRUGO | S_IXUGO,
+-				  GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
++				  S_IRWXU | S_IRUGO | S_IXUGO, uid, gid,
+ 				  kobj, ns);
  	if (IS_ERR(kn)) {
  		if (PTR_ERR(kn) == -EEXIST)
- 			sysfs_warn_dup(parent, kobject_name(kobj));
 diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
-index 5c13f29bfcdb..513fa691ecbd 100644
+index 513fa691ecbd..fa46216523cf 100644
 --- a/fs/sysfs/file.c
 +++ b/fs/sysfs/file.c
-@@ -302,8 +302,9 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
+@@ -245,7 +245,7 @@ static const struct kernfs_ops sysfs_bin_kfops_mmap = {
+ 
+ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
+ 			   const struct attribute *attr, bool is_bin,
+-			   umode_t mode, const void *ns)
++			   umode_t mode, kuid_t uid, kgid_t gid, const void *ns)
+ {
+ 	struct lock_class_key *key = NULL;
+ 	const struct kernfs_ops *ops;
+@@ -302,8 +302,8 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
  	if (!attr->ignore_lockdep)
  		key = attr->key ?: (struct lock_class_key *)&attr->skey;
  #endif
--	kn = __kernfs_create_file(parent, attr->name, mode & 0777, size, ops,
--				  (void *)attr, ns, key);
-+	kn = __kernfs_create_file(parent, attr->name,
-+				  mode & 0777, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
-+				  size, ops, (void *)attr, ns, key);
+-	kn = __kernfs_create_file(parent, attr->name,
+-				  mode & 0777, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
++
++	kn = __kernfs_create_file(parent, attr->name, mode & 0777, uid, gid,
+ 				  size, ops, (void *)attr, ns, key);
  	if (IS_ERR(kn)) {
  		if (PTR_ERR(kn) == -EEXIST)
- 			sysfs_warn_dup(parent, attr->name);
-diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-index ab25c8b6d9e3..814643f7ee52 100644
---- a/include/linux/kernfs.h
-+++ b/include/linux/kernfs.h
-@@ -15,6 +15,7 @@
- #include <linux/lockdep.h>
- #include <linux/rbtree.h>
- #include <linux/atomic.h>
-+#include <linux/uidgid.h>
+@@ -313,12 +313,6 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
+ 	return 0;
+ }
+ 
+-int sysfs_add_file(struct kernfs_node *parent, const struct attribute *attr,
+-		   bool is_bin)
+-{
+-	return sysfs_add_file_mode_ns(parent, attr, is_bin, attr->mode, NULL);
+-}
+-
+ /**
+  * sysfs_create_file_ns - create an attribute file for an object with custom ns
+  * @kobj: object we're creating for
+@@ -328,9 +322,14 @@ int sysfs_add_file(struct kernfs_node *parent, const struct attribute *attr,
+ int sysfs_create_file_ns(struct kobject *kobj, const struct attribute *attr,
+ 			 const void *ns)
+ {
++	kuid_t uid;
++	kgid_t gid;
++
+ 	BUG_ON(!kobj || !kobj->sd || !attr);
+ 
+-	return sysfs_add_file_mode_ns(kobj->sd, attr, false, attr->mode, ns);
++	kobject_get_ownership(kobj, &uid, &gid);
++	return sysfs_add_file_mode_ns(kobj->sd, attr, false, attr->mode,
++				      uid, gid, ns);
+ 
+ }
+ EXPORT_SYMBOL_GPL(sysfs_create_file_ns);
+@@ -359,6 +358,8 @@ int sysfs_add_file_to_group(struct kobject *kobj,
+ 		const struct attribute *attr, const char *group)
+ {
+ 	struct kernfs_node *parent;
++	kuid_t uid;
++	kgid_t gid;
+ 	int error;
+ 
+ 	if (group) {
+@@ -371,7 +372,9 @@ int sysfs_add_file_to_group(struct kobject *kobj,
+ 	if (!parent)
+ 		return -ENOENT;
+ 
+-	error = sysfs_add_file(parent, attr, false);
++	kobject_get_ownership(kobj, &uid, &gid);
++	error = sysfs_add_file_mode_ns(kobj->sd, attr, false,
++				       attr->mode, uid, gid, NULL);
+ 	kernfs_put(parent);
+ 
+ 	return error;
+@@ -487,9 +490,14 @@ EXPORT_SYMBOL_GPL(sysfs_remove_file_from_group);
+ int sysfs_create_bin_file(struct kobject *kobj,
+ 			  const struct bin_attribute *attr)
+ {
++	kuid_t uid;
++	kgid_t gid;
++
+ 	BUG_ON(!kobj || !kobj->sd || !attr);
+ 
+-	return sysfs_add_file(kobj->sd, &attr->attr, true);
++	kobject_get_ownership(kobj, &uid, &gid);
++	return sysfs_add_file_mode_ns(kobj->sd, &attr->attr, true,
++				      attr->attr.mode, uid, gid, NULL);
+ }
+ EXPORT_SYMBOL_GPL(sysfs_create_bin_file);
+ 
+diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
+index 4802ec0e1e3a..c7a716c4acc9 100644
+--- a/fs/sysfs/group.c
++++ b/fs/sysfs/group.c
+@@ -31,6 +31,7 @@ static void remove_files(struct kernfs_node *parent,
+ }
+ 
+ static int create_files(struct kernfs_node *parent, struct kobject *kobj,
++			kuid_t uid, kgid_t gid,
+ 			const struct attribute_group *grp, int update)
+ {
+ 	struct attribute *const *attr;
+@@ -60,7 +61,7 @@ static int create_files(struct kernfs_node *parent, struct kobject *kobj,
+ 
+ 			mode &= SYSFS_PREALLOC | 0664;
+ 			error = sysfs_add_file_mode_ns(parent, *attr, false,
+-						       mode, NULL);
++						       mode, uid, gid, NULL);
+ 			if (unlikely(error))
+ 				break;
+ 		}
+@@ -90,7 +91,8 @@ static int create_files(struct kernfs_node *parent, struct kobject *kobj,
+ 			mode &= SYSFS_PREALLOC | 0664;
+ 			error = sysfs_add_file_mode_ns(parent,
+ 					&(*bin_attr)->attr, true,
+-					mode, NULL);
++					mode,
++					uid, gid, NULL);
+ 			if (error)
+ 				break;
+ 		}
+@@ -106,6 +108,8 @@ static int internal_create_group(struct kobject *kobj, int update,
+ 				 const struct attribute_group *grp)
+ {
+ 	struct kernfs_node *kn;
++	kuid_t uid;
++	kgid_t gid;
+ 	int error;
+ 
+ 	BUG_ON(!kobj || (!update && !kobj->sd));
+@@ -118,9 +122,11 @@ static int internal_create_group(struct kobject *kobj, int update,
+ 			kobj->name, grp->name ?: "");
+ 		return -EINVAL;
+ 	}
++	kobject_get_ownership(kobj, &uid, &gid);
+ 	if (grp->name) {
+-		kn = kernfs_create_dir(kobj->sd, grp->name,
+-				       S_IRWXU | S_IRUGO | S_IXUGO, kobj);
++		kn = kernfs_create_dir_ns(kobj->sd, grp->name,
++					  S_IRWXU | S_IRUGO | S_IXUGO,
++					  uid, gid, kobj, NULL);
+ 		if (IS_ERR(kn)) {
+ 			if (PTR_ERR(kn) == -EEXIST)
+ 				sysfs_warn_dup(kobj->sd, grp->name);
+@@ -129,7 +135,7 @@ static int internal_create_group(struct kobject *kobj, int update,
+ 	} else
+ 		kn = kobj->sd;
+ 	kernfs_get(kn);
+-	error = create_files(kn, kobj, grp, update);
++	error = create_files(kn, kobj, uid, gid, grp, update);
+ 	if (error) {
+ 		if (grp->name)
+ 			kernfs_remove(kn);
+@@ -281,6 +287,8 @@ int sysfs_merge_group(struct kobject *kobj,
+ 		       const struct attribute_group *grp)
+ {
+ 	struct kernfs_node *parent;
++	kuid_t uid;
++	kgid_t gid;
+ 	int error = 0;
+ 	struct attribute *const *attr;
+ 	int i;
+@@ -289,8 +297,11 @@ int sysfs_merge_group(struct kobject *kobj,
+ 	if (!parent)
+ 		return -ENOENT;
+ 
++	kobject_get_ownership(kobj, &uid, &gid);
++
+ 	for ((i = 0, attr = grp->attrs); *attr && !error; (++i, ++attr))
+-		error = sysfs_add_file(parent, *attr, false);
++		error = sysfs_add_file_mode_ns(parent, *attr, false,
++					       (*attr)->mode, uid, gid, NULL);
+ 	if (error) {
+ 		while (--i >= 0)
+ 			kernfs_remove_by_name(parent, (*--attr)->name);
+diff --git a/fs/sysfs/sysfs.h b/fs/sysfs/sysfs.h
+index d098e015fcc9..0050cc0c0236 100644
+--- a/fs/sysfs/sysfs.h
++++ b/fs/sysfs/sysfs.h
+@@ -27,11 +27,10 @@ void sysfs_warn_dup(struct kernfs_node *parent, const char *name);
+ /*
+  * file.c
+  */
+-int sysfs_add_file(struct kernfs_node *parent,
+-		   const struct attribute *attr, bool is_bin);
+ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
+ 			   const struct attribute *attr, bool is_bin,
+-			   umode_t amode, const void *ns);
++			   umode_t amode, kuid_t uid, kgid_t gid,
++			   const void *ns);
+ 
+ /*
+  * symlink.c
+diff --git a/include/linux/kobject.h b/include/linux/kobject.h
+index 7f6f93c3df9c..b49ff230beba 100644
+--- a/include/linux/kobject.h
++++ b/include/linux/kobject.h
+@@ -26,6 +26,7 @@
  #include <linux/wait.h>
+ #include <linux/atomic.h>
+ #include <linux/workqueue.h>
++#include <linux/uidgid.h>
  
- struct file;
-@@ -325,12 +326,14 @@ void kernfs_destroy_root(struct kernfs_root *root);
+ #define UEVENT_HELPER_PATH_LEN		256
+ #define UEVENT_NUM_ENVP			32	/* number of env pointers */
+@@ -114,6 +115,8 @@ extern struct kobject * __must_check kobject_get_unless_zero(
+ extern void kobject_put(struct kobject *kobj);
  
- struct kernfs_node *kernfs_create_dir_ns(struct kernfs_node *parent,
- 					 const char *name, umode_t mode,
-+					 kuid_t uid, kgid_t gid,
- 					 void *priv, const void *ns);
- struct kernfs_node *kernfs_create_empty_dir(struct kernfs_node *parent,
- 					    const char *name);
- struct kernfs_node *__kernfs_create_file(struct kernfs_node *parent,
--					 const char *name,
--					 umode_t mode, loff_t size,
-+					 const char *name, umode_t mode,
-+					 kuid_t uid, kgid_t gid,
-+					 loff_t size,
- 					 const struct kernfs_ops *ops,
- 					 void *priv, const void *ns,
- 					 struct lock_class_key *key);
-@@ -415,12 +418,14 @@ static inline void kernfs_destroy_root(struct kernfs_root *root) { }
+ extern const void *kobject_namespace(struct kobject *kobj);
++extern void kobject_get_ownership(struct kobject *kobj,
++				  kuid_t *uid, kgid_t *gid);
+ extern char *kobject_get_path(struct kobject *kobj, gfp_t flag);
  
- static inline struct kernfs_node *
- kernfs_create_dir_ns(struct kernfs_node *parent, const char *name,
--		     umode_t mode, void *priv, const void *ns)
-+		     umode_t mode, kuid_t uid, kgid_t gid,
-+		     void *priv, const void *ns)
- { return ERR_PTR(-ENOSYS); }
+ struct kobj_type {
+@@ -122,6 +125,7 @@ struct kobj_type {
+ 	struct attribute **default_attrs;
+ 	const struct kobj_ns_type_operations *(*child_ns_type)(struct kobject *kobj);
+ 	const void *(*namespace)(struct kobject *kobj);
++	void (*get_ownership)(struct kobject *kobj, kuid_t *uid, kgid_t *gid);
+ };
  
- static inline struct kernfs_node *
- __kernfs_create_file(struct kernfs_node *parent, const char *name,
--		     umode_t mode, loff_t size, const struct kernfs_ops *ops,
-+		     umode_t mode, kuid_t uid, kgid_t gid,
-+		     loff_t size, const struct kernfs_ops *ops,
- 		     void *priv, const void *ns, struct lock_class_key *key)
- { return ERR_PTR(-ENOSYS); }
- 
-@@ -498,12 +503,15 @@ static inline struct kernfs_node *
- kernfs_create_dir(struct kernfs_node *parent, const char *name, umode_t mode,
- 		  void *priv)
- {
--	return kernfs_create_dir_ns(parent, name, mode, priv, NULL);
-+	return kernfs_create_dir_ns(parent, name, mode,
-+				    GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
-+				    priv, NULL);
+ struct kobj_uevent_env {
+diff --git a/lib/kobject.c b/lib/kobject.c
+index 18989b5b3b56..f2dc1f756007 100644
+--- a/lib/kobject.c
++++ b/lib/kobject.c
+@@ -35,6 +35,25 @@ const void *kobject_namespace(struct kobject *kobj)
+ 	return kobj->ktype->namespace(kobj);
  }
  
- static inline struct kernfs_node *
- kernfs_create_file_ns(struct kernfs_node *parent, const char *name,
--		      umode_t mode, loff_t size, const struct kernfs_ops *ops,
-+		      umode_t mode, kuid_t uid, kgid_t gid,
-+		      loff_t size, const struct kernfs_ops *ops,
- 		      void *priv, const void *ns)
- {
- 	struct lock_class_key *key = NULL;
-@@ -511,15 +519,17 @@ kernfs_create_file_ns(struct kernfs_node *parent, const char *name,
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- 	key = (struct lock_class_key *)&ops->lockdep_key;
- #endif
--	return __kernfs_create_file(parent, name, mode, size, ops, priv, ns,
--				    key);
-+	return __kernfs_create_file(parent, name, mode, uid, gid,
-+				    size, ops, priv, ns, key);
- }
- 
- static inline struct kernfs_node *
- kernfs_create_file(struct kernfs_node *parent, const char *name, umode_t mode,
- 		   loff_t size, const struct kernfs_ops *ops, void *priv)
- {
--	return kernfs_create_file_ns(parent, name, mode, size, ops, priv, NULL);
-+	return kernfs_create_file_ns(parent, name, mode,
-+				     GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
-+				     size, ops, priv, NULL);
- }
- 
- static inline int kernfs_remove_by_name(struct kernfs_node *parent,
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 077370bf8964..35cf3d71f8aa 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -3557,7 +3557,9 @@ static int cgroup_add_file(struct cgroup_subsys_state *css, struct cgroup *cgrp,
- 	key = &cft->lockdep_key;
- #endif
- 	kn = __kernfs_create_file(cgrp->kn, cgroup_file_name(cgrp, cft, name),
--				  cgroup_file_mode(cft), 0, cft->kf_ops, cft,
-+				  cgroup_file_mode(cft),
-+				  GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
-+				  0, cft->kf_ops, cft,
- 				  NULL, key);
- 	if (IS_ERR(kn))
- 		return PTR_ERR(kn);
++/**
++ * kobject_get_ownership - get sysfs ownership data for @kobj
++ * @kobj: kobject in question
++ * @uid: kernel user ID for sysfs objects
++ * @gid: kernel group ID for sysfs objects
++ *
++ * Returns initial uid/gid pair that should be used when creating sysfs
++ * representation of given kobject. Normally used to adjust ownership of
++ * objects in a container.
++ */
++void kobject_get_ownership(struct kobject *kobj, kuid_t *uid, kgid_t *gid)
++{
++	*uid = GLOBAL_ROOT_UID;
++	*gid = GLOBAL_ROOT_GID;
++
++	if (kobj->ktype->get_ownership)
++		kobj->ktype->get_ownership(kobj, uid, gid);
++}
++
+ /*
+  * populate_dir - populate directory with attributes.
+  * @kobj: object we're working on.
 -- 
 2.7.4
 
