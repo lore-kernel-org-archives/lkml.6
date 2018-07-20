@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2DBECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C971ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561EA206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561EA206B7
+	by mail.kernel.org (Postfix) with ESMTP id 45EA7206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45EA7206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389206AbeGTNZC (ORCPT
+        id S2389214AbeGTNZE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:25:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44944 "EHLO
+        Fri, 20 Jul 2018 09:25:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45014 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387815AbeGTNZB (ORCPT
+        with ESMTP id S2387815AbeGTNZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:25:01 -0400
+        Fri, 20 Jul 2018 09:25:03 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 27D94BC1;
-        Fri, 20 Jul 2018 12:33:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1AF64A73;
+        Fri, 20 Jul 2018 12:34:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 58/92] block: do not use interruptible wait anywhere
-Date:   Fri, 20 Jul 2018 14:14:02 +0200
-Message-Id: <20180720121421.243196695@linuxfoundation.org>
+        James Morse <james.morse@arm.com>,
+        Christoffer Dall <cdall@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.14 71/92] KVM: arm/arm64: Convert kvm_host_cpu_state to a static per-cpu allocation
+Date:   Fri, 20 Jul 2018 14:14:15 +0200
+Message-Id: <20180720121421.819961946@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -52,71 +52,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Jenkins <alan.christopher.jenkins@gmail.com>
+From: James Morse <james.morse@arm.com>
 
-commit 1dc3039bc87ae7d19a990c3ee71cfd8a9068f428 upstream.
+Commit 36989e7fd386a9a5822c48691473863f8fbb404d upstream.
 
-When blk_queue_enter() waits for a queue to unfreeze, or unset the
-PREEMPT_ONLY flag, do not allow it to be interrupted by a signal.
+kvm_host_cpu_state is a per-cpu allocation made from kvm_arch_init()
+used to store the host EL1 registers when KVM switches to a guest.
 
-The PREEMPT_ONLY flag was introduced later in commit 3a0a529971ec
-("block, scsi: Make SCSI quiesce and resume work reliably").  Note the SCSI
-device is resumed asynchronously, i.e. after un-freezing userspace tasks.
+Make it easier for ASM to generate pointers into this per-cpu memory
+by making it a static allocation.
 
-So that commit exposed the bug as a regression in v4.15.  A mysterious
-SIGBUS (or -EIO) sometimes happened during the time the device was being
-resumed.  Most frequently, there was no kernel log message, and we saw Xorg
-or Xwayland killed by SIGBUS.[1]
-
-[1] E.g. https://bugzilla.redhat.com/show_bug.cgi?id=1553979
-
-Without this fix, I get an IO error in this test:
-
-# dd if=/dev/sda of=/dev/null iflag=direct & \
-  while killall -SIGUSR1 dd; do sleep 0.1; done & \
-  echo mem > /sys/power/state ; \
-  sleep 5; killall dd  # stop after 5 seconds
-
-The interruptible wait was added to blk_queue_enter in
-commit 3ef28e83ab15 ("block: generic request_queue reference counting").
-Before then, the interruptible wait was only in blk-mq, but I don't think
-it could ever have been correct.
-
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: James Morse <james.morse@arm.com>
+Acked-by: Christoffer Dall <cdall@linaro.org>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-core.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ virt/kvm/arm/arm.c |   18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -779,7 +779,6 @@ EXPORT_SYMBOL(blk_alloc_queue);
- int blk_queue_enter(struct request_queue *q, bool nowait)
- {
- 	while (true) {
--		int ret;
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -51,8 +51,8 @@
+ __asm__(".arch_extension	virt");
+ #endif
  
- 		if (percpu_ref_tryget_live(&q->q_usage_counter))
- 			return 0;
-@@ -796,13 +795,11 @@ int blk_queue_enter(struct request_queue
- 		 */
- 		smp_rmb();
++DEFINE_PER_CPU(kvm_cpu_context_t, kvm_host_cpu_state);
+ static DEFINE_PER_CPU(unsigned long, kvm_arm_hyp_stack_page);
+-static kvm_cpu_context_t __percpu *kvm_host_cpu_state;
  
--		ret = wait_event_interruptible(q->mq_freeze_wq,
--				!atomic_read(&q->mq_freeze_depth) ||
--				blk_queue_dying(q));
-+		wait_event(q->mq_freeze_wq,
-+			   !atomic_read(&q->mq_freeze_depth) ||
-+			   blk_queue_dying(q));
- 		if (blk_queue_dying(q))
- 			return -ENODEV;
--		if (ret)
--			return ret;
+ /* Per-CPU variable containing the currently running vcpu. */
+ static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_arm_running_vcpu);
+@@ -351,7 +351,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu
  	}
+ 
+ 	vcpu->cpu = cpu;
+-	vcpu->arch.host_cpu_context = this_cpu_ptr(kvm_host_cpu_state);
++	vcpu->arch.host_cpu_context = this_cpu_ptr(&kvm_host_cpu_state);
+ 
+ 	kvm_arm_set_running_vcpu(vcpu);
+ 
+@@ -1259,19 +1259,8 @@ static inline void hyp_cpu_pm_exit(void)
+ }
+ #endif
+ 
+-static void teardown_common_resources(void)
+-{
+-	free_percpu(kvm_host_cpu_state);
+-}
+-
+ static int init_common_resources(void)
+ {
+-	kvm_host_cpu_state = alloc_percpu(kvm_cpu_context_t);
+-	if (!kvm_host_cpu_state) {
+-		kvm_err("Cannot allocate host CPU state\n");
+-		return -ENOMEM;
+-	}
+-
+ 	/* set size of VMID supported by CPU */
+ 	kvm_vmid_bits = kvm_get_vmid_bits();
+ 	kvm_info("%d-bit VMID\n", kvm_vmid_bits);
+@@ -1413,7 +1402,7 @@ static int init_hyp_mode(void)
+ 	for_each_possible_cpu(cpu) {
+ 		kvm_cpu_context_t *cpu_ctxt;
+ 
+-		cpu_ctxt = per_cpu_ptr(kvm_host_cpu_state, cpu);
++		cpu_ctxt = per_cpu_ptr(&kvm_host_cpu_state, cpu);
+ 		err = create_hyp_mappings(cpu_ctxt, cpu_ctxt + 1, PAGE_HYP);
+ 
+ 		if (err) {
+@@ -1497,7 +1486,6 @@ out_hyp:
+ 	if (!in_hyp_mode)
+ 		teardown_hyp_mode();
+ out_err:
+-	teardown_common_resources();
+ 	return err;
  }
  
 
