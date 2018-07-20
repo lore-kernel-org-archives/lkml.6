@@ -2,102 +2,88 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C19ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD5DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87EC72084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:27:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87EC72084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neuling.org
+	by mail.kernel.org (Postfix) with ESMTP id ECC642084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 00:27:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC642084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731175AbeGTBMs convert rfc822-to-8bit (ORCPT
+        id S1731244AbeGTBM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 21:12:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:33515 "EHLO ozlabs.org"
+        Thu, 19 Jul 2018 21:12:57 -0400
+Received: from nautica.notk.org ([91.121.71.147]:48362 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730798AbeGTBMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 21:12:48 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by ozlabs.org (Postfix) with ESMTP id 41WsCM090qz9s4r;
-        Fri, 20 Jul 2018 10:27:11 +1000 (AEST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id B9F28EE78BF; Fri, 20 Jul 2018 10:27:10 +1000 (AEST)
-Message-ID: <1205bfc10c62986b4345fa258cf37e820c08226b.camel@neuling.org>
-Subject: Re: [RESEND][PATCH] powerpc/powernv : Save/Restore SPRG3 on
- entry/exit from stop.
-From:   Michael Neuling <mikey@neuling.org>
-To:     ego@linux.vnet.ibm.com
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Florian Weimer <fweimer@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Date:   Fri, 20 Jul 2018 10:27:10 +1000
-In-Reply-To: <20180718081249.GA17700@in.ibm.com>
-References: <1531826849-31838-1-git-send-email-ego@linux.vnet.ibm.com>
-         <1531843216-22209-1-git-send-email-ego@linux.vnet.ibm.com>
-         <80bbdf47081e3e302ab5f28b5ddc9e2faabba842.camel@neuling.org>
-         <20180718081249.GA17700@in.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        id S1730798AbeGTBM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 21:12:57 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 11D49C009; Fri, 20 Jul 2018 02:27:20 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 02:27:05 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     syzbot <syzbot+b173e77096a8ba815511@syzkaller.appspotmail.com>,
+        jack@suse.cz, jlayton@redhat.com, syzkaller-bugs@googlegroups.com,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        linux-mm@kvack.org, v9fs-developer@lists.sourceforge.net,
+        mgorman@techsingularity.net
+Subject: Re: [V9fs-developer] KASAN: use-after-free Read in
+ generic_perform_write
+Message-ID: <20180720002704.GA20844@nautica>
+References: <00000000000047116205715df655@google.com>
+ <20180719170718.8d4e7344fe79b2ad411dde98@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180719170718.8d4e7344fe79b2ad411dde98@linux-foundation.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-18 at 13:42 +0530, Gautham R Shenoy wrote:
-> Hello Mikey,
-> 
-> On Wed, Jul 18, 2018 at 09:24:19AM +1000, Michael Neuling wrote:
+Andrew Morton wrote on Thu, Jul 19, 2018:
+> On Thu, 19 Jul 2018 11:01:01 -0700 syzbot <syzbot+b173e77096a8ba815511@syzkaller.appspotmail.com> wrote:
+> > Hello,
 > > 
-> > >  	DEFINE(PPC_DBELL_SERVER, PPC_DBELL_SERVER);
-> > > diff --git a/arch/powerpc/kernel/idle_book3s.S
-> > > b/arch/powerpc/kernel/idle_book3s.S
-> > > index d85d551..5069d42 100644
-> > > --- a/arch/powerpc/kernel/idle_book3s.S
-> > > +++ b/arch/powerpc/kernel/idle_book3s.S
-> > > @@ -120,6 +120,9 @@ power9_save_additional_sprs:
-> > >  	mfspr	r4, SPRN_MMCR2
-> > >  	std	r3, STOP_MMCR1(r13)
-> > >  	std	r4, STOP_MMCR2(r13)
-> > > +
-> > > +	mfspr	r3, SPRN_SPRG3
-> > > +	std	r3, STOP_SPRG3(r13)
+> > syzbot found the following crash on:
 > > 
-> > We don't need to save it.  Just restore it from paca->sprg_vdso which should
-> > never change.
-> 
-> Ok. I will respin a patch to restore SPRG3 from paca->sprg_vdso.
-> 
+> > HEAD commit:    1c34981993da Add linux-next specific files for 20180719
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=16e6ac44400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=7002497517b09aec
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=b173e77096a8ba815511
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 > > 
-> > How can we do better at catching these missing SPRGs?
+> > Unfortunately, I don't have any reproducer for this crash yet.
 > 
-> We can go through the list of SPRs from the POWER9 User Manual and
-> document explicitly why we don't have to save/restore certain SPRs
-> during the execution of the stop instruction. Does this sound ok ?
-> 
-> (Ref: Table 4-8, Section 4.7.3.4 from the POWER9 User Manual
-> accessible from
-> https://openpowerfoundation.org/?resource_lib=power9-processor-users-manual)
+> Thanks.  I cc'ed v9fs-developer, optimistically.  That list manager is
+> weird :(
 
-I was thinking of a boot time test case built into linux. linux has some boot
-time test cases which you can enable via CONFIG options.
+I agree that list is weird, does anyone know the reason v9fs-developer
+is not a vger.k.o list? Or a reason not to change? It's still not too
+late...
 
-Firstly you could see if an SPR exists using the same trick xmon does in
-dump_one_spr(). Then once you have a list of usable SPRs, you could write all
-the known ones (I assume you'd have to leave out some, like the PSSCR), then set
-the appropriate stop level, make sure you got into that stop level, and then see
-if that register was changed. Then you'd have an automated list of registers you
-need to make sure you save/restore at each stop level.
+> I'm suspecting v9fs.  Does that fs attempt to write to the fs from a
+> kmalloced buffer?
 
-Could something like that work?
+Difficult to say without any idea of what syzkaller tried doing, but it
+looks like it hook'd up a fd opened to a local ext4 file into a trans_fd
+mount; so sending a packet to the "server" would trigger a local write
+instead.
+The reason it's freed too early probably is that the reply came from a
+read before the write happened; this is going to be tricky to fix as
+that write is 100% asynchronous without any feedback right now (the
+design assumes that the write has to have finished by the time reply
+came), but if we want to protect ourselves from rogue servers we'll have
+to think about something.
 
-Mikey
+I'll write it down to not forget, thanks for the cc.
+
+-- 
+Dominique Martinet
