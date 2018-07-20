@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE0CECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA1EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0EAA204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:17:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0EAA204EC
+	by mail.kernel.org (Postfix) with ESMTP id E3DFE204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:17:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3DFE204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388039AbeGTQGX (ORCPT
+        id S2388073AbeGTQEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:06:23 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54497 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387933AbeGTQEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Jul 2018 12:04:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54399 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388059AbeGTQEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 12:04:45 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EFF7C2097A; Fri, 20 Jul 2018 17:15:59 +0200 (CEST)
+        id 7C75D20949; Fri, 20 Jul 2018 17:15:59 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 31A51207B4;
-        Fri, 20 Jul 2018 17:15:41 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id DCFCC2097D;
+        Fri, 20 Jul 2018 17:15:38 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 22/35] mtd: rawnand: tango: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 17:15:14 +0200
-Message-Id: <20180720151527.16038-23-miquel.raynal@bootlin.com>
+Subject: [PATCH v4 18/35] mtd: rawnand: s3c2410: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 17:15:10 +0200
+Message-Id: <20180720151527.16038-19-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180720151527.16038-1-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
@@ -73,72 +73,76 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/tango_nand.c | 40 +++++++++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 16 deletions(-)
+ drivers/mtd/nand/raw/s3c2410.c | 30 +++++++++++++-----------------
+ 1 file changed, 13 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/tango_nand.c b/drivers/mtd/nand/raw/tango_nand.c
-index dd7a26efdf4f..a448d0797cd5 100644
---- a/drivers/mtd/nand/raw/tango_nand.c
-+++ b/drivers/mtd/nand/raw/tango_nand.c
-@@ -517,6 +517,28 @@ static int tango_set_timings(struct mtd_info *mtd, int csline,
+diff --git a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
+index e8bf64832213..c21e8892394a 100644
+--- a/drivers/mtd/nand/raw/s3c2410.c
++++ b/drivers/mtd/nand/raw/s3c2410.c
+@@ -915,20 +915,19 @@ static void s3c2410_nand_init_chip(struct s3c2410_nand_info *info,
+ }
+ 
+ /**
+- * s3c2410_nand_update_chip - post probe update
+- * @info: The controller instance.
+- * @nmtd: The driver version of the MTD instance.
++ * s3c2410_nand_attach_chip - Init the ECC engine after NAND scan
++ * @chip: The NAND chip
+  *
+- * This routine is called after the chip probe has successfully completed
+- * and the relevant per-chip information updated. This call ensure that
++ * This hook is called by the core after the identification of the NAND chip,
++ * once the relevant per-chip information is up to date.. This call ensure that
+  * we update the internal state accordingly.
+  *
+  * The internal state is currently limited to the ECC state information.
+ */
+-static int s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
+-				    struct s3c2410_nand_mtd *nmtd)
++static int s3c2410_nand_attach_chip(struct nand_chip *chip)
+ {
+-	struct nand_chip *chip = &nmtd->chip;
++	struct mtd_info *mtd = nand_to_mtd(chip);
++	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
+ 
+ 	switch (chip->ecc.mode) {
+ 
+@@ -998,6 +997,10 @@ static int s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
  	return 0;
  }
  
-+static int tango_attach_chip(struct nand_chip *chip)
-+{
-+	struct nand_ecc_ctrl *ecc = &chip->ecc;
-+
-+	ecc->mode = NAND_ECC_HW;
-+	ecc->algo = NAND_ECC_BCH;
-+	ecc->bytes = DIV_ROUND_UP(ecc->strength * FIELD_ORDER, BITS_PER_BYTE);
-+
-+	ecc->read_page_raw = tango_read_page_raw;
-+	ecc->write_page_raw = tango_write_page_raw;
-+	ecc->read_page = tango_read_page;
-+	ecc->write_page = tango_write_page;
-+	ecc->read_oob = tango_read_oob;
-+	ecc->write_oob = tango_write_oob;
-+
-+	return 0;
-+}
-+
-+static const struct nand_controller_ops tango_controller_ops = {
-+	.attach_chip = tango_attach_chip,
++static const struct nand_controller_ops s3c24xx_nand_controller_ops = {
++	.attach_chip = s3c2410_nand_attach_chip,
 +};
 +
- static int chip_init(struct device *dev, struct device_node *np)
- {
- 	u32 cs;
-@@ -560,28 +582,14 @@ static int chip_init(struct device *dev, struct device_node *np)
- 			NAND_NO_SUBPAGE_WRITE |
- 			NAND_WAIT_TCCS;
- 	chip->controller = &nfc->hw;
-+	chip->controller->ops = &tango_controller_ops;
- 	tchip->base = nfc->pbus_base + (cs * 256);
+ static const struct of_device_id s3c24xx_nand_dt_ids[] = {
+ 	{
+ 		.compatible = "samsung,s3c2410-nand",
+@@ -1095,6 +1098,7 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, info);
  
- 	nand_set_flash_node(chip, np);
- 	mtd_set_ooblayout(mtd, &tango_nand_ooblayout_ops);
- 	mtd->dev.parent = dev;
+ 	nand_controller_init(&info->controller);
++	info->controller.ops = &s3c24xx_nand_controller_ops;
  
--	err = nand_scan_ident(mtd, 1, NULL);
--	if (err)
--		return err;
+ 	/* get the clock source and enable it */
+ 
+@@ -1166,15 +1170,7 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 		mtd->dev.parent = &pdev->dev;
+ 		s3c2410_nand_init_chip(info, nmtd, sets);
+ 
+-		err = nand_scan_ident(mtd, (sets) ? sets->nr_chips : 1, NULL);
+-		if (err)
+-			goto exit_error;
 -
--	ecc->mode = NAND_ECC_HW;
--	ecc->algo = NAND_ECC_BCH;
--	ecc->bytes = DIV_ROUND_UP(ecc->strength * FIELD_ORDER, BITS_PER_BYTE);
+-		err = s3c2410_nand_update_chip(info, nmtd);
+-		if (err < 0)
+-			goto exit_error;
 -
--	ecc->read_page_raw = tango_read_page_raw;
--	ecc->write_page_raw = tango_write_page_raw;
--	ecc->read_page = tango_read_page;
--	ecc->write_page = tango_write_page;
--	ecc->read_oob = tango_read_oob;
--	ecc->write_oob = tango_write_oob;
--
--	err = nand_scan_tail(mtd);
-+	err = nand_scan(mtd, 1);
- 	if (err)
- 		return err;
+-		err = nand_scan_tail(mtd);
++		err = nand_scan(mtd, sets ? sets->nr_chips : 1);
+ 		if (err)
+ 			goto exit_error;
  
 -- 
 2.14.1
