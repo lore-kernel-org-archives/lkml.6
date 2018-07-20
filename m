@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC73ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A192ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5544F206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5544F206B7
+	by mail.kernel.org (Postfix) with ESMTP id 133D8206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 133D8206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731695AbeGTNNu (ORCPT
+        id S1731712AbeGTNNx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:13:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34716 "EHLO
+        Fri, 20 Jul 2018 09:13:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34724 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730183AbeGTNNu (ORCPT
+        with ESMTP id S1730183AbeGTNNw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:13:50 -0400
+        Fri, 20 Jul 2018 09:13:52 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89C2CBBD;
-        Fri, 20 Jul 2018 12:25:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45A3EBBF;
+        Fri, 20 Jul 2018 12:25:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Meelis Roos <mroos@linux.ee>,
-        Mathieu Malaterre <malat@debian.org>,
-        Andreas Schwab <schwab@linux-m68k.org>,
+        stable@vger.kernel.org, Daniele Iamartino <danielei@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 20/29] net: sungem: fix rx checksum support
-Date:   Fri, 20 Jul 2018 14:11:15 +0200
-Message-Id: <20180720115159.700367601@linuxfoundation.org>
+Subject: [PATCH 3.18 21/29] tcp: fix Fast Open key endianness
+Date:   Fri, 20 Jul 2018 14:11:16 +0200
+Message-Id: <20180720115159.738668418@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720115158.974693829@linuxfoundation.org>
 References: <20180720115158.974693829@linuxfoundation.org>
@@ -53,109 +53,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit 12b03558cef6d655d0d394f5e98a6fd07c1f6c0f ]
+[ Upstream commit c860e997e9170a6d68f9d1e6e2cf61f572191aaf ]
 
-After commit 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE
-are friends"), sungem owners reported the infamous "eth0: hw csum failure"
-message.
+Fast Open key could be stored in different endian based on the CPU.
+Previously hosts in different endianness in a server farm using
+the same key config (sysctl value) would produce different cookies.
+This patch fixes it by always storing it as little endian to keep
+same API for LE hosts.
 
-CHECKSUM_COMPLETE has in fact never worked for this driver, but this
-was masked by the fact that upper stacks had to strip the FCS, and
-therefore skb->ip_summed was set back to CHECKSUM_NONE before
-my recent change.
-
-Driver configures a number of bytes to skip when the chip computes
-the checksum, and for some reason only half of the Ethernet header
-was skipped.
-
-Then a second problem is that we should strip the FCS by default,
-unless the driver is updated to eventually support NETIF_F_RXFCS in
-the future.
-
-Finally, a driver should check if NETIF_F_RXCSUM feature is enabled
-or not, so that the admin can turn off rx checksum if wanted.
-
-Many thanks to Andreas Schwab and Mathieu Malaterre for their
-help in debugging this issue.
-
+Reported-by: Daniele Iamartino <danielei@google.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Meelis Roos <mroos@linux.ee>
-Reported-by: Mathieu Malaterre <malat@debian.org>
-Reported-by: Andreas Schwab <schwab@linux-m68k.org>
-Tested-by: Andreas Schwab <schwab@linux-m68k.org>
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/sun/sungem.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ net/ipv4/sysctl_net_ipv4.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/sun/sungem.c
-+++ b/drivers/net/ethernet/sun/sungem.c
-@@ -60,8 +60,7 @@
- #include <linux/sungem_phy.h>
- #include "sungem.h"
+--- a/net/ipv4/sysctl_net_ipv4.c
++++ b/net/ipv4/sysctl_net_ipv4.c
+@@ -206,8 +206,9 @@ static int proc_tcp_fastopen_key(struct
+ {
+ 	struct ctl_table tbl = { .maxlen = (TCP_FASTOPEN_KEY_LENGTH * 2 + 10) };
+ 	struct tcp_fastopen_context *ctxt;
+-	int ret;
+ 	u32  user_key[4]; /* 16 bytes, matching TCP_FASTOPEN_KEY_LENGTH */
++	__le32 key[4];
++	int ret, i;
  
--/* Stripping FCS is causing problems, disabled for now */
--#undef STRIP_FCS
-+#define STRIP_FCS
+ 	tbl.data = kmalloc(tbl.maxlen, GFP_KERNEL);
+ 	if (!tbl.data)
+@@ -216,11 +217,14 @@ static int proc_tcp_fastopen_key(struct
+ 	rcu_read_lock();
+ 	ctxt = rcu_dereference(tcp_fastopen_ctx);
+ 	if (ctxt)
+-		memcpy(user_key, ctxt->key, TCP_FASTOPEN_KEY_LENGTH);
++		memcpy(key, ctxt->key, TCP_FASTOPEN_KEY_LENGTH);
+ 	else
+-		memset(user_key, 0, sizeof(user_key));
++		memset(key, 0, sizeof(key));
+ 	rcu_read_unlock();
  
- #define DEFAULT_MSG	(NETIF_MSG_DRV		| \
- 			 NETIF_MSG_PROBE	| \
-@@ -435,7 +434,7 @@ static int gem_rxmac_reset(struct gem *g
- 	writel(desc_dma & 0xffffffff, gp->regs + RXDMA_DBLOW);
- 	writel(RX_RING_SIZE - 4, gp->regs + RXDMA_KICK);
- 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
--	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
-+	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
- 	writel(val, gp->regs + RXDMA_CFG);
- 	if (readl(gp->regs + GREG_BIFCFG) & GREG_BIFCFG_M66EN)
- 		writel(((5 & RXDMA_BLANK_IPKTS) |
-@@ -760,7 +759,6 @@ static int gem_rx(struct gem *gp, int wo
- 	struct net_device *dev = gp->dev;
- 	int entry, drops, work_done = 0;
- 	u32 done;
--	__sum16 csum;
- 
- 	if (netif_msg_rx_status(gp))
- 		printk(KERN_DEBUG "%s: rx interrupt, done: %d, rx_new: %d\n",
-@@ -855,9 +853,13 @@ static int gem_rx(struct gem *gp, int wo
- 			skb = copy_skb;
- 		}
- 
--		csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
--		skb->csum = csum_unfold(csum);
--		skb->ip_summed = CHECKSUM_COMPLETE;
-+		if (likely(dev->features & NETIF_F_RXCSUM)) {
-+			__sum16 csum;
++	for (i = 0; i < ARRAY_SIZE(key); i++)
++		user_key[i] = le32_to_cpu(key[i]);
 +
-+			csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
-+			skb->csum = csum_unfold(csum);
-+			skb->ip_summed = CHECKSUM_COMPLETE;
-+		}
- 		skb->protocol = eth_type_trans(skb, gp->dev);
+ 	snprintf(tbl.data, tbl.maxlen, "%08x-%08x-%08x-%08x",
+ 		user_key[0], user_key[1], user_key[2], user_key[3]);
+ 	ret = proc_dostring(&tbl, write, buffer, lenp, ppos);
+@@ -236,12 +240,16 @@ static int proc_tcp_fastopen_key(struct
+ 		 * first invocation of tcp_fastopen_cookie_gen
+ 		 */
+ 		tcp_fastopen_init_key_once(false);
+-		tcp_fastopen_reset_cipher(user_key, TCP_FASTOPEN_KEY_LENGTH);
++
++		for (i = 0; i < ARRAY_SIZE(user_key); i++)
++			key[i] = cpu_to_le32(user_key[i]);
++
++		tcp_fastopen_reset_cipher(key, TCP_FASTOPEN_KEY_LENGTH);
+ 	}
  
- 		napi_gro_receive(&gp->napi, skb);
-@@ -1755,7 +1757,7 @@ static void gem_init_dma(struct gem *gp)
- 	writel(0, gp->regs + TXDMA_KICK);
- 
- 	val = (RXDMA_CFG_BASE | (RX_OFFSET << 10) |
--	       ((14 / 2) << 13) | RXDMA_CFG_FTHRESH_128);
-+	       (ETH_HLEN << 13) | RXDMA_CFG_FTHRESH_128);
- 	writel(val, gp->regs + RXDMA_CFG);
- 
- 	writel(desc_dma >> 32, gp->regs + RXDMA_DBHI);
-@@ -2973,8 +2975,8 @@ static int gem_init_one(struct pci_dev *
- 	pci_set_drvdata(pdev, dev);
- 
- 	/* We can do scatter/gather and HW checksum */
--	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM;
--	dev->features |= dev->hw_features | NETIF_F_RXCSUM;
-+	dev->hw_features = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
-+	dev->features = dev->hw_features;
- 	if (pci_using_dac)
- 		dev->features |= NETIF_F_HIGHDMA;
- 
+ bad_key:
+ 	pr_debug("proc FO key set 0x%x-%x-%x-%x <- 0x%s: %u\n",
+-	       user_key[0], user_key[1], user_key[2], user_key[3],
++		 user_key[0], user_key[1], user_key[2], user_key[3],
+ 	       (char *)tbl.data, ret);
+ 	kfree(tbl.data);
+ 	return ret;
 
 
