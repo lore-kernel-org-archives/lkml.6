@@ -6,141 +6,112 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3ADECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E08ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E47E1206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:16:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47E1206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FB9F2064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:22:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB9F2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbeGTKD6 (ORCPT
+        id S1727800AbeGTKJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 06:03:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45200 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727167AbeGTKD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 06:03:58 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D28C087A75;
-        Fri, 20 Jul 2018 09:16:37 +0000 (UTC)
-Received: from t460s.bristot.redhat.com (ovpn-117-93.ams2.redhat.com [10.36.117.93])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 35721111AF1D;
-        Fri, 20 Jul 2018 09:16:34 +0000 (UTC)
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Clark Williams <williams@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH V3] sched/deadline: Update rq_clock of later_rq when pushing a task
-Date:   Fri, 20 Jul 2018 11:16:30 +0200
-Message-Id: <ca31d073a4788acf0684a8b255f14fea775ccf20.1532077269.git.bristot@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 20 Jul 2018 09:16:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 20 Jul 2018 09:16:37 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bristot@redhat.com' RCPT:''
+        Fri, 20 Jul 2018 06:09:48 -0400
+Received: from mout.perfora.net ([74.208.4.197]:44537 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727233AbeGTKJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 06:09:47 -0400
+Received: from localhost.localdomain ([89.217.215.226]) by mrelay.perfora.net
+ (mreueus003 [74.208.5.2]) with ESMTPSA (Nemesis) id 0MezRn-1fMRmF149Z-00Oa3I;
+ Fri, 20 Jul 2018 11:21:06 +0200
+Message-ID: <1532078447.19673.8.camel@ziswiler.com>
+Subject: Re: [PATCH] ASoC: wm9712: fix replace codec to component
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, linux-mips@linux-mips.org,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        James Hogan <jhogan@kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Manuel Lauss <manuel.lauss@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Jaroslav Kysela <perex@perex.cz>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
+        Han Xu <han.xu@nxp.com>, Donglin Peng <dolinux.peng@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Date:   Fri, 20 Jul 2018 11:20:47 +0200
+In-Reply-To: <87effy48lz.wl-kuninori.morimoto.gx@renesas.com>
+References: <20180720075148.14648-1-marcel@ziswiler.com>
+         <87effy48lz.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:onunNaexXgGZawMVxD2fW8hPkHh4cO9Cg1yWbodhs51c600RaZq
+ wyk0sT4cSVy3YJ0M3f4WzppRf/hMK5T8CfGNbmNZrUncJCNr6AZ+1b4dFyz+cZJtX5bhqKz
+ Exu7ktyVhMy4dEFD4QA02bu3tRUwtKfY9iSt+gJAdx7xaI8pprNY5gLkYbKYEwebM99bPz9
+ EZgjCaRO4u8Lh2cViCJOQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:pEE3KBkYACo=:bvNhs15X8y4LQ9Ram2ca1E
+ 6jdb4tG6+O/68mKLJqF0or2WqML2rIXxYxZL7ZJ8EXLyNCvaRwlpjrfVRX0/jHD4tUEYnrdCM
+ NPhhaZava5/afY34O5HVa2QtkjC5YBCza1zQ2UDmZrPc7NRNaqMJ9LlIbZb+7f3Gw6oGM6o4R
+ M4nP2gGXCXjnjHPvgbS7S0YhGiAFCwm0jCJXUqMmnOzq1zCwPv/D/IYny2LcaN4YJpRz1d9mT
+ E35wapSwkcJbFcinmI+q3xYqqc7v+LO7S5mO1OcKpiHcH3IZ1lYwSZW1PJulJ+LJbTmVe+gOK
+ 5KQH/nfCWIO9FT5UkmUcCUmqRxFWlGOADR+MrPaOneuZj8JEia2V9N0mAErIwGj5FZrLw0/2k
+ oqwQBf7izzeTv1sTx1TBsK9T/co92PsvpXBbcq9zPcEBPsVorW3D9C24+Y3H7hAMR2N0T6zRg
+ VzABrMMkTajI9NlM1DxLiwu61vkqBOWQohvZsoSCR9MjoG8DH5VZmi3Df1LaMRqruIYwPI81s
+ Qh3mpqy52p5OUcEeDtpNWMAx1wqx8mQ83g433M2Pmz/J9VqbhQQpj07Rj5CwDhrXZLGTVAqIx
+ FCGX/Kg+0rcMovBz2IUNGN6DLsCXgK/FLHjsDvVl1QGObgX4fw2GBtLTWSAFm3mPF23TdE7o9
+ +bEBb3FXKxADqPFCOe8VnWbtw0HY9+YhMr7m3e+tCmJfAkh1XAUwa6FTdTfyyTzO7oO8YbcT4
+ egCewQvmnhlM3WOR
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Casini got this warn while running a DL task here at RetisLab:
+Hi Kuninori
 
-  [  461.137582] ------------[ cut here ]------------
-  [  461.137583] rq->clock_update_flags < RQCF_ACT_SKIP
-  [  461.137599] WARNING: CPU: 4 PID: 2354 at kernel/sched/sched.h:967 assert_clock_updated.isra.32.part.33+0x17/0x20
-      [a ton of modules]
-  [  461.137646] CPU: 4 PID: 2354 Comm: label_image Not tainted 4.18.0-rc4+ #3
-  [  461.137647] Hardware name: ASUS All Series/Z87-K, BIOS 0801 09/02/2013
-  [  461.137649] RIP: 0010:assert_clock_updated.isra.32.part.33+0x17/0x20
-  [  461.137649] Code: ff 48 89 83 08 09 00 00 eb c6 66 0f 1f 84 00 00 00 00 00 55 48 c7 c7 98 7a 6c a5 c6 05 bc 0d 54 01 01 48 89 e5 e8 a9 84 fb ff <0f> 0b 5d c3 0f 1f 44 00 00 0f 1f 44 00 00 83 7e 60 01 74 0a 48 3b
-  [  461.137673] RSP: 0018:ffffa77e08cafc68 EFLAGS: 00010082
-  [  461.137674] RAX: 0000000000000000 RBX: ffff8b3fc1702d80 RCX: 0000000000000006
-  [  461.137674] RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff8b3fded164b0
-  [  461.137675] RBP: ffffa77e08cafc68 R08: 0000000000000026 R09: 0000000000000339
-  [  461.137676] R10: ffff8b3fd060d410 R11: 0000000000000026 R12: ffffffffa4e14e20
-  [  461.137677] R13: ffff8b3fdec22940 R14: ffff8b3fc1702da0 R15: ffff8b3fdec22940
-  [  461.137678] FS:  00007efe43ee5700(0000) GS:ffff8b3fded00000(0000) knlGS:0000000000000000
-  [  461.137679] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [  461.137680] CR2: 00007efe30000010 CR3: 0000000301744003 CR4: 00000000001606e0
-  [  461.137680] Call Trace:
-  [  461.137684]  push_dl_task.part.46+0x3bc/0x460
-  [  461.137686]  task_woken_dl+0x60/0x80
-  [  461.137689]  ttwu_do_wakeup+0x4f/0x150
-  [  461.137690]  ttwu_do_activate+0x77/0x80
-  [  461.137692]  try_to_wake_up+0x1d6/0x4c0
-  [  461.137693]  wake_up_q+0x32/0x70
-  [  461.137696]  do_futex+0x7e7/0xb50
-  [  461.137698]  __x64_sys_futex+0x8b/0x180
-  [  461.137701]  do_syscall_64+0x5a/0x110
-  [  461.137703]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  [  461.137705] RIP: 0033:0x7efe4918ca26
-  [  461.137705] Code: 00 00 00 74 17 49 8b 48 20 44 8b 59 10 41 83 e3 30 41 83 fb 20 74 1e be 85 00 00 00 41 ba 01 00 00 00 41 b9 01 00 00 04 0f 05 <48> 3d 01 f0 ff ff 73 1f 31 c0 c3 be 8c 00 00 00 49 89 c8 4d 31 d2
-  [  461.137738] RSP: 002b:00007efe43ee4928 EFLAGS: 00000283 ORIG_RAX: 00000000000000ca
-  [  461.137739] RAX: ffffffffffffffda RBX: 0000000005094df0 RCX: 00007efe4918ca26
-  [  461.137740] RDX: 0000000000000001 RSI: 0000000000000085 RDI: 0000000005094e24
-  [  461.137741] RBP: 00007efe43ee49c0 R08: 0000000005094e20 R09: 0000000004000001
-  [  461.137741] R10: 0000000000000001 R11: 0000000000000283 R12: 0000000000000000
-  [  461.137742] R13: 0000000005094df8 R14: 0000000000000001 R15: 0000000000448a10
-  [  461.137743] ---[ end trace 187df4cad2bf7649 ]---
+On Fri, 2018-07-20 at 08:30 +0000, Kuninori Morimoto wrote:
+> Hi Marcel
+> 
+> > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > 
+> > Since commit 143b44845d87 ("ASoC: wm9712: replace codec to
+> > component")
+> > "wm9712-codec" got renamed to "wm9712-component", however, this
+> > change
+> > never got propagated down to the actual board/platform drivers.
+> > E.g. on
+> > Colibri T20 this lead to the following spew upon boot with
+> > sound/touch
+> > being broken:
+> 
+> Oops, my bad...
+> The platform_driver name is not important,
+> how about simply rename back it to "wm9712-codec" ?
 
-This warning happened in the push_dl_task(), because
-__add_running_bw()->cpufreq_update_util() is getting the rq_clock of
-the later_rq before its update, which takes place at activate_task().
-The fix then is to update the rq_clock before calling add_running_bw().
+Sure, that's your call. After all it was now broken for almost half a
+year (;-p). Should I cook that up as well or are you gona do it?
 
-To avoid double rq_clock_update() call, we set ENQUEUE_NOCLOCK flag to
-activate_task().
+> Best regards
+> ---
+> Kuninori Morimoto
 
-Changes:
-  v1->v2:
-    Remove part of the comment regarding the ENQUEUE_NOCLOCK usage (Kirill Tkhai).
-  v0->v1:
-    Cosmetic changes in the log, and correct Juri's email (Daniel).
+Cheers
 
-Reported-by: Daniel Casini <daniel.casini@santannapisa.it>
-Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
-Cc: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: <stable@vger.kernel.org> # 4.16+
-Fixes: e0367b12674b sched/deadline: Move CPU frequency selection triggering points
----
- kernel/sched/deadline.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index fbfc3f1d368a..8b50eea4b607 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2090,8 +2090,14 @@ static int push_dl_task(struct rq *rq)
- 	sub_rq_bw(&next_task->dl, &rq->dl);
- 	set_task_cpu(next_task, later_rq->cpu);
- 	add_rq_bw(&next_task->dl, &later_rq->dl);
-+
-+	/*
-+	 * Update the later_rq clock here, because the clock is used
-+	 * by the cpufreq_update_util() inside __add_running_bw().
-+	 */
-+	update_rq_clock(later_rq);
- 	add_running_bw(&next_task->dl, &later_rq->dl);
--	activate_task(later_rq, next_task, 0);
-+	activate_task(later_rq, next_task, ENQUEUE_NOCLOCK);
- 	ret = 1;
- 
- 	resched_curr(later_rq);
--- 
-2.17.1
-
+Marcel
