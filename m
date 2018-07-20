@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF78ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C39BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2B1F20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B1F20854
+	by mail.kernel.org (Postfix) with ESMTP id E45B720854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45B720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388052AbeGTNQg (ORCPT
+        id S2388065AbeGTNQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:16:36 -0400
+        Fri, 20 Jul 2018 09:16:39 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:36730 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731669AbeGTNQg (ORCPT
+        with ESMTP id S1731669AbeGTNQh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:16:36 -0400
+        Fri, 20 Jul 2018 09:16:37 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1FADDA95;
-        Fri, 20 Jul 2018 12:28:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BBC9BCF;
+        Fri, 20 Jul 2018 12:28:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 14/66] bcm63xx_enet: do not write to random DMA channel on BCM6345
-Date:   Fri, 20 Jul 2018 14:13:31 +0200
-Message-Id: <20180720121408.089414896@linuxfoundation.org>
+Subject: [PATCH 4.9 15/66] crypto: crypto4xx - remove bad list_del
+Date:   Fri, 20 Jul 2018 14:13:32 +0200
+Message-Id: <20180720121408.144204977@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -51,36 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jonas Gorski <jonas.gorski@gmail.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
 
-commit d6213c1f2ad54a964b77471690264ed685718928 upstream.
+commit a728a196d253530f17da5c86dc7dfbe58c5f7094 upstream.
 
-The DMA controller regs actually point to DMA channel 0, so the write to
-ENETDMA_CFG_REG will actually modify a random DMA channel.
+alg entries are only added to the list, after the registration
+was successful. If the registration failed, it was never added
+to the list in the first place.
 
-Since DMA controller registers do not exist on BCM6345, guard the write
-with the usual check for dma_has_sram.
-
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/broadcom/bcm63xx_enet.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/crypto/amcc/crypto4xx_core.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-+++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-@@ -1063,7 +1063,8 @@ static int bcm_enet_open(struct net_devi
- 	val = enet_readl(priv, ENET_CTL_REG);
- 	val |= ENET_CTL_ENABLE_MASK;
- 	enet_writel(priv, val, ENET_CTL_REG);
--	enet_dma_writel(priv, ENETDMA_CFG_EN_MASK, ENETDMA_CFG_REG);
-+	if (priv->dma_has_sram)
-+		enet_dma_writel(priv, ENETDMA_CFG_EN_MASK, ENETDMA_CFG_REG);
- 	enet_dmac_writel(priv, priv->dma_chan_en_mask,
- 			 ENETDMAC_CHANCFG, priv->rx_chan);
+--- a/drivers/crypto/amcc/crypto4xx_core.c
++++ b/drivers/crypto/amcc/crypto4xx_core.c
+@@ -1034,12 +1034,10 @@ int crypto4xx_register_alg(struct crypto
+ 			break;
+ 		}
  
+-		if (rc) {
+-			list_del(&alg->entry);
++		if (rc)
+ 			kfree(alg);
+-		} else {
++		else
+ 			list_add_tail(&alg->entry, &sec_dev->alg_list);
+-		}
+ 	}
+ 
+ 	return 0;
 
 
