@@ -2,104 +2,139 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FABECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD89ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F279820652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:23:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F279820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C2EC20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:23:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2EC20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbeGTJK2 (ORCPT
+        id S1728312AbeGTJKt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 05:10:28 -0400
-Received: from mout.perfora.net ([74.208.4.194]:42855 "EHLO mout.perfora.net"
+        Fri, 20 Jul 2018 05:10:49 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38283 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727815AbeGTJK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:10:28 -0400
-X-Greylist: delayed 1723 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Jul 2018 05:10:27 EDT
-Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
- mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MWzli-1fUQ753p7E-00Vywe; Fri, 20 Jul 2018 10:23:08 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2] pinctrl: tegra: fix spelling in devicetree binding document
-Date:   Fri, 20 Jul 2018 10:22:57 +0200
-Message-Id: <20180720082258.1590-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.4
-X-Provags-ID: V03:K1:U5yQERU9V1/6zuXiEALpL8KQ/ljqzuIzpFdI4E6nWv2R9MmQD5b
- UHUkzHaVI3ZPyckNVvJggBPZdv+/IpGoMEXC34327Y7FGhdbe8IVj7shovz7YZtrSNccRN3
- nkxr5M78rB7mCDpcgLoBpPKuEBKx7lNXmGCmS3ypaHxhN/1e6Dm8qSD4yPQEDY+JmJfyQgA
- tJfxr4QdSXa9aAdK+orig==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:XvoJtvNxT80=:LA3NwHN2IhJ52yyXbxoNUo
- u/oKcFzWuZfM/kX5a2qlIz+q/ZcRTOybP66+e0sn7W0SaHVqRnd//QNIEKsONYXI0OrjCC1wD
- KXR0ObQ8FVOeJrVsty7pgh+P/t1Veji0KUJNdUDL+QxMC43QT+Zw1pLz4EZ1qZFJbxL7mT8G+
- NZLfOav/V5DA77h0dmVZqXvkC8Pr8l39sRqa891uGmt3Q6kcaJrIv1I0/+h/16pZrrqjebJkX
- 00YEfNPIlkCdjEem7Sq4cciEJDC7WAVicd5ctRNJc0nFgsxtAIIyGtyKodYvYc8qCDTd6xItM
- FmAn53B1289YUFgZqkRIXXtBf66BC8fd0c28pfu1HJjU1kpknJDkLRJ6v0Xdor03ZisbvEI0p
- aKh9tVFQqufGy/8iP/742/SFxOPUffsE3uPMHLsoXW9HYoobhjGO9wORlBia7cHgJZsjlTUT9
- aeehwokNCRgEAT59c0dzDsX683ewexLWn1NM/41bPd0Y9vJhCi8uDDFsgEuxMzIfDMJT9ypjL
- iwAo3aNKhf8CdbKJoaxJhHnq+acZlp2mE8FX75sjlWfWiHU404+bKmPTMUUJzFv1gADpYbuUS
- IwOXGhiuOWOhMd9GDMZgwZOzjfEKPaNPGFZ0Or8jTz/h+Ng1aBelsYhlzwDdR6iuMl+uxsTf1
- tIqM/3MhuocTewl5L/pwuOMXWSy2nTLwbPiRNFoKgMHPJiNhrCKWR7TJXuusUx1lVE0c=
+        id S1728236AbeGTJKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 05:10:49 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 831A8207AD; Fri, 20 Jul 2018 10:23:39 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 33EF420618;
+        Fri, 20 Jul 2018 10:23:39 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 10:23:39 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
+Subject: Re: [PATCH 2/2] sparc64: add reads{b,w,l}/writes{b,w,l}
+Message-ID: <20180720102339.22c9aa57@bbrezillon>
+In-Reply-To: <20180711120824.3882108-2-arnd@arndb.de>
+References: <20180711120824.3882108-1-arnd@arndb.de>
+        <20180711120824.3882108-2-arnd@arndb.de>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
++Miquel who's in charge of the NAND tree for this release
 
-This fixes a spelling mistake.
+On Wed, 11 Jul 2018 14:08:06 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Some drivers need these for compile-testing. On most architectures
+> they come from asm-generic/io.h, but not on sparc64, which has its
+> own definitions.
+> 
+> Since we already have ioread*_rep()/iowrite*_rep() that have the
+> same behavior on sparc64 (i.e. all PCI I/O space is memory mapped),
+> we can rename the existing helpers and add macros to define them
+> to the same implementation.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
----
+I tried to compile a sparc64 kernel with COMPILE_TEST=y plus the
+orion and s3c2410 NAND drivers enabled and it compiles fine (it does
+without this patch). So it seems to fix the compilation error reported
+by kbuild robots.
 
-Changes in v2:
-- Also fix up the one in nvidia,tegra210-pinmux.txt as suggested by Jon.
+Tested-by: Boris Brezillon <boris.brezillon@bootlin>
+(only compile-tested)
 
- Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt | 2 +-
- Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Dave gave his A-b, so, if everyone is okay with that, I'd like this
+patch to go trough the NAND tree.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-index ecb5c0d25218..f4d06bb0b55a 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-@@ -17,7 +17,7 @@ Tegra124 adds the following optional properties for pin configuration subnodes.
- The macros for options are defined in the
- 	include/dt-binding/pinctrl/pinctrl-tegra.h.
- - nvidia,enable-input: Integer. Enable the pin's input path.
--		enable :TEGRA_PIN_ENABLE0 and
-+		enable :TEGRA_PIN_ENABLE and
- 		disable or output only: TEGRA_PIN_DISABLE.
- - nvidia,open-drain: Integer.
- 		enable: TEGRA_PIN_ENABLE.
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-index a62d82d5fbe9..85f211436b8e 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-@@ -44,7 +44,7 @@ Optional subnode-properties:
- - nvidia,tristate: Integer.
-     0: drive, 1: tristate.
- - nvidia,enable-input: Integer. Enable the pin's input path.
--    enable :TEGRA_PIN_ENABLE0 and
-+    enable :TEGRA_PIN_ENABLE and
-     disable or output only: TEGRA_PIN_DISABLE.
- - nvidia,open-drain: Integer.
-     enable: TEGRA_PIN_ENABLE.
--- 
-2.14.4
+Thanks,
+
+Boris
+
+> ---
+>  arch/sparc/include/asm/io_64.h | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/sparc/include/asm/io_64.h b/arch/sparc/include/asm/io_64.h
+> index 9a1e9cbc7e6d..b162c23ae8c2 100644
+> --- a/arch/sparc/include/asm/io_64.h
+> +++ b/arch/sparc/include/asm/io_64.h
+> @@ -243,35 +243,42 @@ void insb(unsigned long, void *, unsigned long);
+>  void insw(unsigned long, void *, unsigned long);
+>  void insl(unsigned long, void *, unsigned long);
+>  
+> -static inline void ioread8_rep(void __iomem *port, void *buf, unsigned long count)
+> +static inline void readsb(void __iomem *port, void *buf, unsigned long count)
+>  {
+>  	insb((unsigned long __force)port, buf, count);
+>  }
+> -static inline void ioread16_rep(void __iomem *port, void *buf, unsigned long count)
+> +static inline void readsw(void __iomem *port, void *buf, unsigned long count)
+>  {
+>  	insw((unsigned long __force)port, buf, count);
+>  }
+>  
+> -static inline void ioread32_rep(void __iomem *port, void *buf, unsigned long count)
+> +static inline void readsl(void __iomem *port, void *buf, unsigned long count)
+>  {
+>  	insl((unsigned long __force)port, buf, count);
+>  }
+>  
+> -static inline void iowrite8_rep(void __iomem *port, const void *buf, unsigned long count)
+> +static inline void writesb(void __iomem *port, const void *buf, unsigned long count)
+>  {
+>  	outsb((unsigned long __force)port, buf, count);
+>  }
+>  
+> -static inline void iowrite16_rep(void __iomem *port, const void *buf, unsigned long count)
+> +static inline void writesw(void __iomem *port, const void *buf, unsigned long count)
+>  {
+>  	outsw((unsigned long __force)port, buf, count);
+>  }
+>  
+> -static inline void iowrite32_rep(void __iomem *port, const void *buf, unsigned long count)
+> +static inline void writesl(void __iomem *port, const void *buf, unsigned long count)
+>  {
+>  	outsl((unsigned long __force)port, buf, count);
+>  }
+>  
+> +#define ioread8_rep(p,d,l)	readsb(p,d,l)
+> +#define ioread16_rep(p,d,l)	readsw(p,d,l)
+> +#define ioread32_rep(p,d,l)	readsl(p,d,l)
+> +#define iowrite8_rep(p,d,l)	writesb(p,d,l)
+> +#define iowrite16_rep(p,d,l)	writesw(p,d,l)
+> +#define iowrite32_rep(p,d,l)	writesl(p,d,l)
+> +
+>  /* Valid I/O Space regions are anywhere, because each PCI bus supported
+>   * can live in an arbitrary area of the physical address range.
+>   */
 
