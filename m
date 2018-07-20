@@ -2,82 +2,109 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC560ECDFBD
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AFCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1F02084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:20:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D1F02084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id AACE120850
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:20:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AACE120850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbeGTIHR (ORCPT
+        id S1728036AbeGTIHQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:07:17 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:49614 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbeGTIHQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Jul 2018 04:07:16 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 41X2N80Jpqz1qvyy;
-        Fri, 20 Jul 2018 09:20:24 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 41X2N76pRQz20xT2;
-        Fri, 20 Jul 2018 09:20:23 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id MXovyqyzbz2G; Fri, 20 Jul 2018 09:20:22 +0200 (CEST)
-X-Auth-Info: ahZVuOL76DKvek2OY/P+lmV/Xhii6qwY5qSujVbyL/L9Ql12yVG44UctlbGgLuAr
-Received: from igel.home (ppp-188-174-158-212.dynamic.mnet-online.de [188.174.158.212])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Fri, 20 Jul 2018 09:20:22 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id C2E912C1EAC; Fri, 20 Jul 2018 09:20:21 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org
-Subject: Re: m68k allmodconfig build errors
-References: <28ebe45d-3dbd-2a82-f537-b0725f7a2bcf@infradead.org>
-X-Yow:  I just remembered something about a TOAD!
-Date:   Fri, 20 Jul 2018 09:20:21 +0200
-In-Reply-To: <28ebe45d-3dbd-2a82-f537-b0725f7a2bcf@infradead.org> (Randy
-        Dunlap's message of "Thu, 19 Jul 2018 15:39:50 -0700")
-Message-ID: <878t66idai.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from mga05.intel.com ([192.55.52.43]:13646 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727407AbeGTIGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:06:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 00:19:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,377,1526367600"; 
+   d="scan'208";a="68652048"
+Received: from yhuang6-ux31a.sh.intel.com ([10.239.198.6])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Jul 2018 00:18:59 -0700
+From:   Huang Ying <ying.huang@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH v4 4/8] swap: Unify normal/huge code path in swap_page_trans_huge_swapped()
+Date:   Fri, 20 Jul 2018 15:18:41 +0800
+Message-Id: <20180720071845.17920-5-ying.huang@intel.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180720071845.17920-1-ying.huang@intel.com>
+References: <20180720071845.17920-1-ying.huang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Jul 19 2018, Randy Dunlap <rdunlap@infradead.org> wrote:
+As suggested by Dave, we should unify the code path for normal and
+huge swap support if possible to avoid duplicated code, bugs, etc. and
+make it easier to review code.
 
-> block/partitions/ldm.o: In function `ldm_partition':
-> ldm.c:(.text+0x1900): undefined reference to `strcmp'
-> ldm.c:(.text+0x1964): undefined reference to `strcmp'
-> drivers/rtc/rtc-proc.o: In function `is_rtc_hctosys':
-> rtc-proc.c:(.text+0x290): undefined reference to `strcmp'
-> drivers/watchdog/watchdog_pretimeout.o: In function `watchdog_register_governor':
-> (.text+0x142): undefined reference to `strcmp'
+In this patch, the normal/huge code path in swap_page_trans_huge_swapped()
+is unified, the added and removed lines are same.  And the binary size
+is kept almost same when CONFIG_TRANSPARENT_HUGEPAGE=n.
 
-GCC has optimized strncmp to strcmp, but at a stage where macros are no
-longer available.  I think the right fix is to use strcmp directly,
-since strncmp doesn't make sense here.
+		 text	   data	    bss	    dec	    hex	filename
+base:		24179	   2028	    340	  26547	   67b3	mm/swapfile.o
+unified:	24215	   2028	    340	  26583	   67d7	mm/swapfile.o
 
-Andreas.
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Suggested-and-acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shaohua Li <shli@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+---
+ mm/swapfile.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 833613e59ef7..97814a01170d 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -270,7 +270,9 @@ static inline void cluster_set_null(struct swap_cluster_info *info)
+ 
+ static inline bool cluster_is_huge(struct swap_cluster_info *info)
+ {
+-	return info->flags & CLUSTER_FLAG_HUGE;
++	if (IS_ENABLED(CONFIG_THP_SWAP))
++		return info->flags & CLUSTER_FLAG_HUGE;
++	return false;
+ }
+ 
+ static inline void cluster_clear_huge(struct swap_cluster_info *info)
+@@ -1492,9 +1494,6 @@ static bool swap_page_trans_huge_swapped(struct swap_info_struct *si,
+ 	int i;
+ 	bool ret = false;
+ 
+-	if (!IS_ENABLED(CONFIG_THP_SWAP))
+-		return swap_swapcount(si, entry) != 0;
+-
+ 	ci = lock_cluster_or_swap_info(si, offset);
+ 	if (!ci || !cluster_is_huge(ci)) {
+ 		if (swap_count(map[roffset]))
 -- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+2.16.4
+
