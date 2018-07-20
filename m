@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 078BEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A12E2ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B653A204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:31:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B653A204EC
+	by mail.kernel.org (Postfix) with ESMTP id 65DC1204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:31:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65DC1204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732156AbeGTPTt (ORCPT
+        id S1732790AbeGTPTv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 11:19:49 -0400
-Received: from mout.perfora.net ([74.208.4.197]:45721 "EHLO mout.perfora.net"
+        Fri, 20 Jul 2018 11:19:51 -0400
+Received: from mout.perfora.net ([74.208.4.196]:41521 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731336AbeGTPTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 11:19:48 -0400
+        id S1732163AbeGTPTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 11:19:50 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LwHJA-1g67lP3R2k-0185va; Fri, 20 Jul 2018 16:30:50 +0200
+ 0M6DSW-1fwFrM33G6-00yAJG; Fri, 20 Jul 2018 16:30:43 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
@@ -34,30 +34,31 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         linux-kernel@vger.kernel.org,
         Benjamin Gilbert <benjamin.gilbert@coreos.com>,
         Dmitry Osipenko <digetx@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         "Robin H. Johnson" <robbat2@gentoo.org>
-Subject: [PATCH 6/6] ARM: defconfig: tegra: enable tegra raw nand driver
-Date:   Fri, 20 Jul 2018 16:30:12 +0200
-Message-Id: <20180720143012.7740-6-marcel@ziswiler.com>
+Subject: [PATCH 4/6] ARM: defconfig: tegra: enable dynamic debug
+Date:   Fri, 20 Jul 2018 16:30:10 +0200
+Message-Id: <20180720143012.7740-4-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180720143012.7740-1-marcel@ziswiler.com>
 References: <20180720143012.7740-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:VuX1QxYreuZU3BfK+Jmfcf/99oF4tYaBtTLtlWlYbCsfcMjs04v
- AMN7Iz5uSQbzLENyJ4viA1wEUWGaAzC4aW8c7cFP/1Htdii3FMeYBMeHx/AaH7wTukXmVvB
- rsOoriWgm849z+C6nMzBqwNOupKUrt2SjIrvYwfczuAD9zLbt3FjjNpodqvGncwZr0vXxCA
- Cqm7E165wH5q6+JD5rmCg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:UyAVt37YMUA=:aFzYAJlTfph5kqomE2Lxs1
- 4PbgwE575SOIneGw+9sjx/LRQlUSE44+eLPMbe45cvXVqb1Rwe2uLARUuXtqx2FMm1cwwA8QI
- 116x7qB4eWOHmAexzWlarl5rGaB+9vMLL3KRBuRPMriodTN4cDy9TWb3kOlrJ253gx3RWpton
- UWwsI8AmgjT8wvELE2z7UN2c+n0XilsrqSrvYgLglj2TrRXB5nUus+1aSVZFk7HPqpemjJRS5
- skmI7owDxbYrVuVHVhdowHU8UT0gmeBFJCh9u6tMZX6VbTFWp0mDaOcL/PV4V4nFDIwrxueJE
- wZQM5XE5fdC7RCxJ0qeZpYniwByfUzx2OKWW+1H6qT/HeRoft2lzUAi8rOfOWToQ6Vwn9gPsp
- iWBOFaNDzfOhsGDhCJZknTf+n1rvL7faIVqzjHKfZvCX8+I6ufCyEghcZ0JCJK4Du8ezRkJBF
- Da4Bczb0YtMtIPJtxxTfWVueHevrqrTnecteS+IXrmJpnR3gz2bfl6glgPBjnpUFtuQUNkirx
- N6vA527MVZPsmmJ1H+mBb2LBmC77pbUpFciCfrDwIp4lNj9jWOCII3yLe3UgoTwl3oAr+/MoU
- J1IycXxnBgUKfIVlJrtCjLfKc5k9LshvBT7QS/Vd81F+3zUsBtFSYJRcOHlowWWAlVBI8THLU
- J2woGNg6yKSuYoRSFAG1FaXEjC46iS0fmgdcXHJYFPq0+2gpLPS0J/dSOTrsE6NkIZH0=
+X-Provags-ID: V03:K1:LobQlTHUraj0kTsp1PL2pafoUNOH56BXmCCkEmVT6h6mc/QkywV
+ Zuk/dEKJrmC/ipq3McrZ8m/hvy+AISc/QqAJ+VY0EOFAc5HiTjQ+Ok//qlfLCoyvmDhISs0
+ 4oA8aQZxR6TN3d1qTRns0mxv7fUo4QTQ16KjlsodXzbD+A3gzCDKKrjYYGe4HcBXBaT/mY5
+ 5GIJqOouRaNXLNUmTkOtw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5IgfVcw8sKI=:D3hZkmELtGcY9/LEjciJzE
+ 5QSG1X7LnVvJqeTbdpSGcAlLQtS1TCio3nzOcrsXLZ0iSOdixt0ZwT9SE7sEPyd9tYuGhPvyZ
+ HZz1OMvA2HggaWCKsftxe2eDNmuHZZMpXNZQNetVILnIxRWHkoqZ62EjZVfzdbxrlU11RS+Fb
+ /HzKLW4xqmZE1BXyDaOpar5a8dMjgLNwFhuQXrKoCYG7kdTiVG1VyMptW10tiFLcEiZARNrku
+ Moj8XLR7OaEnimp6oqMVdFdVty0gx/nXgXvfk5df0Q9tQK04B3llFkiU6zRkWo1Ro8R3K8Spw
+ UOzY4nIpVRunxy5G6nScfcrtSMrA70sO1A1pOu9ibt67pTyRdrbpTeLx4Qd0xr1rcWgRbTR3o
+ 4wiuJBm+SaNtoSh2sPX4jh5ECq4ejsEDbLWEySPMge7ifarCKdrq4ml8Js8TYsHNPUgScIAEX
+ 4BJMrfEjpColh5avMH5o33rgubCv2u8+JHDJF5nvoSztXNuAWx4uEsUlSi7DOKYVBnacO/YsW
+ Z7EF89IqQ/8XGjnwpnApsXkfsRqTbnfYs7T7P527O3WY22Drw1vm4xbgg/Ap3S4UWoGKxCtdU
+ RFXb8LmRr3O4xo5vMBzt8bnr55m2ofckzOioqdPFgnpmgmC5ogry+6a1WLhl+fPrcKlMwlkd5
+ rGw+RuVYGsPB+ulMsznSGCwnuGDwGc6LVW115rAXdtpM/+uxiRWF4A2/Emf6hDvkRVKI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,44 +66,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Now with everything being merged actually enable it. Also enable
-MTD_OF_PARTS, MTD_BLOCK, MTD_NAND, MTD_UBI and UBIFS without which
-the former would not make much sense and is also in-line with
-multi_v7_defconfig.
+Dynamic debug is really helpful.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/configs/tegra_defconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/configs/tegra_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 24e297659b55..b248e231900f 100644
+index c7b99ebf5fcf..24e297659b55 100644
 --- a/arch/arm/configs/tegra_defconfig
 +++ b/arch/arm/configs/tegra_defconfig
-@@ -79,8 +79,13 @@ CONFIG_DMA_CMA=y
- CONFIG_CMA_SIZE_MBYTES=64
- CONFIG_TEGRA_GMI=y
- CONFIG_MTD=y
-+CONFIG_MTD_OF_PARTS=y
-+CONFIG_MTD_BLOCK=y
- CONFIG_MTD_M25P80=y
-+CONFIG_MTD_NAND=y
-+CONFIG_MTD_NAND_TEGRA=y
- CONFIG_MTD_SPI_NOR=y
-+CONFIG_MTD_UBI=y
- CONFIG_BLK_DEV_LOOP=y
- CONFIG_AD525X_DPOT=y
- CONFIG_AD525X_DPOT_I2C=y
-@@ -280,6 +285,7 @@ CONFIG_EXT3_FS_SECURITY=y
- CONFIG_VFAT_FS=y
- CONFIG_TMPFS=y
- CONFIG_TMPFS_POSIX_ACL=y
-+CONFIG_UBIFS_FS=y
- CONFIG_SQUASHFS=y
- CONFIG_SQUASHFS_LZO=y
- CONFIG_SQUASHFS_XZ=y
+@@ -289,6 +289,7 @@ CONFIG_ROOT_NFS=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ CONFIG_PRINTK_TIME=y
++CONFIG_DYNAMIC_DEBUG=y
+ CONFIG_DEBUG_INFO=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_SLAB=y
 -- 
 2.14.4
 
