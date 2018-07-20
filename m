@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DBDECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD2AECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 923D220661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0863220856
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:22:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCE0yHt5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923D220661
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efU634T/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0863220856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731166AbeGTVLz (ORCPT
+        id S1731465AbeGTVLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 20 Jul 2018 17:11:55 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55937 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727884AbeGTVLy (ORCPT
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34741 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730821AbeGTVLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 17:11:54 -0400
-Received: by mail-wm0-f67.google.com with SMTP id f21-v6so10555555wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 13:22:02 -0700 (PDT)
+        Fri, 20 Jul 2018 17:11:55 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c13-v6so12348094wrt.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 13:22:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=eI2A7GKKUKKDBks0BJNzX7OPxvhrHXIDpp3s+mL+y48=;
-        b=YCE0yHt5H40qKTEi8hXPE7EEX3GvXdBByvGu8mFnTOzIQH3DXZo4QDPH+FoE2dtsQ2
-         6TxXfynWheC35xNYhEJGFHRWlZfSIN8Dm0W5X7mDjvkfs5dEPoBdbyR723TizWk5DtYu
-         OP5DZPzLG+142ipHoIced8oISjUBIV7iPAUonCIBt3dkJnhkzSDtJEc86bPSgfaByfex
-         JllT7Wi5OhAI9om2vjiGGtk3sI8vZqrMdYB/HgPv3cPeTsJFLYLuyFT+Nk/xvtsqtu27
-         87WPsLwwFAAo4CvwVqweMWy1frBd0f8M5UyFw/GoVfRWP1k/5DD0S9ObwdivZk8s2liC
-         hYPw==
+        bh=g55OB7vq5Q7ro8lceEqreX5u8FNldAPVCEFCAxbWUHM=;
+        b=efU634T/AoFde9cj+926YEhtXf2IdsZDKt9W4PCnu9wefpmz1f/oONk47hGjRFv857
+         x7GOeM1gPo+2uH+qO13vOERJXUyboK28FW6et3Vv95+SxSnA57UDNP7sc68DQIfz2ZVM
+         KkwiVRivnyiM0GFZ+UXcJzODJQgi6fin5+eGKoeTrt1JecZnxiDcURRLHHQ1dyFGlrz2
+         UHgWRp67UxIYg2AHBnYNz4NXICmmJrVmetrtUIqo6RhX5L+CSNzDtT2XVwyFTRGl1pGM
+         G8O0imKmhlJK0yh8OtGu6NtFSJxroUx782CZ82hVWfqruGFr75xmmLLBZYKERZRvZ28A
+         s7Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=eI2A7GKKUKKDBks0BJNzX7OPxvhrHXIDpp3s+mL+y48=;
-        b=s7hMhAR1VZotBzAZ6FxPFyxPNZNbRc/G2tk+uOZPXkTP3BJVaW7jcJM2wyQh/b1wW1
-         l+qyAofXUNqnOQhEYtiBssDtsuHDyl/HCULtk1CUedxrLNU4xjDBJ5tPOpZCOdRpGIQa
-         RZeQgsVJjl07LkiWjluxPCQJn54SZ1h9SsfcGaVksDQ6kcnl7OhaSw8jOdssZ6hQ4+t0
-         np5BU770MCaC3LllfhBfguMOBE+GY1iUGOCQeL4/vSjy5hSk5SK0K1NBiL+okWg20ZVU
-         gC8tsUmRQPiyaVLEcgyloj7FFjfVTtv77JPF1noCdJ20nyUBR4ynowE01y6t4F0QKWH7
-         /2+w==
-X-Gm-Message-State: AOUpUlHE7Fd62HVsYnLsNLgQPmyWKc69xDhANOSrk0NR4Ozv4HGmed1l
-        wC6+qt7PAZn9mOsBBO1TVWYXYo3vun0=
-X-Google-Smtp-Source: AAOMgpeSULUv9Profili7KK0mnGkgH6QOIUxCK3rk4evTOeIuV58YKS/Cxamdt177TTvO7zyb43mJw==
-X-Received: by 2002:a1c:be13:: with SMTP id o19-v6mr2205458wmf.1.1532118121504;
-        Fri, 20 Jul 2018 13:22:01 -0700 (PDT)
+        bh=g55OB7vq5Q7ro8lceEqreX5u8FNldAPVCEFCAxbWUHM=;
+        b=iuoqt2Iv15YFP6lNwkH0NyHIHY0PxYJyB+DnakFRcvpOcHzJvyKvsJqLTNo7Oht+3s
+         gKhJ5BfFXxrrszo/TRUGURlRBKPOCjDoiPghl1YtCi1xJ8HlWwu/RkgTXBmqDYz6JxBz
+         MVBaZmkMA0azMoUkluel00olOXh6kcFOJPbYt9eLdsxQuvgsym7p0PcS+zDuls2ujuWB
+         zyTk6tBd6ndHO6TlbRGnHG033+fMAuSIc7ebyBG/CrxJnDEixAHNLtJ9VStr94xA1HdY
+         3okIdwb3NirOLLur5UDyiAYEctizFQhZHClYj5haycoeTSVETnBssdJZTFop+TrwI6Db
+         /t0g==
+X-Gm-Message-State: AOUpUlHNP3p34o+TIcTs4Dpslqkh/eGyZgiVZ26AgjIT3sEFSqlyjwOB
+        t3qhRKGp9yq2c+/UWLIXcL5t8pPoah4=
+X-Google-Smtp-Source: AAOMgperUQ60FTc8x+zANrLCW6yRyWnNwl4QDJ0NUU0wIxkzN5DW1sQbulys1f1i0a4t+kMRFSgq1A==
+X-Received: by 2002:adf:c78e:: with SMTP id l14-v6mr2409488wrg.230.1532118123023;
+        Fri, 20 Jul 2018 13:22:03 -0700 (PDT)
 Received: from localhost.localdomain (host109-151-85-76.range109-151.btcentralplus.com. [109.151.85.76])
-        by smtp.gmail.com with ESMTPSA id z14-v6sm1282628wrr.71.2018.07.20.13.22.00
+        by smtp.gmail.com with ESMTPSA id z14-v6sm1282628wrr.71.2018.07.20.13.22.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 13:22:00 -0700 (PDT)
+        Fri, 20 Jul 2018 13:22:02 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 03/14] staging:rtl8192u: Rename structure member FirstChnl - Style
-Date:   Fri, 20 Jul 2018 21:21:31 +0100
-Message-Id: <20180720202142.26312-4-johnfwhitmore@gmail.com>
+Subject: [PATCH 04/14] staging:rtl8192u: Rename variable NumChnls - Style
+Date:   Fri, 20 Jul 2018 21:21:32 +0100
+Message-Id: <20180720202142.26312-5-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720202142.26312-1-johnfwhitmore@gmail.com>
 References: <20180720202142.26312-1-johnfwhitmore@gmail.com>
@@ -74,63 +74,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename structure member FirstChnl to first_channel. This coding style change
-clears a checkpatch issue with CamelCase naming. This change should not impact
-the runtime code execution.
+Rename the member variable NumChnls to num_channels. This change clears the
+checkpatch issue with CamelCase naming. The change should not impact runtime
+execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/dot11d.c | 10 +++++-----
- drivers/staging/rtl8192u/ieee80211/dot11d.h |  2 +-
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/dot11d.c | 4 ++--
+ drivers/staging/rtl8192u/ieee80211/dot11d.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/dot11d.c b/drivers/staging/rtl8192u/ieee80211/dot11d.c
-index 8ac08ee5256e..f24dae97bc0d 100644
+index f24dae97bc0d..17bccb7bf594 100644
 --- a/drivers/staging/rtl8192u/ieee80211/dot11d.c
 +++ b/drivers/staging/rtl8192u/ieee80211/dot11d.c
-@@ -62,14 +62,14 @@ void Dot11d_UpdateCountryIe(struct ieee80211_device *dev, u8 *pTaddr,
- 	NumTriples = (CoutryIeLen - 3) / 3; /* skip 3-byte country string. */
- 	pTriple = (struct chnl_txpower_triple *)(pCoutryIe + 3);
- 	for (i = 0; i < NumTriples; i++) {
--		if (MaxChnlNum >= pTriple->FirstChnl) {
-+		if (MaxChnlNum >= pTriple->first_channel) {
- 			/* It is not in a monotonically increasing order, so
- 			 * stop processing.
- 			 */
+@@ -69,7 +69,7 @@ void Dot11d_UpdateCountryIe(struct ieee80211_device *dev, u8 *pTaddr,
  			netdev_err(dev->dev, "Dot11d_UpdateCountryIe(): Invalid country IE, skip it........1\n");
  			return;
  		}
--		if (MAX_CHANNEL_NUMBER < (pTriple->FirstChnl + pTriple->NumChnls)) {
-+		if (MAX_CHANNEL_NUMBER < (pTriple->first_channel + pTriple->NumChnls)) {
+-		if (MAX_CHANNEL_NUMBER < (pTriple->first_channel + pTriple->NumChnls)) {
++		if (MAX_CHANNEL_NUMBER < (pTriple->first_channel + pTriple->num_channels)) {
  			/* It is not a valid set of channel id, so stop
  			 * processing.
  			 */
-@@ -78,9 +78,9 @@ void Dot11d_UpdateCountryIe(struct ieee80211_device *dev, u8 *pTaddr,
+@@ -77,7 +77,7 @@ void Dot11d_UpdateCountryIe(struct ieee80211_device *dev, u8 *pTaddr,
+ 			return;
  		}
  
- 		for (j = 0; j < pTriple->NumChnls; j++) {
--			pDot11dInfo->channel_map[pTriple->FirstChnl + j] = 1;
--			pDot11dInfo->MaxTxPwrDbmList[pTriple->FirstChnl + j] = pTriple->MaxTxPowerInDbm;
--			MaxChnlNum = pTriple->FirstChnl + j;
-+			pDot11dInfo->channel_map[pTriple->first_channel + j] = 1;
-+			pDot11dInfo->MaxTxPwrDbmList[pTriple->first_channel + j] = pTriple->MaxTxPowerInDbm;
-+			MaxChnlNum = pTriple->first_channel + j;
- 		}
- 
- 		pTriple = (struct chnl_txpower_triple *)((u8 *)pTriple + 3);
+-		for (j = 0; j < pTriple->NumChnls; j++) {
++		for (j = 0; j < pTriple->num_channels; j++) {
+ 			pDot11dInfo->channel_map[pTriple->first_channel + j] = 1;
+ 			pDot11dInfo->MaxTxPwrDbmList[pTriple->first_channel + j] = pTriple->MaxTxPowerInDbm;
+ 			MaxChnlNum = pTriple->first_channel + j;
 diff --git a/drivers/staging/rtl8192u/ieee80211/dot11d.h b/drivers/staging/rtl8192u/ieee80211/dot11d.h
-index 9471279cf8e6..968c622137df 100644
+index 968c622137df..8c2b11d12185 100644
 --- a/drivers/staging/rtl8192u/ieee80211/dot11d.h
 +++ b/drivers/staging/rtl8192u/ieee80211/dot11d.h
-@@ -5,7 +5,7 @@
- #include "ieee80211.h"
+@@ -6,7 +6,7 @@
  
  struct chnl_txpower_triple {
--	u8 FirstChnl;
-+	u8  first_channel;
- 	u8  NumChnls;
+ 	u8  first_channel;
+-	u8  NumChnls;
++	u8  num_channels;
  	u8  MaxTxPowerInDbm;
  };
+ 
 -- 
 2.18.0
 
