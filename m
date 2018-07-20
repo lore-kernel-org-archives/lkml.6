@@ -2,88 +2,150 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2B9ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C09BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 511CD206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:00:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 511CD206B7
+	by mail.kernel.org (Postfix) with ESMTP id CF488206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:03:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJuaTZyE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF488206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731558AbeGTLs1 (ORCPT
+        id S1728585AbeGTLvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:48:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32844 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728254AbeGTLsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:48:25 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0913272630;
-        Fri, 20 Jul 2018 11:00:43 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B6287111DCF5;
-        Fri, 20 Jul 2018 11:00:41 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 4/4] perf tools: Move syscall_64.tbl check into check-headers.sh
-Date:   Fri, 20 Jul 2018 13:00:36 +0200
-Message-Id: <20180720110036.32251-4-jolsa@kernel.org>
-In-Reply-To: <20180720110036.32251-1-jolsa@kernel.org>
-References: <20180720110036.32251-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 11:00:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 11:00:43 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+        Fri, 20 Jul 2018 07:51:31 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36791 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbeGTLvb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 07:51:31 -0400
+Received: by mail-lj1-f194.google.com with SMTP id u7-v6so10806352lji.3;
+        Fri, 20 Jul 2018 04:03:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5h3utGIUO4yTj5Gf8nctT7YB3sjsemfWSm51sX6CnVo=;
+        b=XJuaTZyEMFYnTkvz0cqWHfEoMYLeJTW4PTPKfKWkm0zUEEul4uoQ4BL2KQBhfQC+RY
+         YitO1Gd+V1YwgULxQvqtghltHGxE/8dsl4gcR9L1j6NbC95e4diaGzEIOO3Dcc2cnE2P
+         vQ9DLUYRPLMaabopzFlToDtZLk2bUedItmoO2t55sL4L3GSFapRhz2dw29j1rYZzmAkP
+         gSnoVIw90lTONrncMx8LhNvcQ9E6fKCj1Ds9WNJvF1sgJbZAoJwGyEKd5uvxKRjTJ39u
+         TNcZuBJECrfW6t93eyIzmg7cLVRFc2YcpCaIuIzVqw0BST/UbAGoikeH0BQN4lHlM0fR
+         yoxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5h3utGIUO4yTj5Gf8nctT7YB3sjsemfWSm51sX6CnVo=;
+        b=ppvjfMcimO70o0INZ+XsRfyeu29atd/nD4w1tLDQbdeCzlVLkLKyU86WbNtkwCCHvl
+         yRE1uPbgU+MFd/OMUtdoRPx5l/q5niRzpZdz4kzQY5x78NQh5WKdEFRJQ6l5rXnhZ6Ma
+         i3r0cXiWQbhCd5sAApExluquLlg3wByfgKgCuskzDztE4h29EL2FvbH84AP2M6UrdefO
+         3w5YAcg06BOffP5SDK+TCBQHWzWMBBrY/StN1UzjaXpL5tW5qa9C4lw55racI3mLZ6s5
+         a7OB3ctA5SB+uaZ2GeTR7AW3JfBFPireNTmwO14zjDe5Bs96q76k/nsWkhSVf9pRl8xw
+         MENg==
+X-Gm-Message-State: AOUpUlE6Wmy4uoyIQkzlNa76MSdOstohDL49PUa3Q/ysIVwHCQ8BvopZ
+        Eh3YLleTe5ryCtBVBJ01G7g=
+X-Google-Smtp-Source: AAOMgpdt5vOe3n2U1i/LSfbJ1X+SSCarC6FynqqdlpgmsA/GbBE1cmPzBhcf2MsmykIQB3Y84DRu6Q==
+X-Received: by 2002:a2e:144f:: with SMTP id 15-v6mr1394052lju.122.1532084625992;
+        Fri, 20 Jul 2018 04:03:45 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id e20-v6sm253577lff.41.2018.07.20.04.03.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 04:03:45 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fgTC7-0006VO-Cc; Fri, 20 Jul 2018 13:03:31 +0200
+Date:   Fri, 20 Jul 2018 13:03:31 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     Johan Hovold <johan@kernel.org>, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, t-kristo@ti.com,
+        linux-rtc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] rtc: omap: Cut down the shutdown time from 2
+ seconds to 1 sec
+Message-ID: <20180720110331.GE19245@localhost>
+References: <1531372060-10532-1-git-send-email-j-keerthy@ti.com>
+ <1531372060-10532-2-git-send-email-j-keerthy@ti.com>
+ <20180719100229.GQ10204@localhost>
+ <ed335c7a-f079-082d-d572-93632087fd8f@ti.com>
+ <a6930aca-f475-5b53-ce9d-d45fbc75d69c@ti.com>
+ <20180719123617.GV10204@localhost>
+ <e3841afa-fe18-84c0-e5b6-520365c5e4a1@ti.com>
+ <28f0d002-f05e-b4dc-f0dd-d0bc0fc5616d@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28f0d002-f05e-b4dc-f0dd-d0bc0fc5616d@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Probably leftover from the time we introducd the check-headers.sh script.
+On Fri, Jul 20, 2018 at 04:03:20PM +0530, Keerthy wrote:
+> 
+> 
+> On Thursday 19 July 2018 06:16 PM, Keerthy wrote:
+> > 
+> > 
+> > On Thursday 19 July 2018 06:06 PM, Johan Hovold wrote:
+> >> On Thu, Jul 19, 2018 at 05:52:17PM +0530, Keerthy wrote:
+> >>> On Thursday 19 July 2018 05:23 PM, Keerthy wrote:
+> >>>> On Thursday 19 July 2018 03:32 PM, Johan Hovold wrote:
+> >>>>> On Thu, Jul 12, 2018 at 10:37:37AM +0530, Keerthy wrote:
+> >>
+> >>>>>> @@ -470,6 +476,9 @@ static void omap_rtc_power_off(void)
+> >>>>>>  	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+> >>>>>>  	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
+> >>>>>>  			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
+> >>
+> >>>>>> +	/* Our calculations started right before the rollover, try again */
+> >>
+> >>>>>> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
+> >>>>>> +		goto again;
+> >>>>>
+> >>>>> Here the alarm may have gone off as part of the roll over, in which case
+> >>>>> you shouldn't retry.
+> >>>>
+> >>>> Ex: We programmed at Sec = 2 and we expect ALARM2 to fire at sec = 3.
+> >>>>
+> >>>> In the event of Roll over before setting the
+> >>>> OMAP_RTC_INTERRUPTS_IT_ALARM2 bit in the OMAP_RTC_INTERRUPTS_REG will we
+> >>>> not miss the ALARM2 event? Then poweroff would fail right?
+> >>
+> >> Right, that would fail.
+> >>
+> >>>> Hence the attempt to retry the next second. This sequence would begin
+> >>>> right at the beginning of a new second and we expect the full sequence
+> >>>> to get over without having to retry again.
+> >>>>
+> >>>> Hope i am clear.
+> >>
+> >> Yes, sure, but my point is that could end up retrying also after the
+> >> alarm has fired correctly (e.g. due to latencies in turning of the
+> >> power)>
+> >> It may be enough to check OMAP_RTC_STATUS_REG before retrying.
+> 
+> On a second thought. Status gets set only after the next second.
+> 
+> if ALARM2 status bit is set that surely means interrupt has fired but if
+> it is not set then there are 2 possibilities
+> 
+> 1) ALARM2 is missed as the roll over happened
+> 2) ALARM2 yet to fire as we are yet to get to the next second.
+> 
+> On the other hand Seconds gives me clear indication if we missed the
+> interrupt or we are about to get one.
 
-Link: http://lkml.kernel.org/n/tip-oh56ckqztoc07we7mtdphu7r@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/arch/x86/Makefile | 3 ---
- tools/perf/check-headers.sh  | 3 +++
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Yes, you still have to check seconds *before* retrying based on status.
 
-diff --git a/tools/perf/arch/x86/Makefile b/tools/perf/arch/x86/Makefile
-index 1a38e78117ce..8cc6642fce7a 100644
---- a/tools/perf/arch/x86/Makefile
-+++ b/tools/perf/arch/x86/Makefile
-@@ -19,9 +19,6 @@ systbl := $(sys)/syscalltbl.sh
- _dummy := $(shell [ -d '$(out)' ] || mkdir -p '$(out)')
- 
- $(header): $(sys)/syscall_64.tbl $(systbl)
--	@(test -d ../../kernel -a -d ../../tools -a -d ../perf && ( \
--        (diff -B arch/x86/entry/syscalls/syscall_64.tbl ../../arch/x86/entry/syscalls/syscall_64.tbl >/dev/null) \
--        || echo "Warning: Kernel ABI header at 'tools/perf/arch/x86/entry/syscalls/syscall_64.tbl' differs from latest version at 'arch/x86/entry/syscalls/syscall_64.tbl'" >&2 )) || true
- 	$(Q)$(SHELL) '$(systbl)' $(sys)/syscall_64.tbl 'x86_64' > $@
- 
- clean::
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index 73e723675c5f..2c10e46d98e9 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -93,3 +93,6 @@ check arch/x86/lib/memcpy_64.S        '-I "^EXPORT_SYMBOL" -I "^#include <asm/ex
- check arch/x86/lib/memset_64.S        '-I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"'
- check include/uapi/asm-generic/mman.h '-I "^#include <\(uapi/\)*asm-generic/mman-common.h>"'
- check include/uapi/linux/mman.h       '-I "^#include <\(uapi/\)*asm/mman.h>"'
-+
-+# diff non-symmetric files
-+check_2 arch/x86/entry/syscalls/syscall_64.tbl ../../arch/x86/entry/syscalls/syscall_64.tbl
--- 
-2.17.1
+That should do, right?
 
+Johan
