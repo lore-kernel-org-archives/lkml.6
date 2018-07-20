@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC320ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49058ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66330206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66330206B7
+	by mail.kernel.org (Postfix) with ESMTP id 0D276206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:33:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D276206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388735AbeGTNVn (ORCPT
+        id S2388745AbeGTNVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:21:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41326 "EHLO
+        Fri, 20 Jul 2018 09:21:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41370 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731623AbeGTNVm (ORCPT
+        with ESMTP id S1731623AbeGTNVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:21:42 -0400
+        Fri, 20 Jul 2018 09:21:45 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9588C22;
-        Fri, 20 Jul 2018 12:32:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67546C34;
+        Fri, 20 Jul 2018 12:32:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
+        stable@vger.kernel.org, Eli Cohen <eli@mellanox.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 29/92] net/mlx5: Fix incorrect raw command length parsing
-Date:   Fri, 20 Jul 2018 14:13:33 +0200
-Message-Id: <20180720121419.581055066@linuxfoundation.org>
+Subject: [PATCH 4.14 30/92] net/mlx5: Fix required capability for manipulating MPFS
+Date:   Fri, 20 Jul 2018 14:13:34 +0200
+Message-Id: <20180720121419.707147456@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -50,42 +51,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Vesker <valex@mellanox.com>
+From: Eli Cohen <eli@mellanox.com>
 
-[ Upstream commit 603b7bcff824740500ddfa001d7a7168b0b38542 ]
+[ Upstream commit f811980444ec59ad62f9e041adbb576a821132c7 ]
 
-The NULL character was not set correctly for the string containing
-the command length, this caused failures reading the output of the
-command due to a random length. The fix is to initialize the output
-length string.
+Manipulating of the MPFS requires eswitch manager capabilities.
 
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Signed-off-by: Alex Vesker <valex@mellanox.com>
+Fixes: eeb66cdb6826 ('net/mlx5: Separate between E-Switch and MPFS')
+Signed-off-by: Eli Cohen <eli@mellanox.com>
+Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/lib/mpfs.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -1274,7 +1274,7 @@ static ssize_t outlen_write(struct file
- {
- 	struct mlx5_core_dev *dev = filp->private_data;
- 	struct mlx5_cmd_debug *dbg = &dev->cmd.dbg;
--	char outlen_str[8];
-+	char outlen_str[8] = {0};
- 	int outlen;
- 	void *ptr;
- 	int err;
-@@ -1289,8 +1289,6 @@ static ssize_t outlen_write(struct file
- 	if (copy_from_user(outlen_str, buf, count))
- 		return -EFAULT;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/lib/mpfs.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/mpfs.c
+@@ -34,6 +34,7 @@
+ #include <linux/mlx5/driver.h>
+ #include <linux/mlx5/mlx5_ifc.h>
+ #include "mlx5_core.h"
++#include "eswitch.h"
+ #include "lib/mpfs.h"
  
--	outlen_str[7] = 0;
--
- 	err = sscanf(outlen_str, "%d", &outlen);
- 	if (err < 0)
- 		return err;
+ /* HW L2 Table (MPFS) management */
+@@ -98,7 +99,7 @@ int mlx5_mpfs_init(struct mlx5_core_dev
+ 	int l2table_size = 1 << MLX5_CAP_GEN(dev, log_max_l2_table);
+ 	struct mlx5_mpfs *mpfs;
+ 
+-	if (!MLX5_VPORT_MANAGER(dev))
++	if (!MLX5_ESWITCH_MANAGER(dev))
+ 		return 0;
+ 
+ 	mpfs = kzalloc(sizeof(*mpfs), GFP_KERNEL);
+@@ -122,7 +123,7 @@ void mlx5_mpfs_cleanup(struct mlx5_core_
+ {
+ 	struct mlx5_mpfs *mpfs = dev->priv.mpfs;
+ 
+-	if (!MLX5_VPORT_MANAGER(dev))
++	if (!MLX5_ESWITCH_MANAGER(dev))
+ 		return;
+ 
+ 	WARN_ON(!hlist_empty(mpfs->hash));
+@@ -137,7 +138,7 @@ int mlx5_mpfs_add_mac(struct mlx5_core_d
+ 	u32 index;
+ 	int err;
+ 
+-	if (!MLX5_VPORT_MANAGER(dev))
++	if (!MLX5_ESWITCH_MANAGER(dev))
+ 		return 0;
+ 
+ 	mutex_lock(&mpfs->lock);
+@@ -179,7 +180,7 @@ int mlx5_mpfs_del_mac(struct mlx5_core_d
+ 	int err = 0;
+ 	u32 index;
+ 
+-	if (!MLX5_VPORT_MANAGER(dev))
++	if (!MLX5_ESWITCH_MANAGER(dev))
+ 		return 0;
+ 
+ 	mutex_lock(&mpfs->lock);
 
 
