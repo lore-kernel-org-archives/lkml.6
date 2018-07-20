@@ -2,125 +2,93 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE861ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB89ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83D96204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:09:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83D96204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 34FDD20833
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:10:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vWsaRxKV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34FDD20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732164AbeGTP6d (ORCPT
+        id S1732677AbeGTP7b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 11:58:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33914 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731797AbeGTP6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 11:58:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 30DABAFDD;
-        Fri, 20 Jul 2018 15:09:49 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 17:09:48 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Dmitry Safonov <dima@arista.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCHv3] lib/ratelimit: Lockless ratelimiting
-Message-ID: <20180720150948.nv57fjmmrmo2r7rx@pathway.suse.cz>
-References: <20180703225628.25684-1-dima@arista.com>
- <1531789154.18720.3.camel@arista.com>
- <CAHp75VdmQ1YLzWpYb7878zKOCCyOEicdLAtpohbmY2hL1h1RNg@mail.gmail.com>
+        Fri, 20 Jul 2018 11:59:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731797AbeGTP7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 11:59:31 -0400
+Received: from mail-io0-f174.google.com (mail-io0-f174.google.com [209.85.223.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BE3B20856;
+        Fri, 20 Jul 2018 15:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532099448;
+        bh=bH8ke6zhT4Dp7gqRi5kNAqgAbduypomIGJLEXiEOfQM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vWsaRxKV6GPi8PcwYzPcxcHrRkPaeCQaswDOFiEov4kJ/lS2OLHYikcxk9h+69GF6
+         p4e/yDY5dx6Rz2WDf9r+1/C/PmB+tW5LgvIi+AUuNs2/mhBb9e8++vJbAc7BOyH/yG
+         ZmI5VVhXtFDtlmCLKzSu2QDSi0xWacTa2RQk7ELk=
+Received: by mail-io0-f174.google.com with SMTP id l14-v6so10202856iob.7;
+        Fri, 20 Jul 2018 08:10:48 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEBXv1WNFqn0nx72QQ1Alhv+Uu34MDTY+hHykFm6uJ9btFv5YHX
+        cUacgeK0U9p+lnIGxuPuaZKmb1TPH1n4M6l0pA==
+X-Google-Smtp-Source: AAOMgpfo4qwRTBgy7usK08tIeczYJgY5qEsUc3pBtSkgSx/gOcxS2iK7USj20h2HsSHnkf4P3UveiU44i2yxaZWBLRo=
+X-Received: by 2002:a6b:6407:: with SMTP id t7-v6mr2032322iog.111.1532099447486;
+ Fri, 20 Jul 2018 08:10:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VdmQ1YLzWpYb7878zKOCCyOEicdLAtpohbmY2hL1h1RNg@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <20180706053552.11438-1-daniel@zonque.org> <20180706053552.11438-2-daniel@zonque.org>
+ <20180711150157.GA18150@rob-hp-laptop> <5070717c-4c9f-c580-8f50-2369dcd74aef@zonque.org>
+In-Reply-To: <5070717c-4c9f-c580-8f50-2369dcd74aef@zonque.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 20 Jul 2018 09:10:36 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL10WT5AK37_8o3M_=UiLx_thcm1W3UNz2qBaB5dRo8XA@mail.gmail.com>
+Message-ID: <CAL_JsqL10WT5AK37_8o3M_=UiLx_thcm1W3UNz2qBaB5dRo8XA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] dt-bindings: w1: document generic onewire bindings
+To:     Daniel Mack <daniel@zonque.org>
+Cc:     zbr@ioremap.net, Mark Rutland <mark.rutland@arm.com>,
+        szabolcs.gyurko@tlt.hu, Sebastian Reichel <sre@kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-07-18 19:49:10, Andy Shevchenko wrote:
-> On Tue, Jul 17, 2018 at 3:59 AM, Dmitry Safonov <dima@arista.com> wrote:
-> > I would be glad if someone helps/bothers to review the change :C
+On Wed, Jul 18, 2018 at 6:40 AM Daniel Mack <daniel@zonque.org> wrote:
+>
+> On Wednesday, July 11, 2018 05:01 PM, Rob Herring wrote:
+> > On Fri, Jul 06, 2018 at 07:35:48AM +0200, Daniel Mack wrote:
+> >> This patch adds a generic w1 bindings document that describes how w1
+> >> slave deviceses are grouped under master nodes. It also augments the
+> >> existing w1-gpio.txt document a bit.
+> >>
+> >> Signed-off-by: Daniel Mack <daniel@zonque.org>
+> >> ---
+> >>   .../devicetree/bindings/w1/w1-gpio.txt        | 11 +++++---
+> >>   Documentation/devicetree/bindings/w1/w1.txt   | 25 +++++++++++++++++++
+> >>   2 files changed, 33 insertions(+), 3 deletions(-)
+> >>   create mode 100644 Documentation/devicetree/bindings/w1/w1.txt
 > >
-> 
-> Perhaps Petr and / or Steven can help you.
-
-
-> > Thanks,
-> > Dmitry
+> > Reviewed-by: Rob Herring <robh@kernel.org>
 > >
-> > On Tue, 2018-07-03 at 23:56 +0100, Dmitry Safonov wrote:
-> >> Currently ratelimit_state is protected with spin_lock. If the .lock
-> >> is
-> >> taken at the moment of ___ratelimit() call, the message is suppressed
-> >> to
-> >> make ratelimiting robust.
-> >>
-> >> That results in the following issue issue:
-> >>       CPU0                          CPU1
-> >> ------------------           ------------------
-> >> printk_ratelimit()           printk_ratelimit()
-> >>         |                             |
-> >>   try_spin_lock()              try_spin_lock()
-> >>         |                             |
-> >> time_is_before_jiffies()          return 0; // suppress
-> >>
-> >> So, concurrent call of ___ratelimit() results in silently suppressing
-> >> one of the messages, regardless if the limit is reached or not.
-> >> And rc->missed is not increased in such case so the issue is covered
-> >> from user.
-> >>
-> >> Convert ratelimiting to use atomic counters and drop spin_lock.
-> >>
-> >> Note: That might be unexpected, but with the first interval of
-> >> messages
-> >> storm one can print up to burst*2 messages. So, it doesn't guarantee
-> >> that in *any* interval amount of messages is lesser than burst.
-> >> But, that differs lightly from previous behavior where one can start
-> >> burst=5 interval and print 4 messages on the last milliseconds of
-> >> interval + new 5 messages from new interval (totally 9 messages in
-> >> lesser than interval value):
-> >>
-> >>    msg0              msg1-msg4 msg0-msg4
-> >>     |                     |       |
-> >>     |                     |       |
-> >>  |--o---------------------o-|-----o--------------------|--> (t)
-> >>                           <------->
-> >>                        Lesser than burst
-> >>
+> > Note that this will conflict with a unit-address fix that I have queued
+> > up for 4.18 (will send this week).
+>
+> How would we best handle this? Sebastian, are you going to apply this
+> series, and add a note to the PR for 4.19 on how to resolve the conflict?
 
-I am a bit confused. Does this patch fix two problems?
+Either 4.18-rc6 or my devicetree-fixes-for-4.18 tag (based on rc1) can
+be pulled in. Or just note the conflict. It is trivial enough.
 
-   + Lost rc->missed update when try_spin_lock() fails
-   + printing up to burst*2 messages in a give interval
-
-It would make the review much easier if you split it into more
-patches and fix the problems separately.
-
-Otherwise, it looks promissing...
-
-Best Regards,
-Petr
-
-PS: I have vacation the following two weeks. Anyway, please, CC me
-if you send any new version.
-
-Best Regards,
-Petr
+Rob
