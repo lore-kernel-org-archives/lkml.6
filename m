@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BE1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CF5ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC08420652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC08420652
+	by mail.kernel.org (Postfix) with ESMTP id 2CEDF20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:45:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CEDF20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390339AbeGTNdP (ORCPT
+        id S2390348AbeGTNdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:33:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55816 "EHLO
+        Fri, 20 Jul 2018 09:33:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55890 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389719AbeGTNdP (ORCPT
+        with ESMTP id S2389719AbeGTNdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:33:15 -0400
+        Fri, 20 Jul 2018 09:33:18 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DAF90CB5;
-        Fri, 20 Jul 2018 12:39:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05988CA6;
+        Fri, 20 Jul 2018 12:37:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+7d427828b2ea6e592804@syzkaller.appspotmail.com,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.17 081/101] bpf: dont leave partial mangled prog in jit_subprogs error path
-Date:   Fri, 20 Jul 2018 14:14:27 +0200
-Message-Id: <20180720121426.701350320@linuxfoundation.org>
+        stable@vger.kernel.org, Liam Shepherd <liam@dancer.es>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 052/101] xen-netfront: Update features after registering netdev
+Date:   Fri, 20 Jul 2018 14:13:58 +0200
+Message-Id: <20180720121425.254856227@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -52,116 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-commit c7a897843224a92209f306c984975b704969b89d upstream.
+[ Upstream commit 45c8184c1bed1ca8a7f02918552063a00b909bf5 ]
 
-syzkaller managed to trigger the following bug through fault injection:
+Update the features after calling register_netdev() otherwise the
+device features are not set up correctly and it not possible to change
+the MTU of the device. After this change, the features reported by
+ethtool match the device's features before the commit which introduced
+the issue and it is possible to change the device's MTU.
 
-  [...]
-  [  141.043668] verifier bug. No program starts at insn 3
-  [  141.044648] WARNING: CPU: 3 PID: 4072 at kernel/bpf/verifier.c:1613
-                 get_callee_stack_depth kernel/bpf/verifier.c:1612 [inline]
-  [  141.044648] WARNING: CPU: 3 PID: 4072 at kernel/bpf/verifier.c:1613
-                 fixup_call_args kernel/bpf/verifier.c:5587 [inline]
-  [  141.044648] WARNING: CPU: 3 PID: 4072 at kernel/bpf/verifier.c:1613
-                 bpf_check+0x525e/0x5e60 kernel/bpf/verifier.c:5952
-  [  141.047355] CPU: 3 PID: 4072 Comm: a.out Not tainted 4.18.0-rc4+ #51
-  [  141.048446] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),BIOS 1.10.2-1 04/01/2014
-  [  141.049877] Call Trace:
-  [  141.050324]  __dump_stack lib/dump_stack.c:77 [inline]
-  [  141.050324]  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  [  141.050950]  ? dump_stack_print_info.cold.2+0x52/0x52 lib/dump_stack.c:60
-  [  141.051837]  panic+0x238/0x4e7 kernel/panic.c:184
-  [  141.052386]  ? add_taint.cold.5+0x16/0x16 kernel/panic.c:385
-  [  141.053101]  ? __warn.cold.8+0x148/0x1ba kernel/panic.c:537
-  [  141.053814]  ? __warn.cold.8+0x117/0x1ba kernel/panic.c:530
-  [  141.054506]  ? get_callee_stack_depth kernel/bpf/verifier.c:1612 [inline]
-  [  141.054506]  ? fixup_call_args kernel/bpf/verifier.c:5587 [inline]
-  [  141.054506]  ? bpf_check+0x525e/0x5e60 kernel/bpf/verifier.c:5952
-  [  141.055163]  __warn.cold.8+0x163/0x1ba kernel/panic.c:538
-  [  141.055820]  ? get_callee_stack_depth kernel/bpf/verifier.c:1612 [inline]
-  [  141.055820]  ? fixup_call_args kernel/bpf/verifier.c:5587 [inline]
-  [  141.055820]  ? bpf_check+0x525e/0x5e60 kernel/bpf/verifier.c:5952
-  [...]
-
-What happens in jit_subprogs() is that kcalloc() for the subprog func
-buffer is failing with NULL where we then bail out. Latter is a plain
-return -ENOMEM, and this is definitely not okay since earlier in the
-loop we are walking all subprogs and temporarily rewrite insn->off to
-remember the subprog id as well as insn->imm to temporarily point the
-call to __bpf_call_base + 1 for the initial JIT pass. Thus, bailing
-out in such state and handing this over to the interpreter is troublesome
-since later/subsequent e.g. find_subprog() lookups are based on wrong
-insn->imm.
-
-Therefore, once we hit this point, we need to jump to out_free path
-where we undo all changes from earlier loop, so that interpreter can
-work on unmodified insn->{off,imm}.
-
-Another point is that should find_subprog() fail in jit_subprogs() due
-to a verifier bug, then we also should not simply defer the program to
-the interpreter since also here we did partial modifications. Instead
-we should just bail out entirely and return an error to the user who is
-trying to load the program.
-
-Fixes: 1c2a088a6626 ("bpf: x64: add JIT support for multi-function programs")
-Reported-by: syzbot+7d427828b2ea6e592804@syzkaller.appspotmail.com
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+Reported-by: Liam Shepherd <liam@dancer.es>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/bpf/verifier.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/xen-netfront.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -5349,6 +5349,10 @@ static int jit_subprogs(struct bpf_verif
- 		if (insn->code != (BPF_JMP | BPF_CALL) ||
- 		    insn->src_reg != BPF_PSEUDO_CALL)
- 			continue;
-+		/* Upon error here we cannot fall back to interpreter but
-+		 * need a hard reject of the program. Thus -EFAULT is
-+		 * propagated in any case.
-+		 */
- 		subprog = find_subprog(env, i + insn->imm + 1);
- 		if (subprog < 0) {
- 			WARN_ONCE(1, "verifier bug. No program starts at insn %d\n",
-@@ -5369,7 +5373,7 @@ static int jit_subprogs(struct bpf_verif
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1951,10 +1951,6 @@ static int xennet_connect(struct net_dev
+ 	/* talk_to_netback() sets the correct number of queues */
+ 	num_queues = dev->real_num_tx_queues;
  
- 	func = kzalloc(sizeof(prog) * (env->subprog_cnt + 1), GFP_KERNEL);
- 	if (!func)
--		return -ENOMEM;
-+		goto out_undo_insn;
- 
- 	for (i = 0; i <= env->subprog_cnt; i++) {
- 		subprog_start = subprog_end;
-@@ -5424,7 +5428,7 @@ static int jit_subprogs(struct bpf_verif
- 		tmp = bpf_int_jit_compile(func[i]);
- 		if (tmp != func[i] || func[i]->bpf_func != old_bpf_func) {
- 			verbose(env, "JIT doesn't support bpf-to-bpf calls\n");
--			err = -EFAULT;
-+			err = -ENOTSUPP;
- 			goto out_free;
+-	rtnl_lock();
+-	netdev_update_features(dev);
+-	rtnl_unlock();
+-
+ 	if (dev->reg_state == NETREG_UNINITIALIZED) {
+ 		err = register_netdev(dev);
+ 		if (err) {
+@@ -1964,6 +1960,10 @@ static int xennet_connect(struct net_dev
  		}
- 		cond_resched();
-@@ -5466,6 +5470,7 @@ out_free:
- 		if (func[i])
- 			bpf_jit_free(func[i]);
- 	kfree(func);
-+out_undo_insn:
- 	/* cleanup main prog to be interpreted */
- 	prog->jit_requested = 0;
- 	for (i = 0, insn = prog->insnsi; i < prog->len; i++, insn++) {
-@@ -5492,6 +5497,8 @@ static int fixup_call_args(struct bpf_ve
- 		err = jit_subprogs(env);
- 		if (err == 0)
- 			return 0;
-+		if (err == -EFAULT)
-+			return err;
  	}
- #ifndef CONFIG_BPF_JIT_ALWAYS_ON
- 	for (i = 0; i < prog->len; i++, insn++) {
+ 
++	rtnl_lock();
++	netdev_update_features(dev);
++	rtnl_unlock();
++
+ 	/*
+ 	 * All public and private state should now be sane.  Get
+ 	 * ready to start sending and receiving packets and give the driver
 
 
