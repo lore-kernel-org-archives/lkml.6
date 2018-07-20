@@ -2,125 +2,133 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9D8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92597ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A98A20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3905620661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:25:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="n6tSlkqW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A98A20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bS0deEee"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3905620661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387941AbeGTRLl (ORCPT
+        id S2387976AbeGTRON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:11:41 -0400
-Received: from 8bytes.org ([81.169.241.247]:35772 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387899AbeGTRLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:11:40 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 2C1D8257; Fri, 20 Jul 2018 18:22:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1532103759; bh=Mf9lS0qkLiHNasS6CeFKKOwNfTQB9DBJzg6ADMqVxH0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n6tSlkqWtba2Ob6NAdePKpBAwofVcfKinGkae42J4H+DMR7xjvLdEJvnBdRhIvNY8
-         3doxlalxMYfwfIbuSHi6ZxL/2iGtJ9+RFhNYNFxOjL7xWJaWG74p8GW8ySZbx4hUrs
-         TEP4BAQ6bff2Ewk3KWjMU8R4uO9Pt7gbPdNp7daqGYTcdgEGQjavapIqhNovlS6au4
-         SfvSllyLzaF29+Xj5Ga9oeXNmTrAkZtUvJSHb3GGAlYneXPJipz1vFdDklHkvByhb+
-         2dxbN5QD+hLEiJ+DDbT3V8JKEsErznSKtLDBy3aYsLSRYzDgDAaunbDu/G6K/+ChTw
-         y/1rjSlJgGgyQ==
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        jroedel@suse.de, Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, joro@8bytes.org
-Subject: [PATCH 1/3] perf/core: Make sure the ring-buffer is mapped in all page-tables
-Date:   Fri, 20 Jul 2018 18:22:22 +0200
-Message-Id: <1532103744-31902-2-git-send-email-joro@8bytes.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532103744-31902-1-git-send-email-joro@8bytes.org>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
+        Fri, 20 Jul 2018 13:14:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36002 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387909AbeGTRON (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:14:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3Cqmez5xv91CGTI0za12HyrLz9SVqDku4azKe5IUmDc=; b=bS0deEeetcouwZvmTdzTV/3eo
+        kUbcdqOBJix8/K9j5QDOm6uNlFX/KGIuh7lVxLzQSnRA/5fFGQF6mjapXdPYEQu95OWAksWqFgMHa
+        pEfwCDh2qrvdGQRtCHTN53r8Xnbwsvo+kO04W1BpmanHexge2kMTTF3TjLh8jn38psqreG2iJHBK/
+        2HUNOGsCTJiPY/dVroO5lGhBFJJXgRuYY3YXmPMnKkBtBIVFmDKN7ZLUfrBrvIFp/EKb0jMcff0F7
+        Z8GWMY/1sJrhIFAq9vqsUSbgbeKUvyPlpGCUKepo1ZneDY+K1RvxGMtQutfjh+mZmbE4ynPhb4ozk
+        4c8NWqO1g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fgYDG-0003hE-Tt; Fri, 20 Jul 2018 16:25:03 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D056C20275F4B; Fri, 20 Jul 2018 18:25:00 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 18:25:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+Message-ID: <20180720162500.GT2494@hirez.programming.kicks-ass.net>
+References: <20180703155823.GS533219@devbig577.frc2.facebook.com>
+ <20180719135224.GE2494@hirez.programming.kicks-ass.net>
+ <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
+ <20180719153045.GT72677@devbig577.frc2.facebook.com>
+ <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
+ <20180719165201.GU72677@devbig577.frc2.facebook.com>
+ <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
+ <20180720114549.GY72677@devbig577.frc2.facebook.com>
+ <20180720154454.GR2494@hirez.programming.kicks-ass.net>
+ <20180720155613.GB1934745@devbig577.frc2.facebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180720155613.GB1934745@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On Fri, Jul 20, 2018 at 08:56:13AM -0700, Tejun Heo wrote:
+> Hello, Peter.
+> 
+> On Fri, Jul 20, 2018 at 05:44:54PM +0200, Peter Zijlstra wrote:
+> > > The currently proposed implementation is somewhere in the middle.  It
+> > > kinda gets there by restricting a partition to be a child of another
+> > > partition, which may be okay but it does make the whole delegation
+> > > mechanism less useful.
+> > 
+> > So the implementation does not set ownership of the 'partition' file to
+> > that of the parent directory? Because _that_ is what I understood from
+> > Waiman (many versions ago). And that _does_ allow delegation to work
+> > nicely.
+> 
+> So, that part isn't the problem.  The problem is that if we allow
+> partitioning nested further away from ancestor, the descendant would
+> be able to take away reources from the removed ancestor.
 
-The ring-buffer is accessed in the NMI handler, so we better
-avoid faulting on it. Sync the vmalloc range with all
-page-tables in system to make sure everyone has it mapped.
+If the partition file is owned by the parent, the descendant cannot take
+away anything. It can only read the file, not actually write to it.
 
-This fixes a WARN_ON_ONCE() that can be triggered with PTI
-enabled on x86-32:
+To be explicit, if we have:
 
-	WARNING: CPU: 4 PID: 0 at arch/x86/mm/fault.c:320 vmalloc_fault+0x220/0x230
+	/.			(uid = root)
+	/A/.			(uid = user1)
+	/A/cpuset.partition	(uid = root)
 
-This triggers because with PTI enabled on an PAE kernel the
-PMDs are no longer shared between the page-tables, so the
-vmalloc changes do not propagate automatically.
+so ./*/cpuset.partition is always owned by .
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- kernel/events/ring_buffer.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> Waiman avoids this problem by only allowing partitions to nest but
+> then it's kinda weird cuz it's just a separate tree.
 
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 5d3cf40..7b0e9aa 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -814,6 +814,9 @@ static void rb_free_work(struct work_struct *work)
- 
- 	vfree(base);
- 	kfree(rb);
-+
-+	/* Make sure buffer is unmapped in all page-tables */
-+	vmalloc_sync_all();
- }
- 
- void rb_free(struct ring_buffer *rb)
-@@ -840,6 +843,13 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
- 	if (!all_buf)
- 		goto fail_all_buf;
- 
-+	/*
-+	 * The buffer is accessed in NMI handlers, make sure it is
-+	 * mapped in all page-tables in the system so that we don't
-+	 * fault on the range in an NMI handler.
-+	 */
-+	vmalloc_sync_all();
-+
- 	rb->user_page = all_buf;
- 	rb->data_pages[0] = all_buf + PAGE_SIZE;
- 	if (nr_pages) {
--- 
-2.7.4
+The only real constraint is that the parent must have exclusive
+'ownership' of the CPUs. Being a partition mandates that to be so. There
+is no other way to distinguish exclusive / shared CPUs.
+
+But I don't see how any of this is related to delegation per se. It is a
+prerequisite for creating nested partitions, which in turn is a
+prerequisite for delegation of partitions.
+
+> > > > > 2. take away any given cpu from ist subtree.
+
+> > Still, the question was, how is this (dispicable or not) behaviour not
+> > allowed by the current implementation?
+> 
+> I'm not quite sure what you're trying to ask.  Can you elaborate?
+
+We can always offline the CPU, so how exactly can the ancestor not take
+back it's CPU?
+
+The parent can simply shrink it's cpuset.cpus, no? Then the child gets
+to recompute its setup and it might find its sub-partition just became
+smaller or empty -- just like hotplug.
+
 
