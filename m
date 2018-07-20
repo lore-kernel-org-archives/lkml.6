@@ -2,535 +2,194 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A484FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF26ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 440BC20647
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:12:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440BC20647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5AB7720647
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:13:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UEn6kDHj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AB7720647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeGTG7Y (ORCPT
+        id S1728003AbeGTG7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 02:59:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37490 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727755AbeGTG7X (ORCPT
+        Fri, 20 Jul 2018 02:59:52 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34276 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727545AbeGTG7w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 02:59:23 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6K6AdZ0078549
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 02:12:46 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kb98va4aq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 02:12:46 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <shilpa.bhat@linux.vnet.ibm.com>;
-        Fri, 20 Jul 2018 07:12:44 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 20 Jul 2018 07:12:42 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6K6Cf6237355586
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Jul 2018 06:12:41 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35F0611C050;
-        Fri, 20 Jul 2018 09:12:58 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A24711C04A;
-        Fri, 20 Jul 2018 09:12:56 +0100 (BST)
-Received: from oc4502181600.ibm.com (unknown [9.79.210.147])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 20 Jul 2018 09:12:55 +0100 (BST)
-From:   Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-To:     mpe@ellerman.id.au, linux@roeck-us.net
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com,
-        stewart@linux.ibm.com,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH v7 2/2] hwmon: ibmpowernv: Add attributes to enable/disable sensor groups
-Date:   Fri, 20 Jul 2018 11:42:23 +0530
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1532067143-22022-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-References: <1532067143-22022-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18072006-0012-0000-0000-0000028C728D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072006-0013-0000-0000-000020BE3ECE
-Message-Id: <1532067143-22022-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-20_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807200074
+        Fri, 20 Jul 2018 02:59:52 -0400
+Received: by mail-pg1-f196.google.com with SMTP id y5-v6so5932703pgv.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 23:13:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=62RNlA/AXthYMrggsGhdb3vhBaClUjFY4s/voIRvkho=;
+        b=UEn6kDHjq3tLdVd38q9B7lwrDDiTowfnwdUJVSPPS45lOs+dStqjRESP5JU+rUSXvy
+         QlcQfUiwdGNnIf84QPct5+c89e0KRbrC0Lxa94XIH0WH0Ye2cMI0jRDyS3E8+P4a9U6S
+         1WmxwCn/MeFH8iZgEYZJBQsIdVaZdDvnoA1K4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=62RNlA/AXthYMrggsGhdb3vhBaClUjFY4s/voIRvkho=;
+        b=AxqL3w1vPoXnIYuFUiuEsTO6+vY0jv6jjYyxiL28gxdgEdLiEi6K41pBbvPWLJBSdT
+         qx2VNFwG7No+yfXhA/vQZpzRD7H2zOOSL8y4HwRp6mzxp3ertX460zrIPl1sFXMvIwdC
+         l5iP1DaNtll0BjLiNUPE7mWB5z5zAg9leXYi01dXKfZnxa7xV7ua+D+TL7IYORHZQGdV
+         6ZBUTifhuL0DV/scXT4r5cd41GlPu1kFfgs8goRuysRsUlpghME/nIO7G0RNM9II7pMJ
+         JPqIo7uBlD7ezzCDn0IqVsgXARvTWDfwFjSqyQuSNIBBJ1grvteskD8b5dCdeaN/JkdD
+         j13Q==
+X-Gm-Message-State: AOUpUlHRefR+deoGyCpKijKWuOxnxsu1KLvfj/Q5qsPmECvmY/G72lLZ
+        uyIpLS4gI/W2yn98yYAHsf83QQ==
+X-Google-Smtp-Source: AAOMgpc8l5OLvd38FS7j2I8paM9ZX8fKnZgLr41dYzxBT2ioXHmRyEY8z5LFSejapZkKeZrFSLK3gw==
+X-Received: by 2002:a63:4811:: with SMTP id v17-v6mr738660pga.379.1532067196421;
+        Thu, 19 Jul 2018 23:13:16 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id q140-v6sm1194936pgq.11.2018.07.19.23.13.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Jul 2018 23:13:15 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 15:14:36 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 10/15] arm64: kexec_file: allow for loading
+ Image-format kernel
+Message-ID: <20180720061434.GK11258@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180711074203.3019-1-takahiro.akashi@linaro.org>
+ <20180711074203.3019-11-takahiro.akashi@linaro.org>
+ <bfbb8d3f-6d7b-3ebb-d805-15b89c55aaeb@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bfbb8d3f-6d7b-3ebb-d805-15b89c55aaeb@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OPAL firmware provides the facility for some groups of sensors to be
-enabled/disabled at runtime to give the user the option of using the
-system resources for collecting these sensors or not.
+On Wed, Jul 18, 2018 at 05:47:50PM +0100, James Morse wrote:
+> Hi Akashi,
+> 
+> On 11/07/18 08:41, AKASHI Takahiro wrote:
+> > This patch provides kexec_file_ops for "Image"-format kernel. In this
+> > implementation, a binary is always loaded with a fixed offset identified
+> > in text_offset field of its header.
+> > 
+> > Regarding signature verification for trusted boot, this patch doesn't
+> > contains CONFIG_KEXEC_VERIFY_SIG support, which is to be added later
+> > in this series, but file-attribute-based verification is still a viable
+> > option by enabling IMA security subsystem.
+> > 
+> > You can sign(label) a to-be-kexec'ed kernel image on target file system
+> > with:
+> >     $ evmctl ima_sign --key /path/to/private_key.pem Image
+> > 
+> > On live system, you must have IMA enforced with, at least, the following
+> > security policy:
+> >     "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig"
+> > 
+> > See more details about IMA here:
+> >     https://sourceforge.net/p/linux-ima/wiki/Home/
+> 
+> This looks useful to set a keys/signature/policy for a kernel that wasn't built
+> to enforce signatures at compile time, so its a good thing to have from a
+> single-image perspective.
+> 
+> I haven't managed to get IMA working to test this, but its all done by the kexec
+> core code, so I don't think we're missing anything.
+> 
+> 
+> > diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+> > new file mode 100644
+> > index 000000000000..a47cf9bc699e
+> > --- /dev/null
+> > +++ b/arch/arm64/kernel/kexec_image.c
+> 
+> > +static int image_probe(const char *kernel_buf, unsigned long kernel_len)
+> > +{
+> > +	const struct arm64_image_header *h;
+> > +
+> > +	h = (const struct arm64_image_header *)(kernel_buf);
+> > +
+> > +	if (!h || (kernel_len < sizeof(*h)) ||
+> 
+> > +			!memcmp(&h->magic, ARM64_MAGIC, sizeof(ARM64_MAGIC)))
+> 
+> Doesn't memcmp() return 0 if the memory regions are the same?
+> This would always match the correct magic, rejecting the image.
+> 
+> That's not whats happening, as kexec-file works, so this never matches anything.
+> 
+> sizeof(ARM64_MAGIC) includes the null terminator, but this sequence is output in
+> head.S using '.ascii' which doesn't include the terminator, (otherwise it
+> wouldn't fit in the 4byte magic field). The memcmp() here is also consuming the
+> least significant bytes of the next field.
+> 
+> I think this line should be:
+> | 			memcmp(&h->magic, ARM64_MAGIC, sizeof(h->magic)))
 
-For example, on POWER9 systems, the On Chip Controller (OCC) gathers
-various system and chip level sensors and maintains their values in
-main memory.
+Absolutely you're right!
 
-This patch provides support for enabling/disabling the sensor groups
-like power, temperature, current and voltage.
+> 
+> > +static void *image_load(struct kimage *image,
+> > +				char *kernel, unsigned long kernel_len,
+> > +				char *initrd, unsigned long initrd_len,
+> > +				char *cmdline, unsigned long cmdline_len)
+> 
+> > +	kbuf.buffer = kernel;
+> > +	kbuf.bufsz = kernel_len;
+> > +	kbuf.memsz = le64_to_cpu(h->image_size);
+> > +	text_offset = le64_to_cpu(h->text_offset);
+> > +	kbuf.buf_align = SZ_2M;
+> 
+> Nit: MIN_KIMG_ALIGN ?
 
-Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-[stewart@linux.vnet.ibm.com: Commit message]
----
-Changes from v6:
-- Updated the commit message as per Stewart's suggestion
-- Use the compatible DT property instead of the path to find the node
+OK.
 
- Documentation/hwmon/ibmpowernv |  43 ++++++-
- drivers/hwmon/ibmpowernv.c     | 249 +++++++++++++++++++++++++++++++++++------
- 2 files changed, 258 insertions(+), 34 deletions(-)
+> 
+> > +	/* Adjust kernel segment with TEXT_OFFSET */
+> > +	kbuf.memsz += text_offset;
+> > +
+> > +	ret = kexec_add_buffer(&kbuf);
+> > +	if (ret)
+> > +		goto out;
+> 
+> You just return in the error cases above but here you goto ... the return
+> statement at the end. Seems a bit odd.
 
-diff --git a/Documentation/hwmon/ibmpowernv b/Documentation/hwmon/ibmpowernv
-index 8826ba2..5646825 100644
---- a/Documentation/hwmon/ibmpowernv
-+++ b/Documentation/hwmon/ibmpowernv
-@@ -33,9 +33,48 @@ fanX_input		Measured RPM value.
- fanX_min		Threshold RPM for alert generation.
- fanX_fault		0: No fail condition
- 			1: Failing fan
-+
- tempX_input		Measured ambient temperature.
- tempX_max		Threshold ambient temperature for alert generation.
--inX_input		Measured power supply voltage
-+tempX_highest		Historical maximum temperature
-+tempX_lowest		Historical minimum temperature
-+tempX_enable		Enable/disable all temperature sensors belonging to the
-+			sub-group. In POWER9, this attribute corresponds to
-+			each OCC. Using this attribute each OCC can be asked to
-+			disable/enable all of its temperature sensors.
-+			1: Enable
-+			0: Disable
-+
-+inX_input		Measured power supply voltage (millivolt)
- inX_fault		0: No fail condition.
- 			1: Failing power supply.
--power1_input		System power consumption (microWatt)
-+inX_highest		Historical maximum voltage
-+inX_lowest		Historical minimum voltage
-+inX_enable		Enable/disable all voltage sensors belonging to the
-+			sub-group. In POWER9, this attribute corresponds to
-+			each OCC. Using this attribute each OCC can be asked to
-+			disable/enable all of its voltage sensors.
-+			1: Enable
-+			0: Disable
-+
-+powerX_input		Power consumption (microWatt)
-+powerX_input_highest	Historical maximum power
-+powerX_input_lowest	Historical minimum power
-+powerX_enable		Enable/disable all power sensors belonging to the
-+			sub-group. In POWER9, this attribute corresponds to
-+			each OCC. Using this attribute each OCC can be asked to
-+			disable/enable all of its power sensors.
-+			1: Enable
-+			0: Disable
-+
-+currX_input		Measured current (milliampere)
-+currX_highest		Historical maximum current
-+currX_lowest		Historical minimum current
-+currX_enable		Enable/disable all current sensors belonging to the
-+			sub-group. In POWER9, this attribute corresponds to
-+			each OCC. Using this attribute each OCC can be asked to
-+			disable/enable all of its current sensors.
-+			1: Enable
-+			0: Disable
-+
-+energyX_input		Cumulative energy (microJoule)
-diff --git a/drivers/hwmon/ibmpowernv.c b/drivers/hwmon/ibmpowernv.c
-index f829dad..99afbf7 100644
---- a/drivers/hwmon/ibmpowernv.c
-+++ b/drivers/hwmon/ibmpowernv.c
-@@ -90,11 +90,20 @@ struct sensor_data {
- 	char label[MAX_LABEL_LEN];
- 	char name[MAX_ATTR_LEN];
- 	struct device_attribute dev_attr;
-+	struct sensor_group_data *sgrp_data;
-+};
-+
-+struct sensor_group_data {
-+	struct mutex mutex;
-+	u32 gid;
-+	bool enable;
- };
- 
- struct platform_data {
- 	const struct attribute_group *attr_groups[MAX_SENSOR_TYPE + 1];
-+	struct sensor_group_data *sgrp_data;
- 	u32 sensors_count; /* Total count of sensors from each group */
-+	u32 nr_sensor_groups; /* Total number of sensor groups */
- };
- 
- static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
-@@ -105,6 +114,9 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
- 	ssize_t ret;
- 	u64 x;
- 
-+	if (sdata->sgrp_data && !sdata->sgrp_data->enable)
-+		return -ENODATA;
-+
- 	ret =  opal_get_sensor_data_u64(sdata->id, &x);
- 
- 	if (ret)
-@@ -120,6 +132,46 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
- 	return sprintf(buf, "%llu\n", x);
- }
- 
-+static ssize_t show_enable(struct device *dev,
-+			   struct device_attribute *devattr, char *buf)
-+{
-+	struct sensor_data *sdata = container_of(devattr, struct sensor_data,
-+						 dev_attr);
-+
-+	return sprintf(buf, "%u\n", sdata->sgrp_data->enable);
-+}
-+
-+static ssize_t store_enable(struct device *dev,
-+			    struct device_attribute *devattr,
-+			    const char *buf, size_t count)
-+{
-+	struct sensor_data *sdata = container_of(devattr, struct sensor_data,
-+						 dev_attr);
-+	struct sensor_group_data *sgrp_data = sdata->sgrp_data;
-+	bool data;
-+	int ret;
-+
-+	ret = kstrtobool(buf, &data);
-+	if (ret)
-+		return ret;
-+
-+	ret = mutex_lock_interruptible(&sgrp_data->mutex);
-+	if (ret)
-+		return ret;
-+
-+	if (data != sgrp_data->enable) {
-+		ret =  sensor_group_enable(sgrp_data->gid, data);
-+		if (!ret)
-+			sgrp_data->enable = data;
-+	}
-+
-+	if (!ret)
-+		ret = count;
-+
-+	mutex_unlock(&sgrp_data->mutex);
-+	return ret;
-+}
-+
- static ssize_t show_label(struct device *dev, struct device_attribute *devattr,
- 			  char *buf)
- {
-@@ -292,12 +344,126 @@ static u32 get_sensor_hwmon_index(struct sensor_data *sdata,
- 	return ++sensor_groups[sdata->type].hwmon_index;
- }
- 
-+static int init_sensor_group_data(struct platform_device *pdev,
-+				  struct platform_data *pdata)
-+{
-+	struct sensor_group_data *sgrp_data;
-+	struct device_node *groups, *sgrp;
-+	enum sensors type;
-+	int count = 0, ret = 0;
-+
-+	groups = of_find_compatible_node(NULL, NULL, "ibm,opal-sensor-group");
-+	if (!groups)
-+		return ret;
-+
-+	for_each_child_of_node(groups, sgrp) {
-+		type = get_sensor_type(sgrp);
-+		if (type != MAX_SENSOR_TYPE)
-+			pdata->nr_sensor_groups++;
-+	}
-+
-+	if (!pdata->nr_sensor_groups)
-+		goto out;
-+
-+	sgrp_data = devm_kcalloc(&pdev->dev, pdata->nr_sensor_groups,
-+				 sizeof(*sgrp_data), GFP_KERNEL);
-+	if (!sgrp_data) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	for_each_child_of_node(groups, sgrp) {
-+		const __be32 *phandles;
-+		int len, gid;
-+
-+		type = get_sensor_type(sgrp);
-+		if (type == MAX_SENSOR_TYPE)
-+			continue;
-+
-+		if (of_property_read_u32(sgrp, "sensor-group-id", &gid))
-+			continue;
-+
-+		phandles = of_get_property(sgrp, "sensors", &len);
-+		if (!phandles)
-+			continue;
-+
-+		len /= sizeof(u32);
-+		if (!len)
-+			continue;
-+
-+		sensor_groups[type].attr_count++;
-+		sgrp_data[count].gid = gid;
-+		mutex_init(&sgrp_data[count].mutex);
-+		sgrp_data[count++].enable = false;
-+	}
-+
-+	pdata->sgrp_data = sgrp_data;
-+out:
-+	of_node_put(groups);
-+	return ret;
-+}
-+
-+static struct sensor_group_data *get_sensor_group(struct platform_data *pdata,
-+						  struct device_node *node,
-+						  enum sensors gtype)
-+{
-+	struct sensor_group_data *sgrp_data = pdata->sgrp_data;
-+	struct device_node *groups, *sgrp;
-+
-+	groups = of_find_compatible_node(NULL, NULL, "ibm,opal-sensor-group");
-+	if (!groups)
-+		return NULL;
-+
-+	for_each_child_of_node(groups, sgrp) {
-+		const __be32 *phandles;
-+		int len, gid, i;
-+		enum sensors type;
-+
-+		type = get_sensor_type(sgrp);
-+		if (type != gtype)
-+			continue;
-+
-+		if (of_property_read_u32(sgrp, "sensor-group-id", &gid))
-+			continue;
-+
-+		phandles = of_get_property(sgrp, "sensors", &len);
-+		if (!phandles)
-+			continue;
-+
-+		len /= sizeof(u32);
-+		if (!len)
-+			continue;
-+
-+		while (--len >= 0)
-+			if (be32_to_cpu(phandles[len]) == node->phandle)
-+				break;
-+
-+		if (len < 0)
-+			continue;
-+
-+		for (i = 0; i < pdata->nr_sensor_groups; i++)
-+			if (gid == sgrp_data[i].gid) {
-+				of_node_put(sgrp);
-+				of_node_put(groups);
-+				return &sgrp_data[i];
-+			}
-+	}
-+
-+	of_node_put(groups);
-+	return NULL;
-+}
-+
- static int populate_attr_groups(struct platform_device *pdev)
- {
- 	struct platform_data *pdata = platform_get_drvdata(pdev);
- 	const struct attribute_group **pgroups = pdata->attr_groups;
- 	struct device_node *opal, *np;
- 	enum sensors type;
-+	int ret;
-+
-+	ret = init_sensor_group_data(pdev, pdata);
-+	if (ret)
-+		return ret;
- 
- 	opal = of_find_node_by_path("/ibm,opal/sensors");
- 	for_each_child_of_node(opal, np) {
-@@ -344,7 +510,10 @@ static int populate_attr_groups(struct platform_device *pdev)
- static void create_hwmon_attr(struct sensor_data *sdata, const char *attr_name,
- 			      ssize_t (*show)(struct device *dev,
- 					      struct device_attribute *attr,
--					      char *buf))
-+					      char *buf),
-+			    ssize_t (*store)(struct device *dev,
-+					     struct device_attribute *attr,
-+					     const char *buf, size_t count))
- {
- 	snprintf(sdata->name, MAX_ATTR_LEN, "%s%d_%s",
- 		 sensor_groups[sdata->type].name, sdata->hwmon_index,
-@@ -352,23 +521,33 @@ static void create_hwmon_attr(struct sensor_data *sdata, const char *attr_name,
- 
- 	sysfs_attr_init(&sdata->dev_attr.attr);
- 	sdata->dev_attr.attr.name = sdata->name;
--	sdata->dev_attr.attr.mode = S_IRUGO;
- 	sdata->dev_attr.show = show;
-+	if (store) {
-+		sdata->dev_attr.store = store;
-+		sdata->dev_attr.attr.mode = 0664;
-+	} else {
-+		sdata->dev_attr.attr.mode = 0444;
-+	}
- }
- 
- static void populate_sensor(struct sensor_data *sdata, int od, int hd, int sid,
- 			    const char *attr_name, enum sensors type,
- 			    const struct attribute_group *pgroup,
-+			    struct sensor_group_data *sgrp_data,
- 			    ssize_t (*show)(struct device *dev,
- 					    struct device_attribute *attr,
--					    char *buf))
-+					    char *buf),
-+			    ssize_t (*store)(struct device *dev,
-+					     struct device_attribute *attr,
-+					     const char *buf, size_t count))
- {
- 	sdata->id = sid;
- 	sdata->type = type;
- 	sdata->opal_index = od;
- 	sdata->hwmon_index = hd;
--	create_hwmon_attr(sdata, attr_name, show);
-+	create_hwmon_attr(sdata, attr_name, show, store);
- 	pgroup->attrs[sensor_groups[type].attr_count++] = &sdata->dev_attr.attr;
-+	sdata->sgrp_data = sgrp_data;
- }
- 
- static char *get_max_attr(enum sensors type)
-@@ -403,24 +582,23 @@ static int create_device_attrs(struct platform_device *pdev)
- 	const struct attribute_group **pgroups = pdata->attr_groups;
- 	struct device_node *opal, *np;
- 	struct sensor_data *sdata;
--	u32 sensor_id;
--	enum sensors type;
- 	u32 count = 0;
--	int err = 0;
-+	u32 group_attr_id[MAX_SENSOR_TYPE] = {0};
- 
--	opal = of_find_node_by_path("/ibm,opal/sensors");
- 	sdata = devm_kcalloc(&pdev->dev,
- 			     pdata->sensors_count, sizeof(*sdata),
- 			     GFP_KERNEL);
--	if (!sdata) {
--		err = -ENOMEM;
--		goto exit_put_node;
--	}
-+	if (!sdata)
-+		return -ENOMEM;
- 
-+	opal = of_find_node_by_path("/ibm,opal/sensors");
- 	for_each_child_of_node(opal, np) {
-+		struct sensor_group_data *sgrp_data;
- 		const char *attr_name;
--		u32 opal_index;
-+		u32 opal_index, hw_id;
-+		u32 sensor_id;
- 		const char *label;
-+		enum sensors type;
- 
- 		if (np->name == NULL)
- 			continue;
-@@ -456,14 +634,12 @@ static int create_device_attrs(struct platform_device *pdev)
- 			opal_index = INVALID_INDEX;
- 		}
- 
--		sdata[count].opal_index = opal_index;
--		sdata[count].hwmon_index =
--			get_sensor_hwmon_index(&sdata[count], sdata, count);
--
--		create_hwmon_attr(&sdata[count], attr_name, show_sensor);
--
--		pgroups[type]->attrs[sensor_groups[type].attr_count++] =
--				&sdata[count++].dev_attr.attr;
-+		hw_id = get_sensor_hwmon_index(&sdata[count], sdata, count);
-+		sgrp_data = get_sensor_group(pdata, np, type);
-+		populate_sensor(&sdata[count], opal_index, hw_id, sensor_id,
-+				attr_name, type, pgroups[type], sgrp_data,
-+				show_sensor, NULL);
-+		count++;
- 
- 		if (!of_property_read_string(np, "label", &label)) {
- 			/*
-@@ -474,35 +650,43 @@ static int create_device_attrs(struct platform_device *pdev)
- 			 */
- 
- 			make_sensor_label(np, &sdata[count], label);
--			populate_sensor(&sdata[count], opal_index,
--					sdata[count - 1].hwmon_index,
-+			populate_sensor(&sdata[count], opal_index, hw_id,
- 					sensor_id, "label", type, pgroups[type],
--					show_label);
-+					NULL, show_label, NULL);
- 			count++;
- 		}
- 
- 		if (!of_property_read_u32(np, "sensor-data-max", &sensor_id)) {
- 			attr_name = get_max_attr(type);
--			populate_sensor(&sdata[count], opal_index,
--					sdata[count - 1].hwmon_index,
-+			populate_sensor(&sdata[count], opal_index, hw_id,
- 					sensor_id, attr_name, type,
--					pgroups[type], show_sensor);
-+					pgroups[type], sgrp_data, show_sensor,
-+					NULL);
- 			count++;
- 		}
- 
- 		if (!of_property_read_u32(np, "sensor-data-min", &sensor_id)) {
- 			attr_name = get_min_attr(type);
--			populate_sensor(&sdata[count], opal_index,
--					sdata[count - 1].hwmon_index,
-+			populate_sensor(&sdata[count], opal_index, hw_id,
- 					sensor_id, attr_name, type,
--					pgroups[type], show_sensor);
-+					pgroups[type], sgrp_data, show_sensor,
-+					NULL);
-+			count++;
-+		}
-+
-+		if (sgrp_data && !sgrp_data->enable) {
-+			sgrp_data->enable = true;
-+			hw_id = ++group_attr_id[type];
-+			populate_sensor(&sdata[count], opal_index, hw_id,
-+					sgrp_data->gid, "enable", type,
-+					pgroups[type], sgrp_data, show_enable,
-+					store_enable);
- 			count++;
- 		}
- 	}
- 
--exit_put_node:
- 	of_node_put(opal);
--	return err;
-+	return 0;
- }
- 
- static int ibmpowernv_probe(struct platform_device *pdev)
-@@ -517,6 +701,7 @@ static int ibmpowernv_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pdata);
- 	pdata->sensors_count = 0;
-+	pdata->nr_sensor_groups = 0;
- 	err = populate_attr_groups(pdev);
- 	if (err)
- 		return err;
--- 
-1.8.3.1
+Will fix it.
 
+> 
+> With the memcmp() thing fixed:
+> Reviewed-by: James Morse <james.morse@arm.com>
+
+Always appreciate you reviewing.
+
+-Takahiro AKASHI
+
+
+> 
+> Thanks,
+> 
+> James
