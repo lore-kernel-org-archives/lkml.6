@@ -3,136 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B79CEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEF8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8037C20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8037C20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 41C1720652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:58:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41C1720652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731993AbeGTWsC (ORCPT
+        id S1732033AbeGTWsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 18:48:02 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37672 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728214AbeGTWsC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 18:48:02 -0400
-Received: from 2.general.tyhicks.us.vpn ([10.172.64.53] helo=sec.l.tihix.com)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <tyhicks@canonical.com>)
-        id 1fgdPH-0004ZT-R8; Fri, 20 Jul 2018 21:57:48 +0000
-From:   Tyler Hicks <tyhicks@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stephen Hemminger <stephen@networkplumber.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bridge@lists.linux-foundation.org,
-        Linux Containers <containers@lists.linux-foundation.org>
-Subject: [PATCH net-next v3 8/8] bridge: make sure objects belong to container's owner
-Date:   Fri, 20 Jul 2018 21:56:54 +0000
-Message-Id: <1532123814-1109-9-git-send-email-tyhicks@canonical.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
-References: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
+        Fri, 20 Jul 2018 18:48:14 -0400
+Received: from sauhun.de ([88.99.104.3]:59642 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728214AbeGTWsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 18:48:13 -0400
+Received: from localhost (p54B33241.dip0.t-ipconnect.de [84.179.50.65])
+        by pokefinder.org (Postfix) with ESMTPSA id 35C425E000F;
+        Fri, 20 Jul 2018 23:58:02 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 23:58:01 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Vitor soares <Vitor.Soares@synopsys.com>
+Cc:     boris.brezillon@bootlin.com, linux-i2c@vger.kernel.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
+        gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com,
+        agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com,
+        dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com,
+        sureshp@cadence.com, rafalc@cadence.com,
+        thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org,
+        pawel.moll@arm.com, mark.rutland@arm.com,
+        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, linus.walleij@linaro.org,
+        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
+        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
+        Joao.Pinto@synopsys.com
+Subject: Re: [PATCH 0/3] Add driver for Synopsys DesignWare I3C master IP
+Message-ID: <20180720215801.dmklhwxsgakj4exd@ninjato>
+References: <1532120272-17157-1-git-send-email-soares@synopsys.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x2lspxohbhnfcm6l"
+Content-Disposition: inline
+In-Reply-To: <1532120272-17157-1-git-send-email-soares@synopsys.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When creating various bridge objects in /sys/class/net/... make sure
-that they belong to the container's owner instead of global root (if
-they belong to a container/namespace).
 
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
----
- net/bridge/br_if.c       | 9 +++++++++
- net/bridge/br_private.h  | 2 ++
- net/bridge/br_sysfs_if.c | 5 ++---
- 3 files changed, 13 insertions(+), 3 deletions(-)
+--x2lspxohbhnfcm6l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
-index 05e42d86882d..e7c8d55212aa 100644
---- a/net/bridge/br_if.c
-+++ b/net/bridge/br_if.c
-@@ -26,6 +26,7 @@
- #include <net/sock.h>
- #include <linux/if_vlan.h>
- #include <net/switchdev.h>
-+#include <net/net_namespace.h>
- 
- #include "br_private.h"
- 
-@@ -204,11 +205,19 @@ static void release_nbp(struct kobject *kobj)
- 	kfree(p);
- }
- 
-+static void brport_get_ownership(struct kobject *kobj, kuid_t *uid, kgid_t *gid)
-+{
-+	struct net_bridge_port *p = kobj_to_brport(kobj);
-+
-+	net_ns_get_ownership(dev_net(p->dev), uid, gid);
-+}
-+
- static struct kobj_type brport_ktype = {
- #ifdef CONFIG_SYSFS
- 	.sysfs_ops = &brport_sysfs_ops,
- #endif
- 	.release = release_nbp,
-+	.get_ownership = brport_get_ownership,
- };
- 
- static void destroy_nbp(struct net_bridge_port *p)
-diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
-index 5216a524b537..cf0005d2a4d0 100644
---- a/net/bridge/br_private.h
-+++ b/net/bridge/br_private.h
-@@ -283,6 +283,8 @@ struct net_bridge_port {
- 	u16				group_fwd_mask;
- };
- 
-+#define kobj_to_brport(obj)	container_of(obj, struct net_bridge_port, kobj)
-+
- #define br_auto_port(p) ((p)->flags & BR_AUTO_MASK)
- #define br_promisc_port(p) ((p)->flags & BR_PROMISC)
- 
-diff --git a/net/bridge/br_sysfs_if.c b/net/bridge/br_sysfs_if.c
-index f99c5bf5c906..ab4c7f8adf68 100644
---- a/net/bridge/br_sysfs_if.c
-+++ b/net/bridge/br_sysfs_if.c
-@@ -249,13 +249,12 @@ static const struct brport_attribute *brport_attrs[] = {
- };
- 
- #define to_brport_attr(_at) container_of(_at, struct brport_attribute, attr)
--#define to_brport(obj)	container_of(obj, struct net_bridge_port, kobj)
- 
- static ssize_t brport_show(struct kobject *kobj,
- 			   struct attribute *attr, char *buf)
- {
- 	struct brport_attribute *brport_attr = to_brport_attr(attr);
--	struct net_bridge_port *p = to_brport(kobj);
-+	struct net_bridge_port *p = kobj_to_brport(kobj);
- 
- 	if (!brport_attr->show)
- 		return -EINVAL;
-@@ -268,7 +267,7 @@ static ssize_t brport_store(struct kobject *kobj,
- 			    const char *buf, size_t count)
- {
- 	struct brport_attribute *brport_attr = to_brport_attr(attr);
--	struct net_bridge_port *p = to_brport(kobj);
-+	struct net_bridge_port *p = kobj_to_brport(kobj);
- 	ssize_t ret = -EINVAL;
- 	char *endp;
- 	unsigned long val;
--- 
-2.7.4
+On Fri, Jul 20, 2018 at 09:57:49PM +0100, Vitor soares wrote:
+> This patch series is a proposal for the I3C master driver for Synopsys IP.
+> This patch is to be applied on top of I3C subsystem RFC V6 submitted
+> by Boris Brezillon.
 
+Nice! More users will help the subsystem evolve.
+
+Yet, I also think this may be a good timing for a seperate I3C mailing
+list? We can always cross-post if I2C is relevant, but I guess new I3C
+masters usually are very I3C specific. I think a seperate mailing list
+would also look good in the MAINTAINERS entry.
+
+
+--x2lspxohbhnfcm6l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltSWukACgkQFA3kzBSg
+KbY5ig/9EK7rk7249vzONpuTF/gM8ZBE6c+8Bxu8bxp0fhItU6oF/+FoNigAUO/x
+U2uRGxUChHNyQXeT89+TRC0Hc7IDmUMw5fnLfgUBORinA5IdzYMHZ3TMuT6HMQbR
++8O9wiK4MQMvTQLvWO9Zfeqq+cG8Ra5Ff2/Ahgg3Kh1yNsilspEDeVfCMXc0/Vao
+WC2Gam+W70ZaYizAH7PnWgDsB/AP25MC9VKaQqsl7UhGBNKidB+oogPknUm72ePO
+Uhq8S3+3uvF98zpGE7dX49+6fm4KYkRj1Y2u1riVUvwrlw+ACJLeCotUqvq71KZH
+D6Tb5EcPz+1MIxz5f/ZS7LubxLAmclRvXsYqhF0UcCCGpy0Ppf1hhMGoYEU3gTWf
+mFQAlPEY12j/mmqIWGh58LQlMTjH8WW5ns1jz0UHxECu0o8yIAXFIn+QgEgKC1Ap
+s1MpAsMotU2keQ+ZZe+iZu+RSjMYhHMl5RPHt8yAqm6fk5kHjitlPVAnwuIEfGrR
+xSaAPmFF9BLXZKWHU7nGWJrxcJC1s9SEEinZrNN/p0wezKyRjCTr8u+/WeF6kNWS
+fe3MMSF/xrEE2pHSNyRc3lW/rNh9ii7igo8wL5kSyaRvtA9qb6bro8AODZMsz84E
+60HCFjRFT7WSK1nb6OlXkjn0R0byc939hZjo/r0voplsChncgmM=
+=lZ8H
+-----END PGP SIGNATURE-----
+
+--x2lspxohbhnfcm6l--
