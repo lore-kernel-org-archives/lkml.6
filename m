@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F4AECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EDCECDFBD
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9C0A2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:12:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C0A2084A
+	by mail.kernel.org (Postfix) with ESMTP id 4FC5F2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 05:12:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC5F2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbeGTF7I (ORCPT
+        id S1727666AbeGTF7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 20 Jul 2018 01:59:08 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:9175 "EHLO
+Received: from mailgw02.mediatek.com ([210.61.82.184]:62629 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727177AbeGTF7H (ORCPT
+        with ESMTP id S1726616AbeGTF7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Jul 2018 01:59:07 -0400
-X-UUID: 1f676073f95a45d4b0f4c0688c1f2081-20180720
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+X-UUID: 8be554a63ba5422591bebabaa53c24ae-20180720
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <sean.wang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1411473296; Fri, 20 Jul 2018 13:12:34 +0800
+        with ESMTP id 489439146; Fri, 20 Jul 2018 13:12:34 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Fri, 20 Jul 2018 13:12:32 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
@@ -41,9 +41,9 @@ CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v6 2/4] Bluetooth: Add new quirk for non-persistent setup settings
-Date:   Fri, 20 Jul 2018 13:12:28 +0800
-Message-ID: <d20e070679bb40bff011f5a74f531e1b662d08a5.1532060309.git.sean.wang@mediatek.com>
+Subject: [PATCH v6 1/4] dt-bindings: net: bluetooth: Add mediatek-bluetooth
+Date:   Fri, 20 Jul 2018 13:12:27 +0800
+Message-ID: <0abe731710734135619bb1291ff2f71e0d5cf5be.1532060309.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1532060309.git.sean.wang@mediatek.com>
 References: <cover.1532060309.git.sean.wang@mediatek.com>
@@ -57,49 +57,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Add a new quirk HCI_QUIRK_NON_PERSISTENT_SETUP allowing that a quirk that
-runs setup() after every open() and not just after the first open().
+Add binding document for a SoC built-in device using MediaTek protocol.
+Which could be found on MT7622 SoC or other similar MediaTek SoCs.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- include/net/bluetooth/hci.h | 9 +++++++++
- net/bluetooth/hci_core.c    | 3 ++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/net/mediatek-bluetooth.txt | 35 ++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
 
-diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
-index 1668211..b37d973 100644
---- a/include/net/bluetooth/hci.h
-+++ b/include/net/bluetooth/hci.h
-@@ -183,6 +183,15 @@ enum {
- 	 * during the hdev->setup vendor callback.
- 	 */
- 	HCI_QUIRK_NON_PERSISTENT_DIAG,
+diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+new file mode 100644
+index 0000000..14ceb2a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+@@ -0,0 +1,35 @@
++MediaTek SoC built-in Bluetooth Devices
++==================================
 +
-+	/* When this quirk is set, setup() would be run after every
-+	 * open() and not just after the first open().
-+	 *
-+	 * This quirk can be set before hci_register_dev is called or
-+	 * during the hdev->setup vendor callback.
-+	 *
-+	 */
-+	HCI_QUIRK_NON_PERSISTENT_SETUP,
- };
- 
- /* HCI device flags */
-diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-index 40d260f..7de712e2 100644
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -1377,7 +1377,8 @@ static int hci_dev_do_open(struct hci_dev *hdev)
- 	atomic_set(&hdev->cmd_cnt, 1);
- 	set_bit(HCI_INIT, &hdev->flags);
- 
--	if (hci_dev_test_flag(hdev, HCI_SETUP)) {
-+	if (hci_dev_test_flag(hdev, HCI_SETUP) ||
-+	    test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
- 		hci_sock_dev_event(hdev, HCI_DEV_SETUP);
- 
- 		if (hdev->setup)
++This device is a serial attached device to BTIF device and thus it must be a
++child node of the serial node with BTIF. The dt-bindings details for BTIF
++device can be known via Documentation/devicetree/bindings/serial/8250.txt.
++
++Required properties:
++
++- compatible:	Must be
++		  "mediatek,mt7622-bluetooth": for MT7622 SoC
++- clocks:	Should be the clock specifiers corresponding to the entry in
++		clock-names property.
++- clock-names:	Should contain "ref" entries.
++- power-domains: Phandle to the power domain that the device is part of
++
++Example:
++
++	btif: serial@1100c000 {
++		compatible = "mediatek,mt7622-btif",
++			     "mediatek,mtk-btif";
++		reg = <0 0x1100c000 0 0x1000>;
++		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&pericfg CLK_PERI_BTIF_PD>;
++		clock-names = "main";
++		reg-shift = <2>;
++		reg-io-width = <4>;
++
++		bluetooth {
++			compatible = "mediatek,mt7622-bluetooth";
++			power-domains = <&scpsys MT7622_POWER_DOMAIN_WB>;
++			clocks = <&clk25m>;
++			clock-names = "ref";
++		};
++	};
 -- 
 2.7.4
 
