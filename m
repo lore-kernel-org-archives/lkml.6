@@ -6,150 +6,78 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A4AECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B178ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0803E20671
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:38:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0803E20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id D0B9320671
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:42:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0B9320671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731724AbeGTU2c (ORCPT
+        id S1727671AbeGTUb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 16:28:32 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43585 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731465AbeGTU2b (ORCPT
+        Fri, 20 Jul 2018 16:31:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44350 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbeGTUb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 16:28:31 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6KJbbbq2769255
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 20 Jul 2018 12:37:37 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6KJbbJ32769251;
-        Fri, 20 Jul 2018 12:37:37 -0700
-Date:   Fri, 20 Jul 2018 12:37:37 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-9cd342705877526f387cfcb5df8a964ab5873deb@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, jpoimboe@redhat.com, bp@alien8.de,
-        dhgutteridge@sympatico.ca, luto@kernel.org, aarcange@redhat.com,
-        torvalds@linux-foundation.org, dvlasenk@redhat.com, pavel@ucw.cz,
-        brgerst@gmail.com, jgross@suse.com, hpa@zytor.com,
-        mingo@kernel.org, jroedel@suse.de, gregkh@linuxfoundation.org,
-        peterz@infradead.org, David.Laight@aculab.com, jolsa@redhat.com,
-        boris.ostrovsky@oracle.com, acme@kernel.org, namhyung@kernel.org,
-        will.deacon@arm.com, jkosina@suse.cz,
-        alexander.shishkin@linux.intel.com, eduval@amazon.com,
-        tglx@linutronix.de, dave.hansen@intel.com, llong@redhat.com
-Reply-To: gregkh@linuxfoundation.org, jroedel@suse.de, hpa@zytor.com,
-          mingo@kernel.org, brgerst@gmail.com, jgross@suse.com,
-          peterz@infradead.org, David.Laight@aculab.com,
-          alexander.shishkin@linux.intel.com, will.deacon@arm.com,
-          jkosina@suse.cz, acme@kernel.org, namhyung@kernel.org,
-          boris.ostrovsky@oracle.com, jolsa@redhat.com,
-          dave.hansen@intel.com, llong@redhat.com, tglx@linutronix.de,
-          eduval@amazon.com, linux-kernel@vger.kernel.org,
-          jpoimboe@redhat.com, bp@alien8.de, luto@kernel.org,
-          dhgutteridge@sympatico.ca, pavel@ucw.cz,
-          torvalds@linux-foundation.org, dvlasenk@redhat.com,
-          aarcange@redhat.com
-In-Reply-To: <1532103744-31902-3-git-send-email-joro@8bytes.org>
-References: <1532103744-31902-3-git-send-email-joro@8bytes.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/32: Check for VM86 mode in slow-path check
-Git-Commit-ID: 9cd342705877526f387cfcb5df8a964ab5873deb
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Fri, 20 Jul 2018 16:31:57 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5399D4C;
+        Fri, 20 Jul 2018 19:42:13 +0000 (UTC)
+Date:   Fri, 20 Jul 2018 12:42:12 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH -next 0/2] fs/epoll: loosen irq safety when possible
+Message-Id: <20180720124212.7260d76d83e2b8e5e3349ea5@linux-foundation.org>
+In-Reply-To: <20180720172956.2883-1-dave@stgolabs.net>
+References: <20180720172956.2883-1-dave@stgolabs.net>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9cd342705877526f387cfcb5df8a964ab5873deb
-Gitweb:     https://git.kernel.org/tip/9cd342705877526f387cfcb5df8a964ab5873deb
-Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Fri, 20 Jul 2018 18:22:23 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 21:32:08 +0200
+On Fri, 20 Jul 2018 10:29:54 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
 
-x86/entry/32: Check for VM86 mode in slow-path check
+> Hi,
+> 
+> Both patches replace saving+restoring interrupts when taking the
+> ep->lock (now the waitqueue lock), with just disabling local irqs.
+> This shows immediate performance benefits in patch 1 for an epoll
+> workload running on Xen.
 
-The SWITCH_TO_KERNEL_STACK macro only checks for CPL == 0 to go down the
-slow and paranoid entry path. The problem is that this check also returns
-true when coming from VM86 mode. This is not a problem by itself, as the
-paranoid path handles VM86 stack-frames just fine, but it is not necessary
-as the normal code path handles VM86 mode as well (and faster).
+I'm surprised.  Is spin_lock_irqsave() significantly more expensive
+than spin_lock_irq()?  Relative to all the other stuff those functions
+are doing?  If so, how come?  Some architectural thing makes
+local_irq_save() much more costly than local_irq_disable()?
 
-Extend the check to include VM86 mode. This also makes an optimization of
-the paranoid path possible.
+> The main concern we need to have with this
+> sort of changes in epoll is the ep_poll_callback() which is passed
+> to the wait queue wakeup and is done very often under irq context,
+> this patch does not touch this call.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1532103744-31902-3-git-send-email-joro@8bytes.org
+Yeah, these changes are scary.  For the code as it stands now, and for
+the code as it evolves.
 
----
- arch/x86/entry/entry_32.S | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+I'd have more confidence if we had some warning mechanism if we run
+spin_lock_irq() when IRQs are disabled, which is probably-a-bug.  But
+afaict we don't have that.  Probably for good reasons - I wonder what
+they are?
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 010cdb41e3c7..2767c625a52c 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -414,8 +414,16 @@
- 	andl	$(0x0000ffff), PT_CS(%esp)
- 
- 	/* Special case - entry from kernel mode via entry stack */
--	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
--	jz	.Lentry_from_kernel_\@
-+#ifdef CONFIG_VM86
-+	movl	PT_EFLAGS(%esp), %ecx		# mix EFLAGS and CS
-+	movb	PT_CS(%esp), %cl
-+	andl	$(X86_EFLAGS_VM | SEGMENT_RPL_MASK), %ecx
-+#else
-+	movl	PT_CS(%esp), %ecx
-+	andl	$SEGMENT_RPL_MASK, %ecx
-+#endif
-+	cmpl	$USER_RPL, %ecx
-+	jb	.Lentry_from_kernel_\@
- 
- 	/* Bytes to copy */
- 	movl	$PTREGS_SIZE, %ecx
+> Patches have been tested pretty heavily with the customer workload,
+> microbenchmarks, ltp testcases and two high level workloads that
+> use epoll under the hood: nginx and libevent benchmarks.
+> 
+> Details are in the individual patches.
+> 
+> Applies on top of mmotd.
+
+Please convince me about the performance benefits?
