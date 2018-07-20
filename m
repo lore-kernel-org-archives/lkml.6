@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF28ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8632EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72ECB20647
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A23D20647
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:45:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="PrDrEYmN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72ECB20647
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="o7Hvbbp/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A23D20647
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388056AbeGTRe2 (ORCPT
+        id S2388203AbeGTRea (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:34:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59854 "EHLO
+        Fri, 20 Jul 2018 13:34:30 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59890 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387805AbeGTRe2 (ORCPT
+        with ESMTP id S2387732AbeGTRe3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:34:28 -0400
+        Fri, 20 Jul 2018 13:34:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=JNRZdD/wgx4csnKFF8uz4pAubjwvw6eCVexPTfIOl4Q=; b=PrDrEYmNttlf
-        2kMG0/I2QycLguwGWi1PZfFF8FC+tbjpt4qfG/yrtiJLQlmKp5LXAJihbbbIzP7Qsj7lpxOVbNufN
-        P1H/hjbPFJD7fVqq4KIDNbIQ5CRayLa7xIkgZOnDk6UDiznd8NVuk2KphocnWbNZD+LoiUxZ7qihe
-        Bg3ko=;
+        List-Archive; bh=oPz4/c6xGcoiPZZJs3nm3zNCFiO7d94tXeO0WGLc9/0=; b=o7Hvbbp/DA4t
+        irTIxX7j5oxWwIAmhdYVAHK3sEZ/F3lGyYJb5gV89D1X0M8t4pM/ItuKZfA7qTf5Wc4jI1XCahZTq
+        OeUBTEGykoGRTc3gThRzehHBTJrrBRj+3KQrPtq3+Sug1UH+pkv9aaKP42COa2EYInatb0QP67pkf
+        Mva6A=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fgYWt-00006A-S8; Fri, 20 Jul 2018 16:45:19 +0000
+        id 1fgYWv-00006H-Pk; Fri, 20 Jul 2018 16:45:21 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fgYWt-00013U-DY; Fri, 20 Jul 2018 17:45:19 +0100
+        id 1fgYWv-00014q-CE; Fri, 20 Jul 2018 17:45:21 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Niklas Cassel <niklas.cassel@linaro.org>
 Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Applied "regulator: qcom_spmi: Indent with tabs instead of spaces" to the regulator tree
-In-Reply-To:  <20180716113525.9335-5-niklas.cassel@linaro.org>
-Message-Id: <E1fgYWt-00013U-DY@debutante>
-Date:   Fri, 20 Jul 2018 17:45:19 +0100
+Subject: Applied "regulator: qcom_spmi: Do not initialise static to NULL" to the regulator tree
+In-Reply-To:  <20180716113525.9335-4-niklas.cassel@linaro.org>
+Message-Id: <E1fgYWv-00014q-CE@debutante>
+Date:   Fri, 20 Jul 2018 17:45:21 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: qcom_spmi: Indent with tabs instead of spaces
+   regulator: qcom_spmi: Do not initialise static to NULL
 
 has been applied to the regulator tree at
 
@@ -85,17 +85,17 @@ to this mail.
 Thanks,
 Mark
 
-From 37164571fb25adef80ae2aaf55840b0105c15b22 Mon Sep 17 00:00:00 2001
+From 9689ca0af345b82d06a02e45cc214c1b8bad9e8d Mon Sep 17 00:00:00 2001
 From: Niklas Cassel <niklas.cassel@linaro.org>
-Date: Mon, 16 Jul 2018 15:32:54 +0200
-Subject: [PATCH] regulator: qcom_spmi: Indent with tabs instead of spaces
+Date: Mon, 16 Jul 2018 15:32:53 +0200
+Subject: [PATCH] regulator: qcom_spmi: Do not initialise static to NULL
 
 Fix the following checkpatch error:
 
-ERROR: code indent should use tabs where possible
-+        { }$
+ERROR: do not initialise statics to NULL
++static struct regmap *saw_regmap = NULL;
 
-Fixes: ca5cd8c9400c ("regulator: qcom_spmi: Add support for pmi8994")
+Fixes: 0caecaa87202 ("regulator: qcom_spmi: Add support for SAW")
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
@@ -103,18 +103,18 @@ Signed-off-by: Mark Brown <broonie@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-index 5246f5b870c2..53a61fb65642 100644
+index ba3d5e63ada6..5246f5b870c2 100644
 --- a/drivers/regulator/qcom_spmi-regulator.c
 +++ b/drivers/regulator/qcom_spmi-regulator.c
-@@ -1728,7 +1728,7 @@ static const struct spmi_regulator_data pmi8994_regulators[] = {
- 	{ "s2", 0x1700, "vdd_s2", },
- 	{ "s3", 0x1a00, "vdd_s3", },
- 	{ "l1", 0x4000, "vdd_l1", },
--        { }
-+	{ }
- };
+@@ -1060,7 +1060,7 @@ static irqreturn_t spmi_regulator_vs_ocp_isr(int irq, void *data)
+ #define SAW3_AVS_CTL_TGGL_MASK	0x8000000
+ #define SAW3_AVS_CTL_CLEAR_MASK	0x7efc00
  
- static const struct of_device_id qcom_spmi_regulator_match[] = {
+-static struct regmap *saw_regmap = NULL;
++static struct regmap *saw_regmap;
+ 
+ static void spmi_saw_set_vdd(void *data)
+ {
 -- 
 2.18.0
 
