@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE43ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BA2ECDFBD
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EDA4204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EDA4204EC
+	by mail.kernel.org (Postfix) with ESMTP id E4EF2204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4EF2204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387931AbeGTQEf (ORCPT
+        id S2387954AbeGTQEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:04:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54185 "EHLO mail.bootlin.com"
+        Fri, 20 Jul 2018 12:04:36 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54215 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732981AbeGTQEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 12:04:34 -0400
+        id S2387775AbeGTQEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 12:04:35 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 524C2209D6; Fri, 20 Jul 2018 17:15:49 +0200 (CEST)
+        id CE3DA20893; Fri, 20 Jul 2018 17:15:49 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6D72020876;
-        Fri, 20 Jul 2018 17:15:31 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 93F97208FF;
+        Fri, 20 Jul 2018 17:15:32 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 05/35] mtd: rawnand: fsl_elbc: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 17:14:57 +0200
-Message-Id: <20180720151527.16038-6-miquel.raynal@bootlin.com>
+Subject: [PATCH v4 07/35] mtd: rawnand: fsmc: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 17:14:59 +0200
+Message-Id: <20180720151527.16038-8-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180720151527.16038-1-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
@@ -73,53 +73,174 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/fsl_elbc_nand.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ drivers/mtd/nand/raw/fsmc_nand.c | 148 +++++++++++++++++++++------------------
+ 1 file changed, 78 insertions(+), 70 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/fsl_elbc_nand.c b/drivers/mtd/nand/raw/fsl_elbc_nand.c
-index 0aa54a949653..44893e49b386 100644
---- a/drivers/mtd/nand/raw/fsl_elbc_nand.c
-+++ b/drivers/mtd/nand/raw/fsl_elbc_nand.c
-@@ -637,9 +637,9 @@ static int fsl_elbc_wait(struct mtd_info *mtd, struct nand_chip *chip)
- 	return (elbc_fcm_ctrl->mdr & 0xff) | NAND_STATUS_WP;
- }
- 
--static int fsl_elbc_chip_init_tail(struct mtd_info *mtd)
-+static int fsl_elbc_attach_chip(struct nand_chip *chip)
- {
--	struct nand_chip *chip = mtd_to_nand(mtd);
-+	struct mtd_info *mtd = nand_to_mtd(chip);
- 	struct fsl_elbc_mtd *priv = nand_get_controller_data(chip);
- 	struct fsl_lbc_ctrl *ctrl = priv->ctrl;
- 	struct fsl_lbc_regs __iomem *lbc = ctrl->regs;
-@@ -706,6 +706,10 @@ static int fsl_elbc_chip_init_tail(struct mtd_info *mtd)
+diff --git a/drivers/mtd/nand/raw/fsmc_nand.c b/drivers/mtd/nand/raw/fsmc_nand.c
+index 59524d181bfe..f418236fa020 100644
+--- a/drivers/mtd/nand/raw/fsmc_nand.c
++++ b/drivers/mtd/nand/raw/fsmc_nand.c
+@@ -919,6 +919,82 @@ static int fsmc_nand_probe_config_dt(struct platform_device *pdev,
  	return 0;
  }
  
-+static const struct nand_controller_ops fsl_elbc_controller_ops = {
-+	.attach_chip = fsl_elbc_attach_chip,
++static int fsmc_nand_attach_chip(struct nand_chip *nand)
++{
++	struct mtd_info *mtd = nand_to_mtd(nand);
++	struct fsmc_nand_data *host = mtd_to_fsmc(mtd);
++
++	if (AMBA_REV_BITS(host->pid) >= 8) {
++		switch (mtd->oobsize) {
++		case 16:
++		case 64:
++		case 128:
++		case 224:
++		case 256:
++			break;
++		default:
++			dev_warn(host->dev,
++				 "No oob scheme defined for oobsize %d\n",
++				 mtd->oobsize);
++			return -EINVAL;
++		}
++
++		mtd_set_ooblayout(mtd, &fsmc_ecc4_ooblayout_ops);
++
++		return 0;
++	}
++
++	switch (nand->ecc.mode) {
++	case NAND_ECC_HW:
++		dev_info(host->dev, "Using 1-bit HW ECC scheme\n");
++		nand->ecc.calculate = fsmc_read_hwecc_ecc1;
++		nand->ecc.correct = nand_correct_data;
++		nand->ecc.bytes = 3;
++		nand->ecc.strength = 1;
++		break;
++
++	case NAND_ECC_SOFT:
++		if (nand->ecc.algo == NAND_ECC_BCH) {
++			dev_info(host->dev,
++				 "Using 4-bit SW BCH ECC scheme\n");
++			break;
++		}
++
++	case NAND_ECC_ON_DIE:
++		break;
++
++	default:
++		dev_err(host->dev, "Unsupported ECC mode!\n");
++		return -ENOTSUPP;
++	}
++
++	/*
++	 * Don't set layout for BCH4 SW ECC. This will be
++	 * generated later in nand_bch_init() later.
++	 */
++	if (nand->ecc.mode == NAND_ECC_HW) {
++		switch (mtd->oobsize) {
++		case 16:
++		case 64:
++		case 128:
++			mtd_set_ooblayout(mtd,
++					  &fsmc_ecc1_ooblayout_ops);
++			break;
++		default:
++			dev_warn(host->dev,
++				 "No oob scheme defined for oobsize %d\n",
++				 mtd->oobsize);
++			return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
++static const struct nand_controller_ops fsmc_nand_controller_ops = {
++	.attach_chip = fsmc_nand_attach_chip,
 +};
 +
- static int fsl_elbc_read_page(struct mtd_info *mtd, struct nand_chip *chip,
- 			      uint8_t *buf, int oob_required, int page)
- {
-@@ -910,15 +914,8 @@ static int fsl_elbc_nand_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err;
- 
+ /*
+  * fsmc_nand_probe - Probe function
+  * @pdev:       platform device structure
+@@ -1048,76 +1124,8 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
+ 	/*
+ 	 * Scan to find existence of the device
+ 	 */
 -	ret = nand_scan_ident(mtd, 1, NULL);
--	if (ret)
--		goto err;
+-	if (ret) {
+-		dev_err(&pdev->dev, "No NAND Device found!\n");
+-		goto release_dma_write_chan;
+-	}
 -
--	ret = fsl_elbc_chip_init_tail(mtd);
--	if (ret)
--		goto err;
+-	if (AMBA_REV_BITS(host->pid) >= 8) {
+-		switch (mtd->oobsize) {
+-		case 16:
+-		case 64:
+-		case 128:
+-		case 224:
+-		case 256:
+-			break;
+-		default:
+-			dev_warn(&pdev->dev, "No oob scheme defined for oobsize %d\n",
+-				 mtd->oobsize);
+-			ret = -EINVAL;
+-			goto release_dma_write_chan;
+-		}
 -
+-		mtd_set_ooblayout(mtd, &fsmc_ecc4_ooblayout_ops);
+-	} else {
+-		switch (nand->ecc.mode) {
+-		case NAND_ECC_HW:
+-			dev_info(&pdev->dev, "Using 1-bit HW ECC scheme\n");
+-			nand->ecc.calculate = fsmc_read_hwecc_ecc1;
+-			nand->ecc.correct = nand_correct_data;
+-			nand->ecc.bytes = 3;
+-			nand->ecc.strength = 1;
+-			break;
+-
+-		case NAND_ECC_SOFT:
+-			if (nand->ecc.algo == NAND_ECC_BCH) {
+-				dev_info(&pdev->dev, "Using 4-bit SW BCH ECC scheme\n");
+-				break;
+-			}
+-
+-		case NAND_ECC_ON_DIE:
+-			break;
+-
+-		default:
+-			dev_err(&pdev->dev, "Unsupported ECC mode!\n");
+-			goto release_dma_write_chan;
+-		}
+-
+-		/*
+-		 * Don't set layout for BCH4 SW ECC. This will be
+-		 * generated later in nand_bch_init() later.
+-		 */
+-		if (nand->ecc.mode == NAND_ECC_HW) {
+-			switch (mtd->oobsize) {
+-			case 16:
+-			case 64:
+-			case 128:
+-				mtd_set_ooblayout(mtd,
+-						  &fsmc_ecc1_ooblayout_ops);
+-				break;
+-			default:
+-				dev_warn(&pdev->dev,
+-					 "No oob scheme defined for oobsize %d\n",
+-					 mtd->oobsize);
+-				ret = -EINVAL;
+-				goto release_dma_write_chan;
+-			}
+-		}
+-	}
+-
+-	/* Second stage of scan to fill MTD data-structures */
 -	ret = nand_scan_tail(mtd);
-+	priv->chip.controller->ops = &fsl_elbc_controller_ops;
++	nand->dummy_controller.ops = &fsmc_nand_controller_ops;
 +	ret = nand_scan(mtd, 1);
  	if (ret)
- 		goto err;
+ 		goto release_dma_write_chan;
  
 -- 
 2.14.1
