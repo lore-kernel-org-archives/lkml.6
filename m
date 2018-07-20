@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C072BECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776F8ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AAE020647
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:44:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DF492084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:44:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tf8wBByL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AAE020647
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="cbJeclvf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF492084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388168AbeGTRdx (ORCPT
+        id S2388190AbeGTRdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:33:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58794 "EHLO
+        Fri, 20 Jul 2018 13:33:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58854 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387873AbeGTRdx (ORCPT
+        with ESMTP id S2388151AbeGTRdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:33:53 -0400
+        Fri, 20 Jul 2018 13:33:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Iqu9YUzcYc1hFAHjUvjjiXM/AvU91X5Gy9rqYMEa1WU=; b=tf8wBByLYJ1r
-        0Aa/puNrDDlj/QX9kLK6z5WTzC7OSWhwBMkOZ9m24nLhYmVioi3uLFBCU7k30zO6dkMFScwALbrU6
-        izXJPUQjuagNP16p4JtFTB5EK3M05G82Zw1RjB/mXgH+46dskV0KXOZdUKIEihXoKeqqXyAkbSc2t
-        +xKJM=;
+        List-Archive; bh=NsUclS4k88D/l+q1KZSPx2Gmn8EtUDMcopRhvPULvvE=; b=cbJeclvf6ZU2
+        6GAs/C1+ciHBKvBUBn+vG3bWhBkV/Yoetcxgmk/hEGNcGrmm+eENKycyMDCdsf0qUIG9a3+nSADnD
+        IwBfayY/eoD3SI+bZA+JG3uMMToW4uUx/IEPjqycdbSeIYBlfh4O9V9EkDUPFmG8AkyNRA5SsPJvW
+        kx8m8=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fgYW5-00005f-OR; Fri, 20 Jul 2018 16:44:29 +0000
+        id 1fgYW7-00005m-Mv; Fri, 20 Jul 2018 16:44:31 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fgYW5-0000vs-Ao; Fri, 20 Jul 2018 17:44:29 +0100
+        id 1fgYW7-0000x8-8Q; Fri, 20 Jul 2018 17:44:31 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
@@ -51,10 +51,10 @@ Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: meson: add tdm interface driver" to the asoc tree
-In-Reply-To:  <20180717153643.8806-14-jbrunet@baylibre.com>
-Message-Id: <E1fgYW5-0000vs-Ao@debutante>
-Date:   Fri, 20 Jul 2018 17:44:29 +0100
+Subject: Applied "ASoC: meson: add tdm formatter base driver" to the asoc tree
+In-Reply-To:  <20180717153643.8806-13-jbrunet@baylibre.com>
+Message-Id: <E1fgYW7-0000x8-8Q@debutante>
+Date:   Fri, 20 Jul 2018 17:44:31 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: add tdm interface driver
+   ASoC: meson: add tdm formatter base driver
 
 has been applied to the asoc tree at
 
@@ -87,70 +87,79 @@ to this mail.
 Thanks,
 Mark
 
-From d60e4f1e4be5e2dfb55fb084b119aed094227a35 Mon Sep 17 00:00:00 2001
+From 1a11d88f499ceb69e9b4098ddc36866820335a54 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 17 Jul 2018 17:42:59 +0200
-Subject: [PATCH] ASoC: meson: add tdm interface driver
+Date: Tue, 17 Jul 2018 17:42:58 +0200
+Subject: [PATCH] ASoC: meson: add tdm formatter base driver
 
-Add Amlogic's axg TDM interface driver. This driver manages the format
-and clocks provided on the pads.
+Add Amlogic's axg TDM core driver. On this SoC, tdm is bit more
+complex than usual, mainly because the different TDM input decoders can
+be attached to any of TDM pad interface, including the output pads.
 
-On this SoC, each stream direction provides 4 serial lanes. This makes
-a maximum of 8 channels in i2s modes and 128 channels in DSP modes.
+For the this, TDM on this SoC is modeled like this:
+- TDM interface provides the DAIs the codecs will be attached to.
+  The main responsibility of this driver is to manage the pad format
+  and the TDM clock rates.
+- TDM Formatters: These are the entities which are actually dealing with
+  the TDM signal. TDMOUT produce a TDM signal from the audio sample
+  provided by FRDDR using the clocks provided the TDM interface. TDMIN
+  feeds TODDR with audio sample using the clocks and TDM signal provided
+  by the TDM Interface.
+- TDM Streams: This provides the link between 1 DAI stream of the TDM
+  interface and one (or more) TDM formatters.
 
-While each lanes operate on the same slot number (same bit clock), they
-may have different TDM masks. This requires to provide a function to let
-the card set the 4 masks, in lieu of the usual set_tdm_slots() callback
-of the dai driver.
+This driver provides the TDM formatter and TDM stream operations.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
  sound/soc/meson/Kconfig             |   4 +
  sound/soc/meson/Makefile            |   2 +
- sound/soc/meson/axg-tdm-interface.c | 542 ++++++++++++++++++++++++++++
- sound/soc/meson/axg-tdm.h           |   4 +
- 4 files changed, 552 insertions(+)
- create mode 100644 sound/soc/meson/axg-tdm-interface.c
+ sound/soc/meson/axg-tdm-formatter.c | 381 ++++++++++++++++++++++++++++
+ sound/soc/meson/axg-tdm-formatter.h |  39 +++
+ sound/soc/meson/axg-tdm.h           |  74 ++++++
+ 5 files changed, 500 insertions(+)
+ create mode 100644 sound/soc/meson/axg-tdm-formatter.c
+ create mode 100644 sound/soc/meson/axg-tdm-formatter.h
+ create mode 100644 sound/soc/meson/axg-tdm.h
 
 diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 80a88689491f..869b359c2ce7 100644
+index 9408214b5854..80a88689491f 100644
 --- a/sound/soc/meson/Kconfig
 +++ b/sound/soc/meson/Kconfig
-@@ -23,6 +23,10 @@ config SND_MESON_AXG_TDM_FORMATTER
- 	tristate
- 	select REGMAP_MMIO
+@@ -19,6 +19,10 @@ config SND_MESON_AXG_TODDR
+ 	  Select Y or M to add support for the frontend capture interfaces
+ 	  embedded in the Amlogic AXG SoC family
  
-+config SND_MESON_AXG_TDM_INTERFACE
++config SND_MESON_AXG_TDM_FORMATTER
 +	tristate
-+	select SND_MESON_AXG_TDM_FORMATTER
++	select REGMAP_MMIO
 +
  config SND_MESON_AXG_SPDIFOUT
  	tristate "Amlogic AXG SPDIF Output Support"
  	imply SND_SOC_SPDIF
 diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
-index a06b56a1c995..1a8eb77402e3 100644
+index d51ae045ef08..a06b56a1c995 100644
 --- a/sound/soc/meson/Makefile
 +++ b/sound/soc/meson/Makefile
-@@ -4,10 +4,12 @@ snd-soc-meson-axg-fifo-objs := axg-fifo.o
+@@ -3,9 +3,11 @@
+ snd-soc-meson-axg-fifo-objs := axg-fifo.o
  snd-soc-meson-axg-frddr-objs := axg-frddr.o
  snd-soc-meson-axg-toddr-objs := axg-toddr.o
- snd-soc-meson-axg-tdm-formatter-objs := axg-tdm-formatter.o
-+snd-soc-meson-axg-tdm-interface-objs := axg-tdm-interface.o
++snd-soc-meson-axg-tdm-formatter-objs := axg-tdm-formatter.o
  snd-soc-meson-axg-spdifout-objs := axg-spdifout.o
  
  obj-$(CONFIG_SND_MESON_AXG_FIFO) += snd-soc-meson-axg-fifo.o
  obj-$(CONFIG_SND_MESON_AXG_FRDDR) += snd-soc-meson-axg-frddr.o
  obj-$(CONFIG_SND_MESON_AXG_TODDR) += snd-soc-meson-axg-toddr.o
- obj-$(CONFIG_SND_MESON_AXG_TDM_FORMATTER) += snd-soc-meson-axg-tdm-formatter.o
-+obj-$(CONFIG_SND_MESON_AXG_TDM_INTERFACE) += snd-soc-meson-axg-tdm-interface.o
++obj-$(CONFIG_SND_MESON_AXG_TDM_FORMATTER) += snd-soc-meson-axg-tdm-formatter.o
  obj-$(CONFIG_SND_MESON_AXG_SPDIFOUT) += snd-soc-meson-axg-spdifout.o
-diff --git a/sound/soc/meson/axg-tdm-interface.c b/sound/soc/meson/axg-tdm-interface.c
+diff --git a/sound/soc/meson/axg-tdm-formatter.c b/sound/soc/meson/axg-tdm-formatter.c
 new file mode 100644
-index 000000000000..7b8baf46d968
+index 000000000000..43e390f9358a
 --- /dev/null
-+++ b/sound/soc/meson/axg-tdm-interface.c
-@@ -0,0 +1,542 @@
++++ b/sound/soc/meson/axg-tdm-formatter.c
+@@ -0,0 +1,381 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +//
 +// Copyright (c) 2018 BayLibre, SAS.
@@ -159,553 +168,504 @@ index 000000000000..7b8baf46d968
 +#include <linux/clk.h>
 +#include <linux/module.h>
 +#include <linux/of_platform.h>
-+#include <sound/pcm_params.h>
++#include <linux/regmap.h>
 +#include <sound/soc.h>
-+#include <sound/soc-dai.h>
 +
-+#include "axg-tdm.h"
++#include "axg-tdm-formatter.h"
 +
-+enum {
-+	TDM_IFACE_PAD,
-+	TDM_IFACE_LOOPBACK,
++struct axg_tdm_formatter {
++	struct list_head list;
++	struct axg_tdm_stream *stream;
++	const struct axg_tdm_formatter_driver *drv;
++	struct clk *pclk;
++	struct clk *sclk;
++	struct clk *lrclk;
++	struct clk *sclk_sel;
++	struct clk *lrclk_sel;
++	bool enabled;
++	struct regmap *map;
 +};
 +
-+static unsigned int axg_tdm_slots_total(u32 *mask)
++int axg_tdm_formatter_set_channel_masks(struct regmap *map,
++					struct axg_tdm_stream *ts,
++					unsigned int offset)
 +{
-+	unsigned int slots = 0;
-+	int i;
++	unsigned int val, ch = ts->channels;
++	unsigned long mask;
++	int i, j;
 +
-+	if (!mask)
-+		return 0;
++	/*
++	 * Distribute the channels of the stream over the available slots
++	 * of each TDM lane
++	 */
++	for (i = 0; i < AXG_TDM_NUM_LANES; i++) {
++		val = 0;
++		mask = ts->mask[i];
 +
-+	/* Count the total number of slots provided by all 4 lanes */
-+	for (i = 0; i < AXG_TDM_NUM_LANES; i++)
-+		slots += hweight32(mask[i]);
++		for (j = find_first_bit(&mask, 32);
++		     (j < 32) && ch;
++		     j = find_next_bit(&mask, 32, j + 1)) {
++			val |= 1 << j;
++			ch -= 1;
++		}
 +
-+	return slots;
-+}
-+
-+int axg_tdm_set_tdm_slots(struct snd_soc_dai *dai, u32 *tx_mask,
-+			  u32 *rx_mask, unsigned int slots,
-+			  unsigned int slot_width)
-+{
-+	struct axg_tdm_iface *iface = snd_soc_dai_get_drvdata(dai);
-+	struct axg_tdm_stream *tx = (struct axg_tdm_stream *)
-+		dai->playback_dma_data;
-+	struct axg_tdm_stream *rx = (struct axg_tdm_stream *)
-+		dai->capture_dma_data;
-+	unsigned int tx_slots, rx_slots;
-+
-+	tx_slots = axg_tdm_slots_total(tx_mask);
-+	rx_slots = axg_tdm_slots_total(rx_mask);
-+
-+	/* We should at least have a slot for a valid interface */
-+	if (!tx_slots && !rx_slots) {
-+		dev_err(dai->dev, "interface has no slot\n");
-+		return -EINVAL;
++		regmap_write(map, offset, val);
++		offset += regmap_get_reg_stride(map);
 +	}
 +
 +	/*
-+	 * Amend the dai driver channel number and let dpcm channel merge do
-+	 * its job
++	 * If we still have channel left at the end of the process, it means
++	 * the stream has more channels than we can accommodate and we should
++	 * have caught this earlier.
 +	 */
-+	if (tx) {
-+		tx->mask = tx_mask;
-+		dai->driver->playback.channels_max = tx_slots;
-+	}
-+
-+	if (rx) {
-+		rx->mask = rx_mask;
-+		dai->driver->capture.channels_max = rx_slots;
-+	}
-+
-+	iface->slots = slots;
-+
-+	switch (slot_width) {
-+	case 0:
-+		/* defaults width to 32 if not provided */
-+		iface->slot_width = 32;
-+		break;
-+	case 8:
-+	case 16:
-+	case 24:
-+	case 32:
-+		iface->slot_width = slot_width;
-+		break;
-+	default:
-+		dev_err(dai->dev, "unsupported slot width: %d\n", slot_width);
++	if (WARN_ON(ch != 0)) {
++		pr_err("channel mask error\n");
 +		return -EINVAL;
 +	}
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(axg_tdm_set_tdm_slots);
++EXPORT_SYMBOL_GPL(axg_tdm_formatter_set_channel_masks);
 +
-+static int axg_tdm_iface_set_sysclk(struct snd_soc_dai *dai, int clk_id,
-+				    unsigned int freq, int dir)
++static int axg_tdm_formatter_enable(struct axg_tdm_formatter *formatter)
 +{
-+	struct axg_tdm_iface *iface = snd_soc_dai_get_drvdata(dai);
-+	int ret = -ENOTSUPP;
-+
-+	if (dir == SND_SOC_CLOCK_OUT && clk_id == 0) {
-+		if (!iface->mclk) {
-+			dev_warn(dai->dev, "master clock not provided\n");
-+		} else {
-+			ret = clk_set_rate(iface->mclk, freq);
-+			if (!ret)
-+				iface->mclk_rate = freq;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int axg_tdm_iface_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-+{
-+	struct axg_tdm_iface *iface = snd_soc_dai_get_drvdata(dai);
-+
-+	/* These modes are not supported */
-+	if (fmt & (SND_SOC_DAIFMT_CBS_CFM | SND_SOC_DAIFMT_CBM_CFS)) {
-+		dev_err(dai->dev, "only CBS_CFS and CBM_CFM are supported\n");
-+		return -EINVAL;
-+	}
-+
-+	/* If the TDM interface is the clock master, it requires mclk */
-+	if (!iface->mclk && (fmt & SND_SOC_DAIFMT_CBS_CFS)) {
-+		dev_err(dai->dev, "cpu clock master: mclk missing\n");
-+		return -ENODEV;
-+	}
-+
-+	iface->fmt = fmt;
-+	return 0;
-+}
-+
-+static int axg_tdm_iface_startup(struct snd_pcm_substream *substream,
-+				 struct snd_soc_dai *dai)
-+{
-+	struct axg_tdm_iface *iface = snd_soc_dai_get_drvdata(dai);
-+	struct axg_tdm_stream *ts =
-+		snd_soc_dai_get_dma_data(dai, substream);
++	struct axg_tdm_stream *ts = formatter->stream;
++	bool invert = formatter->drv->invert_sclk;
 +	int ret;
 +
-+	if (!axg_tdm_slots_total(ts->mask)) {
-+		dev_err(dai->dev, "interface has not slots\n");
-+		return -EINVAL;
-+	}
++	/* Do nothing if the formatter is already enabled */
++	if (formatter->enabled)
++		return 0;
 +
-+	/* Apply component wide rate symmetry */
-+	if (dai->component->active) {
-+		ret = snd_pcm_hw_constraint_single(substream->runtime,
-+						   SNDRV_PCM_HW_PARAM_RATE,
-+						   iface->rate);
-+		if (ret < 0) {
-+			dev_err(dai->dev,
-+				"can't set iface rate constraint\n");
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int axg_tdm_iface_set_stream(struct snd_pcm_substream *substream,
-+				    struct snd_pcm_hw_params *params,
-+				    struct snd_soc_dai *dai)
-+{
-+	struct axg_tdm_iface *iface = snd_soc_dai_get_drvdata(dai);
-+	struct axg_tdm_stream *ts = snd_soc_dai_get_dma_data(dai, substream);
-+	unsigned int channels = params_channels(params);
-+	unsigned int width = params_width(params);
-+
-+	/* Save rate and sample_bits for component symmetry */
-+	iface->rate = params_rate(params);
-+
-+	/* Make sure this interface can cope with the stream */
-+	if (axg_tdm_slots_total(ts->mask) < channels) {
-+		dev_err(dai->dev, "not enough slots for channels\n");
-+		return -EINVAL;
-+	}
-+
-+	if (iface->slot_width < width) {
-+		dev_err(dai->dev, "incompatible slots width for stream\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Save the parameter for tdmout/tdmin widgets */
-+	ts->physical_width = params_physical_width(params);
-+	ts->width = params_width(params);
-+	ts->channels = params_channels(params);
-+
-+	return 0;
-+}
-+
-+static int axg_tdm_iface_set_lrclk(struct snd_soc_dai *dai,
-+				   struct snd_pcm_hw_params *params)
-+{
-+	struct axg_tdm_iface *iface = snd_soc_dai_get_drvdata(dai);
-+	unsigned int ratio_num;
-+	int ret;
-+
-+	ret = clk_set_rate(iface->lrclk, params_rate(params));
-+	if (ret) {
-+		dev_err(dai->dev, "setting sample clock failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	switch (iface->fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_I2S:
-+	case SND_SOC_DAIFMT_LEFT_J:
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+		/* 50% duty cycle ratio */
-+		ratio_num = 1;
-+		break;
-+
-+	case SND_SOC_DAIFMT_DSP_A:
-+	case SND_SOC_DAIFMT_DSP_B:
-+		/*
-+		 * A zero duty cycle ratio will result in setting the mininum
-+		 * ratio possible which, for this clock, is 1 cycle of the
-+		 * parent bclk clock high and the rest low, This is exactly
-+		 * what we want here.
-+		 */
-+		ratio_num = 0;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	ret = clk_set_duty_cycle(iface->lrclk, ratio_num, 2);
-+	if (ret) {
-+		dev_err(dai->dev,
-+			"setting sample clock duty cycle failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Set sample clock inversion */
-+	ret = clk_set_phase(iface->lrclk,
-+			    axg_tdm_lrclk_invert(iface->fmt) ? 180 : 0);
-+	if (ret) {
-+		dev_err(dai->dev,
-+			"setting sample clock phase failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int axg_tdm_iface_set_sclk(struct snd_soc_dai *dai,
-+				  struct snd_pcm_hw_params *params)
-+{
-+	struct axg_tdm_iface *iface = snd_soc_dai_get_drvdata(dai);
-+	unsigned long srate;
-+	int ret;
-+
-+	srate = iface->slots * iface->slot_width * params_rate(params);
-+
-+	if (!iface->mclk_rate) {
-+		/* If no specific mclk is requested, default to bit clock * 4 */
-+		clk_set_rate(iface->mclk, 4 * srate);
-+	} else {
-+		/* Check if we can actually get the bit clock from mclk */
-+		if (iface->mclk_rate % srate) {
-+			dev_err(dai->dev,
-+				"can't derive sclk %lu from mclk %lu\n",
-+				srate, iface->mclk_rate);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	ret = clk_set_rate(iface->sclk, srate);
-+	if (ret) {
-+		dev_err(dai->dev, "setting bit clock failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Set the bit clock inversion */
-+	ret = clk_set_phase(iface->sclk,
-+			    axg_tdm_sclk_invert(iface->fmt) ? 0 : 180);
-+	if (ret) {
-+		dev_err(dai->dev, "setting bit clock phase failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+static int axg_tdm_iface_hw_params(struct snd_pcm_substream *substream,
-+				   struct snd_pcm_hw_params *params,
-+				   struct snd_soc_dai *dai)
-+{
-+	struct axg_tdm_iface *iface = snd_soc_dai_get_drvdata(dai);
-+	int ret;
-+
-+	switch (iface->fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_I2S:
-+	case SND_SOC_DAIFMT_LEFT_J:
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+		if (iface->slots > 2) {
-+			dev_err(dai->dev, "bad slot number for format: %d\n",
-+				iface->slots);
-+			return -EINVAL;
-+		}
-+		break;
-+
-+	case SND_SOC_DAI_FORMAT_DSP_A:
-+	case SND_SOC_DAI_FORMAT_DSP_B:
-+		break;
-+
-+	default:
-+		dev_err(dai->dev, "unsupported dai format\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = axg_tdm_iface_set_stream(substream, params, dai);
++	/*
++	 * If sclk is inverted, invert it back and provide the inversion
++	 * required by the formatter
++	 */
++	invert ^= axg_tdm_sclk_invert(ts->iface->fmt);
++	ret = clk_set_phase(formatter->sclk, invert ? 180 : 0);
 +	if (ret)
 +		return ret;
 +
-+	if (iface->fmt & SND_SOC_DAIFMT_CBS_CFS) {
-+		ret = axg_tdm_iface_set_sclk(dai, params);
-+		if (ret)
-+			return ret;
++	/* Setup the stream parameter in the formatter */
++	ret = formatter->drv->ops->prepare(formatter->map, formatter->stream);
++	if (ret)
++		return ret;
 +
-+		ret = axg_tdm_iface_set_lrclk(dai, params);
-+		if (ret)
-+			return ret;
++	/* Enable the signal clocks feeding the formatter */
++	ret = clk_prepare_enable(formatter->sclk);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(formatter->lrclk);
++	if (ret) {
++		clk_disable_unprepare(formatter->sclk);
++		return ret;
 +	}
 +
-+	return 0;
-+}
-+
-+static int axg_tdm_iface_hw_free(struct snd_pcm_substream *substream,
-+				 struct snd_soc_dai *dai)
-+{
-+	struct axg_tdm_stream *ts = snd_soc_dai_get_dma_data(dai, substream);
-+
-+	/* Stop all attached formatters */
-+	axg_tdm_stream_stop(ts);
++	/* Finally, actually enable the formatter */
++	formatter->drv->ops->enable(formatter->map);
++	formatter->enabled = true;
 +
 +	return 0;
 +}
 +
-+static int axg_tdm_iface_prepare(struct snd_pcm_substream *substream,
-+				 struct snd_soc_dai *dai)
++static void axg_tdm_formatter_disable(struct axg_tdm_formatter *formatter)
 +{
-+	struct axg_tdm_stream *ts = snd_soc_dai_get_dma_data(dai, substream);
++	/* Do nothing if the formatter is already disabled */
++	if (!formatter->enabled)
++		return;
 +
-+	/* Force all attached formatters to update */
-+	return axg_tdm_stream_reset(ts);
++	formatter->drv->ops->disable(formatter->map);
++	clk_disable_unprepare(formatter->lrclk);
++	clk_disable_unprepare(formatter->sclk);
++	formatter->enabled = false;
 +}
 +
-+static int axg_tdm_iface_remove_dai(struct snd_soc_dai *dai)
++static int axg_tdm_formatter_attach(struct axg_tdm_formatter *formatter)
 +{
-+	if (dai->capture_dma_data)
-+		axg_tdm_stream_free(dai->capture_dma_data);
++	struct axg_tdm_stream *ts = formatter->stream;
++	int ret = 0;
 +
-+	if (dai->playback_dma_data)
-+		axg_tdm_stream_free(dai->playback_dma_data);
++	mutex_lock(&ts->lock);
 +
-+	return 0;
-+}
-+
-+static int axg_tdm_iface_probe_dai(struct snd_soc_dai *dai)
-+{
-+	struct axg_tdm_iface *iface = snd_soc_dai_get_drvdata(dai);
-+
-+	if (dai->capture_widget) {
-+		dai->capture_dma_data = axg_tdm_stream_alloc(iface);
-+		if (!dai->capture_dma_data)
-+			return -ENOMEM;
-+	}
-+
-+	if (dai->playback_widget) {
-+		dai->playback_dma_data = axg_tdm_stream_alloc(iface);
-+		if (!dai->playback_dma_data) {
-+			axg_tdm_iface_remove_dai(dai);
-+			return -ENOMEM;
++	/* Catch up if the stream is already running when we attach */
++	if (ts->ready) {
++		ret = axg_tdm_formatter_enable(formatter);
++		if (ret) {
++			pr_err("failed to enable formatter\n");
++			goto out;
 +		}
 +	}
 +
-+	return 0;
++	list_add_tail(&formatter->list, &ts->formatter_list);
++out:
++	mutex_unlock(&ts->lock);
++	return ret;
 +}
 +
-+static const struct snd_soc_dai_ops axg_tdm_iface_ops = {
-+	.set_sysclk	= axg_tdm_iface_set_sysclk,
-+	.set_fmt	= axg_tdm_iface_set_fmt,
-+	.startup	= axg_tdm_iface_startup,
-+	.hw_params	= axg_tdm_iface_hw_params,
-+	.prepare	= axg_tdm_iface_prepare,
-+	.hw_free	= axg_tdm_iface_hw_free,
-+};
-+
-+/* TDM Backend DAIs */
-+static const struct snd_soc_dai_driver axg_tdm_iface_dai_drv[] = {
-+	[TDM_IFACE_PAD] = {
-+		.name = "TDM Pad",
-+		.playback = {
-+			.stream_name	= "Playback",
-+			.channels_min	= 1,
-+			.channels_max	= AXG_TDM_CHANNEL_MAX,
-+			.rates		= AXG_TDM_RATES,
-+			.formats	= AXG_TDM_FORMATS,
-+		},
-+		.capture = {
-+			.stream_name	= "Capture",
-+			.channels_min	= 1,
-+			.channels_max	= AXG_TDM_CHANNEL_MAX,
-+			.rates		= AXG_TDM_RATES,
-+			.formats	= AXG_TDM_FORMATS,
-+		},
-+		.id = TDM_IFACE_PAD,
-+		.ops = &axg_tdm_iface_ops,
-+		.probe = axg_tdm_iface_probe_dai,
-+		.remove = axg_tdm_iface_remove_dai,
-+	},
-+	[TDM_IFACE_LOOPBACK] = {
-+		.name = "TDM Loopback",
-+		.capture = {
-+			.stream_name	= "Loopback",
-+			.channels_min	= 1,
-+			.channels_max	= AXG_TDM_CHANNEL_MAX,
-+			.rates		= AXG_TDM_RATES,
-+			.formats	= AXG_TDM_FORMATS,
-+		},
-+		.id = TDM_IFACE_LOOPBACK,
-+		.ops = &axg_tdm_iface_ops,
-+		.probe = axg_tdm_iface_probe_dai,
-+		.remove = axg_tdm_iface_remove_dai,
-+	},
-+};
-+
-+static int axg_tdm_iface_set_bias_level(struct snd_soc_component *component,
-+					enum snd_soc_bias_level level)
++static void axg_tdm_formatter_dettach(struct axg_tdm_formatter *formatter)
 +{
-+	struct axg_tdm_iface *iface = snd_soc_component_get_drvdata(component);
-+	enum snd_soc_bias_level now =
-+		snd_soc_component_get_bias_level(component);
++	struct axg_tdm_stream *ts = formatter->stream;
++
++	mutex_lock(&ts->lock);
++	list_del(&formatter->list);
++	mutex_unlock(&ts->lock);
++
++	axg_tdm_formatter_disable(formatter);
++}
++
++static int axg_tdm_formatter_power_up(struct axg_tdm_formatter *formatter,
++				      struct snd_soc_dapm_widget *w)
++{
++	struct axg_tdm_stream *ts = formatter->drv->ops->get_stream(w);
++	int ret;
++
++	/*
++	 * If we don't get a stream at this stage, it would mean that the
++	 * widget is powering up but is not attached to any backend DAI.
++	 * It should not happen, ever !
++	 */
++	if (WARN_ON(!ts))
++		return -ENODEV;
++
++	/* Clock our device */
++	ret = clk_prepare_enable(formatter->pclk);
++	if (ret)
++		return ret;
++
++	/* Reparent the bit clock to the TDM interface */
++	ret = clk_set_parent(formatter->sclk_sel, ts->iface->sclk);
++	if (ret)
++		goto disable_pclk;
++
++	/* Reparent the sample clock to the TDM interface */
++	ret = clk_set_parent(formatter->lrclk_sel, ts->iface->lrclk);
++	if (ret)
++		goto disable_pclk;
++
++	formatter->stream = ts;
++	ret = axg_tdm_formatter_attach(formatter);
++	if (ret)
++		goto disable_pclk;
++
++	return 0;
++
++disable_pclk:
++	clk_disable_unprepare(formatter->pclk);
++	return ret;
++}
++
++static void axg_tdm_formatter_power_down(struct axg_tdm_formatter *formatter)
++{
++	axg_tdm_formatter_dettach(formatter);
++	clk_disable_unprepare(formatter->pclk);
++	formatter->stream = NULL;
++}
++
++int axg_tdm_formatter_event(struct snd_soc_dapm_widget *w,
++			    struct snd_kcontrol *control,
++			    int event)
++{
++	struct snd_soc_component *c = snd_soc_dapm_to_component(w->dapm);
++	struct axg_tdm_formatter *formatter = snd_soc_component_get_drvdata(c);
 +	int ret = 0;
 +
-+	switch (level) {
-+	case SND_SOC_BIAS_PREPARE:
-+		if (now == SND_SOC_BIAS_STANDBY)
-+			ret = clk_prepare_enable(iface->mclk);
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		ret = axg_tdm_formatter_power_up(formatter, w);
 +		break;
 +
-+	case SND_SOC_BIAS_STANDBY:
-+		if (now == SND_SOC_BIAS_PREPARE)
-+			clk_disable_unprepare(iface->mclk);
++	case SND_SOC_DAPM_PRE_PMD:
++		axg_tdm_formatter_power_down(formatter);
 +		break;
 +
-+	case SND_SOC_BIAS_OFF:
-+	case SND_SOC_BIAS_ON:
-+		break;
++	default:
++		dev_err(c->dev, "Unexpected event %d\n", event);
++		return -EINVAL;
 +	}
 +
 +	return ret;
 +}
++EXPORT_SYMBOL_GPL(axg_tdm_formatter_event);
 +
-+static const struct snd_soc_component_driver axg_tdm_iface_component_drv = {
-+	.set_bias_level	= axg_tdm_iface_set_bias_level,
-+};
-+
-+static const struct of_device_id axg_tdm_iface_of_match[] = {
-+	{ .compatible = "amlogic,axg-tdm-iface", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, axg_tdm_iface_of_match);
-+
-+static int axg_tdm_iface_probe(struct platform_device *pdev)
++int axg_tdm_formatter_probe(struct platform_device *pdev)
 +{
 +	struct device *dev = &pdev->dev;
-+	struct snd_soc_dai_driver *dai_drv;
-+	struct axg_tdm_iface *iface;
-+	int ret, i;
++	const struct axg_tdm_formatter_driver *drv;
++	struct axg_tdm_formatter *formatter;
++	struct resource *res;
++	void __iomem *regs;
++	int ret;
 +
-+	iface = devm_kzalloc(dev, sizeof(*iface), GFP_KERNEL);
-+	if (!iface)
++	drv = of_device_get_match_data(dev);
++	if (!drv) {
++		dev_err(dev, "failed to match device\n");
++		return -ENODEV;
++	}
++
++	formatter = devm_kzalloc(dev, sizeof(*formatter), GFP_KERNEL);
++	if (!formatter)
 +		return -ENOMEM;
-+	platform_set_drvdata(pdev, iface);
++	platform_set_drvdata(pdev, formatter);
++	formatter->drv = drv;
 +
-+	/*
-+	 * Duplicate dai driver: depending on the slot masks configuration
-+	 * We'll change the number of channel provided by DAI stream, so dpcm
-+	 * channel merge can be done properly
-+	 */
-+	dai_drv = devm_kcalloc(dev, ARRAY_SIZE(axg_tdm_iface_dai_drv),
-+			       sizeof(*dai_drv), GFP_KERNEL);
-+	if (!dai_drv)
-+		return -ENOMEM;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
 +
-+	for (i = 0; i < ARRAY_SIZE(axg_tdm_iface_dai_drv); i++)
-+		memcpy(&dai_drv[i], &axg_tdm_iface_dai_drv[i],
-+		       sizeof(*dai_drv));
++	formatter->map = devm_regmap_init_mmio(dev, regs, drv->regmap_cfg);
++	if (IS_ERR(formatter->map)) {
++		dev_err(dev, "failed to init regmap: %ld\n",
++			PTR_ERR(formatter->map));
++		return PTR_ERR(formatter->map);
++	}
 +
-+	/* Bit clock provided on the pad */
-+	iface->sclk = devm_clk_get(dev, "sclk");
-+	if (IS_ERR(iface->sclk)) {
-+		ret = PTR_ERR(iface->sclk);
++	/* Peripharal clock */
++	formatter->pclk = devm_clk_get(dev, "pclk");
++	if (IS_ERR(formatter->pclk)) {
++		ret = PTR_ERR(formatter->pclk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "failed to get pclk: %d\n", ret);
++		return ret;
++	}
++
++	/* Formatter bit clock */
++	formatter->sclk = devm_clk_get(dev, "sclk");
++	if (IS_ERR(formatter->sclk)) {
++		ret = PTR_ERR(formatter->sclk);
 +		if (ret != -EPROBE_DEFER)
 +			dev_err(dev, "failed to get sclk: %d\n", ret);
 +		return ret;
 +	}
 +
-+	/* Sample clock provided on the pad */
-+	iface->lrclk = devm_clk_get(dev, "lrclk");
-+	if (IS_ERR(iface->lrclk)) {
-+		ret = PTR_ERR(iface->lrclk);
++	/* Formatter sample clock */
++	formatter->lrclk = devm_clk_get(dev, "lrclk");
++	if (IS_ERR(formatter->lrclk)) {
++		ret = PTR_ERR(formatter->lrclk);
 +		if (ret != -EPROBE_DEFER)
 +			dev_err(dev, "failed to get lrclk: %d\n", ret);
 +		return ret;
 +	}
 +
-+	/*
-+	 * mclk maybe be missing when the cpu dai is in slave mode and
-+	 * the codec does not require it to provide a master clock.
-+	 * At this point, ignore the error if mclk is missing. We'll
-+	 * throw an error if the cpu dai is master and mclk is missing
-+	 */
-+	iface->mclk = devm_clk_get(dev, "mclk");
-+	if (IS_ERR(iface->mclk)) {
-+		ret = PTR_ERR(iface->mclk);
-+		if (ret == -ENOENT) {
-+			iface->mclk = NULL;
-+		} else {
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(dev, "failed to get mclk: %d\n", ret);
-+			return ret;
++	/* Formatter bit clock input multiplexer */
++	formatter->sclk_sel = devm_clk_get(dev, "sclk_sel");
++	if (IS_ERR(formatter->sclk_sel)) {
++		ret = PTR_ERR(formatter->sclk_sel);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "failed to get sclk_sel: %d\n", ret);
++		return ret;
++	}
++
++	/* Formatter sample clock input multiplexer */
++	formatter->lrclk_sel = devm_clk_get(dev, "lrclk_sel");
++	if (IS_ERR(formatter->lrclk_sel)) {
++		ret = PTR_ERR(formatter->lrclk_sel);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "failed to get lrclk_sel: %d\n", ret);
++		return ret;
++	}
++
++	return devm_snd_soc_register_component(dev, drv->component_drv,
++					       NULL, 0);
++}
++EXPORT_SYMBOL_GPL(axg_tdm_formatter_probe);
++
++int axg_tdm_stream_start(struct axg_tdm_stream *ts)
++{
++	struct axg_tdm_formatter *formatter;
++	int ret = 0;
++
++	mutex_lock(&ts->lock);
++	ts->ready = true;
++
++	/* Start all the formatters attached to the stream */
++	list_for_each_entry(formatter, &ts->formatter_list, list) {
++		ret = axg_tdm_formatter_enable(formatter);
++		if (ret) {
++			pr_err("failed to start tdm stream\n");
++			goto out;
 +		}
 +	}
 +
-+	return devm_snd_soc_register_component(dev,
-+					&axg_tdm_iface_component_drv, dai_drv,
-+					ARRAY_SIZE(axg_tdm_iface_dai_drv));
++out:
++	mutex_unlock(&ts->lock);
++	return ret;
 +}
++EXPORT_SYMBOL_GPL(axg_tdm_stream_start);
 +
-+static struct platform_driver axg_tdm_iface_pdrv = {
-+	.probe = axg_tdm_iface_probe,
-+	.driver = {
-+		.name = "axg-tdm-iface",
-+		.of_match_table = axg_tdm_iface_of_match,
-+	},
-+};
-+module_platform_driver(axg_tdm_iface_pdrv);
++void axg_tdm_stream_stop(struct axg_tdm_stream *ts)
++{
++	struct axg_tdm_formatter *formatter;
 +
-+MODULE_DESCRIPTION("Amlogic AXG TDM interface driver");
++	mutex_lock(&ts->lock);
++	ts->ready = false;
++
++	/* Stop all the formatters attached to the stream */
++	list_for_each_entry(formatter, &ts->formatter_list, list) {
++		axg_tdm_formatter_disable(formatter);
++	}
++
++	mutex_unlock(&ts->lock);
++}
++EXPORT_SYMBOL_GPL(axg_tdm_stream_stop);
++
++struct axg_tdm_stream *axg_tdm_stream_alloc(struct axg_tdm_iface *iface)
++{
++	struct axg_tdm_stream *ts;
++
++	ts = kzalloc(sizeof(*ts), GFP_KERNEL);
++	if (ts) {
++		INIT_LIST_HEAD(&ts->formatter_list);
++		mutex_init(&ts->lock);
++		ts->iface = iface;
++	}
++
++	return ts;
++}
++EXPORT_SYMBOL_GPL(axg_tdm_stream_alloc);
++
++void axg_tdm_stream_free(struct axg_tdm_stream *ts)
++{
++	/*
++	 * If the list is not empty, it would mean that one of the formatter
++	 * widget is still powered and attached to the interface while we
++	 * we are removing the TDM DAI. It should not be possible
++	 */
++	WARN_ON(!list_empty(&ts->formatter_list));
++	mutex_destroy(&ts->lock);
++	kfree(ts);
++}
++EXPORT_SYMBOL_GPL(axg_tdm_stream_free);
++
++MODULE_DESCRIPTION("Amlogic AXG TDM formatter driver");
 +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
 +MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/meson/axg-tdm.h b/sound/soc/meson/axg-tdm.h
-index 435d95b86457..e578b6f40a07 100644
---- a/sound/soc/meson/axg-tdm.h
-+++ b/sound/soc/meson/axg-tdm.h
-@@ -71,4 +71,8 @@ static inline int axg_tdm_stream_reset(struct axg_tdm_stream *ts)
- 	return axg_tdm_stream_start(ts);
- }
- 
-+int axg_tdm_set_tdm_slots(struct snd_soc_dai *dai, u32 *tx_mask,
-+			  u32 *rx_mask, unsigned int slots,
-+			  unsigned int slot_width);
+diff --git a/sound/soc/meson/axg-tdm-formatter.h b/sound/soc/meson/axg-tdm-formatter.h
+new file mode 100644
+index 000000000000..cf947caf3cb1
+--- /dev/null
++++ b/sound/soc/meson/axg-tdm-formatter.h
+@@ -0,0 +1,39 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT)
++ *
++ * Copyright (c) 2018 Baylibre SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
 +
- #endif /* _MESON_AXG_TDM_H */
++#ifndef _MESON_AXG_TDM_FORMATTER_H
++#define _MESON_AXG_TDM_FORMATTER_H
++
++#include "axg-tdm.h"
++
++struct platform_device;
++struct regmap;
++struct snd_soc_dapm_widget;
++struct snd_kcontrol;
++
++struct axg_tdm_formatter_ops {
++	struct axg_tdm_stream *(*get_stream)(struct snd_soc_dapm_widget *w);
++	void (*enable)(struct regmap *map);
++	void (*disable)(struct regmap *map);
++	int (*prepare)(struct regmap *map, struct axg_tdm_stream *ts);
++};
++
++struct axg_tdm_formatter_driver {
++	const struct snd_soc_component_driver *component_drv;
++	const struct regmap_config *regmap_cfg;
++	const struct axg_tdm_formatter_ops *ops;
++	bool invert_sclk;
++};
++
++int axg_tdm_formatter_set_channel_masks(struct regmap *map,
++					struct axg_tdm_stream *ts,
++					unsigned int offset);
++int axg_tdm_formatter_event(struct snd_soc_dapm_widget *w,
++			    struct snd_kcontrol *control,
++			    int event);
++int axg_tdm_formatter_probe(struct platform_device *pdev);
++
++#endif /* _MESON_AXG_TDM_FORMATTER_H */
+diff --git a/sound/soc/meson/axg-tdm.h b/sound/soc/meson/axg-tdm.h
+new file mode 100644
+index 000000000000..435d95b86457
+--- /dev/null
++++ b/sound/soc/meson/axg-tdm.h
+@@ -0,0 +1,74 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT)
++ *
++ * Copyright (c) 2018 Baylibre SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++#ifndef _MESON_AXG_TDM_H
++#define _MESON_AXG_TDM_H
++
++#include <linux/clk.h>
++#include <linux/regmap.h>
++#include <sound/pcm.h>
++#include <sound/soc.h>
++#include <sound/soc-dai.h>
++
++#define AXG_TDM_NUM_LANES	4
++#define AXG_TDM_CHANNEL_MAX	128
++#define AXG_TDM_RATES		(SNDRV_PCM_RATE_5512 |		\
++				 SNDRV_PCM_RATE_8000_192000)
++#define AXG_TDM_FORMATS		(SNDRV_PCM_FMTBIT_S8 |		\
++				 SNDRV_PCM_FMTBIT_S16_LE |	\
++				 SNDRV_PCM_FMTBIT_S20_LE |	\
++				 SNDRV_PCM_FMTBIT_S24_LE |	\
++				 SNDRV_PCM_FMTBIT_S32_LE)
++
++struct axg_tdm_iface {
++	struct clk *sclk;
++	struct clk *lrclk;
++	struct clk *mclk;
++	unsigned long mclk_rate;
++
++	/* format is common to all the DAIs of the iface */
++	unsigned int fmt;
++	unsigned int slots;
++	unsigned int slot_width;
++
++	/* For component wide symmetry */
++	int rate;
++};
++
++static inline bool axg_tdm_lrclk_invert(unsigned int fmt)
++{
++	return (fmt & SND_SOC_DAIFMT_I2S) ^
++		!!(fmt & (SND_SOC_DAIFMT_IB_IF | SND_SOC_DAIFMT_NB_IF));
++}
++
++static inline bool axg_tdm_sclk_invert(unsigned int fmt)
++{
++	return fmt & (SND_SOC_DAIFMT_IB_IF | SND_SOC_DAIFMT_IB_NF);
++}
++
++struct axg_tdm_stream {
++	struct axg_tdm_iface *iface;
++	struct list_head formatter_list;
++	struct mutex lock;
++	unsigned int channels;
++	unsigned int width;
++	unsigned int physical_width;
++	u32 *mask;
++	bool ready;
++};
++
++struct axg_tdm_stream *axg_tdm_stream_alloc(struct axg_tdm_iface *iface);
++void axg_tdm_stream_free(struct axg_tdm_stream *ts);
++int axg_tdm_stream_start(struct axg_tdm_stream *ts);
++void axg_tdm_stream_stop(struct axg_tdm_stream *ts);
++
++static inline int axg_tdm_stream_reset(struct axg_tdm_stream *ts)
++{
++	axg_tdm_stream_stop(ts);
++	return axg_tdm_stream_start(ts);
++}
++
++#endif /* _MESON_AXG_TDM_H */
 -- 
 2.18.0
 
