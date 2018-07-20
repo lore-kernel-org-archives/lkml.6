@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C097ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60265ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB23120854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:28:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB23120854
+	by mail.kernel.org (Postfix) with ESMTP id 0E6F220854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:29:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E6F220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388119AbeGTNQ4 (ORCPT
+        id S2388129AbeGTNRA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:16:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36936 "EHLO
+        Fri, 20 Jul 2018 09:17:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37002 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731701AbeGTNQz (ORCPT
+        with ESMTP id S1731747AbeGTNRA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:16:55 -0400
+        Fri, 20 Jul 2018 09:17:00 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81B6FBBF;
-        Fri, 20 Jul 2018 12:28:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 145DBBCF;
+        Fri, 20 Jul 2018 12:28:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.9 21/66] net/mlx5: Fix incorrect raw command length parsing
-Date:   Fri, 20 Jul 2018 14:13:38 +0200
-Message-Id: <20180720121408.480609446@linuxfoundation.org>
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 02/66] compiler, clang: suppress warning for unused static inline functions
+Date:   Fri, 20 Jul 2018 14:13:19 +0200
+Message-Id: <20180720121407.391832846@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -50,42 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Vesker <valex@mellanox.com>
+From: David Rientjes <rientjes@google.com>
 
-[ Upstream commit 603b7bcff824740500ddfa001d7a7168b0b38542 ]
+commit abb2ea7dfd82451d85ce669b811310c05ab5ca46 upstream.
 
-The NULL character was not set correctly for the string containing
-the command length, this caused failures reading the output of the
-command due to a random length. The fix is to initialize the output
-length string.
+GCC explicitly does not warn for unused static inline functions for
+-Wunused-function.  The manual states:
 
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Signed-off-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+	Warn whenever a static function is declared but not defined or
+	a non-inline static function is unused.
+
+Clang does warn for static inline functions that are unused.
+
+It turns out that suppressing the warnings avoids potentially complex
+#ifdef directives, which also reduces LOC.
+
+Suppress the warning for clang.
+
+Signed-off-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -1256,7 +1256,7 @@ static ssize_t outlen_write(struct file
- {
- 	struct mlx5_core_dev *dev = filp->private_data;
- 	struct mlx5_cmd_debug *dbg = &dev->cmd.dbg;
--	char outlen_str[8];
-+	char outlen_str[8] = {0};
- 	int outlen;
- 	void *ptr;
- 	int err;
-@@ -1271,8 +1271,6 @@ static ssize_t outlen_write(struct file
- 	if (copy_from_user(outlen_str, buf, count))
- 		return -EFAULT;
+---
+ include/linux/compiler-clang.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -16,6 +16,13 @@
+  */
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
  
--	outlen_str[7] = 0;
--
- 	err = sscanf(outlen_str, "%d", &outlen);
- 	if (err < 0)
- 		return err;
++/*
++ * GCC does not warn about unused static inline functions for
++ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
++ * directives.  Suppress the warning in clang as well.
++ */
++#define inline inline __attribute__((unused))
++
+ /* Clang doesn't have a way to turn it off per-function, yet. */
+ #ifdef __noretpoline
+ #undef __noretpoline
 
 
