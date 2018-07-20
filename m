@@ -6,35 +6,55 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D984ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B950ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD8772084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD8772084A
+	by mail.kernel.org (Postfix) with ESMTP id DD37720850
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD37720850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387872AbeGTNPy (ORCPT
+        id S2387897AbeGTNP4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35630 "EHLO
+        Fri, 20 Jul 2018 09:15:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35704 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbeGTNPy (ORCPT
+        with ESMTP id S1731803AbeGTNP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:54 -0400
+        Fri, 20 Jul 2018 09:15:56 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6529EC7A;
-        Fri, 20 Jul 2018 12:27:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0389BBF;
+        Fri, 20 Jul 2018 12:27:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 08/31] bcm63xx_enet: correct clock usage
-Date:   Fri, 20 Jul 2018 14:13:38 +0200
-Message-Id: <20180720121340.460861890@linuxfoundation.org>
+        stable@vger.kernel.org, "H. Peter Anvin" <hpa@linux.intel.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, acme@redhat.com,
+        akataria@vmware.com, akpm@linux-foundation.org,
+        andrea.parri@amarulasolutions.com, ard.biesheuvel@linaro.org,
+        arnd@arndb.de, aryabinin@virtuozzo.com, astrachan@google.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, geert@linux-m68k.org,
+        ghackmann@google.com, jan.kiszka@siemens.com,
+        jarkko.sakkinen@linux.intel.com, joe@perches.com,
+        jpoimboe@redhat.com, keescook@google.com,
+        kirill.shutemov@linux.intel.com, kstewart@linuxfoundation.org,
+        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        manojgupta@google.com, mawilcox@microsoft.com,
+        michal.lkml@markovi.net, mjg59@google.com, mka@chromium.org,
+        pombredanne@nexb.com, rientjes@google.com, rostedt@goodmis.org,
+        thomas.lendacky@amd.com, tstellar@redhat.com, tweek@google.com,
+        virtualization@lists.linux-foundation.org, will.deacon@arm.com,
+        yamada.masahiro@socionext.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 05/31] x86/asm: Add _ASM_ARG* constants for argument registers to <asm/asm.h>
+Date:   Fri, 20 Jul 2018 14:13:35 +0200
+Message-Id: <20180720121340.351022699@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -51,109 +71,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jonas Gorski <jonas.gorski@gmail.com>
+From: H. Peter Anvin <hpa@linux.intel.com>
 
-commit 9c86b846ce02f7e35d7234cf090b80553eba5389 upstream.
+commit 0e2e160033283e20f688d8bad5b89460cc5bfcc4 upstream.
 
-Check the return code of prepare_enable and change one last instance of
-enable only to prepare_enable. Also properly disable and release the
-clock in error paths and on remove for enetsw.
+i386 and x86-64 uses different registers for arguments; make them
+available so we don't have to #ifdef in the actual code.
 
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Native size and specified size (q, l, w, b) versions are provided.
+
+Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
+Acked-by: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: acme@redhat.com
+Cc: akataria@vmware.com
+Cc: akpm@linux-foundation.org
+Cc: andrea.parri@amarulasolutions.com
+Cc: ard.biesheuvel@linaro.org
+Cc: arnd@arndb.de
+Cc: aryabinin@virtuozzo.com
+Cc: astrachan@google.com
+Cc: boris.ostrovsky@oracle.com
+Cc: brijesh.singh@amd.com
+Cc: caoj.fnst@cn.fujitsu.com
+Cc: geert@linux-m68k.org
+Cc: ghackmann@google.com
+Cc: gregkh@linuxfoundation.org
+Cc: jan.kiszka@siemens.com
+Cc: jarkko.sakkinen@linux.intel.com
+Cc: joe@perches.com
+Cc: jpoimboe@redhat.com
+Cc: keescook@google.com
+Cc: kirill.shutemov@linux.intel.com
+Cc: kstewart@linuxfoundation.org
+Cc: linux-efi@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: manojgupta@google.com
+Cc: mawilcox@microsoft.com
+Cc: michal.lkml@markovi.net
+Cc: mjg59@google.com
+Cc: mka@chromium.org
+Cc: pombredanne@nexb.com
+Cc: rientjes@google.com
+Cc: rostedt@goodmis.org
+Cc: thomas.lendacky@amd.com
+Cc: tstellar@redhat.com
+Cc: tweek@google.com
+Cc: virtualization@lists.linux-foundation.org
+Cc: will.deacon@arm.com
+Cc: yamada.masahiro@socionext.com
+Link: http://lkml.kernel.org/r/20180621162324.36656-3-ndesaulniers@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/broadcom/bcm63xx_enet.c |   31 ++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ arch/x86/include/asm/asm.h |   59 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-+++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-@@ -1787,7 +1787,9 @@ static int bcm_enet_probe(struct platfor
- 		ret = PTR_ERR(priv->mac_clk);
- 		goto out;
- 	}
--	clk_prepare_enable(priv->mac_clk);
-+	ret = clk_prepare_enable(priv->mac_clk);
-+	if (ret)
-+		goto out_put_clk_mac;
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -44,6 +44,65 @@
+ #define _ASM_SI		__ASM_REG(si)
+ #define _ASM_DI		__ASM_REG(di)
  
- 	/* initialize default and fetch platform data */
- 	priv->rx_ring_size = BCMENET_DEF_RX_DESC;
-@@ -1819,9 +1821,11 @@ static int bcm_enet_probe(struct platfor
- 		if (IS_ERR(priv->phy_clk)) {
- 			ret = PTR_ERR(priv->phy_clk);
- 			priv->phy_clk = NULL;
--			goto out_put_clk_mac;
-+			goto out_disable_clk_mac;
- 		}
--		clk_prepare_enable(priv->phy_clk);
-+		ret = clk_prepare_enable(priv->phy_clk);
-+		if (ret)
-+			goto out_put_clk_phy;
- 	}
- 
- 	/* do minimal hardware init to be able to probe mii bus */
-@@ -1921,13 +1925,16 @@ out_free_mdio:
- out_uninit_hw:
- 	/* turn off mdc clock */
- 	enet_writel(priv, 0, ENET_MIISC_REG);
--	if (priv->phy_clk) {
-+	if (priv->phy_clk)
- 		clk_disable_unprepare(priv->phy_clk);
++#ifndef __x86_64__
++/* 32 bit */
 +
-+out_put_clk_phy:
-+	if (priv->phy_clk)
- 		clk_put(priv->phy_clk);
--	}
- 
--out_put_clk_mac:
-+out_disable_clk_mac:
- 	clk_disable_unprepare(priv->mac_clk);
-+out_put_clk_mac:
- 	clk_put(priv->mac_clk);
- out:
- 	free_netdev(dev);
-@@ -2772,7 +2779,9 @@ static int bcm_enetsw_probe(struct platf
- 		ret = PTR_ERR(priv->mac_clk);
- 		goto out_unmap;
- 	}
--	clk_enable(priv->mac_clk);
-+	ret = clk_prepare_enable(priv->mac_clk);
-+	if (ret)
-+		goto out_put_clk;
- 
- 	priv->rx_chan = 0;
- 	priv->tx_chan = 1;
-@@ -2793,7 +2802,7 @@ static int bcm_enetsw_probe(struct platf
- 
- 	ret = register_netdev(dev);
- 	if (ret)
--		goto out_put_clk;
-+		goto out_disable_clk;
- 
- 	netif_carrier_off(dev);
- 	platform_set_drvdata(pdev, dev);
-@@ -2802,6 +2811,9 @@ static int bcm_enetsw_probe(struct platf
- 
- 	return 0;
- 
-+out_disable_clk:
-+	clk_disable_unprepare(priv->mac_clk);
++#define _ASM_ARG1	_ASM_AX
++#define _ASM_ARG2	_ASM_DX
++#define _ASM_ARG3	_ASM_CX
 +
- out_put_clk:
- 	clk_put(priv->mac_clk);
- 
-@@ -2833,6 +2845,9 @@ static int bcm_enetsw_remove(struct plat
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	release_mem_region(res->start, resource_size(res));
- 
-+	clk_disable_unprepare(priv->mac_clk);
-+	clk_put(priv->mac_clk);
++#define _ASM_ARG1L	eax
++#define _ASM_ARG2L	edx
++#define _ASM_ARG3L	ecx
 +
- 	free_netdev(dev);
- 	return 0;
- }
++#define _ASM_ARG1W	ax
++#define _ASM_ARG2W	dx
++#define _ASM_ARG3W	cx
++
++#define _ASM_ARG1B	al
++#define _ASM_ARG2B	dl
++#define _ASM_ARG3B	cl
++
++#else
++/* 64 bit */
++
++#define _ASM_ARG1	_ASM_DI
++#define _ASM_ARG2	_ASM_SI
++#define _ASM_ARG3	_ASM_DX
++#define _ASM_ARG4	_ASM_CX
++#define _ASM_ARG5	r8
++#define _ASM_ARG6	r9
++
++#define _ASM_ARG1Q	rdi
++#define _ASM_ARG2Q	rsi
++#define _ASM_ARG3Q	rdx
++#define _ASM_ARG4Q	rcx
++#define _ASM_ARG5Q	r8
++#define _ASM_ARG6Q	r9
++
++#define _ASM_ARG1L	edi
++#define _ASM_ARG2L	esi
++#define _ASM_ARG3L	edx
++#define _ASM_ARG4L	ecx
++#define _ASM_ARG5L	r8d
++#define _ASM_ARG6L	r9d
++
++#define _ASM_ARG1W	di
++#define _ASM_ARG2W	si
++#define _ASM_ARG3W	dx
++#define _ASM_ARG4W	cx
++#define _ASM_ARG5W	r8w
++#define _ASM_ARG6W	r9w
++
++#define _ASM_ARG1B	dil
++#define _ASM_ARG2B	sil
++#define _ASM_ARG3B	dl
++#define _ASM_ARG4B	cl
++#define _ASM_ARG5B	r8b
++#define _ASM_ARG6B	r9b
++
++#endif
++
+ /* Exception table entry */
+ #ifdef __ASSEMBLY__
+ # define _ASM_EXTABLE(from,to)					\
 
 
