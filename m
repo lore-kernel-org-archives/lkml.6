@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1BAECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0170BECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1DF206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D1DF206B7
+	by mail.kernel.org (Postfix) with ESMTP id BC183206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC183206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbeGTNNY (ORCPT
+        id S1731417AbeGTNN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:13:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34634 "EHLO
+        Fri, 20 Jul 2018 09:13:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34636 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731191AbeGTNNY (ORCPT
+        with ESMTP id S1730673AbeGTNN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:13:24 -0400
+        Fri, 20 Jul 2018 09:13:27 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3471BBF;
-        Fri, 20 Jul 2018 12:25:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F147BBD;
+        Fri, 20 Jul 2018 12:25:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot 
-        <syzbot+9f03168400f56df89dbc6f1751f4458fe739ff29@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3.18 12/29] loop: remember whether sysfs_create_group() was done
-Date:   Fri, 20 Jul 2018 14:11:07 +0200
-Message-Id: <20180720115159.421509745@linuxfoundation.org>
+        stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 3.18 13/29] bcm63xx_enet: correct clock usage
+Date:   Fri, 20 Jul 2018 14:11:08 +0200
+Message-Id: <20180720115159.456411805@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720115158.974693829@linuxfoundation.org>
 References: <20180720115158.974693829@linuxfoundation.org>
@@ -53,65 +51,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Jonas Gorski <jonas.gorski@gmail.com>
 
-commit d3349b6b3c373ac1fbfb040b810fcee5e2adc7e0 upstream.
+commit 9c86b846ce02f7e35d7234cf090b80553eba5389 upstream.
 
-syzbot is hitting WARN() triggered by memory allocation fault
-injection [1] because loop module is calling sysfs_remove_group()
-when sysfs_create_group() failed.
-Fix this by remembering whether sysfs_create_group() succeeded.
+Check the return code of prepare_enable and change one last instance of
+enable only to prepare_enable. Also properly disable and release the
+clock in error paths and on remove for enetsw.
 
-[1] https://syzkaller.appspot.com/bug?id=3f86c0edf75c86d2633aeb9dd69eccc70bc7e90b
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+9f03168400f56df89dbc6f1751f4458fe739ff29@syzkaller.appspotmail.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Renamed sysfs_ready -> sysfs_inited.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   11 ++++++-----
- drivers/block/loop.h |    1 +
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/broadcom/bcm63xx_enet.c |   31 ++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -803,16 +803,17 @@ static struct attribute_group loop_attri
- 	.attrs= loop_attrs,
- };
+--- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
++++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+@@ -1788,7 +1788,9 @@ static int bcm_enet_probe(struct platfor
+ 		ret = PTR_ERR(priv->mac_clk);
+ 		goto out;
+ 	}
+-	clk_prepare_enable(priv->mac_clk);
++	ret = clk_prepare_enable(priv->mac_clk);
++	if (ret)
++		goto out_put_clk_mac;
  
--static int loop_sysfs_init(struct loop_device *lo)
-+static void loop_sysfs_init(struct loop_device *lo)
- {
--	return sysfs_create_group(&disk_to_dev(lo->lo_disk)->kobj,
--				  &loop_attribute_group);
-+	lo->sysfs_inited = !sysfs_create_group(&disk_to_dev(lo->lo_disk)->kobj,
-+						&loop_attribute_group);
+ 	/* initialize default and fetch platform data */
+ 	priv->rx_ring_size = BCMENET_DEF_RX_DESC;
+@@ -1820,9 +1822,11 @@ static int bcm_enet_probe(struct platfor
+ 		if (IS_ERR(priv->phy_clk)) {
+ 			ret = PTR_ERR(priv->phy_clk);
+ 			priv->phy_clk = NULL;
+-			goto out_put_clk_mac;
++			goto out_disable_clk_mac;
+ 		}
+-		clk_prepare_enable(priv->phy_clk);
++		ret = clk_prepare_enable(priv->phy_clk);
++		if (ret)
++			goto out_put_clk_phy;
+ 	}
+ 
+ 	/* do minimal hardware init to be able to probe mii bus */
+@@ -1922,13 +1926,16 @@ out_free_mdio:
+ out_uninit_hw:
+ 	/* turn off mdc clock */
+ 	enet_writel(priv, 0, ENET_MIISC_REG);
+-	if (priv->phy_clk) {
++	if (priv->phy_clk)
+ 		clk_disable_unprepare(priv->phy_clk);
++
++out_put_clk_phy:
++	if (priv->phy_clk)
+ 		clk_put(priv->phy_clk);
+-	}
+ 
+-out_put_clk_mac:
++out_disable_clk_mac:
+ 	clk_disable_unprepare(priv->mac_clk);
++out_put_clk_mac:
+ 	clk_put(priv->mac_clk);
+ out:
+ 	free_netdev(dev);
+@@ -2769,7 +2776,9 @@ static int bcm_enetsw_probe(struct platf
+ 		ret = PTR_ERR(priv->mac_clk);
+ 		goto out_unmap;
+ 	}
+-	clk_enable(priv->mac_clk);
++	ret = clk_prepare_enable(priv->mac_clk);
++	if (ret)
++		goto out_put_clk;
+ 
+ 	priv->rx_chan = 0;
+ 	priv->tx_chan = 1;
+@@ -2790,7 +2799,7 @@ static int bcm_enetsw_probe(struct platf
+ 
+ 	ret = register_netdev(dev);
+ 	if (ret)
+-		goto out_put_clk;
++		goto out_disable_clk;
+ 
+ 	netif_carrier_off(dev);
+ 	platform_set_drvdata(pdev, dev);
+@@ -2799,6 +2808,9 @@ static int bcm_enetsw_probe(struct platf
+ 
+ 	return 0;
+ 
++out_disable_clk:
++	clk_disable_unprepare(priv->mac_clk);
++
+ out_put_clk:
+ 	clk_put(priv->mac_clk);
+ 
+@@ -2830,6 +2842,9 @@ static int bcm_enetsw_remove(struct plat
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	release_mem_region(res->start, resource_size(res));
+ 
++	clk_disable_unprepare(priv->mac_clk);
++	clk_put(priv->mac_clk);
++
+ 	free_netdev(dev);
+ 	return 0;
  }
- 
- static void loop_sysfs_exit(struct loop_device *lo)
- {
--	sysfs_remove_group(&disk_to_dev(lo->lo_disk)->kobj,
--			   &loop_attribute_group);
-+	if (lo->sysfs_inited)
-+		sysfs_remove_group(&disk_to_dev(lo->lo_disk)->kobj,
-+				   &loop_attribute_group);
- }
- 
- static void loop_config_discard(struct loop_device *lo)
---- a/drivers/block/loop.h
-+++ b/drivers/block/loop.h
-@@ -60,6 +60,7 @@ struct loop_device {
- 	wait_queue_head_t	lo_event;
- 	/* wait queue for incoming requests */
- 	wait_queue_head_t	lo_req_wait;
-+	bool			sysfs_inited;
- 
- 	struct request_queue	*lo_queue;
- 	struct gendisk		*lo_disk;
 
 
