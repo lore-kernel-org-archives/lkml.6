@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCFAECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E54ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA59B204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:15:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA59B204EC
+	by mail.kernel.org (Postfix) with ESMTP id 56DD2206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:16:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56DD2206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388046AbeGTQEk (ORCPT
+        id S2388032AbeGTQEk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 20 Jul 2018 12:04:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54290 "EHLO mail.bootlin.com"
+Received: from mail.bootlin.com ([62.4.15.54]:54312 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387933AbeGTQEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387961AbeGTQEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Jul 2018 12:04:37 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1889920935; Fri, 20 Jul 2018 17:15:51 +0200 (CEST)
+        id A5E9820A0F; Fri, 20 Jul 2018 17:15:51 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6DE7B2093A;
-        Fri, 20 Jul 2018 17:15:35 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 93FDF20943;
+        Fri, 20 Jul 2018 17:15:36 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 12/35] mtd: rawnand: lpc32xx_slc: convert driver to nand_scan()
-Date:   Fri, 20 Jul 2018 17:15:04 +0200
-Message-Id: <20180720151527.16038-13-miquel.raynal@bootlin.com>
+Subject: [PATCH v4 14/35] mtd: rawnand: mtk: convert driver to nand_scan()
+Date:   Fri, 20 Jul 2018 17:15:06 +0200
+Message-Id: <20180720151527.16038-15-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180720151527.16038-1-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
@@ -73,103 +73,114 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/lpc32xx_slc.c | 77 +++++++++++++++++++++-----------------
- 1 file changed, 42 insertions(+), 35 deletions(-)
+ drivers/mtd/nand/raw/mtk_nand.c | 75 ++++++++++++++++++++++++-----------------
+ 1 file changed, 44 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/lpc32xx_slc.c b/drivers/mtd/nand/raw/lpc32xx_slc.c
-index 42820aa1abab..a4e8b7e75135 100644
---- a/drivers/mtd/nand/raw/lpc32xx_slc.c
-+++ b/drivers/mtd/nand/raw/lpc32xx_slc.c
-@@ -779,6 +779,46 @@ static struct lpc32xx_nand_cfg_slc *lpc32xx_parse_dt(struct device *dev)
- 	return ncfg;
+diff --git a/drivers/mtd/nand/raw/mtk_nand.c b/drivers/mtd/nand/raw/mtk_nand.c
+index 7bc6be3f6ec0..967418f945ea 100644
+--- a/drivers/mtd/nand/raw/mtk_nand.c
++++ b/drivers/mtd/nand/raw/mtk_nand.c
+@@ -1250,13 +1250,54 @@ static int mtk_nfc_ecc_init(struct device *dev, struct mtd_info *mtd)
+ 	return 0;
  }
  
-+static int lpc32xx_nand_attach_chip(struct nand_chip *chip)
++static int mtk_nfc_attach_chip(struct nand_chip *chip)
 +{
 +	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
++	struct device *dev = mtd->dev.parent;
++	struct mtk_nfc *nfc = nand_get_controller_data(chip);
++	struct mtk_nfc_nand_chip *mtk_nand = to_mtk_nand(chip);
++	int len;
++	int ret;
 +
-+	/* OOB and ECC CPU and DMA work areas */
-+	host->ecc_buf = (uint32_t *)(host->data_buf + LPC32XX_DMA_DATA_SIZE);
-+
-+	/*
-+	 * Small page FLASH has a unique OOB layout, but large and huge
-+	 * page FLASH use the standard layout. Small page FLASH uses a
-+	 * custom BBT marker layout.
-+	 */
-+	if (mtd->writesize <= 512)
-+		mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
-+
-+	/* These sizes remain the same regardless of page size */
-+	chip->ecc.size = 256;
-+	chip->ecc.bytes = LPC32XX_SLC_DEV_ECC_BYTES;
-+	chip->ecc.prepad = 0;
-+	chip->ecc.postpad = 0;
-+
-+	/*
-+	 * Use a custom BBT marker setup for small page FLASH that
-+	 * won't interfere with the ECC layout. Large and huge page
-+	 * FLASH use the standard layout.
-+	 */
-+	if ((chip->bbt_options & NAND_BBT_USE_FLASH) &&
-+	    mtd->writesize <= 512) {
-+		chip->bbt_td = &bbt_smallpage_main_descr;
-+		chip->bbt_md = &bbt_smallpage_mirror_descr;
++	if (chip->options & NAND_BUSWIDTH_16) {
++		dev_err(dev, "16bits buswidth not supported");
++		return -EINVAL;
 +	}
++
++	/* store bbt magic in page, cause OOB is not protected */
++	if (chip->bbt_options & NAND_BBT_USE_FLASH)
++		chip->bbt_options |= NAND_BBT_NO_OOB;
++
++	ret = mtk_nfc_ecc_init(dev, mtd);
++	if (ret)
++		return ret;
++
++	ret = mtk_nfc_set_spare_per_sector(&mtk_nand->spare_per_sector, mtd);
++	if (ret)
++		return ret;
++
++	mtk_nfc_set_fdm(&mtk_nand->fdm, mtd);
++	mtk_nfc_set_bad_mark_ctl(&mtk_nand->bad_mark, mtd);
++
++	len = mtd->writesize + mtd->oobsize;
++	nfc->buffer = devm_kzalloc(dev, len, GFP_KERNEL);
++	if (!nfc->buffer)
++		return  -ENOMEM;
 +
 +	return 0;
 +}
 +
-+static const struct nand_controller_ops lpc32xx_nand_controller_ops = {
-+	.attach_chip = lpc32xx_nand_attach_chip,
++static const struct nand_controller_ops mtk_nfc_controller_ops = {
++	.attach_chip = mtk_nfc_attach_chip,
 +};
 +
- /*
-  * Probe for NAND controller
-  */
-@@ -884,41 +924,8 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
- 	}
+ static int mtk_nfc_nand_chip_init(struct device *dev, struct mtk_nfc *nfc,
+ 				  struct device_node *np)
+ {
+ 	struct mtk_nfc_nand_chip *chip;
+ 	struct nand_chip *nand;
+ 	struct mtd_info *mtd;
+-	int nsels, len;
++	int nsels;
+ 	u32 tmp;
+ 	int ret;
+ 	int i;
+@@ -1287,6 +1328,7 @@ static int mtk_nfc_nand_chip_init(struct device *dev, struct mtk_nfc *nfc,
  
- 	/* Find NAND device */
--	res = nand_scan_ident(mtd, 1, NULL);
--	if (res)
--		goto release_dma;
+ 	nand = &chip->nand;
+ 	nand->controller = &nfc->controller;
++	nand->controller->ops = &mtk_nfc_controller_ops;
+ 
+ 	nand_set_flash_node(nand, np);
+ 	nand_set_controller_data(nand, nfc);
+@@ -1324,36 +1366,7 @@ static int mtk_nfc_nand_chip_init(struct device *dev, struct mtk_nfc *nfc,
+ 
+ 	mtk_nfc_hw_init(nfc);
+ 
+-	ret = nand_scan_ident(mtd, nsels, NULL);
+-	if (ret)
+-		return ret;
 -
--	/* OOB and ECC CPU and DMA work areas */
--	host->ecc_buf = (uint32_t *)(host->data_buf + LPC32XX_DMA_DATA_SIZE);
+-	/* store bbt magic in page, cause OOB is not protected */
+-	if (nand->bbt_options & NAND_BBT_USE_FLASH)
+-		nand->bbt_options |= NAND_BBT_NO_OOB;
 -
--	/*
--	 * Small page FLASH has a unique OOB layout, but large and huge
--	 * page FLASH use the standard layout. Small page FLASH uses a
--	 * custom BBT marker layout.
--	 */
--	if (mtd->writesize <= 512)
--		mtd_set_ooblayout(mtd, &lpc32xx_ooblayout_ops);
+-	ret = mtk_nfc_ecc_init(dev, mtd);
+-	if (ret)
+-		return -EINVAL;
 -
--	/* These sizes remain the same regardless of page size */
--	chip->ecc.size = 256;
--	chip->ecc.bytes = LPC32XX_SLC_DEV_ECC_BYTES;
--	chip->ecc.prepad = chip->ecc.postpad = 0;
--
--	/*
--	 * Use a custom BBT marker setup for small page FLASH that
--	 * won't interfere with the ECC layout. Large and huge page
--	 * FLASH use the standard layout.
--	 */
--	if ((chip->bbt_options & NAND_BBT_USE_FLASH) &&
--	    mtd->writesize <= 512) {
--		chip->bbt_td = &bbt_smallpage_main_descr;
--		chip->bbt_md = &bbt_smallpage_mirror_descr;
+-	if (nand->options & NAND_BUSWIDTH_16) {
+-		dev_err(dev, "16bits buswidth not supported");
+-		return -EINVAL;
 -	}
 -
--	/*
--	 * Fills out all the uninitialized function pointers with the defaults
--	 */
--	res = nand_scan_tail(mtd);
-+	chip->dummy_controller.ops = &lpc32xx_nand_controller_ops;
-+	res = nand_scan(mtd, 1);
- 	if (res)
- 		goto release_dma;
+-	ret = mtk_nfc_set_spare_per_sector(&chip->spare_per_sector, mtd);
+-	if (ret)
+-		return ret;
+-
+-	mtk_nfc_set_fdm(&chip->fdm, mtd);
+-	mtk_nfc_set_bad_mark_ctl(&chip->bad_mark, mtd);
+-
+-	len = mtd->writesize + mtd->oobsize;
+-	nfc->buffer = devm_kzalloc(dev, len, GFP_KERNEL);
+-	if (!nfc->buffer)
+-		return  -ENOMEM;
+-
+-	ret = nand_scan_tail(mtd);
++	ret = nand_scan(mtd, nsels);
+ 	if (ret)
+ 		return ret;
  
 -- 
 2.14.1
