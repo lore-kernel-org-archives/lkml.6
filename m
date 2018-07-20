@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7E2ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F870ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D3620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D3620652
+	by mail.kernel.org (Postfix) with ESMTP id E73E920652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:38:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73E920652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389482AbeGTN0x (ORCPT
+        id S2389494AbeGTN05 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:26:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47402 "EHLO
+        Fri, 20 Jul 2018 09:26:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47516 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388565AbeGTN0x (ORCPT
+        with ESMTP id S2388886AbeGTN04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:26:53 -0400
+        Fri, 20 Jul 2018 09:26:56 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF5BACC6;
-        Fri, 20 Jul 2018 12:36:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 676DDC83;
+        Fri, 20 Jul 2018 12:33:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
-        Eli Cohen <eli@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.17 019/101] net/mlx5e: Avoid dealing with vport representors if not being e-switch manager
-Date:   Fri, 20 Jul 2018 14:13:25 +0200
-Message-Id: <20180720121423.774940591@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Philipp Rosenberger <p.rosenberger@linutronix.de>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Richard Weinberger <richard@nod.at>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 57/92] mtd: rawnand: denali_dt: set clk_x_rate to 200 MHz unconditionally
+Date:   Fri, 20 Jul 2018 14:14:01 +0200
+Message-Id: <20180720121421.200025124@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
-References: <20180720121422.837870592@linuxfoundation.org>
+In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
+References: <20180720121417.206337808@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,114 +50,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Or Gerlitz <ogerlitz@mellanox.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 733d3e5497070d05971352ca5087bac83c197c3d ]
+commit 3f6e6986045d47f87bd982910821b7ab9758487e upstream.
 
-In smartnic env, the host (PF) driver might not be an e-switch
-manager, hence the switchdev mode representors are running on
-the embedded cpu (EC) and not at the host.
+Since commit 1bb88666775e ("mtd: nand: denali: handle timing parameters
+by setup_data_interface()"), denali_dt.c gets the clock rate from the
+clock driver.  The driver expects the frequency of the bus interface
+clock, whereas the clock driver of SOCFPGA provides the core clock.
+Thus, the setup_data_interface() hook calculates timing parameters
+based on a wrong frequency.
 
-As such, we should avoid dealing with vport representors if
-not being esw manager.
+To make it work without relying on the clock driver, hard-code the clock
+frequency, 200MHz.  This is fine for existing DT of UniPhier, and also
+fixes the issue of SOCFPGA because both platforms use 200 MHz for the
+bus interface clock.
 
-While here, make sure to disallow eswitch switchdev related
-setups through devlink if we are not esw managers.
-
-Fixes: cb67b832921c ('net/mlx5e: Introduce SRIOV VF representors')
-Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
-Reviewed-by: Eli Cohen <eli@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 1bb88666775e ("mtd: nand: denali: handle timing parameters by setup_data_interface()")
+Cc: linux-stable <stable@vger.kernel.org> #4.14+
+Reported-by: Philipp Rosenberger <p.rosenberger@linutronix.de>
+Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Tested-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c          |   12 ++++++------
- drivers/net/ethernet/mellanox/mlx5/core/en_rep.c           |    2 +-
- drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c |    4 ++--
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/mtd/nand/denali_dt.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -2612,7 +2612,7 @@ void mlx5e_activate_priv_channels(struct
- 	mlx5e_activate_channels(&priv->channels);
- 	netif_tx_start_all_queues(priv->netdev);
+--- a/drivers/mtd/nand/denali_dt.c
++++ b/drivers/mtd/nand/denali_dt.c
+@@ -122,7 +122,11 @@ static int denali_dt_probe(struct platfo
+ 	if (ret)
+ 		return ret;
  
--	if (MLX5_VPORT_MANAGER(priv->mdev))
-+	if (MLX5_ESWITCH_MANAGER(priv->mdev))
- 		mlx5e_add_sqs_fwd_rules(priv);
+-	denali->clk_x_rate = clk_get_rate(dt->clk);
++	/*
++	 * Hardcode the clock rate for the backward compatibility.
++	 * This works for both SOCFPGA and UniPhier.
++	 */
++	denali->clk_x_rate = 200000000;
  
- 	mlx5e_wait_channels_min_rx_wqes(&priv->channels);
-@@ -2623,7 +2623,7 @@ void mlx5e_deactivate_priv_channels(stru
- {
- 	mlx5e_redirect_rqts_to_drop(priv);
- 
--	if (MLX5_VPORT_MANAGER(priv->mdev))
-+	if (MLX5_ESWITCH_MANAGER(priv->mdev))
- 		mlx5e_remove_sqs_fwd_rules(priv);
- 
- 	/* FIXME: This is a W/A only for tx timeout watch dog false alarm when
-@@ -4315,7 +4315,7 @@ static void mlx5e_build_nic_netdev(struc
- 	mlx5e_set_netdev_dev_addr(netdev);
- 
- #if IS_ENABLED(CONFIG_MLX5_ESWITCH)
--	if (MLX5_VPORT_MANAGER(mdev))
-+	if (MLX5_ESWITCH_MANAGER(mdev))
- 		netdev->switchdev_ops = &mlx5e_switchdev_ops;
- #endif
- 
-@@ -4465,7 +4465,7 @@ static void mlx5e_nic_enable(struct mlx5
- 
- 	mlx5e_enable_async_events(priv);
- 
--	if (MLX5_VPORT_MANAGER(priv->mdev))
-+	if (MLX5_ESWITCH_MANAGER(priv->mdev))
- 		mlx5e_register_vport_reps(priv);
- 
- 	if (netdev->reg_state != NETREG_REGISTERED)
-@@ -4500,7 +4500,7 @@ static void mlx5e_nic_disable(struct mlx
- 
- 	queue_work(priv->wq, &priv->set_rx_mode_work);
- 
--	if (MLX5_VPORT_MANAGER(priv->mdev))
-+	if (MLX5_ESWITCH_MANAGER(priv->mdev))
- 		mlx5e_unregister_vport_reps(priv);
- 
- 	mlx5e_disable_async_events(priv);
-@@ -4684,7 +4684,7 @@ static void *mlx5e_add(struct mlx5_core_
- 		return NULL;
- 
- #ifdef CONFIG_MLX5_ESWITCH
--	if (MLX5_VPORT_MANAGER(mdev)) {
-+	if (MLX5_ESWITCH_MANAGER(mdev)) {
- 		rpriv = mlx5e_alloc_nic_rep_priv(mdev);
- 		if (!rpriv) {
- 			mlx5_core_warn(mdev, "Failed to alloc NIC rep priv data\n");
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-@@ -790,7 +790,7 @@ bool mlx5e_is_uplink_rep(struct mlx5e_pr
- 	struct mlx5e_rep_priv *rpriv = priv->ppriv;
- 	struct mlx5_eswitch_rep *rep;
- 
--	if (!MLX5_CAP_GEN(priv->mdev, vport_group_manager))
-+	if (!MLX5_ESWITCH_MANAGER(priv->mdev))
- 		return false;
- 
- 	rep = rpriv->rep;
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-@@ -983,8 +983,8 @@ static int mlx5_devlink_eswitch_check(st
- 	if (MLX5_CAP_GEN(dev, port_type) != MLX5_CAP_PORT_TYPE_ETH)
- 		return -EOPNOTSUPP;
- 
--	if (!MLX5_CAP_GEN(dev, vport_group_manager))
--		return -EOPNOTSUPP;
-+	if(!MLX5_ESWITCH_MANAGER(dev))
-+		return -EPERM;
- 
- 	if (dev->priv.eswitch->mode == SRIOV_NONE)
- 		return -EOPNOTSUPP;
+ 	ret = denali_init(denali);
+ 	if (ret)
 
 
