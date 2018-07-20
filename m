@@ -6,72 +6,75 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 677AEECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7C0ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F36D205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5E0B206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:57:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jp1nWErt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F36D205C9
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WVr86iO5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5E0B206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731912AbeGTPo2 (ORCPT
+        id S1732113AbeGTPpp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 11:44:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44140 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731235AbeGTPo1 (ORCPT
+        Fri, 20 Jul 2018 11:45:45 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39122 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731995AbeGTPpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 11:44:27 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r16-v6so11574523wrt.11
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 07:55:47 -0700 (PDT)
+        Fri, 20 Jul 2018 11:45:45 -0400
+Received: by mail-wm0-f65.google.com with SMTP id h20-v6so10042201wmb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 07:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EJz7eJWiX6MUb3Xn6ZAubAShvNmXKcIDm6++CIe9L/c=;
-        b=Jp1nWErt2Bm+DkniU1i9CQCLXZlK2RTiYn07kZ2RjOHJPNNrKnpFQ/3QYRdT7hZtMq
-         uTh4rl9hwU0H0DHcSdWTNAM11nWHY2T0MRKYn1TqvUPM1Qg/YM9SSMGv9oufsxqr7UYN
-         mFXEzSZ3y303xgyz4vzwO39R/F1qkFEOY4VIQ=
+        bh=U4B8YoAlpVNFLfUHbl5qplI9aefzz172mt8eJQ9Mj6o=;
+        b=WVr86iO5DYMqXTjxFdIiTx39ZH7iSfZJaY6k4gAn3gUt22XV/zdBTDAJXhsqQPbwzZ
+         kkFWnRrpc0iw3IfmRpW6LH1lgvl6STTO4hF/Xyhg4PZNiEzfKWFPHlwpx7vesgsVlEWW
+         qzIMSDWp0HW0g5KTNyornzSPMIAqB9kLdQ4+0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=EJz7eJWiX6MUb3Xn6ZAubAShvNmXKcIDm6++CIe9L/c=;
-        b=XpSr4dB+BAIJblqahnez/jr3d+aW588suR0J2n8ArvS8cZworYhf3lYYE4dUmjHNXo
-         veaZoDVwzVATOIiaOtqVIFDNRaWd3Y16q4Gz2MrlcFDx3vi1vGT5I1ZLyEeZMss8Zr5K
-         ROzXLLsLYmGqfCkg528SyZaoWgC1qyHe7hSBRvnv13/2mNLjECvAPd+MjscZbYFLoetx
-         7FLShS1MBiQVqk9jby4S3pfAwlPF2+OSFl5X1nn9k/GrIe6H3nVBRXrhw6cmIGEsLqkV
-         N/7bANZ71uLITylC5no5ww+6cTh8QHj9SU4xOVdznWrds4aaP10PIPxHdgYok1z0FxCh
-         3mRg==
-X-Gm-Message-State: AOUpUlGvsFijn9+JgIXbyMM+BbVOMDubrsH4wqO8ezpmp8qhU8uqAy3A
-        sdRessJjnOTfuiH1ydFxDVVqqw==
-X-Google-Smtp-Source: AAOMgpcfDjSBHVUhC+TtNfAMQaPur0j3SLSmenpZ0ZseM8YOVswjJN0SDEf7ycAs4dwnLxKjjA8W0g==
-X-Received: by 2002:a5d:438d:: with SMTP id i13-v6mr1820178wrq.156.1532098546634;
-        Fri, 20 Jul 2018 07:55:46 -0700 (PDT)
+        bh=U4B8YoAlpVNFLfUHbl5qplI9aefzz172mt8eJQ9Mj6o=;
+        b=DaD/OHa6u5cxAuhChKg9v6rtqf5a0Cmd31SRnAc0OsvnD9NpSOmz5YLrzRVMaUzeLo
+         xjOLHMFEKCRM7j9fhO3n6V99ThCeVfEGawG67S7DSEXB6LTRqniJsJH5z/A4HVhC3rUg
+         q/oBZACk3QJIPQ3CjUGcoyLFOZ5Q4cXsYQ2Bxf366v1WW0c0aSt0uvWvN+7U7lNsCgln
+         Cje9A+sG04F5rtIOHiX5qfNC4pR9ok5KXcpMXh0N2wy1tNCWZfPAECFOzpvKcjk0+sHx
+         cnmYh53yOd63oPEZiZaJG6QFvoBTwFXoW13+Cd19VjqmwyOOeiw2cnMqo0UDZ5oePmKS
+         KDag==
+X-Gm-Message-State: AOUpUlHc/7qyaGjr6YXVPCExPN+0Toz+7sJPnBDD7iPDeDRhzqU6WMou
+        wb2GI1pMvIbApGioud4hm2gmGw==
+X-Google-Smtp-Source: AAOMgpcd8o5XnnzFAupbPRDNqFIlRBtP+JUFkXjVEg6WbjVtfGC7GPBY6JbyxGpghWxK13p6xKoO4Q==
+X-Received: by 2002:a1c:57c1:: with SMTP id l184-v6mr1777365wmb.16.1532098624348;
+        Fri, 20 Jul 2018 07:57:04 -0700 (PDT)
 Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id n14-v6sm1622209wmc.14.2018.07.20.07.55.45
+        by smtp.googlemail.com with ESMTPSA id r140-v6sm2439303wmd.27.2018.07.20.07.57.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 07:55:46 -0700 (PDT)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v6 6/8] interconnect: qcom: Add msm8916 interconnect
- provider driver
-To:     Alexandre Bailon <abailon@baylibre.com>
+        Fri, 20 Jul 2018 07:57:03 -0700 (PDT)
+Subject: Re: [PATCH v6 7/8] dt-bindings: Introduce interconnect consumers
+ bindings
+To:     Evan Green <evgreen@chromium.org>
 Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, vincent.guittot@linaro.org,
-        skannan@codeaurora.org, bjorn.andersson@linaro.org,
+        rjw@rjwysocki.net, robh+dt@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        khilman@baylibre.com, Alexandre Bailon <abailon@baylibre.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org, mka@chromium.org,
-        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org
+        daidavid1@codeaurora.org, mka@chromium.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, tfiga@chromium.org
 References: <20180709155104.25528-1-georgi.djakov@linaro.org>
- <20180709155104.25528-7-georgi.djakov@linaro.org>
- <8d2fd280-9cd7-f612-b663-ec4bcdd129cb@baylibre.com>
+ <20180709155104.25528-8-georgi.djakov@linaro.org>
+ <CAE=gft7tDYB172LTMuS4JPPaTFasT22zLBx4XjpYne2PNNz+kQ@mail.gmail.com>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
 Openpgp: preference=signencrypt
 Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
  xsFNBFjTuRcBEACyAOVzghvyN19Sa/Nit4LPBWkICi5W20p6bwiZvdjhtuh50H5q4ktyxJtp
@@ -116,10 +119,10 @@ Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
  7ayYJIXFqjl/X0KBcCbiAl4vbdBw1bqFnO4zd1lMXKVoa29UHqby4MPbQhjWNVv9kqp8A39+
  E9xw890l1xdERkjVKX6IEJu2hf7X3MMl9tOjBK6MvdOUxvh1bNNmXh7OlBL1MpJYY/ydIm3B
  KEmKjLDvB0pePJkdTw==
-Message-ID: <3f8fa550-f789-ac04-9d9a-186d596c98f7@linaro.org>
-Date:   Fri, 20 Jul 2018 17:55:44 +0300
+Message-ID: <5081de57-e6f2-1201-a1f3-15e05ea3800b@linaro.org>
+Date:   Fri, 20 Jul 2018 17:57:02 +0300
 MIME-Version: 1.0
-In-Reply-To: <8d2fd280-9cd7-f612-b663-ec4bcdd129cb@baylibre.com>
+In-Reply-To: <CAE=gft7tDYB172LTMuS4JPPaTFasT22zLBx4XjpYne2PNNz+kQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -128,42 +131,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+Hi,
 
-On 07/11/2018 06:42 PM, Alexandre Bailon wrote:
-> On 07/09/2018 05:51 PM, Georgi Djakov wrote:
->> Add driver for the Qualcomm interconnect buses found in msm8916 based
->> platforms.
+On 07/11/2018 01:34 AM, Evan Green wrote:
+> On Mon, Jul 9, 2018 at 8:51 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>
+>> Add documentation for the interconnect consumer bindings, that will allow
+>> to link a device node (consumer) to its interconnect controller hardware.
+>>
+>> Tha aim is to enable drivers to request a framework API to configure an
+>> interconnect path by providing their struct device pointer and a name.
 >>
 >> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 >> ---
->>  drivers/interconnect/Kconfig        |   5 +
->>  drivers/interconnect/Makefile       |   1 +
->>  drivers/interconnect/qcom/Kconfig   |  10 +
->>  drivers/interconnect/qcom/Makefile  |   2 +
->>  drivers/interconnect/qcom/msm8916.c | 499 ++++++++++++++++++++++++++++
->>  5 files changed, 517 insertions(+)
->>  create mode 100644 drivers/interconnect/qcom/msm8916>>
-
-[..]
-
->> +static int qcom_icc_set(struct icc_node *src, struct icc_node *dst,
->> +			u32 avg, u32 peak)
->> +{
->> +	struct qcom_icc_provider *qp;
->> +	struct qcom_icc_node *qn;
->> +	struct icc_node *node;
->> +	struct icc_provider *provider;
->> +	u64 avg_bw = icc_units_to_bps(avg);
->> +	u64 peak_bw = icc_units_to_bps(peak);
->> +	u64 rate = 0;
->> +	int ret = 0;
+>>  .../bindings/interconnect/interconnect.txt    | 27 +++++++++++++++++++
+>>  1 file changed, 27 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+>> index 6e2b2971b094..0ad65dccbe8b 100644
+>> --- a/Documentation/devicetree/bindings/interconnect/interconnect.txt
+>> +++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+>> @@ -31,3 +31,30 @@ Example:
+>>                         clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
+>>                                  <&rpmcc RPM_SMD_SNOC_A_CLK>;
+>>                 };
 >> +
->> +	if (!src)
-> NIT: I think that src can't be NULL (there is a if statement to avoid it
-> in apply_constraints()).
+>> +
+>> += interconnect consumers =
+>> +
+>> +The interconnect consumers are device nodes which consume the interconnect
+>> +path(s) provided by the interconnect provider. There can be multiple
+> 
+> I wonder if this sentence could be more descriptive. Maybe something like:
+> 
+> The interconnect consumers are device nodes which dynamically express
+> their bandwidth requirements along interconnect paths they are
+> connected to.
+> 
+> ...or choose a better one if this one's a mouthful.
+> 
 
-Yes, true!
+This sounds much better. Thank you!
 
-Thanks,
 Georgi
