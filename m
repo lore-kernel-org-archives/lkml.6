@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DC8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B79CEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 632E620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 632E620652
+	by mail.kernel.org (Postfix) with ESMTP id 8037C20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 21:57:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8037C20673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731921AbeGTWr6 (ORCPT
+        id S1731993AbeGTWsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 18:47:58 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37664 "EHLO
+        Fri, 20 Jul 2018 18:48:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37672 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728214AbeGTWr6 (ORCPT
+        with ESMTP id S1728214AbeGTWsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 18:47:58 -0400
+        Fri, 20 Jul 2018 18:48:02 -0400
 Received: from 2.general.tyhicks.us.vpn ([10.172.64.53] helo=sec.l.tihix.com)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <tyhicks@canonical.com>)
-        id 1fgdPF-0004ZT-2D; Fri, 20 Jul 2018 21:57:45 +0000
+        id 1fgdPH-0004ZT-R8; Fri, 20 Jul 2018 21:57:48 +0000
 From:   Tyler Hicks <tyhicks@canonical.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tejun Heo <tj@kernel.org>,
@@ -38,9 +38,9 @@ Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         bridge@lists.linux-foundation.org,
         Linux Containers <containers@lists.linux-foundation.org>
-Subject: [PATCH net-next v3 7/8] net: create reusable function for getting ownership info of sysfs inodes
-Date:   Fri, 20 Jul 2018 21:56:53 +0000
-Message-Id: <1532123814-1109-8-git-send-email-tyhicks@canonical.com>
+Subject: [PATCH net-next v3 8/8] bridge: make sure objects belong to container's owner
+Date:   Fri, 20 Jul 2018 21:56:54 +0000
+Message-Id: <1532123814-1109-9-git-send-email-tyhicks@canonical.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
 References: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
@@ -49,131 +49,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make net_ns_get_ownership() reusable by networking code outside of core.
-This is useful, for example, to allow bridge related sysfs files to be
-owned by container root.
-
-Add a function comment since this is a potentially dangerous function to
-use given the way that kobject_get_ownership() works by initializing uid
-and gid before calling .get_ownership().
+When creating various bridge objects in /sys/class/net/... make sure
+that they belong to the container's owner instead of global root (if
+they belong to a container/namespace).
 
 Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 ---
- include/net/net_namespace.h | 10 ++++++++++
- net/core/net-sysfs.c        | 18 ------------------
- net/core/net_namespace.c    | 28 ++++++++++++++++++++++++++++
- 3 files changed, 38 insertions(+), 18 deletions(-)
+ net/bridge/br_if.c       | 9 +++++++++
+ net/bridge/br_private.h  | 2 ++
+ net/bridge/br_sysfs_if.c | 5 ++---
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
-index a71264d75d7f..9b5fdc50519a 100644
---- a/include/net/net_namespace.h
-+++ b/include/net/net_namespace.h
-@@ -10,6 +10,7 @@
- #include <linux/workqueue.h>
- #include <linux/list.h>
- #include <linux/sysctl.h>
-+#include <linux/uidgid.h>
- 
- #include <net/flow.h>
- #include <net/netns/core.h>
-@@ -170,6 +171,8 @@ extern struct net init_net;
- struct net *copy_net_ns(unsigned long flags, struct user_namespace *user_ns,
- 			struct net *old_net);
- 
-+void net_ns_get_ownership(const struct net *net, kuid_t *uid, kgid_t *gid);
-+
- void net_ns_barrier(void);
- #else /* CONFIG_NET_NS */
- #include <linux/sched.h>
-@@ -182,6 +185,13 @@ static inline struct net *copy_net_ns(unsigned long flags,
- 	return old_net;
- }
- 
-+static inline void net_ns_get_ownership(const struct net *net,
-+					kuid_t *uid, kgid_t *gid)
-+{
-+	*uid = GLOBAL_ROOT_UID;
-+	*gid = GLOBAL_ROOT_GID;
-+}
-+
- static inline void net_ns_barrier(void) {}
- #endif /* CONFIG_NET_NS */
- 
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index ada065fc685e..0a95bcf64cdc 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -656,24 +656,6 @@ static const struct attribute_group wireless_group = {
- #define net_class_groups	NULL
- #endif /* CONFIG_SYSFS */
- 
--static void net_ns_get_ownership(const struct net *net,
--				 kuid_t *uid, kgid_t *gid)
--{
--	if (net) {
--		kuid_t ns_root_uid = make_kuid(net->user_ns, 0);
--		kgid_t ns_root_gid = make_kgid(net->user_ns, 0);
--
--		if (uid_valid(ns_root_uid))
--			*uid = ns_root_uid;
--
--		if (gid_valid(ns_root_gid))
--			*gid = ns_root_gid;
--	} else {
--		*uid = GLOBAL_ROOT_UID;
--		*gid = GLOBAL_ROOT_GID;
--	}
--}
--
- #ifdef CONFIG_SYSFS
- #define to_rx_queue_attr(_attr) \
- 	container_of(_attr, struct rx_queue_attribute, attr)
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index a11e03f920d3..738871af5efa 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -17,6 +17,7 @@
- #include <linux/user_namespace.h>
- #include <linux/net_namespace.h>
- #include <linux/sched/task.h>
-+#include <linux/uidgid.h>
- 
+diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
+index 05e42d86882d..e7c8d55212aa 100644
+--- a/net/bridge/br_if.c
++++ b/net/bridge/br_if.c
+@@ -26,6 +26,7 @@
  #include <net/sock.h>
- #include <net/netlink.h>
-@@ -448,6 +449,33 @@ struct net *copy_net_ns(unsigned long flags,
- 	return net;
+ #include <linux/if_vlan.h>
+ #include <net/switchdev.h>
++#include <net/net_namespace.h>
+ 
+ #include "br_private.h"
+ 
+@@ -204,11 +205,19 @@ static void release_nbp(struct kobject *kobj)
+ 	kfree(p);
  }
  
-+/**
-+ * net_ns_get_ownership - get sysfs ownership data for @net
-+ * @net: network namespace in question (can be NULL)
-+ * @uid: kernel user ID for sysfs objects
-+ * @gid: kernel group ID for sysfs objects
-+ *
-+ * Returns the uid/gid pair of root in the user namespace associated with the
-+ * given network namespace.
-+ */
-+void net_ns_get_ownership(const struct net *net, kuid_t *uid, kgid_t *gid)
++static void brport_get_ownership(struct kobject *kobj, kuid_t *uid, kgid_t *gid)
 +{
-+	if (net) {
-+		kuid_t ns_root_uid = make_kuid(net->user_ns, 0);
-+		kgid_t ns_root_gid = make_kgid(net->user_ns, 0);
++	struct net_bridge_port *p = kobj_to_brport(kobj);
 +
-+		if (uid_valid(ns_root_uid))
-+			*uid = ns_root_uid;
-+
-+		if (gid_valid(ns_root_gid))
-+			*gid = ns_root_gid;
-+	} else {
-+		*uid = GLOBAL_ROOT_UID;
-+		*gid = GLOBAL_ROOT_GID;
-+	}
++	net_ns_get_ownership(dev_net(p->dev), uid, gid);
 +}
-+EXPORT_SYMBOL_GPL(net_ns_get_ownership);
 +
- static void unhash_nsid(struct net *net, struct net *last)
+ static struct kobj_type brport_ktype = {
+ #ifdef CONFIG_SYSFS
+ 	.sysfs_ops = &brport_sysfs_ops,
+ #endif
+ 	.release = release_nbp,
++	.get_ownership = brport_get_ownership,
+ };
+ 
+ static void destroy_nbp(struct net_bridge_port *p)
+diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
+index 5216a524b537..cf0005d2a4d0 100644
+--- a/net/bridge/br_private.h
++++ b/net/bridge/br_private.h
+@@ -283,6 +283,8 @@ struct net_bridge_port {
+ 	u16				group_fwd_mask;
+ };
+ 
++#define kobj_to_brport(obj)	container_of(obj, struct net_bridge_port, kobj)
++
+ #define br_auto_port(p) ((p)->flags & BR_AUTO_MASK)
+ #define br_promisc_port(p) ((p)->flags & BR_PROMISC)
+ 
+diff --git a/net/bridge/br_sysfs_if.c b/net/bridge/br_sysfs_if.c
+index f99c5bf5c906..ab4c7f8adf68 100644
+--- a/net/bridge/br_sysfs_if.c
++++ b/net/bridge/br_sysfs_if.c
+@@ -249,13 +249,12 @@ static const struct brport_attribute *brport_attrs[] = {
+ };
+ 
+ #define to_brport_attr(_at) container_of(_at, struct brport_attribute, attr)
+-#define to_brport(obj)	container_of(obj, struct net_bridge_port, kobj)
+ 
+ static ssize_t brport_show(struct kobject *kobj,
+ 			   struct attribute *attr, char *buf)
  {
- 	struct net *tmp;
+ 	struct brport_attribute *brport_attr = to_brport_attr(attr);
+-	struct net_bridge_port *p = to_brport(kobj);
++	struct net_bridge_port *p = kobj_to_brport(kobj);
+ 
+ 	if (!brport_attr->show)
+ 		return -EINVAL;
+@@ -268,7 +267,7 @@ static ssize_t brport_store(struct kobject *kobj,
+ 			    const char *buf, size_t count)
+ {
+ 	struct brport_attribute *brport_attr = to_brport_attr(attr);
+-	struct net_bridge_port *p = to_brport(kobj);
++	struct net_bridge_port *p = kobj_to_brport(kobj);
+ 	ssize_t ret = -EINVAL;
+ 	char *endp;
+ 	unsigned long val;
 -- 
 2.7.4
 
