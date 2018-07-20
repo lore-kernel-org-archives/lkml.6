@@ -2,108 +2,198 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 151E9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16E3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B83C4206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:27:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B83C4206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 66C88206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 07:30:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C88206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darmarit.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeGTIOp (ORCPT
+        id S1727272AbeGTIRd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:14:45 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:40783 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726779AbeGTIOp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:14:45 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6K7O1fn024661;
-        Fri, 20 Jul 2018 09:27:31 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2kasntc9mr-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 20 Jul 2018 09:27:31 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5E40234;
-        Fri, 20 Jul 2018 07:27:30 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2A0011A41;
-        Fri, 20 Jul 2018 07:27:30 +0000 (GMT)
-Received: from localhost (10.75.127.51) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 20 Jul 2018 09:27:29
- +0200
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <thierry.reding@gmail.com>, <stefan.wahren@i2se.com>,
-        <gohai@sukzessiv.net>
-CC:     <hsweeten@visionengravers.com>, <gottfried.haider@gmail.com>,
-        <loic.pallardy@st.com>, <broonie@kernel.org>,
-        <fabrice.gasnier@st.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-Subject: [RESEND PATCH] Revert "pwm: Set class for exported channels in sysfs"
-Date:   Fri, 20 Jul 2018 09:27:25 +0200
-Message-ID: <1532071645-17718-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-20_02:,,
- signatures=0
+        Fri, 20 Jul 2018 04:17:33 -0400
+Received: from smtp2-2.goneo.de ([85.220.129.34]:42051 "EHLO smtp2-2.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727028AbeGTIRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:17:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.goneo.de (Postfix) with ESMTP id 9F3F423F728;
+        Fri, 20 Jul 2018 09:30:35 +0200 (CEST)
+X-Virus-Scanned: by goneo
+Received: from smtp2.goneo.de ([127.0.0.1])
+        by localhost (smtp2.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id THwoZaMpEYZp; Fri, 20 Jul 2018 09:30:34 +0200 (CEST)
+Received: from ryzen (host-091-097-245-073.ewe-ip-backbone.de [91.97.245.73])
+        by smtp2.goneo.de (Postfix) with ESMTPSA id C6A7723F6F0;
+        Fri, 20 Jul 2018 09:30:33 +0200 (CEST)
+Message-ID: <44d73cd9926f58976a1269ff3cd3afb845ec84fa.camel@darmarit.de>
+Subject: Re: Sphinx version dependencies?
+From:   Markus Heiser <markus.heiser@darmarit.de>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 20 Jul 2018 09:30:33 +0200
+In-Reply-To: <20180719190400.GB4800@magnolia>
+References: <20180719181556.GA21435@thunk.org>
+         <20180719190400.GB4800@magnolia>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it causes
-regression with multiple pwm chip. It creates a new entry in
-'/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export':
-- 1st time export will create an entry in /sys/class/pwm/pwmX
-- when another export happens on another pwmchip, it can't be created
-(e.g. -EEXIST)
+Am Donnerstag, den 19.07.2018, 12:04 -0700 schrieb Darrick J. Wong:
+> On Thu, Jul 19, 2018 at 02:15:56PM -0400, Theodore Y. Ts'o wrote:
+> > Darrick has sent in patches to convert the ext4 documentation to use
+> > rst and to be built as part of the full kernel documentation thanks.
+> > In addition to that, he's imported the on-disk documentation from the
+> > ext4 wiki into the kernel sources, so hopefully we can keep it more up
+> > to date.
+> > 
+> > When I was experimenting with this, I had to actually build the kernel
+> > docs using Sphinx for the first time.  I'm using Debian testing, so at
+> > first I blindly followed the instructions by
+> > ./scripts/sphinx-pre-install:
+> > 
+> > Detected OS: Debian GNU/Linux unstable (sid).
+> > 	/usr/local/bin/virtualenv sphinx_1.4
+> > 	. sphinx_1.4/bin/activate
+> > 	pip install -r Documentation/sphinx/requirements.txt
+> > 
+> > But when I did that, Sphinx had heartburn over the ext4.rst file.
+> > 
+> >     ./include/linux/spi/spi.h:373: ERROR: Unexpected indentation.
+> >     /usr/projects/linux/ext4/Documentation/filesystems/ext4/ext4.rst:139: ERROR: Malformed table.
+> >     Column span alignment problem in table line 5.
+> 
+> Hmmm, apparently it's choking on the table heading borders not matching
+> the text:
+> 
+> ====== ===========
+> Foo    Bar
+> ====== ===========        <-- need to extend to EOL
+> Blah   Blah blah blah blah
+> ====== ===========
+> 
+> Though weirdly while I /can/ get this error to reproduce with the
+> virtualenv 1.4.9 release, I can't get it to reproduce with the 1.3.6 or
+> 1.6.7 ubuntu packages.  Maybe it's a python3 thing, maybe not?  
 
-This also changes existing ABI (Documentation/ABI/testing/sysfs-class-pwm):
-- pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
+Not a py2 or py3 thing. I *guess* it is caused by changes in the underlying
+docutils.
 
-Example on stm32 (stm32429i-eval) platform:
-$ ls /sys/class/pwm
-pwmchip0 pwmchip4
+> Seems
+> pretty fragile to me.
 
-$ cd /sys/class/pwm/pwmchip0/
-$ echo 0 > export
-$ ls /sys/class/pwm
-pwm0 pwmchip0 pwmchip4
+Yes, this is a very confusing and we have to look at reST, docutils, Sphinx-doc,
+virtualenv py2 & py3, all these distros and the philosophy of the Linux
+community to understand.
 
-$ cd /sys/class/pwm/pwmchip4/
-$ echo 0 > export
-sysfs: cannot create duplicate filename '/class/pwm/pwm0'
-...Exception stack follows...
+Yes, this is a very confusing and we have to look at reST, docutils, Sphinx-doc,
+virtualenv py2 & py3, all these distros and the philosophy of the Linux
+community to understand.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- drivers/pwm/sysfs.c | 1 -
- 1 file changed, 1 deletion(-)
+reST: Is the markup.
 
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 7c71cdb..4726d43 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -263,7 +263,6 @@ static int pwm_export_child(struct device *parent, struct pwm_device *pwm)
- 	export->pwm = pwm;
- 	mutex_init(&export->lock);
+docutils (python): Is the reST reference implementation with some changes in
+  2017[1].
+
+Sphinx-doc (python): reST application based on the docutils lib
+  (docutils>=0.11)[2].  Take in mind, this dependency opens a new array of
+  confusion, cause its fulfillment is based on what is installed on your system
+  (or in your virtualenv, see below). Side node: the pdf-builder (LaTeX, to be
+  correct) is in a continues redesign since the last two years and was horrible
+  in older Sphinx-doc versions. E.g. take a look at the current 1.8.0
+  development (section deprecated)[4].
+
+python: py2 will retire in 2020 (py3 was released in 2008). All py applications
+   we using are py2 and py3 compatible. If we have no bugs, py2 or py3 should
+   never be the cause.
+
+distros: Nearly all distros using using py2 as there default python interpreter
+   (mostly since there package managers are written/tested with py2).
+
+virtualenv: A virtualenv is build up in the $HOME folder where Sphinx-doc and
+   docutils are installed from pypi, the python package manager[3]. Take in
+   mind, using another package in parallel to the system package manager manager
+   opens another array of confusion.
+
+Normally I would say, lets use (and test against) state of the art. This is
+easily done by installing py3 and using virtualenv. But this seems not match the
+philosophy of the whole Linux community.
+
+As one told me, the philosophy is to build the Kernel with less installations
+from the web by using what the distro ships. IMO this might be right for the
+Kernel but not for applications building viewing formats. When it comes to
+build PDF you will realize how naive this approach is. IMO there is also no
+need to build viewing formats as we can read the documentation in plain text
+as we can do it since the beginning ... and this is one reason why we changed
+from XML to a plain text markup.
+
+The script named 'sphinx-pre-install' is the crutch that supports this
+philosophy.
+
+We have this discussion over and over again an I believe we will have it again
+and again, as long as we do not change our POV .. building viewing formats is
+an application not a part of the Kernel.
  
--	export->child.class = parent->class;
- 	export->child.release = pwm_export_release;
- 	export->child.parent = parent;
- 	export->child.devt = MKDEV(0, 0);
--- 
-1.9.1
+Anyway, I hope this helps to clarify, why we have those problems.
 
+[1] http://docutils.sourceforge.net/HISTORY.html 
+[2] https://github.com/sphinx-doc/sphinx/blob/master/setup.py#L22
+[3] https://pypi.org/
+[4] https://github.com/sphinx-doc/sphinx/blob/master/CHANGES
+
+-- Markus --
+
+> 
+> Anyway, I'll fix ext4.rst and resubmit that part to get this moving.
+> 
+> --D
+> 
+> >     ...
+> > 
+> > After consulting with Darrick, it appears the problem is that Sphinx8
+> > 1.4.9 was the problem.  This is the version that
+> > Documentation/sphinx/requirements.txt calls for.  He did his rst
+> > conversion work using Ubuntu 18.04's Sphinx 1.6.7.
+> > 
+> > As it turns out Debian testing/unstable already has Sphinx 1.7.5 in
+> > its repository, so if I simply install Sphinx 1.7.5, it works fine.
+> > That's what I've done for now.
+> > 
+> > So that leaves me with some questions:
+> > 
+> > * Is there a reason why scripts/sphinx-pre-install suggested using a
+> >   Python virtual environment and installing Sphinx 1.4.9 instead of
+> >   using the distro's pre-packaged Sphinx for Debian unstable/testing?
+> > 
+> > * Why does Documentation/sphinx/requirements.txt asking for such an
+> >   old version of Sphinx?
+> >  
+> > * Is it a requirement that *.rst files that are checked into the
+> >   kernel repo have to work with Sphinx 1.4.9?  Or is it sufficient
+> >   that it works with Sphinx 1.6.7 and 1.7.5 (which are the prepackaged
+> >   Debian and Ubuntu versions).  And it looks like Fedora 28 has Sphinx
+> >   1.7.2 if I'm not mistaken.   How many versions of Sphinx are various
+> >   automated build/test systems using?
+> > 
+> > Thanks,
+> > 
+> > 						- Ted
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-doc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
