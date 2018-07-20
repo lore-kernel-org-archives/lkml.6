@@ -2,202 +2,178 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11101ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3AFECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A44CE20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:30:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44CE20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C26E620652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:33:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B/QaBSbJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MM9DKpRS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26E620652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731578AbeGTOSq (ORCPT
+        id S1731617AbeGTOVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 10:18:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42984 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731314AbeGTOSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 10:18:46 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 20 Jul 2018 10:21:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36146 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728252AbeGTOVV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 10:21:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 72AAB60B74; Fri, 20 Jul 2018 13:33:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532093581;
+        bh=bTsb19k1oII6V7/RRpXIqP+mRm+psDEvbcPjL/dr5p0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=B/QaBSbJXZuboWLYoBwspvj5/pyXHKXo2Tpzxeb4vO7HfjNqDY8FPBdJ1arVwGwdL
+         pJ5v9NazdKUf+kCTouiOCXbhpmqo3NbnvXMmrcXhWZExe57ojanaoSvm8BaR1vV6zr
+         09XmN25G18ucGi29c02uI9gqwfHceRaDoVeXxu6U=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BFA244074447;
-        Fri, 20 Jul 2018 13:30:26 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B971111AF1D;
-        Fri, 20 Jul 2018 13:30:21 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 09:27:37 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>, sgrubb@redhat.com,
-        aviro@redhat.com
-Subject: Re: [RFC PATCH ghak59 V1 1/6] audit: give a clue what CONFIG_CHANGE
- op was involved
-Message-ID: <20180720132737.nukm4xycty6mozh6@madcap2.tricolour.ca>
-References: <cover.1529003588.git.rgb@redhat.com>
- <17f22b579c28c6cd9475a57e792b5d4fb4dde1dc.1529003588.git.rgb@redhat.com>
- <CAHC9VhTxjcmJGEq6XQmRV0Ouk8oOyHO2C8+HVQOy1qxw9yKyXw@mail.gmail.com>
- <20180713004122.qlxdpkae4ihkxatg@madcap2.tricolour.ca>
- <CAHC9VhTwYo2p9sKJvhK5haQWuNtR20AEDoA=yGW1gQqdYBzMzQ@mail.gmail.com>
- <20180719160803.7faw2feelfkunysa@madcap2.tricolour.ca>
- <CAHC9VhQs9g2yBJC+fy4xcAbgOAPWMnPs8+7ksffLgc3RUenKpw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQs9g2yBJC+fy4xcAbgOAPWMnPs8+7ksffLgc3RUenKpw@mail.gmail.com>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 13:30:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 13:30:26 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8CA156063A;
+        Fri, 20 Jul 2018 13:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532093580;
+        bh=bTsb19k1oII6V7/RRpXIqP+mRm+psDEvbcPjL/dr5p0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MM9DKpRSN6gphSzgbADXLRsQp/xkHGtyAkLNPZrS0wwNYaLdsThfebHwK1SKDEt1i
+         hMytpCQwzOM+Cnx23wJ+ox5/GSkUY13LF/W4+ukKb1WdW7/lY7txfpT4rhY0geevzf
+         R89FrqmbQaE3Bu0PYGbFA4i+kr62cIuXgHjTJmQ4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8CA156063A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [PATCH v10 0/7] Enable Bluetooth functionality for WCN3990 
+Date:   Fri, 20 Jul 2018 19:02:36 +0530
+Message-Id: <20180720133243.6851-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-19 18:47, Paul Moore wrote:
-> On Thu, Jul 19, 2018 at 12:10 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-07-18 17:45, Paul Moore wrote:
-> > > On Thu, Jul 12, 2018 at 8:43 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > On 2018-06-28 15:41, Paul Moore wrote:
-> > > > > On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > The failure to add an audit rule due to audit locked gives no clue
-> > > > > > what CONFIG_CHANGE operation failed.
-> > > > > > Similarly the set operation is the only other operation that doesn't
-> > > > > > give the "op=" field to indicate the action.
-> > > > > > All other CONFIG_CHANGE records include an op= field to give a clue as
-> > > > > > to what sort of configuration change is being executed.
-> > > > > >
-> > > > > > Since these are the only CONFIG_CHANGE records that that do not have an
-> > > > > > op= field, add them to bring them in line with the rest.
-> > > > >
-> > > > > Normally this would be an immediate reject because this patch inserts
-> > > > > a field into an existing record, but the CONFIG_CHANGE record is so
-> > > > > variable (supposedly bad in its own right) that I don't this really
-> > > > > matters.
-> > > > >
-> > > > > With that out of the way, I think this patch is fine, but I don't
-> > > > > think it is complete.  At the very least there is another
-> > > > > CONFIG_CHANGE record in audit_watch_log_rule_change() that doesn't
-> > > > > appear to include an "op" field.  If we want to make sure we have an
-> > > > > "op" field in every CONFIG_CHANGE record, let's actually add them all
-> > > > > :)
-> > > >
-> > > > The version I'm looking at already had it when it was added in 2009.
-> > >
-> > > Yup, there it is ... now I'm wondering what tree I was looking at as a
-> > > reference while reviewing this?
-> > >
-> > > /me scratches head
-> > >
-> > > > This one doesn't add the auid and ses fields because they will be
-> > > > covered by the linking of this record with the syscall record via the
-> > > > audit_context() introduced in another patch.
-> > >
-> > > Yeah, I'm not concerned about that for the reasons you state.
-> > >
-> > > > > and one more in audit_receive_msg().  There may be more.
-> > > >
-> > > > I believe they're covered by other patches in the ghak59 set.
-> > >
-> > > If they are in the later patches it might be good to move those "op="
-> > > additions into this patch.
-> >
-> > I don't see any CONFIG_CHANGE records generated in audit_receive_msg()
-> > that are missing op= field.  Can you narrow it down?
-> 
-> Well, just grep'ing my way through audit_receive_msg() I see that
-> AUDIT_ADD/DEL_RULE generates a CONFIG_CHANGE record.
+These patches enables Bluetooth functinalties for new Qualcomm
+Bluetooth chip wnc3990. As this is latest chip with new features, 
+along with some common features to old chip "qcom,qca6174-bt".
+we have updated names of functions that are used for both the chips 
+to keep this generic and would help in future when we would have new 
+BT SoC.
 
-The failure case is addressed in this patch.  The success case is
-addressed in audit_log_rule_change().  The latter already has it.  What
-is the problem?  What tree are you looking at?  What am I missing?
+The below are difference between new and old chips.
 
-> > > > > > Old records:
-> > > > > > type=CONFIG_CHANGE msg=audit(1519812997.781:374): pid=610 uid=0 auid=0 ses=1 subj=... audit_enabled=2 res=0
-> > > > > > type=CONFIG_CHANGE msg=audit(2018-06-14 14:55:04.507:47) : audit_enabled=1 old=1 auid=unset ses=unset subj=... res=yes
-> > > > > >
-> > > > > > New records:
-> > > > > > type=CONFIG_CHANGE msg=audit(1520958477.855:100): pid=610 uid=0 auid=0 ses=1 subj=... op=add_rule audit_enabled=2 res=0
-> > > > > >
-> > > > > > type=CONFIG_CHANGE msg=audit(2018-06-14 14:55:04.507:47) : op=set audit_enabled=1 old=1 auid=unset ses=unset subj=... res=yes
-> > > > > >
-> > > > > > See: https://github.com/linux-audit/audit-kernel/issues/59
-> > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > > ---
-> > > > > >  kernel/audit.c | 6 ++++--
-> > > > > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > > > > index e7478cb..ad54339 100644
-> > > > > > --- a/kernel/audit.c
-> > > > > > +++ b/kernel/audit.c
-> > > > > > @@ -403,7 +403,7 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
-> > > > > >         ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> > > > > >         if (unlikely(!ab))
-> > > > > >                 return rc;
-> > > > > > -       audit_log_format(ab, "%s=%u old=%u", function_name, new, old);
-> > > > > > +       audit_log_format(ab, "op=set %s=%u old=%u", function_name, new, old);
-> > > > > >         audit_log_session_info(ab);
-> > > > > >         rc = audit_log_task_context(ab);
-> > > > > >         if (rc)
-> > > > > > @@ -1365,7 +1365,9 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> > > > > >                         return -EINVAL;
-> > > > > >                 if (audit_enabled == AUDIT_LOCKED) {
-> > > > > >                         audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
-> > > > > > -                       audit_log_format(ab, " audit_enabled=%d res=0", audit_enabled);
-> > > > > > +                       audit_log_format(ab, " op=%s_rule audit_enabled=%d res=0",
-> > > > > > +                                        msg_type == AUDIT_ADD_RULE ? "add" : "remove",
-> > > > > > +                                        audit_enabled);
-> > > > > >                         audit_log_end(ab);
-> > > > > >                         return -EPERM;
-> > > > > >                 }
-> > > > > > --
-> > > > > > 1.8.3.1
-> > > > >
-> > > > > --
-> > > > > paul moore
-> > > > > www.paul-moore.com
-> > > >
-> > > > - RGB
-> > > >
-> > > > --
-> > > > Richard Guy Briggs <rgb@redhat.com>
-> > > > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > > > Remote, Ottawa, Red Hat Canada
-> > > > IRC: rgb, SunRaycer
-> > > > Voice: +1.647.777.2635, Internal: (81) 32635
-> > >
-> > >
-> > >
-> > > --
-> > > paul moore
-> > > www.paul-moore.com
-> >
-> > - RGB
-> >
-> > --
-> > Richard Guy Briggs <rgb@redhat.com>
-> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > Remote, Ottawa, Red Hat Canada
-> > IRC: rgb, SunRaycer
-> > Voice: +1.647.777.2635, Internal: (81) 32635
-> 
-> 
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
+*Power:
+ *New chip: we use voltage regulators to turn on/off the chip and we 
+  must send a command on Tx line to turn on/off the chip completely.
+ *Old chip: We turn on/off by setting a GPIO.
 
-- RGB
+ *Note: Turning on sequence differs between two chips.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+*Firmware download:
+  Only firmware file name differ from New and Old chip.
+  
+  So we reused some functions/structure/variables which are used for old 
+  chip to New chip by generic naming (may be future chips may use same functions).
+
+ * As we have multiple changes for functions names,we have tested these patches 
+   on both chips.
+
+v10:
+ * update current load with actual values of WCN3990.
+ * added support  for itterative connect with BT chip if it fails to respond to the HOST.
+ * Added regulator current dtbindings.
+ * addressed review comments.
+
+v9:
+ * removed smps regs.
+ * hidded flow control in respective functions.
+ * moved qca_soc_ver to qca_setup
+ * addressed review comments.
+ 
+v8:
+  * Squashed [v7 2/8] and [v7 3/8] to one patch.
+  * updated functions to set and get the UART speeds.
+  * addressed review comments.
+
+v7:
+  * Renamed all the possible function of ROME to generic.
+  * updated with review comments for hci_qca and btqca
+  * fixed kbuild errors.
+  * created wrapper functions for re-usable blocks.
+ 
+v6:
+  * Hooked up qca_power to qca_serdev.
+  * renamed all the naming inconsistency functions with qca_*
+  * leveraged common code of ROME for wcn3990.
+  * created wrapper functions for re-usable blocks.
+  * updated function of _*regulator_enable and _*regualtor_disable.  
+  * removed redundant comments and functions.
+  * add code to derive the firmware files based on ROM Version.
+  * created new patch for common function of ROME and wcn3990.
+  * enables Qualcomm chip to operate at 3.2Mbps.
+  * updated names of functions that are used for both the chips to keep this generic. 
+
+v5:
+  * updated with review comments for hci_qca and btqca
+ 
+v4:
+  * rebased all changes on top of bluetooth-next.
+  * addressed review comments.
+  * New patch created for firmware download.
+
+v3:
+  * Rebased all changes on top of bluetooth-next.
+  * dt-bindings: net: bluetooth: Add device tree bindings for QTI chip wcn3990
+    - added dt-binding snippet for bluetooth chip wcn3990.
+  * Bluetooth: Add support for wcn3990 soc.
+    - updated BT_INFO with bt_dev_info, where ever necessary.
+
+v2:
+   * Add support for wcn3990:
+    These changes are aligned as per serdev frame work.
+          We implemented these changes on top of https://patchwork.kernel.org/patch/10316093/
+        As this patch enable serdev for one of the Qualcomm BT chip.
+
+        The changes in the patch include.
+        - Adding support to voting up/down regulators for WCN3990.
+           - Bluetooth firmware download for wcn3990.
+
+  * Add device tree bindings for Atheros chips:
+          These changes are on top of https://patchwork.kernel.org/patch/10316097/.
+          - Description of device tree bindings.
+
+
+Balakrishna Godavarthi (7):
+  dt-bindings: net: bluetooth: Add device tree bindings for QTI chip
+    wcn3990
+  Bluetooth: btqca: Rename ROME specific functions to generic functions
+  Bluetooth: btqca: Redefine qca_uart_setup() to generic function.
+  Bluetooth: hci_qca: Add wrapper functions for setting UART speed
+  Bluetooth: hci_qca: Enable 3.2 Mbps operating speed.
+  Bluetooth: btqca: Add wcn3990 firmware download support.
+  Bluetooth: hci_qca: Add support for Qualcomm Bluetooth chip wcn3990
+
+ .../bindings/net/qualcomm-bluetooth.txt       |  42 +-
+ drivers/bluetooth/btqca.c                     | 116 ++--
+ drivers/bluetooth/btqca.h                     |  23 +-
+ drivers/bluetooth/hci_qca.c                   | 564 ++++++++++++++++--
+ 4 files changed, 629 insertions(+), 116 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
