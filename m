@@ -5,90 +5,89 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A1AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B812ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8A9820850
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:33:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8A9820850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id DDCF920850
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:34:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCF920850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388112AbeGTRWz (ORCPT
+        id S2388132AbeGTRXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:22:55 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:37778 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387858AbeGTRWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:22:55 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1fgYLd-0007He-FL; Fri, 20 Jul 2018 10:33:42 -0600
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Shuah Khan <shuah@kernel.org>
-References: <20180609000819.13883-1-logang@deltatee.com>
- <20180609000819.13883-10-logang@deltatee.com>
- <20180615195152.GA25605@mobilestation>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <641e5245-9e77-7e8e-aa70-6c7e73636a22@deltatee.com>
-Date:   Fri, 20 Jul 2018 10:33:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180615195152.GA25605@mobilestation>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: shuah@kernel.org, Shyam-sundar.S-k@amd.com, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, fancer.lancer@gmail.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 8/8] NTB: ntb_test: Fix bug when counting remote files
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        Fri, 20 Jul 2018 13:23:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33654 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731554AbeGTRXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 13:23:05 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D5DF377890;
+        Fri, 20 Jul 2018 16:34:02 +0000 (UTC)
+Received: from vitty.brq.redhat.com (ovpn-204-189.brq.redhat.com [10.40.204.189])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 00FAF2156899;
+        Fri, 20 Jul 2018 16:34:00 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>
+Subject: [PATCH net-next] xen-netfront: fix queue name setting
+Date:   Fri, 20 Jul 2018 18:33:59 +0200
+Message-Id: <20180720163359.28187-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 20 Jul 2018 16:34:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 20 Jul 2018 16:34:02 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit f599c64fdf7d ("xen-netfront: Fix race between device setup and
+open") changed the initialization order: xennet_create_queues() now
+happens before we do register_netdev() so using netdev->name in
+xennet_init_queue() is incorrect, we end up with the following in
+/proc/interrupts:
 
+ 60:        139          0   xen-dyn    -event     eth%d-q0-tx
+ 61:        265          0   xen-dyn    -event     eth%d-q0-rx
+ 62:        234          0   xen-dyn    -event     eth%d-q1-tx
+ 63:          1          0   xen-dyn    -event     eth%d-q1-rx
 
-On 15/06/18 01:51 PM, Serge Semin wrote:
-> I also tested this script in the looped-back setup. It is the case when two
-> NTB-device ports are available at the same RootComplex. So the NTB can be
-> configured from the single executional context. In this case the REMOTE_HOST is left
-> empty, so the colon is left prepended to the corresponding paths and causes multiple
-> errors including the one fixed by this patch. In order to fix it, we need to discard
-> the colon for remote-less case, for instance, by the next patch:
-> 
-> @@ -482,7 +495,11 @@ function perf_test()
->  function ntb_tool_tests()
->  {
->  	LOCAL_TOOL="$DEBUGFS/ntb_tool/$LOCAL_DEV"
-> -	REMOTE_TOOL="$REMOTE_HOST:$DEBUGFS/ntb_tool/$REMOTE_DEV"
-> +	if [[ "${REMOTE_HOST}" != "" ]]; then
-> +		REMOTE_TOOL="$REMOTE_HOST:$DEBUGFS/ntb_tool/$REMOTE_DEV"
-> +	else
-> +		REMOTE_TOOL="$DEBUGFS/ntb_tool/$REMOTE_DEV"
-> +	fi
->  
->  	echo "Starting ntb_tool tests..."
->  
-> And so on for REMOTE_PP and REMOTE_PERF. It is necessary for NTB devices, which ports
-> are looped-back to the same Root-Port. Would you be amenable if you resent this patch
-> together with the fix I suggested?
-I took a closer look at this and it's not necessary. (Note: I do the
-majority of my testing in a looped-back setup).
+and this looks ugly. Actually, using early netdev name (even when it's
+already set) is also not ideal: nowadays we tend to rename eth devices
+and queue name may end up not corresponding to the netdev name.
 
-What you didn't notice is that split_remote() separates the colon
-whether there is a host or not. It's not passed to ssh or cat (or
-whatever) directly. So the change you propose will actually break the
-how it was designed.
+Use nodename from xenbus device for queue naming: this can't change in VM's
+lifetime. Now /proc/interrupts looks like
 
-Logan
+ 62:        202          0   xen-dyn    -event     device/vif/0-q0-tx
+ 63:        317          0   xen-dyn    -event     device/vif/0-q0-rx
+ 64:        262          0   xen-dyn    -event     device/vif/0-q1-tx
+ 65:         17          0   xen-dyn    -event     device/vif/0-q1-rx
+
+Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ drivers/net/xen-netfront.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index a57daecf1d57..1b40b648ed5c 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1604,7 +1604,7 @@ static int xennet_init_queue(struct netfront_queue *queue)
+ 	timer_setup(&queue->rx_refill_timer, rx_refill_timeout, 0);
+ 
+ 	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
+-		 queue->info->netdev->name, queue->id);
++		 queue->info->xbdev->nodename, queue->id);
+ 
+ 	/* Initialise tx_skbs as a free chain containing every entry. */
+ 	queue->tx_skb_freelist = 0;
+-- 
+2.14.4
 
