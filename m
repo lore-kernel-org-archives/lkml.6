@@ -2,110 +2,72 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED46ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 377A8ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013E720661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:45:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZDkXng6i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013E720661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id DF87720661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 15:45:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF87720661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387784AbeGTQeG (ORCPT
+        id S2387826AbeGTQeQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 12:34:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40102 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731583AbeGTQeG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 12:34:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CTrgbzCEKwqwIlnAuzvzAfy7hiCeZtkIp3hlVKFAupY=; b=ZDkXng6iPrf7HgV0QmP6nbYJZ
-        iepEUF6kOnr6mFNCo5Rd5SuQb2txNi/aPqt3Al2wttST8EAwOA/ClV6akx5jFIfu3qp/1RejfCf+u
-        jjMq2z7TQQOQG05F47AQQtLOc71uyHpEdV7AitHRuCCx0U8jnBEBNRwGvC0XUc0g/OCMXe2pgFALw
-        ZKsWMEpmR8nXpDCyaq6mJ4cvAMzJxzmjMzGIhgNmHziQfbOMPL7OUPTopKK1uSaJh8H/2RDIVzNp3
-        jh273DMC6davrkmmBvfNAgZ4L4JIfKXEO8qXnG6ddf5NrXzwrtHsJfWu7+r39njbXElf/5oJU2LDk
-        6Q5x2bmiQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fgXaS-0006CY-SX; Fri, 20 Jul 2018 15:44:57 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0C9DE20275F37; Fri, 20 Jul 2018 17:44:54 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 17:44:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-Message-ID: <20180720154454.GR2494@hirez.programming.kicks-ass.net>
-References: <20180702165322.GI533219@devbig577.frc2.facebook.com>
- <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
- <20180703155823.GS533219@devbig577.frc2.facebook.com>
- <20180719135224.GE2494@hirez.programming.kicks-ass.net>
- <1107494a-9667-df58-dcac-9366e969dc3a@redhat.com>
- <20180719153045.GT72677@devbig577.frc2.facebook.com>
- <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
- <20180719165201.GU72677@devbig577.frc2.facebook.com>
- <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
- <20180720114549.GY72677@devbig577.frc2.facebook.com>
-MIME-Version: 1.0
+        Fri, 20 Jul 2018 12:34:16 -0400
+Received: from gate.crashing.org ([63.228.1.57]:39561 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731583AbeGTQeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 12:34:16 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6KFioSU030427;
+        Fri, 20 Jul 2018 10:44:50 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id w6KFinQv030424;
+        Fri, 20 Jul 2018 10:44:49 -0500
+Date:   Fri, 20 Jul 2018 10:44:49 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Dirk Gouders <dirk@gouders.net>,
+        Andy Whitcroft <apw@canonical.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] checkpatch: kbuild: if_changed: check for multiple calls in targets
+Message-ID: <20180720154449.GC16221@gate.crashing.org>
+References: <ghy3eafbrf.fsf@lena.gouders.net> <20180720074804.4160-1-dirk@gouders.net> <01cfa83d2e29667d311d679c904b1648cd35c614.camel@perches.com> <20180720152150.GB16221@gate.crashing.org> <4977e9adba5e826d5e7e9f503e3ce8fbaa872af5.camel@perches.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180720114549.GY72677@devbig577.frc2.facebook.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <4977e9adba5e826d5e7e9f503e3ce8fbaa872af5.camel@perches.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 04:45:49AM -0700, Tejun Heo wrote:
-
-> > > Hmm... so a given ancestor must be able to both
+On Fri, Jul 20, 2018 at 08:33:56AM -0700, Joe Perches wrote:
+> On Fri, 2018-07-20 at 10:21 -0500, Segher Boessenkool wrote:
+> > On Fri, Jul 20, 2018 at 03:06:37AM -0700, Joe Perches wrote:
+> > > On Fri, 2018-07-20 at 09:48 +0200, Dirk Gouders wrote:
+> > > > +		# Check for multiple calls of if_changed within a target in Makefiles
+> > > > +		if (($realfile =~ /Makefile.*/ || $realfile =~ /Kbuild.*/) &&
 > > > 
-> > > 1. control which cpus are moved into a partition in all of its
-> > >    subtree.
+> > > The uses of .* here are superfluous.
 > > 
-> > By virtue of the partition file being owned by the parent, this is
-> > already achived, no?
+> > And it looks like you wanted to match this only at the beginning of the
+> > string, which would be /^Makefile/ etc.
 > 
-> The currently proposed implementation is somewhere in the middle.  It
-> kinda gets there by restricting a partition to be a child of another
-> partition, which may be okay but it does make the whole delegation
-> mechanism less useful.
-
-So the implementation does not set ownership of the 'partition' file to
-that of the parent directory? Because _that_ is what I understood from
-Waiman (many versions ago). And that _does_ allow delegation to work
-nicely.
-
-> > > 2. take away any given cpu from ist subtree.
-> > 
-> > I really hate this obsession of yours and doubly so for partitions. But
-> > why would this currently not be allowed?
+> Nope.
 > 
-> Well, sorry that you hate it.  It's a fundamental architectural
-> constraint.  If it can't satisfy that, it should't be in cgroup.
+> $realfile includes path and /^Makefile/ matches only the
+> top level Makefile and none of the ones in subdirectories.
 
-So is hierarchical behaviour; but you seem willing to forgo that.
+Then the .* is more mysterious :-)
 
-Still, the question was, how is this (dispicable or not) behaviour not
-allowed by the current implementation?
+(Maybe the script should use File::Basename).
+
+
+Segher
