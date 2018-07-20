@@ -2,142 +2,127 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 567CBECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD889ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16E7A20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:12:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16E7A20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 5851620673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:16:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tVffmKaS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5851620673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbeGTK7m (ORCPT
+        id S1727851AbeGTLEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 06:59:42 -0400
-Received: from sauhun.de ([88.99.104.3]:55854 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbeGTK7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 06:59:41 -0400
-Received: from localhost (p54B33241.dip0.t-ipconnect.de [84.179.50.65])
-        by pokefinder.org (Postfix) with ESMTPSA id 0BE525E000F;
-        Fri, 20 Jul 2018 12:12:07 +0200 (CEST)
-Date:   Fri, 20 Jul 2018 12:12:06 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Fri, 20 Jul 2018 07:04:21 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45457 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727179AbeGTLEU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 07:04:20 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j143-v6so1430565lfj.12;
+        Fri, 20 Jul 2018 03:16:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Zs+u+LKAHbPI+veyDNpITYz4ztIDThBPrqpba+h/i/c=;
+        b=tVffmKaS1AB8YJYaC3myP2p7n1ypNpzmFQZ8aiPEnPkGC/wio1Ij2TSHl1ro7b96xw
+         1aYfCTra1gh8pZstw8rop1RnyKgaCf0uFDAmtfohm9Fw3uP6M4EGvPGvP77zCFam8EoY
+         YQlADWMdaAi+V2DDZwPlRyTLP6P80X72TMYt6anjMErbBT7gahVN9F65tHJy69sQeTlm
+         ZKqe46RKz9H4jSAcVhj54hfJANhzszq22+4b43NOI7DsgXW6jyXKYit5zIYKX9lAJXqa
+         9UKNcaIulQMb6kXCDNfaFkfcMP5porrigHbdutbRweC9eVYIw2bnOmKxaLqqEk2FLa86
+         3KTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Zs+u+LKAHbPI+veyDNpITYz4ztIDThBPrqpba+h/i/c=;
+        b=KwvWkVhXVIYsIgRHEyUAIpCg5j5rSPLG9VcU0EEsVnJPT+yTGYefyG7EYH8zl2Ch4f
+         rVjP3MjQByKyL90kKNooj0LWeW291ftjCcDl+XI9YhZU/gp9Qjk3ItKD1NKdtStYdyf3
+         DPLxZ/VBhJNshVbUBnKFTn11zsFeQahkXW5wF2e1vTTLm5hp++fa/dSBEkhZNvlQDd8z
+         A5KiaCBurEYvaX0bBAliKJzDszk0FaJBN5gZfE/95pLZHNoIxcS6XlemWMZa7WQ7viJI
+         9oxLLVou0MQekKIVPTWTX3ejduFZpnShhX/C8TPtG0GrfgTPO9asKbZA4vgdnlRC3AhX
+         BRHA==
+X-Gm-Message-State: AOUpUlE8kjNp8oypvC/l3yJzkU4U4Vd3GN08Zvnlp87atnSGXBX/Bzar
+        urLdzTFXRN+N/TLOmUbu9x0=
+X-Google-Smtp-Source: AAOMgpeoEOv4qNMgicayTT9bt22XxA95QarIdem5NH6u71FYlo9mqsUObyq8cthz+3Y6V5GTE7gnpA==
+X-Received: by 2002:a19:1604:: with SMTP id m4-v6mr992794lfi.120.1532081805814;
+        Fri, 20 Jul 2018 03:16:45 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id b14-v6sm234628lfa.62.2018.07.20.03.16.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 03:16:44 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fgSSb-000492-Lq; Fri, 20 Jul 2018 12:16:30 +0200
+Date:   Fri, 20 Jul 2018 12:16:29 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Karoly Pados <pados@pados.hu>
+Cc:     Johan Hovold <johan@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>
-Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
-Message-ID: <20180720101206.tv7nsoanwo5ftnia@ninjato>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
- <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] USB: serial: cp210x: Implement GPIO support for
+ CP2102N
+Message-ID: <20180720101629.GB19245@localhost>
+References: <20180718212004.11852-1-pados@pados.hu>
+ <ea05b80064d32c7beef3f2039adb89aa@pados.hu>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="buglsqpmzc2gtcib"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <ea05b80064d32c7beef3f2039adb89aa@pados.hu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 18, 2018 at 09:38:12PM +0000, Karoly Pados wrote:
+> Hello Johan,
+> 
+> I hope maybe after you come back from your vacation you can still
+> merge this into 4.19, I guess the merge window will still be open.
 
---buglsqpmzc2gtcib
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You shouldn't make assumptions about peoples vacation plans. ;)
 
+> Given that there are
+> about another 5 weeks until 4.19rc1 merge window closes,
+> I didn't think I'd be late with this patch, I am sorry.
 
-> I have not read much of the I3C spec. I'm just coming from the
-> current situation with I2C and the i2c-demux-pinctrl driver which
-> tries to retrofit this into the I2C world and is not doing a grand
-> job. And how could it?
->=20
-> If you can acknowledge that i2c-demux-pinctrl is needed for I2C
-> but for some reason is not needed for I3C because of something
-> that differs between I2C and I3C, then fine, by all means ditch
-> the explicit bus object.
->=20
-> But in my mind splitting up the devices on the same bus between
-> several of our own masters and then not have a single object for
-> the bus is going to cause headaches down the line. Be it address
-> clashes or trouble with master ping-pong or whatever.
->=20
-> I think the reason for i2c-demux-pinctrl is that some (most?) I2C
-> hardware suffers from quirks and one way to work around it is to
-> make selected accesses from a different master. I expect I3C HW
-> to also suffer from quirks...
->=20
-> Maybe a bit-bang I3C master isn't feasible for some fundamental
-> reason? But if it is, then I'd say that it's just a matter of time
-> until someone finds a situation where such a thing could be used to
-> work around some I3C quirk. And then it might be too expensive to
-> always use the bit-bang master for the affected device.
->=20
-> But what do I know? Don't let me hold this series back...
+New code must be ready and reviewed well in time before the merge window
+*opens*. So generally you cannot expect anything you post this week to
+be included in 4.19.
 
-Thanks, Peter. You nailed it, the I2C use case (and its limits). From
-what I know about I3C, bit-banging doesn't sound very feasible to me, so
-the situation might be a bit different. Still, no one knows about future
-I3C use cases and HW quirks. This is why I encouraged the seperate bus
-object because back then it was said it was easy to do and implement. If
-this now becomes a show-stopper, we can surely re-decide. I am not
-strong on this point, it was just something which would have helped I2C.
-(And for that matter, we (=3D the Renesas Upstream Kernel Team) was
-discussing something similar to the i2c demuxer for SPI, too. We have
-multiple IP cores which can do SPI on R-Car, all with their pros and
-cons)
+> However, as already explained to you, it'd be very important
+> for me to get this patch at least into 4.19, as otherwise the
+> time I loose is much greater than a single release cycle (due
+> to distro cycles), and I have actually a crowdfunding product
+> depending on this.
 
+I know, and I already cut some corners for you with the baud-rate
+handling changes even though this is strictly not a valid reason to
+change the normal procedures.
 
---buglsqpmzc2gtcib
-Content-Type: application/pgp-signature; name="signature.asc"
+That being said, I took a look at your gpio patch today and as it looks
+like you've addressed the major concerns with v1, and done so in a clean
+way, I'll make an exception.
 
------BEGIN PGP SIGNATURE-----
+I'll post some review comments, but I've already fixed up the patch
+myself. It's mostly style issues, but I did also find two bugs.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltRtXYACgkQFA3kzBSg
-KbbC3g//Qw+XT9Q0C+cSSYBwENIyyKVec3nsbrnekmC6VqMsApKNsdiQQUhkS7pe
-VFvc/3SOfmOhL791jwZ63MPvhhG00mGs1xL1jsoDql0xNcnodTbOFM61iIhJQQs2
-uCr1xqHtQotCuUm3B1wcd4a1+adZePRwmT7o5jQL8jbPQBMZJDea/NphOEq5ewAI
-rN6/P+CynS3NL1QaHV3fZKTSzd/vkWjDRXj19maT0FLyGfOvA5/hMtj0XQzfgJI+
-iArvUIX8fZ7lkCPia/3tjsMkwpgCMHlbdWKsysbFl/Zr1ocVT5IappqbolvfZTwX
-4QXnOtjEDY+AOfjrSXXlsjaFgnVqX+wFWk9MSpQmL95Yy2JImdjt50wUam3FPHFJ
-sjCDfyu2ueefmzichetpDG0gu++kJSIRis0jOgsB2BVQ0Ak0Z6yvFK7rzHNssB8U
-EXdS302fj+HV75O7H6ynN1dmBk4f5Xpw+X/3i6IQ3QUIAReVgc7s6JRq+3/Z0Npb
-tNXjYUROJN4PZr1XqOC/8nMzEe3A2s+q5EkjBHUko1rfyq7vo1KqN5HkEjNlYwbR
-Cf6ksivMfiWHHts94f6EhDTxMnWbkKdCR3ZfxSKQtXcVnh4MyZNAQggcszNmHhXz
-iMymQYq7uYzAq1McBTP7vpBGzOK+kzwHZzcWl4y84AlaVP1oRbI=
-=o7ro
------END PGP SIGNATURE-----
+I do need you to respin the commit message, though; a commit message
+should be self-contained and not rely on external discussions to make
+sense (you can of course still refer/link to it). Patch-revision info
+should generally go below the cut-off line, unless it is useful to have
+it recorded.
 
---buglsqpmzc2gtcib--
+Can you post a reworked commit message today so I can include this in my
+4.19 updates?
+
+Thanks,
+Johan
