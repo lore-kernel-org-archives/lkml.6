@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84FCECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E536ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C107206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C107206B7
+	by mail.kernel.org (Postfix) with ESMTP id 2DF4C206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF4C206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389340AbeGTNZl (ORCPT
+        id S2389351AbeGTNZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:25:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45720 "EHLO
+        Fri, 20 Jul 2018 09:25:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45788 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388356AbeGTNZk (ORCPT
+        with ESMTP id S2388356AbeGTNZm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:25:40 -0400
+        Fri, 20 Jul 2018 09:25:42 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E386BBF;
-        Fri, 20 Jul 2018 12:35:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BBF1C9D;
+        Fri, 20 Jul 2018 12:35:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 89/92] arm64: KVM: Add ARCH_WORKAROUND_2 support for guests
-Date:   Fri, 20 Jul 2018 14:14:33 +0200
-Message-Id: <20180720121422.801790529@linuxfoundation.org>
+Subject: [PATCH 4.14 90/92] arm64: KVM: Handle guests ARCH_WORKAROUND_2 requests
+Date:   Fri, 20 Jul 2018 14:14:34 +0200
+Message-Id: <20180720121422.854223739@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -54,181 +53,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 55e3748e8902ff641e334226bdcb432f9a5d78d3 upstream.
+commit b4f18c063a13dfb33e3a63fe1844823e19c2265e upstream.
 
-In order to offer ARCH_WORKAROUND_2 support to guests, we need
-a bit of infrastructure.
+In order to forward the guest's ARCH_WORKAROUND_2 calls to EL3,
+add a small(-ish) sequence to handle it at EL2. Special care must
+be taken to track the state of the guest itself by updating the
+workaround flags. We also rely on patching to enable calls into
+the firmware.
 
-Let's add a flag indicating whether or not the guest uses
-SSBD mitigation. Depending on the state of this flag, allow
-KVM to disable ARCH_WORKAROUND_2 before entering the guest,
-and enable it when exiting it.
+Note that since we need to execute branches, this always executes
+after the Spectre-v2 mitigation has been applied.
 
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/kvm_mmu.h    |    5 +++++
- arch/arm64/include/asm/kvm_asm.h  |    3 +++
- arch/arm64/include/asm/kvm_host.h |    3 +++
- arch/arm64/include/asm/kvm_mmu.h  |   24 ++++++++++++++++++++++++
- arch/arm64/kvm/hyp/switch.c       |   38 ++++++++++++++++++++++++++++++++++++++
- virt/kvm/arm/arm.c                |    4 ++++
- 6 files changed, 77 insertions(+)
+ arch/arm64/kernel/asm-offsets.c |    1 +
+ arch/arm64/kvm/hyp/hyp-entry.S  |   38 +++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 38 insertions(+), 1 deletion(-)
 
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -254,6 +254,11 @@ static inline int kvm_map_vectors(void)
- 	return 0;
- }
- 
-+static inline int hyp_map_aux_data(void)
-+{
-+	return 0;
-+}
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -131,6 +131,7 @@ int main(void)
+   BLANK();
+ #ifdef CONFIG_KVM_ARM_HOST
+   DEFINE(VCPU_CONTEXT,		offsetof(struct kvm_vcpu, arch.ctxt));
++  DEFINE(VCPU_WORKAROUND_FLAGS,	offsetof(struct kvm_vcpu, arch.workaround_flags));
+   DEFINE(CPU_GP_REGS,		offsetof(struct kvm_cpu_context, gp_regs));
+   DEFINE(CPU_USER_PT_REGS,	offsetof(struct kvm_regs, regs));
+   DEFINE(CPU_FP_REGS,		offsetof(struct kvm_regs, fp_regs));
+--- a/arch/arm64/kvm/hyp/hyp-entry.S
++++ b/arch/arm64/kvm/hyp/hyp-entry.S
+@@ -106,8 +106,44 @@ el1_hvc_guest:
+ 	 */
+ 	ldr	x1, [sp]				// Guest's x0
+ 	eor	w1, w1, #ARM_SMCCC_ARCH_WORKAROUND_1
++	cbz	w1, wa_epilogue
 +
- #endif	/* !__ASSEMBLY__ */
- 
- #endif /* __ARM_KVM_MMU_H__ */
---- a/arch/arm64/include/asm/kvm_asm.h
-+++ b/arch/arm64/include/asm/kvm_asm.h
-@@ -33,6 +33,9 @@
- #define KVM_ARM64_DEBUG_DIRTY_SHIFT	0
- #define KVM_ARM64_DEBUG_DIRTY		(1 << KVM_ARM64_DEBUG_DIRTY_SHIFT)
- 
-+#define	VCPU_WORKAROUND_2_FLAG_SHIFT	0
-+#define	VCPU_WORKAROUND_2_FLAG		(_AC(1, UL) << VCPU_WORKAROUND_2_FLAG_SHIFT)
++	/* ARM_SMCCC_ARCH_WORKAROUND_2 handling */
++	eor	w1, w1, #(ARM_SMCCC_ARCH_WORKAROUND_1 ^ \
++			  ARM_SMCCC_ARCH_WORKAROUND_2)
+ 	cbnz	w1, el1_trap
+-	mov	x0, x1
 +
- /* Translate a kernel address of @sym into its equivalent linear mapping */
- #define kvm_ksym_ref(sym)						\
- 	({								\
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -210,6 +210,9 @@ struct kvm_vcpu_arch {
- 	/* Exception Information */
- 	struct kvm_vcpu_fault_info fault;
- 
-+	/* State of various workarounds, see kvm_asm.h for bit assignment */
-+	u64 workaround_flags;
-+
- 	/* Guest debug state */
- 	u64 debug_flags;
- 
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -383,5 +383,29 @@ static inline int kvm_map_vectors(void)
- }
- #endif
- 
 +#ifdef CONFIG_ARM64_SSBD
-+DECLARE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
++alternative_cb	arm64_enable_wa2_handling
++	b	wa2_end
++alternative_cb_end
++	get_vcpu_ptr	x2, x0
++	ldr	x0, [x2, #VCPU_WORKAROUND_FLAGS]
 +
-+static inline int hyp_map_aux_data(void)
-+{
-+	int cpu, err;
++	// Sanitize the argument and update the guest flags
++	ldr	x1, [sp, #8]			// Guest's x1
++	clz	w1, w1				// Murphy's device:
++	lsr	w1, w1, #5			// w1 = !!w1 without using
++	eor	w1, w1, #1			// the flags...
++	bfi	x0, x1, #VCPU_WORKAROUND_2_FLAG_SHIFT, #1
++	str	x0, [x2, #VCPU_WORKAROUND_FLAGS]
 +
-+	for_each_possible_cpu(cpu) {
-+		u64 *ptr;
++	/* Check that we actually need to perform the call */
++	hyp_ldr_this_cpu x0, arm64_ssbd_callback_required, x2
++	cbz	x0, wa2_end
 +
-+		ptr = per_cpu_ptr(&arm64_ssbd_callback_required, cpu);
-+		err = create_hyp_mappings(ptr, ptr + 1, PAGE_HYP);
-+		if (err)
-+			return err;
-+	}
-+	return 0;
-+}
-+#else
-+static inline int hyp_map_aux_data(void)
-+{
-+	return 0;
-+}
++	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
++	smc	#0
++
++	/* Don't leak data from the SMC call */
++	mov	x3, xzr
++wa2_end:
++	mov	x2, xzr
++	mov	x1, xzr
 +#endif
 +
- #endif /* __ASSEMBLY__ */
- #endif /* __ARM64_KVM_MMU_H__ */
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -15,6 +15,7 @@
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
++wa_epilogue:
++	mov	x0, xzr
+ 	add	sp, sp, #16
+ 	eret
  
-+#include <linux/arm-smccc.h>
- #include <linux/types.h>
- #include <linux/jump_label.h>
- #include <uapi/linux/psci.h>
-@@ -281,6 +282,39 @@ static void __hyp_text __skip_instr(stru
- 	write_sysreg_el2(*vcpu_pc(vcpu), elr);
- }
- 
-+static inline bool __hyp_text __needs_ssbd_off(struct kvm_vcpu *vcpu)
-+{
-+	if (!cpus_have_const_cap(ARM64_SSBD))
-+		return false;
-+
-+	return !(vcpu->arch.workaround_flags & VCPU_WORKAROUND_2_FLAG);
-+}
-+
-+static void __hyp_text __set_guest_arch_workaround_state(struct kvm_vcpu *vcpu)
-+{
-+#ifdef CONFIG_ARM64_SSBD
-+	/*
-+	 * The host runs with the workaround always present. If the
-+	 * guest wants it disabled, so be it...
-+	 */
-+	if (__needs_ssbd_off(vcpu) &&
-+	    __hyp_this_cpu_read(arm64_ssbd_callback_required))
-+		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 0, NULL);
-+#endif
-+}
-+
-+static void __hyp_text __set_host_arch_workaround_state(struct kvm_vcpu *vcpu)
-+{
-+#ifdef CONFIG_ARM64_SSBD
-+	/*
-+	 * If the guest has disabled the workaround, bring it back on.
-+	 */
-+	if (__needs_ssbd_off(vcpu) &&
-+	    __hyp_this_cpu_read(arm64_ssbd_callback_required))
-+		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 1, NULL);
-+#endif
-+}
-+
- int __hyp_text __kvm_vcpu_run(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_cpu_context *host_ctxt;
-@@ -311,6 +345,8 @@ int __hyp_text __kvm_vcpu_run(struct kvm
- 	__sysreg_restore_guest_state(guest_ctxt);
- 	__debug_restore_state(vcpu, kern_hyp_va(vcpu->arch.debug_ptr), guest_ctxt);
- 
-+	__set_guest_arch_workaround_state(vcpu);
-+
- 	/* Jump in the fire! */
- again:
- 	exit_code = __guest_enter(vcpu, host_ctxt);
-@@ -367,6 +403,8 @@ again:
- 		/* 0 falls through to be handled out of EL2 */
- 	}
- 
-+	__set_host_arch_workaround_state(vcpu);
-+
- 	if (cpus_have_const_cap(ARM64_HARDEN_BP_POST_GUEST_EXIT)) {
- 		u32 midr = read_cpuid_id();
- 
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -1411,6 +1411,10 @@ static int init_hyp_mode(void)
- 		}
- 	}
- 
-+	err = hyp_map_aux_data();
-+	if (err)
-+		kvm_err("Cannot map host auxilary data: %d\n", err);
-+
- 	return 0;
- 
- out_err:
 
 
