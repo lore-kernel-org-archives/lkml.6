@@ -3,102 +3,171 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886C5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C86ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B82A206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:17:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B82A206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 94332206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94332206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731707AbeGTOFU (ORCPT
+        id S1731825AbeGTOGU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 10:05:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42570 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730996AbeGTOFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 10:05:19 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8C1714070497;
-        Fri, 20 Jul 2018 13:17:03 +0000 (UTC)
-Received: from redhat.com (ovpn-121-184.rdu2.redhat.com [10.10.121.184])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 64B092156700;
-        Fri, 20 Jul 2018 13:16:59 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 16:16:57 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        hch@infradead.org, linuxram@us.ibm.com, haren@linux.vnet.ibm.com,
-        paulus@samba.org, srikar@linux.vnet.ibm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180720161541-mutt-send-email-mst@kernel.org>
-References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
+        Fri, 20 Jul 2018 10:06:20 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49678 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731492AbeGTOGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 10:06:20 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9635B2073D; Fri, 20 Jul 2018 15:18:02 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DBC7F20618;
+        Fri, 20 Jul 2018 15:17:51 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 15:17:51 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>
+Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
+Message-ID: <20180720151751.242d4809@bbrezillon>
+In-Reply-To: <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+        <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
+        <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
+        <20180720101206.tv7nsoanwo5ftnia@ninjato>
+        <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
+        <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
+        <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 13:17:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 20 Jul 2018 13:17:03 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 09:29:37AM +0530, Anshuman Khandual wrote:
-> This patch series is the follow up on the discussions we had before about
-> the RFC titled [RFC,V2] virtio: Add platform specific DMA API translation
-> for virito devices (https://patchwork.kernel.org/patch/10417371/). There
-> were suggestions about doing away with two different paths of transactions
-> with the host/QEMU, first being the direct GPA and the other being the DMA
-> API based translations.
-> 
-> First patch attempts to create a direct GPA mapping based DMA operations
-> structure called 'virtio_direct_dma_ops' with exact same implementation
-> of the direct GPA path which virtio core currently has but just wrapped in
-> a DMA API format. Virtio core must use 'virtio_direct_dma_ops' instead of
-> the arch default in absence of VIRTIO_F_IOMMU_PLATFORM flag to preserve the
-> existing semantics. The second patch does exactly that inside the function
-> virtio_finalize_features(). The third patch removes the default direct GPA
-> path from virtio core forcing it to use DMA API callbacks for all devices.
-> Now with that change, every device must have a DMA operations structure
-> associated with it. The fourth patch adds an additional hook which gives
-> the platform an opportunity to do yet another override if required. This
-> platform hook can be used on POWER Ultravisor based protected guests to
-> load up SWIOTLB DMA callbacks to do the required (as discussed previously
-> in the above mentioned thread how host is allowed to access only parts of
-> the guest GPA range) bounce buffering into the shared memory for all I/O
-> scatter gather buffers to be consumed on the host side.
-> 
-> Please go through these patches and review whether this approach broadly
-> makes sense. I will appreciate suggestions, inputs, comments regarding
-> the patches or the approach in general. Thank you.
+On Fri, 20 Jul 2018 13:28:10 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-I like how patches 1-3 look. Could you test performance
-with/without to see whether the extra indirection through
-use of DMA ops causes a measurable slow-down?
+> On Fri, Jul 20, 2018 at 1:13 PM, Peter Rosin <peda@axentia.se> wrote:
+> > On 2018-07-20 12:57, Arnd Bergmann wrote:  
+> >> * What I understand from reading i2c-demux-pinctrl.c, a slave device
+> >>   will only ever be observable from one master at a time, when you
+> >>   switch over, all children get removed on one master and added to
+> >>   the other one, to be probed again by their respective drivers.
+> >>   I can see this as a useful feature on i3c as well, in particular to
+> >>   deal with the situation where we have i2c slaves connected to a
+> >>   pinmux that can switch them between an i3c master and an
+> >>   i2c-only master (possibly a gpio based one). That particular use
+> >>   case however doesn't seem to fix well in the current code, which
+> >>   is structure around i3c buses.  
+> >
+> > It's pretty easy to come up with examples where this reprobing is
+> > not desirable at all. E.g. if one of the involved I2C devices is
+> > a HDMI encoder (I have a TDA19988 here) sitting in the middle of the
+> > graphics pipeline. Blink-blink on the screen because some *other*
+> > unrelated device needed to be accessed by an alternative master. Not
+> > pretty.  
+> 
+> Agreed, we definitely don't want to reprobe all devices during normal
+> operation for i3c master handover.
+> 
 
-> Anshuman Khandual (4):
->   virtio: Define virtio_direct_dma_ops structure
->   virtio: Override device's DMA OPS with virtio_direct_dma_ops selectively
->   virtio: Force virtio core to use DMA API callbacks for all virtio devices
->   virtio: Add platform specific DMA API translation for virito devices
+Re-probing would not happen, no matter the solution we choose. It's
+that, in one case, you would have X virtual/linux devices representing
+the same physical device and in the other case, you would just have
+one, and everytime a transfer is requested by the driver, the core
+would pick the appropriate master to do it (most likely the one in
+control of the bus at that time)
+
+> What is the least contrived use case that you can think of where we
+> would want to use one master to talk to one device on the bus,
+> but another master to talk to another device on the same bus?
+
+The only reason I see for this use case is when you have 2 masters,
+each of them having different capabilities:
+
+device A needs cap X
+device B need cap Y
+master N provides cap X but not cap Y
+master M provides cap Y but not cap X
+
+In this case you'd want device A to use master M and device B to use
+master N.
+
+> I still hope that we can decide that this is not a useful scenario
+> at all.
+
+I'm not saying this scenario is about to happen IRL, just describing
+one potential reason for having 2 different masters connected to the
+same bus and both exposed to Linux.
+
 > 
->  arch/powerpc/include/asm/dma-mapping.h |  6 +++
->  arch/powerpc/platforms/pseries/iommu.c |  6 +++
->  drivers/virtio/virtio.c                | 72 ++++++++++++++++++++++++++++++++++
->  drivers/virtio/virtio_pci_common.h     |  3 ++
->  drivers/virtio/virtio_ring.c           | 65 +-----------------------------
->  5 files changed, 89 insertions(+), 63 deletions(-)
+> If we find a case in which it is needed, we could still deal with it
+> like this:
+> - enumerate all slaves connected to the bus for each of the
+>   two masters
+
+That's what will happen if you don't share the same bus representation.
+
+> - mark each slave as status="enabled" in at most one of the
+>   buses, and as disabled everywhere else
+
+We shouldn't need to do that. We can just let the driver check whether
+the master provides the necessary capabilities to efficiently
+communicate with the device, and if it does not just return -ENOTSUPP
+in the ->probe() function. This way you'll have a device, but not
+driver controlling it on one bus, and on the other bus, you'll have
+another device (which points to the same physical device) this time
+with a driver attached to it.
+
+> - Use dynamic handover according to the bus protocol to
+>   switch masters without having Linux even know that the
+>   two buses are shared.
+
+Yep.
+
 > 
-> -- 
-> 2.9.3
+> That scenario would then fall completely into the "secondary
+> master handover" category but require no special handling
+> in the i3c layer beyond what we need for secondary masters
+> that are managed by something outside of the kernel's
+> score (a microcontroller, firmware, ...).
+
+I definitely agree that both options should work. It's just that having
+X times the same physical device represented in Linux seemed like a bad
+thing to me, but it's also not something I'm strongly opposed to.
+
+Regards,
+
+Boris
