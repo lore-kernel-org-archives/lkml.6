@@ -2,127 +2,148 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCFDECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7900CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76EA120652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34C9620854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 17:41:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pl5o/+18"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76EA120652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A++WD4JL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34C9620854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388164AbeGTSaV (ORCPT
+        id S2388223AbeGTSbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 14:30:21 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:37430 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731305AbeGTSaV (ORCPT
+        Fri, 20 Jul 2018 14:31:07 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46868 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731305AbeGTSbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 14:30:21 -0400
-Received: by mail-yw0-f196.google.com with SMTP id w76-v6so4631198ywg.4;
-        Fri, 20 Jul 2018 10:41:03 -0700 (PDT)
+        Fri, 20 Jul 2018 14:31:06 -0400
+Received: by mail-pg1-f194.google.com with SMTP id p23-v6so7447546pgv.13;
+        Fri, 20 Jul 2018 10:41:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cwFuLmY72f0ORSsZ9OAumVPGmBV/AQlH7QKLVGd2oNA=;
-        b=Pl5o/+18GRH9i/WZPjrEHnH3xfrmbYm7BON6a7jmSq5sF3+GRLSTqbeeqtYn+3iXLE
-         IlYlR8zTN1r4vyBHxlYGZSNvFBykG51Bnj1Sn+O0+K8r86OBfJYnEOqVAdidxjwLaSF7
-         /O+pkY8WVMC+jLpTh/8Rlpb5/1cXey/xMa7tdqZkZdF4BBlFtBeVSxecbxl+N5vgsF0/
-         Sd7Wctlehg/wrpySRhUo8TFRdgFM77UjoUIN9/gCh/EC4fNpb1s7IBFC3B0Rfd3G8pV9
-         OPQ4D1rrhh1DsyY5Bp+fe1ZZzXLgBSUx4h/Ztm2QxNWIGbG8+lkxT70JSSJXJH+UvYWf
-         sMvQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ebGDfZaJ6A5otDc0AS941+jfWKYGER9G0EGKo1WDLjc=;
+        b=A++WD4JL/Ol/70h2qZp1c9Bw94b9DN5g3el+B1Um7iEz8rFhJOX1fx99GDC1y4awXS
+         c4O9DqcVoZlB75zhDr12zur0kZzl0AC4bXVmtt6eIOFwJctyK7ftAcy3wR2MeS0FAQVF
+         JKy/kyd6xuapBodiliq1B3i9s47Ja1shXAOBPxSH8RPAXLWdTrwnJAlhKMEPv547TtlK
+         jwcl4jkKLZZP1sFKKraHjDIFkn6Ziah2beCkgPt4TRZ8U2W+P3NXSb5qlwSZfWYrT/96
+         A3H0iak/5LIw8+9xIm9CaMR/K3IpvXqCKbtVu08op+pdP8wEKI7eKZy5L8Bm5enzMxVF
+         hIqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cwFuLmY72f0ORSsZ9OAumVPGmBV/AQlH7QKLVGd2oNA=;
-        b=PNhsYo19rcTCOiJF3ftKr08PRnAEaRzk2ZtToeW4TN47PzBk+AjW7NDNmrk3uADdoF
-         fOlHl8gPqyJjhkM97M5InJWD16vHwpQezxmZepOWav1GZwtur+0cj318kGi8kX+2L1y7
-         nKe7SXGI+Xnk1EXmeOCQHebPnpnbajEt1Z1lyc5Vk3t5DtEC75ViKBLz2b9StoD0hh0r
-         s0rniSn+Q6qFz/KH6T06GdFXXt/WY9EVZXcbcmmxHVpvZvgRZyPN3/5R7DZiTmJ43iQd
-         3WewqgRsiXKv08Mbwv+kUBhdBqu+V9kwBfFYLz92LItfToqmF1yddahzsrXf4WONMOAV
-         cBSA==
-X-Gm-Message-State: AOUpUlHRo0zXnplmOjUzaBLzoKoAuN5AciCbTU5lPGz6Q2RCRfc3xriN
-        NkNNAoD5xuJ9mJr1MlXSezs=
-X-Google-Smtp-Source: AAOMgpd7HeKVK5z9xo3iYYL1DI1ScsG9/UjoUEIkcyEGmefRU3FJ/PPqhO54/eeO8dQRmM9nK7nzfA==
-X-Received: by 2002:a0d:ddc8:: with SMTP id g191-v6mr1549773ywe.145.1532108463068;
-        Fri, 20 Jul 2018 10:41:03 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:b56b])
-        by smtp.gmail.com with ESMTPSA id x69-v6sm2384166ywx.105.2018.07.20.10.41.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 10:41:02 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 10:41:00 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-Message-ID: <20180720174100.GC1934745@devbig577.frc2.facebook.com>
-References: <20180719153045.GT72677@devbig577.frc2.facebook.com>
- <de6f931d-613a-3e6a-2a4d-0e49b3bfe2e5@redhat.com>
- <20180719165201.GU72677@devbig577.frc2.facebook.com>
- <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
- <20180720114549.GY72677@devbig577.frc2.facebook.com>
- <20180720154454.GR2494@hirez.programming.kicks-ass.net>
- <20180720155613.GB1934745@devbig577.frc2.facebook.com>
- <4857a9db-ebf5-24f8-c42d-d795f5c75854@redhat.com>
- <20180720163712.GU2494@hirez.programming.kicks-ass.net>
- <8c655adc-6d9e-b767-1024-5d6941c995a9@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ebGDfZaJ6A5otDc0AS941+jfWKYGER9G0EGKo1WDLjc=;
+        b=kNei5vZTBeGjFGsvLCC//bnJgylsvRRzEIvq/AkKeaNDAfDeJFHyCoGMov0SOIp0Bd
+         LmG/yrq+Pi+nDNvC56B8MvBA9S4AKyXyw3B6oQ+w//ejRxV4bekUoKUAntARHG2UugYS
+         6dpIaOcMvMDaZGyyn3P388YWP1+ajzXrTu3ckLPqbziknCpjffEOTZK7rL/cDYcGuYGX
+         1V4DsC+l4eyTZ9cGGylp3SJfwMLUYGmcK43g4bvTLGquzmB5CdN0uWhR/ScDTP3xz+x0
+         a8rZHtYkdAzpC8XL4VyypqOVgLofOowuC8edT3PH02vkBTpgOnNXTQzivs+V87Qv4uTg
+         Nf1g==
+X-Gm-Message-State: AOUpUlHzrTBaCZULQeUsTGLF03B8PzUac+A/B1bP5PP2u8KpzZZ4sPxs
+        2Y7Pa0PPlxb3kB9dQA7Uw8tR+ghTPcWOXMWNbHY=
+X-Google-Smtp-Source: AAOMgpcQv9ekJMVPRXr3kiTrEndnimCjCntUoJrFBOws78IcXUEAFDENoQa3ZlRhTWDyDAi2O36wTxQ5vc9Sja06GHA=
+X-Received: by 2002:a63:941a:: with SMTP id m26-v6mr2909846pge.82.1532108508443;
+ Fri, 20 Jul 2018 10:41:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c655adc-6d9e-b767-1024-5d6941c995a9@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <1531756070-8560-1-git-send-email-akinobu.mita@gmail.com>
+ <1531756070-8560-2-git-send-email-akinobu.mita@gmail.com> <20180718152832.ylu6rlcsaom2q4xm@ninjato>
+In-Reply-To: <20180718152832.ylu6rlcsaom2q4xm@ninjato>
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Sat, 21 Jul 2018 02:41:37 +0900
+Message-ID: <CAC5umyig9ZTddEu7HLwnspcPqEEmRS7ac=Oszd=6dPdN1vSkfA@mail.gmail.com>
+Subject: Re: [PATCH -next v4 1/3] regmap: add SCCB support
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-media@vger.kernel.org, linux-i2c@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Peter Rosin <peda@axentia.se>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+2018=E5=B9=B47=E6=9C=8819=E6=97=A5(=E6=9C=A8) 0:28 Wolfram Sang <wsa@the-dr=
+eams.de>:
+>
+> On Tue, Jul 17, 2018 at 12:47:48AM +0900, Akinobu Mita wrote:
+> > This adds Serial Camera Control Bus (SCCB) support for regmap API that
+> > is intended to be used by some of Omnivision sensor drivers.
+> >
+> > The ov772x and ov9650 drivers are going to use this SCCB regmap API.
+> >
+> > The ov772x driver was previously only worked with the i2c controller
+> > drivers that support I2C_FUNC_PROTOCOL_MANGLING, because the ov772x
+> > device doesn't support repeated starts.  After commit 0b964d183cbf
+> > ("media: ov772x: allow i2c controllers without
+> > I2C_FUNC_PROTOCOL_MANGLING"), reading ov772x register is replaced with
+> > issuing two separated i2c messages in order to avoid repeated start.
+> > Using this SCCB regmap hides the implementation detail.
+> >
+> > The ov9650 driver also issues two separated i2c messages to read the
+> > registers as the device doesn't support repeated start.  So it can
+> > make use of this SCCB regmap.
+>
+> Cool, this series really gets better and better each time. Thank you for
+> keeping at it! And thanks to everyone for their suggestions. I really
+> like how we do not introduce a couple of i2c_sccb_* functions with a
+> need to export them. And given the nature of regmap, I'd think it should
+> be fairly easy to add support for ov2659 somewhen which has 16 bit
+> registers? Only minor nits:
 
-On Fri, Jul 20, 2018 at 01:09:23PM -0400, Waiman Long wrote:
-> On 07/20/2018 12:37 PM, Peter Zijlstra wrote:
-> > On Fri, Jul 20, 2018 at 12:19:29PM -0400, Waiman Long wrote:
-> >> I am not against the idea of making it hierarchical eventually. I am
-> >> just hoping to get thing going by merging the patchset in its current
-> >> form and then we can make it hierarchical in a followup patch.
-> > Where's the rush? Why can't we do this right in one go?
-> 
-> For me, the rush comes from RHEL8 as it is a goal to have a fully
-> functioning cgroup v2 in that release.
-> 
-> I also believe that most of the use cases of partition can be satisfied
-> with partitions at the first level children. Getting hierarchical
-> partition right may drag on for half a year, maybe, giving our history
-> with cpu v2 controller. No matter what we do to enable hierarchical
-> partition in the future, the current model of using a partition flag is
-> intuitive enough that it won't be changed at least for the first level
-> children.
+I have an ov2659 sensor.  The ov2659 driver works with i2c adapter that
+doesn't know I2C_FUNC_PROTOCOL_MANGLING, so it actually supports repeated
+start.
 
-I'm fully with Waiman here.  There are people wanting to use it and
-the part most people isn't controversial at all.  I don't see what'd
-be gained by further delaying the whole thing.  If the first level
-partition thing isn't acceptable to everyone, we can even strip down
-further.  We can get .cpus and .mems merged first, which is what most
-people want anyway.
+But ov5645, ov5647, ov7251 drivers may want to use SCCB regmap API for
+16-bit register.  Because they use i2c_master_send + i2c_master_recv
+for reading register value.
 
-Thanks.
+> > +#include <linux/regmap.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/module.h>
+>
+> Sort these?
+>
+> > +/**
+> > + * regmap_sccb_read - Read data from SCCB slave device
+> > + * @context: Device that will be interacted wit
+>
+> "with"
+>
+> > +     ret =3D __i2c_smbus_xfer(i2c->adapter, i2c->addr, i2c->flags,
+> > +                            I2C_SMBUS_WRITE, reg, I2C_SMBUS_BYTE, NULL=
+);
+>
+> Mark: __i2c_smbus_xfer is a dependency on i2c/for-next. Do you want an
+> immutable branch for that?
+>
+> > +/**
+> > + * regmap_sccb_write - Write data to SCCB slave device
+> > + * @context: Device that will be interacted wit
+>
+> "with"
+>
+> But in general (especially for the I2C parts):
+>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
--- 
-tejun
+Thank you for your reviewing.
