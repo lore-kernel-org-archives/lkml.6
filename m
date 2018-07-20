@@ -2,115 +2,106 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E614EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C88EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A83FC2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:59:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A83FC2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id D597220673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:59:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D597220673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728830AbeGTLqn convert rfc822-to-8bit (ORCPT
+        id S1730825AbeGTLrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:46:43 -0400
-Received: from eu-smtp-delivery-211.mimecast.com ([207.82.80.211]:53213 "EHLO
-        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727289AbeGTLqm (ORCPT
+        Fri, 20 Jul 2018 07:47:03 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12041 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727289AbeGTLrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:46:42 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-115-F7fa8LnjOrWsLpX9wEOGfQ-1; Fri, 20 Jul 2018 11:57:45 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
- 20 Jul 2018 11:59:25 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 20 Jul 2018 11:59:25 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Masahiro Yamada' <yamada.masahiro@socionext.com>,
-        'Michal Marek' <michal.lkml@markovi.net>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] Detect invalid .o files created by objtool.
-Thread-Topic: [PATCH] Detect invalid .o files created by objtool.
-Thread-Index: AdQgGLh7PYZxMOlYSQi/8LvLaBR9Jg==
-Date:   Fri, 20 Jul 2018 10:59:25 +0000
-Message-ID: <30f4d334645246ddb7175b601de2c502@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
+        Fri, 20 Jul 2018 07:47:03 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b51c0830000>; Fri, 20 Jul 2018 03:59:15 -0700
+Received: from HQMAIL105.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 20 Jul 2018 03:59:21 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 20 Jul 2018 03:59:21 -0700
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 20 Jul
+ 2018 10:59:21 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Fri, 20 Jul 2018 10:59:20 +0000
+Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b51c0860002>; Fri, 20 Jul 2018 03:59:20 -0700
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+CC:     Aapo Vienamo <avienamo@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 0/7] Tegra PMC pinctrl pad configuration
+Date:   Fri, 20 Jul 2018 13:59:08 +0300
+Message-ID: <1532084355-31482-1-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-X-MC-Unique: F7fa8LnjOrWsLpX9wEOGfQ-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
-The objtool code that generates to ORC unwind tables found a bug
-in libelf that causes the section headers to not be rewritten.
-The next access to the output file generates a ' File format not recognised'
-error from objdump or ld.
+The Tegra Power Management Controller (PMC) can set pad power states
+and voltage configuration. This series implements pinctrl interfaces
+for configuring said pad properties.
 
-Module compilation uses 'objdump ... | grep -q ...' and the objump
-error is treated the same as the grep not finding the required line.
-This means the build doesn't even stop.
+Changelog
+v5:
+	- Fix a typo in "soc/tegra: pmc: Remove public pad voltage APIs"
+		- 1.8 V / 3.3 V selection logic worked the wrong way
+		  around on SoCs without pmc->soc->has_impl_33v_pwr.
+v4:
+	- Revise the dt-bindings docs
+v3:
+	- Don't expose tegra_io_pad_is_powered()
+	- Remove tegra_io_pad_set_voltage() stub from pmc.h
+		- Fixes i386 build failure reported by kbuild test robot
+v2:
+	- Add Tegra186 AO_HV pad
+	- Make the IO pad tables narrower
+	- Add parens to TEGRA_IO_PAD() and TEGRA_IO_PIN_DESC()
+	- Fix a typo in the dt-bindings docs
+	- Remove old pmc pad voltage configuration APIs
+	- Check return value of tegra_io_pad_find() in
+	  tegra_io_pad_pinconf_get()/_set()
 
-Detect errors from objdump when building modules.
+Aapo Vienamo (7):
+  soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+  soc/tegra: pmc: Factor out DPD register bit calculation
+  soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+  soc/tegra: pmc: Use X macro to generate IO pad tables
+  dt-bindings: Add Tegra PMC pad configuration bindings
+  soc/tegra: pmc: Remove public pad voltage APIs
+  soc/tegra: pmc: Implement pad configuration via pinctrl
 
-Verfify (with objdump -h) that the file modified by objtool is valid.
-If invalid suggest updating libelf.so or disabling the ORC unwinder.
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 ++++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++
+ drivers/soc/tegra/pmc.c                            | 512 +++++++++++++++------
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+ include/soc/tegra/pmc.h                            |  20 +-
+ 5 files changed, 597 insertions(+), 148 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
 
-Signed-off-by: David Laight <david.laight@aculab.com>
----
- scripts/Makefile.build | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index e7889f4..200b02c 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -193,7 +193,9 @@ else
- cmd_cc_o_c = $(CC) $(c_flags) -c -o $(@D)/.tmp_$(@F) $<
- 
- cmd_modversions_c =								\
--	if $(OBJDUMP) -h $(@D)/.tmp_$(@F) | grep -q __ksymtab; then		\
-+	if ! obj_headers=$$($(OBJDUMP) -h $(@D)/.tmp_$(@F)); then		\
-+		false;								\
-+	elif echo "$obj_headers" | grep -q __ksymtab; then			\
- 		$(call cmd_gensymtypes_c,$(KBUILD_SYMTYPES),$(@:.o=.symtypes))	\
- 		    > $(@D)/.tmp_$(@F:.o=.ver);					\
- 										\
-@@ -277,7 +279,14 @@ endif
- # 'OBJECT_FILES_NON_STANDARD_foo.o := 'n': override directory skip for a file
- cmd_objtool = $(if $(patsubst y%,, \
- 	$(OBJECT_FILES_NON_STANDARD_$(basetarget).o)$(OBJECT_FILES_NON_STANDARD)n), \
--	$(__objtool_obj) $(objtool_args) "$(objtool_o)";)
-+	$(__objtool_obj) $(objtool_args) "$(objtool_o)" && { \
-+		$(OBJDUMP) -h "$(objtool_o)" >/dev/null 2>&1 || { \
-+			echo >&2 "******* objtool generated the invalid file $(objtool_o)"; \
-+			echo >&2 "******* Update libelf.so or disable the ORC unwinder"; \
-+			/bin/false; \
-+		}; \
-+	};)
-+
- objtool_obj = $(if $(patsubst y%,, \
- 	$(OBJECT_FILES_NON_STANDARD_$(basetarget).o)$(OBJECT_FILES_NON_STANDARD)n), \
- 	$(__objtool_obj))
 -- 
-1.8.1.2
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+2.7.4
 
