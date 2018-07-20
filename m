@@ -2,110 +2,131 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73795ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 781BCECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30F4020661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:04:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30F4020661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 26ECC20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:06:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="rNRndj/+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26ECC20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbeGTNw1 (ORCPT
+        id S1731336AbeGTNy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:52:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56910 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730996AbeGTNw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:52:26 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DA0AF307D86F;
-        Fri, 20 Jul 2018 13:04:15 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BC24E5C1A1;
-        Fri, 20 Jul 2018 13:04:15 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 928694BB78;
-        Fri, 20 Jul 2018 13:04:15 +0000 (UTC)
-Date:   Fri, 20 Jul 2018 09:04:15 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Luiz Capitulino <lcapitulino@redhat.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>, kwolf@redhat.com,
-        haozhong zhang <haozhong.zhang@intel.com>, jack@suse.cz,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        kvm@vger.kernel.org, riel@surriel.com, linux-nvdimm@ml01.01.org,
-        david@redhat.com, ross zwisler <ross.zwisler@intel.com>,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        hch@infradead.org, imammedo@redhat.com, mst@redhat.com,
-        niteshnarayanlal@hotmail.com, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>, nilal@redhat.com
-Message-ID: <1832644023.52851886.1532091855557.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180719084819.730b7971@doriath>
-References: <20180713075232.9575-1-pagupta@redhat.com> <20180713075232.9575-4-pagupta@redhat.com> <20180718085529.133a0a22@doriath> <367397176.52317488.1531979293251.JavaMail.zimbra@redhat.com> <20180719121635.GA28107@stefanha-x1.localdomain> <20180719084819.730b7971@doriath>
-Subject: Re: [Qemu-devel] [RFC v3] qemu: Add virtio pmem device
+        Fri, 20 Jul 2018 09:54:26 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:50690 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730183AbeGTNy0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 09:54:26 -0400
+Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
+        by mail.micronovasrl.com (Postfix) with ESMTP id 79B42B009B0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 15:06:12 +0200 (CEST)
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
+         h=content-transfer-encoding:content-language:content-type
+        :content-type:in-reply-to:mime-version:user-agent:date:date
+        :message-id:from:from:references:to:subject:subject; s=dkim; t=
+        1532091971; x=1532955972; bh=7jn3/sOfQlBRzUAuLmkj4+GboTSWI6y14K0
+        VUDUMdxI=; b=rNRndj/+Y989Sr8P+XZA1mXdD7p8naeCRX+u6adtktQ5kZrylrO
+        pnQy6m5SHtj23kw2GxUw2h4e5VoAjdrQBM7zk2cH2Ck77BeawzCQysveKOxROPER
+        btC7IH9hfS83ch/vm4IQyfRMf3zUTR/VmdIqBwJw5rNs9X1gqIFFDMuU=
+X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
+Received: from mail.micronovasrl.com ([127.0.0.1])
+        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id EFQYtI4KmZj7 for <linux-kernel@vger.kernel.org>;
+        Fri, 20 Jul 2018 15:06:11 +0200 (CEST)
+Received: from [192.168.2.133] (62-11-51-166.dialup.tiscali.it [62.11.51.166])
+        by mail.micronovasrl.com (Postfix) with ESMTPSA id 223EBB004A5;
+        Fri, 20 Jul 2018 15:06:11 +0200 (CEST)
+Subject: Re: [PATCH v9 4/4] rtc: ds1307: add frequency_test_enable sysfs
+ attribute to check tick on m41txx
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180718094006.105675-1-giulio.benetti@micronovasrl.com>
+ <20180718094006.105675-3-giulio.benetti@micronovasrl.com>
+ <CAHp75VcaALb8fYJExnZ=Ye=GcNHc3aPXgFihVK+rAu_a1A01Sg@mail.gmail.com>
+ <30d6b568-b785-ae93-9f56-d0a8b7e82901@micronovasrl.com>
+ <CAHp75VchXfm6J+PPcB8ekoXcDktsPUNok3KKBMFyyk9XV=AUyQ@mail.gmail.com>
+ <d03aec28-a33a-5a07-4305-246508185b2b@micronovasrl.com>
+ <CAHp75VdSHdtJA5E=KvkUyij8CcgpyVO1b63-XBR7MnhVeWDpWA@mail.gmail.com>
+From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <27a1d79b-7651-4896-58f7-73ff73b14c22@micronovasrl.com>
+Date:   Fri, 20 Jul 2018 15:06:10 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAHp75VdSHdtJA5E=KvkUyij8CcgpyVO1b63-XBR7MnhVeWDpWA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: it
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.65.193.70, 10.4.195.18]
-Thread-Topic: qemu: Add virtio pmem device
-Thread-Index: lg4rWpxgdnhQI+PfnM/uab2D63zWJw==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 20 Jul 2018 13:04:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> > > > > +
-> > > > > +typedef struct VirtIOPMEMresp {
-> > > > > +    int ret;
-> > > > > +} VirtIOPMEMResp;
-> > > > > +
-> > > > > +typedef struct VirtIODeviceRequest {
-> > > > > +    VirtQueueElement elem;
-> > > > > +    int fd;
-> > > > > +    VirtIOPMEM *pmem;
-> > > > > +    VirtIOPMEMResp resp;
-> > > > > +} VirtIODeviceRequest;
-> > > > > +
-> > > > > +static int worker_cb(void *opaque)
-> > > > > +{
-> > > > > +    VirtIODeviceRequest *req = opaque;
-> > > > > +    int err = 0;
-> > > > > +
-> > > > > +    /* flush raw backing image */
-> > > > > +    err = fsync(req->fd);
-> > > > > +    if (err != 0) {
-> > > > > +        err = errno;
-> > > > > +    }
-> > > > > +    req->resp.ret = err;
-> > > > 
-> > > > Host question: are you returning the guest errno code to the host?
-> > > 
-> > > No. I am returning error code from the host in-case of host fsync
-> > > failure, otherwise returning zero.
-> > 
-> > I think that's what Luiz meant.  errno constants are not portable
-> > between operating systems and architectures.  Therefore they cannot be
-> > used in external interfaces in software that expects to communicate with
-> > other systems.
+Il 20/07/2018 14:53, Andy Shevchenko ha scritto:
+> On Thu, Jul 19, 2018 at 9:19 PM, Giulio Benetti
+> <giulio.benetti@micronovasrl.com> wrote:
+>> Hi Andy,
+>>
+>> Il 18/07/2018 18:26, Andy Shevchenko ha scritto:
+>>>
+>>> On Wed, Jul 18, 2018 at 5:06 PM, Giulio Benetti
+>>> <giulio.benetti@micronovasrl.com> wrote:
+>>>
+>>>>>> +       int ret;
+>>>>>> +
+>>>>>> +       ret = kstrtobool(buf, &freq_test_en);
+>>>>>> +       if (ret == -EINVAL) {
+>>>
+>>>
+>>>>> What kind of other error code you may expect and why they are not
+>>>>> considered as no error?
+>>>
+>>>
+>>>> According to documentation, kstrtobool can only fail with -EINVAL.
+>>>> See:
+>>>> https://elixir.bootlin.com/linux/v4.18-rc5/source/lib/kstrtox.c#L332
+>>>
+>>>
+>>> That's correct. So, what do you want to show by explicitly mentioned
+>>> an error code in the condition?
+>>>
+>>
+>> So you mean I should check for negative values instead of specific error,
+>> right?
 > 
-> Oh, thanks. Only saw this email now.
+> Learn from the existing code.
 > 
-> > It will be necessary to define specific constants for virtio-pmem
-> > instead of passing errno from the host to guest.
+> As you found kstrtobool() returns either 0 (no error), or -EINVAL (the
+> only possible error code for now).
+> Checking ret for non-zero is enough.
+> Thus,
 > 
-> Yes, defining your own constants work. But I think the only fsync()
-> error that will make sense for the guest is EIO. The other errors
-> only make sense for the host.
+> if (ret) {
+>   ...
+>   return ret;
+> }
+> 
+> should do a job.
+> 
 
-Agree.
+Oh, I was pretty sure I've found an example of kstrtobool() in the way 
+I've used, instead no.
+Thanks for pointing me.
+I correct it.
 
-Thanks,
-Pankaj
+Best regards
+Giulio
