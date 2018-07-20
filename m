@@ -2,82 +2,129 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A598AECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF29ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5294920652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:16:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XT8iD52l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5294920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id AE2EE20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 16:17:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE2EE20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387884AbeGTRFD (ORCPT
+        id S2387915AbeGTRGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 13:05:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60350 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387807AbeGTRFD (ORCPT
+        Fri, 20 Jul 2018 13:06:01 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:57092 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731746AbeGTRGB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:05:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/hCaKrGcwlM/RMUZgDXtXvLke0J6eGhaagHu7P9kYkQ=; b=XT8iD52lvoFrYuPFcNwuDHOTM
-        /GvlNUUSuxU6kPM/6Eo0aN6VEl0I6SMS6uspYvvlaHBEYRGohDDpqkiCmU+v12qcRjIvHlRtOyNpG
-        z6cBC1hPBrR6Xj/gFOQ40tT6hgj4Fj0s3oZu8U+hAOv4QL6nrGjgZX8+tK9wnO5R5hHvK3j3N/BAK
-        Wbxy+PrB3xBqTN3quUDvnCgcNMXs5B0nXXppI4+e18YSbsCTsnE+KtTuij+Jt7J8x6uvM59i5TNxn
-        Z3xLmwCbusbmBy0cQllNjyZtLfHGLr3CbHWCVS7nZzylgTW/XyWfQtDh4dfzrCxhTTBqI9WDemNJX
-        zHBgMXjDg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fgY4b-0000Zl-0k; Fri, 20 Jul 2018 16:16:05 +0000
-To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] net/dsa/realtek: add MODULE_LICENSE()
-Message-ID: <3502c393-e098-241b-c361-4e5069486d71@infradead.org>
-Date:   Fri, 20 Jul 2018 09:16:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 20 Jul 2018 13:06:01 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id D4H11y01d3XaVaC014H2pJ; Fri, 20 Jul 2018 18:17:02 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fgY5V-0005wv-Sz; Fri, 20 Jul 2018 18:17:01 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fgY5V-0007lX-QW; Fri, 20 Jul 2018 18:17:01 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] iommu/ipmmu-vmsa: Fix allocation in atomic context
+Date:   Fri, 20 Jul 2018 18:16:59 +0200
+Message-Id: <20180720161659.29800-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+When attaching a device to an IOMMU group with
+CONFIG_DEBUG_ATOMIC_SLEEP=y:
 
-Add MODULE_LICENSE() to net/dsa/realtek.o to fix build warning message.
+    BUG: sleeping function called from invalid context at mm/slab.h:421
+    in_atomic(): 1, irqs_disabled(): 128, pid: 61, name: kworker/1:1
+    ...
+    Call trace:
+     ...
+     arm_lpae_alloc_pgtable+0x114/0x184
+     arm_64_lpae_alloc_pgtable_s1+0x2c/0x128
+     arm_32_lpae_alloc_pgtable_s1+0x40/0x6c
+     alloc_io_pgtable_ops+0x60/0x88
+     ipmmu_attach_device+0x140/0x334
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/net/dsa/realtek.o
+ipmmu_attach_device() takes a spinlock, while arm_lpae_alloc_pgtable()
+allocates memory using GFP_KERNEL.  Originally, the ipmmu-vmsa driver
+had its own custom page table allocation implementation using
+GFP_ATOMIC, hence the spinlock was fine.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Fix this by replacing the spinlock by a mutex, like the arm-smmu driver
+does.
+
+Fixes: f20ed39f53145e45 ("iommu/ipmmu-vmsa: Use the ARM LPAE page table allocator")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/dsa/realtek-smi.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iommu/ipmmu-vmsa.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- linux-next-20180720.orig/drivers/net/dsa/realtek-smi.c
-+++ linux-next-20180720/drivers/net/dsa/realtek-smi.c
-@@ -485,3 +485,5 @@ static struct platform_driver realtek_sm
- 	.remove = realtek_smi_remove,
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 6a0e7142f41bf667..8f54f25404456035 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -73,7 +73,7 @@ struct ipmmu_vmsa_domain {
+ 	struct io_pgtable_ops *iop;
+ 
+ 	unsigned int context_id;
+-	spinlock_t lock;			/* Protects mappings */
++	struct mutex mutex;			/* Protects mappings */
  };
- module_platform_driver(realtek_smi_driver);
-+
-+MODULE_LICENSE("GPL");
-
+ 
+ static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
+@@ -599,7 +599,7 @@ static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
+ 	if (!domain)
+ 		return NULL;
+ 
+-	spin_lock_init(&domain->lock);
++	mutex_init(&domain->mutex);
+ 
+ 	return &domain->io_domain;
+ }
+@@ -645,7 +645,6 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
+ 	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+-	unsigned long flags;
+ 	unsigned int i;
+ 	int ret = 0;
+ 
+@@ -654,7 +653,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 		return -ENXIO;
+ 	}
+ 
+-	spin_lock_irqsave(&domain->lock, flags);
++	mutex_lock(&domain->mutex);
+ 
+ 	if (!domain->mmu) {
+ 		/* The domain hasn't been used yet, initialize it. */
+@@ -678,7 +677,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 	} else
+ 		dev_info(dev, "Reusing IPMMU context %u\n", domain->context_id);
+ 
+-	spin_unlock_irqrestore(&domain->lock, flags);
++	mutex_unlock(&domain->mutex);
+ 
+ 	if (ret < 0)
+ 		return ret;
+-- 
+2.17.1
 
