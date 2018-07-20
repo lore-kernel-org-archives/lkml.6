@@ -2,159 +2,135 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34967ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 427F2ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E7620661
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 19:53:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E7620661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id DF12E20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 20:01:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="diZ4R2pd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF12E20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbeGTUnc (ORCPT
+        id S1727867AbeGTUvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 16:43:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37830 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727805AbeGTUnc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 16:43:32 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fgbTB-0002H9-Tw; Fri, 20 Jul 2018 21:53:42 +0200
-Date:   Fri, 20 Jul 2018 21:53:41 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Joerg Roedel <joro@8bytes.org>, Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 1/3] perf/core: Make sure the ring-buffer is mapped in
- all page-tables
-In-Reply-To: <alpine.DEB.2.21.1807202142130.1694@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1807202152400.1694@nanos.tec.linutronix.de>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org> <1532103744-31902-2-git-send-email-joro@8bytes.org> <CALCETrXJX8tPVgD=Ce41534uneAAobm-HyjeGwVYgJDJ_+-bDw@mail.gmail.com> <alpine.DEB.2.21.1807202126400.1694@nanos.tec.linutronix.de>
- <CALCETrW7o=s7esmE4+SxLPsLv2SvJZU6f7jfsedazZVrot2EqA@mail.gmail.com> <alpine.DEB.2.21.1807202142130.1694@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 20 Jul 2018 16:51:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727429AbeGTUvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 16:51:13 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 203CD20661;
+        Fri, 20 Jul 2018 20:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532116886;
+        bh=41Xoo+71BD8l4sJvbFH74KVX8ctiJ9NUCW6ZsEDev7c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=diZ4R2pdHL+GLr3Gfxef3usYu8I05MLZ/P+b+Ktg1NoTmtcbzNZjB78QqmcpP7Rig
+         Ol8ptak6QnlsLvVWJ3KQvub32NXeaAKnN63CzzEg4CxFQ9mVGVl9pMNP7/zd3C/OLH
+         jBg9l/tTdx/Clj/EXUgW1WLgap2TZTrXZ/E318iQ=
+Date:   Fri, 20 Jul 2018 15:01:23 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Sinan Kaya <Okaya@kernel.org>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        linux-arm-msm@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
+ reset
+Message-ID: <20180720200123.GS128988@bhelgaas-glaptop.roam.corp.google.com>
+References: <CAK9iUCM=zWexWow9TwkRfO186Hwr5WyGy0NHZF1vtXn3wbbZGQ@mail.gmail.com>
+ <12fc8de5-ff03-cb00-52cb-25a43c71d03a@codeaurora.org>
+ <20180708171418.GA11476@wunner.de>
+ <CAK9iUCMcic5mzGiT20KNxgwPo6AuajHFsoj7GOjSht5SwrQevg@mail.gmail.com>
+ <20180709160008.GA1490@wunner.de>
+ <CAK9iUCMMVR114msKiMHu7ik0VK8T5j=LAYAKsEkdnocTqkdMjQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK9iUCMMVR114msKiMHu7ik0VK8T5j=LAYAKsEkdnocTqkdMjQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018, Thomas Gleixner wrote:
-> On Fri, 20 Jul 2018, Andy Lutomirski wrote:
-> > On Fri, Jul 20, 2018 at 12:27 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > On Fri, 20 Jul 2018, Andy Lutomirski wrote:
-> > >> > On Jul 20, 2018, at 6:22 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> > >> >
-> > >> > From: Joerg Roedel <jroedel@suse.de>
-> > >> >
-> > >> > The ring-buffer is accessed in the NMI handler, so we better
-> > >> > avoid faulting on it. Sync the vmalloc range with all
-> > >> > page-tables in system to make sure everyone has it mapped.
-> > >> >
-> > >> > This fixes a WARN_ON_ONCE() that can be triggered with PTI
-> > >> > enabled on x86-32:
-> > >> >
-> > >> >    WARNING: CPU: 4 PID: 0 at arch/x86/mm/fault.c:320 vmalloc_fault+0x220/0x230
-> > >> >
-> > >> > This triggers because with PTI enabled on an PAE kernel the
-> > >> > PMDs are no longer shared between the page-tables, so the
-> > >> > vmalloc changes do not propagate automatically.
-> > >>
-> > >> It seems like it would be much more robust to fix the vmalloc_fault()
-> > >> code instead.
+On Tue, Jul 10, 2018 at 02:30:11PM -0400, Sinan Kaya wrote:
+> On Mon, Jul 9, 2018 at 12:00 PM, Lukas Wunner <lukas@wunner.de> wrote:
+> > On Mon, Jul 09, 2018 at 08:48:44AM -0600, Sinan Kaya wrote:
+> > > On 7/8/18, Lukas Wunner <lukas@wunner.de> wrote:
+> > > > On Tue, Jul 03, 2018 at 11:43:26AM -0400, Sinan Kaya wrote:
+> > > > > My solution doesn't help if link down interrupt is observed
+> > > > > before the AER or DPC services.
+> > > >
+> > > > If pciehp gets an interrupt quicker than dpc/aer, it will (at
+> > > > least with my patches) remove all devices, check if the
+> > > > presence bit is set, and if so, try to bring the slot up
+> > > > again.
 > > >
-> > > Right, but now the obvious fix for the issue at hand is this. We surely
-> > > should revisit this.
-> > 
-> > If you commit this under this reasoning, then please at least make it say:
-> > 
-> > /* XXX: The vmalloc_fault() code is buggy on PTI+PAE systems, and this
-> > is a workaround. */
-> > 
-> > Let's not have code in the kernel that pretends to make sense but is
-> > actually voodoo magic that works around bugs elsewhere.  It's no fun
-> > to maintain down the road.
+> > > Hotplug driver should only observe a link down interrupt. Link
+> > > would come up in response to a secondary bus reset initiated by
+> > > the AER driver.
+> >
+> > PCIe hotplug doesn't have separate Link Down and Link Up
+> > interrupts, there is only a Link State *Changed* event.
+> >
+> > > Can you point me to the code that would bring up the link in hp
+> > > code?
+> >
+> > I was referring to the situation with my recently posted pciehp
+> > patches applied, in particular patch [21/32] ("PCI: pciehp: Become
+> > resilient to missed events"):
+> > https://patchwork.ozlabs.org/patch/930389/
+> >
+> > When I get a presence or link changed event, I turn the slot off.
+> > That includes removing all devices in the slot.  Because even if
+> > the slot is still occupied or link is up, there was definitely a
+> > change and the safe behavior is to assume that the card in the
+> > slot is now a different one than before.
 > 
-> Fair enough. Lemme amend it. Joerg is looking into it, but I surely want to
-> get that stuff some exposure in next ASAP.
+> We do have a bit of mess unfortunately. Error handling and hotplug
+> drivers do not play nicely with each other.
+> 
+> When hotplug driver observes a link down, we are not checking if the
+> link down happened because user really wanted to remove a card or if
+> it was because it was originated by an error handling service such
+> as AER/DPC.
+> 
+> I'm thinking that we could potentially check if a hotplug event is
+> pending at the entrance of fatal error handling. If it is pending,
+> we could poll until the status bit clears. That should flush the
+> link down event.
+> 
+> Even then, link down indication of hotplug seem to turn off slot
+> power and LED.
+> 
+> If AER/DPC service runs after the hotplug driver, link won't come
+> back up as the power to the slot is turned off.
+> 
+> I'd like to hear about Bjorn's opinion before we throw something
+> else into this problem.
 
-Delta patch below.
+You guys know way more about this than I do.
 
-Thanks.
+I think the separation of AER/DPC/pciehp into separate drivers is
+somewhat artificial because there are many interdependencies.  The
+driver model doesn't apply very well because there's only one
+underlying piece of hardware, which forces us to use the portdrv as
+sort of a multiplexer.  The fact that portdrv claims these bridges
+also means normal drivers (e.g., for performance counters) can't use
+the usual model.
 
-	tglx
+All that is to say that if integrating these services more tightly
+would help solve this problem, I'd be open to that.
 
-8<-------------
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -815,8 +815,12 @@ static void rb_free_work(struct work_str
- 	vfree(base);
- 	kfree(rb);
- 
--	/* Make sure buffer is unmapped in all page-tables */
--	vmalloc_sync_all();
-+	/*
-+	 * FIXME: PAE workaround for vmalloc_fault(): Make sure buffer is
-+	 * unmapped in all page-tables.
-+	 */
-+	if (IS_ENABLED(CONFIG_X86_PAE))
-+		vmalloc_sync_all();
- }
- 
- void rb_free(struct ring_buffer *rb)
-@@ -844,11 +848,13 @@ struct ring_buffer *rb_alloc(int nr_page
- 		goto fail_all_buf;
- 
- 	/*
--	 * The buffer is accessed in NMI handlers, make sure it is
--	 * mapped in all page-tables in the system so that we don't
--	 * fault on the range in an NMI handler.
-+	 * FIXME: PAE workaround for vmalloc_fault(): The buffer is
-+	 * accessed in NMI handlers, make sure it is mapped in all
-+	 * page-tables in the system so that we don't fault on the range in
-+	 * an NMI handler.
- 	 */
--	vmalloc_sync_all();
-+	if (IS_ENABLED(CONFIG_X86_PAE))
-+		vmalloc_sync_all();
- 
- 	rb->user_page = all_buf;
- 	rb->data_pages[0] = all_buf + PAGE_SIZE;
+Bjorn
