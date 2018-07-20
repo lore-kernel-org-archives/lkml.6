@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D9D4ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB283ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50E7B20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E7B20854
+	by mail.kernel.org (Postfix) with ESMTP id 8E91B20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E91B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388503AbeGTNUN (ORCPT
+        id S2388517AbeGTNUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:20:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39824 "EHLO
+        Fri, 20 Jul 2018 09:20:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39860 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731780AbeGTNUM (ORCPT
+        with ESMTP id S1731780AbeGTNUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:20:12 -0400
+        Fri, 20 Jul 2018 09:20:14 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3BAE8BC8;
-        Fri, 20 Jul 2018 12:31:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3287DC96;
+        Fri, 20 Jul 2018 12:31:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.9 59/66] arm64: ssbd: Restore mitigation status on CPU resume
-Date:   Fri, 20 Jul 2018 14:14:16 +0200
-Message-Id: <20180720121412.041787562@linuxfoundation.org>
+Subject: [PATCH 4.9 60/66] arm64: ssbd: Introduce thread flag to control userspace mitigation
+Date:   Fri, 20 Jul 2018 14:14:17 +0200
+Message-Id: <20180720121412.160159085@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -54,94 +54,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 647d0519b53f440a55df163de21c52a8205431cc upstream.
+commit 9dd9614f5476687abbff8d4b12cd08ae70d7c2ad upstream.
 
-On a system where firmware can dynamically change the state of the
-mitigation, the CPU will always come up with the mitigation enabled,
-including when coming back from suspend.
+In order to allow userspace to be mitigated on demand, let's
+introduce a new thread flag that prevents the mitigation from
+being turned off when exiting to userspace, and doesn't turn
+it on on entry into the kernel (with the assumption that the
+mitigation is always enabled in the kernel itself).
 
-If the user has requested "no mitigation" via a command line option,
-let's enforce it by calling into the firmware again to disable it.
+This will be used by a prctl interface introduced in a later
+patch.
 
-Similarily, for a resume from hibernate, the mitigation could have
-been disabled by the boot kernel. Let's ensure that it is set
-back on in that case.
-
-Acked-by: Will Deacon <will.deacon@arm.com>
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/cpufeature.h |    6 ++++++
- arch/arm64/kernel/cpu_errata.c      |    2 +-
- arch/arm64/kernel/hibernate.c       |   11 +++++++++++
- arch/arm64/kernel/suspend.c         |    8 ++++++++
- 4 files changed, 26 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/thread_info.h |    1 +
+ arch/arm64/kernel/entry.S            |    2 ++
+ 2 files changed, 3 insertions(+)
 
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -237,6 +237,12 @@ static inline int arm64_get_ssbd_state(v
- #endif
- }
+--- a/arch/arm64/include/asm/thread_info.h
++++ b/arch/arm64/include/asm/thread_info.h
+@@ -122,6 +122,7 @@ static inline struct thread_info *curren
+ #define TIF_RESTORE_SIGMASK	20
+ #define TIF_SINGLESTEP		21
+ #define TIF_32BIT		22	/* 32bit process */
++#define TIF_SSBD		23	/* Wants SSB mitigation */
  
-+#ifdef CONFIG_ARM64_SSBD
-+void arm64_set_ssbd_mitigation(bool state);
-+#else
-+static inline void arm64_set_ssbd_mitigation(bool state) {}
-+#endif
-+
- #endif /* __ASSEMBLY__ */
- 
- #endif
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -258,7 +258,7 @@ void __init arm64_enable_wa2_handling(st
- 		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
- }
- 
--static void arm64_set_ssbd_mitigation(bool state)
-+void arm64_set_ssbd_mitigation(bool state)
- {
- 	switch (psci_ops.conduit) {
- 	case PSCI_CONDUIT_HVC:
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -308,6 +308,17 @@ int swsusp_arch_suspend(void)
- 
- 		sleep_cpu = -EINVAL;
- 		__cpu_suspend_exit();
-+
-+		/*
-+		 * Just in case the boot kernel did turn the SSBD
-+		 * mitigation off behind our back, let's set the state
-+		 * to what we expect it to be.
-+		 */
-+		switch (arm64_get_ssbd_state()) {
-+		case ARM64_SSBD_FORCE_ENABLE:
-+		case ARM64_SSBD_KERNEL:
-+			arm64_set_ssbd_mitigation(true);
-+		}
- 	}
- 
- 	local_dbg_restore(flags);
---- a/arch/arm64/kernel/suspend.c
-+++ b/arch/arm64/kernel/suspend.c
-@@ -67,6 +67,14 @@ void notrace __cpu_suspend_exit(void)
- 	 */
- 	if (hw_breakpoint_restore)
- 		hw_breakpoint_restore(cpu);
-+
-+	/*
-+	 * On resume, firmware implementing dynamic mitigation will
-+	 * have turned the mitigation on. If the user has forcefully
-+	 * disabled it, make sure their wishes are obeyed.
-+	 */
-+	if (arm64_get_ssbd_state() == ARM64_SSBD_FORCE_DISABLE)
-+		arm64_set_ssbd_mitigation(false);
- }
- 
- /*
+ #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+ #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -105,6 +105,8 @@ alternative_cb	arm64_enable_wa2_handling
+ alternative_cb_end
+ 	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
+ 	cbz	\tmp2, \targ
++	ldr	\tmp2, [tsk, #TI_FLAGS]
++	tbnz	\tmp2, #TIF_SSBD, \targ
+ 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
+ 	mov	w1, #\state
+ alternative_cb	arm64_update_smccc_conduit
 
 
