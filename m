@@ -6,99 +6,69 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C896FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123B1ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8469920673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:32:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8469920673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B9D8020673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:36:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D8020673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbeGTHSm (ORCPT
+        id S1727243AbeGTHXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 03:18:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:58428 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbeGTHSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 03:18:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6848118A;
-        Thu, 19 Jul 2018 23:32:02 -0700 (PDT)
-Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 641683F246;
-        Thu, 19 Jul 2018 23:31:59 -0700 (PDT)
-Date:   Fri, 20 Jul 2018 07:31:56 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Cc:     linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, rishabhb@codeaurora.org,
-        linux-kernel@vger.kernel.org, robh@kernel.org, hoeun.ryu@gmail.com,
-        adobriyan@gmail.com, zhizhouzhang@asrmicro.com,
-        suzuki.poulose@arm.com, james.morse@arm.com, will.deacon@arm.com,
-        catalin.marinas@arm.com, Matt Wagantall <mattw@codeaurora.org>
-Subject: Re: [PATCH] ARM64: smp: BUG() if smp_send_reschedule() is called for
- an offline cpu
-Message-ID: <20180720063156.ico2wsqc3lr2pesa@salmiak>
-References: <1532038369-5159-1-git-send-email-vnkgutta@codeaurora.org>
+        Fri, 20 Jul 2018 03:23:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60360 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727048AbeGTHXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 03:23:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ABDB6ACD8;
+        Fri, 20 Jul 2018 06:36:31 +0000 (UTC)
+Date:   Fri, 20 Jul 2018 08:36:31 +0200
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     James Smart <james.smart@broadcom.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Ewan Milne <emilne@redhat.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH 0/4] Rework NVMe abort handling
+Message-ID: <20180720063631.tn4nh2njt43u27bi@linux-x5ow.site>
+References: <20180719132838.15556-1-jthumshirn@suse.de>
+ <20180719134203.GA15212@lst.de>
+ <20180719141025.yveza2svhvc2r4lw@linux-x5ow.site>
+ <20180719142355.GA18800@lst.de>
+ <20180719143534.i36vo45lhz24xbrg@linux-x5ow.site>
+ <20180719145005.GA21000@lst.de>
+ <20180719145422.2tdrbwa34gheuam3@linux-x5ow.site>
+ <8d1ad465-c6b2-b67d-39f5-c88d849a89dd@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1532038369-5159-1-git-send-email-vnkgutta@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8d1ad465-c6b2-b67d-39f5-c88d849a89dd@broadcom.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 03:12:49PM -0700, Venkata Narendra Kumar Gutta wrote:
-> Based on the 'commit <8b775be35e41b9f> ("ARM: smp:
-> BUG() if smp_send_reschedule() is called for an offline cpu")'
+On Thu, Jul 19, 2018 at 08:04:09AM -0700, James Smart wrote:
+> Which I'm going to say no on. I originally did the abort before the reset
+> and it brought out some confusion in the reset code. Thus the existing flow
+> which just resets the controller which has to be done after the abort
+> anyway.
 
-This commit does not appear to exist in mainline. Which tree is it in?
+OK copied that.
 
-> Sending an IPI_RESCHEDULE to an offline CPU is incorrect and potentially
-> bad for both power and stability. On some sub-architectures such as MSM,
-> if a power-collapsed CPU is unexpectedly woken up by an IPI, it will be
-> begin executing without the preparations that would normally happen as
-> part of CPU_UP_PREPARE. If clocks, voltage regulators, or other hardware
-> configuration are not performed, the booting CPU may cause general
-> instability or (at best) poor power performance since the CPU would be
-> powered up but not utilized.
-> 
-> One common cause for such issues is misuse of add_timer_on() or APIs
-> such as queue_work_on() which call it. If proper precautions are not
-> taken to block hotplug while these APIs are called then a race may
-> result in IPIs being sent to CPUs that are already offline.
-> 
-> This same argument could be applied to other IPIs (with the exception
-> of IPI_WAKEUP), but the others are already restricted to only online
-> CPUs by existing mechanisms, so an explicit assertion is not useful.
-> 
-> Signed-off-by: Matt Wagantall <mattw@codeaurora.org>
-> Signed-off-by: Trilok Soni <tsoni@codeaurora.org>
-> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> ---
->  arch/arm64/kernel/smp.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> index 2faa986..5e39030 100644
-> --- a/arch/arm64/kernel/smp.c
-> +++ b/arch/arm64/kernel/smp.c
-> @@ -898,6 +898,7 @@ void handle_IPI(int ipinr, struct pt_regs *regs)
->  
->  void smp_send_reschedule(int cpu)
->  {
-> +	BUG_ON(cpu_is_offline(cpu));
->  	smp_cross_call(cpumask_of(cpu), IPI_RESCHEDULE);
->  }
-
-Is BUG_ON() appropriate?
-
-Why not WARN_ON() and return?
-
-AFAICT, arm doesn't have this logic today either.
-
-Thanks,
-Mark.
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
