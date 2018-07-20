@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61014ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9933BECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22A592084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A592084A
+	by mail.kernel.org (Postfix) with ESMTP id 57FCD2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:27:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57FCD2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387769AbeGTNPc (ORCPT
+        id S2387784AbeGTNPh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:15:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35048 "EHLO
+        Fri, 20 Jul 2018 09:15:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35058 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731708AbeGTNPc (ORCPT
+        with ESMTP id S1731662AbeGTNPh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:32 -0400
+        Fri, 20 Jul 2018 09:15:37 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B28E41C;
-        Fri, 20 Jul 2018 12:27:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB62341C;
+        Fri, 20 Jul 2018 12:27:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.4 25/31] rtlwifi: rtl8821ae: fix firmware is not ready to run
-Date:   Fri, 20 Jul 2018 14:13:55 +0200
-Message-Id: <20180720121341.060920827@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
+Subject: [PATCH 4.4 26/31] MIPS: Call dump_stack() from show_regs()
+Date:   Fri, 20 Jul 2018 14:13:56 +0200
+Message-Id: <20180720121341.095972489@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121340.158484922@linuxfoundation.org>
 References: <20180720121340.158484922@linuxfoundation.org>
@@ -51,41 +52,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ping-Ke Shih <pkshih@realtek.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit 9a98302de19991d51e067b88750585203b2a3ab6 upstream.
+commit 5a267832c2ec47b2dad0fdb291a96bb5b8869315 upstream.
 
-Without this patch, firmware will not run properly on rtl8821ae, and it
-causes bad user experience. For example, bad connection performance with
-low rate, higher power consumption, and so on.
+The generic nmi_cpu_backtrace() function calls show_regs() when a struct
+pt_regs is available, and dump_stack() otherwise. If we were to make use
+of the generic nmi_cpu_backtrace() with MIPS' current implementation of
+show_regs() this would mean that we see only register data with no
+accompanying stack information, in contrast with our current
+implementation which calls dump_stack() regardless of whether register
+state is available.
 
-rtl8821ae uses two kinds of firmwares for normal and WoWlan cases, and
-each firmware has firmware data buffer and size individually. Original
-code always overwrite size of normal firmware rtlpriv->rtlhal.fwsize, and
-this mismatch causes firmware checksum error, then firmware can't start.
+In preparation for making use of the generic nmi_cpu_backtrace() to
+implement arch_trigger_cpumask_backtrace(), have our implementation of
+show_regs() call dump_stack() and drop the explicit dump_stack() call in
+arch_dump_stack() which is invoked by arch_trigger_cpumask_backtrace().
 
-In this situation, driver gives message "Firmware is not ready to run!".
+This will allow the output we produce to remain the same after a later
+patch switches to using nmi_cpu_backtrace(). It may mean that we produce
+extra stack output in other uses of show_regs(), but this:
 
-Fixes: fe89707f0afa ("rtlwifi: rtl8821ae: Simplify loading of WOWLAN firmware")
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Stable <stable@vger.kernel.org> # 4.0+
-Reviewed-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+  1) Seems harmless.
+  2) Is good for consistency between arch_trigger_cpumask_backtrace()
+     and other users of show_regs().
+  3) Matches the behaviour of the ARM & PowerPC architectures.
+
+Marked for stable back to v4.9 as a prerequisite of the following patch
+"MIPS: Call dump_stack() from show_regs()".
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19596/
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v4.9+
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/core.c |    1 -
- 1 file changed, 1 deletion(-)
+ arch/mips/kernel/process.c |    4 ++--
+ arch/mips/kernel/traps.c   |    1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/core.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/core.c
-@@ -135,7 +135,6 @@ found_alt:
- 		       firmware->size);
- 		rtlpriv->rtlhal.wowlan_fwsize = firmware->size;
- 	}
--	rtlpriv->rtlhal.fwsize = firmware->size;
- 	release_firmware(firmware);
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -637,8 +637,8 @@ static void arch_dump_stack(void *info)
+ 
+ 	if (regs)
+ 		show_regs(regs);
+-
+-	dump_stack();
++	else
++		dump_stack();
  }
  
+ void arch_trigger_all_cpu_backtrace(bool include_self)
+--- a/arch/mips/kernel/traps.c
++++ b/arch/mips/kernel/traps.c
+@@ -344,6 +344,7 @@ static void __show_regs(const struct pt_
+ void show_regs(struct pt_regs *regs)
+ {
+ 	__show_regs((struct pt_regs *)regs);
++	dump_stack();
+ }
+ 
+ void show_registers(struct pt_regs *regs)
 
 
