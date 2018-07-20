@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D09C5ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DF2ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8318C20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8318C20652
+	by mail.kernel.org (Postfix) with ESMTP id EE9B120652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:43:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE9B120652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390165AbeGTNbL (ORCPT
+        id S2390173AbeGTNbO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:31:11 -0400
+        Fri, 20 Jul 2018 09:31:14 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:53374 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389978AbeGTNbK (ORCPT
+        with ESMTP id S2389961AbeGTNbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:31:10 -0400
+        Fri, 20 Jul 2018 09:31:11 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B8791D7D;
-        Fri, 20 Jul 2018 12:39:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73964CAF;
+        Fri, 20 Jul 2018 12:39:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.17 095/101] arm64: KVM: Add HYP per-cpu accessors
-Date:   Fri, 20 Jul 2018 14:14:41 +0200
-Message-Id: <20180720121427.252200540@linuxfoundation.org>
+Subject: [PATCH 4.17 096/101] arm64: KVM: Add ARCH_WORKAROUND_2 support for guests
+Date:   Fri, 20 Jul 2018 14:14:42 +0200
+Message-Id: <20180720121427.291521891@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121422.837870592@linuxfoundation.org>
 References: <20180720121422.837870592@linuxfoundation.org>
@@ -54,12 +54,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 85478bab409171de501b719971fd25a3d5d639f9 upstream.
+commit 55e3748e8902ff641e334226bdcb432f9a5d78d3 upstream.
 
-As we're going to require to access per-cpu variables at EL2,
-let's craft the minimum set of accessors required to implement
-reading a per-cpu variable, relying on tpidr_el2 to contain the
-per-cpu offset.
+In order to offer ARCH_WORKAROUND_2 support to guests, we need
+a bit of infrastructure.
+
+Let's add a flag indicating whether or not the guest uses
+SSBD mitigation. Depending on the state of this flag, allow
+KVM to disable ARCH_WORKAROUND_2 before entering the guest,
+and enable it when exiting it.
 
 Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
@@ -67,50 +70,183 @@ Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/kvm_asm.h |   27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ arch/arm/include/asm/kvm_mmu.h    |    5 ++++
+ arch/arm64/include/asm/kvm_asm.h  |    3 ++
+ arch/arm64/include/asm/kvm_host.h |    3 ++
+ arch/arm64/include/asm/kvm_mmu.h  |   24 +++++++++++++++++++++
+ arch/arm64/kvm/hyp/switch.c       |   42 ++++++++++++++++++++++++++++++++++++++
+ virt/kvm/arm/arm.c                |    4 +++
+ 6 files changed, 81 insertions(+)
 
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@ -335,6 +335,11 @@ static inline int kvm_map_vectors(void)
+ 	return 0;
+ }
+ 
++static inline int hyp_map_aux_data(void)
++{
++	return 0;
++}
++
+ #define kvm_phys_to_vttbr(addr)		(addr)
+ 
+ #endif	/* !__ASSEMBLY__ */
 --- a/arch/arm64/include/asm/kvm_asm.h
 +++ b/arch/arm64/include/asm/kvm_asm.h
-@@ -71,14 +71,37 @@ extern u32 __kvm_get_mdcr_el2(void);
+@@ -33,6 +33,9 @@
+ #define KVM_ARM64_DEBUG_DIRTY_SHIFT	0
+ #define KVM_ARM64_DEBUG_DIRTY		(1 << KVM_ARM64_DEBUG_DIRTY_SHIFT)
  
- extern u32 __init_stage2_translation(void);
++#define	VCPU_WORKAROUND_2_FLAG_SHIFT	0
++#define	VCPU_WORKAROUND_2_FLAG		(_AC(1, UL) << VCPU_WORKAROUND_2_FLAG_SHIFT)
++
+ /* Translate a kernel address of @sym into its equivalent linear mapping */
+ #define kvm_ksym_ref(sym)						\
+ 	({								\
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -216,6 +216,9 @@ struct kvm_vcpu_arch {
+ 	/* Exception Information */
+ 	struct kvm_vcpu_fault_info fault;
  
-+/* Home-grown __this_cpu_{ptr,read} variants that always work at HYP */
-+#define __hyp_this_cpu_ptr(sym)						\
-+	({								\
-+		void *__ptr = hyp_symbol_addr(sym);			\
-+		__ptr += read_sysreg(tpidr_el2);			\
-+		(typeof(&sym))__ptr;					\
-+	 })
++	/* State of various workarounds, see kvm_asm.h for bit assignment */
++	u64 workaround_flags;
 +
-+#define __hyp_this_cpu_read(sym)					\
-+	({								\
-+		*__hyp_this_cpu_ptr(sym);				\
-+	 })
-+
- #else /* __ASSEMBLY__ */
+ 	/* Guest debug state */
+ 	u64 debug_flags;
  
--.macro get_host_ctxt reg, tmp
--	adr_l	\reg, kvm_host_cpu_state
-+.macro hyp_adr_this_cpu reg, sym, tmp
-+	adr_l	\reg, \sym
- 	mrs	\tmp, tpidr_el2
- 	add	\reg, \reg, \tmp
- .endm
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -473,6 +473,30 @@ static inline int kvm_map_vectors(void)
+ }
+ #endif
  
-+.macro hyp_ldr_this_cpu reg, sym, tmp
-+	adr_l	\reg, \sym
-+	mrs	\tmp, tpidr_el2
-+	ldr	\reg,  [\reg, \tmp]
-+.endm
++#ifdef CONFIG_ARM64_SSBD
++DECLARE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
 +
-+.macro get_host_ctxt reg, tmp
-+	hyp_adr_this_cpu \reg, kvm_host_cpu_state, \tmp
-+.endm
++static inline int hyp_map_aux_data(void)
++{
++	int cpu, err;
 +
- .macro get_vcpu_ptr vcpu, ctxt
- 	get_host_ctxt \ctxt, \vcpu
- 	ldr	\vcpu, [\ctxt, #HOST_CONTEXT_VCPU]
++	for_each_possible_cpu(cpu) {
++		u64 *ptr;
++
++		ptr = per_cpu_ptr(&arm64_ssbd_callback_required, cpu);
++		err = create_hyp_mappings(ptr, ptr + 1, PAGE_HYP);
++		if (err)
++			return err;
++	}
++	return 0;
++}
++#else
++static inline int hyp_map_aux_data(void)
++{
++	return 0;
++}
++#endif
++
+ #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
+ 
+ #endif /* __ASSEMBLY__ */
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -15,6 +15,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <linux/arm-smccc.h>
+ #include <linux/types.h>
+ #include <linux/jump_label.h>
+ #include <uapi/linux/psci.h>
+@@ -389,6 +390,39 @@ static bool __hyp_text fixup_guest_exit(
+ 	return false;
+ }
+ 
++static inline bool __hyp_text __needs_ssbd_off(struct kvm_vcpu *vcpu)
++{
++	if (!cpus_have_const_cap(ARM64_SSBD))
++		return false;
++
++	return !(vcpu->arch.workaround_flags & VCPU_WORKAROUND_2_FLAG);
++}
++
++static void __hyp_text __set_guest_arch_workaround_state(struct kvm_vcpu *vcpu)
++{
++#ifdef CONFIG_ARM64_SSBD
++	/*
++	 * The host runs with the workaround always present. If the
++	 * guest wants it disabled, so be it...
++	 */
++	if (__needs_ssbd_off(vcpu) &&
++	    __hyp_this_cpu_read(arm64_ssbd_callback_required))
++		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 0, NULL);
++#endif
++}
++
++static void __hyp_text __set_host_arch_workaround_state(struct kvm_vcpu *vcpu)
++{
++#ifdef CONFIG_ARM64_SSBD
++	/*
++	 * If the guest has disabled the workaround, bring it back on.
++	 */
++	if (__needs_ssbd_off(vcpu) &&
++	    __hyp_this_cpu_read(arm64_ssbd_callback_required))
++		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 1, NULL);
++#endif
++}
++
+ /* Switch to the guest for VHE systems running in EL2 */
+ int kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
+ {
+@@ -409,6 +443,8 @@ int kvm_vcpu_run_vhe(struct kvm_vcpu *vc
+ 	sysreg_restore_guest_state_vhe(guest_ctxt);
+ 	__debug_switch_to_guest(vcpu);
+ 
++	__set_guest_arch_workaround_state(vcpu);
++
+ 	do {
+ 		/* Jump in the fire! */
+ 		exit_code = __guest_enter(vcpu, host_ctxt);
+@@ -416,6 +452,8 @@ int kvm_vcpu_run_vhe(struct kvm_vcpu *vc
+ 		/* And we're baaack! */
+ 	} while (fixup_guest_exit(vcpu, &exit_code));
+ 
++	__set_host_arch_workaround_state(vcpu);
++
+ 	fp_enabled = fpsimd_enabled_vhe();
+ 
+ 	sysreg_save_guest_state_vhe(guest_ctxt);
+@@ -465,6 +503,8 @@ int __hyp_text __kvm_vcpu_run_nvhe(struc
+ 	__sysreg_restore_state_nvhe(guest_ctxt);
+ 	__debug_switch_to_guest(vcpu);
+ 
++	__set_guest_arch_workaround_state(vcpu);
++
+ 	do {
+ 		/* Jump in the fire! */
+ 		exit_code = __guest_enter(vcpu, host_ctxt);
+@@ -472,6 +512,8 @@ int __hyp_text __kvm_vcpu_run_nvhe(struc
+ 		/* And we're baaack! */
+ 	} while (fixup_guest_exit(vcpu, &exit_code));
+ 
++	__set_host_arch_workaround_state(vcpu);
++
+ 	fp_enabled = __fpsimd_enabled_nvhe();
+ 
+ 	__sysreg_save_state_nvhe(guest_ctxt);
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1490,6 +1490,10 @@ static int init_hyp_mode(void)
+ 		}
+ 	}
+ 
++	err = hyp_map_aux_data();
++	if (err)
++		kvm_err("Cannot map host auxilary data: %d\n", err);
++
+ 	return 0;
+ 
+ out_err:
 
 
