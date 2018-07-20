@@ -2,119 +2,121 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0545ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D01ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B37D20833
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 693FD20833
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 03:45:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Dw73zpDu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B37D20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r3AXs4jt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693FD20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbeGTE2c (ORCPT
+        id S1727028AbeGTEbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 00:28:32 -0400
-Received: from ozlabs.org ([203.11.71.1]:58999 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725737AbeGTE2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 00:28:32 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41WxXX5Kknz9s2x;
-        Fri, 20 Jul 2018 13:42:20 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532058140;
-        bh=TSXgwUSNIf2JVvhekw6xQuY0ED1lWViLgwxL+Fhr0Xw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Dw73zpDuyi8BBWXBu0ILxtTuYq1lpkPh7Hi0wYuVIyZxUgFXGvQY/fn/HPyUZOfT3
-         VZ1M3bc4T0swUOyu4G10SGcSgRqi8pGHftSlWh45uhsJIOk0femM1m9jDApiHwIej2
-         DzQJwakaKloO7Cei7cKO0aw6LqXynRStGBuAgyJ9Qx2EFYVwmwYBupptgKvo83aCOj
-         5FT1mVDSHkfSXTbmFRPqChp4gFdaCdmN8aBUq6WeN7VPJxbBEQCIoA05Oz5Zt2iyk8
-         lgwMyivivk0gM8Va3D5O5j5TB44YdLiH6WAfzoNJrytXRvydFBH4U3Pe7aRBoxrb27
-         ssE6xTPDnADlQ==
-Date:   Fri, 20 Jul 2018 13:42:19 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Lee Jones <lee.jones@linaro.org>, Takashi Iwai <tiwai@suse.de>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: linux-next: manual merge of the mfd tree with the sound tree
-Message-ID: <20180720134219.680ae314@canb.auug.org.au>
+        Fri, 20 Jul 2018 00:31:46 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36981 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbeGTEbp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 00:31:45 -0400
+Received: by mail-oi0-f65.google.com with SMTP id k81-v6so18921687oib.4;
+        Thu, 19 Jul 2018 20:45:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ulc5nI5SdQwAV7BaCcUKXThA96wYrHpBEjuECQz1uiA=;
+        b=r3AXs4jtRtRS/dIPvqI39OifuqTrsHpS10dEqz2z3xp5jt3pOBoHiuK0dbeyxX7Dq3
+         OBxiKGfio0BOqn682GnMuikwJACucMUXvlchlxjljkWwYU4NzsDoNvYLxbjKqDo65Hn+
+         fZTT7JXKsg0BQY23kbz1xF2gj4btMTWwGf5QyMxlSMS26CtP0g7cerNTpn64kMs6Lk0B
+         tO1H1+baR4GaN/fW/LvcmsSJmTu7vmLlzVjBfQ/J5Nyo8ecEb6Udeyrf2OenTIbT92wP
+         BC+OOkrLXUXOy+f7ybaatjTNxooMC8rY1Sy0VQPhPc1oI9FqPMhtWasYREGXBmgusHtF
+         6fpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ulc5nI5SdQwAV7BaCcUKXThA96wYrHpBEjuECQz1uiA=;
+        b=ZvqXsnhTgPYZqLGEi5dTWtIIYkXaec0B8Mt7Qgg+wkxDrTNLQqwX5X7A5k6Tnhy6is
+         uw2qViuiYVd8F1w0U3Y2+QiUL9m7ztoy9712Z0dVmcrEA2enbP4AC4RoEWjnGpUBf1Vr
+         pg2uWMPk7pH0WNQmSC9gctqDmmm+Is/GDcWjSnDftlMEeM+jJ9ac7VpZ72Ah6FT+/ipk
+         8QXiOBgA3rD10iIvW/lEWc9ckL4FCFv9p3LBuh/mefT9+scqaAekmx5YenGo/8OGt636
+         D8U32iUnCW6CWvR8u003XJoTjlz1uC7hpCEBdlpBGP0wiHAiENmP4xzp5uOT3j5YkfOF
+         nRww==
+X-Gm-Message-State: AOUpUlHZKWh/3A7cHLRpOfsF0ZScJlWdjGN9EzdRMAxn9RVmAjd5pQoH
+        9Kjvf7toKKbyCJfoPZi6dsPLAPXi0tcus3Ui9pM=
+X-Google-Smtp-Source: AAOMgpfXX3psIHeM0xNbnylhRi6SzKTOMnfpXDsp/Kbz+PZQdv6TiftAqlX1tWJK/mZPFdcFWJt2W12SoWCyQbBLSmI=
+X-Received: by 2002:aca:ad4f:: with SMTP id w76-v6mr381282oie.233.1532058335566;
+ Thu, 19 Jul 2018 20:45:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5JD4bK+5wTLCMckjOCK2b9e"; protocol="application/pgp-signature"
+References: <1530598891-21370-1-git-send-email-wanpengli@tencent.com>
+ <1530598891-21370-3-git-send-email-wanpengli@tencent.com> <CALzav=fUmJZSvDgTvsB-7nyv1KiAMHgVcq-N+k0WCn3OsrVpNw@mail.gmail.com>
+In-Reply-To: <CALzav=fUmJZSvDgTvsB-7nyv1KiAMHgVcq-N+k0WCn3OsrVpNw@mail.gmail.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Fri, 20 Jul 2018 11:45:40 +0800
+Message-ID: <CANRm+Cx8qy7Ttf42zNuEPDGBc-6J1jMpe8di7UGUL2E6bxmMDg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] KVM: X86: Implement PV IPIs in linux guest
+To:     David Matlack <dmatlack@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/5JD4bK+5wTLCMckjOCK2b9e
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 20 Jul 2018 at 07:05, David Matlack <dmatlack@google.com> wrote:
+>
+> On Mon, Jul 2, 2018 at 11:23 PM Wanpeng Li <kernellwp@gmail.com> wrote:
+> >
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> >
+> > Implement paravirtual apic hooks to enable PV IPIs.
+>
+> Very cool. Thanks for working on this!
 
-Hi all,
+Thanks David!
 
-Today's linux-next merge of the mfd tree got a conflict in:
+>
+> >
+> > apic->send_IPI_mask
+> > apic->send_IPI_mask_allbutself
+> > apic->send_IPI_allbutself
+> > apic->send_IPI_all
+> >
+> > The PV IPIs supports maximal 128 vCPUs VM, it is big enough for cloud
+> > environment currently,
+>
+> From the Cloud perspective, 128 vCPUs is already obsolete. GCE's
+> n1-utlramem-160 VMs have 160 vCPUs where the maximum APIC ID is 231.
+> I'd definitely prefer an approach that scales to higher APIC IDs, like
+> Paolo's offset idea.
 
-  drivers/gpu/drm/i915/Kconfig
+Ok, I will try the offset method in next version.
 
-between commit:
+>
+> To Radim's point of real world performance testing, do you know what
+> is the primary source of multi-target IPIs? If it's TLB shootdowns we
+> might get a bigger bang for our buck with a PV TLB Shootdown.
 
-  a57942bfdd61 ("ALSA: hda: Make audio component support more generic")
+The "Function Call interrupts", there is a lot of callers for
+smp_call_function_many() except TLB Shootdowns in linux kernel which
+try to run a function on a set of other CPUs. TLB Shootdown still can
+get benefit from PV IPIs even if PV TLB Shootdown is enabled since
+IPIs should be sent to the vCPUs which are active and will incur
+vmexits. PV IPIs will benefit both vCPUs overcommit and
+non-overcommit(which PV TLB Shootdown can't help) scenarios. Btw,
+hyperv also implements PV IPIs even if PV TLB Shootdown is present.
+https://lkml.org/lkml/2018/7/3/537
 
-from the sound tree and commit:
-
-  9c229127aee2 ("drm/i915: hdmi: add CEC notifier to intel_hdmi")
-
-from the mfd tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/i915/Kconfig
-index 5c607f2c707b,2d65d567d5d1..000000000000
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@@ -23,7 -23,7 +23,8 @@@ config DRM_I91
-  	select SYNC_FILE
-  	select IOSF_MBI
-  	select CRC32
- +	select SND_HDA_I915 if SND_HDA_CORE
-+ 	select CEC_CORE if CEC_NOTIFIER
-  	help
-  	  Choose this option if you have a system that has "Intel Graphics
-  	  Media Accelerator" or "HD Graphics" integrated graphics,
-
---Sig_/5JD4bK+5wTLCMckjOCK2b9e
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltRWhsACgkQAVBC80lX
-0GyWpgf+OPe3aiUyVE8K7aSjJluHBiq3EtdDeBYh4fVkvgwCgBM4Tg/X2nrnctpk
-g2inYr6Jo0BPG009ePaYvBF/QnEYMB0CzFc5x1AZh8Xi3qaPvTpCaCCPQGdJeJPF
-Wlf/FymBUuFI+glD/g6AqXP1kbosTxzGQygxY0P1Zovo4bmy/TqEkhavhajzqd9T
-PQEvI8DdyBCPe4abwJdQRAtYTOIeCfYaa/zlBDm9Wwg4tRTTxDRCgkijvgARsT89
-3EelS7u5U16DsN6w+/sA6UDF0eaBF9nGzytYG+3l0/AQyae0WcVHPpY1TLIuMisx
-sQfYOyPWsWvjkGyH35+X5Yi18RVNlw==
-=IeSq
------END PGP SIGNATURE-----
-
---Sig_/5JD4bK+5wTLCMckjOCK2b9e--
+Regards,
+Wanpeng Li
