@@ -2,121 +2,199 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F6AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43645ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C7C320673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:32:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C7C320673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id F08C820673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 09:32:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EtalVolx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08C820673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbeGTKUM (ORCPT
+        id S1728429AbeGTKUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 06:20:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58476 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727243AbeGTKUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 06:20:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6012CAF3B;
-        Fri, 20 Jul 2018 09:32:47 +0000 (UTC)
-Subject: Re: [PATCH v3 1/7] mm, slab: combine kmalloc_caches and
- kmalloc_dma_caches
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-References: <20180718133620.6205-1-vbabka@suse.cz>
- <20180718133620.6205-2-vbabka@suse.cz>
- <20180719081020.5pl3naynwhgev6rx@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <fbd8741b-1d1d-408b-74e0-5d6e87cb1e54@suse.cz>
-Date:   Fri, 20 Jul 2018 11:30:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 20 Jul 2018 06:20:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51066 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727243AbeGTKUR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 06:20:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8+qzytnsBEglVVyNwjzyOWBLjWMNGkX4t7Jpwiaa4Gc=; b=EtalVolxoXRhMErybeMjnxWc2
+        fEjyMeUqV4/CSNF8hYLEg8duKI1EfFAfXek0D2NIYHbhDx0ufmXF1eeQYTZPhbmENWp1dFURAu6pk
+        q6ptGd/238L6YR22LZSdxRHE9cg9xa6j/yl8u+v8RaysPeImeLl/BI0VR3YfkwqjY8iMRvNialG++
+        2GCtYHOQsfCVTWG/J1WsUncudsd/ONZ6e+WFq33EgTA1U3NdP52aYL3zbgRBAKrUBR6gO7YTTDtQq
+        Lf127hG8CEnXc/wrm0G6uKaIP8Uhn/5nVEvYl+/ggBnuZl0rff7PN1zhuXCeUTdihL5hyLT/e+RyU
+        SSe/XNRPg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fgRmE-0004jT-Bi; Fri, 20 Jul 2018 09:32:42 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DA9E120289335; Fri, 20 Jul 2018 11:32:39 +0200 (CEST)
+Date:   Fri, 20 Jul 2018 11:32:39 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Rik van Riel <riel@surriel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Mike Galbraith <efault@gmx.de>,
+        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
+Message-ID: <20180720093239.GO2494@hirez.programming.kicks-ass.net>
+References: <20180716190337.26133-1-riel@surriel.com>
+ <20180716190337.26133-5-riel@surriel.com>
+ <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com>
+ <B6566AA4-2E8A-43BD-A224-0F6D4747B8FB@surriel.com>
+ <F93A3335-4830-4E36-9179-D0FA5D640C8A@amacapital.net>
+ <B976CC13-D014-433A-83DE-F8DF9AB4F421@surriel.com>
+ <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180719081020.5pl3naynwhgev6rx@techsingularity.net>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 10:10 AM, Mel Gorman wrote:
-> On Wed, Jul 18, 2018 at 03:36:14PM +0200, Vlastimil Babka wrote:
->> The kmalloc caches currently mainain separate (optional) array
->> kmalloc_dma_caches for __GFP_DMA allocations. There are tests for __GFP_DMA in
->> the allocation hotpaths. We can avoid the branches by combining kmalloc_caches
->> and kmalloc_dma_caches into a single two-dimensional array where the outer
->> dimension is cache "type". This will also allow to add kmalloc-reclaimable
->> caches as a third type.
->>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> I'm surprised there are so many kmalloc users that require the DMA zone.
-> Some of them are certainly bogus such as in drivers for archs that only
-> have one zone and is probably a reflection of the confusing naming. The
-> audit would be a mess and unrelated to the patch so for this patch;
+On Thu, Jul 19, 2018 at 09:45:47AM -0700, Andy Lutomirski wrote:
+> After some grepping, there are very few users.  The
+> only nontrivial ones are the ones in kernel/ and mm/mmu_context.c that
+> are involved in the rather complicated dance of refcounting active_mm.
 
-Yeah, there was a session about that on LSF/MM and Luis was working on
-it. One of the motivations was to get rid of the branch, so that's
-sidestepped by this patch. I would still like to not have slabinfo full
-of empty dma-kmalloc caches though :)
+Something like so should work I suppose.
 
-> Acked-by: Mel Gorman <mgorman@techsingularity.net>
-> 
+It keeps the field, but ensure that for all tasks tsk->active_mm ==
+tsk->mm. The implication is that switch_mm(.prev == NULL) should work
+(it does for x86, we don't care about @prev).
 
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index d84eafcf5e29..7bfd850c6bf7 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2780,12 +2780,8 @@ static __always_inline struct rq *
+ context_switch(struct rq *rq, struct task_struct *prev,
+ 	       struct task_struct *next, struct rq_flags *rf)
+ {
+-	struct mm_struct *mm, *oldmm;
+-
+ 	prepare_task_switch(rq, prev, next);
+ 
+-	mm = next->mm;
+-	oldmm = prev->active_mm;
+ 	/*
+ 	 * For paravirt, this is coupled with an exit in switch_to to
+ 	 * combine the page table reload and the switch backend into
+@@ -2800,16 +2796,32 @@ context_switch(struct rq *rq, struct task_struct *prev,
+ 	 * membarrier after storing to rq->curr, before returning to
+ 	 * user-space.
+ 	 */
+-	if (!mm) {
+-		next->active_mm = oldmm;
+-		mmgrab(oldmm);
+-		enter_lazy_tlb(oldmm, next);
+-	} else
+-		switch_mm_irqs_off(oldmm, mm, next);
+-
+-	if (!prev->mm) {
+-		prev->active_mm = NULL;
+-		rq->prev_mm = oldmm;
++
++	/*
++	 * kernel -> kernel   lazy + transfer active
++	 *   user -> kernel   lazy + mmgrab() active
++	 *
++	 * kernel ->   user   switch + mmdrop() active
++	 *   user ->   user   switch
++	 */
++	if (!next->mm) {				// to kernel
++		enter_lazy_tlb(prev->active_mm, next);
++
++#ifdef ARCH_NO_ACTIVE_MM
++		next->active_mm = prev->active_mm;
++		if (prev->mm)				// from user
++			mmgrab(prev->active_mm);
++#endif
++	} else {					// to user
++		switch_mm_irqs_off(prev->active_mm, next->mm, next);
++
++#ifdef ARCH_NO_ACTIVE_MM
++		if (!prev->mm) {			// from kernel
++			/* will mmdrop() in finish_task_switch(). */
++			rq->prev_mm = prev->active_mm;
++			prev->active_mm = NULL;
++		}
++#endif
+ 	}
+ 
+ 	rq->clock_update_flags &= ~(RQCF_ACT_SKIP|RQCF_REQ_SKIP);
+diff --git a/mm/mmu_context.c b/mm/mmu_context.c
+index 3e612ae748e9..770bb615d115 100644
+--- a/mm/mmu_context.c
++++ b/mm/mmu_context.c
+@@ -12,6 +12,10 @@
+ 
+ #include <asm/mmu_context.h>
+ 
++#ifndef finish_arch_post_lock_switch
++# define finish_arch_post_lock_switch()	do { } while (0)
++#endif
++
+ /*
+  * use_mm
+  *	Makes the calling kernel thread take on the specified
+@@ -33,12 +37,14 @@ void use_mm(struct mm_struct *mm)
+ 	tsk->mm = mm;
+ 	switch_mm(active_mm, mm, tsk);
+ 	task_unlock(tsk);
+-#ifdef finish_arch_post_lock_switch
+ 	finish_arch_post_lock_switch();
+-#endif
+ 
++#ifdef ARCH_NO_ACTIVE_MM
++	WARN_ON_ONCE(active_mm != NULL);
++#else
+ 	if (active_mm != mm)
+ 		mmdrop(active_mm);
++#endif
+ }
+ EXPORT_SYMBOL_GPL(use_mm);
+ 
+@@ -57,8 +63,22 @@ void unuse_mm(struct mm_struct *mm)
+ 	task_lock(tsk);
+ 	sync_mm_rss(mm);
+ 	tsk->mm = NULL;
++
++	WARN_ON_ONCE(tsk->active_mm != mm);
++
++#ifdef ARCH_NO_ACTIVE_MM
++	switch_mm(tsk->active_mm, &init_mm, tsk);
++	mmdrop(tsk->active_mm);
++	tsk->active_mm = NULL;
++#else
+ 	/* active_mm is still 'mm' */
+ 	enter_lazy_tlb(mm, tsk);
++#endif
++
+ 	task_unlock(tsk);
++
++#ifdef ARCH_NO_ACTIVE_MM
++	finish_arch_post_lock_switch();
++#endif
+ }
+ EXPORT_SYMBOL_GPL(unuse_mm);
