@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD164ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494FCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92602206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92602206B7
+	by mail.kernel.org (Postfix) with ESMTP id 062D6206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 062D6206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731578AbeGTNNg (ORCPT
+        id S1731604AbeGTNNj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:13:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34668 "EHLO
+        Fri, 20 Jul 2018 09:13:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34678 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730673AbeGTNNg (ORCPT
+        with ESMTP id S1730673AbeGTNNi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:13:36 -0400
+        Fri, 20 Jul 2018 09:13:38 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0530ABBF;
-        Fri, 20 Jul 2018 12:25:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5DF2BBD;
+        Fri, 20 Jul 2018 12:25:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 3.18 16/29] crypto: crypto4xx - fix crypto4xx_build_pdr, crypto4xx_build_sdr leak
-Date:   Fri, 20 Jul 2018 14:11:11 +0200
-Message-Id: <20180720115159.565977948@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 17/29] net: dccp: avoid crash in ccid3_hc_rx_send_feedback()
+Date:   Fri, 20 Jul 2018 14:11:12 +0200
+Message-Id: <20180720115159.599065116@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720115158.974693829@linuxfoundation.org>
 References: <20180720115158.974693829@linuxfoundation.org>
@@ -52,90 +52,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Lamparter <chunkeey@googlemail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 5d59ad6eea82ef8df92b4109615a0dde9d8093e9 upstream.
+[ Upstream commit 74174fe5634ffbf645a7ca5a261571f700b2f332 ]
 
-If one of the later memory allocations in rypto4xx_build_pdr()
-fails: dev->pdr (and/or) dev->pdr_uinfo wouldn't be freed.
+On fast hosts or malicious bots, we trigger a DCCP_BUG() which
+seems excessive.
 
-crypto4xx_build_sdr() has the same issue with dev->sdr.
+syzbot reported :
 
-Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+BUG: delta (-6195) <= 0 at net/dccp/ccids/ccid3.c:628/ccid3_hc_rx_send_feedback()
+CPU: 1 PID: 18 Comm: ksoftirqd/1 Not tainted 4.18.0-rc1+ #112
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+ ccid3_hc_rx_send_feedback net/dccp/ccids/ccid3.c:628 [inline]
+ ccid3_hc_rx_packet_recv.cold.16+0x38/0x71 net/dccp/ccids/ccid3.c:793
+ ccid_hc_rx_packet_recv net/dccp/ccid.h:185 [inline]
+ dccp_deliver_input_to_ccids+0xf0/0x280 net/dccp/input.c:180
+ dccp_rcv_established+0x87/0xb0 net/dccp/input.c:378
+ dccp_v4_do_rcv+0x153/0x180 net/dccp/ipv4.c:654
+ sk_backlog_rcv include/net/sock.h:914 [inline]
+ __sk_receive_skb+0x3ba/0xd80 net/core/sock.c:517
+ dccp_v4_rcv+0x10f9/0x1f58 net/dccp/ipv4.c:875
+ ip_local_deliver_finish+0x2eb/0xda0 net/ipv4/ip_input.c:215
+ NF_HOOK include/linux/netfilter.h:287 [inline]
+ ip_local_deliver+0x1e9/0x750 net/ipv4/ip_input.c:256
+ dst_input include/net/dst.h:450 [inline]
+ ip_rcv_finish+0x823/0x2220 net/ipv4/ip_input.c:396
+ NF_HOOK include/linux/netfilter.h:287 [inline]
+ ip_rcv+0xa18/0x1284 net/ipv4/ip_input.c:492
+ __netif_receive_skb_core+0x2488/0x3680 net/core/dev.c:4628
+ __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4693
+ process_backlog+0x219/0x760 net/core/dev.c:5373
+ napi_poll net/core/dev.c:5771 [inline]
+ net_rx_action+0x7da/0x1980 net/core/dev.c:5837
+ __do_softirq+0x2e8/0xb17 kernel/softirq.c:284
+ run_ksoftirqd+0x86/0x100 kernel/softirq.c:645
+ smpboot_thread_fn+0x417/0x870 kernel/smpboot.c:164
+ kthread+0x345/0x410 kernel/kthread.c:240
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
+Cc: dccp@vger.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/crypto/amcc/crypto4xx_core.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ net/dccp/ccids/ccid3.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/crypto/amcc/crypto4xx_core.c
-+++ b/drivers/crypto/amcc/crypto4xx_core.c
-@@ -207,7 +207,7 @@ static u32 crypto4xx_build_pdr(struct cr
- 				  dev->pdr_pa);
- 		return -ENOMEM;
- 	}
--	memset(dev->pdr, 0,  sizeof(struct ce_pd) * PPC4XX_NUM_PD);
-+	memset(dev->pdr, 0, sizeof(struct ce_pd) * PPC4XX_NUM_PD);
- 	dev->shadow_sa_pool = dma_alloc_coherent(dev->core_dev->device,
- 				   256 * PPC4XX_NUM_PD,
- 				   &dev->shadow_sa_pool_pa,
-@@ -240,13 +240,15 @@ static u32 crypto4xx_build_pdr(struct cr
- 
- static void crypto4xx_destroy_pdr(struct crypto4xx_device *dev)
- {
--	if (dev->pdr != NULL)
-+	if (dev->pdr)
- 		dma_free_coherent(dev->core_dev->device,
- 				  sizeof(struct ce_pd) * PPC4XX_NUM_PD,
- 				  dev->pdr, dev->pdr_pa);
-+
- 	if (dev->shadow_sa_pool)
- 		dma_free_coherent(dev->core_dev->device, 256 * PPC4XX_NUM_PD,
- 				  dev->shadow_sa_pool, dev->shadow_sa_pool_pa);
-+
- 	if (dev->shadow_sr_pool)
- 		dma_free_coherent(dev->core_dev->device,
- 			sizeof(struct sa_state_record) * PPC4XX_NUM_PD,
-@@ -416,12 +418,12 @@ static u32 crypto4xx_build_sdr(struct cr
- 
- static void crypto4xx_destroy_sdr(struct crypto4xx_device *dev)
- {
--	if (dev->sdr != NULL)
-+	if (dev->sdr)
- 		dma_free_coherent(dev->core_dev->device,
- 				  sizeof(struct ce_sd) * PPC4XX_NUM_SD,
- 				  dev->sdr, dev->sdr_pa);
- 
--	if (dev->scatter_buffer_va != NULL)
-+	if (dev->scatter_buffer_va)
- 		dma_free_coherent(dev->core_dev->device,
- 				  dev->scatter_buffer_size * PPC4XX_NUM_SD,
- 				  dev->scatter_buffer_va,
-@@ -1206,7 +1208,7 @@ static int __init crypto4xx_probe(struct
- 
- 	rc = crypto4xx_build_gdr(core_dev->dev);
- 	if (rc)
--		goto err_build_gdr;
-+		goto err_build_pdr;
- 
- 	rc = crypto4xx_build_sdr(core_dev->dev);
- 	if (rc)
-@@ -1248,12 +1250,11 @@ err_iomap:
- err_request_irq:
- 	irq_dispose_mapping(core_dev->irq);
- 	tasklet_kill(&core_dev->tasklet);
--	crypto4xx_destroy_sdr(core_dev->dev);
- err_build_sdr:
-+	crypto4xx_destroy_sdr(core_dev->dev);
- 	crypto4xx_destroy_gdr(core_dev->dev);
--err_build_gdr:
--	crypto4xx_destroy_pdr(core_dev->dev);
- err_build_pdr:
-+	crypto4xx_destroy_pdr(core_dev->dev);
- 	kfree(core_dev->dev);
- err_alloc_dev:
- 	kfree(core_dev);
+--- a/net/dccp/ccids/ccid3.c
++++ b/net/dccp/ccids/ccid3.c
+@@ -624,9 +624,8 @@ static void ccid3_hc_rx_send_feedback(st
+ 	case CCID3_FBACK_PERIODIC:
+ 		delta = ktime_us_delta(now, hc->rx_tstamp_last_feedback);
+ 		if (delta <= 0)
+-			DCCP_BUG("delta (%ld) <= 0", (long)delta);
+-		else
+-			hc->rx_x_recv = scaled_div32(hc->rx_bytes_recv, delta);
++			delta = 1;
++		hc->rx_x_recv = scaled_div32(hc->rx_bytes_recv, delta);
+ 		break;
+ 	default:
+ 		return;
 
 
