@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3AFECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF231ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C26E620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7700920652
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:33:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B/QaBSbJ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MM9DKpRS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26E620652
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="etwQ75iV";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DYtDboGZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7700920652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731617AbeGTOVV (ORCPT
+        id S1731774AbeGTOVZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 10:21:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36146 "EHLO
+        Fri, 20 Jul 2018 10:21:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36320 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728252AbeGTOVV (ORCPT
+        with ESMTP id S1728252AbeGTOVZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 10:21:21 -0400
+        Fri, 20 Jul 2018 10:21:25 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 72AAB60B74; Fri, 20 Jul 2018 13:33:01 +0000 (UTC)
+        id 1111F60B83; Fri, 20 Jul 2018 13:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532093581;
-        bh=bTsb19k1oII6V7/RRpXIqP+mRm+psDEvbcPjL/dr5p0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=B/QaBSbJXZuboWLYoBwspvj5/pyXHKXo2Tpzxeb4vO7HfjNqDY8FPBdJ1arVwGwdL
-         pJ5v9NazdKUf+kCTouiOCXbhpmqo3NbnvXMmrcXhWZExe57ojanaoSvm8BaR1vV6zr
-         09XmN25G18ucGi29c02uI9gqwfHceRaDoVeXxu6U=
+        s=default; t=1532093585;
+        bh=jAqF8d4rjaiF6z0DN+u9CJj2J2qIWADKazmInGPbLvI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=etwQ75iVHsiSH9gEcjB61eWnYg794eGsI0IicwK8zDr51bMST4XMP/sA2UL4AmqbZ
+         8AGu9dSrvacsOv375zrQz3eBsdvtf8ejohTB+YdNp3VWlWSTBv7R052Kift7JDSqq5
+         Lf5zyDZ+LC5oHM6eNXGaDWhPNRCb1MmI8fJIlDzo=
 Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8CA156063A;
-        Fri, 20 Jul 2018 13:32:57 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1401060B22;
+        Fri, 20 Jul 2018 13:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532093580;
-        bh=bTsb19k1oII6V7/RRpXIqP+mRm+psDEvbcPjL/dr5p0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MM9DKpRSN6gphSzgbADXLRsQp/xkHGtyAkLNPZrS0wwNYaLdsThfebHwK1SKDEt1i
-         hMytpCQwzOM+Cnx23wJ+ox5/GSkUY13LF/W4+ukKb1WdW7/lY7txfpT4rhY0geevzf
-         R89FrqmbQaE3Bu0PYGbFA4i+kr62cIuXgHjTJmQ4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8CA156063A
+        s=default; t=1532093584;
+        bh=jAqF8d4rjaiF6z0DN+u9CJj2J2qIWADKazmInGPbLvI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DYtDboGZ/IpBYhGo6AxuY14g0mZwQvZgyNUCidrIQr8P08KaC69/GO+dJ+SbPxpV6
+         Cd7r0WGxOzpoKN4bAj8yTPhsPQaTI0RJ40X5/YSpdzq6l03KkFJ4MSerjE3zVGOhhc
+         d5wLAw8UIbt+0DI4PEH3iC6kFSiP5gid/32ohceY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1401060B22
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
 From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
@@ -58,121 +58,109 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         rtatiya@codeaurora.org, hemantg@codeaurora.org,
         linux-arm-msm@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v10 0/7] Enable Bluetooth functionality for WCN3990 
-Date:   Fri, 20 Jul 2018 19:02:36 +0530
-Message-Id: <20180720133243.6851-1-bgodavar@codeaurora.org>
+Subject: [PATCH v10 1/7] dt-bindings: net: bluetooth: Add device tree bindings for QTI chip wcn3990
+Date:   Fri, 20 Jul 2018 19:02:37 +0530
+Message-Id: <20180720133243.6851-2-bgodavar@codeaurora.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180720133243.6851-1-bgodavar@codeaurora.org>
+References: <20180720133243.6851-1-bgodavar@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These patches enables Bluetooth functinalties for new Qualcomm
-Bluetooth chip wnc3990. As this is latest chip with new features, 
-along with some common features to old chip "qcom,qca6174-bt".
-we have updated names of functions that are used for both the chips 
-to keep this generic and would help in future when we would have new 
-BT SoC.
+This patch enables regulators for the Qualcomm Bluetooth wcn3990
+controller.
 
-The below are difference between new and old chips.
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes in v10:
+    * added entry for regulator currents
 
-*Power:
- *New chip: we use voltage regulators to turn on/off the chip and we 
-  must send a command on Tx line to turn on/off the chip completely.
- *Old chip: We turn on/off by setting a GPIO.
+Changes in v9:
+    * updated with latest reg handle and names.
+    * updated max-speed definition. 
 
- *Note: Turning on sequence differs between two chips.
+Changes in v8:
+    * Separated the optional entries between two chips
 
-*Firmware download:
-  Only firmware file name differ from New and Old chip.
-  
-  So we reused some functions/structure/variables which are used for old 
-  chip to New chip by generic naming (may be future chips may use same functions).
+Changes in v7:
+    * no change.
 
- * As we have multiple changes for functions names,we have tested these patches 
-   on both chips.
+Changes in v6:
 
-v10:
- * update current load with actual values of WCN3990.
- * added support  for itterative connect with BT chip if it fails to respond to the HOST.
- * Added regulator current dtbindings.
- * addressed review comments.
+    * Changed the oper-speed to max-speed.
 
-v9:
- * removed smps regs.
- * hidded flow control in respective functions.
- * moved qca_soc_ver to qca_setup
- * addressed review comments.
+Changes in v5:
+
+    * Added entry for oper-speed and init-speed.
+
+---
+ .../bindings/net/qualcomm-bluetooth.txt       | 42 ++++++++++++++++++-
+ 1 file changed, 40 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+index 0ea18a53cc29..ca04c4981048 100644
+--- a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
++++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+@@ -10,12 +10,34 @@ device the slave device is attached to.
+ Required properties:
+  - compatible: should contain one of the following:
+    * "qcom,qca6174-bt"
++   * "qcom,wcn3990-bt"
++
++Optional properties for compatible string qcom,qca6174-bt:
  
-v8:
-  * Squashed [v7 2/8] and [v7 3/8] to one patch.
-  * updated functions to set and get the UART speeds.
-  * addressed review comments.
-
-v7:
-  * Renamed all the possible function of ROME to generic.
-  * updated with review comments for hci_qca and btqca
-  * fixed kbuild errors.
-  * created wrapper functions for re-usable blocks.
+-Optional properties:
+  - enable-gpios: gpio specifier used to enable chip
+  - clocks: clock provided to the controller (SUSCLK_32KHZ)
  
-v6:
-  * Hooked up qca_power to qca_serdev.
-  * renamed all the naming inconsistency functions with qca_*
-  * leveraged common code of ROME for wcn3990.
-  * created wrapper functions for re-usable blocks.
-  * updated function of _*regulator_enable and _*regualtor_disable.  
-  * removed redundant comments and functions.
-  * add code to derive the firmware files based on ROM Version.
-  * created new patch for common function of ROME and wcn3990.
-  * enables Qualcomm chip to operate at 3.2Mbps.
-  * updated names of functions that are used for both the chips to keep this generic. 
-
-v5:
-  * updated with review comments for hci_qca and btqca
+-Example:
++Optional properties for compatible string qcom,wcn3990-bt:
++
++ - vddio-supply: Bluetooth wcn3990 VDD_IO supply regulator handle.
++ - vddxo-supply: Bluetooth wcn3990 VDD_XO supply regulator handle.
++ - vddrf-supply: Bluetooth wcn3990 VDD_RF supply regulator handle.
++ - vddch0-supply: Bluetooth wcn3990 VDD_CH0 supply regulator handle.
++
++ - If WCN3990 is connected to platform where RPMH PMIC processor is used
++   then the load values will be 1uA. if it is connected to platform where RPM
++   PMIC processor is used then load value will be 10000 uA.
++   if it is connected to different platform, where current values are fixed
++   as in data sheet then below property are not required.
++
++   - vddio-current: Bluetooth wcn3990 VDD_IO current level in uA.
++   - vddxo-current: Bluetooth wcn3990 VDD_XO current level in uA.
++   - vddrf-current: Bluetooth wcn3990 VDD_RF current level in uA.
++   - vddch0-current: Bluetooth wcn3990 VDD_CH0 current level in uA.
++
++ - max-speed: see Documentation/devicetree/bindings/serial/slave-device.txt
++
++Examples:
  
-v4:
-  * rebased all changes on top of bluetooth-next.
-  * addressed review comments.
-  * New patch created for firmware download.
-
-v3:
-  * Rebased all changes on top of bluetooth-next.
-  * dt-bindings: net: bluetooth: Add device tree bindings for QTI chip wcn3990
-    - added dt-binding snippet for bluetooth chip wcn3990.
-  * Bluetooth: Add support for wcn3990 soc.
-    - updated BT_INFO with bt_dev_info, where ever necessary.
-
-v2:
-   * Add support for wcn3990:
-    These changes are aligned as per serdev frame work.
-          We implemented these changes on top of https://patchwork.kernel.org/patch/10316093/
-        As this patch enable serdev for one of the Qualcomm BT chip.
-
-        The changes in the patch include.
-        - Adding support to voting up/down regulators for WCN3990.
-           - Bluetooth firmware download for wcn3990.
-
-  * Add device tree bindings for Atheros chips:
-          These changes are on top of https://patchwork.kernel.org/patch/10316097/.
-          - Description of device tree bindings.
-
-
-Balakrishna Godavarthi (7):
-  dt-bindings: net: bluetooth: Add device tree bindings for QTI chip
-    wcn3990
-  Bluetooth: btqca: Rename ROME specific functions to generic functions
-  Bluetooth: btqca: Redefine qca_uart_setup() to generic function.
-  Bluetooth: hci_qca: Add wrapper functions for setting UART speed
-  Bluetooth: hci_qca: Enable 3.2 Mbps operating speed.
-  Bluetooth: btqca: Add wcn3990 firmware download support.
-  Bluetooth: hci_qca: Add support for Qualcomm Bluetooth chip wcn3990
-
- .../bindings/net/qualcomm-bluetooth.txt       |  42 +-
- drivers/bluetooth/btqca.c                     | 116 ++--
- drivers/bluetooth/btqca.h                     |  23 +-
- drivers/bluetooth/hci_qca.c                   | 564 ++++++++++++++++--
- 4 files changed, 629 insertions(+), 116 deletions(-)
-
+ serial@7570000 {
+ 	label = "BT-UART";
+@@ -28,3 +50,19 @@ serial@7570000 {
+ 		clocks = <&divclk4>;
+ 	};
+ };
++
++serial@898000 {
++	bluetooth {
++		compatible = "qcom,wcn3990-bt";
++
++		vddio-supply = <&vreg_s4a_1p8>;
++		vddxo-supply = <&vreg_l7a_1p8>;
++		vddrf-supply = <&vreg_l17a_1p3>;
++		vddch0-supply = <&vreg_l25a_3p3>;
++		vddio-current = <1>;
++		vddxo-current = <1>;
++		vddrf-current = <1>;
++		vddch0-current = <1>;
++		max-speed = <3200000>;
++	};
++};
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
