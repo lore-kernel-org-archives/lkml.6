@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B288ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9428ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F3B1206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F3B1206B7
+	by mail.kernel.org (Postfix) with ESMTP id 6144D206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6144D206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389091AbeGTNY1 (ORCPT
+        id S2389115AbeGTNYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:24:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44294 "EHLO
+        Fri, 20 Jul 2018 09:24:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387890AbeGTNY0 (ORCPT
+        with ESMTP id S2387847AbeGTNYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:24:26 -0400
+        Fri, 20 Jul 2018 09:24:31 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1C23C9E;
-        Fri, 20 Jul 2018 12:33:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8CE7CCA8;
+        Fri, 20 Jul 2018 12:33:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        stable@vger.kernel.org,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.14 11/92] PCI: exynos: Fix a potential init_clk_resources NULL pointer dereference
-Date:   Fri, 20 Jul 2018 14:13:15 +0200
-Message-Id: <20180720121417.892084940@linuxfoundation.org>
+Subject: [PATCH 4.14 12/92] crypto: crypto4xx - remove bad list_del
+Date:   Fri, 20 Jul 2018 14:13:16 +0200
+Message-Id: <20180720121417.954587659@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -51,37 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaehoon Chung <jh80.chung@samsung.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
 
-commit b5d6bc90c9129279d363ccbc02ad11e7b657c0b4 upstream.
+commit a728a196d253530f17da5c86dc7dfbe58c5f7094 upstream.
 
-In order to avoid triggering a NULL pointer dereference in
-exynos_pcie_probe() a check must be put in place to detect if
-the init_clk_resources hook is initialized before calling it.
+alg entries are only added to the list, after the registration
+was successful. If the registration failed, it was never added
+to the list in the first place.
 
-Add the respective function pointer check in exynos_pcie_probe().
-
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-[lorenzo.pieralisi@arm.com: rewrote the commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/dwc/pci-exynos.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/crypto/amcc/crypto4xx_core.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/pci/dwc/pci-exynos.c
-+++ b/drivers/pci/dwc/pci-exynos.c
-@@ -695,7 +695,8 @@ static int __init exynos_pcie_probe(stru
- 			return ret;
+--- a/drivers/crypto/amcc/crypto4xx_core.c
++++ b/drivers/crypto/amcc/crypto4xx_core.c
+@@ -1033,12 +1033,10 @@ int crypto4xx_register_alg(struct crypto
+ 			break;
+ 		}
+ 
+-		if (rc) {
+-			list_del(&alg->entry);
++		if (rc)
+ 			kfree(alg);
+-		} else {
++		else
+ 			list_add_tail(&alg->entry, &sec_dev->alg_list);
+-		}
  	}
  
--	if (ep->ops && ep->ops->get_clk_resources) {
-+	if (ep->ops && ep->ops->get_clk_resources &&
-+			ep->ops->init_clk_resources) {
- 		ret = ep->ops->get_clk_resources(ep);
- 		if (ret)
- 			return ret;
+ 	return 0;
 
 
