@@ -2,126 +2,113 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2BD0ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F69ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70A222084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:00:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70A222084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8283620833
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 13:01:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="E/v79LVg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8283620833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731772AbeGTNOF (ORCPT
+        id S1731244AbeGTNNV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:14:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34762 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728252AbeGTNOE (ORCPT
+        Fri, 20 Jul 2018 09:13:21 -0400
+Received: from mail-pl0-f44.google.com ([209.85.160.44]:39847 "EHLO
+        mail-pl0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728214AbeGTNNU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:14:04 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5359BBD;
-        Fri, 20 Jul 2018 12:26:04 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 3.18 25/29] net/mlx5: Fix command interface race in polling mode
-Date:   Fri, 20 Jul 2018 14:11:20 +0200
-Message-Id: <20180720115159.880064240@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180720115158.974693829@linuxfoundation.org>
-References: <20180720115158.974693829@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 20 Jul 2018 09:13:20 -0400
+Received: by mail-pl0-f44.google.com with SMTP id m1-v6so148523plt.6
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 05:25:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ta5vvVgJCKzDuXlJlUvy8VUbe05AVTwWpPny1GjFueQ=;
+        b=E/v79LVgIFPtCR9a7ltTZg50fcH4w80p7AtMr3Kf8oZ1w0MyoN0eh0KLTDz5c5nwsE
+         q5d3orX+tdZXJPSIerUC0p4qoUigC4gY+QtfW+6oti9jLqTHHzI0M/aJh5UCQ1m6ONV4
+         NGwYsq9PnhtOnI3pW2kvdDCZUvfqq0JQxj/2wfVHz8aXFskvSxRdLBi/4y1g1fz9ORIG
+         qasWOn21PIthlHUFNat579sfK/aZ3GjbaahSm6V2IALlsVEUwcdTEe0Y7KXaBZEojYzU
+         4dnpI3msUWJ8SUsjfh2mXUjYMnFvVinLyAdLLABoz6aJ/y+I9NaCQd3A1BgApR66cSsP
+         UDOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ta5vvVgJCKzDuXlJlUvy8VUbe05AVTwWpPny1GjFueQ=;
+        b=TVxPrFUbbYUdEwe+cSN82mgWf1eAnuciKvbe6ZVzk1zmgbQH0MUHSCw3LBWtR2KtV9
+         0Skyhl/0iblnkitpCMqrc/NIQbaYpRHW92/+O9fBC/TG5/70Nyo4yxsuiho834Xus+TM
+         FGkr9a+fVKiXXFjQUNsiSRY8nNTxlJWuWW92QUXA/v5IgKeRT3SsmG1MDc8etRTrfqaD
+         x9Og7OEx5ft4memigOAVONJOkWxZB2+PCY6/r/knvbFge27QX8amTOBYP2U6nj0GYVpV
+         /5CsCkfHbNLoXtz8V3EavAWNkpTJ7n9Dx5oxBd7dnBNBxPv82xyNNeIvBdU+jQ248vsD
+         7YJA==
+X-Gm-Message-State: AOUpUlFr0nn3057xM9pHMrZSYqOmg70Q3sWnzNWFdNhX9sey+A0pqWvP
+        m3+oeGvJjdoHRbyJ3fVKs39wcQ==
+X-Google-Smtp-Source: AAOMgpc1Bm/vRE8sFeQJ3b7ntvLRiPeZdAkIkVCMB46j4QC+R8SOJuziAKzH94pdzv20eKLrbytY/g==
+X-Received: by 2002:a17:902:740b:: with SMTP id g11-v6mr1929588pll.85.1532089520849;
+        Fri, 20 Jul 2018 05:25:20 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr03-ext.fm.intel.com. [192.55.54.38])
+        by smtp.gmail.com with ESMTPSA id c2-v6sm2636735pfa.138.2018.07.20.05.25.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 05:25:19 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 8F2CE300254; Fri, 20 Jul 2018 15:25:16 +0300 (+03)
+Date:   Fri, 20 Jul 2018 15:25:16 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv5 05/19] mm/page_alloc: Handle allocation for encrypted
+ memory
+Message-ID: <20180720122516.zm35yk4r4tcy752s@kshutemo-mobl1>
+References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
+ <20180717112029.42378-6-kirill.shutemov@linux.intel.com>
+ <95ce19cb-332c-44f5-b3a1-6cfebd870127@intel.com>
+ <20180719082724.4qvfdp6q4kuhxskn@kshutemo-mobl1>
+ <b0a92a2f-cf14-c976-9fbd-fd9aa4ebcf96@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0a92a2f-cf14-c976-9fbd-fd9aa4ebcf96@intel.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jul 19, 2018 at 07:05:36AM -0700, Dave Hansen wrote:
+> On 07/19/2018 01:27 AM, Kirill A. Shutemov wrote:
+> >> What other code might need prep_encrypted_page()?
+> > 
+> > Custom pages allocators if these pages can end up in encrypted VMAs.
+> > 
+> > It this case compaction creates own pool of pages to be used for
+> > allocation during page migration.
+> 
+> OK, that makes sense.  It also sounds like some great information to add
+> near prep_encrypted_page().
 
-------------------
+Okay.
 
-From: Alex Vesker <valex@mellanox.com>
+> Do we have any ability to catch cases like this if we get them wrong, or
+> will we just silently corrupt data?
 
-[ Upstream commit d412c31dae053bf30a1bc15582a9990df297a660 ]
+I cannot come up with any reasonable way to detect this immediately.
+I'll think about this more.
 
-The command interface can work in two modes: Events and Polling.
-In the general case, each time we invoke a command, a work is
-queued to handle it.
-
-When working in events, the interrupt handler completes the
-command execution. On the other hand, when working in polling
-mode, the work itself completes it.
-
-Due to a bug in the work handler, a command could have been
-completed by the interrupt handler, while the work handler
-hasn't finished yet, causing the it to complete once again
-if the command interface mode was changed from Events to
-polling after the interrupt handler was called.
-
-mlx5_unload_one()
-        mlx5_stop_eqs()
-                // Destroy the EQ before cmd EQ
-                ...cmd_work_handler()
-                        write_doorbell()
-                        --> EVENT_TYPE_CMD
-                                mlx5_cmd_comp_handler() // First free
-                                        free_ent(cmd, ent->idx)
-                                        complete(&ent->done)
-
-        <-- mlx5_stop_eqs //cmd was complete
-                // move to polling before destroying the last cmd EQ
-                mlx5_cmd_use_polling()
-                        cmd->mode = POLL;
-
-                --> cmd_work_handler (continues)
-                        if (cmd->mode == POLL)
-                                mlx5_cmd_comp_handler() // Double free
-
-The solution is to store the cmd->mode before writing the doorbell.
-
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Signed-off-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -480,6 +480,7 @@ static void cmd_work_handler(struct work
- 	struct mlx5_core_dev *dev = container_of(cmd, struct mlx5_core_dev, cmd);
- 	struct mlx5_cmd_layout *lay;
- 	struct semaphore *sem;
-+	int cmd_mode;
- 
- 	sem = ent->page_queue ? &cmd->pages_sem : &cmd->sem;
- 	down(sem);
-@@ -513,13 +514,14 @@ static void cmd_work_handler(struct work
- 	set_signature(ent, !cmd->checksum_disabled);
- 	dump_command(dev, ent, 1);
- 	ent->ts1 = ktime_get_ns();
-+	cmd_mode = cmd->mode;
- 
- 	/* ring doorbell after the descriptor is valid */
- 	wmb();
- 	iowrite32be(1 << ent->idx, &dev->iseg->cmd_dbell);
- 	mlx5_core_dbg(dev, "write 0x%x to command doorbell\n", 1 << ent->idx);
- 	mmiowb();
--	if (cmd->mode == CMD_MODE_POLLING) {
-+	if (cmd_mode == CMD_MODE_POLLING) {
- 		poll_timeout(ent);
- 		/* make sure we read the descriptor after ownership is SW */
- 		rmb();
-
-
+-- 
+ Kirill A. Shutemov
