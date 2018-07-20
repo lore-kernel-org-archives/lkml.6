@@ -2,1350 +2,231 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAE9ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D29ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6697D206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:04:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6697D206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 22C81206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 06:04:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C81206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbeGTGvI (ORCPT
+        id S1727648AbeGTGvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 02:51:08 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:60430 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeGTGvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 02:51:07 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 04C3E200002;
-        Fri, 20 Jul 2018 07:47:11 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6F2FC200055;
-        Fri, 20 Jul 2018 07:47:10 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id C816940C72;
-        Thu, 19 Jul 2018 22:47:09 -0700 (MST)
-Received: from vinitha-OptiPlex-790.ap.freescale.net (vinitha-OptiPlex-790.ap.freescale.net [10.232.134.124])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w6K5l5gL026022;
-        Thu, 19 Jul 2018 22:47:05 -0700
-From:   Udit Agarwal <udit.agarwal@nxp.com>
-To:     dhowells@redhat.com, zohar@linux.vnet.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     sahil.malhotra@nxp.com, Udit Agarwal <udit.agarwal@nxp.com>
-Subject: [PATCH 1/2] security/keys/secure_key: Adds the secure key support based on CAAM.
-Date:   Fri, 20 Jul 2018 11:16:55 +0530
-Message-Id: <20180720054656.29143-1-udit.agarwal@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Fri, 20 Jul 2018 02:51:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34666 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726918AbeGTGvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 02:51:13 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A928A40122D4;
+        Fri, 20 Jul 2018 05:57:40 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-76.pek2.redhat.com [10.72.12.76])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 90F522156700;
+        Fri, 20 Jul 2018 05:57:32 +0000 (UTC)
+Date:   Fri, 20 Jul 2018 13:57:27 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH v11 03/15] powerpc, kexec_file: factor out memblock-based
+ arch_kexec_walk_mem()
+Message-ID: <20180720055727.GA9487@dhcp-128-65.nay.redhat.com>
+References: <20180714015223.GA2745@dhcp-128-65.nay.redhat.com>
+ <2a4ec965-5258-5835-3022-8f403a2f6bdd@arm.com>
+ <20180716122412.GA7160@dhcp-128-65.nay.redhat.com>
+ <20180717053104.GB11258@linaro.org>
+ <20180717074923.GA8591@dhcp-128-65.nay.redhat.com>
+ <20180718053818.GF11258@linaro.org>
+ <20180718061350.GA5086@dhcp-128-65.nay.redhat.com>
+ <20180718064041.GI11258@linaro.org>
+ <20180718064519.GB5324@dhcp-128-65.nay.redhat.com>
+ <20180720053333.GJ11258@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180720053333.GJ11258@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 05:57:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 20 Jul 2018 05:57:40 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Secure keys are derieved using CAAM crypto block.
+On 07/20/18 at 02:33pm, AKASHI Takahiro wrote:
+> Dave,
+> 
+> On Wed, Jul 18, 2018 at 02:45:19PM +0800, Dave Young wrote:
+> > On 07/18/18 at 03:40pm, AKASHI Takahiro wrote:
+> > > On Wed, Jul 18, 2018 at 02:13:50PM +0800, Dave Young wrote:
+> > > > Hi AKASHI,
+> > > > 
+> > > > On 07/18/18 at 02:38pm, AKASHI Takahiro wrote:
+> > > > > Dave,
+> > > > > 
+> > > > > On Tue, Jul 17, 2018 at 03:49:23PM +0800, Dave Young wrote:
+> > > > > > Hi AKASHI,
+> > > > > > On 07/17/18 at 02:31pm, AKASHI Takahiro wrote:
+> > > > > > > Hi Dave,
+> > > > > > > 
+> > > > > > > On Mon, Jul 16, 2018 at 08:24:12PM +0800, Dave Young wrote:
+> > > > > > > > On 07/16/18 at 12:04pm, James Morse wrote:
+> > > > > > > > > Hi Dave,
+> > > > > > > > > 
+> > > > > > > > > On 14/07/18 02:52, Dave Young wrote:
+> > > > > > > > > > On 07/11/18 at 04:41pm, AKASHI Takahiro wrote:
+> > > > > > > > > >> Memblock list is another source for usable system memory layout.
+> > > > > > > > > >> So powerpc's arch_kexec_walk_mem() is moved to kexec_file.c so that
+> > > > > > > > > >> other memblock-based architectures, particularly arm64, can also utilise
+> > > > > > > > > >> it. A moved function is now renamed to kexec_walk_memblock() and merged
+> > > > > > > > > >> into the existing arch_kexec_walk_mem() for general use, either resource
+> > > > > > > > > >> list or memblock list.
+> > > > > > > > > >>
+> > > > > > > > > >> A consequent function will not work for kdump with memblock list, but
+> > > > > > > > > >> this will be fixed in the next patch.
+> > > > > > > > > 
+> > > > > > > > > >> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > > > > > > > > 
+> > > > > > > > > >> @@ -513,6 +563,10 @@ static int locate_mem_hole_callback(struct resource *res, void *arg)
+> > > > > > > > > >>  int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > > > > > > > > >>  			       int (*func)(struct resource *, void *))
+> > > > > > > > > >>  {
+> > > > > > > > > >> +	if (IS_ENABLED(CONFIG_HAVE_MEMBLOCK) &&
+> > > > > > > > > >> +			!IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK))
+> > > > > > > > > >> +		return kexec_walk_memblock(kbuf, func);
+> > > > > > > > > > 
+> > > > > > > > > > AKASHI, I'm not sure if this works on all arches, for example I chekced
+> > > > > > > > > > the .config on my Nokia N900 kernel tree, there is HAVE_MEMBLOCK=y and
+> > > > > > > > > > no CONFIG_ARCH_DISCARD_MEMBLOCK, in 32bit arm code no arch_kexec_walk_mem()
+> > > > > > > > > By doesn't work you mean it's a change in behaviour?
+> > > > > > > > > I think this is fine because 32bit arm doesn't support KEXEC_FILE, (this file is
+> > > > > > > > > kexec_file specific right?).
+> > > > > > > > 
+> > > > > > > > Ah, replied on a train, I forgot this is only for kexec_file, sorry
+> > > > > > > > about that.  Please ignore the comment.
+> > > > > > > > 
+> > > > > > > > But since we have a weak function arch_kexec_walk_mem, adding another
+> > > > > > > > condition branch within this weak function looks not good.
+> > > > > > > > Something like below would be better:
+> > > > > > > 
+> > > > > > > I see your concern here, but
+> > > > > > > 
+> > > > > > > 
+> > > > > > > > int kexec_locate_mem_hole(struct kexec_buf *kbuf)
+> > > > > > > > {
+> > > > > > > >         int ret;
+> > > > > > > > 
+> > > > > > > > 	+ if use memblock
+> > > > > > > > 	+	ret = kexec_walk_memblock()
+> > > > > > > > 	+ else
+> > > > > > > >         	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
+> > > > > > > > 
+> > > > > > > >         return ret == 1 ? 0 : -EADDRNOTAVAIL;
+> > > > > > > > }
+> > > > > > > 
+> > > > > > > what if yet another architecture comes to kexec_file and wanna
+> > > > > > > take a third approach? How can it override those functions?
+> > > > > > > Depending on kernel configuration, it might re-define either
+> > > > > > > kexec_walk_memblock() or arch_kexec_walk_mem(). It sounds weird to me.
+> > > > > > 
+> > > > > > I also feel this weird, but it is slightly better because currently no
+> > > > > > user need another overriding requirement, and I feel it is not expected to have in
+> > > > > > the future for the memblock use.
+> > > > > > 
+> > > > > > Rethinking about this issue, we can just remove the weak function and
+> > > > > > just use general function.
+> > > > > 
+> > > > > Do you really want to remove "weak" attribute?
+> > > > > 
+> > > > > > Currently with your patch applied only s390 use arch_kexec_walk_mem like
+> > > > > > below:
+> > > > > > /*
+> > > > > >  * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
+> > > > > >  * and provide kbuf->mem by hand.
+> > > > > >  */
+> > > > > > int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > > > > >                         int (*func)(struct resource *, void *))
+> > > > > > {
+> > > > > >         return 1;
+> > > > > > }
+> > > > > > 
+> > > > > > AFAIK, all other users initialize kbuf->mem as NULL, so we can check
+> > > > > 
+> > > > > As a matter of fact, nobody initializes kbuf->mem before calling
+> > > > > kexec_add_buffer (in turn, kexec_locate_mem_hole()).
+> > > > 
+> > > > Not sure we understand each other..
+> > > > Let's take an example in arch/x86/kernel/kexec-bzimage64.c:
+> > > > bzImage64_load() :
+> > > > 	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
+> > > > 				.top_down = true };
+> > > > 
+> > > > Except the three fields above other members will be initialized as zero
+> > > > when compiling including the kbuf->mem
+> > > 
+> > > Ah, you're right.
+> > > (My armr64 patch doesn't use struct initializer, though.)
+> > > 
+> > > > > 
+> > > > > > kbuf->mem in int kexec_locate_mem_hole:
+> > > > > > 
+> > > > > > if (kbuf->mem)
+> > > > > > 	return 0;
+> > > > > > 
+> > > > > > if use memblock
+> > > > > > 	kexec_walk_memblock
+> > > > > > else
+> > > > > > 	kexec_walk_mem
+> > > > 
+> > > > kexec_walk_resource will be better than kexec_walk_mem
+> > > > 
+> > > > > 
+> > > > > I think that your solution will work for existing architectures
+> > > > > with appropriate patches, but to take your approach, as I said above,
+> > > > > we will have to modify every call site on all kexec_file-capable architectures.
+> > > > > 
+> > > > > If this is what you expect, I will work on it, but I don't think
+> > > > > that it would be a better idea.
+> > > 
+> > > So you would expect me to modify my own arm64 code as well as s390.
+> > 
+> > Yes :)  But I had not get time to read all your patches so I was not
+> > aware the struct initialization in arm64 code so I assumed only s390
+> > need a change..
+> 
+> Okay, but I don't want to mix cross-arch changes into a single patch,
+> prefer to leave the current patch as it is and add an additional patch
+> as you suggested here.
+Hi AKASHI,
 
-Secure keys derieved are the random number symmetric keys from CAAM.
-Blobs corresponding to the key are formed using CAAM. User space
-will only be able to view the blob of the key.
+Maybe add another patch to drop s390 walk function first, then follow
+with this patch with the modification about common code restructure.
 
-Signed-off-by: Udit Agarwal <udit.agarwal@nxp.com>
-Reviewed-by: Sahil Malhotra <sahil.malhotra@nxp.com>
----
- Documentation/security/keys/secure-key.rst |  67 +++
- MAINTAINERS                                |  11 +
- include/keys/secure-type.h                 |  33 ++
- security/keys/Kconfig                      |  11 +
- security/keys/Makefile                     |   3 +
- security/keys/secure_key.c                 | 339 ++++++++++++
- security/keys/securekey_desc.c             | 606 +++++++++++++++++++++
- security/keys/securekey_desc.h             | 141 +++++
- 8 files changed, 1211 insertions(+)
- create mode 100644 Documentation/security/keys/secure-key.rst
- create mode 100644 include/keys/secure-type.h
- create mode 100644 security/keys/secure_key.c
- create mode 100644 security/keys/securekey_desc.c
- create mode 100644 security/keys/securekey_desc.h
+Is this better? For example:
+03/15 s390, drop s390 arch_kexec_mem_walk
+04/15 powerpc, kexec_file: factor out memblock-based arch_kexec_walk_mem
+> 
+> Is that OK for you?
+> 
+> Thanks,
+> -Takahiro AKASHI
+> 
+> 
+> > Thanks
+> > Dave
 
-diff --git a/Documentation/security/keys/secure-key.rst b/Documentation/security/keys/secure-key.rst
-new file mode 100644
-index 000000000000..0fc3367b00f8
---- /dev/null
-+++ b/Documentation/security/keys/secure-key.rst
-@@ -0,0 +1,67 @@
-+==========
-+Secure Key
-+==========
-+
-+Secure key is the new type added to kernel key ring service.
-+Secure key is a symmetric type key of minimum length 32 bytes
-+and with maximum possible length to be 128 bytes. It is produced
-+in kernel using the CAAM crypto engine. Userspace can only see
-+the blob for the corresponding key. All the blobs are displayed
-+or loaded in hex ascii.
-+
-+Secure key can only be created on platforms which supports CAAM
-+hardware block. Secure key can also be used as a master key to
-+create the encrypted keys along with the existing key types in
-+kernel.
-+
-+Secure key uses CAAM hardware to generate the key and blobify its
-+content for userspace. Generated blobs are tied up with the hardware
-+secret key stored in CAAM, hence the same blob will not be able to
-+de-blobify with the different secret key on another machine.
-+
-+Usage::
-+
-+	keyctl add secure <name> "new <keylen>" <ring>
-+	keyctl load secure <name> "load <hex_blob>" <ring>
-+	keyctl print <key_id>
-+
-+"keyctl add secure" option will create the random data of the
-+specified key len using CAAM and store it as a key in kernel.
-+Key contents will be displayed as blobs to the user in hex ascii.
-+User can input key len from 32 bytes to 128 bytes.
-+
-+"keyctl load secure" option will load the blob contents. In kernel,
-+key will be deirved using input blob and CAAM, along with the secret
-+key stored in CAAM.
-+
-+"keyctl print" will return the hex string of the blob corresponding to
-+key_id. Returned blob will be of key_len + 48 bytes. Extra 48 bytes are
-+the header bytes added by the CAAM.
-+
-+Example of secure key usage::
-+
-+1. Create the secure key with name kmk-master of length 32 bytes::
-+
-+	$ keyctl add secure kmk-master "new 32" @u
-+	46001928
-+
-+	$keyctl show
-+	Session Keyring
-+	1030783626 --alswrv      0 65534  keyring: _uid_ses.0
-+	 695927745 --alswrv      0 65534   \_ keyring: _uid.0
-+	  46001928 --als-rv      0     0       \_ secure: kmk-master
-+
-+2. Print the blob contents for the kmk-master key::
-+
-+	$ keyctl print 46001928
-+	d9743445b640f3d59c1670dddc0bc9c2
-+	34fc9aab7dd05c965e6120025012f029b
-+	07faa4776c4f6ed02899e35a135531e9a
-+	6e5c2b51132f9d5aef28f68738e658296
-+	3fe583177cfe50d2542b659a13039
-+
-+	$ keyctl pipe 46001928 > secure_key.blob
-+
-+3. Load the blob in the user key ring::
-+
-+	$ keyctl load secure kmk-master "load 'cat secure_key.blob'" @u
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9fd5e8808208..654be2ee4b0a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7939,6 +7939,17 @@ F:	include/keys/trusted-type.h
- F:	security/keys/trusted.c
- F:	security/keys/trusted.h
- 
-+KEYS-SECURE
-+M:	Udit Agarwal <udit.agarwal@nxp.com>
-+R:	Sahil Malhotra <sahil.malhotra@nxp.com>
-+L:	linux-security-module@vger.kernel.org
-+L:	keyrings@vger.kernel.org
-+S:	Supported
-+F:	include/keys/secure-type.h
-+F:	security/keys/secure_key.c
-+F:	security/keys/securekey_desc.c
-+F:	security/keys/securekey_desc.h
-+
- KEYS/KEYRINGS:
- M:	David Howells <dhowells@redhat.com>
- L:	keyrings@vger.kernel.org
-diff --git a/include/keys/secure-type.h b/include/keys/secure-type.h
-new file mode 100644
-index 000000000000..5b7a5f144e41
---- /dev/null
-+++ b/include/keys/secure-type.h
-@@ -0,0 +1,33 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 NXP.
-+ *
-+ */
-+
-+#ifndef _KEYS_SECURE_TYPE_H
-+#define _KEYS_SECURE_TYPE_H
-+
-+#include <linux/key.h>
-+#include <linux/rcupdate.h>
-+
-+/* Minimum key size to be used is 32 bytes and maximum key size fixed
-+ * is 128 bytes.
-+ * Blob size to be kept is Maximum key size + blob header added by CAAM.
-+ */
-+
-+#define MIN_KEY_SIZE                    32
-+#define MAX_KEY_SIZE                    128
-+#define BLOB_HEADER_SIZE		48
-+
-+#define MAX_BLOB_SIZE                   (MAX_KEY_SIZE + BLOB_HEADER_SIZE)
-+
-+struct secure_key_payload {
-+	struct rcu_head rcu;
-+	unsigned int key_len;
-+	unsigned int blob_len;
-+	unsigned char key[MAX_KEY_SIZE + 1];
-+	unsigned char blob[MAX_BLOB_SIZE];
-+};
-+
-+extern struct key_type key_type_secure;
-+#endif
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 6462e6654ccf..7eb138b5a54f 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -71,6 +71,17 @@ config TRUSTED_KEYS
- 
- 	  If you are unsure as to whether this is required, answer N.
- 
-+config SECURE_KEYS
-+	tristate "SECURE_KEYS"
-+	depends on KEYS && CRYPTO_DEV_FSL_CAAM && CRYPTO_DEV_FSL_CAAM_JR
-+	help
-+	  This option provide support for creating secure-type key and blobs
-+	  in kernel. Secure keys are random number symmetric keys generated
-+	  from CAAM. The CAAM creates the blobs for the random key.
-+	  Userspace will only be able to see the blob.
-+
-+	  If you are unsure as to whether this is required, answer N.
-+
- config ENCRYPTED_KEYS
- 	tristate "ENCRYPTED KEYS"
- 	depends on KEYS
-diff --git a/security/keys/Makefile b/security/keys/Makefile
-index ef1581b337a3..606ba4efb9e6 100644
---- a/security/keys/Makefile
-+++ b/security/keys/Makefile
-@@ -28,4 +28,7 @@ obj-$(CONFIG_KEY_DH_OPERATIONS) += dh.o
- #
- obj-$(CONFIG_BIG_KEYS) += big_key.o
- obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
-+ccflags-$(CONFIG_SECURE_KEYS) += -I$(obj)/../../drivers/crypto/caam/
-+obj-$(CONFIG_SECURE_KEYS) += securekey_desc.o
-+obj-$(CONFIG_SECURE_KEYS) += secure_key.o
- obj-$(CONFIG_ENCRYPTED_KEYS) += encrypted-keys/
-diff --git a/security/keys/secure_key.c b/security/keys/secure_key.c
-new file mode 100644
-index 000000000000..ec8ad4394549
---- /dev/null
-+++ b/security/keys/secure_key.c
-@@ -0,0 +1,339 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2018 NXP
-+ * Secure key is generated using NXP CAAM hardware block. CAAM generates the
-+ * random number (used as a key) and creates its blob for the user.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/parser.h>
-+#include <linux/string.h>
-+#include <linux/key-type.h>
-+#include <linux/rcupdate.h>
-+#include <keys/secure-type.h>
-+#include <linux/completion.h>
-+
-+#include "securekey_desc.h"
-+
-+static const char hmac_alg[] = "hmac(sha1)";
-+static const char hash_alg[] = "sha1";
-+
-+static struct crypto_shash *hashalg;
-+static struct crypto_shash *hmacalg;
-+
-+enum {
-+	error = -1,
-+	new_key,
-+	load_blob,
-+};
-+
-+static const match_table_t key_tokens = {
-+	{new_key, "new"},
-+	{load_blob, "load"},
-+	{error, NULL}
-+};
-+
-+static struct secure_key_payload *secure_payload_alloc(struct key *key)
-+{
-+	struct secure_key_payload *sec_key = NULL;
-+	int ret = 0;
-+
-+	ret = key_payload_reserve(key, sizeof(*sec_key));
-+	if (ret < 0)
-+		goto out;
-+
-+	sec_key = kzalloc(sizeof(*sec_key), GFP_KERNEL);
-+	if (!sec_key)
-+		goto out;
-+
-+out:
-+	return sec_key;
-+}
-+
-+/*
-+ * parse_inputdata - parse the keyctl input data and fill in the
-+ *		     payload structure for key or its blob.
-+ * param[in]: data pointer to the data to be parsed for creating key.
-+ * param[in]: p pointer to secure key payload structure to fill parsed data
-+ * On success returns 0, otherwise -EINVAL.
-+ */
-+static int parse_inputdata(char *data, struct secure_key_payload *p)
-+{
-+	substring_t args[MAX_OPT_ARGS];
-+	long keylen = 0;
-+	int ret = -EINVAL;
-+	int key_cmd = -EINVAL;
-+	char *c = NULL;
-+
-+	c = strsep(&data, " \t");
-+	if (!c) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* Get the keyctl command i.e. new_key or load_blob etc */
-+	key_cmd = match_token(c, key_tokens, args);
-+
-+	switch (key_cmd) {
-+	case new_key:
-+		/* first argument is key size */
-+		c = strsep(&data, " \t");
-+		if (!c) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		ret = kstrtol(c, 10, &keylen);
-+		if (ret < 0 || keylen < MIN_KEY_SIZE ||
-+						keylen > MAX_KEY_SIZE) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		p->key_len = keylen;
-+		ret = new_key;
-+
-+		break;
-+	case load_blob:
-+		/* first argument is blob data for CAAM*/
-+		c = strsep(&data, " \t");
-+		if (!c) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		/* Blob_len = No of characters in blob/2 */
-+		p->blob_len = strlen(c) / 2;
-+		if (p->blob_len > MAX_BLOB_SIZE) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		ret = hex2bin(p->blob, c, p->blob_len);
-+		if (ret < 0) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		ret = load_blob;
-+
-+		break;
-+	case error:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+/*
-+ * secure_instantiate - create a new secure type key.
-+ * Supports the operation to generate a new key. A random number
-+ * is generated from CAAM as key data and the corresponding red blob
-+ * is formed and stored as key_blob.
-+ * Also supports the operation to load the blob and key is derived using
-+ * that blob from CAAM.
-+ * On success, return 0. Otherwise return errno.
-+ */
-+static int secure_instantiate(struct key *key,
-+		struct key_preparsed_payload *prep)
-+{
-+	struct secure_key_payload *payload = NULL;
-+	size_t datalen = prep->datalen;
-+	char *data = NULL;
-+	int key_cmd = 0;
-+	int ret = 0;
-+	enum sk_req_type sk_op_type;
-+	struct device *dev = NULL;
-+
-+	if (datalen <= 0 || datalen > 32767 || !prep->data) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	data = kmalloc(datalen + 1, GFP_KERNEL);
-+	if (!data) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	memcpy(data, prep->data, datalen);
-+	data[datalen] = '\0';
-+
-+	payload = secure_payload_alloc(key);
-+	if (!payload) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	/* Allocate caam job ring for operation to be performed from CAAM */
-+	dev = caam_jr_alloc();
-+	if (!dev) {
-+		pr_info("caam_jr_alloc failed\n");
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
-+	key_cmd = parse_inputdata(data, payload);
-+	if (key_cmd < 0) {
-+		ret = key_cmd;
-+		goto out;
-+	}
-+
-+	switch (key_cmd) {
-+	case load_blob:
-+		/*
-+		 * Red blob decryption to be done for load operation
-+		 * to derive the key.
-+		 */
-+		sk_op_type = sk_red_blob_dec;
-+		ret = key_deblob(payload, sk_op_type, dev);
-+		if (ret != 0) {
-+			pr_info("secure_key: key_blob decap fail (%d)\n", ret);
-+			goto out;
-+		}
-+		break;
-+	case new_key:
-+		/* Get Random number from caam of the specified length */
-+		sk_op_type = sk_get_random;
-+		ret = caam_get_random(payload, sk_op_type, dev);
-+		if (ret != 0) {
-+			pr_info("secure_key: get_random fail (%d)\n", ret);
-+			goto out;
-+		}
-+
-+		/* Generate red blob of key random bytes with CAAM */
-+		sk_op_type = sk_red_blob_enc;
-+		ret = key_blob(payload, sk_op_type, dev);
-+		if (ret != 0) {
-+			pr_info("secure_key: key_blob encap fail (%d)\n", ret);
-+			goto out;
-+		}
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+out:
-+	if (data)
-+		kzfree(data);
-+	if (dev)
-+		caam_jr_free(dev);
-+
-+	if (!ret)
-+		rcu_assign_keypointer(key, payload);
-+	else
-+		kzfree(payload);
-+
-+	return ret;
-+}
-+
-+/*
-+ * secure_read - copy the  blob data to userspace in hex.
-+ * param[in]: key pointer to key struct
-+ * param[in]: buffer pointer to user data for creating key
-+ * param[in]: buflen is the length of the buffer
-+ * On success, return to userspace the secure key data size.
-+ */
-+static long secure_read(const struct key *key, char __user *buffer,
-+			 size_t buflen)
-+{
-+	const struct secure_key_payload *p = NULL;
-+	char *ascii_buf;
-+	char *bufp;
-+	int i;
-+
-+	p = dereference_key_locked(key);
-+	if (!p)
-+		return -EINVAL;
-+
-+	if (buffer && buflen >= 2 * p->blob_len) {
-+		ascii_buf = kmalloc(2 * p->blob_len, GFP_KERNEL);
-+		if (!ascii_buf)
-+			return -ENOMEM;
-+
-+		bufp = ascii_buf;
-+		for (i = 0; i < p->blob_len; i++)
-+			bufp = hex_byte_pack(bufp, p->blob[i]);
-+		if (copy_to_user(buffer, ascii_buf, 2 * p->blob_len) != 0) {
-+			kzfree(ascii_buf);
-+			return -EFAULT;
-+		}
-+		kzfree(ascii_buf);
-+	}
-+	return 2 * p->blob_len;
-+}
-+
-+/*
-+ * secure_destroy - clear and free the key's payload
-+ */
-+static void secure_destroy(struct key *key)
-+{
-+	kzfree(key->payload.data[0]);
-+}
-+
-+struct key_type key_type_secure = {
-+	.name = "secure",
-+	.instantiate = secure_instantiate,
-+	.destroy = secure_destroy,
-+	.read = secure_read,
-+};
-+EXPORT_SYMBOL_GPL(key_type_secure);
-+
-+static void secure_shash_release(void)
-+{
-+	if (hashalg)
-+		crypto_free_shash(hashalg);
-+	if (hmacalg)
-+		crypto_free_shash(hmacalg);
-+}
-+
-+static int __init secure_shash_alloc(void)
-+{
-+	int ret;
-+
-+	hmacalg = crypto_alloc_shash(hmac_alg, 0, CRYPTO_ALG_ASYNC);
-+	if (IS_ERR(hmacalg)) {
-+		pr_info("secure_key: could not allocate crypto %s\n",
-+				hmac_alg);
-+		return PTR_ERR(hmacalg);
-+	}
-+
-+	hashalg = crypto_alloc_shash(hash_alg, 0, CRYPTO_ALG_ASYNC);
-+	if (IS_ERR(hashalg)) {
-+		pr_info("secure_key: could not allocate crypto %s\n",
-+				hash_alg);
-+		ret = PTR_ERR(hashalg);
-+		goto hashalg_fail;
-+	}
-+
-+	return 0;
-+
-+hashalg_fail:
-+	crypto_free_shash(hmacalg);
-+	return ret;
-+}
-+
-+static int __init init_secure_key(void)
-+{
-+	int ret;
-+
-+	ret = secure_shash_alloc();
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = register_key_type(&key_type_secure);
-+	if (ret < 0)
-+		secure_shash_release();
-+	return ret;
-+}
-+
-+static void __exit cleanup_secure_key(void)
-+{
-+	secure_shash_release();
-+	unregister_key_type(&key_type_secure);
-+}
-+
-+late_initcall(init_secure_key);
-+module_exit(cleanup_secure_key);
-+
-+MODULE_LICENSE("GPL");
-diff --git a/security/keys/securekey_desc.c b/security/keys/securekey_desc.c
-new file mode 100644
-index 000000000000..a4fa811a5753
---- /dev/null
-+++ b/security/keys/securekey_desc.c
-@@ -0,0 +1,606 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 NXP
-+ *
-+ */
-+
-+#include <keys/secure-type.h>
-+#include "securekey_desc.h"
-+
-+/* key modifier for blob encapsulation & decapsulation descriptor */
-+u8 key_modifier[] = "SECURE_KEY";
-+u32 key_modifier_len = 10;
-+
-+void caam_sk_rng_desc(struct sk_req *skreq, struct sk_desc *skdesc)
-+{
-+	struct sk_fetch_rnd_data *fetch_rnd_data = NULL;
-+	struct random_desc *rnd_desc = NULL;
-+	size_t len = 0;
-+	u32 *desc = skreq->hwdesc;
-+
-+	init_job_desc(desc, 0);
-+
-+	fetch_rnd_data = &skreq->req_u.sk_fetch_rnd_data;
-+	rnd_desc = &skdesc->dma_u.random_descp;
-+	len = fetch_rnd_data->key_len;
-+
-+	/* command 0x82500000 */
-+	append_cmd(desc, CMD_OPERATION | OP_TYPE_CLASS1_ALG |
-+			OP_ALG_ALGSEL_RNG);
-+	/* command 0x60340000 | len */
-+	append_cmd(desc, CMD_FIFO_STORE | FIFOST_TYPE_RNGSTORE | len);
-+	append_ptr(desc, rnd_desc->rnd_data);
-+}
-+
-+void caam_sk_redblob_encap_desc(struct sk_req *skreq, struct sk_desc *skdesc)
-+{
-+	struct redblob_encap_desc *red_blob_desc =
-+					&skdesc->dma_u.redblob_encapdesc;
-+	struct sk_red_blob_encap *red_blob_req =
-+					&skreq->req_u.sk_red_blob_encap;
-+	u32 *desc = skreq->hwdesc;
-+
-+	init_job_desc(desc, 0);
-+
-+	/* Load class 2 key with key modifier. */
-+	append_key_as_imm(desc, key_modifier, key_modifier_len,
-+			  key_modifier_len, CLASS_2 | KEY_DEST_CLASS_REG);
-+
-+	/* SEQ IN PTR Command. */
-+	append_seq_in_ptr(desc, red_blob_desc->in_data, red_blob_req->data_sz,
-+			  0);
-+
-+	/* SEQ OUT PTR Command. */
-+	append_seq_out_ptr(desc, red_blob_desc->redblob,
-+			   red_blob_req->redblob_sz, 0);
-+
-+	/* RedBlob encapsulation PROTOCOL Command. */
-+	append_operation(desc, OP_TYPE_ENCAP_PROTOCOL | OP_PCLID_BLOB);
-+}
-+
-+/* void caam_sk_redblob_decap_desc(struct sk_req *skreq, struct sk_desc *skdesc)
-+ * brief CAAM Descriptor creator from redblob to plaindata.
-+ * param[in] skreq Pointer to secure key request structure
-+ * param[in] skdesc Pointer to secure key descriptor structure
-+ */
-+void caam_sk_redblob_decap_desc(struct sk_req *skreq, struct sk_desc *skdesc)
-+{
-+	struct redblob_decap_desc *red_blob_desc =
-+					&skdesc->dma_u.redblob_decapdesc;
-+	struct sk_red_blob_decap *red_blob_req =
-+					&skreq->req_u.sk_red_blob_decap;
-+	u32 *desc = skreq->hwdesc;
-+
-+	init_job_desc(desc, 0);
-+
-+	/* Load class 2 key with key modifier. */
-+	append_key_as_imm(desc, key_modifier, key_modifier_len,
-+			  key_modifier_len, CLASS_2 | KEY_DEST_CLASS_REG);
-+
-+	/* SEQ IN PTR Command. */
-+	append_seq_in_ptr(desc, red_blob_desc->redblob,
-+			  red_blob_req->redblob_sz, 0);
-+
-+	/* SEQ OUT PTR Command. */
-+	append_seq_out_ptr(desc, red_blob_desc->out_data,
-+			   red_blob_req->data_sz, 0);
-+
-+	/* RedBlob decapsulation PROTOCOL Command. */
-+	append_operation(desc, OP_TYPE_DECAP_PROTOCOL | OP_PCLID_BLOB);
-+}
-+
-+/* int caam_sk_get_random_map(struct device *dev, struct sk_req *req,
-+ *			      struct sk_desc *skdesc)
-+ * brief DMA map the buffer virtual pointers to physical address.
-+ * param[in] dev Pointer to job ring device structure
-+ * param[in] req Pointer to secure key request structure
-+ * param[in] skdesc Pointer to secure key descriptor structure
-+ * return 0 on success, error value otherwise.
-+ */
-+int caam_sk_get_random_map(struct device *dev, struct sk_req *req,
-+			   struct sk_desc *skdesc)
-+{
-+	struct sk_fetch_rnd_data *fetch_rnd_data;
-+	struct random_desc *rnd_desc;
-+
-+	fetch_rnd_data = &req->req_u.sk_fetch_rnd_data;
-+	rnd_desc = &skdesc->dma_u.random_descp;
-+
-+	rnd_desc->rnd_data = dma_map_single(dev, fetch_rnd_data->data,
-+				fetch_rnd_data->key_len, DMA_FROM_DEVICE);
-+
-+	if (dma_mapping_error(dev, rnd_desc->rnd_data)) {
-+		dev_err(dev, "Unable to map memory\n");
-+		goto sk_random_map_fail;
-+	}
-+	return 0;
-+
-+sk_random_map_fail:
-+	return -ENOMEM;
-+}
-+
-+/* int caam_sk_redblob_encap_map(struct device *dev, struct sk_req *req,
-+ *					struct sk_desc *skdesc)
-+ * brief DMA map the buffer virtual pointers to physical address.
-+ * param[in] dev Pointer to job ring device structure
-+ * param[in] req Pointer to secure key request structure
-+ * param[in] skdesc Pointer to secure key descriptor structure
-+ * return 0 on success, error value otherwise.
-+ */
-+int caam_sk_redblob_encap_map(struct device *dev, struct sk_req *req,
-+			      struct sk_desc *skdesc)
-+{
-+	struct sk_red_blob_encap *red_blob_encap;
-+	struct redblob_encap_desc *red_blob_desc;
-+
-+	red_blob_encap = &req->req_u.sk_red_blob_encap;
-+	red_blob_desc = &skdesc->dma_u.redblob_encapdesc;
-+
-+	red_blob_desc->in_data = dma_map_single(dev, red_blob_encap->data,
-+					red_blob_encap->data_sz, DMA_TO_DEVICE);
-+	if (dma_mapping_error(dev, red_blob_desc->in_data)) {
-+		dev_err(dev, "Unable to map memory\n");
-+		goto sk_data_fail;
-+	}
-+
-+	red_blob_desc->redblob = dma_map_single(dev, red_blob_encap->redblob,
-+				red_blob_encap->redblob_sz, DMA_FROM_DEVICE);
-+	if (dma_mapping_error(dev, red_blob_desc->redblob)) {
-+		dev_err(dev, "Unable to map memory\n");
-+		goto sk_redblob_fail;
-+	}
-+
-+	return 0;
-+
-+sk_redblob_fail:
-+	dma_unmap_single(dev, red_blob_desc->in_data, red_blob_encap->data_sz,
-+			 DMA_TO_DEVICE);
-+sk_data_fail:
-+	return -ENOMEM;
-+}
-+
-+/* static int caam_sk_redblob_decap_map(struct device *dev,
-+ *					    struct sk_req *req,
-+ *					    struct sk_desc *skdesc)
-+ * brief DMA map the buffer virtual pointers to physical address.
-+ * param[in] dev Pointer to job ring device structure
-+ * param[in] req Pointer to secure key request structure
-+ * param[in] skdesc Pointer to secure key descriptor structure
-+ * return 0 on success, error value otherwise.
-+ */
-+int caam_sk_redblob_decap_map(struct device *dev, struct sk_req *req,
-+			      struct sk_desc *skdesc)
-+{
-+	struct sk_red_blob_decap *red_blob_decap;
-+	struct redblob_decap_desc *red_blob_desc;
-+
-+	red_blob_decap = &req->req_u.sk_red_blob_decap;
-+	red_blob_desc = &skdesc->dma_u.redblob_decapdesc;
-+
-+	red_blob_desc->redblob = dma_map_single(dev, red_blob_decap->redblob,
-+				red_blob_decap->redblob_sz, DMA_TO_DEVICE);
-+	if (dma_mapping_error(dev, red_blob_desc->redblob)) {
-+		dev_err(dev, "Unable to map memory\n");
-+		goto sk_redblob_fail;
-+	}
-+
-+	red_blob_desc->out_data = dma_map_single(dev, red_blob_decap->data,
-+				red_blob_decap->data_sz, DMA_FROM_DEVICE);
-+	if (dma_mapping_error(dev, red_blob_desc->out_data)) {
-+		dev_err(dev, "Unable to map memory\n");
-+		goto sk_data_fail;
-+	}
-+
-+	return 0;
-+
-+sk_data_fail:
-+	dma_unmap_single(dev, red_blob_desc->redblob,
-+			 red_blob_decap->redblob_sz, DMA_TO_DEVICE);
-+sk_redblob_fail:
-+	return -ENOMEM;
-+}
-+
-+/* @fn void securekey_unmap(struct device *dev,
-+ *			    struct sk_desc *skdesc, struct sk_req *req)
-+ * @brief DMA unmap the buffer pointers.
-+ * @param[in] dev Pointer to job ring device structure
-+ * @param[in] skdesc Pointer to secure key descriptor structure
-+ * @param[in] req Pointer to secure key request structure
-+ */
-+void securekey_unmap(struct device *dev,
-+		     struct sk_desc *skdesc, struct sk_req *req)
-+{
-+
-+	switch (req->type) {
-+	case sk_get_random:
-+		{
-+			struct sk_fetch_rnd_data *fetch_rnd_data;
-+			struct random_desc *rnd_desc;
-+
-+			fetch_rnd_data = &req->req_u.sk_fetch_rnd_data;
-+			rnd_desc = &skdesc->dma_u.random_descp;
-+
-+			/* Unmap Descriptor buffer pointers. */
-+			dma_unmap_single(dev, rnd_desc->rnd_data,
-+					 fetch_rnd_data->key_len,
-+					 DMA_FROM_DEVICE);
-+			break;
-+		}
-+	case sk_red_blob_enc:
-+		{
-+			struct sk_red_blob_encap *red_blob_encap;
-+			struct redblob_encap_desc *red_blob_desc;
-+
-+			red_blob_encap = &req->req_u.sk_red_blob_encap;
-+			red_blob_desc = &skdesc->dma_u.redblob_encapdesc;
-+
-+			/* Unmap Descriptor buffer pointers. */
-+			dma_unmap_single(dev, red_blob_desc->in_data,
-+					 red_blob_encap->data_sz,
-+					 DMA_TO_DEVICE);
-+
-+			dma_unmap_single(dev, red_blob_desc->redblob,
-+					 red_blob_encap->redblob_sz,
-+					 DMA_FROM_DEVICE);
-+
-+			break;
-+		}
-+	case sk_red_blob_dec:
-+		{
-+			struct sk_red_blob_decap *red_blob_decap;
-+			struct redblob_decap_desc *red_blob_desc;
-+
-+			red_blob_decap = &req->req_u.sk_red_blob_decap;
-+			red_blob_desc = &skdesc->dma_u.redblob_decapdesc;
-+
-+			/* Unmap Descriptor buffer pointers. */
-+			dma_unmap_single(dev, red_blob_desc->redblob,
-+					 red_blob_decap->redblob_sz,
-+					 DMA_TO_DEVICE);
-+
-+			dma_unmap_single(dev, red_blob_desc->out_data,
-+					 red_blob_decap->data_sz,
-+					 DMA_FROM_DEVICE);
-+
-+			break;
-+		}
-+	default:
-+		dev_err(dev, "Unable to find request type\n");
-+		break;
-+	}
-+	kfree(skdesc);
-+}
-+
-+/*  int caam_securekey_desc_init(struct device *dev, struct sk_req *req)
-+ *  brief CAAM Descriptor creator for secure key operations.
-+ *  param[in] dev Pointer to job ring device structure
-+ *  param[in] req Pointer to secure key request structure
-+ *  return 0 on success, error value otherwise.
-+ */
-+int caam_securekey_desc_init(struct device *dev, struct sk_req *req)
-+{
-+	struct sk_desc *skdesc = NULL;
-+	int ret = 0;
-+
-+	switch (req->type) {
-+	case sk_get_random:
-+		{
-+			skdesc = kmalloc(sizeof(*skdesc), GFP_DMA);
-+			if (!skdesc) {
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+			skdesc->req_type = req->type;
-+
-+			if (caam_sk_get_random_map(dev, req, skdesc)) {
-+				dev_err(dev, "caam get_random map fail\n");
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+			caam_sk_rng_desc(req, skdesc);
-+			break;
-+		}
-+	case sk_red_blob_enc:
-+		{
-+			skdesc = kmalloc(sizeof(*skdesc), GFP_DMA);
-+			if (!skdesc) {
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+
-+			skdesc->req_type = req->type;
-+
-+			if (caam_sk_redblob_encap_map(dev, req, skdesc)) {
-+				dev_err(dev, "caam redblob_encap map fail\n");
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+
-+			/* Descriptor function to create redblob from data. */
-+			caam_sk_redblob_encap_desc(req, skdesc);
-+			break;
-+		}
-+
-+	case sk_red_blob_dec:
-+		{
-+			skdesc = kmalloc(sizeof(*skdesc), GFP_DMA);
-+			if (!skdesc) {
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+
-+			skdesc->req_type = req->type;
-+
-+			if (caam_sk_redblob_decap_map(dev, req, skdesc)) {
-+				dev_err(dev, "caam redblob_decap map fail\n");
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+
-+			/* Descriptor function to decap data from redblob. */
-+			caam_sk_redblob_decap_desc(req, skdesc);
-+			break;
-+		}
-+	default:
-+		pr_debug("Unknown request type\n");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	req->desc_pointer = (void *)skdesc;
-+
-+out:
-+	return ret;
-+}
-+
-+/* static void caam_op_done (struct device *dev, u32 *desc, u32 ret,
-+ *			     void *context)
-+ * brief callback function to be called when descriptor executed.
-+ * param[in] dev Pointer to device structure
-+ * param[in] desc descriptor pointer
-+ * param[in] ret return status of Job submitted
-+ * param[in] context void pointer
-+ */
-+static void caam_op_done(struct device *dev, u32 *desc, u32 ret,
-+			 void *context)
-+{
-+	struct sk_req *req = context;
-+
-+	if (ret) {
-+		dev_err(dev, "caam op done err: %x\n", ret);
-+		/* print the error source name. */
-+		caam_jr_strstatus(dev, ret);
-+	}
-+	/* Call securekey_unmap function for unmapping the buffer pointers. */
-+	securekey_unmap(dev, req->desc_pointer, req);
-+
-+	req->ret = ret;
-+	complete(&req->comp);
-+}
-+
-+
-+/*  static int sk_job_submit(struct device *jrdev, struct sk_req *req)
-+ *  brief Enqueue a Job descriptor to Job ring and wait until SEC returns.
-+ *  param[in] jrdev Pointer to job ring device structure
-+ *  param[in] req Pointer to secure key request structure
-+ *  return 0 on success, error value otherwise.
-+ */
-+static int sk_job_submit(struct device *jrdev, struct sk_req *req)
-+{
-+	int ret;
-+
-+	init_completion(&req->comp);
-+
-+	/* caam_jr_enqueue function for Enqueue a job descriptor */
-+	ret = caam_jr_enqueue(jrdev, req->hwdesc, caam_op_done, req);
-+	if (!ret)
-+		wait_for_completion_interruptible(&req->comp);
-+
-+	ret = req->ret;
-+	return ret;
-+}
-+
-+/* caam_get_random(struct secure_key_payload *p,  enum sk_req_type fetch_rnd,
-+ *		   struct device *dev)
-+ * Create the random number of the specified length using CAAM block
-+ * param[in]: out pointer to place the random bytes
-+ * param[in]: length for the random data bytes.
-+ * param[in]: dev Pointer to job ring device structure
-+ * If operation is successful return 0, otherwise error.
-+ */
-+int caam_get_random(struct secure_key_payload *p,  enum sk_req_type fetch_rnd,
-+		    struct device *dev)
-+{
-+	struct sk_fetch_rnd_data *fetch_rnd_data = NULL;
-+	struct sk_req *req = NULL;
-+	int ret = 0;
-+	void *temp = NULL;
-+
-+	req = kmalloc(sizeof(struct sk_req), GFP_DMA);
-+	if (!req) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	req->type = fetch_rnd;
-+	fetch_rnd_data = &(req->req_u.sk_fetch_rnd_data);
-+
-+	/* initialise with key length */
-+	fetch_rnd_data->key_len = p->key_len;
-+
-+	temp = kmalloc(fetch_rnd_data->key_len, GFP_DMA);
-+	if (!temp) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+	fetch_rnd_data->data = temp;
-+
-+	ret = caam_securekey_desc_init(dev, req);
-+
-+	if (ret) {
-+		pr_info("caam_securekey_desc_init failed\n");
-+		goto out;
-+	}
-+
-+	ret = sk_job_submit(dev, req);
-+	if (!ret) {
-+		/*Copy output to key buffer. */
-+		memcpy(p->key, fetch_rnd_data->data, p->key_len);
-+	} else {
-+		ret = -EINVAL;
-+	}
-+
-+out:
-+	if (req)
-+		kfree(req);
-+
-+	if (temp)
-+		kfree(temp);
-+
-+	return ret;
-+}
-+
-+/* key_deblob(struct secure_key_payload *p, enum sk_req_type decap_type
-+ *		struct device *dev)
-+ * Deblobify the blob to get the key data and fill in secure key payload struct
-+ * param[in] p pointer to the secure key payload
-+ * param[in] decap_type operation to be done.
-+ * param[in] dev dev Pointer to job ring device structure
-+ * If operation is successful return 0, otherwise error.
-+ */
-+int key_deblob(struct secure_key_payload *p, enum sk_req_type decap_type,
-+	       struct device *dev)
-+{
-+	unsigned int blob_len;
-+	struct sk_red_blob_decap *d_blob;
-+	struct sk_req *req = NULL;
-+	int total_sz = 0, *temp = NULL, ret = 0;
-+
-+	req = kmalloc(sizeof(struct sk_req), GFP_DMA);
-+	if (!req) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	d_blob = &(req->req_u.sk_red_blob_decap);
-+	blob_len = p->blob_len;
-+	req->type = decap_type;
-+
-+	/*
-+	 * Red blob size is the blob_len filled in payload struct
-+	 * Data_sz i.e. key is the blob_len - blob header size
-+	 */
-+
-+	d_blob->redblob_sz = blob_len;
-+	d_blob->data_sz = blob_len - (SK_BLOB_KEY_SZ + SK_BLOB_MAC_SZ);
-+	total_sz = d_blob->data_sz + d_blob->redblob_sz;
-+
-+	temp = kmalloc(total_sz, GFP_DMA);
-+	if (!temp) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	req->mem_pointer = temp;
-+	d_blob->redblob = temp;
-+	d_blob->data = d_blob->redblob + d_blob->redblob_sz;
-+	memcpy(d_blob->redblob, p->blob, blob_len);
-+
-+	ret = caam_securekey_desc_init(dev, req);
-+
-+	if (ret) {
-+		pr_info("caam_securekey_desc_init: Failed\n");
-+		goto out;
-+	}
-+
-+	ret = sk_job_submit(dev, req);
-+	if (!ret) {
-+		/*Copy output to key buffer. */
-+		p->key_len = d_blob->data_sz;
-+		memcpy(p->key, d_blob->data, p->key_len);
-+	} else {
-+		ret = -EINVAL;
-+	}
-+
-+out:
-+	if (temp)
-+		kfree(temp);
-+	if (req)
-+		kfree(req);
-+	return ret;
-+}
-+
-+/* key_blob(struct secure_key_payload *p, enum sk_req_type encap_type,
-+ *		struct device *dev)
-+ * To blobify the key data to get the blob. This blob can only be seen by
-+ * userspace.
-+ * param[in] p pointer to the secure key payload
-+ * param[in] decap_type operation to be done.
-+ * param[in] dev dev Pointer to job ring device structure
-+ * If operation is successful return 0, otherwise error.
-+ */
-+int key_blob(struct secure_key_payload *p, enum sk_req_type encap_type,
-+	     struct device *dev)
-+{
-+	unsigned int key_len;
-+	struct sk_red_blob_encap *k_blob;
-+	struct sk_req *req = NULL;
-+	int total_sz = 0, *temp = NULL, ret = 0;
-+
-+	req = kmalloc(sizeof(struct sk_req), GFP_DMA);
-+	if (!req) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	key_len = p->key_len;
-+
-+	req->type = encap_type;
-+	k_blob = &(req->req_u.sk_red_blob_encap);
-+
-+	/*
-+	 * Data_sz i.e. key len and the corresponding blob_len is
-+	 * key_len + BLOB header size.
-+	 */
-+
-+	k_blob->data_sz = key_len;
-+	k_blob->redblob_sz = key_len + SK_BLOB_KEY_SZ + SK_BLOB_MAC_SZ;
-+	total_sz = k_blob->data_sz + k_blob->redblob_sz;
-+
-+	temp = kmalloc(total_sz, GFP_DMA);
-+	if (!temp) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	req->mem_pointer = temp;
-+	k_blob->data = temp;
-+
-+	k_blob->redblob = k_blob->data + k_blob->data_sz;
-+	memcpy(k_blob->data, p->key, key_len);
-+
-+	ret = caam_securekey_desc_init(dev, req);
-+
-+	if (ret) {
-+		pr_info("caam_securekey_desc_init failed\n");
-+		goto out;
-+	}
-+
-+	ret = sk_job_submit(dev, req);
-+	if (!ret) {
-+		/*Copy output to key buffer. */
-+		p->blob_len = k_blob->redblob_sz;
-+		memcpy(p->blob, k_blob->redblob, p->blob_len);
-+	} else {
-+		ret = -EINVAL;
-+	}
-+
-+out:
-+	if (temp)
-+		kfree(req->mem_pointer);
-+	if (req)
-+		kfree(req);
-+	return ret;
-+
-+}
-+
-diff --git a/security/keys/securekey_desc.h b/security/keys/securekey_desc.h
-new file mode 100644
-index 000000000000..0ee26e95b205
---- /dev/null
-+++ b/security/keys/securekey_desc.h
-@@ -0,0 +1,141 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2018 NXP
-+ *
-+ */
-+#ifndef _SECUREKEY_DESC_H_
-+#define _SECUREKEY_DESC_H_
-+
-+#include "compat.h"
-+#include "regs.h"
-+#include "intern.h"
-+#include "desc.h"
-+#include "desc_constr.h"
-+#include "jr.h"
-+#include "error.h"
-+#include "pdb.h"
-+
-+#define SK_BLOB_KEY_SZ		32	/* Blob key size. */
-+#define SK_BLOB_MAC_SZ		16	/* Blob MAC size. */
-+
-+/*
-+ * brief defines different kinds of operations supported by this module.
-+ */
-+enum sk_req_type {
-+	sk_get_random,
-+	sk_red_blob_enc,
-+	sk_red_blob_dec,
-+};
-+
-+
-+/*
-+ * struct random_des
-+ * param[out] rnd_data output buffer for random data.
-+ */
-+struct random_desc {
-+	dma_addr_t rnd_data;
-+};
-+
-+/* struct redblob_encap_desc
-+ * details Structure containing dma address for redblob encapsulation.
-+ * param[in] in_data input data to redblob encap descriptor.
-+ * param[out] redblob output buffer for redblob.
-+ */
-+struct redblob_encap_desc {
-+	dma_addr_t in_data;
-+	dma_addr_t redblob;
-+};
-+
-+/* struct redblob_decap_desc
-+ * details Structure containing dma address for redblob decapsulation.
-+ * param[in] redblob input buffer to redblob decap descriptor.
-+ * param[out] out_data output data from redblob decap descriptor.
-+ */
-+struct redblob_decap_desc {
-+	dma_addr_t redblob;
-+	dma_addr_t out_data;
-+};
-+
-+/* struct sk_desc
-+ * details Structure for securekey descriptor creation.
-+ * param[in] req_type operation supported.
-+ * param[in] dma_u union of struct for supported operation.
-+ */
-+struct sk_desc {
-+	u32 req_type;
-+	union {
-+		struct redblob_encap_desc redblob_encapdesc;
-+		struct redblob_decap_desc redblob_decapdesc;
-+		struct random_desc random_descp;
-+	} dma_u;
-+};
-+
-+/* struct sk_fetch_rnd_data
-+ * decriptor structure containing key length.
-+ */
-+struct sk_fetch_rnd_data {
-+	void *data;
-+	size_t key_len;
-+};
-+
-+/* struct sk_red_blob_encap
-+ * details Structure containing buffer pointers for redblob encapsulation.
-+ * param[in] data Input data.
-+ * param[in] data_sz size of Input data.
-+ * param[out] redblob output buffer for redblob.
-+ * param[in] redblob_sz size of redblob.
-+ */
-+struct sk_red_blob_encap {
-+	void *data;
-+	uint32_t data_sz;
-+	void *redblob;
-+	uint32_t redblob_sz;
-+};
-+
-+/* struct sk_red_blob_decap
-+ * details Structure containing buffer pointers for redblob decapsulation.
-+ * param[in] redblob Input redblob.
-+ * param[in] redblob_sz size of redblob.
-+ * param[out] data output buffer for data.
-+ * param[in] data_sz size of output data.
-+ */
-+struct sk_red_blob_decap {
-+	void *redblob;
-+	uint32_t redblob_sz;
-+	void *data;
-+	uint32_t data_sz;
-+};
-+
-+/* struct sk_req
-+ * details Structure for securekey request creation.
-+ * param[in] type operation supported.
-+ * param[in] req_u union of struct for supported operation.
-+ * param[out] ret return status of CAAM operation.
-+ * param[in] mem_pointer memory pointer for allocated kernel memory.
-+ * param[in] desc_pointer Pointer to securekey descriptor creation structure.
-+ * param[in] comp struct completion object.
-+ * param[in] hwdesc contains descriptor instructions.
-+ */
-+struct sk_req {
-+	enum sk_req_type type;
-+	void *arg;
-+	union {
-+		struct sk_red_blob_encap sk_red_blob_encap;
-+		struct sk_red_blob_decap sk_red_blob_decap;
-+		struct sk_fetch_rnd_data sk_fetch_rnd_data;
-+	} req_u;
-+	int ret;
-+	void *mem_pointer;
-+	void *desc_pointer;
-+	struct completion comp;
-+	u32 hwdesc[MAX_CAAM_DESCSIZE];
-+};
-+
-+int caam_get_random(struct secure_key_payload *p,  enum sk_req_type fetch_rnd,
-+		    struct device *dev);
-+int key_blob(struct secure_key_payload *p, enum sk_req_type encap_type,
-+	     struct device *dev);
-+int key_deblob(struct secure_key_payload *p, enum sk_req_type decap_type,
-+	       struct device *dev);
-+
-+#endif /*_SECUREKEY_DESC_H_*/
--- 
-2.17.1
-
+Thanks
+Dave
