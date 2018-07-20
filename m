@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EDFECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BFCECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC1B920854
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1B920854
+	by mail.kernel.org (Postfix) with ESMTP id 4B90520854
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:32:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B90520854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388588AbeGTNU2 (ORCPT
+        id S2388594AbeGTNUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:20:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40124 "EHLO
+        Fri, 20 Jul 2018 09:20:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40178 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732091AbeGTNU1 (ORCPT
+        with ESMTP id S1732091AbeGTNUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:20:27 -0400
+        Fri, 20 Jul 2018 09:20:31 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52E14C34;
-        Fri, 20 Jul 2018 12:31:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BA6C41C;
+        Fri, 20 Jul 2018 12:31:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.9 65/66] arm64: KVM: Add ARCH_WORKAROUND_2 discovery through ARCH_FEATURES_FUNC_ID
-Date:   Fri, 20 Jul 2018 14:14:22 +0200
-Message-Id: <20180720121412.464911899@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 26/66] qed: Limit msix vectors in kdump kernel to the minimum required count.
+Date:   Fri, 20 Jul 2018 14:13:43 +0200
+Message-Id: <20180720121408.792124901@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
 References: <20180720121407.228772286@linuxfoundation.org>
@@ -52,122 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-commit 5d81f7dc9bca4f4963092433e27b508cbe524a32 upstream.
+[ Upstream commit bb7858ba1102f82470a917e041fd23e6385c31be ]
 
-Now that all our infrastructure is in place, let's expose the
-availability of ARCH_WORKAROUND_2 to guests. We take this opportunity
-to tidy up a couple of SMCCC constants.
+Memory size is limited in the kdump kernel environment. Allocation of more
+msix-vectors (or queues) consumes few tens of MBs of memory, which might
+lead to the kdump kernel failure.
+This patch adds changes to limit the number of MSI-X vectors in kdump
+kernel to minimum required value (i.e., 2 per engine).
 
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: fe56b9e6a ("qed: Add module with basic common support")
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/kvm_host.h   |   12 ++++++++++++
- arch/arm/kvm/psci.c               |   18 ++++++++++++++++--
- arch/arm64/include/asm/kvm_host.h |   23 +++++++++++++++++++++++
- arch/arm64/kvm/reset.c            |    4 ++++
- 4 files changed, 55 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_main.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/arm/include/asm/kvm_host.h
-+++ b/arch/arm/include/asm/kvm_host.h
-@@ -327,4 +327,16 @@ static inline bool kvm_arm_harden_branch
- 	return false;
- }
+--- a/drivers/net/ethernet/qlogic/qed/qed_main.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+@@ -23,6 +23,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/qed/qed_if.h>
+ #include <linux/qed/qed_ll2_if.h>
++#include <linux/crash_dump.h>
  
-+#define KVM_SSBD_UNKNOWN		-1
-+#define KVM_SSBD_FORCE_DISABLE		0
-+#define KVM_SSBD_KERNEL		1
-+#define KVM_SSBD_FORCE_ENABLE		2
-+#define KVM_SSBD_MITIGATED		3
-+
-+static inline int kvm_arm_have_ssbd(void)
-+{
-+	/* No way to detect it yet, pretend it is not there. */
-+	return KVM_SSBD_UNKNOWN;
-+}
-+
- #endif /* __ARM_KVM_HOST_H__ */
---- a/arch/arm/kvm/psci.c
-+++ b/arch/arm/kvm/psci.c
-@@ -403,7 +403,7 @@ static int kvm_psci_call(struct kvm_vcpu
- int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
- {
- 	u32 func_id = smccc_get_function(vcpu);
--	u32 val = PSCI_RET_NOT_SUPPORTED;
-+	u32 val = SMCCC_RET_NOT_SUPPORTED;
- 	u32 feature;
+ #include "qed.h"
+ #include "qed_sriov.h"
+@@ -701,6 +702,14 @@ static int qed_slowpath_setup_int(struct
+ 	/* We want a minimum of one slowpath and one fastpath vector per hwfn */
+ 	cdev->int_params.in.min_msix_cnt = cdev->num_hwfns * 2;
  
- 	switch (func_id) {
-@@ -415,7 +415,21 @@ int kvm_hvc_call_handler(struct kvm_vcpu
- 		switch(feature) {
- 		case ARM_SMCCC_ARCH_WORKAROUND_1:
- 			if (kvm_arm_harden_branch_predictor())
--				val = 0;
-+				val = SMCCC_RET_SUCCESS;
-+			break;
-+		case ARM_SMCCC_ARCH_WORKAROUND_2:
-+			switch (kvm_arm_have_ssbd()) {
-+			case KVM_SSBD_FORCE_DISABLE:
-+			case KVM_SSBD_UNKNOWN:
-+				break;
-+			case KVM_SSBD_KERNEL:
-+				val = SMCCC_RET_SUCCESS;
-+				break;
-+			case KVM_SSBD_FORCE_ENABLE:
-+			case KVM_SSBD_MITIGATED:
-+				val = SMCCC_RET_NOT_REQUIRED;
-+				break;
-+			}
- 			break;
- 		}
- 		break;
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -425,4 +425,27 @@ static inline bool kvm_arm_harden_branch
- 	return cpus_have_const_cap(ARM64_HARDEN_BRANCH_PREDICTOR);
- }
- 
-+#define KVM_SSBD_UNKNOWN		-1
-+#define KVM_SSBD_FORCE_DISABLE		0
-+#define KVM_SSBD_KERNEL		1
-+#define KVM_SSBD_FORCE_ENABLE		2
-+#define KVM_SSBD_MITIGATED		3
-+
-+static inline int kvm_arm_have_ssbd(void)
-+{
-+	switch (arm64_get_ssbd_state()) {
-+	case ARM64_SSBD_FORCE_DISABLE:
-+		return KVM_SSBD_FORCE_DISABLE;
-+	case ARM64_SSBD_KERNEL:
-+		return KVM_SSBD_KERNEL;
-+	case ARM64_SSBD_FORCE_ENABLE:
-+		return KVM_SSBD_FORCE_ENABLE;
-+	case ARM64_SSBD_MITIGATED:
-+		return KVM_SSBD_MITIGATED;
-+	case ARM64_SSBD_UNKNOWN:
-+	default:
-+		return KVM_SSBD_UNKNOWN;
++	if (is_kdump_kernel()) {
++		DP_INFO(cdev,
++			"Kdump kernel: Limit the max number of requested MSI-X vectors to %hd\n",
++			cdev->int_params.in.min_msix_cnt);
++		cdev->int_params.in.num_vectors =
++			cdev->int_params.in.min_msix_cnt;
 +	}
-+}
 +
- #endif /* __ARM64_KVM_HOST_H__ */
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -135,6 +135,10 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu
- 	/* Reset PMU */
- 	kvm_pmu_vcpu_reset(vcpu);
- 
-+	/* Default workaround setup is enabled (if supported) */
-+	if (kvm_arm_have_ssbd() == KVM_SSBD_KERNEL)
-+		vcpu->arch.workaround_flags |= VCPU_WORKAROUND_2_FLAG;
-+
- 	/* Reset timer */
- 	return kvm_timer_vcpu_reset(vcpu, cpu_vtimer_irq);
- }
+ 	rc = qed_set_int_mode(cdev, false);
+ 	if (rc)  {
+ 		DP_ERR(cdev, "qed_slowpath_setup_int ERR\n");
 
 
