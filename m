@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAB3ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D09BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD65E20833
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD65E20833
+	by mail.kernel.org (Postfix) with ESMTP id 1DE61206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE61206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731815AbeGTNOJ (ORCPT
+        id S1731833AbeGTNOM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:14:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34772 "EHLO
+        Fri, 20 Jul 2018 09:14:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34782 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731745AbeGTNOJ (ORCPT
+        with ESMTP id S1731745AbeGTNOM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:14:09 -0400
+        Fri, 20 Jul 2018 09:14:12 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 013DCBBD;
-        Fri, 20 Jul 2018 12:26:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B35F3BBF;
+        Fri, 20 Jul 2018 12:26:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+2b43f681169a2a0d306a@syzkaller.appspotmail.com,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 3.18 26/29] netfilter: ebtables: reject non-bridge targets
-Date:   Fri, 20 Jul 2018 14:11:21 +0200
-Message-Id: <20180720115159.913538479@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 27/29] KEYS: DNS: fix parsing multiple options
+Date:   Fri, 20 Jul 2018 14:11:22 +0200
+Message-Id: <20180720115159.951499170@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720115158.974693829@linuxfoundation.org>
 References: <20180720115158.974693829@linuxfoundation.org>
@@ -52,64 +51,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 11ff7288beb2b7da889a014aff0a7b80bf8efcf3 upstream.
+commit c604cb767049b78b3075497b80ebb8fd530ea2cc upstream.
 
-the ebtables evaluation loop expects targets to return
-positive values (jumps), or negative values (absolute verdicts).
+My recent fix for dns_resolver_preparse() printing very long strings was
+incomplete, as shown by syzbot which still managed to hit the
+WARN_ONCE() in set_precision() by adding a crafted "dns_resolver" key:
 
-This is completely different from what xtables does.
-In xtables, targets are expected to return the standard netfilter
-verdicts, i.e. NF_DROP, NF_ACCEPT, etc.
+    precision 50001 too large
+    WARNING: CPU: 7 PID: 864 at lib/vsprintf.c:2164 vsnprintf+0x48a/0x5a0
 
-ebtables will consider these as jumps.
+The bug this time isn't just a printing bug, but also a logical error
+when multiple options ("#"-separated strings) are given in the key
+payload.  Specifically, when separating an option string into name and
+value, if there is no value then the name is incorrectly considered to
+end at the end of the key payload, rather than the end of the current
+option.  This bypasses validation of the option length, and also means
+that specifying multiple options is broken -- which presumably has gone
+unnoticed as there is currently only one valid option anyway.
 
-Therefore reject any target found due to unspec fallback.
-v2: also reject watchers.  ebtables ignores their return value, so
-a target that assumes skb ownership (and returns NF_STOLEN) causes
-use-after-free.
+A similar problem also applied to option values, as the kstrtoul() when
+parsing the "dnserror" option will read past the end of the current
+option and into the next option.
 
-The only watchers in the 'ebtables' front-end are log and nflog;
-both have AF_BRIDGE specific wrappers on kernel side.
+Fix these bugs by correctly computing the length of the option name and
+by copying the option value, null-terminated, into a temporary buffer.
 
-Reported-by: syzbot+2b43f681169a2a0d306a@syzkaller.appspotmail.com
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reproducer for the WARN_ONCE() that syzbot hit:
+
+    perl -e 'print "#A#", "\0" x 50000' | keyctl padd dns_resolver desc @s
+
+Reproducer for "dnserror" option being parsed incorrectly (expected
+behavior is to fail when seeing the unknown option "foo", actual
+behavior was to read the dnserror value as "1#foo" and fail there):
+
+    perl -e 'print "#dnserror=1#foo\0"' | keyctl padd dns_resolver desc @s
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 4a2d789267e0 ("DNS: If the DNS server returns an error, allow that to be cached [ver #2]")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/netfilter/ebtables.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ net/dns_resolver/dns_key.c |   30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -402,6 +402,12 @@ ebt_check_watcher(struct ebt_entry_watch
- 	watcher = xt_request_find_target(NFPROTO_BRIDGE, w->u.name, 0);
- 	if (IS_ERR(watcher))
- 		return PTR_ERR(watcher);
-+
-+	if (watcher->family != NFPROTO_BRIDGE) {
-+		module_put(watcher->me);
-+		return -ENOENT;
-+	}
-+
- 	w->u.watcher = watcher;
+--- a/net/dns_resolver/dns_key.c
++++ b/net/dns_resolver/dns_key.c
+@@ -87,35 +87,39 @@ dns_resolver_preparse(struct key_prepars
+ 		opt++;
+ 		kdebug("options: '%s'", opt);
+ 		do {
++			int opt_len, opt_nlen;
+ 			const char *eq;
+-			int opt_len, opt_nlen, opt_vlen, tmp;
++			char optval[128];
  
- 	par->target   = watcher;
-@@ -722,6 +728,13 @@ ebt_check_entry(struct ebt_entry *e, str
- 		goto cleanup_watchers;
- 	}
+ 			next_opt = memchr(opt, '#', end - opt) ?: end;
+ 			opt_len = next_opt - opt;
+-			if (opt_len <= 0 || opt_len > 128) {
++			if (opt_len <= 0 || opt_len > sizeof(optval)) {
+ 				pr_warn_ratelimited("Invalid option length (%d) for dns_resolver key\n",
+ 						    opt_len);
+ 				return -EINVAL;
+ 			}
  
-+	/* Reject UNSPEC, xtables verdicts/return values are incompatible */
-+	if (target->family != NFPROTO_BRIDGE) {
-+		module_put(target->me);
-+		ret = -ENOENT;
-+		goto cleanup_watchers;
-+	}
+-			eq = memchr(opt, '=', opt_len) ?: end;
+-			opt_nlen = eq - opt;
+-			eq++;
+-			opt_vlen = next_opt - eq; /* will be -1 if no value */
+-
+-			tmp = opt_vlen >= 0 ? opt_vlen : 0;
+-			kdebug("option '%*.*s' val '%*.*s'",
+-			       opt_nlen, opt_nlen, opt, tmp, tmp, eq);
++			eq = memchr(opt, '=', opt_len);
++			if (eq) {
++				opt_nlen = eq - opt;
++				eq++;
++				memcpy(optval, eq, next_opt - eq);
++				optval[next_opt - eq] = '\0';
++			} else {
++				opt_nlen = opt_len;
++				optval[0] = '\0';
++			}
 +
- 	t->u.target = target;
- 	if (t->u.target == &ebt_standard_target) {
- 		if (gap < sizeof(struct ebt_standard_target)) {
++			kdebug("option '%*.*s' val '%s'",
++			       opt_nlen, opt_nlen, opt, optval);
+ 
+ 			/* see if it's an error number representing a DNS error
+ 			 * that's to be recorded as the result in this key */
+ 			if (opt_nlen == sizeof(DNS_ERRORNO_OPTION) - 1 &&
+ 			    memcmp(opt, DNS_ERRORNO_OPTION, opt_nlen) == 0) {
+ 				kdebug("dns error number option");
+-				if (opt_vlen <= 0)
+-					goto bad_option_value;
+ 
+-				ret = kstrtoul(eq, 10, &derrno);
++				ret = kstrtoul(optval, 10, &derrno);
+ 				if (ret < 0)
+ 					goto bad_option_value;
+ 
 
 
