@@ -2,118 +2,135 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19076ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C466ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C39DB20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:53:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C39DB20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E2B2720673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 10:55:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gKh9EB79"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2B2720673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729922AbeGTLlH (ORCPT
+        id S1728857AbeGTLnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 07:41:07 -0400
-Received: from mga12.intel.com ([192.55.52.136]:59910 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727408AbeGTLlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 07:41:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 03:53:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,378,1526367600"; 
-   d="scan'208";a="74040434"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 20 Jul 2018 03:53:20 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 20 Jul 2018 13:53:19 +0300
-Date:   Fri, 20 Jul 2018 13:53:19 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>, Jun Li <jun.li@nxp.com>,
-        Mats Karrman <mats.dev.list@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] usb: typec: mux: Get the mux identifier from
- function parameter
-Message-ID: <20180720105319.GB13264@kuha.fi.intel.com>
-References: <20180627151953.30942-1-heikki.krogerus@linux.intel.com>
- <20180627151953.30942-4-heikki.krogerus@linux.intel.com>
- <20180628105155.GB5191@kroah.com>
- <20180628113427.GB30974@kuha.fi.intel.com>
- <20180709190310.GC1896@roeck-us.net>
+        Fri, 20 Jul 2018 07:43:25 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:37100 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727983AbeGTLnZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 07:43:25 -0400
+Received: by mail-yb0-f195.google.com with SMTP id r3-v6so4463488ybo.4
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 03:55:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9KzDb9stgx9l2CJByrnMYfMZEin6YTqcaj9BIPOPqdU=;
+        b=gKh9EB79tT9HY87oJ/7W7DxOtfRhBjPOSwBYDddtlieNtyZhkqDjH72H+nKNR4Z1US
+         DVG2rb2/elrliGpZpyxg2sMOPwbj2IN26UDKj4WTXXvYWtJnjKmqojk+fBB3x35oVmBl
+         jp7Fah5aTnKpN88BTWM0KEbcvATLWShycTQi0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9KzDb9stgx9l2CJByrnMYfMZEin6YTqcaj9BIPOPqdU=;
+        b=fmw34Azy8QTa/qEc1ZTpS92ezAwKxuAxUR0lZ8e+RuW8VZrbtacxmMm3QpQF4LLU1U
+         IGnMcP3pCfwBP3uxG7y4TQ9O58QK27J3JUTOKExhPUP0gEqdcLurTQ8zqSQNm2Vvkgsf
+         N4pZwv0ZeWL0J5rjeLRgAbYUK8FSc9pSALXhvtl5hW9Tt8dkNzlhwKofbWf/Afgs5qqy
+         HhtvlxpVwYeE1z9DYhrDchH+U/TZE5dXt6ErDvFS402YJr8Fza8gHjbZTHqZ3MN0Jk6l
+         JhvP5CLY9hQPAv+iqvLnWHQKpwSjNt66rQxuHoLh2VQRUSOpU5MuutrboMeYS3RdM0Rv
+         DO2A==
+X-Gm-Message-State: AOUpUlE9kvLkUY/F/Vdrx+Melojvt63QwPwNEkKb4GhfzeyQ8Oe5aVIn
+        hFnFR6GvC09EpBiBOEjeJ8xVxiYExCE=
+X-Google-Smtp-Source: AAOMgpfEx3RbjNk2TCB9lokuUv/ftbsjSnmrNHRsIFlXA+X4R+p8W9CG76pj3Biklarpp2xd8lScOA==
+X-Received: by 2002:a25:3105:: with SMTP id x5-v6mr710186ybx.468.1532084143511;
+        Fri, 20 Jul 2018 03:55:43 -0700 (PDT)
+Received: from mail-yb0-f178.google.com (mail-yb0-f178.google.com. [209.85.213.178])
+        by smtp.gmail.com with ESMTPSA id f64-v6sm747762ywd.58.2018.07.20.03.55.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Jul 2018 03:55:41 -0700 (PDT)
+Received: by mail-yb0-f178.google.com with SMTP id c3-v6so4453089ybi.13
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 03:55:41 -0700 (PDT)
+X-Received: by 2002:a25:4b01:: with SMTP id y1-v6mr675748yba.344.1532084140544;
+ Fri, 20 Jul 2018 03:55:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709190310.GC1896@roeck-us.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com> <Pine.LNX.4.44L0.1807171643120.1344-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1807171643120.1344-100000@iolanthe.rowland.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Fri, 20 Jul 2018 19:55:29 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5D4YHOkMhyTmpPzpp9aPNoZtJMHgU1xmvb4PoPRaOFrbg@mail.gmail.com>
+Message-ID: <CAAFQd5D4YHOkMhyTmpPzpp9aPNoZtJMHgU1xmvb4PoPRaOFrbg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
+ ISO transfer
+To:     stern@rowland.harvard.edu
+Cc:     Ezequiel Garcia <ezequiel@collabora.com>, matwey@sai.msu.ru,
+        hdegoede@redhat.com, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
+        bhumirks@gmail.com, colin.king@canonical.com,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 12:03:10PM -0700, Guenter Roeck wrote:
-> On Thu, Jun 28, 2018 at 02:34:27PM +0300, Heikki Krogerus wrote:
-> > On Thu, Jun 28, 2018 at 07:51:55PM +0900, Greg Kroah-Hartman wrote:
-> > > On Wed, Jun 27, 2018 at 06:19:48PM +0300, Heikki Krogerus wrote:
-> > > > In order for the muxes to be usable with alternate modes,
-> > > > the alternate mode devices will need also to be able to get
-> > > > a handle to the muxes on top of the port devices. To make
-> > > > that possible, the muxes need to be possible to request with
-> > > > an identifier.
-> > > > 
-> > > > This will change the API so that the mux identifier is given
-> > > > as a function parameter to typec_mux_get(), and the hard-coded
-> > > > "typec-mux" is replaced with that value.
-> > > > 
-> > > > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > > > ---
-> > > >  drivers/usb/typec/class.c     | 2 +-
-> > > >  drivers/usb/typec/mux.c       | 6 +++---
-> > > >  include/linux/usb/typec_mux.h | 2 +-
-> > > >  3 files changed, 5 insertions(+), 5 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> > > > index 2b3eaa969f3b..b860bd3a0acb 100644
-> > > > --- a/drivers/usb/typec/class.c
-> > > > +++ b/drivers/usb/typec/class.c
-> > > > @@ -1357,7 +1357,7 @@ struct typec_port *typec_register_port(struct device *parent,
-> > > >  		goto err_switch;
-> > > >  	}
-> > > >  
-> > > > -	port->mux = typec_mux_get(cap->fwnode ? &port->dev : parent);
-> > > > +	port->mux = typec_mux_get(parent, "typec-mux");
-> > > 
-> > > This changes the first parameter for this call, is that ok?  Doesn't
-> > > that change the functionality here?
-> > 
-> > No, I noticed that cap->fwnode is set after we call that function, so
-> > we always ended up using parent.
-> > 
-> > This needs to be fixed properly of course, but I choose not to propose
-> > anything in this series. We don't yet use the fwnode handle with the
-> > muxes in any case, as the device connection API does not support
-> > anything else except build-in connections descriptions for now.
-> > 
-> 
-> Seems to me that would be better handled in a separate patch or patch
-> series. With this patch, the code ends up always using parent here but
-> there is still
-> 	port->sw = typec_switch_get(cap->fwnode ? &port->dev : parent);
-> a couple of lines above. This is at the very least confusing to the
-> reader.
+On Wed, Jul 18, 2018 at 5:51 AM Alan Stern <stern@rowland.harvard.edu> wrote:
+>
+> On Tue, 17 Jul 2018, Ezequiel Garcia wrote:
+>
+> > Hi Matwey,
+> >
+> > First of all, sorry for the delay.
+> >
+> > Adding Alan and Hans. Guys, do you have any feedback here?
+>
+> ...
+>
+> > > > So, what is the benefit of using consistent
+> > > > for these URBs, as opposed to streaming?
+> > >
+> > > I don't know, I think there is no real benefit and all we see is a
+> > > consequence of copy-pasta when some webcam drivers were inspired by
+> > > others and development priparily was going at x86 platforms.
+> >
+> > You are probably right about the copy-pasta.
+> >
+> > >  It would
+> > > be great if somebody corrected me here. DMA Coherence is quite strong
+> > > property and I cannot figure out how can it help when streaming video.
+> > > The CPU host always reads from the buffer and never writes to.
+> > > Hardware perepherial always writes to and never reads from. Moreover,
+> > > buffer access is mutually exclusive and separated in time by Interrupt
+> > > fireing and URB starting (when we reuse existing URB for new request).
+> > > Only single one memory barrier is really required here.
+> > >
+> >
+> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
+> > create DMA mappings and use the streaming API. Which makes more
+> > sense in hardware without hardware coherency.
+>
+> As far as I know, the _only_ advantage to using coherent DMA in this
+> situation is that you then do not have to pay the overhead of
+> constantly setting up and tearing down the streaming mappings.  So it
+> depends very much on the platform: If coherent buffers are cached then
+> it's a slight win and otherwise it's a big lose.
 
-True. I'll refactor this function a little in a separate patch. But
-not right away. I still have one week of vacation.
+Isn't it about usb_alloc_coherent() being backed by DMA coherent API
+(dma_alloc_coherent/attrs()) and ending up allocating uncached (or
+write-combine) memory for devices with non-coherent DMAs? I'm not sure
+how this memory is used by this driver, but if it reads from it using
+CPU, uncached mapping might be significantly slower than cached
+mapping of memory allocated with kmalloc().
 
-
-Thanks,
-
--- 
-heikki
+Best regards,
+Tomasz
