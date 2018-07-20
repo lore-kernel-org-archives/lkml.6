@@ -2,281 +2,178 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E88FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 22:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D97ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 22:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2512E20671
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 22:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B07E820671
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 22:13:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="wbd5GwCd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2512E20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A99xEuwI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B07E820671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729070AbeGTXDv (ORCPT
+        id S1730118AbeGTXEA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 19:03:51 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45329 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbeGTXDv (ORCPT
+        Fri, 20 Jul 2018 19:04:00 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44037 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728326AbeGTXEA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 19:03:51 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j143-v6so2744823lfj.12
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 15:13:36 -0700 (PDT)
+        Fri, 20 Jul 2018 19:04:00 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r1-v6so7921560pgp.11
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 15:13:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=cpj4TteIj4lg6hmNVWaPOb7UncWVCgMvhTBcNa3hRqM=;
-        b=wbd5GwCdY+8NEUNN8wN9JfHRk/fSNsb7QWWPU/0R5rdn/c+eblb11ulNUm4iIhLRcq
-         FpPCnAkv45yr8CJwdR4QQ8pbbiqu9FtmQHcpbENoAUR/iiKZrN86UeMtwI8ZuStuA0+t
-         ZnV3qOSJ0HSf8ABDF3Vro+zfcvISQhwwH59aXL0+eFGvpYVlQWBAMS7ylF29zhWdWrIN
-         cfmPBh2nXccQi7uBdfGac2K0yM7oy24Zv+Gw5KKTSyUeIr6oVBCCB1rArBsdudoF+WC9
-         +YWXVRK5GYUiXu+y2+GQ/qgsG7YF90tELHeOKZjC5MC5o4GdGEMzrdXXNe6kEoq6MDGb
-         n6AQ==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=f0GVuaU8mcNvy9tTLPl9T+Q7VQlvX5HhHcuzlCceTQE=;
+        b=A99xEuwIq9E9VNuHgeRRRwzK+67LRbSU6MO5T6/oBGhWvJvWqzXXHc4bjZ5GY+I/T4
+         QWEdu6vRppnPKapbYZP8mmNI4rIbzN8BrHXdI/W+Iko9fKCZ44f4l2FOeMS90RKqSEGc
+         /DK81rxETiQ3ULS4TgtmgfoylmouWEG1VeR/aPNcncCwlyy4cuaBs9K/J+ZCQxc7702q
+         xUAqIGPSeigDQRiFWXkEimwlC4RQbuzDuEoxp1WRrqd+fUrg2w8KfS41waL7kW8mN374
+         o3u9r303NBTI817OJzfU5ceK5iqNPd1zHLb3a3cHHcALd4MQdcvjAXwLrCdB88F3jNPV
+         HAZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cpj4TteIj4lg6hmNVWaPOb7UncWVCgMvhTBcNa3hRqM=;
-        b=C/6vSj92qiXgD6X142pCbnDIKO6GLMaqCVhkzo+iB+7xC3ABJsjE+IBcyJMdCJAVpT
-         VGel297A12m+0Rku5GEkKkqVZYgJsvYwYlTQJv1/lMmv8CaFVDmHFG92p1Po0+J7okoU
-         pB+MDlRMrzYD1WysUuPvscj2c0+9F+F71rLN9ry/pvI4SHJcCzCYVHykxEXp+jIiuSJe
-         Oxz5q2j4gE9ncZJHR1aDZKq/XKMY/Z1jHLZduUGlXbRORnyb966bRaFNOklpL1YvzWfT
-         azKJQyMcV2H3U7uuhCXILxMMd5DpPxex0HNDw2qzSNAgzxc+lSVYrwAVN0t879W8BnsG
-         xbWA==
-X-Gm-Message-State: AOUpUlGnkkBre67SbsvNEyOKrWY6lqcOiDleQFvBg3WBeC8+psJWfq3j
-        9UCZR+ttDSIST4XuPPSJy8LaoiWwHiNo5I9iHaEN
-X-Google-Smtp-Source: AAOMgpfMJESrQ/W1pfTZrOv2OFEgHUfsNHkKoXhx2CXH44RRNllXcD44UEYL6eEQy1CplD472oSJwgTYX7gs+GOZWIs=
-X-Received: by 2002:a19:dd5c:: with SMTP id u89-v6mr2275891lfg.83.1532124815140;
- Fri, 20 Jul 2018 15:13:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=f0GVuaU8mcNvy9tTLPl9T+Q7VQlvX5HhHcuzlCceTQE=;
+        b=gOu+D12St6setOIfF3rWvqR4KYTI6ljFO9Ggon4aMjWEUxOG/RkLvgX5mE0dAk/h9p
+         S1xw0Q3hasJJZ+x1OoouMIhG3TQ5fE5pVnbRn/6v0HrpZYZb7z4ZqdxchCVhBJf4240v
+         CeHdEMWPCAw0Z1mvgc4JXAy3ziMtCfTDGRqIVXCE3qD9BYFiNI4ELk1ahRiqwOXOfqBr
+         uojvsFWb6kvYGzLKNA8nLlP/uMR9gwWNH8vHi2KQ103ipBpeGcNP1fvZV7WcsEfBF5FV
+         dT++2b4bL4WqSYNA1hh4kxZny71jaZ2pW8ukeUsvQj1eJl9HVlW+AvLnpaDkdKzJTSJT
+         Xa2w==
+X-Gm-Message-State: AOUpUlFErw2LpzhNq9Ia6lTXhpKSTMG0a0ci7o4FS4tmdgo14G7xKNRE
+        DzYor2y9GUVy7soVICYK3LDnZg==
+X-Google-Smtp-Source: AAOMgpdV0kNmLITsC86YEtA9yujePi2xfYnY1yh2d/BQDFvj2yNg0IgGmvgMmkjg0n10VIt0zn6NKA==
+X-Received: by 2002:a62:1489:: with SMTP id 131-v6mr3838248pfu.159.1532124826276;
+        Fri, 20 Jul 2018 15:13:46 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id l27-v6sm5467377pfi.180.2018.07.20.15.13.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 20 Jul 2018 15:13:45 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 15:13:44 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch v4] mm, oom: fix unnecessary killing of additional
+ processes
+In-Reply-To: <ca34b123-5c81-569f-85ea-4851bc569962@i-love.sakura.ne.jp>
+Message-ID: <alpine.DEB.2.21.1807201505550.38399@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1806211434420.51095@chino.kir.corp.google.com> <d19d44c3-c8cf-70a1-9b15-c98df233d5f0@i-love.sakura.ne.jp> <alpine.DEB.2.21.1807181317540.49359@chino.kir.corp.google.com> <a78fb992-ad59-0cdb-3c38-8284b2245f21@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807200133310.119737@chino.kir.corp.google.com> <alpine.DEB.2.21.1807201314230.231119@chino.kir.corp.google.com> <ca34b123-5c81-569f-85ea-4851bc569962@i-love.sakura.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <cover.1528304203.git.rgb@redhat.com> <0377c3ced6bdbc44fe17f9a5679cb6eda4304024.1528304203.git.rgb@redhat.com>
-In-Reply-To: <0377c3ced6bdbc44fe17f9a5679cb6eda4304024.1528304203.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 20 Jul 2018 18:13:24 -0400
-Message-ID: <CAHC9VhRk+qLAyizM9i8D+cjKxyhruuj_Z9N0QRmjM-fjm4hgRw@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 01/10] audit: add container id
-To:     rgb@redhat.com
-Cc:     cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
-        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 1:00 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> Implement the proc fs write to set the audit container identifier of a
-> process, emitting an AUDIT_CONTAINER_ID record to document the event.
->
-> This is a write from the container orchestrator task to a proc entry of
-> the form /proc/PID/audit_containerid where PID is the process ID of the
-> newly created task that is to become the first task in a container, or
-> an additional task added to a container.
->
-> The write expects up to a u64 value (unset: 18446744073709551615).
->
-> The writer must have capability CAP_AUDIT_CONTROL.
->
-> This will produce a record such as this:
->   type=3DCONTAINER_ID msg=3Daudit(2018-06-06 12:39:29.636:26949) : op=3Ds=
-et opid=3D2209 old-contid=3D18446744073709551615 contid=3D123456 pid=3D628 =
-auid=3Droot uid=3Droot tty=3DttyS0 ses=3D1 subj=3Dunconfined_u:unconfined_r=
-:unconfined_t:s0-s0:c0.c1023 comm=3Dbash exe=3D/usr/bin/bash res=3Dyes
->
-> The "op" field indicates an initial set.  The "pid" to "ses" fields are
-> the orchestrator while the "opid" field is the object's PID, the process
-> being "contained".  Old and new audit container identifier values are
-> given in the "contid" fields, while res indicates its success.
->
-> It is not permitted to unset or re-set the audit container identifier.
-> A child inherits its parent's audit container identifier, but then can
-> be set only once after.
->
-> See: https://github.com/linux-audit/audit-kernel/issues/90
-> See: https://github.com/linux-audit/audit-userspace/issues/51
-> See: https://github.com/linux-audit/audit-testsuite/issues/64
-> See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container=
--ID
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  fs/proc/base.c             | 37 ++++++++++++++++++++++++
->  include/linux/audit.h      | 25 ++++++++++++++++
->  include/uapi/linux/audit.h |  2 ++
->  kernel/auditsc.c           | 71 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  4 files changed, 135 insertions(+)
+On Sat, 21 Jul 2018, Tetsuo Handa wrote:
 
-...
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -3066,25 +3066,27 @@ void exit_mmap(struct mm_struct *mm)
+> >  	if (unlikely(mm_is_oom_victim(mm))) {
+> >  		/*
+> >  		 * Manually reap the mm to free as much memory as possible.
+> > -		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
+> > -		 * this mm from further consideration.  Taking mm->mmap_sem for
+> > -		 * write after setting MMF_OOM_SKIP will guarantee that the oom
+> > -		 * reaper will not run on this mm again after mmap_sem is
+> > -		 * dropped.
+> > -		 *
+> >  		 * Nothing can be holding mm->mmap_sem here and the above call
+> >  		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
+> >  		 * __oom_reap_task_mm() will not block.
+> >  		 *
+> > +		 * This sets MMF_UNSTABLE to avoid racing with the oom reaper.
+> >  		 * This needs to be done before calling munlock_vma_pages_all(),
+> >  		 * which clears VM_LOCKED, otherwise the oom reaper cannot
+> > -		 * reliably test it.
+> > +		 * reliably test for it.  If the oom reaper races with
+> > +		 * munlock_vma_pages_all(), this can result in a kernel oops if
+> > +		 * a pmd is zapped, for example, after follow_page_mask() has
+> > +		 * checked pmd_none().
+> >  		 */
+> >  		mutex_lock(&oom_lock);
+> >  		__oom_reap_task_mm(mm);
+> >  		mutex_unlock(&oom_lock);
+> 
+> I don't like holding oom_lock for full teardown of an mm, for an OOM victim's mm
+> might have multiple TB memory which could take long time.
+> 
 
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -606,6 +621,16 @@ static inline bool audit_loginuid_set(struct task_st=
-ruct *tsk)
->        return uid_valid(audit_get_loginuid(tsk));
-> }
->
-> +static inline bool cid_valid(u64 contid)
-> +{
-> +       return contid !=3D AUDIT_CID_UNSET;
-> +}
-> +
-> +static inline bool audit_contid_set(struct task_struct *tsk)
-> +{
-> +       return cid_valid(audit_get_contid(tsk));
-> +}
+This patch does not involve deltas for oom_lock here, it can certainly be 
+changed on top of this patch.  I'm not attempting to address any oom_lock 
+issue here.  It should pose no roadblock for you.
 
-For the sake of consistency I think we should rename cid_valid() to
-audit_contid_valid().
+I only propose this patch now since it fixes millions of processes being 
+oom killed unnecessarily, it was in -mm before a NACK for the most trivial 
+fixes that have now been squashed into it, and is actually tested.
 
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 59ef7a81..611e926 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -956,6 +956,8 @@ int audit_alloc(struct task_struct *tsk)
->                 return -ENOMEM;
->         info->loginuid =3D audit_get_loginuid(current);
->         info->sessionid =3D audit_get_sessionid(current);
-> +       info->contid =3D audit_get_contid(current);
-> +       info->inherited =3D true;
+> >  
+> > -		set_bit(MMF_OOM_SKIP, &mm->flags);
+> > +		/*
+> > +		 * Taking mm->mmap_sem for write after setting MMF_UNSTABLE will
+> > +		 * guarantee that the oom reaper will not run on this mm again
+> > +		 * after mmap_sem is dropped.
+> > +		 */
+> >  		down_write(&mm->mmap_sem);
+> >  		up_write(&mm->mmap_sem);
+> >  	}
+> 
+> 
+> 
+> > -#define MAX_OOM_REAP_RETRIES 10
+> >  static void oom_reap_task(struct task_struct *tsk)
+> >  {
+> > -	int attempts = 0;
+> >  	struct mm_struct *mm = tsk->signal->oom_mm;
+> >  
+> > -	/* Retry the down_read_trylock(mmap_sem) a few times */
+> > -	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
+> > -		schedule_timeout_idle(HZ/10);
+> > +	/*
+> > +	 * If this mm has either been fully unmapped, or the oom reaper has
+> > +	 * given up on it, nothing left to do except drop the refcount.
+> > +	 */
+> > +	if (test_bit(MMF_OOM_SKIP, &mm->flags))
+> > +		goto drop;
+> >  
+> > -	if (attempts <= MAX_OOM_REAP_RETRIES ||
+> > -	    test_bit(MMF_OOM_SKIP, &mm->flags))
+> > -		goto done;
+> > +	/*
+> > +	 * If this mm has already been reaped, doing so again will not likely
+> > +	 * free additional memory.
+> > +	 */
+> > +	if (!test_bit(MMF_UNSTABLE, &mm->flags))
+> > +		oom_reap_task_mm(tsk, mm);
+> 
+> This is still wrong. If preempted immediately after set_bit(MMF_UNSTABLE, &mm->flags) from
+> __oom_reap_task_mm() from exit_mmap(), oom_reap_task() can give up before reclaiming any memory.
 
-First see my others comments in this patch about inheritence, but if
-we decide that flagging inherited values is important we should
-probably rename the "inherited" field to indicate that it applies to
-just the "contid" field.
+If there is a single thread holding onto the mm and has reached 
+exit_mmap() and is in the process of starting oom reaping itself, there's 
+no advantage to the oom reaper trying to oom reap it.  The thread in 
+exit_mmap() will take care of it, __oom_reap_task_mm() does not block and 
+oom_free_timeout_ms allows for enough time for that memory freeing to 
+occur.  The oom reaper will not set MMF_OOM_SKIP until the timeout has 
+expired.
 
->         tsk->audit =3D info;
->
->         if (likely(!audit_ever_enabled))
-> @@ -985,6 +987,8 @@ int audit_alloc(struct task_struct *tsk)
->  struct audit_task_info init_struct_audit =3D {
->         .loginuid =3D INVALID_UID,
->         .sessionid =3D AUDIT_SID_UNSET,
-> +       .contid =3D AUDIT_CID_UNSET,
-> +       .inherited =3D true,
->         .ctx =3D NULL,
->  };
->
-> @@ -2112,6 +2116,73 @@ int audit_set_loginuid(kuid_t loginuid)
->  }
->
->  /**
-> + * audit_set_contid - set current task's audit_context contid
-> + * @contid: contid value
-> + *
-> + * Returns 0 on success, -EPERM on permission failure.
-> + *
-> + * Called (set) from fs/proc/base.c::proc_contid_write().
-> + */
-> +int audit_set_contid(struct task_struct *task, u64 contid)
-> +{
-> +       u64 oldcontid;
-> +       int rc =3D 0;
-> +       struct audit_buffer *ab;
-> +       uid_t uid;
-> +       struct tty_struct *tty;
-> +       char comm[sizeof(current->comm)];
-> +
-> +       /* Can't set if audit disabled */
-> +       if (!task->audit)
-> +               return -ENOPROTOOPT;
-> +       oldcontid =3D audit_get_contid(task);
-> +       /* Don't allow the audit containerid to be unset */
-> +       if (!cid_valid(contid))
-> +               rc =3D -EINVAL;
-> +       /* if we don't have caps, reject */
-> +       else if (!capable(CAP_AUDIT_CONTROL))
-> +               rc =3D -EPERM;
-> +       /* if task has children or is not single-threaded, deny */
-> +       else if (!list_empty(&task->children))
-> +               rc =3D -EBUSY;
-
-Is this safe without holding tasklist_lock?  I worry we might be
-vulnerable to a race with fork().
-
-> +       else if (!(thread_group_leader(task) && thread_group_empty(task))=
-)
-> +               rc =3D -EALREADY;
-
-Similar concern here as well, although related to threads.
-
-> +       /* it is already set, and not inherited from the parent, reject *=
-/
-> +       else if (cid_valid(oldcontid) && !task->audit->inherited)
-> +               rc =3D -EEXIST;
-
-Maybe I'm missing something, but why do we care about preventing
-reassigning the audit container ID in this case?  The task is single
-threaded and has no descendants at this point so it should be safe,
-yes?  So long as the task changing the audit container ID has
-capable(CAP_AUDIT_CONTOL) it shouldn't matter, right?
-
-Related, I'm questioning if we would ever care if the audit container
-ID was inherited or not?
-
-> +       if (!rc) {
-> +               task_lock(task);
-> +               task->audit->contid =3D contid;
-> +               task->audit->inherited =3D false;
-> +               task_unlock(task);
-
-I suspect the task_lock() may not be what we want here, but if we are
-using task_lock() to protect the audit fields two things come to mind:
-
-1. We should update the header comments for task_lock() in task.h to
-indicate that it also protects ->audit.
-2. Where else do we need to worry about taking this lock?  At the very
-least we should take this lock near the top of this function before we
-check task->audit and not drop it until after we have set it, or
-failed the operation for one of the reasons above.
-
-> +       }
-> +
-> +       if (!audit_enabled)
-> +               return rc;
-> +
-> +       ab =3D audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAIN=
-ER_ID);
-> +       if (!ab)
-> +               return rc;
-> +
-> +       uid =3D from_kuid(&init_user_ns, task_uid(current));
-> +       tty =3D audit_get_tty(current);
-> +       audit_log_format(ab, "op=3Dset opid=3D%d old-contid=3D%llu contid=
-=3D%llu pid=3D%d uid=3D%u auid=3D%u tty=3D%s ses=3D%u",
-> +                        task_tgid_nr(task), oldcontid, contid,
-> +                        task_tgid_nr(current), uid
-> +                        from_kuid(&init_user_ns, audit_get_loginuid(curr=
-ent)),
-> +                        tty ? tty_name(tty) : "(none)",
-> +                        audit_get_sessionid(current));
-> +       audit_put_tty(tty);
-> +       audit_log_task_context(ab);
-> +       audit_log_format(ab, " comm=3D");
-> +       audit_log_untrustedstring(ab, get_task_comm(comm, current));
-> +       audit_log_d_path_exe(ab, current->mm);
-> +       audit_log_format(ab, " res=3D%d", !rc);
-> +       audit_log_end(ab);
-> +       return rc;
-> +}
-> +
-> +/**
->   * __audit_mq_open - record audit data for a POSIX MQ open
->   * @oflag: open flag
->   * @mode: mode bits
-
---
-paul moore
-www.paul-moore.com
+As I said before, you could make a case for extending the timeout once 
+MMF_UNSTABLE has been set.  It practice, we haven't encountered a case 
+where that matters.  But that's trivial to do if you would prefer.
