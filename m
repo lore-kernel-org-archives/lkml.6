@@ -2,160 +2,145 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E6CECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A57ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76422205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:20:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76422205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 465E4205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 14:22:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="UbdNaQFq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465E4205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbeGTPJJ (ORCPT
+        id S1732113AbeGTPKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 11:09:09 -0400
-Received: from mga17.intel.com ([192.55.52.151]:14685 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731305AbeGTPJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 11:09:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 07:20:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,379,1526367600"; 
-   d="scan'208";a="68545716"
-Received: from pavlovix-mobl.ger.corp.intel.com (HELO [10.249.254.39]) ([10.249.254.39])
-  by orsmga003.jf.intel.com with ESMTP; 20 Jul 2018 07:20:27 -0700
-Subject: Re: [RFC PATCH v2 14/27] mm: Handle THP/HugeTLB shadow stack page
- fault
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-15-yu-cheng.yu@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <adc8f0b0-e2a5-d3e9-edaf-8d5b3be6a5b6@linux.intel.com>
-Date:   Fri, 20 Jul 2018 07:20:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 20 Jul 2018 11:10:35 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37157 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731754AbeGTPKe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 11:10:34 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v9-v6so11304843ljk.4
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 07:22:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TO0jcPdxrRklxCJyI7pW2b7Nf5uDY7oE+ByEOqW+D4E=;
+        b=UbdNaQFqPWlrG5vb8MoVPxjEdzL6EaXygn6iceFrGgJG8i/T65xC6l+hC8aAaNDabw
+         /g9+HARrCXjeG2/xmwgXNAC5bR6qYvwC2GbTPIChhxyTTT1IKJOaTKgmXFnGEfo271v/
+         oTzFgVMYqCdRaPgQtXIoddt8Ia2/yLAf+Flc38a+viDWeW4MLtV4IzQ2ykEssne+GuEe
+         HTlDRcp2HjP92aS5pbnplgjy84yyvPuZRgRbNoORCKuB7DU07L0nEwaGX2mhnPIHpEfx
+         wptcqXOnx53vydbpkBJeSDVPPJ+ZhENtmsrzA100Pe2mLUx+GMnqbl5s/XYlNZB5aTeu
+         9wsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TO0jcPdxrRklxCJyI7pW2b7Nf5uDY7oE+ByEOqW+D4E=;
+        b=cXp0hpYkXDHv5tmefP4WEifToz8773fqR/ItqiWHcGReW88AzXhl87eMZLhrEYm291
+         UUlrISVoedni5MkoSJVW8RlD2aqZ5W+IqKLQEOIx8F0VLafD+XKFSzhFB5VPAxqnqMnC
+         uyz+E9QlXO9wy4UZh4jZb6V0h/i00Hhh+3vprhmoOIWGML2L2MjaqkiNaf1buWc1ZHjl
+         qScIpw1Q0h07LR1BY0v2YFFKgpCzFes6lsYOS5HzMMdbXQxmcG5R+8RxRLxmypqb7LGh
+         EuA8Jqk0eN7qpW//bec2NbWmIKvbIkMu5fcceKAXtIZO61trm60ZZOOT3a3nbwKsNqkQ
+         AjCg==
+X-Gm-Message-State: AOUpUlEFHpLs2KmDPHU7TDwixUZ1+jG1xH4UZEqkNl2Shez8dNAAcR0/
+        kSL6SzEOzTFuoXRFpScBEQoYMS0mmssMhyWK1+nT
+X-Google-Smtp-Source: AAOMgpd9A2alwWvhvpHULIjARqe0uwburDuOKhxvoAcRp1BJnUivrfD0U8O758GA2O71XeXLHbq4wSZRdiOahSo6ETE=
+X-Received: by 2002:a2e:2d0a:: with SMTP id t10-v6mr515144ljt.8.1532096521574;
+ Fri, 20 Jul 2018 07:22:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180710222639.8241-15-yu-cheng.yu@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <cover.1529003588.git.rgb@redhat.com> <17f22b579c28c6cd9475a57e792b5d4fb4dde1dc.1529003588.git.rgb@redhat.com>
+ <CAHC9VhTxjcmJGEq6XQmRV0Ouk8oOyHO2C8+HVQOy1qxw9yKyXw@mail.gmail.com>
+ <20180713004122.qlxdpkae4ihkxatg@madcap2.tricolour.ca> <CAHC9VhTwYo2p9sKJvhK5haQWuNtR20AEDoA=yGW1gQqdYBzMzQ@mail.gmail.com>
+ <20180719160803.7faw2feelfkunysa@madcap2.tricolour.ca> <CAHC9VhQs9g2yBJC+fy4xcAbgOAPWMnPs8+7ksffLgc3RUenKpw@mail.gmail.com>
+ <20180720132737.nukm4xycty6mozh6@madcap2.tricolour.ca>
+In-Reply-To: <20180720132737.nukm4xycty6mozh6@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 20 Jul 2018 10:21:50 -0400
+Message-ID: <CAHC9VhT0WnmAGWk5pLJ9TYusdb_8Dububdi=8tWnvoaY+NMnSQ@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak59 V1 1/6] audit: give a clue what CONFIG_CHANGE
+ op was involved
+To:     rgb@redhat.com
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>, sgrubb@redhat.com,
+        aviro@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
-> @@ -1193,6 +1195,8 @@ static int do_huge_pmd_wp_page_fallback(struct vm_fault *vmf, pmd_t orig_pmd,
->  		pte_t entry;
->  		entry = mk_pte(pages[i], vma->vm_page_prot);
->  		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
-> +		if (is_shstk_mapping(vma->vm_flags))
-> +			entry = pte_mkdirty_shstk(entry);
+On Fri, Jul 20, 2018 at 9:30 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-07-19 18:47, Paul Moore wrote:
+> > On Thu, Jul 19, 2018 at 12:10 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2018-07-18 17:45, Paul Moore wrote:
+> > > > On Thu, Jul 12, 2018 at 8:43 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > On 2018-06-28 15:41, Paul Moore wrote:
+> > > > > > On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > > The failure to add an audit rule due to audit locked gives no clue
+> > > > > > > what CONFIG_CHANGE operation failed.
+> > > > > > > Similarly the set operation is the only other operation that doesn't
+> > > > > > > give the "op=" field to indicate the action.
+> > > > > > > All other CONFIG_CHANGE records include an op= field to give a clue as
+> > > > > > > to what sort of configuration change is being executed.
+> > > > > > >
+> > > > > > > Since these are the only CONFIG_CHANGE records that that do not have an
+> > > > > > > op= field, add them to bring them in line with the rest.
+> > > > > >
+> > > > > > Normally this would be an immediate reject because this patch inserts
+> > > > > > a field into an existing record, but the CONFIG_CHANGE record is so
+> > > > > > variable (supposedly bad in its own right) that I don't this really
+> > > > > > matters.
+> > > > > >
+> > > > > > With that out of the way, I think this patch is fine, but I don't
+> > > > > > think it is complete.  At the very least there is another
+> > > > > > CONFIG_CHANGE record in audit_watch_log_rule_change() that doesn't
+> > > > > > appear to include an "op" field.  If we want to make sure we have an
+> > > > > > "op" field in every CONFIG_CHANGE record, let's actually add them all
+> > > > > > :)
+> > > > >
+> > > > > The version I'm looking at already had it when it was added in 2009.
+> > > >
+> > > > Yup, there it is ... now I'm wondering what tree I was looking at as a
+> > > > reference while reviewing this?
+> > > >
+> > > > /me scratches head
+> > > >
+> > > > > This one doesn't add the auid and ses fields because they will be
+> > > > > covered by the linking of this record with the syscall record via the
+> > > > > audit_context() introduced in another patch.
+> > > >
+> > > > Yeah, I'm not concerned about that for the reasons you state.
+> > > >
+> > > > > > and one more in audit_receive_msg().  There may be more.
+> > > > >
+> > > > > I believe they're covered by other patches in the ghak59 set.
+> > > >
+> > > > If they are in the later patches it might be good to move those "op="
+> > > > additions into this patch.
+> > >
+> > > I don't see any CONFIG_CHANGE records generated in audit_receive_msg()
+> > > that are missing op= field.  Can you narrow it down?
+> >
+> > Well, just grep'ing my way through audit_receive_msg() I see that
+> > AUDIT_ADD/DEL_RULE generates a CONFIG_CHANGE record.
+>
+> The failure case is addressed in this patch.  The success case is
+> addressed in audit_log_rule_change().  The latter already has it.  What
+> is the problem?  What tree are you looking at?  What am I missing?
 
-Peter Z was pointing out that we should get rid of all this generic code
-manipulation.  We might not easily be able to do it *all*, but we can do
-better than what we've got here.
+So it does.  This discussion dragged out long enough that I forgot to
+check the actual patch submission.
 
-Basically, if you have code outside of arch/x86 in your patch set that
-refers to shadow stacks, you should consider it a bug (for now),
-especially if you have to hack .c files.
+I think this patch is fine, I would recommend updating this patchset
+using the feedback on the other individual patches and resubmitting.
 
-For instance, in the code above, you could move the is_shstk_mapping() into:
-
-static inline pte_t maybe_mkwrite(pte_t pte, struct vm_area_struct *vma)
-{
-        if (likely(vma->vm_flags & VM_WRITE))
-                pte = pte_mkwrite(pte);
-	
-+	pte = arch_pte_mkwrite(pte, vma);
-+
-        return pte;
-}
-
-... and add an arch callback that does:
-
-static inline pte_t maybe_mkwrite(pte_t pte, struct vm_area_struct *vma)
-{
-	if (!is_shstk_mapping(vma->vm_flags))
-		return pte;
-
-	WARN_ON(... pte bits incompatible with shadow stacks?);
-
-	/* Lots of comments of course */
-	entry = pte_mkdirty_shstk(entry);
-}
-
-This is just one example.  You are probably going to need a couple of
-similar things.  Just remember: the bar is very high to make changes to
-.c files outside of arch/x86.  You can do a _bit_ more in non-x86
-headers, but you have the most freedom to patch what you want as long as
-it's in arch/x86.
+-- 
+paul moore
+www.paul-moore.com
