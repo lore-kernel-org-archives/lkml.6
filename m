@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89791ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07249ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A73206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2A73206B7
+	by mail.kernel.org (Postfix) with ESMTP id B436A206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:37:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B436A206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389233AbeGTNZL (ORCPT
+        id S2389243AbeGTNZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:25:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45112 "EHLO
+        Fri, 20 Jul 2018 09:25:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45150 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387815AbeGTNZK (ORCPT
+        with ESMTP id S2387815AbeGTNZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:25:10 -0400
+        Fri, 20 Jul 2018 09:25:13 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5535EC93;
-        Fri, 20 Jul 2018 12:35:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF72DB14;
+        Fri, 20 Jul 2018 12:34:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 85/92] arm64: ssbd: Restore mitigation status on CPU resume
-Date:   Fri, 20 Jul 2018 14:14:29 +0200
-Message-Id: <20180720121422.563077746@linuxfoundation.org>
+        James Morse <james.morse@arm.com>,
+        Christoffer Dall <cdall@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.14 72/92] KVM: arm64: Change hyp_panic()s dependency on tpidr_el2
+Date:   Fri, 20 Jul 2018 14:14:16 +0200
+Message-Id: <20180720121421.860470726@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -52,96 +52,162 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: James Morse <james.morse@arm.com>
 
-commit 647d0519b53f440a55df163de21c52a8205431cc upstream.
+Commit c97e166e54b662717d20ec2e36761758d2b6a7c2 upstream.
 
-On a system where firmware can dynamically change the state of the
-mitigation, the CPU will always come up with the mitigation enabled,
-including when coming back from suspend.
+Make tpidr_el2 a cpu-offset for per-cpu variables in the same way the
+host uses tpidr_el1. This lets tpidr_el{1,2} have the same value, and
+on VHE they can be the same register.
 
-If the user has requested "no mitigation" via a command line option,
-let's enforce it by calling into the firmware again to disable it.
+KVM calls hyp_panic() when anything unexpected happens. This may occur
+while a guest owns the EL1 registers. KVM stashes the vcpu pointer in
+tpidr_el2, which it uses to find the host context in order to restore
+the host EL1 registers before parachuting into the host's panic().
 
-Similarily, for a resume from hibernate, the mitigation could have
-been disabled by the boot kernel. Let's ensure that it is set
-back on in that case.
+The host context is a struct kvm_cpu_context allocated in the per-cpu
+area, and mapped to hyp. Given the per-cpu offset for this CPU, this is
+easy to find. Change hyp_panic() to take a pointer to the
+struct kvm_cpu_context. Wrap these calls with an asm function that
+retrieves the struct kvm_cpu_context from the host's per-cpu area.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Copy the per-cpu offset from the hosts tpidr_el1 into tpidr_el2 during
+kvm init. (Later patches will make this unnecessary for VHE hosts)
+
+We print out the vcpu pointer as part of the panic message. Add a back
+reference to the 'running vcpu' in the host cpu context to preserve this.
+
+Signed-off-by: James Morse <james.morse@arm.com>
+Reviewed-by: Christoffer Dall <cdall@linaro.org>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/cpufeature.h |    6 ++++++
- arch/arm64/kernel/cpu_errata.c      |    2 +-
- arch/arm64/kernel/hibernate.c       |   11 +++++++++++
- arch/arm64/kernel/suspend.c         |    8 ++++++++
- 4 files changed, 26 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/kvm_host.h |    2 ++
+ arch/arm64/kvm/hyp/hyp-entry.S    |   12 ++++++++++++
+ arch/arm64/kvm/hyp/s2-setup.c     |    3 +++
+ arch/arm64/kvm/hyp/switch.c       |   25 +++++++++++++------------
+ 4 files changed, 30 insertions(+), 12 deletions(-)
 
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -278,6 +278,12 @@ static inline int arm64_get_ssbd_state(v
- #endif
- }
- 
-+#ifdef CONFIG_ARM64_SSBD
-+void arm64_set_ssbd_mitigation(bool state);
-+#else
-+static inline void arm64_set_ssbd_mitigation(bool state) {}
-+#endif
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -194,6 +194,8 @@ struct kvm_cpu_context {
+ 		u64 sys_regs[NR_SYS_REGS];
+ 		u32 copro[NR_COPRO_REGS];
+ 	};
 +
- #endif /* __ASSEMBLY__ */
++	struct kvm_vcpu *__hyp_running_vcpu;
+ };
  
- #endif
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -299,7 +299,7 @@ void __init arm64_enable_wa2_handling(st
- 		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
+ typedef struct kvm_cpu_context kvm_cpu_context_t;
+--- a/arch/arm64/kvm/hyp/hyp-entry.S
++++ b/arch/arm64/kvm/hyp/hyp-entry.S
+@@ -179,6 +179,18 @@ ENTRY(__hyp_do_panic)
+ 	eret
+ ENDPROC(__hyp_do_panic)
+ 
++ENTRY(__hyp_panic)
++	/*
++	 * '=kvm_host_cpu_state' is a host VA from the constant pool, it may
++	 * not be accessible by this address from EL2, hyp_panic() converts
++	 * it with kern_hyp_va() before use.
++	 */
++	ldr	x0, =kvm_host_cpu_state
++	mrs	x1, tpidr_el2
++	add	x0, x0, x1
++	b	hyp_panic
++ENDPROC(__hyp_panic)
++
+ .macro invalid_vector	label, target = __hyp_panic
+ 	.align	2
+ \label:
+--- a/arch/arm64/kvm/hyp/s2-setup.c
++++ b/arch/arm64/kvm/hyp/s2-setup.c
+@@ -84,5 +84,8 @@ u32 __hyp_text __init_stage2_translation
+ 
+ 	write_sysreg(val, vtcr_el2);
+ 
++	/* copy tpidr_el1 into tpidr_el2 for use by HYP */
++	write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
++
+ 	return parange;
  }
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -289,9 +289,9 @@ int __hyp_text __kvm_vcpu_run(struct kvm
+ 	u64 exit_code;
  
--static void arm64_set_ssbd_mitigation(bool state)
-+void arm64_set_ssbd_mitigation(bool state)
+ 	vcpu = kern_hyp_va(vcpu);
+-	write_sysreg(vcpu, tpidr_el2);
+ 
+ 	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
++	host_ctxt->__hyp_running_vcpu = vcpu;
+ 	guest_ctxt = &vcpu->arch.ctxt;
+ 
+ 	__sysreg_save_host_state(host_ctxt);
+@@ -406,7 +406,8 @@ again:
+ 
+ static const char __hyp_panic_string[] = "HYP panic:\nPS:%08llx PC:%016llx ESR:%08llx\nFAR:%016llx HPFAR:%016llx PAR:%016llx\nVCPU:%p\n";
+ 
+-static void __hyp_text __hyp_call_panic_nvhe(u64 spsr, u64 elr, u64 par)
++static void __hyp_text __hyp_call_panic_nvhe(u64 spsr, u64 elr, u64 par,
++					     struct kvm_vcpu *vcpu)
  {
- 	switch (psci_ops.conduit) {
- 	case PSCI_CONDUIT_HVC:
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -313,6 +313,17 @@ int swsusp_arch_suspend(void)
+ 	unsigned long str_va;
  
- 		sleep_cpu = -EINVAL;
- 		__cpu_suspend_exit();
+@@ -420,35 +421,35 @@ static void __hyp_text __hyp_call_panic_
+ 	__hyp_do_panic(str_va,
+ 		       spsr,  elr,
+ 		       read_sysreg(esr_el2),   read_sysreg_el2(far),
+-		       read_sysreg(hpfar_el2), par,
+-		       (void *)read_sysreg(tpidr_el2));
++		       read_sysreg(hpfar_el2), par, vcpu);
+ }
+ 
+-static void __hyp_text __hyp_call_panic_vhe(u64 spsr, u64 elr, u64 par)
++static void __hyp_text __hyp_call_panic_vhe(u64 spsr, u64 elr, u64 par,
++					    struct kvm_vcpu *vcpu)
+ {
+ 	panic(__hyp_panic_string,
+ 	      spsr,  elr,
+ 	      read_sysreg_el2(esr),   read_sysreg_el2(far),
+-	      read_sysreg(hpfar_el2), par,
+-	      (void *)read_sysreg(tpidr_el2));
++	      read_sysreg(hpfar_el2), par, vcpu);
+ }
+ 
+ static hyp_alternate_select(__hyp_call_panic,
+ 			    __hyp_call_panic_nvhe, __hyp_call_panic_vhe,
+ 			    ARM64_HAS_VIRT_HOST_EXTN);
+ 
+-void __hyp_text __noreturn __hyp_panic(void)
++void __hyp_text __noreturn hyp_panic(struct kvm_cpu_context *__host_ctxt)
+ {
++	struct kvm_vcpu *vcpu = NULL;
 +
-+		/*
-+		 * Just in case the boot kernel did turn the SSBD
-+		 * mitigation off behind our back, let's set the state
-+		 * to what we expect it to be.
-+		 */
-+		switch (arm64_get_ssbd_state()) {
-+		case ARM64_SSBD_FORCE_ENABLE:
-+		case ARM64_SSBD_KERNEL:
-+			arm64_set_ssbd_mitigation(true);
-+		}
+ 	u64 spsr = read_sysreg_el2(spsr);
+ 	u64 elr = read_sysreg_el2(elr);
+ 	u64 par = read_sysreg(par_el1);
+ 
+ 	if (read_sysreg(vttbr_el2)) {
+-		struct kvm_vcpu *vcpu;
+ 		struct kvm_cpu_context *host_ctxt;
+ 
+-		vcpu = (struct kvm_vcpu *)read_sysreg(tpidr_el2);
+-		host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
++		host_ctxt = kern_hyp_va(__host_ctxt);
++		vcpu = host_ctxt->__hyp_running_vcpu;
+ 		__timer_save_state(vcpu);
+ 		__deactivate_traps(vcpu);
+ 		__deactivate_vm(vcpu);
+@@ -456,7 +457,7 @@ void __hyp_text __noreturn __hyp_panic(v
  	}
  
- 	local_dbg_restore(flags);
---- a/arch/arm64/kernel/suspend.c
-+++ b/arch/arm64/kernel/suspend.c
-@@ -62,6 +62,14 @@ void notrace __cpu_suspend_exit(void)
- 	 */
- 	if (hw_breakpoint_restore)
- 		hw_breakpoint_restore(cpu);
-+
-+	/*
-+	 * On resume, firmware implementing dynamic mitigation will
-+	 * have turned the mitigation on. If the user has forcefully
-+	 * disabled it, make sure their wishes are obeyed.
-+	 */
-+	if (arm64_get_ssbd_state() == ARM64_SSBD_FORCE_DISABLE)
-+		arm64_set_ssbd_mitigation(false);
- }
+ 	/* Call panic for real */
+-	__hyp_call_panic()(spsr, elr, par);
++	__hyp_call_panic()(spsr, elr, par, vcpu);
  
- /*
+ 	unreachable();
+ }
 
 
