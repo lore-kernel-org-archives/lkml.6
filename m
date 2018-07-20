@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB01ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1379DECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 300C9206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300C9206B7
+	by mail.kernel.org (Postfix) with ESMTP id CF1AB2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:26:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF1AB2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731731AbeGTNN7 (ORCPT
+        id S1731752AbeGTNOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:13:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34744 "EHLO
+        Fri, 20 Jul 2018 09:14:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34752 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730183AbeGTNN7 (ORCPT
+        with ESMTP id S1730183AbeGTNOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:13:59 -0400
+        Fri, 20 Jul 2018 09:14:01 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3AAF9BC1;
-        Fri, 20 Jul 2018 12:25:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26291BC8;
+        Fri, 20 Jul 2018 12:26:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Jason Wang <jasowang@redhat.com>,
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 23/29] vhost_net: validate sock before trying to put its fd
-Date:   Fri, 20 Jul 2018 14:11:18 +0200
-Message-Id: <20180720115159.809868746@linuxfoundation.org>
+Subject: [PATCH 3.18 24/29] net_sched: blackhole: tell upper qdisc about dropped packets
+Date:   Fri, 20 Jul 2018 14:11:19 +0200
+Message-Id: <20180720115159.846940481@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720115158.974693829@linuxfoundation.org>
 References: <20180720115158.974693829@linuxfoundation.org>
@@ -51,35 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit b8f1f65882f07913157c44673af7ec0b308d03eb ]
+[ Upstream commit 7e85dc8cb35abf16455f1511f0670b57c1a84608 ]
 
-Sock will be NULL if we pass -1 to vhost_net_set_backend(), but when
-we meet errors during ubuf allocation, the code does not check for
-NULL before calling sockfd_put(), this will lead NULL
-dereferencing. Fixing by checking sock pointer before.
+When blackhole is used on top of classful qdisc like hfsc it breaks
+qlen and backlog counters because packets are disappear without notice.
 
-Fixes: bab632d69ee4 ("vhost: vhost TX zero-copy support")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+In HFSC non-zero qlen while all classes are inactive triggers warning:
+WARNING: ... at net/sched/sch_hfsc.c:1393 hfsc_dequeue+0xba4/0xe90 [sch_hfsc]
+and schedules watchdog work endlessly.
+
+This patch return __NET_XMIT_BYPASS in addition to NET_XMIT_SUCCESS,
+this flag tells upper layer: this packet is gone and isn't queued.
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/net.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/sched/sch_blackhole.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -983,7 +983,8 @@ err_used:
- 	if (ubufs)
- 		vhost_net_ubuf_put_wait_and_free(ubufs);
- err_ubufs:
--	sockfd_put(sock);
-+	if (sock)
-+		sockfd_put(sock);
- err_vq:
- 	mutex_unlock(&vq->mutex);
- err:
+--- a/net/sched/sch_blackhole.c
++++ b/net/sched/sch_blackhole.c
+@@ -20,7 +20,7 @@
+ static int blackhole_enqueue(struct sk_buff *skb, struct Qdisc *sch)
+ {
+ 	qdisc_drop(skb, sch);
+-	return NET_XMIT_SUCCESS;
++	return NET_XMIT_SUCCESS | __NET_XMIT_BYPASS;
+ }
+ 
+ static struct sk_buff *blackhole_dequeue(struct Qdisc *sch)
 
 
