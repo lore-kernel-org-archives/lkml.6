@@ -2,39 +2,39 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8320CECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F7EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26192206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26192206B7
+	by mail.kernel.org (Postfix) with ESMTP id 0FE5A206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 12:34:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE5A206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388779AbeGTNWa (ORCPT
+        id S2388792AbeGTNWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 09:22:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42084 "EHLO
+        Fri, 20 Jul 2018 09:22:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42146 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728029AbeGTNW3 (ORCPT
+        with ESMTP id S1728029AbeGTNWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:22:29 -0400
+        Fri, 20 Jul 2018 09:22:32 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 939C2CAE;
-        Fri, 20 Jul 2018 12:32:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53291C96;
+        Fri, 20 Jul 2018 12:32:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
+        stable@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 22/92] net: dccp: switch rx_tstamp_last_feedback to monotonic clock
-Date:   Fri, 20 Jul 2018 14:13:26 +0200
-Message-Id: <20180720121418.764398602@linuxfoundation.org>
+Subject: [PATCH 4.14 32/92] net: mvneta: fix the Rx desc DMA address in the Rx path
+Date:   Fri, 20 Jul 2018 14:13:36 +0200
+Message-Id: <20180720121419.853291413@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 References: <20180720121417.206337808@linuxfoundation.org>
@@ -51,65 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-[ Upstream commit 0ce4e70ff00662ad7490e545ba0cd8c1fa179fca ]
+[ Upstream commit 271f7ff5aa5a73488b7a9d8b84b5205fb5b2f7cc ]
 
-To compute delays, better not use time of the day which can
-be changed by admins or malicious programs.
+When using s/w buffer management, buffers are allocated and DMA mapped.
+When doing so on an arm64 platform, an offset correction is applied on
+the DMA address, before storing it in an Rx descriptor. The issue is
+this DMA address is then used later in the Rx path without removing the
+offset correction. Thus the DMA address is wrong, which can led to
+various issues.
 
-Also change ccid3_first_li() to use s64 type for delta variable
-to avoid potential overflows.
+This patch fixes this by removing the offset correction from the DMA
+address retrieved from the Rx descriptor before using it in the Rx path.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
-Cc: dccp@vger.kernel.org
+Fixes: 8d5047cf9ca2 ("net: mvneta: Convert to be 64 bits compatible")
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/ccids/ccid3.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/marvell/mvneta.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/dccp/ccids/ccid3.c
-+++ b/net/dccp/ccids/ccid3.c
-@@ -599,7 +599,7 @@ static void ccid3_hc_rx_send_feedback(st
- {
- 	struct ccid3_hc_rx_sock *hc = ccid3_hc_rx_sk(sk);
- 	struct dccp_sock *dp = dccp_sk(sk);
--	ktime_t now = ktime_get_real();
-+	ktime_t now = ktime_get();
- 	s64 delta = 0;
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -1959,7 +1959,7 @@ static int mvneta_rx_swbm(struct mvneta_
+ 		rx_bytes = rx_desc->data_size - (ETH_FCS_LEN + MVNETA_MH_SIZE);
+ 		index = rx_desc - rxq->descs;
+ 		data = rxq->buf_virt_addr[index];
+-		phys_addr = rx_desc->buf_phys_addr;
++		phys_addr = rx_desc->buf_phys_addr - pp->rx_offset_correction;
  
- 	switch (fbtype) {
-@@ -631,7 +631,7 @@ static void ccid3_hc_rx_send_feedback(st
- 		return;
- 	}
- 
--	ccid3_pr_debug("Interval %ldusec, X_recv=%u, 1/p=%u\n", (long)delta,
-+	ccid3_pr_debug("Interval %lldusec, X_recv=%u, 1/p=%u\n", delta,
- 		       hc->rx_x_recv, hc->rx_pinv);
- 
- 	hc->rx_tstamp_last_feedback = now;
-@@ -678,7 +678,8 @@ static int ccid3_hc_rx_insert_options(st
- static u32 ccid3_first_li(struct sock *sk)
- {
- 	struct ccid3_hc_rx_sock *hc = ccid3_hc_rx_sk(sk);
--	u32 x_recv, p, delta;
-+	u32 x_recv, p;
-+	s64 delta;
- 	u64 fval;
- 
- 	if (hc->rx_rtt == 0) {
-@@ -686,7 +687,9 @@ static u32 ccid3_first_li(struct sock *s
- 		hc->rx_rtt = DCCP_FALLBACK_RTT;
- 	}
- 
--	delta  = ktime_to_us(net_timedelta(hc->rx_tstamp_last_feedback));
-+	delta = ktime_us_delta(ktime_get(), hc->rx_tstamp_last_feedback);
-+	if (delta <= 0)
-+		delta = 1;
- 	x_recv = scaled_div32(hc->rx_bytes_recv, delta);
- 	if (x_recv == 0) {		/* would also trigger divide-by-zero */
- 		DCCP_WARN("X_recv==0\n");
+ 		if (!mvneta_rxq_desc_is_first_last(rx_status) ||
+ 		    (rx_status & MVNETA_RXD_ERR_SUMMARY)) {
 
 
