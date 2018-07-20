@@ -6,63 +6,66 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C93AECDFBB
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF08ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14E0520652
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:55:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A6B2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 11:56:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D17X17kW";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h2I6r9RA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14E0520652
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NaZ4xMDR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Rv4DMoTi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A6B2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729837AbeGTMnu (ORCPT
+        id S1730920AbeGTMn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 08:43:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44506 "EHLO
+        Fri, 20 Jul 2018 08:43:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44724 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeGTMnt (ORCPT
+        with ESMTP id S1727410AbeGTMn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:43:49 -0400
+        Fri, 20 Jul 2018 08:43:57 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A0E6A60131; Fri, 20 Jul 2018 11:55:55 +0000 (UTC)
+        id 7039E60BB0; Fri, 20 Jul 2018 11:56:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532087755;
-        bh=eYf4sRkGf+gKqXfJxDgpA8aUngH0zKGhQAt8Yx5nIk8=;
+        s=default; t=1532087763;
+        bh=02lBuoYJaUUHGY22LUWryssXx+Db5goo0A3khzTdae0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D17X17kW3gYEXE2vSRBRzxrMlwbyqS246EZk4Fd21tpTvwlK1K860Jqg2IljyCVOH
-         TrdOymjK2juSFjMrKKEdBsXPm3//AeNMMCRgS7lLxZgH/NirTO4HaelLTSy7S5BM7Z
-         JoXD6G6tIRiB38yJ8SvY01L6XWHKbSEvlR8OY3Tc=
+        b=NaZ4xMDRYko7jOmIBM703uiLzkmUroZjaEScCnjxg/qg7BeS9HrMPXVwpAkMQEgtN
+         jGAEfAKC/+RB4rLTCoOWon8AnPKxztDxwjL6+vp4W7a0TOkLb3YsmJRssGRPP4e4rw
+         ZAsNGRhPJbJJnnk2WWeyFu0S+M2sPMQta3Aet6SU=
 Received: from dkota-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: dkota@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E857A60131;
-        Fri, 20 Jul 2018 11:55:49 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 01B0D60B22;
+        Fri, 20 Jul 2018 11:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532087753;
-        bh=eYf4sRkGf+gKqXfJxDgpA8aUngH0zKGhQAt8Yx5nIk8=;
+        s=default; t=1532087762;
+        bh=02lBuoYJaUUHGY22LUWryssXx+Db5goo0A3khzTdae0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h2I6r9RAE6ZTJORHsoX6Wgj5phUevsx7pxgTJAO24DojYFXnAXd/2/+B4+Zb+0UrF
-         fC8S1jHBnRNSCn/cWL/mOPu0t3xTYKnPPkBwhfqV63mXg8W7nxHRxhszbwZSeQr1Oj
-         Y/rjbmp+buGDL/+PfKkwSLxrP4ELBPs/UeVFrPzE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E857A60131
+        b=Rv4DMoTiMYRkUcIPu1nZLUclDITSTrbpo7wPYonCMVclJZzoyh28akl5Kw7xJytUM
+         P3/d6lTLH0dSGkPGEh8OKkRGvhsb79J9qUjzkdjwn2wZ2LbfBVBhtZ1AXm2kVrPwNx
+         1jFz3dlpzOqAK1t3HoMuzfosPmObkSVksghHPZpc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01B0D60B22
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=dkota@codeaurora.org
 From:   Dilip Kota <dkota@codeaurora.org>
 To:     timur@codeaurora.org, swboyd@chromium.org, broonie@kernel.org,
         mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
         Sagar Dharia <sdharia@codeaurora.org>,
-        Dilip Kota <dkota@codeaurora.org>
-Subject: [PATCH V2] spi: spi-geni-qcom: Add SPI driver support for GENI based QUP
-Date:   Fri, 20 Jul 2018 17:20:59 +0530
-Message-Id: <1532087461-3474-2-git-send-email-dkota@codeaurora.org>
+        Girish Mahadevan <girishm@codeaurora.org>
+Subject: [PATCH V2] dt-bindings: soc: qcom: Add device tree binding for GENI SE
+Date:   Fri, 20 Jul 2018 17:21:00 +0530
+Message-Id: <1532087461-3474-3-git-send-email-dkota@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1532087461-3474-1-git-send-email-dkota@codeaurora.org>
 References: <1532087461-3474-1-git-send-email-dkota@codeaurora.org>
@@ -71,778 +74,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Girish Mahadevan <girishm@codeaurora.org>
+From: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
 
-This driver supports GENI based SPI Controller in the Qualcomm SOCs. The
-Qualcomm Generic Interface (GENI) is a programmable module supporting a
-wide range of serial interfaces including SPI. This driver supports SPI
-operations using FIFO mode of transfer.
+Add device tree binding support for the QCOM GENI SE driver.
 
-Change-Id: Ib2c7feba5a2fc4015bc83319b233b4356f7d3190
-Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
 Signed-off-by: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
 Signed-off-by: Sagar Dharia <sdharia@codeaurora.org>
 Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Dilip Kota <dkota@codeaurora.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 ---
- drivers/spi/Kconfig               |  12 +
- drivers/spi/Makefile              |   1 +
- drivers/spi/spi-geni-qcom.c       | 685 ++++++++++++++++++++++++++++++++++++++
- include/linux/spi/spi-geni-qcom.h |  14 +
- 4 files changed, 712 insertions(+)
- create mode 100644 drivers/spi/spi-geni-qcom.c
- create mode 100644 include/linux/spi/spi-geni-qcom.h
+ .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  | 119 +++++++++++++++++++++
+ 1 file changed, 119 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index ad5d68e..d4aa755 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -533,6 +533,18 @@ config SPI_QUP
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called spi_qup.
- 
-+config SPI_QCOM_GENI
-+	tristate "Qualcomm SPI controller with QUP interface"
-+	depends on QCOM_GENI_SE
-+	help
-+	  This driver supports GENI serial engine based SPI controller in
-+	  master mode on the Qualcomm Technologies Inc.'s SoCs. If you say
-+	  yes to this option, support will be included for the built-in SPI
-+	  interface on the Qualcomm Technologies Inc.'s SoCs.
-+
-+	  This driver can also be built as a module.  If so, the module
-+	  will be called spi-geni-qcom.
-+
- config SPI_S3C24XX
- 	tristate "Samsung S3C24XX series SPI"
- 	depends on ARCH_S3C24XX
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index cb1f437..98337cf 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -74,6 +74,7 @@ obj-$(CONFIG_SPI_PPC4xx)		+= spi-ppc4xx.o
- spi-pxa2xx-platform-objs		:= spi-pxa2xx.o spi-pxa2xx-dma.o
- obj-$(CONFIG_SPI_PXA2XX)		+= spi-pxa2xx-platform.o
- obj-$(CONFIG_SPI_PXA2XX_PCI)		+= spi-pxa2xx-pci.o
-+obj-$(CONFIG_SPI_QCOM_GENI)		+= spi-geni-qcom.o
- obj-$(CONFIG_SPI_QUP)			+= spi-qup.o
- obj-$(CONFIG_SPI_ROCKCHIP)		+= spi-rockchip.o
- obj-$(CONFIG_SPI_RB4XX)			+= spi-rb4xx.o
-diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
 new file mode 100644
-index 0000000..95381b8
+index 0000000..d330c73
 --- /dev/null
-+++ b/drivers/spi/spi-geni-qcom.c
-@@ -0,0 +1,685 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2017-2018, The Linux foundation. All rights reserved.
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+@@ -0,0 +1,119 @@
++Qualcomm Technologies, Inc. GENI Serial Engine QUP Wrapper Controller
 +
-+#include <linux/clk.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/qcom-geni-se.h>
-+#include <linux/spi/spi.h>
-+#include <linux/spi/spi-geni-qcom.h>
++Generic Interface (GENI) based Qualcomm Universal Peripheral (QUP) wrapper
++is a programmable module for supporting a wide range of serial interfaces
++like UART, SPI, I2C, I3C, etc. A single QUP module can provide upto 8 Serial
++Interfaces, using its internal Serial Engines. The GENI Serial Engine QUP
++Wrapper controller is modeled as a node with zero or more child nodes each
++representing a serial engine.
 +
-+/* SPI SE specific registers and respective register fields */
-+#define SE_SPI_CPHA		0x224
-+#define CPHA			BIT(0)
++Required properties:
++- compatible:		Must be "qcom,geni-se-qup".
++- reg:			Must contain QUP register address and length.
++- clock-names:		Must contain "m-ahb" and "s-ahb".
++- clocks:		AHB clocks needed by the device.
 +
-+#define SE_SPI_LOOPBACK		0x22c
-+#define LOOPBACK_ENABLE		0x1
-+#define NORMAL_MODE		0x0
-+#define LOOPBACK_MSK		GENMASK(1, 0)
++Required properties if child node exists:
++- #address-cells: 	Must be <1> for Serial Engine Address
++- #size-cells: 		Must be <1> for Serial Engine Address Size
++- ranges: 		Must be present
 +
-+#define SE_SPI_CPOL		0x230
-+#define CPOL			BIT(2)
++Properties for children:
 +
-+#define SE_SPI_DEMUX_OUTPUT_INV	0x24c
-+#define CS_DEMUX_OUTPUT_INV_MSK	GENMASK(3, 0)
++A GENI based QUP wrapper controller node can contain 0 or more child nodes
++representing serial devices.  These serial devices can be a QCOM UART, I2C
++controller, SPI controller, or some combination of aforementioned devices.
++Please refer below the child node definitions for the supported serial
++interface protocols.
 +
-+#define SE_SPI_DEMUX_SEL	0x250
-+#define CS_DEMUX_OUTPUT_SEL	GENMASK(3, 0)
++Qualcomm Technologies Inc. GENI Serial Engine based I2C Controller
 +
-+#define SE_SPI_TRANS_CFG	0x25c
-+#define CS_TOGGLE		BIT(0)
++Required properties:
++- compatible:		Must be "qcom,geni-i2c".
++- reg: 			Must contain QUP register address and length.
++- interrupts: 		Must contain I2C interrupt.
++- clock-names: 		Must contain "se".
++- clocks: 		Serial engine core clock needed by the device.
++- #address-cells:	Must be <1> for I2C device address.
++- #size-cells:		Must be <0> as I2C addresses have no size component.
 +
-+#define SE_SPI_WORD_LEN		0x268
-+#define WORD_LEN_MSK		GENMASK(9, 0)
-+#define MIN_WORD_LEN		4
++Optional property:
++- clock-frequency:	Desired I2C bus clock frequency in Hz.
++			When missing default to 400000Hz.
 +
-+#define SE_SPI_TX_TRANS_LEN	0x26c
-+#define SE_SPI_RX_TRANS_LEN	0x270
-+#define TRANS_LEN_MSK		GENMASK(23, 0)
++Child nodes should conform to I2C bus binding as described in i2c.txt.
 +
-+#define SE_SPI_PRE_POST_CMD_DLY	0x274
++Qualcomm Technologies Inc. GENI Serial Engine based UART Controller
 +
-+#define SE_SPI_DELAY_COUNTERS	0x278
-+#define SPI_INTER_WORDS_DELAY_MSK	GENMASK(9, 0)
-+#define SPI_CS_CLK_DELAY_MSK		GENMASK(19, 10)
-+#define SPI_CS_CLK_DELAY_SHFT		10
++Required properties:
++- compatible:		Must be "qcom,geni-debug-uart".
++- reg: 			Must contain UART register location and length.
++- interrupts: 		Must contain UART core interrupts.
++- clock-names:		Must contain "se".
++- clocks:		Serial engine core clock needed by the device.
 +
-+/* M_CMD OP codes for SPI */
-+#define SPI_TX_ONLY		1
-+#define SPI_RX_ONLY		2
-+#define SPI_FULL_DUPLEX		3
-+#define SPI_TX_RX		7
-+#define SPI_CS_ASSERT		8
-+#define SPI_CS_DEASSERT		9
-+#define SPI_SCK_ONLY		10
-+/* M_CMD params for SPI */
-+#define SPI_PRE_CMD_DELAY	BIT(0)
-+#define TIMESTAMP_BEFORE	BIT(1)
-+#define FRAGMENTATION		BIT(2)
-+#define TIMESTAMP_AFTER		BIT(3)
-+#define POST_CMD_DELAY		BIT(4)
++Qualcomm Technologies Inc. GENI Serial Engine based SPI Controller
 +
-+static irqreturn_t geni_spi_isr(int irq, void *data);
++Required properties:
++- compatible:		Must contain "qcom,geni-spi".
++- reg:			Must contain SPI register location and length.
++- interrupts:		Must contain SPI controller interrupts.
++- clock-names:		Must contain "se".
++- clocks:		Serial engine core clock needed by the device.
++- spi-max-frequency:	Specifies maximum SPI clock frequency, units - Hz.
++- #address-cells:	Must be <1> to define a chip select address on
++			the SPI bus.
++- #size-cells:		Must be <0>.
 +
-+struct spi_geni_master {
-+	struct geni_se se;
-+	int irq;
-+	struct device *dev;
-+	int rx_fifo_depth;
-+	int tx_fifo_depth;
-+	int tx_fifo_width;
-+	int tx_wm;
-+	bool setup;
-+	u32 cur_speed_hz;
-+	int cur_word_len;
-+	unsigned int tx_rem_bytes;
-+	unsigned int rx_rem_bytes;
-+	struct spi_transfer *cur_xfer;
-+	struct completion xfer_done;
-+	int oversampling;
-+};
++SPI slave nodes must be children of the SPI master node and conform to SPI bus
++binding as described in Documentation/devicetree/bindings/spi/spi-bus.txt.
 +
-+static int get_spi_clk_cfg(u32 speed_hz, struct spi_geni_master *mas,
-+			int *clk_idx, int *clk_div)
-+{
-+	unsigned long sclk_freq;
-+	struct geni_se *se = &mas->se;
-+	int ret;
++Example:
++	geniqup@8c0000 {
++		compatible = "qcom,geni-se-qup";
++		reg = <0x8c0000 0x6000>;
++		clock-names = "m-ahb", "s-ahb";
++		clocks = <&clock_gcc GCC_QUPV3_WRAP_0_M_AHB_CLK>,
++			<&clock_gcc GCC_QUPV3_WRAP_0_S_AHB_CLK>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
 +
-+	ret = geni_se_clk_freq_match(&mas->se,
-+				(speed_hz * mas->oversampling), clk_idx,
-+				&sclk_freq, true);
-+	if (ret) {
-+		dev_err(mas->dev, "%s: Failed(%d) to find src clk for 0x%x\n",
-+						__func__, ret, speed_hz);
-+		return ret;
++		i2c0: i2c@a94000 {
++			compatible = "qcom,geni-i2c";
++			reg = <0xa94000 0x4000>;
++			interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "se";
++			clocks = <&clock_gcc GCC_QUPV3_WRAP0_S5_CLK>;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&qup_1_i2c_5_active>;
++			pinctrl-1 = <&qup_1_i2c_5_sleep>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		uart0: serial@a88000 {
++			compatible = "qcom,geni-debug-uart";
++			reg = <0xa88000 0x7000>;
++			interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "se";
++			clocks = <&clock_gcc GCC_QUPV3_WRAP0_S0_CLK>;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&qup_1_uart_3_active>;
++			pinctrl-1 = <&qup_1_uart_3_sleep>;
++		};
++
++		spi0: spi@a84000 {
++			compatible = "qcom,geni-spi";
++			reg = <0xa84000 0x4000>;
++			interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "se";
++			clocks = <&clock_gcc GCC_QUPV3_WRAP0_S0_CLK>;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&qup_1_spi_2_active>;
++			pinctrl-1 = <&qup_1_spi_2_sleep>;
++			spi-max-frequency = <19200000>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
 +	}
-+
-+	*clk_div = ((sclk_freq / mas->oversampling) / speed_hz);
-+	if (!(*clk_div)) {
-+		dev_err(mas->dev, "%s:Err:sclk:%lu oversampling:%d speed:%u\n",
-+			__func__, sclk_freq, mas->oversampling, speed_hz);
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(mas->dev, "%s: req %u sclk %lu, idx %d, div %d\n", __func__,
-+				speed_hz, sclk_freq, *clk_idx, *clk_div);
-+	ret = clk_set_rate(se->clk, sclk_freq);
-+	if (ret)
-+		dev_err(mas->dev, "%s: clk_set_rate failed %d\n",
-+							__func__, ret);
-+	return ret;
-+}
-+
-+static void spi_setup_word_len(struct spi_geni_master *mas, u32 mode,
-+						int bits_per_word)
-+{
-+	int pack_words = 1;
-+	bool msb_first = (mode & SPI_LSB_FIRST) ? false : true;
-+	struct geni_se *se = &mas->se;
-+	u32 word_len;
-+
-+	word_len = readl_relaxed(se->base + SE_SPI_WORD_LEN);
-+
-+	/*
-+	 * If bits_per_word isn't a byte aligned value, set the packing to be
-+	 * 1 SPI word per FIFO word.
-+	 */
-+	if (!(mas->tx_fifo_width % bits_per_word))
-+		pack_words = mas->tx_fifo_width / bits_per_word;
-+	word_len &= ~WORD_LEN_MSK;
-+	word_len |= ((bits_per_word - MIN_WORD_LEN) & WORD_LEN_MSK);
-+	geni_se_config_packing(&mas->se, bits_per_word, pack_words, msb_first,
-+								true, true);
-+	writel_relaxed(word_len, se->base + SE_SPI_WORD_LEN);
-+}
-+
-+static int setup_fifo_params(struct spi_device *spi_slv,
-+					struct spi_master *spi)
-+{
-+	struct spi_geni_master *mas = spi_master_get_devdata(spi);
-+	struct geni_se *se = &mas->se;
-+	u16 mode = spi_slv->mode;
-+	u32 loopback_cfg = readl_relaxed(se->base + SE_SPI_LOOPBACK);
-+	u32 cpol = readl_relaxed(se->base + SE_SPI_CPOL);
-+	u32 cpha = readl_relaxed(se->base + SE_SPI_CPHA);
-+	u32 demux_sel = 0;
-+	u32 demux_output_inv = 0;
-+	u32 clk_sel = 0;
-+	u32 m_clk_cfg = 0;
-+	int ret = 0;
-+	int idx;
-+	int div;
-+	struct spi_geni_qcom_ctrl_data *delay_params = NULL;
-+	u32 spi_delay_params = 0;
-+
-+	loopback_cfg &= ~LOOPBACK_MSK;
-+	cpol &= ~CPOL;
-+	cpha &= ~CPHA;
-+
-+	if (mode & SPI_LOOP)
-+		loopback_cfg |= LOOPBACK_ENABLE;
-+
-+	if (mode & SPI_CPOL)
-+		cpol |= CPOL;
-+
-+	if (mode & SPI_CPHA)
-+		cpha |= CPHA;
-+
-+	if (spi_slv->mode & SPI_CS_HIGH)
-+		demux_output_inv |= BIT(spi_slv->chip_select);
-+
-+	if (spi_slv->controller_data) {
-+		u32 cs_clk_delay = 0;
-+		u32 inter_words_delay = 0;
-+
-+		delay_params =
-+		(struct spi_geni_qcom_ctrl_data *) spi_slv->controller_data;
-+		cs_clk_delay =
-+		(delay_params->spi_cs_clk_delay << SPI_CS_CLK_DELAY_SHFT)
-+							& SPI_CS_CLK_DELAY_MSK;
-+		inter_words_delay =
-+			delay_params->spi_inter_words_delay &
-+						SPI_INTER_WORDS_DELAY_MSK;
-+		spi_delay_params =
-+		(inter_words_delay | cs_clk_delay);
-+	}
-+
-+	demux_sel = spi_slv->chip_select;
-+	mas->cur_speed_hz = spi_slv->max_speed_hz;
-+	mas->cur_word_len = spi_slv->bits_per_word;
-+
-+	ret = get_spi_clk_cfg(mas->cur_speed_hz, mas, &idx, &div);
-+	if (ret) {
-+		dev_err(mas->dev, "Err setting clks ret(%d) for %d\n",
-+							ret, mas->cur_speed_hz);
-+		return ret;
-+	}
-+
-+	clk_sel |= (idx & CLK_SEL_MSK);
-+	m_clk_cfg |= ((div << CLK_DIV_SHFT) | SER_CLK_EN);
-+	spi_setup_word_len(mas, spi_slv->mode, spi_slv->bits_per_word);
-+	writel_relaxed(loopback_cfg, se->base + SE_SPI_LOOPBACK);
-+	writel_relaxed(demux_sel, se->base + SE_SPI_DEMUX_SEL);
-+	writel_relaxed(cpha, se->base + SE_SPI_CPHA);
-+	writel_relaxed(cpol, se->base + SE_SPI_CPOL);
-+	writel_relaxed(demux_output_inv, se->base + SE_SPI_DEMUX_OUTPUT_INV);
-+	writel_relaxed(clk_sel, se->base + SE_GENI_CLK_SEL);
-+	writel_relaxed(m_clk_cfg, se->base + GENI_SER_M_CLK_CFG);
-+	writel_relaxed(spi_delay_params, se->base + SE_SPI_DELAY_COUNTERS);
-+	return 0;
-+}
-+
-+static int spi_geni_prepare_message(struct spi_master *spi,
-+					struct spi_message *spi_msg)
-+{
-+	int ret = 0;
-+	struct spi_geni_master *mas = spi_master_get_devdata(spi);
-+	struct geni_se *se = &mas->se;
-+
-+	geni_se_select_mode(se, GENI_SE_FIFO);
-+	reinit_completion(&mas->xfer_done);
-+	ret = setup_fifo_params(spi_msg->spi, spi);
-+	if (ret) {
-+		dev_err(mas->dev, "%s: Couldn't select mode %d", __func__, ret);
-+		ret = -EINVAL;
-+	}
-+	return ret;
-+}
-+
-+static int spi_geni_prepare_transfer_hardware(struct spi_master *spi)
-+{
-+	struct spi_geni_master *mas = spi_master_get_devdata(spi);
-+	struct geni_se *se = &mas->se;
-+
-+	if (!mas->setup) {
-+		int proto = geni_se_read_proto(se);
-+		unsigned int major;
-+		unsigned int minor;
-+		unsigned int step;
-+
-+		if (proto != GENI_SE_SPI) {
-+			dev_err(mas->dev, "Invalid proto %d\n", proto);
-+			return -ENXIO;
-+		}
-+		mas->tx_fifo_depth = geni_se_get_tx_fifo_depth(se);
-+		mas->rx_fifo_depth = geni_se_get_rx_fifo_depth(se);
-+		mas->tx_fifo_width = geni_se_get_tx_fifo_width(se);
-+		geni_se_init(se, 0x0, (mas->tx_fifo_depth - 2));
-+		mas->oversampling = 1;
-+		/* Transmit an entire FIFO worth of data per IRQ */
-+		mas->tx_wm = 1;
-+		geni_se_get_wrapper_version(se, major, minor, step);
-+		if ((major == 1) && (minor == 0))
-+			mas->oversampling = 2;
-+		mas->setup = 1;
-+	}
-+	return 0;
-+}
-+
-+static void setup_fifo_xfer(struct spi_transfer *xfer,
-+				struct spi_geni_master *mas, u16 mode,
-+				struct spi_master *spi)
-+{
-+	u32 m_cmd = 0;
-+	u32 m_param = 0;
-+	struct geni_se *se = &mas->se;
-+	u32 spi_tx_cfg = readl_relaxed(se->base + SE_SPI_TRANS_CFG);
-+	u32 trans_len = 0;
-+
-+	if (xfer->bits_per_word != mas->cur_word_len) {
-+		spi_setup_word_len(mas, mode, xfer->bits_per_word);
-+		mas->cur_word_len = xfer->bits_per_word;
-+	}
-+
-+	/* Speed and bits per word can be overridden per transfer */
-+	if (xfer->speed_hz != mas->cur_speed_hz) {
-+		int ret = 0;
-+		u32 clk_sel = 0;
-+		u32 m_clk_cfg = 0;
-+		int idx = 0;
-+		int div = 0;
-+
-+		ret = get_spi_clk_cfg(xfer->speed_hz, mas, &idx, &div);
-+		if (ret) {
-+			dev_err(mas->dev, "%s:Err setting clks:%d\n",
-+								__func__, ret);
-+			return;
-+		}
-+		mas->cur_speed_hz = xfer->speed_hz;
-+		clk_sel |= (idx & CLK_SEL_MSK);
-+		m_clk_cfg |= ((div << CLK_DIV_SHFT) | SER_CLK_EN);
-+		writel_relaxed(clk_sel, se->base + SE_GENI_CLK_SEL);
-+		writel_relaxed(m_clk_cfg, se->base + GENI_SER_M_CLK_CFG);
-+	}
-+
-+	mas->tx_rem_bytes = 0;
-+	mas->rx_rem_bytes = 0;
-+	if (xfer->tx_buf && xfer->rx_buf)
-+		m_cmd = SPI_FULL_DUPLEX;
-+	else if (xfer->tx_buf)
-+		m_cmd = SPI_TX_ONLY;
-+	else if (xfer->rx_buf)
-+		m_cmd = SPI_RX_ONLY;
-+
-+	spi_tx_cfg &= ~CS_TOGGLE;
-+	if (!(mas->cur_word_len % MIN_WORD_LEN)) {
-+		trans_len =
-+			((xfer->len * BITS_PER_BYTE) /
-+					mas->cur_word_len) & TRANS_LEN_MSK;
-+	} else {
-+		int bytes_per_word = (mas->cur_word_len / BITS_PER_BYTE) + 1;
-+
-+		trans_len = (xfer->len / bytes_per_word) & TRANS_LEN_MSK;
-+	}
-+
-+	/*
-+	 * If CS change flag is set, then toggle the CS line in between
-+	 * transfers and keep CS asserted after the last transfer.
-+	 * Else if keep CS flag asserted in between transfers and de-assert
-+	 * CS after the last message.
-+	 */
-+	if (xfer->cs_change) {
-+		if (list_is_last(&xfer->transfer_list,
-+				&spi->cur_msg->transfers))
-+			m_param |= FRAGMENTATION;
-+	} else {
-+		if (!list_is_last(&xfer->transfer_list,
-+				&spi->cur_msg->transfers))
-+			m_param |= FRAGMENTATION;
-+	}
-+
-+	mas->cur_xfer = xfer;
-+	if (m_cmd & SPI_TX_ONLY) {
-+		mas->tx_rem_bytes = xfer->len;
-+		writel_relaxed(trans_len, se->base + SE_SPI_TX_TRANS_LEN);
-+	}
-+
-+	if (m_cmd & SPI_RX_ONLY) {
-+		writel_relaxed(trans_len, se->base + SE_SPI_RX_TRANS_LEN);
-+		mas->rx_rem_bytes = xfer->len;
-+	}
-+	writel_relaxed(spi_tx_cfg, se->base + SE_SPI_TRANS_CFG);
-+	geni_se_setup_m_cmd(se, m_cmd, m_param);
-+	if (m_cmd & SPI_TX_ONLY)
-+		writel_relaxed(mas->tx_wm, se->base + SE_GENI_TX_WATERMARK_REG);
-+}
-+
-+static void handle_fifo_timeout(struct spi_master *spi,
-+				struct spi_message *msg)
-+{
-+	struct spi_geni_master *mas = spi_master_get_devdata(spi);
-+	unsigned long timeout;
-+	struct geni_se *se = &mas->se;
-+
-+	reinit_completion(&mas->xfer_done);
-+	geni_se_cancel_m_cmd(se);
-+	writel_relaxed(0, se->base + SE_GENI_TX_WATERMARK_REG);
-+	timeout = wait_for_completion_timeout(&mas->xfer_done, HZ);
-+	if (!timeout) {
-+		reinit_completion(&mas->xfer_done);
-+		geni_se_abort_m_cmd(se);
-+		timeout = wait_for_completion_timeout(&mas->xfer_done,
-+								HZ);
-+		if (!timeout)
-+			dev_err(mas->dev,
-+				"Failed to cancel/abort m_cmd\n");
-+	}
-+}
-+
-+static int spi_geni_transfer_one(struct spi_master *spi,
-+				struct spi_device *slv,
-+				struct spi_transfer *xfer)
-+{
-+	struct spi_geni_master *mas = spi_master_get_devdata(spi);
-+
-+	setup_fifo_xfer(xfer, mas, slv->mode, spi);
-+	return 1;
-+}
-+
-+static void geni_spi_handle_tx(struct spi_geni_master *mas)
-+{
-+	int i = 0;
-+	int tx_fifo_width = mas->tx_fifo_width / BITS_PER_BYTE;
-+	int max_bytes = 0;
-+	const u8 *tx_buf;
-+	struct geni_se *se = &mas->se;
-+
-+	if (!mas->cur_xfer)
-+		return;
-+
-+	/*
-+	 * For non-byte aligned bits-per-word values. (e.g 9)
-+	 * The FIFO packing is set to 1 SPI word per FIFO word.
-+	 * Assumption is that each SPI word will be accomodated in
-+	 * ceil (bits_per_word / bits_per_byte)
-+	 * and the next SPI word starts at the next byte.
-+	 * In such cases, we can fit 1 SPI word per FIFO word so adjust the
-+	 * max byte that can be sent per IRQ accordingly.
-+	 */
-+	if ((mas->tx_fifo_width % mas->cur_word_len))
-+		max_bytes = (mas->tx_fifo_depth - mas->tx_wm) *
-+				((mas->cur_word_len / BITS_PER_BYTE) + 1);
-+	else
-+		max_bytes = (mas->tx_fifo_depth - mas->tx_wm) * tx_fifo_width;
-+	tx_buf = mas->cur_xfer->tx_buf;
-+	tx_buf += (mas->cur_xfer->len - mas->tx_rem_bytes);
-+	max_bytes = min_t(int, mas->tx_rem_bytes, max_bytes);
-+	while (i < max_bytes) {
-+		int j;
-+		u32 fifo_word = 0;
-+		u8 *fifo_byte;
-+		int bytes_per_fifo = tx_fifo_width;
-+		int bytes_to_write = 0;
-+
-+		if ((mas->tx_fifo_width % mas->cur_word_len))
-+			bytes_per_fifo =
-+				(mas->cur_word_len / BITS_PER_BYTE) + 1;
-+		bytes_to_write = min_t(int, max_bytes - i, bytes_per_fifo);
-+		fifo_byte = (u8 *)&fifo_word;
-+		for (j = 0; j < bytes_to_write; j++)
-+			fifo_byte[j] = tx_buf[i++];
-+		iowrite32_rep(se->base + SE_GENI_TX_FIFOn, &fifo_word, 1);
-+	}
-+	mas->tx_rem_bytes -= max_bytes;
-+	if (!mas->tx_rem_bytes)
-+		writel_relaxed(0, se->base + SE_GENI_TX_WATERMARK_REG);
-+}
-+
-+static void geni_spi_handle_rx(struct spi_geni_master *mas)
-+{
-+	int i = 0;
-+	struct geni_se *se = &mas->se;
-+	int fifo_width = mas->tx_fifo_width / BITS_PER_BYTE;
-+	u32 rx_fifo_status = readl_relaxed(se->base + SE_GENI_RX_FIFO_STATUS);
-+	int rx_bytes = 0;
-+	int rx_wc = 0;
-+	u8 *rx_buf;
-+
-+	if (!mas->cur_xfer)
-+		return;
-+
-+	rx_buf = mas->cur_xfer->rx_buf;
-+	rx_wc = rx_fifo_status & RX_FIFO_WC_MSK;
-+	if (rx_fifo_status & RX_LAST) {
-+		int rx_last_byte_valid =
-+			(rx_fifo_status & RX_LAST_BYTE_VALID_MSK)
-+					>> RX_LAST_BYTE_VALID_SHFT;
-+		if (rx_last_byte_valid && (rx_last_byte_valid < 4)) {
-+			rx_wc -= 1;
-+			rx_bytes += rx_last_byte_valid;
-+		}
-+	}
-+
-+	/*
-+	 * For non-byte aligned bits-per-word values. (e.g 9)
-+	 * The FIFO packing is set to 1 SPI word per FIFO word.
-+	 * Assumption is that each SPI word will be accomodated in
-+	 * ceil (bits_per_word / bits_per_byte)
-+	 * and the next SPI word starts at the next byte.
-+	 */
-+	if (!(mas->tx_fifo_width % mas->cur_word_len))
-+		rx_bytes += rx_wc * fifo_width;
-+	else
-+		rx_bytes += rx_wc *
-+			((mas->cur_word_len / BITS_PER_BYTE) + 1);
-+	rx_bytes = min_t(int, mas->rx_rem_bytes, rx_bytes);
-+	rx_buf += (mas->cur_xfer->len - mas->rx_rem_bytes);
-+	while (i < rx_bytes) {
-+		u32 fifo_word = 0;
-+		u8 *fifo_byte;
-+		int bytes_per_fifo = fifo_width;
-+		int read_bytes = 0;
-+		int j;
-+
-+		if ((mas->tx_fifo_width % mas->cur_word_len))
-+			bytes_per_fifo =
-+				(mas->cur_word_len / BITS_PER_BYTE) + 1;
-+		read_bytes = min_t(int, rx_bytes - i, bytes_per_fifo);
-+		ioread32_rep(se->base + SE_GENI_RX_FIFOn, &fifo_word, 1);
-+		fifo_byte = (u8 *)&fifo_word;
-+		for (j = 0; j < read_bytes; j++)
-+			rx_buf[i++] = fifo_byte[j];
-+	}
-+	mas->rx_rem_bytes -= rx_bytes;
-+}
-+
-+static irqreturn_t geni_spi_isr(int irq, void *data)
-+{
-+	struct spi_master *spi = data;
-+	struct spi_geni_master *mas = spi_master_get_devdata(spi);
-+	struct geni_se *se = &mas->se;
-+	u32 m_irq = 0;
-+	irqreturn_t ret = IRQ_HANDLED;
-+
-+	if (pm_runtime_status_suspended(mas->dev)) {
-+		ret = IRQ_NONE;
-+		goto exit_geni_spi_irq;
-+	}
-+	m_irq = readl_relaxed(se->base + SE_GENI_M_IRQ_STATUS);
-+	if ((m_irq & M_RX_FIFO_WATERMARK_EN) || (m_irq & M_RX_FIFO_LAST_EN))
-+		geni_spi_handle_rx(mas);
-+
-+	if ((m_irq & M_TX_FIFO_WATERMARK_EN))
-+		geni_spi_handle_tx(mas);
-+
-+	if (m_irq & M_CMD_DONE_EN) {
-+		spi_finalize_current_transfer(spi);
-+		/*
-+		 * If this happens, then a CMD_DONE came before all the Tx
-+		 * buffer bytes were sent out. This is unusual, log this
-+		 * condition and disable the WM interrupt to prevent the
-+		 * system from stalling due an interrupt storm.
-+		 * If this happens when all Rx bytes haven't been received, log
-+		 * the condition.
-+		 * The only known time this can happen is if bits_per_word != 8
-+		 * and some registers that expect xfer lengths in num spi_words
-+		 * weren't written correctly.
-+		 */
-+		if (mas->tx_rem_bytes) {
-+			writel_relaxed(0, se->base + SE_GENI_TX_WATERMARK_REG);
-+			dev_err(mas->dev,
-+				"%s:Premature Done.tx_rem%d bpw%d\n",
-+				__func__, mas->tx_rem_bytes, mas->cur_word_len);
-+		}
-+		if (mas->rx_rem_bytes)
-+			dev_err(mas->dev,
-+				"%s:Premature Done.rx_rem%d bpw%d\n",
-+				__func__, mas->rx_rem_bytes, mas->cur_word_len);
-+	}
-+
-+	if ((m_irq & M_CMD_CANCEL_EN) || (m_irq & M_CMD_ABORT_EN))
-+		complete(&mas->xfer_done);
-+exit_geni_spi_irq:
-+	writel_relaxed(m_irq, se->base + SE_GENI_M_IRQ_CLEAR);
-+	return ret;
-+}
-+
-+static int spi_geni_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+	struct spi_master *spi;
-+	struct spi_geni_master *spi_geni;
-+	struct resource *res;
-+	struct geni_se *se;
-+
-+	spi = spi_alloc_master(&pdev->dev, sizeof(struct spi_geni_master));
-+	if (!spi) {
-+		ret = -ENOMEM;
-+		dev_err(&pdev->dev, "Failed to alloc spi struct\n");
-+		goto spi_geni_probe_err;
-+	}
-+
-+	platform_set_drvdata(pdev, spi);
-+	spi_geni = spi_master_get_devdata(spi);
-+	spi_geni->dev = &pdev->dev;
-+	spi_geni->se.dev = &pdev->dev;
-+	spi_geni->se.wrapper = dev_get_drvdata(pdev->dev.parent);
-+	se = &spi_geni->se;
-+
-+	spi->bus_num = -1;
-+	spi->dev.of_node = pdev->dev.of_node;
-+	spi_geni->se.clk = devm_clk_get(&pdev->dev, "se");
-+	if (IS_ERR(spi_geni->se.clk)) {
-+		ret = PTR_ERR(spi_geni->se.clk);
-+		dev_err(&pdev->dev, "Err getting SE Core clk %d\n", ret);
-+		goto spi_geni_probe_err;
-+	}
-+
-+	if (of_property_read_u32(pdev->dev.of_node, "spi-max-frequency",
-+				&spi->max_speed_hz)) {
-+		dev_err(&pdev->dev, "Max frequency not specified.\n");
-+		ret = -ENXIO;
-+		goto spi_geni_probe_err;
-+	}
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	se->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(se->base)) {
-+		ret = -ENOMEM;
-+		dev_err(&pdev->dev, "Err IO mapping iomem\n");
-+		goto spi_geni_probe_err;
-+	}
-+
-+	spi_geni->irq = platform_get_irq(pdev, 0);
-+	if (spi_geni->irq < 0) {
-+		dev_err(&pdev->dev, "Err getting IRQ\n");
-+		ret = spi_geni->irq;
-+		goto spi_geni_probe_unmap;
-+	}
-+	ret = devm_request_irq(&pdev->dev, spi_geni->irq, geni_spi_isr,
-+				IRQF_TRIGGER_HIGH, "spi_geni", spi);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Request_irq failed:%d: err:%d\n",
-+							spi_geni->irq, ret);
-+		goto spi_geni_probe_unmap;
-+	}
-+
-+	spi->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP | SPI_CS_HIGH;
-+	spi->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
-+	spi->num_chipselect = 4;
-+	spi->prepare_transfer_hardware = spi_geni_prepare_transfer_hardware;
-+	spi->prepare_message = spi_geni_prepare_message;
-+	spi->transfer_one = spi_geni_transfer_one;
-+	spi->auto_runtime_pm = true;
-+	spi->handle_err = handle_fifo_timeout;
-+
-+	init_completion(&spi_geni->xfer_done);
-+	pm_runtime_enable(&pdev->dev);
-+	ret = devm_spi_register_master(&pdev->dev, spi);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register SPI master\n");
-+		goto spi_geni_probe_unmap;
-+	}
-+
-+	dev_dbg(&pdev->dev, "%s Probed\n", __func__);
-+	return ret;
-+spi_geni_probe_unmap:
-+	devm_iounmap(&pdev->dev, se->base);
-+spi_geni_probe_err:
-+	spi_master_put(spi);
-+	return ret;
-+}
-+
-+static int spi_geni_remove(struct platform_device *pdev)
-+{
-+	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_geni_master *spi_geni = spi_master_get_devdata(master);
-+
-+	geni_se_resources_off(&spi_geni->se);
-+	pm_runtime_put_noidle(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+	return 0;
-+}
-+
-+static int __maybe_unused spi_geni_runtime_suspend(struct device *dev)
-+{
-+	struct spi_master *spi = dev_get_drvdata(dev);
-+	struct spi_geni_master *spi_geni = spi_master_get_devdata(spi);
-+
-+	return geni_se_resources_off(&spi_geni->se);
-+}
-+
-+static int __maybe_unused spi_geni_runtime_resume(struct device *dev)
-+{
-+	struct spi_master *spi = dev_get_drvdata(dev);
-+	struct spi_geni_master *spi_geni = spi_master_get_devdata(spi);
-+
-+	return geni_se_resources_on(&spi_geni->se);
-+}
-+
-+static int __maybe_unused spi_geni_suspend(struct device *dev)
-+{
-+	if (!pm_runtime_status_suspended(dev))
-+		return -EBUSY;
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops spi_geni_pm_ops = {
-+	SET_RUNTIME_PM_OPS(spi_geni_runtime_suspend,
-+					spi_geni_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(spi_geni_suspend, NULL)
-+};
-+
-+static const struct of_device_id spi_geni_dt_match[] = {
-+	{ .compatible = "qcom,geni-spi" },
-+	{}
-+};
-+
-+static struct platform_driver spi_geni_driver = {
-+	.probe  = spi_geni_probe,
-+	.remove = spi_geni_remove,
-+	.driver = {
-+		.name = "geni_spi",
-+		.pm = &spi_geni_pm_ops,
-+		.of_match_table = spi_geni_dt_match,
-+	},
-+};
-+module_platform_driver(spi_geni_driver);
-+
-+MODULE_DESCRIPTION("SPI driver for GENI based QUP cores");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/spi/spi-geni-qcom.h b/include/linux/spi/spi-geni-qcom.h
-new file mode 100644
-index 0000000..dc95764
---- /dev/null
-+++ b/include/linux/spi/spi-geni-qcom.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/*
-+ * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef __SPI_GENI_QCOM_HEADER___
-+#define __SPI_GENI_QCOM_HEADER___
-+
-+struct spi_geni_qcom_ctrl_data {
-+	u32 spi_cs_clk_delay;
-+	u32 spi_inter_words_delay;
-+};
-+
-+#endif /*__SPI_GENI_QCOM_HEADER___*/
 -- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
