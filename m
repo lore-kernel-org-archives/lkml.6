@@ -2,109 +2,112 @@ Return-Path: <SRS0=cuzA=KE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A74FFECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DBDECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 513AB206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:03:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sZc4dBqC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 513AB206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 27E4020673
+	for <linux-kernel@archiver.kernel.org>; Fri, 20 Jul 2018 08:04:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E4020673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbeGTIuc (ORCPT
+        id S1727756AbeGTIvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 04:50:32 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33019 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbeGTIuc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 04:50:32 -0400
-Received: by mail-oi0-f66.google.com with SMTP id l10-v6so19854858oii.0;
-        Fri, 20 Jul 2018 01:03:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to:cc;
-        bh=5HwqE1bsGfTQHm7LDHWtYHMlQnsHaPc7IrHaNTdv1JA=;
-        b=sZc4dBqCdxSQ8ejE8DspMrBWPm+vtKLQ9lvX6kl5OM6IrJ2X8m5PL2ap50mM55bALO
-         8Y9/w/c2+kEaWj0AtohMiM6gUrvQg/vqYpjAOi0HYD458R6IDvoFmP8y3XPJiQwF1cUF
-         MZDS2E6NTP2nXRfPePd3JNJcvJAXD57GqXUW0pxLcm90JYgTVmbI6lYQDSmmqM8PKlKY
-         Yjgmd+p81+CxKBbD86cVrK01l/1i00A0SNTNFSGx9aA34lbq0zwdGr/ZW67tOw4j5xV0
-         n4fH4XxGg4iZ4/ZQi73Q6WOLt+/Dqvv4/7AsYpHkiw452PN9iceshQ6L+eyczNzVAdLh
-         r9sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to:cc;
-        bh=5HwqE1bsGfTQHm7LDHWtYHMlQnsHaPc7IrHaNTdv1JA=;
-        b=b7+R/Oj5LDvS3uvA3jdgVsHgtINLsa8AXXxi1tLkjPKWa3Tvz1iu0bce7kChSPZtNw
-         eHRw2lscY3AVn6ta+cm8qJsddw7SFba83mXpshqbGs/FOQD/7lTAjIDGZwgIN5fzglcY
-         14aS5i28++LWSG7hXRI1mYy5uHAqb463Ms/v4p1LT3tKahRqMBDE0Eo6Osbk3TcjTkfZ
-         TNqJZAQgndvBYPiKjCg7pynaMy5A2fv2uphU1axSysDFLe2QCqK12Z5iha94/XD72oVF
-         sZ4Zif+YJfeqr9yrREl4pCsQZ54DTIC3tHCKHFxvTNqrKYfpo1DhtfMW5oEJ2o7qKW+E
-         9DwA==
-X-Gm-Message-State: AOUpUlHPnVJmOSOc+UqweNnq470rLuYQxnAx+xGreDrZMk0rUryAdNDn
-        tznUMD7AhBJSSW+XRLp/Lbbw2ti+BGa+nyNsSck=
-X-Google-Smtp-Source: AAOMgpds+tRg/Qi6jKk/WksJ56g2Kvym/KLpTKLETES7w6za/9yNsVldP0y8X7k9mPE8t2agUsxn8MqSA5+UmQCUKxw=
-X-Received: by 2002:aca:adc6:: with SMTP id w189-v6mr1085625oie.174.1532073808472;
- Fri, 20 Jul 2018 01:03:28 -0700 (PDT)
+        Fri, 20 Jul 2018 04:51:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55568 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727219AbeGTIvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 04:51:31 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A9D4872630;
+        Fri, 20 Jul 2018 08:04:26 +0000 (UTC)
+Received: from [10.36.117.156] (ovpn-117-156.ams2.redhat.com [10.36.117.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3F769111DCE5;
+        Fri, 20 Jul 2018 08:04:25 +0000 (UTC)
+Subject: Re: [PATCH v3 5/6] KVM: X86: Add NMI support to PV IPIs
+To:     Wanpeng Li <kernellwp@gmail.com>, Radim Krcmar <rkrcmar@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+References: <1530598891-21370-1-git-send-email-wanpengli@tencent.com>
+ <1530598891-21370-6-git-send-email-wanpengli@tencent.com>
+ <20180719163138.GC11749@flask>
+ <CANRm+CwzG8jcsVhhGa2w55KcCTpwm-yokFR2Oi6LYaoS0ameqQ@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <825c953c-ec48-84cf-f1ca-bdee5d327427@redhat.com>
+Date:   Fri, 20 Jul 2018 10:04:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 01:03:28
- -0700 (PDT)
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 20 Jul 2018 10:03:28 +0200
-X-Google-Sender-Auth: JF72ly2KZOzSNVpeDeDDCkQ4jUc
-Message-ID: <CAJZ5v0ipKgfRfCmkRshrm9726=5rj5dUrKSLAK2GNEcdvnBMtw@mail.gmail.com>
-Subject: [GIT PULL] Power management fix for v4.18-rc6
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANRm+CwzG8jcsVhhGa2w55KcCTpwm-yokFR2Oi6LYaoS0ameqQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 08:04:26 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 20 Jul 2018 08:04:26 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 20/07/2018 05:53, Wanpeng Li wrote:
+>>> -     ret = kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitmap_high, vector);
+>>> +     switch (vector) {
+>>> +     default:
+>>> +             icr = APIC_DM_FIXED | vector;
+>>> +             break;
+>>> +     case NMI_VECTOR:
+>>> +             icr = APIC_DM_NMI;
+>> I think it would be better to say that KVM interprets NMI_VECTOR and
+>> sends the interrupt as APIC_DM_NMI.
 
-Please pull from the tag
+It's not KVM, this is arch/x86/kernel/kvm.c so the guest side.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-4.18-rc6
+Paolo
 
-with top-most commit 95d6c0857e54b788982746071130d822a795026b
+> Yeah, in addition, SDM 10.6.1 also mentioned that:
+> Delivery mode:
+>     100 (NMI) Delivers an NMI interrupt to the target processor or
+> processors. The vector information is ignored.
 
- cpufreq: intel_pstate: Register when ACPI PCCH is present
-
-on top of commit 9d3cce1e8b8561fed5f383d22a4d6949db4eadbe
-
- Linux 4.18-rc5
-
-to receive a power management fix for 4.18-rc6.
-
-This fixes a relatively old initialization issue in intel_pstate
-causing the pcc-cpufreq driver to be used instead of it on some HP
-Proliant systems, which turned into a functional regression during
-the 4.17 cycle, because pcc-cpufreq is a scalability disaster and
-that was amplified by the idle loop rework done at that time (Rafael
-Wysocki).
-
-Thanks!
-
-
----------------
-
-Rafael J. Wysocki (1):
-      cpufreq: intel_pstate: Register when ACPI PCCH is present
-
----------------
-
- drivers/cpufreq/intel_pstate.c | 17 ++++++++++++++++-
- drivers/cpufreq/pcc-cpufreq.c  |  4 ++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
