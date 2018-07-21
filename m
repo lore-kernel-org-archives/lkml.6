@@ -2,156 +2,121 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BDDECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25143ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93514206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C66A22084A
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:18:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="sNFAPqNQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93514206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXQe+xsx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C66A22084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbeGUMAE (ORCPT
+        id S1727633AbeGUMK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 08:00:04 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:42396 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727952AbeGUMAE (ORCPT
+        Sat, 21 Jul 2018 08:10:26 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43580 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbeGUMK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 08:00:04 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Daniel Silsby <dansilsby@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
-Subject: [PATCH v3 05/18] dmaengine: dma-jz4780: Use 4-word descriptors
-Date:   Sat, 21 Jul 2018 13:06:30 +0200
-Message-Id: <20180721110643.19624-6-paul@crapouillou.net>
-In-Reply-To: <20180721110643.19624-1-paul@crapouillou.net>
-References: <20180721110643.19624-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1532171262; bh=eFcn3o/g4I6Hkf5cEci6UQoR5QL1uJ6/x5bhau03rqQ=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=sNFAPqNQW7WxA4pcrdsq1VKAAiCSDgiErP+pwq/eUfpnAnzxC940gEckB+MlHclwv9q2nEGNCU7Cbah+tJA4x+OS35p3wnJvTlTAWK2Er6qLXhzc51AUMQmZiNdZsZm5GGW5MDo1XkXsg7pZVcRV2SD6+wxFiqwZliHM3WUIjOA=
+        Sat, 21 Jul 2018 08:10:26 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b20-v6so11741197edt.10;
+        Sat, 21 Jul 2018 04:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TFQwbZIr8IkIjYVIuVcqtgW2+x8k/UzqJfdM4uVFoZg=;
+        b=KXQe+xsx1/jQ7+CO7VTtlYEk+JXoJ1nAOJ2AggvlyydwQhNgmaHjL5BVedhHNBap1+
+         1jma+nNIEuWX6eZN9l1wJhFe8hvGAm4a68KeOMMw0ytaIUdNlTDPr0YoQv3+ces/Buwr
+         syU0lLYCpkRXAIWwh1MJWuajUAVDSS5Ue2jpB+vjG2WKL2gkPjAKRUkDAGSWV3eLIr2V
+         X5z53Kr0pC3ccqNdjCJ1AmVMIZfMrAk4OXpEDsy967Bus6tGNTPsL1BdN87hfV4RwHqH
+         4PkXYDWUYCgXzc8IDXBGyKjvMvxezrLVNgFNAN3HGzNPsxOGQuNOGV43LJ5fRetrCvX/
+         SeKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TFQwbZIr8IkIjYVIuVcqtgW2+x8k/UzqJfdM4uVFoZg=;
+        b=bIeIldOMYNf4arXF2892e2QXOKkGlPw6Qr1Mfyktr1JFpt9zx1S3xIM4hsyuh6Og3I
+         tkecXmiwoT6+O0jPCBml8EmlkbWk4MVzjibQBBmrZWmokRBxQTDrSovu5XsIYU8I9EU5
+         w38i6CMF8uoYbYeavVic942izzRjukcCYyWh3actQ9e0HTt0YXY4MfOO5+rRCzCx3aOx
+         tFEkPj1WTit7/wCNu1IB0GIGxxvujpkKrsT3aiBLuhM0ialB8Zw8uK19YhAKN4nrdmqS
+         9i1UAfjQ13YsoJoedAc8F7QwRi6aoX24uQMdHKXctyWxe33cxZFaJLsWySyYf4GhIPAO
+         13eA==
+X-Gm-Message-State: AOUpUlFOJ8M6O9tcjewkplgfZ+DX/tiq3kl4v+80UKX8kw9HAwgeyVmL
+        ih+yjIm7dnc0E7qmqQnQMhk=
+X-Google-Smtp-Source: AAOMgpexTKjbBFMG4hADMNK02TjtTUvDRX6A/ELcAb/teiTeRU90DcgURu7y45dmWaYdxoNYlZeGPA==
+X-Received: by 2002:a50:984c:: with SMTP id h12-v6mr6393010edb.150.1532171882032;
+        Sat, 21 Jul 2018 04:18:02 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id g1-v6sm3272070edr.52.2018.07.21.04.18.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 21 Jul 2018 04:18:01 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ASoC: tegra: probe deferral error reporting
+Date:   Sat, 21 Jul 2018 14:17:54 +0300
+Message-ID: <8512069.csTsg4TRIJ@dimapc>
+In-Reply-To: <20180721095615.GG16228@sirena.org.uk>
+References: <20180720080424.31505-1-marcel@ziswiler.com> <1532089865.19673.13.camel@toradex.com> <20180721095615.GG16228@sirena.org.uk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only information we use in the 8-word version of the hardware DMA
-descriptor that is not present in the 4-word version is the transfer
-type, aka. the ID of the source or recipient device.
+On Saturday, 21 July 2018 12:56:15 MSK Mark Brown wrote:
+> On Fri, Jul 20, 2018 at 12:31:07PM +0000, Marcel Ziswiler wrote:
+> > On Fri, 2018-07-20 at 13:16 +0100, Mark Brown wrote:
+> > > >  	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
+> > > >  	
+> > > >  					    "nvidia,codec-sync-
+> > > > 
+> > > > gpio", 0);
+> > > > 
+> > > >  	if (!gpio_is_valid(ac97->sync_gpio)) {
+> > > > 
+> > > > -		dev_err(&pdev->dev, "no codec-sync GPIO
+> > > > supplied\n");
+> > > > +		ret = ac97->sync_gpio;
+> > > > +		dev_err(&pdev->dev, "no codec-sync GPIO supplied:
+> > > > %d\n", ret);
+> > > > 
+> > > >  		goto err_clk_put;
+> > > >  	
+> > > >  	}
+> > > 
+> > > This isn't reporting an error code associated with the attempt to
+> > > find a
+> > > codec-sync GPIO, it's the result of some other operation.
+> > 
+> > What exactly is then the of_get_named_gpio() above please doing if
+> > not getting the codec sync GPIO? I am not following you, sorry.
+> 
+> It's not in any way involved in setting the value of ret, whatever value
+> that has it's nothing to do with that operation.
 
-Since the transfer type will never change for a DMA channel in use,
-we can just set it once for all in the corresponding DMA register
-before starting any transfer.
+The comment to gpio_is_valid() says that it "Returns GPIO number to use with 
+Linux generic GPIO API, or one of the errno value on the error condition". 
+Comment doesn't explicitly states that the returned GPIO number is always 
+valid, but it is kinda implied.
 
-This has several benefits:
-
-* the driver will handle twice as many hardware DMA descriptors;
-
-* the driver is closer to support the JZ4740, which only supports 4-word
-  hardware DMA descriptors;
-
-* the JZ4770 SoC needs the transfer type to be set in the corresponding
-  DMA register anyway, even if 8-word descriptors are in use.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
----
- drivers/dma/dma-jz4780.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
-
- v2: No change
-
- v3: No change
-
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 2f17a0fb1e5c..23e92d153919 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -95,17 +95,12 @@
-  * @dtc: transfer count (number of blocks of the transfer size specified in DCM
-  * to transfer) in the low 24 bits, offset of the next descriptor from the
-  * descriptor base address in the upper 8 bits.
-- * @sd: target/source stride difference (in stride transfer mode).
-- * @drt: request type
-  */
- struct jz4780_dma_hwdesc {
- 	uint32_t dcm;
- 	uint32_t dsa;
- 	uint32_t dta;
- 	uint32_t dtc;
--	uint32_t sd;
--	uint32_t drt;
--	uint32_t reserved[2];
- };
- 
- /* Size of allocations for hardware descriptor blocks. */
-@@ -286,7 +281,6 @@ static int jz4780_dma_setup_hwdesc(struct jz4780_dma_chan *jzchan,
- 		desc->dcm = JZ_DMA_DCM_SAI;
- 		desc->dsa = addr;
- 		desc->dta = config->dst_addr;
--		desc->drt = jzchan->transfer_type;
- 
- 		width = config->dst_addr_width;
- 		maxburst = config->dst_maxburst;
-@@ -294,7 +288,6 @@ static int jz4780_dma_setup_hwdesc(struct jz4780_dma_chan *jzchan,
- 		desc->dcm = JZ_DMA_DCM_DAI;
- 		desc->dsa = config->src_addr;
- 		desc->dta = addr;
--		desc->drt = jzchan->transfer_type;
- 
- 		width = config->src_addr_width;
- 		maxburst = config->src_maxburst;
-@@ -439,9 +432,10 @@ static struct dma_async_tx_descriptor *jz4780_dma_prep_dma_memcpy(
- 	tsz = jz4780_dma_transfer_size(dest | src | len,
- 				       &jzchan->transfer_shift);
- 
-+	jzchan->transfer_type = JZ_DMA_DRT_AUTO;
-+
- 	desc->desc[0].dsa = src;
- 	desc->desc[0].dta = dest;
--	desc->desc[0].drt = JZ_DMA_DRT_AUTO;
- 	desc->desc[0].dcm = JZ_DMA_DCM_TIE | JZ_DMA_DCM_SAI | JZ_DMA_DCM_DAI |
- 			    tsz << JZ_DMA_DCM_TSZ_SHIFT |
- 			    JZ_DMA_WIDTH_32_BIT << JZ_DMA_DCM_SP_SHIFT |
-@@ -496,9 +490,12 @@ static void jz4780_dma_begin(struct jz4780_dma_chan *jzchan)
- 			(jzchan->curr_hwdesc + 1) % jzchan->desc->count;
- 	}
- 
--	/* Use 8-word descriptors. */
--	jz4780_dma_chn_writel(jzdma, jzchan->id,
--			      JZ_DMA_REG_DCS, JZ_DMA_DCS_DES8);
-+	/* Use 4-word descriptors. */
-+	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DCS, 0);
-+
-+	/* Set transfer type. */
-+	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DRT,
-+			      jzchan->transfer_type);
- 
- 	/* Write descriptor address and initiate descriptor fetch. */
- 	desc_phys = jzchan->desc->desc_phys +
-@@ -508,7 +505,7 @@ static void jz4780_dma_begin(struct jz4780_dma_chan *jzchan)
- 
- 	/* Enable the channel. */
- 	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DCS,
--			      JZ_DMA_DCS_DES8 | JZ_DMA_DCS_CTE);
-+			      JZ_DMA_DCS_CTE);
- }
- 
- static void jz4780_dma_issue_pending(struct dma_chan *chan)
--- 
-2.11.0
 
