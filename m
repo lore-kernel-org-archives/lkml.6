@@ -2,115 +2,106 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9222ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6EAECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6620520868
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 108C920868
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:15:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiGpSdBW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6620520868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ltQgFUQz";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Tt0Tt/lh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108C920868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbeGUTDe (ORCPT
+        id S1728353AbeGUTIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 15:03:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728083AbeGUTDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 15:03:34 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 21 Jul 2018 15:08:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54116 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbeGUTIw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 15:08:52 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9F7B56021A; Sat, 21 Jul 2018 18:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532196915;
+        bh=qWB+6F+5j4ioDrNIoZqItS1A/kRvlZVocpg8Abk/Gsw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ltQgFUQzH9RW9Pp5VQZdek5T8beg9/JLKMIDym5f59/3DzbyWrnQjr+XIbgJ0w1dt
+         i57lBy05bYBE7EuNRfmWBmwK26sDKLg/r/wNN9NWc+qxIOWEYzMEVJC1yuP5wwI9Vw
+         FGVzolkofCW1+Kk4IYO1B74OdjcOYV80Kt+RTTzY=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A90DB20868;
-        Sat, 21 Jul 2018 18:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532196598;
-        bh=RUmVNor4t99ruwYaObefrkA/XVpr63mj2pA9dqgeJOc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IiGpSdBWbFphnS3q0tZ9vu8S8qY+6SWcY9wfzIkSQAitxgzOFcxQ60UHRq7xTAS6b
-         VU4zxDAQIrBsHoUjUjkP3AKaK+gMhd6uJaeMh/ufPGOcPwxSnGCZFF00XF5bBev5ZZ
-         PHnGgA7zUPrwsHtJAVEOkdDEqyDCqQ0Y0YHRd6SY=
-Date:   Sat, 21 Jul 2018 19:09:54 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Vignesh R <vigneshr@ti.com>,
-        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH 0/5] ti_am335x_tsc: Enable wakeup capability
-Message-ID: <20180721190954.3d08e774@archlinux>
-In-Reply-To: <20180718170902.vk7rahyoaevucxbi@penguin>
-References: <20180630103318.25355-1-vigneshr@ti.com>
-        <dcb4a63b-9ecb-a72e-bfb8-ebb62017b4f7@ti.com>
-        <20180718074736.GA4641@dell>
-        <20180718170902.vk7rahyoaevucxbi@penguin>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 675166021A;
+        Sat, 21 Jul 2018 18:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532196914;
+        bh=qWB+6F+5j4ioDrNIoZqItS1A/kRvlZVocpg8Abk/Gsw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Tt0Tt/lhkFzewTCmUh9j1WDxjYyGYWZpCva4ePl3BkNNFC0ePCjBNPsVS7sj273ou
+         th8YnDZfNW/E4EgNrt38yv3BGeRQr+vEbEnusRbBauD6BjjRK3O8NBA8g25hRPS2vI
+         7oYTfakdsjK9PctdS5+f+BEcRahEidPaDUxHNI5Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 675166021A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        grahamr@qti.qualcomm.com, Taniya Das <tdas@codeaurora.org>
+Subject: [RFC PATCH 0/4] clk: qcom: Add support to vote to genpd
+Date:   Sat, 21 Jul 2018 23:44:58 +0530
+Message-Id: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jul 2018 17:09:02 +0000
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+A clock controller could be connected to single or multiple power domains. Add
+support for powerdomain_class which would help associate these power domains to
+the RCGs and PLLs in the clock controller. Map the domain and the corresponding
+frequencies to the clock(RCG/PLL). The clock frequency request from a consumer
+would be mapped to the corresponding performance corner, aggregated at the
+clock driver and would be vote/unvoted to the genpd framework for the desired
+performance state.
 
-> On Wed, Jul 18, 2018 at 08:47:36AM +0100, Lee Jones wrote:
-> > On Tue, 17 Jul 2018, Vignesh R wrote:
-> >   
-> > > Hi Dmitry,
-> > > 
-> > > On Saturday 30 June 2018 04:03 PM, Vignesh R wrote:  
-> > > > On AM335x, resistive TSC can wakeup the system from low power state.
-> > > > Currently, parent MFD device is marked as wakeup source, which is
-> > > > inaccurate as its the touch event generated by TSC thats the wakeup
-> > > > source. This series moves all wakeup related calls to operate on TSC
-> > > > device instead of MFD. It also marks TSC IRQ as wakeup capable, so that
-> > > > its not disabled during system suspend.
-> > > > 
-> > > > This series is based on Dmitry's comments here:
-> > > > https://lkml.org/lkml/2018/4/24/65
-> > > > 
-> > > > There are many new patches in this series, hence did not mark this as v4.
-> > > > 
-> > > > Vignesh R (5):
-> > > >   mfd: ti_am335x_tscadc: Don't mark TSCADC MFD as wakeup capable
-> > > >   Input: ti_am335x_tsc: Mark TSC device as wakeup source
-> > > >   mfd: ti_am335x_tscadc: Keep ADC interface on if child is wakeup
-> > > >     capable
-> > > >   iio: adc: ti_am335x_adc: Disable ADC during suspend unconditionally
-> > > >   Input: ti_am335x_tsc: Mark IRQ as wakeup capable
-> > > > 
-> > > >  drivers/iio/adc/ti_am335x_adc.c           | 12 ++++--------
-> > > >  drivers/input/touchscreen/ti_am335x_tsc.c | 22 +++++++++++++++++-----
-> > > >  drivers/mfd/ti_am335x_tscadc.c            | 14 +++++++++++++-
-> > > >  3 files changed, 34 insertions(+), 14 deletions(-)
-> > > >   
-> > > 
-> > > Gentle ping... Could you review/pick this series? MFD amd IIO bits are
-> > > already ACKed  
-> > 
-> > MFD patches are reviewed "for my own reference" meaning that we
-> > haven't yet agreed on a merge plan yet.  
-> 
-> I think this series makes sense to be pushed through a single tree as
-> opposed to being spread between 3, even if it could technically be
-> possible. It looks like Jonathan is fine with going it through either
-> his or some other tree, I am fine with it going through MFD. I just
-> Acked the 2 input-related patches.
+This series add an example of power domain class for sdm845 RCG/PLLs and the
+corresponding frequency mappings. This depends on power domain drivers of
+SDM845 https://lkml.org/lkml/2018/6/27/7.
 
-Just to confirm, MFD is fine for iio patches.  That driver isn't a hotbed
-of activity ;)
+Taniya Das (4):
+  clk: qcom: Add support to request power domain state
+  clk: qcom: Initialize the power domain class for each clock
+  clk: qcom: Add prepare/unprepare clock ops for PLL/RCG
+  clk: qcom: sdm845: Add Power Domain to RCGs and PLL
 
-Jonathan
+ arch/arm64/boot/dts/qcom/sdm845.dtsi |   2 +
+ drivers/clk/qcom/Makefile            |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c     |  52 ++++++++--
+ drivers/clk/qcom/clk-pd.c            | 193 +++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-pd.h            |  55 ++++++++++
+ drivers/clk/qcom/clk-rcg2.c          |  61 +++++++++--
+ drivers/clk/qcom/clk-regmap.h        |   5 +
+ drivers/clk/qcom/common.c            |  17 ++-
+ drivers/clk/qcom/gcc-sdm845.c        |  83 ++++++++++++---
+ 9 files changed, 427 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/clk/qcom/clk-pd.c
+ create mode 100644 drivers/clk/qcom/clk-pd.h
 
-> 
-> Thanks.
-> 
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
