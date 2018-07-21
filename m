@@ -2,133 +2,147 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 620D1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 03:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D84AECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 03:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A47C205F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 03:28:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nin1SMbB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A47C205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C974220856
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 03:40:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C974220856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeGUETf (ORCPT
+        id S1727325AbeGUE3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 00:19:35 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46570 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726997AbeGUETe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 00:19:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=5Qp2jh889yvdk+j4ZAqNBNaX/aSFM2S+2qivQ5jXdfQ=; b=nin1SMbBCky2YF4GRn148KzczV
-        oCD8Orat0zZ23eeo0m6zfx0fwp5AJozTn32AZA5yjuLCA19BDK4lqrwOk522MBdHmEqPH+I3TkVhq
-        ujKyvNhM6TelqzKcqOOOsunI3jL49T9SIRmdtimbbn2kAxeewhCrGyMoq/MExIRUNzJSQQaJuNxm3
-        EQFYqnKhDR5ePSNxgSyMw9DyOp63Nj8btzMOU8Kv9lzlDHtebjYqE3kKbQXFDwm43rs3GWvh2svEC
-        FlGfmgRYQDI/0w73sUcQxUaTjdPJOqckTC3RDx10cuGCx0VWYwPUuTz3yPtYdkRDBgsS5rt4BzKYO
-        mY5Nn1Hg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fgiZG-0001OC-2G; Sat, 21 Jul 2018 03:28:28 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc:     Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] arch/h8300: modify ffs(), fls() etc. functions to return int
-Message-ID: <1cdcd8e1-b12c-31cb-1188-c062dae3e461@infradead.org>
-Date:   Fri, 20 Jul 2018 20:28:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 21 Jul 2018 00:29:16 -0400
+Received: from mga09.intel.com ([134.134.136.24]:13419 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726957AbeGUE3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 00:29:15 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jul 2018 20:38:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,382,1526367600"; 
+   d="scan'208";a="56706280"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga008.fm.intel.com with ESMTP; 20 Jul 2018 20:38:04 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fgiia-000NlC-6K; Sat, 21 Jul 2018 11:38:04 +0800
+Date:   Sat, 21 Jul 2018 11:37:52 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Daniel Kurtz <djkurtz@chromium.org>
+Cc:     kbuild-all@01.org, Dylan Reid <dgreid@chromium.org>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: da7219: Allow pdata to specify a VDDIO
+Message-ID: <201807211137.jmWeBTni%fengguang.wu@intel.com>
+References: <20180721001235.164891-1-djkurtz@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180721001235.164891-1-djkurtz@chromium.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi Daniel,
 
-Building drivers/mtd/nand/raw/nandsim.c on arch/hexagon/ produces a
-printk format build warning.  This is due to hexagon's ffs() being
-coded as returning long instead of int.
+Thank you for the patch! Perhaps something to improve:
 
-Fix the printk format warning by changing all of hexagon's ffx() and
-flx() functions to return int instead of long.  The variables that
-they return are already int instead of long.
+[auto build test WARNING on asoc/for-next]
+[also build test WARNING on v4.18-rc5 next-20180720]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-../drivers/mtd/nand/raw/nandsim.c: In function 'init_nandsim':
-../drivers/mtd/nand/raw/nandsim.c:760:2: warning: format '%u' expects argument of type 'unsigned int', but argument 2 has type 'long int' [-Wformat]
+url:    https://github.com/0day-ci/linux/commits/Daniel-Kurtz/ASoC-da7219-Allow-pdata-to-specify-a-VDDIO/20180721-082411
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-There are no ffx() or flx() allmodconfig build errors after making this
-change.
+sparse warnings: (new ones prefixed by >>)
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org
+   sound/soc/codecs/da7219.c:440:44: sparse: cast to restricted __le16
+   sound/soc/codecs/da7219.c:461:13: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] val @@    got  short [unsigned] [usertype] val @@
+   sound/soc/codecs/da7219.c:461:13:    expected unsigned short [unsigned] [usertype] val
+   sound/soc/codecs/da7219.c:461:13:    got restricted __le16 [usertype] <noident>
+   sound/soc/codecs/da7219.c:817:57: sparse: dubious: x & !y
+   sound/soc/codecs/da7219.c:1427:16: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] offset @@    got  short [unsigned] [usertype] offset @@
+   sound/soc/codecs/da7219.c:1427:16:    expected unsigned short [unsigned] [usertype] offset
+   sound/soc/codecs/da7219.c:1427:16:    got restricted __le16 [usertype] <noident>
+>> sound/soc/codecs/da7219.c:1637:61: sparse: incorrect type in argument 3 (different base types) @@    expected char const **val @@    got uchar const **val @@
+   sound/soc/codecs/da7219.c:1637:61:    expected char const **val
+   sound/soc/codecs/da7219.c:1637:61:    got unsigned int *<noident>
+   sound/soc/codecs/da7219.c: In function 'da7219_fw_to_pdata':
+   sound/soc/codecs/da7219.c:1637:53: error: passing argument 3 of 'device_property_read_string' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     if (!device_property_read_string(dev, "dlg,vddio", &of_val32))
+                                                        ^
+   In file included from include/linux/acpi.h:28:0,
+                    from sound/soc/codecs/da7219.c:14:
+   include/linux/property.h:49:5: note: expected 'const char **' but argument is of type 'u32 * {aka unsigned int *}'
+    int device_property_read_string(struct device *dev, const char *propname,
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+vim +1637 sound/soc/codecs/da7219.c
+
+  1607	
+  1608	static struct da7219_pdata *da7219_fw_to_pdata(struct snd_soc_component *component)
+  1609	{
+  1610		struct device *dev = component->dev;
+  1611		struct da7219_pdata *pdata;
+  1612		const char *of_str;
+  1613		u32 of_val32;
+  1614	
+  1615		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+  1616		if (!pdata)
+  1617			return NULL;
+  1618	
+  1619		pdata->wakeup_source = device_property_read_bool(dev, "wakeup-source");
+  1620	
+  1621		pdata->dai_clks_name = "da7219-dai-clks";
+  1622		if (device_property_read_string(dev, "clock-output-names",
+  1623						&pdata->dai_clks_name))
+  1624			dev_warn(dev, "Using default clk name: %s\n",
+  1625				 pdata->dai_clks_name);
+  1626	
+  1627		if (device_property_read_u32(dev, "dlg,micbias-lvl", &of_val32) >= 0)
+  1628			pdata->micbias_lvl = da7219_fw_micbias_lvl(dev, of_val32);
+  1629		else
+  1630			pdata->micbias_lvl = DA7219_MICBIAS_2_2V;
+  1631	
+  1632		if (!device_property_read_string(dev, "dlg,mic-amp-in-sel", &of_str))
+  1633			pdata->mic_amp_in_sel = da7219_fw_mic_amp_in_sel(dev, of_str);
+  1634		else
+  1635			pdata->mic_amp_in_sel = DA7219_MIC_AMP_IN_SEL_DIFF;
+  1636	
+> 1637		if (!device_property_read_string(dev, "dlg,vddio", &of_val32))
+  1638			pdata->vddio = of_val32;
+  1639	
+  1640		return pdata;
+  1641	}
+  1642	
+
 ---
- arch/hexagon/include/asm/bitops.h |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
---- linux-next-20180717.orig/arch/hexagon/include/asm/bitops.h
-+++ linux-next-20180717/arch/hexagon/include/asm/bitops.h
-@@ -194,7 +194,7 @@ static inline int __test_bit(int nr, con
-  *
-  * Undefined if no zero exists, so code should check against ~0UL first.
-  */
--static inline long ffz(int x)
-+static inline int ffz(int x)
- {
- 	int r;
- 
-@@ -211,7 +211,7 @@ static inline long ffz(int x)
-  * This is defined the same way as ffs.
-  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
-  */
--static inline long fls(int x)
-+static inline int fls(int x)
- {
- 	int r;
- 
-@@ -232,7 +232,7 @@ static inline long fls(int x)
-  * the libc and compiler builtin ffs routines, therefore
-  * differs in spirit from the above ffz (man ffs).
-  */
--static inline long ffs(int x)
-+static inline int ffs(int x)
- {
- 	int r;
- 
-@@ -254,7 +254,7 @@ static inline long ffs(int x)
-  * bits_per_long assumed to be 32
-  * numbering starts at 0 I think (instead of 1 like ffs)
-  */
--static inline unsigned long __ffs(unsigned long word)
-+static inline int __ffs(unsigned long word)
- {
- 	int num;
- 
-@@ -272,7 +272,7 @@ static inline unsigned long __ffs(unsign
-  * Undefined if no set bit exists, so code should check against 0 first.
-  * bits_per_long assumed to be 32
-  */
--static inline unsigned long __fls(unsigned long word)
-+static inline int __fls(unsigned long word)
- {
- 	int num;
- 
-
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
