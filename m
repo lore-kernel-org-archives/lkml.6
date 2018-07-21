@@ -2,204 +2,379 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C267ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB47DECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 203C220858
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:23:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IumnIef4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 203C220858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A167020858
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:29:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A167020858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbeGUTRC (ORCPT
+        id S1728376AbeGUTWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 15:17:02 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:41486 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbeGUTRC (ORCPT
+        Sat, 21 Jul 2018 15:22:43 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:37357 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727854AbeGUTWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 15:17:02 -0400
-Received: by mail-yb0-f196.google.com with SMTP id s8-v6so5840680ybe.8;
-        Sat, 21 Jul 2018 11:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RMO/Ldkiln+6L5LfNkSoKkhokRJumbCHnWrzlXB91no=;
-        b=IumnIef4DB4+aFPVEy3A4kiC19XM0zAkhqmbocl1NgUgLGq6z+suRxofg7HgkCwzGb
-         yiF0e7MyUhqkLTGzrcRT9C3SrAiOhxXpRwSfJuR0BWOgwS6Yh3Kszz453VfbKDCLOlvJ
-         ywFZ+jBjndC25FluufMwTpPyy5cj9K/KZsxkshrgHCGfHck2oVxAUbdzGhAKZgcktw/n
-         WMEPWqnzOWG2EZ4cA0D9moI4nWoKvOsrTuP8mkxpe7OLX1lnRjh2wqtkkB77695fD3Dx
-         /UXE3mTKOutAsqpRbxAkbIAnZRAO0QMxZtm6BPKjjJknceDSSjNM3VJz87q0sbmtatNg
-         u0Vw==
+        Sat, 21 Jul 2018 15:22:42 -0400
+Received: by mail-io0-f200.google.com with SMTP id l5-v6so10891018ioh.4
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 11:29:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RMO/Ldkiln+6L5LfNkSoKkhokRJumbCHnWrzlXB91no=;
-        b=SzlYbgxY870UvwnZoOjhqsdwt4UEiXtZlLUqW2NjiIU4JVpMAreP3NS+R0GQoHFVgn
-         4HR0pCKVnC+yGN6ijeg0KcFBJcwDDJ7mJvelj5hUNBiUk2ze5KgDUpJwpbDVDldTbdEq
-         FsF9JFD5rnVQy54ir575o5nJIzxC+hderUOezzOB/7YcjzkGsXq7BYlk+ceioK8NHbEZ
-         +DMAv9ItbSeLUxAGo+w9B4v/Yy8e5ihDTmkvhKtVYgnPo7jrvo9jwIXBMA/B+yTZpW1v
-         NgU8EI/ZNKH9T5jBxuDZdql1wmah4MuOZRSu6h55V+XsPCCTm1M+VlbDTi/8FpQXCGc9
-         eUOg==
-X-Gm-Message-State: AOUpUlHFzjPsS7QKAaw/6foVzxPjF90+DpBrLt8oZ5lNvid32kEEbp2j
-        1SE7XBwBI9VVfczd5h/qoOA=
-X-Google-Smtp-Source: AAOMgpf+TCSKylegBiPJSVRd+lVxLSR+Yvy4dq8hmGhWk3Twgzl9aTakHgMEbq1fBRo9vThMf9PeqQ==
-X-Received: by 2002:a25:13c2:: with SMTP id 185-v6mr2467408ybt.331.1532197403605;
-        Sat, 21 Jul 2018 11:23:23 -0700 (PDT)
-Received: from sophia ([72.188.97.40])
-        by smtp.gmail.com with ESMTPSA id b135-v6sm4766275ywh.24.2018.07.21.11.23.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 11:23:22 -0700 (PDT)
-Date:   Sat, 21 Jul 2018 14:23:09 -0400
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, fabrice.gasnier@st.com,
-        benjamin.gaignard@st.com, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, akpm@linux-foundation.org
-Subject: Re: [PATCH v8 00/11] Introduce the Counter subsystem
-Message-ID: <20180721182202.GA17344@sophia>
-References: <cover.1531685024.git.vilhelm.gray@gmail.com>
- <20180721190134.166e50ab@archlinux>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=nc9Kgp8SYjbIpE71gcdnGJvBINWJFE0NSJqraXrNPg4=;
+        b=nDVAXaAEZulI357+dMR6wnfvctWeM9vwnxIBpNad+aHlqy75sAfLsg57DcjTeZt/iM
+         5fLr7fdJF5WzZgRVjWaBL2/XaCBjU+dvYdfdLmMh3YK1Lbq+KLuYpuO56EhzlggWRRFG
+         I87WPnexf4MPBsXOxsLswEe+fUa2vtv3OxJZ02tM3kW1nZFN7LEWr9fjECmg+dPXBU50
+         cDH2hBwoSQGnjFOXcrgbUDwisXrlASmgEdScoBst9SwjCIQvZvMtU+1B1IjoD9/3Fx25
+         FbBodkUsp+aYi9FDB5ahlWeHLl9a5cJofW42QVcr26927pJ6RrTrmjgm96wssm6ANVBO
+         PUbA==
+X-Gm-Message-State: AOUpUlFPSvV8s2SV15DKwZkJriN2ToTwVjcmay6XRWlcyAocxpaDG1X7
+        nSmFwEl4XmNGbeih2d08rlDGZzrYBrLFUhV7yFd/lTk5IdbD
+X-Google-Smtp-Source: AAOMgpfwVlgakc2zunnefHwTfsObdAC8hGqE8G21xKRRLvR7fqdI5xFlcuc/alu5XMqa2Lpb9EwYR5u5Mlz1cMlkRTtZt3hR+XEA
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180721190134.166e50ab@archlinux>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Received: by 2002:a02:384a:: with SMTP id v10-v6mr3317449jae.59.1532197743315;
+ Sat, 21 Jul 2018 11:29:03 -0700 (PDT)
+Date:   Sat, 21 Jul 2018 11:29:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000037578b057186966f@google.com>
+Subject: KASAN: stack-out-of-bounds Read in locks_remove_posix
+From:   syzbot <syzbot+5855b4355079756bf451@syzkaller.appspotmail.com>
+To:     bfields@fieldses.org, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 21, 2018 at 07:01:34PM +0100, Jonathan Cameron wrote:
->On Sun, 15 Jul 2018 16:44:24 -0400
->William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
->
->> Changes in v8:
->>  - Add counter_enum.h file
->>  - Simplify COUNTER Kconfig option help text
->>  - Rename generic-counter.c to the more straightforward counter.c
->>  - Update copyright and license boilerplate (use recommended SPDX line)
->>  - Replace EXPORT_SYMBOL lines with respective EXPORT_SYMBOL_GPL lines
->>  - Replace scnprintf lines with sprintf since we're dealing with sysfs files
->>  - Add struct counter_attr_parm to simplify counter_attribute_create parameters
->>  - Rename *_comp_t suffixes to *_unit in order to avoid *_t suffix implications
->>  - List sysfs attribute values verbatim in sysfs documentation files
->>  - Reorganize 104-QUAD-8 driver license boilerplate update to dedicated patch
->> 
->> This revision is functionally identical to the last; changes in this version
->> were made to improve clarity, formatting and whitespace, and organization. I
->> also took this opportunity to record some of the new ACKs from the last
->> submission.
->> 
->> The counter_enum.h file was created to hold the Generic Counter enum helper
->> functions required by the Generic Counter enum macros (i.e. COUNTER_SIGNAL_ENUM,
->> COUNTER_COUNT_ENUM, etc.). These helper functions are not intended to be used
->> directly by driver authors, so I thought it best to keep them separated. Now the
->> counter.h file contains only macro, functions, and data structures that are
->> expected to possibly appear in a counter device driver.
->> 
->> The counter_attribute_create function parameter list was large so I reorganized
->> the parameters into the counter_attr_parm structure, which may be set and passed
->> by reference to the counter_attribute_create function. Since the show and store
->> function pointers match with the struct device_attribute show and store function
->> pointers, I decided to keep them declared as there are here without a typedef --
->> however, I can typedef them in a future revision if it will improve clarity to
->> do so.
->> 
->> Heads-up for Jonathan Cameron: you may pick-up the "iio: 104-quad-8: Update
->> license boilerplate" patch independent of this series; it's the SPDX license
->> boilerplate update for the 104-QUAD-8 IIO driver.
->> 
->> Sincerely,
->> 
->> William Breathitt Gray
->> 
->This crossed with Andrew Morton's good points on this occupying
->namespace that is rather too generically named.  Hence I'll assume
->we'll see a v9 with a solution to that (and personally ignore v8
->to save time ;)
->
->Ah I see you just replied to Andrew. Great!
->
->
->Jonathan
+Hello,
 
-That's right: please ignore this v8 release; Andrew Morton's suggestions
-on the v7 thread are quick enough that I should have a v9 tested and
-submitted by tomorrow, so keep an eye out for that one instead.
+syzbot found the following crash on:
 
-Thanks,
+HEAD commit:    8ae71e76cf1f Merge branch 'bpf-offload-sharing'
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17724d1c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=89129667b46496c3
+dashboard link: https://syzkaller.appspot.com/bug?extid=5855b4355079756bf451
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1193eee0400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c5c9dc400000
 
-William Breathitt Gray
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5855b4355079756bf451@syzkaller.appspotmail.com
 
->
->> Benjamin Gaignard (2):
->>   counter: Add STM32 Timer quadrature encoder
->>   dt-bindings: counter: Document stm32 quadrature encoder
->> 
->> Fabrice Gasnier (2):
->>   counter: stm32-lptimer: add counter device
->>   dt-bindings: counter: Adjust dt-bindings for STM32 lptimer move
->> 
->> William Breathitt Gray (7):
->>   counter: Introduce the Generic Counter interface
->>   counter: Documentation: Add Generic Counter sysfs documentation
->>   docs: Add Generic Counter interface documentation
->>   iio: 104-quad-8: Update license boilerplate
->>   counter: 104-quad-8: Add Generic Counter interface support
->>   counter: 104-quad-8: Documentation: Add Generic Counter sysfs
->>     documentation
->>   iio: counter: Add deprecation markings for IIO Counter attributes
->> 
->>  Documentation/ABI/testing/sysfs-bus-counter   |  230 +++
->>  .../ABI/testing/sysfs-bus-counter-104-quad-8  |   36 +
->>  Documentation/ABI/testing/sysfs-bus-iio       |    8 +
->>  .../testing/sysfs-bus-iio-counter-104-quad-8  |   16 +
->>  .../{iio => }/counter/stm32-lptimer-cnt.txt   |    0
->>  .../bindings/counter/stm32-timer-cnt.txt      |   31 +
->>  .../devicetree/bindings/mfd/stm32-lptimer.txt |    2 +-
->>  .../devicetree/bindings/mfd/stm32-timers.txt  |    7 +
->>  Documentation/driver-api/generic-counter.rst  |  342 ++++
->>  Documentation/driver-api/index.rst            |    1 +
->>  MAINTAINERS                                   |   15 +-
->>  drivers/Kconfig                               |    2 +
->>  drivers/Makefile                              |    1 +
->>  drivers/{iio => }/counter/104-quad-8.c        |  782 ++++++++-
->>  drivers/counter/Kconfig                       |   51 +
->>  drivers/{iio => }/counter/Makefile            |    5 +-
->>  drivers/counter/counter.c                     | 1561 +++++++++++++++++
->>  drivers/{iio => }/counter/stm32-lptimer-cnt.c |  361 +++-
->>  drivers/counter/stm32-timer-cnt.c             |  390 ++++
->>  drivers/iio/Kconfig                           |    1 -
->>  drivers/iio/Makefile                          |    1 -
->>  drivers/iio/counter/Kconfig                   |   34 -
->>  include/linux/counter.h                       |  505 ++++++
->>  include/linux/counter_enum.h                  |   45 +
->>  24 files changed, 4341 insertions(+), 86 deletions(-)
->>  create mode 100644 Documentation/ABI/testing/sysfs-bus-counter
->>  create mode 100644 Documentation/ABI/testing/sysfs-bus-counter-104-quad-8
->>  rename Documentation/devicetree/bindings/{iio => }/counter/stm32-lptimer-cnt.txt (100%)
->>  create mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
->>  create mode 100644 Documentation/driver-api/generic-counter.rst
->>  rename drivers/{iio => }/counter/104-quad-8.c (44%)
->>  create mode 100644 drivers/counter/Kconfig
->>  rename drivers/{iio => }/counter/Makefile (46%)
->>  create mode 100644 drivers/counter/counter.c
->>  rename drivers/{iio => }/counter/stm32-lptimer-cnt.c (48%)
->>  create mode 100644 drivers/counter/stm32-timer-cnt.c
->>  delete mode 100644 drivers/iio/counter/Kconfig
->>  create mode 100644 include/linux/counter.h
->>  create mode 100644 include/linux/counter_enum.h
->> 
->
+==================================================================
+kasan: CONFIG_KASAN_INLINE enabled
+BUG: KASAN: stack-out-of-bounds in locks_inode include/linux/fs.h:1061  
+[inline]
+BUG: KASAN: stack-out-of-bounds in locks_remove_posix+0x787/0x890  
+fs/locks.c:2468
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+Read of size 8 at addr ffff8801b7644e18 by task syz-executor473/4469
+
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 1 PID: 4469 Comm: syz-executor473 Not tainted 4.18.0-rc3+ #58
+CPU: 0 PID: 17562 Comm: syz-executor473 Not tainted 4.18.0-rc3+ #58
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__read_seqcount_begin include/linux/seqlock.h:113 [inline]
+RIP: 0010:raw_read_seqcount_begin include/linux/seqlock.h:148 [inline]
+RIP: 0010:hrtimer_active+0x1fb/0x440 kernel/time/hrtimer.c:1327
+Call Trace:
+Code:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+ff
+80
+38
+00
+0f
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+85
+f3
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+01
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+00
+  locks_inode include/linux/fs.h:1061 [inline]
+  locks_remove_posix+0x787/0x890 fs/locks.c:2468
+00 48
+8b
+85
+f0 fe
+ff
+ff 4c
+8d
+6b
+10
+48
+89
+9d
+58
+ff
+ff
+ff
+c6
+  filp_close+0x1bb/0x250 fs/open.c:1182
+00
+f8
+4c
+89
+  close_files fs/file.c:388 [inline]
+  put_files_struct+0x26f/0x3a0 fs/file.c:416
+e8
+48
+c1
+e8
+  exit_files+0x83/0xb0 fs/file.c:445
+03
+  do_exit+0xf61/0x2750 kernel/exit.c:860
+41
+c6
+06
+04
+<42>
+0f
+b6
+14
+38
+4c
+89
+e8
+83
+e0
+07
+83
+c0
+03
+38
+d0
+7c
+08
+84
+d2
+0f
+85
+RSP: 0018:ffff8801dae07850 EFLAGS: 00010002
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff8158c5a9
+RDX: 0000000000010000 RSI: ffffffff816a4140 RDI: ffff8801b688e3d0
+RBP: ffff8801dae07990 R08: ffff8801dae07968 R09: fffffbfff02be35c
+R10: fffffbfff02be35d R11: ffffffff815f1aeb R12: ffff8801b688d730
+R13: 0000000000000010 R14: ffffed003b5c0f15 R15: dffffc0000000000
+FS:  00000000024e2880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8e1116ce78 CR3: 00000001c4e12000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  do_group_exit+0x177/0x440 kernel/exit.c:968
+  entity_tick kernel/sched/fair.c:4520 [inline]
+  task_tick_fair+0x60/0x320 kernel/sched/fair.c:9934
+  get_signal+0x88e/0x1970 kernel/signal.c:2468
+  scheduler_tick+0x18b/0x430 kernel/sched/core.c:3087
+  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
+  update_process_times+0x51/0x70 kernel/time/timer.c:1641
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
+  exit_to_usermode_loop+0x2e0/0x370 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode+0x342/0x3b0 arch/x86/entry/common.c:197
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
+  retint_user+0x8/0x18
+RIP: 0033:lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+Code:
+10
+49
+c1
+e9
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+09
+  </IRQ>
+41
+Modules linked in:
+57
+49 83 f1
+Dumping ftrace buffer:
+01
+    (ftrace buffer empty)
+48
+---[ end trace e84c0149ab776256 ]---
+8b
+RIP: 0010:__read_seqcount_begin include/linux/seqlock.h:113 [inline]
+RIP: 0010:raw_read_seqcount_begin include/linux/seqlock.h:148 [inline]
+RIP: 0010:hrtimer_active+0x1fb/0x440 kernel/time/hrtimer.c:1327
+bd
+Code:
+30 ff
+ff
+ff
+80
+ff
+38
+8b
+00
+b5
+0f
+2c
+85
+ff
+f3
+ff
+01
+ff
+00
+41
+00
+83
+48
+e1
+8b
+01
+85
+65
+f0 fe
+4c
+ff
+8b
+ff
+24
+4c
+25
+8d
+40
+6b
+ee
+10
+01
+48
+00
+89
+e8
+9d
+dc
+58
+8e
+ff
+ff
+ff
+ff
+ff
+<49>
+c6
+8d
+00
+bc
+f8
+24
+4c
+34
+89
+08
+e8
+00
+48
+00
+c1 e8
+48
+03
+b8
+41
+00
+c6
+00
+06
+00 00
+04
+00
+<42>
+fc
+0f
+ff
+b6
+df 48
+14
+89
+38
+fa
+4c 89
+48
+e8
+83
+RSP: 002b:00007ffe727cd790 EFLAGS: 00010217
+e0
+07
+RAX: 0000000000000000 RBX: 00007ffe727cd8c0 RCX: 0000000000473990
+83
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007ffe727cd790
+c0
+RBP: 0000000000001eb0 R08: 0000000000000001 R09: 00000000024e2880
+03
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000001eb0
+38 d0
+R13: 00000000000233be R14: 00007ffe727cd8e8 R15: 0000000000000003
+7c
+
+08
+Allocated by task 4466:
+84
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+d2
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+0f
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+85
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  __d_alloc+0xc8/0xd50 fs/dcache.c:1616
+RSP: 0018:ffff8801dae07850 EFLAGS: 00010002
+  d_alloc_pseudo+0x1d/0x30 fs/dcache.c:1744
+  create_pipe_files+0x42c/0x950 fs/pipe.c:753
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff8158c5a9
+  __do_pipe_flags+0x45/0x250 fs/pipe.c:802
+RDX: 0000000000010000 RSI: ffffffff816a4140 RDI: ffff8801b688e3d0
+  do_pipe2+0x9d/0x310 fs/pipe.c:850
+RBP: ffff8801dae07990 R08: ffff8801dae07968 R09: fffffbfff02be35c
+  __do_sys_pipe fs/pipe.c:873 [inline]
+  __se_sys_pipe fs/pipe.c:871 [inline]
+  __x64_sys_pipe+0x33/0x40 fs/pipe.c:871
+R10: fffffbfff02be35d R11: ffffffff815f1aeb R12: ffff8801b688d730
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+R13: 0000000000000010 R14: ffffed003b5c0f15 R15: dffffc0000000000
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+FS:  00000000024e2880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8e1116ce78 CR3: 00000001c4e12000 CR4: 00000000001406f0
+Freed by task 0:
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+(stack is not available)
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
