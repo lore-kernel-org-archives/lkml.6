@@ -4,76 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14057ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 138CFECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0ABF2086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEBC52086E
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:41:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ceBDcIjC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0ABF2086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mt/Hte9X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEBC52086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbeGUOdk (ORCPT
+        id S1728169AbeGUOeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 10:33:40 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35847 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727867AbeGUOdk (ORCPT
+        Sat, 21 Jul 2018 10:34:20 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34429 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727666AbeGUOeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 10:33:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s7-v6so5638319pgv.3;
-        Sat, 21 Jul 2018 06:40:51 -0700 (PDT)
+        Sat, 21 Jul 2018 10:34:20 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y5-v6so9086609pgv.1;
+        Sat, 21 Jul 2018 06:41:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=W7P6F1saFXTiwPxF2MUp+sZ09wADrLgcDZFTpfYgdd0=;
-        b=ceBDcIjCmZ513CZmThuWyU98jzjRgH03HH1ChnqofwltlvxufdU77/bgCsTyHgXp69
-         dacMZ4Nc/IX/F+R+443opzO73sdQFAWhC9xeZTYYSipNugKYqfBGCLixBs56hffEuGUk
-         IcRV4gfGf13ddmPthqrSUlljdJbem38MYgWJE+ZkBInCequPr4z31T2ep7OfuwzfHDxG
-         +c/P/JPk5vLF5W5MbCK3mmfcJbbYk9PC/+ZNm5Y351/lwlBncmY9tXxpauhPnN9E3XhU
-         MMWFneVjNWPkiS8JqodRL6bUOK1ObTh+m6gASqjPeU+Tc+xx077E8xOmoIr7MvgGAB+i
-         dFiQ==
+        bh=59OXgxrUqLjsIZUOgxj5qqVpfwZ6uCigoUi74NQ3mcU=;
+        b=mt/Hte9XNEbN5AvEdrHzu+7n39S4xBFtwc35QliWOJ+kL2ABzeAjxqmr+Ahu/fKUfc
+         L3YF/aU4WchZWVaFdfpQ8S4lcBcPLwxfzD1os2/gvZqTCxFLNj0z5V2mkRfpl/TdX7/A
+         wh7HUrMHZLb/rSqN46n1TiSZZNz8GTz6RDKXpcrox+icnPuCb1Z6m2uMlVDjZPp2br1n
+         m9jQ2Wp3Q7J6jIegZozbSI7hpjiDm/+FWd6mCFo/eMC++2YVM6bTQlGOsQ9EmunZyKpK
+         19WP01t7TIXwB21PQt+mEDhbGezbKYWGTa9BUJkWr9wUyeZeJkPQANuoDlTU93x8HAvJ
+         G1Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=W7P6F1saFXTiwPxF2MUp+sZ09wADrLgcDZFTpfYgdd0=;
-        b=JTEQCgThJ/RRUSU/cMrbR2D//mF8YNWkMpgZNJiEA1NaerjtToyUe2K9gxlzfbcYu8
-         kcQ4VhEwAHNWuZ2AmTdZPoDsWxaQGcrZN9tuODbJgZKEpkkUHlCfA4ywVDxo6Z/5DBOs
-         Hf0w3LnHkPsYmxcl+V724wuyfp6FLigz0YHoj0x4xquGwBkmmchjGghMeJ3A9XqWs5GE
-         nbjsIkakW4NqLrBEzoHsbdq3tCq75WYXMJucpq17/bjYptyf8745wDq53Di/2jP74+qd
-         A/OG1xiGyKoN78kU9dKxOtZeVR9w89YOQf0TvRPH4wGY03jvMRPAfP8n8/+Gfo5XFLui
-         C8LQ==
-X-Gm-Message-State: AOUpUlH0ddsugXyAoiBbFPR7ajEyqeIYu8E8pHyo1VAG2BbBhKwFGwO6
-        SdHz2E4gin5Wf4GlvRaEVLCytC2h
-X-Google-Smtp-Source: AAOMgpdHSQ/BxZz3rxABjpTDYByIdnLkejmU5B40Sov8prXK6wL+a4Kl1eKZnhL0891dkwjhubiNuA==
-X-Received: by 2002:a63:dd09:: with SMTP id t9-v6mr5766497pgg.370.1532180451118;
-        Sat, 21 Jul 2018 06:40:51 -0700 (PDT)
+        bh=59OXgxrUqLjsIZUOgxj5qqVpfwZ6uCigoUi74NQ3mcU=;
+        b=a8gMejAOKmbAVdq877RRb7ovJYnRpJ0HOre/l/wFnM5o4/3V8UyUs2o0Ri0gDaIEDs
+         S4bg02Frm1TQfBfk6ztdN6+36N6Hktd/KCd097Ua/fnzcV3ptpq3ivCqo47BANKraXfy
+         gHlh8ai7hkG6npixKr5nKpzeGFS05u2iSuGkVn90PBoB+uxETrmdNra8uuQzb/h6b47Y
+         teUKfgJBObQpz0mLfbqs/EfP8v8B5lvdlweXLKH7pJA2ciRtesUi9cyeui2VrGMbxB7G
+         U5Mm+zQ0MSmEOrQZDKeeOo3qmNHRnjWijEd6n7JQwWPv8OcbKPbcxAlEJijzSA5E/Hab
+         VAzQ==
+X-Gm-Message-State: AOUpUlESUFIhHOR9/cna6UwbfvZxm7a89nZPN2rRPNcJ+/eEKnUxbQz6
+        5jGiZnqHkaig54fjZe/kBHWXt9gH
+X-Google-Smtp-Source: AAOMgpfWVeURUBxfxHWBHLJjb6/WRn3MuxrkTfco1q4nmWP1buWpO7vOur2vMp3SprFpMNF0XiZYrg==
+X-Received: by 2002:a63:3444:: with SMTP id b65-v6mr5628497pga.396.1532180491125;
+        Sat, 21 Jul 2018 06:41:31 -0700 (PDT)
 Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id n5-v6sm6085924pgr.24.2018.07.21.06.40.50
+        by smtp.gmail.com with ESMTPSA id 13-v6sm6361005pfw.131.2018.07.21.06.41.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 06:40:50 -0700 (PDT)
-Subject: Re: [PATCH 4.9 00/66] 4.9.114-stable review
+        Sat, 21 Jul 2018 06:41:30 -0700 (PDT)
+Subject: Re: [PATCH 4.14 00/92] 4.14.57-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
         shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-References: <20180720121407.228772286@linuxfoundation.org>
+References: <20180720121417.206337808@linuxfoundation.org>
 From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <cad35061-2079-43bc-724e-a8e0e7fe5f93@roeck-us.net>
-Date:   Sat, 21 Jul 2018 06:40:49 -0700
+Message-ID: <8680637d-316a-c68a-e80c-0dc9afbbe2cc@roeck-us.net>
+Date:   Sat, 21 Jul 2018 06:41:29 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180720121407.228772286@linuxfoundation.org>
+In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -83,19 +84,19 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 07/20/2018 05:13 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.114 release.
-> There are 66 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 4.14.57 release.
+> There are 92 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Sun Jul 22 12:13:47 UTC 2018.
+> Responses should be made by Sun Jul 22 12:13:50 UTC 2018.
 > Anything received after that time might be too late.
 > 
 
 Build results:
 	total: 148 pass: 148 fail: 0
 Qemu test results:
-	total: 166 pass: 166 fail: 0
+	total: 174 pass: 174 fail: 0
 
 Details are available at http://kerneltests.org/builders/.
 
