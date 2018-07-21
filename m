@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DD6ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC1AECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E1BE20856
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:35:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA6042086A
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:35:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlqOhAcV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E1BE20856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bw2//KsM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6042086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbeGUO2I (ORCPT
+        id S1728132AbeGUO2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 10:28:08 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36395 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727823AbeGUO2I (ORCPT
+        Sat, 21 Jul 2018 10:28:10 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33898 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727823AbeGUO2J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 10:28:08 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s7-v6so5632269pgv.3
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 06:35:21 -0700 (PDT)
+        Sat, 21 Jul 2018 10:28:09 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y5-v6so9080082pgv.1
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 06:35:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=E+xqQH42AHWVqN+bkEZOAkIfwyNU3aQ8/q5uyepghOU=;
-        b=FlqOhAcVv9Mk8JEZ93ewGGpkziIByd6e5eJBDPkMqRG6rkVCjXb52i4EQhXSZfEfSb
-         YMap+lDZw2Qm+DAobWoXNo/Hdiftk5BrQYTG+ylNthmifNhfueqpfjNqV1hoMBgN5v/B
-         0mFACpdN0ltdTKkjX9W/w1yLnBprdLeeGMxNxOSGPoulKndGLouZnoiNfdbWwr3Zib8/
-         7zTNULx6YWPyfsWXHJc1A9Fs/en5tqfqUkRDRrLeUA9cszOoO/d6jfsyfTRZevSbctSn
-         10rl4Xi4yAW4xC1eOZHUXfK36y4kZPX3i7Hl6W5v1Wn2AUqdWIxh+XhAP75xqCVP8NPB
-         A8kw==
+        bh=aMrz5T2+pyh6QUoBFvF5dt/tuQ53TEyQx+NdnoSXbbE=;
+        b=Bw2//KsM3+3w/PPUPzukBIIzFoKqoncEO86vBnywoxIz1C0RneiQ2aWTtAaygGNy7M
+         kOHZof9nigkjTU8XiwzvrL/nYy4ZHFqG6xyKXIiNkhzZnTyiBgJIACd9B6EH4fS10BhI
+         4rJzzyUSOlRbwfpoCuqLWbzblQpRGqtrkzepPBCA8FFqN9+Bqcm9PVW7j3BPpACVQXSm
+         BOQsdHUxjmH6iAbWAXnrDNaDRMh7PzXst4cHpP+aY1MANjnLH66EoHreKXhixYAd42rI
+         XqTEIgvcnKPueOzMwapyCNM19wfSIpF5o/bAQQBe52CiiLfEd2jVM6tNc7kOBkQiepX3
+         ZtWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=E+xqQH42AHWVqN+bkEZOAkIfwyNU3aQ8/q5uyepghOU=;
-        b=ZpI1YjbfQDzBsJ3X5JSIa+3HSKyAHfuO9OIF72Vssa9cyjFmo4V4i07Pq1dlGsaV28
-         vNz5UAF/eWiz3141w0OtOVLHevfQfxV5S7+fzsC3VPcyNW3a29F7FQhWgi8pe7hMrDbZ
-         CB+pNLEYH5V+UIB1ATTShCzzG8r4vOucKMuE5S5RxvHeXhqCN/YPw8vyIPiRXT9xWPB4
-         nNKkPm0olWMYQDgCCkImeHJcRBADleqVXs6brijDGx2S7BLC51JA+s+uZADmbgQpI2Ag
-         30+FQ/hNswOuHQItt3QFt3UqFMtQKfExbxwuPC/gKSNHm9E9/etafo+2vuk1jCl3YoIc
-         T2DQ==
-X-Gm-Message-State: AOUpUlH3YC+8TZiBULoC0iLV9hJYY/k5SPQZ3ClF4+Xq6RXD8Z9c21nF
-        WSJzlpzK2EKXniaNkwt2fP0=
-X-Google-Smtp-Source: AAOMgpfQWdI8tk2AXG0RyjmVSPLRB9pUGKgf1Ix8qlPVihd4FSeyiGgYoIb16E3aYo4SLQ8udw/2rg==
-X-Received: by 2002:a65:520d:: with SMTP id o13-v6mr5593696pgp.282.1532180120712;
-        Sat, 21 Jul 2018 06:35:20 -0700 (PDT)
+        bh=aMrz5T2+pyh6QUoBFvF5dt/tuQ53TEyQx+NdnoSXbbE=;
+        b=WeSrEAHEKPBzT+HgUXMPY1yDPHsFHYM+cU9mUK4RFfS34KKVN2NcEmH3bkKpgDn1I0
+         zJz9RmQVVmc6KDONzQMQ61Oj89IOh6z1bvpIAkxUjW72sffu+x/YZNMiC0y9FpMjmdH7
+         1+hTc+V9R4tl02MXqOcVPemhtVlFEUboMs14tNTa7amfjuLULZ3bQ5+CH+ub5RSrV6Ep
+         mn5IFyc9hla3Snizv6ntcXXnnUUU7Gv9AvuvzpTqqyrrcWdNbln8ZXwwJ32KWANTcEVj
+         zvAWoFpbQBpRrbmpN/RaMZF5JISnEFhpHqPJeuRPL5eB+Zs3y65kOAE4aKkOTBxG9nyx
+         Cqyw==
+X-Gm-Message-State: AOUpUlHwAExFBZQDYktrRWwqUb97CWBtuZ6sa+Gp+EBkij+VJlYfEYNr
+        EVN1E9zdAmQJXzGBnZCIfDY=
+X-Google-Smtp-Source: AAOMgpdLK1Jk8gMcxStMWcan6pr6kQa/rye9lUA9CXwIo728pdMskOMAJNcUUAWY4cYf3aYKCEe4WQ==
+X-Received: by 2002:a63:175b:: with SMTP id 27-v6mr5603755pgx.31.1532180121660;
+        Sat, 21 Jul 2018 06:35:21 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id p26-v6sm9445023pfi.183.2018.07.21.06.35.19
+        by smtp.gmail.com with ESMTPSA id p26-v6sm9445023pfi.183.2018.07.21.06.35.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 06:35:20 -0700 (PDT)
+        Sat, 21 Jul 2018 06:35:21 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 01/14] staging: gasket: fix check_and_invoke_callback log param
-Date:   Sat, 21 Jul 2018 06:34:54 -0700
-Message-Id: <20180721133507.95599-2-toddpoynor@gmail.com>
+Subject: [PATCH 02/14] staging: gasket: remove duplicate call to retrieve device callback
+Date:   Sat, 21 Jul 2018 06:34:55 -0700
+Message-Id: <20180721133507.95599-3-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 In-Reply-To: <20180721133507.95599-1-toddpoynor@gmail.com>
 References: <20180721133507.95599-1-toddpoynor@gmail.com>
@@ -81,28 +81,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-The message should be passed the callback function pointer, not
-the pointer to the gasket device.
+gasket_handle_ioctl() calls gasket_get_ioctl_permissions_cb() twice;
+simplify the code and avoid duplicated work by fetching the callback
+pointer only once.
 
-Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+Reported-by: Dmitry Torokhov <dtor@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/gasket/gasket_ioctl.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 40e46ca5228c8..2cd232230845c 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -205,7 +205,7 @@ static inline int check_and_invoke_callback(
+diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+index 2e2c9b997093b..dbe9fdef0c268 100644
+--- a/drivers/staging/gasket/gasket_ioctl.c
++++ b/drivers/staging/gasket/gasket_ioctl.c
+@@ -55,14 +55,15 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *argp)
  {
- 	int ret = 0;
+ 	struct gasket_dev *gasket_dev;
+ 	unsigned long arg = (unsigned long)argp;
++	gasket_ioctl_permissions_cb_t ioctl_permissions_cb;
+ 	int retval;
  
--	gasket_nodev_error("check_and_invoke_callback %p", gasket_dev);
-+	gasket_nodev_error("check_and_invoke_callback %p", cb_function);
- 	if (cb_function) {
- 		mutex_lock(&gasket_dev->mutex);
- 		ret = cb_function(gasket_dev);
+ 	gasket_dev = (struct gasket_dev *)filp->private_data;
+ 	trace_gasket_ioctl_entry(gasket_dev->dev_info.name, cmd);
+ 
+-	if (gasket_get_ioctl_permissions_cb(gasket_dev)) {
+-		retval = gasket_get_ioctl_permissions_cb(gasket_dev)(
+-			filp, cmd, argp);
++	ioctl_permissions_cb = gasket_get_ioctl_permissions_cb(gasket_dev);
++	if (ioctl_permissions_cb) {
++		retval = ioctl_permissions_cb(filp, cmd, argp);
+ 		if (retval < 0) {
+ 			trace_gasket_ioctl_exit(-EPERM);
+ 			return retval;
 -- 
 2.18.0.233.g985f88cf7e-goog
 
