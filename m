@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0703ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991A0ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A24820858
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:57:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F75920856
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:57:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGbtCDxw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A24820858
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HedT5wp8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F75920856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbeGUNuc (ORCPT
+        id S1729857AbeGUNud (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 09:50:32 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:47003 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729549AbeGUNua (ORCPT
+        Sat, 21 Jul 2018 09:50:33 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34184 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729549AbeGUNuc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 09:50:30 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p23-v6so9016327pgv.13
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 05:57:50 -0700 (PDT)
+        Sat, 21 Jul 2018 09:50:32 -0400
+Received: by mail-pl0-f66.google.com with SMTP id f6-v6so6335624plo.1
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 05:57:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+2IJEtfJULp18D+0nd4wW9BdT1d7nKZ3Wde8OwFth+8=;
-        b=DGbtCDxwv859J0mCFKvaJERC5KCS19BJf1BJ17CEb1LrPi9JMmqhIVw99uuc1T95IO
-         eyBTJnN5eKyGhqi7CnT30HQrIDfsovHpAmDbjMKW57lNmeaCx3uORS8Qi/W6S+xDzyAs
-         /qMnvRtJduic3TjxieMNCJWxKHzL/Fw7FN3MuD2y1nndY7IOtOkTx0x7E5yE9ZlkYCyP
-         CTwC4cnPQVTUrk57NnsypCiYmjB3WmSjBQ0smN/8THrpcwN0BUpZsVJRocF2Uv7UJAmY
-         LK3UZr40uQBvDWdnrWljWEV/xAEcwxUy6/2pTRxP4FU/a1cXGzGfz6zlM8rFKB9vlaQw
-         TvoA==
+        bh=hiW2Dbr3eUgq/g4Rbn6WYhxli/PT+BDktrtcY4Ukais=;
+        b=HedT5wp8EvV9CUi3pn+2TVNo9N0xfgnTYcGYbcfb+j/QG8CAEszSOIwPngXFb2622z
+         3WTs1EqRsFbtBYT9H7broJGH3iedLZspBjMJlvh7MY0izZh8/OtUPIiU575aGHXiVXPa
+         TakRy8JCi1qJtOvr3SHfT0TuY+LQpnpEUdIk9c8+FsaT1/a1pcvl7sV/HUoUQ6USOFly
+         7l7nenIhDYw/3HS+pYjISa3OVdBXEpTnz5nWrrY7ztkPRwPnVraTRUQZ4RLdbyO/LBJT
+         vetUGDN6Ow0/wvYx6xy1Wq+9zXWr119ENVfb+fhEKdpAFCa/bEaCARRpyuJnmRb0KFG1
+         CLZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+2IJEtfJULp18D+0nd4wW9BdT1d7nKZ3Wde8OwFth+8=;
-        b=ui9ZohmbAI9cszVdP6/xH3OgJkBGrDknJQEhXghhJzv//hhI50ng+31s+mcKPiqW13
-         OdxcWq+88YGV6UXE0xqfewY5HTb+FDbZIq+WzjyPQYzZnnbAUTHsikof/0Il4pryDT7f
-         5nDtBMrhCTnXRVXNQ2oZXWFaxO+YwlD6mIZHqHqguk4XY3OQdZyrwV93MF/wo+R7ka7X
-         K4fV2UN8mAOgqcWfBB9R/dtA5q2xfsodGtrjSO21zD72sd84APB828jZ5WlC3c0Zgctr
-         IPcNxjpAhV156KxaN+bYAgAg8yZESkrJkD2Gled2wyeZwc9VVR1jTVpQh6fkLZLrROZ+
-         di/w==
-X-Gm-Message-State: AOUpUlGaJ5H5Ta0ZjhsLcqkj5BZIqL/ChWIoXTTuS4/hUWyWtbOcC3x9
-        6SuX7xfrk+xGiZF87WmfysVsHIVHl9c=
-X-Google-Smtp-Source: AAOMgpeu3bPQqJthYygQLHZNZdkf3Ifw3FN2LuDlNt3AWNQU9mhmDPv9paoojaDdSv4PTiplz0l0dw==
-X-Received: by 2002:a62:aa02:: with SMTP id e2-v6mr5911289pff.211.1532177870441;
-        Sat, 21 Jul 2018 05:57:50 -0700 (PDT)
+        bh=hiW2Dbr3eUgq/g4Rbn6WYhxli/PT+BDktrtcY4Ukais=;
+        b=iUTusZj40mqNZ8TsAS8Hr9lydA0+ozJKQK3pacA2Zi3maLkxK0LFOsjnSjJMDMUJve
+         3JfqztjFkNMQyzHEd8gLAyuMUex3Ysj5aWNU7I+aRic1rtY91Fhu7FcM+DHQsn7ExkLI
+         p7inuvHZ/+jBg08KP80pbi3OHK6aSwbq4HzB1/pzFbO2Lvf87EzL38AgtIlFu44LHPLe
+         jy8DMZpV5JGxsKBu5aSGVhOx3qwiIzNaDI9c5vYcTMZNCbgwUR/NMaRgB1kn6zmxY1gi
+         PDJm0a2NeU5gSmbSYJN7c9LmDGWrTdG5jPjZYTeTEcOFWQQ4PnciY2GcMGbnvsxrWCyB
+         ncNA==
+X-Gm-Message-State: AOUpUlGd3n55I+EIsZ0LHyVu6jQPhlKx/9uKaFFrsEABFSgre8lHlMUf
+        QGTc0Do2/B6BB+Uynmkl7+w=
+X-Google-Smtp-Source: AAOMgpcPj+UyBIW1zbIXhIMoypKVigpo1lPhlEghDVmL8uvph2Danzl0h2jXjGvyofuUPQbPVE/SoQ==
+X-Received: by 2002:a17:902:d24:: with SMTP id 33-v6mr5730364plu.211.1532177872560;
+        Sat, 21 Jul 2018 05:57:52 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm1072542pfe.42.2018.07.21.05.57.49
+        by smtp.gmail.com with ESMTPSA id d19-v6sm1072542pfe.42.2018.07.21.05.57.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 05:57:49 -0700 (PDT)
+        Sat, 21 Jul 2018 05:57:52 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -67,10 +67,11 @@ Cc:     Zhongze Hu <frankhu@chromium.org>,
         Dmitry Torokhov <dtor@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 10/14] staging: gasket: interrupts: convert various logs to debug level
-Date:   Sat, 21 Jul 2018 05:56:58 -0700
-Message-Id: <20180721125713.88501-20-toddpoynor@gmail.com>
+        Todd Poynor <toddpoynor@google.com>,
+        Simon Que <sque@chromium.org>
+Subject: [PATCH 11/20] staging: gasket: fix comment syntax in apex.h
+Date:   Sat, 21 Jul 2018 05:57:00 -0700
+Message-Id: <20180721125713.88501-22-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 In-Reply-To: <20180721125713.88501-1-toddpoynor@gmail.com>
 References: <20180721125713.88501-1-toddpoynor@gmail.com>
@@ -81,123 +82,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Debugging information is improperly logged at non-debug log level in a
-number of places, and some logs regarding error conditions may be
-generated too frequently, such that these could cause performance
-problems and/or obscure other logs.  Convert these to debug log level.
+Use kernel-style multi-line comment syntax.
 
-Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+Reported-by: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Simon Que <sque@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_interrupt.c | 24 +++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/staging/gasket/apex.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_interrupt.c b/drivers/staging/gasket/gasket_interrupt.c
-index d096ce73cc8b3..2b8c26d065336 100644
---- a/drivers/staging/gasket/gasket_interrupt.c
-+++ b/drivers/staging/gasket/gasket_interrupt.c
-@@ -287,7 +287,7 @@ int gasket_interrupt_reinit(struct gasket_dev *gasket_dev)
- 	int ret;
+diff --git a/drivers/staging/gasket/apex.h b/drivers/staging/gasket/apex.h
+index 4ef264106f503..d89cc2387b7d4 100644
+--- a/drivers/staging/gasket/apex.h
++++ b/drivers/staging/gasket/apex.h
+@@ -22,9 +22,10 @@
  
- 	if (!gasket_dev->interrupt_data) {
--		gasket_log_error(
-+		gasket_log_debug(
- 			gasket_dev,
- 			"Attempted to reinit uninitialized interrupt data.");
- 		return -EINVAL;
-@@ -305,7 +305,7 @@ int gasket_interrupt_reinit(struct gasket_dev *gasket_dev)
- 	case PCI_MSI:
- 	case PLATFORM_WIRE:
- 	default:
--		gasket_nodev_error(
-+		gasket_nodev_debug(
- 			"Cannot handle unsupported interrupt type %d.",
- 			gasket_dev->interrupt_data->type);
- 		ret = -EINVAL;
-@@ -351,7 +351,7 @@ static void gasket_interrupt_setup(struct gasket_dev *gasket_dev)
- 		gasket_dev->interrupt_data;
+ #define APEX_EXTENDED_SHIFT 63 /* Extended address bit position. */
  
- 	if (!interrupt_data) {
--		gasket_log_error(
-+		gasket_log_debug(
- 			gasket_dev, "Interrupt data is not initialized.");
- 		return;
- 	}
-@@ -365,7 +365,7 @@ static void gasket_interrupt_setup(struct gasket_dev *gasket_dev)
- 	}
- 
- 	if (interrupt_data->type != PCI_MSIX) {
--		gasket_nodev_error(
-+		gasket_nodev_debug(
- 			"Cannot handle unsupported interrupt type %d.",
- 			interrupt_data->type);
- 		return;
-@@ -403,7 +403,7 @@ static void gasket_interrupt_setup(struct gasket_dev *gasket_dev)
- 				pack_shift = 3 * interrupt_data->pack_width;
- 				break;
- 			default:
--				gasket_nodev_error(
-+				gasket_nodev_debug(
- 					"Found interrupt description with "
- 					"unknown enum %d.",
- 					interrupt_data->interrupts[i].packing);
-@@ -445,7 +445,7 @@ void gasket_interrupt_cleanup(struct gasket_dev *gasket_dev)
- 	case PCI_MSI:
- 	case PLATFORM_WIRE:
- 	default:
--		gasket_nodev_error(
-+		gasket_nodev_debug(
- 			"Cannot handle unsupported interrupt type %d.",
- 			interrupt_data->type);
- 	};
-@@ -460,18 +460,18 @@ void gasket_interrupt_cleanup(struct gasket_dev *gasket_dev)
- int gasket_interrupt_system_status(struct gasket_dev *gasket_dev)
- {
- 	if (!gasket_dev->interrupt_data) {
--		gasket_nodev_info("Interrupt data is null.");
-+		gasket_nodev_debug("Interrupt data is null.");
- 		return GASKET_STATUS_DEAD;
- 	}
- 
- 	if (!gasket_dev->interrupt_data->msix_configured) {
--		gasket_nodev_info("Interrupt not initialized.");
-+		gasket_nodev_debug("Interrupt not initialized.");
- 		return GASKET_STATUS_LAMED;
- 	}
- 
- 	if (gasket_dev->interrupt_data->num_configured !=
- 		gasket_dev->interrupt_data->num_interrupts) {
--		gasket_nodev_info("Not all interrupts were configured.");
-+		gasket_nodev_debug("Not all interrupts were configured.");
- 		return GASKET_STATUS_LAMED;
- 	}
- 
-@@ -516,14 +516,14 @@ static ssize_t interrupt_sysfs_show(
- 
- 	gasket_dev = gasket_sysfs_get_device_data(device);
- 	if (!gasket_dev) {
--		gasket_nodev_error(
-+		gasket_nodev_debug(
- 			"No sysfs mapping found for device 0x%p", device);
- 		return 0;
- 	}
- 
- 	gasket_attr = gasket_sysfs_get_attr(device, attr);
- 	if (!gasket_attr) {
--		gasket_nodev_error(
-+		gasket_nodev_debug(
- 			"No sysfs attr data found for device 0x%p", device);
- 		gasket_sysfs_put_device_data(device, gasket_dev);
- 		return 0;
-@@ -545,7 +545,7 @@ static ssize_t interrupt_sysfs_show(
- 		ret = total_written;
- 		break;
- 	default:
--		gasket_log_error(
-+		gasket_log_debug(
- 			gasket_dev, "Unknown attribute: %s", attr->attr.name);
- 		ret = 0;
- 		break;
+-/* Addresses are 2^3=8 bytes each. */
+-/* page in second level page table */
+-/* holds APEX_PAGE_SIZE/8 addresses  */
++/*
++ * Addresses are 2^3=8 bytes each. Page in second level page table holds
++ * APEX_PAGE_SIZE/8 addresses.
++ */
+ #define APEX_ADDR_SHIFT 3
+ #define APEX_LEVEL_SHIFT (APEX_PAGE_SHIFT - APEX_ADDR_SHIFT)
+ #define APEX_LEVEL_SIZE BIT(APEX_LEVEL_SHIFT)
 -- 
 2.18.0.233.g985f88cf7e-goog
 
