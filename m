@@ -2,67 +2,171 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B16EECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3A9ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B459C20849
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:13:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B459C20849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8540E20849
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:23:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8540E20849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeGUHFK (ORCPT
+        id S1727284AbeGUHPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 03:05:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44062 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbeGUHFK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 03:05:10 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB752707;
-        Sat, 21 Jul 2018 06:13:39 +0000 (UTC)
-Date:   Sat, 21 Jul 2018 08:13:29 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?utf-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
-Subject: Re: [GIT PULL] extcon next for v4.19
-Message-ID: <20180721061329.GA22971@kroah.com>
-References: <CGME20180719001704epcas2p2aab364365a7e3e9e52d619bd612a6958@epcas2p2.samsung.com>
- <5B4FD880.60806@samsung.com>
+        Sat, 21 Jul 2018 03:15:09 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42240 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726905AbeGUHPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 03:15:09 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 12C34207AD; Sat, 21 Jul 2018 08:23:35 +0200 (CEST)
+Received: from bbrezillon (unknown [37.173.220.171])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 14A762069C;
+        Sat, 21 Jul 2018 08:23:33 +0200 (CEST)
+Date:   Sat, 21 Jul 2018 08:23:32 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Han Xu <han.xu@nxp.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Xiaolei Li <xiaolei.li@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v4 01/35] mtd: rawnand: brcmnand: convert driver to
+ nand_scan()
+Message-ID: <20180721082332.4c098adb@bbrezillon>
+In-Reply-To: <20180720151527.16038-2-miquel.raynal@bootlin.com>
+References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
+        <20180720151527.16038-2-miquel.raynal@bootlin.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B4FD880.60806@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 09:17:04AM +0900, Chanwoo Choi wrote:
-> Dear Greg,
-> 
-> This is extcon-next pull request for v4.19. I add detailed description of
-> this pull request on below. Please pull extcon with following updates.
-> 
-> Best Regards,
-> Chanwoo Choi
-> 
-> 
-> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
-> 
->   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-4.19
+On Fri, 20 Jul 2018 17:14:53 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-Now pulled, thanks.
+> Two helpers have been added to the core to make ECC-related
+> configuration between the detection phase and the final NAND scan. Use
+> these hooks and convert the driver to just use nand_scan() instead of
+> both nand_scan_ident() and nand_scan_tail().
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  drivers/mtd/nand/raw/brcmnand/brcmnand.c | 47 +++++++++++++++++++-------------
+>  1 file changed, 28 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> index 2e5efa0f9ea2..071f09af56dc 100644
+> --- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> +++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> @@ -2208,6 +2208,32 @@ static int brcmnand_setup_dev(struct brcmnand_host *host)
+>  	return 0;
+>  }
+>  
+> +static int brcmnand_attach_chip(struct nand_chip *chip)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(chip);
+> +	struct brcmnand_host *host = nand_get_controller_data(chip);
+> +	int ret;
+> +
+> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+> +		chip->bbt_options |= NAND_BBT_NO_OOB;
+> +
+> +	if (brcmnand_setup_dev(host))
+> +		return -ENXIO;
+> +
+> +	chip->ecc.size = host->hwcfg.sector_size_1k ? 1024 : 512;
+> +
+> +	/* only use our internal HW threshold */
+> +	mtd->bitflip_threshold = 1;
+> +
+> +	ret = brcmstb_choose_ecc_layout(host);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct nand_controller_ops brcmnand_controller_ops = {
+> +	.attach_chip = brcmnand_attach_chip,
+> +};
+> +
+>  static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
+>  {
+>  	struct brcmnand_controller *ctrl = host->ctrl;
+> @@ -2267,10 +2293,6 @@ static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
+>  	nand_writereg(ctrl, cfg_offs,
+>  		      nand_readreg(ctrl, cfg_offs) & ~CFG_BUS_WIDTH);
+>  
+> -	ret = nand_scan_ident(mtd, 1, NULL);
+> -	if (ret)
+> -		return ret;
+> -
+>  	chip->options |= NAND_NO_SUBPAGE_WRITE;
+>  	/*
+>  	 * Avoid (for instance) kmap()'d buffers from JFFS2, which we can't DMA
+> @@ -2279,21 +2301,7 @@ static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
+>  	 */
+>  	chip->options |= NAND_USE_BOUNCE_BUFFER;
+>  
 
-greg k-h
+Any reason for not moving the above chunk in brcmnand_attach_chip()?
+
+Since ->attach_chip() is called between nand_scan_ident() and
+nand_scan_tail() in nand_scan(), I'd recommend simply copying all the
+code found between those 2 calls (applies to all drivers).
+
+> -	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+> -		chip->bbt_options |= NAND_BBT_NO_OOB;
+> -
+> -	if (brcmnand_setup_dev(host))
+> -		return -ENXIO;
+> -
+> -	chip->ecc.size = host->hwcfg.sector_size_1k ? 1024 : 512;
+> -	/* only use our internal HW threshold */
+> -	mtd->bitflip_threshold = 1;
+> -
+> -	ret = brcmstb_choose_ecc_layout(host);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = nand_scan_tail(mtd);
+> +	ret = nand_scan(mtd, 1);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -2434,6 +2442,7 @@ int brcmnand_probe(struct platform_device *pdev, struct brcmnand_soc *soc)
+>  	init_completion(&ctrl->done);
+>  	init_completion(&ctrl->dma_done);
+>  	nand_controller_init(&ctrl->controller);
+> +	ctrl->controller.ops = &brcmnand_controller_ops;
+>  	INIT_LIST_HEAD(&ctrl->host_list);
+>  
+>  	/* NAND register range */
+
