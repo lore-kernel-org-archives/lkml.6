@@ -2,75 +2,65 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809EEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8914ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D7382084A
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:23:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYggG6y3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7382084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BD1E2084A
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:31:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD1E2084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbeGUMP6 (ORCPT
+        id S1727720AbeGUMYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 08:15:58 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34765 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727549AbeGUMP6 (ORCPT
+        Sat, 21 Jul 2018 08:24:09 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61705 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727437AbeGUMYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 08:15:58 -0400
-Received: by mail-yb0-f196.google.com with SMTP id e9-v6so5611045ybq.1;
-        Sat, 21 Jul 2018 04:23:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=IISkwgtloMwre3PiNAm0Fpw8RGesT1eVn1treWoxBS4=;
-        b=DYggG6y3GjScWPjhFTkzO6Zusy+AZnUzNuZhFovCU95PvUWE8wd/F2YsOTjqATSySR
-         d0A+QR6dJ+LcvmoOPMTOt1eFXPgC60D5Umifu3bQ/pwJPMnNlZawz1uHaN9mvv72MuNE
-         RgTN1zChsl8w6PHPMfPGpyTYwIcHTgo0PUmui+7Y26CBrMhoAipIm9xRuU6sDxo3aS3M
-         hynVYUB2mgHUKw6PNCYIXGEmVCXOhsHwIJEmaeZqNHfc0CIgfB/eRploNZ2VuMVCAguI
-         pLV1jUFMdaudmJDcviFF9VgZXsLSjmtIGOwr/73Gft1ncBuI19OG77CI0Mipzys45U85
-         SFgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=IISkwgtloMwre3PiNAm0Fpw8RGesT1eVn1treWoxBS4=;
-        b=L/p+ydKC9aHqFy5lWJjZOrTR2JYQzMshrz35VOn9j1+bNF74PCZnWAfXTZd5+WavVT
-         0UVzg3cHxfklYAm6Umve0Cuphx+HkgA8aeimcpM8NLt8LyuIQNoYDhCu1B7MtyRbPMUM
-         Gvz3QGAllvz9xDPz910lThNwsbK4acYYlaOotD6VF3uGrWLf0WMNLa6Gzq7fT43OwHq4
-         A19ycn+Jg5w2jms+C7NKYAPUSql2d1N8ym7oPSXuhjboQZa0GD2n8zmL/4gyM9h8LhTv
-         bk3wCiGsxEV8TSJTuwhvUvTnWb5pwpPon7FsPVKKRHAKq9VYiQlPtDC15EJsII9qVH9n
-         wkxA==
-X-Gm-Message-State: AOUpUlEQqS6JDXVXac9FvW1cTCF/BWwrCp/lPe7Xr7UPYgr0fZU6hR5h
-        JwRQHTCZk6QvAulc2e03oMFu0ODVqUuR6w==
-X-Google-Smtp-Source: AAOMgpdaQnbOIxOwCtN/d15h47IwnsoQHJJKLZnsyjJQ4ErWTyQZUt4TSA1TAcJ1Q1WfhiVc0UjELg==
-X-Received: by 2002:a25:2102:: with SMTP id h2-v6mr2842983ybh.31.1532172213097;
-        Sat, 21 Jul 2018 04:23:33 -0700 (PDT)
-Received: from ?IPv6:2601:153:601:7d2a::100b? ([2601:153:601:7d2a::100b])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm2058121ywg.106.2018.07.21.04.23.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 04:23:32 -0700 (PDT)
-From:   Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH 1/2] Add sw2_sw4 voltage table to cpcap regulator.
-To:     lgirdwood@gmail.com, broonie@kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Message-ID: <17c10727-cab3-4736-281a-d4ace1cdbb82@gmail.com>
-Date:   Sat, 21 Jul 2018 07:23:31 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Sat, 21 Jul 2018 08:24:08 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6LBVgNV011042;
+        Sat, 21 Jul 2018 20:31:42 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Sat, 21 Jul 2018 20:31:42 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6LBVY55011007
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 21 Jul 2018 20:31:42 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC PATCH] sched/debug: Use terse backtrace for idly sleeping
+ threads.
+To:     David Laight <David.Laight@ACULAB.COM>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1532007443-3538-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180719134653.GH2476@hirez.programming.kicks-ass.net>
+ <54fc7ab8-2995-e864-7f74-c4434d23622c@i-love.sakura.ne.jp>
+ <2802327e499a43cf832d84237436959c@AcuMS.aculab.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <374c247a-ebe1-7f31-a52f-69d7f2db21be@i-love.sakura.ne.jp>
+Date:   Sat, 21 Jul 2018 20:31:36 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <2802327e499a43cf832d84237436959c@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,53 +68,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Re-sending due to email address typo.
+On 2018/07/20 23:04, David Laight wrote:
+> From: Tetsuo Handa
+>> Sent: 20 July 2018 14:27
+>>
+>> On 2018/07/19 22:46, Peter Zijlstra wrote:
+>>> On Thu, Jul 19, 2018 at 10:37:23PM +0900, Tetsuo Handa wrote:
+>>>> This patch can be applied before proposing abovementioned changes.
+>>>> Since there are many kernel threads whose backtrace is boring due to idly
+>>>> waiting for an event inside the main loop, this patch introduces a kernel
+>>>> config option (which allows SysRq-t to use one-liner backtrace for threads
+>>>> idly waiting for an event) and simple helpers (which allow current thread
+>>>> to declare that current thread is about to start/end idly waiting).
+> 
+> A kernel config option isn't the right place to select this.
+> Distros will build kernels with the 'wrong' value.
 
-SW2 and SW4 use a shared table to provide voltage to the cpu core and
-devices on Tegra hardware.
-Added this table to the cpcap regulator driver as the first step to
-supporting this device on Tegra.
+What do you mean? Distros can build their kernels with that config option disabled.
+Are you suggesting runtime switching like /proc/sys/ or sysfs or debugfs ?
 
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
----
-  drivers/regulator/cpcap-regulator.c | 23 +++++++++++++++++++++++
-  1 file changed, 23 insertions(+)
+I'm using a syzbot specific kernel config option for testing under syzbot
+(e.g. https://lore.kernel.org/lkml/9b9fcdda-c347-53ee-fdbb-8a7d11cf430e@I-love.SAKURA.ne.jp/T/#u ).
+But I don't think that "using one-liner backtrace for threads idly waiting for
+an event" has to be syzbot specific.
 
-diff --git a/drivers/regulator/cpcap-regulator.c 
-b/drivers/regulator/cpcap-regulator.c
-index bd910fe123d9..c0b1e04bd90f 100644
---- a/drivers/regulator/cpcap-regulator.c
-+++ b/drivers/regulator/cpcap-regulator.c
-@@ -271,6 +271,29 @@ static struct regulator_ops cpcap_regulator_ops = {
-  };
+> 
+> In any case it is usually easier to read /proc/nnn/stack of the process
+> you are interested it rather than write all of them to the kernel message
+> buffer and find that it is far too small.
 
-  static const unsigned int unknown_val_tbl[] = { 0, };
-+static const unsigned int sw2_sw4_val_tbl[] = { 612500, 625000, 637500,
-+                                               650000, 662500, 675000,
-+                                               687500, 700000, 712500,
-+                                               725000, 737500, 750000,
-+                                               762500, 775000, 787500,
-+                                               800000, 812500, 825000,
-+                                               837500, 850000, 862500,
-+                                               875000, 887500, 900000,
-+                                               912500, 925000, 937500,
-+                                               950000, 962500, 975000,
-+                                               987500, 1000000, 1012500,
-+                                               1025000, 1037500, 1050000,
-+                                               1062500, 1075000, 1087500,
-+                                               1100000, 1112500, 1125000,
-+                                               1137500, 1150000, 1162500,
-+                                               1175000, 1187500, 1200000,
-+                                               1212500, 1225000, 1237500,
-+                                               1250000, 1262500, 1275000,
-+                                               1287500, 1300000, 1312500,
-+                                               1325000, 1337500, 1350000,
-+                                               1362500, 1375000, 1387500,
-+                                               1400000, 1412500, 1425000,
-+                                               1437500, 1450000, 
-1462500, };
-  static const unsigned int sw5_val_tbl[] = { 0, 5050000, };
-  static const unsigned int vcam_val_tbl[] = { 2600000, 2700000, 2800000,
-                                              2900000, };
--- 
-2.17.1
+Reading /proc/$pid/stack is not an option for automated testing by syzbot.
+
+syzbot currently has 65 hung task reports. Calling SysRq-l when khungtaskd
+fired is still insufficient, and also analyzing vmcore is still impossible.
+For syzbot, calling SysRq-t when khungtaskd fired will be helpful.
+
+> 
+>>>> diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+>>>> index f776807..6b8c8bd 100644
+>>>> --- a/drivers/base/devtmpfs.c
+>>>> +++ b/drivers/base/devtmpfs.c
+>>>> @@ -406,7 +406,9 @@ static int devtmpfsd(void *p)
+>>>>  		}
+>>>>  		__set_current_state(TASK_INTERRUPTIBLE);
+>>>>  		spin_unlock(&req_lock);
+>>>> +		start_idle_sleeping();
+>>>>  		schedule();
+>>>> +		end_idle_sleeping();
+>>>>  	}
+>>>>  	return 0;
+>>>>  out:
+>>>
+>>> So I _really_ hate the idea of sprinking that all around the kernel like
+>>> this.
+>>>
+>>
+>> Does that comment mean the idea of "using one-liner backtrace for threads
+>> idly waiting for an event" itself is OK?
+> 
+> Aren't such stack traces likely to be short ones anyway?
+> Either that or you actually want to know where it is really waiting.
+
+Even if each stack is small, since size of console log needs to be limited,
+I want to save lines where possible.
+
+> 
+>> Since there already is schedule_idle() function, introducing idly_schedule()
+>> etc. is very confusing. What I'm trying to do is to tell debug function that
+>> "I'm currently in neutral situation and hence dumping my backtrace will not
+>> give you interesting result". Since such section needs to be carefully
+>> annotated with comments, I think that lockdep-like annotation fits better
+>> than introducing wrapped functions.
+> 
+> Or use extra bits of current->state set by set_current_state().
+
+I didn't catch how we can use it. I worry that there is a risk of
+unexpectedly overwritten because I don't think that the statement which
+follows set_current_state() is always schedule*()/wait_event*() etc.
+
