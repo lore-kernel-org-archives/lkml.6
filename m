@@ -2,162 +2,254 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC8DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBFEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A4B220854
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:30:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B348720856
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:31:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qGMTtVQt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A4B220854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcEuy0Jf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B348720856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeGUSX7 (ORCPT
+        id S1728207AbeGUSYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 14:23:59 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43693 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbeGUSX6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 14:23:58 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v13-v6so9306611pgr.10;
-        Sat, 21 Jul 2018 10:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=oU+bL+T+HfkDmA67qfWNq4xTnQmopUkcVDO/YclhDV0=;
-        b=qGMTtVQtqREX4plNM14l0tjPqBW1jls6IEFP3DN5Ka1tz0rM59DfRrEqxU0pJLirpX
-         QzWUO9Tg/ODLt9RsNIyIxEqOiId1AnGyqrh9czvVtzXUjmx86WbwLxchy40YAba5bHI6
-         EPp1MRvJGV8odZxVUV9WP16gE1iZ4Am76X03Aax5WWtRT3R7u52EpEsgRjGTGqWlqlwJ
-         iFj4G61gU1L9r/Aqqe8Lh14Ru1pgfysjdnS9bjZNcQQOm84Gv4skMMua7OKFq7jiYOXC
-         s/jSwIyXLMnyd0UTMrSsp5kfODhw/LemStWe+k0vD5rG1z/ACn156s1Xv/Mjd+S3U0Gh
-         O2Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oU+bL+T+HfkDmA67qfWNq4xTnQmopUkcVDO/YclhDV0=;
-        b=T0Hy45F/31tY7QtupZNaOevBckphQueHaDwcch9YyBssDV45LuMtHaspnA+gl3yTI4
-         UhnebyOJb3MV4ybGZkyDckNnLVs8tDBOm+jGaU245FRZ9KeRypoXDjkpbT3IaPAqb/fl
-         Y+WffZDkppNvfhzdNneECGUDEfutuWkojccCSaqSr3HfPWQ/Iw9PqtH/UD581iZ1TSg4
-         KKRNn6j5Kzb1P6v2UFO/S4727K562PAwhdDJGk+DEu0+mHtZC0RrA7e2r2fwRwX/K/2x
-         B7YAUUDrA7JPQKjR9up/oxJXv/STW5VLGUmbMZs4GiJy4VtsUZXVcV4VuQ1QBMJ9O0iO
-         DpQQ==
-X-Gm-Message-State: AOUpUlEQoMsQ+YFiTBpn8vuuVPlCGEzLs7+us2EzG0Z3cyfk4YAnjdMx
-        dIYo9cAE4gWEpbp5NhvH7PfXfShK
-X-Google-Smtp-Source: AAOMgpf3QCv5mrNi/QYsp6ASQMhTn0/4PflKXIFoortr/31psNUonI1j5dUjKBj4lUBan8uTv+ZMCg==
-X-Received: by 2002:a63:62c4:: with SMTP id w187-v6mr6264043pgb.55.1532194231097;
-        Sat, 21 Jul 2018 10:30:31 -0700 (PDT)
-Received: from linux-zmni.DHCP ([124.227.0.73])
-        by smtp.gmail.com with ESMTPSA id i6-v6sm6800708pfo.107.2018.07.21.10.30.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 21 Jul 2018 10:30:30 -0700 (PDT)
-From:   Sean Fu <fxinrong@gmail.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sean Fu <fxinrong@gmail.com>
-Subject: [PATCH] fs/buffer.c: Optimize grow_buffer function.
-Date:   Sun, 22 Jul 2018 01:30:17 +0800
-Message-Id: <1532194217-19002-1-git-send-email-fxinrong@gmail.com>
-X-Mailer: git-send-email 2.6.2
+        Sat, 21 Jul 2018 14:24:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49438 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727998AbeGUSYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 14:24:42 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 274AA20854;
+        Sat, 21 Jul 2018 17:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532194273;
+        bh=kY/aimcV6GcxtbxbI0VG4exPPLIROw1TWyjGNLXqCv8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dcEuy0JfutYtEkh44vSmzFTa4cghtFL4QslRA14SmK+0811ScbAXg8k2LvfKrTuDB
+         WenHyzDRxluO4xcBn3H6UDg6mC7YmNRpAzYRXEX6PFks94G94gmCnk7YdM40vSF7+L
+         4hQtKYJrXGYp6OhJ34eRNkv7fhnUlNhhUMH9v+A8=
+Date:   Sat, 21 Jul 2018 18:31:07 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
+        fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com,
+        drew.paterson@ams.com
+Subject: Re: [PATCH v2 1/7] iio: imu: mpu6050: add support for regulator
+ framework
+Message-ID: <20180721183107.3770295d@archlinux>
+In-Reply-To: <20180717084158.23532-2-masneyb@onstation.org>
+References: <20180717084158.23532-1-masneyb@onstation.org>
+        <20180717084158.23532-2-masneyb@onstation.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use PAGE_SHIFT and i_blkbits of bd_inode directly to avoid ugly sizebits
-calculation.
-Remove ugly sizebits calculation.
-Remove unnecessary sizebits parameter of grow_dev_page.
+On Tue, 17 Jul 2018 04:41:52 -0400
+Brian Masney <masneyb@onstation.org> wrote:
 
-Reduces code size:
+> This patch adds support for the regulator framework to the mpu6050
+> driver.
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 
-Before:
+I'm not 100% sure what the purpose of the regulator_enabled
+tracking is.  Perhaps you could point out the path where that is
+needed?
 
-sean@linux-zmni:~/sda5/source/linus_repo/linux> size fs/buffer.o
-   text	   data	    bss	    dec	    hex	filename
-  34037	   1510	     16	  35563	   8aeb	fs/buffer.o
+Also, a missing bit of documentation needs adding.
 
-After:
+Jonathan
 
-sean@linux-zmni:~/sda5/source/linus_repo/linux> size fs/buffer.o
-   text	   data	    bss	    dec	    hex	filename
-  34021	   1510	     16	  35547	   8adb	fs/buffer.o
-
-Signed-off-by: Sean Fu <fxinrong@gmail.com>
----
- fs/buffer.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 249b83f..143ad78 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -918,7 +918,7 @@ init_page_buffers(struct page *page, struct block_device *bdev,
-  */
- static int
- grow_dev_page(struct block_device *bdev, sector_t block,
--	      pgoff_t index, int size, int sizebits, gfp_t gfp)
-+	      pgoff_t index, int size, gfp_t gfp)
- {
- 	struct inode *inode = bdev->bd_inode;
- 	struct page *page;
-@@ -945,7 +945,7 @@ grow_dev_page(struct block_device *bdev, sector_t block,
- 		bh = page_buffers(page);
- 		if (bh->b_size == size) {
- 			end_block = init_page_buffers(page, bdev,
--						(sector_t)index << sizebits,
-+						(sector_t)index << (PAGE_SHIFT - inode->i_blkbits),
- 						size);
- 			goto done;
- 		}
-@@ -965,7 +965,8 @@ grow_dev_page(struct block_device *bdev, sector_t block,
- 	 */
- 	spin_lock(&inode->i_mapping->private_lock);
- 	link_dev_buffers(page, bh);
--	end_block = init_page_buffers(page, bdev, (sector_t)index << sizebits,
-+	end_block = init_page_buffers(page, bdev,
-+			(sector_t)index << (PAGE_SHIFT - inode->i_blkbits),
- 			size);
- 	spin_unlock(&inode->i_mapping->private_lock);
- done:
-@@ -984,20 +985,13 @@ static int
- grow_buffers(struct block_device *bdev, sector_t block, int size, gfp_t gfp)
- {
- 	pgoff_t index;
--	int sizebits;
--
--	sizebits = -1;
--	do {
--		sizebits++;
--	} while ((size << sizebits) < PAGE_SIZE);
--
--	index = block >> sizebits;
-+	index = block >> (PAGE_SHIFT - bdev->bd_inode->i_blkbits);
- 
- 	/*
- 	 * Check for a block which wants to lie outside our maximum possible
- 	 * pagecache index.  (this comparison is done using sector_t types).
- 	 */
--	if (unlikely(index != block >> sizebits)) {
-+	if (unlikely(index != block >> (PAGE_SHIFT - bdev->bd_inode->i_blkbits))) {
- 		printk(KERN_ERR "%s: requested out-of-range block %llu for "
- 			"device %pg\n",
- 			__func__, (unsigned long long)block,
-@@ -1006,7 +1000,7 @@ grow_buffers(struct block_device *bdev, sector_t block, int size, gfp_t gfp)
- 	}
- 
- 	/* Create a page with the proper size buffers.. */
--	return grow_dev_page(bdev, block, index, size, sizebits, gfp);
-+	return grow_dev_page(bdev, block, index, size, gfp);
- }
- 
- static struct buffer_head *
--- 
-2.6.2
+> ---
+> Changes since v1:
+> - Use devm_regulator_get() instead of devm_regulator_get_optional()
+> - Use devm_add_action() for cleaning up the regulator.
+> - Correct ordering of resume code.
+> - Add regulator_enabled flag to ensure regulator is not disabled twice,
+>   specifically the case where the device is suspended and then the
+>   driver is removed.
+> 
+> Original extra changelog from v1:
+> 
+> This is a variation of Jonathan Marek's patch from postmarketOS
+> https://gitlab.com/postmarketOS/linux-postmarketos/commit/b8ad1ec1859c8bbcbce94944b3f4dd68f8f9fc37
+> with the following changes:
+> 
+> - Stripped out 6515 variant code.
+> - Add the regulator to the mpu core instead of only the i2c variant.
+> - Add error handling.
+> - Release the regulator on suspend, device remove, etc.
+> - Device tree documentation.
+> 
+>  .../bindings/iio/imu/inv_mpu6050.txt          |  1 +
+>  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c    | 73 +++++++++++++++++++
+>  drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h     |  3 +
+>  3 files changed, 77 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+> index b7def51c8ad9..d39907b12a46 100644
+> --- a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+> +++ b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+> @@ -21,6 +21,7 @@ Required properties:
+>    bindings.
+>  
+>  Optional properties:
+> + - vddio-supply: regulator phandle for VDDIO supply
+>   - mount-matrix: an optional 3x3 mounting rotation matrix
+>   - i2c-gate node.  These devices also support an auxiliary i2c bus.  This is
+>     simple enough to be described using the i2c-gate binding. See
+> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> index 12c1b9507007..e1fbab4bc0a0 100644
+> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/iio/iio.h>
+>  #include <linux/acpi.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
+>  #include "inv_mpu_iio.h"
+>  
+>  /*
+> @@ -926,6 +927,46 @@ static int inv_check_and_setup_chip(struct inv_mpu6050_state *st)
+>  	return result;
+>  }
+>  
+> +static int inv_mpu_core_enable_regulator(struct inv_mpu6050_state *st)
+> +{
+> +	int result;
+> +
+> +	result = regulator_enable(st->vddio_supply);
+> +	if (result) {
+> +		dev_err(regmap_get_device(st->map),
+> +			"Failed to enable regulator: %d\n", result);
+> +	} else {
+> +		st->regulator_enabled = true;
+> +
+> +		/* Give the device a little bit of time to start up. */
+> +		usleep_range(35000, 70000);
+> +	}
+> +
+> +	return result;
+> +}
+> +
+> +static int inv_mpu_core_disable_regulator(struct inv_mpu6050_state *st)
+> +{
+> +	int result;
+> +
+> +	if (!st->regulator_enabled)
+> +		return 0;
+> +
+> +	result = regulator_disable(st->vddio_supply);
+> +	if (result)
+> +		dev_err(regmap_get_device(st->map),
+> +			"Failed to disable regulator: %d\n", result);
+> +
+> +	st->regulator_enabled = false;
+> +
+> +	return result;
+> +}
+> +
+> +static void inv_mpu_core_disable_regulator_action(void *_data)
+> +{
+> +	inv_mpu_core_disable_regulator(_data);
+> +}
+> +
+>  int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
+>  		int (*inv_mpu_bus_setup)(struct iio_dev *), int chip_type)
+>  {
+> @@ -990,6 +1031,28 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
+>  		return -EINVAL;
+>  	}
+>  
+> +	st->vddio_supply = devm_regulator_get(dev, "vddio");
+> +	if (IS_ERR(st->vddio_supply)) {
+> +		if (PTR_ERR(st->vddio_supply) != -EPROBE_DEFER)
+> +			dev_err(dev, "Failed to get vddio regulator %d\n",
+> +				(int)PTR_ERR(st->vddio_supply));
+> +
+> +		return PTR_ERR(st->vddio_supply);
+> +	}
+> +
+> +	result = inv_mpu_core_enable_regulator(st);
+> +	if (result)
+> +		return result;
+> +
+> +	result = devm_add_action(dev, inv_mpu_core_disable_regulator_action,
+> +				 st);
+> +	if (result) {
+> +		inv_mpu_core_disable_regulator_action(st);
+> +		dev_err(dev, "Failed to setup regulator cleanup action %d\n",
+> +			result);
+> +		return result;
+> +	}
+> +
+>  	/* power is turned on inside check chip type*/
+>  	result = inv_check_and_setup_chip(st);
+>  	if (result)
+> @@ -1049,7 +1112,12 @@ static int inv_mpu_resume(struct device *dev)
+>  	int result;
+>  
+>  	mutex_lock(&st->lock);
+> +	result = inv_mpu_core_enable_regulator(st);
+> +	if (result)
+> +		goto out_unlock;
+> +
+>  	result = inv_mpu6050_set_power_itg(st, true);
+> +out_unlock:
+>  	mutex_unlock(&st->lock);
+>  
+>  	return result;
+> @@ -1062,6 +1130,11 @@ static int inv_mpu_suspend(struct device *dev)
+>  
+>  	mutex_lock(&st->lock);
+>  	result = inv_mpu6050_set_power_itg(st, false);
+> +	if (result)
+> +		goto out_unlock;
+> +
+> +	result = inv_mpu_core_disable_regulator(st);
+> +out_unlock:
+>  	mutex_unlock(&st->lock);
+>  
+>  	return result;
+> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
+> index e69a59659dbc..01c8fe9b4fa0 100644
+> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
+> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
+> @@ -129,6 +129,7 @@ struct inv_mpu6050_hw {
+>   *  @chip_period:	chip internal period estimation (~1kHz).
+>   *  @it_timestamp:	timestamp from previous interrupt.
+>   *  @data_timestamp:	timestamp for next data sample.
+> + *  @vddio_supply	voltage regulator for the chip.
+Docs missing for regulator_enabled.
+>   */
+>  struct inv_mpu6050_state {
+>  	struct mutex lock;
+> @@ -149,6 +150,8 @@ struct inv_mpu6050_state {
+>  	s64 chip_period;
+>  	s64 it_timestamp;
+>  	s64 data_timestamp;
+> +	struct regulator *vddio_supply;
+> +	bool regulator_enabled;
+>  };
+>  
+>  /*register and associated bit definition*/
 
