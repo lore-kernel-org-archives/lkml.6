@@ -2,153 +2,146 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27A8ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3119CECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BBAC20858
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D19A220849
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTsPwIbx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BBAC20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uoNdj5tQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D19A220849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbeGURRp (ORCPT
+        id S1728101AbeGURTf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 13:17:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727737AbeGURRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 13:17:45 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00C3D20849;
-        Sat, 21 Jul 2018 16:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532190267;
-        bh=FBqHaNnMI76CJjSBNB+WZK7a7Q/O00vS3BuSygmMJ9Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FTsPwIbxD0OOAjPmmPZRFDLEHmW3Sx1hAWNf0/U1+K8wVTojCedJs8rc6P2tAobxy
-         qw/ZHF+YERbpAWnO/MUefAe+KAlrj89jGjd3U7BCu4MHgeDly1BwN211Qxh9fcXd/o
-         grFHmDLP2W61zdAQ8GiYoX1dhfwNyUrEexfTiq08=
-Date:   Sat, 21 Jul 2018 17:24:23 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Lars-Peter Clausen <lars@metafoo.de>
-Cc:     Manish Narani <manish.narani@xilinx.com>, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, michal.simek@xilinx.com,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, anirudh@xilinx.com, sgoud@xilinx.com
-Subject: Re: [PATCH 3/4] iio: adc: xilinx: Check for return values in clk
- related functions
-Message-ID: <20180721172423.11efb5ea@archlinux>
-In-Reply-To: <f4b8e687-217f-15b1-b0b1-b95dbc3dcc2a@metafoo.de>
-References: <1531912331-26431-1-git-send-email-manish.narani@xilinx.com>
-        <1531912331-26431-4-git-send-email-manish.narani@xilinx.com>
-        <f4b8e687-217f-15b1-b0b1-b95dbc3dcc2a@metafoo.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 21 Jul 2018 13:19:35 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:44891 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727813AbeGURTf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 13:19:35 -0400
+Received: by mail-yb0-f193.google.com with SMTP id l16-v6so5775992ybk.11;
+        Sat, 21 Jul 2018 09:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rvJGNyqbxXUdov3UpMvLUnDCSV18eeMuFAPnt8IuKeA=;
+        b=uoNdj5tQK1IKdLs3SNdGPO3oPjAYKIJZUW6n6EwcqvTTz2QOF0XOU58tJS1JAW7Rz4
+         ou4h1YmMkG2IlCWPYRbfuTvEKq70TiO8qgcSsmsXJyPNqcsWx5V/Fi2A2YU+C+w33W87
+         EwjOHLTA9scAX+hw/6jgtmhC9gFZHVPi5HZNKhj45JU9blE7UmN1bZAd3Zh3c4LFXm3J
+         9mnPV2DrgpjeIC3hpLOwBcVlT25cU+73bTlRwkp8+BpfJ4r7fwpCZsqpnB2+bD6Np9y2
+         ysfyxGx9ngU2tUlVggqfBm66C9/SLD8iWSgnqwyklwekVmXiJocAFC2sJdXBF4kdNvNX
+         NQeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rvJGNyqbxXUdov3UpMvLUnDCSV18eeMuFAPnt8IuKeA=;
+        b=PHLKMnueJXwvfKriJ9rLwwOSVccOSBrnmDPhPp8Kwvn7sD3wHo5JTbbhZHfEUUBPCS
+         9ro+VP2bRbLAdVkhVqfPZ3HkniYFWK7woYu1W1Wi04lO6N+RzTzry0RJVrKFmG4kx7E3
+         cIl3WZeIzoEUYWI/3rwGQ1Fg32+ygTP22udPiRaDHYYy0Odmb3ASGAAL+CpNwctzcP/O
+         Za+IB3o0xJrrPuU79M51XNTLcbx6/GlkhQmKUpAsRI4QHv5bklHI/rESRGv7iEub1OXz
+         KisYV6GapUKPcvPACxrjc7jwS+y6FKUP/n+ZEZtBLZaRE8yP7F9pBJ3p4h5m6svnNb/5
+         BOEQ==
+X-Gm-Message-State: AOUpUlE4pyA+qFTaK4GMpQ34riNfyxAChPvfIxjkR7Cf7Wca+Cfib4w6
+        V0c0TM6x+QyZirkdSKMkCLg=
+X-Google-Smtp-Source: AAOMgpfh36vHu0BlO4zlFCc6BKEuYZUWNnz6NiE/B0SpMrRAJR3f5zTV3BFBAoyYf4uVJ0gP3wVz3g==
+X-Received: by 2002:a25:6546:: with SMTP id z67-v6mr3292900ybb.453.1532190378201;
+        Sat, 21 Jul 2018 09:26:18 -0700 (PDT)
+Received: from sophia ([72.188.97.40])
+        by smtp.gmail.com with ESMTPSA id q127-v6sm4966244ywq.83.2018.07.21.09.26.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 21 Jul 2018 09:26:17 -0700 (PDT)
+Date:   Sat, 21 Jul 2018 12:26:10 -0400
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     gregkh@linuxfoundation.org, jic23@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        fabrice.gasnier@st.com, benjamin.gaignard@st.com,
+        robh+dt@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, mark.rutland@arm.com
+Subject: Re: [PATCH v7 01/10] counter: Introduce the Generic Counter interface
+Message-ID: <20180721162610.GA15622@sophia>
+References: <cover.1529607879.git.vilhelm.gray@gmail.com>
+ <51b75b2b4495d4ad7ed173d91a726379bdae2353.1529607879.git.vilhelm.gray@gmail.com>
+ <20180717204954.4b5e371603d0b40b2aaabbb8@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180717204954.4b5e371603d0b40b2aaabbb8@linux-foundation.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 18:40:26 +0200
-Lars-Peter Clausen <lars@metafoo.de> wrote:
+On Tue, Jul 17, 2018 at 08:49:54PM -0700, Andrew Morton wrote:
+>On Thu, 21 Jun 2018 17:07:08 -0400 William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
+>
+>> This patch introduces the Generic Counter interface for supporting
+>> counter devices.
+>> 
+>
+>+EXPORT_SYMBOL(count_direction_str);
+>+EXPORT_SYMBOL(count_mode_str);
+>+EXPORT_SYMBOL(counter_signal_enum_read);
+>+EXPORT_SYMBOL(counter_signal_enum_write);
+>+EXPORT_SYMBOL(counter_signal_enum_available_read);
+>+EXPORT_SYMBOL(counter_count_enum_read);
+>+EXPORT_SYMBOL(counter_count_enum_write);
+>+EXPORT_SYMBOL(counter_count_enum_available_read);
+>+EXPORT_SYMBOL(counter_device_enum_read);
+>+EXPORT_SYMBOL(counter_device_enum_write);
+>+EXPORT_SYMBOL(counter_device_enum_available_read);
+>+EXPORT_SYMBOL(signal_read_value_set);
+>+EXPORT_SYMBOL(count_read_value_set);
+>+EXPORT_SYMBOL(count_write_value_get);
+>+EXPORT_SYMBOL(counter_register);
+>+EXPORT_SYMBOL(counter_unregister);
+>+EXPORT_SYMBOL(devm_counter_register);
+>+EXPORT_SYMBOL(devm_counter_unregister);
+>
+>The naming is a bit chaotic.  Most of the symbols start with counter_,
+>which is good.  But a handful do not.
 
-> On 07/18/2018 01:12 PM, Manish Narani wrote:
-> > This patch adds check for return values from clock related functions.
-> > This was reported by static code analysis tool.  
-> 
-> This patch seems to do something else.
-Indeed, definitely doing two things only one of which is mentioned.
-Please break it up and resend.
+I can prefix these exported symbols with "counter_" to help make it
+clear they all belong to the Generic Counter API. I'll keep the devm_*
+symbols the same to match the naming convention in the other subsystems
+I see (watchdog, IIO, GPIO, etc.).
 
-Jonathan
+>
+>Also, symbols called signal_* make my head spin - Linux already has a
+>firmly ingrained notion of what a signal is, and this ain't it ;)
+>Although the kernel tends to use sig_ for signals-as-an-IPC-thing.
+>
+>Also, many many drivers deal with signals-as-an-electrical-thing - is
+>it appropriate for this particular driver to take that namespace?
 
-> 
-> > 
-> > Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> > ---
-> >  drivers/iio/adc/xilinx-xadc-core.c | 24 ++++++++++++++++++++++--
-> >  1 file changed, 22 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
-> > index 248cffa..47eb364 100644
-> > --- a/drivers/iio/adc/xilinx-xadc-core.c
-> > +++ b/drivers/iio/adc/xilinx-xadc-core.c
-> > @@ -322,6 +322,7 @@ static irqreturn_t xadc_zynq_interrupt_handler(int irq, void *devid)
-> >  
-> >  #define XADC_ZYNQ_TCK_RATE_MAX 50000000
-> >  #define XADC_ZYNQ_IGAP_DEFAULT 20
-> > +#define XADC_ZYNQ_PCAP_RATE_MAX 200000000
-> >  
-> >  static int xadc_zynq_setup(struct platform_device *pdev,
-> >  	struct iio_dev *indio_dev, int irq)
-> > @@ -332,6 +333,7 @@ static int xadc_zynq_setup(struct platform_device *pdev,
-> >  	unsigned int div;
-> >  	unsigned int igap;
-> >  	unsigned int tck_rate;
-> > +	int ret;
-> >  
-> >  	/* TODO: Figure out how to make igap and tck_rate configurable */
-> >  	igap = XADC_ZYNQ_IGAP_DEFAULT;
-> > @@ -341,6 +343,13 @@ static int xadc_zynq_setup(struct platform_device *pdev,
-> >  
-> >  	pcap_rate = clk_get_rate(xadc->clk);
-> >  
-> > +	if (pcap_rate > XADC_ZYNQ_PCAP_RATE_MAX) {
-> > +		ret = clk_set_rate(xadc->clk,
-> > +				   (unsigned long)XADC_ZYNQ_PCAP_RATE_MAX);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> >  	if (tck_rate > pcap_rate / 2) {
-> >  		div = 2;
-> >  	} else {
-> > @@ -366,6 +375,12 @@ static int xadc_zynq_setup(struct platform_device *pdev,
-> >  			XADC_ZYNQ_CFG_REDGE | XADC_ZYNQ_CFG_WEDGE |
-> >  			tck_div | XADC_ZYNQ_CFG_IGAP(igap));
-> >  
-> > +	if (pcap_rate > XADC_ZYNQ_PCAP_RATE_MAX) {
-> > +		ret = clk_set_rate(xadc->clk, pcap_rate);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > @@ -887,6 +902,9 @@ static int xadc_write_raw(struct iio_dev *indio_dev,
-> >  	unsigned long clk_rate = xadc_get_dclk_rate(xadc);
-> >  	unsigned int div;
-> >  
-> > +	if (!clk_rate)
-> > +		return -EINVAL;
-> > +
-> >  	if (info != IIO_CHAN_INFO_SAMP_FREQ)
-> >  		return -EINVAL;
-> >  
-> > @@ -1239,8 +1257,10 @@ static int xadc_probe(struct platform_device *pdev)
-> >  		goto err_free_irq;
-> >  
-> >  	/* Disable all alarms */
-> > -	xadc_update_adc_reg(xadc, XADC_REG_CONF1, XADC_CONF1_ALARM_MASK,
-> > -		XADC_CONF1_ALARM_MASK);
-> > +	ret = xadc_update_adc_reg(xadc, XADC_REG_CONF1, XADC_CONF1_ALARM_MASK,
-> > +				  XADC_CONF1_ALARM_MASK);
-> > +	if (ret)
-> > +		goto err_free_irq;
-> >  
-> >  	/* Set thresholds to min/max */
-> >  	for (i = 0; i < 16; i++) {
-> >   
-> 
+In the context of the Generic Counter paradigm, a "Signal" is an
+abstraction for the stream of data that is fed to the counter device for
+evaluation (triggering updates for the readable "Count"). In many cases
+a "Signal" correlates with a physical electrical line (for example the A
+and B electrical lines for a quadrature encoder), but this isn't a hard
+requirement as the paradigm permits more abstract data streams.
 
+I decided on "Signal" to match the naming convention that appears in the
+datasheets of many counter devices, but "Line" may be a decent
+alternative name we could use to indicate a counter device input data
+stream.
+
+I'd like to get some other opinions as well before I make a naming
+change to "Signal" -- whether to stay with "Signal," switch to "Line," or
+rename to something else. For what it's worth, I think it's unlikely for
+a counter device driver author to confuse a Counter Signal with the
+Linux OS signal within the context of the Generic Counter paradigm and
+their respective counter device datasheet.
+
+William Breathitt Gray
