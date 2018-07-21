@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB16ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0703ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA59820856
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:57:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A24820858
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:57:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6K30mdr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA59820856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGbtCDxw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A24820858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729585AbeGUNua (ORCPT
+        id S1729816AbeGUNuc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 09:50:30 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:38900 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728377AbeGUNu3 (ORCPT
+        Sat, 21 Jul 2018 09:50:32 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:47003 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729549AbeGUNua (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 09:50:29 -0400
-Received: by mail-pl0-f66.google.com with SMTP id b1-v6so6327285pls.5
+        Sat, 21 Jul 2018 09:50:30 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p23-v6so9016327pgv.13
         for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 05:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GW1VPLwfnYoCqffd2T0p2jE7KcTeVJdu4H4ufG/yUt8=;
-        b=D6K30mdrSiyROXvrg/5klEpWks8GyQ0HKgrNnBVU8Q22I0lM7G1EpuQuD5Llo1OOMJ
-         OEbQ5X055nOFCBAC8XU/cFNIJkohUhC5htNMhKJ8ZgyDqwhyyQrJAu2igKq1LyoPb8ME
-         bvt8glA2n2NMMYPY8RmiAskJnw0KxDItl65Lgo7ucx7eulTIMxAhVX3RbKiqxH1fkZbZ
-         h6mtUtZSvu46OixCstFu/XybM9AOSbtKdtuw1d2DAl39O4YUUnxSqK5CbzG0zCs7fPQ2
-         ovgkRKLSYyYCxwUfreZDe7wKYIhcFYoSFE4FLaMXhUJOt16ECRubjTfq0v7eqP7gA7bA
-         aKtQ==
+        bh=+2IJEtfJULp18D+0nd4wW9BdT1d7nKZ3Wde8OwFth+8=;
+        b=DGbtCDxwv859J0mCFKvaJERC5KCS19BJf1BJ17CEb1LrPi9JMmqhIVw99uuc1T95IO
+         eyBTJnN5eKyGhqi7CnT30HQrIDfsovHpAmDbjMKW57lNmeaCx3uORS8Qi/W6S+xDzyAs
+         /qMnvRtJduic3TjxieMNCJWxKHzL/Fw7FN3MuD2y1nndY7IOtOkTx0x7E5yE9ZlkYCyP
+         CTwC4cnPQVTUrk57NnsypCiYmjB3WmSjBQ0smN/8THrpcwN0BUpZsVJRocF2Uv7UJAmY
+         LK3UZr40uQBvDWdnrWljWEV/xAEcwxUy6/2pTRxP4FU/a1cXGzGfz6zlM8rFKB9vlaQw
+         TvoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GW1VPLwfnYoCqffd2T0p2jE7KcTeVJdu4H4ufG/yUt8=;
-        b=QDYiTfrbRbfJutbhkLSQ/ee/aqUInN20BxmBchI+wTp1554xDD43zGzxeWCOD+mCsU
-         wEY2FYeIzMtfP0FIfJ5Kvkgt/r6fK6vofSyPwummRGvICqK9Qo4ZQoBgbaG7ngUlAyXC
-         hEYbjWy4FjHNrzGm/lfRtZ6OSw0mWV3PiintGh+g5oXDSuPgQPQr1MiRHCqFwNcG1y44
-         uvkQJHWlCrxSc7ZU7AiNpplcud/03+hwSXETTUMjYphKaQG6I0FUnEioVSOWp7wL7dpQ
-         1iwqhgjFaZ2cLzR3tAaR31C5vGHgPLbp/6PQJYYR3ERtmhmVd9neM9gur4EVXuC1tvZF
-         hYBw==
-X-Gm-Message-State: AOUpUlH26xC0DlM31Co5FubePSBpDf6p4ivi2wHcvp8SAAaU4NL5gsen
-        nLmd9D0pHKPuijaTFgm5crQ1M4a/M4E=
-X-Google-Smtp-Source: AAOMgpcY3nJzsEweYfJZ1OHusash/hh0xC/eDhyBGTFSLarKOYxK+hYoncLcuC6faRz14N4W9rM8sQ==
-X-Received: by 2002:a17:902:28a4:: with SMTP id f33-v6mr5695573plb.297.1532177869538;
-        Sat, 21 Jul 2018 05:57:49 -0700 (PDT)
+        bh=+2IJEtfJULp18D+0nd4wW9BdT1d7nKZ3Wde8OwFth+8=;
+        b=ui9ZohmbAI9cszVdP6/xH3OgJkBGrDknJQEhXghhJzv//hhI50ng+31s+mcKPiqW13
+         OdxcWq+88YGV6UXE0xqfewY5HTb+FDbZIq+WzjyPQYzZnnbAUTHsikof/0Il4pryDT7f
+         5nDtBMrhCTnXRVXNQ2oZXWFaxO+YwlD6mIZHqHqguk4XY3OQdZyrwV93MF/wo+R7ka7X
+         K4fV2UN8mAOgqcWfBB9R/dtA5q2xfsodGtrjSO21zD72sd84APB828jZ5WlC3c0Zgctr
+         IPcNxjpAhV156KxaN+bYAgAg8yZESkrJkD2Gled2wyeZwc9VVR1jTVpQh6fkLZLrROZ+
+         di/w==
+X-Gm-Message-State: AOUpUlGaJ5H5Ta0ZjhsLcqkj5BZIqL/ChWIoXTTuS4/hUWyWtbOcC3x9
+        6SuX7xfrk+xGiZF87WmfysVsHIVHl9c=
+X-Google-Smtp-Source: AAOMgpeu3bPQqJthYygQLHZNZdkf3Ifw3FN2LuDlNt3AWNQU9mhmDPv9paoojaDdSv4PTiplz0l0dw==
+X-Received: by 2002:a62:aa02:: with SMTP id e2-v6mr5911289pff.211.1532177870441;
+        Sat, 21 Jul 2018 05:57:50 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm1072542pfe.42.2018.07.21.05.57.48
+        by smtp.gmail.com with ESMTPSA id d19-v6sm1072542pfe.42.2018.07.21.05.57.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 05:57:48 -0700 (PDT)
+        Sat, 21 Jul 2018 05:57:49 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -67,11 +67,10 @@ Cc:     Zhongze Hu <frankhu@chromium.org>,
         Dmitry Torokhov <dtor@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Todd Poynor <toddpoynor@google.com>,
-        Simon Que <sque@chromium.org>
-Subject: [PATCH 09/20] staging: gasket: gasket page table functions use bool return type
-Date:   Sat, 21 Jul 2018 05:56:57 -0700
-Message-Id: <20180721125713.88501-19-toddpoynor@gmail.com>
+        Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH 10/14] staging: gasket: interrupts: convert various logs to debug level
+Date:   Sat, 21 Jul 2018 05:56:58 -0700
+Message-Id: <20180721125713.88501-20-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 In-Reply-To: <20180721125713.88501-1-toddpoynor@gmail.com>
 References: <20180721125713.88501-1-toddpoynor@gmail.com>
@@ -82,255 +81,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Convert from int to bool return type for gasket page table functions
-that return values used as booleans.
+Debugging information is improperly logged at non-debug log level in a
+number of places, and some logs regarding error conditions may be
+generated too frequently, such that these could cause performance
+problems and/or obscure other logs.  Convert these to debug log level.
 
-Reported-by: Guenter Roeck <groeck@chromium.org>
-Signed-off-by: Simon Que <sque@chromium.org>
+Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_page_table.c | 58 +++++++++++-----------
- drivers/staging/gasket/gasket_page_table.h |  8 +--
- 2 files changed, 33 insertions(+), 33 deletions(-)
+ drivers/staging/gasket/gasket_interrupt.c | 24 +++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index 36a560c87af36..2a27db658a4e4 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -262,16 +262,16 @@ static void gasket_perform_unmapping(
- static void gasket_free_extended_subtable(
- 	struct gasket_page_table *pg_tbl, struct gasket_page_table_entry *pte,
- 	u64 __iomem *att_reg);
--static int gasket_release_page(struct page *page);
-+static bool gasket_release_page(struct page *page);
+diff --git a/drivers/staging/gasket/gasket_interrupt.c b/drivers/staging/gasket/gasket_interrupt.c
+index d096ce73cc8b3..2b8c26d065336 100644
+--- a/drivers/staging/gasket/gasket_interrupt.c
++++ b/drivers/staging/gasket/gasket_interrupt.c
+@@ -287,7 +287,7 @@ int gasket_interrupt_reinit(struct gasket_dev *gasket_dev)
+ 	int ret;
  
- /* Other/utility declarations */
--static inline int gasket_addr_is_simple(
-+static inline bool gasket_addr_is_simple(
- 	struct gasket_page_table *pg_tbl, ulong addr);
--static int gasket_is_simple_dev_addr_bad(
-+static bool gasket_is_simple_dev_addr_bad(
- 	struct gasket_page_table *pg_tbl, ulong dev_addr, uint num_pages);
--static int gasket_is_extended_dev_addr_bad(
-+static bool gasket_is_extended_dev_addr_bad(
- 	struct gasket_page_table *pg_tbl, ulong dev_addr, uint num_pages);
--static int gasket_is_pte_range_free(
-+static bool gasket_is_pte_range_free(
- 	struct gasket_page_table_entry *pte, uint num_entries);
- static void gasket_page_table_garbage_collect_nolock(
- 	struct gasket_page_table *pg_tbl);
-@@ -558,7 +558,7 @@ int gasket_page_table_lookup_page(
- }
+ 	if (!gasket_dev->interrupt_data) {
+-		gasket_log_error(
++		gasket_log_debug(
+ 			gasket_dev,
+ 			"Attempted to reinit uninitialized interrupt data.");
+ 		return -EINVAL;
+@@ -305,7 +305,7 @@ int gasket_interrupt_reinit(struct gasket_dev *gasket_dev)
+ 	case PCI_MSI:
+ 	case PLATFORM_WIRE:
+ 	default:
+-		gasket_nodev_error(
++		gasket_nodev_debug(
+ 			"Cannot handle unsupported interrupt type %d.",
+ 			gasket_dev->interrupt_data->type);
+ 		ret = -EINVAL;
+@@ -351,7 +351,7 @@ static void gasket_interrupt_setup(struct gasket_dev *gasket_dev)
+ 		gasket_dev->interrupt_data;
  
- /* See gasket_page_table.h for description. */
--int gasket_page_table_are_addrs_bad(
-+bool gasket_page_table_are_addrs_bad(
- 	struct gasket_page_table *pg_tbl, ulong host_addr, ulong dev_addr,
- 	ulong bytes)
+ 	if (!interrupt_data) {
+-		gasket_log_error(
++		gasket_log_debug(
+ 			gasket_dev, "Interrupt data is not initialized.");
+ 		return;
+ 	}
+@@ -365,7 +365,7 @@ static void gasket_interrupt_setup(struct gasket_dev *gasket_dev)
+ 	}
+ 
+ 	if (interrupt_data->type != PCI_MSIX) {
+-		gasket_nodev_error(
++		gasket_nodev_debug(
+ 			"Cannot handle unsupported interrupt type %d.",
+ 			interrupt_data->type);
+ 		return;
+@@ -403,7 +403,7 @@ static void gasket_interrupt_setup(struct gasket_dev *gasket_dev)
+ 				pack_shift = 3 * interrupt_data->pack_width;
+ 				break;
+ 			default:
+-				gasket_nodev_error(
++				gasket_nodev_debug(
+ 					"Found interrupt description with "
+ 					"unknown enum %d.",
+ 					interrupt_data->interrupts[i].packing);
+@@ -445,7 +445,7 @@ void gasket_interrupt_cleanup(struct gasket_dev *gasket_dev)
+ 	case PCI_MSI:
+ 	case PLATFORM_WIRE:
+ 	default:
+-		gasket_nodev_error(
++		gasket_nodev_debug(
+ 			"Cannot handle unsupported interrupt type %d.",
+ 			interrupt_data->type);
+ 	};
+@@ -460,18 +460,18 @@ void gasket_interrupt_cleanup(struct gasket_dev *gasket_dev)
+ int gasket_interrupt_system_status(struct gasket_dev *gasket_dev)
  {
-@@ -567,7 +567,7 @@ int gasket_page_table_are_addrs_bad(
- 			pg_tbl,
- 			"host mapping address 0x%lx must be page aligned",
- 			host_addr);
--		return 1;
-+		return true;
+ 	if (!gasket_dev->interrupt_data) {
+-		gasket_nodev_info("Interrupt data is null.");
++		gasket_nodev_debug("Interrupt data is null.");
+ 		return GASKET_STATUS_DEAD;
  	}
  
- 	return gasket_page_table_is_dev_addr_bad(pg_tbl, dev_addr, bytes);
-@@ -575,7 +575,7 @@ int gasket_page_table_are_addrs_bad(
- EXPORT_SYMBOL(gasket_page_table_are_addrs_bad);
- 
- /* See gasket_page_table.h for description. */
--int gasket_page_table_is_dev_addr_bad(
-+bool gasket_page_table_is_dev_addr_bad(
- 	struct gasket_page_table *pg_tbl, ulong dev_addr, ulong bytes)
- {
- 	uint num_pages = bytes / PAGE_SIZE;
-@@ -584,7 +584,7 @@ int gasket_page_table_is_dev_addr_bad(
- 		gasket_pg_tbl_error(
- 			pg_tbl,
- 			"mapping size 0x%lX must be page aligned", bytes);
--		return 1;
-+		return true;
+ 	if (!gasket_dev->interrupt_data->msix_configured) {
+-		gasket_nodev_info("Interrupt not initialized.");
++		gasket_nodev_debug("Interrupt not initialized.");
+ 		return GASKET_STATUS_LAMED;
  	}
  
- 	if (num_pages == 0) {
-@@ -592,7 +592,7 @@ int gasket_page_table_is_dev_addr_bad(
- 			pg_tbl,
- 			"requested mapping is less than one page: %lu / %lu",
- 			bytes, PAGE_SIZE);
--		return 1;
-+		return true;
+ 	if (gasket_dev->interrupt_data->num_configured !=
+ 		gasket_dev->interrupt_data->num_interrupts) {
+-		gasket_nodev_info("Not all interrupts were configured.");
++		gasket_nodev_debug("Not all interrupts were configured.");
+ 		return GASKET_STATUS_LAMED;
  	}
  
- 	if (gasket_addr_is_simple(pg_tbl, dev_addr))
-@@ -1285,23 +1285,23 @@ static void gasket_free_extended_subtable(
- /*
-  * Safely return a page to the OS.
-  * @page: The page to return to the OS.
-- * Returns 1 if the page was released, 0 if it was
-+ * Returns true if the page was released, false if it was
-  * ignored.
-  */
--static int gasket_release_page(struct page *page)
-+static bool gasket_release_page(struct page *page)
- {
- 	if (!page)
--		return 0;
-+		return false;
+@@ -516,14 +516,14 @@ static ssize_t interrupt_sysfs_show(
  
- 	if (!PageReserved(page))
- 		SetPageDirty(page);
- 	put_page(page);
- 
--	return 1;
-+	return true;
- }
- 
- /* Evaluates to nonzero if the specified virtual address is simple. */
--static inline int gasket_addr_is_simple(
-+static inline bool gasket_addr_is_simple(
- 	struct gasket_page_table *pg_tbl, ulong addr)
- {
- 	return !((addr) & (pg_tbl)->extended_flag);
-@@ -1317,7 +1317,7 @@ static inline int gasket_addr_is_simple(
-  * address to/from page + offset) and that the requested page range starts and
-  * ends within the set of currently-partitioned simple pages.
-  */
--static int gasket_is_simple_dev_addr_bad(
-+static bool gasket_is_simple_dev_addr_bad(
- 	struct gasket_page_table *pg_tbl, ulong dev_addr, uint num_pages)
- {
- 	ulong page_offset = dev_addr & (PAGE_SIZE - 1);
-@@ -1328,7 +1328,7 @@ static int gasket_is_simple_dev_addr_bad(
- 		pg_tbl, 1, page_index, page_offset) != dev_addr) {
- 		gasket_pg_tbl_error(
- 			pg_tbl, "address is invalid, 0x%lX", dev_addr);
--		return 1;
-+		return true;
+ 	gasket_dev = gasket_sysfs_get_device_data(device);
+ 	if (!gasket_dev) {
+-		gasket_nodev_error(
++		gasket_nodev_debug(
+ 			"No sysfs mapping found for device 0x%p", device);
+ 		return 0;
  	}
  
- 	if (page_index >= pg_tbl->num_simple_entries) {
-@@ -1336,7 +1336,7 @@ static int gasket_is_simple_dev_addr_bad(
- 			pg_tbl,
- 			"starting slot at %lu is too large, max is < %u",
- 			page_index, pg_tbl->num_simple_entries);
--		return 1;
-+		return true;
- 	}
- 
- 	if (page_index + num_pages > pg_tbl->num_simple_entries) {
-@@ -1344,10 +1344,10 @@ static int gasket_is_simple_dev_addr_bad(
- 			pg_tbl,
- 			"ending slot at %lu is too large, max is <= %u",
- 			page_index + num_pages, pg_tbl->num_simple_entries);
--		return 1;
-+		return true;
- 	}
- 
--	return 0;
-+	return false;
- }
- 
- /*
-@@ -1359,7 +1359,7 @@ static int gasket_is_simple_dev_addr_bad(
-  * @dev_addr: The device address to which the pages will be mapped.
-  * @num_pages: The number of second-level/sub pages in the range to consider.
-  */
--static int gasket_is_extended_dev_addr_bad(
-+static bool gasket_is_extended_dev_addr_bad(
- 	struct gasket_page_table *pg_tbl, ulong dev_addr, uint num_pages)
- {
- 	/* Starting byte index of dev_addr into the first mapped page */
-@@ -1373,7 +1373,7 @@ static int gasket_is_extended_dev_addr_bad(
- 	if (addr >> (GASKET_EXTENDED_LVL0_WIDTH + GASKET_EXTENDED_LVL0_SHIFT)) {
- 		gasket_pg_tbl_error(pg_tbl, "device address out of bound, 0x%p",
- 				    (void *)dev_addr);
--		return 1;
-+		return true;
- 	}
- 
- 	/* Find the starting sub-page index in the space of all sub-pages. */
-@@ -1391,7 +1391,7 @@ static int gasket_is_extended_dev_addr_bad(
- 		pg_tbl, 0, page_global_idx, page_offset) != dev_addr) {
- 		gasket_pg_tbl_error(
- 			pg_tbl, "address is invalid, 0x%p", (void *)dev_addr);
--		return 1;
-+		return true;
- 	}
- 
- 	if (page_lvl0_idx >= pg_tbl->num_extended_entries) {
-@@ -1399,7 +1399,7 @@ static int gasket_is_extended_dev_addr_bad(
- 			pg_tbl,
- 			"starting level 0 slot at %lu is too large, max is < "
- 			"%u", page_lvl0_idx, pg_tbl->num_extended_entries);
--		return 1;
-+		return true;
- 	}
- 
- 	if (page_lvl0_idx + num_lvl0_pages > pg_tbl->num_extended_entries) {
-@@ -1408,10 +1408,10 @@ static int gasket_is_extended_dev_addr_bad(
- 			"ending level 0 slot at %lu is too large, max is <= %u",
- 			page_lvl0_idx + num_lvl0_pages,
- 			pg_tbl->num_extended_entries);
--		return 1;
-+		return true;
- 	}
- 
--	return 0;
-+	return false;
- }
- 
- /*
-@@ -1425,17 +1425,17 @@ static int gasket_is_extended_dev_addr_bad(
-  *
-  * The page table mutex must be held before this call.
-  */
--static int gasket_is_pte_range_free(
-+static bool gasket_is_pte_range_free(
- 	struct gasket_page_table_entry *ptes, uint num_entries)
- {
- 	int i;
- 
- 	for (i = 0; i < num_entries; i++) {
- 		if (ptes[i].status != PTE_FREE)
--			return 0;
-+			return false;
- 	}
- 
--	return 1;
-+	return true;
- }
- 
- /*
-diff --git a/drivers/staging/gasket/gasket_page_table.h b/drivers/staging/gasket/gasket_page_table.h
-index 720ce2bc2c012..0e8afdb8c1139 100644
---- a/drivers/staging/gasket/gasket_page_table.h
-+++ b/drivers/staging/gasket/gasket_page_table.h
-@@ -162,9 +162,9 @@ int gasket_page_table_lookup_page(
-  * specified by both addresses and the size are valid for mapping pages into
-  * device memory.
-  *
-- * Returns 1 if true - if the mapping is bad, 0 otherwise.
-+ * Returns true if the mapping is bad, false otherwise.
-  */
--int gasket_page_table_are_addrs_bad(
-+bool gasket_page_table_are_addrs_bad(
- 	struct gasket_page_table *page_table, ulong host_addr, ulong dev_addr,
- 	ulong bytes);
- 
-@@ -178,9 +178,9 @@ int gasket_page_table_are_addrs_bad(
-  * specified by the device address and the size is valid for mapping pages into
-  * device memory.
-  *
-- * Returns 1 if true - if the address is bad, 0 otherwise.
-+ * Returns true if the address is bad, false otherwise.
-  */
--int gasket_page_table_is_dev_addr_bad(
-+bool gasket_page_table_is_dev_addr_bad(
- 	struct gasket_page_table *page_table, ulong dev_addr, ulong bytes);
- 
- /*
+ 	gasket_attr = gasket_sysfs_get_attr(device, attr);
+ 	if (!gasket_attr) {
+-		gasket_nodev_error(
++		gasket_nodev_debug(
+ 			"No sysfs attr data found for device 0x%p", device);
+ 		gasket_sysfs_put_device_data(device, gasket_dev);
+ 		return 0;
+@@ -545,7 +545,7 @@ static ssize_t interrupt_sysfs_show(
+ 		ret = total_written;
+ 		break;
+ 	default:
+-		gasket_log_error(
++		gasket_log_debug(
+ 			gasket_dev, "Unknown attribute: %s", attr->attr.name);
+ 		ret = 0;
+ 		break;
 -- 
 2.18.0.233.g985f88cf7e-goog
 
