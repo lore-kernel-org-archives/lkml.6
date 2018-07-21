@@ -6,61 +6,49 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2780ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92266ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DD2E2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:10:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DD2E2086D
+	by mail.kernel.org (Postfix) with ESMTP id 47DB320849
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:15:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47DB320849
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbeGUSDg (ORCPT
+        id S1728144AbeGUSIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 14:03:36 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49081 "EHLO mail.bootlin.com"
+        Sat, 21 Jul 2018 14:08:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49175 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728076AbeGUSDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 14:03:35 -0400
+        id S1727989AbeGUSIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 14:08:47 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 03C4320737; Sat, 21 Jul 2018 19:10:10 +0200 (CEST)
+        id 5B09A20737; Sat, 21 Jul 2018 19:15:21 +0200 (CEST)
 Received: from bbrezillon (unknown [37.173.79.60])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D0C93206F3;
-        Sat, 21 Jul 2018 19:10:07 +0200 (CEST)
-Date:   Sat, 21 Jul 2018 19:10:04 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 182A7206F3;
+        Sat, 21 Jul 2018 19:15:18 +0200 (CEST)
+Date:   Sat, 21 Jul 2018 19:15:15 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Han Xu <han.xu@nxp.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Xiaolei Li <xiaolei.li@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 14/35] mtd: rawnand: mtk: convert driver to
- nand_scan()
-Message-ID: <20180721191004.26fc9290@bbrezillon>
-In-Reply-To: <20180720151527.16038-15-miquel.raynal@bootlin.com>
-References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
-        <20180720151527.16038-15-miquel.raynal@bootlin.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Vitor soares <Vitor.Soares@synopsys.com>,
+        linux-i2c@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
+        arnd@arndb.de, psroka@cadence.com, agolec@cadence.com,
+        adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com,
+        alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com,
+        rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com,
+        robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, linus.walleij@linaro.org,
+        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
+        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
+        Joao.Pinto@synopsys.com
+Subject: Re: [PATCH 0/3] Add driver for Synopsys DesignWare I3C master IP
+Message-ID: <20180721191515.6b20d23b@bbrezillon>
+In-Reply-To: <20180720215801.dmklhwxsgakj4exd@ninjato>
+References: <1532120272-17157-1-git-send-email-soares@synopsys.com>
+        <20180720215801.dmklhwxsgakj4exd@ninjato>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -70,133 +58,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 17:15:06 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+Hi Wolfram,
 
-> Two helpers have been added to the core to make ECC-related
-> configuration between the detection phase and the final NAND scan. Use
-> these hooks and convert the driver to just use nand_scan() instead of
-> both nand_scan_ident() and nand_scan_tail().
+On Fri, 20 Jul 2018 23:58:01 +0200
+Wolfram Sang <wsa@the-dreams.de> wrote:
+
+> On Fri, Jul 20, 2018 at 09:57:49PM +0100, Vitor soares wrote:
+> > This patch series is a proposal for the I3C master driver for Synopsys IP.
+> > This patch is to be applied on top of I3C subsystem RFC V6 submitted
+> > by Boris Brezillon.  
 > 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/mtd/nand/raw/mtk_nand.c | 75 ++++++++++++++++++++++++-----------------
->  1 file changed, 44 insertions(+), 31 deletions(-)
+> Nice! More users will help the subsystem evolve.
 > 
-> diff --git a/drivers/mtd/nand/raw/mtk_nand.c b/drivers/mtd/nand/raw/mtk_nand.c
-> index 7bc6be3f6ec0..967418f945ea 100644
-> --- a/drivers/mtd/nand/raw/mtk_nand.c
-> +++ b/drivers/mtd/nand/raw/mtk_nand.c
-> @@ -1250,13 +1250,54 @@ static int mtk_nfc_ecc_init(struct device *dev, struct mtd_info *mtd)
->  	return 0;
->  }
->  
-> +static int mtk_nfc_attach_chip(struct nand_chip *chip)
-> +{
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	struct device *dev = mtd->dev.parent;
-> +	struct mtk_nfc *nfc = nand_get_controller_data(chip);
-> +	struct mtk_nfc_nand_chip *mtk_nand = to_mtk_nand(chip);
-> +	int len;
-> +	int ret;
-> +
-> +	if (chip->options & NAND_BUSWIDTH_16) {
-> +		dev_err(dev, "16bits buswidth not supported");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* store bbt magic in page, cause OOB is not protected */
-> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
-> +		chip->bbt_options |= NAND_BBT_NO_OOB;
-> +
-> +	ret = mtk_nfc_ecc_init(dev, mtd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = mtk_nfc_set_spare_per_sector(&mtk_nand->spare_per_sector, mtd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	mtk_nfc_set_fdm(&mtk_nand->fdm, mtd);
-> +	mtk_nfc_set_bad_mark_ctl(&mtk_nand->bad_mark, mtd);
-> +
-> +	len = mtd->writesize + mtd->oobsize;
-> +	nfc->buffer = devm_kzalloc(dev, len, GFP_KERNEL);
-> +	if (!nfc->buffer)
-> +		return  -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct nand_controller_ops mtk_nfc_controller_ops = {
-> +	.attach_chip = mtk_nfc_attach_chip,
-> +};
-> +
->  static int mtk_nfc_nand_chip_init(struct device *dev, struct mtk_nfc *nfc,
->  				  struct device_node *np)
->  {
->  	struct mtk_nfc_nand_chip *chip;
->  	struct nand_chip *nand;
->  	struct mtd_info *mtd;
-> -	int nsels, len;
-> +	int nsels;
->  	u32 tmp;
->  	int ret;
->  	int i;
-> @@ -1287,6 +1328,7 @@ static int mtk_nfc_nand_chip_init(struct device *dev, struct mtk_nfc *nfc,
->  
->  	nand = &chip->nand;
->  	nand->controller = &nfc->controller;
-> +	nand->controller->ops = &mtk_nfc_controller_ops;
+> Yet, I also think this may be a good timing for a seperate I3C mailing
+> list? We can always cross-post if I2C is relevant, but I guess new I3C
+> masters usually are very I3C specific. I think a seperate mailing list
+> would also look good in the MAINTAINERS entry.
+> 
 
-Just like for the marvell driver, this assignment should be moved here
-[1]. Also, it looks like this driver is open-coding
-nand_controller_init(), probably something we should fix (in a separate
-patch).
+I was waiting for the I3C framework to be merged before creating the ML
+and the git repo, but if you think we should do that now I can create
+them.
 
-With this fixed:
+Regards,
 
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
->  
->  	nand_set_flash_node(nand, np);
->  	nand_set_controller_data(nand, nfc);
-> @@ -1324,36 +1366,7 @@ static int mtk_nfc_nand_chip_init(struct device *dev, struct mtk_nfc *nfc,
->  
->  	mtk_nfc_hw_init(nfc);
->  
-> -	ret = nand_scan_ident(mtd, nsels, NULL);
-> -	if (ret)
-> -		return ret;
-> -
-> -	/* store bbt magic in page, cause OOB is not protected */
-> -	if (nand->bbt_options & NAND_BBT_USE_FLASH)
-> -		nand->bbt_options |= NAND_BBT_NO_OOB;
-> -
-> -	ret = mtk_nfc_ecc_init(dev, mtd);
-> -	if (ret)
-> -		return -EINVAL;
-> -
-> -	if (nand->options & NAND_BUSWIDTH_16) {
-> -		dev_err(dev, "16bits buswidth not supported");
-> -		return -EINVAL;
-> -	}
-> -
-> -	ret = mtk_nfc_set_spare_per_sector(&chip->spare_per_sector, mtd);
-> -	if (ret)
-> -		return ret;
-> -
-> -	mtk_nfc_set_fdm(&chip->fdm, mtd);
-> -	mtk_nfc_set_bad_mark_ctl(&chip->bad_mark, mtd);
-> -
-> -	len = mtd->writesize + mtd->oobsize;
-> -	nfc->buffer = devm_kzalloc(dev, len, GFP_KERNEL);
-> -	if (!nfc->buffer)
-> -		return  -ENOMEM;
-> -
-> -	ret = nand_scan_tail(mtd);
-> +	ret = nand_scan(mtd, nsels);
->  	if (ret)
->  		return ret;
->  
+Boris
 
