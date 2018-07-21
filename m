@@ -2,190 +2,101 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B82CCECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84572ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788612084A
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:47:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788612084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 39C732084A
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:48:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C732084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbeGUHjD (ORCPT
+        id S1727554AbeGUHj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 03:39:03 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:32994
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727041AbeGUHjD (ORCPT
+        Sat, 21 Jul 2018 03:39:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46968 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727284AbeGUHj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 03:39:03 -0400
-X-IronPort-AV: E=Sophos;i="5.51,383,1526335200"; 
-   d="scan'208";a="273663712"
-Received: from abo-214-111-68.mrs.modulonet.fr (HELO [192.168.0.15]) ([85.68.111.214])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jul 2018 08:47:24 +0200
-Date:   Sat, 21 Jul 2018 08:47:24 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Logan Gunthorpe <logang@deltatee.com>
-cc:     Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com,
-        linux-kernel@vger.kernel.org, kbuild-all@01.org
-Subject: [PATCH] NTB: fix debugfs_simple_attr.cocci warnings
-Message-ID: <alpine.DEB.2.20.1807210845090.2381@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Sat, 21 Jul 2018 03:39:57 -0400
+Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89D3A707;
+        Sat, 21 Jul 2018 06:48:19 +0000 (UTC)
+Date:   Sat, 21 Jul 2018 08:48:17 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Todd Poynor <toddpoynor@gmail.com>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        Zhongze Hu <frankhu@chromium.org>,
+        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Todd Poynor <toddpoynor@google.com>,
+        Dmitry Torokhov <dtor@chromium.org>
+Subject: Re: [PATCH 02/20] staging: gasket: gasket_enable_dev remove
+ unnecessary variable
+Message-ID: <20180721064817.GA4771@kroah.com>
+References: <20180720034920.77320-1-toddpoynor@gmail.com>
+ <20180720034920.77320-3-toddpoynor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180720034920.77320-3-toddpoynor@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <fengguang.wu@intel.com>
+On Thu, Jul 19, 2018 at 08:49:02PM -0700, Todd Poynor wrote:
+> From: Todd Poynor <toddpoynor@google.com>
+> 
+> Remove unnecessary variable, pass constant param instead.
+> 
+> Reported-by: Dmitry Torokhov <dtor@chromium.org>
+> Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+> ---
+>  drivers/staging/gasket/gasket_core.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+> index 0d5ba7359af73..f327c9d7f90a3 100644
+> --- a/drivers/staging/gasket/gasket_core.c
+> +++ b/drivers/staging/gasket/gasket_core.c
+> @@ -898,7 +898,6 @@ static int gasket_enable_dev(
+>  {
+>  	int tbl_idx;
+>  	int ret;
+> -	bool has_dma_ops;
+>  	struct device *ddev;
+>  	const struct gasket_driver_desc *driver_desc =
+>  		internal_desc->driver_desc;
+> @@ -917,8 +916,6 @@ static int gasket_enable_dev(
+>  		return ret;
+>  	}
+>  
+> -	has_dma_ops = true;
+> -
+>  	for (tbl_idx = 0; tbl_idx < driver_desc->num_page_tables; tbl_idx++) {
+>  		gasket_log_debug(
+>  			gasket_dev, "Initializing page table %d.", tbl_idx);
+> @@ -936,7 +933,7 @@ static int gasket_enable_dev(
+>  			&gasket_dev->bar_data[
+>  				driver_desc->page_table_bar_index],
+>  			&driver_desc->page_table_configs[tbl_idx],
+> -			ddev, gasket_dev->pci_dev, has_dma_ops);
+> +			ddev, gasket_dev->pci_dev, true);
 
- Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
- for debugfs files.
+As the only call for this function now hard-codes this last parameter,
+perhaps that parameter should just be removed now?
 
- Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
- imposes some significant overhead as compared to
- DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
+Something for a later patch.
 
-Generated by: scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
+thanks,
 
-Fixes: c75153197d20 ("NTB: Introduce NTB MSI Test Client")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
----
-
-I don't know much about this issue, beyondwhat is explained by the
-semantic patch.  Please check if the changes can be relevant.
-
- ntb_msi_test.c |   61 ++++++++++++++++++++++++++++-----------------------------
- 1 file changed, 31 insertions(+), 30 deletions(-)
-
---- a/drivers/ntb/test/ntb_msi_test.c
-+++ b/drivers/ntb/test/ntb_msi_test.c
-@@ -170,8 +170,8 @@ static int ntb_msit_dbgfs_trigger(void *
- 				    &peer->msi_desc[idx]);
- }
-
--DEFINE_SIMPLE_ATTRIBUTE(ntb_msit_trigger_fops, NULL,
--			ntb_msit_dbgfs_trigger, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(ntb_msit_trigger_fops, NULL, ntb_msit_dbgfs_trigger,
-+			 "%llu\n");
-
- static int ntb_msit_dbgfs_port_get(void *data, u64 *port)
- {
-@@ -182,8 +182,8 @@ static int ntb_msit_dbgfs_port_get(void
- 	return 0;
- }
-
--DEFINE_SIMPLE_ATTRIBUTE(ntb_msit_port_fops, ntb_msit_dbgfs_port_get,
--			NULL, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(ntb_msit_port_fops, ntb_msit_dbgfs_port_get, NULL,
-+			 "%llu\n");
-
- static int ntb_msit_dbgfs_count_get(void *data, u64 *count)
- {
-@@ -194,8 +194,8 @@ static int ntb_msit_dbgfs_count_get(void
- 	return 0;
- }
-
--DEFINE_SIMPLE_ATTRIBUTE(ntb_msit_count_fops, ntb_msit_dbgfs_count_get,
--			NULL, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(ntb_msit_count_fops, ntb_msit_dbgfs_count_get, NULL,
-+			 "%llu\n");
-
- static int ntb_msit_dbgfs_ready_get(void *data, u64 *ready)
- {
-@@ -213,8 +213,8 @@ static int ntb_msit_dbgfs_ready_set(void
- 	return wait_for_completion_interruptible(&peer->init_comp);
- }
-
--DEFINE_SIMPLE_ATTRIBUTE(ntb_msit_ready_fops, ntb_msit_dbgfs_ready_get,
--			ntb_msit_dbgfs_ready_set, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(ntb_msit_ready_fops, ntb_msit_dbgfs_ready_get,
-+			 ntb_msit_dbgfs_ready_set, "%llu\n");
-
- static int ntb_msit_dbgfs_occurrences_get(void *data, u64 *occurrences)
- {
-@@ -225,9 +225,8 @@ static int ntb_msit_dbgfs_occurrences_ge
- 	return 0;
- }
-
--DEFINE_SIMPLE_ATTRIBUTE(ntb_msit_occurrences_fops,
--			ntb_msit_dbgfs_occurrences_get,
--			NULL, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(ntb_msit_occurrences_fops,
-+			 ntb_msit_dbgfs_occurrences_get, NULL, "%llu\n");
-
- static int ntb_msit_dbgfs_local_port_get(void *data, u64 *port)
- {
-@@ -238,9 +237,8 @@ static int ntb_msit_dbgfs_local_port_get
- 	return 0;
- }
-
--DEFINE_SIMPLE_ATTRIBUTE(ntb_msit_local_port_fops,
--			ntb_msit_dbgfs_local_port_get,
--			NULL, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(ntb_msit_local_port_fops,
-+			 ntb_msit_dbgfs_local_port_get, NULL, "%llu\n");
-
- static void ntb_msit_create_dbgfs(struct ntb_msit_ctx *nm)
- {
-@@ -251,8 +249,8 @@ static void ntb_msit_create_dbgfs(struct
-
- 	nm->dbgfs_dir = debugfs_create_dir(pci_name(pdev),
- 					   ntb_msit_dbgfs_topdir);
--	debugfs_create_file("port", 0400, nm->dbgfs_dir, nm,
--			    &ntb_msit_local_port_fops);
-+	debugfs_create_file_unsafe("port", 0400, nm->dbgfs_dir, nm,
-+				   &ntb_msit_local_port_fops);
-
- 	for (i = 0; i < ntb_peer_port_count(nm->ntb); i++) {
- 		nm->peers[i].pidx = i;
-@@ -262,24 +260,27 @@ static void ntb_msit_create_dbgfs(struct
- 		snprintf(buf, sizeof(buf), "peer%d", i);
- 		peer_dir = debugfs_create_dir(buf, nm->dbgfs_dir);
-
--		debugfs_create_file("trigger", 0200, peer_dir,
--				    &nm->peers[i], &ntb_msit_trigger_fops);
--
--		debugfs_create_file("port", 0400, peer_dir,
--				    &nm->peers[i], &ntb_msit_port_fops);
--
--		debugfs_create_file("count", 0400, peer_dir,
--				    &nm->peers[i], &ntb_msit_count_fops);
--
--		debugfs_create_file("ready", 0600, peer_dir,
--				    &nm->peers[i], &ntb_msit_ready_fops);
-+		debugfs_create_file_unsafe("trigger", 0200, peer_dir,
-+					   &nm->peers[i],
-+					   &ntb_msit_trigger_fops);
-+
-+		debugfs_create_file_unsafe("port", 0400, peer_dir,
-+					   &nm->peers[i], &ntb_msit_port_fops);
-+
-+		debugfs_create_file_unsafe("count", 0400, peer_dir,
-+					   &nm->peers[i],
-+					   &ntb_msit_count_fops);
-+
-+		debugfs_create_file_unsafe("ready", 0600, peer_dir,
-+					   &nm->peers[i],
-+					   &ntb_msit_ready_fops);
- 	}
-
- 	for (i = 0; i < num_irqs; i++) {
- 		snprintf(buf, sizeof(buf), "irq%d_occurrences", i);
--		debugfs_create_file(buf, 0400, nm->dbgfs_dir,
--				    &nm->isr_ctx[i],
--				    &ntb_msit_occurrences_fops);
-+		debugfs_create_file_unsafe(buf, 0400, nm->dbgfs_dir,
-+					   &nm->isr_ctx[i],
-+					   &ntb_msit_occurrences_fops);
- 	}
- }
-
+greg k-h
