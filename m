@@ -2,70 +2,68 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB93ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 07:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC406ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 07:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B87220849
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 07:02:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B87220849
+	by mail.kernel.org (Postfix) with ESMTP id 6C332206B7
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 07:21:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C332206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeGUHx6 (ORCPT
+        id S1727365AbeGUIM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 03:53:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47374 "EHLO
+        Sat, 21 Jul 2018 04:12:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48330 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbeGUHx6 (ORCPT
+        with ESMTP id S1727172AbeGUIM2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 03:53:58 -0400
+        Sat, 21 Jul 2018 04:12:28 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 24740707;
-        Sat, 21 Jul 2018 07:02:17 +0000 (UTC)
-Date:   Sat, 21 Jul 2018 09:02:15 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     John Whitmore <johnfwhitmore@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        kstewart@linuxfoundation.org, pombredanne@nexb.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH v2 09/10] staging:trl8192u: Rename TClasProc >
- t_clas_proc - Style
-Message-ID: <20180721070215.GA20326@kroah.com>
-References: <20180716190454.31489-1-johnfwhitmore@gmail.com>
- <20180716190454.31489-10-johnfwhitmore@gmail.com>
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EE23B13;
+        Sat, 21 Jul 2018 07:20:45 +0000 (UTC)
+Date:   Sat, 21 Jul 2018 09:20:43 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc:     Adam Borowski <kilobyte@angband.pl>,
+        Kees Cook <keescook@chromium.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Dave Mielke <Dave@mielke.cc>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        linux-kernel@vger.kernel.org, linux-console@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] vt: avoid a VLA in the unicode screen scroll
+ function
+Message-ID: <20180721072043.GA26449@kroah.com>
+References: <20180718010242.5254-1-nicolas.pitre@linaro.org>
+ <20180718010242.5254-2-nicolas.pitre@linaro.org>
+ <20180718014813.ygcbgqxk4yo3ydbl@angband.pl>
+ <nycvar.YSQ.7.76.1807172155070.11681@knanqh.ubzr>
+ <nycvar.YSQ.7.76.1807182353560.2327@knanqh.ubzr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180716190454.31489-10-johnfwhitmore@gmail.com>
+In-Reply-To: <nycvar.YSQ.7.76.1807182353560.2327@knanqh.ubzr>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 08:04:53PM +0100, John Whitmore wrote:
-> Rename the struct TS_COMMON_INFO member variable TClasProc to
-> t_clas_proc. This change clears the checkpatch issue with CamelCase variable
-> names. There should be no impact on runtime execution.
+On Thu, Jul 19, 2018 at 12:05:25AM -0400, Nicolas Pitre wrote:
 > 
-> Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
-> ---
->  drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h     | 2 +-
->  drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+> The nr argument is typically small: most often nr == 1. However this
+> could be abused with a very large explicit scroll in a resized screen.
+> Make the code scroll lines by performing an array rotation operation to
+> avoid the need for a large temporary space.
+> 
+> Requested-by: Kees Cook <keescook@chromium.org>
+> Suggested-by: Adam Borowski <kilobyte@angband.pl>
+> Signed-off-by: Nicolas Pitre <nico@linaro.org>
 
-Ah, I think the problem with the rejections was that I didn't pick up
-this patch, because you mispelled the driver name :)
-
-I filter for drivers to apply everything for that one at the same time
-to make things easier on myself.  And this got dropped.  Please fix the
-subject up and add it to your series and resend, that should hopefully
-fix the problems.
-
-thanks,
+I've now applied this v2 of the patch, thanks for this.
 
 greg k-h
