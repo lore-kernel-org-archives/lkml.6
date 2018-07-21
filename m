@@ -6,54 +6,48 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7331BECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2266ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C5FD20858
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:29:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48DF320858
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:31:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zERBn6U1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C5FD20858
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSXqP3el"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48DF320858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728077AbeGURWq (ORCPT
+        id S1728084AbeGURYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 13:22:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43054 "EHLO mail.kernel.org"
+        Sat, 21 Jul 2018 13:24:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727813AbeGURWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 13:22:45 -0400
+        id S1727876AbeGURYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 13:24:53 -0400
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06C7C20849;
-        Sat, 21 Jul 2018 16:29:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5200120849;
+        Sat, 21 Jul 2018 16:31:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532190568;
-        bh=65yYyUrenRsCMJiRmdLy1jtf2+ePkf3AWxPMGOhOJfA=;
+        s=default; t=1532190695;
+        bh=DLgY/h6sWsqD8zZ/GyYJPXNGKkVn5luzXAhGMLi1xAQ=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=zERBn6U1kDlBtIlQLodfvpr7A7qQJFMIB4qeImnVFr0KenrwpRPdgICHS6bA3ewLf
-         OP2ty3dyidG55pXgaqeZFMDBmsDleF7izVziYMVnVYT+5YlCPza0iIe4GumxG5R8kF
-         g2hdptMq2yEIAsUoblbgBD1Z5g88cFuYT8g4bjM8=
-Date:   Sat, 21 Jul 2018 17:29:24 +0100
+        b=rSXqP3eltiUJXLoZ/dp8X1miN4HKwFvgpdqVhJ6ZssfC6bL4pczhSGs8RxN2lRUtb
+         h5oLpjakVC/Zs21COa+bmOzbhP4U+qnc+oU9/kEtoGx4ihxBVfTrYxKlP3FnRkzgOj
+         a68kLNRBKsXx9iC77Pw16qFazFX1VPDyaXh0IWP4=
+Date:   Sat, 21 Jul 2018 17:31:31 +0100
 From:   Jonathan Cameron <jic23@kernel.org>
 To:     Himanshu Jha <himanshujha199640@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
         Daniel Baluta <daniel.baluta@gmail.com>
 Subject: Re: [PATCH v4] iio: chemical: Add support for Bosch BME680 sensor
-Message-ID: <20180721172924.53619e6a@archlinux>
-In-Reply-To: <20180721155230.GB11127@himanshu-Vostro-3559>
+Message-ID: <20180721173131.6be1579f@archlinux>
+In-Reply-To: <20180721153607.GA11127@himanshu-Vostro-3559>
 References: <1532122284-19602-1-git-send-email-himanshujha199640@gmail.com>
         <20180721161934.75066d97@archlinux>
         <20180721153607.GA11127@himanshu-Vostro-3559>
-        <CAHp75VegzWr8Q2idzAWpc5Nw3T5n=vWkMvspe0YGRwEQ_h0p+A@mail.gmail.com>
-        <20180721155230.GB11127@himanshu-Vostro-3559>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -63,49 +57,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 21 Jul 2018 21:22:30 +0530
+On Sat, 21 Jul 2018 21:06:08 +0530
 Himanshu Jha <himanshujha199640@gmail.com> wrote:
 
-> On Sat, Jul 21, 2018 at 06:43:51PM +0300, Andy Shevchenko wrote:
-> > On Sat, Jul 21, 2018 at 6:36 PM, Himanshu Jha
-> > <himanshujha199640@gmail.com> wrote:
-> >   
-> > >> > +   /* Look up table 1 for the possible gas range values */
-> > >> > +   u32 lookupTable1[16] = {2147483647u, 2147483647u, 2147483647u,
-> > >> > +                           2147483647u, 2147483647u, 2126008810u,
-> > >> > +                           2147483647u, 2130303777u, 2147483647u,
-> > >> > +                           2147483647u, 2143188679u, 2136746228u,
-> > >> > +                           2147483647u, 2126008810u, 2147483647u,
-> > >> > +                           2147483647u};  
+> > Hi Himanshu,
 > > 
-> > This one needs perhaps a bit of though, but...
-> >   
-> > >> > +   /* Look up table 2 for the possible gas range values */
-> > >> > +   u32 lookupTable2[16] = {4096000000u, 2048000000u, 1024000000u,
-> > >> > +                           512000000u, 255744255u, 127110228u, 64000000u,
-> > >> > +                           32258064u, 16016016u, 8000000u, 4000000u,
-> > >> > +                           2000000u, 1000000u, 500000u, 250000u, 125000u};  
+> > This was close to the point where I'd take it and make the few remaining
+> > fixes myself.  I'm still bothered however by the fact the casts in the
+> > various calibration functions are still not all justified so please take
+> > another look at that.  Frankly it looks like the original author
+> > threw in casts because they didn't want to have to think about which ones
+> > actually do anything!  
+> 
+> Ok. I will remove the ones mentioned below.
+> 
+> > Few other things to fix up for v5 as well.  
+> 
+> I will send the fixes in an hour.
+> 
+> > Jonathan
 > > 
-> > ...this one obviously just a not needed one. You may replace it with a
-> > one constant and simple calculation to get either value (index from
-> > value, or value from index).  
+> >   
+> > > +#define   BME680_NB_CONV_MASK			GENMASK(3, 0)
+> > > +#define	    BME680_RUN_GAS_EN_BIT		BIT(4)  
+> > 
+> > odd looking spacing above.  
 > 
-> Not sure to understand your opinion!?
-> 
-> Anything related to increase to .ro segment ?
-> 
-> I think adding is better to let compiler optimise the code a bit
-> further.
+> I don't know why this is showing like that in the diff output, but I
+> have checked the code by apllying to my test tree(git am <patch>) and
+> there was no such spurious spacing!
 
-No, I missed this as didn't look too closely at those numbers.
-They are almost by not quite simple power's of 2 * 125000.
-Question is whether the very very small difference from that matter or not...
+You have a tab after the #define in this one instance - in the others it's
+all spaces (as it should be)
 
-Andy is suggesting replacing this block of data with an equation that is
-'near enough'.
-> 
-> > -- 
-> > With Best Regards,
-> > Andy Shevchenko  
-> 
-
+...
