@@ -6,93 +6,100 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A6AECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 05:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D91C4ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 05:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C813F206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 05:08:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C813F206B7
+	by mail.kernel.org (Postfix) with ESMTP id 9DDF8206B7
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 05:08:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DDF8206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbeGUF7R (ORCPT
+        id S1727622AbeGUF7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 01:59:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40760 "EHLO
+        Sat, 21 Jul 2018 01:59:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40772 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbeGUF7R (ORCPT
+        with ESMTP id S1727206AbeGUF7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 01:59:17 -0400
+        Sat, 21 Jul 2018 01:59:51 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1385720;
-        Sat, 21 Jul 2018 05:07:55 +0000 (UTC)
-Date:   Sat, 21 Jul 2018 07:07:52 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EDD3720;
+        Sat, 21 Jul 2018 05:08:29 +0000 (UTC)
+Date:   Sat, 21 Jul 2018 07:08:27 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     lkp@intel.com, kbuild-all@01.org, stable@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, jgross@suse.com,
-        LKML <linux-kernel@vger.kernel.org>
+Cc:     stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
 Subject: Re: [4.4 STABLE BACKPORT] x86: paravirt: make native_save_fl extern
  inline
-Message-ID: <20180721050752.GC27598@kroah.com>
-References: <20180720223642.126080-1-ndesaulniers@google.com>
- <201807210738.RRpvc56w%fengguang.wu@intel.com>
- <CAKwvOdnrwW-CaVKR-iJTDfwVGRj4xE=5MaUMyvjqsEw-7yPiZw@mail.gmail.com>
+Message-ID: <20180721050827.GD27598@kroah.com>
+References: <20180718090702.GA6212@kroah.com>
+ <20180720223642.126080-1-ndesaulniers@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdnrwW-CaVKR-iJTDfwVGRj4xE=5MaUMyvjqsEw-7yPiZw@mail.gmail.com>
+In-Reply-To: <20180720223642.126080-1-ndesaulniers@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 05:06:07PM -0700, Nick Desaulniers wrote:
-> On Fri, Jul 20, 2018 at 5:04 PM kbuild test robot <lkp@intel.com> wrote:
-> >
-> > Hi Nick,
-> >
-> > Thank you for the patch! Yet something to improve:
-> >
-> > [auto build test ERROR on tip/x86/core]
-> > [cannot apply to v4.18-rc5 next-20180720]
-> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> >
-> > url:    https://github.com/0day-ci/linux/commits/Nick-Desaulniers/x86-paravirt-make-native_save_fl-extern-inline/20180721-073112
-> > config: i386-tinyconfig (attached as .config)
-> > compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> > reproduce:
-> >         # save the attached .config to linux build tree
-> >         make ARCH=i386
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >    arch/x86/kernel/irqflags.S: Assembler messages:
-> > >> arch/x86/kernel/irqflags.S:22: Error: bad register name `%_ASM_ARG1'
-> >
-> > vim +22 arch/x86/kernel/irqflags.S
-> >
-> >     16
-> >     17  /*
-> >     18   * void native_restore_fl(unsigned long flags)
-> >     19   * %eax/%rdi: flags
-> >     20   */
-> >     21  ENTRY(native_restore_fl)
-> >   > 22          push %_ASM_ARG1
-> >
-> > ---
-> > 0-DAY kernel test infrastructure                Open Source Technology Center
-> > https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+On Fri, Jul 20, 2018 at 03:36:41PM -0700, Nick Desaulniers wrote:
+> native_save_fl() is marked static inline, but by using it as
+> a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
 > 
-> oops, probably should not have cc'ed vger.kernel.org for a patch meant
-> for stable.
+> paravirt's use of native_save_fl() also requires that no GPRs other than
+> %rax are clobbered.
+> 
+> Compilers have different heuristics which they use to emit stack guard
+> code, the emittance of which can break paravirt's callee saved assumption
+> by clobbering %rcx.
+> 
+> Marking a function definition extern inline means that if this version
+> cannot be inlined, then the out-of-line version will be preferred. By
+> having the out-of-line version be implemented in assembly, it cannot be
+> instrumented with a stack protector, which might violate custom calling
+> conventions that code like paravirt rely on.
+> 
+> The semantics of extern inline has changed since gnu89. This means that
+> folks using GCC versions >= 5.1 may see symbol redefinition errors at
+> link time for subdirs that override KBUILD_CFLAGS (making the C standard
+> used implicit) regardless of this patch. This has been cleaned up
+> earlier in the patch set, but is left as a note in the commit message
+> for future travelers.
+> 
+> Reports:
+> https://lkml.org/lkml/2018/5/7/534
+> https://github.com/ClangBuiltLinux/linux/issues/16
+> 
+> Discussion:
+> https://bugs.llvm.org/show_bug.cgi?id=37512
+> https://lkml.org/lkml/2018/5/24/1371
+> 
+> Thanks to the many folks that participated in the discussion.
+> 
+> Acked-by: Juergen Gross <jgross@suse.com>
+> Debugged-by: Alistair Strachan <astrachan@google.com>
+> Debugged-by: Matthias Kaehlcke <mka@chromium.org>
+> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Suggested-by: H. Peter Anvin <hpa@zytor.com>
+> Suggested-by: Tom Stellar <tstellar@redhat.com>
+> Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> ---
+> Backport for 4.4. 4.4 is missing commit 784d5699eddc "x86: move exports to
+> actual definitions" which doesn't apply cleanly, and not really worth
+> backporting IMO. It's simpler to change this patch from upstream:
+> + #include <asm-generic/export.h>
+> rather than
+> + #include <asm/export.h>
 
-stable@vger.kernel.org is the right address, you did it correct.  I
-think 0-day just got a bit trigger-happy on this one for some reason,
-don't worry about it.
-
-thanks,
+Yeah, that makes sense, thanks for the backport.  I'll queue it up after
+the next round of stable kernels comes out in a few days.
 
 greg k-h
