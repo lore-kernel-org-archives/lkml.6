@@ -6,169 +6,142 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADE6ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 23:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD4FECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 23:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CEC320856
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 23:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73FDD20868
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 23:30:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gf/Xw1Zy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CEC320856
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oO7ph1xd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73FDD20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbeGVAXs (ORCPT
+        id S1728353AbeGVAY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 20:23:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41482 "EHLO mail.kernel.org"
+        Sat, 21 Jul 2018 20:24:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728145AbeGVAXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 20:23:47 -0400
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        id S1728149AbeGVAY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 20:24:56 -0400
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD69520856
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 23:29:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BB7320864
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 23:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532215758;
-        bh=GmpP38JKyuO2NM1CDT/Loh2aFcVZegE/jFmJbIL5YDA=;
+        s=default; t=1532215826;
+        bh=UDIoa9BbRnm2jxNS5PdV2KqOPMM1XVQ8Z1dAbLN7G+w=;
         h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=gf/Xw1ZyfRUxHrFIjF2GS6SZATYAyHvqA3NDi5VxsSNfGGGBj9bxjf9PiylR8Fhim
-         AKTcK9mJrxBL9J3/wBsn1v9h0XHQBbk2S5pQI4lxezdtOSzcU4a9iCYODpa0ixPgji
-         HJp+HWmKuZlM8EkjwnZTemclazhdH3W7VfI+AlRQ=
-Received: by mail-wr1-f44.google.com with SMTP id g6-v6so14438619wrp.0
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 16:29:17 -0700 (PDT)
-X-Gm-Message-State: AOUpUlH7fchcMk9+hiDilXRoMMF30FUt24Zqu8otjoc3N9akCbYuajrT
-        WUuy3V0xXAp+ESHjip5bKEnTDcyTkM4WD8vfc9RlPw==
-X-Google-Smtp-Source: AAOMgpfdzd6XdmNu79GlJjPNFX0afI4VENZ3q1/hWVHJ5VjJwdK2mzT6UjXt1ozb0khM6Q9zvW71nP1iI/sOF2Vs7ys=
-X-Received: by 2002:adf:8325:: with SMTP id 34-v6mr4675246wrd.67.1532215756363;
- Sat, 21 Jul 2018 16:29:16 -0700 (PDT)
+        b=oO7ph1xdeimLdNBKmSJ6atWDg4qfd3Rts7UCRtHYXrBgZ9/mn8FRV+JxsL0tezIFp
+         aGLQzd9owKxrLMa8/dVNKau6T60dx9Sm6d6ZSd+XAenMbKQMtkl1X8N/fIoukld34+
+         /jJbTuZ/PoIpGtS/IYHi7oSATP6g3Vm9GODDxLHY=
+Received: by mail-wr1-f47.google.com with SMTP id e7-v6so14412755wrs.9
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 16:30:26 -0700 (PDT)
+X-Gm-Message-State: AOUpUlERKKUEUIaCtS0TGJFXJJ/1N9fD2RMQbdqvxk/i0ELLb+NePGeN
+        x9YLPHnzhcX2ghKTiJ2cUnC05DxU+NjdsA9mD2ORRA==
+X-Google-Smtp-Source: AAOMgpf1rOygB7BPzoYkNKSSCEem8m4XBi7QQG5fPBo44PmfW79Eo4gaW+VI1tKz4HPWznsRoSldseyTwf8L+sm1fEc=
+X-Received: by 2002:adf:81c3:: with SMTP id 61-v6mr4888278wra.120.1532215824794;
+ Sat, 21 Jul 2018 16:30:24 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Sat, 21 Jul 2018 16:28:55
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Sat, 21 Jul 2018 16:30:04
  -0700 (PDT)
-In-Reply-To: <20180718224159.18236-1-astrachan@google.com>
-References: <20180718224159.18236-1-astrachan@google.com>
+In-Reply-To: <b9ad156c-45e9-da80-9cf0-eabbe5a1bbf2@runbox.com>
+References: <20180721194909.23903-1-m.v.b@runbox.com> <CALCETrX435cC7Hi2aTLVrBecZEEeJ3_TgQnTwbObNrt9MKvFzg@mail.gmail.com>
+ <b9ad156c-45e9-da80-9cf0-eabbe5a1bbf2@runbox.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 21 Jul 2018 16:28:55 -0700
-X-Gmail-Original-Message-ID: <CALCETrW9tha_CedoCPWfkXRjOWmb5HeT3D3Nh3-fq33yJb9VfQ@mail.gmail.com>
-Message-ID: <CALCETrW9tha_CedoCPWfkXRjOWmb5HeT3D3Nh3-fq33yJb9VfQ@mail.gmail.com>
-Subject: Re: [PATCH] x86: vdso: Use $LD instead of $CC to link
-To:     Alistair Strachan <astrachan@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Date:   Sat, 21 Jul 2018 16:30:04 -0700
+X-Gmail-Original-Message-ID: <CALCETrXsNxYP7-w-OoiNdJWspTKCsr0i01e6NiwFk1O5jL6grA@mail.gmail.com>
+Message-ID: <CALCETrXsNxYP7-w-OoiNdJWspTKCsr0i01e6NiwFk1O5jL6grA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] x86/entry/64: Do not clear %rbx under Xen
+To:     "M. Vefa Bicakci" <m.v.b@runbox.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        X86 ML <x86@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        joel@joelfernandes.com
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, X86 ML <x86@kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 3:41 PM, Alistair Strachan <astrachan@google.com> wrote:
-> The vdso{32,64}.so can fail to link with CC=clang when clang tries to
-> find a suitable GCC toolchain to link these libraries with.
+On Sat, Jul 21, 2018 at 4:19 PM, M. Vefa Bicakci <m.v.b@runbox.com> wrote:
+> On 07/21/2018 05:45 PM, Andy Lutomirski wrote:
+>>
+>> On Sat, Jul 21, 2018 at 12:49 PM, M. Vefa Bicakci <m.v.b@runbox.com>
+>> wrote:
+>>>
+>>> Commit 3ac6d8c787b8 ("x86/entry/64: Clear registers for
+>>> exceptions/interrupts, to reduce speculation attack surface")
+>>> unintendedly
+>>> broke Xen PV virtual machines by clearing the %rbx register at the end of
+>>> xen_failsafe_callback before the latter jumps to error_exit.
+>>> error_exit expects the %rbx register to be a flag indicating whether
+>>> there should be a return to kernel mode.
+>>>
+>>> This commit makes sure that the %rbx register is not cleared by
+>>> the PUSH_AND_CLEAR_REGS macro, when the macro in question is instantiated
+>>> by xen_failsafe_callback, to avoid the issue.
+>>
+>>
+>> Seems like a genuine problem, but:
+>>
+>>> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+>>> index c7449f377a77..96e8ff34129e 100644
+>>> --- a/arch/x86/entry/entry_64.S
+>>> +++ b/arch/x86/entry/entry_64.S
+>>> @@ -1129,7 +1129,7 @@ ENTRY(xen_failsafe_callback)
+>>>          addq    $0x30, %rsp
+>>>          UNWIND_HINT_IRET_REGS
+>>>          pushq   $-1 /* orig_ax = -1 => not a system call */
+>>> -       PUSH_AND_CLEAR_REGS
+>>> +       PUSH_AND_CLEAR_REGS clear_rbx=0
+>>>          ENCODE_FRAME_POINTER
+>>>          jmp     error_exit
+>>
+>>
+>> The old code first set RBX to zero then, if frame pointers are on,
+>> sets it to some special non-zero value, then crosses its fingers and
+>> hopes for the best.  Your patched code just skips the zeroing part, so
+>> RBX either contains the ENCODE_FRAME_POINTER result or is
+>> uninitialized.
+>>
+>> How about actually initializing rbx to something sensible like, say, 1?
 >
-> /usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o:
->   access beyond end of merged section (782)
 >
-> This happens because the host environment leaked into the cross
-> compiler environment due to the way clang searches for suitable GCC
-> toolchains.
+> Hello Andy,
 >
-> Clang is a retargetable compiler, and each invocation of it must
-> provide --target=<something> --gcc-toolchain=<something> to allow it
-> to find the correct binutils for cross compilation. These flags had
-> been added to KBUILD_CFLAGS, but the vdso code uses CC and not
-> KBUILD_CFLAGS (for various reasons) which breaks clang's ability to
-> find the correct linker when cross compiling.
+> Thank you for the review! Apparently, I have not done my homework fully.
+> I will test your suggestion and report back, most likely in a few hours.
 >
-> Most of the time this goes unnoticed because the host linker is new
-> enough to work anyway, or is incompatible and skipped, but this cannot
-> be reliably assumed.
->
-> This change alters the vdso makefile to just use LD directly, which
-> bypasses clang and thus the searching problem. The makefile will just
-> use ${CROSS_COMPILE}ld instead, which is always what we want. This
-> matches the method used to link vmlinux.
+> I have been testing with the next/linux-next tree's master branch
+> (dated 20180720), and I noticed that ENCODE_FRAME_POINTER changes the
+> frame pointer (i.e., RBP) register, as opposed to the RBX register,
+> which the patch aims to avoid changing before jumping to error_exit.
+> It is possible that I am missing something though -- I am not sure about
+> the connection between the RBP and RBX registers.
 
-Acked-by: Andy Lutomirski <luto@kernel.org>
-
-
+Sorry, brain fart on my part.
 
 >
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: x86@kernel.org
-> Cc: kernel-team@android.com
-> Cc: joel@joelfernandes.com
-> Signed-off-by: Alistair Strachan <astrachan@google.com>
-> ---
-> Supersedes "x86: vdso: Fix leaky vdso link with CC=clang"
->  arch/x86/entry/vdso/Makefile | 22 +++++++++-------------
->  1 file changed, 9 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-> index 1943aebadede..896a55204386 100644
-> --- a/arch/x86/entry/vdso/Makefile
-> +++ b/arch/x86/entry/vdso/Makefile
-> @@ -48,10 +48,8 @@ targets += $(vdso_img_sodbg)
->
->  export CPPFLAGS_vdso.lds += -P -C
->
-> -VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
-> -                       -Wl,--no-undefined \
-> -                       -Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096 \
-> -                       $(DISABLE_LTO)
-> +VDSO_LDFLAGS_vdso.lds = -m elf_x86_64 -soname linux-vdso.so.1 --no-undefined \
-> +                       -z max-page-size=4096 -z common-page-size=4096
->
->  $(obj)/vdso64.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
->         $(call if_changed,vdso)
-> @@ -97,10 +95,8 @@ CFLAGS_REMOVE_vvar.o = -pg
->  #
->
->  CPPFLAGS_vdsox32.lds = $(CPPFLAGS_vdso.lds)
-> -VDSO_LDFLAGS_vdsox32.lds = -Wl,-m,elf32_x86_64 \
-> -                          -Wl,-soname=linux-vdso.so.1 \
-> -                          -Wl,-z,max-page-size=4096 \
-> -                          -Wl,-z,common-page-size=4096
-> +VDSO_LDFLAGS_vdsox32.lds = -m elf32_x86_64 -soname linux-vdso.so.1 \
-> +                          -z max-page-size=4096 -z common-page-size=4096
->
->  # 64-bit objects to re-brand as x32
->  vobjs64-for-x32 := $(filter-out $(vobjs-nox32),$(vobjs-y))
-> @@ -128,7 +124,7 @@ $(obj)/vdsox32.so.dbg: $(src)/vdsox32.lds $(vobjx32s) FORCE
->         $(call if_changed,vdso)
->
->  CPPFLAGS_vdso32.lds = $(CPPFLAGS_vdso.lds)
-> -VDSO_LDFLAGS_vdso32.lds = -m32 -Wl,-m,elf_i386 -Wl,-soname=linux-gate.so.1
-> +VDSO_LDFLAGS_vdso32.lds = -m elf_i386 -soname linux-gate.so.1
->
->  targets += vdso32/vdso32.lds
->  targets += vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
-> @@ -162,13 +158,13 @@ $(obj)/vdso32.so.dbg: FORCE \
->  # The DSO images are built using a special linker script.
->  #
->  quiet_cmd_vdso = VDSO    $@
-> -      cmd_vdso = $(CC) -nostdlib -o $@ \
-> +      cmd_vdso = $(LD) -nostdlib -o $@ \
->                        $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$(filter %.lds,$(^F))) \
-> -                      -Wl,-T,$(filter %.lds,$^) $(filter %.o,$^) && \
-> +                      -T $(filter %.lds,$^) $(filter %.o,$^) && \
->                  sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
->
-> -VDSO_LDFLAGS = -fPIC -shared $(call cc-ldoption, -Wl$(comma)--hash-style=both) \
-> -       $(call cc-ldoption, -Wl$(comma)--build-id) -Wl,-Bsymbolic $(LTO_CFLAGS)
-> +VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
-> +       $(call ld-option, --build-id) -Bsymbolic
->  GCOV_PROFILE := n
->
->  #
+> The change introduced by commit 3ac6d8c787b8 is in the excerpt below. Would
+> it
+> be valid to state that the original code had the same issue that you
+> referred
+> to (i.e., leaving the RBX register uninitialized)?
+
+Presumably.
+
+I would propose a rather different fix:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/pti&id=bb3d76b50c3bc78b67d79cf90d328f38a435c793
+
+Any chance you could test that and see if it fixes your problem?
