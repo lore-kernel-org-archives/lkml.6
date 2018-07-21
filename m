@@ -2,379 +2,139 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB47DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7BDECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A167020858
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:29:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A167020858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EC68520858
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:31:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC68520858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbeGUTWn (ORCPT
+        id S1728405AbeGUTZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 15:22:43 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:37357 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727854AbeGUTWm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 15:22:42 -0400
-Received: by mail-io0-f200.google.com with SMTP id l5-v6so10891018ioh.4
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 11:29:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=nc9Kgp8SYjbIpE71gcdnGJvBINWJFE0NSJqraXrNPg4=;
-        b=nDVAXaAEZulI357+dMR6wnfvctWeM9vwnxIBpNad+aHlqy75sAfLsg57DcjTeZt/iM
-         5fLr7fdJF5WzZgRVjWaBL2/XaCBjU+dvYdfdLmMh3YK1Lbq+KLuYpuO56EhzlggWRRFG
-         I87WPnexf4MPBsXOxsLswEe+fUa2vtv3OxJZ02tM3kW1nZFN7LEWr9fjECmg+dPXBU50
-         cDH2hBwoSQGnjFOXcrgbUDwisXrlASmgEdScoBst9SwjCIQvZvMtU+1B1IjoD9/3Fx25
-         FbBodkUsp+aYi9FDB5ahlWeHLl9a5cJofW42QVcr26927pJ6RrTrmjgm96wssm6ANVBO
-         PUbA==
-X-Gm-Message-State: AOUpUlFPSvV8s2SV15DKwZkJriN2ToTwVjcmay6XRWlcyAocxpaDG1X7
-        nSmFwEl4XmNGbeih2d08rlDGZzrYBrLFUhV7yFd/lTk5IdbD
-X-Google-Smtp-Source: AAOMgpfwVlgakc2zunnefHwTfsObdAC8hGqE8G21xKRRLvR7fqdI5xFlcuc/alu5XMqa2Lpb9EwYR5u5Mlz1cMlkRTtZt3hR+XEA
+        Sat, 21 Jul 2018 15:25:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36480 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727854AbeGUTZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 15:25:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 26F2FAD9D;
+        Sat, 21 Jul 2018 18:31:32 +0000 (UTC)
+Date:   Sat, 21 Jul 2018 11:31:27 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, jbaron@akamai.com,
+        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next 0/2] fs/epoll: loosen irq safety when possible
+Message-ID: <20180721183127.3busfa335zlcjeox@linux-r8p5>
+References: <20180720172956.2883-1-dave@stgolabs.net>
+ <20180720124212.7260d76d83e2b8e5e3349ea5@linux-foundation.org>
+ <20180720200559.27nc7j2rrxpy5p3n@linux-r8p5>
+ <20180720134429.1ba61018934b084bb2e17bdb@linux-foundation.org>
+ <20180721172120.kbdu4euc2wn4xzgf@linux-r8p5>
+ <20180721173944.GV2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-Received: by 2002:a02:384a:: with SMTP id v10-v6mr3317449jae.59.1532197743315;
- Sat, 21 Jul 2018 11:29:03 -0700 (PDT)
-Date:   Sat, 21 Jul 2018 11:29:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000037578b057186966f@google.com>
-Subject: KASAN: stack-out-of-bounds Read in locks_remove_posix
-From:   syzbot <syzbot+5855b4355079756bf451@syzkaller.appspotmail.com>
-To:     bfields@fieldses.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180721173944.GV2494@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sat, 21 Jul 2018, Peter Zijlstra wrote:
 
-syzbot found the following crash on:
+>On Sat, Jul 21, 2018 at 10:21:20AM -0700, Davidlohr Bueso wrote:
+>> On Fri, 20 Jul 2018, Andrew Morton wrote:
+>>
+>> > We could open-code it locally.  Add a couple of
+>> > WARN_ON_ONCE(irqs_disabled())?  That might need re-benchmarking with
+>> > Xen but surely just reading the thing isn't too expensive?
+>>
+>> We could also pass on the responsibility to lockdep and just use
+>> lockdep_assert_irqs_disabled(). But I guess that would be less effective
+>> than to just open code it in epoll without lockdep -- note that over 80
+>> places in the kernel do this.
+>
+>The lockdep thing is relatively recent. I think someone proposed to go
+>replace a bunch of the open-coded ones at some point.
 
-HEAD commit:    8ae71e76cf1f Merge branch 'bpf-offload-sharing'
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17724d1c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=89129667b46496c3
-dashboard link: https://syzkaller.appspot.com/bug?extid=5855b4355079756bf451
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1193eee0400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c5c9dc400000
+For the open coded checks, I'm seeing a small (1-2% ish) cost for bare
+metal on workload 1). I don't see (via code inspection) any additional
+overhead in xen either. While negligible in the overall of things, I do
+like the idea of lockdep handling it nonetheless.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5855b4355079756bf451@syzkaller.appspotmail.com
+I can add the open coded version if people really feel that it would catch
+more bugs (no lockdep users out there in production afaik :) in the long
+term; but if lockdep is where things are headed...
 
-==================================================================
-kasan: CONFIG_KASAN_INLINE enabled
-BUG: KASAN: stack-out-of-bounds in locks_inode include/linux/fs.h:1061  
-[inline]
-BUG: KASAN: stack-out-of-bounds in locks_remove_posix+0x787/0x890  
-fs/locks.c:2468
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-Read of size 8 at addr ffff8801b7644e18 by task syz-executor473/4469
+Thanks,
+Davidlohr
 
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 1 PID: 4469 Comm: syz-executor473 Not tainted 4.18.0-rc3+ #58
-CPU: 0 PID: 17562 Comm: syz-executor473 Not tainted 4.18.0-rc3+ #58
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__read_seqcount_begin include/linux/seqlock.h:113 [inline]
-RIP: 0010:raw_read_seqcount_begin include/linux/seqlock.h:148 [inline]
-RIP: 0010:hrtimer_active+0x1fb/0x440 kernel/time/hrtimer.c:1327
-Call Trace:
-Code:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-ff
-80
-38
-00
-0f
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-85
-f3
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-01
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-00
-  locks_inode include/linux/fs.h:1061 [inline]
-  locks_remove_posix+0x787/0x890 fs/locks.c:2468
-00 48
-8b
-85
-f0 fe
-ff
-ff 4c
-8d
-6b
-10
-48
-89
-9d
-58
-ff
-ff
-ff
-c6
-  filp_close+0x1bb/0x250 fs/open.c:1182
-00
-f8
-4c
-89
-  close_files fs/file.c:388 [inline]
-  put_files_struct+0x26f/0x3a0 fs/file.c:416
-e8
-48
-c1
-e8
-  exit_files+0x83/0xb0 fs/file.c:445
-03
-  do_exit+0xf61/0x2750 kernel/exit.c:860
-41
-c6
-06
-04
-<42>
-0f
-b6
-14
-38
-4c
-89
-e8
-83
-e0
-07
-83
-c0
-03
-38
-d0
-7c
-08
-84
-d2
-0f
-85
-RSP: 0018:ffff8801dae07850 EFLAGS: 00010002
-RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff8158c5a9
-RDX: 0000000000010000 RSI: ffffffff816a4140 RDI: ffff8801b688e3d0
-RBP: ffff8801dae07990 R08: ffff8801dae07968 R09: fffffbfff02be35c
-R10: fffffbfff02be35d R11: ffffffff815f1aeb R12: ffff8801b688d730
-R13: 0000000000000010 R14: ffffed003b5c0f15 R15: dffffc0000000000
-FS:  00000000024e2880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8e1116ce78 CR3: 00000001c4e12000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <IRQ>
-  do_group_exit+0x177/0x440 kernel/exit.c:968
-  entity_tick kernel/sched/fair.c:4520 [inline]
-  task_tick_fair+0x60/0x320 kernel/sched/fair.c:9934
-  get_signal+0x88e/0x1970 kernel/signal.c:2468
-  scheduler_tick+0x18b/0x430 kernel/sched/core.c:3087
-  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
-  update_process_times+0x51/0x70 kernel/time/timer.c:1641
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
-  exit_to_usermode_loop+0x2e0/0x370 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode+0x342/0x3b0 arch/x86/entry/common.c:197
-  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
-  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
-  retint_user+0x8/0x18
-RIP: 0033:lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
-Code:
-10
-49
-c1
-e9
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-09
-  </IRQ>
-41
-Modules linked in:
-57
-49 83 f1
-Dumping ftrace buffer:
-01
-    (ftrace buffer empty)
-48
----[ end trace e84c0149ab776256 ]---
-8b
-RIP: 0010:__read_seqcount_begin include/linux/seqlock.h:113 [inline]
-RIP: 0010:raw_read_seqcount_begin include/linux/seqlock.h:148 [inline]
-RIP: 0010:hrtimer_active+0x1fb/0x440 kernel/time/hrtimer.c:1327
-bd
-Code:
-30 ff
-ff
-ff
-80
-ff
-38
-8b
-00
-b5
-0f
-2c
-85
-ff
-f3
-ff
-01
-ff
-00
-41
-00
-83
-48
-e1
-8b
-01
-85
-65
-f0 fe
-4c
-ff
-8b
-ff
-24
-4c
-25
-8d
-40
-6b
-ee
-10
-01
-48
-00
-89
-e8
-9d
-dc
-58
-8e
-ff
-ff
-ff
-ff
-ff
-<49>
-c6
-8d
-00
-bc
-f8
-24
-4c
-34
-89
-08
-e8
-00
-48
-00
-c1 e8
-48
-03
-b8
-41
-00
-c6
-00
-06
-00 00
-04
-00
-<42>
-fc
-0f
-ff
-b6
-df 48
-14
-89
-38
-fa
-4c 89
-48
-e8
-83
-RSP: 002b:00007ffe727cd790 EFLAGS: 00010217
-e0
-07
-RAX: 0000000000000000 RBX: 00007ffe727cd8c0 RCX: 0000000000473990
-83
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007ffe727cd790
-c0
-RBP: 0000000000001eb0 R08: 0000000000000001 R09: 00000000024e2880
-03
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000001eb0
-38 d0
-R13: 00000000000233be R14: 00007ffe727cd8e8 R15: 0000000000000003
-7c
+-------8<--------------------------------------------------------
+[PATCH -next 3/2] fs/epoll: robustify irq safety with  lockdep_assert_irqs_enabled()
 
-08
-Allocated by task 4466:
-84
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-d2
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-0f
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-85
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  __d_alloc+0xc8/0xd50 fs/dcache.c:1616
-RSP: 0018:ffff8801dae07850 EFLAGS: 00010002
-  d_alloc_pseudo+0x1d/0x30 fs/dcache.c:1744
-  create_pipe_files+0x42c/0x950 fs/pipe.c:753
-RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff8158c5a9
-  __do_pipe_flags+0x45/0x250 fs/pipe.c:802
-RDX: 0000000000010000 RSI: ffffffff816a4140 RDI: ffff8801b688e3d0
-  do_pipe2+0x9d/0x310 fs/pipe.c:850
-RBP: ffff8801dae07990 R08: ffff8801dae07968 R09: fffffbfff02be35c
-  __do_sys_pipe fs/pipe.c:873 [inline]
-  __se_sys_pipe fs/pipe.c:871 [inline]
-  __x64_sys_pipe+0x33/0x40 fs/pipe.c:871
-R10: fffffbfff02be35d R11: ffffffff815f1aeb R12: ffff8801b688d730
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-R13: 0000000000000010 R14: ffffed003b5c0f15 R15: dffffc0000000000
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-FS:  00000000024e2880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+Sprinkle lockdep_assert_irqs_enabled() checks in the functions that
+do not save and restore interrupts when dealing with the ep->wq.lock.
+These are ep_scan_ready_list() and those called by epoll_ctl():
+ep_insert, ep_modify and ep_remove.
 
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8e1116ce78 CR3: 00000001c4e12000 CR4: 00000000001406f0
-Freed by task 0:
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-(stack is not available)
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
-
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/eventpoll.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 1b1abc461fc0..97b9b73dfec8 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -670,6 +670,9 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
+ 	struct epitem *epi, *nepi;
+ 	LIST_HEAD(txlist);
+ 
++	/* must not be called with irqs off */
++	lockdep_assert_irqs_enabled();
++
+ 	/*
+ 	 * We need to lock this because we could be hit by
+ 	 * eventpoll_release_file() and epoll_ctl().
+@@ -764,6 +767,9 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+ {
+ 	struct file *file = epi->ffd.file;
+ 
++	/* must not be called with irqs off */
++	lockdep_assert_irqs_enabled();
++
+ 	/*
+ 	 * Removes poll wait queue hooks.
+ 	 */
+@@ -1412,6 +1418,9 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+ 	struct epitem *epi;
+ 	struct ep_pqueue epq;
+ 
++	/* must not be called with irqs off */
++	lockdep_assert_irqs_enabled();
++
+ 	user_watches = atomic_long_read(&ep->user->epoll_watches);
+ 	if (unlikely(user_watches >= max_user_watches))
+ 		return -ENOSPC;
+@@ -1540,6 +1549,9 @@ static int ep_modify(struct eventpoll *ep, struct epitem *epi,
+ 	int pwake = 0;
+ 	poll_table pt;
+ 
++	/* must not be called with irqs off */
++	lockdep_assert_irqs_enabled();
++
+ 	init_poll_funcptr(&pt, NULL);
+ 
+ 	/*
+-- 
+2.16.4
+
