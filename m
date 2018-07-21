@@ -6,334 +6,66 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F89ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB807ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06F7D2084A
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:44:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06F7D2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 607D12084A
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:45:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607D12084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbeGUHfu (ORCPT
+        id S1727630AbeGUHgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 03:35:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42512 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726905AbeGUHfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 03:35:50 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 989BA207AD; Sat, 21 Jul 2018 08:44:12 +0200 (CEST)
-Received: from bbrezillon (unknown [37.173.220.171])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B48022072F;
-        Sat, 21 Jul 2018 08:44:09 +0200 (CEST)
-Date:   Sat, 21 Jul 2018 08:44:08 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Han Xu <han.xu@nxp.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Xiaolei Li <xiaolei.li@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 03/35] mtd: rawnand: davinci: convert driver to
- nand_scan()
-Message-ID: <20180721084408.1d32d5b7@bbrezillon>
-In-Reply-To: <20180720151527.16038-4-miquel.raynal@bootlin.com>
-References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
-        <20180720151527.16038-4-miquel.raynal@bootlin.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sat, 21 Jul 2018 03:36:52 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:60426 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbeGUHgv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 03:36:51 -0400
+Received: from localhost (unknown [172.58.43.202])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1CF1C11AEC845;
+        Fri, 20 Jul 2018 23:45:15 -0700 (PDT)
+Date:   Fri, 20 Jul 2018 23:45:13 -0700 (PDT)
+Message-Id: <20180720.234513.1918064468930334448.davem@davemloft.net>
+To:     tyhicks@canonical.com
+Cc:     gregkh@linuxfoundation.org, tj@kernel.org,
+        stephen@networkplumber.org, dmitry.torokhov@gmail.com,
+        ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, bridge@lists.linux-foundation.org,
+        containers@lists.linux-foundation.org
+Subject: Re: [PATCH net-next v3 0/8] Make /sys/class/net per net namespace
+ objects belong to container
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
+References: <1532123814-1109-1-git-send-email-tyhicks@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 20 Jul 2018 23:45:16 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 17:14:55 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+From: Tyler Hicks <tyhicks@canonical.com>
+Date: Fri, 20 Jul 2018 21:56:46 +0000
 
-> Two helpers have been added to the core to make ECC-related
-> configuration between the detection phase and the final NAND scan. Use
-> these hooks and convert the driver to just use nand_scan() instead of
-> both nand_scan_ident() and nand_scan_tail().
+> This is a revival of an older patch set from Dmitry Torokhov:
 > 
-> Also change the unused "struct device *dev" parameter of the driver
-> structure into a platform device to reuse it in the ->attach_chip()
-> hook.
+>  https://lore.kernel.org/lkml/1471386795-32918-1-git-send-email-dmitry.torokhov@gmail.com/
 > 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/mtd/nand/raw/davinci_nand.c | 195 +++++++++++++++++++-----------------
->  1 file changed, 102 insertions(+), 93 deletions(-)
+> My submission of v2 is here:
 > 
-> diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-> index 626c9363e460..40145e206a6b 100644
-> --- a/drivers/mtd/nand/raw/davinci_nand.c
-> +++ b/drivers/mtd/nand/raw/davinci_nand.c
-> @@ -53,7 +53,7 @@
->  struct davinci_nand_info {
->  	struct nand_chip	chip;
->  
-> -	struct device		*dev;
-> +	struct platform_device	*pdev;
+>  https://lore.kernel.org/lkml/1531497949-1766-1-git-send-email-tyhicks@canonical.com/
+> 
+> Here's Dmitry's description:
+ ...
+> * Changes since v2:
+ ...
 
-For the record, there's a to_platform_device() macro you can use to get
-a platform_device object from a device one, so this change was not
-really needed. Actually, you should not even need a ->dev field here
-because it can be retrieved from mtd->dev.parent. Anyway, if you
-patched all places using davinci->dev to now use &davinci->pdev->dev
-we should be good.
-
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
->  
->  	bool			is_readmode;
->  
-> @@ -605,6 +605,104 @@ static struct davinci_nand_pdata
->  }
->  #endif
->  
-> +static int davinci_nand_attach_chip(struct nand_chip *chip)
-> +{
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	struct davinci_nand_info *info = to_davinci_nand(mtd);
-> +	struct davinci_nand_pdata *pdata = nand_davinci_get_pdata(info->pdev);
-> +	int ret = 0;
-> +
-> +	if (IS_ERR(pdata))
-> +		return PTR_ERR(pdata);
-> +
-> +	switch (info->chip.ecc.mode) {
-> +	case NAND_ECC_NONE:
-> +		pdata->ecc_bits = 0;
-> +		break;
-> +	case NAND_ECC_SOFT:
-> +		pdata->ecc_bits = 0;
-> +		/*
-> +		 * This driver expects Hamming based ECC when ecc_mode is set
-> +		 * to NAND_ECC_SOFT. Force ecc.algo to NAND_ECC_HAMMING to
-> +		 * avoid adding an extra ->ecc_algo field to
-> +		 * davinci_nand_pdata.
-> +		 */
-> +		info->chip.ecc.algo = NAND_ECC_HAMMING;
-> +		break;
-> +	case NAND_ECC_HW:
-> +		if (pdata->ecc_bits == 4) {
-> +			/*
-> +			 * No sanity checks:  CPUs must support this,
-> +			 * and the chips may not use NAND_BUSWIDTH_16.
-> +			 */
-> +
-> +			/* No sharing 4-bit hardware between chipselects yet */
-> +			spin_lock_irq(&davinci_nand_lock);
-> +			if (ecc4_busy)
-> +				ret = -EBUSY;
-> +			else
-> +				ecc4_busy = true;
-> +			spin_unlock_irq(&davinci_nand_lock);
-> +
-> +			if (ret == -EBUSY)
-> +				return ret;
-> +
-> +			info->chip.ecc.calculate = nand_davinci_calculate_4bit;
-> +			info->chip.ecc.correct = nand_davinci_correct_4bit;
-> +			info->chip.ecc.hwctl = nand_davinci_hwctl_4bit;
-> +			info->chip.ecc.bytes = 10;
-> +			info->chip.ecc.options = NAND_ECC_GENERIC_ERASED_CHECK;
-> +			info->chip.ecc.algo = NAND_ECC_BCH;
-> +		} else {
-> +			/* 1bit ecc hamming */
-> +			info->chip.ecc.calculate = nand_davinci_calculate_1bit;
-> +			info->chip.ecc.correct = nand_davinci_correct_1bit;
-> +			info->chip.ecc.hwctl = nand_davinci_hwctl_1bit;
-> +			info->chip.ecc.bytes = 3;
-> +			info->chip.ecc.algo = NAND_ECC_HAMMING;
-> +		}
-> +		info->chip.ecc.size = 512;
-> +		info->chip.ecc.strength = pdata->ecc_bits;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	/*
-> +	 * Update ECC layout if needed ... for 1-bit HW ECC, the default
-> +	 * is OK, but it allocates 6 bytes when only 3 are needed (for
-> +	 * each 512 bytes).  For the 4-bit HW ECC, that default is not
-> +	 * usable:  10 bytes are needed, not 6.
-> +	 */
-> +	if (pdata->ecc_bits == 4) {
-> +		int chunks = mtd->writesize / 512;
-> +
-> +		if (!chunks || mtd->oobsize < 16) {
-> +			dev_dbg(&info->pdev->dev, "too small\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		/* For small page chips, preserve the manufacturer's
-> +		 * badblock marking data ... and make sure a flash BBT
-> +		 * table marker fits in the free bytes.
-> +		 */
-> +		if (chunks == 1) {
-> +			mtd_set_ooblayout(mtd, &hwecc4_small_ooblayout_ops);
-> +		} else if (chunks == 4 || chunks == 8) {
-> +			mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
-> +			info->chip.ecc.mode = NAND_ECC_HW_OOB_FIRST;
-> +		} else {
-> +			return -EIO;
-> +		}
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct nand_controller_ops davinci_nand_controller_ops = {
-> +	.attach_chip = davinci_nand_attach_chip,
-> +};
-> +
->  static int nand_davinci_probe(struct platform_device *pdev)
->  {
->  	struct davinci_nand_pdata	*pdata;
-> @@ -658,7 +756,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
->  		return -EADDRNOTAVAIL;
->  	}
->  
-> -	info->dev		= &pdev->dev;
-> +	info->pdev		= pdev;
->  	info->base		= base;
->  	info->vaddr		= vaddr;
->  
-> @@ -708,97 +806,13 @@ static int nand_davinci_probe(struct platform_device *pdev)
->  	spin_unlock_irq(&davinci_nand_lock);
->  
->  	/* Scan to find existence of the device(s) */
-> -	ret = nand_scan_ident(mtd, pdata->mask_chipsel ? 2 : 1, NULL);
-> +	info->chip.dummy_controller.ops = &davinci_nand_controller_ops;
-> +	ret = nand_scan(mtd, pdata->mask_chipsel ? 2 : 1);
->  	if (ret < 0) {
->  		dev_dbg(&pdev->dev, "no NAND chip(s) found\n");
->  		return ret;
->  	}
->  
-> -	switch (info->chip.ecc.mode) {
-> -	case NAND_ECC_NONE:
-> -		pdata->ecc_bits = 0;
-> -		break;
-> -	case NAND_ECC_SOFT:
-> -		pdata->ecc_bits = 0;
-> -		/*
-> -		 * This driver expects Hamming based ECC when ecc_mode is set
-> -		 * to NAND_ECC_SOFT. Force ecc.algo to NAND_ECC_HAMMING to
-> -		 * avoid adding an extra ->ecc_algo field to
-> -		 * davinci_nand_pdata.
-> -		 */
-> -		info->chip.ecc.algo = NAND_ECC_HAMMING;
-> -		break;
-> -	case NAND_ECC_HW:
-> -		if (pdata->ecc_bits == 4) {
-> -			/* No sanity checks:  CPUs must support this,
-> -			 * and the chips may not use NAND_BUSWIDTH_16.
-> -			 */
-> -
-> -			/* No sharing 4-bit hardware between chipselects yet */
-> -			spin_lock_irq(&davinci_nand_lock);
-> -			if (ecc4_busy)
-> -				ret = -EBUSY;
-> -			else
-> -				ecc4_busy = true;
-> -			spin_unlock_irq(&davinci_nand_lock);
-> -
-> -			if (ret == -EBUSY)
-> -				return ret;
-> -
-> -			info->chip.ecc.calculate = nand_davinci_calculate_4bit;
-> -			info->chip.ecc.correct = nand_davinci_correct_4bit;
-> -			info->chip.ecc.hwctl = nand_davinci_hwctl_4bit;
-> -			info->chip.ecc.bytes = 10;
-> -			info->chip.ecc.options = NAND_ECC_GENERIC_ERASED_CHECK;
-> -			info->chip.ecc.algo = NAND_ECC_BCH;
-> -		} else {
-> -			/* 1bit ecc hamming */
-> -			info->chip.ecc.calculate = nand_davinci_calculate_1bit;
-> -			info->chip.ecc.correct = nand_davinci_correct_1bit;
-> -			info->chip.ecc.hwctl = nand_davinci_hwctl_1bit;
-> -			info->chip.ecc.bytes = 3;
-> -			info->chip.ecc.algo = NAND_ECC_HAMMING;
-> -		}
-> -		info->chip.ecc.size = 512;
-> -		info->chip.ecc.strength = pdata->ecc_bits;
-> -		break;
-> -	default:
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* Update ECC layout if needed ... for 1-bit HW ECC, the default
-> -	 * is OK, but it allocates 6 bytes when only 3 are needed (for
-> -	 * each 512 bytes).  For the 4-bit HW ECC, that default is not
-> -	 * usable:  10 bytes are needed, not 6.
-> -	 */
-> -	if (pdata->ecc_bits == 4) {
-> -		int	chunks = mtd->writesize / 512;
-> -
-> -		if (!chunks || mtd->oobsize < 16) {
-> -			dev_dbg(&pdev->dev, "too small\n");
-> -			ret = -EINVAL;
-> -			goto err;
-> -		}
-> -
-> -		/* For small page chips, preserve the manufacturer's
-> -		 * badblock marking data ... and make sure a flash BBT
-> -		 * table marker fits in the free bytes.
-> -		 */
-> -		if (chunks == 1) {
-> -			mtd_set_ooblayout(mtd, &hwecc4_small_ooblayout_ops);
-> -		} else if (chunks == 4 || chunks == 8) {
-> -			mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
-> -			info->chip.ecc.mode = NAND_ECC_HW_OOB_FIRST;
-> -		} else {
-> -			ret = -EIO;
-> -			goto err;
-> -		}
-> -	}
-> -
-> -	ret = nand_scan_tail(mtd);
-> -	if (ret < 0)
-> -		goto err;
-> -
->  	if (pdata->parts)
->  		ret = mtd_device_register(mtd, pdata->parts, pdata->nr_parts);
->  	else
-> @@ -815,11 +829,6 @@ static int nand_davinci_probe(struct platform_device *pdev)
->  err_cleanup_nand:
->  	nand_cleanup(&info->chip);
->  
-> -err:
-> -	spin_lock_irq(&davinci_nand_lock);
-> -	if (info->chip.ecc.mode == NAND_ECC_HW_SYNDROME)
-> -		ecc4_busy = false;
-> -	spin_unlock_irq(&davinci_nand_lock);
->  	return ret;
->  }
->  
-
+Series applied, let's see how the build goes this time :-)
