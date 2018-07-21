@@ -2,122 +2,105 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB26ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF37BECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C9FB20856
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:38:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C9FB20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
+	by mail.kernel.org (Postfix) with ESMTP id 667F320864
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:46:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ue9RRV+e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 667F320864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbeGUWdH (ORCPT
+        id S1728221AbeGUWkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 18:33:07 -0400
-Received: from tartarus.angband.pl ([89.206.35.136]:45782 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728012AbeGUWdH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 18:33:07 -0400
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1fgzaN-0002Qh-5T; Sat, 21 Jul 2018 23:38:43 +0200
-Date:   Sat, 21 Jul 2018 23:38:43 +0200
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jslaby@suse.com>, linux-console@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] vt: no blinking on console, 256/24-bit color
- improvements
-Message-ID: <20180721213843.wkculy5cdrrbmuij@angband.pl>
-References: <20180718030152.kdq53mwpdfusvwl5@angband.pl>
- <20180721074319.GA30454@kroah.com>
+        Sat, 21 Jul 2018 18:40:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728166AbeGUWkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 18:40:13 -0400
+Received: from mail-wm0-f42.google.com (mail-wm0-f42.google.com [74.125.82.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF5AC20875
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 21:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532209561;
+        bh=MPio0gvhtelbCQvqD7OQBz7v7atJ027Vg/wNk1Jm/FM=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Ue9RRV+ezeDN0VUS+mOulHucy33gHs3Z1PXdXXimGwOKWanKahdKfNEdFWwbK8eee
+         98UThJnhWGG+tTO6yHDfdhwNnZGqAstlLR4UTm87om0ExWn6LJN9E+tUd0Owlr6T8k
+         /CtgZ9RvvhvomuNUcfi+82GNtnBL7X5G4aGUVSmo=
+Received: by mail-wm0-f42.google.com with SMTP id l2-v6so6792305wme.1
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 14:46:00 -0700 (PDT)
+X-Gm-Message-State: AOUpUlE6EYXnxMvsqV3bkxHrln5k3bnfAyAqFTeimIwahLBsMn+clZtD
+        CZXul+8TSVHLB5Kixmrd/SHF20CrlJlWNIXy1++KGA==
+X-Google-Smtp-Source: AAOMgpcJtSg5dF6SWzAa8O+GkZR9vAzAxms0vQE+d0VAkjO50fbi7PklEYlu2x8vew2umiK87LLVxKgewR8KPcGejog=
+X-Received: by 2002:a1c:8b0d:: with SMTP id n13-v6mr3970179wmd.46.1532209559270;
+ Sat, 21 Jul 2018 14:45:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180721074319.GA30454@kroah.com>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Sat, 21 Jul 2018 14:45:38
+ -0700 (PDT)
+In-Reply-To: <20180721194909.23903-1-m.v.b@runbox.com>
+References: <20180721194909.23903-1-m.v.b@runbox.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sat, 21 Jul 2018 14:45:38 -0700
+X-Gmail-Original-Message-ID: <CALCETrX435cC7Hi2aTLVrBecZEEeJ3_TgQnTwbObNrt9MKvFzg@mail.gmail.com>
+Message-ID: <CALCETrX435cC7Hi2aTLVrBecZEEeJ3_TgQnTwbObNrt9MKvFzg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] x86/entry/64: Do not clear %rbx under Xen
+To:     "M. Vefa Bicakci" <m.v.b@runbox.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, X86 ML <x86@kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 21, 2018 at 09:43:19AM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jul 18, 2018 at 05:01:52AM +0200, Adam Borowski wrote:
-> > Here's a patchset with two entangled improvements:
-> > 
-> > * it'd be good to get rid of blinking where possible.  Even CGA (thus VGA)
-> >   allows disabling it, rendering such characters with a bright background
-> >   instead.
-> > * due to my error, 256-color mode uses a much darker palette for conversion,
-> >   resulting in behaving inconsistently with 24-bit mode.
-> > 
-> > The new code uses bright backgrounds when possible, enabled with \e[100m or
-> > \e[48;m.
-> > 
-> > Despite the whole idea following a VGA capability, this patchset doesn't
-> > change vgacon yet, just fbcon.  [Not breaking nvidia-proprietary.]
-> > 
-> > Thus, let's enable unblinking on fbcon for now.  We can flip that bit (in
-> > register 0x10) later.
-> > 
-> > This fixes the display of catimg and similar tools.
-> 
-> I've applied the first patch, as it was obvious :)
-> 
-> For the rest, can you make it a config option as Alan said?  And I
-> agree, we don't care about breaking nvidia systems, go ahead :)
+On Sat, Jul 21, 2018 at 12:49 PM, M. Vefa Bicakci <m.v.b@runbox.com> wrote:
+> Commit 3ac6d8c787b8 ("x86/entry/64: Clear registers for
+> exceptions/interrupts, to reduce speculation attack surface") unintendedly
+> broke Xen PV virtual machines by clearing the %rbx register at the end of
+> xen_failsafe_callback before the latter jumps to error_exit.
+> error_exit expects the %rbx register to be a flag indicating whether
+> there should be a return to kernel mode.
+>
+> This commit makes sure that the %rbx register is not cleared by
+> the PUSH_AND_CLEAR_REGS macro, when the macro in question is instantiated
+> by xen_failsafe_callback, to avoid the issue.
 
-The only thing such an option would be able to set is disabling blinking on
-vgacon, which is not yet implemented.  fbcon never blinks, and the only case
-it can't display bright background is 1-bit black&white.
+Seems like a genuine problem, but:
 
-I probably should change the line in fbcon:
-+       vc->vc_unblinking = vc->vc_can_do_color;
-to always use 1, but it doesn't matter either way.  Only difference would be
-matching the variable name ("unblinking" vs "shows_bright_bg").
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index c7449f377a77..96e8ff34129e 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -1129,7 +1129,7 @@ ENTRY(xen_failsafe_callback)
+>         addq    $0x30, %rsp
+>         UNWIND_HINT_IRET_REGS
+>         pushq   $-1 /* orig_ax = -1 => not a system call */
+> -       PUSH_AND_CLEAR_REGS
+> +       PUSH_AND_CLEAR_REGS clear_rbx=0
+>         ENCODE_FRAME_POINTER
+>         jmp     error_exit
 
-Console drivers can interpret that bit of attribute as:
-* blinking (vc_unblinking = 0)
-* bright background (vc_unblinking = 1)
-* neither (result is ignored down the pipeline)
+The old code first set RBX to zero then, if frame pointers are on,
+sets it to some special non-zero value, then crosses its fingers and
+hopes for the best.  Your patched code just skips the zeroing part, so
+RBX either contains the ENCODE_FRAME_POINTER result or is
+uninitialized.
 
-The matrix is:
-                color                                     b&w
--------+-------------------------------------------+--------------
-fb            bright bg                                 neither
-mda              N/A                                     blink
-newport      ?bright bg?                                 ?N/A?
-sti           ?neither?                                    ?
-vga      CGA/VGA: hardware switch (write to port)      MDA: blink
-sisusb            ?                                        ?
-
-Technically, every console can be made to blink by drawing/clearing affected
-characters a few times per second, but that'd be quite a waste of coding
-time and kernel size.  There's a reason browsers dropped support for <blink>
-and text-decoration:blink.
-
-This patchset doesn't drop blink in any case that was supported before,
-though.  I did the easy part used by most people first (fbcon), so it can be
-reviewed/merged.  Doing the hard part is quite pointless if this is NAKed
-(but obviously doesn't require actual merging).
-
-But perhaps by "option" you mean letting the user drop blink with no
-replacement, which might also be a good idea if configurable?
-
-
-Meow!
--- 
-// If you believe in so-called "intellectual property", please immediately
-// cease using counterfeit alphabets.  Instead, contact the nearest temple
-// of Amon, whose priests will provide you with scribal services for all
-// your writing needs, for Reasonable And Non-Discriminatory prices.
+How about actually initializing rbx to something sensible like, say, 1?
