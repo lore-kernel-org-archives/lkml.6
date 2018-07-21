@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9FAECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A825BECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F6C20863
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6735220858
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:58:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwZBZ39k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F6C20863
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u9GJIdrT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6735220858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728906AbeGUTvw (ORCPT
+        id S1729168AbeGUTvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 15:51:52 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35830 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728655AbeGUTvw (ORCPT
+        Sat, 21 Jul 2018 15:51:54 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34368 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727805AbeGUTvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 15:51:52 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o18-v6so1257778wmc.0
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 11:58:08 -0700 (PDT)
+        Sat, 21 Jul 2018 15:51:53 -0400
+Received: by mail-wm0-f66.google.com with SMTP id l2-v6so6616494wme.1
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 11:58:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=i5R3yVBHLMT3fAeREpweUC4g0rJRSCT474DZnOgKO7U=;
-        b=PwZBZ39kqJB/xjJCF2gRLUivqHM1lr1CxD8fLegvZwjualmsloed01L7PZrIR1gmsL
-         HatNk99+6I8VRHZh3PDtaCYnTC5uoZToKiyfHznHCtvk83NqfhNE10HL+gS+87efKz13
-         8uF0F4BwrqMaS9wsGqY20oOb9YqCMKFbsqu6JC0bflrjfG/Awpn3p8RChCQa6Cthy3hh
-         akbx+nncPQNZRZVHKJttao/BWcIX+5AEw3wc/xfpX11QeW0YbTrLwYA4RwDnKPg8Kr3u
-         KYXAtAbFxtfHj0f4Wo43afemTHw3/EURP2HKEUmnNEKYJksNZeY9cIPC8aOC//bW+olf
-         KdJw==
+        bh=/QvfMCMYoAagGCxMdaJGnRMG8z8eJJLlF+y+bfCmX1w=;
+        b=u9GJIdrTUy+0joKxtGT8Wr9mK3z6t5mU+OWVNCVc0rWReQxYyoFAVPrXXPcaRbJBfq
+         gfFlWSOoksLY7tHvdcZPhF412saV/J/lhN2kdi0hVzIgMLQfhLx674jGnqmMsTZIDyBl
+         BCCZUxe31d6yZPFMLXtVr5GNlG/nM/SzJCQr2KvPqT/ggSblv9OLPKyhltZxNTRDzPaB
+         +3gSzOT3VztMz/5DxwBKl4nTi79o6RZ4L6pERL6xA6Ly6VFBzxW043e9BFURR879V+yE
+         dsrZz8020Vo1GbyKr5Xb5yitolyA3cUgNnMRffxw8ox6fVxBaR1R0O23H4wxRPMn66OR
+         nzwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=i5R3yVBHLMT3fAeREpweUC4g0rJRSCT474DZnOgKO7U=;
-        b=B48HYxUf+wTz6cqW72c2pDcnSQXGc+YLZDBFesIaJrxbGoaKzANHiGq33mNAY8Tx9Z
-         EiTdYebElDuHM8SrPso+G2fGJXexs+/O5gM31ic719eawMGMHXNfZbZcdJrhGGA/3FWw
-         KfhZCsuP/V1Ojo8/nJ0K8hkD0rsxKoOZ8XqqHxfo43gWbIJKXV+GJj0GMRktOJrTFmZW
-         qfglkPNlnBqn0MGj7cic+PdcYregSBfnZUqFiJsvYPRL/lxCQZpWX604/pbvTiLOXYDZ
-         Ni6NCFq+XB6lvZkHjz8uRGMi5WEk4LdisEW85mW4PeIe1qS4Sk0cInsfPkB9z4vaqE6g
-         /b5g==
-X-Gm-Message-State: AOUpUlGVzaQnCkqHWV2urXtEKplfOuEHht9fLiqG+tizDrXw4knKRnYO
-        rfAPkgbeyWh7kBChlpA3ezo4QXpa
-X-Google-Smtp-Source: AAOMgpfUqk1MisNgNmCTZrz4FEbiz5j3W+aXd6QRg2pb8IRc+PeLR4L0p4YqymGq3mjr/3Cao/+cBA==
-X-Received: by 2002:a1c:c019:: with SMTP id q25-v6mr4047634wmf.148.1532199487450;
-        Sat, 21 Jul 2018 11:58:07 -0700 (PDT)
+        bh=/QvfMCMYoAagGCxMdaJGnRMG8z8eJJLlF+y+bfCmX1w=;
+        b=UVsIinD8O9NhOGB7xQRNz38EuH/BGrQBdcVMN2lq+FJ/DnRMuqY1wHgbaZoZ833qFm
+         qVdO32N7eMpmak+eYGad5UxCEQwD1x7IpwlIZd6AQieGLho5Z7J6vRNh6u6Cv7w04EJv
+         UkzZTZbxcPQBBUXAqOYuklWYz+WhD7/2aGkUyulqey2mE93ZLCBi0uuqeT9JQs+06FI3
+         ZQMSJMVnkD8LwqBxVuq6Y+A98VVS/7j74xFpeNLEF/xLtls9Cu+c8fHLPIie4DAAy0nn
+         GcOrVRNgU89ym+cnMF2vAaPe0pxJgGkxHinko6LU4ml95tTUMhOcB4W5caB2QyxbAttZ
+         eC9A==
+X-Gm-Message-State: AOUpUlGcOaAIkwxL836J/clGA7a5+Bee6rBGxYXIH9ve9qwBi76asI3D
+        9WhjnkUtHf/VbQurOou+2GQ=
+X-Google-Smtp-Source: AAOMgpdFNFOkQY5/TyjMq3nG2Wp4Sm5Fx6MJnAocnuf5WciNem8rzt/33saBnnrmJxfsXsmXy+0vCQ==
+X-Received: by 2002:a1c:93d2:: with SMTP id v201-v6mr3995314wmd.77.1532199488981;
+        Sat, 21 Jul 2018 11:58:08 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:34d9:1402:6a14:c45d])
-        by smtp.gmail.com with ESMTPSA id w24-v6sm3657899wmc.15.2018.07.21.11.58.06
+        by smtp.gmail.com with ESMTPSA id w24-v6sm3657899wmc.15.2018.07.21.11.58.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 11:58:06 -0700 (PDT)
+        Sat, 21 Jul 2018 11:58:08 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 6/8] staging: rtl8188eu: remove unnecessary parentheses
-Date:   Sat, 21 Jul 2018 20:57:40 +0200
-Message-Id: <20180721185742.7496-6-straube.linux@gmail.com>
+Subject: [PATCH 7/8] staging: rtl8188eu: replace tabs with spaces
+Date:   Sat, 21 Jul 2018 20:57:41 +0200
+Message-Id: <20180721185742.7496-7-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180721185742.7496-1-straube.linux@gmail.com>
 References: <20180721185742.7496-1-straube.linux@gmail.com>
@@ -73,54 +73,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary parentheses.
+Replace tabs with spaces or just remove tabs where appropriate.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- .../staging/rtl8188eu/core/rtw_ieee80211.c    | 20 +++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_ieee80211.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-index 9db19724f168..1259cfd8098d 100644
+index 1259cfd8098d..7d5cbaf50f1c 100644
 --- a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
 +++ b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-@@ -40,18 +40,18 @@ u8 RSN_CIPHER_SUITE_WEP104[] = { 0x00, 0x0f, 0xac, 5 };
+@@ -39,14 +39,14 @@ u8 RSN_CIPHER_SUITE_WEP104[] = { 0x00, 0x0f, 0xac, 5 };
+ /*  for adhoc-master to generate ie and provide supported-rate to fw */
  /*  */
  
- static u8	WIFI_CCKRATES[] = {
--	(IEEE80211_CCK_RATE_1MB | IEEE80211_BASIC_RATE_MASK),
--	(IEEE80211_CCK_RATE_2MB | IEEE80211_BASIC_RATE_MASK),
--	(IEEE80211_CCK_RATE_5MB | IEEE80211_BASIC_RATE_MASK),
--	(IEEE80211_CCK_RATE_11MB | IEEE80211_BASIC_RATE_MASK)
-+	IEEE80211_CCK_RATE_1MB | IEEE80211_BASIC_RATE_MASK,
-+	IEEE80211_CCK_RATE_2MB | IEEE80211_BASIC_RATE_MASK,
-+	IEEE80211_CCK_RATE_5MB | IEEE80211_BASIC_RATE_MASK,
-+	IEEE80211_CCK_RATE_11MB | IEEE80211_BASIC_RATE_MASK
- 	};
+-static u8	WIFI_CCKRATES[] = {
++static u8 WIFI_CCKRATES[] = {
+ 	IEEE80211_CCK_RATE_1MB | IEEE80211_BASIC_RATE_MASK,
+ 	IEEE80211_CCK_RATE_2MB | IEEE80211_BASIC_RATE_MASK,
+ 	IEEE80211_CCK_RATE_5MB | IEEE80211_BASIC_RATE_MASK,
+ 	IEEE80211_CCK_RATE_11MB | IEEE80211_BASIC_RATE_MASK
+-	};
++};
  
- static u8	WIFI_OFDMRATES[] = {
--	 (IEEE80211_OFDM_RATE_6MB),
--	 (IEEE80211_OFDM_RATE_9MB),
--	 (IEEE80211_OFDM_RATE_12MB),
--	 (IEEE80211_OFDM_RATE_18MB),
--	 (IEEE80211_OFDM_RATE_24MB),
-+	 IEEE80211_OFDM_RATE_6MB,
-+	 IEEE80211_OFDM_RATE_9MB,
-+	 IEEE80211_OFDM_RATE_12MB,
-+	 IEEE80211_OFDM_RATE_18MB,
-+	 IEEE80211_OFDM_RATE_24MB,
+-static u8	WIFI_OFDMRATES[] = {
++static u8 WIFI_OFDMRATES[] = {
+ 	 IEEE80211_OFDM_RATE_6MB,
+ 	 IEEE80211_OFDM_RATE_9MB,
+ 	 IEEE80211_OFDM_RATE_12MB,
+@@ -55,7 +55,7 @@ static u8	WIFI_OFDMRATES[] = {
  	 IEEE80211_OFDM_RATE_36MB,
  	 IEEE80211_OFDM_RATE_48MB,
  	 IEEE80211_OFDM_RATE_54MB
-@@ -919,7 +919,7 @@ void rtw_macaddr_cfg(u8 *mac_addr)
- 		DBG_88E("MAC Address from efuse error, assign random one !!!\n");
- 	}
+-	};
++};
  
--	DBG_88E("%s MAC Address  = %pM\n", __func__, (mac_addr));
-+	DBG_88E("%s MAC Address  = %pM\n", __func__, mac_addr);
- }
+ int rtw_get_bit_value_from_ieee_value(u8 val)
+ {
+@@ -492,7 +492,7 @@ int rtw_get_sec_ie(u8 *in_ie, uint in_len, u8 *rsn_ie, u16 *rsn_len, u8 *wpa_ie,
+ {
+ 	u8 authmode, sec_idx, i;
+ 	u8 wpa_oui[4] = {0x0, 0x50, 0xf2, 0x01};
+-	uint	cnt;
++	uint cnt;
  
- static int rtw_get_cipher_info(struct wlan_network *pnetwork)
+ 	/* Search required WPA or WPA2 IE and copy to sec_ie[] */
+ 
+@@ -970,7 +970,7 @@ void rtw_get_bcn_info(struct wlan_network *pnetwork)
+ 	u16 wpa_len = 0, rsn_len = 0;
+ 	struct HT_info_element *pht_info = NULL;
+ 	uint len;
+-	unsigned char		*p;
++	unsigned char *p;
+ 
+ 	memcpy(&le_tmp, rtw_get_capability_from_ie(pnetwork->network.ies), 2);
+ 	cap = le16_to_cpu(le_tmp);
 -- 
 2.18.0
 
