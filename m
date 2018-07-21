@@ -6,83 +6,84 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2651ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 22:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F31ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 22:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A3D52086A
+	by mail.kernel.org (Postfix) with ESMTP id D16272086D
 	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 22:24:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="gstTR8cK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A3D52086A
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Pz+BmLqs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16272086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbeGUXS7 (ORCPT
+        id S1728511AbeGUXTE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 19:18:59 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40498 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727974AbeGUXS7 (ORCPT
+        Sat, 21 Jul 2018 19:19:04 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40431 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727974AbeGUXTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 19:18:59 -0400
-Received: by mail-lf1-f67.google.com with SMTP id y200-v6so4005998lfd.7
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 15:24:40 -0700 (PDT)
+        Sat, 21 Jul 2018 19:19:04 -0400
+Received: by mail-lj1-f193.google.com with SMTP id j19-v6so13878458ljc.7
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 15:24:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=qrKuTIMMg25n5Bq7wz8lgYOEENingMXIGNHZaIrAab4=;
-        b=gstTR8cKokjM/zL178po2KLaPfOg3+nN3G2Ux/m6Q9wyo5sxZEBsOxRPvW5DiMtEsR
-         B7l7tQR3Tel6YriMjKIfJMOO3U9/GqESSNKlS+uq5Tt1ogEfeiq9icGRmcR0htJmp9g8
-         arwN1bnrtIDyYPBvAjPYwA2TfMvlVBP6QU0mAZdp+VH4ptCuUeRuh6bJlC2Zh7s0Xx0I
-         sG1fqS6X+BEpg9OF5Xr61V/0U9ZDzbxffreIGcHqsck0+jeK4K61xCGzGQLSHMNI3hPm
-         KFJS72JR/LeCxx7FDRtcgiNZUVIWrksSM1wugHC+x+IoEjpciH2/Y7vEVH5HtUIH4vzd
-         a2HQ==
+        bh=0eM98ZREW8zwGXk6HGpHvPeLfLF+NJNyTNP7DRXMQM0=;
+        b=Pz+BmLqsT79aRUKdAeZ4f5tT8IL+HTzrr3O6qJO44JmZk9b2H+HM5dHefaOuwERhnQ
+         e+KSOBYn0v2zxsfiCF8vk1Ra1pmfmHPNllLGnUq7ysQVkZ8dK3A3tMrimEe37XHe09M+
+         Md3Tr00eIS7DihMzJDy3JsLTw0NL+IYPdc+ebpAmf8DB0QrTky/lFRnHEBOAZX4eAO1H
+         DQ83yf6P7EqPzU+z3eh8M8MNyRaqFeGz3RD1cukZPOICuCSFCA+FKXzA4qCA1fowtBnz
+         pNxzqR8pxCq1dCvarbl1x2+GlGm1jdddZu7gTJwYljY8DPeSzRJoqSh5pltPpo+P4T9O
+         fxVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qrKuTIMMg25n5Bq7wz8lgYOEENingMXIGNHZaIrAab4=;
-        b=pfsMHhXHoEXJNtfbIcwRy0vee98SYNOZMJCGrlrMJ7apl+76ZO3wgBURNXEGPI4YuW
-         g26Zj3bImtn9MbDWgC+zL94IbvAvcPJDOn22KgxKufEM7uvLZjEnE+Dl6JXfyAQWeDb+
-         rncBQEmdekTZ06Du0xWAooDSGXFfWVTOMFUat5TLYTZTWHvYBPOWzWJlg61c1vDGszWE
-         shpHj3HqQ3tVpq5eQ7ZOMIVmDyuC7UyWD4ChW2/epQ/Ha6TJolE1pKlNZCrt+Yo5bnTJ
-         quW2idPxAzkFKDQhvnwHh2VTnT4lSxNj4Ml9SgIf3K0E9am5ey1tp28tRVZ1YVVrtIGb
-         WB+A==
-X-Gm-Message-State: AOUpUlEaClZuukbx9pYx5k4ZyNke8fRoj75Yw7F2wmfMhPyXEKH4YXaj
-        KnGC7Ci9NQ4E0EYTfUYJS3LTN+Nl2PDwiQ==
-X-Google-Smtp-Source: AAOMgpeOuibVcxDGemne4h0cy0jK+aqkmuRebU+zdmC66louA3jrHt9p9TxU1ZEev8k2IbtS7rN/0A==
-X-Received: by 2002:a19:ef13:: with SMTP id n19-v6mr4321091lfh.48.1532211879176;
-        Sat, 21 Jul 2018 15:24:39 -0700 (PDT)
+        bh=0eM98ZREW8zwGXk6HGpHvPeLfLF+NJNyTNP7DRXMQM0=;
+        b=paBRcQW1/dKGgeOX33rCOD6BMu3cXtH4s+fIjpNwE3qnbf/EpqpkGWpjgyD3VFt8LZ
+         7rVjqmJ7vcv5y1Q19aw/Xby1K0ooNGUSk4ubftLVMhV7XcoTAD5l0tU64KThCfGbDM9D
+         kW9xGW+36Tb7NjvxiXgHcXk8GoliNSxmL9ZH3oNkI6ojTlZWYZGe9Eq4Earuuu6Vzzgp
+         N7aGKjr5SpJhzaK+J27r/oy81GalGB8FXCfLXBnio+cdX4F29SRbgOCNmB+b3l8auIWl
+         Ss8KJye0EUAudr/3dLzuzESLZx8JmdXwV59ir3dB0X1rLp104iW7KgzMVSd5u+WCFG7r
+         zQxg==
+X-Gm-Message-State: AOUpUlFyD/ngNa2SgMTXWg3jhsm/v9pZZj6oxkBN2DBSkIkeLNmkHn8D
+        KC+PU1tNKFA2O3aYNRSv3Aqayw==
+X-Google-Smtp-Source: AAOMgpcUSgW3peAgMtHthnP/yOFb2GUmNopKbsEnbpJuEmodBI9d4Mp3KPm4PNeReUOCWBv3CQyHqA==
+X-Received: by 2002:a2e:10ca:: with SMTP id 71-v6mr5137247ljq.59.1532211884317;
+        Sat, 21 Jul 2018 15:24:44 -0700 (PDT)
 Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id o74-v6sm798458lfg.31.2018.07.21.15.24.36
+        by smtp.gmail.com with ESMTPSA id r23-v6sm1058161ljc.15.2018.07.21.15.24.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 15:24:37 -0700 (PDT)
-Date:   Sat, 21 Jul 2018 14:24:30 -0700
+        Sat, 21 Jul 2018 15:24:43 -0700 (PDT)
+Date:   Sat, 21 Jul 2018 14:26:26 -0700
 From:   Olof Johansson <olof@lixom.net>
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     arm-soc <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL 3/3] ARM: uniphier: UniPhier SoC updates for v4.19
-Message-ID: <20180721212430.odjwcusbbihffo6l@localhost>
-References: <CAK7LNAShLhWqCRR8RfuJ0xBJAFoj-S6WLcSdh9QShg8dGfq9RA@mail.gmail.com>
+Subject: Re: [GIT PULL 1/3] ARM: dts: uniphier: UniPhier DT updates for v4.19
+Message-ID: <20180721212626.p3vth4xry46tlsfg@localhost>
+References: <CAK7LNASA08wMtQaEfZy66u-EubV7X-u+z6KcTrtq_yXzWyzPvw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNAShLhWqCRR8RfuJ0xBJAFoj-S6WLcSdh9QShg8dGfq9RA@mail.gmail.com>
+In-Reply-To: <CAK7LNASA08wMtQaEfZy66u-EubV7X-u+z6KcTrtq_yXzWyzPvw@mail.gmail.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 08:05:03AM +0900, Masahiro Yamada wrote:
+On Thu, Jul 19, 2018 at 08:01:06AM +0900, Masahiro Yamada wrote:
 > Hi Arnd, Olof,
 > 
-> Please pull UniPhier SoC changes for the v4.19 MW.
+> Please pull UniPhier DT (32bit) updates for the v4.19 MW.
 > 
 > Thanks!
+> 
 > 
 > 
 > The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
@@ -92,35 +93,14 @@ On Thu, Jul 19, 2018 at 08:05:03AM +0900, Masahiro Yamada wrote:
 > are available in the git repository at:
 > 
 >   git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
-> tags/uniphier-soc-v4.19
+> tags/uniphier-dt-v4.19
 > 
-> for you to fetch changes up to ae93e694440a454609fa40725e16619c5a781768:
+> for you to fetch changes up to 38dc27c85e642cd6229f3a4b2c85128501852158:
 > 
->   ARM: uniphier: remove empty Makefile (2018-07-19 06:53:16 +0900)
-> 
-> ----------------------------------------------------------------
-> UniPhier ARM SoC updates for v4.19
-> 
-> - enable ethernet and thermal drivers from multi_v7_defconfig
-> 
-> - select RESET_CONTROLLER
-> 
-> - remove empty arch/arm/mach-uniphier/Makefile
-> 
-> ----------------------------------------------------------------
-> Kunihiko Hayashi (1):
->       ARM: multi_v7_defconfig: add CONFIG_UNIPHIER_THERMAL and CONFIG_SNI_AVE
+>   ARM: dts: uniphier: Add missing cooling device properties for CPUs
+> (2018-07-19 06:42:16 +0900)
 
-I renormalied multi_v7_defconfig for 4.18-rc3, so please base your branch
-on that to avoid conflicts.
+Merged, thanks.
 
-Also, we separate out defconfig updates to branches on their own. I can
-cherry-pick the branch apart but wanted to check with you before I do
-so in case it messes up your workflow. If it does, send a fresh pull
-request for SoC, and either one for the defconfig or just the patch and
-we can apply it directly.
-
-
-Thanks!
 
 -Olof
