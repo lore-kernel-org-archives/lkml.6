@@ -2,522 +2,186 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67FFECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 02:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F0EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 02:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68E832064D
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 02:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E2D82064D
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 02:38:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a3IXpSjM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68E832064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rTppKkpg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2D82064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeGUD2Z (ORCPT
+        id S1728189AbeGUD3A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 23:28:25 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36677 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbeGUD2Y (ORCPT
+        Fri, 20 Jul 2018 23:29:00 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35093 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727987AbeGUD3A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 23:28:24 -0400
-Received: by mail-io0-f195.google.com with SMTP id r15-v6so5180115ioa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 19:37:26 -0700 (PDT)
+        Fri, 20 Jul 2018 23:29:00 -0400
+Received: by mail-it0-f67.google.com with SMTP id q20-v6so17008455ith.0;
+        Fri, 20 Jul 2018 19:38:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=VtW09YiZOGDG97U9in/lJk2y8jjLk4O5MzZgCykHZG4=;
-        b=a3IXpSjM/2ileS221sBHnFnNs/tR5YpObY8xyBji7DtathFBrJYhsgn6j37UQG3kxV
-         6MY4LaH/Thj6WuDHMYREmq8Ri+r3rOScWtDkFIeVQGcd6BXuqNQGHFlzFozK8B92EQOH
-         lqjO9wC0o2P8p6uvvxg+P2fhXkOY/K9AKz9Rqhw7YgJdLoymb0QO8l65VjyX1J6i9qWj
-         hU/Dri8qW9kccVxDcWSiVgUVnQ6jlQ8zI8gTaewSXJwVFHTaScVLo20m2VMXQanHsbTN
-         dR0P7QXCbQHYVQaPvn5vwl/vdjb8J2eTluNprnUYWdBgM7C0+Bs7qlGQ4vWIT3Y7jlRh
-         mGSA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=S0ylOVW/ZlETUFKiI1xGMHquvLjc/Zr8wBTug3qwh0o=;
+        b=rTppKkpge/Si/yqKLhPKMbc85s/mDtQLXm2uKze+tbeQnbNYehCSYCjNX3Bnr6+ViX
+         uSVH0S4awLYtz+E1vRy3T8lk67bGZGd8BzsqVhr9WRtRADns9ajSqW4znBedjyojYVGa
+         QSWshi6n037YQMy0olBiaT8LoIvb7YTyCk+fvq2LPradCka8XLKx/x0UbQC3LPwYGNe7
+         d7TGOrTqWqfvfQDwN5OgOsRxvp43phH2g/I5sGuQjLpYVQd2ZkHmAwuqmGI9j1lNChbX
+         NhyV32R1I9anI/f68Y0NUkXWHCNVR2PMic2QgTt5gwTtW3DZPjEYJHTpkJkv1SyGbUzI
+         FmmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=VtW09YiZOGDG97U9in/lJk2y8jjLk4O5MzZgCykHZG4=;
-        b=hE0wWDRn5JjgtvQj5kdRRsGGh/lIpg4VeuUOHPnCZdHPRO42FyGw7FthkPLwfJ0eAE
-         owTGNK1PNKfNMF+rO9JmtEW6mJhEYV0O/wVrWP/RNsKuYE5Zjovtyrv3k+9Ky+v9CLMp
-         AlfmBYh/2ink9YOXPRFaJrme1Y30ldexV/XpPKIOsBX9w7FCRZTvcfhwE41IYnvxgXom
-         CY0khMeSZmGFGrFtH/+v2VLJsiQE1wSHc3WMMqDUtg4DifGUMM0l8uepLCU3N3riR11B
-         cdvPWBnYqdlDJ+/ik8J317OeCqjcIvJL+Hk/UZ+/Rr+20/8Ab/f73ZuKEj++AZlfvgcz
-         Hfsg==
-X-Gm-Message-State: AOUpUlFDlhHxW/8rNa9QcfiupU9Z4wLk56qRoo2Ys/XCOt6Z1NyBTdQS
-        k62TLFDaUugO8msVFmE47ugvZHmY2HdcErrQ8Aa4QA==
-X-Google-Smtp-Source: AAOMgpeJcca4Es7WM38RpjQAC2HGyB6t3fszXjAk0xGM2lGYlszqJrNIw5Z3hJmmqbOsiV8UDaXk2smhCmlVGhBrHss=
-X-Received: by 2002:a5e:8341:: with SMTP id y1-v6mr3263029iom.183.1532140645541;
- Fri, 20 Jul 2018 19:37:25 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=S0ylOVW/ZlETUFKiI1xGMHquvLjc/Zr8wBTug3qwh0o=;
+        b=A/s8rHkF599TZw52GXJ2XZBUu3Iju1z+ggSGFZJ7x9FUTLgVvdnSPXTqed4iiol4J4
+         wMbAGtNS7HI71L6zugP3fH9DR4SWS+qxIaxZUmmw+sXr+YytCuKdZnMAHpFmTf8LEa3R
+         4aeftOIH+wL4X9WNv3v79dyp/tvx9P6+cOdVH0okZXIKepfdTlc3nZR08k9GgCWul4mk
+         jbA5ZYqsaJrxZ4cA6ipxYbksiRpTJbeDCNdMGRWrp/WSLwzXxP5GP2CORNiXBdao9B4g
+         Kmfu/VriTKFTq+kMe29SsI5MxFimzhRjxlPHFFhKD708uOZ766PXj/Y26K0TIxQ9pqZZ
+         9Nyw==
+X-Gm-Message-State: AOUpUlGTyACLla5hgvX3r9g7frEwPqOO/+H+P7dlIZRIKBByGnw5mQGo
+        SpGrHrcVH0FrWanW5KNZgxA4BDZuAdsSdEvvmSg=
+X-Google-Smtp-Source: AAOMgpdUOV20cBLhL9/xmrMIfMUtPgnUMyogwR+WpmZB2oGvzSsoeC3+kybNh07y1YwrtbT2rNuAsdAgxgXg2wqgbvY=
+X-Received: by 2002:a24:d0cd:: with SMTP id m196-v6mr4122519itg.9.1532140681355;
+ Fri, 20 Jul 2018 19:38:01 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac0:e445:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 19:37:24
- -0700 (PDT)
-In-Reply-To: <20180716082906.6061-9-patrick.bellasi@arm.com>
-References: <20180716082906.6061-1-patrick.bellasi@arm.com> <20180716082906.6061-9-patrick.bellasi@arm.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Fri, 20 Jul 2018 19:37:24 -0700
-Message-ID: <CAJuCfpE4FbtrwbXNCjj=pXAvTiTLw7z1aLS4+-28X=y4V+SJ-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 08/12] sched/core: uclamp: extend cpu's cgroup controller
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
+References: <20180719160050.22566-1-krzk@kernel.org>
+In-Reply-To: <20180719160050.22566-1-krzk@kernel.org>
+From:   Tomasz Figa <tomasz.figa@gmail.com>
+Date:   Sat, 21 Jul 2018 11:37:49 +0900
+Message-ID: <CA+Ln22HdeSTqZSfh18rewK_w-q7Xhx6r_5djkuAkbXV=pT8rgw@mail.gmail.com>
+Subject: Re: [RFT 00/10] pinctrl: samsung: Remove ugly hack for sharing eint_wakeup_mask
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
+        <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 1:29 AM, Patrick Bellasi
-<patrick.bellasi@arm.com> wrote:
-> The cgroup's CPU controller allows to assign a specified (maximum)
-> bandwidth to the tasks of a group. However this bandwidth is defined and
-> enforced only on a temporal base, without considering the actual
-> frequency a CPU is running on. Thus, the amount of computation completed
-> by a task within an allocated bandwidth can be very different depending
-> on the actual frequency the CPU is running that task.
-> The amount of computation can be affected also by the specific CPU a
-> task is running on, especially when running on asymmetric capacity
-> systems like Arm's big.LITTLE.
->
-> With the availability of schedutil, the scheduler is now able
-> to drive frequency selections based on actual task utilization.
-> Moreover, the utilization clamping support provides a mechanism to
-> bias the frequency selection operated by schedutil depending on
-> constraints assigned to the tasks currently RUNNABLE on a CPU.
->
-> Give the above mechanisms, it is now possible to extend the cpu
-> controller to specify what is the minimum (or maximum) utilization which
-> a task is expected (or allowed) to generate.
-> Constraints on minimum and maximum utilization allowed for tasks in a
-> CPU cgroup can improve the control on the actual amount of CPU bandwidth
-> consumed by tasks.
->
-> Utilization clamping constraints are useful not only to bias frequency
-> selection, when a task is running, but also to better support certain
-> scheduler decisions regarding task placement. For example, on
-> asymmetric capacity systems, a utilization clamp value can be
-> conveniently used to enforce important interactive tasks on more capable
-> CPUs or to run low priority and background tasks on more energy
-> efficient CPUs.
->
-> The ultimate goal of utilization clamping is thus to enable:
->
-> - boosting: by selecting an higher capacity CPU and/or higher execution
->             frequency for small tasks which are affecting the user
->             interactive experience.
->
-> - capping: by selecting more energy efficiency CPUs or lower execution
->            frequency, for big tasks which are mainly related to
->            background activities, and thus without a direct impact on
->            the user experience.
->
-> Thus, a proper extension of the cpu controller with utilization clamping
-> support will make this controller even more suitable for integration
-> with advanced system management software (e.g. Android).
-> Indeed, an informed user-space can provide rich information hints to the
-> scheduler regarding the tasks it's going to schedule.
->
-> This patch extends the CPU controller by adding a couple of new
-> attributes, util_min and util_max, which can be used to enforce task's
-> utilization boosting and capping. Specifically:
->
-> - util_min: defines the minimum utilization which should be considered,
->             e.g. when schedutil selects the frequency for a CPU while a
->             task in this group is RUNNABLE.
->             i.e. the task will run at least at a minimum frequency which
->                 corresponds to the min_util utilization
->
-> - util_max: defines the maximum utilization which should be considered,
->             e.g. when schedutil selects the frequency for a CPU while a
->             task in this group is RUNNABLE.
->             i.e. the task will run up to a maximum frequency which
->                 corresponds to the max_util utilization
->
-> These attributes:
->
-> a) are available only for non-root nodes, both on default and legacy
->    hierarchies
-> b) do not enforce any constraints and/or dependency between the parent
->    and its child nodes, thus relying on the delegation model and
->    permission settings defined by the system management software
-> c) allow to (eventually) further restrict task-specific clamps defined
->    via sched_setattr(2)
->
-> This patch provides the basic support to expose the two new attributes
-> and to validate their run-time updates.
->
-> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> ---
->  Documentation/admin-guide/cgroup-v2.rst |  25 ++++
->  init/Kconfig                            |  22 +++
->  kernel/sched/core.c                     | 186 ++++++++++++++++++++++++
->  kernel/sched/sched.h                    |   5 +
->  4 files changed, 238 insertions(+)
->
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> index 8a2c52d5c53b..328c011cc105 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -904,6 +904,12 @@ controller implements weight and absolute bandwidth limit models for
->  normal scheduling policy and absolute bandwidth allocation model for
->  realtime scheduling policy.
->
-> +Cycles distribution is based, by default, on a temporal base and it
-> +does not account for the frequency at which tasks are executed.
-> +The (optional) utilization clamping support allows to enforce a minimum
-> +bandwidth, which should always be provided by a CPU, and a maximum bandwidth,
-> +which should never be exceeded by a CPU.
-> +
->  WARNING: cgroup2 doesn't yet support control of realtime processes and
->  the cpu controller can only be enabled when all RT processes are in
->  the root cgroup.  Be aware that system management software may already
-> @@ -963,6 +969,25 @@ All time durations are in microseconds.
->         $PERIOD duration.  "max" for $MAX indicates no limit.  If only
->         one number is written, $MAX is updated.
->
-> +  cpu.util_min
-> +        A read-write single value file which exists on non-root cgroups.
-> +        The default is "0", i.e. no bandwidth boosting.
-> +
-> +        The minimum utilization in the range [0, 1023].
-> +
-> +        This interface allows reading and setting minimum utilization clamp
-> +        values similar to the sched_setattr(2). This minimum utilization
-> +        value is used to clamp the task specific minimum utilization clamp.
-> +
-> +  cpu.util_max
-> +        A read-write single value file which exists on non-root cgroups.
-> +        The default is "1023". i.e. no bandwidth clamping
-> +
-> +        The maximum utilization in the range [0, 1023].
-> +
-> +        This interface allows reading and setting maximum utilization clamp
-> +        values similar to the sched_setattr(2). This maximum utilization
-> +        value is used to clamp the task specific maximum utilization clamp.
->
->  Memory
->  ------
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 0a377ad7c166..d7e2b74637ff 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -792,6 +792,28 @@ config RT_GROUP_SCHED
->
->  endif #CGROUP_SCHED
->
-> +config UCLAMP_TASK_GROUP
-> +       bool "Utilization clamping per group of tasks"
-> +       depends on CGROUP_SCHED
-> +       depends on UCLAMP_TASK
-> +       default n
-> +       help
-> +         This feature enables the scheduler to track the clamped utilization
-> +         of each CPU based on RUNNABLE tasks currently scheduled on that CPU.
-> +
-> +         When this option is enabled, the user can specify a min and max
-> +         CPU bandwidth which is allowed for each single task in a group.
-> +         The max bandwidth allows to clamp the maximum frequency a task
-> +         can use, while the min bandwidth allows to define a minimum
-> +         frequency a task will always use.
-> +
-> +         When task group based utilization clamping is enabled, an eventually
-> +          specified task-specific clamp value is constrained by the cgroup
-> +         specified clamp value. Both minimum and maximum task clamping cannot
-> +          be bigger than the corresponding clamping defined at task group level.
-> +
-> +         If in doubt, say N.
-> +
->  config CGROUP_PIDS
->         bool "PIDs controller"
->         help
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 0cb6e0aa4faa..30b1d894f978 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1227,6 +1227,74 @@ static inline int uclamp_group_get(struct task_struct *p,
->         return 0;
->  }
->
-> +#ifdef CONFIG_UCLAMP_TASK_GROUP
-> +/**
-> + * init_uclamp_sched_group: initialize data structures required for TG's
-> + *                          utilization clamping
-> + */
-> +static inline void init_uclamp_sched_group(void)
-> +{
-> +       struct uclamp_map *uc_map;
-> +       struct uclamp_se *uc_se;
-> +       int group_id;
-> +       int clamp_id;
-> +
-> +       /* Root TG's is statically assigned to the first clamp group */
-> +       group_id = 0;
-> +
-> +       /* Initialize root TG's to default (none) clamp values */
-> +       for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-> +               uc_map = &uclamp_maps[clamp_id][0];
-> +
-> +               /* Map root TG's clamp value */
-> +               uclamp_group_init(clamp_id, group_id, uclamp_none(clamp_id));
-> +
-> +               /* Init root TG's clamp group */
-> +               uc_se = &root_task_group.uclamp[clamp_id];
-> +               uc_se->value = uclamp_none(clamp_id);
-> +               uc_se->group_id = group_id;
-> +
-> +               /* Attach root TG's clamp group */
-> +               uc_map[group_id].se_count = 1;
-> +       }
-> +}
-> +
-> +/**
-> + * alloc_uclamp_sched_group: initialize a new TG's for utilization clamping
-> + * @tg: the newly created task group
-> + * @parent: its parent task group
-> + *
-> + * A newly created task group inherits its utilization clamp values, for all
-> + * clamp indexes, from its parent task group.
-> + * This ensures that its values are properly initialized and that the task
-> + * group is accounted in the same parent's group index.
-> + *
-> + * Return: !0 on error
-> + */
-> +static inline int alloc_uclamp_sched_group(struct task_group *tg,
-> +                                          struct task_group *parent)
-> +{
-> +       struct uclamp_se *uc_se;
-> +       int clamp_id;
-> +
-> +       for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-> +               uc_se = &tg->uclamp[clamp_id];
-> +
-> +               uc_se->value = parent->uclamp[clamp_id].value;
-> +               uc_se->group_id = UCLAMP_NONE;
-> +       }
-> +
-> +       return 1;
-> +}
-> +#else /* CONFIG_UCLAMP_TASK_GROUP */
-> +static inline void init_uclamp_sched_group(void) { }
-> +static inline int alloc_uclamp_sched_group(struct task_group *tg,
-> +                                          struct task_group *parent)
-> +{
-> +       return 1;
-> +}
-> +#endif /* CONFIG_UCLAMP_TASK_GROUP */
-> +
->  static inline int __setscheduler_uclamp(struct task_struct *p,
->                                         const struct sched_attr *attr)
->  {
-> @@ -1289,11 +1357,18 @@ static void __init init_uclamp(void)
->                         raw_spin_lock_init(&uc_map[group_id].se_lock);
->                 }
->         }
-> +
-> +       init_uclamp_sched_group();
->  }
->
->  #else /* CONFIG_UCLAMP_TASK */
->  static inline void uclamp_cpu_get(struct rq *rq, struct task_struct *p) { }
->  static inline void uclamp_cpu_put(struct rq *rq, struct task_struct *p) { }
-> +static inline int alloc_uclamp_sched_group(struct task_group *tg,
-> +                                          struct task_group *parent)
-> +{
-> +       return 1;
-> +}
->  static inline int __setscheduler_uclamp(struct task_struct *p,
->                                         const struct sched_attr *attr)
->  {
-> @@ -6890,6 +6965,9 @@ struct task_group *sched_create_group(struct task_group *parent)
->         if (!alloc_rt_sched_group(tg, parent))
->                 goto err;
->
-> +       if (!alloc_uclamp_sched_group(tg, parent))
-> +               goto err;
-> +
->         return tg;
->
->  err:
-> @@ -7110,6 +7188,88 @@ static void cpu_cgroup_attach(struct cgroup_taskset *tset)
->                 sched_move_task(task);
->  }
->
-> +#ifdef CONFIG_UCLAMP_TASK_GROUP
-> +static int cpu_util_min_write_u64(struct cgroup_subsys_state *css,
-> +                                 struct cftype *cftype, u64 min_value)
-> +{
-> +       struct task_group *tg;
-> +       int ret = -EINVAL;
-> +
-> +       if (min_value > SCHED_CAPACITY_SCALE)
-> +               return -ERANGE;
-> +
-> +       mutex_lock(&uclamp_mutex);
-> +       rcu_read_lock();
-> +
-> +       tg = css_tg(css);
-> +       if (tg->uclamp[UCLAMP_MIN].value == min_value) {
-> +               ret = 0;
-> +               goto out;
-> +       }
-> +       if (tg->uclamp[UCLAMP_MAX].value < min_value)
-> +               goto out;
-> +
+Hi Krzysztof,
 
-+ tg->uclamp[UCLAMP_MIN].value = min_value;
-+ ret = 0;
+2018=E5=B9=B47=E6=9C=8820=E6=97=A5(=E9=87=91) 1:01 Krzysztof Kozlowski <krz=
+k@kernel.org>:
+>
+> Hi All,
+>
+> Tests
+> =3D=3D=3D=3D=3D
+> This is both request for comments and requests for tests. Only basic
+> tests were done, including suspend to RAM on Odroid U3 (Exynos4412)
+> with max7768 RTC wakeup. Please kindly test it with devices capable of
+> suspending and resuming. I am mostly thinking about S5Pv210-based (Aria),
+> Trats, Trats2 and TM2 (Exynos5433). Existing platforms should not be
+> broken however changing external interrupt wakeup mask was not done
+> on Exynos5433.
+>
+>
+> Description
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> The Exynos/S5Pv210 machine suspend code needs to write the external
+> interrupt mask during suspend.  The mask is controlled by pin controller
+> driver: the exynos_wkup_irq_set_wake() in IRQ chip for these wakeup
+> interrupts.
+>
+> Therefore pinctrl driver code exposed an exynos_get_eint_wake_mask()
+> function which was later used as an extern in machine code.
+>
+> This is quite ugly way of combining driver and machine code,
+> not portable triggering Sparse and GCC warnings.
+>
+>
+> This might break suspend capability S5Pv210 on with older DTBs (thus
+> breaks DTB compatibility), however:
+> 1. just "might" because in case of using older DTB, the wakeup mask
+>    will not be changed during suspend and default reset value (all
+>    interrupts non-masked) should work,
+> 2. mainline support for S5Pv210 with DTB is limited and suspend
+>    to RAM already might be broken.
 
-Are these assignments missing or am I missing something? Same for
-cpu_util_max_write_u64().
+We probably should also add that it's highly unlikely that anyone
+using S5PV210 actually uses a standalone DTB, since those systems
+normally predated DT support in bootloaders and workarounds such as
+chainloading or appended DTB are normally used.
 
-> +out:
-> +       rcu_read_unlock();
-> +       mutex_unlock(&uclamp_mutex);
-> +
-> +       return ret;
-> +}
-> +
-> +static int cpu_util_max_write_u64(struct cgroup_subsys_state *css,
-> +                                 struct cftype *cftype, u64 max_value)
-> +{
-> +       struct task_group *tg;
-> +       int ret = -EINVAL;
-> +
-> +       if (max_value > SCHED_CAPACITY_SCALE)
-> +               return -ERANGE;
-> +
-> +       mutex_lock(&uclamp_mutex);
-> +       rcu_read_lock();
-> +
-> +       tg = css_tg(css);
-> +       if (tg->uclamp[UCLAMP_MAX].value == max_value) {
-> +               ret = 0;
-> +               goto out;
-> +       }
-> +       if (tg->uclamp[UCLAMP_MIN].value > max_value)
-> +               goto out;
-> +
-> +out:
-> +       rcu_read_unlock();
-> +       mutex_unlock(&uclamp_mutex);
-> +
-> +       return ret;
-> +}
-> +
-> +static inline u64 cpu_uclamp_read(struct cgroup_subsys_state *css,
-> +                                 enum uclamp_id clamp_id)
-> +{
-> +       struct task_group *tg;
-> +       u64 util_clamp;
-> +
-> +       rcu_read_lock();
-> +       tg = css_tg(css);
-> +       util_clamp = tg->uclamp[clamp_id].value;
-> +       rcu_read_unlock();
-> +
-> +       return util_clamp;
-> +}
-> +
-> +static u64 cpu_util_min_read_u64(struct cgroup_subsys_state *css,
-> +                                struct cftype *cft)
-> +{
-> +       return cpu_uclamp_read(css, UCLAMP_MIN);
-> +}
-> +
-> +static u64 cpu_util_max_read_u64(struct cgroup_subsys_state *css,
-> +                                struct cftype *cft)
-> +{
-> +       return cpu_uclamp_read(css, UCLAMP_MAX);
-> +}
-> +#endif /* CONFIG_UCLAMP_TASK_GROUP */
-> +
->  #ifdef CONFIG_FAIR_GROUP_SCHED
->  static int cpu_shares_write_u64(struct cgroup_subsys_state *css,
->                                 struct cftype *cftype, u64 shareval)
-> @@ -7437,6 +7597,18 @@ static struct cftype cpu_legacy_files[] = {
->                 .read_u64 = cpu_rt_period_read_uint,
->                 .write_u64 = cpu_rt_period_write_uint,
->         },
-> +#endif
-> +#ifdef CONFIG_UCLAMP_TASK_GROUP
-> +       {
-> +               .name = "util_min",
-> +               .read_u64 = cpu_util_min_read_u64,
-> +               .write_u64 = cpu_util_min_write_u64,
-> +       },
-> +       {
-> +               .name = "util_max",
-> +               .read_u64 = cpu_util_max_read_u64,
-> +               .write_u64 = cpu_util_max_write_u64,
-> +       },
->  #endif
->         { }     /* Terminate */
->  };
-> @@ -7604,6 +7776,20 @@ static struct cftype cpu_files[] = {
->                 .seq_show = cpu_max_show,
->                 .write = cpu_max_write,
->         },
-> +#endif
-> +#ifdef CONFIG_UCLAMP_TASK_GROUP
-> +       {
-> +               .name = "util_min",
-> +               .flags = CFTYPE_NOT_ON_ROOT,
-> +               .read_u64 = cpu_util_min_read_u64,
-> +               .write_u64 = cpu_util_min_write_u64,
-> +       },
-> +       {
-> +               .name = "util_max",
-> +               .flags = CFTYPE_NOT_ON_ROOT,
-> +               .read_u64 = cpu_util_max_read_u64,
-> +               .write_u64 = cpu_util_max_write_u64,
-> +       },
->  #endif
->         { }     /* terminate */
->  };
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 7e4f10c507b7..1471a23e8f57 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -389,6 +389,11 @@ struct task_group {
->  #endif
 >
->         struct cfs_bandwidth    cfs_bandwidth;
-> +
-> +#ifdef CONFIG_UCLAMP_TASK_GROUP
-> +       struct                  uclamp_se uclamp[UCLAMP_CNT];
-> +#endif
-> +
->  };
 >
->  #ifdef CONFIG_FAIR_GROUP_SCHED
-> --
-> 2.17.1
+> Dependencies
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. The first seven patches should be taken through one tree,
+>    preferably samsung-pinctrl,
+> 2. The DTS patch (7/10) for S5Pv210 should go into next cycle,
+> 3. The remaining patches (8-10) should go after all previous,
+>    so probably another release cycle.
 >
+>
+> Best regards,
+> Krzysztof
+>
+>
+> Krzysztof Kozlowski (10):
+>   pinctrl: samsung: Define suspend and resume callbacks for all banks
+>     and SoCs
+>   pinctrl: samsung: Document suspend and resume members
+>   pinctrl: samsung: Document hidden requirement about one external
+>     wakeup
+>   pinctrl: samsung: Add dedicated compatible for S5Pv210 wakeup
+>     interrupts
+>   ARM: exynos: Define EINT_WAKEUP_MASK registers for S5Pv210 and
+>     Exynos5433
+>   pinctrl: samsung: Write external interrupt mask
+>   ARM: dts: s5pv210: Switch to S5Pv210 specific pinctrl wakeup
+>     compatible
+>   ARM: s5pv210: Remove legacy setting of external wakeup interrupts
+>   ARM: exynos: Remove legacy setting of external wakeup interrupts
+>   pinctrl: samsung: Remove legacy API for handling external wakeup
+>     interrupts mask
+>
+>  .../bindings/pinctrl/samsung-pinctrl.txt           | 11 ++-
+>  arch/arm/boot/dts/s5pv210.dtsi                     |  2 +-
+>  arch/arm/mach-exynos/common.h                      |  2 -
+>  arch/arm/mach-exynos/suspend.c                     | 16 +++--
+>  arch/arm/mach-s5pv210/common.h                     |  1 -
+>  arch/arm/mach-s5pv210/pm.c                         | 16 +++--
+>  drivers/pinctrl/samsung/pinctrl-exynos-arm.c       | 16 +++++
+>  drivers/pinctrl/samsung/pinctrl-exynos.c           | 78 ++++++++++++++++=
++++---
+>  drivers/pinctrl/samsung/pinctrl-samsung.h          | 11 +++
+>  include/linux/soc/samsung/exynos-regs-pmu.h        |  8 ++-
+>  10 files changed, 136 insertions(+), 25 deletions(-)
+
+Looking through the series, the idea seems to be very reasonable, so:
+
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Thanks for cleaning this up!
+
+Best regards,
+Tomasz
