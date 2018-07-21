@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3A9ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68879ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8540E20849
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:23:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8540E20849
+	by mail.kernel.org (Postfix) with ESMTP id 1DDA9206B7
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 06:35:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DDA9206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeGUHPJ (ORCPT
+        id S1727518AbeGUH1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 03:15:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42240 "EHLO mail.bootlin.com"
+        Sat, 21 Jul 2018 03:27:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42391 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726905AbeGUHPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 03:15:09 -0400
+        id S1727137AbeGUH1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 03:27:21 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 12C34207AD; Sat, 21 Jul 2018 08:23:35 +0200 (CEST)
+        id 2FFF2207AD; Sat, 21 Jul 2018 08:35:45 +0200 (CEST)
 Received: from bbrezillon (unknown [37.173.220.171])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 14A762069C;
-        Sat, 21 Jul 2018 08:23:33 +0200 (CEST)
-Date:   Sat, 21 Jul 2018 08:23:32 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 19A222069C;
+        Sat, 21 Jul 2018 08:35:43 +0200 (CEST)
+Date:   Sat, 21 Jul 2018 08:35:41 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
@@ -55,12 +55,12 @@ Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 01/35] mtd: rawnand: brcmnand: convert driver to
+Subject: Re: [PATCH v4 02/35] mtd: rawnand: cafe: convert driver to
  nand_scan()
-Message-ID: <20180721082332.4c098adb@bbrezillon>
-In-Reply-To: <20180720151527.16038-2-miquel.raynal@bootlin.com>
+Message-ID: <20180721083541.5a52771a@bbrezillon>
+In-Reply-To: <20180720151527.16038-3-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
-        <20180720151527.16038-2-miquel.raynal@bootlin.com>
+        <20180720151527.16038-3-miquel.raynal@bootlin.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -70,7 +70,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 17:14:53 +0200
+On Fri, 20 Jul 2018 17:14:54 +0200
 Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
 > Two helpers have been added to the core to make ECC-related
@@ -80,93 +80,68 @@ Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 > 
 > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 > ---
->  drivers/mtd/nand/raw/brcmnand/brcmnand.c | 47 +++++++++++++++++++-------------
->  1 file changed, 28 insertions(+), 19 deletions(-)
+>  drivers/mtd/nand/raw/cafe_nand.c | 130 +++++++++++++++++++++++----------------
+>  1 file changed, 76 insertions(+), 54 deletions(-)
 > 
-> diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-> index 2e5efa0f9ea2..071f09af56dc 100644
-> --- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-> +++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-> @@ -2208,6 +2208,32 @@ static int brcmnand_setup_dev(struct brcmnand_host *host)
->  	return 0;
+> diff --git a/drivers/mtd/nand/raw/cafe_nand.c b/drivers/mtd/nand/raw/cafe_nand.c
+> index ac0be933a490..c303c261dd8d 100644
+> --- a/drivers/mtd/nand/raw/cafe_nand.c
+> +++ b/drivers/mtd/nand/raw/cafe_nand.c
+> @@ -71,7 +71,9 @@ struct cafe_priv {
+>  	unsigned char *dmabuf;
+>  };
+>  
+> -static int usedma = 1;
+> +#define CAFE_DEFAULT_DMA	1
+> +
+> +static int usedma = CAFE_DEFAULT_DMA;
+
+Not sure you need a macro for that.
+
+>  module_param(usedma, int, 0644);
+>  
+>  static int skipbbt = 0;
+> @@ -593,6 +595,76 @@ static int cafe_mul(int x)
+>  	return gf4096_mul(x, 0xe01);
 >  }
 >  
-> +static int brcmnand_attach_chip(struct nand_chip *chip)
+> +static int cafe_nand_attach_chip(struct nand_chip *chip)
 > +{
 > +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	struct brcmnand_host *host = nand_get_controller_data(chip);
-> +	int ret;
+> +	struct cafe_priv *cafe = nand_get_controller_data(chip);
+> +	int err = 0;
 > +
-> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
-> +		chip->bbt_options |= NAND_BBT_NO_OOB;
+> +	cafe->dmabuf = dma_alloc_coherent(&cafe->pdev->dev, 2112,
+> +					  &cafe->dmaaddr, GFP_KERNEL);
+> +	if (!cafe->dmabuf)
+> +		return -ENOMEM;
 > +
-> +	if (brcmnand_setup_dev(host))
-> +		return -ENXIO;
+> +	/* Set up DMA address */
+> +	cafe_writel(cafe, lower_32_bits(cafe->dmaaddr), NAND_DMA_ADDR0);
+> +	cafe_writel(cafe, upper_32_bits(cafe->dmaaddr), NAND_DMA_ADDR1);
 > +
-> +	chip->ecc.size = host->hwcfg.sector_size_1k ? 1024 : 512;
+> +	cafe_dev_dbg(&cafe->pdev->dev, "Set DMA address to %x (virt %p)\n",
+> +		     cafe_readl(cafe, NAND_DMA_ADDR0), cafe->dmabuf);
 > +
-> +	/* only use our internal HW threshold */
-> +	mtd->bitflip_threshold = 1;
-> +
-> +	ret = brcmstb_choose_ecc_layout(host);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct nand_controller_ops brcmnand_controller_ops = {
-> +	.attach_chip = brcmnand_attach_chip,
-> +};
-> +
->  static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
->  {
->  	struct brcmnand_controller *ctrl = host->ctrl;
-> @@ -2267,10 +2293,6 @@ static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
->  	nand_writereg(ctrl, cfg_offs,
->  		      nand_readreg(ctrl, cfg_offs) & ~CFG_BUS_WIDTH);
->  
-> -	ret = nand_scan_ident(mtd, 1, NULL);
-> -	if (ret)
-> -		return ret;
-> -
->  	chip->options |= NAND_NO_SUBPAGE_WRITE;
->  	/*
->  	 * Avoid (for instance) kmap()'d buffers from JFFS2, which we can't DMA
-> @@ -2279,21 +2301,7 @@ static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
->  	 */
->  	chip->options |= NAND_USE_BOUNCE_BUFFER;
->  
+> +	/* Restore the DMA flag */
+> +	usedma = CAFE_DEFAULT_DMA;
 
-Any reason for not moving the above chunk in brcmnand_attach_chip()?
+This is wrong. The user might have passed a different value to usedma
+when loading the module (or on the kernel cmdline), and you're simply
+ignoring it. I see 2 solutions to solve that:
 
-Since ->attach_chip() is called between nand_scan_ident() and
-nand_scan_tail() in nand_scan(), I'd recommend simply copying all the
-code found between those 2 calls (applies to all drivers).
+1/ add a ->usedma field to the cafe_priv struct which you initialize to
+   0 in the probe function (already done if you kzalloc() the struct)
+   and update it here:
 
-> -	if (chip->bbt_options & NAND_BBT_USE_FLASH)
-> -		chip->bbt_options |= NAND_BBT_NO_OOB;
-> -
-> -	if (brcmnand_setup_dev(host))
-> -		return -ENXIO;
-> -
-> -	chip->ecc.size = host->hwcfg.sector_size_1k ? 1024 : 512;
-> -	/* only use our internal HW threshold */
-> -	mtd->bitflip_threshold = 1;
-> -
-> -	ret = brcmstb_choose_ecc_layout(host);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = nand_scan_tail(mtd);
-> +	ret = nand_scan(mtd, 1);
->  	if (ret)
->  		return ret;
->  
-> @@ -2434,6 +2442,7 @@ int brcmnand_probe(struct platform_device *pdev, struct brcmnand_soc *soc)
->  	init_completion(&ctrl->done);
->  	init_completion(&ctrl->dma_done);
->  	nand_controller_init(&ctrl->controller);
-> +	ctrl->controller.ops = &brcmnand_controller_ops;
->  	INIT_LIST_HEAD(&ctrl->host_list);
->  
->  	/* NAND register range */
+	cafe->usedma = usedma.
 
+   then you have to patch all places where usedma was tested and
+   replace this test by a test on cafe->usedma
+
+2/ add a static in old_usedma which you assign to usedma value in the
+   probe and then restore the usedma value here:
+
+	usedma = old_usedma
+
+I prefer option #1.
