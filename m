@@ -2,149 +2,599 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42042ECDE5F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CF0ECDFBD
 	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D758620854
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:19:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 255FA20864
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:19:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="N8zEwIEg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D758620854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=pmeerw.net header.i=@pmeerw.net header.b="GYB8GBzh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 255FA20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=pmeerw.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbeGUWN4 (ORCPT
+        id S1728249AbeGUWN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 18:13:56 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:55854 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbeGUWN4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 18:13:56 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6LLJ8NC047668;
-        Sat, 21 Jul 2018 21:19:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=XZDD7fyLG8m14+nYKES/LWigAyE84VHnIzzfKTNPdvw=;
- b=N8zEwIEgitsH5ogTlYRXoYvHKMlMpBG4gSsm2t6BXV6dehQSb+YGX7GXLRWmTA1yHrUo
- 8TZfeZKc6aLiF2yCGZviHGtC63iwAOfrgHlUX0AmdAULqeE9xta40pCIopzJbN6lCXbz
- WirlgGQ17Ux7urgmV14OgOzG/ocf2cVfaWt9QkKrPnLba/DxS7Z8nftXVG+tvw27TvuK
- V1NCrwmIw8860BiehSXHrXzxm/eXnM95B688sg6RYov6LsdwqTzi9w5Y25ju9O53ea4q
- XdQgVD9G6KQCTebJKlPkZnAmp/LtcFSTRKNlTurXv5O7Naqaq67rDCkRg7tIVK842uYJ hA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2kbv8ss16s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 21 Jul 2018 21:19:15 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6LLJBIh027021
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 21 Jul 2018 21:19:11 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6LLJ9k9027532;
-        Sat, 21 Jul 2018 21:19:10 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 21 Jul 2018 14:19:09 -0700
-Subject: Re: [PATCH 1/2] x86/entry/64: Do not clear %rbx under Xen
-To:     "M. Vefa Bicakci" <m.v.b@runbox.com>, linux-kernel@vger.kernel.org
-Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        stable@vger.kernel.org
-References: <20180721194909.23903-1-m.v.b@runbox.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <5a21b844-36a9-8fe4-c6cd-6fade3dfa941@oracle.com>
-Date:   Sat, 21 Jul 2018 17:19:36 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 21 Jul 2018 18:13:59 -0400
+Received: from ns.pmeerw.net ([84.19.176.117]:46338 "EHLO ns.pmeerw.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727838AbeGUWN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 18:13:58 -0400
+Received: by ns.pmeerw.net (Postfix, from userid 1000)
+        id 43C14E033C; Sat, 21 Jul 2018 23:19:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=pmeerw.net; s=mail;
+        t=1532207988; bh=wmMIhS7lXUH71uwWV5IY65SD7laBfEx1LAUbz6x9GJM=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=GYB8GBzhfc7zjbF3asCqYBXp157qucZgoGx5ulN7uqYkDalltJZ3F0GIvIMSpkiEt
+         /Z1jsMWUO6cVyZA6FCI46MR6YVHY/ZcPqmccOO5He78uZMRY5wpgDq4WcVYLylfYF3
+         JYluzgE76G1+oGe+VfY4DDiDdfNPJDp+SszkwU4g=
+Received: from localhost (localhost [127.0.0.1])
+        by ns.pmeerw.net (Postfix) with ESMTP id 0AD59E0093;
+        Sat, 21 Jul 2018 23:19:48 +0200 (CEST)
+Date:   Sat, 21 Jul 2018 23:19:48 +0200 (CEST)
+From:   Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To:     Marcus Folkesson <marcus.folkesson@gmail.com>
+cc:     Kent Gustavsson <kent@minoris.se>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] iio: adc: add support for mcp3911
+In-Reply-To: <20180721195923.7610-1-marcus.folkesson@gmail.com>
+Message-ID: <alpine.DEB.2.21.1807212259480.13457@vps.pmeerw.net>
+References: <20180721195923.7610-1-marcus.folkesson@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180721194909.23903-1-m.v.b@runbox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8961 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=757
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807210245
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/21/2018 03:49 PM, M. Vefa Bicakci wrote:
-> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-> index c7449f377a77..96e8ff34129e 100644
-> --- a/arch/x86/entry/entry_64.S
-> +++ b/arch/x86/entry/entry_64.S
-> @@ -1129,7 +1129,7 @@ ENTRY(xen_failsafe_callback)
->  	addq	$0x30, %rsp
->  	UNWIND_HINT_IRET_REGS
->  	pushq	$-1 /* orig_ax = -1 => not a system call */
-> -	PUSH_AND_CLEAR_REGS
-> +	PUSH_AND_CLEAR_REGS clear_rbx=0
+Hello,
 
+> MCP3911 is a dual channel Analog Front End (AFE) containing two
+> synchronous sampling delta-sigma Analog-to-Digital Converters (ADC).
 
-Do we need this at all? We are returning from the hypervisor here.
+some comments below...
+ 
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> Signed-off-by: Kent Gustavsson <kent@minoris.se>
+> ---
+>  drivers/iio/adc/Kconfig   |  10 ++
+>  drivers/iio/adc/Makefile  |   1 +
+>  drivers/iio/adc/mcp3911.c | 444 ++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 455 insertions(+)
+>  create mode 100644 drivers/iio/adc/mcp3911.c
+> 
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 15606f237480..f9a41fa96fcc 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -501,6 +501,16 @@ config MCP3422
+>  	  This driver can also be built as a module. If so, the module will be
+>  	  called mcp3422.
+>  
+> +config MCP3911
+> +	tristate "Microchip Technology MCP3911 driver"
+> +	depends on SPI
+> +	help
+> +	  Say yes here to build support for Microchip Technology's MCP3911
+> +	  analog to digital converter.
+> +
+> +	  This driver can also be built as a module. If so, the module will be
+> +	  called mcp3911.
+> +
+>  config MEDIATEK_MT6577_AUXADC
+>          tristate "MediaTek AUXADC driver"
+>          depends on ARCH_MEDIATEK || COMPILE_TEST
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index 28a9423997f3..3cfebfff7d26 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -47,6 +47,7 @@ obj-$(CONFIG_MAX1363) += max1363.o
+>  obj-$(CONFIG_MAX9611) += max9611.o
+>  obj-$(CONFIG_MCP320X) += mcp320x.o
+>  obj-$(CONFIG_MCP3422) += mcp3422.o
+> +obj-$(CONFIG_MCP3911) += mcp3911.o
+>  obj-$(CONFIG_MEDIATEK_MT6577_AUXADC) += mt6577_auxadc.o
+>  obj-$(CONFIG_MEN_Z188_ADC) += men_z188_adc.o
+>  obj-$(CONFIG_MESON_SARADC) += meson_saradc.o
+> diff --git a/drivers/iio/adc/mcp3911.c b/drivers/iio/adc/mcp3911.c
+> new file mode 100644
+> index 000000000000..be74cb15827b
+> --- /dev/null
+> +++ b/drivers/iio/adc/mcp3911.c
+> @@ -0,0 +1,444 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Driver for Microchip MCP3911, Two-channel Analog Front End
+> + *
+> + * Copyright (C) 2018 Marcus Folkesson <marcus.folkesson@gmail.com>
+> + * Copyright (C) 2018 Kent Gustavsson <kent@minoris.se>
+> + *
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/module.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/spi/spi.h>
+> +
+> +#define MCP3911_REG_CHANNEL0		0x00
+> +#define MCP3911_REG_CHANNEL1		0x03
+> +#define MCP3911_REG_MOD			0x06
+> +#define MCP3911_REG_PHASE		0x07
+> +
+> +#define MCP3911_REG_GAIN		0x09
+> +#define MCP3911_GAIN_MASK(ch)		(0x7 << 3*ch)
 
--boris
+space around * operator, maybe parenthesis around variable, i.e
+(0x07 << (3 * (ch)))
 
->  	ENCODE_FRAME_POINTER
->  	jmp	error_exit
->  END(xen_failsafe_callback)
+> +#define MCP3911_GAIN_VAL(ch, val)	((val << 3*ch) & MCP3911_GAIN_MASK(ch))
+> +
+> +#define MCP3911_REG_STATUSCOM		0x0a
+> +#define MCP3911_STATUSCOM_CH1_24WIDTH	BIT(4)
+> +#define MCP3911_STATUSCOM_CH0_24WIDTH	BIT(3)
+> +#define MCP3911_STATUSCOM_EN_OFFCAL	BIT(2)
+> +#define MCP3911_STATUSCOM_EN_GAINCAL	BIT(1)
+> +
+> +#define MCP3911_REG_CONFIG		0x0c
+> +#define MCP3911_CONFIG_CLKEXT		BIT(1)
+> +#define MCP3911_CONFIG_VREFEXT		BIT(2)
+> +
+> +#define MCP3911_REG_OFFCAL_CH0		0x0e
+> +#define MCP3911_REG_GAINCAL_CH0		0x11
+> +#define MCP3911_REG_OFFCAL_CH1		0x14
+> +#define MCP3911_REG_GAINCAL_CH1		0x17
+> +#define MCP3911_REG_VREFCAL		0x1a
+> +
+> +#define MCP3911_CHANNEL(x)		(MCP3911_REG_CHANNEL0 + x * 3)
+> +#define MCP3911_OFFCAL(x)		(MCP3911_REG_OFFCAL_CH0 + x * 6)
+> +#define MCP3911_GAINCAL(x)		(MCP3911_REG_GAINCAL_CH0 + x * 6)
+> +
 
+delete newline
+
+> +
+> +/* Internal voltage reference in uV */
+> +#define MCP3911_INT_VREF_UV		1200000
+> +
+> +#define REG_READ(reg, id)	(((reg << 1) | (id << 5) | (1 << 0)) & 0xff)
+> +#define REG_WRITE(reg, id)	(((reg << 1) | (id << 5) | (0 << 0)) & 0xff)
+
+MCP3911_ prefix please
+parenthesis around variables
+
+> +
+> +#define MCP3911_NUM_CHANNELS		2
+> +
+> +
+> +struct mcp3911 {
+> +	struct spi_device *spi;
+> +	struct device_node *np;
+> +	struct mutex lock;
+> +
+> +	u32 gain[MCP3911_NUM_CHANNELS];
+> +	u32 width[MCP3911_NUM_CHANNELS];
+> +
+> +	u32 dev_addr;
+> +	bool vrefext;
+> +	struct regulator *vref;
+> +};
+> +
+> +static int mcp3911_read(struct mcp3911 *adc, u8 reg, u32 *val, u8 len)
+> +{
+> +	int ret;
+> +
+> +	reg = REG_READ(reg, adc->dev_addr);
+> +	ret = spi_write_then_read(adc->spi, &reg, 1, val, len);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	*val <<= ((4-len)*8);
+
+space around - and * operator, here and elsewhere
+
+shouldn't the endiness conversion happen before the value is shifted? 
+(here and below)?
+
+> +	be32_to_cpus(val);
+> +	dev_dbg(&adc->spi->dev, "Reading 0x%x from register 0x%x\n", *val,
+> +			reg>>1);
+> +	return ret;
+> +}
+> +
+> +static int mcp3911_write(struct mcp3911 *adc, u8 reg, u32 val, u8 len)
+> +{
+> +	dev_dbg(&adc->spi->dev, "Writing 0x%x to register 0x%x\n", val, reg);
+> +
+> +	cpu_to_be32s(&val);
+> +	val >>= (3-len)*8;
+> +	val |= REG_WRITE(reg, adc->dev_addr);
+> +
+> +	return spi_write(adc->spi, &val, len+1);
+> +}
+> +
+> +static int mcp3911_update(struct mcp3911 *adc, u8 reg, u32 mask,
+> +		u32 val, u8 len)
+> +{
+> +	u32 tmp;
+> +	int ret;
+> +
+> +	ret = mcp3911_read(adc, reg, &tmp, len);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val &= mask;
+> +	val |= tmp & ~mask;
+> +	return mcp3911_write(adc, reg, val, len);
+> +}
+> +
+> +static int mcp3911_get_hwgain(struct mcp3911 *adc, u8 channel, u32 *val)
+> +{
+> +	int ret = mcp3911_read(adc, MCP3911_REG_GAIN, val, 1);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	*val >>= channel*3;
+> +	*val &= 0x07;
+> +	*val = (1 << *val);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mcp3911_read_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *channel, int *val,
+> +			    int *val2, long mask)
+> +{
+> +	struct mcp3911 *adc = iio_priv(indio_dev);
+> +	int ret = -EINVAL;
+> +
+> +	mutex_lock(&adc->lock);
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = mcp3911_read(adc,
+> +				MCP3911_CHANNEL(channel->channel), val, 3);
+> +		if (ret)
+> +			goto out;
+> +
+> +		ret = IIO_VAL_INT;
+> +		break;
+> +
+> +	case IIO_CHAN_INFO_OFFSET:
+> +		ret = mcp3911_read(adc,
+> +				MCP3911_OFFCAL(channel->channel), val, 3);
+> +		if (ret)
+> +			goto out;
+> +
+> +		ret = IIO_VAL_INT;
+> +		break;
+> +
+> +	case IIO_CHAN_INFO_HARDWAREGAIN:
+> +		ret = mcp3911_get_hwgain(adc, channel->channel, val);
+> +		if (ret)
+> +			goto out;
+> +
+> +		ret = IIO_VAL_INT;
+> +		break;
+> +
+> +	case IIO_CHAN_INFO_SCALE:
+> +		if (adc->vrefext) {
+> +			ret = regulator_get_voltage(adc->vref);
+> +			if (ret < 0) {
+> +				dev_err(indio_dev->dev.parent,
+> +					"failed to get vref voltage:%d\n", ret);
+
+start message consistently with upper/lowercase
+maybe space before :
+
+> +				goto out;
+> +			}
+> +
+> +			*val = ret / 1000;
+> +		} else {
+> +			*val = MCP3911_INT_VREF_UV;
+> +		}
+> +
+> +		/* apply with gain value */
+> +		*val /= adc->gain[channel->channel];
+> +		*val2 = adc->width[channel->channel];
+> +
+> +		ret = IIO_VAL_FRACTIONAL_LOG2;
+> +		break;
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&adc->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int mcp3911_write_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *channel, int val,
+> +			    int val2, long mask)
+> +{
+> +	struct mcp3911 *adc = iio_priv(indio_dev);
+> +	int ret = -EINVAL;
+> +
+> +	mutex_lock(&adc->lock);
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_OFFSET:
+> +
+
+val2 should probably be zero and checked?
+
+> +		/* Write offset */
+> +		ret = mcp3911_write(adc, MCP3911_OFFCAL(channel->channel), val,
+> +				3);
+> +		if (ret)
+> +			goto out;
+> +
+> +		/* Enable offset*/
+> +		ret = mcp3911_update(adc, MCP3911_REG_STATUSCOM,
+> +				MCP3911_STATUSCOM_EN_OFFCAL,
+> +				MCP3911_STATUSCOM_EN_OFFCAL, 2);
+> +		if (ret)
+> +			goto out;
+> +
+> +		break;
+> +
+> +	case IIO_CHAN_INFO_HARDWAREGAIN:
+
+val2?
+
+> +		if (!is_power_of_2(val) && val <= 32) {
+
+the check looks suspicious, maybe || val > 32
+
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		adc->gain[channel->channel] = val;
+> +
+> +		val = ilog2(val);
+> +		ret = mcp3911_update(adc, MCP3911_REG_GAIN,
+> +					MCP3911_GAIN_MASK(channel->channel),
+> +					MCP3911_GAIN_VAL(channel->channel,
+> +						val), 1);
+> +		break;
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&adc->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct iio_chan_spec mcp3911_channels[] = {
+> +	{
+
+maybe use a MACRO(), e.g. MCP3911_CHANNEL(idx) ...
+
+> +		.type = IIO_VOLTAGE,
+> +		.indexed = 1,
+> +		.channel = 0,
+> +		.address = MCP3911_REG_CHANNEL0,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> +			BIT(IIO_CHAN_INFO_OFFSET) |
+> +			BIT(IIO_CHAN_INFO_SCALE) |
+> +			BIT(IIO_CHAN_INFO_HARDWAREGAIN),
+> +	},
+> +	{
+> +		.type = IIO_VOLTAGE,
+> +		.indexed = 1,
+> +		.channel = 1,
+> +		.address = MCP3911_REG_CHANNEL1,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> +			BIT(IIO_CHAN_INFO_OFFSET) |
+> +			BIT(IIO_CHAN_INFO_SCALE) |
+> +			BIT(IIO_CHAN_INFO_HARDWAREGAIN),
+> +	},
+> +};
+> +
+> +static const struct iio_info mcp3911_info = {
+> +	.read_raw = mcp3911_read_raw,
+> +	.write_raw = mcp3911_write_raw,
+> +};
+> +
+> +static int mcp3911_config_of(struct mcp3911 *adc)
+> +{
+> +	u32 configreg;
+> +	u32 statuscomreg;
+> +	int ret;
+> +
+> +	of_property_read_u32(adc->np, "device-addr", &adc->dev_addr);
+> +	if (adc->dev_addr > 3) {
+> +		dev_err(&adc->spi->dev,
+> +				"invalid device address (%i). Must be in range 0-3.\n",
+> +				adc->dev_addr);
+> +		return -EINVAL;
+> +	}
+> +	dev_dbg(&adc->spi->dev, "use device address %i\n", adc->dev_addr);
+> +
+> +	ret = mcp3911_read(adc, MCP3911_REG_CONFIG, &configreg, 2);
+> +	if (ret)
+> +		return ret;
+> +
+> +	adc->vrefext = of_property_read_bool(adc->np, "external-vref");
+> +	if (adc->vrefext) {
+> +		dev_dbg(&adc->spi->dev, "use external voltage reference\n");
+> +		configreg |= MCP3911_CONFIG_VREFEXT;
+> +
+> +	} else {
+> +		dev_dbg(&adc->spi->dev, "use internal voltage reference (1.2V)\n");
+> +		configreg &= ~MCP3911_CONFIG_VREFEXT;
+> +	}
+> +
+> +	if (of_property_read_bool(adc->np, "external-clock")) {
+> +		dev_dbg(&adc->spi->dev, "use external clock as clocksource\n");
+> +		configreg |= MCP3911_CONFIG_CLKEXT;
+> +	} else {
+> +		dev_dbg(&adc->spi->dev, "use crystal oscillator as clocksource\n");
+> +		configreg &= ~MCP3911_CONFIG_CLKEXT;
+> +	}
+> +
+> +	ret =  mcp3911_write(adc, MCP3911_REG_CONFIG, configreg, 2);
+> +	if (ret)
+> +		return ret;
+> +
+> +
+> +	ret = mcp3911_read(adc, MCP3911_REG_STATUSCOM, &statuscomreg, 2);
+> +	if (ret)
+> +		return ret;
+> +
+
+no duplicate newlines (here and elsewhere)
+
+> +
+> +	of_property_read_u32(adc->np, "ch0-width", &adc->width[0]);
+> +	switch (adc->width[0]) {
+> +	case 24:
+> +		statuscomreg &= ~MCP3911_STATUSCOM_CH0_24WIDTH;
+> +		dev_dbg(&adc->spi->dev, "set channel 0 into 24bit mode\n");
+> +		break;
+> +	case 16:
+> +		statuscomreg |= MCP3911_STATUSCOM_CH0_24WIDTH;
+> +		dev_dbg(&adc->spi->dev, "set channel 0 into 16bit mode\n");
+> +		break;
+> +	default:
+> +		adc->width[0] = 24;
+> +		dev_info(&adc->spi->dev, "invalid width for channel 0. Use 24bit.\n");
+> +		break;
+> +	}
+> +
+> +	of_property_read_u32(adc->np, "ch1-width", &adc->width[1]);
+> +	switch (adc->width[1]) {
+> +	case 24:
+> +		statuscomreg &= ~MCP3911_STATUSCOM_CH1_24WIDTH;
+> +		dev_dbg(&adc->spi->dev, "set channel 1 into 24bit mode\n");
+> +		break;
+> +	case 16:
+> +		statuscomreg |= MCP3911_STATUSCOM_CH1_24WIDTH;
+> +		dev_dbg(&adc->spi->dev, "set channel 1 into 16bit mode\n");
+> +		break;
+> +	default:
+> +		adc->width[1] = 24;
+> +		dev_info(&adc->spi->dev, "invalid width for channel 1. Use 24bit.\n");
+> +		break;
+> +	}
+> +
+> +	return mcp3911_write(adc, MCP3911_REG_STATUSCOM, statuscomreg, 2);
+> +}
+> +
+> +static int mcp3911_probe(struct spi_device *spi)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct mcp3911 *adc;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*adc));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	adc = iio_priv(indio_dev);
+> +	adc->spi = spi;
+> +	adc->np = spi->dev.of_node;
+> +
+> +	ret = mcp3911_config_of(adc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (adc->vrefext) {
+> +		adc->vref = devm_regulator_get(&adc->spi->dev, "vref");
+> +		if (IS_ERR(adc->vref))
+> +			return PTR_ERR(adc->vref);
+> +
+> +		ret = regulator_enable(adc->vref);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	/* Store gain values to better calculate scale values */
+> +	mcp3911_get_hwgain(adc, 0, &adc->gain[0]);
+> +	mcp3911_get_hwgain(adc, 1, &adc->gain[1]);
+> +
+> +	indio_dev->dev.parent = &spi->dev;
+> +	indio_dev->dev.of_node = spi->dev.of_node;
+> +	indio_dev->name = spi_get_device_id(spi)->name;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->info = &mcp3911_info;
+> +	spi_set_drvdata(spi, indio_dev);
+> +
+> +	indio_dev->channels = mcp3911_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(mcp3911_channels);
+> +
+> +	mutex_init(&adc->lock);
+> +
+> +	ret = iio_device_register(indio_dev);
+> +	if (ret)
+> +		goto reg_disable;
+> +
+> +	return ret;
+> +
+> +reg_disable:
+> +	if (adc->vref)
+> +		regulator_disable(adc->vref);
+> +
+> +	return ret;
+> +}
+> +
+> +static int mcp3911_remove(struct spi_device *spi)
+> +{
+> +	struct iio_dev *indio_dev = spi_get_drvdata(spi);
+> +	struct mcp3911 *adc = iio_priv(indio_dev);
+> +
+> +	iio_device_unregister(indio_dev);
+> +
+> +	if (adc->vref)
+> +		regulator_disable(adc->vref);
+> +
+> +	return 0;
+> +}
+> +
+> +#if defined(CONFIG_OF)
+> +static const struct of_device_id mcp3911_dt_ids[] = {
+> +	{ .compatible = "microchip,mcp3911" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, mcp3911_dt_ids);
+> +#endif
+> +
+> +static const struct spi_device_id mcp3911_id[] = {
+> +	{ "mcp3911", 0 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(spi, mcp3911_id);
+> +
+> +static struct spi_driver mcp3911_driver = {
+> +	.driver = {
+> +		.name = "mcp3911",
+> +		.of_match_table = of_match_ptr(mcp3911_dt_ids),
+> +	},
+> +	.probe = mcp3911_probe,
+> +	.remove = mcp3911_remove,
+> +	.id_table = mcp3911_id,
+> +};
+> +module_spi_driver(mcp3911_driver);
+> +
+> +MODULE_AUTHOR("Marcus Folkesson <marcus.folkesson@gmail.com>");
+> +MODULE_AUTHOR("Kent Gustavsson <kent@minoris.se>");
+> +MODULE_DESCRIPTION("Microchip Technology MCP3911");
+> +MODULE_LICENSE("GPL v2");
+> 
+
+-- 
+
+Peter Meerwald-Stadler
+Mobile: +43 664 24 44 418
