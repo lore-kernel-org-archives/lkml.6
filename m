@@ -2,140 +2,93 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673DCECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFA7ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED8D20854
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:07:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED8D20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 9E16620854
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 16:13:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E16620854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbeGUQ7p (ORCPT
+        id S1728003AbeGURGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 12:59:45 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54963 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727759AbeGUQ7p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 12:59:45 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 0D2B280500; Sat, 21 Jul 2018 18:06:28 +0200 (CEST)
-Date:   Sat, 21 Jul 2018 18:06:19 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        jroedel@suse.de, Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 2/3] x86/entry/32: Check for VM86 mode in slow-path check
-Message-ID: <20180721160619.GA19856@amd>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
- <1532103744-31902-3-git-send-email-joro@8bytes.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="opJtzjQTFsWo+cga"
-Content-Disposition: inline
-In-Reply-To: <1532103744-31902-3-git-send-email-joro@8bytes.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 21 Jul 2018 13:06:23 -0400
+Received: from www.osadl.org ([62.245.132.105]:49595 "EHLO www.osadl.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727737AbeGURGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 13:06:22 -0400
+Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w6LG9H8Z031732;
+        Sat, 21 Jul 2018 18:09:17 +0200
+From:   Nicholas Mc Guire <hofrat@osadl.org>
+To:     Graham Moore <grmoore@opensource.altera.com>
+Cc:     Vignesh R <vigneshr@ti.com>, Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH] mtd: spi-nor: cadence-quadspi: make return type fit wait_for_completion_timeout
+Date:   Sat, 21 Jul 2018 18:08:13 +0200
+Message-Id: <1532189293-5975-1-git-send-email-hofrat@osadl.org>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+wait_for_completion_timeout returns an unsigned long not int. declare a
+suitably type timeout and fix up assignment and check.
 
---opJtzjQTFsWo+cga
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Reported-by: Vignesh R <vigneshr@ti.com>
+Fixes: 140623410536 ("mtd: spi-nor: Add driver for Cadence Quad SPI Flash Controller")
+---
 
-Hi!
+Given that CQSPI_TIMEOUT_MS is < INT_MAX the type conversion is actually safe
+here but it is cleaner to use proper types.
 
-> The SWITCH_TO_KERNEL_STACK macro only checks for CPL =3D=3D 0 to
-> go down the slow and paranoid entry path. The problem is
-> that this check also returns true when coming from VM86
-> mode. This is not a problem by itself, as the paranoid path
-> handles VM86 stack-frames just fine, but it is not necessary
-> as the normal code path handles VM86 mode as well (and
-> faster).
->=20
-> Extend the check to include VM86 mode. This also makes an
-> optimization of the paranoid path possible.
->=20
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->  arch/x86/entry/entry_32.S | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-> index 010cdb4..2767c62 100644
-> --- a/arch/x86/entry/entry_32.S
-> +++ b/arch/x86/entry/entry_32.S
-> @@ -414,8 +414,16 @@
->  	andl	$(0x0000ffff), PT_CS(%esp)
-> =20
->  	/* Special case - entry from kernel mode via entry stack */
-> -	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
-> -	jz	.Lentry_from_kernel_\@
-> +#ifdef CONFIG_VM86
-> +	movl	PT_EFLAGS(%esp), %ecx		# mix EFLAGS and CS
-> +	movb	PT_CS(%esp), %cl
-> +	andl	$(X86_EFLAGS_VM | SEGMENT_RPL_MASK), %ecx
-> +#else
-> +	movl	PT_CS(%esp), %ecx
-> +	andl	$SEGMENT_RPL_MASK, %ecx
-> +#endif
-> +	cmpl	$USER_RPL, %ecx
-> +	jb	.Lentry_from_kernel_\@
+Patch was compile tested with: socfpga_defconfig (implies
+CONFIG_SPI_CADENCE_QUADSPI=y)
 
-Would it make sense to jump to the slow path as we did, and them jump
-back if VM86 is detected?
+Patch is against 4.18-rc5 (localversion-next is next-20180720)
 
-Because VM86 is not really used often these days, and moving partial
-registers results in short code but IIRC it will be rather slow.
+ drivers/mtd/spi-nor/cadence-quadspi.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+index d7e10b3..ce5f840 100644
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -622,6 +622,7 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
+ 	unsigned int remaining = n_tx;
+ 	unsigned int write_bytes;
+ 	int ret;
++	unsigned long timeout;
+ 
+ 	writel(to_addr, reg_base + CQSPI_REG_INDIRECTWRSTARTADDR);
+ 	writel(remaining, reg_base + CQSPI_REG_INDIRECTWRBYTES);
+@@ -649,10 +650,10 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
+ 		iowrite32_rep(cqspi->ahb_base, txbuf,
+ 			      DIV_ROUND_UP(write_bytes, 4));
+ 
+-		ret = wait_for_completion_timeout(&cqspi->transfer_complete,
+-						  msecs_to_jiffies
+-						  (CQSPI_TIMEOUT_MS));
+-		if (!ret) {
++		timeout = wait_for_completion_timeout(&cqspi->transfer_complete,
++						      msecs_to_jiffies
++						      (CQSPI_TIMEOUT_MS));
++		if (!timeout) {
+ 			dev_err(nor->dev, "Indirect write timeout\n");
+ 			ret = -ETIMEDOUT;
+ 			goto failwr;
+-- 
+2.1.4
 
---opJtzjQTFsWo+cga
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltTWfsACgkQMOfwapXb+vKVGACeI9NdVcZTy/Fm7pXV6TV/7gqH
-Uu0An2ln3dlg2bBDomHRNz30cXj7GbYG
-=/5m4
------END PGP SIGNATURE-----
-
---opJtzjQTFsWo+cga--
