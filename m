@@ -2,194 +2,522 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AD6ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 02:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E67FFECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 02:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EB7A2084A
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 02:26:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EB7A2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 68E832064D
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 02:37:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a3IXpSjM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68E832064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbeGUDQu (ORCPT
+        id S1727845AbeGUD2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 23:16:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42922 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727304AbeGUDQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 23:16:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9CFA7ADC5;
-        Sat, 21 Jul 2018 02:25:51 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     paulmck@linux.vnet.ibm.com,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Date:   Sat, 21 Jul 2018 12:25:41 +1000
-Cc:     Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] rhashtable: don't hold lock on first table throughout insertion.
-In-Reply-To: <20180720144152.GW12945@linux.vnet.ibm.com>
-References: <153086169828.24852.10332573315056854948.stgit@noble> <153086175009.24852.7782466383056542839.stgit@noble> <20180720075409.kfckhodsnvktift7@gondor.apana.org.au> <20180720144152.GW12945@linux.vnet.ibm.com>
-Message-ID: <87muulqq8q.fsf@notabene.neil.brown.name>
+        Fri, 20 Jul 2018 23:28:25 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36677 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727631AbeGUD2Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Jul 2018 23:28:24 -0400
+Received: by mail-io0-f195.google.com with SMTP id r15-v6so5180115ioa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jul 2018 19:37:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=VtW09YiZOGDG97U9in/lJk2y8jjLk4O5MzZgCykHZG4=;
+        b=a3IXpSjM/2ileS221sBHnFnNs/tR5YpObY8xyBji7DtathFBrJYhsgn6j37UQG3kxV
+         6MY4LaH/Thj6WuDHMYREmq8Ri+r3rOScWtDkFIeVQGcd6BXuqNQGHFlzFozK8B92EQOH
+         lqjO9wC0o2P8p6uvvxg+P2fhXkOY/K9AKz9Rqhw7YgJdLoymb0QO8l65VjyX1J6i9qWj
+         hU/Dri8qW9kccVxDcWSiVgUVnQ6jlQ8zI8gTaewSXJwVFHTaScVLo20m2VMXQanHsbTN
+         dR0P7QXCbQHYVQaPvn5vwl/vdjb8J2eTluNprnUYWdBgM7C0+Bs7qlGQ4vWIT3Y7jlRh
+         mGSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=VtW09YiZOGDG97U9in/lJk2y8jjLk4O5MzZgCykHZG4=;
+        b=hE0wWDRn5JjgtvQj5kdRRsGGh/lIpg4VeuUOHPnCZdHPRO42FyGw7FthkPLwfJ0eAE
+         owTGNK1PNKfNMF+rO9JmtEW6mJhEYV0O/wVrWP/RNsKuYE5Zjovtyrv3k+9Ky+v9CLMp
+         AlfmBYh/2ink9YOXPRFaJrme1Y30ldexV/XpPKIOsBX9w7FCRZTvcfhwE41IYnvxgXom
+         CY0khMeSZmGFGrFtH/+v2VLJsiQE1wSHc3WMMqDUtg4DifGUMM0l8uepLCU3N3riR11B
+         cdvPWBnYqdlDJ+/ik8J317OeCqjcIvJL+Hk/UZ+/Rr+20/8Ab/f73ZuKEj++AZlfvgcz
+         Hfsg==
+X-Gm-Message-State: AOUpUlFDlhHxW/8rNa9QcfiupU9Z4wLk56qRoo2Ys/XCOt6Z1NyBTdQS
+        k62TLFDaUugO8msVFmE47ugvZHmY2HdcErrQ8Aa4QA==
+X-Google-Smtp-Source: AAOMgpeJcca4Es7WM38RpjQAC2HGyB6t3fszXjAk0xGM2lGYlszqJrNIw5Z3hJmmqbOsiV8UDaXk2smhCmlVGhBrHss=
+X-Received: by 2002:a5e:8341:: with SMTP id y1-v6mr3263029iom.183.1532140645541;
+ Fri, 20 Jul 2018 19:37:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Received: by 2002:ac0:e445:0:0:0:0:0 with HTTP; Fri, 20 Jul 2018 19:37:24
+ -0700 (PDT)
+In-Reply-To: <20180716082906.6061-9-patrick.bellasi@arm.com>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com> <20180716082906.6061-9-patrick.bellasi@arm.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 20 Jul 2018 19:37:24 -0700
+Message-ID: <CAJuCfpE4FbtrwbXNCjj=pXAvTiTLw7z1aLS4+-28X=y4V+SJ-Q@mail.gmail.com>
+Subject: Re: [PATCH v2 08/12] sched/core: uclamp: extend cpu's cgroup controller
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jul 20 2018, Paul E. McKenney wrote:
-
-> On Fri, Jul 20, 2018 at 03:54:09PM +0800, Herbert Xu wrote:
->> On Fri, Jul 06, 2018 at 05:22:30PM +1000, NeilBrown wrote:
->> > rhashtable_try_insert() currently hold a lock on the bucket in
->> > the first table, while also locking buckets in subsequent tables.
->> > This is unnecessary and looks like a hold-over from some earlier
->> > version of the implementation.
->> >=20
->> > As insert and remove always lock a bucket in each table in turn, and
->> > as insert only inserts in the final table, there cannot be any races
->> > that are not covered by simply locking a bucket in each table in turn.
->> >=20
->> > When an insert call reaches that last table it can be sure that there
->> > is no match entry in any other table as it has searched them all, and
->> > insertion never happens anywhere but in the last table.  The fact that
->> > code tests for the existence of future_tbl while holding a lock on
->> > the relevant bucket ensures that two threads inserting the same key
->> > will make compatible decisions about which is the "last" table.
->> >=20
->> > This simplifies the code and allows the ->rehash field to be
->> > discarded.
->> >=20
->> > We still need a way to ensure that a dead bucket_table is never
->> > re-linked by rhashtable_walk_stop().  This can be achieved by
->> > calling call_rcu() inside the locked region, and checking
->> > ->rcu.func in rhashtable_walk_stop().  If it is not NULL, then
->> > the bucket table is empty and dead.
->> >=20
->> > Signed-off-by: NeilBrown <neilb@suse.com>
->>=20
->> ...
->>=20
->> > @@ -339,13 +338,16 @@ static int rhashtable_rehash_table(struct rhasht=
-able *ht)
->> >  	spin_lock(&ht->lock);
->> >  	list_for_each_entry(walker, &old_tbl->walkers, list)
->> >  		walker->tbl =3D NULL;
->> > -	spin_unlock(&ht->lock);
->> >=20=20
->> >  	/* Wait for readers. All new readers will see the new
->> >  	 * table, and thus no references to the old table will
->> >  	 * remain.
->> > +	 * We do this inside the locked region so that
->> > +	 * rhashtable_walk_stop() can check ->rcu.func and know
->> > +	 * not to re-link the table.
->> >  	 */
->> >  	call_rcu(&old_tbl->rcu, bucket_table_free_rcu);
->> > +	spin_unlock(&ht->lock);
->> >=20=20
->> >  	return rht_dereference(new_tbl->future_tbl, ht) ? -EAGAIN : 0;
->> >  }
->>=20
->> ...
->>=20
->> > @@ -964,7 +942,7 @@ void rhashtable_walk_stop(struct rhashtable_iter *=
-iter)
->> >  	ht =3D iter->ht;
->> >=20=20
->> >  	spin_lock(&ht->lock);
->> > -	if (tbl->rehash < tbl->size)
->> > +	if (tbl->rcu.func =3D=3D NULL)
->> >  		list_add(&iter->walker.list, &tbl->walkers);
->> >  	else
->> >  		iter->walker.tbl =3D NULL;
->>=20
->> This appears to be relying on implementation details within RCU.
->> Paul, are you OK with rhashtable doing this trick?
+On Mon, Jul 16, 2018 at 1:29 AM, Patrick Bellasi
+<patrick.bellasi@arm.com> wrote:
+> The cgroup's CPU controller allows to assign a specified (maximum)
+> bandwidth to the tasks of a group. However this bandwidth is defined and
+> enforced only on a temporal base, without considering the actual
+> frequency a CPU is running on. Thus, the amount of computation completed
+> by a task within an allocated bandwidth can be very different depending
+> on the actual frequency the CPU is running that task.
+> The amount of computation can be affected also by the specific CPU a
+> task is running on, especially when running on asymmetric capacity
+> systems like Arm's big.LITTLE.
 >
-> The notion of accessing objects that are already on RCU's callback lists
-> makes me -very- nervous because this sort of thing is not easy to
-> get right.  After all, if you are accessing something that is already
-> on one of RCU's callback lists, RCU might invoke the callback it at any
-> time (thus freeing it in this case), and because it is already on RCU's
-> callback lists, rcu_read_lock() is going to be of no help whatsoever.
-
-I don't follow that last line.  If some other thread has already called
-rcu_read_lock() when call_rcu() is called, then that other threads
-rcu_read_lock() will certainly help to ensure that the object doesn't
-get freed.  This code assumes that it also ensures that rcu.func will
-not be changed before the other thread calls rcu_read_unlock() and
-allows the grace period to end.
-(There is nothing explicitly about rcu lists here, just rcu.func).
-
+> With the availability of schedutil, the scheduler is now able
+> to drive frequency selections based on actual task utilization.
+> Moreover, the utilization clamping support provides a mechanism to
+> bias the frequency selection operated by schedutil depending on
+> constraints assigned to the tasks currently RUNNABLE on a CPU.
 >
-> In addition, RCU does no ordering on its store to ->func, but the ht->lock
-> compensates in this case.  But suppose rhashtable_walk_stop() sees the
-> pointer as non-NULL.  What prevents RCU from freeing the bucket table out
-> from under rhashtable_walk_stop()?  In v4.17, bucket_table_free_rcu()
-> just does some calls to various deallocators, which does not provide
-> the necessary synchronization.
+> Give the above mechanisms, it is now possible to extend the cpu
+> controller to specify what is the minimum (or maximum) utilization which
+> a task is expected (or allowed) to generate.
+> Constraints on minimum and maximum utilization allowed for tasks in a
+> CPU cgroup can improve the control on the actual amount of CPU bandwidth
+> consumed by tasks.
 >
-> Does the rhashtable_iter structure use some trick to make this safe?
-> Or has synchronization been added to bucket_table_free_rcu()?  Or is
-> some other trick in use?
+> Utilization clamping constraints are useful not only to bias frequency
+> selection, when a task is running, but also to better support certain
+> scheduler decisions regarding task placement. For example, on
+> asymmetric capacity systems, a utilization clamp value can be
+> conveniently used to enforce important interactive tasks on more capable
+> CPUs or to run low priority and background tasks on more energy
+> efficient CPUs.
 >
-> 							Thanx, Paul
+> The ultimate goal of utilization clamping is thus to enable:
+>
+> - boosting: by selecting an higher capacity CPU and/or higher execution
+>             frequency for small tasks which are affecting the user
+>             interactive experience.
+>
+> - capping: by selecting more energy efficiency CPUs or lower execution
+>            frequency, for big tasks which are mainly related to
+>            background activities, and thus without a direct impact on
+>            the user experience.
+>
+> Thus, a proper extension of the cpu controller with utilization clamping
+> support will make this controller even more suitable for integration
+> with advanced system management software (e.g. Android).
+> Indeed, an informed user-space can provide rich information hints to the
+> scheduler regarding the tasks it's going to schedule.
+>
+> This patch extends the CPU controller by adding a couple of new
+> attributes, util_min and util_max, which can be used to enforce task's
+> utilization boosting and capping. Specifically:
+>
+> - util_min: defines the minimum utilization which should be considered,
+>             e.g. when schedutil selects the frequency for a CPU while a
+>             task in this group is RUNNABLE.
+>             i.e. the task will run at least at a minimum frequency which
+>                 corresponds to the min_util utilization
+>
+> - util_max: defines the maximum utilization which should be considered,
+>             e.g. when schedutil selects the frequency for a CPU while a
+>             task in this group is RUNNABLE.
+>             i.e. the task will run up to a maximum frequency which
+>                 corresponds to the max_util utilization
+>
+> These attributes:
+>
+> a) are available only for non-root nodes, both on default and legacy
+>    hierarchies
+> b) do not enforce any constraints and/or dependency between the parent
+>    and its child nodes, thus relying on the delegation model and
+>    permission settings defined by the system management software
+> c) allow to (eventually) further restrict task-specific clamps defined
+>    via sched_setattr(2)
+>
+> This patch provides the basic support to expose the two new attributes
+> and to validate their run-time updates.
+>
+> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Joel Fernandes <joelaf@google.com>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> ---
+>  Documentation/admin-guide/cgroup-v2.rst |  25 ++++
+>  init/Kconfig                            |  22 +++
+>  kernel/sched/core.c                     | 186 ++++++++++++++++++++++++
+>  kernel/sched/sched.h                    |   5 +
+>  4 files changed, 238 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+> index 8a2c52d5c53b..328c011cc105 100644
+> --- a/Documentation/admin-guide/cgroup-v2.rst
+> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> @@ -904,6 +904,12 @@ controller implements weight and absolute bandwidth limit models for
+>  normal scheduling policy and absolute bandwidth allocation model for
+>  realtime scheduling policy.
+>
+> +Cycles distribution is based, by default, on a temporal base and it
+> +does not account for the frequency at which tasks are executed.
+> +The (optional) utilization clamping support allows to enforce a minimum
+> +bandwidth, which should always be provided by a CPU, and a maximum bandwidth,
+> +which should never be exceeded by a CPU.
+> +
+>  WARNING: cgroup2 doesn't yet support control of realtime processes and
+>  the cpu controller can only be enabled when all RT processes are in
+>  the root cgroup.  Be aware that system management software may already
+> @@ -963,6 +969,25 @@ All time durations are in microseconds.
+>         $PERIOD duration.  "max" for $MAX indicates no limit.  If only
+>         one number is written, $MAX is updated.
+>
+> +  cpu.util_min
+> +        A read-write single value file which exists on non-root cgroups.
+> +        The default is "0", i.e. no bandwidth boosting.
+> +
+> +        The minimum utilization in the range [0, 1023].
+> +
+> +        This interface allows reading and setting minimum utilization clamp
+> +        values similar to the sched_setattr(2). This minimum utilization
+> +        value is used to clamp the task specific minimum utilization clamp.
+> +
+> +  cpu.util_max
+> +        A read-write single value file which exists on non-root cgroups.
+> +        The default is "1023". i.e. no bandwidth clamping
+> +
+> +        The maximum utilization in the range [0, 1023].
+> +
+> +        This interface allows reading and setting maximum utilization clamp
+> +        values similar to the sched_setattr(2). This maximum utilization
+> +        value is used to clamp the task specific maximum utilization clamp.
+>
+>  Memory
+>  ------
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 0a377ad7c166..d7e2b74637ff 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -792,6 +792,28 @@ config RT_GROUP_SCHED
+>
+>  endif #CGROUP_SCHED
+>
+> +config UCLAMP_TASK_GROUP
+> +       bool "Utilization clamping per group of tasks"
+> +       depends on CGROUP_SCHED
+> +       depends on UCLAMP_TASK
+> +       default n
+> +       help
+> +         This feature enables the scheduler to track the clamped utilization
+> +         of each CPU based on RUNNABLE tasks currently scheduled on that CPU.
+> +
+> +         When this option is enabled, the user can specify a min and max
+> +         CPU bandwidth which is allowed for each single task in a group.
+> +         The max bandwidth allows to clamp the maximum frequency a task
+> +         can use, while the min bandwidth allows to define a minimum
+> +         frequency a task will always use.
+> +
+> +         When task group based utilization clamping is enabled, an eventually
+> +          specified task-specific clamp value is constrained by the cgroup
+> +         specified clamp value. Both minimum and maximum task clamping cannot
+> +          be bigger than the corresponding clamping defined at task group level.
+> +
+> +         If in doubt, say N.
+> +
+>  config CGROUP_PIDS
+>         bool "PIDs controller"
+>         help
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 0cb6e0aa4faa..30b1d894f978 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1227,6 +1227,74 @@ static inline int uclamp_group_get(struct task_struct *p,
+>         return 0;
+>  }
+>
+> +#ifdef CONFIG_UCLAMP_TASK_GROUP
+> +/**
+> + * init_uclamp_sched_group: initialize data structures required for TG's
+> + *                          utilization clamping
+> + */
+> +static inline void init_uclamp_sched_group(void)
+> +{
+> +       struct uclamp_map *uc_map;
+> +       struct uclamp_se *uc_se;
+> +       int group_id;
+> +       int clamp_id;
+> +
+> +       /* Root TG's is statically assigned to the first clamp group */
+> +       group_id = 0;
+> +
+> +       /* Initialize root TG's to default (none) clamp values */
+> +       for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+> +               uc_map = &uclamp_maps[clamp_id][0];
+> +
+> +               /* Map root TG's clamp value */
+> +               uclamp_group_init(clamp_id, group_id, uclamp_none(clamp_id));
+> +
+> +               /* Init root TG's clamp group */
+> +               uc_se = &root_task_group.uclamp[clamp_id];
+> +               uc_se->value = uclamp_none(clamp_id);
+> +               uc_se->group_id = group_id;
+> +
+> +               /* Attach root TG's clamp group */
+> +               uc_map[group_id].se_count = 1;
+> +       }
+> +}
+> +
+> +/**
+> + * alloc_uclamp_sched_group: initialize a new TG's for utilization clamping
+> + * @tg: the newly created task group
+> + * @parent: its parent task group
+> + *
+> + * A newly created task group inherits its utilization clamp values, for all
+> + * clamp indexes, from its parent task group.
+> + * This ensures that its values are properly initialized and that the task
+> + * group is accounted in the same parent's group index.
+> + *
+> + * Return: !0 on error
+> + */
+> +static inline int alloc_uclamp_sched_group(struct task_group *tg,
+> +                                          struct task_group *parent)
+> +{
+> +       struct uclamp_se *uc_se;
+> +       int clamp_id;
+> +
+> +       for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+> +               uc_se = &tg->uclamp[clamp_id];
+> +
+> +               uc_se->value = parent->uclamp[clamp_id].value;
+> +               uc_se->group_id = UCLAMP_NONE;
+> +       }
+> +
+> +       return 1;
+> +}
+> +#else /* CONFIG_UCLAMP_TASK_GROUP */
+> +static inline void init_uclamp_sched_group(void) { }
+> +static inline int alloc_uclamp_sched_group(struct task_group *tg,
+> +                                          struct task_group *parent)
+> +{
+> +       return 1;
+> +}
+> +#endif /* CONFIG_UCLAMP_TASK_GROUP */
+> +
+>  static inline int __setscheduler_uclamp(struct task_struct *p,
+>                                         const struct sched_attr *attr)
+>  {
+> @@ -1289,11 +1357,18 @@ static void __init init_uclamp(void)
+>                         raw_spin_lock_init(&uc_map[group_id].se_lock);
+>                 }
+>         }
+> +
+> +       init_uclamp_sched_group();
+>  }
+>
+>  #else /* CONFIG_UCLAMP_TASK */
+>  static inline void uclamp_cpu_get(struct rq *rq, struct task_struct *p) { }
+>  static inline void uclamp_cpu_put(struct rq *rq, struct task_struct *p) { }
+> +static inline int alloc_uclamp_sched_group(struct task_group *tg,
+> +                                          struct task_group *parent)
+> +{
+> +       return 1;
+> +}
+>  static inline int __setscheduler_uclamp(struct task_struct *p,
+>                                         const struct sched_attr *attr)
+>  {
+> @@ -6890,6 +6965,9 @@ struct task_group *sched_create_group(struct task_group *parent)
+>         if (!alloc_rt_sched_group(tg, parent))
+>                 goto err;
+>
+> +       if (!alloc_uclamp_sched_group(tg, parent))
+> +               goto err;
+> +
+>         return tg;
+>
+>  err:
+> @@ -7110,6 +7188,88 @@ static void cpu_cgroup_attach(struct cgroup_taskset *tset)
+>                 sched_move_task(task);
+>  }
+>
+> +#ifdef CONFIG_UCLAMP_TASK_GROUP
+> +static int cpu_util_min_write_u64(struct cgroup_subsys_state *css,
+> +                                 struct cftype *cftype, u64 min_value)
+> +{
+> +       struct task_group *tg;
+> +       int ret = -EINVAL;
+> +
+> +       if (min_value > SCHED_CAPACITY_SCALE)
+> +               return -ERANGE;
+> +
+> +       mutex_lock(&uclamp_mutex);
+> +       rcu_read_lock();
+> +
+> +       tg = css_tg(css);
+> +       if (tg->uclamp[UCLAMP_MIN].value == min_value) {
+> +               ret = 0;
+> +               goto out;
+> +       }
+> +       if (tg->uclamp[UCLAMP_MAX].value < min_value)
+> +               goto out;
+> +
 
-When rhashtable_rehash_table() has copied all objects out of a
-bucket_table, it must then disconnect any paused walkers and free the
-table. (a 'paused' walker has called rhashtable_walk_stop() and dropped
-the rcu read lock).
-It sets walk->tbl=3DNULL (thus implicitly removing from the list) and
-calls call_rcu(...,bucket_table_free_rcu) under a spinlock.
++ tg->uclamp[UCLAMP_MIN].value = min_value;
++ ret = 0;
 
-When rhashtable_walk_stop() is called, it needs to know whether it is
-safe to attach the walker to the bucket_table().
-It takes the same spin lock as above while still holding the
-rcu_read_lock that it took some time ago.
-If it gets the spinlock before rhashtable_rehash_table() gets it, then
-rcu.func will be NULL (tables are allocated with kzalloc) and the walker
-is attached to the table.  If it gets the spinlock after
-rhashtable_rehash_table() gets it, then rcu.func will not be NULL and
-the walker will not be attached to the table.
+Are these assignments missing or am I missing something? Same for
+cpu_util_max_write_u64().
 
-The only interesting question is whether RCU might ever set rcu.func to
-NULL (or change it at all) *after* call_rcu() has been called, and
-*before* the current grace period ends.
-If you don't want to guarantee that it doesn't, I can add an extra flag
-field to the table to say "this table must not be attached walkers", but
-I currently think that should be unnecessary.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltSmaYACgkQOeye3VZi
-gbmSag/+PIJbVkkCSVOhCxOJoTgo+hcjbDrrnAVWiOPc5hJpLf1i814gazhDd3jX
-1DrBl38H9FPoEVyDeqBcHGfPF0UvbFBuzYj0K6yEpgiKHDbhYJeKpFvl7wgmRD/g
-x6dcu+Jp4NDa6BBWlNhuZGtNojdi+TpPaQvaD9TC8z9HKUvhnj9JmHggSzkXsvpk
-2nyr+qqQ0FHGTuk+ulJhp3lCWtguu64CumGtoR+b8762kqOXy6/lQTnNeJpAiMGa
-lmSqzQYqNwHI7qVAPVcxdQDpWU0UVySXjQS7yhaOolTNf8jUxFnJwCYDGoFqU4Xu
-rppozGbM3mBSRpmnR1ipRxy+zRaV1Pr0OcG1j4So2SZK269GscGZP6kqe2AhZF8B
-hmPbQoiZDiF3h1JMZGTBSEGZ++EK3cKvBJWuPItAvp/RmGXJshLlVZceG1wNYTSi
-dmwD4Sy2YO8BPV6ChtFgzPoDWP0ctZYiyTcXw4Z5ATCXvPvfkBZXx7uPk4s4T2NC
-qTNZ2pbKjPppz2uLgr+BWu9SU3YGg4j2B+u0VeQNqnMfVCKhd00cmSSJjPFf3Q+8
-ZMgXiJabOGWNI+cedZLR3BuMPUnmI9DAgkQIyX8Wa61/It8BEPWavmGGtNdyUNLK
-MpRfsP0DIA67lMAdnVUo7lcSU+Z5On5QJZrA6Y4vArZMkt4sxw0=
-=vWtD
------END PGP SIGNATURE-----
---=-=-=--
+> +out:
+> +       rcu_read_unlock();
+> +       mutex_unlock(&uclamp_mutex);
+> +
+> +       return ret;
+> +}
+> +
+> +static int cpu_util_max_write_u64(struct cgroup_subsys_state *css,
+> +                                 struct cftype *cftype, u64 max_value)
+> +{
+> +       struct task_group *tg;
+> +       int ret = -EINVAL;
+> +
+> +       if (max_value > SCHED_CAPACITY_SCALE)
+> +               return -ERANGE;
+> +
+> +       mutex_lock(&uclamp_mutex);
+> +       rcu_read_lock();
+> +
+> +       tg = css_tg(css);
+> +       if (tg->uclamp[UCLAMP_MAX].value == max_value) {
+> +               ret = 0;
+> +               goto out;
+> +       }
+> +       if (tg->uclamp[UCLAMP_MIN].value > max_value)
+> +               goto out;
+> +
+> +out:
+> +       rcu_read_unlock();
+> +       mutex_unlock(&uclamp_mutex);
+> +
+> +       return ret;
+> +}
+> +
+> +static inline u64 cpu_uclamp_read(struct cgroup_subsys_state *css,
+> +                                 enum uclamp_id clamp_id)
+> +{
+> +       struct task_group *tg;
+> +       u64 util_clamp;
+> +
+> +       rcu_read_lock();
+> +       tg = css_tg(css);
+> +       util_clamp = tg->uclamp[clamp_id].value;
+> +       rcu_read_unlock();
+> +
+> +       return util_clamp;
+> +}
+> +
+> +static u64 cpu_util_min_read_u64(struct cgroup_subsys_state *css,
+> +                                struct cftype *cft)
+> +{
+> +       return cpu_uclamp_read(css, UCLAMP_MIN);
+> +}
+> +
+> +static u64 cpu_util_max_read_u64(struct cgroup_subsys_state *css,
+> +                                struct cftype *cft)
+> +{
+> +       return cpu_uclamp_read(css, UCLAMP_MAX);
+> +}
+> +#endif /* CONFIG_UCLAMP_TASK_GROUP */
+> +
+>  #ifdef CONFIG_FAIR_GROUP_SCHED
+>  static int cpu_shares_write_u64(struct cgroup_subsys_state *css,
+>                                 struct cftype *cftype, u64 shareval)
+> @@ -7437,6 +7597,18 @@ static struct cftype cpu_legacy_files[] = {
+>                 .read_u64 = cpu_rt_period_read_uint,
+>                 .write_u64 = cpu_rt_period_write_uint,
+>         },
+> +#endif
+> +#ifdef CONFIG_UCLAMP_TASK_GROUP
+> +       {
+> +               .name = "util_min",
+> +               .read_u64 = cpu_util_min_read_u64,
+> +               .write_u64 = cpu_util_min_write_u64,
+> +       },
+> +       {
+> +               .name = "util_max",
+> +               .read_u64 = cpu_util_max_read_u64,
+> +               .write_u64 = cpu_util_max_write_u64,
+> +       },
+>  #endif
+>         { }     /* Terminate */
+>  };
+> @@ -7604,6 +7776,20 @@ static struct cftype cpu_files[] = {
+>                 .seq_show = cpu_max_show,
+>                 .write = cpu_max_write,
+>         },
+> +#endif
+> +#ifdef CONFIG_UCLAMP_TASK_GROUP
+> +       {
+> +               .name = "util_min",
+> +               .flags = CFTYPE_NOT_ON_ROOT,
+> +               .read_u64 = cpu_util_min_read_u64,
+> +               .write_u64 = cpu_util_min_write_u64,
+> +       },
+> +       {
+> +               .name = "util_max",
+> +               .flags = CFTYPE_NOT_ON_ROOT,
+> +               .read_u64 = cpu_util_max_read_u64,
+> +               .write_u64 = cpu_util_max_write_u64,
+> +       },
+>  #endif
+>         { }     /* terminate */
+>  };
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 7e4f10c507b7..1471a23e8f57 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -389,6 +389,11 @@ struct task_group {
+>  #endif
+>
+>         struct cfs_bandwidth    cfs_bandwidth;
+> +
+> +#ifdef CONFIG_UCLAMP_TASK_GROUP
+> +       struct                  uclamp_se uclamp[UCLAMP_CNT];
+> +#endif
+> +
+>  };
+>
+>  #ifdef CONFIG_FAIR_GROUP_SCHED
+> --
+> 2.17.1
+>
