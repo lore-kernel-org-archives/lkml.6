@@ -6,51 +6,54 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D49ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 07:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F371ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 07:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F33E20849
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 07:44:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F33E20849
+	by mail.kernel.org (Postfix) with ESMTP id E6A6C20849
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 07:45:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6A6C20849
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeGUIf6 (ORCPT
+        id S1727692AbeGUIhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 04:35:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48648 "EHLO
+        Sat, 21 Jul 2018 04:37:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48656 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbeGUIf6 (ORCPT
+        with ESMTP id S1727140AbeGUIhK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 04:35:58 -0400
+        Sat, 21 Jul 2018 04:37:10 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE630AE7;
-        Sat, 21 Jul 2018 07:44:10 +0000 (UTC)
-Date:   Sat, 21 Jul 2018 09:44:08 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BE16AEF;
+        Sat, 21 Jul 2018 07:45:23 +0000 (UTC)
+Date:   Sat, 21 Jul 2018 09:45:21 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     rkir@google.com
 Cc:     linux-kernel@vger.kernel.org, tkjos@google.com
-Subject: Re: [PATCH 1/3] tty: Address checkpatch warnings in goldfish.c
-Message-ID: <20180721074408.GA6484@kroah.com>
+Subject: Re: [PATCH 2/3] tty: Make constants to be enums instead of #define
+ in goldfish.c
+Message-ID: <20180721074521.GB6484@kroah.com>
 References: <20180718001455.140575-1-rkir@google.com>
+ <20180718001455.140575-2-rkir@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180718001455.140575-1-rkir@google.com>
+In-Reply-To: <20180718001455.140575-2-rkir@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 05:14:53PM -0700, rkir@google.com wrote:
+On Tue, Jul 17, 2018 at 05:14:54PM -0700, rkir@google.com wrote:
 > From: Roman Kiryanov <rkir@google.com>
 > 
-> To make further maintenance easier.
+> enums produce better compilation errors than defines.
 
-That sentance makes no sense :(
+Yes, if you name the enum.  But you didn't do that here, so this patch
+really does not do anything to cause any "protection" at all :(
 
-Please be specific as to what exactly you are doing here.
+Please fix this up and resend.
 
 thanks,
 
