@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D21FECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AD3ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2B6720856
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED5AB20872
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:36:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iEmqRO78"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2B6720856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rTDQmBLG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5AB20872
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbeGUO2P (ORCPT
+        id S1728862AbeGUO2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 10:28:15 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37592 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727713AbeGUO2O (ORCPT
+        Sat, 21 Jul 2018 10:28:48 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38778 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727713AbeGUO2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 10:28:14 -0400
-Received: by mail-pl0-f66.google.com with SMTP id 31-v6so6370142plc.4
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 06:35:27 -0700 (PDT)
+        Sat, 21 Jul 2018 10:28:16 -0400
+Received: by mail-pl0-f65.google.com with SMTP id b1-v6so6350966pls.5
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 06:35:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BS7jONlcC15l+eBl52Jh0dWrkwF8GT1KK+12jUOAAcY=;
-        b=iEmqRO78nkQ95C8DCLTo3gPnPtACjOl3Tf6y1UMJZa0rgVxKWvTNgmLgH21J+uitW1
-         y+YbU2jVNOp+H/xLatWyVjfCZjLb6Ybj9KnhvbL+YhIzAepZXp4qGpXCYtgHR+QlvjBK
-         QJGrtdHR/5SrGe3g3oQyJLBgixgSkt8M5g759niYfU3IKHCjlqS3G0PKIN1KZKtMr196
-         cr7uV3XErWZA1buy5HPmHi5LmhWGFCOIauh2z8kNDOk2vHDO/Q+SwCdA1/Y/tOZCtTyg
-         emdaUj9hZOPfz1FtOuJ7ucdm5zgKxWB5mSzmpQ+IikNiwF/9XLOMIefKF2uAhPSl7pWs
-         d3GA==
+        bh=q9kReK5tZUutLvhAvbUCEgi9Q9LNcMaiDMfnVmd8CqM=;
+        b=rTDQmBLGnvmXcRk9nwqHkrCnGWgNQjnV33X+xE6UecPWMs7TrBe+SNxdoIKt5ulTLx
+         /HOXNZNizo1vsKmP6SvbmTQj3eObHJ8HVAmghizf1p4uCuZbOI/ACae7j/R2ZMYrSKDS
+         0/4AleHa/FraOmkkr7N2jcbIkFkYxlAUqk2JdvFrdRlruSLBiCicbELU3eDoO04rt6gR
+         WZUkXpqUCnspm/qYKaQYu55kdp0neTfodusf1QOllcsmTjawH/PRgy2rSmuuVKYiohsU
+         nmnGQ4xwBgicoxj+QuzFW+okVkylZyxHCfbVsiN9XcStHD3QtOBI2tZd/oOoCytH2WTZ
+         yqmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=BS7jONlcC15l+eBl52Jh0dWrkwF8GT1KK+12jUOAAcY=;
-        b=OAYAG68B83zj6s/EXpkQedie1IR5rnvvm6GMe4bY4r5BGUHBe6Ka00ijA5Xagz3E4B
-         LNDjB9mdaSWVfYeW/9Uj8EDCz/+NJD61bgQW/sWR3whZ9V6JjdP21wALRUZuqQFA8DIe
-         Nxu5KMVNDMayXBlsm6b61x6+qY+1X+hHmJDOEwLRt56yr9KrYm58iNrMBm8wZWLrJ6jT
-         lSCzn2Rk5Tg1VrwV96wLY4a1ratVfjeBDo7H5P/6TQZ6g0OD198MX4/TX/q1p4x86c7N
-         THLMEPJnvBbCgX53uHHscLFrjtHlakhF+E1rwYjn13FKjOHP4t6AR5vbLGDVb9cVahfp
-         Etxw==
-X-Gm-Message-State: AOUpUlFVgKroPzRdcwp9q735LLcMTWDw6kCC+YUGqF+lf3j0RS4sxenU
-        4kdzhqDpbi2sEA4mbLqqxXU=
-X-Google-Smtp-Source: AAOMgpff00kLrUM79eC6NySBUM2/Gvag40zGoih5SfLtFsI1mCb8btAdi/XobVkcBwIeNpY+NVzEQw==
-X-Received: by 2002:a17:902:6e09:: with SMTP id u9-v6mr5753050plk.13.1532180126626;
-        Sat, 21 Jul 2018 06:35:26 -0700 (PDT)
+        bh=q9kReK5tZUutLvhAvbUCEgi9Q9LNcMaiDMfnVmd8CqM=;
+        b=fmtXOZGkDv8VgZgG9iuxWGjkHgmwkneTQom/wUsSY8KuSew5mnEn0AH6O1+UtgP3n8
+         CMaLPzIA77M0Otv4VlHamfi7ejJQhbb/N2wb0l+g2oMTGjFC4g/QEPMrxk3zXE6MhoKs
+         XJAp+KOy7HkDy+5nb9nDINKDaF59YJpwuAdNB2i6EOdpYVWrCXTlZ2R5cEiw3cpduzxD
+         7WCaV2KvUm5nAZPs3xTNrw8FH3QSmxW5/NREmbhYZe2gC8KPCYOPJlMkuDoaRlxu1Qxv
+         LEji4y/r1z4t7A1J6/aG1tiuPf8WMTjPWc5cYFYCV3AP1oxLVWFhZmJ1tluUn3Jfmukk
+         HIqg==
+X-Gm-Message-State: AOUpUlG8WyNoQ1cLglr3lR/6Mtr2PW1Tvix6WhrPhZrNSRgOTx8LZo0t
+        ATjE7O240IIBb2HhzCG8Yak=
+X-Google-Smtp-Source: AAOMgpfjcydbqnwkSfEQvJ07mFV7OG5v+HSPO/dkbD4/HT1U/lbcNhF+nuaVpI4lxc/X7v0xKxAVYw==
+X-Received: by 2002:a17:902:7781:: with SMTP id o1-v6mr5849717pll.48.1532180128541;
+        Sat, 21 Jul 2018 06:35:28 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id p26-v6sm9445023pfi.183.2018.07.21.06.35.25
+        by smtp.gmail.com with ESMTPSA id p26-v6sm9445023pfi.183.2018.07.21.06.35.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 06:35:26 -0700 (PDT)
+        Sat, 21 Jul 2018 06:35:28 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 07/14] staging: gasket: gasket_get_device drop check for NULL pci_dev
-Date:   Sat, 21 Jul 2018 06:35:00 -0700
-Message-Id: <20180721133507.95599-8-toddpoynor@gmail.com>
+Subject: [PATCH 09/14] staging: gasket: core: convert various logs to debug level
+Date:   Sat, 21 Jul 2018 06:35:02 -0700
+Message-Id: <20180721133507.95599-10-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 In-Reply-To: <20180721133507.95599-1-toddpoynor@gmail.com>
 References: <20180721133507.95599-1-toddpoynor@gmail.com>
@@ -81,30 +81,169 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-The pci_dev field of a struct gasket_dev can never be NULL, there's no
-need to check for this in gasket_get_device().
+Debugging information is improperly logged at non-debug log level in a
+number of places, and some logs regarding error conditions may be
+generated too frequently, such that these could cause performance
+problems and/or obscure other logs.  Convert these to debug log level.
 
-Reported-by: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/staging/gasket/gasket_core.c | 38 +++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index e82f8ce39c9fd..8265d543623d7 100644
+index 8265d543623d7..1d04fd0990e45 100644
 --- a/drivers/staging/gasket/gasket_core.c
 +++ b/drivers/staging/gasket/gasket_core.c
-@@ -2026,9 +2026,7 @@ const struct gasket_driver_desc *gasket_get_driver_desc(struct gasket_dev *dev)
-  */
- struct device *gasket_get_device(struct gasket_dev *dev)
+@@ -205,7 +205,8 @@ static inline int check_and_invoke_callback(
  {
--	if (dev->pci_dev)
--		return &dev->pci_dev->dev;
--	return NULL;
-+	return &dev->pci_dev->dev;
- }
+ 	int ret = 0;
  
- /**
+-	gasket_nodev_error("check_and_invoke_callback %p", cb_function);
++	gasket_log_debug(gasket_dev, "check_and_invoke_callback %p",
++			 cb_function);
+ 	if (cb_function) {
+ 		mutex_lock(&gasket_dev->mutex);
+ 		ret = cb_function(gasket_dev);
+@@ -227,7 +228,7 @@ static inline int gasket_check_and_invoke_callback_nolock(
+ 	int ret = 0;
+ 
+ 	if (cb_function) {
+-		gasket_log_info(
++		gasket_log_debug(
+ 			gasket_dev, "Invoking device-specific callback.");
+ 		ret = cb_function(gasket_dev);
+ 	}
+@@ -1177,7 +1178,7 @@ static int gasket_release(struct inode *inode, struct file *file)
+ 	if (file->f_mode & FMODE_WRITE) {
+ 		ownership->write_open_count--;
+ 		if (ownership->write_open_count == 0) {
+-			gasket_log_info(gasket_dev, "Device is now free");
++			gasket_log_debug(gasket_dev, "Device is now free");
+ 			ownership->is_owned = 0;
+ 			ownership->owner = 0;
+ 
+@@ -1198,7 +1199,7 @@ static int gasket_release(struct inode *inode, struct file *file)
+ 		}
+ 	}
+ 
+-	gasket_log_info(
++	gasket_log_debug(
+ 		gasket_dev, "New open count (owning tgid %u): %d",
+ 		ownership->owner, ownership->write_open_count);
+ 	mutex_unlock(&gasket_dev->mutex);
+@@ -1225,7 +1226,7 @@ static bool gasket_mmap_has_permissions(
+ 
+ 	/* Never allow non-sysadmins to access to a dead device. */
+ 	if (gasket_dev->status != GASKET_STATUS_ALIVE) {
+-		gasket_log_info(gasket_dev, "Device is dead.");
++		gasket_log_debug(gasket_dev, "Device is dead.");
+ 		return false;
+ 	}
+ 
+@@ -1233,7 +1234,7 @@ static bool gasket_mmap_has_permissions(
+ 	requested_permissions =
+ 		(vma->vm_flags & (VM_WRITE | VM_READ | VM_EXEC));
+ 	if (requested_permissions & ~(bar_permissions)) {
+-		gasket_log_info(
++		gasket_log_debug(
+ 			gasket_dev,
+ 			"Attempting to map a region with requested permissions "
+ 			"0x%x, but region has permissions 0x%x.",
+@@ -1244,7 +1245,7 @@ static bool gasket_mmap_has_permissions(
+ 	/* Do not allow a non-owner to write. */
+ 	if ((vma->vm_flags & VM_WRITE) &&
+ 	    !gasket_owned_by_current_tgid(&gasket_dev->dev_info)) {
+-		gasket_log_info(
++		gasket_log_debug(
+ 			gasket_dev,
+ 			"Attempting to mmap a region for write without owning "
+ 			"device.");
+@@ -1736,15 +1737,16 @@ static int gasket_get_hw_status(struct gasket_dev *gasket_dev)
+ 	status = gasket_check_and_invoke_callback_nolock(
+ 		gasket_dev, driver_desc->device_status_cb);
+ 	if (status != GASKET_STATUS_ALIVE) {
+-		gasket_log_info(gasket_dev, "Hardware reported status %d.",
+-				status);
++		gasket_log_debug(gasket_dev, "Hardware reported status %d.",
++				 status);
+ 		return status;
+ 	}
+ 
+ 	status = gasket_interrupt_system_status(gasket_dev);
+ 	if (status != GASKET_STATUS_ALIVE) {
+-		gasket_log_info(gasket_dev,
+-				"Interrupt system reported status %d.", status);
++		gasket_log_debug(gasket_dev,
++				 "Interrupt system reported status %d.",
++				 status);
+ 		return status;
+ 	}
+ 
+@@ -1752,7 +1754,7 @@ static int gasket_get_hw_status(struct gasket_dev *gasket_dev)
+ 		status = gasket_page_table_system_status(
+ 			gasket_dev->page_table[i]);
+ 		if (status != GASKET_STATUS_ALIVE) {
+-			gasket_log_info(
++			gasket_log_debug(
+ 				gasket_dev, "Page table %d reported status %d.",
+ 				i, status);
+ 			return status;
+@@ -1783,7 +1785,7 @@ static long gasket_ioctl(struct file *filp, uint cmd, ulong arg)
+ 	gasket_dev = (struct gasket_dev *)filp->private_data;
+ 	driver_desc = gasket_dev->internal_desc->driver_desc;
+ 	if (!driver_desc) {
+-		gasket_log_error(
++		gasket_log_debug(
+ 			gasket_dev,
+ 			"Unable to find device descriptor for file %s",
+ 			d_path(&filp->f_path, path, 256));
+@@ -1831,7 +1833,7 @@ int gasket_reset_nolock(struct gasket_dev *gasket_dev, uint reset_type)
+ 	/* Perform a device reset of the requested type. */
+ 	ret = driver_desc->device_reset_cb(gasket_dev, reset_type);
+ 	if (ret) {
+-		gasket_log_error(
++		gasket_log_debug(
+ 			gasket_dev, "Device reset cb returned %d.", ret);
+ 		return ret;
+ 	}
+@@ -1842,7 +1844,7 @@ int gasket_reset_nolock(struct gasket_dev *gasket_dev, uint reset_type)
+ 
+ 	ret = gasket_interrupt_reinit(gasket_dev);
+ 	if (ret) {
+-		gasket_log_error(
++		gasket_log_debug(
+ 			gasket_dev, "Unable to reinit interrupts: %d.", ret);
+ 		return ret;
+ 	}
+@@ -1850,7 +1852,7 @@ int gasket_reset_nolock(struct gasket_dev *gasket_dev, uint reset_type)
+ 	/* Get current device health. */
+ 	gasket_dev->status = gasket_get_hw_status(gasket_dev);
+ 	if (gasket_dev->status == GASKET_STATUS_DEAD) {
+-		gasket_log_error(gasket_dev, "Device reported as dead.");
++		gasket_log_debug(gasket_dev, "Device reported as dead.");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -2002,7 +2004,7 @@ static ssize_t gasket_sysfs_data_show(
+ 		}
+ 		break;
+ 	default:
+-		gasket_log_error(
++		gasket_log_debug(
+ 			gasket_dev, "Unknown attribute: %s", attr->attr.name);
+ 		ret = 0;
+ 		break;
+@@ -2056,7 +2058,7 @@ int gasket_wait_with_reschedule(
+ 		msleep(delay_ms);
+ 		retries++;
+ 	}
+-	gasket_log_error(gasket_dev, "%s timeout: reg %llx timeout (%llu ms)",
++	gasket_log_debug(gasket_dev, "%s timeout: reg %llx timeout (%llu ms)",
+ 			 __func__, offset, max_retries * delay_ms);
+ 	return -ETIMEDOUT;
+ }
 -- 
 2.18.0.233.g985f88cf7e-goog
 
