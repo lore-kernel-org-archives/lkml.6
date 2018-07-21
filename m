@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB38ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07423ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 764BA206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 771E520856
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:59:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TQQ+xuPy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764BA206B7
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QAyzUrpl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771E520856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbeGUMwM (ORCPT
+        id S1728318AbeGUMwP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 08:52:12 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44469 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728028AbeGUMwL (ORCPT
+        Sat, 21 Jul 2018 08:52:15 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41275 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728193AbeGUMwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 08:52:11 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q127-v6so13184294ljq.11
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 04:59:41 -0700 (PDT)
+        Sat, 21 Jul 2018 08:52:13 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y17-v6so13190289ljy.8
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 04:59:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1YA/ffmI4lvPW6BD2uhQsoeiW5XV+DX4SZhSwKauGOw=;
-        b=TQQ+xuPyV0qwrF/V1dFImuWPHaG+oPPFqLH9G6xdeRnk6knbT+TGup/Q07LJ2AYdS+
-         4T9goXTzmz60Jtv97jEx7/937mxahREDDToQR7GDsu1dnjlZNPm4SJbCF7RXk1HQGM3j
-         a0htMvw4NikRfNwgZkXp4jZG0Nos6CSfPsKy8=
+        bh=DcxmhcXsmFcf1oRC5wcTAR2OzdG7NohyyFhu97ixLXo=;
+        b=QAyzUrplcVjLRsfsoE/HcV1BSw1N+4ft06+X8jmHV8IrncGTvvMpEopNM2Q64pRtg4
+         k0ZE0Xa++cP8jKaD/14WFF7Js5BcbCoH/c+7UOZrkJGmne2JdkAaswih33r7+SO/ctLi
+         XvtidxkHBhBnAW8znZ9qEI/JfurMz3WbT/TqI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=1YA/ffmI4lvPW6BD2uhQsoeiW5XV+DX4SZhSwKauGOw=;
-        b=gQpgeGBgAE0fPRdKjgK3GyxR5nibCk5yL+C33bjyHmiEaG3gc8rBnhkSKDG3PJGF7F
-         o1kHtNwQ9OZ0Pxp331LlY0KeD6lX89PNgTmyY1R012k2BiPK70klDfIk4b+wt9TELfSC
-         SbpMfIBUob8N68WahgMmHW8i+PZW2Z2rTI2WGPXjT9rpCBHCFT19gHEwh3D/VbO8txcr
-         QetLUoLeHrM+cRAZ8fr+0KBVvYtJ9XcW3AsrvlhqoKWlmSHkC3buDoTdvKR9+uRJx0XJ
-         kZf55TVolWvzdYA0VzKpfScXMwo70ZEmuNr0xlIKu8JGJz+oALE0MJH2771MtasaWwJG
-         Z29Q==
-X-Gm-Message-State: AOUpUlGEKJiyXkgPDdRQWjuHRiDkGCvvU5NItusTpEBMVe8ER81+98QW
-        VMEaQ+ljgsD25v0aZuv+1BAVoA==
-X-Google-Smtp-Source: AAOMgpevXdI5q1Dkt9JxrcExZFIHBYPkYFPEFa9tQkRokPPiLgbCppNEvvmLmWJCg/2hY1sB2BRYqg==
-X-Received: by 2002:a2e:800e:: with SMTP id j14-v6mr4134395ljg.114.1532174380338;
-        Sat, 21 Jul 2018 04:59:40 -0700 (PDT)
+        bh=DcxmhcXsmFcf1oRC5wcTAR2OzdG7NohyyFhu97ixLXo=;
+        b=hzMMSQYUrmBfYzbZNHLzySqwnHrAq1fVGWVp21M//eJq9R2x65N/Oa+r47oyX+7/+n
+         05gysGQeCdirGhjxw4lTkPX+3RV9GvY6laL7YI6I9aLMIgtOSomHl9rEHlQdnk/M/O03
+         UUzoORPvrxllKl5YJL4I3HgTlUuNtVZPiz5WfNrrqjzlXNe60ncIuCehDT++1kONaub3
+         Ptg3eSSDG1+9f2x/6WYwbHl31s0Kpuszy6JQuAYGaR4+SBobI9Cggpl7iEQMZBDGTdwK
+         rn79afMPhN9HKnfG3nE6w/Qjoz72qRw+fJAtjZd2rdkkkvxSQmPS9qn0lTL8o4JzY+mm
+         s46w==
+X-Gm-Message-State: AOUpUlGDCDAi6xWKMJQNofnK1NMEqe7eeEgn0ot3Qh4tgmivFld3/kGR
+        cjyYp3vSARv6ParbHQWosfu3+w==
+X-Google-Smtp-Source: AAOMgpdGxjfWOjsyMiFxqxZ5GRCTHXoKX2i6IrZ4HLwjvxlXyvwn9pxd3mO4HTp6ODB7eT3PzAkzvw==
+X-Received: by 2002:a2e:91d6:: with SMTP id u22-v6mr4008147ljg.64.1532174381929;
+        Sat, 21 Jul 2018 04:59:41 -0700 (PDT)
 Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id 73-v6sm664260lfs.44.2018.07.21.04.59.38
+        by smtp.gmail.com with ESMTPSA id 73-v6sm664260lfs.44.2018.07.21.04.59.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 04:59:39 -0700 (PDT)
+        Sat, 21 Jul 2018 04:59:41 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     davem@davemloft.net, grygorii.strashko@ti.com
 Cc:     corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
         ilias.apalodimas@linaro.org, p-varis@ti.com, spatton@ti.com,
         francois.ozog@linaro.org, yogeshs@ti.com, nsekhar@ti.com,
         andrew@lunn.ch, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v4 net-next 5/6] net: ethernet: ti: cpsw: restore shaper configuration while down/up
-Date:   Sat, 21 Jul 2018 14:59:22 +0300
-Message-Id: <20180721115923.1389-6-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v4 net-next 6/6] Documentation: networking: cpsw: add MQPRIO & CBS offload examples
+Date:   Sat, 21 Jul 2018 14:59:23 +0300
+Message-Id: <20180721115923.1389-7-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180721115923.1389-1-ivan.khoronzhuk@linaro.org>
 References: <20180721115923.1389-1-ivan.khoronzhuk@linaro.org>
@@ -74,83 +74,563 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Need to restore shapers configuration after interface was down/up.
-This is needed as appropriate configuration is still replicated in
-kernel settings. This only shapers context restore, so vlan
-configuration should be restored by user if needed, especially for
-devices with one port where vlan frames are sent via ALE.
+This document describes MQPRIO and CBS Qdisc offload configuration
+for cpsw driver based on examples. It potentially can be used in
+audio video bridging (AVB) and time sensitive networking (TSN).
 
 Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- drivers/net/ethernet/ti/cpsw.c | 47 ++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ Documentation/networking/ti-cpsw.txt | 540 +++++++++++++++++++++++++++
+ 1 file changed, 540 insertions(+)
+ create mode 100644 Documentation/networking/ti-cpsw.txt
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 449dc7f1e5f8..171abcfb6184 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -1808,6 +1808,51 @@ static int cpsw_set_cbs(struct net_device *ndev,
- 	return ret;
- }
- 
-+static void cpsw_cbs_resume(struct cpsw_slave *slave, struct cpsw_priv *priv)
-+{
-+	int fifo, bw;
+diff --git a/Documentation/networking/ti-cpsw.txt b/Documentation/networking/ti-cpsw.txt
+new file mode 100644
+index 000000000000..1e840346cae1
+--- /dev/null
++++ b/Documentation/networking/ti-cpsw.txt
+@@ -0,0 +1,540 @@
++* Texas Instruments CPSW ethernet driver
 +
-+	for (fifo = CPSW_FIFO_SHAPERS_NUM; fifo > 0; fifo--) {
-+		bw = priv->fifo_bw[fifo];
-+		if (!bw)
-+			continue;
++Multiqueue & CBS & MQPRIO
++=====================================================================
++=====================================================================
 +
-+		cpsw_set_fifo_rlimit(priv, fifo, bw);
-+	}
-+}
++The cpsw has 3 CBS shapers for each external ports. This document
++describes MQPRIO and CBS Qdisc offload configuration for cpsw driver
++based on examples. It potentially can be used in audio video bridging
++(AVB) and time sensitive networking (TSN).
 +
-+static void cpsw_mqprio_resume(struct cpsw_slave *slave, struct cpsw_priv *priv)
-+{
-+	struct cpsw_common *cpsw = priv->cpsw;
-+	u32 tx_prio_map = 0;
-+	int i, tc, fifo;
-+	u32 tx_prio_rg;
++The following examples was tested on AM572x EVM and BBB boards.
 +
-+	if (!priv->mqprio_hw)
-+		return;
++Test setup
++==========
 +
-+	for (i = 0; i < 8; i++) {
-+		tc = netdev_get_prio_tc_map(priv->ndev, i);
-+		fifo = CPSW_FIFO_SHAPERS_NUM - tc;
-+		tx_prio_map |= fifo << (4 * i);
-+	}
++Under consideration two examples with AM52xx EVM running cpsw driver
++in dual_emac mode.
 +
-+	tx_prio_rg = cpsw->version == CPSW_VERSION_1 ?
-+		     CPSW1_TX_PRI_MAP : CPSW2_TX_PRI_MAP;
++Several prerequisites:
++- TX queues must be rated starting from txq0 that has highest priority
++- Traffic classes are used starting from 0, that has highest priority
++- CBS shapers should be used with rated queues
++- The bandwidth for CBS shapers has to be set a little bit more then
++  potential incoming rate, thus, rate of all incoming tx queues has
++  to be a little less
++- Real rates can differ, due to discreetness
++- Map skb-priority to txq is not enough, also skb-priority to l2 prio
++  map has to be created with ip or vconfig tool
++- Any l2/socket prio (0 - 7) for classes can be used, but for
++  simplicity default values are used: 3 and 2
++- only 2 classes tested: A and B, but checked and can work with more,
++  maximum allowed 4, but only for 3 rate can be set.
 +
-+	slave_write(slave, tx_prio_map, tx_prio_rg);
-+}
++Test setup for examples
++=======================
++                                    +-------------------------------+
++                                    |--+                            |
++                                    |  |      Workstation0          |
++                                    |E |  MAC 18:03:73:66:87:42     |
+++-----------------------------+  +--|t |                            |
++|                    | 1  | E |  |  |h |./tsn_listener -d \         |
++|  Target board:     | 0  | t |--+  |0 | 18:03:73:66:87:42 -i eth0 \|
++|  AM572x EVM        | 0  | h |     |  | -s 1500                    |
++|                    | 0  | 0 |     |--+                            |
++|  Only 2 classes:   |Mb  +---|     +-------------------------------+
++|  class A, class B  |        |
++|                    |    +---|     +-------------------------------+
++|                    | 1  | E |     |--+                            |
++|                    | 0  | t |     |  |      Workstation1          |
++|                    | 0  | h |--+  |E |  MAC 20:cf:30:85:7d:fd     |
++|                    |Mb  | 1 |  +--|t |                            |
+++-----------------------------+     |h |./tsn_listener -d \         |
++                                    |0 | 20:cf:30:85:7d:fd -i eth0 \|
++                                    |  | -s 1500                    |
++                                    |--+                            |
++                                    +-------------------------------+
 +
-+/* restore resources after port reset */
-+static void cpsw_restore(struct cpsw_priv *priv)
-+{
-+	/* restore MQPRIO offload */
-+	for_each_slave(priv, cpsw_mqprio_resume, priv);
++*********************************************************************
++*********************************************************************
++*********************************************************************
++Example 1: One port tx AVB configuration scheme for target board
++----------------------------------------------------------------------
++(prints and scheme for AM52xx evm, applicable for single port boards)
 +
-+	/* restore CBS offload */
-+	for_each_slave(priv, cpsw_cbs_resume, priv);
-+}
++tc - traffic class
++txq - transmit queue
++p - priority
++f - fifo (cpsw fifo)
++S - shaper configured
 +
- static int cpsw_ndo_open(struct net_device *ndev)
- {
- 	struct cpsw_priv *priv = netdev_priv(ndev);
-@@ -1887,6 +1932,8 @@ static int cpsw_ndo_open(struct net_device *ndev)
- 
- 	}
- 
-+	cpsw_restore(priv);
+++------------------------------------------------------------------+ u
++| +---------------+  +---------------+  +------+ +------+          | s
++| |               |  |               |  |      | |      |          | e
++| | App 1         |  | App 2         |  | Apps | | Apps |          | r
++| | Class A       |  | Class B       |  | Rest | | Rest |          |
++| | Eth0          |  | Eth0          |  | Eth0 | | Eth1 |          | s
++| | VLAN100       |  | VLAN100       |  |   |  | |   |  |          | p
++| | 40 Mb/s       |  | 20 Mb/s       |  |   |  | |   |  |          | a
++| | SO_PRIORITY=3 |  | SO_PRIORITY=2 |  |   |  | |   |  |          | c
++| |   |           |  |   |           |  |   |  | |   |  |          | e
++| +---|-----------+  +---|-----------+  +---|--+ +---|--+          |
+++-----|------------------|------------------|--------|-------------+
++    +-+     +------------+                  |        |
++    |       |             +-----------------+     +--+
++    |       |             |                       |
+++---|-------|-------------|-----------------------|----------------+
++| +----+ +----+ +----+ +----+                   +----+             |
++| | p3 | | p2 | | p1 | | p0 |                   | p0 |             | k
++| \    / \    / \    / \    /                   \    /             | e
++|  \  /   \  /   \  /   \  /                     \  /              | r
++|   \/     \/     \/     \/                       \/               | n
++|    |     |             |                        |                | e
++|    |     |       +-----+                        |                | l
++|    |     |       |                              |                |
++| +----+ +----+ +----+                          +----+             | s
++| |tc0 | |tc1 | |tc2 |                          |tc0 |             | p
++| \    / \    / \    /                          \    /             | a
++|  \  /   \  /   \  /                            \  /              | c
++|   \/     \/     \/                              \/               | e
++|   |      |       +-----+                        |                |
++|   |      |       |     |                        |                |
++|   |      |       |     |                        |                |
++|   |      |       |     |                        |                |
++| +----+ +----+ +----+ +----+                   +----+             |
++| |txq0| |txq1| |txq2| |txq3|                   |txq4|             |
++| \    / \    / \    / \    /                   \    /             |
++|  \  /   \  /   \  /   \  /                     \  /              |
++|   \/     \/     \/     \/                       \/               |
++| +-|------|------|------|--+                  +--|--------------+ |
++| | |      |      |      |  | Eth0.100         |  |     Eth1     | |
+++---|------|------|------|------------------------|----------------+
++    |      |      |      |                        |
++    p      p      p      p                        |
++    3      2      0-1, 4-7  <- L2 priority        |
++    |      |      |      |                        |
++    |      |      |      |                        |
+++---|------|------|------|------------------------|----------------+
++|   |      |      |      |             |----------+                |
++| +----+ +----+ +----+ +----+       +----+                         |
++| |dma7| |dma6| |dma5| |dma4|       |dma3|                         |
++| \    / \    / \    / \    /       \    /                         | c
++|  \S /   \S /   \  /   \  /         \  /                          | p
++|   \/     \/     \/     \/           \/                           | s
++|   |      |      | +-----            |                            | w
++|   |      |      | |                 |                            |
++|   |      |      | |                 |                            | d
++| +----+ +----+ +----+p            p+----+                         | r
++| |    | |    | |    |o            o|    |                         | i
++| | f3 | | f2 | | f0 |r            r| f0 |                         | v
++| |tc0 | |tc1 | |tc2 |t            t|tc0 |                         | e
++| \CBS / \CBS / \CBS /1            2\CBS /                         | r
++|  \S /   \S /   \  /                \  /                          |
++|   \/     \/     \/                  \/                           |
+++------------------------------------------------------------------+
++========================================Eth==========================>
 +
- 	/* Enable Interrupt pacing if configured */
- 	if (cpsw->coal_intvl != 0) {
- 		struct ethtool_coalesce coal;
++1)
++// Add 4 tx queues, for interface Eth0, and 1 tx queue for Eth1
++$ ethtool -L eth0 rx 1 tx 5
++rx unmodified, ignoring
++
++2)
++// Check if num of queues is set correctly:
++$ ethtool -l eth0
++Channel parameters for eth0:
++Pre-set maximums:
++RX:             8
++TX:             8
++Other:          0
++Combined:       0
++Current hardware settings:
++RX:             1
++TX:             5
++Other:          0
++Combined:       0
++
++3)
++// TX queues must be rated starting from 0, so set bws for tx0 and tx1
++// Set rates 40 and 20 Mb/s appropriately.
++// Pay attention, real speed can differ a bit due to discreetness.
++// Leave last 2 tx queues not rated.
++$ echo 40 > /sys/class/net/eth0/queues/tx-0/tx_maxrate
++$ echo 20 > /sys/class/net/eth0/queues/tx-1/tx_maxrate
++
++4)
++// Check maximum rate of tx (cpdma) queues:
++$ cat /sys/class/net/eth0/queues/tx-*/tx_maxrate
++40
++20
++0
++0
++0
++
++5)
++// Map skb->priority to traffic class:
++// 3pri -> tc0, 2pri -> tc1, (0,1,4-7)pri -> tc2
++// Map traffic class to transmit queue:
++// tc0 -> txq0, tc1 -> txq1, tc2 -> (txq2, txq3)
++$ tc qdisc replace dev eth0 handle 100: parent root mqprio num_tc 3 \
++map 2 2 1 0 2 2 2 2 2 2 2 2 2 2 2 2 queues 1@0 1@1 2@2 hw 1
++
++5a)
++// As two interface sharing same set of tx queues, assign all traffic
++// coming to interface Eth1 to separate queue in order to not mix it
++// with traffic from interface Eth0, so use separate txq to send
++// packets to Eth1, so all prio -> tc0 and tc0 -> txq4
++// Here hw 0, so here still default configuration for eth1 in hw
++$ tc qdisc replace dev eth1 handle 100: parent root mqprio num_tc 1 \
++map 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 queues 1@4 hw 0
++
++6)
++// Check classes settings
++$ tc -g class show dev eth0
+++---(100:ffe2) mqprio
++|    +---(100:3) mqprio
++|    +---(100:4) mqprio
++|
+++---(100:ffe1) mqprio
++|    +---(100:2) mqprio
++|
+++---(100:ffe0) mqprio
++     +---(100:1) mqprio
++
++$ tc -g class show dev eth1
+++---(100:ffe0) mqprio
++     +---(100:5) mqprio
++
++7)
++// Set rate for class A - 41 Mbit (tc0, txq0) using CBS Qdisc
++// Set it +1 Mb for reserve (important!)
++// here only idle slope is important, others arg are ignored
++// Pay attention, real speed can differ a bit due to discreetness
++$ tc qdisc add dev eth0 parent 100:1 cbs locredit -1438 \
++hicredit 62 sendslope -959000 idleslope 41000 offload 1
++net eth0: set FIFO3 bw = 50
++
++8)
++// Set rate for class B - 21 Mbit (tc1, txq1) using CBS Qdisc:
++// Set it +1 Mb for reserve (important!)
++$ tc qdisc add dev eth0 parent 100:2 cbs locredit -1468 \
++hicredit 65 sendslope -979000 idleslope 21000 offload 1
++net eth0: set FIFO2 bw = 30
++
++9)
++// Create vlan 100 to map sk->priority to vlan qos
++$ ip link add link eth0 name eth0.100 type vlan id 100
++8021q: 802.1Q VLAN Support v1.8
++8021q: adding VLAN 0 to HW filter on device eth0
++8021q: adding VLAN 0 to HW filter on device eth1
++net eth0: Adding vlanid 100 to vlan filter
++
++10)
++// Map skb->priority to L2 prio, 1 to 1
++$ ip link set eth0.100 type vlan \
++egress 0:0 1:1 2:2 3:3 4:4 5:5 6:6 7:7
++
++11)
++// Check egress map for vlan 100
++$ cat /proc/net/vlan/eth0.100
++[...]
++INGRESS priority mappings: 0:0  1:0  2:0  3:0  4:0  5:0  6:0 7:0
++EGRESS priority mappings: 0:0 1:1 2:2 3:3 4:4 5:5 6:6 7:7
++
++12)
++// Run your appropriate tools with socket option "SO_PRIORITY"
++// to 3 for class A and/or to 2 for class B
++// (I took at https://www.spinics.net/lists/netdev/msg460869.html)
++./tsn_talker -d 18:03:73:66:87:42 -i eth0.100 -p3 -s 1500&
++./tsn_talker -d 18:03:73:66:87:42 -i eth0.100 -p2 -s 1500&
++
++13)
++// run your listener on workstation (should be in same vlan)
++// (I took at https://www.spinics.net/lists/netdev/msg460869.html)
++./tsn_listener -d 18:03:73:66:87:42 -i enp5s0 -s 1500
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39000 kbps
++
++14)
++// Restore default configuration if needed
++$ ip link del eth0.100
++$ tc qdisc del dev eth1 root
++$ tc qdisc del dev eth0 root
++net eth0: Prev FIFO2 is shaped
++net eth0: set FIFO3 bw = 0
++net eth0: set FIFO2 bw = 0
++$ ethtool -L eth0 rx 1 tx 1
++
++*********************************************************************
++*********************************************************************
++*********************************************************************
++Example 2: Two port tx AVB configuration scheme for target board
++----------------------------------------------------------------------
++(prints and scheme for AM52xx evm, for dual emac boards only)
++
+++------------------------------------------------------------------+ u
++| +----------+  +----------+  +------+  +----------+  +----------+ | s
++| |          |  |          |  |      |  |          |  |          | | e
++| | App 1    |  | App 2    |  | Apps |  | App 3    |  | App 4    | | r
++| | Class A  |  | Class B  |  | Rest |  | Class B  |  | Class A  | |
++| | Eth0     |  | Eth0     |  |   |  |  | Eth1     |  | Eth1     | | s
++| | VLAN100  |  | VLAN100  |  |   |  |  | VLAN100  |  | VLAN100  | | p
++| | 40 Mb/s  |  | 20 Mb/s  |  |   |  |  | 10 Mb/s  |  | 30 Mb/s  | | a
++| | SO_PRI=3 |  | SO_PRI=2 |  |   |  |  | SO_PRI=3 |  | SO_PRI=2 | | c
++| |   |      |  |   |      |  |   |  |  |   |      |  |   |      | | e
++| +---|------+  +---|------+  +---|--+  +---|------+  +---|------+ |
+++-----|-------------|-------------|---------|-------------|--------+
++    +-+     +-------+             |         +----------+  +----+
++    |       |             +-------+------+             |       |
++    |       |             |              |             |       |
+++---|-------|-------------|--------------|-------------|-------|---+
++| +----+ +----+ +----+ +----+          +----+ +----+ +----+ +----+ |
++| | p3 | | p2 | | p1 | | p0 |          | p0 | | p1 | | p2 | | p3 | | k
++| \    / \    / \    / \    /          \    / \    / \    / \    / | e
++|  \  /   \  /   \  /   \  /            \  /   \  /   \  /   \  /  | r
++|   \/     \/     \/     \/              \/     \/     \/     \/   | n
++|   |      |             |                |             |      |   | e
++|   |      |        +----+                +----+        |      |   | l
++|   |      |        |                          |        |      |   |
++| +----+ +----+ +----+                        +----+ +----+ +----+ | s
++| |tc0 | |tc1 | |tc2 |                        |tc2 | |tc1 | |tc0 | | p
++| \    / \    / \    /                        \    / \    / \    / | a
++|  \  /   \  /   \  /                          \  /   \  /   \  /  | c
++|   \/     \/     \/                            \/     \/     \/   | e
++|   |      |       +-----+                +-----+      |       |   |
++|   |      |       |     |                |     |      |       |   |
++|   |      |       |     |                |     |      |       |   |
++|   |      |       |     |    E      E    |     |      |       |   |
++| +----+ +----+ +----+ +----+ t      t +----+ +----+ +----+ +----+ |
++| |txq0| |txq1| |txq4| |txq5| h      h |txq6| |txq7| |txq3| |txq2| |
++| \    / \    / \    / \    / 0      1 \    / \    / \    / \    / |
++|  \  /   \  /   \  /   \  /  .      .  \  /   \  /   \  /   \  /  |
++|   \/     \/     \/     \/   1      1   \/     \/     \/     \/   |
++| +-|------|------|------|--+ 0      0 +-|------|------|------|--+ |
++| | |      |      |      |  | 0      0 | |      |      |      |  | |
+++---|------|------|------|---------------|------|------|------|----+
++    |      |      |      |               |      |      |      |
++    p      p      p      p               p      p      p      p
++    3      2      0-1, 4-7   <-L2 pri->  0-1, 4-7      2      3
++    |      |      |      |               |      |      |      |
++    |      |      |      |               |      |      |      |
+++---|------|------|------|---------------|------|------|------|----+
++|   |      |      |      |               |      |      |      |    |
++| +----+ +----+ +----+ +----+          +----+ +----+ +----+ +----+ |
++| |dma7| |dma6| |dma3| |dma2|          |dma1| |dma0| |dma4| |dma5| |
++| \    / \    / \    / \    /          \    / \    / \    / \    / | c
++|  \S /   \S /   \  /   \  /            \  /   \  /   \S /   \S /  | p
++|   \/     \/     \/     \/              \/     \/     \/     \/   | s
++|   |      |      | +-----                |      |      |      |   | w
++|   |      |      | |                     +----+ |      |      |   |
++|   |      |      | |                          | |      |      |   | d
++| +----+ +----+ +----+p                      p+----+ +----+ +----+ | r
++| |    | |    | |    |o                      o|    | |    | |    | | i
++| | f3 | | f2 | | f0 |r        CPSW          r| f3 | | f2 | | f0 | | v
++| |tc0 | |tc1 | |tc2 |t                      t|tc0 | |tc1 | |tc2 | | e
++| \CBS / \CBS / \CBS /1                      2\CBS / \CBS / \CBS / | r
++|  \S /   \S /   \  /                          \S /   \S /   \  /  |
++|   \/     \/     \/                            \/     \/     \/   |
+++------------------------------------------------------------------+
++========================================Eth==========================>
++
++1)
++// Add 8 tx queues, for interface Eth0, but they are common, so are accessed
++// by two interfaces Eth0 and Eth1.
++$ ethtool -L eth1 rx 1 tx 8
++rx unmodified, ignoring
++
++2)
++// Check if num of queues is set correctly:
++$ ethtool -l eth0
++Channel parameters for eth0:
++Pre-set maximums:
++RX:             8
++TX:             8
++Other:          0
++Combined:       0
++Current hardware settings:
++RX:             1
++TX:             8
++Other:          0
++Combined:       0
++
++3)
++// TX queues must be rated starting from 0, so set bws for tx0 and tx1 for Eth0
++// and for tx2 and tx3 for Eth1. That is, rates 40 and 20 Mb/s appropriately
++// for Eth0 and 30 and 10 Mb/s for Eth1.
++// Real speed can differ a bit due to discreetness
++// Leave last 4 tx queues as not rated
++$ echo 40 > /sys/class/net/eth0/queues/tx-0/tx_maxrate
++$ echo 20 > /sys/class/net/eth0/queues/tx-1/tx_maxrate
++$ echo 30 > /sys/class/net/eth1/queues/tx-2/tx_maxrate
++$ echo 10 > /sys/class/net/eth1/queues/tx-3/tx_maxrate
++
++4)
++// Check maximum rate of tx (cpdma) queues:
++$ cat /sys/class/net/eth0/queues/tx-*/tx_maxrate
++40
++20
++30
++10
++0
++0
++0
++0
++
++5)
++// Map skb->priority to traffic class for Eth0:
++// 3pri -> tc0, 2pri -> tc1, (0,1,4-7)pri -> tc2
++// Map traffic class to transmit queue:
++// tc0 -> txq0, tc1 -> txq1, tc2 -> (txq4, txq5)
++$ tc qdisc replace dev eth0 handle 100: parent root mqprio num_tc 3 \
++map 2 2 1 0 2 2 2 2 2 2 2 2 2 2 2 2 queues 1@0 1@1 2@4 hw 1
++
++6)
++// Check classes settings
++$ tc -g class show dev eth0
+++---(100:ffe2) mqprio
++|    +---(100:5) mqprio
++|    +---(100:6) mqprio
++|
+++---(100:ffe1) mqprio
++|    +---(100:2) mqprio
++|
+++---(100:ffe0) mqprio
++     +---(100:1) mqprio
++
++7)
++// Set rate for class A - 41 Mbit (tc0, txq0) using CBS Qdisc for Eth0
++// here only idle slope is important, others ignored
++// Real speed can differ a bit due to discreetness
++$ tc qdisc add dev eth0 parent 100:1 cbs locredit -1470 \
++hicredit 62 sendslope -959000 idleslope 41000 offload 1
++net eth0: set FIFO3 bw = 50
++
++8)
++// Set rate for class B - 21 Mbit (tc1, txq1) using CBS Qdisc for Eth0
++$ tc qdisc add dev eth0 parent 100:2 cbs locredit -1470 \
++hicredit 65 sendslope -979000 idleslope 21000 offload 1
++net eth0: set FIFO2 bw = 30
++
++9)
++// Create vlan 100 to map sk->priority to vlan qos for Eth0
++$ ip link add link eth0 name eth0.100 type vlan id 100
++net eth0: Adding vlanid 100 to vlan filter
++
++10)
++// Map skb->priority to L2 prio for Eth0.100, one to one
++$ ip link set eth0.100 type vlan \
++egress 0:0 1:1 2:2 3:3 4:4 5:5 6:6 7:7
++
++11)
++// Check egress map for vlan 100
++$ cat /proc/net/vlan/eth0.100
++[...]
++INGRESS priority mappings: 0:0  1:0  2:0  3:0  4:0  5:0  6:0 7:0
++EGRESS priority mappings: 0:0 1:1 2:2 3:3 4:4 5:5 6:6 7:7
++
++12)
++// Map skb->priority to traffic class for Eth1:
++// 3pri -> tc0, 2pri -> tc1, (0,1,4-7)pri -> tc2
++// Map traffic class to transmit queue:
++// tc0 -> txq2, tc1 -> txq3, tc2 -> (txq6, txq7)
++$ tc qdisc replace dev eth1 handle 100: parent root mqprio num_tc 3 \
++map 2 2 1 0 2 2 2 2 2 2 2 2 2 2 2 2 queues 1@2 1@3 2@6 hw 1
++
++13)
++// Check classes settings
++$ tc -g class show dev eth1
+++---(100:ffe2) mqprio
++|    +---(100:7) mqprio
++|    +---(100:8) mqprio
++|
+++---(100:ffe1) mqprio
++|    +---(100:4) mqprio
++|
+++---(100:ffe0) mqprio
++     +---(100:3) mqprio
++
++14)
++// Set rate for class A - 31 Mbit (tc0, txq2) using CBS Qdisc for Eth1
++// here only idle slope is important, others ignored
++// Set it +1 Mb for reserve (important!)
++$ tc qdisc add dev eth1 parent 100:3 cbs locredit -1453 \
++hicredit 47 sendslope -969000 idleslope 31000 offload 1
++net eth1: set FIFO3 bw = 31
++
++15)
++// Set rate for class B - 11 Mbit (tc1, txq3) using CBS Qdisc for Eth1
++// Set it +1 Mb for reserve (important!)
++$ tc qdisc add dev eth1 parent 100:4 cbs locredit -1483 \
++hicredit 34 sendslope -989000 idleslope 11000 offload 1
++net eth1: set FIFO2 bw = 11
++
++16)
++// Create vlan 100 to map sk->priority to vlan qos for Eth1
++$ ip link add link eth1 name eth1.100 type vlan id 100
++net eth1: Adding vlanid 100 to vlan filter
++
++17)
++// Map skb->priority to L2 prio for Eth1.100, one to one
++$ ip link set eth1.100 type vlan \
++egress 0:0 1:1 2:2 3:3 4:4 5:5 6:6 7:7
++
++18)
++// Check egress map for vlan 100
++$ cat /proc/net/vlan/eth1.100
++[...]
++INGRESS priority mappings: 0:0  1:0  2:0  3:0  4:0  5:0  6:0 7:0
++EGRESS priority mappings: 0:0 1:1 2:2 3:3 4:4 5:5 6:6 7:7
++
++19)
++// Run appropriate tools with socket option "SO_PRIORITY" to 3
++// for class A and to 2 for class B. For both interfaces
++./tsn_talker -d 18:03:73:66:87:42 -i eth0.100 -p2 -s 1500&
++./tsn_talker -d 18:03:73:66:87:42 -i eth0.100 -p3 -s 1500&
++./tsn_talker -d 20:cf:30:85:7d:fd -i eth1.100 -p2 -s 1500&
++./tsn_talker -d 20:cf:30:85:7d:fd -i eth1.100 -p3 -s 1500&
++
++20)
++// run your listener on workstation (should be in same vlan)
++// (I took at https://www.spinics.net/lists/netdev/msg460869.html)
++./tsn_listener -d 18:03:73:66:87:42 -i enp5s0 -s 1500
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39012 kbps
++Receiving data rate: 39000 kbps
++
++21)
++// Restore default configuration if needed
++$ ip link del eth1.100
++$ ip link del eth0.100
++$ tc qdisc del dev eth1 root
++net eth1: Prev FIFO2 is shaped
++net eth1: set FIFO3 bw = 0
++net eth1: set FIFO2 bw = 0
++$ tc qdisc del dev eth0 root
++net eth0: Prev FIFO2 is shaped
++net eth0: set FIFO3 bw = 0
++net eth0: set FIFO2 bw = 0
++$ ethtool -L eth0 rx 1 tx 1
 -- 
 2.17.1
 
