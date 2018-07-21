@@ -2,149 +2,172 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB0FECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A477ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7637C206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF21220854
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:04:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SUm+EKoG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7637C206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ojPWODIj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF21220854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbeGUMwF (ORCPT
+        id S1727812AbeGUM4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 08:52:05 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45502 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbeGUMwF (ORCPT
+        Sat, 21 Jul 2018 08:56:32 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43277 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727663AbeGUM4c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 08:52:05 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j143-v6so3471746lfj.12
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 04:59:34 -0700 (PDT)
+        Sat, 21 Jul 2018 08:56:32 -0400
+Received: by mail-ed1-f67.google.com with SMTP id b20-v6so11797746edt.10;
+        Sat, 21 Jul 2018 05:04:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cafp2N5/pCFZNE4LiyMSXZb3eQNaxHPcEoMdkA3oO3Y=;
-        b=SUm+EKoG+uABvx2ouH3GAwsJB7jH9LxMkOyvxgqxi3AEXJxbPW0sM96HAOwCV7aAc8
-         /hB2S+BLCCBiyclUuNIkqrercbJGoosmuDRIQ14mdO2EymaUR/LM9o2QsGFHmYlv9IC7
-         NnwMZfweTeZ88FiIK0R/CbIxLTc9aidqd3k3M=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=x4Fkp/KHa7FEOEu7VoafhS/3yTx22+dgWdZXXxfohOc=;
+        b=ojPWODIjvniRPm8IkhnXQuB441H6P5TsZE3JMoai9Hc6HWmF/zYFBzeimHAnCANTMY
+         hQo4KHoP040q2TPZ89qJ8jzXAJSeDLQd9JSj5yWVEv/IqM6nO8tVzjA6oMHdn2/GkZPt
+         LwH5aiEaJZSppVO5CznrGzlrCeMqKdRbxjXL4b2JCu9KYIoG/93BUrcaL7P2BjpxfBrE
+         T3PmHQft7OQNM/4HC3NfAyDSd/nMtQOlULKWRDTqVh19k/el0rQ3k3IhNVFQcEJhmGjy
+         53vJeBx00OtEA3Kh5BFgAijjHCxt7LBOcP18GwljyV/AR8g60OHOuTNHrMsrM3fAkVNx
+         VGWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=cafp2N5/pCFZNE4LiyMSXZb3eQNaxHPcEoMdkA3oO3Y=;
-        b=WSCTwNHhVPBaZudNQa9zXWX68pIB6CC/oX06zmnTm3LeqYlaWLetzIOb6/3t7f8Cvh
-         MNjKGFnHO7cC/SodhPiapOAVWk3REwpaqmXABhRahONd6iN+UTXOs7AZxWd4susD1qVv
-         o5HlrMeUFqsy89P0CMk2SNQNsVrirFhhUOMVZqJP96zn1G9h5+0oeMbq8cJIF85dKDiw
-         GZ4v3ddvIK273NsRxut7Q1WODDt/96BLCqOl8NYBTj0e4hScfGBCS0I/60r56EJGB+Z/
-         7gwjULBPt42iJx4Vr7+D46zjJzilmMgtbC2WIy0dl2F3uqXOBlwQPsstrjAb9TZEFIeD
-         lK8g==
-X-Gm-Message-State: AOUpUlGh/pjPW7dWTuqPoJiDrUN8bS+ewXLTNu5X9mbS5cTuyEHPK0E7
-        O119LqD19apVE0DJnza7Py7XTw==
-X-Google-Smtp-Source: AAOMgpep3OQI8fn3+BW+V72/89C59Exl59NW2h1nzyS5HImnUZszV4A8qXGIWRYVeWjzNYVeH5rzYQ==
-X-Received: by 2002:a19:e955:: with SMTP id g82-v6mr3585281lfh.44.1532174374222;
-        Sat, 21 Jul 2018 04:59:34 -0700 (PDT)
-Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id 73-v6sm664260lfs.44.2018.07.21.04.59.32
+         :references:mime-version:content-transfer-encoding;
+        bh=x4Fkp/KHa7FEOEu7VoafhS/3yTx22+dgWdZXXxfohOc=;
+        b=YVDxKHzD733tTZjD5xZMRFwMW36VRakXMwXH0fhVNSJ2doHxxHP2PqsE3H1XzY5+Ok
+         9s8fz2jkvd6AbqZS4xb6l5lC880b2RQw4kPmZYmLg13BZ3K+7v9TTxzVxsdVqFO+82UX
+         kQXcvgR+Gy3bvYnB98H/vAeYUIsoC2JYrHzCvkGUh4wHAyJM6zItVJhbMlFQ7SK1hgRH
+         ofOFwFiSQ36WbWt2mWhLhKyXfIXaZyooAJ8K/7M22uTcVzbImxVWEM30p6a3aAGJNEDh
+         SKt4Mv/heRuaklDiLgDUPphW+9QA9ELRWbF78aZoKvsmGKfo4i7ptDuH+kuRDLG7lHQX
+         58PQ==
+X-Gm-Message-State: AOUpUlFv0KFRHZ77868llp250YGkjdCtqtstOHRewqBepD1g9KKvKYy3
+        fOHc289Om+c9zleJrXnwHJY=
+X-Google-Smtp-Source: AAOMgpcv4zOIY3PzM80A3vNuJYKXOF0RVlCEHUITNu2gemhasFi+wYrp3CldlIP+aSLkrAtsj5JFMA==
+X-Received: by 2002:a50:c211:: with SMTP id n17-v6mr4373111edf.11.1532174639853;
+        Sat, 21 Jul 2018 05:03:59 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id v3-v6sm1948840edq.92.2018.07.21.05.03.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 04:59:33 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     davem@davemloft.net, grygorii.strashko@ti.com
-Cc:     corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, vinicius.gomes@intel.com,
-        henrik@austad.us, jesus.sanchez-palencia@intel.com,
-        ilias.apalodimas@linaro.org, p-varis@ti.com, spatton@ti.com,
-        francois.ozog@linaro.org, yogeshs@ti.com, nsekhar@ti.com,
-        andrew@lunn.ch, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v4 net-next 1/6] net: ethernet: ti: cpsw: use cpdma channels in backward order for txq
-Date:   Sat, 21 Jul 2018 14:59:18 +0300
-Message-Id: <20180721115923.1389-2-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180721115923.1389-1-ivan.khoronzhuk@linaro.org>
-References: <20180721115923.1389-1-ivan.khoronzhuk@linaro.org>
+        Sat, 21 Jul 2018 05:03:59 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH 2/2] ASoC: tegra: probe deferral error reporting
+Date:   Sat, 21 Jul 2018 15:03:57 +0300
+Message-ID: <2195096.d8yV6ZqeS2@dimapc>
+In-Reply-To: <1532174119.19673.24.camel@toradex.com>
+References: <20180720080424.31505-1-marcel@ziswiler.com> <8512069.csTsg4TRIJ@dimapc> <1532174119.19673.24.camel@toradex.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpdma channel highest priority is from hi to lo number.
-The driver has limited number of descriptors that are shared between
-number of cpdma channels. Number of queues can be tuned with ethtool,
-that allows to not spend descriptors on not needed cpdma channels.
-In AVB usually only 2 tx queues can be enough with rate limitation.
-The rate limitation can be used only for hi priority queues. Thus, to
-use only 2 queues the 8 has to be created. It's wasteful.
+On Saturday, 21 July 2018 14:55:21 MSK Marcel Ziswiler wrote:
+> On Sat, 2018-07-21 at 14:17 +0300, Dmitry Osipenko wrote:
+> 
+> > On Saturday, 21 July 2018 12:56:15 MSK Mark Brown wrote:
+> > 
+> > > On Fri, Jul 20, 2018 at 12:31:07PM +0000, Marcel Ziswiler wrote:
+> > > 
+> > > > On Fri, 2018-07-20 at 13:16 +0100, Mark Brown wrote:
+> > > > 
+> > > > > >  	ac97->sync_gpio = of_get_named_gpio(pdev-
+> > > > > > >
+> > > > > > >dev.of_node,
+> > > > > > >
+> > > > > >  	
+> > > > > >  	
+> > > > > >  					    "nvidia,codec-
+> > > > > > 
+> > > > > > sync-
+> > > > > > 
+> > > > > > gpio", 0);
+> > > > > > 
+> > > > > > 
+> > > > > >  	if (!gpio_is_valid(ac97->sync_gpio)) {
+> > > > > > 
+> > > > > > 
+> > > > > > -		dev_err(&pdev->dev, "no codec-sync GPIO
+> > > > > > supplied\n");
+> > > > > > +		ret = ac97->sync_gpio;
+> > > > > > +		dev_err(&pdev->dev, "no codec-sync GPIO
+> > > > > > supplied:
+> > > > > > %d\n", ret);
+> > > > > > 
+> > > > > > 
+> > > > > >  		goto err_clk_put;
+> > > > > >  	
+> > > > > >  	
+> > > > > >  	}
+> > > > > 
+> > > > > 
+> > > > > This isn't reporting an error code associated with the attempt
+> > > > > to
+> > > > > find a
+> > > > > codec-sync GPIO, it's the result of some other operation.
+> > > > 
+> > > > 
+> > > > What exactly is then the of_get_named_gpio() above please doing
+> > > > if
+> > > > not getting the codec sync GPIO? I am not following you, sorry.
+> > > 
+> > > 
+> > > It's not in any way involved in setting the value of ret, whatever
+> > > value
+> > > that has it's nothing to do with that operation.
+> > 
+> > 
+> > The comment to gpio_is_valid() says that it "Returns GPIO number to
+> > use with 
+> > Linux generic GPIO API, or one of the errno value on the error
+> > condition". 
+> > Comment doesn't explicitly states that the returned GPIO number is
+> > always 
+> > valid, but it is kinda implied.
+> 
+> 
+> Do you mean I should be assigning the return value of gpio_is_valid()
+> to ret and use that instead?
 
-So, in order to allow using only needed number of rate limited
-tx queues, save resources, and be able to set rate limitation for
-them, let assign tx cpdma channels in backward order to queues.
+No, gpio_is_valid() returns a boolean. I think your patch is fine as it is is.
 
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
- drivers/net/ethernet/ti/cpsw.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+Probably Mark meant something like this:
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 00761fe59848..4425b537b9dd 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -968,8 +968,8 @@ static int cpsw_tx_mq_poll(struct napi_struct *napi_tx, int budget)
- 
- 	/* process every unprocessed channel */
- 	ch_map = cpdma_ctrl_txchs_state(cpsw->dma);
--	for (ch = 0, num_tx = 0; ch_map; ch_map >>= 1, ch++) {
--		if (!(ch_map & 0x01))
-+	for (ch = 0, num_tx = 0; ch_map & 0xff; ch_map <<= 1, ch++) {
-+		if (!(ch_map & 0x80))
- 			continue;
- 
- 		txv = &cpsw->txv[ch];
-@@ -2432,7 +2432,7 @@ static int cpsw_update_channels_res(struct cpsw_priv *priv, int ch_num, int rx)
- 	void (*handler)(void *, int, int);
- 	struct netdev_queue *queue;
- 	struct cpsw_vector *vec;
--	int ret, *ch;
-+	int ret, *ch, vch;
- 
- 	if (rx) {
- 		ch = &cpsw->rx_ch_num;
-@@ -2445,7 +2445,8 @@ static int cpsw_update_channels_res(struct cpsw_priv *priv, int ch_num, int rx)
- 	}
- 
- 	while (*ch < ch_num) {
--		vec[*ch].ch = cpdma_chan_create(cpsw->dma, *ch, handler, rx);
-+		vch = rx ? *ch : 7 - *ch;
-+		vec[*ch].ch = cpdma_chan_create(cpsw->dma, vch, handler, rx);
- 		queue = netdev_get_tx_queue(priv->ndev, *ch);
- 		queue->tx_maxrate = 0;
- 
-@@ -2982,7 +2983,7 @@ static int cpsw_probe(struct platform_device *pdev)
- 	u32 slave_offset, sliver_offset, slave_size;
- 	const struct soc_device_attribute *soc;
- 	struct cpsw_common		*cpsw;
--	int ret = 0, i;
-+	int ret = 0, i, ch;
- 	int irq;
- 
- 	cpsw = devm_kzalloc(&pdev->dev, sizeof(struct cpsw_common), GFP_KERNEL);
-@@ -3157,7 +3158,8 @@ static int cpsw_probe(struct platform_device *pdev)
- 	if (soc)
- 		cpsw->quirk_irq = 1;
- 
--	cpsw->txv[0].ch = cpdma_chan_create(cpsw->dma, 0, cpsw_tx_handler, 0);
-+	ch = cpsw->quirk_irq ? 0 : 7;
-+	cpsw->txv[0].ch = cpdma_chan_create(cpsw->dma, ch, cpsw_tx_handler, 0);
- 	if (IS_ERR(cpsw->txv[0].ch)) {
- 		dev_err(priv->dev, "error initializing tx dma channel\n");
- 		ret = PTR_ERR(cpsw->txv[0].ch);
--- 
-2.17.1
+        ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
+                                            "nvidia,codec-sync-gpio", 0);
+        if (ac97->sync_gpio < 0) {
+                ret = ac97->sync_gpio;
+                dev_err(&pdev->dev, "no codec-sync GPIO supplied: %d\n", ret);
+                goto err_clk_put;
+        }
+
+        if (!gpio_is_valid(ac97->sync_gpio)) {
+                ret = -EINVAL;
+                goto err_clk_put;
+       }
+
+But that is not needed because of_get_named_gpio() returns either a valid GPIO 
+number or a error code.
+
 
