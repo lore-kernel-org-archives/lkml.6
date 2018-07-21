@@ -2,149 +2,205 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4E7ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A48ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E125920854
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:26:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D029120856
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 21:34:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IR1r2jNT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E125920854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="XkBPBM4E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D029120856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbeGUWUK (ORCPT
+        id S1728180AbeGUW3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 18:20:10 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:56248 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727974AbeGUWUK (ORCPT
+        Sat, 21 Jul 2018 18:29:02 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:38218 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728101AbeGUW3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 18:20:10 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6LLNS0a076098;
-        Sat, 21 Jul 2018 21:25:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=mqNotk1FTE1Ocs5g4JvW+glQDIi4ksZ4ZRPFEvbIqFo=;
- b=IR1r2jNTuPw1sm5Q5lgNcqBEY6bNQuDmAU6L5c3ErsF1Vuve4T9YZXHzOO1kPpVgg67k
- +Q1V512qReebqNQTW57aTW2hu3vzDMMXhe5TxXSbIhxnfiVqQpe7+UM+gO94SpIx8ux5
- hzfiw/czCs2hoxhOnBHvr+vsD+VnaCm+h2WqgNBygTnvRP+ak9fwLod3xFmroxLBcJjJ
- rms0HVQ2NhZFlft9AodEbGDd9KKfCiGStv/12GvMzOPN/+HodbCmFyYDdqGCfx/4HFll
- CzDgYcKT3acOzqfFqQWm96386lZ/nZfQ8DvnZDxrtMzlhQZyCZLoAIGJrJteqU5geF4x VA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2kbtbch51e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 21 Jul 2018 21:25:29 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6LLPSdq006400
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 21 Jul 2018 21:25:28 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6LLPRn8020376;
-        Sat, 21 Jul 2018 21:25:27 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 21 Jul 2018 14:25:27 -0700
-Subject: Re: [PATCH 2/2] xen/pv: Call get_cpu_address_sizes to set
- x86_virt/phys_bits
-To:     "M. Vefa Bicakci" <m.v.b@runbox.com>, linux-kernel@vger.kernel.org
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        stable@vger.kernel.org
-References: <20180721194909.23903-1-m.v.b@runbox.com>
- <20180721194909.23903-2-m.v.b@runbox.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <90bc371d-a296-51b3-8b78-62106c9690de@oracle.com>
-Date:   Sat, 21 Jul 2018 17:25:54 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 21 Jul 2018 18:29:02 -0400
+Received: by mail-oi0-f67.google.com with SMTP id v8-v6so27194595oie.5;
+        Sat, 21 Jul 2018 14:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MdgpA9Mukv3Hs3nLzBZT+UPEKk+EeXXr7nZ2ftmKh4I=;
+        b=XkBPBM4E4uZ7sqxrb4VUmKwikVnOX4/rdtItmJfse1jvFNTqkxDFBBSX0gXu89n7IG
+         aKtvoazCgHPNHBKfvMOWJFKOm19r12RErTatemBJCnW/6rLr7pwpf+M1sIhVMQ9cJD5d
+         o1muXVhtgvQdhnj2axcmm70CM2qQuz8mg71g9y+sUpOSoc6yM0O6xWq7JvykyUKqEWF9
+         Bq6mB8QU9SEJL1yWO6sfnXtvmpm/exlR+fZTkrKWNmRcM7bAvcBFPr/SDwnpuZZT0kXC
+         HELbRTDGL0Rb6FM6gr5vzYUSNZcnjHqWz1xyZnJZxmaEXs7aXjSzVTsHm1egmOsNUewx
+         YIHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MdgpA9Mukv3Hs3nLzBZT+UPEKk+EeXXr7nZ2ftmKh4I=;
+        b=XEt98iYPet09Xko8DJAw6vJIJRGCla/90LR1T7A5XURT/slxuph05+zM+4+rDUqTPa
+         qVt1vJ7gGUJSeTWYW6Xn2g7kmGvYJDcMsc3SKkmyKrVZM0JIl5qRbaIEi7r+Q/NscQ7s
+         GZdn2bUcH4GcyEUlbKiHTKmI5i0xUmeWk4Zkuoyel8n4Rcrk2eYQss92yZMb1VwenPbD
+         4kEk/ZtVym8F9m5CzIaqrAXdMNIAX4wvuEcjiDSF7ExWgCIwnXcgmpnKJ/gvuwFAZ/61
+         AU+NGNacOIXoTa4YwOEcY2yMghaK/lwr91terHDe2vBcUa5dU8MWrrhU8+oz4q5qw3r+
+         Gk5A==
+X-Gm-Message-State: AOUpUlG+EkWMsJuK4Jah3jCVfcHHzXoMND8jamspQI2k06Konq+Rdhsv
+        Dk9ZlSAj45eu+zMv59LClsYd9xd/70C3hVs16CcAfiGL
+X-Google-Smtp-Source: AAOMgpdA8LQN/XJFSEF0Iv//ilV5tzDH1MO75qKVDVDOXhNYfG29iT3nOoolC6vK5HjPgLn8qEcd7GQHkXVbURpv4H8=
+X-Received: by 2002:aca:edc1:: with SMTP id l184-v6mr2982962oih.65.1532208890735;
+ Sat, 21 Jul 2018 14:34:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180721194909.23903-2-m.v.b@runbox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8961 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807210246
+References: <20180717095617.12240-1-jbrunet@baylibre.com> <20180717095617.12240-4-jbrunet@baylibre.com>
+ <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com> <CAFBinCBc_cFD2ACiSHVuRrXaqSyDnkJb2rem1_k2jwved=QXVw@mail.gmail.com>
+ <1532206010.26720.84.camel@baylibre.com>
+In-Reply-To: <1532206010.26720.84.camel@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sat, 21 Jul 2018 23:34:39 +0200
+Message-ID: <CAFBinCD3i5pRzSp4Sx5349p_2XQfdCNguxU-gU1tD_asFu6YjA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: meson: clk-pll: drop hard-coded rates from pll tables
+To:     jbrunet@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/21/2018 03:49 PM, M. Vefa Bicakci wrote:
-> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> index 439a94bf89ad..87afb000142a 100644
-> --- a/arch/x86/xen/enlighten_pv.c
-> +++ b/arch/x86/xen/enlighten_pv.c
-> @@ -1257,6 +1257,7 @@ asmlinkage __visible void __init xen_start_kernel(void)
->  
->  	/* Work out if we support NX */
->  	get_cpu_cap(&boot_cpu_data);
-> +	get_cpu_address_sizes(&boot_cpu_data);
->  	x86_configure_nx();
+Hi Jerome,
+
+On Sat, Jul 21, 2018 at 10:46 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+> On Sat, 2018-07-21 at 22:16 +0200, Martin Blumenstingl wrote:
+> > > We could even add ranges instead of table when we know the PLL supports a well-known continuous dividers range.
+> >
+> > I had a look at the sys_pll settings on Meson8b, here's what
+> > Meson8/Meson8b/Meson8m2 support for sys_pll:
+> > - 50..74
+> > - 76
+> > - 78
+> > - 80
+> > - 82
+> > - 84
+> > - 86
+> > - 88
+> > - 90
+> > - 92
+> > - 94
+> > - 96
+> > - 98
+>
+> Are those values with the same predivider (n) value ?
+yes, all are using n = 1
+
+> I suspect the ability of the DCO to lock might depends on its input rate and an
+> m range
+>
+> So if n change, it might possible that the m range will be different.
+>
+> ... at least, that's my guess :)
+for the Meson8b's SYS_PLL Amlogic's GPL kernel is using bits 15:14 in
+HHI_SYS_PLL_CNTL for frequencies above 1.64GHz (below that these
+reserved bits are always 0).
+if the values are useful for you (format is: frequency, m, n, od and
+bits 15:14. what's missing here is the "cpu_scale_div" divider which
+is for example why you'll see the "56, 1, 2, 0" tuple multiple times):
+SYS_PLL(24000, 56, 1, 2, 0)
+SYS_PLL(48000, 64, 1, 2, 0)
+SYS_PLL(72000, 72, 1, 2, 0)
+SYS_PLL(96000, 64, 1, 2, 0)
+SYS_PLL(120000, 80, 1, 2, 0)
+SYS_PLL(144000, 96, 1, 2, 0)
+SYS_PLL(168000, 56, 1, 1, 0)
+SYS_PLL(192000, 64, 1, 1, 0)
+SYS_PLL(216000, 72, 1, 1, 0)
+SYS_PLL(240000, 80, 1, 1, 0)
+SYS_PLL(264000, 88, 1, 1, 0)
+SYS_PLL(288000, 96, 1, 1, 0)
+SYS_PLL(312000, 52, 1, 2, 0)
+SYS_PLL(336000, 56, 1, 2, 0)
+SYS_PLL(360000, 60, 1, 2, 0)
+SYS_PLL(384000, 64, 1, 2, 0)
+SYS_PLL(408000, 68, 1, 2, 0)
+SYS_PLL(432000, 72, 1, 2, 0)
+SYS_PLL(456000, 76, 1, 2, 0)
+SYS_PLL(480000, 80, 1, 2, 0)
+SYS_PLL(504000, 84, 1, 2, 0)
+SYS_PLL(528000, 88, 1, 2, 0)
+SYS_PLL(552000, 92, 1, 2, 0)
+SYS_PLL(576000, 96, 1, 2, 0)
+SYS_PLL(600000, 50, 1, 1, 0)
+SYS_PLL(624000, 52, 1, 1, 0)
+SYS_PLL(648000, 54, 1, 1, 0)
+SYS_PLL(672000, 56, 1, 1, 0)
+SYS_PLL(696000, 58, 1, 1, 0)
+SYS_PLL(720000, 60, 1, 1, 0)
+SYS_PLL(744000, 62, 1, 1, 0)
+SYS_PLL(768000, 64, 1, 1, 0)
+SYS_PLL(792000, 66, 1, 1, 0)
+SYS_PLL(816000, 68, 1, 1, 0)
+SYS_PLL(840000, 70, 1, 1, 0)
+SYS_PLL(864000, 72, 1, 1, 0)
+SYS_PLL(888000, 74, 1, 1, 0)
+SYS_PLL(912000, 76, 1, 1, 0)
+SYS_PLL(936000, 78, 1, 1, 0)
+SYS_PLL(960000, 80, 1, 1, 0)
+SYS_PLL(984000, 82, 1, 1, 0)
+SYS_PLL(1008000, 84, 1, 1, 0)
+SYS_PLL(1032000, 86, 1, 1, 0)
+SYS_PLL(1056000, 88, 1, 1, 0)
+SYS_PLL(1080000, 90, 1, 1, 0)
+SYS_PLL(1104000, 92, 1, 1, 0)
+SYS_PLL(1128000, 94, 1, 1, 0)
+SYS_PLL(1152000, 96, 1, 1, 0)
+SYS_PLL(1176000, 98, 1, 1, 0)
+SYS_PLL(1200000, 50, 1, 0, 0)
+SYS_PLL(1224000, 51, 1, 0, 0)
+SYS_PLL(1248000, 52, 1, 0, 0)
+SYS_PLL(1272000, 53, 1, 0, 0)
+SYS_PLL(1296000, 54, 1, 0, 0)
+SYS_PLL(1320000, 55, 1, 0, 0)
+SYS_PLL(1344000, 56, 1, 0, 0)
+SYS_PLL(1368000, 57, 1, 0, 0)
+SYS_PLL(1392000, 58, 1, 0, 0)
+SYS_PLL(1416000, 59, 1, 0, 0)
+SYS_PLL(1440000, 60, 1, 0, 0)
+SYS_PLL(1464000, 61, 1, 0, 0)
+SYS_PLL(1488000, 62, 1, 0, 0)
+SYS_PLL(1512000, 63, 1, 0, 0)
+SYS_PLL(1536000, 64, 1, 0, 0)
+SYS_PLL(1560000, 65, 1, 0, 0)
+SYS_PLL(1584000, 66, 1, 0, 0)
+SYS_PLL(1608000, 67, 1, 0, 0)
+SYS_PLL(1632000, 68, 1, 0, 0)
+SYS_PLL(1656000, 68, 1, 0, 1)
+SYS_PLL(1680000, 68, 1, 0, 2)
+SYS_PLL(1704000, 68, 1, 0, 3)
+SYS_PLL(1728000, 69, 1, 0, 0)
+SYS_PLL(1752000, 69, 1, 0, 1)
+SYS_PLL(1776000, 69, 1, 0, 2)
+SYS_PLL(1800000, 69, 1, 0, 3)
+SYS_PLL(1824000, 70, 1, 0, 0)
+SYS_PLL(1848000, 70, 1, 0, 1)
+SYS_PLL(1872000, 70, 1, 0, 2)
+SYS_PLL(1896000, 70, 1, 0, 3)
+SYS_PLL(1920000, 71, 1, 0, 0)
+SYS_PLL(1944000, 71, 1, 0, 1)
+SYS_PLL(1968000, 71, 1, 0, 2)
+SYS_PLL(1992000, 71, 1, 0, 3)
+SYS_PLL(2016000, 72, 1, 0, 0)
+SYS_PLL(2040000, 72, 1, 0, 1)
+SYS_PLL(2064000, 72, 1, 0, 2)
+SYS_PLL(2088000, 72, 1, 0, 3)
+SYS_PLL(2112000, 73, 1, 0, 0)
 
 
-Have you observed any problems without this call? get_cpu_cap() is only
-called here to set X86_FEATURE_NX, and is then called again, together
-with get_cpu_address_sizes(), from early_identify_cpu().
-
--boris
-
+Regards
+Martin
