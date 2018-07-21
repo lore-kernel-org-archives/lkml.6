@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B07ECDFBD
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF477ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA44620856
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:35:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B23B20856
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/vVcIJB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA44620856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uN91sFmn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B23B20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbeGUO2U (ORCPT
+        id S1728605AbeGUO2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 10:28:20 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42546 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728351AbeGUO2T (ORCPT
+        Sat, 21 Jul 2018 10:28:21 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39718 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbeGUO2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 10:28:19 -0400
-Received: by mail-pl0-f65.google.com with SMTP id z7-v6so4576448plo.9
+        Sat, 21 Jul 2018 10:28:20 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g2-v6so9069420pgs.6
         for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 06:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ubexO41eU5i6ImnFrQXEb0OCgTpDP6HhIWS2okH8gp4=;
-        b=F/vVcIJBXjIBv7SBFsRz1pMB7Uro8j6O7D2zARZxhAWJzUGIyeJKZjjzWlStRa7SIs
-         Y4AgtxsxOKs4lPFWWXgJxSI/cW6Q7vbVvda6/vgQ03FgkjFCyumQ8TcudTRfbSo/xGIB
-         OdjYw4orOnsnm/cmddiF1WEKsitEinbViCZx6GiPWeqm15F6UF7I8kEFOnJDG7AZNHdK
-         usDb0ea7MGBFB4l73kuuWiSInhjmUawIotU16VSQir33jCXemxTsnAc+qjXEC1E+8w/R
-         GGJi71tHOPngTgViDq29brfXRvFk7OYbGEpbj/gbTWRUsBEIkY68f5sVjIIp/deWflR7
-         /6+w==
+        bh=z81/wVfnvkuwyBDYVUx9HulwxVk5OwVko9OgSWO0G6M=;
+        b=uN91sFmn5UMStgGt7DugOHKZdXvusG0Iofjf2sgOyZtmKjaVQ/+GMa2hG4l6+2gBYA
+         AQuzYXK+szIMw/NOJaZmKQ93mjfhesWXg+u6DiZixm+SynidZuu0SSTwruo51tgpKEBf
+         BOpgc/DKUbxkk4CKcpVv4X9mdwGsKslm4lyG8+yr6ZJ9oLG49Eh/lr8K0wjhhrxB1QA5
+         CLc8uEdnvFu2vWMXTDvD02rcfCuL34yDbKHzNegTamwFWinVFJa0Og+ItBYXwapEAKXp
+         AbHiHy1QVN36G1g6d4YviYLHWLt0j6FH8EU59NGMHgbhqGT9sb0Q0v4pwTg6tOcpWrJX
+         NcpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ubexO41eU5i6ImnFrQXEb0OCgTpDP6HhIWS2okH8gp4=;
-        b=QWfSwZSR7k03YmeDVr8+RR22AUedfExiNds4HYgjVg0R9DdXahvCr17hdbHCnnn7I9
-         6hbBLWxemtW3FGWCBSWyVygjqKCNpRqg93Qq+OHWZG04PjQ9isVsDadoKbgNjuI5ClZh
-         Wmy2ogywOQSaS2jABwDhAMDaLeRSiOzBfSk8t8fRk7gM1aeAS5ZSrDOy+GqbXcu/kPaz
-         +Cs4WKI4jjrcCE3h8yd1PXnLzT6u0G6eKVHEy+ckX+Wf6QGN13TbPVLl0mh0hO3w1VMY
-         d1W8mxjBEm1dRhxQ4qFlcUVfZ5HzFmLlZ8D+wRrb6LCYQ6mHcnWE//dEJJRe5QuBv6uE
-         V99A==
-X-Gm-Message-State: AOUpUlEgkkvh3/xun3yr11/9aP3TEN75cz1kC7+hpJMWaTGd6+05VzzG
-        OyUpglpHhwI+r4Be0C6LxtM=
-X-Google-Smtp-Source: AAOMgpeB4Wdd+a4ZueLz4sNCliLmIv176f+DgYRwsGPwJmCAL2SZZG9PnFJU3+CuZluFuzTM8cZKOQ==
-X-Received: by 2002:a17:902:8215:: with SMTP id x21-v6mr5847386pln.175.1532180131634;
-        Sat, 21 Jul 2018 06:35:31 -0700 (PDT)
+        bh=z81/wVfnvkuwyBDYVUx9HulwxVk5OwVko9OgSWO0G6M=;
+        b=EIyg1ybd16AIb+VQSU4dKEhCzV9B5ev6qfswCwrkVNpLoTJRjEiWx5yWziGA6bRlMg
+         BeBGTQ7+WYvqk8RaxwD+7B07+6yNZqNnnwZ7eg7DQGK/JScE0CNJ9+L701aKKWcZi/5P
+         uypsYwUx8PXi92tkILt4quCEQ4+M8cfym3DX/WvYo0v5O+YoeMPN3ovxRSlB8qrqI5yj
+         ZLH7qLBSTQ3Q+ss+R6ui628EFnmRdCySJoAksommmVauzzy0qOrg8yHesA+R3hjbdhpA
+         bCnhxN6PKjupj0VkVLOCcg4wVuegoHIZWbJsoFqNVTcItffty1pAkU7LsZGcEjWVU4R5
+         3ZGA==
+X-Gm-Message-State: AOUpUlF64tEqqPOBHcQN7OO/1MT2nVJ16oj2dfNInwNcft7HzknPu33b
+        TC0eGSzDXcFdoMt2DLhfK+MTGhnzl+I=
+X-Google-Smtp-Source: AAOMgpcO7a0qW8W1ps1b+LDGA3nLVtcP6+q9WeHPB8oCGP+VdRsFVTIx6m1MSBijTIKdDeYxa9Hwrw==
+X-Received: by 2002:a63:f14f:: with SMTP id o15-v6mr5709126pgk.306.1532180132536;
+        Sat, 21 Jul 2018 06:35:32 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id p26-v6sm9445023pfi.183.2018.07.21.06.35.30
+        by smtp.gmail.com with ESMTPSA id p26-v6sm9445023pfi.183.2018.07.21.06.35.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 06:35:31 -0700 (PDT)
+        Sat, 21 Jul 2018 06:35:32 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 12/14] staging: gasket: page table: convert various logs to debug level
-Date:   Sat, 21 Jul 2018 06:35:05 -0700
-Message-Id: <20180721133507.95599-13-toddpoynor@gmail.com>
+Subject: [PATCH 13/14] staging: gasket: page table: remove unnecessary logs
+Date:   Sat, 21 Jul 2018 06:35:06 -0700
+Message-Id: <20180721133507.95599-14-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 In-Reply-To: <20180721133507.95599-1-toddpoynor@gmail.com>
 References: <20180721133507.95599-1-toddpoynor@gmail.com>
@@ -81,75 +81,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Debugging information is improperly logged at non-debug log level in a
-number of places, and some logs regarding error conditions may be
-generated too frequently, such that these could cause performance
-problems and/or obscure other logs.  Convert these to debug log level.
+Some error logs in page table handling code could only be hit in
+cases of programming errors not expected in the current code base, and
+aren't likely to be useful on their own.  Remove these.
 
-Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_page_table.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/gasket/gasket_page_table.c | 23 +++++-----------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index 9f8116112e0ac..f0c4884cb4bc6 100644
+index f0c4884cb4bc6..4f2ff77006586 100644
 --- a/drivers/staging/gasket/gasket_page_table.c
 +++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -306,7 +306,7 @@ int gasket_page_table_init(
- 	 * hardware register that contains the page table size.
- 	 */
- 	if (total_entries == ULONG_MAX) {
--		gasket_nodev_error(
-+		gasket_nodev_debug(
- 			"Error reading page table size. "
- 			"Initializing page table with size 0.");
- 		total_entries = 0;
-@@ -323,7 +323,7 @@ int gasket_page_table_init(
- 
- 	*ppg_tbl = kzalloc(sizeof(**ppg_tbl), GFP_KERNEL);
- 	if (!*ppg_tbl) {
--		gasket_nodev_error("No memory for page table.");
-+		gasket_nodev_debug("No memory for page table.");
- 		return -ENOMEM;
- 	}
- 
-@@ -332,7 +332,7 @@ int gasket_page_table_init(
- 	if (bytes != 0) {
- 		pg_tbl->entries = vmalloc(bytes);
- 		if (!pg_tbl->entries) {
--			gasket_nodev_error(
-+			gasket_nodev_debug(
- 				"No memory for address translation metadata.");
- 			kfree(pg_tbl);
- 			*ppg_tbl = NULL;
-@@ -658,7 +658,7 @@ int gasket_page_table_system_status(struct gasket_page_table *page_table)
- 	}
+@@ -605,10 +605,8 @@ EXPORT_SYMBOL(gasket_page_table_is_dev_addr_bad);
+ /* See gasket_page_table.h for description. */
+ uint gasket_page_table_max_size(struct gasket_page_table *page_table)
+ {
+-	if (!page_table) {
+-		gasket_nodev_error("Passed a null page table.");
++	if (!page_table)
+ 		return 0;
+-	}
+ 	return page_table->config.total_entries;
+ }
+ EXPORT_SYMBOL(gasket_page_table_max_size);
+@@ -616,11 +614,8 @@ EXPORT_SYMBOL(gasket_page_table_max_size);
+ /* See gasket_page_table.h for description. */
+ uint gasket_page_table_num_entries(struct gasket_page_table *pg_tbl)
+ {
+-	if (!pg_tbl) {
+-		gasket_nodev_error("Passed a null page table.");
++	if (!pg_tbl)
+ 		return 0;
+-	}
+-
+ 	return pg_tbl->num_simple_entries + pg_tbl->num_extended_entries;
+ }
+ EXPORT_SYMBOL(gasket_page_table_num_entries);
+@@ -628,11 +623,8 @@ EXPORT_SYMBOL(gasket_page_table_num_entries);
+ /* See gasket_page_table.h for description. */
+ uint gasket_page_table_num_simple_entries(struct gasket_page_table *pg_tbl)
+ {
+-	if (!pg_tbl) {
+-		gasket_nodev_error("Passed a null page table.");
++	if (!pg_tbl)
+ 		return 0;
+-	}
+-
+ 	return pg_tbl->num_simple_entries;
+ }
+ EXPORT_SYMBOL(gasket_page_table_num_simple_entries);
+@@ -640,11 +632,8 @@ EXPORT_SYMBOL(gasket_page_table_num_simple_entries);
+ /* See gasket_page_table.h for description. */
+ uint gasket_page_table_num_active_pages(struct gasket_page_table *pg_tbl)
+ {
+-	if (!pg_tbl) {
+-		gasket_nodev_error("Passed a null page table.");
++	if (!pg_tbl)
+ 		return 0;
+-	}
+-
+ 	return pg_tbl->num_active_pages;
+ }
+ EXPORT_SYMBOL(gasket_page_table_num_active_pages);
+@@ -652,10 +641,8 @@ EXPORT_SYMBOL(gasket_page_table_num_active_pages);
+ /* See gasket_page_table.h */
+ int gasket_page_table_system_status(struct gasket_page_table *page_table)
+ {
+-	if (!page_table) {
+-		gasket_nodev_error("Passed a null page table.");
++	if (!page_table)
+ 		return GASKET_STATUS_LAMED;
+-	}
  
  	if (gasket_page_table_num_entries(page_table) == 0) {
--		gasket_nodev_error("Page table size is 0.");
-+		gasket_nodev_debug("Page table size is 0.");
- 		return GASKET_STATUS_LAMED;
- 	}
- 
-@@ -903,7 +903,7 @@ static int gasket_perform_mapping(
- 				(unsigned long long)ptes[i].dma_addr);
- 
- 			if (ptes[i].dma_addr == -1) {
--				gasket_nodev_error(
-+				gasket_nodev_debug(
- 					"%s i %d"
- 					" -> fail to map page %llx "
- 					"[pfn %p ohys %p]\n",
-@@ -1612,7 +1612,7 @@ int gasket_set_user_virt(
- 	 */
- 	pg_tbl = gasket_dev->page_table[0];
- 	if (!pg_tbl) {
--		gasket_nodev_error(
-+		gasket_nodev_debug(
- 			"%s: invalid page table index", __func__);
- 		return 0;
- 	}
+ 		gasket_nodev_debug("Page table size is 0.");
 -- 
 2.18.0.233.g985f88cf7e-goog
 
