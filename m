@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60ACFECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813D7ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1020720856
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3753C20856
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 13:00:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+dDMZME"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1020720856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIOGKswM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3753C20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbeGUNuX (ORCPT
+        id S1728384AbeGUNuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 21 Jul 2018 09:50:23 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42674 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728345AbeGUNuW (ORCPT
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38768 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728271AbeGUNuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 09:50:22 -0400
-Received: by mail-pl0-f65.google.com with SMTP id z7-v6so4553488plo.9
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 05:57:42 -0700 (PDT)
+        Sat, 21 Jul 2018 09:50:21 -0400
+Received: by mail-pg1-f194.google.com with SMTP id k3-v6so9022163pgq.5
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 05:57:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CEnOMmXj1PSytsHYEuA+E29Sq6QGkC9YGpuPwIBA0TI=;
-        b=W+dDMZMEnPTTDd6I6GUyFg2rbB+htqBpg1Ut3JZwIh4kn/ULh6J6s7cLMpp5NCEmU2
-         X61gmlwSJBU/zgRdMfFnUwKzSkMkmcZx2Q1WeMcNbNRG5Lrk7zSjk3hwWP2li2Ne6AlI
-         //cCDgBCjVsWqsdHxT1N4klD9joCi6ucnWg4kFHDsKdFZbhw/+Krj28WR+iHVYD1SQhw
-         HRJvymIygaLwGGHFm54QhEzid72ZhJtQjMzgSx6VbP4w3v2fcpUMKZ0k2MmCSiJ/xIQP
-         eFsln586uUTdD+cEGesPf5XS0kT9lkZasHyp8vtw4WLeGhefhB4Ni7qEh6ioFMUUeJqk
-         S8mg==
+        bh=GyTpDiqCSzoAxLUvfs7PhBh1s33xbPdf/OCeCQ4KrSw=;
+        b=eIOGKswMcWPA0HOKJ/4qlEacZeDTJgfB35HmLrN233w6deCHOqAkoZ8nMXAujjziEX
+         +OgdWBg4KFyYwOJIIa859nXGCJvGqNEigvKbOw+kpazPdTLF7+9YP44zywJkCfk0amMw
+         EtEo1oxcoNvGFBJvbWBxKgxIfN5QfTen3peq2ZRtaI0gD/dejaXqbgs4GQwkF/nyQBh9
+         YCNMjAbhYCN5f0n5di1+qWTYo7AudGfFcXm/gvjtUBIiN9uZLEe1aiivH7ueA5h4v485
+         GzDDdFfT6hQDJqdMpLypq3bUPnzDFgFda6UNjQmEmXVj3F39D3Vx1jAz90woAo83SnB5
+         bncA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CEnOMmXj1PSytsHYEuA+E29Sq6QGkC9YGpuPwIBA0TI=;
-        b=L3+HDQOe0ktFblA6RIeXCeJ9aDQ8N+YaWnAMOC6xRsQUlsyANkdlSk/MJD2Wvb4/29
-         sRn/qDAg2glI9BwAUwgYg3eKjXBuXrVCoB4RM96nKwUWoQwUNJStfL8qdx+i5AARhiqq
-         gJ6GbgW6deU+qShodBpGDywKCncr4mxsY3I+SwTiO8vMGhoD9dFoPugqo7V4lAmNYFT0
-         iXkppYxa0ZeEJjvVWmR4aotlw2w4x9uQ1GJBOtas3cHS8iD9OwECdT4nDnUKqiYhPxwF
-         101ZOOs8TBaKNgCtPOuUlFsZOWaYHhj64aTiTnNPKrVbY0GYh6bzUalgYSoLLLS5EhP3
-         yVWw==
-X-Gm-Message-State: AOUpUlGCKRGqYP3a8arSPwEUzK2mtkLZnc8wL0UBUvmLbEJDYV1kSTh7
-        CPSL8VxRuVw3FNtDWDQLPpA=
-X-Google-Smtp-Source: AAOMgpf/8szHGm8oPneNXfpbHmwY4S35SI/g8ykZzW8Nz8BW+4GAIZuV+YyiCh+RTNVEtz1yrGW02g==
-X-Received: by 2002:a17:902:8a8e:: with SMTP id p14-v6mr5739325plo.213.1532177862407;
-        Sat, 21 Jul 2018 05:57:42 -0700 (PDT)
-Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm1072542pfe.42.2018.07.21.05.57.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=GyTpDiqCSzoAxLUvfs7PhBh1s33xbPdf/OCeCQ4KrSw=;
+        b=RcMNGFN3f66WvRxD8cjFDtnf3GCyu9qOxHceOiv9Zl6dkym96tKUXOFqUgPytyMPc7
+         vl5ZiYXkInOKR+Cr1FJVWv9OIbOLiVuK/3RelIHwQjEcluLGZEC9hgNeaBs1q1+hrw08
+         wup6JrxPNEU7pPu3qrJnjjFxTXPgQiqrddVD6yTZhqsQnusqVrcKtWEymYUi99GoBb6v
+         YflpGrEdisQWO7PwikQVP0OvF4IpvQNgLhg/3gIcfLfBkDDTPHiDQZDeknxG4SibU3dv
+         Pmz+VdqcB42HFrKHPc0v4mUcjGo/5In8pWg72O+46ArvHc2MbcdKt7yGenuPQVZ4+PqN
+         C9lQ==
+X-Gm-Message-State: AOUpUlEYkXGoA9fNQ8FBI33vrwZp7lYY1QtAtvJndgNO59Z6N7iMLx1o
+        NR8usNvOFOZrBITpuQhfZko=
+X-Google-Smtp-Source: AAOMgpfmMeJrU0MN5krCM2QXeOJLjVYM5BOZ7YBi/BlsXjRK3QZKtB9NayeVwS2zOj6bRMrUytCirg==
+X-Received: by 2002:a62:a018:: with SMTP id r24-v6mr6010881pfe.144.1532177861439;
         Sat, 21 Jul 2018 05:57:41 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
+        by smtp.gmail.com with ESMTPSA id d19-v6sm1072542pfe.42.2018.07.21.05.57.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 21 Jul 2018 05:57:40 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 05/20] staging: gasket: remove unnecessary code in coherent allocator
-Date:   Sat, 21 Jul 2018 05:56:49 -0700
-Message-Id: <20180721125713.88501-11-toddpoynor@gmail.com>
+Subject: [PATCH 05/14] staging: gasket: print mmap starting address as unsigned long
+Date:   Sat, 21 Jul 2018 05:56:48 -0700
+Message-Id: <20180721125713.88501-10-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 In-Reply-To: <20180721125713.88501-1-toddpoynor@gmail.com>
 References: <20180721125713.88501-1-toddpoynor@gmail.com>
@@ -81,31 +81,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Remove extraneous statement in gasket_config_coherent_allocator()
+Page alignment error log should print the offending value as an unsigned
+long, not as a kernel pointer.
 
-Reported-by: Dmitry Torokhov <dtor@chromium.org>
-Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+Reported-by: Guenter Roeck <groeck@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_ioctl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/staging/gasket/gasket_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
-index 0c2f85cf54480..d0142ed048a65 100644
---- a/drivers/staging/gasket/gasket_ioctl.c
-+++ b/drivers/staging/gasket/gasket_ioctl.c
-@@ -420,10 +420,8 @@ static int gasket_config_coherent_allocator(
- 	if (ibuf.page_table_index >= gasket_dev->num_page_tables)
- 		return -EFAULT;
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 2cd232230845c..11ab049854493 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1596,8 +1596,8 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
  
--	if (ibuf.size > PAGE_SIZE * MAX_NUM_COHERENT_PAGES) {
--		ibuf.size = PAGE_SIZE * MAX_NUM_COHERENT_PAGES;
-+	if (ibuf.size > PAGE_SIZE * MAX_NUM_COHERENT_PAGES)
- 		return -ENOMEM;
--	}
- 
- 	if (ibuf.enable == 0) {
- 		ret = gasket_free_coherent_memory(
+ 	if (vma->vm_start & ~PAGE_MASK) {
+ 		gasket_log_error(
+-			gasket_dev, "Base address not page-aligned: 0x%p\n",
+-			(void *)vma->vm_start);
++			gasket_dev, "Base address not page-aligned: 0x%lx\n",
++			vma->vm_start);
+ 		trace_gasket_mmap_exit(-EINVAL);
+ 		return -EINVAL;
+ 	}
 -- 
 2.18.0.233.g985f88cf7e-goog
 
