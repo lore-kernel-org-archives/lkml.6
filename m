@@ -6,72 +6,69 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F0CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 20:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF62FECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 20:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 534FC20854
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 20:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A1CD20856
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 20:48:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zqBIib/S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534FC20854
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="P3U7EyM4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A1CD20856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbeGUVk4 (ORCPT
+        id S1728372AbeGUVm4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 17:40:56 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51944 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728236AbeGUVk4 (ORCPT
+        Sat, 21 Jul 2018 17:42:56 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45640 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728241AbeGUVm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 17:40:56 -0400
-Received: by mail-wm0-f66.google.com with SMTP id h3-v6so11951041wmb.1
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 13:46:53 -0700 (PDT)
+        Sat, 21 Jul 2018 17:42:56 -0400
+Received: by mail-wr1-f65.google.com with SMTP id t13-v6so4824479wrv.12
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 13:48:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ugJCCvwqMRhQ7YJEMV3exptme4nw/xVD44+Rlete6ac=;
-        b=zqBIib/SbiO81gWimb1KaVev5FgT/GttAAuFClcOlkVAQb6AeBUlS+ZwX1sSjiFqd0
-         OIauq/g6Awr+WzD7Ng6d1bChrBcg/It6seMql/Dy8SssTIDOZ/BffzM4nfhQMrIO4LhX
-         Z2ty1segP60oN280a3NPQCnX+i1o69n6Cu/yidKBMWmoKsObpaiZFsTWFcAWSUDbQOAp
-         2ipkZ4rnvIB/yX6BUUsT2MHDAQtafCXNHIirM0/4GUdtAXjalc299krG6Qa69OdTP0oA
-         oAcdqGCZkpQNZwpo2qnxoO5IUDr0IOQr2xTxOsjiKs1rFdH5O1Rw2GUPXieK/QKP/+tf
-         wYpQ==
+        bh=LqdlhjKct4bJcWkR2A1JXXlgIFYjMYw/VCweiS0reuo=;
+        b=P3U7EyM4av3qbhI8aboSv1dQVOuUVa3lvIJd1fxXpS+4VP142ghgVKhjpJNbZ6cgrt
+         jqSLYlsQ3IyAdxK6+vXGL41RpgJ3GGuzOJ81zbJZutNTlTb459cykGXPIjg+2NKJMZok
+         IxWNdGp/5HFYu5LXc8fB61I0mjx+nak1OkaK+bhVBX4LvwRCzeYiA0V6lOsCr1xijXrl
+         k71HXe+fFKG958OccchNXh0gzxMjj9dfCN9sx0NcvtkllzeflIHvPJFHRTQjZjYrcJC+
+         vu491E/NKuu6k8/HIqyqxnwqTXACyBXqoyM39T+IT96lhfJ5vd23tz96I1uQul29lCpf
+         YCjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ugJCCvwqMRhQ7YJEMV3exptme4nw/xVD44+Rlete6ac=;
-        b=maIx4CKF3WbA6LbCufUb2TZf+jV86xJSVKegG7X55Z3IGiQ0U3du/56g2XC6VnOtXO
-         jdr2BdBfVltG1gZk+y0PJelElQeEVZZZOUBO3NwdFHVZNuv7e3lea+T3iwL5/iX+l0Af
-         nwT59CFp9Fw2sfyYUtoTfm+ysMubA7D1z1/oxRBYrRRTHk/ytAzj3jLquDWJ269aPqE2
-         Mp8fJkXu7yGlJZUd562KY3xLZA3urMqJ7RaWgX/jMavPnG6xjxGhpCuzVyhr8x3nm6wS
-         ZZZJsR4uAGUg8RNEmWMbD+0KWPSRuUrhQK4u34SgjxA2YxlXzlsPqBXhAqCyfPbvXY8z
-         imzg==
-X-Gm-Message-State: AOUpUlEAkeLngLz3aCmQtLRc9EjqEhisHWkWOMrT4DdFJdTtGDvknn7C
-        8PCwHoC20sOXoPfk9ymqk1eI2A==
-X-Google-Smtp-Source: AAOMgpcaG2hygnhI7WTZGEJa/KZIKq0AH/2t54vnOv+6aBX2HDvDQcrVos755PVjA3izAlR4/JCWLw==
-X-Received: by 2002:a7b:c01a:: with SMTP id c26-v6mr4308531wmb.33.1532206012653;
-        Sat, 21 Jul 2018 13:46:52 -0700 (PDT)
+        bh=LqdlhjKct4bJcWkR2A1JXXlgIFYjMYw/VCweiS0reuo=;
+        b=ZWLbg0+zWoSTeLReSFzmUYpZ5xWUAfi1sVRjflN7FgYDqoO3JT07Jt9Ef4LP512o0B
+         y6FSKxx1otPVueB+uDydrgpUt5XXY2vTynzXqj60X3Kkn8T3DjPdv3hMRi6SaYnfEnET
+         Fu/zc0VhKqMWQSVnBuUqNKfd1tDwooKdQPd2Mxr72xd8GmR+/J+vB/yTZ4B8AN86VJas
+         JBYt+fP59XbWHlQi3gHYuFKoNoGShCc72DJmkznlgSZ/BvXTA5npj4awTKBOLLoPrYEq
+         9KBKwEvD5ErCI9q53ymmZQU7k6aGspRW98T9zzAaqY/evDKw5qQi1niFodUac0l4AM3P
+         Q9Tw==
+X-Gm-Message-State: AOUpUlGX9avqeZnzbDwKBkxlTGSpkDOa+ge7K9sxTC2NKLl06S0J7TGi
+        JMIsQ8VZ4A57YFbz+N7VvB0T0Q==
+X-Google-Smtp-Source: AAOMgperuM+Jzipelrld1I5CQMNk3PH35P1uLJEkM42nJlUmB9NE/0LflECJPuCuvss/9qpAxcqeAQ==
+X-Received: by 2002:adf:a963:: with SMTP id u90-v6mr4974825wrc.248.1532206132370;
+        Sat, 21 Jul 2018 13:48:52 -0700 (PDT)
 Received: from boomer (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id g125-v6sm5268842wmf.16.2018.07.21.13.46.51
+        by smtp.gmail.com with ESMTPSA id d7-v6sm3573399wro.92.2018.07.21.13.48.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 21 Jul 2018 13:46:52 -0700 (PDT)
-Message-ID: <1532206010.26720.84.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] clk: meson: clk-pll: drop hard-coded rates from pll
- tables
+        Sat, 21 Jul 2018 13:48:51 -0700 (PDT)
+Message-ID: <1532206130.26720.86.camel@baylibre.com>
+Subject: Re: [PATCH 0/3] clk: meson: clk-pll driver update
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, khilman@baylibre.com
-Date:   Sat, 21 Jul 2018 22:46:50 +0200
-In-Reply-To: <CAFBinCBc_cFD2ACiSHVuRrXaqSyDnkJb2rem1_k2jwved=QXVw@mail.gmail.com>
+Date:   Sat, 21 Jul 2018 22:48:50 +0200
+In-Reply-To: <CAFBinCC4CO_C_f9LLTnLmzVJ6-C-w8J0JQ0e6F9Jh_h61bGEKQ@mail.gmail.com>
 References: <20180717095617.12240-1-jbrunet@baylibre.com>
-         <20180717095617.12240-4-jbrunet@baylibre.com>
-         <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com>
-         <CAFBinCBc_cFD2ACiSHVuRrXaqSyDnkJb2rem1_k2jwved=QXVw@mail.gmail.com>
+         <CAFBinCC4CO_C_f9LLTnLmzVJ6-C-w8J0JQ0e6F9Jh_h61bGEKQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
 Mime-Version: 1.0
@@ -81,34 +78,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-07-21 at 22:16 +0200, Martin Blumenstingl wrote:
-> > We could even add ranges instead of table when we know the PLL supports a well-known continuous dividers range.
+On Sat, 2018-07-21 at 22:17 +0200, Martin Blumenstingl wrote:
+> > This series has been tested on the gxl libretech cc and axg s400.
+> > I did not test it on meson8b yet.
 > 
-> I had a look at the sys_pll settings on Meson8b, here's what
-> Meson8/Meson8b/Meson8m2 support for sys_pll:
-> - 50..74
-> - 76
-> - 78
-> - 80
-> - 82
-> - 84
-> - 86
-> - 88
-> - 90
-> - 92
-> - 94
-> - 96
-> - 98
+> I had some comments on patch #2
+> once that is fixed I can help testing on Meson8b (if you give me a few days...)
 
-Are those values with the same predivider (n) value ?
-I suspect the ability of the DCO to lock might depends on its input rate and an
-m range
-
-So if n change, it might possible that the m range will be different.
-
-... at least, that's my guess :)
-
-> 
-> (I'm providing this info because it may help finding a decision
-> whether ranges are good or not. I have no preference)
-
+I don't intend to make another PR to clk in this cycle, unless something
+critical comes up. No rush.
