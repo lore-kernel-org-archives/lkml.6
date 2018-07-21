@@ -2,132 +2,106 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F93ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 15:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9455ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 15:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B831C206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 15:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80BBA206B7
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 15:44:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V5pMJ3b5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B831C206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEJ7k7qU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80BBA206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbeGUQgA (ORCPT
+        id S1728271AbeGUQhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 12:36:00 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41436 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728011AbeGUQgA (ORCPT
+        Sat, 21 Jul 2018 12:37:03 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33255 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728130AbeGUQhD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 12:36:00 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6LFfuKe063957;
-        Sat, 21 Jul 2018 10:41:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1532187716;
-        bh=VXjp5xIGSjZ2HETFCNt6jj1ln/8mkBeGiln7dgps5UQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=V5pMJ3b5JPfJHhNyhwbTgoxFSNVVmGc5JryShnrhmN22xC4ly87dSzV05VM9uDvsv
-         l1hQXYsen6CQZ2CaaI3zUm50yIxPb9PpG7QyFdHXNJvPx87D8uDFSNlfqIeAdcvx8f
-         rxc/uza0Bed68OigznEFCTMIPbVzVjqkfjqQn8Vg=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6LFfuJN005800;
-        Sat, 21 Jul 2018 10:41:56 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sat, 21
- Jul 2018 10:41:55 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Sat, 21 Jul 2018 10:41:55 -0500
-Received: from [172.22.218.0] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6LFfqRO005476;
-        Sat, 21 Jul 2018 10:41:53 -0500
-Subject: Re: [PATCH 1/2] mtd: spi-nor: cadence-quadspi: fix timeout handling
- in wait_for_completion_timeout
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <1532182912-3674-1-git-send-email-hofrat@osadl.org>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <a0644f99-b997-2a94-01ac-dcc2656e984b@ti.com>
-Date:   Sat, 21 Jul 2018 21:11:51 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 21 Jul 2018 12:37:03 -0400
+Received: by mail-ua0-f193.google.com with SMTP id i4-v6so9267132uak.0;
+        Sat, 21 Jul 2018 08:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=vZ0w8NyDNU6xL1u3nc0ExNEhGmCa8gdU8KmAupNt0w4=;
+        b=TEJ7k7qUdcU2GLFEZTszKd6wyasB9DkStsgDllH++rhmSfrmSqUB/fCrXktdRfNXYJ
+         pmzLQOQQ02VIO35/bZ83S2tnhFefx23ZU5B9gRl0Z5kux5u/lA1ESBkW9IuGd3WKgzcB
+         F6CaVqYUwKrJ3udlEk/4pfe3fXfq0b2xRd53fbQHaCrQVlhqGHfphZvIJIShWw7o8T1s
+         hs6FTOH75vDlVnDi+GLW6/KuzkuE+JOQg52FyluGTEwKtYqwEQg5XVZhbaI77N91le2e
+         ZxNn/H1UCBc6UiC86ewrn+5gwR32ZFdCNk2cBR2lCF5itBT2+cDnUxeP+5iKmVPqjqLJ
+         11zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=vZ0w8NyDNU6xL1u3nc0ExNEhGmCa8gdU8KmAupNt0w4=;
+        b=FpTd3E2FGfSfc2zcqQeGu8bvqTWfkg2FmMmIM0JxGR2/KSPSdvk3gbAyXpOn1kvnjy
+         Rg/8JpSfgSjs3KdPq+vuEHowFMLStslZaPXD8nmwEMr5Yoh4OKDA8YjUa++YhVxUdXG7
+         jXaFOt6TLdO2JuRxuufHg3XCsRBwgAuoTuHQIPm+NTtCftJBC3XtihfzEWNHxeAFWHuw
+         msDnftg0keRf+VOh2D34i2/uNlwZ+L0DAEngNqf/EEzq8EuaxeJC/D1WQSJ1+cEx2oHB
+         B27VztRIqj4eFfTcRQ5ajCWoZcwpeDS9cxr3C1F2f2ypzU4HdsNTs2/YPbMoXd8+w6c5
+         sMlA==
+X-Gm-Message-State: AOUpUlG1PqMULgBior84XNqIvja9Z06HYSH0R3Jpl3dEGrw3JoDiUwRY
+        tDd6YhnaGX3I/H9qUcqndypRHVoUPiYakrLHZSE=
+X-Google-Smtp-Source: AAOMgpevrS7dNuWBMbMb4egvdfT5wq6Jqf86os0E3SY8wB50UkmxSgkllV5NlA7sh7j2GZ3o5AsL5oREVQmsu/cGU4c=
+X-Received: by 2002:ab0:4025:: with SMTP id h34-v6mr4321442uad.12.1532187832995;
+ Sat, 21 Jul 2018 08:43:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1532182912-3674-1-git-send-email-hofrat@osadl.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Sat, 21 Jul 2018 08:43:51
+ -0700 (PDT)
+In-Reply-To: <20180721153607.GA11127@himanshu-Vostro-3559>
+References: <1532122284-19602-1-git-send-email-himanshujha199640@gmail.com>
+ <20180721161934.75066d97@archlinux> <20180721153607.GA11127@himanshu-Vostro-3559>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sat, 21 Jul 2018 18:43:51 +0300
+Message-ID: <CAHp75VegzWr8Q2idzAWpc5Nw3T5n=vWkMvspe0YGRwEQ_h0p+A@mail.gmail.com>
+Subject: Re: [PATCH v4] iio: chemical: Add support for Bosch BME680 sensor
+To:     Himanshu Jha <himanshujha199640@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Daniel Baluta <daniel.baluta@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sat, Jul 21, 2018 at 6:36 PM, Himanshu Jha
+<himanshujha199640@gmail.com> wrote:
 
-On 21-Jul-18 7:51 PM, Nicholas Mc Guire wrote:
-> wait_for_completion_timeout returns unsigned long not int so a variable of
-> proper type is introduced. Further the check for <= 0 is ambiguous and should
-> be == 0 here.
->
+>> > +   /* Look up table 1 for the possible gas range values */
+>> > +   u32 lookupTable1[16] = {2147483647u, 2147483647u, 2147483647u,
+>> > +                           2147483647u, 2147483647u, 2126008810u,
+>> > +                           2147483647u, 2130303777u, 2147483647u,
+>> > +                           2147483647u, 2143188679u, 2136746228u,
+>> > +                           2147483647u, 2126008810u, 2147483647u,
+>> > +                           2147483647u};
 
-Oops, my bad. Thanks for the fix! I see you have fixed similar bug in
-cqspi_indirect_read_execute(). There is similar code in
-cqspi_indirect_write_execute(). Could you fix that as well?
+This one needs perhaps a bit of though, but...
 
-Regards
-Vignesh
+>> > +   /* Look up table 2 for the possible gas range values */
+>> > +   u32 lookupTable2[16] = {4096000000u, 2048000000u, 1024000000u,
+>> > +                           512000000u, 255744255u, 127110228u, 64000000u,
+>> > +                           32258064u, 16016016u, 8000000u, 4000000u,
+>> > +                           2000000u, 1000000u, 500000u, 250000u, 125000u};
 
+...this one obviously just a not needed one. You may replace it with a
+one constant and simple calculation to get either value (index from
+value, or value from index).
 
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Fixes: ffa639e069fb ("mtd: spi-nor: cadence-quadspi: Add DMA support for direct mode reads")
-> ---
-> 
-> Patch found by experimental coccinelle API conformance checker
->> Patch was compile tested with: socfpga_defconfig (implies
-> CONFIG_SPI_CADENCE_QUADSPI=y)
-> 
-> Patch is against 4.18-rc5 (localversion-next is next-20180720)
-> 
->  drivers/mtd/spi-nor/cadence-quadspi.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-> index d7e10b3..79f6a54 100644
-> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
-> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-> @@ -953,6 +953,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
->  	enum dma_ctrl_flags flags = DMA_CTRL_ACK | DMA_PREP_INTERRUPT;
->  	dma_addr_t dma_src = (dma_addr_t)cqspi->mmap_phys_base + from;
->  	int ret = 0;
-> +	unsigned long timeout;
->  	struct dma_async_tx_descriptor *tx;
->  	dma_cookie_t cookie;
->  	dma_addr_t dma_dst;
-> @@ -988,9 +989,9 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
->  	}
->  
->  	dma_async_issue_pending(cqspi->rx_chan);
-> -	ret = wait_for_completion_timeout(&cqspi->rx_dma_complete,
-> -					  msecs_to_jiffies(len));
-> -	if (ret <= 0) {
-> +	timeout = wait_for_completion_timeout(&cqspi->rx_dma_complete,
-> +					      msecs_to_jiffies(len));
-> +	if (timeout == 0) {
->  		dmaengine_terminate_sync(cqspi->rx_chan);
->  		dev_err(nor->dev, "DMA wait_for_completion_timeout\n");
->  		ret = -ETIMEDOUT;
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
