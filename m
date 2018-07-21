@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B2CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADE3ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3DB20858
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:52:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3DB20858
+	by mail.kernel.org (Postfix) with ESMTP id 8F30A20856
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 12:53:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F30A20856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lineageos.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbeGUNp2 (ORCPT
+        id S1728318AbeGUNpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 09:45:28 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43796 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeGUNp2 (ORCPT
+        Sat, 21 Jul 2018 09:45:38 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43181 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727631AbeGUNpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 09:45:28 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v13-v6so9017721pgr.10;
-        Sat, 21 Jul 2018 05:52:49 -0700 (PDT)
+        Sat, 21 Jul 2018 09:45:38 -0400
+Received: by mail-pl0-f65.google.com with SMTP id o7-v6so6326147plk.10;
+        Sat, 21 Jul 2018 05:52:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Nd8TRqG3Zzb2FOV1SNN3bGArF9UXbDFiREj4up1N8GY=;
-        b=j+ioPixNKb364iPHJLJ+iJtGHHXVL75TKL+4nlnJ6VGyAMkIexZjfncF9xckN1oGWJ
-         j9pZ4yV2R5/jVp44JGimSjqK8agFUXN29XswGSR9Ax4YvGvKZwI+4cdacwgFwhNZyiuM
-         Cqo2J/qCHPWSAVrdC/QntbAVyceS12C/UIWVJ08o14At6QWiuD74NqBd+EcNJIfCUmw4
-         UE31xoWH1Jw1ufGZlvCVAVJUtwYhXR8giofSPsL5zg2e/mYVwD5SmbCB4RsJ7x2oG8fg
-         bXt5puNejz9dtf7XhuvPufvS4NHpNpvEeQr+D8GBOkhm0JTnOfUxi30mNV7VI3VLCYd9
-         aVHw==
-X-Gm-Message-State: AOUpUlF2V2bjS13hnhGqLjU+hPff7Io2hpoyc6VNbA7KZEkSae+YFIQH
-        XwbKi9mHz7zPzOOipdsVEaDF4MigZs4=
-X-Google-Smtp-Source: AAOMgpcKEJN/JEq1+qpQ+510YotKz7l7EbAeHHWi9xV4b9TLG99bnlAO/tCxGundPOPpWxKjCkojbg==
-X-Received: by 2002:a63:6b86:: with SMTP id g128-v6mr5655941pgc.344.1532177568611;
-        Sat, 21 Jul 2018 05:52:48 -0700 (PDT)
+        bh=mTRMG3e8cpur4/bVkde+umdpGfZDcp0Xb3shjDFnD00=;
+        b=LQkWGvrA//Bgypg5jv/d+qW+DTDZmqcalFlurLGhCdPzoWl/TLDVBrYTBYNCKfGVyo
+         F1MYFalyWcd01395liuZQ/HCxFWArliZdeNFk2aIcelk0aMbjOa43cfdEgnWpzgu5SMd
+         2Umwy5nDWR1ZeDltnvoLqels002pzMIfQPaDifVG/j3Ljc0vG9eNakhGSO9NmxqBdm49
+         TAlVBIS8LygpmTXq/54xUdxMPfD1Y+5QyXAVa/BzJF9MjEicDLbd5fCoxXtp+/7wJgna
+         mxetLgbv1OrwGwWfIf/KLGScNbH1rEpda0kyeYyKe8mNgUUFcV2j1KzYqdDwsPAQGpGO
+         Lcng==
+X-Gm-Message-State: AOUpUlFMd+yfFJVD14nYTIoIZxq8T2eyz7B4Xah95M4msHfw00EscBxE
+        3H+ks+R7O/Yofz/CC7HeT6QGUGE1lKs=
+X-Google-Smtp-Source: AAOMgpeE2Ngj3aENHG6sr87G5wrSYGriveVMVaJpP328bvVPItVwkpQ3NLWqb4WkE3ROIzbQGECYnA==
+X-Received: by 2002:a17:902:8215:: with SMTP id x21-v6mr5727580pln.175.1532177578938;
+        Sat, 21 Jul 2018 05:52:58 -0700 (PDT)
 Received: from forlindon.lan (27-32-42-49.static.tpgi.com.au. [27.32.42.49])
-        by smtp.gmail.com with ESMTPSA id o72-v6sm6625945pfk.76.2018.07.21.05.52.44
+        by smtp.gmail.com with ESMTPSA id o72-v6sm6625945pfk.76.2018.07.21.05.52.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Jul 2018 05:52:47 -0700 (PDT)
+        Sat, 21 Jul 2018 05:52:57 -0700 (PDT)
 From:   Simon Shields <simon@lineageos.org>
 To:     linux-samsung-soc@vger.kernel.org
 Cc:     Simon Shields <simon@lineageos.org>,
@@ -54,9 +54,9 @@ Cc:     Simon Shields <simon@lineageos.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] ARM: dts: exynos: configure max77686 IRQ pin on midas
-Date:   Sat, 21 Jul 2018 22:50:52 +1000
-Message-Id: <20180721125128.31498-5-simon@lineageos.org>
+Subject: [PATCH 5/5] ARM: dts: exynos: configure midas SD card CD pin
+Date:   Sat, 21 Jul 2018 22:50:53 +1000
+Message-Id: <20180721125128.31498-6-simon@lineageos.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180721125128.31498-1-simon@lineageos.org>
 References: <20180721125128.31498-1-simon@lineageos.org>
@@ -65,39 +65,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This pin is externally pulled up, so we need to disable the
-SoC's internal pull-down.
+This pin is externally pulled up, so we need to disable the SoC's
+internal pull down resistor to allow it to function properly.
 
 Signed-off-by: Simon Shields <simon@lineageos.org>
 ---
- arch/arm/boot/dts/exynos4412-midas.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/exynos4412-midas.dtsi | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index 6a6364a9debd..d69bc3c2d0ff 100644
+index d69bc3c2d0ff..3d3e6b74c12e 100644
 --- a/arch/arm/boot/dts/exynos4412-midas.dtsi
 +++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -685,6 +685,8 @@
- 		compatible = "maxim,max77686";
- 		interrupt-parent = <&gpx0>;
- 		interrupts = <7 IRQ_TYPE_NONE>;
-+		pinctrl-0 = <&max77686_irq>;
-+		pinctrl-names = "default";
- 		reg = <0x09>;
- 		#clock-cells = <1>;
- 
-@@ -1135,6 +1137,11 @@
+@@ -1152,6 +1152,11 @@
  		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
  	};
  
-+	max77686_irq: max77686-irq {
-+		samsung,pins = "gpx0-7";
++	sdhci2_cd: sdhci2-cd-irq {
++		samsung,pins = "gpx3-4";
 +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
 +	};
 +
- 	max77693_irq: max77693-irq {
- 		samsung,pins = "gpx1-5";
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+ 	hdmi_hpd: hdmi-hpd {
+ 		samsung,pins = "gpx3-7";
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+@@ -1383,7 +1388,7 @@
+ 	bus-width = <4>;
+ 	cd-gpios = <&gpx3 4 GPIO_ACTIVE_HIGH>;
+ 	cd-inverted;
+-	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sdhci2_cd>;
+ 	pinctrl-names = "default";
+ 	vmmc-supply = <&ldo21_reg>;
+ 	status = "okay";
 -- 
 2.18.0
 
