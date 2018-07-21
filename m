@@ -2,72 +2,109 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 055CAECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 08:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F60ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 08:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A5D2205F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 08:08:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A5D2205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 745772084A
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 08:26:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCaQqW3k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 745772084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbeGUI7D (ORCPT
+        id S1727437AbeGUJS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 04:59:03 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9706 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727041AbeGUI7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 04:59:02 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 43F412AB5D3E3;
-        Sat, 21 Jul 2018 16:06:56 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.382.0; Sat, 21 Jul 2018 16:06:54 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <tglx@linutronix.de>, <mingo@redhat.com>
-CC:     <dave.hansen@linux.intel.com>, <kirill.shutemov@linux.intel.com>,
-        <tim.c.chen@linux.intel.com>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH linux-next] mm/tlb: make some function static to avoid warning
-Date:   Sat, 21 Jul 2018 15:55:32 +0800
-Message-ID: <1532159732-22939-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Sat, 21 Jul 2018 05:18:29 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41846 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727205AbeGUJS2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 05:18:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j5-v6so13216316wrr.8
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 01:26:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p/9uF5QRqbdy/VXNy1wCqXc9JfpyW/6C4oWKpe02dz4=;
+        b=HCaQqW3kdbBR+wWpBcvS8IZ4MAsqmqNEXsogVv6hrs//T349ftmjgipbZ7c3ad7/qh
+         kEqtF/W0RlW4duHpm6U3Ve5wGoQagKACiwIba/neGws5XdRfvWS4ZYFCdu0rct1wNtO1
+         Kx5VFAKU2W/YeIO+PQPTh1btFeouthqsHEwVCJxa3QXa/+Xf5ppQ1grIcIdJIw1rHOjz
+         5FxJOnyU0aHKxZGM3/mIRMmUi5U+M6mpYtQaf54aWqweqbxjg/5mOx+tpVsWSgWFKK3+
+         QOyFcH0LE+dIrF6jQXLWueHO2m4FdCMAze60Wkl8fmWzvmC9kpDqINj9J4MuGKj+nOfk
+         ersw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p/9uF5QRqbdy/VXNy1wCqXc9JfpyW/6C4oWKpe02dz4=;
+        b=QKqMnLlgeE4BO6UZG9AtTISQ9vohhhw+apsqWa74/1brEXp5Kg2sZUFoXclTl9BcDu
+         7XDAkR02yIfRNODI0DCm4rInZB7ghHQx5f8m1sWA13IcKXwuc+RVZYEb+WVyTSL1UM8J
+         GWxEJWFbdVn2K2mLvVL1kKHsu2WDlKswjN+KdZcd4jpKWpHFJpukxuyHkHZtaxfsC1tk
+         msoVVC7SHfPuFoZdxmiAwK1GcwLgesLPDC0ls3boqDdLnIV/BJViaVyRTTdDgsaaCVeQ
+         CahYn+IR1dnc/r1mup1kMHBvD74LheGh9/TivZng2MgVwxbrZGaUJtVdElJegjtA5jUn
+         9lGw==
+X-Gm-Message-State: AOUpUlFJ05HsdS3kcEH/x/HwLqr9e+uUYhJrWKsFLljgjxbkL4AD0310
+        oEyyAGGYEcGhm9skv+9N/OM=
+X-Google-Smtp-Source: AAOMgpcDwAjTJAbf3XQUv0+9u+Quf2HJa9AJYdWBfk+wCwbAKSazYTb03KC0G0rCDdtLCbIh3+ZyBQ==
+X-Received: by 2002:adf:e190:: with SMTP id k16-v6mr3469781wri.36.1532161592881;
+        Sat, 21 Jul 2018 01:26:32 -0700 (PDT)
+Received: from xux707-tw (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
+        by smtp.gmail.com with ESMTPSA id w9-v6sm889814wmw.23.2018.07.21.01.26.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 21 Jul 2018 01:26:31 -0700 (PDT)
+Date:   Sat, 21 Jul 2018 09:26:31 +0100
+From:   John Whitmore <arigead@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     John Whitmore <johnfwhitmore@gmail.com>,
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        kstewart@linuxfoundation.org, pombredanne@nexb.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v2 09/10] staging:trl8192u: Rename TClasProc >
+ t_clas_proc - Style
+Message-ID: <20180721082629.GA28035@xux707-tw>
+References: <20180716190454.31489-1-johnfwhitmore@gmail.com>
+ <20180716190454.31489-10-johnfwhitmore@gmail.com>
+ <20180721070215.GA20326@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180721070215.GA20326@kroah.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following sparse warnings:
+On Sat, Jul 21, 2018 at 09:02:15AM +0200, Greg KH wrote:
+> On Mon, Jul 16, 2018 at 08:04:53PM +0100, John Whitmore wrote:
+> > Rename the struct TS_COMMON_INFO member variable TClasProc to
+> > t_clas_proc. This change clears the checkpatch issue with CamelCase variable
+> > names. There should be no impact on runtime execution.
+> > 
+> > Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> > ---
+> >  drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h     | 2 +-
+> >  drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c | 4 ++--
+> >  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> Ah, I think the problem with the rejections was that I didn't pick up
+> this patch, because you mispelled the driver name :)
+> 
+> I filter for drivers to apply everything for that one at the same time
+> to make things easier on myself.  And this got dropped.  Please fix the
+> subject up and add it to your series and resend, that should hopefully
+> fix the problems.
+> 
 
-arch/x86/mm/tlb.c:38:6: warning: symbol 'clear_asid_other' was not declared. Should it be static?
+Oops! (I'm sure this list probably rejects naughty potty mouth language, Oops
+will have to do)
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- arch/x86/mm/tlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 6eb1f34..5e8e478 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -35,7 +35,7 @@
-  * necessary invalidation by clearing out the 'ctx_id' which
-  * forces a TLB flush when the context is loaded.
-  */
--void clear_asid_other(void)
-+static void clear_asid_other(void)
- {
- 	u16 asid;
- 
--- 
-1.7.12.4
-
+Sorry careless on my part, I'll go through these patches later today and
+reissue a series. Thank you for applying and sorry I messed up.
