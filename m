@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356AFECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 00:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED5C6ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 00:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3E3720854
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 00:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A410E20854
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 00:43:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YhPWa7aA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3E3720854
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SiAmkIyv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A410E20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728830AbeGUBeI (ORCPT
+        id S1729702AbeGUBec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 20 Jul 2018 21:34:08 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:40317 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbeGUBeI (ORCPT
+        Fri, 20 Jul 2018 21:34:32 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45873 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbeGUBec (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Jul 2018 21:34:08 -0400
-Received: by mail-qk0-f195.google.com with SMTP id c126-v6so7218855qkd.7;
-        Fri, 20 Jul 2018 17:43:27 -0700 (PDT)
+        Fri, 20 Jul 2018 21:34:32 -0400
+Received: by mail-qt0-f193.google.com with SMTP id y5-v6so11832027qti.12;
+        Fri, 20 Jul 2018 17:43:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:subject:to:cc:message-id:date:user-agent:mime-version
          :content-language:content-transfer-encoding;
-        bh=ihg/8jer5BsW2VgIb54yzVxs964umeEWPrHqlNFHtDI=;
-        b=YhPWa7aAjkrZWwqsvB7vR0Xi7Wz1ycSIKRsC9mh+5LzoZJkUCYhy7rziwfu/kJJ4uo
-         MFMCw979GTLFzukc+2Yg/xQYB0MNqg6IQ5xzemmqVTK9zC8aCDRXcclpDLRyIZ4xmvE1
-         nG28NbyRxCBS/2/z0QOS2Yl9HiB2C8Yl4INMX+Bjcs1uDqeI3d96hhG88TcMPJJCHpLe
-         dAxESa9OCZAwOwovkesdfzYEGNHbQsJJJnPaFQqsTQUem2wq9XTjLvfJ6v48UDYLHgWz
-         i81t+s/1ATZznJTPAnLz0ciLbd2K1Bonb7xCEq0wwKaN1bUwk9Dr6c0eTSwbpbPW311P
-         t3GA==
+        bh=jNHEmiMUbgsxbbOM3eVQNH1BY1k6Ym3TZHXCOd81D74=;
+        b=SiAmkIyvrCFIqcseAF7kmU5Sl/iXVwbAd1mBXYOPBFL3/fwqdopsh3uwt7klruNlU2
+         5OsETtaeNKFyEcOrrxigsUIOx814LQpuOVfbEbKCQsCnXYwopW9ftqdI6G80IXFsQ397
+         kkBDlcS3d1UL6QyDGWz95d1xnzqo6GbET3LjG47nv5oDkSfNQL+3yLjdTNnlBsb8kJZL
+         6NX8c82ULZuNWHHvCdszEW0dtGxKiVaJn7NwoK2bBBe/1p7D8SDMFXjkp6ICJxNou27S
+         iYxmO1aoONImEnohqHpakZsHhZu10YeznTSO+atI580YlZz2uF6bs4cD/JQNHyFnvpdW
+         JIww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
          :mime-version:content-language:content-transfer-encoding;
-        bh=ihg/8jer5BsW2VgIb54yzVxs964umeEWPrHqlNFHtDI=;
-        b=tMzQbrqrLI0d3YzoVLJ1EtPoTgtvfsmXFeiOhtH90ATksI/BpP3BuCMtUHrnmv3jJO
-         ORCwknpN2DtbJFmETmT4z1uIr3tY1jPijXWKR7hWngIRzthXpRcjrDUI9Pwm2YOo0UB6
-         Ufp9Qxb5TPWkT2x3wZtpI71VSMFHXndmNLXchlY3KwNDqrx41UJmvLAqG7MkVOpS/55q
-         iEMsu1R7SXosErMx/J9dOjGmmi0nBa7PFh5qQWSeCg6O3N8PBvzoayQzH7aBZ4bCvprS
-         HpK0bSO2HZOmCAkxInjDmWs+T8IIbMkWEdLEP2lNw0xlml4YJ9zoXEJwEAPNc1B1QumF
-         4rbA==
-X-Gm-Message-State: AOUpUlH5zlfYeuoSp+y1frAQb7MSHF/L0doiymXup2KdW8+IEuns4+oM
-        4oRSSEDs4p+WBElsPUFefUABx6r6l9+Ncw==
-X-Google-Smtp-Source: AAOMgpcm1w5jLgdqmzYonR8nzQ3JUlSNWzXol7XmUsfMkRc55Oad2IeeugdfWC1Je6BZ1t2wMuWVLw==
-X-Received: by 2002:ae9:df87:: with SMTP id t129-v6mr3641037qkf.361.1532133806935;
-        Fri, 20 Jul 2018 17:43:26 -0700 (PDT)
+        bh=jNHEmiMUbgsxbbOM3eVQNH1BY1k6Ym3TZHXCOd81D74=;
+        b=DmlZhuO5nmVb/zuXsfqBNGMMKXiIKALheT3VaDLD9XxWxnVW+ZuSBpRKkYEYg3+Ueb
+         RN/edZnYAP6W481aRChS4hCXKcUl34KoHmDwnW8Knc0DcnscEdXTwGfKHtiQer0hMV4+
+         O8ny0KFHlaLQkoMC80uVFkae/pwQsuNv1QNc++iADvtSvdOGfhfSKb7womH42NWiHz0/
+         s2IopWoyv4HbUxcXaU/j73GC7qnXQoJ1MdLBC5N3/nJDVeUsKqbOlkMuSHDfpegVAljt
+         NhMnWTPq31VY7Byg82eyDCpjrfnrSkHYniQ/WFEFZyZfaPLZ7RfoTVfuBvZjqeU0QaEv
+         YiAg==
+X-Gm-Message-State: AOUpUlF/n71fmMzX2VnWBUiYxcbDPilWQngSJtBaGp1Y6mFAPbteua40
+        CiTN8mWRQckSJkfF+Th6IVNSCD19S8SOYg==
+X-Google-Smtp-Source: AAOMgpecuSw0Re2Ad9R0LPWjt1jrVAvzMxdoPm6U/tcZU5A2+AS0dn1Ph4KzH3hMktA3eK8PzwDA6w==
+X-Received: by 2002:a0c:a991:: with SMTP id a17-v6mr3772432qvb.83.1532133830664;
+        Fri, 20 Jul 2018 17:43:50 -0700 (PDT)
 Received: from ?IPv6:2601:153:601:7d2a::100b? ([2601:153:601:7d2a::100b])
-        by smtp.gmail.com with ESMTPSA id g207-v6sm2073615qke.41.2018.07.20.17.43.25
+        by smtp.gmail.com with ESMTPSA id e21-v6sm2159567qtc.67.2018.07.20.17.43.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Jul 2018 17:43:26 -0700 (PDT)
+        Fri, 20 Jul 2018 17:43:50 -0700 (PDT)
 From:   Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH 0/2] Add support for cpcap regulators on Tegra devices.
-To:     lgirdwood@gmail.com, broonie@kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+Subject: [PATCH 1/2] Add sw2_sw4 voltage table to cpcap regulator.
+To:     girdwood@gmail.com
+Cc:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Message-ID: <72f7b6c2-f5a0-fa27-da01-e37edc6024c3@gmail.com>
-Date:   Fri, 20 Jul 2018 20:43:25 -0400
+Message-ID: <d38d3fea-dc7d-09fe-651e-386b36befde1@gmail.com>
+Date:   Fri, 20 Jul 2018 20:43:49 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -78,21 +78,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good Evening,
+SW2 and SW4 use a shared table to provide voltage to the cpu core and
+devices on Tegra hardware.
+Added this table to the cpcap regulator driver as the first step to
+supporting this device on Tegra.
 
-The CPCAP regulator driver can support various devices, but currently 
-only supports Omap4 devices.
-Adds the sw2 and sw4 voltage tables, which power the Tegra core, and a 
-DT match for the Tegra device.
-Tested on the Motorola Xoom MZ602.
+Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+---
+  drivers/regulator/cpcap-regulator.c | 23 +++++++++++++++++++++++
+  1 file changed, 23 insertions(+)
 
-Peter Geis (2):
-   Add sw2_sw4 voltage table to cpcap regulator.
-   Add support for CPCAP regulators on Tegra devices.
+diff --git a/drivers/regulator/cpcap-regulator.c 
+b/drivers/regulator/cpcap-regulator.c
+index bd910fe123d9..c0b1e04bd90f 100644
+--- a/drivers/regulator/cpcap-regulator.c
++++ b/drivers/regulator/cpcap-regulator.c
+@@ -271,6 +271,29 @@ static struct regulator_ops cpcap_regulator_ops = {
+  };
 
-  .../bindings/regulator/cpcap-regulator.txt    |   1 +
-  drivers/regulator/cpcap-regulator.c           | 103 ++++++++++++++++++
-  2 files changed, 104 insertions(+)
-
+  static const unsigned int unknown_val_tbl[] = { 0, };
++static const unsigned int sw2_sw4_val_tbl[] = { 612500, 625000, 637500,
++                                               650000, 662500, 675000,
++                                               687500, 700000, 712500,
++                                               725000, 737500, 750000,
++                                               762500, 775000, 787500,
++                                               800000, 812500, 825000,
++                                               837500, 850000, 862500,
++                                               875000, 887500, 900000,
++                                               912500, 925000, 937500,
++                                               950000, 962500, 975000,
++                                               987500, 1000000, 1012500,
++                                               1025000, 1037500, 1050000,
++                                               1062500, 1075000, 1087500,
++                                               1100000, 1112500, 1125000,
++                                               1137500, 1150000, 1162500,
++                                               1175000, 1187500, 1200000,
++                                               1212500, 1225000, 1237500,
++                                               1250000, 1262500, 1275000,
++                                               1287500, 1300000, 1312500,
++                                               1325000, 1337500, 1350000,
++                                               1362500, 1375000, 1387500,
++                                               1400000, 1412500, 1425000,
++                                               1437500, 1450000, 
+1462500, };
+  static const unsigned int sw5_val_tbl[] = { 0, 5050000, };
+  static const unsigned int vcam_val_tbl[] = { 2600000, 2700000, 2800000,
+                                              2900000, };
 -- 
 2.17.1
