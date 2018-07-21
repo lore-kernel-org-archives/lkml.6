@@ -2,59 +2,66 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35A6ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1534ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69BC620863
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:37:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kIc3vpbP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69BC620863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6CD9F20854
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 17:39:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CD9F20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbeGUSaw (ORCPT
+        id S1728142AbeGUScs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 14:30:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49888 "EHLO mail.kernel.org"
+        Sat, 21 Jul 2018 14:32:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49717 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727486AbeGUSaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 14:30:52 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA65520858;
-        Sat, 21 Jul 2018 17:37:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532194642;
-        bh=Pa/kSQPJ5svel9JEXeHYuiyVgl25lqTs5UKm8VFU6Yg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kIc3vpbPh/O6AM6EWPz33suk1eh8eUWcnfgq5r03cz1H9AHeGBoR5PK3kcC8zqGag
-         KGNgXswgr2INa0Mhg6edJsvQvSaydn4AAr4ivRR41W4UnpOC4ZPy7bD/sPEt8JNaiT
-         srwmL7dsu7yNJkatz6RQP4bg44qKWTH0ekrUu168=
-Date:   Sat, 21 Jul 2018 18:37:16 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Brian Masney <masneyb@onstation.org>, mark.rutland@arm.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, jonathan@marek.ca,
-        jmaneyrol@invensense.com, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, mkelly@xevo.com, fischerdouglasc@gmail.com,
-        bshah@kde.org, ctatlor97@gmail.com, drew.paterson@ams.com
-Subject: Re: [PATCH v2 3/7] iio: tsl2772: add support for reading power
- settings from device tree
-Message-ID: <20180721183716.524632f1@archlinux>
-In-Reply-To: <20180720173635.GA21241@rob-hp-laptop>
-References: <20180717084158.23532-1-masneyb@onstation.org>
-        <20180717084158.23532-4-masneyb@onstation.org>
-        <20180720173635.GA21241@rob-hp-laptop>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727562AbeGUScs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 14:32:48 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6A22C2091A; Sat, 21 Jul 2018 19:39:11 +0200 (CEST)
+Received: from bbrezillon (unknown [37.173.79.60])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DB3532099F;
+        Sat, 21 Jul 2018 19:38:43 +0200 (CEST)
+Date:   Sat, 21 Jul 2018 19:38:40 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Han Xu <han.xu@nxp.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Xiaolei Li <xiaolei.li@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v4 18/35] mtd: rawnand: s3c2410: convert driver to
+ nand_scan()
+Message-ID: <20180721193840.05fa4e4f@bbrezillon>
+In-Reply-To: <20180720151527.16038-19-miquel.raynal@bootlin.com>
+References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
+        <20180720151527.16038-19-miquel.raynal@bootlin.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -63,100 +70,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 11:36:35 -0600
-Rob Herring <robh@kernel.org> wrote:
+On Fri, 20 Jul 2018 17:15:10 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-> On Tue, Jul 17, 2018 at 04:41:54AM -0400, Brian Masney wrote:
-> > This patch adds support for optionally reading the prox_diode and
-> > prox_power settings from device tree. This was tested using a LG
-> > Nexus 5 (hammerhead) which requires a different diode than the driver
-> > default for the IR LED.
-> > 
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > ---
-> > The next patch in the series removes the tsl2772 driver from the
-> > trivial-devices.txt file. I separated it out so that change can go
-> > through device tree.
-> > 
-> >  .../devicetree/bindings/iio/light/tsl2772.txt | 39 +++++++++++++++++++  
+> Two helpers have been added to the core to make ECC-related
+> configuration between the detection phase and the final NAND scan. Use
+> these hooks and convert the driver to just use nand_scan() instead of
+> both nand_scan_ident() and nand_scan_tail().
 > 
-> Please split DT bindings to separate patch.
-> 
-> >  drivers/iio/light/tsl2772.c                   | 16 ++++++++
-> >  include/dt-bindings/iio/amstaos,tsl2772.h     | 24 ++++++++++++
-> >  3 files changed, 79 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/light/tsl2772.txt
-> >  create mode 100644 include/dt-bindings/iio/amstaos,tsl2772.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/light/tsl2772.txt b/Documentation/devicetree/bindings/iio/light/tsl2772.txt
-> > new file mode 100644
-> > index 000000000000..ab553d52b9fc
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/light/tsl2772.txt
-> > @@ -0,0 +1,39 @@
-> > +* AMS/TAOS ALS and proximity sensor
-> > +
-> > +Required properties:
-> > +
-> > +  - compatible: Should be one of
-> > +		"amstaos,tsl2571"
-> > +		"amstaos,tsl2671"
-> > +		"amstaos,tmd2671"
-> > +		"amstaos,tsl2771"
-> > +		"amstaos,tmd2771"
-> > +		"amstaos,tsl2572"
-> > +		"amstaos,tsl2672"
-> > +		"amstaos,tmd2672"
-> > +		"amstaos,tsl2772"
-> > +		"amstaos,tmd2772"
-> > +  - reg: the I2C address of the device
-> > +
-> > +Optional properties:
-> > +
-> > +  - amstaos,prox_diode - must be TSL2772_DIODE0, TSL2772_DIODE1, or
-> > +                         TSL2772_DIODE_BOTH.  
-> 
-> s/_/-/
-> 
-> > +  - amstaos,prox_power - must be TSL2772_100_mA, TSL2772_50_mA, TSL2772_25_mA,
-> > +                         or TSL2772_13_mA.  
-> 
-> I wonder if this should be common. Perhaps we should use the existing 
-> 'led-max-microamp' as this is setting the current for an IR LED.
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-Seems reasonable, then perhaps have two controls to turn on the diodes
-above.
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
+> ---
+>  drivers/mtd/nand/raw/s3c2410.c | 30 +++++++++++++-----------------
+>  1 file changed, 13 insertions(+), 17 deletions(-)
 > 
-> And while called 'power' this setting is current.
-
-Also can we have real values?  I really don't like defines if they
-aren't absolutely necessary - particularly when there is a nice real
-unit to be used.
-
-> 
-> > +  - interrupt-parent: should be the phandle for the interrupt controller  
-> 
-> Don't need to document this. It's implied by interrupts (and could be in 
-> a parent node).
-> 
-> > +  - interrupts: the sole interrupt generated by the device
-> > +
-> > +  Refer to interrupt-controller/interrupts.txt for generic interrupt client
-> > +  node bindings.
-> > +
-> > +Example:
-> > +
-> > +#include <dt-bindings/iio/amstaos,tsl2772.h>
-> > +
-> > +tsl2772@39 {
-> > +	compatible = "amstaos,tsl2772";
-> > +	reg = <0x39>;
-> > +	interrupts-extended = <&msmgpio 61 IRQ_TYPE_EDGE_FALLING>;
-> > +	amstaos,prox_diode = <TSL2772_DIODE0>;
-> > +};  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --git a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
+> index e8bf64832213..c21e8892394a 100644
+> --- a/drivers/mtd/nand/raw/s3c2410.c
+> +++ b/drivers/mtd/nand/raw/s3c2410.c
+> @@ -915,20 +915,19 @@ static void s3c2410_nand_init_chip(struct s3c2410_nand_info *info,
+>  }
+>  
+>  /**
+> - * s3c2410_nand_update_chip - post probe update
+> - * @info: The controller instance.
+> - * @nmtd: The driver version of the MTD instance.
+> + * s3c2410_nand_attach_chip - Init the ECC engine after NAND scan
+> + * @chip: The NAND chip
+>   *
+> - * This routine is called after the chip probe has successfully completed
+> - * and the relevant per-chip information updated. This call ensure that
+> + * This hook is called by the core after the identification of the NAND chip,
+> + * once the relevant per-chip information is up to date.. This call ensure that
+>   * we update the internal state accordingly.
+>   *
+>   * The internal state is currently limited to the ECC state information.
+>  */
+> -static int s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
+> -				    struct s3c2410_nand_mtd *nmtd)
+> +static int s3c2410_nand_attach_chip(struct nand_chip *chip)
+>  {
+> -	struct nand_chip *chip = &nmtd->chip;
+> +	struct mtd_info *mtd = nand_to_mtd(chip);
+> +	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
+>  
+>  	switch (chip->ecc.mode) {
+>  
+> @@ -998,6 +997,10 @@ static int s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
+>  	return 0;
+>  }
+>  
+> +static const struct nand_controller_ops s3c24xx_nand_controller_ops = {
+> +	.attach_chip = s3c2410_nand_attach_chip,
+> +};
+> +
+>  static const struct of_device_id s3c24xx_nand_dt_ids[] = {
+>  	{
+>  		.compatible = "samsung,s3c2410-nand",
+> @@ -1095,6 +1098,7 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, info);
+>  
+>  	nand_controller_init(&info->controller);
+> +	info->controller.ops = &s3c24xx_nand_controller_ops;
+>  
+>  	/* get the clock source and enable it */
+>  
+> @@ -1166,15 +1170,7 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+>  		mtd->dev.parent = &pdev->dev;
+>  		s3c2410_nand_init_chip(info, nmtd, sets);
+>  
+> -		err = nand_scan_ident(mtd, (sets) ? sets->nr_chips : 1, NULL);
+> -		if (err)
+> -			goto exit_error;
+> -
+> -		err = s3c2410_nand_update_chip(info, nmtd);
+> -		if (err < 0)
+> -			goto exit_error;
+> -
+> -		err = nand_scan_tail(mtd);
+> +		err = nand_scan(mtd, sets ? sets->nr_chips : 1);
+>  		if (err)
+>  			goto exit_error;
+>  
 
