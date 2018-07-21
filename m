@@ -2,161 +2,192 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2417ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 09:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 896DBECDFBD
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 09:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5163020856
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 09:16:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44E0E20862
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 09:40:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E6p1A6/5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5163020856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fyrr/XD7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E0E20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeGUKIO (ORCPT
+        id S1727678AbeGUKcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 06:08:14 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33360 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbeGUKIO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 06:08:14 -0400
-Received: by mail-lj1-f194.google.com with SMTP id s12-v6so13007266ljj.0
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 02:16:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=UsdIT5kR7HmhyZy1LEYLxDNfI4hjSfylJK5GVw55M6A=;
-        b=E6p1A6/5QgQl7Lr2WvcV+t+SvnOQ/i2PSoGHgioF+urTMxankagRtSzqydU6feeUZj
-         nLI+/Ga9fXAibX56Q7vn5fMRJ5UFPaB4xu3+UkJwEeXSPltvMfByJX0fN3Vo0qhpS8FC
-         P142Y9ZrixEL+4OT6wp58sB6R6+njy7Ev63RM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UsdIT5kR7HmhyZy1LEYLxDNfI4hjSfylJK5GVw55M6A=;
-        b=SWBTch+CCgYAnlyrWJLAjApLZ1rphtwn8hdveTuOTgec2c2umwg+6QXptV22vJY/sX
-         hr2QPNpTZYKQD7HjOoQgnkXuwVedyXaKmJjNTnN9CJ3JAGWlyEadGVSXyiLbddRJSUba
-         K9y3sYk3Vn/MRICCUuSe9zmPFy3iMDGwx7yPavC0M31jbftsO5vDXHMmXL1+mfB4TmB5
-         4V6BiZf5CD7XYKi1/4f59gWhFcrYH3UZeqhUOjm4Ql+fN0JZTPAundmWIEgaUQPeQy2W
-         8mK7Qti34wTHF5P2a3rzOdOhhHCD7lvt8aw1q+f4zT8C6IXa1OVcoyTfQxQ/QrNbibNU
-         aR+g==
-X-Gm-Message-State: AOUpUlFwCdA5bA93KTuHL06vVk7PKTKgstJWRAKXl6s7p3F5SoP2LXr/
-        keYsasMFi0zo3zyg27ZOiB/apaKtfIX/J7WUGE/2xj1QYCNJPA==
-X-Google-Smtp-Source: AAOMgpcpOUPJ5+zGZdZXZjhSda5QmJ/4YPlCr/4aPuZkrYG7u1qVh0BSNaNKz5K73y+KEs1YHkz9XtQtYVAiJiEIFAs=
-X-Received: by 2002:a2e:59d1:: with SMTP id g78-v6mr3961161ljf.79.1532164569550;
- Sat, 21 Jul 2018 02:16:09 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Sat, 21 Jul 2018 02:16:08
- -0700 (PDT)
-In-Reply-To: <20180720121417.206337808@linuxfoundation.org>
-References: <20180720121417.206337808@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Sat, 21 Jul 2018 14:46:08 +0530
-Message-ID: <CA+G9fYv7xsurc92qhWCUrr+uyrTW50O_JsRXTq_Rn4LjwW6Thg@mail.gmail.com>
-Subject: Re: [PATCH 4.14 00/92] 4.14.57-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 21 Jul 2018 06:32:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39094 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727568AbeGUKcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 06:32:42 -0400
+Received: from devnote (72.65.214.202.bf.2iij.net [202.214.65.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37CD4206B7;
+        Sat, 21 Jul 2018 09:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532166035;
+        bh=iEqjLwngJWSxRtw+Iq8Qx7zIvNJp2cV30pexTA965Ao=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Fyrr/XD7fpHq/ASCPXGhNLFEGfK1Lg9PhHLFQ6iL8SFsLAlWz+F8ZJKxya4my86qn
+         RNuuERIMADXsUoHkMV5gH+NfgQFETMJFL3hc1TKu3sBFHVj2l/NNITP/cw4xPoHSBN
+         KBiluAi2Ma11hDOxIsCcSknaBzxL9HkJXZTN7oYY=
+Date:   Sat, 21 Jul 2018 18:40:32 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     Francis Deslauriers <francis.deslauriers@efficios.com>,
+        rostedt@goodmis.org, mhiramat@kernel.org, peterz@infradead.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        lkp@01.org
+Subject: Re: [lkp-robot] [tracing]  ecadccb31b:
+ kernel_selftests.ftrace.ftracetest.fail
+Message-Id: <20180721184032.01b1b6d70e0dd3b0f32aac95@kernel.org>
+In-Reply-To: <20180721024113.GI12513@shao2-debian>
+References: <20180721024113.GI12513@shao2-debian>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20 July 2018 at 17:43, Greg Kroah-Hartman <gregkh@linuxfoundation.org> w=
-rote:
-> This is the start of the stable review cycle for the 4.14.57 release.
-> There are 92 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun Jul 22 12:13:50 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.57-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
+Hi,
+
+OK, I'll handle this.
+The reason why this error is that kprobe event tests probe ftrace itself for test.
+
+
+On Sat, 21 Jul 2018 10:41:13 +0800
+kernel test robot <rong.a.chen@intel.com> wrote:
+
+> 
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: ecadccb31b8f1516dd045cc64fc7bc7a2d72947f ("[PATCH 1/2] tracing: kprobes: Prohibit probing on notrace functions")
+> url: https://github.com/0day-ci/linux/commits/Francis-Deslauriers/tracing-kprobes-Prohibit-probing-on-notrace-functions/20180714-072854
+> 
+> 
+> in testcase: kernel_selftests
+> with following parameters:
+> 
+> 	group: kselftests-01
+> 
+> test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
+> test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
+> 
+> 
+> on test machine: 8 threads Intel(R) Core(TM) i7-2600K CPU @ 3.40GHz with 8G memory
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> 
+> 
+> KERNEL SELFTESTS: linux_headers_dir is /usr/src/linux-headers-x86_64-rhel-7.2-ecadccb31b8f1516dd045cc64fc7bc7a2d72947f
+> 2018-07-18 22:17:02 ln -sf /usr/bin/clang-7 /usr/bin/clang
+> 2018-07-18 22:17:02 ln -sf /usr/bin/llc-7 /usr/bin/llc
+> 
+> 2018-07-18 22:17:47 make run_tests -C ftrace
+> make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-ecadccb31b8f1516dd045cc64fc7bc7a2d72947f/tools/testing/selftests/ftrace'
+> TAP version 13
+> selftests: ftrace: ftracetest
+> ========================================
+> === Ftrace unit tests ===
+> [1] Basic trace file check	[PASS]
+> [2] Basic test for tracers	[PASS]
+> [3] Basic trace clock test	[PASS]
+> [4] Basic event tracing check	[PASS]
+> [5] event tracing - enable/disable with event level files	[PASS]
+> [6] event tracing - restricts events based on pid	[PASS]
+> [7] event tracing - enable/disable with subsystem level files	[PASS]
+> [8] event tracing - enable/disable with top level files	[PASS]
+> [9] ftrace - function graph filters with stack tracer	[PASS]
+> [10] ftrace - function graph filters	[PASS]
+> [11] ftrace - function glob filters	[PASS]
+> [12] ftrace - function pid filters	[PASS]
+> [13] ftrace - test for function event triggers	[PASS]
+> [14] ftrace - function profiler with function tracing	[PASS]
+> [15] ftrace - test reading of set_ftrace_filter	[PASS]
+> [16] ftrace - test for function traceon/off triggers	[PASS]
+> [17] Test creation and deletion of trace instances while setting an event	[PASS]
+> [18] Test creation and deletion of trace instances	[PASS]
+> [19] Kprobe dynamic event - adding and removing	[PASS]
+> [20] Kprobe dynamic event - busy event check	[PASS]
+> [21] Kprobe dynamic event with arguments	[PASS]
+> [22] Kprobe event string type argument	[FAIL]
+> [23] Kprobe event argument syntax	[PASS]
+> [24] Kprobes event arguments with types	[PASS]
+> [25] Kprobe event auto/manual naming	[PASS]
+> [26] Kprobe dynamic event with function tracer	[PASS]
+> [27] Kprobe dynamic event - probing module	[FAIL]
+> [28] Kretprobe dynamic event with arguments	[PASS]
+> [29] Kretprobe dynamic event with maxactive	[PASS]
+> [30] Register/unregister many kprobe events	[PASS]
+> [31] Kprobe events - probe points	[FAIL]
+> [32] event trigger - test extended error support	[PASS]
+> [33] event trigger - test field variable support	[PASS]
+> [34] event trigger - test inter-event combined histogram trigger	[PASS]
+> [35] event trigger - test multiple actions on hist trigger	[PASS]
+> [36] event trigger - test inter-event histogram trigger onmatch action	[PASS]
+> [37] event trigger - test inter-event histogram trigger onmatch-onmax action	[PASS]
+> [38] event trigger - test inter-event histogram trigger onmax action	[PASS]
+> [39] event trigger - test synthetic event create remove	[PASS]
+> [40] event trigger - test event enable/disable trigger	[PASS]
+> [41] event trigger - test trigger filter	[PASS]
+> [42] event trigger - test histogram modifiers	[PASS]
+> [43] event trigger - test histogram trigger	[PASS]
+> [44] event trigger - test multiple histogram triggers	[PASS]
+> [45] event trigger - test snapshot-trigger	[PASS]
+> [46] event trigger - test stacktrace-trigger	[PASS]
+> [47] trace_marker trigger - test histogram trigger	[PASS]
+> [48] trace_marker trigger - test snapshot trigger	[PASS]
+> [49] trace_marker trigger - test histogram with synthetic event against kernel event	[PASS]
+> [50] trace_marker trigger - test histogram with synthetic event	[PASS]
+> [51] event trigger - test traceon/off trigger	[PASS]
+> [52] (instance)  Basic test for tracers	[PASS]
+> [53] (instance)  Basic trace clock test	[PASS]
+> [54] (instance)  event tracing - enable/disable with event level files	[PASS]
+> [55] (instance)  event tracing - restricts events based on pid	[PASS]
+> [56] (instance)  event tracing - enable/disable with subsystem level files	[PASS]
+> [57] (instance)  ftrace - test for function event triggers	[PASS]
+> [58] (instance)  ftrace - test for function traceon/off triggers	[PASS]
+> [59] (instance)  event trigger - test event enable/disable trigger	[PASS]
+> [60] (instance)  event trigger - test trigger filter	[PASS]
+> [61] (instance)  event trigger - test histogram modifiers	[PASS]
+> [62] (instance)  event trigger - test histogram trigger	[PASS]
+> [63] (instance)  event trigger - test multiple histogram triggers	[PASS]
+> [64] (instance)  trace_marker trigger - test histogram trigger	[PASS]
+> [65] (instance)  trace_marker trigger - test snapshot trigger	[PASS]
+> 
+> # of passed:  62
+> # of failed:  3
+> # of unresolved:  0
+> # of untested:  0
+> # of unsupported:  0
+> # of xfailed:  0
+> # of undefined(test bug):  0
+> not ok 1..1 selftests: ftrace: ftracetest [FAIL]
+> make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-ecadccb31b8f1516dd045cc64fc7bc7a2d72947f/tools/testing/selftests/ftrace'
+> 
+> 
+> to reproduce:
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp install job.yaml  # job file is attached in this email
+>         bin/lkp run     job.yaml
+> 
+> 
+> 
 > thanks,
->
-> greg k-h
-
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.14.57-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: ec86d5e19e14ae1ee40cf8f41c4b960472bccf89
-git describe: v4.14.56-93-gec86d5e19e14
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.56-93-gec86d5e19e14
-
-No regressions (compared to build v4.14.56-93-ga3636f4156e6)
+> rong, chen
 
 
-Ran 16439 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
