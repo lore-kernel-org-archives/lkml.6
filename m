@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD7EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE2DECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F28820868
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:15:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CED9820868
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 18:15:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="To1Js7ZG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="To1Js7ZG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F28820868
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TtukvSSZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZmqR3rdJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED9820868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbeGUTJJ (ORCPT
+        id S1728877AbeGUTJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 15:09:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54622 "EHLO
+        Sat, 21 Jul 2018 15:09:16 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54878 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbeGUTJJ (ORCPT
+        with ESMTP id S1728738AbeGUTJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 15:09:09 -0400
+        Sat, 21 Jul 2018 15:09:16 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 889BC60588; Sat, 21 Jul 2018 18:15:32 +0000 (UTC)
+        id 20CF260314; Sat, 21 Jul 2018 18:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532196932;
-        bh=IdAzq7oqBKCmGYo/kHqwKtbSgMs0/oaAUylfd1DPGPI=;
+        s=default; t=1532196939;
+        bh=2jrd2lK6NCgp/KwTu6+N3zA+aajc3IIBkVAXHnSE9NQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=To1Js7ZGdgpuOQVyaYsD9Ka/dZCXoq1Q0TaEsT6OaBZUYNtLFYvcuAOk63XoTa548
-         G6al2rBz9itwRASCxG1zW8qvTdJHIWjV0GrE3v74+Zm7pG5hFmI/o6s8vT8HJ0gasC
-         UtSs92BNjJUgJ+pcZhHRpkzfrrOR5mTGL4JI4sww=
+        b=TtukvSSZaEJ+FiD7Vhz2/r41w3ZY0bNYViCp8qLfXiVpIxfY9qD8ewCT3qBUalJGi
+         OvpztbsBSR8bsdbOr9hsdw2Ff4+sN6gBdKNEQ+nD19DwNXpZrOPEaZn83fulZuXfKx
+         g62VuAfS2474FhqnhzNfMo/satZ4slghhozhx6G8=
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BC85B60AD9;
-        Sat, 21 Jul 2018 18:15:28 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7AE3B6021A;
+        Sat, 21 Jul 2018 18:15:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532196932;
-        bh=IdAzq7oqBKCmGYo/kHqwKtbSgMs0/oaAUylfd1DPGPI=;
+        s=default; t=1532196937;
+        bh=2jrd2lK6NCgp/KwTu6+N3zA+aajc3IIBkVAXHnSE9NQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=To1Js7ZGdgpuOQVyaYsD9Ka/dZCXoq1Q0TaEsT6OaBZUYNtLFYvcuAOk63XoTa548
-         G6al2rBz9itwRASCxG1zW8qvTdJHIWjV0GrE3v74+Zm7pG5hFmI/o6s8vT8HJ0gasC
-         UtSs92BNjJUgJ+pcZhHRpkzfrrOR5mTGL4JI4sww=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC85B60AD9
+        b=ZmqR3rdJux+aYjTSLMroK5rluApGwTGGIgsv4D1/6xiBtgHsiXtSUK9iCrEasVkWh
+         TRWVr22h+OWfsUqybJ3PTyJS4hZCwT9D+9wL5skFLsUCUJG7iiqOz6GPTbYjcHXmL8
+         rsY4owA9lg6o86I/Xrh2zPQH9GAP8hUtoYxiq9yA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7AE3B6021A
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -61,9 +61,9 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         grahamr@qti.qualcomm.com, Taniya Das <tdas@codeaurora.org>
-Subject: [RFC PATCH 3/4] clk: qcom: Add prepare/unprepare clock ops for PLL/RCG
-Date:   Sat, 21 Jul 2018 23:45:01 +0530
-Message-Id: <1532196902-28570-4-git-send-email-tdas@codeaurora.org>
+Subject: [RFC PATCH 4/4] clk: qcom: sdm845: Add Power Domain to RCGs and PLL
+Date:   Sat, 21 Jul 2018 23:45:02 +0530
+Message-Id: <1532196902-28570-5-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
 References: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
@@ -72,242 +72,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To put across power domain votes associated with a PLL or RCG, add the
-prepare/unprepare clock ops which would map the corresponding performance
-state corners for a clock frequency when the clk_prepare/clk_unprepare is
-being invoked.
-Also update the set_rate clock ops to send across the performance state to
-genpd framework when a new frequency is being requested.
+Test code for GCC Power Domain Voting for root clocks/plls.
 
 Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 52 +++++++++++++++++++++++++++-------
- drivers/clk/qcom/clk-rcg2.c      | 61 +++++++++++++++++++++++++++++++++++-----
- 2 files changed, 96 insertions(+), 17 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi |  2 +
+ drivers/clk/qcom/gcc-sdm845.c        | 83 +++++++++++++++++++++++++++++-------
+ drivers/clk/qcom/vdd-level.h         | 31 ++++++++++++++
+ 3 files changed, 101 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/clk/qcom/vdd-level.h
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 3c49a60..c03b6e4 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -1,14 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #include <linux/kernel.h>
-@@ -18,6 +10,7 @@
- #include <linux/delay.h>
- 
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 00722b5..742f72a 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -247,6 +247,8 @@
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
++			power-domains = <&rpmhpd SDM845_CX>,
++					<&rpmhpd SDM845_CX_AO>;
+ 		};
+
+ 		qupv3_id_0: geniqup@8c0000 {
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 0f694ed..60225c1 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -24,6 +24,11 @@
  #include "clk-alpha-pll.h"
+ #include "gdsc.h"
+ #include "reset.h"
 +#include "clk-pd.h"
- #include "common.h"
- 
- #define PLL_MODE(p)		((p)->offset + 0x0)
-@@ -522,7 +515,9 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	const struct pll_vco *vco;
- 	u32 l, alpha_width = pll_alpha_width(pll);
-+	unsigned long old_rate = clk_hw_get_rate(hw);
- 	u64 a;
-+	int ret;
- 
- 	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
- 	vco = alpha_pll_find_vco(pll, rate);
-@@ -531,6 +526,15 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		return -EINVAL;
- 	}
- 
-+	if (clk_hw_is_prepared(hw)) {
-+		/* Enforce power domain requirement for new frequency */
-+		ret = clk_power_domain_vote_rate(&pll->clkr, rate);
-+		if (ret) {
-+			pr_err("Failed to vote/set new rate %lu\n", rate);
-+			return ret;
-+		}
-+	}
++#include "vdd-level.h"
 +
- 	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
- 
- 	if (alpha_width > ALPHA_BITWIDTH)
-@@ -550,7 +554,15 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
- 			   PLL_ALPHA_EN, PLL_ALPHA_EN);
- 
--	return clk_alpha_pll_update_latch(pll, is_enabled);
-+	ret = clk_alpha_pll_update_latch(pll, is_enabled);
-+	if (ret)
-+		old_rate = rate;
++#include <linux/delay.h>
++#include <linux/clk.h>
+
+ #define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+
+@@ -162,12 +167,22 @@ enum {
+ 	"core_bi_pll_test_se",
+ };
+
++static CLK_POWERDOMAIN_INIT(vdd_cx, VDD_NUM, 1, vdd_corner);
++static CLK_POWERDOMAIN_INIT(vdd_cx_ao, VDD_NUM, 1, vdd_corner);
 +
-+	if (clk_hw_is_prepared(hw))
-+		/* Release the power domain requirement for old frequency */
-+		clk_power_domain_unvote_rate(&pll->clkr, old_rate);
+ static struct clk_alpha_pll gpll0 = {
+ 	.offset = 0x0,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+ 	.clkr = {
+ 		.enable_reg = 0x52000,
+ 		.enable_mask = BIT(0),
++		.pd = &vdd_cx,
++		.rate_max = (unsigned long[VDD_NUM]) {
++			[VDD_MIN] = 615000000,
++			[VDD_LOW] = 1066000000,
++			[VDD_LOW_L1] = 1600000000,
++			[VDD_NOMINAL] = 2000000000,
++		},
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpll0",
+ 			.parent_names = (const char *[]){ "bi_tcxo" },
+@@ -183,6 +198,13 @@ enum {
+ 	.clkr = {
+ 		.enable_reg = 0x52000,
+ 		.enable_mask = BIT(4),
++		.pd = &vdd_cx,
++		.rate_max = (unsigned long[VDD_NUM]) {
++			[VDD_MIN] = 615000000,
++			[VDD_LOW] = 1066000000,
++			[VDD_LOW_L1] = 1600000000,
++			[VDD_NOMINAL] = 2000000000,
++		},
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpll4",
+ 			.parent_names = (const char *[]){ "bi_tcxo" },
+@@ -226,11 +248,20 @@ enum {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_cpuss_ahb_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_cpuss_ahb_clk_src",
+-		.parent_names = gcc_parent_names_7,
+-		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++	.clkr = {
++	/*	.pd = &vdd_cx_ao,  Remove this for testing */
++		.pd = &vdd_cx,
++		.rate_max = (unsigned long[VDD_NUM]) {
++			[VDD_MIN] = 19200000,
++			[VDD_LOW] = 50000000,
++			[VDD_NOMINAL] = 100000000,
++		},
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_cpuss_ahb_clk_src",
++			.parent_names = gcc_parent_names_7,
++			.num_parents = 4,
++			.ops = &clk_rcg2_ops,
++		},
+ 	},
+ };
+
+@@ -268,11 +299,20 @@ enum {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_1,
+ 	.freq_tbl = ftbl_gcc_gp1_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_gp1_clk_src",
+-		.parent_names = gcc_parent_names_1,
+-		.num_parents = 5,
+-		.ops = &clk_rcg2_ops,
++	.clkr = {
++		.pd = &vdd_cx_ao,
++		.rate_max = (unsigned long[VDD_NUM]) {
++			[VDD_MIN] = 19200000,
++			[VDD_LOWER] = 50000000,
++			[VDD_LOW] = 100000000,
++			[VDD_NOMINAL] = 200000000,
++		},
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gp1_clk_src",
++			.parent_names = gcc_parent_names_1,
++			.num_parents = 5,
++			.ops = &clk_rcg2_ops,
++		},
+ 	},
+ };
+
+@@ -282,11 +322,20 @@ enum {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_1,
+ 	.freq_tbl = ftbl_gcc_gp1_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_gp2_clk_src",
+-		.parent_names = gcc_parent_names_1,
+-		.num_parents = 5,
+-		.ops = &clk_rcg2_ops,
++	.clkr = {
++		.pd = &vdd_cx,
++		.rate_max = (unsigned long[VDD_NUM]) {
++			[VDD_MIN] = 19200000,
++			[VDD_LOWER] = 50000000,
++			[VDD_LOW] = 100000000,
++			[VDD_NOMINAL] = 200000000,
++		},
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gp2_clk_src",
++			.parent_names = gcc_parent_names_1,
++			.num_parents = 5,
++			.ops = &clk_rcg2_ops,
++		},
+ 	},
+ };
+
+@@ -3472,6 +3521,10 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+ 	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+
++	/* Indexes of the power domain */
++	vdd_cx.pd_index[0] = 0;
++	vdd_cx_ao.pd_index[0] = 1;
 +
-+	return ret;
+ 	return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
  }
- 
- static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -1017,7 +1029,25 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return __clk_alpha_pll_update_latch(pll);
- }
- 
-+static int clk_alpha_pll_prepare(struct clk_hw *hw)
-+{
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	unsigned long rate = clk_hw_get_rate(hw);
+
+diff --git a/drivers/clk/qcom/vdd-level.h b/drivers/clk/qcom/vdd-level.h
+new file mode 100644
+index 0000000..7de65142
+--- /dev/null
++++ b/drivers/clk/qcom/vdd-level.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
 +
-+	return clk_power_domain_vote_rate(&pll->clkr, rate);
-+}
++#ifndef __DRIVERS_CLK_QCOM_VDD_LEVEL_H
++#define __DRIVERS_CLK_QCOM_VDD_LEVEL_H
 +
-+static void clk_alpha_pll_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	unsigned long rate = clk_hw_get_rate(hw);
++#include <dt-bindings/power/qcom-rpmpd.h>
 +
-+	clk_power_domain_unvote_rate(&pll->clkr, rate);
-+}
++enum vdd_levels {
++	VDD_NONE,
++	VDD_MIN,	/* MIN SVS */
++	VDD_LOWER,	/* SVS2 */
++	VDD_LOW,	/* SVS */
++	VDD_LOW_L1,	/* SVSL1 */
++	VDD_NOMINAL,	/* NOM */
++	VDD_HIGH,	/* TURBO */
++	VDD_NUM,
++};
 +
- const struct clk_ops clk_alpha_pll_fabia_ops = {
-+	.prepare = clk_alpha_pll_prepare,
-+	.unprepare = clk_alpha_pll_unprepare,
- 	.enable = alpha_pll_fabia_enable,
- 	.disable = alpha_pll_fabia_disable,
- 	.is_enabled = clk_alpha_pll_is_enabled,
-@@ -1028,6 +1058,8 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
- EXPORT_SYMBOL_GPL(clk_alpha_pll_fabia_ops);
- 
- const struct clk_ops clk_alpha_pll_fixed_fabia_ops = {
-+	.prepare = clk_alpha_pll_prepare,
-+	.unprepare = clk_alpha_pll_unprepare,
- 	.enable = alpha_pll_fabia_enable,
- 	.disable = alpha_pll_fabia_disable,
- 	.is_enabled = clk_alpha_pll_is_enabled,
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 52208d4..dc17dbf 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -15,6 +15,7 @@
- 
- #include <asm/div64.h>
- 
-+#include "clk-pd.h"
- #include "clk-rcg.h"
- #include "common.h"
- 
-@@ -247,26 +248,46 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- 	u32 cfg, mask;
- 	struct clk_hw *hw = &rcg->clkr.hw;
- 	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-+	unsigned long old_rate = clk_hw_get_rate(hw);
- 
- 	if (index < 0)
- 		return index;
- 
-+	/* Enforce power domain requirement for new frequency */
-+	if (clk_hw_is_prepared(hw)) {
-+		ret = clk_power_domain_vote_rate(&rcg->clkr, f->freq);
-+		if (ret) {
-+			pr_err("Failed to vote & set new rate %lu\n", f->freq);
-+			return ret;
-+		}
-+	}
++static int vdd_corner[] = {
++	RPMH_REGULATOR_LEVEL_RETENTION,	/* VDD_NONE */
++	RPMH_REGULATOR_LEVEL_MIN_SVS,	/* VDD_MIN */
++	RPMH_REGULATOR_LEVEL_LOW_SVS,	/* VDD_LOWER */
++	RPMH_REGULATOR_LEVEL_SVS,	/* VDD_LOW */
++	RPMH_REGULATOR_LEVEL_SVS_L1,	/* VDD_LOW_L1 */
++	RPMH_REGULATOR_LEVEL_NOM,	/* VDD_NOMINAL */
++	RPMH_REGULATOR_LEVEL_TURBO,	/* VDD_HIGH */
++};
 +
- 	if (rcg->mnd_width && f->n) {
- 		mask = BIT(rcg->mnd_width) - 1;
- 		ret = regmap_update_bits(rcg->clkr.regmap,
- 				rcg->cmd_rcgr + M_REG, mask, f->m);
--		if (ret)
--			return ret;
-+		if (ret) {
-+			/*
-+			 * Release the power domain requirement for
-+			 * new frequency
-+			 */
-+			old_rate = f->freq;
-+			goto out;
-+		}
- 
- 		ret = regmap_update_bits(rcg->clkr.regmap,
- 				rcg->cmd_rcgr + N_REG, mask, ~(f->n - f->m));
--		if (ret)
--			return ret;
-+		if (ret) {
-+			old_rate = f->freq;
-+			goto out;
-+		}
- 
- 		ret = regmap_update_bits(rcg->clkr.regmap,
- 				rcg->cmd_rcgr + D_REG, mask, ~f->n);
--		if (ret)
--			return ret;
-+		if (ret) {
-+			old_rate = f->freq;
-+			goto out;
-+		}
- 	}
- 
- 	mask = BIT(rcg->hid_width) - 1;
-@@ -276,8 +297,14 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- 	if (rcg->mnd_width && f->n && (f->m != f->n))
- 		cfg |= CFG_MODE_DUAL_EDGE;
- 
--	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
-+	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
- 					mask, cfg);
-+out:
-+	if (clk_hw_is_prepared(hw))
-+		/* Release the power domain requirement for old/new frequency */
-+		clk_power_domain_unvote_rate(&rcg->clkr, old_rate);
++#endif
 +
-+	return ret;
- }
- 
- static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-@@ -338,7 +365,25 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
- 	return __clk_rcg2_set_rate(hw, rate, FLOOR);
- }
- 
-+static int clk_rcg2_prepare(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	unsigned long rate = clk_hw_get_rate(hw);
-+
-+	return clk_power_domain_vote_rate(&rcg->clkr, rate);
-+}
-+
-+static void clk_rcg2_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	unsigned long rate = clk_hw_get_rate(hw);
-+
-+	clk_power_domain_unvote_rate(&rcg->clkr, rate);
-+}
-+
- const struct clk_ops clk_rcg2_ops = {
-+	.prepare = clk_rcg2_prepare,
-+	.unprepare = clk_rcg2_unprepare,
- 	.is_enabled = clk_rcg2_is_enabled,
- 	.get_parent = clk_rcg2_get_parent,
- 	.set_parent = clk_rcg2_set_parent,
-@@ -919,6 +964,8 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
- }
- 
- const struct clk_ops clk_rcg2_shared_ops = {
-+	.prepare = clk_rcg2_prepare,
-+	.unprepare = clk_rcg2_unprepare,
- 	.enable = clk_rcg2_shared_enable,
- 	.disable = clk_rcg2_shared_disable,
- 	.get_parent = clk_rcg2_get_parent,
--- 
+--
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
 
