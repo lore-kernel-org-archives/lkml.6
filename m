@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECF5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4B1ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF871206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71558206B7
+	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 11:08:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="KA+FBUfY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF871206B7
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="v553SaQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71558206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387682AbeGUMA7 (ORCPT
+        id S1728336AbeGUMAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 08:00:59 -0400
+        Sat, 21 Jul 2018 08:00:13 -0400
 Received: from outils.crapouillou.net ([89.234.176.41]:44658 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728277AbeGUMAO (ORCPT
+        with ESMTP id S1727500AbeGUMAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 08:00:14 -0400
+        Sat, 21 Jul 2018 08:00:11 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -37,49 +37,84 @@ Cc:     Mathieu Malaterre <malat@debian.org>,
         Paul Cercueil <paul@crapouillou.net>,
         dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
-Subject: [PATCH v3 11/18] dmaengine: dma-jz4780: Add missing residue DTC mask
-Date:   Sat, 21 Jul 2018 13:06:36 +0200
-Message-Id: <20180721110643.19624-12-paul@crapouillou.net>
+Subject: [PATCH v3 09/18] dmaengine: dma-jz4780: Add support for the JZ4725B SoC
+Date:   Sat, 21 Jul 2018 13:06:34 +0200
+Message-Id: <20180721110643.19624-10-paul@crapouillou.net>
 In-Reply-To: <20180721110643.19624-1-paul@crapouillou.net>
 References: <20180721110643.19624-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1532171272; bh=cCn7nWOCI3UnnJ0C9He+kWXSgQ3As3oI7G37pKJTZF4=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=KA+FBUfYn4uQEfj4GBiLVCFt4Ee3NdN1NtJGGmELvYHPegjH3ipMCsNrMTmnHQl3lPasD07uhmjKSmjHCk1rJE8muCFRATHy70uUZQcsK/T/VMdElRJb783UD59U9y2UgEL2RTo5NGDaATY9vTYdgGdcDOT83VAJx4FwaCOVoD8=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1532171269; bh=GGigVRljM3YICg0n3wEOEQ+zKhyB1T5rEZF84jaJ9z4=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=v553SaQ1ezWW7wYvwITvHsIlP45JFaYurg5PlX00jZgDyQk2nMF+t/8H+fGtLSvKQitNG8VlYFrvh8LVh/0BXWlb3s1Nz9drsW9CP8XsUmodDw7uaOyLwgBShmdEpJVzmrFuIYIHi+oqaem6MyeYPyiJ/wunZ55KnJy1kPdUwJ0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Silsby <dansilsby@gmail.com>
+The JZ4725B has one DMA core starring six DMA channels.
+As for the JZ4770, each DMA channel's clock can be enabled with
+a register write, the difference here being that once started, it
+is not possible to turn it off.
 
-The 'dtc' word in jz DMA descriptors contains two fields: The
-lowest 24 bits are the transfer count, and upper 8 bits are the DOA
-offset to next descriptor. The upper 8 bits are now correctly masked
-off when computing residue in jz4780_dma_desc_residue(). Note that
-reads of the DTCn hardware reg are automatically masked this way.
-
-Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Tested-by: Mathieu Malaterre <malat@debian.org>
+Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
 ---
- drivers/dma/dma-jz4780.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/dma/dma-jz4780.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
- v2: No change
+ v2: - Add comments about channel enabling/disabling
+     - The documentation update is now in patch 01/17
 
  v3: No change
 
 diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 3c9d3952e23a..fa926de082ba 100644
+index 084d4023637e..88ce3f0157f6 100644
 --- a/drivers/dma/dma-jz4780.c
 +++ b/drivers/dma/dma-jz4780.c
-@@ -614,7 +614,8 @@ static size_t jz4780_dma_desc_residue(struct jz4780_dma_chan *jzchan,
- 	residue = 0;
+@@ -136,6 +136,7 @@ struct jz4780_dma_chan {
  
- 	for (i = next_sg; i < desc->count; i++)
--		residue += desc->desc[i].dtc << jzchan->transfer_shift;
-+		residue += (desc->desc[i].dtc & 0xffffff) <<
-+			jzchan->transfer_shift;
+ enum jz_version {
+ 	ID_JZ4740,
++	ID_JZ4725B,
+ 	ID_JZ4770,
+ 	ID_JZ4780,
+ };
+@@ -209,8 +210,12 @@ static inline void jz4780_dma_ctrl_writel(struct jz4780_dma_dev *jzdma,
+ static inline void jz4780_dma_chan_enable(struct jz4780_dma_dev *jzdma,
+ 	unsigned int chn)
+ {
+-	if (jzdma->version == ID_JZ4770)
++	if (jzdma->version == ID_JZ4770) {
+ 		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKES, BIT(chn));
++	} else if (jzdma->version == ID_JZ4725B) {
++		/* JZ4725B has no DCKES, it uses DCKE to enable channels */
++		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKE, BIT(chn));
++	}
+ }
  
- 	if (next_sg != 0) {
- 		count = jz4780_dma_chn_readl(jzdma, jzchan->id,
+ static inline void jz4780_dma_chan_disable(struct jz4780_dma_dev *jzdma,
+@@ -218,6 +223,8 @@ static inline void jz4780_dma_chan_disable(struct jz4780_dma_dev *jzdma,
+ {
+ 	if (jzdma->version == ID_JZ4770)
+ 		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKEC, BIT(chn));
++
++	/* On JZ4725B it is not possible to stop a DMA channel once enabled */
+ }
+ 
+ static struct jz4780_dma_desc *jz4780_dma_desc_alloc(
+@@ -805,12 +812,14 @@ static struct dma_chan *jz4780_of_dma_xlate(struct of_phandle_args *dma_spec,
+ 
+ static const struct jz4780_dma_soc_data jz4780_dma_soc_data[] = {
+ 	[ID_JZ4740] = { .nb_channels = 6, .transfer_ord_max = 5, },
++	[ID_JZ4725B] = { .nb_channels = 6, .transfer_ord_max = 5, },
+ 	[ID_JZ4770] = { .nb_channels = 6, .transfer_ord_max = 6, },
+ 	[ID_JZ4780] = { .nb_channels = 32, .transfer_ord_max = 7, },
+ };
+ 
+ static const struct of_device_id jz4780_dma_dt_match[] = {
+ 	{ .compatible = "ingenic,jz4740-dma", .data = (void *)ID_JZ4740 },
++	{ .compatible = "ingenic,jz4725b-dma", .data = (void *)ID_JZ4725B },
+ 	{ .compatible = "ingenic,jz4770-dma", .data = (void *)ID_JZ4770 },
+ 	{ .compatible = "ingenic,jz4780-dma", .data = (void *)ID_JZ4780 },
+ 	{},
 -- 
 2.11.0
 
