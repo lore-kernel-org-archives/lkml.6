@@ -2,239 +2,575 @@ Return-Path: <SRS0=ZAeg=KF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2053BECDE5F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49079ECDFBB
 	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 10:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5AA9206B7
+	by mail.kernel.org (Postfix) with ESMTP id F309020856
 	for <linux-kernel@archiver.kernel.org>; Sat, 21 Jul 2018 10:29:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="KEpLdMVO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5AA9206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F309020856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeGULVV (ORCPT
+        id S1727692AbeGULV3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 07:21:21 -0400
-Received: from mail-bl2nam02on0046.outbound.protection.outlook.com ([104.47.38.46]:20992
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        Sat, 21 Jul 2018 07:21:29 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50364 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727422AbeGULVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 07:21:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bWnRNi4IotDrpPxwcjgBF36pJITK1s+aFrYuuN5nKWg=;
- b=KEpLdMVOcKAKwUhEJ8JIL/NgXGhBo6yI02l7YPKx+CWfSEyiJAK1qFFJ+gLDP+UkpsOPuMKKj91mxqK+ko3pP6ZbL+dBGJ81XxO/P/eZVT7YFGqx8hGLvYz60eh620faUC3qZbVRW7uZabTVGzUP4NcysP5lLWanXeUgNbKMVoI=
-Received: from MWHPR02CA0059.namprd02.prod.outlook.com (2603:10b6:301:60::48)
- by BY2PR02MB092.namprd02.prod.outlook.com (2a01:111:e400:2c1c::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.20.952.20; Sat, 21
- Jul 2018 10:29:00 +0000
-Received: from SN1NAM02FT036.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::207) by MWHPR02CA0059.outlook.office365.com
- (2603:10b6:301:60::48) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.973.16 via Frontend
- Transport; Sat, 21 Jul 2018 10:28:59 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT036.mail.protection.outlook.com (10.152.72.149) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.952.17
- via Frontend Transport; Sat, 21 Jul 2018 10:28:59 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <anurag.kumar.vulisha@xilinx.com>)
-        id 1fgp8E-0007UK-Nx; Sat, 21 Jul 2018 03:28:58 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <anurag.kumar.vulisha@xilinx.com>)
-        id 1fgp89-0005g0-Kg; Sat, 21 Jul 2018 03:28:53 -0700
-Received: from xsj-pvapsmtp01 (xsj-smtp1.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w6LASgjY026745;
-        Sat, 21 Jul 2018 03:28:42 -0700
-Received: from [172.23.64.8] (helo=xhdvnc108.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <anuragku@xilinx.com>)
-        id 1fgp7y-0005eL-7i; Sat, 21 Jul 2018 03:28:42 -0700
-Received: by xhdvnc108.xilinx.com (Postfix, from userid 15427)
-        id 6788C604CB; Sat, 21 Jul 2018 15:58:41 +0530 (IST)
-From:   Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <balbi@kernel.org>
-CC:     <v.anuragkumar@gmail.com>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Subject: [PATCH] usb: dwc3: core: Add quirk for enabling AutoRetry feature in the controller
-Date:   Sat, 21 Jul 2018 15:58:40 +0530
-Message-ID: <1532168920-3269-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
-X-Mailer: git-send-email 2.1.1
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(136003)(39860400002)(2980300002)(438002)(199004)(189003)(2616005)(106466001)(356003)(476003)(126002)(551934003)(486006)(186003)(26005)(1857600001)(336012)(51416003)(47776003)(90966002)(305945005)(107886003)(39060400002)(4326008)(6266002)(316002)(5660300001)(50226002)(110136005)(48376002)(54906003)(16586007)(42186006)(2906002)(103686004)(8936002)(478600001)(106002)(50466002)(52956003)(575784001)(63266004)(426003)(36756003)(8676002)(81156014)(81166006)(36386004)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR02MB092;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT036;1:mNFYa9v3OBh275SZaOofOvjBAbVMfUXcCvY+NvOFL1rKfTOG7cKgu4DqbMHzg8myHeQL0az4HxPxqYe3e9Wm1P612p7IBAwGq1mveo1LgW1ZsUmHJjjIzJjJr/K4/Fc7
+        id S1727422AbeGULV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 07:21:29 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A93FBA8737BC3;
+        Sat, 21 Jul 2018 18:29:08 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.382.0; Sat, 21 Jul 2018
+ 18:29:04 +0800
+Subject: Re: [PATCH v3 1/2] f2fs: fix to avoid broken of dnode block list
+From:   Chao Yu <yuchao0@huawei.com>
+To:     Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20180708140443.23244-1-chao@kernel.org>
+ <20180714054409.GA5555@jaegeuk-macbookpro.roam.corp.google.com>
+ <cfbca120-2f09-465a-2cf0-3694aefc5527@kernel.org>
+ <45705c46-6532-08cf-37fb-49d07b252e36@huawei.com>
+Message-ID: <d52bcd33-6ec5-13d6-da80-646fef5f3c43@huawei.com>
+Date:   Sat, 21 Jul 2018 18:29:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 119c013f-5926-4396-b03e-08d5eef4c574
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:BY2PR02MB092;
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB092;3:3+7rt/D2hZMc3gOLm/q8Dk3Y711nyaO+uDzlDQ/qyytLXjn9SMuulpqSesEq3w3YveUh7bFMHmjlKQ5n5MW+7HrPugDuswS8cXIchxqKfTvzZnyTjJjU+n4QRogjhvgN/hZdtP/GRoY8h8x/4zrZ+Ou6zJdw2w4oYuy6n4pEuM+oWM67LVPWFAfQyMHeHVSl8Cg3UCtWb9GDTzVNtX4EnCn/Yyf/w/0NYrVdqMc7XHl8rRf/+U+ixexct65/7JJxSMsV+Ym+WwP5KGXlIA3pFl6+9dMx0KcbbXCubLt/bORwul4gzRaenCxg1TeJ/LqjlW7pPfOOve/M4Zz4OvgqcGemFW1FVZtkQ+LqERNdu/s=;25:tg/ALE5+yLgN9JdHexW/R4CoXy5edgAcz7pKsTsaBC0Wc2DI06yoTz1Q64u6lSg4qtJmzTlt0FUXIh338ezb5nW/7yAIB7r2DKECrYEU541zinYzzBf29wJPhq+VFhzw+7vNEniU2NMUU8lHiXFe24i3J/o+gxHbIhFylgdYn1oBUJKBvPYXhxCZvQjQOA2Qgrvi6rcWT2jGidGGMpeVF9ICL6SkNm6YuUCpxmRkbONSQaN1Mpyz+8k46q3LyI8a8F/aStPMmEEs/R3g9NE6RntauoLXg6i1NjYocuJeDPdp0XHcRkzO3qk6EfoUMoGVYSBouwqu0N+ye3J42GdGsLg/8YJvER58njYO6jfEwKo=
-X-MS-TrafficTypeDiagnostic: BY2PR02MB092:
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB092;31:+uOLEbuVxRfuDEzXcrO7hsvweh1t7TlUCjIhuWB0zT/EJXa4/ZxCozRILhKxiev0Z0ZE50z4yQJEFR+meORs21uZbeuJhM376SWgnMfk/9Zy7mOBx2oc3gbw6xhBCe1jIahYbbVDa9CdDElJ1DZt1HtVqNyH9FT9D8yOlcedXm5sSa9IeWX/PnlT89K1h8G2gNPIY7fTeOy2x/NCJGdepV3WFcr8KwkCR36P/8QB+is=;20:T3xI8w5XY2M7fS5YwvDTxYBIfS/upbQf/hlOU8EvAOxQD9Q9is3JHrI3t6amTM/jkmDsZTXvuJghE/D8cNsCN+2fB+nAKGjPDGAJE/0pDzFFQxkOM24nLPYYQ0bEtvmPT+8CLHSGmD+RrmC1rpILrC3s46irOyxAYZhPsrVVkk1SJ63OCzrw3EaGoiMy5NZmERrNqexDnxAgT+5wq98BGyOsN9guPcYIs0Ibl7aLdDj8ylA8pHMPcJ9KNrJYMa/lrYF2B2IVnhZ+qxC3XMkCXpdhuVmBtz1Nz7JIBKuSdBN6fKwHUK9VnXq97sQYuO9Jg6nztkh3ijq6Mw09G8nCJpRjx2+mDAjkzPYhnb3vHbWvBOETQYS+0stWi1h0xX7zg8dDmrzXaQRrPvsrsLLYO9Y9c/KP27qiN/U5qdPbB/WrF2DR8/uQ0/Fe86kKRAo7ugvXGWIgYHGxn356qA7zqnU2aWC7dMoJi+xRKX7XF55JuBmi29znAdqtxb2YnEV2
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BY2PR02MB0920ACC146CAB6291C17F47A7500@BY2PR02MB092.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(3002001)(93006095)(93004095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BY2PR02MB092;BCL:0;PCL:0;RULEID:;SRVR:BY2PR02MB092;
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB092;4:QS2d47NOcPC6qXPBYOTgjdHrlvPR1DkV8EROawlZPJQltcPH02bGQl5mVUXbIE2VcP30kfKTdYETAhLwhH5WBdRd+vcqz7HgN0F0dJOlLPJbO1388YJK8xbyfCQgO9/6i/o0ZzV4+xb/2SbfSxznt18Rb+xgGYkqtcs48M1+cIesH8HQzEegot4dfU7Zc9WFt5VkoYGbU28fMUUKmMGeY2EWSbCPHwj2G0z02LSsokjWEcab1wtdlEPgWF8ws4OjlyvQCTTTlzJUHfHyedpF9t340oFHnjaCwtlXuinQnOeT7MLz8Q2nCKWbHJ3LLQH9
-X-Forefront-PRVS: 074040B844
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR02MB092;23:zVDI/71V69VXemA0S4IUkIUzVxBPS3kIJHApOFiLp1?=
- =?us-ascii?Q?B199rIIMmYhbHM5tRZROZQsVRM/eGJxP2S3Dlqkx8bIJ2THj8K8lXmboHGWq?=
- =?us-ascii?Q?Scuf8es/720g6HPW1Gt8pOjcSFp32uLnTYAHHlyEzpYXWEOr+IACP4gswCeq?=
- =?us-ascii?Q?nYeBfBef6Pjuf9gOrgFpwzld7AT97ao18h4WuypSD8zbAnP2ShVFkmD9L1YW?=
- =?us-ascii?Q?ieYcfNeDb0SAyj03zhgdrrRYO9GmhY0MBONbDyQ33Dwxbxbvvjv7iqRWcA9K?=
- =?us-ascii?Q?12IdrCVBWXSwALsdp5f64aRFoFQT32UzlcBFpI0H5k5/81nu4q6k+197AazQ?=
- =?us-ascii?Q?VETSl7U/nqXzWZqMvn7nWaVUuU0PTPMCvY6+kcnM8Z4el1I/MmH/XZdlVcL5?=
- =?us-ascii?Q?YVYn9W2gIWFzpI3Iq3uftQ7GJVpEXrL9Bi0obZ8DX6ulJ+sjsj/dtuDiDteO?=
- =?us-ascii?Q?KfjcqVt1cK2Z3qdT5tdcNaiBi4tBQOwjLFloCIEnuWiIMk+8OO80lTuUl2kL?=
- =?us-ascii?Q?mhzftIvmW+VXw1+00ZQmeknOQBor5gJrq3ivkR9e0ytS24tBXboYI3sdu/jM?=
- =?us-ascii?Q?csI4U4npSRgDq/mMs7Clt9rnIOR6bG2o2P7Vz7Xosk2lvonacUU4To3vjWWD?=
- =?us-ascii?Q?nXz6QqqAu6C/D1EffK44bptqvHl31ItvxAg/J9EHytEgXW2tfpXYf2w+Ud3s?=
- =?us-ascii?Q?43HiO20Ye7C1XEX/XLEjvEdEp8j49AA+LjGXwXv9X1f+vmI6DlMMi2E6hyeP?=
- =?us-ascii?Q?+BxulGtUOti5nAhmw7J3eiVOxaWNj8usuvnPi+PKis0gkux5g8FyTI3uabgW?=
- =?us-ascii?Q?UL9wk23flP6PnMcEFVjRFUCCQ441p/DSIeHynPnIVotBj5aLiRXd/3iw/G1L?=
- =?us-ascii?Q?gsk3D2//4/2JH3LqY/s4CVR0BZl2plIT4FpQhiZT+ZTXoC7bGQ56sDotR9rV?=
- =?us-ascii?Q?DMGpmKWZ7RjaveS2TwiO4rwI0JMWRaECSBIaHdDsGrqyM+BQHGCOUqyBa9Lx?=
- =?us-ascii?Q?e2dZLh1lkp2iyubWuoolenBArdvEzp4dHqPE6x9xnb+0RhTcTB5KYIyXcAvv?=
- =?us-ascii?Q?77vzttlS9D+RXcw8u9uTWXxKXnAmOu68Qet1g/r7jyvMchUgw5N7PcSowV8H?=
- =?us-ascii?Q?JzHdevo3MMYLCFMXWXAR9dijknjkjMI3zeFQrI1yPhbYF7qkfvh+Yeca+AZH?=
- =?us-ascii?Q?WkIyZyzFxWbGc=3D?=
-X-Microsoft-Antispam-Message-Info: ZEnlH+OjwBl9hl0srsJXOevLP78FwTlud/eIo66sLceTve0OJ67EIQ29mRkPmOsn35ZfGAWig5SQMzl05j/mMv+1uxo1s6qiuGdvozOB/Wbt1RIhT36NKsjne6GbA279HZfv+uMGroGnDdkLLAzDpwej18vb5+8CHl7Cf6lsMsQ6KIyDRJeCBLHIH7cWzPSS72sK60R9iD5u1W35t7saoYPvdXwOJYQVtVd8Ltzx1pk2i5D4dk+MtUPJVYS7guqs34wu3+ivHEye1kEqh+SgQOmydhQmseAPUV+RwhwJUwPj9wvFlR/2t1ZAvxjOFggY0wI1P7Th2ReI83fon9+nPeaNAFig4k6bKNOR2HK0ixA=
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB092;6:emy0qWxURr6vXLGATBlMzAUUpKo7bfsqND1Tj40qUH0IbtJS6iujWFcEqODIPzVeeDGHCfY6+nHgphBLJiGy53CM0xh9OQUiy8Xqg9gRLte1v2WUZEnubJmSNYynMswLaF9SFyMPzxsQYuWbbuOOkqqkHkgQ4yBzx1Rm32blBKfe3pbX/04wXAEKuDKsxezABZk5CukpU78wFbdLkE1ZmtZvVBOWlIPMewqx5XKsAYyHihRVVw67bewdf2cHM2G+HtaDN9PaXaHGLDiGwi9E+SdABNKHo80wQr2mLKdvy1qg8N76vZVThhUQYgoQIDuJCfFihiwEZA/7YUJeoQAbpetmhs0ectAimMaRHxotbHRSEMwyPy1oQzmBf8qzj2nYKdmGWWU185PyjasfIv06xEHbU1oFMzEgIb42HY8PYdhX8LcqAAWFHgxQ8Vc4J/WnTjg82T9QFbfvTB2oJbGN+g==;5:jk+cBTU+4BR2VYH4aNREIJ1KMy6fEEZcYC+wJHv50bLAcJbuu3ZqigoGy+RGbTzpgq1uWRJQql7x7RCzAiYYEFBpydPMYBxlTLM5UzgvKnC+wMTYdVjwtH1ly+/31yDGVmpvhnulX3GJjUz976dxUS2BOXiSeczvDSAeFdOSKRw=;24:/K38FD/bN/eB4xGUUBM+kaqIVpfxUv1A69nsOu9uRZKXiiamvu5C9hERWu5EzOo498dDXmVP/Irue0JmwlrTQaUdrX7RIQMON9PmjpNMKTQ=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB092;7:meMuCqgQMSJ7wstX2dDtFGqN2V6OyQLHUnOC0vOgHT3FzsTa7WmO/RXmWXxBqeHrPpESPNprebMLBL+5Zw1ncKCILR0T32mYvZRFL2d/nxmIkmU9hgn3D0ikEcMDt8M4zwr73y+WLJojcgT5vEvYazjzpc9fgmVzGv963cxf4D0nq6uqZ54OWuxfAQWlqrPyIJQYmqfGInHBfcYXIihPQs8Fm+JxCw8hw6cWwvdpUVhv+sCBaOQ0X9l798IFhtK6
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2018 10:28:59.1389
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 119c013f-5926-4396-b03e-08d5eef4c574
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR02MB092
+In-Reply-To: <45705c46-6532-08cf-37fb-49d07b252e36@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default when core sees any transaction error(CRC or overflow)
-it replies with terminating retry ACK (Retry=1 and Nump == 0).
-Enabling this Auto Retry feature in controller, on seeing any
-transaction errors makes the core to send an non-terminating ACK
-transaction packet (that is, ACK TP with Retry=1 and Nump != 0).
-Doing so will give controller a chance to recover from the error
-condition.
+On 2018/7/20 18:45, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2018/7/15 9:30, Chao Yu wrote:
+>> On 2018/7/14 13:44, Jaegeuk Kim wrote:
+>>> On 07/08, Chao Yu wrote:
+>>>> From: Chao Yu <yuchao0@huawei.com>
+>>>>
+>>>> f2fs recovery flow is relying on dnode block link list, it means fsynced
+>>>> file recovery depends on previous dnode's persistence in the list, so
+>>>> during fsync() we should wait on all regular inode's dnode writebacked
+>>>> before issuing flush.
+>>>>
+>>>> By this way, we can avoid dnode block list being broken by out-of-order
+>>>> IO submission due to IO scheduler or driver.
+>>>
+>>> Hi Chao,
+>>>
+>>> Just in case, can we measure some performance numbers with this?
+>>
+>> Hi Jaegeuk,
+>>
+>> OK, let me do some tests on this.
+> 
+> Sheng Yong helps to do the test with this patch:
+> 
+> # Microbenchmark
+> Target:/data (f2fs, -)
+> 64MB / 32768KB / 4KB / 8
+> 
+> # SQLite benchmark
+> 1 / PERSIST / Index
+> 
+> Base:
+> 	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
+> 1	867.82		204.15		41440.03	41370.54	680.8		1025.94		1031.08
+> 2	871.87		205.87		41370.3		40275.2		791.14		1065.84		1101.7
+> 3	866.52		205.69		41795.67	40596.16	694.69		1037.16		1031.48
+> Avg	868.7366667	205.2366667	41535.33333	40747.3		722.21		1042.98		1054.753333
 
-Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
----
- Documentation/devicetree/bindings/usb/dwc3.txt |  5 +++++
- drivers/usb/dwc3/core.c                        | 16 ++++++++++++++++
- drivers/usb/dwc3/core.h                        |  6 ++++++
- 3 files changed, 27 insertions(+)
+If we don't wait dnode writeback for atomic_write:
 
-diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
-index 7f13ebe..2ba2bc2 100644
---- a/Documentation/devicetree/bindings/usb/dwc3.txt
-+++ b/Documentation/devicetree/bindings/usb/dwc3.txt
-@@ -94,6 +94,11 @@ Optional properties:
- 			this and tx-thr-num-pkt-prd to a valid, non-zero value
- 			1-16 (DWC_usb31 programming guide section 1.2.3) to
- 			enable periodic ESS TX threshold.
-+ - snps,enable_auto_retry: Set to enable Auto retry Feature to make the
-+			controller operating in Host mode on seeing transaction
-+			errors(CRC errors or internal overrun scenerios) on IN
-+			transfers to reply to the device with a non-terminating
-+			retry ACK (i.e, an ACK TP with Retry=1 & Nump != 0)
- 
-  - <DEPRECATED> tx-fifo-resize: determines if the FIFO *has* to be reallocated.
- 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 1038075..1c1ab93 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -883,6 +883,20 @@ static int dwc3_core_init(struct dwc3 *dwc)
- 		dwc3_writel(dwc->regs, DWC3_GUCTL1, reg);
- 	}
- 
-+	if (dwc->autoretry_enable) {
-+		reg = dwc3_readl(dwc->regs, DWC3_GUCTL);
-+
-+		/* Enable Auto retry Feature to make the controller operating in
-+		 * Host mode on seeing transaction errors(CRC errors or internal
-+		 * overrun scenerios) on IN transfers to reply to the device
-+		 * with a non-terminating retry ACK (i.e, an ACK transcation
-+		 * packet with Retry=1 & Nump != 0)
-+		 */
-+		reg |= DWC3_GUCTL_HSTINAUTORETRY;
-+
-+		dwc3_writel(dwc->regs, DWC3_GUCTL, reg);
-+	}
-+
- 	/*
- 	 * Must config both number of packets and max burst settings to enable
- 	 * RX and/or TX threshold.
-@@ -1179,6 +1193,8 @@ static void dwc3_get_properties(struct dwc3 *dwc)
- 
- 	dwc->dis_metastability_quirk = device_property_read_bool(dev,
- 				"snps,dis_metastability_quirk");
-+	dwc->autoretry_enable = device_property_read_bool(dev,
-+				"snps,enable_auto_retry");
- 
- 	dwc->lpm_nyet_threshold = lpm_nyet_threshold;
- 	dwc->tx_de_emphasis = tx_de_emphasis;
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index 285ce0e..558dfda 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -227,6 +227,9 @@
- #define DWC3_GCTL_GBLHIBERNATIONEN	BIT(1)
- #define DWC3_GCTL_DSBLCLKGTNG		BIT(0)
- 
-+/* Global User Control Register */
-+#define DWC3_GUCTL_HSTINAUTORETRY	BIT(14)
-+
- /* Global User Control 1 Register */
- #define DWC3_GUCTL1_TX_IPGAP_LINECHECK_DIS	BIT(28)
- #define DWC3_GUCTL1_DEV_L1_EXIT_BY_HW	BIT(24)
-@@ -984,6 +987,8 @@ struct dwc3_scratchpad_array {
-  * 	2	- No de-emphasis
-  * 	3	- Reserved
-  * @dis_metastability_quirk: set to disable metastability quirk.
-+ * @autoretry_enable: set to enable AutoRetry feature in controller to
-+ *		      give an non terminating retry ACK (Retry=1 & Nump != 0)
-  * @imod_interval: set the interrupt moderation interval in 250ns
-  *                 increments or 0 to disable.
-  */
-@@ -1153,6 +1158,7 @@ struct dwc3 {
- 	unsigned		tx_de_emphasis:2;
- 
- 	unsigned		dis_metastability_quirk:1;
-+	unsigned		autoretry_enable:1;
- 
- 	u16			imod_interval;
- };
--- 
-2.1.1
+	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
+1	779.91		206.03		41621.5		40333.16	716.9		1038.21		1034.85
+2	848.51		204.35		40082.44	39486.17	791.83		1119.96		1083.77
+3	772.12		206.27		41335.25	41599.65	723.29		1055.07		971.92
+Avg	800.18		205.55		41013.06333	40472.99333	744.0066667	1071.08		1030.18
+
+Patched/Orig:						
+	0.92108464	1.001526693	0.987425886	0.993268102	1.030180511	1.026942031	0.976702294
+
+SQLite's performance recovers.
+
+> 							
+> After:
+> 	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
+> 1	798.81		202.5		41143		40613.87	602.71		838.08		913.83
+> 2	805.79		206.47		40297.2		41291.46	604.44		840.75		924.27
+> 3	814.83		206.17		41209.57	40453.62	602.85		834.66		927.91
+> Avg	806.4766667	205.0466667	40883.25667	40786.31667	603.3333333	837.83		922.0033333
+> 
+> Orig/Patched:							
+
+Sorry, should be Patched/Orig.
+
+Thanks,
+
+> 	0.928332713	0.999074239	0.984300676	1.000957528	0.835398753	0.803303994	0.874141189
+> 
+> It looks like atomic write will suffer performance regression.
+> 
+> I suspect that the criminal is that we forcing to wait all dnode being in
+> storage cache before we issue PREFLUSH+FUA.
+> 
+> BTW, will commit ("f2fs: don't need to wait for node writes for atomic write")
+> cause the problem: we will lose data of last transaction after SPO, even if
+> atomic write return no error:
+> 
+> - atomic_open();
+> - write() P1, P2, P3;
+> - atomic_commit();
+>  - writeback data: P1, P2, P3;
+>  - writeback node: N1, N2, N3;  <--- If N1, N2 is not writebacked, N3 with fsync_mark is
+> writebacked, In SPOR, we won't find N3 since node chain is broken, turns out that losing
+> last transaction.
+>  - preflush + fua;
+> - power-cut
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>> v3:
+>>>> - add a list to link all writebacked dnodes, let fsync() only wait on
+>>>> necessary dnode.
+>>>>  fs/f2fs/checkpoint.c |   2 +
+>>>>  fs/f2fs/data.c       |   2 +
+>>>>  fs/f2fs/f2fs.h       |  21 +++++++-
+>>>>  fs/f2fs/file.c       |  20 +++----
+>>>>  fs/f2fs/node.c       | 148 +++++++++++++++++++++++++++++++++++++++++----------
+>>>>  fs/f2fs/super.c      |   4 ++
+>>>>  6 files changed, 153 insertions(+), 44 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>>> index 8b698bd54490..d5e60d76362e 100644
+>>>> --- a/fs/f2fs/checkpoint.c
+>>>> +++ b/fs/f2fs/checkpoint.c
+>>>> @@ -1379,6 +1379,8 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>>  
+>>>>  	f2fs_release_ino_entry(sbi, false);
+>>>>  
+>>>> +	f2fs_reset_fsync_node_info(sbi);
+>>>> +
+>>>>  	if (unlikely(f2fs_cp_error(sbi)))
+>>>>  		return -EIO;
+>>>>  
+>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>>> index 70813a4dda3e..afe76d87575c 100644
+>>>> --- a/fs/f2fs/data.c
+>>>> +++ b/fs/f2fs/data.c
+>>>> @@ -176,6 +176,8 @@ static void f2fs_write_end_io(struct bio *bio)
+>>>>  					page->index != nid_of_node(page));
+>>>>  
+>>>>  		dec_page_count(sbi, WB_DATA_TYPE(page));
+>>>> +		if (f2fs_in_warm_node_list(sbi, page))
+>>>> +			f2fs_del_fsync_node_entry(sbi, page);
+>>>>  		clear_cold_data(page);
+>>>>  		end_page_writeback(page);
+>>>>  	}
+>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>> index c8c865fa8450..bf5f7a336ace 100644
+>>>> --- a/fs/f2fs/f2fs.h
+>>>> +++ b/fs/f2fs/f2fs.h
+>>>> @@ -228,6 +228,12 @@ struct inode_entry {
+>>>>  	struct inode *inode;	/* vfs inode pointer */
+>>>>  };
+>>>>  
+>>>> +struct fsync_node_entry {
+>>>> +	struct list_head list;	/* list head */
+>>>> +	struct page *page;	/* warm node page pointer */
+>>>> +	unsigned int seq_id;	/* sequence id */
+>>>> +};
+>>>> +
+>>>>  /* for the bitmap indicate blocks to be discarded */
+>>>>  struct discard_entry {
+>>>>  	struct list_head list;	/* list head */
+>>>> @@ -1152,6 +1158,11 @@ struct f2fs_sb_info {
+>>>>  
+>>>>  	struct inode_management im[MAX_INO_ENTRY];      /* manage inode cache */
+>>>>  
+>>>> +	spinlock_t fsync_node_lock;		/* for node entry lock */
+>>>> +	struct list_head fsync_node_list;	/* node list head */
+>>>> +	unsigned int fsync_seg_id;		/* sequence id */
+>>>> +	unsigned int fsync_node_num;		/* number of node entries */
+>>>> +
+>>>>  	/* for orphan inode, use 0'th array */
+>>>>  	unsigned int max_orphans;		/* max orphan inodes */
+>>>>  
+>>>> @@ -2816,6 +2827,10 @@ struct node_info;
+>>>>  
+>>>>  int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
+>>>>  bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type);
+>>>> +bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct page *page);
+>>>> +void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi);
+>>>> +void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct page *page);
+>>>> +void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi);
+>>>>  int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid);
+>>>>  bool f2fs_is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid);
+>>>>  bool f2fs_need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino);
+>>>> @@ -2825,7 +2840,8 @@ pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs);
+>>>>  int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode);
+>>>>  int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
+>>>>  int f2fs_truncate_xattr_node(struct inode *inode);
+>>>> -int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino);
+>>>> +int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
+>>>> +					unsigned int seq_id);
+>>>>  int f2fs_remove_inode_page(struct inode *inode);
+>>>>  struct page *f2fs_new_inode_page(struct inode *inode);
+>>>>  struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
+>>>> @@ -2834,7 +2850,8 @@ struct page *f2fs_get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid);
+>>>>  struct page *f2fs_get_node_page_ra(struct page *parent, int start);
+>>>>  void f2fs_move_node_page(struct page *node_page, int gc_type);
+>>>>  int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>>> -			struct writeback_control *wbc, bool atomic);
+>>>> +			struct writeback_control *wbc, bool atomic,
+>>>> +			unsigned int *seq_id);
+>>>>  int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+>>>>  			struct writeback_control *wbc,
+>>>>  			bool do_balance, enum iostat_type io_type);
+>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>> index 5e29d4053748..ddea2bfd4042 100644
+>>>> --- a/fs/f2fs/file.c
+>>>> +++ b/fs/f2fs/file.c
+>>>> @@ -213,6 +213,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>  		.nr_to_write = LONG_MAX,
+>>>>  		.for_reclaim = 0,
+>>>>  	};
+>>>> +	unsigned int seq_id = 0;
+>>>>  
+>>>>  	if (unlikely(f2fs_readonly(inode->i_sb)))
+>>>>  		return 0;
+>>>> @@ -275,7 +276,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>  	}
+>>>>  sync_nodes:
+>>>>  	atomic_inc(&sbi->wb_sync_req[NODE]);
+>>>> -	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic);
+>>>> +	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic, &seq_id);
+>>>>  	atomic_dec(&sbi->wb_sync_req[NODE]);
+>>>>  	if (ret)
+>>>>  		goto out;
+>>>> @@ -292,19 +293,10 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>  		goto sync_nodes;
+>>>>  	}
+>>>>  
+>>>> -	/*
+>>>> -	 * If it's atomic_write, it's just fine to keep write ordering. So
+>>>> -	 * here we don't need to wait for node write completion, since we use
+>>>> -	 * node chain which serializes node blocks. If one of node writes are
+>>>> -	 * reordered, we can see simply broken chain, resulting in stopping
+>>>> -	 * roll-forward recovery. It means we'll recover all or none node blocks
+>>>> -	 * given fsync mark.
+>>>> -	 */
+>>>> -	if (!atomic) {
+>>>> -		ret = f2fs_wait_on_node_pages_writeback(sbi, ino);
+>>>> -		if (ret)
+>>>> -			goto out;
+>>>> -	}
+>>>> +
+>>>> +	ret = f2fs_wait_on_node_pages_writeback(sbi, seq_id);
+>>>> +	if (ret)
+>>>> +		goto out;
+>>>>  
+>>>>  	/* once recovery info is written, don't need to tack this */
+>>>>  	f2fs_remove_ino_entry(sbi, ino, APPEND_INO);
+>>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>>>> index 1e30bc305243..31dc372c56a0 100644
+>>>> --- a/fs/f2fs/node.c
+>>>> +++ b/fs/f2fs/node.c
+>>>> @@ -28,6 +28,7 @@
+>>>>  static struct kmem_cache *nat_entry_slab;
+>>>>  static struct kmem_cache *free_nid_slab;
+>>>>  static struct kmem_cache *nat_entry_set_slab;
+>>>> +static struct kmem_cache *fsync_node_entry_slab;
+>>>>  
+>>>>  /*
+>>>>   * Check whether the given nid is within node id range.
+>>>> @@ -267,6 +268,72 @@ static unsigned int __gang_lookup_nat_set(struct f2fs_nm_info *nm_i,
+>>>>  							start, nr);
+>>>>  }
+>>>>  
+>>>> +bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct page *page)
+>>>> +{
+>>>> +	return NODE_MAPPING(sbi) == page->mapping &&
+>>>> +			IS_DNODE(page) && is_cold_node(page);
+>>>> +}
+>>>> +
+>>>> +void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi)
+>>>> +{
+>>>> +	spin_lock_init(&sbi->fsync_node_lock);
+>>>> +	INIT_LIST_HEAD(&sbi->fsync_node_list);
+>>>> +	sbi->fsync_seg_id = 0;
+>>>> +	sbi->fsync_node_num = 0;
+>>>> +}
+>>>> +
+>>>> +static unsigned int f2fs_add_fsync_node_entry(struct f2fs_sb_info *sbi,
+>>>> +							struct page *page)
+>>>> +{
+>>>> +	struct fsync_node_entry *fn;
+>>>> +	unsigned long flags;
+>>>> +	unsigned int seq_id;
+>>>> +
+>>>> +	fn = f2fs_kmem_cache_alloc(fsync_node_entry_slab, GFP_NOFS);
+>>>> +
+>>>> +	get_page(page);
+>>>> +	fn->page = page;
+>>>> +	INIT_LIST_HEAD(&fn->list);
+>>>> +
+>>>> +	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+>>>> +	list_add_tail(&fn->list, &sbi->fsync_node_list);
+>>>> +	fn->seq_id = sbi->fsync_seg_id++;
+>>>> +	seq_id = fn->seq_id;
+>>>> +	sbi->fsync_node_num++;
+>>>> +	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>>>> +
+>>>> +	return seq_id;
+>>>> +}
+>>>> +
+>>>> +void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct page *page)
+>>>> +{
+>>>> +	struct fsync_node_entry *fn;
+>>>> +	unsigned long flags;
+>>>> +
+>>>> +	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+>>>> +	list_for_each_entry(fn, &sbi->fsync_node_list, list) {
+>>>> +		if (fn->page == page) {
+>>>> +			list_del(&fn->list);
+>>>> +			sbi->fsync_node_num--;
+>>>> +			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>>>> +			kmem_cache_free(fsync_node_entry_slab, fn);
+>>>> +			put_page(page);
+>>>> +			return;
+>>>> +		}
+>>>> +	}
+>>>> +	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>>>> +	f2fs_bug_on(sbi, 1);
+>>>> +}
+>>>> +
+>>>> +void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi)
+>>>> +{
+>>>> +	unsigned long flags;
+>>>> +
+>>>> +	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+>>>> +	sbi->fsync_node_num = 0;
+>>>> +	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>>>> +}
+>>>> +
+>>>>  int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+>>>>  {
+>>>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>>> @@ -1353,7 +1420,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
+>>>>  
+>>>>  static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>>>  				struct writeback_control *wbc, bool do_balance,
+>>>> -				enum iostat_type io_type)
+>>>> +				enum iostat_type io_type, unsigned int *seq_id)
+>>>>  {
+>>>>  	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+>>>>  	nid_t nid;
+>>>> @@ -1370,6 +1437,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>>>  		.io_type = io_type,
+>>>>  		.io_wbc = wbc,
+>>>>  	};
+>>>> +	unsigned int seq;
+>>>>  
+>>>>  	trace_f2fs_writepage(page, NODE);
+>>>>  
+>>>> @@ -1416,6 +1484,13 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>>>  
+>>>>  	set_page_writeback(page);
+>>>>  	ClearPageError(page);
+>>>> +
+>>>> +	if (f2fs_in_warm_node_list(sbi, page)) {
+>>>> +		seq = f2fs_add_fsync_node_entry(sbi, page);
+>>>> +		if (seq_id)
+>>>> +			*seq_id = seq;
+>>>> +	}
+>>>> +
+>>>>  	fio.old_blkaddr = ni.blk_addr;
+>>>>  	f2fs_do_write_node_page(nid, &fio);
+>>>>  	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
+>>>> @@ -1463,7 +1538,7 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
+>>>>  			goto out_page;
+>>>>  
+>>>>  		if (__write_node_page(node_page, false, NULL,
+>>>> -					&wbc, false, FS_GC_NODE_IO))
+>>>> +					&wbc, false, FS_GC_NODE_IO, NULL))
+>>>>  			unlock_page(node_page);
+>>>>  		goto release_page;
+>>>>  	} else {
+>>>> @@ -1480,11 +1555,13 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
+>>>>  static int f2fs_write_node_page(struct page *page,
+>>>>  				struct writeback_control *wbc)
+>>>>  {
+>>>> -	return __write_node_page(page, false, NULL, wbc, false, FS_NODE_IO);
+>>>> +	return __write_node_page(page, false, NULL, wbc, false,
+>>>> +						FS_NODE_IO, NULL);
+>>>>  }
+>>>>  
+>>>>  int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>>> -			struct writeback_control *wbc, bool atomic)
+>>>> +			struct writeback_control *wbc, bool atomic,
+>>>> +			unsigned int *seq_id)
+>>>>  {
+>>>>  	pgoff_t index;
+>>>>  	pgoff_t last_idx = ULONG_MAX;
+>>>> @@ -1565,7 +1642,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>>>  			ret = __write_node_page(page, atomic &&
+>>>>  						page == last_page,
+>>>>  						&submitted, wbc, true,
+>>>> -						FS_NODE_IO);
+>>>> +						FS_NODE_IO, seq_id);
+>>>>  			if (ret) {
+>>>>  				unlock_page(page);
+>>>>  				f2fs_put_page(last_page, 0);
+>>>> @@ -1682,7 +1759,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+>>>>  			set_dentry_mark(page, 0);
+>>>>  
+>>>>  			ret = __write_node_page(page, false, &submitted,
+>>>> -						wbc, do_balance, io_type);
+>>>> +						wbc, do_balance, io_type, NULL);
+>>>>  			if (ret)
+>>>>  				unlock_page(page);
+>>>>  			else if (submitted)
+>>>> @@ -1713,35 +1790,42 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+>>>>  	return ret;
+>>>>  }
+>>>>  
+>>>> -int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
+>>>> +int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
+>>>> +						unsigned int seq_id)
+>>>>  {
+>>>> -	pgoff_t index = 0;
+>>>> -	struct pagevec pvec;
+>>>> -	int ret2, ret = 0;
+>>>> -	int nr_pages;
+>>>> +	struct fsync_node_entry *fn;
+>>>> +	struct page *page;
+>>>> +	struct list_head *head = &sbi->fsync_node_list;
+>>>> +	unsigned long flags;
+>>>> +	unsigned int cur_seq_id = 0;
+>>>> +	int ret = 0;
+>>>>  
+>>>> -	pagevec_init(&pvec);
+>>>> +	while (seq_id && cur_seq_id < seq_id) {
+>>>> +		spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+>>>> +		if (list_empty(head)) {
+>>>> +			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>>>> +			break;
+>>>> +		}
+>>>> +		fn = list_first_entry(head, struct fsync_node_entry, list);
+>>>> +		if (fn->seq_id > seq_id) {
+>>>> +			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>>>> +			break;
+>>>> +		}
+>>>> +		cur_seq_id = fn->seq_id;
+>>>> +		page = fn->page;
+>>>> +		get_page(page);
+>>>> +		spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>>>>  
+>>>> -	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
+>>>> -				PAGECACHE_TAG_WRITEBACK))) {
+>>>> -		int i;
+>>>> +		f2fs_wait_on_page_writeback(page, NODE, true);
+>>>> +		if (TestClearPageError(page))
+>>>> +			ret = -EIO;
+>>>>  
+>>>> -		for (i = 0; i < nr_pages; i++) {
+>>>> -			struct page *page = pvec.pages[i];
+>>>> +		put_page(page);
+>>>>  
+>>>> -			if (ino && ino_of_node(page) == ino) {
+>>>> -				f2fs_wait_on_page_writeback(page, NODE, true);
+>>>> -				if (TestClearPageError(page))
+>>>> -					ret = -EIO;
+>>>> -			}
+>>>> -		}
+>>>> -		pagevec_release(&pvec);
+>>>> -		cond_resched();
+>>>> +		if (ret)
+>>>> +			break;
+>>>>  	}
+>>>>  
+>>>> -	ret2 = filemap_check_errors(NODE_MAPPING(sbi));
+>>>> -	if (!ret)
+>>>> -		ret = ret2;
+>>>>  	return ret;
+>>>>  }
+>>>>  
+>>>> @@ -2939,8 +3023,15 @@ int __init f2fs_create_node_manager_caches(void)
+>>>>  			sizeof(struct nat_entry_set));
+>>>>  	if (!nat_entry_set_slab)
+>>>>  		goto destroy_free_nid;
+>>>> +
+>>>> +	fsync_node_entry_slab = f2fs_kmem_cache_create("fsync_node_entry",
+>>>> +			sizeof(struct fsync_node_entry));
+>>>> +	if (!fsync_node_entry_slab)
+>>>> +		goto destroy_nat_entry_set;
+>>>>  	return 0;
+>>>>  
+>>>> +destroy_nat_entry_set:
+>>>> +	kmem_cache_destroy(nat_entry_set_slab);
+>>>>  destroy_free_nid:
+>>>>  	kmem_cache_destroy(free_nid_slab);
+>>>>  destroy_nat_entry:
+>>>> @@ -2951,6 +3042,7 @@ int __init f2fs_create_node_manager_caches(void)
+>>>>  
+>>>>  void f2fs_destroy_node_manager_caches(void)
+>>>>  {
+>>>> +	kmem_cache_destroy(fsync_node_entry_slab);
+>>>>  	kmem_cache_destroy(nat_entry_set_slab);
+>>>>  	kmem_cache_destroy(free_nid_slab);
+>>>>  	kmem_cache_destroy(nat_entry_slab);
+>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>> index 143ed321076e..34321932754d 100644
+>>>> --- a/fs/f2fs/super.c
+>>>> +++ b/fs/f2fs/super.c
+>>>> @@ -1023,6 +1023,8 @@ static void f2fs_put_super(struct super_block *sb)
+>>>>  	 */
+>>>>  	f2fs_release_ino_entry(sbi, true);
+>>>>  
+>>>> +	f2fs_bug_on(sbi, sbi->fsync_node_num);
+>>>> +
+>>>>  	f2fs_leave_shrinker(sbi);
+>>>>  	mutex_unlock(&sbi->umount_mutex);
+>>>>  
+>>>> @@ -2903,6 +2905,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>>>  
+>>>>  	f2fs_init_ino_entry_info(sbi);
+>>>>  
+>>>> +	f2fs_init_fsync_node_info(sbi);
+>>>> +
+>>>>  	/* setup f2fs internal modules */
+>>>>  	err = f2fs_build_segment_manager(sbi);
+>>>>  	if (err) {
+>>>> -- 
+>>>> 2.16.2.17.g38e79b1fd
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
 
