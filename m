@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 339E3ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40481ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E551320880
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E551320880
+	by mail.kernel.org (Postfix) with ESMTP id F1C4520874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1C4520874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbeGVHGq (ORCPT
+        id S1728539AbeGVHGu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 03:06:46 -0400
+        Sun, 22 Jul 2018 03:06:50 -0400
 Received: from mga02.intel.com ([134.134.136.20]:8994 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728312AbeGVHGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 03:06:45 -0400
+        id S1728408AbeGVHGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 03:06:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jul 2018 23:11:15 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jul 2018 23:11:18 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,388,1526367600"; 
-   d="scan'208";a="218015822"
+   d="scan'208";a="218015829"
 Received: from allen-box.sh.intel.com ([10.239.48.172])
-  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2018 23:11:12 -0700
+  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2018 23:11:15 -0700
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -42,9 +42,9 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [RFC PATCH 02/10] iommu/vt-d: Alloc domain for a mediated device
-Date:   Sun, 22 Jul 2018 14:09:25 +0800
-Message-Id: <1532239773-15325-3-git-send-email-baolu.lu@linux.intel.com>
+Subject: [RFC PATCH 03/10] iommu/vt-d: Allocate groups for mediated devices
+Date:   Sun, 22 Jul 2018 14:09:26 +0800
+Message-Id: <1532239773-15325-4-git-send-email-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
 References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
@@ -53,12 +53,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PASID-granular 2nd level address translation makes it possible
-to isolate and protect a mediated device exposed by a real device
-which support PCI PASID features. This patch adds support to allocate
-a domain for a mediated device. A default pasid value will be
-allocated as well for the mediated device. This will be used by the
-mediated device attached to this domain for non-SVM DMA transactions.
+With the Intel IOMMU supporting PASID granularity isolation and
+protection, a mediated device could be isolated and protected by
+an IOMMU unit. We need to allocate a new group instead of a PCI
+group.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -67,65 +65,40 @@ Cc: Liu Yi L <yi.l.liu@intel.com>
 Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/iommu/intel-iommu.c | 17 ++++++++++++++++-
- include/linux/intel-iommu.h |  5 +++++
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ drivers/iommu/intel-iommu.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index fc3ac1c..3ede34a 100644
+index 3ede34a..57ccfc4 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -1926,6 +1926,9 @@ static void domain_exit(struct dmar_domain *domain)
- 	domain_remove_dev_info(domain);
- 	rcu_read_unlock();
- 
-+	if (domain->default_pasid > 0)
-+		intel_pasid_free_id(domain->default_pasid);
-+
- 	/* destroy iovas */
- 	put_iova_domain(&domain->iovad);
- 
-@@ -2519,11 +2522,23 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
- 		}
+@@ -5276,6 +5276,17 @@ static void intel_iommu_put_resv_regions(struct device *dev,
  	}
+ }
  
-+	if (dev && dev_is_mdev(dev) && domain->default_pasid <= 0) {
-+		int max = intel_pasid_get_dev_max_id(dev_mdev_parent(dev));
++static struct iommu_group *intel_iommu_device_group(struct device *dev)
++{
++	if (dev_is_pci(dev))
++		return pci_device_group(dev);
 +
-+		domain->default_pasid = intel_pasid_alloc_id(domain, PASID_MIN,
-+							     max, GFP_KERNEL);
-+		if (domain->default_pasid < 0) {
-+			free_devinfo_mem(info);
-+			return NULL;
-+		}
-+	}
++	if (dev_is_mdev(dev))
++		return iommu_group_alloc();
 +
- 	spin_lock_irqsave(&device_domain_lock, flags);
- 	if (dev)
- 		found = find_domain(dev);
- 
--	if (!found) {
-+	/* A mediated device never has an DMA alias. Ignore searching. */
-+	if (!found && !dev_is_mdev(dev)) {
- 		struct device_domain_info *info2;
- 		info2 = dmar_search_domain_by_dev_info(iommu->segment, bus, devfn);
- 		if (info2) {
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 7efc632..9f5dcf6 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -423,6 +423,11 @@ struct dmar_domain {
- 					   2 == 1GiB, 3 == 512GiB, 4 == 1TiB */
- 	u64		max_addr;	/* maximum mapped address */
- 
-+	int		default_pasid;	/*
-+					 * The default pasid used for non-SVM
-+					 * traffic on mediated devices.
-+					 */
++	return ERR_PTR(-EINVAL);
++}
 +
- 	struct iommu_domain domain;	/* generic domain data structure for
- 					   iommu core */
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+ int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sdev)
+ {
+@@ -5370,7 +5381,7 @@ const struct iommu_ops intel_iommu_ops = {
+ 	.remove_device		= intel_iommu_remove_device,
+ 	.get_resv_regions	= intel_iommu_get_resv_regions,
+ 	.put_resv_regions	= intel_iommu_put_resv_regions,
+-	.device_group		= pci_device_group,
++	.device_group		= intel_iommu_device_group,
+ 	.pgsize_bitmap		= INTEL_IOMMU_PGSIZES,
  };
+ 
 -- 
 2.7.4
 
