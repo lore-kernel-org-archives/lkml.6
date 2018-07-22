@@ -2,111 +2,89 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 863B0C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31318C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A36B20850
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:04:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sYU5NY63"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A36B20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id DA4EF20850
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:14:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA4EF20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731034AbeGWACV (ORCPT
+        id S1731059AbeGWAMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 20:02:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54424 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730680AbeGWACV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 20:02:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JxqFiJdr/t+pjO9xAB6kGCMldCcA3PpmAXCTmdxlT/4=; b=sYU5NY639LpH8beZlL3MTuW+J
-        0A77tUNqzyRwLJ54IMt9YbnhuYnzy3I3lFBG9u4UZz1/4L33kKl8j8o+zzfxcALqC15+zo9AktR5h
-        9/P087Bhu/2ng8dWCMUKH73f70Kc25rtRHFxgOzQgGIBf83DTwvoPJPEJOd+wE9KtQddpS27hKLsa
-        Ghsyi6/Kd1ELK46rdQo67b0LNp+3Diduaw/Pv+eQtC7lI5btLcYjrFpspZqXPKiGWJIn3sVOud/os
-        el/35pm5DTvfkFOaBttWxqN1fRWKUw4yiSJJLaVYAQIGIy2W4tXbm8Pbhgbzra/aZyfysAFs8lODl
-        k7MuuGfFw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhNOS-0003If-Iu; Sun, 22 Jul 2018 23:04:00 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        linux-hexagon@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2] hexagon: modify ffs() and fls() to return int
-Message-ID: <f96af3cd-3316-11a8-d563-dd269f1378a2@infradead.org>
-Date:   Sun, 22 Jul 2018 16:03:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 22 Jul 2018 20:12:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52562 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730673AbeGWAMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 20:12:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A5267ACE8;
+        Sun, 22 Jul 2018 23:13:53 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     paulmck@linux.vnet.ibm.com
+Date:   Mon, 23 Jul 2018 09:13:43 +1000
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] rhashtable: don't hold lock on first table throughout insertion.
+In-Reply-To: <20180722215446.GH12945@linux.vnet.ibm.com>
+References: <153086169828.24852.10332573315056854948.stgit@noble> <153086175009.24852.7782466383056542839.stgit@noble> <20180720075409.kfckhodsnvktift7@gondor.apana.org.au> <20180720144152.GW12945@linux.vnet.ibm.com> <87muulqq8q.fsf@notabene.neil.brown.name> <20180722215446.GH12945@linux.vnet.ibm.com>
+Message-ID: <87h8kqrhi0.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+--=-=-=
+Content-Type: text/plain
 
-Building drivers/mtd/nand/raw/nandsim.c on arch/hexagon/ produces a
-printk format build warning.  This is due to hexagon's ffs() being
-coded as returning long instead of int.
+On Sun, Jul 22 2018, Paul E. McKenney wrote:
+>
+> One issue is that the ->func pointer can legitimately be NULL while on
+> RCU's callback lists.  This happens when someone invokes kfree_rcu()
+> with the rcu_head structure at the beginning of the enclosing structure.
+> I could add an offset to avoid this, or perhaps the kmalloc() folks
+> could be persuaded Rao Shoaib's patch moving kfree_rcu() handling to
+> the slab allocators, so that RCU only ever sees function pointers in
+> the ->func field.
+>
+> Either way, this should be hidden behind an API to allow adjustments
+> to be made if needed.  Maybe something like is_after_call_rcu()?
+> This would (for example) allow debug-object checks to be used to catch
+> check-after-free bugs.
+>
+> Would something of that sort work for you?
 
-Fix the printk format warning by changing all of hexagon's ffs() and
-fls() functions to return int instead of long.  The variables that
-they return are already int instead of long.  This return type
-matches the return type in <asm-generic/bitops/>.
+Yes, if you could provide an is_after_call_rcu() API, that would
+perfectly suit my use-case.
+Thanks,
+NeilBrown
 
-../drivers/mtd/nand/raw/nandsim.c: In function 'init_nandsim':
-../drivers/mtd/nand/raw/nandsim.c:760:2: warning: format '%u' expects argument of type 'unsigned int', but argument 2 has type 'long int' [-Wformat]
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-There are no ffs() or fls() allmodconfig build errors after making this
-change.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Richard Kuo <rkuo@codeaurora.org>
-Cc: linux-hexagon@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
----
-v2:
-add hexagon contacts, drop erroneous sh contacts; [thanks, Geert]
-only change return type for ffs() and fls() [thanks, Geert]
-  [drop the changes for ffz(), __ffs(), and __fls()]
-
- arch/hexagon/include/asm/bitops.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- linux-next-20180717.orig/arch/hexagon/include/asm/bitops.h
-+++ linux-next-20180717/arch/hexagon/include/asm/bitops.h
-@@ -211,7 +211,7 @@ static inline long ffz(int x)
-  * This is defined the same way as ffs.
-  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
-  */
--static inline long fls(int x)
-+static inline int fls(int x)
- {
- 	int r;
- 
-@@ -232,7 +232,7 @@ static inline long fls(int x)
-  * the libc and compiler builtin ffs routines, therefore
-  * differs in spirit from the above ffz (man ffs).
-  */
--static inline long ffs(int x)
-+static inline int ffs(int x)
- {
- 	int r;
- 
-
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltVD6cACgkQOeye3VZi
+gbkh7Q//fsTYBjgz2oplH1RRGFA//cfC7hQhEyQPRdNKAou+es+pLmgE2v4aikms
+sMHT0AObn6iLv12ZV/Geg0fb1NMRiaFThlC1Lb8sfaA6Hczsgl0YtJEHBvEWIX43
+687mapwo51GhdSRQGPkva611qaebO8NOaDWYuhYGONuxCJUl6CLWHqjM4XR2Bug6
+RVVd4m7o5RYSwSMVBZb868uHwqRf7R/XnrfNpg4SZAZa0eOeiWK78VJRkdteHYvl
+9vsipbhTM6RBi+Zy8qi6AryH/m9RuN3T1D62GKN6cxY6RNJEjzeOqbVGdS2wkjMQ
+CIsUtYSbjUmd46f1mGJ2AJR/OVU7BJRWLNVutveWH6C++CfscTP3zNuSDtGTzK6u
+rg19q73dRkfItyvd6E4H2rBInNf3PnzHbhOVEqQIq9zD4ayWl5KQbJyKc09Zjhfa
+dewwDcKsA+uyIUUFVaA8llpDXVNXboxGT0pXKvmmVIpUEcGGLUA5qc7tIJ95b4ZY
+efRSL64MdcPlWpPvVv8BKaClpJskfK7S1qpCfj0So6uzh2DmrGUDyLJLspqvfIN/
+WRPezvw3RXByV0Xf9oqzboixSfVrDv5MlmJXuP8OiEdYowRxfT4VS78VU1nN/QQs
+fD7keSNyRIgssEnQBNgxgGmsaYr3C6fKrHzkB2aOjwpii3vTzr4=
+=AiZF
+-----END PGP SIGNATURE-----
+--=-=-=--
