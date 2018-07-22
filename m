@@ -2,208 +2,111 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E2CC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 863B0C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78E3620854
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A36B20850
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:04:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sAkRb+9E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78E3620854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sYU5NY63"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A36B20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731204AbeGVXua (ORCPT
+        id S1731034AbeGWACV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 19:50:30 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:43876 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730429AbeGVXua (ORCPT
+        Sun, 22 Jul 2018 20:02:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54424 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730680AbeGWACV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 19:50:30 -0400
-Received: by mail-yb0-f195.google.com with SMTP id x10-v6so6590254ybl.10;
-        Sun, 22 Jul 2018 15:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WtrM/1yZXUWUBPgjSl3uinm2kdNBYGgjwhfgxOazJGs=;
-        b=sAkRb+9E0iTBEfqm7nrl+mZVPDQvipKknZPxwLPEvrdf/kBO9zMIT30l/lARsQvfdf
-         WgTMn7tdnIqr0s8TqcT3lQ1aHkYIM0FYTLiSxIErgNVm5HONQv4GP5XltxDWBKcgxPrp
-         q3N89jA0bqghQevcKMasdYGdO2TRIRGFMcIyPhH/NWQS4Yi2YQLh4iQAcJt67oJ4ss0u
-         d6lXWpI0UfGMhSYDP7OmXHaFUxZL6kD6thtxJIeoulh6BIf6onfWzJJ+9ek/G5W0KZjf
-         QoiTLyG9FDwRJRSNvDYTyY4Dkf6YaVaUmmTqf89zBV8ixf9tMiWOwXf5dwCxGjsDHJqK
-         zpdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=WtrM/1yZXUWUBPgjSl3uinm2kdNBYGgjwhfgxOazJGs=;
-        b=YG/TYvTiACXD2HRy9kli7/cnhbjxDKKp5j80j1m3iZci00KVWY2ykEx/n4mU+1pgkE
-         h2bOOeC3Mr7vmdrXXieXFGKZHLBEGrXwtfuMQ8cl61NuRsBYEJBggNRZXeIUMVP9aJUl
-         RYNIeA/2VGwRER6Cl0KI4avWNdKzEus1vyGb1qGxbn7bcgtp4fSS0sBUGiCGEFhWAdAn
-         U1RWXRDsVGabcMSP5yu0kVdTZgqOG5wf+W0xkwW31hch7sM+mD4LKAs9kAz/imYun86Y
-         tb+wiQqUtOwZ7Jq5mRO6l9n/aSZJkMzMKGj+wm2InJlzz4XIb9aL75hPDy0/AYZmhEkw
-         d9zQ==
-X-Gm-Message-State: AOUpUlF41EdBhk9qOZ/9VH/mdlEW4fQfcnJE7Q44CeOctZKdFHNv9vuf
-        4w/BbI2dYN9ybamD57heGw4=
-X-Google-Smtp-Source: AAOMgpeGQw8fXRcreUfKn6DqAY57SBZfmjGCNWfoYJEvFbkEpaterh1jjy+iFOdYRioj7Lyvioj2Kg==
-X-Received: by 2002:a5b:607:: with SMTP id d7-v6mr5765670ybq.281.1532299930957;
-        Sun, 22 Jul 2018 15:52:10 -0700 (PDT)
-Received: from localhost ([72.188.97.40])
-        by smtp.gmail.com with ESMTPSA id j8-v6sm582710ywj.6.2018.07.22.15.52.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 15:52:10 -0700 (PDT)
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     jic23@kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, fabrice.gasnier@st.com,
-        benjamin.gaignard@st.com, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, akpm@linux-foundation.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v9 11/11] iio: counter: Add deprecation markings for IIO Counter attributes
-Date:   Sun, 22 Jul 2018 18:52:05 -0400
-Message-Id: <2450136fe1f5e7f582af69b61e6e1efe0d582c41.1532298882.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <cover.1532298882.git.vilhelm.gray@gmail.com>
-References: <cover.1532298882.git.vilhelm.gray@gmail.com>
+        Sun, 22 Jul 2018 20:02:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JxqFiJdr/t+pjO9xAB6kGCMldCcA3PpmAXCTmdxlT/4=; b=sYU5NY639LpH8beZlL3MTuW+J
+        0A77tUNqzyRwLJ54IMt9YbnhuYnzy3I3lFBG9u4UZz1/4L33kKl8j8o+zzfxcALqC15+zo9AktR5h
+        9/P087Bhu/2ng8dWCMUKH73f70Kc25rtRHFxgOzQgGIBf83DTwvoPJPEJOd+wE9KtQddpS27hKLsa
+        Ghsyi6/Kd1ELK46rdQo67b0LNp+3Diduaw/Pv+eQtC7lI5btLcYjrFpspZqXPKiGWJIn3sVOud/os
+        el/35pm5DTvfkFOaBttWxqN1fRWKUw4yiSJJLaVYAQIGIy2W4tXbm8Pbhgbzra/aZyfysAFs8lODl
+        k7MuuGfFw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhNOS-0003If-Iu; Sun, 22 Jul 2018 23:04:00 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        linux-hexagon@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v2] hexagon: modify ffs() and fls() to return int
+Message-ID: <f96af3cd-3316-11a8-d563-dd269f1378a2@infradead.org>
+Date:   Sun, 22 Jul 2018 16:03:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IIO counter subdirectory is now superceded by the Counter subsystem.
-This patch adds deprecation warnings to the documentation of the
-relevant IIO Counter sysfs attributes.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Building drivers/mtd/nand/raw/nandsim.c on arch/hexagon/ produces a
+printk format build warning.  This is due to hexagon's ffs() being
+coded as returning long instead of int.
+
+Fix the printk format warning by changing all of hexagon's ffs() and
+fls() functions to return int instead of long.  The variables that
+they return are already int instead of long.  This return type
+matches the return type in <asm-generic/bitops/>.
+
+../drivers/mtd/nand/raw/nandsim.c: In function 'init_nandsim':
+../drivers/mtd/nand/raw/nandsim.c:760:2: warning: format '%u' expects argument of type 'unsigned int', but argument 2 has type 'long int' [-Wformat]
+
+There are no ffs() or fls() allmodconfig build errors after making this
+change.
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Richard Kuo <rkuo@codeaurora.org>
+Cc: linux-hexagon@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- Documentation/ABI/testing/sysfs-bus-iio          |  8 ++++++++
- .../ABI/testing/sysfs-bus-iio-counter-104-quad-8 | 16 ++++++++++++++++
- 2 files changed, 24 insertions(+)
+v2:
+add hexagon contacts, drop erroneous sh contacts; [thanks, Geert]
+only change return type for ffs() and fls() [thanks, Geert]
+  [drop the changes for ffz(), __ffs(), and __fls()]
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index a5b4f223641d..06218a5ae10c 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -1652,6 +1652,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_raw
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Raw counter device counts from channel Y. For quadrature
- 		counters, multiplication by an available [Y]_scale results in
- 		the counts of a single quadrature signal phase from channel Y.
-@@ -1660,6 +1662,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_raw
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Raw counter device index value from channel Y. This attribute
- 		provides an absolute positional reference (e.g. a pulse once per
- 		revolution) which may be used to home positional systems as
-@@ -1669,6 +1673,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_count_count_direction_available
- KernelVersion:	4.12
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		A list of possible counting directions which are:
- 		- "up"	: counter device is increasing.
- 		- "down": counter device is decreasing.
-@@ -1677,6 +1683,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_direction
- KernelVersion:	4.12
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Raw counter device counters direction for channel Y.
+ arch/hexagon/include/asm/bitops.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- linux-next-20180717.orig/arch/hexagon/include/asm/bitops.h
++++ linux-next-20180717/arch/hexagon/include/asm/bitops.h
+@@ -211,7 +211,7 @@ static inline long ffz(int x)
+  * This is defined the same way as ffs.
+  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+-static inline long fls(int x)
++static inline int fls(int x)
+ {
+ 	int r;
  
- What:		/sys/bus/iio/devices/iio:deviceX/in_phaseY_raw
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8 b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
-index 7fac2c268d9a..bac3d0d48b7b 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
-@@ -6,6 +6,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_index_synchronous_mode_available
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Discrete set of available values for the respective counter
- 		configuration are listed in this file.
+@@ -232,7 +232,7 @@ static inline long fls(int x)
+  * the libc and compiler builtin ffs routines, therefore
+  * differs in spirit from the above ffz (man ffs).
+  */
+-static inline long ffs(int x)
++static inline int ffs(int x)
+ {
+ 	int r;
  
-@@ -13,6 +15,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_mode
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Count mode for channel Y. Four count modes are available:
- 		normal, range limit, non-recycle, and modulo-n. The preset value
- 		for channel Y is used by the count mode where required.
-@@ -47,6 +51,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_noise_error
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Read-only attribute that indicates whether excessive noise is
- 		present at the channel Y count inputs in quadrature clock mode;
- 		irrelevant in non-quadrature clock mode.
-@@ -55,6 +61,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_preset
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		If the counter device supports preset registers, the preset
- 		count for channel Y is provided by this attribute.
- 
-@@ -62,6 +70,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_quadrature_mode
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Configure channel Y counter for non-quadrature or quadrature
- 		clock mode. Selecting non-quadrature clock mode will disable
- 		synchronous load mode. In quadrature clock mode, the channel Y
-@@ -83,6 +93,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_set_to_preset_on_index
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Whether to set channel Y counter with channel Y preset value
- 		when channel Y index input is active, or continuously count.
- 		Valid attribute values are boolean.
-@@ -91,6 +103,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_index_polarity
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Active level of channel Y index input; irrelevant in
- 		non-synchronous load mode.
- 
-@@ -98,6 +112,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_synchronous_mode
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Configure channel Y counter for non-synchronous or synchronous
- 		load mode. Synchronous load mode cannot be selected in
- 		non-quadrature clock mode.
--- 
-2.18.0
 
