@@ -2,126 +2,74 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECECECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E38DDC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2988120854
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:12:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9696A20854
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:13:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ujt4zwO0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2988120854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="DlB9uFsV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9696A20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731041AbeGVXKd (ORCPT
+        id S2387893AbeGVXLc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 19:10:33 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39886 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730712AbeGVXJI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 19:09:08 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h10-v6so16019276wre.6
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 15:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FniwGQOu+qHw9aYQlWW5dLQ+1yz6XqiL4WWTg4ne1zc=;
-        b=ujt4zwO0VMtdZP9wjC9EtKHNnhAGfOrtrIDk2oar7P0SLtfKEy6IjBokU7vMD0uBP0
-         GvccyItse1HDC2lRozBRg//XpVAx2RNifJY0YvLoDx/z50NfDGScISfjvP+BGUuWfl6i
-         O/rmFiXmS9QMX9aRXQhDoNn76T1lQasccGxmHladdA4piRXk4E/bZprHvx5qj9dUkWJF
-         vEl6tRKJiDI6ZX/n/JQunmQiIwDamPHs4vVmE4rA2zAWLjYhCPSYRJsjOOo2HFv4CUQa
-         RvIecN82bg9C1sxOh49dFXQR0IQ5bl98cosm2jkmfoTFhO4jD64JaJ9CO1gTbPJAFcA1
-         bYgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FniwGQOu+qHw9aYQlWW5dLQ+1yz6XqiL4WWTg4ne1zc=;
-        b=JHwHZIHP9dRETKSaXbHaosk5W6fBieCtdBRNOpC20UV03/vjY8aLxmq405MP8c04RH
-         kIBXY1Xx0gAj2jDXcNmN1dB7mBQavk0+yv5gW/6ekGu1nMDzdASlMIRVjr2yAk8GKPYe
-         iyBVI5lILuPPaSZ2NVSTTDPzikhC7ERlo9yTI3rysVU/BP4ln6YUhMN7Mpvnk/yBow9B
-         MpYabsZkJBz47XwR/cVa70fjPHr2MfN0Hv3B4b7bvzTPei9hfzDo+l5UzfCeabYR+k4D
-         RYmd5Uj/K+mO0SH+KVtj8stLeNrfxZa1p6wmx88+EK9tt0sB17kJSu2X5AFceng7SfgF
-         eyYQ==
-X-Gm-Message-State: AOUpUlG6Xr+QRCAoM8Xy3fZbqHNINs7afBcLVUxEqfcXF8S+UeMNH0Sb
-        uwCK8kfOKO58TiBuKiRckcPpqQJuboI=
-X-Google-Smtp-Source: AAOMgpc9Mn4EJHB/ud37/kXzWAfmxVM0MMvb8fhlakUJ2faN8MGj3nt85nVyr7W0/YTJm+1/EAnAzw==
-X-Received: by 2002:adf:81c3:: with SMTP id 61-v6mr6857840wra.120.1532297456549;
-        Sun, 22 Jul 2018 15:10:56 -0700 (PDT)
-Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id e12-v6sm5870824wrt.29.2018.07.22.15.10.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 15:10:55 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 06/20] staging:rtl8192u: Remove unused page d definitions - Style
-Date:   Sun, 22 Jul 2018 23:10:21 +0100
-Message-Id: <20180722221035.14453-7-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180722221035.14453-1-johnfwhitmore@gmail.com>
-References: <20180722221035.14453-1-johnfwhitmore@gmail.com>
+        Sun, 22 Jul 2018 19:11:32 -0400
+Received: from imap.thunk.org ([74.207.234.97]:43686 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730404AbeGVXLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 19:11:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=dZbQoDgPidU7/seDgkgBOBHELwBr2QTJbEHfX6Tkx1c=; b=DlB9uFsV8WEGR4GIrFAh8mp2mF
+        4CsgvRl1uq33NmFgyJEtB654kyz+8EVG8yOHKC8VHjy2AfYX/inoI/8qWPTpgaH9TQ2U6KUvGab89
+        kM1f7lCN/Am0KD/UN/in+4aqvXNk8Sf4GJGZGqsEuwSZXqmMFmCECCFHc6Tzf0ZPH3Gc=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fhMbP-0005VQ-0y; Sun, 22 Jul 2018 22:13:19 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 5C8DB7A6463; Sun, 22 Jul 2018 18:13:14 -0400 (EDT)
+Date:   Sun, 22 Jul 2018 18:13:14 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     adilger.kernel@dilger.ca, willy@infradead.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: ext4: use new return type vm_fault_t
+Message-ID: <20180722221314.GB3358@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Souptick Joarder <jrdr.linux@gmail.com>, adilger.kernel@dilger.ca,
+        willy@infradead.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180707103029.GA13365@jordon-HP-15-Notebook-PC>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180707103029.GA13365@jordon-HP-15-Notebook-PC>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unused 'page d' definitions. These definitions fail the
-checkpatch CamelCase naming test. Rather then renaming unused
-definitions they have simply been removed. This change is a coding
-style change and should have no impact on runtime code execution.
+On Sat, Jul 07, 2018 at 04:00:30PM +0530, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler
+> ext4_filemap_fault.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- drivers/staging/rtl8192u/r819xU_phyreg.h | 27 ------------------------
- 1 file changed, 27 deletions(-)
+Thanks, applied.
 
-diff --git a/drivers/staging/rtl8192u/r819xU_phyreg.h b/drivers/staging/rtl8192u/r819xU_phyreg.h
-index 26d18a494fb4..661df18867dd 100644
---- a/drivers/staging/rtl8192u/r819xU_phyreg.h
-+++ b/drivers/staging/rtl8192u/r819xU_phyreg.h
-@@ -85,33 +85,6 @@
- /* page d */
- #define rOFDM1_LSTF				0xd00
- #define rOFDM1_TRxPathEnable		0xd04
--#define rOFDM1_CFO				0xd08
--#define rOFDM1_CSI1				0xd10
--#define rOFDM1_SBD				0xd14
--#define rOFDM1_CSI2				0xd18
--#define rOFDM1_CFOTracking			0xd2c
--#define rOFDM1_TRxMesaure1		0xd34
--#define rOFDM1_IntfDet				0xd3c
--#define rOFDM1_PseudoNoiseStateAB 0xd50
--#define rOFDM1_PseudoNoiseStateCD 0xd54
--#define rOFDM1_RxPseudoNoiseWgt   0xd58
--#define rOFDM_PHYCounter1			0xda0  /* cca, parity fail */
--#define rOFDM_PHYCounter2			0xda4  /* rate illegal, crc8 fail */
--
--#define rOFDM_PHYCounter3			0xda8  /* MCS not support */
--#define rOFDM_ShortCFOAB			0xdac
--#define rOFDM_ShortCFOCD			0xdb0
--#define rOFDM_LongCFOAB				0xdb4
--#define rOFDM_LongCFOCD				0xdb8
--#define rOFDM_TailCFOAB				0xdbc
--#define rOFDM_TailCFOCD				0xdc0
--#define rOFDM_PWMeasure1		0xdc4
--#define rOFDM_PWMeasure2		0xdc8
--#define rOFDM_BWReport				0xdcc
--#define rOFDM_AGCReport				0xdd0
--#define rOFDM_RxSNR				0xdd4
--#define rOFDM_RxEVMCSI				0xdd8
--#define rOFDM_SIGReport				0xddc
- 
- /* page e */
- #define rTxAGC_Rate18_06			0xe00
--- 
-2.18.0
-
+					- Ted
