@@ -2,80 +2,81 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 653ACC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BC8C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DEF320854
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:39:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DEF320854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id C4DAF20854
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:39:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DAF20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbeGVRgZ (ORCPT
+        id S1730385AbeGVRg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 13:36:25 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52208 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729936AbeGVRgZ (ORCPT
+        Sun, 22 Jul 2018 13:36:58 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:33408 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729336AbeGVRg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 13:36:25 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fhHO1-0000xY-QW; Sun, 22 Jul 2018 16:39:09 +0000
-Date:   Sun, 22 Jul 2018 17:39:09 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git assorted fixes
-Message-ID: <20180722163909.GG30522@ZenIV.linux.org.uk>
+        Sun, 22 Jul 2018 13:36:58 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1fhHOH-0003nn-6N; Sun, 22 Jul 2018 18:39:25 +0200
+Date:   Sun, 22 Jul 2018 18:39:25 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Shaochun Chen <cscnull@gmail.com>
+Cc:     pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
+        davem@davemloft.net, johannes.berg@intel.com, Jason@zx2c4.com,
+        ktkhai@virtuozzo.com, lucien.xin@gmail.com,
+        xiyou.wangcong@gmail.com, dsahern@gmail.com,
+        netfilter-devel@vger.kernel.org, tom@quantonium.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netlink: fix memory leak of dump
+Message-ID: <20180722163925.gdfkndldatsoae6x@breakpoint.cc>
+References: <20180722143354.23722-1-cscnull@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180722143354.23722-1-cscnull@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Fix several places that screw up cleanups after failures halfway
-through opening a file (one open-coding filp_clone_open() and getting
-it wrong, two misusing alloc_file()).  That part is -stable fodder from
-#work.open.
-	And Christoph's regression fix for uapi breakage in aio series;
-include/uapi/linux/aio_abi.h shouldn't be pulling in the kernel definition
-of sigset_t, the reason for doing so in the first place had been bogus - 
-there's no need to expose struct __aio_sigset in aio_abi.h at all.
+Shaochun Chen <cscnull@gmail.com> wrote:
 
-The following changes since commit 877f919e192a09e77962a13d7165783027dee5fd:
+[ CC ing Tom, as he added ->start() ]
 
-  proc: add proc_seq_release (2018-06-27 20:44:38 -0400)
+> 1) if netlink_dump_start start fail, the memory of c->data will leak.
+> so free manually after netlink_dump_start return error.
+> 
+> 2) In netlink_dump_start, ignore the return of netlink_dump.
+> Because if cb_running is set to true, cb->dump will be call in anyway.
+> so if netlink_dump_start start successfully, just return -EINTR.
 
-are available in the git repository at:
+This now requires ->start() to not return -EINVAL, else we won't
+release resources either, this seems fragile to me.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+I can only think of three ways to address this:
 
-for you to fetch changes up to 9ba546c01976a426292af99e682a557075d6c010:
+1. Kill ->start() and force all users to defer
+   state allocation to first ->dump() invocation, so existing
+   ->done() can be used to release resources.
 
-  aio: don't expose __aio_sigset in uapi (2018-07-17 23:26:58 -0400)
+OR
+2. add ->stop() and have core always pair it with ->start(),
+   no matter if dump() got called or not, then convert all
+   places that provide .start to use .stop, not .done.
 
-----------------------------------------------------------------
-Al Viro (3):
-      drm_mode_create_lease_ioctl(): fix open-coded filp_clone_open()
-      cxl_getfile(): fix double-iput() on alloc_file() failures
-      ocxlflash_getfile(): fix double-iput() on alloc_file() failures
+OR
+3. change meaning of ->done() so its always called once ->start()
+   was invoked (and returned 0), this requires audit of all
+   places that provide .done to make sure they won't trip.
 
-Christoph Hellwig (1):
-      aio: don't expose __aio_sigset in uapi
-
- drivers/gpu/drm/drm_lease.c     | 16 +---------------
- drivers/misc/cxl/api.c          |  8 ++++----
- drivers/scsi/cxlflash/ocxl_hw.c |  5 ++---
- fs/aio.c                        |  5 +++++
- fs/internal.h                   |  1 -
- include/linux/fs.h              |  1 +
- include/linux/syscalls.h        |  1 +
- include/uapi/linux/aio_abi.h    |  6 ------
- 8 files changed, 14 insertions(+), 29 deletions(-)
+3) seems to be what Tom intended when he added .start, so probably
+best to investigate that first.
