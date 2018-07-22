@@ -2,93 +2,113 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BDEC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AB5C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1092D20858
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03AEB20671
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:48:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TW5EyYme"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1092D20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y799woNB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03AEB20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730593AbeGVTnR (ORCPT
+        id S1730664AbeGVTpp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 15:43:17 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:38391 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730415AbeGVTnR (ORCPT
+        Sun, 22 Jul 2018 15:45:45 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36377 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730415AbeGVTpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 15:43:17 -0400
-Received: by mail-io0-f195.google.com with SMTP id v26-v6so13808139iog.5;
-        Sun, 22 Jul 2018 11:45:40 -0700 (PDT)
+        Sun, 22 Jul 2018 15:45:45 -0400
+Received: by mail-pl0-f66.google.com with SMTP id e11-v6so7272822plb.3
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 11:48:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2zIYqof/wyWEfb8OugjakOp1sks1FLuEozB2G3y4u6E=;
-        b=TW5EyYmeT+IL+U+Fn+e+fjq3Rf8PyCuamzLiGyalo0y31ztqzbs3c16ItoHAYDBBi8
-         6nu1UG9agzvkmb1z4i2NTiEDf8323284SWqXGbJwx1D5gRX+iCH1z6JIO0I9/FF8qWct
-         +Fi73CfeEFUU3domicuO+Ogu6RCm5eO4gQThY=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=9MUoaZsKcddeXtPBiHiGdukpu8On0Dk+IpTYcMP2h+I=;
+        b=Y799woNBmnBOrfK2/GAm/Yipmv5eGNmLJSOzvGsmqrzfpEO6IWboLMwr0wvrHqXLyE
+         VIz/qiiECfMYHsMqmEdycyF06t3YuSPpkHYXfoWL/teJhzVevLLBGkF7/0fCSNIIm22O
+         LD5laUvKqsRxm/ZcoUCGItld3ysBMhJS1sk7QxH5ezM/7Out5bujHF59L5dBFFhB3ry+
+         P4/OsdzCKf+z4w7R673yVtlAjW0qGfBR0fwZGARctTgqU0Y5DC0OaOUbY/5cxJEzjcz+
+         fPcTwroWsCy+ZzLUhLkITYjesf3TumvFZ6iUZVCItHc7ehQZgCO24jKBUoHGMhNzneWA
+         hE+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2zIYqof/wyWEfb8OugjakOp1sks1FLuEozB2G3y4u6E=;
-        b=UcuqcIMAcX8w2FWx8ZUWenAMIHeAcJo+A+nWP3uQyQulLdBTq2y9z99TmnC1wMvx8k
-         +t1wSphowjHGEAxOQVvhCQvtinlMvdU5MyWdxVIU6jOByac34RObb9c3JzRcgVQdH2sG
-         2Ai2OZ/bu+dKUFOHIQ0mCctOsrD6B5Wk4KgV35GLRXHz6Ex/PnAWa4w29DiypMcezOXh
-         RQVIkmEsbDHgubdCZglgpGWB4BjbHSE+0IAWSTlDg8H1vkzs4cBeZLMP084hWeHe7h0R
-         dSCnJwBXOZyHuo4+obkMVpocrzKJvYccUqtjp16YkIXs6aoc5SA8lKleo/TdKI5TsStT
-         Uk9g==
-X-Gm-Message-State: AOUpUlHO7xfVGIZAc2EpBYZ0v6O5ZOL0ObXaTKYTlqRPOc3DeATz3olB
-        JwKE0gnbK9I6kdcgYIdKrWLfizv9T7TKATRFDZv+6DD7
-X-Google-Smtp-Source: AAOMgpeIYTzokGV6Hh7+vfP28kkur8WHDcwrL1k+xgMzLDGS5MUY+iPqulecQ57oVUb9pDVNwkb2et+fj+gUZEfxJdc=
-X-Received: by 2002:a6b:7a05:: with SMTP id h5-v6mr8143713iom.238.1532285140185;
- Sun, 22 Jul 2018 11:45:40 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=9MUoaZsKcddeXtPBiHiGdukpu8On0Dk+IpTYcMP2h+I=;
+        b=V0VQSevLfcis99QHTi8XbqUBazcxFlmrSsc+4uU3uvZEuCQfTNExOVwtGoKMS2KTO+
+         h1J5hik1pMDqNKPq2e4NFh6LrzklEsrWZSE7hf+Jd7O/zGDqrMt8uIBcdtD1rrP/Yq8E
+         SHHZ55CeoprHwPQSHbuOz2ar6pBUiceXwMg7xQYOy0e5RpE3xMY0s89jhJePuByvsK9m
+         xuE+T/VCfNdWMAbvignD63lbb5YmAzLjtRTnBXMMx0VWtC9PHkCrfXfTFHZ1sHLXSQWz
+         wZi24qulv2D8FSPnuA80SWnTLfPt5IklbuoqbHbSMHJLU0YxI+vjzjYuZpuGsvhZPj9i
+         SNfA==
+X-Gm-Message-State: AOUpUlE333HqtbqqEHbsFJY9Y6u9TU2/0vrcTLNxsPXmJGC7M0hNtGjj
+        1uKfMfi8mbQXgs5nQLJ41yA=
+X-Google-Smtp-Source: AAOMgpfXaA8Qx3xSesPxeJLPeeIncy7lWhwXrkbf1/rIOo7Q956YPLnH9l6E0PD9fUsjwB9XNEWA7Q==
+X-Received: by 2002:a17:902:548f:: with SMTP id e15-v6mr10005692pli.317.1532285288063;
+        Sun, 22 Jul 2018 11:48:08 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id g15-v6sm16423619pfg.98.2018.07.22.11.48.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 22 Jul 2018 11:48:07 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 00:18:01 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Joe Perches <joe@perches.com>,
+        Lidza Louina <lidza.louina@gmail.com>,
+        Mark Hounschell <markh@compro.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: dgnc: dgnc_tty.c: Avoid '(' at the end of line
+Message-ID: <20180722184756.GA21198@nishad>
 MIME-Version: 1.0
-References: <20180722140711.GF30522@ZenIV.linux.org.uk>
-In-Reply-To: <20180722140711.GF30522@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 22 Jul 2018 11:45:29 -0700
-Message-ID: <CA+55aFxyagGA=3XqqVhw8XAKG90Z+EWKYA=DSVkQKzmHsO+6cQ@mail.gmail.com>
-Subject: Re: [PATCH] fix osf_wait4() breakage
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied.
+Bring the first argument to the previous line,
+remove a superfluous () in the second argument
+by using !, and align the lines to match open
+parenthesis. Issue found by checkpatch.
 
-Just a note:
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+---
+Changes since v1:
+ - Remove a superfluous () and use ! instead, in the second argument.
+---
+ drivers/staging/dgnc/dgnc_tty.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-On Sun, Jul 22, 2018 at 7:07 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Fixes: "osf_wait4: switch to kernel_wait4()"
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 9f9b9a5b4b27..f91eaa1c3b67 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -883,10 +883,9 @@ static int dgnc_tty_open(struct tty_struct *tty, struct file *file)
+ 	 * touched safely, the close routine will signal the
+ 	 * ch_flags_wait to wake us back up.
+ 	 */
+-	rc = wait_event_interruptible(
+-				ch->ch_flags_wait,
+-				(((ch->ch_tun.un_flags |
+-				ch->ch_pun.un_flags) & UN_CLOSING) == 0));
++	rc = wait_event_interruptible(ch->ch_flags_wait,
++				      !((ch->ch_tun.un_flags |
++				      ch->ch_pun.un_flags) & UN_CLOSING));
+ 	/* If ret is non-zero, user ctrl-c'ed us */
+ 	if (rc)
+ 		return -EINTR;
+-- 
+2.17.1
 
-Please put the actual commit ID there too, because that's what people
-with automation check.
-
-> Cc: stable@vger.kernel.org # v4.12+
-
-.. and when you do that, you'll see that it wasn't actually in 4.12,
-but got merged during the 4.13 merge window:
-
-    $ git name-rev 92ebce5ac55d
-    92ebce5ac55d tags/v4.13-rc1~154^2
-
-(unless it was backported, but I don't think it was).
-
-Also, the prototype for kernel_wait4() (in <linux/sched/task.h>) is
-wrong, and doesn't have the __user annotation.
-
-                Linus
