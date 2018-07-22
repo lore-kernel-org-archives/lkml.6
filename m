@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF79BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD6AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8433020874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8433020874
+	by mail.kernel.org (Postfix) with ESMTP id E71DA20874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E71DA20874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729579AbeGVHHJ (ORCPT
+        id S1729807AbeGVHHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 03:07:09 -0400
-Received: from mga11.intel.com ([192.55.52.93]:37222 "EHLO mga11.intel.com"
+        Sun, 22 Jul 2018 03:07:13 -0400
+Received: from mga06.intel.com ([134.134.136.31]:12836 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729296AbeGVHHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 03:07:08 -0400
+        id S1729585AbeGVHHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 03:07:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jul 2018 23:11:38 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jul 2018 23:11:41 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,388,1526367600"; 
-   d="scan'208";a="218015952"
+   d="scan'208";a="218015961"
 Received: from allen-box.sh.intel.com ([10.239.48.172])
-  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2018 23:11:34 -0700
+  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2018 23:11:38 -0700
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -42,9 +42,9 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [RFC PATCH 09/10] vfio/mdev: Add mediated device domain type
-Date:   Sun, 22 Jul 2018 14:09:32 +0800
-Message-Id: <1532239773-15325-10-git-send-email-baolu.lu@linux.intel.com>
+Subject: [RFC PATCH 10/10] vfio/type1: Allocate domain for mediated device
+Date:   Sun, 22 Jul 2018 14:09:33 +0800
+Message-Id: <1532239773-15325-11-git-send-email-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
 References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
@@ -53,106 +53,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A parent device might create different types of mediated
-devices. For example, a mediated device could be created
-on the parent device with a PASID tagged. When the iommu
-supports PASID-granular translations, the mediated device
-is individually protected and isolated by the iommu. It's
-hence possible to allocate a domain for each such device.
-
-This patch defines the domain types of a mediated device
-and allows the parent driver to specify this attribute
-after a mdev is actually created.
+This allocates a domain for the mediated device if it is able to
+be isolated and protected individually by IOMMU.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Cc: Kevin Tian <kevin.tian@intel.com>
 Cc: Liu Yi L <yi.l.liu@intel.com>
-Suggested-by: Kevin Tian <kevin.tian@intel.com>
+Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/vfio/mdev/mdev_core.c    | 21 +++++++++++++++++++++
- drivers/vfio/mdev/mdev_private.h |  1 +
- include/linux/mdev.h             | 22 ++++++++++++++++++++++
- 3 files changed, 44 insertions(+)
+ drivers/vfio/vfio_iommu_type1.c | 43 ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 32 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-index d8f19ba..4d82b36 100644
---- a/drivers/vfio/mdev/mdev_core.c
-+++ b/drivers/vfio/mdev/mdev_core.c
-@@ -391,6 +391,27 @@ int mdev_device_remove(struct device *dev, bool force_remove)
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 3e5b177..496bea6 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -1177,6 +1177,22 @@ static int vfio_bus_type(struct device *dev, void *data)
  	return 0;
  }
  
-+int mdev_set_domain_type(struct device *dev, enum mdev_domain_type type)
++static int mdev_private_domain(struct device *dev, void *data)
 +{
-+	struct mdev_device *mdev = to_mdev_device(dev);
++	enum mdev_domain_type type;
++	enum mdev_domain_type (*fn)(struct device *dev);
 +
-+	if (type == DOMAIN_TYPE_PRIVATE && !iommu_present(&mdev_bus_type))
-+		return -EINVAL;
++	fn = symbol_get(mdev_get_domain_type);
++	if (fn) {
++		type = fn(dev);
++		symbol_put(mdev_get_domain_type);
 +
-+	mdev->domain_type = type;
++		return type != DOMAIN_TYPE_PRIVATE;
++	}
 +
-+	return 0;
++	return -EINVAL;
 +}
-+EXPORT_SYMBOL(mdev_set_domain_type);
 +
-+enum mdev_domain_type mdev_get_domain_type(struct device *dev)
-+{
-+	struct mdev_device *mdev = to_mdev_device(dev);
-+
-+	return mdev->domain_type;
-+}
-+EXPORT_SYMBOL(mdev_get_domain_type);
-+
- static int __init mdev_init(void)
+ static int vfio_iommu_replay(struct vfio_iommu *iommu,
+ 			     struct vfio_domain *domain)
  {
- 	int ret;
-diff --git a/drivers/vfio/mdev/mdev_private.h b/drivers/vfio/mdev/mdev_private.h
-index b5819b7..d47a670 100644
---- a/drivers/vfio/mdev/mdev_private.h
-+++ b/drivers/vfio/mdev/mdev_private.h
-@@ -34,6 +34,7 @@ struct mdev_device {
- 	struct list_head next;
- 	struct kobject *type_kobj;
- 	bool active;
-+	int domain_type;
- };
+@@ -1371,18 +1387,23 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	mdev_bus = symbol_get(mdev_bus_type);
  
- #define to_mdev_device(dev)	container_of(dev, struct mdev_device, dev)
-diff --git a/include/linux/mdev.h b/include/linux/mdev.h
-index b6e048e..5d862b0 100644
---- a/include/linux/mdev.h
-+++ b/include/linux/mdev.h
-@@ -15,6 +15,28 @@
+ 	if (mdev_bus) {
+-		if ((bus == mdev_bus) && !iommu_present(bus)) {
+-			symbol_put(mdev_bus_type);
+-			if (!iommu->external_domain) {
+-				INIT_LIST_HEAD(&domain->group_list);
+-				iommu->external_domain = domain;
+-			} else
+-				kfree(domain);
++		if (bus == mdev_bus) {
++			ret = iommu_group_for_each_dev(iommu_group, NULL,
++						       mdev_private_domain);
++			if (!iommu_present(bus) || ret) {
++				symbol_put(mdev_bus_type);
++				if (!iommu->external_domain) {
++					INIT_LIST_HEAD(&domain->group_list);
++					iommu->external_domain = domain;
++				} else {
++					kfree(domain);
++				}
  
- struct mdev_device;
- 
-+enum mdev_domain_type {
-+	DOMAIN_TYPE_EXTERNAL,	/* Use the external domain and all
-+				 * IOMMU staff controlled by the
-+				 * parent device driver.
-+				 */
-+	DOMAIN_TYPE_INHERITANCE,/* Use the same domain as the parent device. */
-+	DOMAIN_TYPE_PRIVATE,	/* Capable of having a private domain. For an
-+				 * example, the parent device is able to bind
-+				 * a specific PASID for a mediated device and
-+				 * transferring data with the asigned PASID.
-+				 */
-+};
-+
-+/*
-+ * Called by the parent device driver to set the domain type.
-+ * By default, the domain type is set to DOMAIN_TYPE_EXTERNAL.
-+ */
-+int mdev_set_domain_type(struct device *dev, enum mdev_domain_type type);
-+
-+/* Check the domain type. */
-+enum mdev_domain_type mdev_get_domain_type(struct device *dev);
-+
- /**
-  * struct mdev_parent_ops - Structure to be registered for each parent device to
-  * register the device to mdev module.
+-			list_add(&group->next,
+-				 &iommu->external_domain->group_list);
+-			mutex_unlock(&iommu->lock);
+-			return 0;
++				list_add(&group->next,
++					 &iommu->external_domain->group_list);
++				mutex_unlock(&iommu->lock);
++				return 0;
++			}
+ 		}
+ 		symbol_put(mdev_bus_type);
+ 	}
 -- 
 2.7.4
 
