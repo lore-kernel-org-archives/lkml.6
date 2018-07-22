@@ -3,89 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB207C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BF9C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 17:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 632E320874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:56:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 632E320874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C89D20875
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 17:08:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C89D20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730264AbeGVRyJ (ORCPT
+        id S1730234AbeGVSFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 13:54:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60376 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730042AbeGVRyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 13:54:09 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AFC117A7E0;
-        Sun, 22 Jul 2018 16:56:50 +0000 (UTC)
-Received: from redhat.com (ovpn-120-237.rdu2.redhat.com [10.10.120.237])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 61C4679A9;
-        Sun, 22 Jul 2018 16:56:44 +0000 (UTC)
-Date:   Sun, 22 Jul 2018 19:56:43 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wexu@redhat.com, jfreimann@redhat.com, tiwei.bie@intel.com,
-        maxime.coquelin@redhat.com
-Subject: Re: [PATCH net-next V2 0/8] Packed virtqueue support for vhost
-Message-ID: <20180722194843-mutt-send-email-mst@kernel.org>
-References: <1531711691-6769-1-git-send-email-jasowang@redhat.com>
- <20180716113720-mutt-send-email-mst@kernel.org>
- <33f4643f-f226-0389-1f4f-607c289db94e@redhat.com>
- <20180716154102-mutt-send-email-mst@kernel.org>
- <5ba5c927-a0b4-f399-7a88-b90763765142@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ba5c927-a0b4-f399-7a88-b90763765142@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sun, 22 Jul 2018 16:56:50 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sun, 22 Jul 2018 16:56:50 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+        Sun, 22 Jul 2018 14:05:17 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56998 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729893AbeGVSFQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 14:05:16 -0400
+Received: from localhost (unknown [172.58.43.229])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 261CB128F4E9A;
+        Sun, 22 Jul 2018 10:07:56 -0700 (PDT)
+Date:   Sun, 22 Jul 2018 10:07:55 -0700 (PDT)
+Message-Id: <20180722.100755.19840167505550163.davem@davemloft.net>
+To:     fw@strlen.de
+Cc:     cscnull@gmail.com, pablo@netfilter.org, kadlec@blackhole.kfki.hu,
+        johannes.berg@intel.com, Jason@zx2c4.com, ktkhai@virtuozzo.com,
+        lucien.xin@gmail.com, xiyou.wangcong@gmail.com, dsahern@gmail.com,
+        netfilter-devel@vger.kernel.org, tom@quantonium.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netlink: fix memory leak of dump
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180722163925.gdfkndldatsoae6x@breakpoint.cc>
+References: <20180722143354.23722-1-cscnull@gmail.com>
+        <20180722163925.gdfkndldatsoae6x@breakpoint.cc>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 22 Jul 2018 10:07:57 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 08:45:16AM +0800, Jason Wang wrote:
-> > I'm not sure I understand this approach. Packed ring is just an optimization.
-> > What value is there in merging it if it does not help speed?
+From: Florian Westphal <fw@strlen.de>
+Date: Sun, 22 Jul 2018 18:39:25 +0200
+
+> 3. change meaning of ->done() so its always called once ->start()
+>    was invoked (and returned 0), this requires audit of all
+>    places that provide .done to make sure they won't trip.
 > 
-> If you want to support migration from dpdk or vDPA backend.
+> 3) seems to be what Tom intended when he added .start, so probably
+> best to investigate that first.
 
-Migration from dpdk is a mess: if you add new features you
-fix migration from new one but break migration from old one.
-So I'm not too worried until dpdk guys implement one of
-the migration versioning proposals that have been floating
-around for years.
+Hmmm...
 
-I think vDPAs are using split ring right now. They will likely
-switch to packed ring in the future, but it will probably
-take some time before they do.
+Any time ->start() succeeds, we set cb_running to true.
 
-> And we still
-> have the chance to see the performance with virito-net pmd in the future. If
-> this does not make sense for you, I will leave this series until we can get
-> results from virtio-net pmd (or find a way that packed virtqueue
-> outperform).
+From that point forward, ->done() will be called at some point at all
+of the locations that check if cb_running is true and set it to false.
 
-This makes sense to me. If there's a gain that is only
-observed with the pmd driver, I think that's still fine,
-but we do need to see it.
+This may be deferred all the way to socket destruction, but it will
+eventually happens.
 
-> And I will start to post other optimizations on vhost.
-> 
-> Thanks
+Nothing sets cb_running to false without invoking the ->done()
+callback.
 
-Thanks a lot!
-
--- 
-MST
+Just because the individual dump invocations don't call ->done() does
+not mean it will not eventually happen.  The dump callbacks, and thus
+the state data, is live across multiple rounds of recvmsg() calls by
+the user and that is as-designed.
