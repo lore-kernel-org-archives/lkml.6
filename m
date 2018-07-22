@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B058ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E571C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C02420881
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C02420881
+	by mail.kernel.org (Postfix) with ESMTP id 0FF3A20878
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF3A20878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730443AbeGVRrQ (ORCPT
+        id S1730712AbeGVRrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 13:47:16 -0400
-Received: from mout.perfora.net ([74.208.4.197]:39473 "EHLO mout.perfora.net"
+        Sun, 22 Jul 2018 13:47:25 -0400
+Received: from mout.perfora.net ([74.208.4.196]:51809 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729925AbeGVRrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 13:47:15 -0400
+        id S1730084AbeGVRrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 13:47:24 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MOh96-1fcJTe0jl0-00661J; Sun, 22 Jul 2018 18:49:48 +0200
+ 0Lp5Pe-1gAowU1nmu-00essF; Sun, 22 Jul 2018 18:49:58 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 02/28] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
-Date:   Sun, 22 Jul 2018 18:49:10 +0200
-Message-Id: <20180722164936.20581-3-marcel@ziswiler.com>
+Subject: [PATCH 07/28] ARM: tegra: apalis_t30: reorder host1x/hdmi properties
+Date:   Sun, 22 Jul 2018 18:49:15 +0200
+Message-Id: <20180722164936.20581-8-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:udMLPhY5wOSUyT1MpnSFmDqYgBA0dYsaIeG62ifvx5pQsAkZnE1
- KRjzzGB0AGpcDh9PqiH4/cg2sPiozulBRv6w1YGJ4a0FtRpuzmHJrPJFEgh+Uf03IyCeoPa
- oPWetkNy8Lf9BiAVL1VMfMOffdMI/0AQvjl/Ue/6UWknTug6hpsRiYxKxCfEby6uGfoh1vM
- CG4oltfz56M8/WaYOiWVg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:X9HMvVbi6yk=:DjwIkb9s24wvj5VXT/h86m
- VyEOuOCQvu/0nrFc+juX4EfxbiN510ak5Yb1NmP+Z6p/GBeLT9keqKaM79po50WXfTlSlBS3V
- t1oDohcXs0u5+Qqk7XFNmAoiRvirijRwJq4z+TlSVmXp706bLN0LpDJTtOW/J6PEEoCHMWkni
- 3WQMbI2C2dhpuiWXzVdFiPgDhCmtbuwbZrua8w4Oj3RYisL5jtFXHw6xI5ZWR6OGXmzQJjLdJ
- U7AX1omRg8zmBsiXwLryBN8I9CwitO8yx59vPyBGF2MqtgX6lY7RM31uRT+FwRFi6ar6AWhQL
- OJ9ZKe6qinTOqEYTwfhi6gR4ihUf7g0K+7qPHQZ+/BnAQpUJ1m1bN/qrQe0qTvot95bf33yND
- DHeVzwkG610dUlVYzSBH+wjCUtetjNyJj5H42PUU+14UHtRfGmKEakqaDqlBSUlPwIV8lc0XF
- Bh4X+mrg8vrwRa3qlGKZJUpZv6mL34dfxdzVc35Z9KmnaWOfXE9NFVWsbfvrw2+QfooSjj1CL
- Azq33aYsF6kxgvJaONZ7VMdJfxKnU7wTLLd0jy4f85TVK44s6mWMi+O8aUAGL0KJaet5f/5p5
- YmrgICgJSWnzjob5KkLSrHgzZzaYL6scrgmIZiTaTyx0RRds0a6Zi5JvAjKAvgWRO91QPi4pZ
- 2Xk9EVuiCWCStzCVSVwPmvxlCxjDAERI2T4xCO1MTK2Kodj4EHyenRYCykesP4MlY/oU=
+X-Provags-ID: V03:K1:TC7B8qEKxV4GKLBUnuFaG96JJKPVQaM930r2gwloMrnKwB3EMOz
+ YPpnDXN+iI75sNnbz958Jw+78M1w2r5FN16s0TWcqgKwfb9f9CkBiEfJWuUCH4DDZspesd8
+ OI2eF4RV4AUkCbZ0lGD0kldDeypUb/zHeQSe43aqK4d9CBjVclx6tz+Ladcl23obn1DNqRv
+ pWbvTbvOSv9nwR8QDhYCg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3/2A/w5pHpM=:RPIakdc2iVIMLSBMCTuCrg
+ Gfq7WGSLGjwwauOefo2PfMjwjYNxuZksI1Ys12FhvEFC86LORi7vYkublO6OIRy798uZVHf9P
+ P/fRHs26qVZG1GURHuLG1PcuGQM8L0WiqTY0mNU0SIdjYYzDhOP9GR6Fa0DGSy5aNk8d7bk1y
+ hs1Br9AV5SeQmAVdQ6SC1RcUf+llWwNS02/5rHNR7xzM2AkoRARf5vWrNywzy+5IBFeyRZk0U
+ xXJBuHEthcgeymUo7J1OaBMpkXZUfKz+P/Et5mQ47WzrtGY4Ud7H3XUyqOIWWvXJS4rIkGiDs
+ tYqmBozpCdczVRQRWG25MRFBEqMUTv20Zh1qjkoyIm96DJFdWzCFajsgbcCQgJtsh44QqzGam
+ 8i8P3G+eOMAStjxRRsR0jT8P20cnHKGINf+gKST4gICDteYxRa0pI1jKpYfMhn1a8YYkVZ7ka
+ YPLxayQ5Dccf3sfIVX+XMKfR7JFzSJnH4vzS+QLI9UKGJdg1RMCgZ5YYqeAXzXQ05HmVLgliO
+ y1Y0IGzP8UBwe4zpzc18vDoekaLfptKJ1IxyM7hfyrk4vSpsEFzQ2KodTtQdRY1Wy8M6xjP7J
+ sHNkzM1vVp9/BCqzIyaxRJj/YHpNMIwdEgRswaoFVU+BTLV18ipcXW7VepHmm4TYMUvEH21AS
+ 2YgU3aTi8/FDVVFnKkko75WW3pieS+93T9e5ApLAlkELXzNMwqp3SzxAGgAmCNvBhhSg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,38 +61,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Fix MMC1 cmd pin pull-up causing issues on carrier boards without
-external pull-up.
+Reorder Host1x/HDMI properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 23ffe6a3bc2d..e7f3dd52a209 100644
+index a1cc415b3893..d765cac7022a 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -171,14 +171,14 @@
+@@ -46,12 +46,11 @@
  
- 			/* Apalis MMC1 */
- 			sdmmc3_clk_pa6 {
--				nvidia,pins = "sdmmc3_clk_pa6",
--					      "sdmmc3_cmd_pa7";
-+				nvidia,pins = "sdmmc3_clk_pa6";
- 				nvidia,function = "sdmmc3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 			sdmmc3_dat0_pb7 {
--				nvidia,pins = "sdmmc3_dat0_pb7",
-+				nvidia,pins = "sdmmc3_cmd_pa7",
-+					      "sdmmc3_dat0_pb7",
- 					      "sdmmc3_dat1_pb6",
- 					      "sdmmc3_dat2_pb5",
- 					      "sdmmc3_dat3_pb4",
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+-			vdd-supply = <&avdd_hdmi_3v3_reg>;
+-			pll-supply = <&avdd_hdmi_pll_1v8_reg>;
+-
++			nvidia,ddc-i2c-bus = <&hdmiddc>;
+ 			nvidia,hpd-gpio =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-			nvidia,ddc-i2c-bus = <&hdmiddc>;
++			pll-supply = <&avdd_hdmi_pll_1v8_reg>;
++			vdd-supply = <&avdd_hdmi_3v3_reg>;
+ 		};
+ 	};
+ 
 -- 
 2.14.4
 
