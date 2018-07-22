@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F556C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7554ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7FD720858
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8051420854
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:11:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rjtbZi9+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7FD720858
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O21r0WCS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8051420854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387888AbeGVXJX (ORCPT
+        id S2387923AbeGVXJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 19:09:23 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41753 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387780AbeGVXJW (ORCPT
+        Sun, 22 Jul 2018 19:09:26 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50976 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387830AbeGVXJZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 19:09:22 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j5-v6so16020321wrr.8
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 15:11:11 -0700 (PDT)
+        Sun, 22 Jul 2018 19:09:25 -0400
+Received: by mail-wm0-f67.google.com with SMTP id v25-v6so14110244wmc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 15:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PnR8g7TciTlzYEfiSpmMyXlmOgNT7OEGdNmNpXj9P/A=;
-        b=rjtbZi9+KFOKvmtmPDjhHslSKYKPF/7blzqXPfxmt8sdDVujEAuI+LouqNTLs+xKpO
-         KC5K2ehJ/X7mHNK+nhGmtz2tBedoTgBCyO8AgdJuX0yWgZnfgY6Q3AouUJ9OWd0rr4RT
-         orUu4SN4QLABCNaTlUGCFL26bUXE1mSipBStGh+U5erx6HwWKAlHpkfkroMvvvRkpRgP
-         8gB138XPlSaLzxkh1tZrB0LkcuuggWL59ff4ou7G6mG7WxO4DlX+gFze2qp3Irv03oOh
-         WvyaQZsdZGIFrL54SR2Nzpp/IhEBPVgw8cvaz4hYaDZasX2mX7b2LyqI8K/DDWyKqz4e
-         1U0g==
+        bh=xBSWsJtomC9cen8dh0sz8+HU75k8hW8NMfZ46OHYLLM=;
+        b=O21r0WCSotWg5CUNWQtZuqZlTxBoRzz5cUlRxsyU/PHRD2G0HUyAPoSxLOt4MDorV9
+         A827qvQS9hOH0pxetXAt62L2YCWJO7XUWD2n7iyV+Lge6dzejpzNCSC4Xfw1ZE4M0z6j
+         xwnZI4yzMyd4mFCoRkpXDEp/6ydp5ETbkCOyMySepP5zXEHg4PTmywRZaHZ66tHXLARr
+         3gtkwCJ0/F7Nqzk+Mz9ToJ4sjA/5UJ+3fxYP2tK0oJfXrSSPlKpDGv83O+lZh3HjwqBW
+         hcAY0+BjtHsurjAmtNOlwLaLpOSFwpP6eExPpJMEfVBmgRS1C7IP33z10kU44+z6kOQ1
+         JWYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=PnR8g7TciTlzYEfiSpmMyXlmOgNT7OEGdNmNpXj9P/A=;
-        b=rICwiGOK19p5HjU8qhBy8vE5ueslUSjhQdPAyH9iztxZfN+Xj1jsu2oO1czaMQTKDN
-         sIPBGmifCDngUInrSi8jcVTdCgu6+xcSX60+cBCtNNEAThMMvE/luZ1nZYHU0LfRcXH1
-         slZpyuwz3v/ni+lcRsa+GSYD45eC81A79VMOfYBWJT6bja2MEIKKCKgyzQ6+n4JDkez8
-         sy1tGFfJ8E4PhOx1qwkstNcX12jiHz8RsFlK+x0uFPP+FXNGW3MrEcG3NSzLQEGK2GZY
-         sCYeHRsouNCmDwvyOtv08E7S/wCDWLzVVtbIP7uXAkIN3x1Nc5b5vnVAYBU+pD7k0K0P
-         P36Q==
-X-Gm-Message-State: AOUpUlGvGVjZ8XP/ACNm5ohh6sFKgEi6Bv9NTXE3j49v8iGl1PIm8uRw
-        Z55cpWGl8+daxhRi373ktwXsLRCj8wQ=
-X-Google-Smtp-Source: AAOMgpfjsoMEUBOfEUCcwFFxQMC5CuXr2MLdznMyma/I66IH0w4iArSsAq8YCpmWQKR6Wj4OFH7DuA==
-X-Received: by 2002:adf:e0cc:: with SMTP id e12-v6mr6692412wri.199.1532297470163;
-        Sun, 22 Jul 2018 15:11:10 -0700 (PDT)
+        bh=xBSWsJtomC9cen8dh0sz8+HU75k8hW8NMfZ46OHYLLM=;
+        b=qNtIQKqaFIVsO4o+ugcgH6fT+6Gxoca+KQk+KXIprTgSeDNkcv7qiPvS29n+fFT9Y5
+         mDsTVFpkEVKtD9bt50wJ2ne9aaW2TefrfUwlCsMw5CGb+v9SP7ezC6p4CLYXKKhoTioO
+         zQxMDgkfsLQ1Uo3UYG8JCfcfKU0vNnO+ZC1AkqSwKD5MTyr5/cMYS9DTCeVx658fcqV/
+         o/FGLxKYkRJ/ttrH/HgFNcrTA1YqrPvPljzW54lW0SFm0WDDFo659VZfJLiKE/I3vrxM
+         KOyTiBQa+wxCIIsNGuNSuyORD/0U0Ai0FFa6nQf0Hl9GA8az4rtjUVbWrn1WtsKfIlwz
+         swrg==
+X-Gm-Message-State: AOUpUlGSFSDspH6tGback95Cuf/H7SU3H9019fUCsdR9w+wUZ9dtucPL
+        P6uOraHEg0ewMm2b8/yOvEl2DVx0raI=
+X-Google-Smtp-Source: AAOMgpc/UXaWxNKSN/BICcHONt+Kucl443LeFyC2DHmuyyf/JVHL4Tik7U+47J9swrJGSmZJ9gGV4w==
+X-Received: by 2002:a1c:3314:: with SMTP id z20-v6mr5728430wmz.95.1532297472015;
+        Sun, 22 Jul 2018 15:11:12 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id e12-v6sm5870824wrt.29.2018.07.22.15.11.08
+        by smtp.gmail.com with ESMTPSA id e12-v6sm5870824wrt.29.2018.07.22.15.11.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 15:11:09 -0700 (PDT)
+        Sun, 22 Jul 2018 15:11:11 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 14/20] staging:rtl8192u: Remove unused page c Bit Mask definitions - Style
-Date:   Sun, 22 Jul 2018 23:10:29 +0100
-Message-Id: <20180722221035.14453-15-johnfwhitmore@gmail.com>
+Subject: [PATCH 15/20] staging:rtl8192u: Remove unused page d Bit Mask definitions - Style
+Date:   Sun, 22 Jul 2018 23:10:30 +0100
+Message-Id: <20180722221035.14453-16-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180722221035.14453-1-johnfwhitmore@gmail.com>
 References: <20180722221035.14453-1-johnfwhitmore@gmail.com>
@@ -74,192 +74,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unused 'page c' Bit Mask definitions. These definitions will
-fail the checkpatch CamelCase naming test. Rather then renaming, as the
-definitions are unused in code, they have simply been removed.
+Remove the unused 'page d' Bit Mask definitions. These definitions will
+fail the checkpatch CamelCase naming test. Since the definitions are
+unused in code they have been removed, rather then renaming.
 
-The change is a coding style change which should not impact runtime
-code execution.
+This is a coding style change which should not impact runtime code
+execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r819xU_phyreg.h | 163 -----------------------
- 1 file changed, 163 deletions(-)
+ drivers/staging/rtl8192u/r819xU_phyreg.h | 107 -----------------------
+ 1 file changed, 107 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r819xU_phyreg.h b/drivers/staging/rtl8192u/r819xU_phyreg.h
-index af98067c0de0..b0bcef2e73a6 100644
+index b0bcef2e73a6..671fd35297d5 100644
 --- a/drivers/staging/rtl8192u/r819xU_phyreg.h
 +++ b/drivers/staging/rtl8192u/r819xU_phyreg.h
-@@ -123,169 +123,6 @@
+@@ -123,113 +123,6 @@
  /* page-a */
  #define bCCKSideBand				0x10
  
--/* page c */
--#define bNumOfSTF					0x3
--#define bShift_L					0xc0
--#define bGI_TH						0xc
--#define bRxPathA					0x1
--#define bRxPathB					0x2
--#define bRxPathC					0x4
--#define bRxPathD					0x8
--#define bTxPathA					0x1
--#define bTxPathB					0x2
--#define bTxPathC					0x4
--#define bTxPathD					0x8
--#define bTRSSIFreq					0x200
--#define bADCBackoff					0x3000
--#define bDFIRBackoff					0xc000
--#define bTRSSILatchPhase			0x10000
--#define bRxIDCOffset					0xff
--#define bRxQDCOffset					0xff00
--#define bRxDFIRMode				0x1800000
--#define bRxDCNFType				0xe000000
--#define bRXIQImb_A					0x3ff
--#define bRXIQImb_B					0xfc00
--#define bRXIQImb_C					0x3f0000
--#define bRXIQImb_D					0xffc00000
--#define bDC_dc_Notch				0x60000
--#define bRxNBINotch					0x1f000000
--#define bPD_TH						0xf
--#define bPD_TH_Opt2				0xc000
--#define bPWED_TH					0x700
--#define bIfMF_Win_L					0x800
--#define bPD_Option					0x1000
--#define bMF_Win_L					0xe000
--#define bBW_Search_L				0x30000
--#define bwin_enh_L					0xc0000
--#define bBW_TH						0x700000
--#define bED_TH2						0x3800000
--#define bBW_option					0x4000000
--#define bRatio_TH					0x18000000
--#define bWindow_L					0xe0000000
--#define bSBD_Option					0x1
--#define bFrame_TH					0x1c
--#define bFS_Option					0x60
--#define bDC_Slope_check				0x80
--#define bFGuard_Counter_DC_L			0xe00
--#define bFrame_Weight_Short			0x7000
--#define bSub_Tune					0xe00000
--#define bFrame_DC_Length			0xe000000
--#define bSBD_start_offset			0x30000000
--#define bFrame_TH_2				0x7
--#define bFrame_GI2_TH				0x38
--#define bGI2_Sync_en				0x40
--#define bSarch_Short_Early			0x300
--#define bSarch_Short_Late			0xc00
--#define bSarch_GI2_Late				0x70000
--#define bCFOAntSum				0x1
--#define bCFOAcc						0x2
--#define bCFOStartOffset				0xc
--#define bCFOLookBack				0x70
--#define bCFOSumWeight				0x80
--#define bDAGCEnable					0x10000
--#define bTXIQImb_A					0x3ff
--#define bTXIQImb_B					0xfc00
--#define bTXIQImb_C					0x3f0000
--#define bTXIQImb_D					0xffc00000
--#define bTxIDCOffset					0xff
--#define bTxQDCOffset					0xff00
--#define bTxDFIRMode				0x10000
--#define bTxPesudoNoiseOn			0x4000000
--#define bTxPesudoNoise_A			0xff
--#define bTxPesudoNoise_B			0xff00
--#define bTxPesudoNoise_C			0xff0000
--#define bTxPesudoNoise_D			0xff000000
--#define bCCADropOption				0x20000
--#define bCCADropThres				0xfff00000
--#define bEDCCA_H					0xf
--#define bEDCCA_L					0xf0
--#define bLambda_ED               0x300
--#define bRxInitialGain           0x7f
--#define bRxAntDivEn              0x80
--#define bRxAGCAddressForLNA      0x7f00
--#define bRxHighPowerFlow         0x8000
--#define bRxAGCFreezeThres        0xc0000
--#define bRxFreezeStep_AGC1       0x300000
--#define bRxFreezeStep_AGC2       0xc00000
--#define bRxFreezeStep_AGC3       0x3000000
--#define bRxFreezeStep_AGC0       0xc000000
--#define bRxRssi_Cmp_En           0x10000000
--#define bRxQuickAGCEn            0x20000000
--#define bRxAGCFreezeThresMode    0x40000000
--#define bRxOverFlowCheckType     0x80000000
--#define bRxAGCShift              0x7f
--#define bTRSW_Tri_Only           0x80
--#define bPowerThres              0x300
--#define bRxAGCEn                 0x1
--#define bRxAGCTogetherEn         0x2
--#define bRxAGCMin                0x4
--#define bRxHP_Ini                0x7
--#define bRxHP_TRLNA              0x70
--#define bRxHP_RSSI               0x700
--#define bRxHP_BBP1               0x7000
--#define bRxHP_BBP2               0x70000
--#define bRxHP_BBP3               0x700000
--#define bRSSI_H                  0x7f0000     /* the threshold for high power */
--#define bRSSI_Gen                0x7f000000   /* the threshold for ant diversity */
--#define bRxSettle_TRSW           0x7
--#define bRxSettle_LNA            0x38
--#define bRxSettle_RSSI           0x1c0
--#define bRxSettle_BBP            0xe00
--#define bRxSettle_RxHP           0x7000
--#define bRxSettle_AntSW_RSSI     0x38000
--#define bRxSettle_AntSW          0xc0000
--#define bRxProcessTime_DAGC      0x300000
--#define bRxSettle_HSSI           0x400000
--#define bRxProcessTime_BBPPW     0x800000
--#define bRxAntennaPowerShift     0x3000000
--#define bRSSITableSelect         0xc000000
--#define bRxHP_Final              0x7000000
--#define bRxHTSettle_BBP          0x7
--#define bRxHTSettle_HSSI         0x8
--#define bRxHTSettle_RxHP         0x70
--#define bRxHTSettle_BBPPW        0x80
--#define bRxHTSettle_Idle         0x300
--#define bRxHTSettle_Reserved     0x1c00
--#define bRxHTRxHPEn              0x8000
--#define bRxHTAGCFreezeThres      0x30000
--#define bRxHTAGCTogetherEn       0x40000
--#define bRxHTAGCMin              0x80000
--#define bRxHTAGCEn               0x100000
--#define bRxHTDAGCEn              0x200000
--#define bRxHTRxHP_BBP            0x1c00000
--#define bRxHTRxHP_Final          0xe0000000
--#define bRxPWRatioTH             0x3
--#define bRxPWRatioEn             0x4
--#define bRxMFHold                0x3800
--#define bRxPD_Delay_TH1          0x38
--#define bRxPD_Delay_TH2          0x1c0
--#define bRxPD_DC_COUNT_MAX       0x600
--/* #define bRxMF_Hold               0x3800 */
--#define bRxPD_Delay_TH           0x8000
--#define bRxProcess_Delay         0xf0000
--#define bRxSearchrange_GI2_Early 0x700000
--#define bRxFrame_Guard_Counter_L 0x3800000
--#define bRxSGI_Guard_L           0xc000000
--#define bRxSGI_Search_L          0x30000000
--#define bRxSGI_TH                0xc0000000
--#define bDFSCnt0                 0xff
--#define bDFSCnt1                 0xff00
--#define bDFSFlag                 0xf0000
+-/* page d */
+-#define bSTBCEn                  0x4
+-#define bAntennaMapping          0x10
+-#define bNss                     0x20
+-#define bCFOAntSumD              0x200
+-#define bPHYCounterReset         0x8000000
+-#define bCFOReportGet            0x4000000
+-#define bOFDMContinueTx          0x10000000
+-#define bOFDMSingleCarrier       0x20000000
+-#define bOFDMSingleTone          0x40000000
+-/* #define bRxPath1                 0x01
+- * #define bRxPath2                 0x02
+- * #define bRxPath3                 0x04
+- * #define bRxPath4                 0x08
+- * #define bTxPath1                 0x10
+- * #define bTxPath2                 0x20
+- */
+-#define bHTDetect                0x100
+-#define bCFOEn                   0x10000
+-#define bCFOValue                0xfff00000
+-#define bSigTone_Re              0x3f
+-#define bSigTone_Im              0x7f00
+-#define bCounter_CCA             0xffff
+-#define bCounter_ParityFail      0xffff0000
+-#define bCounter_RateIllegal     0xffff
+-#define bCounter_CRC8Fail        0xffff0000
+-#define bCounter_MCSNoSupport    0xffff
+-#define bCounter_FastSync        0xffff
+-#define bShortCFO                0xfff
+-#define bShortCFOTLength         12   /* total */
+-#define bShortCFOFLength         11   /* fraction */
+-#define bLongCFO                 0x7ff
+-#define bLongCFOTLength          11
+-#define bLongCFOFLength          11
+-#define bTailCFO                 0x1fff
+-#define bTailCFOTLength          13
+-#define bTailCFOFLength          12
 -
--#define bMFWeightSum             0x300000
--#define bMinIdxTH                0x7f000000
+-#define bmax_en_pwdB             0xffff
+-#define bCC_power_dB             0xffff0000
+-#define bnoise_pwdB              0xffff
+-#define bPowerMeasTLength        10
+-#define bPowerMeasFLength        3
+-#define bRx_HT_BW                0x1
+-#define bRxSC                    0x6
+-#define bRx_HT                   0x8
 -
--#define bDAFormat                0x40000
+-#define bNB_intf_det_on          0x1
+-#define bIntf_win_len_cfg        0x30
+-#define bNB_Intf_TH_cfg          0x1c0
 -
--#define bTxChEmuEnable           0x01000000
+-#define bRFGain                  0x3f
+-#define bTableSel                0x40
+-#define bTRSW                    0x80
 -
--#define bTRSWIsolation_A         0x7f
--#define bTRSWIsolation_B         0x7f00
--#define bTRSWIsolation_C         0x7f0000
--#define bTRSWIsolation_D         0x7f000000
+-#define bRxSNR_A                 0xff
+-#define bRxSNR_B                 0xff00
+-#define bRxSNR_C                 0xff0000
+-#define bRxSNR_D                 0xff000000
+-#define bSNREVMTLength           8
+-#define bSNREVMFLength           1
 -
--#define bExtLNAGain              0x7c00
+-#define bCSI1st                  0xff
+-#define bCSI2nd                  0xff00
+-#define bRxEVM1st                0xff0000
+-#define bRxEVM2nd                0xff000000
 -
- /* page d */
- #define bSTBCEn                  0x4
- #define bAntennaMapping          0x10
+-#define bSIGEVM                  0xff
+-#define bPWDB                    0xff00
+-#define bSGIEN                   0x10000
+-
+-#define bSFactorQAM1             0xf
+-#define bSFactorQAM2             0xf0
+-#define bSFactorQAM3             0xf00
+-#define bSFactorQAM4             0xf000
+-#define bSFactorQAM5             0xf0000
+-#define bSFactorQAM6             0xf0000
+-#define bSFactorQAM7             0xf00000
+-#define bSFactorQAM8             0xf000000
+-#define bSFactorQAM9             0xf0000000
+-#define bCSIScheme               0x100000
+-
+-#define bNoiseLvlTopSet          0x3
+-#define bChSmooth                0x4
+-#define bChSmoothCfg1            0x38
+-#define bChSmoothCfg2            0x1c0
+-#define bChSmoothCfg3            0xe00
+-#define bChSmoothCfg4            0x7000
+-#define bMRCMode                 0x800000
+-#define bTHEVMCfg                0x7000000
+-
+-#define bLoopFitType             0x1
+-#define bUpdCFO                  0x40
+-#define bUpdCFOOffData           0x80
+-#define bAdvUpdCFO               0x100
+-#define bAdvTimeCtrl             0x800
+-#define bUpdClko                 0x1000
+-#define bFC                      0x6000
+-#define bTrackingMode            0x8000
+-#define bPhCmpEnable             0x10000
+-#define bUpdClkoLTF              0x20000
+-#define bComChCFO                0x40000
+-#define bCSIEstiMode             0x80000
+-#define bAdvUpdEqz               0x100000
+-#define bUChCfg                  0x7000000
+-#define bUpdEqz                  0x8000000
+-
+ /* page e */
+ #define bTxAGCRate18_06			0x7f7f7f7f
+ #define bTxAGCRate54_24			0x7f7f7f7f
 -- 
 2.18.0
 
