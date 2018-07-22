@@ -2,95 +2,90 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBC7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB207C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A23A20874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:52:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A23A20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id 632E320874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:56:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 632E320874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730140AbeGVRrM (ORCPT
+        id S1730264AbeGVRyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 13:47:12 -0400
-Received: from mout.perfora.net ([74.208.4.197]:40457 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729893AbeGVRrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 13:47:11 -0400
-Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
- mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0Lebpg-1gMLWm0cXe-00qO7V; Sun, 22 Jul 2018 18:49:46 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 01/28] ARM: tegra: apalis_t30: enable broken-hpi on emmc
-Date:   Sun, 22 Jul 2018 18:49:09 +0200
-Message-Id: <20180722164936.20581-2-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
-References: <20180722164936.20581-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:WctzPQebzZlNXSrPqqk9YCjhO+3n4SguLjeveHaB+3ymh+X7/B+
- yBajPf1sF3p37wB4q64woCyaQgiQkQ+KJdVl/KYwjo7zNCCSuS7cCwb0KpZQIc/rMcPS/BR
- 0SsyODLDI1ryeWD8CiT28ikGkK856jgITLDJpABvGy8ly+tAF9fM3yk2wsB2xX6LcTgnad3
- PIyztS934XqrYMic3yGyQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:yVWRZHRueuo=:8ACzw3koy5CJAFjoNh+psQ
- JN6NX4Y67kFw/PK+ekTb5l0qBLYXyA23bjwjhQ6hD0WR4gNqHcfGNjE2aGLAUS6yCVyAFgfyY
- 2RffJYkbtWByxvE1tCKJxYKOjBMeqocNnqQTvx0KyBFjKrChcoWNUzC+1Vl3E7ygRyiJAWMni
- 4qWpAhO4jDrLtCfcZP5KO3C73APgp4We/gzM0oUN8hrW0oe7Ns2lGYdy9tKyzjKmcypzeHQ1g
- i8lpUUALJgiUi24GuBid98NQ7zcKM2XXWX8uC5jk4YXYCD9RWBMAWm5YWSgp+aGyh6j5yJZbh
- yQoRhcMjIRQcUBltaJU/IV7BdUM2JuB6lkSPKG1NUxmscv31pVLdQDTjD0JXrL/SGKrGrkBT5
- 4sRDdnFgWRgmwspa9HokYZn8kST6bnH/aHxO4fTmv7dD8BsXmM1EFS/fBDRFAB6GhGE7tPyQQ
- 29g9kLzGZjOxWoOvhjRsOIfBiCY/bMgTF94B+TuOa0dx9fs4ykjW3+grHm05Ghx7u09txhJD3
- OadpvDtTAIVlPWbWqIb9UDqGgd5De5+uy+RcGohDM00rC5wDUlB0kisQkOFTbYdjJr5cOdrMG
- qskPZSeYZmZEXG7BltRTtjLPcAX7zoAAzI8IwiDWUElc9KpiD6LqoW52BCK6zsEdc335Pvogd
- mQn2QKs4RAy5nYYBCa/TwZGS3QqSezAyxvfYsus5ko9UK9k6kLSgXb8vzLKTU5U0oE9E=
+        Sun, 22 Jul 2018 13:54:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60376 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730042AbeGVRyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 13:54:09 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AFC117A7E0;
+        Sun, 22 Jul 2018 16:56:50 +0000 (UTC)
+Received: from redhat.com (ovpn-120-237.rdu2.redhat.com [10.10.120.237])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 61C4679A9;
+        Sun, 22 Jul 2018 16:56:44 +0000 (UTC)
+Date:   Sun, 22 Jul 2018 19:56:43 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wexu@redhat.com, jfreimann@redhat.com, tiwei.bie@intel.com,
+        maxime.coquelin@redhat.com
+Subject: Re: [PATCH net-next V2 0/8] Packed virtqueue support for vhost
+Message-ID: <20180722194843-mutt-send-email-mst@kernel.org>
+References: <1531711691-6769-1-git-send-email-jasowang@redhat.com>
+ <20180716113720-mutt-send-email-mst@kernel.org>
+ <33f4643f-f226-0389-1f4f-607c289db94e@redhat.com>
+ <20180716154102-mutt-send-email-mst@kernel.org>
+ <5ba5c927-a0b4-f399-7a88-b90763765142@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ba5c927-a0b4-f399-7a88-b90763765142@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sun, 22 Jul 2018 16:56:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sun, 22 Jul 2018 16:56:50 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Tue, Jul 17, 2018 at 08:45:16AM +0800, Jason Wang wrote:
+> > I'm not sure I understand this approach. Packed ring is just an optimization.
+> > What value is there in merging it if it does not help speed?
+> 
+> If you want to support migration from dpdk or vDPA backend.
 
-Avoid eMMC issues by specifying broken-hpi.
+Migration from dpdk is a mess: if you add new features you
+fix migration from new one but break migration from old one.
+So I'm not too worried until dpdk guys implement one of
+the migration versioning proposals that have been floating
+around for years.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+I think vDPAs are using split ring right now. They will likely
+switch to packed ring in the future, but it will probably
+take some time before they do.
 
----
+> And we still
+> have the chance to see the performance with virito-net pmd in the future. If
+> this does not make sense for you, I will leave this series until we can get
+> results from virtio-net pmd (or find a way that packed virtqueue
+> outperform).
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This makes sense to me. If there's a gain that is only
+observed with the pmd driver, I think that's still fine,
+but we do need to see it.
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 2f807d40c1b7..23ffe6a3bc2d 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -699,8 +699,16 @@
- 	/* eMMC */
- 	sdhci@78000600 {
- 		status = "okay";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		bus-width = <8>;
- 		non-removable;
-+
-+		emmc: emmc@0 {
-+			reg = <0>;
-+			compatible = "mmc-card";
-+			broken-hpi;
-+		};
- 	};
- 
- 	clocks {
+> And I will start to post other optimizations on vhost.
+> 
+> Thanks
+
+Thanks a lot!
+
 -- 
-2.14.4
-
+MST
