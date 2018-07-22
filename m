@@ -6,37 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC0FC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 21:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6ACECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 21:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E3F20850
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 21:20:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E3F20850
+	by mail.kernel.org (Postfix) with ESMTP id 226DC20850
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 21:20:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226DC20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387920AbeGVWSd (ORCPT
+        id S2387905AbeGVWSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 22 Jul 2018 18:18:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38830 "EHLO mx1.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:38772 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387797AbeGVWS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387732AbeGVWS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 22 Jul 2018 18:18:26 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 02F20AFE1;
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8540BADC0;
         Sun, 22 Jul 2018 21:20:24 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-mips@linux-mips.org
 Cc:     Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
         James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Ionela Voinescu <ionela.voinescu@imgtec.com>,
+        Govindraj Raja <Govindraj.Raja@imgtec.com>,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Subject: [PATCH 14/15] spi: img-spfi: Finish every transfer cleanly
-Date:   Sun, 22 Jul 2018 23:20:09 +0200
-Message-Id: <20180722212010.3979-15-afaerber@suse.de>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 15/15] clk: pistachio: Fix wrong SDHost card speed
+Date:   Sun, 22 Jul 2018 23:20:10 +0200
+Message-Id: <20180722212010.3979-16-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180722212010.3979-1-afaerber@suse.de>
 References: <20180722212010.3979-1-afaerber@suse.de>
@@ -48,126 +52,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ionela Voinescu <ionela.voinescu@imgtec.com>
+From: Govindraj Raja <Govindraj.Raja@imgtec.com>
 
-Before this change, the interrupt status bit that signaled
-the end of a transfer was cleared in the wait_all_done
-function. That functionality triggered issues for DMA
-duplex transactions where the wait function was called
-twice, in both the TX and RX callbacks.
+The SDHost currently clocks the card 4x slower than it
+should do, because there is a fixed divide by 4 in the
+sdhost wrapper that is not present in the clock tree.
+To model this, add a fixed divide by 4 clock node in
+the SDHost clock path.
 
-In order to fix the issue, clear all interrupt data bits
-at the end of a PIO transfer or at the end of both TX and RX
-duplex transfers, if the transfer is not a pending transfer
-(command waiting for data). After that, the status register
-is checked for new incoming data or new data requests to be
-signaled. If SPFI finished cleanly, no new interrupt data
-bits should be set.
+This will ensure the right clock frequency is selected when
+the mmc driver tries to configure frequency on card insert.
 
-Signed-off-by: Ionela Voinescu <ionela.voinescu@imgtec.com>
+Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- drivers/spi/spi-img-spfi.c | 49 +++++++++++++++++++++++++++++++++-------------
- 1 file changed, 35 insertions(+), 14 deletions(-)
+ drivers/clk/pistachio/clk-pistachio.c     | 3 ++-
+ include/dt-bindings/clock/pistachio-clk.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-img-spfi.c b/drivers/spi/spi-img-spfi.c
-index 8ad6c75d0af5..a1244234daa5 100644
---- a/drivers/spi/spi-img-spfi.c
-+++ b/drivers/spi/spi-img-spfi.c
-@@ -83,6 +83,14 @@
- #define SPFI_INTERRUPT_SDE			BIT(1)
- #define SPFI_INTERRUPT_SDTRIG			BIT(0)
+diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
+index c4ceb5eaf46c..1c968d9a6e17 100644
+--- a/drivers/clk/pistachio/clk-pistachio.c
++++ b/drivers/clk/pistachio/clk-pistachio.c
+@@ -44,7 +44,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
+ 	GATE(CLK_AUX_ADC_INTERNAL, "aux_adc_internal", "sys_internal_div",
+ 	     0x104, 22),
+ 	GATE(CLK_AUX_ADC, "aux_adc", "aux_adc_div", 0x104, 23),
+-	GATE(CLK_SD_HOST, "sd_host", "sd_host_div", 0x104, 24),
++	GATE(CLK_SD_HOST, "sd_host", "sd_host_div4", 0x104, 24),
+ 	GATE(CLK_BT, "bt", "bt_div", 0x104, 25),
+ 	GATE(CLK_BT_DIV4, "bt_div4", "bt_div4_div", 0x104, 26),
+ 	GATE(CLK_BT_DIV8, "bt_div8", "bt_div8_div", 0x104, 27),
+@@ -54,6 +54,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
+ static struct pistachio_fixed_factor pistachio_ffs[] __initdata = {
+ 	FIXED_FACTOR(CLK_WIFI_DIV4, "wifi_div4", "wifi_pll", 4),
+ 	FIXED_FACTOR(CLK_WIFI_DIV8, "wifi_div8", "wifi_pll", 8),
++	FIXED_FACTOR(CLK_SDHOST_DIV4, "sd_host_div4", "sd_host_div", 4),
+ };
  
-+#define SPFI_INTERRUPT_DATA_BITS		(SPFI_INTERRUPT_SDHF |\
-+						SPFI_INTERRUPT_SDFUL |\
-+						SPFI_INTERRUPT_GDEX32BIT |\
-+						SPFI_INTERRUPT_GDHF |\
-+						SPFI_INTERRUPT_GDFUL |\
-+						SPFI_INTERRUPT_ALLDONETRIG |\
-+						SPFI_INTERRUPT_GDEX8BIT)
-+
- /*
-  * There are four parallel FIFOs of 16 bytes each.  The word buffer
-  * (*_32BIT_VALID_DATA) accesses all four FIFOs at once, resulting in an
-@@ -144,6 +152,23 @@ static inline void spfi_reset(struct img_spfi *spfi)
- 	spfi_writel(spfi, 0, SPFI_CONTROL);
- }
+ static struct pistachio_div pistachio_divs[] __initdata = {
+diff --git a/include/dt-bindings/clock/pistachio-clk.h b/include/dt-bindings/clock/pistachio-clk.h
+index 039f83facb68..77b92aed241d 100644
+--- a/include/dt-bindings/clock/pistachio-clk.h
++++ b/include/dt-bindings/clock/pistachio-clk.h
+@@ -21,6 +21,7 @@
+ /* Fixed-factor clocks */
+ #define CLK_WIFI_DIV4			16
+ #define CLK_WIFI_DIV8			17
++#define CLK_SDHOST_DIV4			18
  
-+static inline void spfi_finish(struct img_spfi *spfi)
-+{
-+	if (!(spfi->complete))
-+		return;
-+
-+	/* Clear data bits as all transfers(TX and RX) have finished */
-+	spfi_writel(spfi, SPFI_INTERRUPT_DATA_BITS, SPFI_INTERRUPT_CLEAR);
-+	if (spfi_readl(spfi, SPFI_INTERRUPT_STATUS) & SPFI_INTERRUPT_DATA_BITS) {
-+		dev_err(spfi->dev, "SPFI did not finish transfer cleanly.\n");
-+		spfi_reset(spfi);
-+	}
-+	/* Disable SPFI for it not to interfere with pending transactions */
-+	spfi_writel(spfi,
-+		    spfi_readl(spfi, SPFI_CONTROL) & ~SPFI_CONTROL_SPFI_EN,
-+		    SPFI_CONTROL);
-+}
-+
- static int spfi_wait_all_done(struct img_spfi *spfi)
- {
- 	unsigned long timeout = jiffies + msecs_to_jiffies(50);
-@@ -152,19 +177,9 @@ static int spfi_wait_all_done(struct img_spfi *spfi)
- 		return 0;
- 
- 	while (time_before(jiffies, timeout)) {
--		u32 status = spfi_readl(spfi, SPFI_INTERRUPT_STATUS);
--
--		if (status & SPFI_INTERRUPT_ALLDONETRIG) {
--			spfi_writel(spfi, SPFI_INTERRUPT_ALLDONETRIG,
--				    SPFI_INTERRUPT_CLEAR);
--			/*
--			 * Disable SPFI for it not to interfere with
--			 * pending transactions
--			 */
--			spfi_writel(spfi, spfi_readl(spfi, SPFI_CONTROL)
--			& ~SPFI_CONTROL_SPFI_EN, SPFI_CONTROL);
-+		if (spfi_readl(spfi, SPFI_INTERRUPT_STATUS) &
-+		    SPFI_INTERRUPT_ALLDONETRIG)
- 			return 0;
--		}
- 		cpu_relax();
- 	}
- 
-@@ -296,6 +311,8 @@ static int img_spfi_start_pio(struct spi_master *master,
- 	}
- 
- 	ret = spfi_wait_all_done(spfi);
-+	spfi_finish(spfi);
-+
- 	if (ret < 0)
- 		return ret;
- 
-@@ -311,8 +328,10 @@ static void img_spfi_dma_rx_cb(void *data)
- 
- 	spin_lock_irqsave(&spfi->lock, flags);
- 	spfi->rx_dma_busy = false;
--	if (!spfi->tx_dma_busy)
-+	if (!spfi->tx_dma_busy) {
-+		spfi_finish(spfi);
- 		spi_finalize_current_transfer(spfi->master);
-+	}
- 	spin_unlock_irqrestore(&spfi->lock, flags);
- }
- 
-@@ -325,8 +344,10 @@ static void img_spfi_dma_tx_cb(void *data)
- 
- 	spin_lock_irqsave(&spfi->lock, flags);
- 	spfi->tx_dma_busy = false;
--	if (!spfi->rx_dma_busy)
-+	if (!spfi->rx_dma_busy) {
-+		spfi_finish(spfi);
- 		spi_finalize_current_transfer(spfi->master);
-+	}
- 	spin_unlock_irqrestore(&spfi->lock, flags);
- }
- 
+ /* Gate clocks */
+ #define CLK_MIPS			32
 -- 
 2.16.4
 
