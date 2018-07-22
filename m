@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D51CBECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 10:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 745D9C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 10:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 894C620874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 10:33:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 894C620874
+	by mail.kernel.org (Postfix) with ESMTP id 1308420874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 10:36:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1308420874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbeGVL2w (ORCPT
+        id S1728244AbeGVLb6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 07:28:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60145 "EHLO mail.bootlin.com"
+        Sun, 22 Jul 2018 07:31:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60249 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727986AbeGVL2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 07:28:51 -0400
+        id S1727943AbeGVLb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 07:31:58 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A0E42207B4; Sun, 22 Jul 2018 12:32:35 +0200 (CEST)
+        id 3A814207B4; Sun, 22 Jul 2018 12:35:40 +0200 (CEST)
 Received: from bbrezillon (unknown [37.173.49.123])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8A84920717;
-        Sun, 22 Jul 2018 12:32:33 +0200 (CEST)
-Date:   Sun, 22 Jul 2018 12:32:31 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8C43820717;
+        Sun, 22 Jul 2018 12:35:37 +0200 (CEST)
+Date:   Sun, 22 Jul 2018 12:35:33 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
@@ -55,12 +55,12 @@ Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 34/35] mtd: rawnand: allocate model parameter
- dynamically
-Message-ID: <20180722123231.1cde7180@bbrezillon>
-In-Reply-To: <20180720151527.16038-35-miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v4 35/35] mtd: rawnand: allocate dynamically ONFI
+ parameters during detection
+Message-ID: <20180722123533.4966bb36@bbrezillon>
+In-Reply-To: <20180720151527.16038-36-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
-        <20180720151527.16038-35-miquel.raynal@bootlin.com>
+        <20180720151527.16038-36-miquel.raynal@bootlin.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -70,156 +70,224 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 17:15:26 +0200
+On Fri, 20 Jul 2018 17:15:27 +0200
 Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-> Thanks to the migration of all drivers to use nand_scan() and the
-> related nand_controller_ops, we can now allocate data during the
-> detection phase. Let's do it first for the NAND model parameter which
-> is allocated in nand_detect().
+> Now that it is possible to do dynamic allocations during the
+> identification phase, convert the onfi_params structure (which is only
+> needed with ONFI compliant chips) into a pointer that will be allocated
+> only if needed.
 > 
 > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  drivers/mtd/nand/raw/nand_base.c    | 54 +++++++++++++++++++++++--------------
+>  drivers/mtd/nand/raw/nand_micron.c  |  6 ++---
+>  drivers/mtd/nand/raw/nand_timings.c | 12 ++++-----
+>  include/linux/mtd/rawnand.h         |  6 ++---
+>  4 files changed, 46 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index 8645f655e5b0..ed9e2f1578e6 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -5151,6 +5151,8 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  {
+>  	struct mtd_info *mtd = nand_to_mtd(chip);
+>  	struct nand_onfi_params *p;
+> +	struct onfi_params *onfi;
+> +	int onfi_version = 0;
+>  	char id[4];
+>  	int i, ret, val;
+>  
+> @@ -5206,21 +5208,19 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  	/* Check version */
+>  	val = le16_to_cpu(p->revision);
+>  	if (val & ONFI_VERSION_2_3)
+> -		chip->parameters.onfi.version = 23;
+> +		onfi_version = 23;
+>  	else if (val & ONFI_VERSION_2_2)
+> -		chip->parameters.onfi.version = 22;
+> +		onfi_version = 22;
+>  	else if (val & ONFI_VERSION_2_1)
+> -		chip->parameters.onfi.version = 21;
+> +		onfi_version = 21;
+>  	else if (val & ONFI_VERSION_2_0)
+> -		chip->parameters.onfi.version = 20;
+> +		onfi_version = 20;
+>  	else if (val & ONFI_VERSION_1_0)
+> -		chip->parameters.onfi.version = 10;
+> +		onfi_version = 10;
+>  
+> -	if (!chip->parameters.onfi.version) {
+> +	if (!onfi_version) {
+>  		pr_info("unsupported ONFI version: %d\n", val);
+>  		goto free_onfi_param_page;
+> -	} else {
+> -		ret = 1;
+>  	}
+>  
+>  	sanitize_string(p->manufacturer, sizeof(p->manufacturer));
+> @@ -5257,7 +5257,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  	if (p->ecc_bits != 0xff) {
+>  		chip->ecc_strength_ds = p->ecc_bits;
+>  		chip->ecc_step_ds = 512;
+> -	} else if (chip->parameters.onfi.version >= 21 &&
+> +	} else if (onfi_version >= 21 &&
+>  		(le16_to_cpu(p->features) & ONFI_FEATURE_EXT_PARAM_PAGE)) {
+>  
+>  		/*
+> @@ -5284,19 +5284,33 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  		bitmap_set(chip->parameters.set_feature_list,
+>  			   ONFI_FEATURE_ADDR_TIMING_MODE, 1);
+>  	}
+> -	chip->parameters.onfi.tPROG = le16_to_cpu(p->t_prog);
+> -	chip->parameters.onfi.tBERS = le16_to_cpu(p->t_bers);
+> -	chip->parameters.onfi.tR = le16_to_cpu(p->t_r);
+> -	chip->parameters.onfi.tCCS = le16_to_cpu(p->t_ccs);
+> -	chip->parameters.onfi.async_timing_mode =
+> -		le16_to_cpu(p->async_timing_mode);
+> -	chip->parameters.onfi.vendor_revision =
+> -		le16_to_cpu(p->vendor_revision);
+> -	memcpy(chip->parameters.onfi.vendor, p->vendor,
+> -	       sizeof(p->vendor));
+>  
+> +	onfi = kzalloc(sizeof(*onfi), GFP_KERNEL);
+> +	if (!onfi) {
+> +		ret = -ENOMEM;
+> +		goto free_model;
+> +	}
+> +
+> +	onfi->version = onfi_version;
+> +	onfi->tPROG = le16_to_cpu(p->t_prog);
+> +	onfi->tBERS = le16_to_cpu(p->t_bers);
+> +	onfi->tR = le16_to_cpu(p->t_r);
+> +	onfi->tCCS = le16_to_cpu(p->t_ccs);
+> +	onfi->async_timing_mode = le16_to_cpu(p->async_timing_mode);
+> +	onfi->vendor_revision = le16_to_cpu(p->vendor_revision);
+> +	memcpy(onfi->vendor, p->vendor, sizeof(p->vendor));
+> +	chip->parameters.onfi = onfi;
+> +
+> +	/* Identification done, free the full ONFI parameter page and exit */
+> +	kfree(p);
+> +
+> +	return 1;
+> +
+> +free_model:
+> +	kfree(chip->parameters.model);
+>  free_onfi_param_page:
+>  	kfree(p);
+> +
+>  	return ret;
+>  }
+>  
+> @@ -5693,7 +5707,6 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
+>  		}
+>  	}
+>  
+> -	chip->parameters.onfi.version = 0;
+>  	if (!type->name || !type->pagesize) {
+>  		/* Check if the chip is ONFI compliant */
+>  		ret = nand_flash_detect_onfi(chip);
+> @@ -6039,6 +6052,7 @@ static int nand_scan_ident(struct mtd_info *mtd, int maxchips,
+>  static void nand_scan_ident_cleanup(struct nand_chip *chip)
+>  {
+>  	kfree(chip->parameters.model);
+> +	kfree(chip->parameters.onfi);
+>  }
+>  
+>  static int nand_set_ecc_soft_ops(struct mtd_info *mtd)
+> diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
+> index 656947d91841..8466a1740b3b 100644
+> --- a/drivers/mtd/nand/raw/nand_micron.c
+> +++ b/drivers/mtd/nand/raw/nand_micron.c
+> @@ -88,9 +88,9 @@ static int micron_nand_setup_read_retry(struct mtd_info *mtd, int retry_mode)
+>  static int micron_nand_onfi_init(struct nand_chip *chip)
+>  {
+>  	struct nand_parameters *p = &chip->parameters;
+> -	struct nand_onfi_vendor_micron *micron = (void *)p->onfi.vendor;
+> +	struct nand_onfi_vendor_micron *micron = (void *)p->onfi->vendor;
+>  
+> -	if (chip->parameters.onfi.version && p->onfi.vendor_revision) {
+> +	if (p->onfi && p->onfi->vendor_revision) {
+
+I think p->onfi != NULL guarantees that p->onfi->vendor_revision != 0.
+if (p->onfi) should be enough.
+
+Looks good otherwise.
 
 Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-> ---
->  drivers/mtd/nand/raw/nand_base.c | 52 +++++++++++++++++++++++++++++++---------
->  include/linux/mtd/rawnand.h      |  2 +-
->  2 files changed, 42 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index da99232702a4..8645f655e5b0 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5225,8 +5225,11 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  
->  	sanitize_string(p->manufacturer, sizeof(p->manufacturer));
->  	sanitize_string(p->model, sizeof(p->model));
-> -	strncpy(chip->parameters.model, p->model,
-> -		sizeof(chip->parameters.model) - 1);
-> +	chip->parameters.model = kstrdup(p->model, GFP_KERNEL);
-> +	if (!chip->parameters.model) {
-> +		ret = -ENOMEM;
-> +		goto free_onfi_param_page;
-> +	}
->  
->  	mtd->writesize = le32_to_cpu(p->byte_per_page);
->  
-> @@ -5356,8 +5359,11 @@ static int nand_flash_detect_jedec(struct nand_chip *chip)
->  
->  	sanitize_string(p->manufacturer, sizeof(p->manufacturer));
->  	sanitize_string(p->model, sizeof(p->model));
-> -	strncpy(chip->parameters.model, p->model,
-> -		sizeof(chip->parameters.model) - 1);
-> +	chip->parameters.model = kstrdup(p->model, GFP_KERNEL);
-> +	if (!chip->parameters.model) {
-> +		ret = -ENOMEM;
-> +		goto free_jedec_param_page;
-> +	}
->  
->  	mtd->writesize = le32_to_cpu(p->byte_per_page);
->  
-> @@ -5546,8 +5552,9 @@ static bool find_full_id_nand(struct nand_chip *chip,
->  		chip->onfi_timing_mode_default =
->  					type->onfi_timing_mode_default;
->  
-> -		strncpy(chip->parameters.model, type->name,
-> -			sizeof(chip->parameters.model) - 1);
-> +		chip->parameters.model = kstrdup(type->name, GFP_KERNEL);
-> +		if (!chip->parameters.model)
-> +			return false;
->  
->  		return true;
+>  		chip->read_retries = micron->read_retry_options;
+>  		chip->setup_read_retry = micron_nand_setup_read_retry;
 >  	}
-> @@ -5706,8 +5713,9 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
->  	if (!type->name)
->  		return -ENODEV;
+> @@ -382,7 +382,7 @@ static int micron_supports_on_die_ecc(struct nand_chip *chip)
+>  	u8 id[5];
+>  	int ret;
 >  
-> -	strncpy(chip->parameters.model, type->name,
-> -		sizeof(chip->parameters.model) - 1);
-> +	chip->parameters.model = kstrdup(type->name, GFP_KERNEL);
-> +	if (!chip->parameters.model)
-> +		return -ENOMEM;
+> -	if (!chip->parameters.onfi.version)
+> +	if (!chip->parameters.onfi)
+>  		return MICRON_ON_DIE_UNSUPPORTED;
 >  
->  	chip->chipsize = (uint64_t)type->chipsize << 20;
->  
-> @@ -5737,7 +5745,9 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
->  			mtd->name);
->  		pr_warn("bus width %d instead of %d bits\n", busw ? 16 : 8,
->  			(chip->options & NAND_BUSWIDTH_16) ? 16 : 8);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +
-> +		goto free_detect_allocation;
->  	}
->  
->  	nand_decode_bbm_options(chip);
-> @@ -5774,6 +5784,11 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
->  		(int)(chip->chipsize >> 20), nand_is_slc(chip) ? "SLC" : "MLC",
->  		mtd->erasesize >> 10, mtd->writesize, mtd->oobsize);
->  	return 0;
-> +
-> +free_detect_allocation:
-> +	kfree(chip->parameters.model);
-> +
-> +	return ret;
->  }
->  
->  static const char * const nand_ecc_modes[] = {
-> @@ -6021,6 +6036,11 @@ static int nand_scan_ident(struct mtd_info *mtd, int maxchips,
->  	return 0;
->  }
->  
-> +static void nand_scan_ident_cleanup(struct nand_chip *chip)
-> +{
-> +	kfree(chip->parameters.model);
-> +}
-> +
->  static int nand_set_ecc_soft_ops(struct mtd_info *mtd)
+>  	if (chip->bits_per_cell != 1)
+> diff --git a/drivers/mtd/nand/raw/nand_timings.c b/drivers/mtd/nand/raw/nand_timings.c
+> index 9bb599106a31..ebc7b5f76f77 100644
+> --- a/drivers/mtd/nand/raw/nand_timings.c
+> +++ b/drivers/mtd/nand/raw/nand_timings.c
+> @@ -294,6 +294,7 @@ int onfi_fill_data_interface(struct nand_chip *chip,
+>  			     int timing_mode)
 >  {
->  	struct nand_chip *chip = mtd_to_nand(mtd);
-> @@ -6764,11 +6784,18 @@ int nand_scan_with_ids(struct mtd_info *mtd, int maxchips,
+>  	struct nand_data_interface *iface = &chip->data_interface;
+> +	struct onfi_params *onfi = chip->parameters.onfi;
 >  
->  	ret = nand_attach(chip);
->  	if (ret)
-> -		return ret;
-> +		goto cleanup_ident;
+>  	if (type != NAND_SDR_IFACE)
+>  		return -EINVAL;
+> @@ -308,17 +309,16 @@ int onfi_fill_data_interface(struct nand_chip *chip,
+>  	 * tPROG, tBERS, tR and tCCS.
+>  	 * These information are part of the ONFI parameter page.
+>  	 */
+> -	if (chip->parameters.onfi.version) {
+> -		struct nand_parameters *params = &chip->parameters;
+> +	if (onfi) {
+>  		struct nand_sdr_timings *timings = &iface->timings.sdr;
 >  
->  	ret = nand_scan_tail(mtd);
->  	if (ret)
-> -		nand_detach(chip);
-> +		goto detach_chip;
-> +
-> +	return 0;
-> +
-> +detach_chip:
-> +	nand_detach(chip);
-> +cleanup_ident:
-> +	nand_scan_ident_cleanup(chip);
+>  		/* microseconds -> picoseconds */
+> -		timings->tPROG_max = 1000000ULL * params->onfi.tPROG;
+> -		timings->tBERS_max = 1000000ULL * params->onfi.tBERS;
+> -		timings->tR_max = 1000000ULL * params->onfi.tR;
+> +		timings->tPROG_max = 1000000ULL * onfi->tPROG;
+> +		timings->tBERS_max = 1000000ULL * onfi->tBERS;
+> +		timings->tR_max = 1000000ULL * onfi->tR;
 >  
->  	return ret;
->  }
-> @@ -6800,6 +6827,9 @@ void nand_cleanup(struct nand_chip *chip)
->  
->  	/* Free controller specific allocations after chip identification */
->  	nand_detach(chip);
-> +
-> +	/* Free identification phase allocations */
-> +	nand_scan_ident_cleanup(chip);
->  }
->  
->  EXPORT_SYMBOL_GPL(nand_cleanup);
+>  		/* nanoseconds -> picoseconds */
+> -		timings->tCCS_min = 1000UL * params->onfi.tCCS;
+> +		timings->tCCS_min = 1000UL * onfi->tCCS;
+>  	} else {
+>  		struct nand_sdr_timings *timings = &iface->timings.sdr;
+>  		/*
 > diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index a928771a7ae4..5723d940a47d 100644
+> index 5723d940a47d..8074cbd4e3fe 100644
 > --- a/include/linux/mtd/rawnand.h
 > +++ b/include/linux/mtd/rawnand.h
-> @@ -482,7 +482,7 @@ struct onfi_params {
->   */
->  struct nand_parameters {
->  	/* Generic parameters */
-> -	char model[100];
-> +	const char *model;
->  	bool supports_set_get_features;
->  	DECLARE_BITMAP(set_feature_list, ONFI_FEATURE_NUMBER);
+> @@ -488,7 +488,7 @@ struct nand_parameters {
 >  	DECLARE_BITMAP(get_feature_list, ONFI_FEATURE_NUMBER);
+>  
+>  	/* ONFI parameters */
+> -	struct onfi_params onfi;
+> +	struct onfi_params *onfi;
+>  };
+>  
+>  /* The maximum expected count of bytes in the NAND ID sequence */
+> @@ -1618,10 +1618,10 @@ struct platform_nand_data {
+>  /* return the supported asynchronous timing mode. */
+>  static inline int onfi_get_async_timing_mode(struct nand_chip *chip)
+>  {
+> -	if (!chip->parameters.onfi.version)
+> +	if (!chip->parameters.onfi)
+>  		return ONFI_TIMING_MODE_UNKNOWN;
+>  
+> -	return chip->parameters.onfi.async_timing_mode;
+> +	return chip->parameters.onfi->async_timing_mode;
+>  }
+>  
+>  int onfi_fill_data_interface(struct nand_chip *chip,
 
