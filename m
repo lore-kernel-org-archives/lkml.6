@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02349ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 09:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EBEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 09:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A4D20875
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 09:25:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A4D20875
+	by mail.kernel.org (Postfix) with ESMTP id 4E51520858
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 09:26:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E51520858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbeGVKVZ (ORCPT
+        id S1728544AbeGVKWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 06:21:25 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:33049 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728201AbeGVKVY (ORCPT
+        Sun, 22 Jul 2018 06:22:15 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:35711 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728398AbeGVKWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 06:21:24 -0400
-Received: by mail-ua0-f195.google.com with SMTP id i4-v6so9988408uak.0;
-        Sun, 22 Jul 2018 02:25:20 -0700 (PDT)
+        Sun, 22 Jul 2018 06:22:15 -0400
+Received: by mail-vk0-f67.google.com with SMTP id p12-v6so7945267vkf.2;
+        Sun, 22 Jul 2018 02:26:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AsDdYy7bToY04Pp+kz+hteGQ7EENWhfgLjBgXAW4FeM=;
-        b=UPKph+WmRX21VlbHKKWZDV8LIj8ZayepgJSXm0dA6y8wXNIqteA7HCCZfCVOv+wuWM
-         PSSUXT/pWWo5EzzczfYULiQ3DetcAkWJzhCDYwCTPr8whKgW6bW2QCiWtWoLSuqXnqiZ
-         MALBD6Xk8c4PuKtKRMWWx/cDYJb5pCQh+jvXN7LKtDH7PXqxwKcMSPFMhHcFtV1BrPFf
-         iad32dAy8cXHRHB8+PxOWNKdQaR33C0g08a/TTnvw9nl/k7ze+bPZREwmTENKe8Xo2Dl
-         EVmkGyxiVaflaOK4X3bAuS/3d+cgARY0wt1S/t3wOqeNsiW7sVgFnSWaBnR1ZYnGSDb/
-         AoVg==
-X-Gm-Message-State: AOUpUlGytOKiSNi7Ps6T3z/8ZMLwSe9IfhXklX58BaSou38TnzkmsKOw
-        o1I+ek3t7Qttn8eNMtM6EoveJvJwXvxjtMu1pMI=
-X-Google-Smtp-Source: AAOMgpchODGocRvMYHa3zOaDsgzteXNMkdPazxQayOGhaycw5u7WMW+XfpaIWpCZ2XoMl+q2AeXgY61l4zgcM9rg60w=
-X-Received: by 2002:a9f:37c8:: with SMTP id q66-v6mr5776156uaq.180.1532251519755;
- Sun, 22 Jul 2018 02:25:19 -0700 (PDT)
+        bh=LFTb19kZR4E3t+QGqDRIhZKMW1Hv0QDgz1JujwutnXc=;
+        b=qTR6fqUDeuZcekfRDhYfUxbLqrsgYWfN8VvUvYX8fIL1kKKQPp5MFQ+yFmG9KgbcFe
+         1bqEtCWhdYWzDj9gpHcUrS/3p7qrenhdtD3Gq3xSd9xZuB1MD4W9TOIAo9oyty0Lags+
+         PluHk9wXuzmLY0S1sSF5DFjwymTSdijX1pyEFXFtQPYYeTR64zkyOUm29ic4hRh3db3P
+         nKjkTAIqBvt9oToMFdtaQBQjChEZhzqZALujQ9DF6YYM+TG6nuSPJIa7jyhB5pCmfhlU
+         9qXp0n7G4yusw56G6UNwhSDGnvGSQxwEOhaTC0iywOMG+8ji3QPyLAFfOSuVsmJRTnj3
+         hYbA==
+X-Gm-Message-State: AOUpUlE/AArh1r5d4qzEhZGBUWN7E3h6lAkAweaw4R0jAM1UwYZJJTLv
+        XW9c05y9bX897nrcfm1a6UGrNUlG3tXC8dZ0VzI=
+X-Google-Smtp-Source: AAOMgpfVozN1RLKEy7HdT3yyIRpIscXCycusGtA2afcQQ0xQfpWVYapoeQuAOUtmHGO34kHAJiypusADjw8W/7Rw8Zw=
+X-Received: by 2002:a1f:9cc4:: with SMTP id f187-v6mr5041326vke.87.1532251570847;
+ Sun, 22 Jul 2018 02:26:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <1cdcd8e1-b12c-31cb-1188-c062dae3e461@infradead.org>
-In-Reply-To: <1cdcd8e1-b12c-31cb-1188-c062dae3e461@infradead.org>
+References: <b4146df6-93ef-5f4d-9302-2040895d62b0@infradead.org>
+In-Reply-To: <b4146df6-93ef-5f4d-9302-2040895d62b0@infradead.org>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 22 Jul 2018 11:25:07 +0200
-Message-ID: <CAMuHMdVwY0b9S3j2MnuC59vYOuV=LXtQwnhevq227r+mec491Q@mail.gmail.com>
-Subject: Re: [PATCH] arch/h8300: modify ffs(), fls() etc. functions to return int
+Date:   Sun, 22 Jul 2018 11:25:59 +0200
+Message-ID: <CAMuHMdVs4y_BeONEWiAqmNSo+U8um1EZ16sfgdnw8rar6ASzxg@mail.gmail.com>
+Subject: Re: [PATCH] arch/h8300: fix kernel/dma.c build warning
 To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     Richard Kuo <rkuo@codeaurora.org>,
         "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
@@ -65,88 +65,35 @@ CC hexagon
 
 hexagon != H8/300 != SuperH
 
-On Sat, Jul 21, 2018 at 5:28 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+On Sat, Jul 21, 2018 at 5:17 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
 > From: Randy Dunlap <rdunlap@infradead.org>
 >
-> Building drivers/mtd/nand/raw/nandsim.c on arch/hexagon/ produces a
-> printk format build warning.  This is due to hexagon's ffs() being
-> coded as returning long instead of int.
+> Fix build warning in arch/hexagon/kernel/dma.c by casting a void *
+> to unsigned long to match the function parameter type.
 >
-> Fix the printk format warning by changing all of hexagon's ffx() and
-> flx() functions to return int instead of long.  The variables that
-> they return are already int instead of long.
->
-> ../drivers/mtd/nand/raw/nandsim.c: In function 'init_nandsim':
-> ../drivers/mtd/nand/raw/nandsim.c:760:2: warning: format '%u' expects argument of type 'unsigned int', but argument 2 has type 'long int' [-Wformat]
->
->
-> There are no ffx() or flx() allmodconfig build errors after making this
-> change.
+> ../arch/hexagon/kernel/dma.c: In function 'arch_dma_alloc':
+> ../arch/hexagon/kernel/dma.c:51:5: warning: passing argument 2 of 'gen_pool_add' makes integer from pointer without a cast [enabled by default]
+> ../include/linux/genalloc.h:112:19: note: expected 'long unsigned int' but argument is of type 'void *'
 >
 > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 > Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
 > Cc: Rich Felker <dalias@libc.org>
 > Cc: linux-sh@vger.kernel.org
 > ---
->  arch/hexagon/include/asm/bitops.h |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  arch/hexagon/kernel/dma.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> --- linux-next-20180717.orig/arch/hexagon/include/asm/bitops.h
-> +++ linux-next-20180717/arch/hexagon/include/asm/bitops.h
-> @@ -194,7 +194,7 @@ static inline int __test_bit(int nr, con
->   *
->   * Undefined if no zero exists, so code should check against ~0UL first.
->   */
-> -static inline long ffz(int x)
-> +static inline int ffz(int x)
->  {
->         int r;
->
-> @@ -211,7 +211,7 @@ static inline long ffz(int x)
->   * This is defined the same way as ffs.
->   * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
->   */
-> -static inline long fls(int x)
-> +static inline int fls(int x)
->  {
->         int r;
->
-> @@ -232,7 +232,7 @@ static inline long fls(int x)
->   * the libc and compiler builtin ffs routines, therefore
->   * differs in spirit from the above ffz (man ffs).
->   */
-> -static inline long ffs(int x)
-> +static inline int ffs(int x)
->  {
->         int r;
->
-> @@ -254,7 +254,7 @@ static inline long ffs(int x)
->   * bits_per_long assumed to be 32
->   * numbering starts at 0 I think (instead of 1 like ffs)
->   */
-> -static inline unsigned long __ffs(unsigned long word)
-> +static inline int __ffs(unsigned long word)
-
-The version in asm-generic deoes use "unsigned long".
-
-See also "m68k/bitops: convert __ffs to match generic declaration"
-https://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git/commit/?h=for-v4.19&id=4b538d3dca3e590cdb0234746011a6d9c245cfa3
-
->  {
->         int num;
->
-> @@ -272,7 +272,7 @@ static inline unsigned long __ffs(unsign
->   * Undefined if no set bit exists, so code should check against 0 first.
->   * bits_per_long assumed to be 32
->   */
-> -static inline unsigned long __fls(unsigned long word)
-> +static inline int __fls(unsigned long word)
-
-Same here
-
->  {
->         int num;
+> --- linux-next-20180717.orig/arch/hexagon/kernel/dma.c
+> +++ linux-next-20180717/arch/hexagon/kernel/dma.c
+> @@ -47,7 +47,7 @@ void *arch_dma_alloc(struct device *dev,
+>                         panic("Can't create %s() memory pool!", __func__);
+>                 else
+>                         gen_pool_add(coherent_pool,
+> -                               pfn_to_virt(max_low_pfn),
+> +                               (unsigned long)pfn_to_virt(max_low_pfn),
+>                                 hexagon_coherent_pool_size, -1);
+>         }
 >
 
 Gr{oetje,eeting}s,
