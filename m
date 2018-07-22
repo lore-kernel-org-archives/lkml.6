@@ -6,41 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6ACECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 21:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BE7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 21:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 226DC20850
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 21:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226DC20850
+	by mail.kernel.org (Postfix) with ESMTP id 34A2420858
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 21:20:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A2420858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387905AbeGVWSd (ORCPT
+        id S2387817AbeGVWSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 18:18:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38772 "EHLO mx1.suse.de"
+        Sun, 22 Jul 2018 18:18:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38830 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387732AbeGVWS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 18:18:26 -0400
+        id S2387732AbeGVWSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 18:18:24 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8540BADC0;
-        Sun, 22 Jul 2018 21:20:24 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 2715DAFCE;
+        Sun, 22 Jul 2018 21:20:22 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-mips@linux-mips.org
 Cc:     Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
         James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Govindraj Raja <Govindraj.Raja@imgtec.com>,
+        Damien Horsley <damien.horsley@imgtec.com>,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 15/15] clk: pistachio: Fix wrong SDHost card speed
-Date:   Sun, 22 Jul 2018 23:20:10 +0200
-Message-Id: <20180722212010.3979-16-afaerber@suse.de>
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        dmaengine@vger.kernel.org
+Subject: [PATCH 09/15] dmaengine: img-mdc: Handle early status read
+Date:   Sun, 22 Jul 2018 23:20:04 +0200
+Message-Id: <20180722212010.3979-10-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180722212010.3979-1-afaerber@suse.de>
 References: <20180722212010.3979-1-afaerber@suse.de>
@@ -52,57 +50,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+From: Damien Horsley <damien.horsley@imgtec.com>
 
-The SDHost currently clocks the card 4x slower than it
-should do, because there is a fixed divide by 4 in the
-sdhost wrapper that is not present in the clock tree.
-To model this, add a fixed divide by 4 clock node in
-the SDHost clock path.
+It is possible that mdc_tx_status may be called before the first
+node has been read from memory.
 
-This will ensure the right clock frequency is selected when
-the mmc driver tries to configure frequency on card insert.
+In this case, the residue value stored in the register is undefined.
+Return the transfer size instead.
 
-Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
+Signed-off-by: Damien Horsley <damien.horsley@imgtec.com>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- drivers/clk/pistachio/clk-pistachio.c     | 3 ++-
- include/dt-bindings/clock/pistachio-clk.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/dma/img-mdc-dma.c | 40 ++++++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
-index c4ceb5eaf46c..1c968d9a6e17 100644
---- a/drivers/clk/pistachio/clk-pistachio.c
-+++ b/drivers/clk/pistachio/clk-pistachio.c
-@@ -44,7 +44,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
- 	GATE(CLK_AUX_ADC_INTERNAL, "aux_adc_internal", "sys_internal_div",
- 	     0x104, 22),
- 	GATE(CLK_AUX_ADC, "aux_adc", "aux_adc_div", 0x104, 23),
--	GATE(CLK_SD_HOST, "sd_host", "sd_host_div", 0x104, 24),
-+	GATE(CLK_SD_HOST, "sd_host", "sd_host_div4", 0x104, 24),
- 	GATE(CLK_BT, "bt", "bt_div", 0x104, 25),
- 	GATE(CLK_BT_DIV4, "bt_div4", "bt_div4_div", 0x104, 26),
- 	GATE(CLK_BT_DIV8, "bt_div8", "bt_div8_div", 0x104, 27),
-@@ -54,6 +54,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
- static struct pistachio_fixed_factor pistachio_ffs[] __initdata = {
- 	FIXED_FACTOR(CLK_WIFI_DIV4, "wifi_div4", "wifi_pll", 4),
- 	FIXED_FACTOR(CLK_WIFI_DIV8, "wifi_div8", "wifi_pll", 8),
-+	FIXED_FACTOR(CLK_SDHOST_DIV4, "sd_host_div4", "sd_host_div", 4),
- };
+diff --git a/drivers/dma/img-mdc-dma.c b/drivers/dma/img-mdc-dma.c
+index 25cec9c243e1..0f2f0f52d83a 100644
+--- a/drivers/dma/img-mdc-dma.c
++++ b/drivers/dma/img-mdc-dma.c
+@@ -621,25 +621,33 @@ static enum dma_status mdc_tx_status(struct dma_chan *chan,
+ 			(MDC_CMDS_PROCESSED_CMDS_DONE_MASK + 1);
  
- static struct pistachio_div pistachio_divs[] __initdata = {
-diff --git a/include/dt-bindings/clock/pistachio-clk.h b/include/dt-bindings/clock/pistachio-clk.h
-index 039f83facb68..77b92aed241d 100644
---- a/include/dt-bindings/clock/pistachio-clk.h
-+++ b/include/dt-bindings/clock/pistachio-clk.h
-@@ -21,6 +21,7 @@
- /* Fixed-factor clocks */
- #define CLK_WIFI_DIV4			16
- #define CLK_WIFI_DIV8			17
-+#define CLK_SDHOST_DIV4			18
- 
- /* Gate clocks */
- #define CLK_MIPS			32
+ 		/*
+-		 * If the command loaded event hasn't been processed yet, then
+-		 * the difference above includes an extra command.
++		 * If the first node has not yet been read from memory,
++		 * the residue register value is undefined
+ 		 */
+-		if (!mdesc->cmd_loaded)
+-			cmds--;
+-		else
+-			cmds += mdesc->list_cmds_done;
+-
+-		bytes = mdesc->list_xfer_size;
+-		ldesc = mdesc->list;
+-		for (i = 0; i < cmds; i++) {
+-			bytes -= ldesc->xfer_size + 1;
+-			ldesc = ldesc->next_desc;
+-		}
+-		if (ldesc) {
+-			if (residue != MDC_TRANSFER_SIZE_MASK)
+-				bytes -= ldesc->xfer_size - residue;
++		if (!mdesc->cmd_loaded && !cmds) {
++			bytes = mdesc->list_xfer_size;
++		} else {
++			/*
++			 * If the command loaded event hasn't been processed yet, then
++			 * the difference above includes an extra command.
++			 */
++			if (!mdesc->cmd_loaded)
++				cmds--;
+ 			else
++				cmds += mdesc->list_cmds_done;
++
++			bytes = mdesc->list_xfer_size;
++			ldesc = mdesc->list;
++			for (i = 0; i < cmds; i++) {
+ 				bytes -= ldesc->xfer_size + 1;
++				ldesc = ldesc->next_desc;
++			}
++			if (ldesc) {
++				if (residue != MDC_TRANSFER_SIZE_MASK)
++					bytes -= ldesc->xfer_size - residue;
++				else
++					bytes -= ldesc->xfer_size + 1;
++			}
+ 		}
+ 	}
+ 	spin_unlock_irqrestore(&mchan->vc.lock, flags);
 -- 
 2.16.4
 
