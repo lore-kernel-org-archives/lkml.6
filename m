@@ -3,124 +3,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0140C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D8FC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7907F20854
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB81920858
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:33:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U+nZ7naY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7907F20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="O74Y+kRw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB81920858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=hammerspace.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730691AbeGVTZg (ORCPT
+        id S1730573AbeGVTaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 15:25:36 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35529 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730506AbeGVTZf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 15:25:35 -0400
-Received: by mail-io0-f193.google.com with SMTP id w11-v6so8270885iob.2
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 11:28:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4H2b//X01nwgyuSxluobo3FDtc6XUHdPLtYQoFidPx8=;
-        b=U+nZ7naYLlC0d6IlaaTva3lKNP6u/O+IcIBkRrspvxvyVqcpNYNTcwWD8F8VkY+CR2
-         BtTwqutABSZE47Aq8yIjfgJwntdeW+l/3X1+Qg4goy9wlZIcKL2A2TQtW3x+C4WlrYTP
-         IR7MqFipQPaLxm0lWi2fgHoyhUGOoDtfaJIPQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4H2b//X01nwgyuSxluobo3FDtc6XUHdPLtYQoFidPx8=;
-        b=gXLKCys1peSbea+3mvc2ipe3VPWWR4t90gy9veQ5HMPUmRaP5W/7FFpv4pPPL2Z2dK
-         YBTWCiQ/F40R1XCddV8pjlO/jpIdMhngb/4KdZ6m5p8/Q5MUBeJWPegncsmPLIqw8n33
-         igThvCMqzxweo3Z7BhrbPZLmeB//13S/mmnXfy2YHmWDVoKJ9hMqZIwnXgGcPzDyFnlq
-         0l3TSeogSqOnmJx1ovMp2/sA3TRdCnZNcN5f5JPawQQtg0jlalAX2UWcYTbJLGORYtYn
-         EeoU3cb7J158tclrb1RuqnfHtqwCmR6qEl6oEjFrJqOLKWx7IcT8QeeFdw1aloChzEe3
-         QaIA==
-X-Gm-Message-State: AOUpUlHLfXpxxqoWJkxBbWM0ZwzN9MvfrAAS+3VTg+CshzXMlLLsHo0B
-        HbnPDyYWqCR89KiNAXSPN9kQwYGzmmZIl8u6Hh8=
-X-Google-Smtp-Source: AAOMgpebyqVyH30/XSc5bKfGtm2QzsisQMYrZdznndTl0dMcWFcCruaHduKYCn953O5fgOXkqdghpk3fjy2xUdR/hG0=
-X-Received: by 2002:a6b:f612:: with SMTP id n18-v6mr8200579ioh.259.1532284081511;
- Sun, 22 Jul 2018 11:28:01 -0700 (PDT)
+        Sun, 22 Jul 2018 15:30:55 -0400
+Received: from mail-eopbgr690134.outbound.protection.outlook.com ([40.107.69.134]:12671
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729826AbeGVTaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 15:30:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YUkGnfNsdeX2DuwyRDdesQ5q0l2wamVh4/nzHlC5SPY=;
+ b=O74Y+kRwjemJ37UAV8BrlqZ80IQ+s3YKcxc1MguC9GNJXgTvnTozrDjuodMVou0Ftm/pTnexLqZcti5KIoF70VnN1ea1oBwnadaw6WVm9XsyF/3JB+opX4cwompjolcBGHU6RPgiLncEPsTpNc5/gl88Ik4s/v4Lay1zi5MCTDw=
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
+ SN6PR13MB2526.namprd13.prod.outlook.com (52.135.95.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.9; Sun, 22 Jul 2018 18:33:16 +0000
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::606f:87d7:76eb:7d88]) by SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::606f:87d7:76eb:7d88%2]) with mapi id 15.20.0995.014; Sun, 22 Jul 2018
+ 18:33:16 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "nixiaoming@huawei.com" <nixiaoming@huawei.com>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>
+CC:     "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>
+Subject: Re: [PATCH] fs/nfsd: Delete invalid assignment statements in
+ nfsd4_decode_exchange_id
+Thread-Topic: [PATCH] fs/nfsd: Delete invalid assignment statements in
+ nfsd4_decode_exchange_id
+Thread-Index: AQHUIZ3nGKqZY4HtrEiF17Da3y9jp6Sbi9MAgAAF1oA=
+Date:   Sun, 22 Jul 2018 18:33:15 +0000
+Message-ID: <a6be2d3bf2ff5ac43f82dcb7b29ba32faccbbdaf.camel@hammerspace.com>
+References: <20180722085044.50701-1-nixiaoming@huawei.com>
+         <2C39A9CD-4591-46C8-BB25-5FA2C85149CE@oracle.com>
+In-Reply-To: <2C39A9CD-4591-46C8-BB25-5FA2C85149CE@oracle.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-originating-ip: [50.36.91.56]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR13MB2526;6:l2rOc6SheNI8v/n8xX4iJ+mRe6q1JXudIgVw1xguVpAusCMOucGzeeTQHy+oCMTR9864p5ZdGY+eNC1LhC1Gcs8DAigGNuocE982nOi/jYZn8/+Bf4zSayhrq2ZWAmC7DJS6Upr22CaXviaTQMdAQRhChxUiLwu3SSealvTs909pqA/MpVTcO0YG63yMDsfdV0XKoN9PIxECVX17KHYcCT2TEg9mamZ8nElFFgu0By9nAmPugZHILPmokwAo8VV/pk92ZWl1zPJdi1WD2CZIXFzvg891uZJVIF5inBQ9mxX0EWDkCw2BA3dY4HfUIw+LiQUoZE+2iwXeSZF2iABOOEbLQTuxESQvP/XHD0pqlhe4FWAAGcUPFfPXGPJ7Mg7S6Zgmtg1r+lhYlTyKCSCSPTZHT2XmsFIAArPFFBW/J4E83eZbzOilWB6hX9vwUYLW3rqcOsjfGllY6+mEc9EcUQ==;5:JCAgg/9i3UIm41ocMiWHx1P+BOpKgSpN3W/hLK1xPtFBtX2/LNuLx5oJ5fVAdiHMD2I4giv7vQ7IWRNbvm330Jqw/QT16VTapJbgFaDja9laQkA9JRU4VtgcBKnlGQzFeVEmpsjWDOpILuC4Lq7ZlTLPZXdLIlnvwOOqbK1fE7M=;7:zr8Ee9Mve0sQeOlGFqKUS+wiT8NfB9E1LHWl0sKgtlNkInsWMhxTmPfXLjm57bQw81KE2fzD7PCQYznDChgaL2CG7ytzc3x2pOGnEyviHtfgqtUQloSI+Xh/b8ranfL95Z82b+5FJWzC56fE1svt97uy95V4afVIwWM+1foIUt1a0QBnWTuXpos3d3I+DK9r/Fjy2GtdttdCcG0zEEVVd5tpnes849TkxQICv61bYA9oHn3n5A5KeKx9KUWqXQMB
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: cd806452-8461-411d-19ad-08d5f001970c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(5600073)(711020)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:SN6PR13MB2526;
+x-ms-traffictypediagnostic: SN6PR13MB2526:
+x-microsoft-antispam-prvs: <SN6PR13MB2526FF7388B0FACC845CE81DB8570@SN6PR13MB2526.namprd13.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(50582790962513);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(2016111802025)(6072148)(6043046)(201708071742011)(7699016);SRVR:SN6PR13MB2526;BCL:0;PCL:0;RULEID:;SRVR:SN6PR13MB2526;
+x-forefront-prvs: 0741C77572
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(396003)(366004)(346002)(39830400003)(189003)(199004)(186003)(53936002)(15760500003)(2616005)(14454004)(36756003)(2900100001)(97736004)(14444005)(256004)(99286004)(26005)(478600001)(105586002)(7736002)(54906003)(110136005)(316002)(476003)(25786009)(106356001)(486006)(81166006)(66066001)(118296001)(6506007)(2906002)(6246003)(81156014)(446003)(86362001)(53546011)(229853002)(6512007)(5250100002)(5660300001)(2501003)(76176011)(6436002)(8676002)(4326008)(305945005)(6486002)(102836004)(6116002)(11346002)(8936002)(68736007)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2526;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: as3oBFlFPjdQJIOPV06W+UN7fySBrbZl55dKrsFT2gLg1SlG10Wwwua/qp5HkPiB/pphqTzW/XXIrXorzr1Ke9821mHxp7Vb72EYrh3xymjZaBOswjG86GIQN5Y+e8lUoUdbqjnIyRs1C3GgXthoPB4mu79tYalga0mBBCw7hDvYug39EZaRLDvQETEgTiDVBI34us4uragO1gUKlAlGfYpDAAswMCNm9eYG9ypaojGi2pNxaiAOZOY2nUNo8pgOqoHUT8WmqqKoS8+FD4lqN71Al/BZPuerPh5ZslU4AyYRXGW2c4APmNC3ZysJsMNh7YsnwDPfx4TX0KTJJKsQRqRhRO4c5H2iK24yMDJM55A=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <31968880BB468649B06E76AA6850E644@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <cover.1532281180.git.luto@kernel.org> <1e3d01ce04315218d3f8ee269528bb774a4d1d60.1532281180.git.luto@kernel.org>
-In-Reply-To: <1e3d01ce04315218d3f8ee269528bb774a4d1d60.1532281180.git.luto@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 22 Jul 2018 11:27:50 -0700
-Message-ID: <CA+55aFz1ne3KTzni2Yvsp8ZRFzk+s78ZhKyGeLZvmRivBhFMfA@mail.gmail.com>
-Subject: Re: [RFC 2/2] x86/pti/64: Remove the SYSCALL64 entry trampoline
-To:     Andrew Lutomirski <luto@kernel.org>
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd806452-8461-411d-19ad-08d5f001970c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2018 18:33:16.1016
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2526
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 22, 2018 at 10:45 AM Andy Lutomirski <luto@kernel.org> wrote:
->
-> This patch changes the code to map the percpu TSS into the user page
-> tables to allow the non-trampoline SYSCALL64 path to work under PTI.
-
-Me likey.
-
-However:
-
-> This does not add a new direct information leak, since the TSS is
-> readable by Meltdown from the cpu_entry_area alias regardless.
-
-Afaik, it does now potentially expose through meltdown the per-thread
-entry stack info, which is new.
-
-But I don't think that's a show-stopper.
-
->  static void __init pti_clone_user_shared(void)
->  {
-> +       for_each_possible_cpu(cpu) {
-
-But this code is pretty disgusting and seems wrong.
-
-Do you really want to do all trhe _possible_ cpu's, not just the
-online ones? I'd rather expose less (think MAXCPU) and then have the
-CPU hotplug code expose the page as the CPU comes up?
-
-> +               unsigned long va = (unsigned long)&per_cpu(cpu_tss_rw, cpu);
-> +               phys_addr_t pa = per_cpu_ptr_to_phys((void *)va);
-> +               pte_t *target_pte;
-> +
-> +               target_pte = pti_user_pagetable_walk_pte(va);
-
-This function only exists if CONFIG_X86_VSYSCALL_EMULATION, so it
-won't even compile under (very unusual) configurations.
-
-The "disgusting" part is that I think it could/should share more code
-with the vsyscall case, and the whole target-pte checking and setting
-should be shared too.
-
-Beause not being shared, I react to this:
-
-> +               set_pte(target_pte, pfn_pte(pa >> PAGE_SHIFT, PAGE_KERNEL));
-
-Hmm. The vsyscall code just does
-
-        *target_pte = ..
-
-without any set_pte() stuff. Do we want/need the PVOP cases, and if
-so, why doesn't the vsyscall case need it?
-
-Anyway, I love the approach, and how this gets rid of the nasty
-trampoline, so no real complaints, just "this needs some fixups".
-
-                Linus
+T24gU3VuLCAyMDE4LTA3LTIyIGF0IDE0OjEyIC0wNDAwLCBDaHVjayBMZXZlciB3cm90ZToNCj4g
+PiBPbiBKdWwgMjIsIDIwMTgsIGF0IDQ6NTAgQU0sIG5peGlhb21pbmcgPG5peGlhb21pbmdAaHVh
+d2VpLmNvbT4NCj4gPiB3cm90ZToNCj4gPiANCj4gPiBkdW1teSA9IGJlMzJfdG9fY3B1cChwKysp
+Ow0KPiA+IGR1bW15ID0gYmUzMl90b19jcHVwKHArKyk7DQo+ID4gQXNzaWduaW5nIHZhbHVlIHRv
+ICJkdW1teSIgaGVyZSwgYnV0IHRoYXQgc3RvcmVkIHZhbHVlDQo+ID4gaXMgb3ZlcndyaXR0ZW4g
+YmVmb3JlIGl0IGNhbiBiZSB1c2VkLg0KPiA+IA0KPiA+IGRlbGV0ZSBpbnZhbGlkIGFzc2lnbm1l
+bnQgc3RhdGVtZW50cyBpbiBuZnNkNF9kZWNvZGVfZXhjaGFuZ2VfaWQNCj4gPiANCj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBuMDAyMDI3NTQgPG5peGlhb21pbmdAaHVhd2VpLmNvbT4NCj4gPiAtLS0NCj4g
+PiBmcy9uZnNkL25mczR4ZHIuYyB8IDQgKystLQ0KPiA+IDEgZmlsZSBjaGFuZ2VkLCAyIGluc2Vy
+dGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2ZzL25mc2Qv
+bmZzNHhkci5jIGIvZnMvbmZzZC9uZnM0eGRyLmMNCj4gPiBpbmRleCBhOTY4NDNjLi44ZTc4NTQx
+IDEwMDY0NA0KPiA+IC0tLSBhL2ZzL25mc2QvbmZzNHhkci5jDQo+ID4gKysrIGIvZnMvbmZzZC9u
+ZnM0eGRyLmMNCj4gPiBAQCAtMTM5Miw4ICsxMzkyLDggQEAgbmZzZDRfZGVjb2RlX2V4Y2hhbmdl
+X2lkKHN0cnVjdA0KPiA+IG5mc2Q0X2NvbXBvdW5kYXJncyAqYXJncCwNCj4gPiANCj4gPiAJCS8q
+IHNzcF93aW5kb3cgYW5kIHNzcF9udW1fZ3NzX2hhbmRsZXMgKi8NCj4gPiAJCVJFQURfQlVGKDgp
+Ow0KPiA+IC0JCWR1bW15ID0gYmUzMl90b19jcHVwKHArKyk7DQo+ID4gLQkJZHVtbXkgPSBiZTMy
+X3RvX2NwdXAocCsrKTsNCj4gPiArCQliZTMyX3RvX2NwdXAocCsrKTsNCj4gPiArCQliZTMyX3Rv
+X2NwdXAocCsrKTsNCj4gDQo+IElmIHRoZXNlIHZhbHVlcyBhcmUgbm90IHVzZWQsIHdoYXQncyB0
+aGUgcG9pbnQgb2YgYnl0ZSBzd2FwcGluZyB0aGVtPw0KPiBTdXJlbHkgInAgKz0gMjsiIHNob3Vs
+ZCBiZSBlbm91Z2guDQo+IA0KPiANCj4gPiAJCWJyZWFrOw0KPiA+IAlkZWZhdWx0Og0KPiA+IAkJ
+Z290byB4ZHJfZXJyb3I7DQo+IA0KDQpHaXZlbiB0aGF0IHRoZSB2YWx1ZSBvZiAncCcgaXNuJ3Qg
+dXNlZCBlaXRoZXIsIHdoeSBub3QganVzdCBkZWxldGUNCnRob3NlIHR3byBsaW5lcyBhbHRvZ2V0
+aGVyPw0KDQotLSANClRyb25kIE15a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFpbmVy
+LCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
