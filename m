@@ -3,44 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF44C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A90AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 14:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18ACE20875
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:58:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18ACE20875
+	by mail.kernel.org (Postfix) with ESMTP id 4FD4420875
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 14:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD4420875
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbeGVOy6 (ORCPT
+        id S1729567AbeGVO7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 10:54:58 -0400
-Received: from mail02.asahi-net.or.jp ([202.224.55.14]:41431 "EHLO
-        mail02.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728730AbeGVOy6 (ORCPT
+        Sun, 22 Jul 2018 10:59:20 -0400
+Received: from mail01.asahi-net.or.jp ([202.224.55.13]:39326 "EHLO
+        mail01.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729179AbeGVO7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 10:54:58 -0400
+        Sun, 22 Jul 2018 10:59:20 -0400
 Received: from h61-195-96-97.vps.ablenet.jp (h61-195-96-97.vps.ablenet.jp [61.195.96.97])
         (Authenticated sender: PQ4Y-STU)
-        by mail02.asahi-net.or.jp (Postfix) with ESMTPA id 58137F7F0E;
-        Sun, 22 Jul 2018 22:58:08 +0900 (JST)
+        by mail01.asahi-net.or.jp (Postfix) with ESMTPA id E19C081F7B;
+        Sun, 22 Jul 2018 23:02:31 +0900 (JST)
 Received: from yo-satoh-debian.ysato.ml (ZM028236.ppp.dion.ne.jp [222.8.28.236])
-        by h61-195-96-97.vps.ablenet.jp (Postfix) with ESMTPSA id E2B2724006D;
-        Sun, 22 Jul 2018 22:58:07 +0900 (JST)
-Date:   Sun, 22 Jul 2018 22:58:07 +0900
-Message-ID: <87in57fk40.wl-ysato@users.sourceforge.jp>
+        by h61-195-96-97.vps.ablenet.jp (Postfix) with ESMTPSA id A528824006D;
+        Sun, 22 Jul 2018 23:02:31 +0900 (JST)
+Date:   Sun, 22 Jul 2018 23:02:31 +0900
+Message-ID: <87h8krfjwo.wl-ysato@users.sourceforge.jp>
 From:   Yoshinori Sato <ysato@users.sourceforge.jp>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org, linux-arm-kernel@lists.infradead.org,
-        yamada.masahiro@socionext.com
-Subject: Re: [PATCH 1/9] h8300: Don't include linux/kernel.h in asm/atomic.h
-In-Reply-To: <1527159586-8578-2-git-send-email-will.deacon@arm.com>
-References: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
-        <1527159586-8578-2-git-send-email-will.deacon@arm.com>
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc:     uclinux-h8-devel@lists.sourceforge.jp, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] h8300:let the checker know that size_t is ulong
+In-Reply-To: <20180530210343.22320-1-luc.vanoostenryck@gmail.com>
+References: <20180530210343.22320-1-luc.vanoostenryck@gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -51,51 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018 19:59:38 +0900,
-Will Deacon wrote:
+On Thu, 31 May 2018 06:03:43 +0900,
+Luc Van Oostenryck wrote:
 > 
-> linux/kernel.h isn't needed by asm/atomic.h and will result in circular
-> dependencies when the asm-generic atomic bitops are built around the
-> tomic_long_t interface.
+> All 64bit archs use unsigned long for size_t and most 32bit
+> archs use 'unsigned int'. By default, this is what is assumed
+> by sparse.
 > 
-> Remove the broad include and replace it with linux/compiler.h for
-> READ_ONCE etc and asm/irqflags.h for arch_local_irq_save etc.
+> However, on h8300 (a 32bit arch) size_t is unsigned long which
+> can led sparse to emit wrong warnings.
 > 
-> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
+> Fix this by passing to sparse the flag -msize-long, telling it
+> that size_t is unsigned long.
+> 
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 > ---
->  arch/h8300/include/asm/atomic.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/h8300/Makefile | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/h8300/include/asm/atomic.h b/arch/h8300/include/asm/atomic.h
-> index 941e7554e886..b174dec099bf 100644
-> --- a/arch/h8300/include/asm/atomic.h
-> +++ b/arch/h8300/include/asm/atomic.h
-> @@ -2,8 +2,10 @@
->  #ifndef __ARCH_H8300_ATOMIC__
->  #define __ARCH_H8300_ATOMIC__
+> diff --git a/arch/h8300/Makefile b/arch/h8300/Makefile
+> index e1c02ca23..eaac6685f 100644
+> --- a/arch/h8300/Makefile
+> +++ b/arch/h8300/Makefile
+> @@ -22,6 +22,8 @@ KBUILD_CFLAGS += -DUTS_SYSNAME=\"uClinux\"
+>  KBUILD_AFLAGS += $(aflags-y)
+>  LDFLAGS += $(ldflags-y)
 >  
-> +#include <linux/compiler.h>
->  #include <linux/types.h>
->  #include <asm/cmpxchg.h>
-> +#include <asm/irqflags.h>
->  
->  /*
->   * Atomic operations that C can't guarantee us.  Useful for
-> @@ -15,8 +17,6 @@
->  #define atomic_read(v)		READ_ONCE((v)->counter)
->  #define atomic_set(v, i)	WRITE_ONCE(((v)->counter), (i))
->  
-> -#include <linux/kernel.h>
-> -
->  #define ATOMIC_OP_RETURN(op, c_op)				\
->  static inline int atomic_##op##_return(int i, atomic_t *v)	\
->  {								\
+> +CHECKFLAGS += -msize-long
+> +
+>  ifeq ($(CROSS_COMPILE),)
+>  CROSS_COMPILE := h8300-unknown-linux-
+>  endif
 > -- 
-> 2.1.4
+> 2.17.0
 > 
 
-Sorry too late reply.
+Sorry too late replay.
 Applied to h8300-next.
 Thanks.
 
