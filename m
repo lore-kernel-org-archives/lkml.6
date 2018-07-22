@@ -2,281 +2,265 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DFDC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 12:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BD1C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 12:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2458520875
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 12:18:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E56220875
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 12:32:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlKb5Ad2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2458520875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="jLDN1lkZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E56220875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbeGVNK0 (ORCPT
+        id S1728408AbeGVN2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 09:10:26 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37407 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727802AbeGVNK0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 09:10:26 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n7-v6so10245104pgq.4;
-        Sun, 22 Jul 2018 05:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=YZnAq30hJS1BaVjvIrV5h8yjKTCgZSii9SPo3C4wSz8=;
-        b=VlKb5Ad2a6g1ZAlFMrkGln4CjCwSmQkQyJxyRDRn4VvufvySviUmUXbz9IfyvP0Hxy
-         guCayP6PMC75zcwBneq1MLoWQrNbJjEEN02Ewc262Iqpaj4eRT/yqGxIUXtqgD4Ynf/c
-         SyhAtpUKYeKD29zOU7rESN8L9RRyBcshqlGB7Ab+jQjnA/seGB9TUedCZ594w9lvcGoC
-         wkELsa1tjxiwFqADXXinpeP7P0PnpS2afYDB5sQOSkHdX31O1JzHLYX/KY4fmCV05QvH
-         +qlYVbs9mJjmWARdsfQOAX6+7udnhFAhQx86oLxY8pfb+2FhuJ54E3MLAzoE9NchHdLq
-         kwPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=YZnAq30hJS1BaVjvIrV5h8yjKTCgZSii9SPo3C4wSz8=;
-        b=q4Hgj7YkGvLgcEgWp2gpPx+q7nl9XxbpS2TUD4LljEtlmK1HCHMnscafutf5ycpXWw
-         i0lm1rsRiFTrmeBJc+hMNVm3P17nxuVmrPo+M4MAAzpagHfAXlAVORdMVWWRS/yB3Xmf
-         SGRrHBI3nHdcsvtAoWpuh120PjibKOcY8MrxXvbCN9gpn222rn5D7cMVsAqsKIabySTk
-         tIQ8smL/SN1O6qXZLuKuPd5XygPtsPz8Rp0tpjHqg/+X6290SYKJjoRjISUZ5uGFSbqK
-         5565gRm54nl2D1xLqj+vLsLhxDstmO0GS0jMZDNVGVSctXuvSGSKih3YDUh3+1zfBd4d
-         ahLQ==
-X-Gm-Message-State: AOUpUlFWN6PJw+Y2JNvmH5zmxv8yGc0JhATLaXmuxGR0vTW7LWkSRopb
-        nz+4x1QxjdgfyjT6yoVeG0s=
-X-Google-Smtp-Source: AAOMgpdLb+00f9Ke8xOhDyzg33MF1f6wcL0yCTmJjp+6esDGXwfsVE8QJ5TdO2/8kXeOaEFibKzujw==
-X-Received: by 2002:a62:4ece:: with SMTP id c197-v6mr9309949pfb.240.1532261636468;
-        Sun, 22 Jul 2018 05:13:56 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([49.205.216.185])
-        by smtp.gmail.com with ESMTPSA id s66-v6sm5672798pfe.53.2018.07.22.05.13.54
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 22 Jul 2018 05:13:55 -0700 (PDT)
-Date:   Sun, 22 Jul 2018 17:46:36 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     willy@infradead.org, zyan@redhat.com, sage@redhat.com,
-        idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ajitn.linux@gmail.com, brajeswar.linux@gmail.com,
-        sabyasachi.linux@gmail.com
-Subject: [PATCH] fs: ceph: Adding new return type vm_fault_t
-Message-ID: <20180722121636.GA30907@jordon-HP-15-Notebook-PC>
+        Sun, 22 Jul 2018 09:28:19 -0400
+Received: from onstation.org ([52.200.56.107]:49890 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728345AbeGVN2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 09:28:19 -0400
+Received: from localhost (onstation.org [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 920D7272F;
+        Sun, 22 Jul 2018 12:31:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
+        s=default; t=1532262706;
+        bh=qGez4gqVo+GJ1/t+E7s2xJkkooTXCUpFFZHN9cOrMe4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jLDN1lkZ+GHLhz6dnrHh/XOoaYZnd4DVu3fDrgEGPWq+xB40dI6hQBPc3fjwWF9O1
+         40sMlUUqkMMCGJ/+87+fMr0sVuoHhIW77GeoSnS/ZIFGUSi1uDB9ujBkJ/xlykWMCD
+         kXa4l5O5AGrbaoHAtPCbzcjSZWQMxMUbuDlxooRw=
+Date:   Sun, 22 Jul 2018 12:31:45 +0000
+From:   Brian Masney <masneyb@onstation.org>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
+        fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com,
+        drew.paterson@ams.com
+Subject: Re: [PATCH v2 1/7] iio: imu: mpu6050: add support for regulator
+ framework
+Message-ID: <20180722123145.GA20029@onstation.org>
+References: <20180717084158.23532-1-masneyb@onstation.org>
+ <20180717084158.23532-2-masneyb@onstation.org>
+ <20180721183107.3770295d@archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180721183107.3770295d@archlinux>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for page_mkwrite
-and fault handler.
+On Sat, Jul 21, 2018 at 06:31:07PM +0100, Jonathan Cameron wrote:
+> On Tue, 17 Jul 2018 04:41:52 -0400
+> Brian Masney <masneyb@onstation.org> wrote:
+> 
+> > This patch adds support for the regulator framework to the mpu6050
+> > driver.
+> > 
+> > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> 
+> I'm not 100% sure what the purpose of the regulator_enabled
+> tracking is.  Perhaps you could point out the path where that is
+> needed?
 
-vmf_error() is the newly introduce inline function
-in 4.17
+I was thinking about the use case where the device is compiled into the
+kernel as a module, the device is suspended, and then someone rmmods
+the module. If that is not a use case that I need to worry about, then
+the flag can go away and it will simplify the code.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- fs/ceph/addr.c | 62 ++++++++++++++++++++++++++++++----------------------------
- 1 file changed, 32 insertions(+), 30 deletions(-)
+Brian
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index b4336b4..3031d44 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1427,7 +1427,7 @@ static void ceph_restore_sigs(sigset_t *oldset)
- /*
-  * vm ops
-  */
--static int ceph_filemap_fault(struct vm_fault *vmf)
-+static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct inode *inode = file_inode(vma->vm_file);
-@@ -1435,8 +1435,9 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
- 	struct ceph_file_info *fi = vma->vm_file->private_data;
- 	struct page *pinned_page = NULL;
- 	loff_t off = vmf->pgoff << PAGE_SHIFT;
--	int want, got, ret;
-+	int want, got, err;
- 	sigset_t oldset;
-+	vm_fault_t ret;
- 
- 	ceph_block_sigs(&oldset);
- 
-@@ -1448,8 +1449,8 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
- 		want = CEPH_CAP_FILE_CACHE;
- 
- 	got = 0;
--	ret = ceph_get_caps(ci, CEPH_CAP_FILE_RD, want, -1, &got, &pinned_page);
--	if (ret < 0)
-+	err = ceph_get_caps(ci, CEPH_CAP_FILE_RD, want, -1, &got, &pinned_page);
-+	if (err < 0)
- 		goto out_restore;
- 
- 	dout("filemap_fault %p %llu~%zd got cap refs on %s\n",
-@@ -1461,16 +1462,17 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
- 		ceph_add_rw_context(fi, &rw_ctx);
- 		ret = filemap_fault(vmf);
- 		ceph_del_rw_context(fi, &rw_ctx);
-+		dout("filemap_fault %p %llu~%zd drop cap refs %s ret %x\n",
-+			inode, off, (size_t)PAGE_SIZE,
-+				ceph_cap_string(got), ret);
- 	} else
--		ret = -EAGAIN;
-+		err = -EAGAIN;
- 
--	dout("filemap_fault %p %llu~%zd dropping cap refs on %s ret %d\n",
--	     inode, off, (size_t)PAGE_SIZE, ceph_cap_string(got), ret);
- 	if (pinned_page)
- 		put_page(pinned_page);
- 	ceph_put_cap_refs(ci, got);
- 
--	if (ret != -EAGAIN)
-+	if (err != -EAGAIN)
- 		goto out_restore;
- 
- 	/* read inline data */
-@@ -1478,7 +1480,6 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
- 		/* does not support inline data > PAGE_SIZE */
- 		ret = VM_FAULT_SIGBUS;
- 	} else {
--		int ret1;
- 		struct address_space *mapping = inode->i_mapping;
- 		struct page *page = find_or_create_page(mapping, 0,
- 						mapping_gfp_constraint(mapping,
-@@ -1487,32 +1488,32 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
- 			ret = VM_FAULT_OOM;
- 			goto out_inline;
- 		}
--		ret1 = __ceph_do_getattr(inode, page,
-+		err = __ceph_do_getattr(inode, page,
- 					 CEPH_STAT_CAP_INLINE_DATA, true);
--		if (ret1 < 0 || off >= i_size_read(inode)) {
-+		if (err < 0 || off >= i_size_read(inode)) {
- 			unlock_page(page);
- 			put_page(page);
--			if (ret1 < 0)
--				ret = ret1;
-+			if (err == -ENOMEM)
-+				ret = VM_FAULT_OOM;
- 			else
- 				ret = VM_FAULT_SIGBUS;
- 			goto out_inline;
- 		}
--		if (ret1 < PAGE_SIZE)
--			zero_user_segment(page, ret1, PAGE_SIZE);
-+		if (err < PAGE_SIZE)
-+			zero_user_segment(page, err, PAGE_SIZE);
- 		else
- 			flush_dcache_page(page);
- 		SetPageUptodate(page);
- 		vmf->page = page;
- 		ret = VM_FAULT_MAJOR | VM_FAULT_LOCKED;
- out_inline:
--		dout("filemap_fault %p %llu~%zd read inline data ret %d\n",
-+		dout("filemap_fault %p %llu~%zd read inline data ret %x\n",
- 		     inode, off, (size_t)PAGE_SIZE, ret);
- 	}
- out_restore:
- 	ceph_restore_sigs(&oldset);
--	if (ret < 0)
--		ret = (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
-+	if (err < 0)
-+		ret = vmf_error(err);
- 
- 	return ret;
- }
-@@ -1520,7 +1521,7 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
- /*
-  * Reuse write_begin here for simplicity.
-  */
--static int ceph_page_mkwrite(struct vm_fault *vmf)
-+static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct inode *inode = file_inode(vma->vm_file);
-@@ -1531,8 +1532,9 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
- 	loff_t off = page_offset(page);
- 	loff_t size = i_size_read(inode);
- 	size_t len;
--	int want, got, ret;
-+	int want, got, err;
- 	sigset_t oldset;
-+	vm_fault_t ret;
- 
- 	prealloc_cf = ceph_alloc_cap_flush();
- 	if (!prealloc_cf)
-@@ -1546,10 +1548,10 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
- 			lock_page(page);
- 			locked_page = page;
- 		}
--		ret = ceph_uninline_data(vma->vm_file, locked_page);
-+		err = ceph_uninline_data(vma->vm_file, locked_page);
- 		if (locked_page)
- 			unlock_page(locked_page);
--		if (ret < 0)
-+		if (err < 0)
- 			goto out_free;
- 	}
- 
-@@ -1566,9 +1568,9 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
- 		want = CEPH_CAP_FILE_BUFFER;
- 
- 	got = 0;
--	ret = ceph_get_caps(ci, CEPH_CAP_FILE_WR, want, off + len,
-+	err = ceph_get_caps(ci, CEPH_CAP_FILE_WR, want, off + len,
- 			    &got, NULL);
--	if (ret < 0)
-+	if (err < 0)
- 		goto out_free;
- 
- 	dout("page_mkwrite %p %llu~%zd got cap refs on %s\n",
-@@ -1586,13 +1588,13 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
- 			break;
- 		}
- 
--		ret = ceph_update_writeable_page(vma->vm_file, off, len, page);
--		if (ret >= 0) {
-+		err = ceph_update_writeable_page(vma->vm_file, off, len, page);
-+		if (err >= 0) {
- 			/* success.  we'll keep the page locked. */
- 			set_page_dirty(page);
- 			ret = VM_FAULT_LOCKED;
- 		}
--	} while (ret == -EAGAIN);
-+	} while (err == -EAGAIN);
- 
- 	if (ret == VM_FAULT_LOCKED ||
- 	    ci->i_inline_version != CEPH_INLINE_NONE) {
-@@ -1606,14 +1608,14 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
- 			__mark_inode_dirty(inode, dirty);
- 	}
- 
--	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %d\n",
-+	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
- 	     inode, off, len, ceph_cap_string(got), ret);
- 	ceph_put_cap_refs(ci, got);
- out_free:
- 	ceph_restore_sigs(&oldset);
- 	ceph_free_cap_flush(prealloc_cf);
--	if (ret < 0)
--		ret = (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
-+	if (err < 0)
-+		ret = vmf_error(err);
- 	return ret;
- }
- 
--- 
-1.9.1
 
+
+> Also, a missing bit of documentation needs adding.
+> 
+> Jonathan
+> 
+> > ---
+> > Changes since v1:
+> > - Use devm_regulator_get() instead of devm_regulator_get_optional()
+> > - Use devm_add_action() for cleaning up the regulator.
+> > - Correct ordering of resume code.
+> > - Add regulator_enabled flag to ensure regulator is not disabled twice,
+> >   specifically the case where the device is suspended and then the
+> >   driver is removed.
+> > 
+> > Original extra changelog from v1:
+> > 
+> > This is a variation of Jonathan Marek's patch from postmarketOS
+> > https://gitlab.com/postmarketOS/linux-postmarketos/commit/b8ad1ec1859c8bbcbce94944b3f4dd68f8f9fc37
+> > with the following changes:
+> > 
+> > - Stripped out 6515 variant code.
+> > - Add the regulator to the mpu core instead of only the i2c variant.
+> > - Add error handling.
+> > - Release the regulator on suspend, device remove, etc.
+> > - Device tree documentation.
+> > 
+> >  .../bindings/iio/imu/inv_mpu6050.txt          |  1 +
+> >  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c    | 73 +++++++++++++++++++
+> >  drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h     |  3 +
+> >  3 files changed, 77 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+> > index b7def51c8ad9..d39907b12a46 100644
+> > --- a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+> > +++ b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+> > @@ -21,6 +21,7 @@ Required properties:
+> >    bindings.
+> >  
+> >  Optional properties:
+> > + - vddio-supply: regulator phandle for VDDIO supply
+> >   - mount-matrix: an optional 3x3 mounting rotation matrix
+> >   - i2c-gate node.  These devices also support an auxiliary i2c bus.  This is
+> >     simple enough to be described using the i2c-gate binding. See
+> > diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> > index 12c1b9507007..e1fbab4bc0a0 100644
+> > --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> > +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> > @@ -23,6 +23,7 @@
+> >  #include <linux/iio/iio.h>
+> >  #include <linux/acpi.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/regulator/consumer.h>
+> >  #include "inv_mpu_iio.h"
+> >  
+> >  /*
+> > @@ -926,6 +927,46 @@ static int inv_check_and_setup_chip(struct inv_mpu6050_state *st)
+> >  	return result;
+> >  }
+> >  
+> > +static int inv_mpu_core_enable_regulator(struct inv_mpu6050_state *st)
+> > +{
+> > +	int result;
+> > +
+> > +	result = regulator_enable(st->vddio_supply);
+> > +	if (result) {
+> > +		dev_err(regmap_get_device(st->map),
+> > +			"Failed to enable regulator: %d\n", result);
+> > +	} else {
+> > +		st->regulator_enabled = true;
+> > +
+> > +		/* Give the device a little bit of time to start up. */
+> > +		usleep_range(35000, 70000);
+> > +	}
+> > +
+> > +	return result;
+> > +}
+> > +
+> > +static int inv_mpu_core_disable_regulator(struct inv_mpu6050_state *st)
+> > +{
+> > +	int result;
+> > +
+> > +	if (!st->regulator_enabled)
+> > +		return 0;
+> > +
+> > +	result = regulator_disable(st->vddio_supply);
+> > +	if (result)
+> > +		dev_err(regmap_get_device(st->map),
+> > +			"Failed to disable regulator: %d\n", result);
+> > +
+> > +	st->regulator_enabled = false;
+> > +
+> > +	return result;
+> > +}
+> > +
+> > +static void inv_mpu_core_disable_regulator_action(void *_data)
+> > +{
+> > +	inv_mpu_core_disable_regulator(_data);
+> > +}
+> > +
+> >  int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
+> >  		int (*inv_mpu_bus_setup)(struct iio_dev *), int chip_type)
+> >  {
+> > @@ -990,6 +1031,28 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > +	st->vddio_supply = devm_regulator_get(dev, "vddio");
+> > +	if (IS_ERR(st->vddio_supply)) {
+> > +		if (PTR_ERR(st->vddio_supply) != -EPROBE_DEFER)
+> > +			dev_err(dev, "Failed to get vddio regulator %d\n",
+> > +				(int)PTR_ERR(st->vddio_supply));
+> > +
+> > +		return PTR_ERR(st->vddio_supply);
+> > +	}
+> > +
+> > +	result = inv_mpu_core_enable_regulator(st);
+> > +	if (result)
+> > +		return result;
+> > +
+> > +	result = devm_add_action(dev, inv_mpu_core_disable_regulator_action,
+> > +				 st);
+> > +	if (result) {
+> > +		inv_mpu_core_disable_regulator_action(st);
+> > +		dev_err(dev, "Failed to setup regulator cleanup action %d\n",
+> > +			result);
+> > +		return result;
+> > +	}
+> > +
+> >  	/* power is turned on inside check chip type*/
+> >  	result = inv_check_and_setup_chip(st);
+> >  	if (result)
+> > @@ -1049,7 +1112,12 @@ static int inv_mpu_resume(struct device *dev)
+> >  	int result;
+> >  
+> >  	mutex_lock(&st->lock);
+> > +	result = inv_mpu_core_enable_regulator(st);
+> > +	if (result)
+> > +		goto out_unlock;
+> > +
+> >  	result = inv_mpu6050_set_power_itg(st, true);
+> > +out_unlock:
+> >  	mutex_unlock(&st->lock);
+> >  
+> >  	return result;
+> > @@ -1062,6 +1130,11 @@ static int inv_mpu_suspend(struct device *dev)
+> >  
+> >  	mutex_lock(&st->lock);
+> >  	result = inv_mpu6050_set_power_itg(st, false);
+> > +	if (result)
+> > +		goto out_unlock;
+> > +
+> > +	result = inv_mpu_core_disable_regulator(st);
+> > +out_unlock:
+> >  	mutex_unlock(&st->lock);
+> >  
+> >  	return result;
+> > diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
+> > index e69a59659dbc..01c8fe9b4fa0 100644
+> > --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
+> > +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
+> > @@ -129,6 +129,7 @@ struct inv_mpu6050_hw {
+> >   *  @chip_period:	chip internal period estimation (~1kHz).
+> >   *  @it_timestamp:	timestamp from previous interrupt.
+> >   *  @data_timestamp:	timestamp for next data sample.
+> > + *  @vddio_supply	voltage regulator for the chip.
+> Docs missing for regulator_enabled.
+> >   */
+> >  struct inv_mpu6050_state {
+> >  	struct mutex lock;
+> > @@ -149,6 +150,8 @@ struct inv_mpu6050_state {
+> >  	s64 chip_period;
+> >  	s64 it_timestamp;
+> >  	s64 data_timestamp;
+> > +	struct regulator *vddio_supply;
+> > +	bool regulator_enabled;
+> >  };
+> >  
+> >  /*register and associated bit definition*/
