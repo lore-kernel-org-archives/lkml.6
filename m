@@ -2,81 +2,132 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6242CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982B0C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1104D20671
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:08:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="SId2Pf/1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1104D20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 411F420671
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:09:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411F420671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730542AbeGVTGJ (ORCPT
+        id S1730593AbeGVTG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 15:06:09 -0400
-Received: from imap.thunk.org ([74.207.234.97]:43318 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729826AbeGVTGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 15:06:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=cwUtk9mxxDxFOls6dllGOmfgfQrnYmJPKpHg3Ft4aGY=; b=SId2Pf/1SeVmfeRV/1nhhPLmJR
-        f+bKOEouUDh3P+ait8BnjrixbNrxZMpG2sGbQSJofjoFt8Ks4vJBmLIyA0vmYKl77BtsEe9ekqYFQ
-        BVbGopgh93nwOjyOLn9oyjUYchlM3crOmR1kG1gJiCwo6LLNI3XcMpK0XWcgC6XukHn4=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fhImY-0003tl-UA; Sun, 22 Jul 2018 18:08:35 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 11B7E7A44CC; Sun, 22 Jul 2018 14:08:30 -0400 (EDT)
-Date:   Sun, 22 Jul 2018 14:08:30 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sirmy15@gmail.com,
-        stable@vger.kernel.org, tgnottingham@gmail.com,
-        y2038@lists.linaro.org
-Subject: Re: [PATCH v2 4/6] ext4: use timespec64 for all inode times
-Message-ID: <20180722180829.GE6685@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Arnd Bergmann <arnd@arndb.de>, adilger.kernel@dilger.ca,
-        jack@suse.cz, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sirmy15@gmail.com,
-        stable@vger.kernel.org, tgnottingham@gmail.com,
-        y2038@lists.linaro.org
-References: <20180711091414.1494843-1-arnd@arndb.de>
- <20180711091414.1494843-4-arnd@arndb.de>
+        Sun, 22 Jul 2018 15:06:59 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:33656 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729826AbeGVTG7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 15:06:59 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1fhIn8-0004EF-9V; Sun, 22 Jul 2018 20:09:10 +0200
+Date:   Sun, 22 Jul 2018 20:09:10 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     David Miller <davem@davemloft.net>
+Cc:     fw@strlen.de, cscnull@gmail.com, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, johannes.berg@intel.com, Jason@zx2c4.com,
+        ktkhai@virtuozzo.com, lucien.xin@gmail.com,
+        xiyou.wangcong@gmail.com, dsahern@gmail.com,
+        netfilter-devel@vger.kernel.org, tom@quantonium.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netlink: fix memory leak of dump
+Message-ID: <20180722180910.wcwhantwpm2nfxet@breakpoint.cc>
+References: <20180722143354.23722-1-cscnull@gmail.com>
+ <20180722163925.gdfkndldatsoae6x@breakpoint.cc>
+ <20180722.100755.19840167505550163.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180711091414.1494843-4-arnd@arndb.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180722.100755.19840167505550163.davem@davemloft.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 11:14:12AM +0200, Arnd Bergmann wrote:
-> This is the last missing piece for the inode times on 32-bit systems:
-> now that VFS interfaces use timespec64, we just need to stop truncating
-> the tv_sec values for y2038 compatibililty.
+David Miller <davem@davemloft.net> wrote:
+> From: Florian Westphal <fw@strlen.de>
+> Date: Sun, 22 Jul 2018 18:39:25 +0200
 > 
-> Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > 3. change meaning of ->done() so its always called once ->start()
+> >    was invoked (and returned 0), this requires audit of all
+> >    places that provide .done to make sure they won't trip.
+> > 
+> > 3) seems to be what Tom intended when he added .start, so probably
+> > best to investigate that first.
+> 
+> Hmmm...
+> 
+> Any time ->start() succeeds, we set cb_running to true.
 
-Thanks, applied.
+Right.
 
-					- Ted
+> From that point forward, ->done() will be called at some point at all
+> of the locations that check if cb_running is true and set it to false.
+
+Also right, thanks for pointing this out, I missed fact that netlink
+core restarts a dump after this.
+
+So 3) is already true which means we should try to see if we can move
+all dump-related extra magic into ->start().
+
+Shaochun, can you see if this is possible?
+
+Something along these lines (totally untested), which makes this
+a netfilter fix:
+
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -5010,6 +5013,22 @@ nft_obj_filter_alloc(const struct nlattr * const nla[])
+ 	return filter;
+ }
+ 
++static int nf_tables_dump_obj_start(struct netlink_callback *cb)
++{
++	const struct nlattr * const *nla = cb->data;
++	struct nft_obj_filter *filter = NULL;
++
++	if (nla[NFTA_OBJ_TABLE] ||
++	    nla[NFTA_OBJ_TYPE]) {
++		filter = nft_obj_filter_alloc(nla);
++		if (IS_ERR(filter))
++			return -ENOMEM;
++	}
++
++	cb->data = filter;
++	return 0;
++}
++
+ /* called with rcu_read_lock held */
+ static int nf_tables_getobj(struct net *net, struct sock *nlsk,
+ 			    struct sk_buff *skb, const struct nlmsghdr *nlh,
+@@ -5028,21 +5047,13 @@ static int nf_tables_getobj(struct net *net, struct sock *nlsk,
+ 
+ 	if (nlh->nlmsg_flags & NLM_F_DUMP) {
+ 		struct netlink_dump_control c = {
++			.start = nf_tables_dump_obj_start,
+ 			.dump = nf_tables_dump_obj,
+ 			.done = nf_tables_dump_obj_done,
+ 			.module = THIS_MODULE,
++			.data = (void *)nla,
+ 		};
+ 
+-		if (nla[NFTA_OBJ_TABLE] ||
+-		    nla[NFTA_OBJ_TYPE]) {
+-			struct nft_obj_filter *filter;
+-
+-			filter = nft_obj_filter_alloc(nla);
+-			if (IS_ERR(filter))
+-				return -ENOMEM;
+-
+-			c.data = filter;
+-		}
+ 		return nft_netlink_dump_start_rcu(nlsk, skb, nlh, &c);
+ 	}
+ 
