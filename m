@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 943E7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 05:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE33ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 05:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 569B220858
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 05:41:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 569B220858
+	by mail.kernel.org (Postfix) with ESMTP id 9FFAD20858
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 05:41:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FFAD20858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbeGVGhH (ORCPT
+        id S1728534AbeGVGhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 02:37:07 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:44885 "EHLO hermes.aosc.io"
+        Sun, 22 Jul 2018 02:37:18 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:44904 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727880AbeGVGhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 02:37:06 -0400
+        id S1727880AbeGVGhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 02:37:18 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 9D41C9F536;
-        Sun, 22 Jul 2018 05:41:34 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 8B4369F536;
+        Sun, 22 Jul 2018 05:41:46 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -34,9 +34,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 4/5] arm64: allwinner: h6: add EMAC device nodes
-Date:   Sun, 22 Jul 2018 13:39:54 +0800
-Message-Id: <20180722053955.25266-5-icenowy@aosc.io>
+Subject: [PATCH 5/5] arm64: allwinner: h6: add support for the Ethernet on Pine H64
+Date:   Sun, 22 Jul 2018 13:39:55 +0800
+Message-Id: <20180722053955.25266-6-icenowy@aosc.io>
 In-Reply-To: <20180722053955.25266-1-icenowy@aosc.io>
 References: <20180722053955.25266-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,63 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H6 SoC has an EMAC like the one in A64.
+The Pine H64 board has an Ethernet port, which is connected to a
+RTL8211E PHY, then the PHY is connected to the MAC on H6 SoC.
 
-Add device tree nodes for the H6 DTSI file.
+Add support for the Ethernet port.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 30 ++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ .../boot/dts/allwinner/sun50i-h6-pine-h64.dts | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 3ab6cf0256ca..c65311de301a 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -149,6 +149,14 @@
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+index ceffc40810ee..b168b3b8a9ad 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+@@ -14,6 +14,7 @@
+ 	compatible = "pine64,pine-h64", "allwinner,sun50i-h6";
  
-+			ext_rgmii_pins: rgmii_pins {
-+				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
-+				       "PD5", "PD7", "PD8", "PD9", "PD10",
-+				       "PD11", "PD12", "PD13", "PD19", "PD20";
-+				function = "emac";
-+				drive-strength = <40>;
-+			};
-+
- 			mmc0_pins: mmc0-pins {
- 				pins = "PF0", "PF1", "PF2", "PF3",
- 				       "PF4", "PF5";
-@@ -258,6 +266,28 @@
- 			status = "disabled";
+ 	aliases {
++		ethernet0 = &emac;
+ 		serial0 = &uart0;
+ 	};
+ 
+@@ -39,6 +40,34 @@
+ 			gpios = <&r_pio 0 7 GPIO_ACTIVE_HIGH>; /* PL7 */
  		};
+ 	};
++
++	reg_gmac_3v3: gmac-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc-gmac-3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		startup-delay-us = <100000>;
++		gpio = <&pio 2 16 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++};
++
++&emac {
++	pinctrl-names = "default";
++	pinctrl-0 = <&ext_rgmii_pins>;
++	phy-mode = "rgmii";
++	phy-handle = <&ext_rgmii_phy>;
++	phy-supply = <&reg_gmac_3v3>;
++	allwinner,rx-delay-ps = <200>;
++	allwinner,tx-delay-ps = <200>;
++	status = "okay";
++};
++
++&mdio {
++	ext_rgmii_phy: ethernet-phy@1 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <1>;
++	};
+ };
  
-+		emac: ethernet@5020000 {
-+			compatible = "allwinner,sun50i-a64-emac",
-+				     "allwinner,sun50i-h6-emac";
-+			syscon = <&syscon>;
-+			reg = <0x05020000 0x10000>;
-+			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq";
-+			resets = <&ccu RST_BUS_EMAC>;
-+			reset-names = "stmmaceth";
-+			clocks = <&ccu CLK_BUS_EMAC>;
-+			clock-names = "stmmaceth";
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			mdio: mdio {
-+				compatible = "snps,dwmac-mdio";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+		};
-+
- 		r_ccu: clock@7010000 {
- 			compatible = "allwinner,sun50i-h6-r-ccu";
- 			reg = <0x07010000 0x400>;
+ &mmc0 {
 -- 
 2.18.0
 
