@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 422F7C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 14:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE4AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 14:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1E1620858
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 14:11:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E1620858
+	by mail.kernel.org (Postfix) with ESMTP id CE69E20858
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 14:14:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE69E20858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbeGVPHv (ORCPT
+        id S1729596AbeGVPKt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 11:07:51 -0400
-Received: from mail01.asahi-net.or.jp ([202.224.55.13]:39723 "EHLO
+        Sun, 22 Jul 2018 11:10:49 -0400
+Received: from mail01.asahi-net.or.jp ([202.224.55.13]:39844 "EHLO
         mail01.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728549AbeGVPHv (ORCPT
+        with ESMTP id S1728549AbeGVPKs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 11:07:51 -0400
+        Sun, 22 Jul 2018 11:10:48 -0400
 Received: from h61-195-96-97.vps.ablenet.jp (h61-195-96-97.vps.ablenet.jp [61.195.96.97])
         (Authenticated sender: PQ4Y-STU)
-        by mail01.asahi-net.or.jp (Postfix) with ESMTPA id F0DAC81AEF;
-        Sun, 22 Jul 2018 23:11:00 +0900 (JST)
+        by mail01.asahi-net.or.jp (Postfix) with ESMTPA id BC97880B19;
+        Sun, 22 Jul 2018 23:13:57 +0900 (JST)
 Received: from yo-satoh-debian.ysato.ml (ZM028236.ppp.dion.ne.jp [222.8.28.236])
-        by h61-195-96-97.vps.ablenet.jp (Postfix) with ESMTPSA id B0843240070;
-        Sun, 22 Jul 2018 23:11:00 +0900 (JST)
-Date:   Sun, 22 Jul 2018 23:11:00 +0900
-Message-ID: <87effvfjij.wl-ysato@users.sourceforge.jp>
+        by h61-195-96-97.vps.ablenet.jp (Postfix) with ESMTPSA id 7A877240070;
+        Sun, 22 Jul 2018 23:13:57 +0900 (JST)
+Date:   Sun, 22 Jul 2018 23:13:57 +0900
+Message-ID: <87d0vffjdm.wl-ysato@users.sourceforge.jp>
 From:   Yoshinori Sato <ysato@users.sourceforge.jp>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp
-Subject: Re: [PATCH] h8300: remove unnecessary of_platform_populate call
-In-Reply-To: <20180619214054.19326-1-robh@kernel.org>
-References: <20180619214054.19326-1-robh@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] h8300: Correct signature of test_bit()
+In-Reply-To: <20180621192444.24389-1-geert@linux-m68k.org>
+References: <20180621192444.24389-1-geert@linux-m68k.org>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -48,48 +48,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018 06:40:54 +0900,
-Rob Herring wrote:
+On Fri, 22 Jun 2018 04:24:44 +0900,
+Geert Uytterhoeven wrote:
 > 
-> The DT core will call of_platform_populate, so it is not necessary for
-> arch specific code to call it unless there are custom match entries,
-> auxdata or parent device. Neither of those apply here, so remove the call.
+>     mm/filemap.c: In function 'clear_bit_unlock_is_negative_byte':
+>     mm/filemap.c:1181:30: warning: passing argument 2 of 'test_bit' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+>       return test_bit(PG_waiters, mem);
+> 				  ^~~
+>     In file included from include/linux/bitops.h:38,
+> 		     from include/linux/kernel.h:11,
+> 		     from include/linux/list.h:9,
+> 		     from include/linux/wait.h:7,
+> 		     from include/linux/wait_bit.h:8,
+> 		     from include/linux/fs.h:6,
+> 		     from include/linux/dax.h:5,
+> 		     from mm/filemap.c:14:
+>     arch/h8300/include/asm/bitops.h:69:57: note: expected 'const long unsigned int *' but argument is of type 'volatile void *'
+>      static inline int test_bit(int nr, const unsigned long *addr)
+> 					~~~~~~~~~~~~~~~~~~~~~^~~~
 > 
-> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> Cc: uclinux-h8-devel@lists.sourceforge.jp
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Make the bitmask pointed to by the "addr" parameter volatile to fix
+> this, like is done on other architectures.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 > ---
->  arch/h8300/kernel/setup.c | 10 ----------
->  1 file changed, 10 deletions(-)
+> Exposed by commit 98473f9f3f9bd404 ("mm/filemap: fix parameters to
+> test_bit()").
 > 
-> diff --git a/arch/h8300/kernel/setup.c b/arch/h8300/kernel/setup.c
-> index a4d0470c10a9..b2b51f75774e 100644
-> --- a/arch/h8300/kernel/setup.c
-> +++ b/arch/h8300/kernel/setup.c
-> @@ -23,7 +23,6 @@
->  #include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/of_fdt.h>
-> -#include <linux/of_platform.h>
->  #include <linux/of_address.h>
->  #include <linux/clk-provider.h>
->  #include <linux/memblock.h>
-> @@ -188,15 +187,6 @@ const struct seq_operations cpuinfo_op = {
->  	.show	= show_cpuinfo,
->  };
+> v2:
+>   - Rebased.
+> ---
+>  arch/h8300/include/asm/bitops.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/h8300/include/asm/bitops.h b/arch/h8300/include/asm/bitops.h
+> index ea0cb0cf6a8bb2ed..92285bec7b4023ef 100644
+> --- a/arch/h8300/include/asm/bitops.h
+> +++ b/arch/h8300/include/asm/bitops.h
+> @@ -66,7 +66,7 @@ H8300_GEN_BITOP(change_bit, "bnot")
 >  
-> -static int __init device_probe(void)
-> -{
-> -	of_platform_populate(NULL, NULL, NULL, NULL);
-> -
-> -	return 0;
-> -}
-> -
-> -device_initcall(device_probe);
-> -
->  #if defined(CONFIG_CPU_H8300H)
->  #define get_wait(base, addr) ({		\
->  	int baddr;			\
+>  #undef H8300_GEN_BITOP
+>  
+> -static inline int test_bit(int nr, const unsigned long *addr)
+> +static inline int test_bit(int nr, const volatile unsigned long *addr)
+>  {
+>  	int ret = 0;
+>  	unsigned char *b_addr;
 > -- 
 > 2.17.1
 > 
