@@ -2,280 +2,89 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B712C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 17:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14874C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 17:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F7220854
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 17:20:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D8520671
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 17:23:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2HMStWyA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F7220854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="yMLWqtvu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D8520671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730163AbeGVSSN (ORCPT
+        id S1730222AbeGVSUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 14:18:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53154 "EHLO mail.kernel.org"
+        Sun, 22 Jul 2018 14:20:50 -0400
+Received: from imap.thunk.org ([74.207.234.97]:43194 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730090AbeGVSSN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 14:18:13 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74E9E20671;
-        Sun, 22 Jul 2018 17:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532280050;
-        bh=tEvR+r0t9DVdVtgBAHxy+9LZsDWm9+x4uuMSsH9N8s4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=2HMStWyAojIuBYdKhsa4D6PKYHPbFRnH0Mx8BE3IL5jGAiRAGC6ugPdhcPttvlflo
-         W1QolQhaM6n7zJNE7ZgYWwf4FLggwbC1DqCQwQmzpHeE/QJXC42Hxbyg6PmhwC7/tE
-         I1U7kZrOO2kQVVLtbJnWxhvIgQ7pPKetTNK0aXoo=
-Date:   Sun, 22 Jul 2018 18:20:43 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
-        fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com,
-        drew.paterson@ams.com
-Subject: Re: [PATCH v2 1/7] iio: imu: mpu6050: add support for regulator
- framework
-Message-ID: <20180722182043.4c752d15@archlinux>
-In-Reply-To: <20180722123145.GA20029@onstation.org>
-References: <20180717084158.23532-1-masneyb@onstation.org>
-        <20180717084158.23532-2-masneyb@onstation.org>
-        <20180721183107.3770295d@archlinux>
-        <20180722123145.GA20029@onstation.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1730087AbeGVSUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 14:20:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=FOUN4xLFNtrEsu0yqBpV3VYKR0WFu3XaeMSncGjOBEA=; b=yMLWqtvudx/8cPpSudlO11DpMN
+        4+DQ65k5glm+m37GobtGCu0WLGjt/Q1HR8PcmFXCREFepTAX3S6BzOz16au0JOr1zVPsjEKwdmu3T
+        B6y/9XCH/NsJe/a3YHbtPWX6Z747zmQDf8ZzR55txxjQZ8n1R2aGG1irKtF3pZCifyIE=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fhI4p-0003VO-QA; Sun, 22 Jul 2018 17:23:24 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 374FE7A44CC; Sun, 22 Jul 2018 13:23:20 -0400 (EDT)
+Date:   Sun, 22 Jul 2018 13:23:20 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sirmy15@gmail.com,
+        stable@vger.kernel.org, tgnottingham@gmail.com,
+        y2038@lists.linaro.org
+Subject: Re: [PATCH v2 1/6] ext4: sysfs: print ext4_super_block fields as
+ little-endian
+Message-ID: <20180722172320.GB6685@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Arnd Bergmann <arnd@arndb.de>, adilger.kernel@dilger.ca,
+        jack@suse.cz, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sirmy15@gmail.com,
+        stable@vger.kernel.org, tgnottingham@gmail.com,
+        y2038@lists.linaro.org
+References: <20180711091414.1494843-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711091414.1494843-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 22 Jul 2018 12:31:45 +0000
-Brian Masney <masneyb@onstation.org> wrote:
-
-> On Sat, Jul 21, 2018 at 06:31:07PM +0100, Jonathan Cameron wrote:
-> > On Tue, 17 Jul 2018 04:41:52 -0400
-> > Brian Masney <masneyb@onstation.org> wrote:
-> >   
-> > > This patch adds support for the regulator framework to the mpu6050
-> > > driver.
-> > > 
-> > > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > > Signed-off-by: Jonathan Marek <jonathan@marek.ca>  
-> > 
-> > I'm not 100% sure what the purpose of the regulator_enabled
-> > tracking is.  Perhaps you could point out the path where that is
-> > needed?  
+On Wed, Jul 11, 2018 at 11:14:09AM +0200, Arnd Bergmann wrote:
+> While working on extended rand for last_error/first_error timestamps,
+> I noticed that the endianess is wrong, we access the little-endian
+> fields in struct ext4_super_block as native-endian when we print them.
 > 
-> I was thinking about the use case where the device is compiled into the
-> kernel as a module, the device is suspended, and then someone rmmods
-> the module. If that is not a use case that I need to worry about, then
-> the flag can go away and it will simplify the code.
-I'm not sure it's a situation that can actually happen.
-
-Before a rmmod is acted upon I think it will always be un-suspended.
-This is necessary to avoid all sorts of nasty corner cases.
-
-It's been debate in the past on whether it is necessary to come
-out of runtime suspend under these sorts of circumstances but
-I don't think anyone has ever tried to make suspend and remove
-play nicely.
-
-Jonathan
+> This adds a special case in ext4_attr_show() and ext4_attr_store()
+> to byteswap the superblock fields if needed.
 > 
-> Brian
+> In older kernels, this code was part of super.c, it got moved to sysfs.c
+> in linux-4.4.
 > 
-> 
-> 
-> > Also, a missing bit of documentation needs adding.
-> > 
-> > Jonathan
-> >   
-> > > ---
-> > > Changes since v1:
-> > > - Use devm_regulator_get() instead of devm_regulator_get_optional()
-> > > - Use devm_add_action() for cleaning up the regulator.
-> > > - Correct ordering of resume code.
-> > > - Add regulator_enabled flag to ensure regulator is not disabled twice,
-> > >   specifically the case where the device is suspended and then the
-> > >   driver is removed.
-> > > 
-> > > Original extra changelog from v1:
-> > > 
-> > > This is a variation of Jonathan Marek's patch from postmarketOS
-> > > https://gitlab.com/postmarketOS/linux-postmarketos/commit/b8ad1ec1859c8bbcbce94944b3f4dd68f8f9fc37
-> > > with the following changes:
-> > > 
-> > > - Stripped out 6515 variant code.
-> > > - Add the regulator to the mpu core instead of only the i2c variant.
-> > > - Add error handling.
-> > > - Release the regulator on suspend, device remove, etc.
-> > > - Device tree documentation.
-> > > 
-> > >  .../bindings/iio/imu/inv_mpu6050.txt          |  1 +
-> > >  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c    | 73 +++++++++++++++++++
-> > >  drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h     |  3 +
-> > >  3 files changed, 77 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
-> > > index b7def51c8ad9..d39907b12a46 100644
-> > > --- a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
-> > > +++ b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
-> > > @@ -21,6 +21,7 @@ Required properties:
-> > >    bindings.
-> > >  
-> > >  Optional properties:
-> > > + - vddio-supply: regulator phandle for VDDIO supply
-> > >   - mount-matrix: an optional 3x3 mounting rotation matrix
-> > >   - i2c-gate node.  These devices also support an auxiliary i2c bus.  This is
-> > >     simple enough to be described using the i2c-gate binding. See
-> > > diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> > > index 12c1b9507007..e1fbab4bc0a0 100644
-> > > --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> > > +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> > > @@ -23,6 +23,7 @@
-> > >  #include <linux/iio/iio.h>
-> > >  #include <linux/acpi.h>
-> > >  #include <linux/platform_device.h>
-> > > +#include <linux/regulator/consumer.h>
-> > >  #include "inv_mpu_iio.h"
-> > >  
-> > >  /*
-> > > @@ -926,6 +927,46 @@ static int inv_check_and_setup_chip(struct inv_mpu6050_state *st)
-> > >  	return result;
-> > >  }
-> > >  
-> > > +static int inv_mpu_core_enable_regulator(struct inv_mpu6050_state *st)
-> > > +{
-> > > +	int result;
-> > > +
-> > > +	result = regulator_enable(st->vddio_supply);
-> > > +	if (result) {
-> > > +		dev_err(regmap_get_device(st->map),
-> > > +			"Failed to enable regulator: %d\n", result);
-> > > +	} else {
-> > > +		st->regulator_enabled = true;
-> > > +
-> > > +		/* Give the device a little bit of time to start up. */
-> > > +		usleep_range(35000, 70000);
-> > > +	}
-> > > +
-> > > +	return result;
-> > > +}
-> > > +
-> > > +static int inv_mpu_core_disable_regulator(struct inv_mpu6050_state *st)
-> > > +{
-> > > +	int result;
-> > > +
-> > > +	if (!st->regulator_enabled)
-> > > +		return 0;
-> > > +
-> > > +	result = regulator_disable(st->vddio_supply);
-> > > +	if (result)
-> > > +		dev_err(regmap_get_device(st->map),
-> > > +			"Failed to disable regulator: %d\n", result);
-> > > +
-> > > +	st->regulator_enabled = false;
-> > > +
-> > > +	return result;
-> > > +}
-> > > +
-> > > +static void inv_mpu_core_disable_regulator_action(void *_data)
-> > > +{
-> > > +	inv_mpu_core_disable_regulator(_data);
-> > > +}
-> > > +
-> > >  int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
-> > >  		int (*inv_mpu_bus_setup)(struct iio_dev *), int chip_type)
-> > >  {
-> > > @@ -990,6 +1031,28 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
-> > >  		return -EINVAL;
-> > >  	}
-> > >  
-> > > +	st->vddio_supply = devm_regulator_get(dev, "vddio");
-> > > +	if (IS_ERR(st->vddio_supply)) {
-> > > +		if (PTR_ERR(st->vddio_supply) != -EPROBE_DEFER)
-> > > +			dev_err(dev, "Failed to get vddio regulator %d\n",
-> > > +				(int)PTR_ERR(st->vddio_supply));
-> > > +
-> > > +		return PTR_ERR(st->vddio_supply);
-> > > +	}
-> > > +
-> > > +	result = inv_mpu_core_enable_regulator(st);
-> > > +	if (result)
-> > > +		return result;
-> > > +
-> > > +	result = devm_add_action(dev, inv_mpu_core_disable_regulator_action,
-> > > +				 st);
-> > > +	if (result) {
-> > > +		inv_mpu_core_disable_regulator_action(st);
-> > > +		dev_err(dev, "Failed to setup regulator cleanup action %d\n",
-> > > +			result);
-> > > +		return result;
-> > > +	}
-> > > +
-> > >  	/* power is turned on inside check chip type*/
-> > >  	result = inv_check_and_setup_chip(st);
-> > >  	if (result)
-> > > @@ -1049,7 +1112,12 @@ static int inv_mpu_resume(struct device *dev)
-> > >  	int result;
-> > >  
-> > >  	mutex_lock(&st->lock);
-> > > +	result = inv_mpu_core_enable_regulator(st);
-> > > +	if (result)
-> > > +		goto out_unlock;
-> > > +
-> > >  	result = inv_mpu6050_set_power_itg(st, true);
-> > > +out_unlock:
-> > >  	mutex_unlock(&st->lock);
-> > >  
-> > >  	return result;
-> > > @@ -1062,6 +1130,11 @@ static int inv_mpu_suspend(struct device *dev)
-> > >  
-> > >  	mutex_lock(&st->lock);
-> > >  	result = inv_mpu6050_set_power_itg(st, false);
-> > > +	if (result)
-> > > +		goto out_unlock;
-> > > +
-> > > +	result = inv_mpu_core_disable_regulator(st);
-> > > +out_unlock:
-> > >  	mutex_unlock(&st->lock);
-> > >  
-> > >  	return result;
-> > > diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-> > > index e69a59659dbc..01c8fe9b4fa0 100644
-> > > --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-> > > +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-> > > @@ -129,6 +129,7 @@ struct inv_mpu6050_hw {
-> > >   *  @chip_period:	chip internal period estimation (~1kHz).
-> > >   *  @it_timestamp:	timestamp from previous interrupt.
-> > >   *  @data_timestamp:	timestamp for next data sample.
-> > > + *  @vddio_supply	voltage regulator for the chip.  
-> > Docs missing for regulator_enabled.  
-> > >   */
-> > >  struct inv_mpu6050_state {
-> > >  	struct mutex lock;
-> > > @@ -149,6 +150,8 @@ struct inv_mpu6050_state {
-> > >  	s64 chip_period;
-> > >  	s64 it_timestamp;
-> > >  	s64 data_timestamp;
-> > > +	struct regulator *vddio_supply;
-> > > +	bool regulator_enabled;
-> > >  };
-> > >  
-> > >  /*register and associated bit definition*/  
+> Cc: stable@vger.kernel.org
+> Fixes: 52c198c6820f ("ext4: add sysfs entry showing whether the fs contains errors")
+> Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+Applied, thanks.
+
+				- Ted
