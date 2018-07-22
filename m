@@ -2,149 +2,121 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BCAC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 15:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D95C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 15:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC2A120874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 15:28:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2A120874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 9CE6E205C9
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 15:46:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pau+IQ8C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE6E205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbeGVQZt (ORCPT
+        id S1729862AbeGVQnG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 12:25:49 -0400
-Received: from smtprz14.163.net ([106.3.154.247]:2863 "EHLO smtp.tom.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728566AbeGVQZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 12:25:49 -0400
-Received: from antispam2.tom.com (unknown [172.25.16.56])
-        by freemail02.tom.com (Postfix) with ESMTP id 93FF2B00D4E
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 21:34:16 +0800 (CST)
-Received: from antispam2.tom.com (antispam2.tom.com [127.0.0.1])
-        by antispam2.tom.com (Postfix) with ESMTP id 3E87B81220
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 21:34:16 +0800 (CST)
-X-Virus-Scanned: Debian amavisd-new at antispam2.tom.com
-Received: from antispam2.tom.com ([127.0.0.1])
-        by antispam2.tom.com (antispam2.tom.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 6exARlmtqmmV for <linux-kernel@vger.kernel.org>;
-        Sun, 22 Jul 2018 21:34:14 +0800 (CST)
-Received: from localhost (unknown [222.209.18.46])
-        by antispam2.tom.com (Postfix) with ESMTPA id 1777E8053C;
-        Sun, 22 Jul 2018 21:34:14 +0800 (CST)
-From:   Liu Xiang <liu.xiang6@zte.com.cn>
-To:     sre@kernel.org
-Cc:     pali.rohar@gmail.com, afd@ti.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liuxiang_1999@126.com,
-        Liu Xiang <liu.xiang6@zte.com.cn>
-Subject: [PATCH] power: supply: bq27xxx: Add support for BQ27411
-Date:   Sun, 22 Jul 2018 21:33:56 +0800
-Message-Id: <1532266436-20182-1-git-send-email-liu.xiang6@zte.com.cn>
-X-Mailer: git-send-email 1.9.1
+        Sun, 22 Jul 2018 12:43:06 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44838 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729235AbeGVQnG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 12:43:06 -0400
+Received: by mail-pl0-f68.google.com with SMTP id m16-v6so7166963pls.11;
+        Sun, 22 Jul 2018 08:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=S5cLGCI+XVTxRuLGUkFvRH8uP0UZ9nGbqM34dOpZyLQ=;
+        b=Pau+IQ8CHi+yjccLQpNvniHfR4ZZqEVK4Z0fWE1E127gtJOGH3ko/JpeYVnNQ/zEZK
+         GG9APMJdXWMVXKSOYYB9S7ukJl2QarPqCGNSGw1pnK3CE668oYaoiWtoXoAPuuU98IYL
+         J1iQqGQ2ICC7VA3YdrwJY9DuB98alkR4iZATxluEVntD4q7IdOVLLCNsKoeLi6qm7So4
+         8NbJz83Fa9ajY7WoQG4BLg3ErGzU49jmkvcc2VOnGfxUWaNrU6XitNp07w1xguCfbz6S
+         Wkhx+Bl8zPZuNBxwm5QarvNmFSwIz+X8NS6B81nBw6jMWgOx0vsFbJoKfhyBVVA2Gy+v
+         1FQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=S5cLGCI+XVTxRuLGUkFvRH8uP0UZ9nGbqM34dOpZyLQ=;
+        b=rrSzrcp6zuNs4AvSowuhMwiiOsgyVoE6euZaxEnW4BerJIdoQf4fRXgtyaWp5BTCbn
+         qqLZAY+Bueh/Jd+CpnwhLdjpGm4dWZulf76n+EoJ1CdSbpmUWiIr6+WtJgkwK/gBZg1M
+         D+Mzck8laItA5KLeGsoRbOG8rMik05JHXuoGFWdUcmA4r5JSH8lrhsfZn+qxZqRouMLJ
+         pnbi1TG621cG7IQgEHBtr8gWsQ5raJHrcDpwY2vnfJaq6KExuQWcXrZQS/kewj0fC66x
+         tUz7ICerlymCMEti4dXCLv6/ZAkpYH/aPna+IndF/lG6HbpITDInOaTI+y5gMoTNzs2u
+         myKw==
+X-Gm-Message-State: AOUpUlFQ3nKRWZFmxHo9ZdLcnEZayyBcKNvo4oG5UXIrGB51gk2Yed4W
+        6LXykSBwaICcRhrk88rvTOUnhEIz
+X-Google-Smtp-Source: AAOMgpcKp0RlGalS8zffIn/4iSBna1fca5t6Bc0HptMmAAllCGvsmdFPHqdCbyLReiHhNEsW1H7QTw==
+X-Received: by 2002:a17:902:820a:: with SMTP id x10-v6mr9576168pln.261.1532274361059;
+        Sun, 22 Jul 2018 08:46:01 -0700 (PDT)
+Received: from localhost.localdomain ([240f:34:212d:1:35c0:e530:abfe:4337])
+        by smtp.gmail.com with ESMTPSA id k64-v6sm9217493pgd.47.2018.07.22.08.45.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 22 Jul 2018 08:46:00 -0700 (PDT)
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+To:     linux-media@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH -next] regmap: sccb: fix typo and sort headers alphabetically
+Date:   Mon, 23 Jul 2018 00:45:46 +0900
+Message-Id: <1532274346-16952-1-git-send-email-akinobu.mita@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the datasheet, bq27411 is similar to bq27421.
+Fix typos 's/wit/with/' in the comments and sort headers alphabetically
+in order to avoid duplicate includes in future.
 
-Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+Fixes: bcf7eac3d97f ("regmap: add SCCB support")
+Reported-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
 ---
- Documentation/devicetree/bindings/power/supply/bq27xxx.txt | 1 +
- drivers/power/supply/bq27xxx_battery.c                     | 9 +++++++++
- drivers/power/supply/bq27xxx_battery_i2c.c                 | 2 ++
- include/linux/power/bq27xxx_battery.h                      | 1 +
- 4 files changed, 13 insertions(+)
+ drivers/base/regmap/regmap-sccb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/bq27xxx.txt b/Documentation/devicetree/bindings/power/supply/bq27xxx.txt
-index 37994fd..4fa8e08 100644
---- a/Documentation/devicetree/bindings/power/supply/bq27xxx.txt
-+++ b/Documentation/devicetree/bindings/power/supply/bq27xxx.txt
-@@ -23,6 +23,7 @@ Required properties:
-  * "ti,bq27546" - BQ27546
-  * "ti,bq27742" - BQ27742
-  * "ti,bq27545" - BQ27545
-+ * "ti,bq27411" - BQ27411
-  * "ti,bq27421" - BQ27421
-  * "ti,bq27425" - BQ27425
-  * "ti,bq27426" - BQ27426
-diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-index f022e1b..6dbbe95 100644
---- a/drivers/power/supply/bq27xxx_battery.c
-+++ b/drivers/power/supply/bq27xxx_battery.c
-@@ -432,6 +432,7 @@ enum bq27xxx_reg_index {
- 		[BQ27XXX_REG_AP] = 0x18,
- 		BQ27XXX_DM_REG_ROWS,
- 	};
-+#define bq27411_regs bq27421_regs
- #define bq27425_regs bq27421_regs
- #define bq27426_regs bq27421_regs
- #define bq27441_regs bq27421_regs
-@@ -665,6 +666,7 @@ enum bq27xxx_reg_index {
- 	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
- 	POWER_SUPPLY_PROP_MANUFACTURER,
- };
-+#define bq27411_props bq27421_props
- #define bq27425_props bq27421_props
- #define bq27426_props bq27421_props
- #define bq27441_props bq27421_props
-@@ -725,6 +727,12 @@ enum bq27xxx_dm_reg_id {
- #define bq27545_dm_regs 0
- #endif
+diff --git a/drivers/base/regmap/regmap-sccb.c b/drivers/base/regmap/regmap-sccb.c
+index b6eb876..597042e2 100644
+--- a/drivers/base/regmap/regmap-sccb.c
++++ b/drivers/base/regmap/regmap-sccb.c
+@@ -1,9 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Register map access API - SCCB support
  
-+static struct bq27xxx_dm_reg bq27411_dm_regs[] = {
-+	[BQ27XXX_DM_DESIGN_CAPACITY]   = { 82, 10, 2,    0, 32767 },
-+	[BQ27XXX_DM_DESIGN_ENERGY]     = { 82, 12, 2,    0, 32767 },
-+	[BQ27XXX_DM_TERMINATE_VOLTAGE] = { 82, 16, 2, 2800,  3700 },
-+};
-+
- static struct bq27xxx_dm_reg bq27421_dm_regs[] = {
- 	[BQ27XXX_DM_DESIGN_CAPACITY]   = { 82, 10, 2,    0,  8000 },
- 	[BQ27XXX_DM_DESIGN_ENERGY]     = { 82, 12, 2,    0, 32767 },
-@@ -802,6 +810,7 @@ enum bq27xxx_dm_reg_id {
- 	[BQ27546]   = BQ27XXX_DATA(bq27546,   0         , BQ27XXX_O_OTDC),
- 	[BQ27742]   = BQ27XXX_DATA(bq27742,   0         , BQ27XXX_O_OTDC),
- 	[BQ27545]   = BQ27XXX_DATA(bq27545,   0x04143672, BQ27XXX_O_OTDC),
-+	[BQ27411]   = BQ27XXX_DATA(bq27411,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
- 	[BQ27421]   = BQ27XXX_DATA(bq27421,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
- 	[BQ27425]   = BQ27XXX_DATA(bq27425,   0x04143672, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP),
- 	[BQ27426]   = BQ27XXX_DATA(bq27426,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
-diff --git a/drivers/power/supply/bq27xxx_battery_i2c.c b/drivers/power/supply/bq27xxx_battery_i2c.c
-index 4006912..2677c38 100644
---- a/drivers/power/supply/bq27xxx_battery_i2c.c
-+++ b/drivers/power/supply/bq27xxx_battery_i2c.c
-@@ -247,6 +247,7 @@ static int bq27xxx_battery_i2c_remove(struct i2c_client *client)
- 	{ "bq27546", BQ27546 },
- 	{ "bq27742", BQ27742 },
- 	{ "bq27545", BQ27545 },
-+	{ "bq27411", BQ27411 },
- 	{ "bq27421", BQ27421 },
- 	{ "bq27425", BQ27425 },
- 	{ "bq27426", BQ27426 },
-@@ -279,6 +280,7 @@ static int bq27xxx_battery_i2c_remove(struct i2c_client *client)
- 	{ .compatible = "ti,bq27546" },
- 	{ .compatible = "ti,bq27742" },
- 	{ .compatible = "ti,bq27545" },
-+	{ .compatible = "ti,bq27411" },
- 	{ .compatible = "ti,bq27421" },
- 	{ .compatible = "ti,bq27425" },
- 	{ .compatible = "ti,bq27426" },
-diff --git a/include/linux/power/bq27xxx_battery.h b/include/linux/power/bq27xxx_battery.h
-index d6355f4..507c5e2 100644
---- a/include/linux/power/bq27xxx_battery.h
-+++ b/include/linux/power/bq27xxx_battery.h
-@@ -24,6 +24,7 @@ enum bq27xxx_chip {
- 	BQ27546,
- 	BQ27742,
- 	BQ27545, /* bq27545 */
-+	BQ27411,
- 	BQ27421, /* bq27421, bq27441, bq27621 */
- 	BQ27425,
- 	BQ27426,
+-#include <linux/regmap.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
++#include <linux/regmap.h>
+ 
+ #include "internal.h"
+ 
+@@ -29,7 +29,7 @@ static bool sccb_is_available(struct i2c_adapter *adap)
+ 
+ /**
+  * regmap_sccb_read - Read data from SCCB slave device
+- * @context: Device that will be interacted wit
++ * @context: Device that will be interacted with
+  * @reg: Register to be read from
+  * @val: Pointer to store read value
+  *
+@@ -65,7 +65,7 @@ static int regmap_sccb_read(void *context, unsigned int reg, unsigned int *val)
+ 
+ /**
+  * regmap_sccb_write - Write data to SCCB slave device
+- * @context: Device that will be interacted wit
++ * @context: Device that will be interacted with
+  * @reg: Register to write to
+  * @val: Value to be written
+  *
 -- 
-1.9.1
+2.7.4
 
