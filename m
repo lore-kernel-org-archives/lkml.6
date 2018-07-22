@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E571C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04261C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF3A20878
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF3A20878
+	by mail.kernel.org (Postfix) with ESMTP id BC61E20874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC61E20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730712AbeGVRrZ (ORCPT
+        id S1730803AbeGVRr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 13:47:25 -0400
-Received: from mout.perfora.net ([74.208.4.196]:51809 "EHLO mout.perfora.net"
+        Sun, 22 Jul 2018 13:47:29 -0400
+Received: from mout.perfora.net ([74.208.4.197]:42897 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730084AbeGVRrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 13:47:24 -0400
+        id S1730084AbeGVRr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 13:47:29 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0Lp5Pe-1gAowU1nmu-00essF; Sun, 22 Jul 2018 18:49:58 +0200
+ 0MFJUg-1fkWfQ1ddk-00EJTv; Sun, 22 Jul 2018 18:50:04 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 07/28] ARM: tegra: apalis_t30: reorder host1x/hdmi properties
-Date:   Sun, 22 Jul 2018 18:49:15 +0200
-Message-Id: <20180722164936.20581-8-marcel@ziswiler.com>
+Subject: [PATCH 10/28] ARM: tegra: apalis_t30: annotate uarts
+Date:   Sun, 22 Jul 2018 18:49:18 +0200
+Message-Id: <20180722164936.20581-11-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:TC7B8qEKxV4GKLBUnuFaG96JJKPVQaM930r2gwloMrnKwB3EMOz
- YPpnDXN+iI75sNnbz958Jw+78M1w2r5FN16s0TWcqgKwfb9f9CkBiEfJWuUCH4DDZspesd8
- OI2eF4RV4AUkCbZ0lGD0kldDeypUb/zHeQSe43aqK4d9CBjVclx6tz+Ladcl23obn1DNqRv
- pWbvTbvOSv9nwR8QDhYCg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3/2A/w5pHpM=:RPIakdc2iVIMLSBMCTuCrg
- Gfq7WGSLGjwwauOefo2PfMjwjYNxuZksI1Ys12FhvEFC86LORi7vYkublO6OIRy798uZVHf9P
- P/fRHs26qVZG1GURHuLG1PcuGQM8L0WiqTY0mNU0SIdjYYzDhOP9GR6Fa0DGSy5aNk8d7bk1y
- hs1Br9AV5SeQmAVdQ6SC1RcUf+llWwNS02/5rHNR7xzM2AkoRARf5vWrNywzy+5IBFeyRZk0U
- xXJBuHEthcgeymUo7J1OaBMpkXZUfKz+P/Et5mQ47WzrtGY4Ud7H3XUyqOIWWvXJS4rIkGiDs
- tYqmBozpCdczVRQRWG25MRFBEqMUTv20Zh1qjkoyIm96DJFdWzCFajsgbcCQgJtsh44QqzGam
- 8i8P3G+eOMAStjxRRsR0jT8P20cnHKGINf+gKST4gICDteYxRa0pI1jKpYfMhn1a8YYkVZ7ka
- YPLxayQ5Dccf3sfIVX+XMKfR7JFzSJnH4vzS+QLI9UKGJdg1RMCgZ5YYqeAXzXQ05HmVLgliO
- y1Y0IGzP8UBwe4zpzc18vDoekaLfptKJ1IxyM7hfyrk4vSpsEFzQ2KodTtQdRY1Wy8M6xjP7J
- sHNkzM1vVp9/BCqzIyaxRJj/YHpNMIwdEgRswaoFVU+BTLV18ipcXW7VepHmm4TYMUvEH21AS
- 2YgU3aTi8/FDVVFnKkko75WW3pieS+93T9e5ApLAlkELXzNMwqp3SzxAGgAmCNvBhhSg=
+X-Provags-ID: V03:K1:iGjWjcn2bmTDRpqnBqGydHf81h3gnh5Oxz51ZUGtlRgSteHD0jT
+ yJ4LROO01IsN+0gn3Irgb0/bVBW3l+TD7kgYVsdO5gKpYSeUopUhA++JREq9nC2FBb/Kcnb
+ IUjk05xU6qc78wjHRt1pXfF9Y7Uo0H+Sc9I1JyVQLvOkY/bsBs9n+oUCgqUQ9tkf3Yn+3ps
+ 0OUkN9fbMKwye7LrXMTcQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ybvW120ljnQ=:H/IYxvekdkvL7sm80wuLjN
+ PNTuoZE9RLOyQ9S1zrbmEnWJnvuX1wdx0KAtAJk/eVfL9n9Tnqr48SoEpCRgk/cu+TQisdUDh
+ lgjb+YgdmnJsTaJbEUPzgVNVXt8AII6WtNlBIuONaID0rU8ySXmpaVCEDS341e9B/4Ul+X9Io
+ pGAOJnFTXhtkoO5C6MOU/Uo26w+qMtJZ72m5LFEV3QRyB0GA49h4Y3kmVAycIs9bsFCvuofcZ
+ cRnpfaR9OKVvqWwPDK4O6Ss8kGJEM5EddzmfX/1eYN0NBUi40+AV93wFZXi/+NFKBT2dEPptR
+ fi3wZkGQHAOUCrKStbiK2yg4Lbvlk9+AOdCNPpN/7pqEsDUsIUos91levKIw5ZE8SaF72dSC6
+ /y9iVpWPE1Ti93dF0nM2lU9bgTntKpCYfeXFvwfjiIZiYMgB63rILeqrQekIuI8FQrktOEJvW
+ P8pwetcf59IHzk8vir+doA2k5xb1Elx38vQsLRnF28KHxXAzT0sQKvAdG2ixNFNy80y/f8nVy
+ jHGEH3k7ErKinHB/bRBzSIuBB4GHKo/jMAnVWTb5WC1WXSyy99AW4J0vG2fmubnmNLm3/tA8F
+ +GUuubn9ePUCFJRLXkh3nCO5vqNEOFXdpd7uTQpibeP+WS/hOqXX2p2LsuptB2NbiJjzZ1FyC
+ PJWzmY59i6WAvBlofstLNishVj64RRmjGKMpi9Aol+mVNlML6xOYOWNYK/oCqfGu6DGw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,35 +61,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reorder Host1x/HDMI properties.
+Annotate UARTs.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index a1cc415b3893..d765cac7022a 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -46,12 +46,11 @@
- 
- 	host1x@50000000 {
- 		hdmi@54280000 {
--			vdd-supply = <&avdd_hdmi_3v3_reg>;
--			pll-supply = <&avdd_hdmi_pll_1v8_reg>;
--
-+			nvidia,ddc-i2c-bus = <&hdmiddc>;
- 			nvidia,hpd-gpio =
- 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
--			nvidia,ddc-i2c-bus = <&hdmiddc>;
-+			pll-supply = <&avdd_hdmi_pll_1v8_reg>;
-+			vdd-supply = <&avdd_hdmi_3v3_reg>;
+diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+index 05f3656c058c..37c7db35ab1f 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+@@ -51,20 +51,24 @@
  		};
  	};
  
++	/* Apalis UART1 */
+ 	serial@70006000 {
+ 		status = "okay";
+ 	};
+ 
++	/* Apalis UART2 */
+ 	serial@70006040 {
+ 		compatible = "nvidia,tegra30-hsuart";
+ 		status = "okay";
+ 	};
+ 
++	/* Apalis UART3 */
+ 	serial@70006200 {
+ 		compatible = "nvidia,tegra30-hsuart";
+ 		status = "okay";
+ 	};
+ 
++	/* Apalis UART4 */
+ 	serial@70006300 {
+ 		compatible = "nvidia,tegra30-hsuart";
+ 		status = "okay";
 -- 
 2.14.4
 
