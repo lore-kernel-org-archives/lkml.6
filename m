@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C180AECDFBB
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 08:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EECAC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 08:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 812E020875
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 08:52:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 812E020875
+	by mail.kernel.org (Postfix) with ESMTP id EDC352086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 08:59:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC352086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbeGVJsT (ORCPT
+        id S1728274AbeGVJzs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 05:48:19 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59305 "EHLO mail.bootlin.com"
+        Sun, 22 Jul 2018 05:55:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59418 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728053AbeGVJsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 05:48:19 -0400
+        id S1728152AbeGVJzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 05:55:48 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9C11B207AD; Sun, 22 Jul 2018 10:52:19 +0200 (CEST)
+        id 1A1EE207AD; Sun, 22 Jul 2018 10:59:47 +0200 (CEST)
 Received: from bbrezillon (unknown [37.173.20.83])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 97B0920737;
-        Sun, 22 Jul 2018 10:52:17 +0200 (CEST)
-Date:   Sun, 22 Jul 2018 10:52:16 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1918D20737;
+        Sun, 22 Jul 2018 10:59:45 +0200 (CEST)
+Date:   Sun, 22 Jul 2018 10:59:44 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
@@ -55,12 +55,12 @@ Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 29/35] mtd: rawnand: docg4: convert driver to
+Subject: Re: [PATCH v4 30/35] mtd: rawnand: qcom: convert driver to
  nand_scan()
-Message-ID: <20180722105216.3c1418c0@bbrezillon>
-In-Reply-To: <20180720151527.16038-30-miquel.raynal@bootlin.com>
+Message-ID: <20180722105944.76a5941c@bbrezillon>
+In-Reply-To: <20180720151527.16038-31-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
-        <20180720151527.16038-30-miquel.raynal@bootlin.com>
+        <20180720151527.16038-31-miquel.raynal@bootlin.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -70,116 +70,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 17:15:21 +0200
+On Fri, 20 Jul 2018 17:15:22 +0200
 Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-> Two helpers have been added to the core to make ECC-related
-> configuration between the detection phase and the final NAND scan. Use
-> these hooks and convert the driver to just use nand_scan() instead of
-> both nand_scan_ident() and nand_scan_tail().
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/mtd/nand/raw/docg4.c | 55 ++++++++++++++++++++++++++------------------
->  1 file changed, 32 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/docg4.c b/drivers/mtd/nand/raw/docg4.c
-> index 4dccdfba6140..fec4353ff4ef 100644
-> --- a/drivers/mtd/nand/raw/docg4.c
-> +++ b/drivers/mtd/nand/raw/docg4.c
-> @@ -1227,10 +1227,9 @@ static void __init init_mtd_structs(struct mtd_info *mtd)
->  	 * required within a nand driver because they are performed by the nand
->  	 * infrastructure code as part of nand_scan().  In this case they need
->  	 * to be initialized here because we skip call to nand_scan_ident() (the
-> -	 * first half of nand_scan()).  The call to nand_scan_ident() is skipped
-> -	 * because for this device the chip id is not read in the manner of a
-> -	 * standard nand device.  Unfortunately, nand_scan_ident() does other
-> -	 * things as well, such as call nand_set_defaults().
-> +	 * first half of nand_scan()).  The call to nand_scan_ident() could be
-> +	 * skipped because for this device the chip id is not read in the manner
-> +	 * of a standard nand device.
->  	 */
 >  
->  	struct nand_chip *nand = mtd_to_nand(mtd);
-> @@ -1315,6 +1314,27 @@ static int __init read_id_reg(struct mtd_info *mtd)
->  
->  static char const *part_probes[] = { "cmdlinepart", "saftlpart", NULL };
->  
-> +static int docg4_attach_chip(struct nand_chip *chip)
-> +{
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	struct docg4_priv *doc = (struct docg4_priv *)(chip + 1);
-> +
-> +	init_mtd_structs(mtd);
-> +
-> +	/* Initialize kernel BCH algorithm */
-> +	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
-> +	if (!doc->bch)
-> +		return -EINVAL;
-> +
-
-You need a ->detach_chip() hook to free the BCH context, don't you?
-
-> +	reset(mtd);
-> +
-> +	return read_id_reg(mtd);
-> +}
-> +
-> +static const struct nand_controller_ops docg4_controller_ops = {
-> +	.attach_chip = docg4_attach_chip,
-> +};
-> +
->  static int __init probe_docg4(struct platform_device *pdev)
+> -static int qcom_nand_host_init(struct qcom_nand_controller *nandc,
+> -			       struct qcom_nand_host *host,
+> -			       struct device_node *dn)
+> +static int qcom_nand_host_init_and_register(struct qcom_nand_controller *nandc,
+> +					    struct qcom_nand_host *host,
+> +					    struct device_node *dn)
 >  {
->  	struct mtd_info *mtd;
-> @@ -1350,26 +1370,16 @@ static int __init probe_docg4(struct platform_device *pdev)
->  	mtd->dev.parent = &pdev->dev;
->  	doc->virtadr = virtadr;
->  	doc->dev = dev;
-> -
-> -	init_mtd_structs(mtd);
-> -
-> -	/* initialize kernel bch algorithm */
-> -	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
-> -	if (doc->bch == NULL) {
-> -		retval = -EINVAL;
-> -		goto free_nand;
-> -	}
-> -
->  	platform_set_drvdata(pdev, doc);
+>  	struct nand_chip *chip = &host->chip;
+>  	struct mtd_info *mtd = nand_to_mtd(chip);
+> @@ -2824,36 +2828,20 @@ static int qcom_nand_host_init(struct qcom_nand_controller *nandc,
+>  	chip->block_markbad	= qcom_nandc_block_markbad;
 >  
-> -	reset(mtd);
-> -	retval = read_id_reg(mtd);
-> -	if (retval == -ENODEV) {
-> -		dev_warn(dev, "No diskonchip G4 device found.\n");
-> -		goto free_bch;
-> -	}
-> -
-> -	retval = nand_scan_tail(mtd);
-> +	/*
-> +	 * Asking for 0 chips is useless here but it warns the user that the use
-> +	 * of the nand_scan() function is a bit abused here because the
-> +	 * initialization is actually a bit specific and re-handled again in the
-> +	 * ->attach_chip() hook. It will probably leak some memory though.
+>  	chip->controller = &nandc->controller;
+> +	chip->controller->ops = &qcom_nandc_ops;
 
-I don't get the last part. Is there really a memory leak? In that case
-we should find a solution to prevent that.
+This assignment should be moved here [1].
 
-> +	 */
-> +	nand->dummy_controller.ops = &docg4_controller_ops;
-> +	retval = nand_scan(mtd, 0);
->  	if (retval)
->  		goto free_bch;
->  
-> @@ -1389,7 +1399,6 @@ static int __init probe_docg4(struct platform_device *pdev)
->  	nand_cleanup(nand);
->  free_bch:
->  	free_bch(doc->bch);
+Once fixed you can add
 
-This should be done in the ->detach_chip() hook.
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-> -free_nand:
->  	kfree(nand);
->  unmap:
->  	iounmap(virtadr);
 
+[1]https://elixir.bootlin.com/linux/v4.18-rc5/source/drivers/mtd/nand/raw/qcom_nandc.c#L2574
