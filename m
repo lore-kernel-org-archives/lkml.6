@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7949ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF49ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C9C320878
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:33:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C9C320878
+	by mail.kernel.org (Postfix) with ESMTP id A18F120874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:33:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A18F120874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbeGVOaB (ORCPT
+        id S1728533AbeGVOaT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 10:30:01 -0400
-Received: from mail01.asahi-net.or.jp ([202.224.55.13]:38271 "EHLO
-        mail01.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728244AbeGVOaB (ORCPT
+        Sun, 22 Jul 2018 10:30:19 -0400
+Received: from mail03.asahi-net.or.jp ([202.224.55.15]:52604 "EHLO
+        mail03.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728244AbeGVOaT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 10:30:01 -0400
+        Sun, 22 Jul 2018 10:30:19 -0400
 Received: from h61-195-96-97.vps.ablenet.jp (h61-195-96-97.vps.ablenet.jp [61.195.96.97])
         (Authenticated sender: PQ4Y-STU)
-        by mail01.asahi-net.or.jp (Postfix) with ESMTPA id 11FC282137;
-        Sun, 22 Jul 2018 22:33:18 +0900 (JST)
+        by mail03.asahi-net.or.jp (Postfix) with ESMTPA id 84F81EB287;
+        Sun, 22 Jul 2018 22:33:36 +0900 (JST)
 Received: from yo-satoh-debian.ysato.ml (ZM028236.ppp.dion.ne.jp [222.8.28.236])
-        by h61-195-96-97.vps.ablenet.jp (Postfix) with ESMTPSA id 8FB9D24006D;
-        Sun, 22 Jul 2018 22:33:18 +0900 (JST)
-Date:   Sun, 22 Jul 2018 22:33:15 +0900
-Message-ID: <87lga3fl9g.wl-ysato@users.sourceforge.jp>
+        by h61-195-96-97.vps.ablenet.jp (Postfix) with ESMTPSA id 309BE24006D;
+        Sun, 22 Jul 2018 22:33:36 +0900 (JST)
+Date:   Sun, 22 Jul 2018 22:33:35 +0900
+Message-ID: <87k1pnfl8w.wl-ysato@users.sourceforge.jp>
 From:   Yoshinori Sato <ysato@users.sourceforge.jp>
 To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         uclinux-h8-devel@lists.sourceforge.jp
-Subject: Re: [PATCH] arch/h8300: eliminate ptrace.h warnings
-In-Reply-To: <c08b3519-0e43-98ff-1e09-397bcfd55270@infradead.org>
-References: <c08b3519-0e43-98ff-1e09-397bcfd55270@infradead.org>
+Subject: Re: [PATCH] arch/h8300: eliminate kgbd.c warning
+In-Reply-To: <7c458f27-9603-af24-e4e3-b87ef99693e3@infradead.org>
+References: <7c458f27-9603-af24-e4e3-b87ef99693e3@infradead.org>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -49,37 +49,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 11:34:53 +0900,
+On Fri, 20 Jul 2018 11:36:06 +0900,
 Randy Dunlap wrote:
 > 
 > From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> Add a "struct task_struct;" stub to arch/h8300's ptrace.h header to
-> eliminate gcc warnings (gcc version is 8.1.0).
+> Drop the "const" qualifier from arch_kgdb_ops to eliminate the gcc
+> warning (gcc version is 8.1.0).
 > 
-> ../arch/h8300/include/asm/ptrace.h:32:34: warning: 'struct task_struct' declared inside parameter list will not be visible outside of this definition or declaration
->  extern long h8300_get_reg(struct task_struct *task, int regno);
-> ../arch/h8300/include/asm/ptrace.h:33:33: warning: 'struct task_struct' declared inside parameter list will not be visible outside of this definition or declaration
->  extern int h8300_put_reg(struct task_struct *task, int regno,
+> arch/h8300/kernel/kgdb.c:132:24: error: conflicting type qualifiers for 'arch_kgdb_ops'
+>  const struct kgdb_arch arch_kgdb_ops = {
+> In file included from ../arch/h8300/kernel/kgdb.c:12:
+> ../include/linux/kgdb.h:284:26: note: previous declaration of 'arch_kgdb_ops' was here
+>  extern struct kgdb_arch  arch_kgdb_ops;
 > 
 > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 > Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
 > Cc: uclinux-h8-devel@lists.sourceforge.jp
 > ---
->  arch/h8300/include/asm/ptrace.h |    2 ++
->  1 file changed, 2 insertions(+)
+>  arch/h8300/kernel/kgdb.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> --- linux-next-20180717.orig/arch/h8300/include/asm/ptrace.h
-> +++ linux-next-20180717/arch/h8300/include/asm/ptrace.h
-> @@ -4,6 +4,8 @@
+> --- linux-next-20180717.orig/arch/h8300/kernel/kgdb.c
+> +++ linux-next-20180717/arch/h8300/kernel/kgdb.c
+> @@ -129,7 +129,7 @@ void kgdb_arch_exit(void)
+>  	/* Nothing to do */
+>  }
 >  
->  #include <uapi/asm/ptrace.h>
->  
-> +struct task_struct;
-> +
->  #ifndef __ASSEMBLY__
->  #ifndef PS_S
->  #define PS_S  (0x10)
+> -const struct kgdb_arch arch_kgdb_ops = {
+> +struct kgdb_arch arch_kgdb_ops = {
+>  	/* Breakpoint instruction: trapa #2 */
+>  	.gdb_bpt_instr = { 0x57, 0x20 },
+>  };
 > 
 > 
 
