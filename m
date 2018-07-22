@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCACAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 827F0C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A339C20874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A339C20874
+	by mail.kernel.org (Postfix) with ESMTP id 472C620874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:50:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 472C620874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730880AbeGVRra (ORCPT
+        id S1731012AbeGVRrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 13:47:30 -0400
-Received: from mout.perfora.net ([74.208.4.197]:57453 "EHLO mout.perfora.net"
+        Sun, 22 Jul 2018 13:47:37 -0400
+Received: from mout.perfora.net ([74.208.4.196]:53143 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730084AbeGVRra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 13:47:30 -0400
+        id S1730084AbeGVRrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 13:47:37 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MUFcK-1fZ4MW1iqY-00R2fl; Sun, 22 Jul 2018 18:50:06 +0200
+ 0M5O2r-1fwKD92G2p-00zZDc; Sun, 22 Jul 2018 18:50:09 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 11/28] ARM: tegra: apalis_t30: drop unused cami2c label
-Date:   Sun, 22 Jul 2018 18:49:19 +0200
-Message-Id: <20180722164936.20581-12-marcel@ziswiler.com>
+Subject: [PATCH 12/28] ARM: tegra: apalis_t30: white-space clean-up
+Date:   Sun, 22 Jul 2018 18:49:20 +0200
+Message-Id: <20180722164936.20581-13-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:lhOY7CXOfJRQi0q2aVwlOZs0HgThAudrOBuVfbRiUajkzjqzu0S
- t7ULmW7oRf9lstNsa+GymMpXoNhJbL6OFqW7t9m9h3gRIf4fcvXJ2u85PlEyjZFEzmfwZ9V
- jUZf/+urCHCBYuoOMFRSWWCYL0omN1KzfAIjUvKtAIGJpIHLLZUIgC81BcMEOnSAE9EScEf
- a/S7Yru68UGYEb/hAuBCw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ob2XaxO/54M=:UHc0iaJB2cWBFLG4VjFVVW
- fqJ9EIHNIfIee5cgZLI7AmVMRR1kU1xIOvBlZ9YGumzwW1r2UZhsHr/O8KcHWvNSaMS+Ic/GT
- 7cTNJIKjCfsW+3lpEIiZJ4uHURAjbCZlp4uCbpjuxzABJTshzjrl+EtW1bgXqx9SNJCEONMzL
- pcVP0MovXRIgpVh44HFTQtNixFZgYf4K7p60FKIA/GcdnQpCMkYILNYHTGcOPFohUqp8pw0Lk
- Qct67kSpuwtWGyOly7MpHLguDzs/Pmnq0d6bC0rzCPFkTNp0q1ZaYoJLx3U7xThdIbigxoe/I
- oXwdLR9SMIUmeXGzPnq586uFGg70lP6zvkBlKq3jnrjNVQwmx8cnIh05tb4mQxZH63dDFqk6e
- S9L4U4wevv4L2tLQgHTCRNBpw12ISreYhBqFtiuREmd845XcAdaY24On16eJE3X+ue41zopjv
- 2ZyBbIfHdin4vn0iLQb+FhY2Nb9SfPjcd4vrKQqwoqGFATr2M0cx55TNC2E6eXDHCekCfR77v
- 5kMXq7O7jhyUuQrMKIPNLTIy20zc+1cyGkBSZMLxD2THCLMvxLhX2ocZdkr5U/3i0RGScmVfa
- e888iR3b51FVT5NEtzRiIAv3g49ejHYtspyQiegFNl8ryLOPCPAkbTlndLMNLZ/8cFKytc/Tb
- Z0KmIu30z6wALXDTx6IVkpRlG0U7ALvvi/fZedyj/KWs45DajGWOwm/ZLqvtTAkekZNE=
+X-Provags-ID: V03:K1:7a2F5JV3CoyUEL8gNwz3FOJGkSEZq71XHG0UfbRaXugGQo7z+i7
+ WsljEGUjjtTBS0ijRb4POMxnPYWkY6tKsXtIV0AStvh9+cWrUJi8qz1nySpI7dJ1SFnT7o2
+ d0/xFrn8nta6C48dURnwZu9E2PQ69wSfSTTmEHF9C2jtztoIvbdglwt2UfxJYVvnXPN7oVs
+ UytYeHEhSK2weGuF8Y9/w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:srZywXd/gvA=:cRrH12tGY6d4GjuN7Z+zj2
+ cxeVLd9XDRPR7552gdXQjfg5fm9LtaiEAQZzwjLVw+uTtRCmPQiR8tx4i9YkxbG6pSkOKLJKC
+ WDQ+9kk4PjTrpBjO3Su4FVNfmyWTwqV5K8H4LZKjEEz7tGfOWRnSFKZ2mHPnGOXZrwIF/+1tY
+ PR4cDyZMKHWsKJb+qtqbbW1Dj4mb2THlquynax9f5KK+WJa48SDaTExmcnw4lY4C7PsSx/x5L
+ ejGSrOZV5yNkm0OfemArlcjRjtXxOaHC8M1eRrWsKck6eCqw+pzU4judfNJR+guyhwsmV992z
+ vAJZRr/P7nPD6EFsetdBCv7ybGOUpZhDvbvJ9jKFg56cfn/7IQri1ToKsVT9MyiMi5TRhjvEa
+ AfwSpeh9xOju95PQlJ/x0M4832ydD2wfhCUXdXajtWHpjTlMu3BpjUAifg4vY80f6pGG5/ZHl
+ GRC0zdyAPhXAMy2EtvVZUt63oqc3qEhth7TDDjDDJUaQNHZOu7K1IrCphbEPkk2mPYfPSmERp
+ RnHFY4mxLi6TDlkmpqKBbVBU6v5bAOBtRr86zee8NqmVjckA6X47ZZqX3Fp3wZkNzH/0xZfRk
+ mohQEJoj4T425P4RLT5bksy99HwJRn2OB8PqWDFAzl5+RZx6wocMoy4QekMpspJx6gosPZ7rU
+ IxmivgWEa1rN9y6ljJUo5c+3CLgj2PrGFq4k3Shm3F3TcSNnw39DU2LOBGoL+VlRmcK0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,27 +61,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Drop unused cami2c label.
+White-space clean-up.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 37c7db35ab1f..ba178632d82c 100644
+index ba178632d82c..74d588561d9f 100644
 --- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -104,7 +104,7 @@
- 	 * CAM_I2C: I2C3_SDA/SCL on MXM3 pin 201/203 (e.g. camera sensor on
- 	 * carrier board)
- 	 */
--	cami2c: i2c@7000c500 {
-+	i2c@7000c500 {
+@@ -118,6 +118,7 @@
+ 	spi@7000d400 {
  		status = "okay";
- 		clock-frequency = <400000>;
+ 		spi-max-frequency = <25000000>;
++
+ 		spidev0: spidev@1 {
+ 			compatible = "spidev";
+ 			reg = <1>;
+@@ -129,6 +130,7 @@
+ 	spi@7000dc00 {
+ 		status = "okay";
+ 		spi-max-frequency = <25000000>;
++
+ 		spidev1: spidev@2 {
+ 			compatible = "spidev";
+ 			reg = <2>;
+@@ -189,7 +191,6 @@
+ 
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+-
+ 		/* PWM_BKL1 */
+ 		pwms = <&pwm 0 5000000>;
+ 		brightness-levels = <255 231 223 207 191 159 127 0>;
+@@ -217,7 +218,6 @@
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+ 		compatible = "edt,et057090dhu", "simple-panel";
+-
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
  	};
 -- 
 2.14.4
