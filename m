@@ -2,163 +2,127 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E026BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B3FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BF972075B
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:28:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D36D2075B
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 23:29:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Aj1LIbpa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF972075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pihzemn+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D36D2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731109AbeGWA0v (ORCPT
+        id S1731156AbeGWA1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 20:26:51 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44071 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730317AbeGWA0v (ORCPT
+        Sun, 22 Jul 2018 20:27:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60302 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730317AbeGWA1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 20:26:51 -0400
-Received: by mail-io0-f195.google.com with SMTP id q19-v6so14114732ioh.11
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 16:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=lXYAkWMrTXMvydA4fDC57KPIQEb94LnE1NrDFLI3MDY=;
-        b=Aj1LIbpaJaIEUZwSZs6L/QboaqBAYgK0IsG/xkAiKWpgwcOOLFAhyJ6Yr/kkzkqAAZ
-         bqA1c0asnR2SZ1o6tfhiZ4Ko7IKbr9cQVNrwzb2iZEfS1qb2MlpGDVzo6VdzXY1U1Y9F
-         +8CPjgvT9GfNMoTybjJl5n+jVnwH7cYlJ0fAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lXYAkWMrTXMvydA4fDC57KPIQEb94LnE1NrDFLI3MDY=;
-        b=cUrGYQ89EC4LhP2JiF6YhD1SzWohEP+20b2bcDkWuP12WBoICwiMYW/m3UwjXlJN6U
-         mA3osV+NEWrcTSjVj/VrZwrKm02Z1dijv+iLxx8Ffy+mhIgM2E+C2pwtYzq2GfPcSm9p
-         b/6siC/pCPnawf7RTT2SLtjLwSjRlz8JUpMwH1uk1Fe6+4iAXHXmcxloSTXL8rLEc/1C
-         1ukaJy8HudYjjXawxy4b1GoF0rLmQaxujjSP/FVDBQZs2IaGEGqMbuIuXP2Fxg6D4OsZ
-         LdWoMyxdLeXnZSaEUgdd6och2rJeL/H6VaPoYPJoKRvkMod2XIt1LoME0QuywRnmAzVd
-         V5tA==
-X-Gm-Message-State: AOUpUlFqOIkqnbYnwgdraCezp2w2Xv52jFT66v4J04RRFetAOxozTCqV
-        llsL1Km7THO0X1gFYI55NlqDkA==
-X-Google-Smtp-Source: AAOMgpfdl/mK/JWSbZaZOiG+WdkOvtH2jzENJWBCi0eEGqrYj4MEr2UpGngAZHQJpuyXHkqYz4LlgQ==
-X-Received: by 2002:a6b:a715:: with SMTP id q21-v6mr8353954ioe.61.1532302106558;
-        Sun, 22 Jul 2018 16:28:26 -0700 (PDT)
-Received: from djkurtz2.bld.corp.google.com ([2620:15c:183:0:1cfd:61a5:7215:5f9c])
-        by smtp.gmail.com with ESMTPSA id f24-v6sm2334281ioc.52.2018.07.22.16.28.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 16:28:25 -0700 (PDT)
-From:   Daniel Kurtz <djkurtz@chromium.org>
-Cc:     Akshu Agrawal <akshu.agrawal@amd.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org (moderated list:SOUND),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] ASoC: da7219: Allow pdata to specify a VDDIO
-Date:   Sun, 22 Jul 2018 17:28:22 -0600
-Message-Id: <20180722232822.34641-1-djkurtz@chromium.org>
-X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
-To:     unlisted-recipients:; (no To-header on input)
+        Sun, 22 Jul 2018 20:27:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aJyV7KSLyt2ZX6T+ESPq2IO2rm2jOiTeyZVa/ZtxfxI=; b=pihzemn+qT57L9XFFcax9JwOw
+        8+8NKxmG2eKw/OBAb7qSvXAaPJTyz0zBiVAeJ80kDgRPW3DOa2U3aB2dQ7h6t3vf5Nq+noOGs784u
+        45E2pn/sqVXK+CV5p7pB4D3PEHkqj7fBJMIiN0mldBk9/VWK3rgOD5XeFc+CIPs2lq0viOG24xJDO
+        Mh9qOJtha7w7Ogktq4qpMkK6mypYcbXIaITnnXYBbhDrONsawMJ5m+YxgBAaPRri6YAxGVQhzN1ZM
+        7cVQhcssdOyc+mDXnrYn3wtSwfezFc5bqh29DSGy8C4cOotgk0Ihtr2Gb+7/2FlDE1Od31OefoWPY
+        Pkbs+sQ3g==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhNmX-0002na-V1; Sun, 22 Jul 2018 23:28:54 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v2] mtd/maps: fix solutionengine.c printk format warnings
+Message-ID: <0ca72308-0551-97dc-dc74-11e1d8dac5b1@infradead.org>
+Date:   Sun, 22 Jul 2018 16:28:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some systems do not have software controllable regulators driving the
-DA7219's supplies, nor can they use device tree to create "always-on fixed
-regulators" to easily pretend like they do.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-On these systems the call to devm_regulator_bulk_get() just creates
-a set of dummy registers.  Calling regulator_get_voltage() on a dummy
-regulator just returns -EINVAL, in which case the DA7219 is always set up
-to use the default VDDIO voltage range of 2.5-3.6V.
+Fix 2 printk format warnings (this driver is currently only used by
+arch/sh/) by using "%pap" instead of "%lx".
+(or we could just cast the physical addresses to unsigned int)
 
-Provide a new device property to let such systems specify a different
-VDDIO if needed (e.g., 1.8V).
+Fixes these build warnings:
 
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+../drivers/mtd/maps/solutionengine.c: In function 'init_soleng_maps':
+../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
+../drivers/mtd/maps/solutionengine.c:62:54: note: format string is defined here
+  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
+                                                  ~~~~^
+                                                  %08x
+../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
+../drivers/mtd/maps/solutionengine.c:62:72: note: format string is defined here
+  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
+                                                                    ~~~~^
+                                                                    %08x
+
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: linux-mtd@lists.infradead.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Cc: linux-sh@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
-Changes for v2:
- - fix to use device_property_read_u32()
+v2: indent all lines inside the new block
 
- include/sound/da7219.h    |  2 ++
- sound/soc/codecs/da7219.c | 19 +++++++++++++------
- 2 files changed, 15 insertions(+), 6 deletions(-)
+ drivers/mtd/maps/solutionengine.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/include/sound/da7219.h b/include/sound/da7219.h
-index 1bfcb16f2d10ab..16ab125ad4adbf 100644
---- a/include/sound/da7219.h
-+++ b/include/sound/da7219.h
-@@ -38,6 +38,8 @@ struct da7219_pdata {
- 
- 	const char *dai_clks_name;
- 
-+	u32 vddio;
-+
- 	/* Mic */
- 	enum da7219_micbias_voltage micbias_lvl;
- 	enum da7219_mic_amp_in_sel mic_amp_in_sel;
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index 980a6a8bf56d38..9893920b26f41f 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -1634,6 +1634,9 @@ static struct da7219_pdata *da7219_fw_to_pdata(struct snd_soc_component *compone
- 	else
- 		pdata->mic_amp_in_sel = DA7219_MIC_AMP_IN_SEL_DIFF;
- 
-+	if (device_property_read_u32(dev, "dlg,vddio", &of_val32) >= 0)
-+		pdata->vddio = of_val32;
-+
- 	return pdata;
- }
- 
-@@ -1717,8 +1720,12 @@ static int da7219_handle_supplies(struct snd_soc_component *component)
- 	/* Determine VDDIO voltage provided */
- 	vddio = da7219->supplies[DA7219_SUPPLY_VDDIO].consumer;
- 	ret = regulator_get_voltage(vddio);
-+	/* If regulator_get_voltage() fails, try to use vddio from pdata. */
-+	if (ret < 0 && da7219->pdata)
-+		ret = da7219->pdata->vddio;
- 	if (ret < 1200000)
--		dev_warn(component->dev, "Invalid VDDIO voltage\n");
-+		dev_warn(component->dev, "Invalid VDDIO voltage: %d mV\n",
-+			 ret);
- 	else if (ret < 2800000)
- 		io_voltage_lvl = DA7219_IO_VOLTAGE_LEVEL_1_2V_2_8V;
- 
-@@ -1872,6 +1879,11 @@ static int da7219_probe(struct snd_soc_component *component)
- 	mutex_init(&da7219->ctrl_lock);
- 	mutex_init(&da7219->pll_lock);
- 
-+	/* Handle DT/ACPI/Platform data */
-+	da7219->pdata = dev_get_platdata(component->dev);
-+	if (!da7219->pdata)
-+		da7219->pdata = da7219_fw_to_pdata(component);
-+
- 	/* Regulator configuration */
- 	ret = da7219_handle_supplies(component);
- 	if (ret)
-@@ -1897,11 +1909,6 @@ static int da7219_probe(struct snd_soc_component *component)
- 		break;
+--- linux-next-20180717.orig/drivers/mtd/maps/solutionengine.c
++++ linux-next-20180717/drivers/mtd/maps/solutionengine.c
+@@ -59,9 +59,14 @@ static int __init init_soleng_maps(void)
+ 			return -ENXIO;
+ 		}
  	}
+-	printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
+-	       soleng_flash_map.phys & 0x1fffffff,
+-	       soleng_eprom_map.phys & 0x1fffffff);
++	{
++		resource_size_t fl_phys = soleng_flash_map.phys & 0x1fffffff;
++		resource_size_t ep_phys = soleng_eprom_map.phys & 0x1fffffff;
++
++		printk(KERN_NOTICE
++		       "Solution Engine: Flash at 0x%pap, EPROM at 0x%pap\n",
++	       	       &fl_phys, &ep_phys);
++	}
+ 	flash_mtd->owner = THIS_MODULE;
  
--	/* Handle DT/ACPI/Platform data */
--	da7219->pdata = dev_get_platdata(component->dev);
--	if (!da7219->pdata)
--		da7219->pdata = da7219_fw_to_pdata(component);
--
- 	da7219_handle_pdata(component);
- 
- 	/* Check if MCLK provided */
--- 
-2.18.0.233.g985f88cf7e-goog
+ 	eprom_mtd = do_map_probe("map_rom", &soleng_eprom_map);
+
 
