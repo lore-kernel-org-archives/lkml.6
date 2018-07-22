@@ -2,111 +2,87 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA83C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3375C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E8A2075B
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E8A2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9B53C20854
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:08:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="qwEiRcvt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B53C20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731060AbeGVXAr (ORCPT
+        id S1730928AbeGVXG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 19:00:47 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:52560 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730429AbeGVXAr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 19:00:47 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 9C9D327DF4F
-Date:   Mon, 23 Jul 2018 00:02:35 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To:     David Lechner <david@lechnology.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] power: supply: lego_ev3_battery: fix Vce offset
-Message-ID: <20180722220235.3cjpvsufswcqu53g@earth.universe>
-References: <20180720201944.20503-1-david@lechnology.com>
- <20180720201944.20503-3-david@lechnology.com>
+        Sun, 22 Jul 2018 19:06:58 -0400
+Received: from imap.thunk.org ([74.207.234.97]:43620 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730611AbeGVXG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 19:06:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=qVT9DsJUy3tWv6r2oWR9UxkTK51n9zJmFQaz3VqN2js=; b=qwEiRcvttzAxm6ip0psZj18ksE
+        9mJW+FPHr1BZy2FknJNayu+bwBgUcRI6b4Da6qVk6AyPDBpMpwGyaxtnF2ME1lFG750qGLwvBCgUs
+        Nem4yNrBmFgdHxPxtTcSshli+pHzEt2nCTrvOF5btruhbQwGQ2/QhKNcxh5XOoOtI5P0=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fhMWy-0005Sb-Uc; Sun, 22 Jul 2018 22:08:45 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id AF7AB7A6463; Sun, 22 Jul 2018 18:08:41 -0400 (EDT)
+Date:   Sun, 22 Jul 2018 18:08:41 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Junil Lee <junil0814.lee@lge.com>
+Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, junil0814.lee@MIT.EDU
+Subject: Re: [PATCH] ext4: remove abnormal set for I_DATA_SEM subclass
+Message-ID: <20180722220841.GA3358@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Junil Lee <junil0814.lee@lge.com>, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        junil0814.lee@MIT.EDU
+References: <1531123108-45918-1-git-send-email-junil0814.lee@lge.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="go7ejspxnjzluymo"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180720201944.20503-3-david@lechnology.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <1531123108-45918-1-git-send-email-junil0814.lee@lge.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 09, 2018 at 04:58:28PM +0900, Junil Lee wrote:
+> The -EBUSY return value of dquot_enable() function means that just
+> want to update flags. If some users make a duplicate request to update
+> flags, lockdep could catch the false positive casued by needing to
+> allocate a quota block from inside ext4_map_blocks(), while holding
+> i_data_sem for a data inode. This results in this complaint:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&s->s_dquot.dqio_mutex);
+>                                lock(&ei->i_data_sem);
+>                                lock(&s->s_dquot.dqio_mutex);
+>   lock(&ei->i_data_sem);
 
---go7ejspxnjzluymo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+How does this happen in practice?  The function ext4_quota_enable() is
+only called by ext4_enable_quotas(), and I don't see the code path
+where this would happen.  And if it does it would be resulting an
+EXT4-fs warning message getting printing indicating that a failure to
+enable quotas with an error of EBUSY.  So how does this happen that
+"users would make a duplicate request to update flags"?
 
-Hi,
-
-On Fri, Jul 20, 2018 at 03:19:44PM -0500, David Lechner wrote:
-> This fixes the value that accounts for the Vce of a transistor in the
-> LEGO MINDSTORMS EV3 power supply driver. The old value (200mV) was the
-> max value from the data sheet. After testing, the actual value has been
-> found to be 50mV. By using 50mV we get a more accurate voltage
-> indication.
->=20
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
-
-Thanks, queued to power-supply's for-next branch.
-
--- Sebastian
-
->  drivers/power/supply/lego_ev3_battery.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/lego_ev3_battery.c b/drivers/power/supp=
-ly/lego_ev3_battery.c
-> index 6e3b3e384172..1ae3710909b7 100644
-> --- a/drivers/power/supply/lego_ev3_battery.c
-> +++ b/drivers/power/supply/lego_ev3_battery.c
-> @@ -52,7 +52,7 @@ static int lego_ev3_battery_get_property(struct power_s=
-upply *psy,
->  			return ret;
-> =20
->  		val->intval *=3D 2000;
-> -		val->intval +=3D 200000;
-> +		val->intval +=3D 50000;
-> =20
->  		/* plus adjust for shunt resistor drop */
->  		ret =3D iio_read_channel_processed(batt->iio_i, &val2);
-> --=20
-> 2.17.1
->=20
-
---go7ejspxnjzluymo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAltU/vsACgkQ2O7X88g7
-+ppESQ/+OmbigC+YZtUAiBrpp5Iwop3jBTPxRVqRQfJK26gpGKLgPiXQs9e/739m
-IBjvvpwYdqiHCjg2kcjwkHyDqG1YYyJu4nTmKABU3yW80xtfR4tI5scHmqZJVjMk
-2C8r3iyw2LGTVhIBA2QBEXQ+3bSM8mEHQ8EW2zjuzUPyZ45JmALi7h2Bqx0g1G9d
-3tepiVnVCnyWvF5CjbfjX9Z0gNskTd/rbc3uEa1WAvGOSTJPfZ76Ko6jEC3Uz9mn
-Mp6F3+5emE96BDh0wlxAo29rsmOVGZ2ZeZ9KRA2WfJn+d/idYs+eOt3N4dZ0mQKD
-R9YUOZH9t9ogAFd1SH5bbxHMFuBlCOL0LJeemjm/iWLmIHi5pEWhPO1HKOnPIwgV
-sBIpOs9nohr23iUcz31xbIxxL8BbLbrGwPzZc5DnpoWAuI9+xvz/vSHi/rnLQ09u
-OhS7ue5SyF4HZ12Y5+GisLkoSbETeZsfazkcUzYsyB48RB6UTxNwqGFsqOiWDfxW
-e/hO8Yz2wxdx8huHNj4cc1aZAX2HMaL/HDObP+itJuYE9O9eBm1SMdJ+Crgduz22
-wG7rIh4+OxSd9tnpT1nkdvBS8YxA3szUn2za+VHWO5KZWSKGlunCCsv84VMVhmbS
-Sl3OUXiL9miIC1HZXh/UpEOgMsYQgCB3c2y06IAWT+uwMRtla2w=
-=kGWU
------END PGP SIGNATURE-----
-
---go7ejspxnjzluymo--
+       	     	    	      	      	 	- Ted
