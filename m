@@ -2,101 +2,175 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F437ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 00:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A25ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 01:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17ADF20864
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 00:02:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB71920854
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 01:21:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ppa62+4f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17ADF20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="dTaBtu8J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB71920854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=runbox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbeGVA5P (ORCPT
+        id S1728322AbeGVCPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 21 Jul 2018 20:57:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49410 "EHLO mail.kernel.org"
+        Sat, 21 Jul 2018 22:15:53 -0400
+Received: from aibo.runbox.com ([91.220.196.211]:59920 "EHLO aibo.runbox.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728194AbeGVA5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Jul 2018 20:57:14 -0400
-Received: from mail-wm0-f50.google.com (mail-wm0-f50.google.com [74.125.82.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FA3220864
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 00:02:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532217759;
-        bh=NUIICqMFu/exJzBumAfQLJH5Bsx4WLTgsJ/5fjzOYZo=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Ppa62+4fRxpwzOqSOgpzDt4J8HUGNJ2d0eE8adIFzBIL9yRq4ht4YWePGt0lRwEbz
-         54lTjKwDHgJFo4SdDBxJoAXB5L10DOUEfgx7xfuZmz2JYZDWrlXILxEVjLyBDSyj+D
-         R85hnhqCaN6O3BzhqcXQylDMZjBLblHgtV9Tzdlo=
-Received: by mail-wm0-f50.google.com with SMTP id t25-v6so3735107wmi.3
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jul 2018 17:02:39 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEIKd2wA/rrOkNs0jd+mApiNK+xIsSxoHbypKaGlRJwxzJSbWSj
-        oYqcyvYDRqWZLMQpxhoQIJMPE2cVDb4QyimsleWjqw==
-X-Google-Smtp-Source: AAOMgpfe1mo1OSCxGWV98A88I4vRWp9JjBy2bt02aX+L4xGy9IokVZG5e8nctEhDUxsA8XfTVKNVoKcEJuI6pXdldow=
-X-Received: by 2002:a1c:8b0d:: with SMTP id n13-v6mr4079101wmd.46.1532217757918;
- Sat, 21 Jul 2018 17:02:37 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Sat, 21 Jul 2018 17:02:17
- -0700 (PDT)
-In-Reply-To: <41ab203e-4ebd-083f-62c6-f10e649c6bb6@intel.com>
-References: <41ab203e-4ebd-083f-62c6-f10e649c6bb6@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 21 Jul 2018 17:02:17 -0700
-X-Gmail-Original-Message-ID: <CALCETrURzP9N8xHd7+prOoJWZ690R2261-tHwgwnRu4pwn62VA@mail.gmail.com>
-Message-ID: <CALCETrURzP9N8xHd7+prOoJWZ690R2261-tHwgwnRu4pwn62VA@mail.gmail.com>
-Subject: Re: kernel %rsp code at sysenter PTI vs no-PTI
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
+        id S1728229AbeGVCPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Jul 2018 22:15:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
+         s=rbselector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:References:Cc:To:From:Subject;
+        bh=MafrjHOMlzAWtrMLq+usDPsZMBJjQE5NsDIrIaQlLGc=; b=dTaBtu8JoDUkodOhXcEAj3iM1J
+        Hw+RwOev2oMUthygbx/Eo0qvTHlaThY+KYr5G7+GxguHWCLH5S7hMOWVupIBNXDVV3htHW9lNTZed
+        vpR7yMEM7y1U5HqbJ1Js1gaZBCVBZt/YCJCcKd39LvYw+KnIIw5eeV+UlzD5e6FwXRMyqtxWorSDm
+        sc52iV1sh1L+Hpi3KRF287I6DpOssjqdnnJJLqS+fGgV40tn5ScLYceWmdh3uQwv3ZjdtDsdKw1ta
+        5JUxeLWh5FVnV845aFZ2aMMVrfIpqnLqSD+9eCySYkcODyhBhBwstydRkFVCcomq25LgaEOV9/Ja1
+        vKxPNtWA==;
+Received: from [10.9.9.211] (helo=mailfront11.runbox.com)
+        by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+        (envelope-from <m.v.b@runbox.com>)
+        id 1fh33F-0007fk-LY; Sun, 22 Jul 2018 03:20:45 +0200
+Received: by mailfront11.runbox.com with esmtpsa  (uid:769847 )  (TLS1.2:DHE_RSA_AES_128_CBC_SHA1:128)
+        (Exim 4.82)
+        id 1fh33B-00019b-44; Sun, 22 Jul 2018 03:20:41 +0200
+Subject: Re: [PATCH 1/2] x86/entry/64: Do not clear %rbx under Xen
+From:   "M. Vefa Bicakci" <m.v.b@runbox.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, X86 ML <x86@kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+References: <20180721194909.23903-1-m.v.b@runbox.com>
+ <CALCETrX435cC7Hi2aTLVrBecZEEeJ3_TgQnTwbObNrt9MKvFzg@mail.gmail.com>
+ <b9ad156c-45e9-da80-9cf0-eabbe5a1bbf2@runbox.com>
+ <CALCETrXsNxYP7-w-OoiNdJWspTKCsr0i01e6NiwFk1O5jL6grA@mail.gmail.com>
+ <ce0cf39e-102e-8a33-6d46-492cd34e9506@runbox.com>
+Message-ID: <74f29b48-7522-c4f4-c2e7-d8e41fd88873@runbox.com>
+Date:   Sat, 21 Jul 2018 21:20:35 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <ce0cf39e-102e-8a33-6d46-492cd34e9506@runbox.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 10:14 AM, Dave Hansen <dave.hansen@intel.com> wrote:
-> The PTI path does this:
->
->         ...
->         SWITCH_TO_KERNEL_CR3 scratch_reg=%rsp
->         /* Load the top of the task stack into RSP */
->         movq    CPU_ENTRY_AREA_tss + TSS_sp1 + CPU_ENTRY_AREA, %rsp
->
-> And the non-PTI entry path does this:
->
->         ...
->         movq    %rsp, PER_CPU_VAR(rsp_scratch)
->         movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
->
-> Both "mov ___, %rsp" instructions have the kernel %GS value in place and
-> both are running on a good kernel CR3.  Does anybody remember why we
-> don't use cpu_current_top_of_stack in the PTI-on case?
->
-> I'm wondering if it was because we, at some point, did the mov ...,
-> %rsp before CR3 was good.  But it doesn't look like we do that now, so
-> should we maybe make both copies do:
->
->         movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+On 07/21/2018 07:37 PM, M. Vefa Bicakci wrote:
+> On 07/21/2018 07:30 PM, Andy Lutomirski wrote:
+>> On Sat, Jul 21, 2018 at 4:19 PM, M. Vefa Bicakci <m.v.b@runbox.com> wrote:
+>>> On 07/21/2018 05:45 PM, Andy Lutomirski wrote:
+>>>>
+>>>> On Sat, Jul 21, 2018 at 12:49 PM, M. Vefa Bicakci <m.v.b@runbox.com>
+>>>> wrote:
+>>>>>
+>>>>> Commit 3ac6d8c787b8 ("x86/entry/64: Clear registers for
+>>>>> exceptions/interrupts, to reduce speculation attack surface")
+>>>>> unintendedly
+>>>>> broke Xen PV virtual machines by clearing the %rbx register at the end of
+>>>>> xen_failsafe_callback before the latter jumps to error_exit.
+>>>>> error_exit expects the %rbx register to be a flag indicating whether
+>>>>> there should be a return to kernel mode.
+>>>>>
+>>>>> This commit makes sure that the %rbx register is not cleared by
+>>>>> the PUSH_AND_CLEAR_REGS macro, when the macro in question is instantiated
+>>>>> by xen_failsafe_callback, to avoid the issue.
+>>>>
+>>>>
+>>>> Seems like a genuine problem, but:
+>>>>
+>>>>> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+>>>>> index c7449f377a77..96e8ff34129e 100644
+>>>>> --- a/arch/x86/entry/entry_64.S
+>>>>> +++ b/arch/x86/entry/entry_64.S
+>>>>> @@ -1129,7 +1129,7 @@ ENTRY(xen_failsafe_callback)
+>>>>>           addq    $0x30, %rsp
+>>>>>           UNWIND_HINT_IRET_REGS
+>>>>>           pushq   $-1 /* orig_ax = -1 => not a system call */
+>>>>> -       PUSH_AND_CLEAR_REGS
+>>>>> +       PUSH_AND_CLEAR_REGS clear_rbx=0
+>>>>>           ENCODE_FRAME_POINTER
+>>>>>           jmp     error_exit
+>>>>
+>>>>
+>>>> The old code first set RBX to zero then, if frame pointers are on,
+>>>> sets it to some special non-zero value, then crosses its fingers and
+>>>> hopes for the best.  Your patched code just skips the zeroing part, so
+>>>> RBX either contains the ENCODE_FRAME_POINTER result or is
+>>>> uninitialized.
+>>>>
+>>>> How about actually initializing rbx to something sensible like, say, 1?
+>>>
+>>> Hello Andy,
+>>>
+>>> Thank you for the review! Apparently, I have not done my homework fully.
+>>> I will test your suggestion and report back, most likely in a few hours.
+>>>
+>>> I have been testing with the next/linux-next tree's master branch
+>>> (dated 20180720), and I noticed that ENCODE_FRAME_POINTER changes the
+>>> frame pointer (i.e., RBP) register, as opposed to the RBX register,
+>>> which the patch aims to avoid changing before jumping to error_exit.
+>>> It is possible that I am missing something though -- I am not sure about
+>>> the connection between the RBP and RBX registers.
+>>
+>> Sorry, brain fart on my part.
+> 
+> No problem! :-)
+> 
+>>> The change introduced by commit 3ac6d8c787b8 is in the excerpt below. Would
+>>> it
+>>> be valid to state that the original code had the same issue that you
+>>> referred
+>>> to (i.e., leaving the RBX register uninitialized)?
+>>
+>> Presumably.
+>>
+>> I would propose a rather different fix:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/pti&id=bb3d76b50c3bc78b67d79cf90d328f38a435c793
+>>
+>> Any chance you could test that and see if it fixes your problem?
+> 
+> Of course; I will report back with the result in a few hours.
 
-Speed, sort of.  Without the CR3 switch there (i.e. PTI off, but
-trampoline still in use, which is the path that actually gets used),
-there's no forced serialization between swapgs and that movq.  And it
-turns out that the RIP-relative load avoids a pipeline stall that the
-%gs-relative access right after swapgs would cause.  So, with all the
-mitigations off, the trampoline ends up being *faster*, at least in a
-tight loop, than the non-trampolined path.
+Hello Andy,
 
-Of course, on a retpolined kernel, the retpoline at the end kills performance.
+I confirm that the commit at [1] resolves the issue in question as well.
 
->
-> for consistency?
+To test, I first reverted my commit, applied your commit and verified that
+the bug cannot be reproduced. Afterwards, I reverted your commit and
+verified that the bug is reproducible.
+
+I am not sure about the best way to document the bug I encountered in your
+commit message, but in case you plan to have your commit merged, please
+feel free to add a "Reported-and-tested-by: M. Vefa Bicakci <m.v.b@runbox.com>"
+tag to the commit message, possibly with a link to this e-mail thread.
+
+Finally, as I had mentioned in my commit message, this bug exists in all
+kernel versions 4.14 and greater, so it would be nice if you could carbon-copy
+"stable@vger.kernel.org" in the commit message as well.
+
+Thank you,
+
+Vefa
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/pti&id=bb3d76b50c3bc78b67d79cf90d328f38a435c793
+
