@@ -2,141 +2,126 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCB6C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECECECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1636020854
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1636020854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 2988120854
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:12:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ujt4zwO0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2988120854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388013AbeGVXJw (ORCPT
+        id S1731041AbeGVXKd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 19:09:52 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:52584 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387926AbeGVXJv (ORCPT
+        Sun, 22 Jul 2018 19:10:33 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39886 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730712AbeGVXJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 19:09:51 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 035FD26BA64
-Date:   Mon, 23 Jul 2018 00:11:36 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH] power: supply: mark expected switch fall-throughs
-Message-ID: <20180722221136.47vme5v3o4lvibeq@earth.universe>
-References: <20180717212846.GA13179@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ce5nri3u7rvt6hh6"
-Content-Disposition: inline
-In-Reply-To: <20180717212846.GA13179@embeddedor.com>
-User-Agent: NeoMutt/20180622
+        Sun, 22 Jul 2018 19:09:08 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h10-v6so16019276wre.6
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 15:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=FniwGQOu+qHw9aYQlWW5dLQ+1yz6XqiL4WWTg4ne1zc=;
+        b=ujt4zwO0VMtdZP9wjC9EtKHNnhAGfOrtrIDk2oar7P0SLtfKEy6IjBokU7vMD0uBP0
+         GvccyItse1HDC2lRozBRg//XpVAx2RNifJY0YvLoDx/z50NfDGScISfjvP+BGUuWfl6i
+         O/rmFiXmS9QMX9aRXQhDoNn76T1lQasccGxmHladdA4piRXk4E/bZprHvx5qj9dUkWJF
+         vEl6tRKJiDI6ZX/n/JQunmQiIwDamPHs4vVmE4rA2zAWLjYhCPSYRJsjOOo2HFv4CUQa
+         RvIecN82bg9C1sxOh49dFXQR0IQ5bl98cosm2jkmfoTFhO4jD64JaJ9CO1gTbPJAFcA1
+         bYgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=FniwGQOu+qHw9aYQlWW5dLQ+1yz6XqiL4WWTg4ne1zc=;
+        b=JHwHZIHP9dRETKSaXbHaosk5W6fBieCtdBRNOpC20UV03/vjY8aLxmq405MP8c04RH
+         kIBXY1Xx0gAj2jDXcNmN1dB7mBQavk0+yv5gW/6ekGu1nMDzdASlMIRVjr2yAk8GKPYe
+         iyBVI5lILuPPaSZ2NVSTTDPzikhC7ERlo9yTI3rysVU/BP4ln6YUhMN7Mpvnk/yBow9B
+         MpYabsZkJBz47XwR/cVa70fjPHr2MfN0Hv3B4b7bvzTPei9hfzDo+l5UzfCeabYR+k4D
+         RYmd5Uj/K+mO0SH+KVtj8stLeNrfxZa1p6wmx88+EK9tt0sB17kJSu2X5AFceng7SfgF
+         eyYQ==
+X-Gm-Message-State: AOUpUlG6Xr+QRCAoM8Xy3fZbqHNINs7afBcLVUxEqfcXF8S+UeMNH0Sb
+        uwCK8kfOKO58TiBuKiRckcPpqQJuboI=
+X-Google-Smtp-Source: AAOMgpc9Mn4EJHB/ud37/kXzWAfmxVM0MMvb8fhlakUJ2faN8MGj3nt85nVyr7W0/YTJm+1/EAnAzw==
+X-Received: by 2002:adf:81c3:: with SMTP id 61-v6mr6857840wra.120.1532297456549;
+        Sun, 22 Jul 2018 15:10:56 -0700 (PDT)
+Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
+        by smtp.gmail.com with ESMTPSA id e12-v6sm5870824wrt.29.2018.07.22.15.10.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 22 Jul 2018 15:10:55 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        pombredanne@nexb.com, kstewart@linuxfoundation.org,
+        tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH 06/20] staging:rtl8192u: Remove unused page d definitions - Style
+Date:   Sun, 22 Jul 2018 23:10:21 +0100
+Message-Id: <20180722221035.14453-7-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180722221035.14453-1-johnfwhitmore@gmail.com>
+References: <20180722221035.14453-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Remove the unused 'page d' definitions. These definitions fail the
+checkpatch CamelCase naming test. Rather then renaming unused
+definitions they have simply been removed. This change is a coding
+style change and should have no impact on runtime code execution.
 
---ce5nri3u7rvt6hh6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/r819xU_phyreg.h | 27 ------------------------
+ 1 file changed, 27 deletions(-)
 
-Hi,
+diff --git a/drivers/staging/rtl8192u/r819xU_phyreg.h b/drivers/staging/rtl8192u/r819xU_phyreg.h
+index 26d18a494fb4..661df18867dd 100644
+--- a/drivers/staging/rtl8192u/r819xU_phyreg.h
++++ b/drivers/staging/rtl8192u/r819xU_phyreg.h
+@@ -85,33 +85,6 @@
+ /* page d */
+ #define rOFDM1_LSTF				0xd00
+ #define rOFDM1_TRxPathEnable		0xd04
+-#define rOFDM1_CFO				0xd08
+-#define rOFDM1_CSI1				0xd10
+-#define rOFDM1_SBD				0xd14
+-#define rOFDM1_CSI2				0xd18
+-#define rOFDM1_CFOTracking			0xd2c
+-#define rOFDM1_TRxMesaure1		0xd34
+-#define rOFDM1_IntfDet				0xd3c
+-#define rOFDM1_PseudoNoiseStateAB 0xd50
+-#define rOFDM1_PseudoNoiseStateCD 0xd54
+-#define rOFDM1_RxPseudoNoiseWgt   0xd58
+-#define rOFDM_PHYCounter1			0xda0  /* cca, parity fail */
+-#define rOFDM_PHYCounter2			0xda4  /* rate illegal, crc8 fail */
+-
+-#define rOFDM_PHYCounter3			0xda8  /* MCS not support */
+-#define rOFDM_ShortCFOAB			0xdac
+-#define rOFDM_ShortCFOCD			0xdb0
+-#define rOFDM_LongCFOAB				0xdb4
+-#define rOFDM_LongCFOCD				0xdb8
+-#define rOFDM_TailCFOAB				0xdbc
+-#define rOFDM_TailCFOCD				0xdc0
+-#define rOFDM_PWMeasure1		0xdc4
+-#define rOFDM_PWMeasure2		0xdc8
+-#define rOFDM_BWReport				0xdcc
+-#define rOFDM_AGCReport				0xdd0
+-#define rOFDM_RxSNR				0xdd4
+-#define rOFDM_RxEVMCSI				0xdd8
+-#define rOFDM_SIGReport				0xddc
+ 
+ /* page e */
+ #define rTxAGC_Rate18_06			0xe00
+-- 
+2.18.0
 
-On Tue, Jul 17, 2018 at 04:28:46PM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
->=20
-> Addresses-Coverity-ID: 1394724 ("Missing break in switch")
-> Addresses-Coverity-ID: 114958 ("Missing break in switch")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-
-Thanks, queued into power-supply's for-next branch.
-
--- Sebastian
-
->  drivers/power/supply/axp20x_usb_power.c   | 1 +
->  drivers/power/supply/cros_usbpd-charger.c | 1 +
->  drivers/power/supply/wm8350_power.c       | 3 ++-
->  3 files changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supp=
-ly/axp20x_usb_power.c
-> index 44f70dc..42001df 100644
-> --- a/drivers/power/supply/axp20x_usb_power.c
-> +++ b/drivers/power/supply/axp20x_usb_power.c
-> @@ -222,6 +222,7 @@ static int axp20x_usb_power_set_current_max(struct ax=
-p20x_usb_power *power,
->  	case 100000:
->  		if (power->axp20x_id =3D=3D AXP221_ID)
->  			return -EINVAL;
-> +		/* fall through */
->  	case 500000:
->  	case 900000:
->  		val =3D (900000 - intval) / 400000;
-> diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/su=
-pply/cros_usbpd-charger.c
-> index 3a0c96f..688a16b 100644
-> --- a/drivers/power/supply/cros_usbpd-charger.c
-> +++ b/drivers/power/supply/cros_usbpd-charger.c
-> @@ -325,6 +325,7 @@ static int cros_usbpd_charger_get_prop(struct power_s=
-upply *psy,
->  		 */
->  		if (ec_device->mkbp_event_supported || port->psy_online)
->  			break;
-> +		/* fall through */
->  	case POWER_SUPPLY_PROP_CURRENT_MAX:
->  	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
->  	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> diff --git a/drivers/power/supply/wm8350_power.c b/drivers/power/supply/w=
-m8350_power.c
-> index a2740cf..15c0ca1 100644
-> --- a/drivers/power/supply/wm8350_power.c
-> +++ b/drivers/power/supply/wm8350_power.c
-> @@ -230,7 +230,8 @@ static irqreturn_t wm8350_charger_handler(int irq, vo=
-id *data)
->  	case WM8350_IRQ_EXT_USB_FB:
->  	case WM8350_IRQ_EXT_WALL_FB:
->  		wm8350_charger_config(wm8350, policy);
-> -	case WM8350_IRQ_EXT_BAT_FB:   /* Fall through */
-> +		/* Fall through */
-> +	case WM8350_IRQ_EXT_BAT_FB:
->  		power_supply_changed(power->battery);
->  		power_supply_changed(power->usb);
->  		power_supply_changed(power->ac);
-> --=20
-> 2.7.4
->=20
-
---ce5nri3u7rvt6hh6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAltVARgACgkQ2O7X88g7
-+pr9Mg/5AVlLy21NMHQS7ky144rxMyzQmgfH64rWs14c0ycUewCuuqC1BzOWaRFO
-WbWNWb4BD5MUOznyhlTsEyhOj2beF46Rt5VCP/p76Hv5WQoG8HmxpjYaVHaf2Vtz
-hr2mVSy9w0SHUnHzZZqqYoWe3Py6/mXuSouxaPE9poSpl+TAgJJuJ8Mmf5EK8R6Z
-Nk8HOFpRn8VVA3LKs96+npI/7Fbq4M/3lkaCx6LDnICB2Qk+BTruJAEc2xrlgNag
-eMfiy+Km5DbK+DgdrFgHDkBH26fSeUIkqppuduwqk1aCU3kcCd5Dtt6uwf8whKMW
-9fUBsRnT6iVyrXI1uxJi6c6C18e/T2e3Gcv+yuKJlll5m/qG2w6a9xOZiBZy+47W
-P1SZOiLOjbXeC9X6AKG0IhutSuGUNN1XKbGQLi4G96rJtvSOdCPJmnH5NSU40c4G
-2P+AOdSm2Q/3/asGvgX6Lt0XS9gvHpXRKd1nCMD9EVXEiRFTprgaS61kcWpJXfnZ
-CeE87wuDt5f4LsItc3uN6uMXbX6dQlVXfvSgKkAUF0Tj8cw1VR1LBor99BqTl6x/
-gATE32Pdu0KtSXfdYPjxLcjsBv3ceUbaCQ8hVLdX125ul2TMcODpcWe+9WiZ4K4u
-+bWDGMs6suNmEwzNQJZwwJ/zdt3YZRYa1bep46XjnKXFZ7+JKMQ=
-=qD6s
------END PGP SIGNATURE-----
-
---ce5nri3u7rvt6hh6--
