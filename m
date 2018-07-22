@@ -2,91 +2,114 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F7BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A773BC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E2F20875
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 338C820858
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 13:25:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=markrailton-com.20150623.gappssmtp.com header.i=@markrailton-com.20150623.gappssmtp.com header.b="1iMi1iav"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E2F20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=markrailton.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uoLa7ZHu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 338C820858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbeGVODy (ORCPT
+        id S1728322AbeGVONt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 10:03:54 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38524 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728091AbeGVODx (ORCPT
+        Sun, 22 Jul 2018 10:13:49 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44168 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728058AbeGVONs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 10:03:53 -0400
-Received: by mail-wm0-f68.google.com with SMTP id t25-v6so4553391wmi.3
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 06:07:15 -0700 (PDT)
+        Sun, 22 Jul 2018 10:13:48 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r16-v6so15281007wrt.11
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 06:17:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=markrailton-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xI+JSRbehSZUoryQ2aZ+sONs6wwVur/poL4i9GvMfvc=;
-        b=1iMi1iavUMbQaISoKeS3m36G3A6levZM76vhUgrLEP17YTA/G8uKxHJzQB6htNOZPo
-         tM9OqtKd7xRtue1wm9WVAbMRzzc5c/RVVJXYpvzmg8P0QCFPMZPN7me12qel1X+mkyEB
-         j+qSk0LMLUEfW7p/NsV5MaQru7WWRpyN3glWLFxutlx+9ltcWqQKdWwlFZPr4i0MXdBl
-         2Q4cFpdPVoGRqUaGRSQGZGELPJEeLgUmLhABjOHge35MkjDDjc43a6/INxdYkxjgmn8R
-         Q526I9uikAbPiFYjbKCuDdTOwZXxSNdbsgOrXe+tY/zCbC6BKHKR1p4SG2ALXlN9XcW1
-         xJ4Q==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=tRJvhg4rFbqfgBJwf50vI6Jnfv4QnY/K8EVi/v6Y8BY=;
+        b=uoLa7ZHuPuiTSUiCWnyaqGPtGTm2IvqIQUyPQLxoCTm9OvtJhIHIhQAIDATsozMJPe
+         GDlQhbfBmt1bOwbbawFI8etlRpA+cuh3jqk1IEHM4E0a7zJAXF5opwVqvfDejxREb9yg
+         uIAzj9JwF/jbyEEiUq07v6UY3PYwsDjmEj/Xzc0k88s9cVzwvF8Vnfk9CGuS/cBNDaf0
+         7+ijZNHpFUjypz0b21pqDv/92iWNWQ0ICXYpAfo6aUvBV9MlUeOiv6gzUA7V3tJHOo6q
+         fQbBb6OtpiztKY/XDlUSDhcLggYy68+5jRkPh7iNRS8XTbGheUrNytXnufhhCiUAIZNl
+         knaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xI+JSRbehSZUoryQ2aZ+sONs6wwVur/poL4i9GvMfvc=;
-        b=KE5zTWmEkgGiX8+SXjeIik+WNM4Gnu2ZeuwFaxWh67sXdhm9AelD+vtl0X4DeFKbVi
-         VvJsuK/8yY3/uvgHFmvEgzRLSxpRC9ggq0hq2MTiw1FEFOEtQxWDHW5mFKmxMsH/t/FK
-         C2IFvkNkIIucxo53EOhptHfG93ywZGvFRk8CKamtbXXFesTQtSAzJangHg/ZXW1Hf2KK
-         Ciyd8nByLglR/IM7oBXQkVrZvL2gdiV50sM26jk496v6r6AKjpIDxCvjNzgB5JbZEdL2
-         5xPCrInR+a59YrAyD2sRu6nyvCzLlEQWxJON1GRldtoPF+sXXoLu3VWPwCCsFArlj7Tk
-         dR4Q==
-X-Gm-Message-State: AOUpUlEFzskYbn39FMOvbZXEHae5E6IJO2gLQv6ifRPnymx7NyZFxFwY
-        +bboZ6VnxC2T6Wyp2EiPOYp78WwRxlh9zw==
-X-Google-Smtp-Source: AAOMgpckGKkodJariyEthUD2CTuM9F+M7MqL7pnFTxWaYztdexuKBkuSFlJDDAg5Do+lSYUCaHU+NQ==
-X-Received: by 2002:a1c:7408:: with SMTP id p8-v6mr5193657wmc.118.1532264834690;
-        Sun, 22 Jul 2018 06:07:14 -0700 (PDT)
-Received: from ZeroCool ([109.144.210.65])
-        by smtp.gmail.com with ESMTPSA id t13-v6sm7351531wrr.74.2018.07.22.06.07.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 22 Jul 2018 06:07:13 -0700 (PDT)
-Date:   Sun, 22 Jul 2018 14:07:12 +0100
-From:   Mark Railton <mark@markrailton.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     inaky.perez-gonzalez@intel.com, linux-wimax@intel.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: wimax: stack: fixed multi line comment issue
-Message-ID: <20180722130712.GA15027@ZeroCool>
-References: <20180719231146.24532-1-mark@markrailton.com>
- <20180721.193617.1393123001322216230.davem@davemloft.net>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=tRJvhg4rFbqfgBJwf50vI6Jnfv4QnY/K8EVi/v6Y8BY=;
+        b=jmvoiTnAmjKHzDKviOETI93lq5IjRiS5S6Y4thl319unrCzh2/wXUVbZ6LAkC6Xob+
+         TQpP8DGb4Q5FXbegUh6jDypXrX2GlPUEhpaMQ1ipOMWBwL3poXtKuc5nCWm7UApI3yi0
+         h8av6JITv3D9ABCbTQPCD9MFJqzUk509md75ApeBZ27k6GBPpRraXk2NH2k/I7CLGmSu
+         1NoET83aREyo1Ttz4+m9ovP284+WECeL9IPYoIALGKGugTDZpz/u1eYDxs5g66cI7Px8
+         NI1ByF+J7vcD06T6fTqQmj54lW9Lu4FYJiHcPn8ZyfTdNhjCPNUawIpKTLFUp+87ILEA
+         gktA==
+X-Gm-Message-State: AOUpUlG7lWa4ZNkj5mvMnI17zEjcruKvxtTe9RfcutoisqXX0ciQFbO0
+        FUdNv0OzB7F0ap+ttgFBxIJgXHWNYEbIvRhT9czutA==
+X-Google-Smtp-Source: AAOMgpdBLoNtvVzIKZtntuDv0CSj6pmqjJZ1kw9ljVaONJiA5LgcoO++OLtgrxH4CGPGJi+NAguWDPyLGpUTUZkuKPQ=
+X-Received: by 2002:adf:e0cc:: with SMTP id e12-v6mr5918489wri.199.1532265428282;
+ Sun, 22 Jul 2018 06:17:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180721.193617.1393123001322216230.davem@davemloft.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a5d:4812:0:0:0:0:0 with HTTP; Sun, 22 Jul 2018 06:17:07
+ -0700 (PDT)
+In-Reply-To: <b2b2e3e0-14b7-9f46-434d-2134d1d0cfad@alliedtelesis.co.nz>
+References: <cover.1532043059.git.theuns.verwoerd@alliedtelesis.co.nz>
+ <f1c6c3cc0c8850e143594afd57b50d30cd8bb5f8.1532043059.git.theuns.verwoerd@alliedtelesis.co.nz>
+ <20180720000431.GA30522@ZenIV.linux.org.uk> <b2b2e3e0-14b7-9f46-434d-2134d1d0cfad@alliedtelesis.co.nz>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Sun, 22 Jul 2018 15:17:07 +0200
+Message-ID: <CAFLxGvyTmz8JQVn-OJFSVdns74o49XgdWbhGpPsqYe5S2uahYg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] jffs2: Provide jffs2_sync files to track gc POLL progress
+To:     Theuns Verwoerd <Theuns.Verwoerd@alliedtelesis.co.nz>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 21, 2018 at 07:36:17PM -0700, David Miller wrote:
-> From: Mark Railton <mark@markrailton.com>
-> Date: Fri, 20 Jul 2018 00:11:46 +0100
-> 
-> > Moved end of comment to it's own line per guide
-> > 
-> > Signed-off-by: Mark Railton <mark@markrailton.com>
-> 
-> Applied, thanks.
+[fixing CC list]
 
-Thank you,
+On Fri, Jul 20, 2018 at 2:54 AM, Theuns Verwoerd
+<Theuns.Verwoerd@alliedtelesis.co.nz> wrote:
+>
+> On 07/20/2018 12:04 PM, Al Viro wrote:
+>> On Fri, Jul 20, 2018 at 11:50:12AM +1200, Theuns Verwoerd wrote:
+>>
+>>> +ssize_t jffs2_sync_file_read(struct file *f,
+>>> +          char __user *b, size_t len, loff_t *ofs)
+>>> +{
+>>> +    struct jffs2_sb_info *c = file_inode(f)->i_private;
+>>> +
+>>> +    while (c->tidemark)
+>>> +            schedule();
+>>> +
+>>> +    return 0;
+>>> +}
+>> Brilliant.  So when that gets called with c->tidemark being true and
+>> need_resched() - false, we shall...
+> By my reading, schedule() will happily force a reschedule (once) when
+> need_resched() is false.  Every time the process is granted a time
+> slice, it'll check the condition and surrender if not ready.
+>
+> What do you believe will happen?
+>> Bonus question: what happens if that is called after that jffs2_sb_info
+>> gets freed?
+> That is probably a valid critique - if jffs2_kill_sb() gets called the
+> cleanup in exit_jffs2_fs() is not sufficient.
 
-Mark
+Beside of that, IMHO this debugfs file is a gross hack.
+Did you look into the possibility to add the GC phase into the unlink code?
+
+-- 
+Thanks,
+//richard
