@@ -2,147 +2,253 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9941EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 05:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64122ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 05:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41C3E20850
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 05:01:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="M+m7TrAs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41C3E20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id E1F8620854
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 05:03:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F8620854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbeGVF4W (ORCPT
+        id S1727996AbeGVF6b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 01:56:22 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:51963 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725940AbeGVF4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 01:56:22 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d35ed52c;
-        Sun, 22 Jul 2018 04:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=uI4k+BL24/Cs1Sdbow7t7gVyK9c=; b=M+m7Tr
-        AsRQlLC8Khp8J7mU4cTqEDhV5gGx0UCJ3BTz/uIV6q7gZhvVqd1zr1pKgcIiKtul
-        6MQNWR0vSMjc+CS5TH9Um9eTjh75mRn258246TbBLRAaOD3Q641fPcY4jE2uEPrF
-        nAB8/sowL8C7ioeLdiox3AdpD1pN9EtP8iJf6Pu6rL59quz1ZSPxZuQrAqmw+e4/
-        SNYxUiiYixJN90bU5B3PkBE+5qgRbfZ3UZ5B8I4aj/w0X8OCmrsLGUxc0Zxid5U1
-        IBhiQuUrbdR28RW9vgQMCYV86qfhjwUJmsD0a8qZ1w16JJVYeTb4z8+6wOIYfNjo
-        oMkibIirfkZmSYig==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 17af482c (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Sun, 22 Jul 2018 04:50:54 +0000 (UTC)
-Received: by mail-oi0-f43.google.com with SMTP id k81-v6so27927371oib.4;
-        Sat, 21 Jul 2018 22:01:00 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGIAJ0S44bb1MpO6FVh+xk2RZ4sOB6ydgQ3RC5KABHibkLGxDTf
-        fXopmupC+K1EcKsE5GKDUsRney2n66k0DgGxKoc=
-X-Google-Smtp-Source: AAOMgpeSaclrgVjqrqH8h/YIjSOU23WMp7P81Pwex/HuO6kKsGZ7e/6PzJAnLYLPSaQGu5W7cg76oXkmHkdjzs+UreQ=
-X-Received: by 2002:aca:ceca:: with SMTP id e193-v6mr3911977oig.37.1532235659121;
- Sat, 21 Jul 2018 22:00:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180722024925.3176-1-cscnull@gmail.com>
-In-Reply-To: <20180722024925.3176-1-cscnull@gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Sun, 22 Jul 2018 07:00:47 +0200
-X-Gmail-Original-Message-ID: <CAHmME9pLNd5GeR4kq_KHcarPKh3mkS5Cv-2s-tiQsPG6GcZ6sw@mail.gmail.com>
-Message-ID: <CAHmME9pLNd5GeR4kq_KHcarPKh3mkS5Cv-2s-tiQsPG6GcZ6sw@mail.gmail.com>
-Subject: Re: [PATCH] netlink: fix memory leak
-To:     cscnull@gmail.com
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>, kadlec@blackhole.kfki.hu,
-        Florian Westphal <fw@strlen.de>,
-        David Miller <davem@davemloft.net>,
-        "Berg, Johannes" <johannes.berg@intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        kstewart@linuxfoundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dsahern@gmail.com, lucien.xin@gmail.com, ktkhai@virtuozzo.com,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        Netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 22 Jul 2018 01:58:31 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:49502 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727318AbeGVF6b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 01:58:31 -0400
+Received: from localhost (unknown [172.58.46.180])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6F85912130EB6;
+        Sat, 21 Jul 2018 22:03:11 -0700 (PDT)
+Date:   Sat, 21 Jul 2018 22:03:09 -0700 (PDT)
+Message-Id: <20180721.220309.1193443933653884021.davem@davemloft.net>
+To:     karn@ka9q.net
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: hard-coded limit on unresolved multicast route cache in
+ ipv4/ipmr.c causes slow, unreliable creation of multicast routes on busy
+ networks
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <147f730b-8cbf-b76d-f693-b3fdaf72a89c@ka9q.net>
+References: <147f730b-8cbf-b76d-f693-b3fdaf72a89c@ka9q.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 21 Jul 2018 22:03:12 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 22, 2018 at 4:51 AM Shaochun Chen <cscnull@gmail.com> wrote:
-> diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-> index 393573a99a5a..7b85176cf9bb 100644
-> --- a/net/netlink/af_netlink.c
-> +++ b/net/netlink/af_netlink.c
-> @@ -2275,6 +2275,7 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
->         struct netlink_callback *cb;
->         struct sock *sk;
->         struct netlink_sock *nlk;
-> +       bool cb_running = false;
->         int ret;
->
->         refcount_inc(&skb->users);
-> @@ -2317,6 +2318,7 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
->
->         nlk->cb_running = true;
->         nlk->dump_done_errno = INT_MAX;
-> +       cb_running = true;
->
->         mutex_unlock(nlk->cb_mutex);
->
-> @@ -2339,6 +2341,8 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
->         mutex_unlock(nlk->cb_mutex);
->  error_free:
->         kfree_skb(skb);
-> +       if (cb_running)
-> +               netlink_dump_start_fail(control);
+From: Phil Karn <karn@ka9q.net>
+Date: Sat, 21 Jul 2018 18:31:22 -0700
 
-cb_running is never true here, since nothing jumps to error_free after
-you set it to be true. Pasting more code for context:
+> I'm running pimd (protocol independent multicast routing) and found that
+> on busy networks with lots of unresolved multicast routing entries, the
+> creation of new multicast group routes can be extremely slow and
+> unreliable, especially when the group in question has little traffic.
+> 
+> A google search revealed the following conversation about the problem
+> from the fall of 2015:
+> 
+> https://github.com/troglobit/pimd/issues/58
+> 
+> Note especially the comment by kopren on Sep 13, 2016.
+> 
+> The writer traced the problem to function ipmr_cache_unresolved() in
+> file net/ipmr.c, in the following block of code:
+> 
+> 		/* Create a new entry if allowable */
+> 		if (atomic_read(&mrt->cache_resolve_queue_len) >= 10 ||
+> 		    (c = ipmr_cache_alloc_unres()) == NULL) {
+> 			spin_unlock_bh(&mfc_unres_lock);
+> 
+> 			kfree_skb(skb);
+> 			return -ENOBUFS;
+> 		}
+ ...
+> Does this hard-coded limit serve any purpose? Can it be safely increased
+> to a much larger value, or better yet, removed altogether? If it can't
+> be removed, can it at least be made configurable through a /proc entry?
 
+Yeah that limit is bogus for several reasons.
 
-       nlk->cb_running = true;
-       nlk->dump_done_errno = INT_MAX;
-1) ----> cb_runnning = true;
+One, it's too low.
 
-       mutex_unlock(nlk->cb_mutex);
+Two, it's not configurable.
 
-       ret = netlink_dump(sk);
+There does have to be some limit, because we are depending upon a user
+process (mrouted or whatever) to receive the netlink message, resolve
+the cache entry, and update the kernel.
 
-       sock_put(sk);
+If the user process gets stuck, or processes entries very slowly, the
+backlog could grow infinitely.  So we do indeed need some kind of limit.
 
-       if (ret)
-A)               return ret;
+But, we essentially already do have such a limit, and that's the
+socket receive queue limits of the mrouted socket.  And indeed, we
+fail the cache creation if we cannot queue up the netlink message to
+the user process successfully.
 
-       /* We successfully started a dump, by returning -EINTR we
-        * signal not to send ACK even if it was requested.
-        */
-B)       return -EINTR;
+Therefore, it probably is safe and correct to remove this
+cache_resolve_queue_len altogether.
 
-error_put:
-       module_put(control->module);
-error_unlock:
-       sock_put(sk);
-       mutex_unlock(nlk->cb_mutex);
-error_free:
-       kfree_skb(skb);
-2) ----> if (cb_running) netlink_dump_start_fail(control);
-       return ret;
+Something like this:
 
-
-After (1) is set, the function exits via (A) or (B), and so (2) is never hit.
-
-
-But even if you moved it somehow to the if(ret), I'm still not sure
-it'd be correct; start cbs should either succeed, or they should error
-out and cleanup entirely after themselves.
-
-
->         return ret;
->  }
->  EXPORT_SYMBOL(__netlink_dump_start);
-> --
-> 2.17.1
->
+diff --git a/include/linux/mroute_base.h b/include/linux/mroute_base.h
+index d633f737b3c6..b166465d7c05 100644
+--- a/include/linux/mroute_base.h
++++ b/include/linux/mroute_base.h
+@@ -234,7 +234,6 @@ struct mr_table_ops {
+  * @mfc_hash: Hash table of all resolved routes for easy lookup
+  * @mfc_cache_list: list of resovled routes for possible traversal
+  * @maxvif: Identifier of highest value vif currently in use
+- * @cache_resolve_queue_len: current size of unresolved queue
+  * @mroute_do_assert: Whether to inform userspace on wrong ingress
+  * @mroute_do_pim: Whether to receive IGMP PIMv1
+  * @mroute_reg_vif_num: PIM-device vif index
+@@ -251,7 +250,6 @@ struct mr_table {
+ 	struct rhltable		mfc_hash;
+ 	struct list_head	mfc_cache_list;
+ 	int			maxvif;
+-	atomic_t		cache_resolve_queue_len;
+ 	bool			mroute_do_assert;
+ 	bool			mroute_do_pim;
+ 	int			mroute_reg_vif_num;
+diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
+index 9f79b9803a16..c007cf9bfe82 100644
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@ -747,8 +747,6 @@ static void ipmr_destroy_unres(struct mr_table *mrt, struct mfc_cache *c)
+ 	struct sk_buff *skb;
+ 	struct nlmsgerr *e;
+ 
+-	atomic_dec(&mrt->cache_resolve_queue_len);
+-
+ 	while ((skb = skb_dequeue(&c->_c.mfc_un.unres.unresolved))) {
+ 		if (ip_hdr(skb)->version == 0) {
+ 			struct nlmsghdr *nlh = skb_pull(skb,
+@@ -1135,9 +1133,11 @@ static int ipmr_cache_unresolved(struct mr_table *mrt, vifi_t vifi,
+ 	}
+ 
+ 	if (!found) {
++		bool was_empty;
++
+ 		/* Create a new entry if allowable */
+-		if (atomic_read(&mrt->cache_resolve_queue_len) >= 10 ||
+-		    (c = ipmr_cache_alloc_unres()) == NULL) {
++		c = ipmr_cache_alloc_unres();
++		if (!c) {
+ 			spin_unlock_bh(&mfc_unres_lock);
+ 
+ 			kfree_skb(skb);
+@@ -1163,11 +1163,11 @@ static int ipmr_cache_unresolved(struct mr_table *mrt, vifi_t vifi,
+ 			return err;
+ 		}
+ 
+-		atomic_inc(&mrt->cache_resolve_queue_len);
++		was_empty = list_empty(&mrt->mfc_unres_queue);
+ 		list_add(&c->_c.list, &mrt->mfc_unres_queue);
+ 		mroute_netlink_event(mrt, c, RTM_NEWROUTE);
+ 
+-		if (atomic_read(&mrt->cache_resolve_queue_len) == 1)
++		if (was_empty)
+ 			mod_timer(&mrt->ipmr_expire_timer,
+ 				  c->_c.mfc_un.unres.expires);
+ 	}
+@@ -1274,7 +1274,6 @@ static int ipmr_mfc_add(struct net *net, struct mr_table *mrt,
+ 		if (uc->mfc_origin == c->mfc_origin &&
+ 		    uc->mfc_mcastgrp == c->mfc_mcastgrp) {
+ 			list_del(&_uc->list);
+-			atomic_dec(&mrt->cache_resolve_queue_len);
+ 			found = true;
+ 			break;
+ 		}
+@@ -1322,7 +1321,7 @@ static void mroute_clean_tables(struct mr_table *mrt, bool all)
+ 		mr_cache_put(c);
+ 	}
+ 
+-	if (atomic_read(&mrt->cache_resolve_queue_len) != 0) {
++	if (!list_empty(&mrt->mfc_unres_queue)) {
+ 		spin_lock_bh(&mfc_unres_lock);
+ 		list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue, list) {
+ 			list_del(&c->list);
+@@ -2648,9 +2647,19 @@ static int ipmr_rtm_route(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 		return ipmr_mfc_delete(tbl, &mfcc, parent);
+ }
+ 
++static int queue_count(struct mr_table *mrt)
++{
++	struct list_head *pos;
++	int count = 0;
++	
++	list_for_each(pos, &mrt->mfc_unres_queue)
++		count++;
++	return count;
++}
++
+ static bool ipmr_fill_table(struct mr_table *mrt, struct sk_buff *skb)
+ {
+-	u32 queue_len = atomic_read(&mrt->cache_resolve_queue_len);
++	u32 queue_len = queue_count(mrt);
+ 
+ 	if (nla_put_u32(skb, IPMRA_TABLE_ID, mrt->id) ||
+ 	    nla_put_u32(skb, IPMRA_TABLE_CACHE_RES_QUEUE_LEN, queue_len) ||
+diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
+index 0d0f0053bb11..75e9c5a3e7ea 100644
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -759,8 +759,6 @@ static void ip6mr_destroy_unres(struct mr_table *mrt, struct mfc6_cache *c)
+ 	struct net *net = read_pnet(&mrt->net);
+ 	struct sk_buff *skb;
+ 
+-	atomic_dec(&mrt->cache_resolve_queue_len);
+-
+ 	while ((skb = skb_dequeue(&c->_c.mfc_un.unres.unresolved)) != NULL) {
+ 		if (ipv6_hdr(skb)->version == 0) {
+ 			struct nlmsghdr *nlh = skb_pull(skb,
+@@ -1139,8 +1137,8 @@ static int ip6mr_cache_unresolved(struct mr_table *mrt, mifi_t mifi,
+ 		 *	Create a new entry if allowable
+ 		 */
+ 
+-		if (atomic_read(&mrt->cache_resolve_queue_len) >= 10 ||
+-		    (c = ip6mr_cache_alloc_unres()) == NULL) {
++		c = ip6mr_cache_alloc_unres();
++		if (!c) {
+ 			spin_unlock_bh(&mfc_unres_lock);
+ 
+ 			kfree_skb(skb);
+@@ -1167,7 +1165,6 @@ static int ip6mr_cache_unresolved(struct mr_table *mrt, mifi_t mifi,
+ 			return err;
+ 		}
+ 
+-		atomic_inc(&mrt->cache_resolve_queue_len);
+ 		list_add(&c->_c.list, &mrt->mfc_unres_queue);
+ 		mr6_netlink_event(mrt, c, RTM_NEWROUTE);
+ 
+@@ -1455,7 +1452,6 @@ static int ip6mr_mfc_add(struct net *net, struct mr_table *mrt,
+ 		if (ipv6_addr_equal(&uc->mf6c_origin, &c->mf6c_origin) &&
+ 		    ipv6_addr_equal(&uc->mf6c_mcastgrp, &c->mf6c_mcastgrp)) {
+ 			list_del(&_uc->list);
+-			atomic_dec(&mrt->cache_resolve_queue_len);
+ 			found = true;
+ 			break;
+ 		}
+@@ -1502,7 +1498,7 @@ static void mroute_clean_tables(struct mr_table *mrt, bool all)
+ 		mr_cache_put(c);
+ 	}
+ 
+-	if (atomic_read(&mrt->cache_resolve_queue_len) != 0) {
++	if (!list_empty(&mrt->mfc_unres_queue)) {
+ 		spin_lock_bh(&mfc_unres_lock);
+ 		list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue, list) {
+ 			list_del(&c->list);
