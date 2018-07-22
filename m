@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE13EC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4039C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66DEA2086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:00:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66DEA2086A
+	by mail.kernel.org (Postfix) with ESMTP id 8EA2020877
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:00:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EA2020877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbeGVGzb (ORCPT
+        id S1728511AbeGVGz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 02:55:31 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:45517 "EHLO hermes.aosc.io"
+        Sun, 22 Jul 2018 02:55:56 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:45545 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725940AbeGVGzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 02:55:31 -0400
+        id S1725940AbeGVGzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 02:55:55 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 692649F54C;
-        Sun, 22 Jul 2018 05:59:55 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id F087D9F536;
+        Sun, 22 Jul 2018 06:00:21 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -33,9 +33,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 5/9] arm64: allwinner: dts: h6: enable USB2 on Pine H64
-Date:   Sun, 22 Jul 2018 13:57:35 +0800
-Message-Id: <20180722055739.26464-6-icenowy@aosc.io>
+Subject: [PATCH v3 6/9] dt-bindings: phy: add binding for Allwinner USB3 PHY
+Date:   Sun, 22 Jul 2018 13:57:36 +0800
+Message-Id: <20180722055739.26464-7-icenowy@aosc.io>
 In-Reply-To: <20180722055739.26464-1-icenowy@aosc.io>
 References: <20180722055739.26464-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -43,10 +43,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pine H64 board has both the USB2 OTG pins and the USB2 host pins on H6
-SoC wired out to USB Type-A ports.
+The new Allwinner H6 SoC contains a USB3 PHY that is wired to the
+external USB3 pins of the SoC.
 
-Enable them.
+Add a device tree binding for the PHY.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
@@ -54,58 +54,50 @@ Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 Changes in v3:
 - Added Chen-Yu's Review tag.
 
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Rob,
+Although you mentioned that the supply is for the port, not the phy;
+currently in USB situation "powering on the PHY" also indicates
+"powering on the port" and nearly all usages of phy-supply is for Vbus.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-index f21e18f8ed37..97016a848d5b 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -51,6 +51,14 @@
- 	};
- };
- 
-+&ehci0 {
-+	status = "okay";
-+};
+Maybe we should change the overall phy-supply to satisfy this.
+
+Thanks,
+Icenowy
+
+ .../bindings/phy/sun50i-usb3-phy.txt          | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt
+
+diff --git a/Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt b/Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt
+new file mode 100644
+index 000000000000..912d55f9f69d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt
+@@ -0,0 +1,24 @@
++Allwinner sun50i USB3 PHY
++-----------------------
 +
-+&ehci3 {
-+	status = "okay";
-+};
++Required properties:
++- compatible : should be one of
++  * allwinner,sun60i-h6-usb3-phy
++- reg : a list of offset + length pairs
++- #phy-cells : from the generic phy bindings, must be 0
++- clocks : phandle + clock specifier for the phy clock
++- resets : phandle + reset specifier for the phy reset
 +
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -69,6 +77,14 @@
- 	status = "okay";
- };
- 
-+&ohci0 {
-+	status = "okay";
-+};
++Optional Properties:
++- phy-supply : from the generic phy bindings, a phandle to a regulator that
++	       provides power to VBUS.
 +
-+&ohci3 {
-+	status = "okay";
-+};
-+
- &r_i2c {
- 	status = "okay";
- 
-@@ -193,3 +209,14 @@
- 	pinctrl-0 = <&uart0_ph_pins>;
- 	status = "okay";
- };
-+
-+&usb2otg {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usb2phy {
-+	usb0_vbus-supply = <&reg_usb_vbus>;
-+	usb3_vbus-supply = <&reg_usb_vbus>;
-+	status = "okay";
-+};
++Example:
++	usb3phy: phy@5210000 {
++		compatible = "allwinner,sun50i-h6-usb3-phy";
++		reg = <0x5210000 0x10000>;
++		clocks = <&ccu CLK_USB_PHY1>;
++		resets = <&ccu RST_USB_PHY1>;
++		#phy-cells = <0>;
++		status = "disabled";
++	};
 -- 
 2.18.0
 
