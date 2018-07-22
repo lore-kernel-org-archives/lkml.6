@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEF4C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 15:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7D2C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 15:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2783F20874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 15:23:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2783F20874
+	by mail.kernel.org (Postfix) with ESMTP id 77C8820874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 15:23:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77C8820874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbeGVQUS (ORCPT
+        id S1730187AbeGVQUs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 12:20:18 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44557 "EHLO
+        Sun, 22 Jul 2018 12:20:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36571 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728539AbeGVQUS (ORCPT
+        with ESMTP id S1728539AbeGVQUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 12:20:18 -0400
+        Sun, 22 Jul 2018 12:20:48 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6MFMiMJ3458484
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6MFNDif3458520
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 22 Jul 2018 08:22:44 -0700
+        Sun, 22 Jul 2018 08:23:13 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6MFMipF3458481;
-        Sun, 22 Jul 2018 08:22:44 -0700
-Date:   Sun, 22 Jul 2018 08:22:44 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6MFNDRj3458517;
+        Sun, 22 Jul 2018 08:23:13 -0700
+Date:   Sun, 22 Jul 2018 08:23:13 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Ard Biesheuvel <tipbot@zytor.com>
-Message-ID: <tip-aab9593c0cb4454f9d261a8c87a3361f3186c4ec@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        hdegoede@redhat.com, andriy.shevchenko@linux.intel.com,
-        peterz@infradead.org, lukas@wunner.de, ard.biesheuvel@linaro.org
-Reply-To: lukas@wunner.de, ard.biesheuvel@linaro.org, hdegoede@redhat.com,
-          torvalds@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-          peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <20180720014726.24031-8-ard.biesheuvel@linaro.org>
-References: <20180720014726.24031-8-ard.biesheuvel@linaro.org>
+From:   tip-bot for Andy Shevchenko <tipbot@zytor.com>
+Message-ID: <tip-e8f4194d9b98aa13f9f567a0056bbf683d2b1ab8@git.kernel.org>
+Cc:     peterz@infradead.org, andriy.shevchenko@linux.intel.com,
+        tbaicar@codeaurora.org, hdegoede@redhat.com,
+        linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
+        hpa@zytor.com, lukas@wunner.de, torvalds@linux-foundation.org,
+        tglx@linutronix.de, mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
+          andriy.shevchenko@linux.intel.com, tbaicar@codeaurora.org,
+          hdegoede@redhat.com, mingo@kernel.org, ard.biesheuvel@linaro.org,
+          hpa@zytor.com, tglx@linutronix.de, lukas@wunner.de,
+          torvalds@linux-foundation.org
+In-Reply-To: <20180720014726.24031-9-ard.biesheuvel@linaro.org>
+References: <20180720014726.24031-9-ard.biesheuvel@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/core] efi/x86: Replace references to efi_early->is64 with
- efi_is_64bit()
-Git-Commit-ID: aab9593c0cb4454f9d261a8c87a3361f3186c4ec
+Subject: [tip:efi/core] efi/cper: Use consistent types for UUIDs
+Git-Commit-ID: e8f4194d9b98aa13f9f567a0056bbf683d2b1ab8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,119 +62,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  aab9593c0cb4454f9d261a8c87a3361f3186c4ec
-Gitweb:     https://git.kernel.org/tip/aab9593c0cb4454f9d261a8c87a3361f3186c4ec
-Author:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-AuthorDate: Fri, 20 Jul 2018 10:47:24 +0900
+Commit-ID:  e8f4194d9b98aa13f9f567a0056bbf683d2b1ab8
+Gitweb:     https://git.kernel.org/tip/e8f4194d9b98aa13f9f567a0056bbf683d2b1ab8
+Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+AuthorDate: Fri, 20 Jul 2018 10:47:25 +0900
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Sun, 22 Jul 2018 14:13:43 +0200
 
-efi/x86: Replace references to efi_early->is64 with efi_is_64bit()
+efi/cper: Use consistent types for UUIDs
 
-There are a couple of places in the x86 EFI stub code where we select
-between 32-bit and 64-bit versions of the support routines based on
-the value of efi_early->is64. Referencing that field directly is a
-bad idea, since it prevents the compiler from inferring that this
-field can never be true on a 32-bit build, and can only become false
-on a 64-bit build if support for mixed mode is compiled in. This
-results in dead code to be retained in the uncompressed part of the
-kernel image, which is wasteful.
+The commit:
 
-So switch to the efi_is_64bit() helper, which will resolve to a
-constant boolean unless building for 64-bit with mixed mode support.
+  2f74f09bce4f ("efi: parse ARM processor error")
 
-Tested-by: Hans de Goede <hdegoede@redhat.com>
+... brought inconsistency in UUID types which are used across the CPER.
+
+Fix this by moving to use guid_t API everywhere.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Lukas Wunner <lukas@wunner.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tyler Baicar <tbaicar@codeaurora.org>
 Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180720014726.24031-8-ard.biesheuvel@linaro.org
+Link: http://lkml.kernel.org/r/20180720014726.24031-9-ard.biesheuvel@linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/boot/compressed/eboot.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/firmware/efi/cper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-index 915c64edbe8e..1458b1700fc7 100644
---- a/arch/x86/boot/compressed/eboot.c
-+++ b/arch/x86/boot/compressed/eboot.c
-@@ -404,7 +404,7 @@ struct boot_params *make_boot_params(struct efi_config *c)
- 	if (sys_table->hdr.signature != EFI_SYSTEM_TABLE_SIGNATURE)
- 		return NULL;
+diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+index b73fc4cab083..a7902fccdcfa 100644
+--- a/drivers/firmware/efi/cper.c
++++ b/drivers/firmware/efi/cper.c
+@@ -472,7 +472,7 @@ cper_estatus_print_section(const char *pfx, struct acpi_hest_generic_data *gdata
+ 		else
+ 			goto err_section_too_small;
+ #if defined(CONFIG_ARM64) || defined(CONFIG_ARM)
+-	} else if (!uuid_le_cmp(*sec_type, CPER_SEC_PROC_ARM)) {
++	} else if (guid_equal(sec_type, &CPER_SEC_PROC_ARM)) {
+ 		struct cper_sec_proc_arm *arm_err = acpi_hest_get_payload(gdata);
  
--	if (efi_early->is64)
-+	if (efi_is_64bit())
- 		setup_boot_services64(efi_early);
- 	else
- 		setup_boot_services32(efi_early);
-@@ -639,7 +639,6 @@ struct exit_boot_struct {
- 	struct efi_info		*efi;
- 	struct setup_data	*e820ext;
- 	__u32			e820ext_size;
--	bool			is64;
- };
- 
- static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
-@@ -666,7 +665,8 @@ static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
- 		first = false;
- 	}
- 
--	signature = p->is64 ? EFI64_LOADER_SIGNATURE : EFI32_LOADER_SIGNATURE;
-+	signature = efi_is_64bit() ? EFI64_LOADER_SIGNATURE
-+				   : EFI32_LOADER_SIGNATURE;
- 	memcpy(&p->efi->efi_loader_signature, signature, sizeof(__u32));
- 
- 	p->efi->efi_systab		= (unsigned long)sys_table_arg;
-@@ -683,8 +683,7 @@ static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
- 	return EFI_SUCCESS;
- }
- 
--static efi_status_t exit_boot(struct boot_params *boot_params,
--			      void *handle, bool is64)
-+static efi_status_t exit_boot(struct boot_params *boot_params, void *handle)
- {
- 	unsigned long map_sz, key, desc_size, buff_size;
- 	efi_memory_desc_t *mem_map;
-@@ -705,7 +704,6 @@ static efi_status_t exit_boot(struct boot_params *boot_params,
- 	priv.efi		= &boot_params->efi_info;
- 	priv.e820ext		= NULL;
- 	priv.e820ext_size	= 0;
--	priv.is64		= is64;
- 
- 	/* Might as well exit boot services now */
- 	status = efi_exit_boot_services(sys_table, handle, &map, &priv,
-@@ -740,13 +738,11 @@ efi_main(struct efi_config *c, struct boot_params *boot_params)
- 	struct desc_struct *desc;
- 	void *handle;
- 	efi_system_table_t *_table;
--	bool is64;
- 
- 	efi_early = c;
- 
- 	_table = (efi_system_table_t *)(unsigned long)efi_early->table;
- 	handle = (void *)(unsigned long)efi_early->image_handle;
--	is64 = efi_early->is64;
- 
- 	sys_table = _table;
- 
-@@ -754,7 +750,7 @@ efi_main(struct efi_config *c, struct boot_params *boot_params)
- 	if (sys_table->hdr.signature != EFI_SYSTEM_TABLE_SIGNATURE)
- 		goto fail;
- 
--	if (is64)
-+	if (efi_is_64bit())
- 		setup_boot_services64(efi_early);
- 	else
- 		setup_boot_services32(efi_early);
-@@ -810,7 +806,7 @@ efi_main(struct efi_config *c, struct boot_params *boot_params)
- 		hdr->code32_start = bzimage_addr;
- 	}
- 
--	status = exit_boot(boot_params, handle, is64);
-+	status = exit_boot(boot_params, handle);
- 	if (status != EFI_SUCCESS) {
- 		efi_printk(sys_table, "exit_boot() failed!\n");
- 		goto fail;
+ 		printk("%ssection_type: ARM processor error\n", newpfx);
