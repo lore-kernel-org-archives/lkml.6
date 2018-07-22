@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0B5C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D255C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC2620874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:51:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC2620874
+	by mail.kernel.org (Postfix) with ESMTP id 49DE720874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 16:51:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49DE720874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731140AbeGVRro (ORCPT
+        id S1730511AbeGVRs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 13:47:44 -0400
-Received: from mout.perfora.net ([74.208.4.194]:45233 "EHLO mout.perfora.net"
+        Sun, 22 Jul 2018 13:48:57 -0400
+Received: from mout.perfora.net ([74.208.4.194]:39299 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729936AbeGVRrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731106AbeGVRrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 22 Jul 2018 13:47:43 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MK2aJ-1fgS512OZx-001RRy; Sun, 22 Jul 2018 18:50:11 +0200
+ 0LwYMD-1g55eP2l5T-018Ke0; Sun, 22 Jul 2018 18:50:19 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 13/28] ARM: tegra: apalis_t30: drop unused mmc1/sd1 labels
-Date:   Sun, 22 Jul 2018 18:49:21 +0200
-Message-Id: <20180722164936.20581-14-marcel@ziswiler.com>
+Subject: [PATCH 17/28] ARM: tegra: apalis_t30: drop pwmleds
+Date:   Sun, 22 Jul 2018 18:49:25 +0200
+Message-Id: <20180722164936.20581-18-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180722164936.20581-1-marcel@ziswiler.com>
 References: <20180722164936.20581-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:lKU62ac6M0jiEAec97uMIWxVYe2LsvIuRsaAbCUqEzlgcA6CDFX
- C572FSqIqJKTwSqQdk2IL2BQxNMSciS3N9CLNWnh2iYxgJkym6zWmYdCrTAPbIfXCDIFojK
- 2GP0BuPnRBiNB7bBWXFRdvrts3k8DbjtHXgSLkILGc8JmGfEtgj1cUWA0pFTGW30RxQQMqs
- va5j/1P+1ct7ujm76F6Vw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:HTQKFBv7zF0=:5MSIyKlT5KRAQ1GktlfSNu
- tnubcpVoAZ774OvqdUaRIksGMSrm5xsxKhPsdFSXzqetRvAojgvlOImVsOEv+DHJLHsn9F1/4
- nEE9lfiyMmsmp/eo9uEt+4JzxmmenqaKKipksa7XOV5ODkkr43zmkiSDmYVNj0xFj2xxtPZ0s
- cM23PIYbaoEygHWecqX/Md72/igjl6XZ3ogDhc9JMNtvBPbISzSZUqr6uDAjojmY5hScXuPrN
- Z+qHkakpP/p4h+HAMHGjqinGZYaiUnXNIgfkBiNNciWRBrOQ9yRyPa2UdTG/IrCCMhNQaQwO3
- zzR1C9Pdn98G4IZcNdbiQZxu+NUAwKScQap1RWvI6AI211/ldaH6hlaWQE8yTqRA3N8fakwkQ
- CCE4d5L5BGTZdbgBxZbrwLLs8M+aq3QQlryVHIRqvKyobQ0clapUMQDWK+lCMs2IlIf43KaME
- +1OpwqKA1Yv+NYy1v9XLOp7VQndXLXNJqbmtIX2mYqBEpS35ffAA0JG8jZBxVcVrac2yV/Ce6
- eGheXkMx//CR6njnLNTRyaKzxKkPRgt3wAaL58zWkd0ZhZ87FZm+ul7w/HdVeJO/u4Yj+TZvO
- /fAOYFFennY5qFvKwUpRYAfZxbg5YaduaEAiIIrvn8v8Da/+YdG9xJNOArkR/AmhMc4qk0zFA
- O1jIbFotG8ypJucN1OlVOkNF+jPLiOjqYR+Ax4hhHG/ZdPAG5Jysh7FWhHEcAQWuyp+c=
+X-Provags-ID: V03:K1:vrxjzt+Jn8RoMI5QWEkvtgtKSg+a7eQxNxOX+BIFAKEbfooveSA
+ /9ZleiZaduXHVI5QV63J7EGa1ORkCiklZsdqVLFP04kZbffTHEP09hjNN75ZBVu9y+PjFoT
+ x1F7sm/j3NvGm4a7PpVcihp6qVwVEkB/s4p+hyxQ+xLTKMxzoMLRZF03K4CMdtqFZoNSfbf
+ TRWlDJVdEXVipQBS0jsmQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:XgEKY2hYX5o=:igsjPBhy2MZIsRXjcwn3I3
+ vQ+DjYzvZx3w5Q9DnsFxUYDPFqclXo0Zmr9+fLbsRvHrszVwquA48WWD2wKE8GL/awp7rEGsW
+ Rp3JgOIFob4MfzSvN8twwsJd22QtafpT2YkxZKakOaoSbBgmzC2MhLlfC4+QwDLIDH+ZmqjuG
+ a3bedFVJ+QjaCvRCxLbkvc+xmqv23UKllyaS+gQfz5FXRvVRZJJFMPRcVQFnH8q/9JMcyaQC6
+ etjHCTGn5TO6SXdq61U0xYvzM5VxWhdlZgxCW/PKipG/p1E79aZIGn0KdL3Z61WPeurozQ1Pr
+ lE516Q2pQVEgPyY10t63gqkYEfk51sx9D75CekTee2DiWfQ4KFXTKY3LlTAZz2fLXTw6fKmax
+ VWNe1i7lqgf/w5T8oRnFORQ4raWnUs+hk++9OuevWEZ5lIJ4s6DqngzyV3wrIw2BKPdw8z/NH
+ 8i3v8bgf0dSXEwGTDn8j02y+YHkGIP7gN/A9NTXB3Ch5BwsjoWObvYjCUcxPgGnSYPZ2raCTK
+ scYRjHcJYHb+uziUJZ1vV2o/hy6jG2Qha/Q4i/61bcp9nj6N+T2ktDT7my3RtpkCQ1qF69YAP
+ PDfal+BRbesX46Rnzv5dU7yHqjZRmh2j5ej6JBA7Rct3xPYbXOfkF/v5gy6fy3/rnJ7u4L8h1
+ 5Xz+ZFt5FChcT7sTj6M6j2nYQYc07pK9+XV144eSk2fsh5m5mTC3FDrqPFnpBc3Y+yIk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,37 +61,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Drop unused mmc1/sd1 labels.
+Drop pwmleds in favour of using regular PWMs.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 22 ----------------------
+ 1 file changed, 22 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 74d588561d9f..078b1061fb26 100644
+index c4153e8e8b8c..6978e3626fae 100644
 --- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -142,7 +142,7 @@
- 		status = "okay";
+@@ -223,28 +223,6 @@
+ 		power-supply = <&reg_3v3>;
  	};
  
--	sd1: sdhci@78000000 {
-+	sdhci@78000000 {
- 		status = "okay";
- 		bus-width = <4>;
- 		/* SD1_CD# */
-@@ -150,7 +150,7 @@
- 		no-1-8-v;
- 	};
- 
--	mmc1: sdhci@78000400 {
-+	sdhci@78000400 {
- 		status = "okay";
- 		bus-width = <8>;
- 		/* MMC1_CD# */
+-	pwmleds {
+-		compatible = "pwm-leds";
+-
+-		pwm1 {
+-			label = "PWM1";
+-			pwms = <&pwm 3 19600>;
+-			max-brightness = <255>;
+-		};
+-
+-		pwm2 {
+-			label = "PWM2";
+-			pwms = <&pwm 2 19600>;
+-			max-brightness = <255>;
+-		};
+-
+-		pwm3 {
+-			label = "PWM3";
+-			pwms = <&pwm 1 19600>;
+-			max-brightness = <255>;
+-		};
+-	};
+-
+ 	reg_3v3: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "3.3V_SW";
 -- 
 2.14.4
 
