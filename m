@@ -3,121 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0682C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0140C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AE7C20671
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7907F20854
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 18:28:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C/Igasa9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AE7C20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U+nZ7naY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7907F20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730388AbeGVTKF (ORCPT
+        id S1730691AbeGVTZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 15:10:05 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:43314 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbeGVTKF (ORCPT
+        Sun, 22 Jul 2018 15:25:36 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35529 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730506AbeGVTZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 15:10:05 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6MI9PGR005186;
-        Sun, 22 Jul 2018 18:12:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=u5FueHwAvDOYML9SDSpRzkby/SodOsUY89dVOBU1+GY=;
- b=C/Igasa9Ub5nHf/mCuFdnDXTI/mB7sXhfeioMDmtdoY+y6oIit4B6MWAA6FNuZGJwgIi
- HyWUB6sqKHW3WSxCqg83anF3PxT6VnC0hxJQ7zcKfT7GXMXowPgexQ7ZL+lKdVlWwYQA
- rFjl+Dxn9R6wQKHWQkVrNiW8+5XmbJcQs5SJQ81188jCN5uL9p/vLrPJUuLYkt4QmBUw
- dc5o121J4afCNSzD3hh9OW9RbNqzYBcxd9TWXjs6EA8gDb1KNlmuIRP8ce6sWM+941ug
- DyvwzNBCSON4Acd8dyf5jb8VqHpJmEimh0+nFJiuw2sSgxvNzL5xqHuXogS42fuqW6A2 pw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2kbtbcj8t2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 22 Jul 2018 18:12:23 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6MICMDH018361
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 22 Jul 2018 18:12:23 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6MICL2f029608;
-        Sun, 22 Jul 2018 18:12:21 GMT
-Received: from anon-dhcp-171.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 22 Jul 2018 11:12:21 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH] fs/nfsd: Delete invalid assignment statements in
- nfsd4_decode_exchange_id
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20180722085044.50701-1-nixiaoming@huawei.com>
-Date:   Sun, 22 Jul 2018 14:12:20 -0400
-Cc:     Bruce Fields <bfields@fieldses.org>, jlayton@kernel.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2C39A9CD-4591-46C8-BB25-5FA2C85149CE@oracle.com>
-References: <20180722085044.50701-1-nixiaoming@huawei.com>
-To:     nixiaoming <nixiaoming@huawei.com>
-X-Mailer: Apple Mail (2.3445.9.1)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8962 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807220217
+        Sun, 22 Jul 2018 15:25:35 -0400
+Received: by mail-io0-f193.google.com with SMTP id w11-v6so8270885iob.2
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 11:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4H2b//X01nwgyuSxluobo3FDtc6XUHdPLtYQoFidPx8=;
+        b=U+nZ7naYLlC0d6IlaaTva3lKNP6u/O+IcIBkRrspvxvyVqcpNYNTcwWD8F8VkY+CR2
+         BtTwqutABSZE47Aq8yIjfgJwntdeW+l/3X1+Qg4goy9wlZIcKL2A2TQtW3x+C4WlrYTP
+         IR7MqFipQPaLxm0lWi2fgHoyhUGOoDtfaJIPQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4H2b//X01nwgyuSxluobo3FDtc6XUHdPLtYQoFidPx8=;
+        b=gXLKCys1peSbea+3mvc2ipe3VPWWR4t90gy9veQ5HMPUmRaP5W/7FFpv4pPPL2Z2dK
+         YBTWCiQ/F40R1XCddV8pjlO/jpIdMhngb/4KdZ6m5p8/Q5MUBeJWPegncsmPLIqw8n33
+         igThvCMqzxweo3Z7BhrbPZLmeB//13S/mmnXfy2YHmWDVoKJ9hMqZIwnXgGcPzDyFnlq
+         0l3TSeogSqOnmJx1ovMp2/sA3TRdCnZNcN5f5JPawQQtg0jlalAX2UWcYTbJLGORYtYn
+         EeoU3cb7J158tclrb1RuqnfHtqwCmR6qEl6oEjFrJqOLKWx7IcT8QeeFdw1aloChzEe3
+         QaIA==
+X-Gm-Message-State: AOUpUlHLfXpxxqoWJkxBbWM0ZwzN9MvfrAAS+3VTg+CshzXMlLLsHo0B
+        HbnPDyYWqCR89KiNAXSPN9kQwYGzmmZIl8u6Hh8=
+X-Google-Smtp-Source: AAOMgpebyqVyH30/XSc5bKfGtm2QzsisQMYrZdznndTl0dMcWFcCruaHduKYCn953O5fgOXkqdghpk3fjy2xUdR/hG0=
+X-Received: by 2002:a6b:f612:: with SMTP id n18-v6mr8200579ioh.259.1532284081511;
+ Sun, 22 Jul 2018 11:28:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1532281180.git.luto@kernel.org> <1e3d01ce04315218d3f8ee269528bb774a4d1d60.1532281180.git.luto@kernel.org>
+In-Reply-To: <1e3d01ce04315218d3f8ee269528bb774a4d1d60.1532281180.git.luto@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 22 Jul 2018 11:27:50 -0700
+Message-ID: <CA+55aFz1ne3KTzni2Yvsp8ZRFzk+s78ZhKyGeLZvmRivBhFMfA@mail.gmail.com>
+Subject: Re: [RFC 2/2] x86/pti/64: Remove the SYSCALL64 entry trampoline
+To:     Andrew Lutomirski <luto@kernel.org>
+Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jul 22, 2018 at 10:45 AM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> This patch changes the code to map the percpu TSS into the user page
+> tables to allow the non-trampoline SYSCALL64 path to work under PTI.
 
+Me likey.
 
-> On Jul 22, 2018, at 4:50 AM, nixiaoming <nixiaoming@huawei.com> wrote:
->=20
-> dummy =3D be32_to_cpup(p++);
-> dummy =3D be32_to_cpup(p++);
-> Assigning value to "dummy" here, but that stored value
-> is overwritten before it can be used.
->=20
-> delete invalid assignment statements in nfsd4_decode_exchange_id
->=20
-> Signed-off-by: n00202754 <nixiaoming@huawei.com>
-> ---
-> fs/nfsd/nfs4xdr.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> index a96843c..8e78541 100644
-> --- a/fs/nfsd/nfs4xdr.c
-> +++ b/fs/nfsd/nfs4xdr.c
-> @@ -1392,8 +1392,8 @@ nfsd4_decode_exchange_id(struct =
-nfsd4_compoundargs *argp,
->=20
-> 		/* ssp_window and ssp_num_gss_handles */
-> 		READ_BUF(8);
-> -		dummy =3D be32_to_cpup(p++);
-> -		dummy =3D be32_to_cpup(p++);
-> +		be32_to_cpup(p++);
-> +		be32_to_cpup(p++);
+However:
 
-If these values are not used, what's the point of byte swapping them?
-Surely "p +=3D 2;" should be enough.
+> This does not add a new direct information leak, since the TSS is
+> readable by Meltdown from the cpu_entry_area alias regardless.
 
+Afaik, it does now potentially expose through meltdown the per-thread
+entry stack info, which is new.
 
-> 		break;
-> 	default:
-> 		goto xdr_error;
+But I don't think that's a show-stopper.
 
---
-Chuck Lever
+>  static void __init pti_clone_user_shared(void)
+>  {
+> +       for_each_possible_cpu(cpu) {
 
+But this code is pretty disgusting and seems wrong.
 
+Do you really want to do all trhe _possible_ cpu's, not just the
+online ones? I'd rather expose less (think MAXCPU) and then have the
+CPU hotplug code expose the page as the CPU comes up?
 
+> +               unsigned long va = (unsigned long)&per_cpu(cpu_tss_rw, cpu);
+> +               phys_addr_t pa = per_cpu_ptr_to_phys((void *)va);
+> +               pte_t *target_pte;
+> +
+> +               target_pte = pti_user_pagetable_walk_pte(va);
+
+This function only exists if CONFIG_X86_VSYSCALL_EMULATION, so it
+won't even compile under (very unusual) configurations.
+
+The "disgusting" part is that I think it could/should share more code
+with the vsyscall case, and the whole target-pte checking and setting
+should be shared too.
+
+Beause not being shared, I react to this:
+
+> +               set_pte(target_pte, pfn_pte(pa >> PAGE_SHIFT, PAGE_KERNEL));
+
+Hmm. The vsyscall code just does
+
+        *target_pte = ..
+
+without any set_pte() stuff. Do we want/need the PVOP cases, and if
+so, why doesn't the vsyscall case need it?
+
+Anyway, I love the approach, and how this gets rid of the nasty
+trampoline, so no real complaints, just "this needs some fixups".
+
+                Linus
