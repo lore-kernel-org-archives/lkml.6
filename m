@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B000AC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 10:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D51CBECDFB8
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 10:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FCAA20875
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 10:31:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FCAA20875
+	by mail.kernel.org (Postfix) with ESMTP id 894C620874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 10:33:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 894C620874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbeGVL0f (ORCPT
+        id S1728363AbeGVL2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 07:26:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60026 "EHLO mail.bootlin.com"
+        Sun, 22 Jul 2018 07:28:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60145 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727536AbeGVL0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 07:26:35 -0400
+        id S1727986AbeGVL2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 07:28:51 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2FB45207B4; Sun, 22 Jul 2018 12:30:19 +0200 (CEST)
+        id A0E42207B4; Sun, 22 Jul 2018 12:32:35 +0200 (CEST)
 Received: from bbrezillon (unknown [37.173.49.123])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 152CB20717;
-        Sun, 22 Jul 2018 12:30:17 +0200 (CEST)
-Date:   Sun, 22 Jul 2018 12:30:13 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8A84920717;
+        Sun, 22 Jul 2018 12:32:33 +0200 (CEST)
+Date:   Sun, 22 Jul 2018 12:32:31 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
@@ -55,12 +55,12 @@ Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 33/35] mtd: rawnand: do not export
- nand_scan_[ident|tail]() anymore
-Message-ID: <20180722123013.500d8883@bbrezillon>
-In-Reply-To: <20180720151527.16038-34-miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v4 34/35] mtd: rawnand: allocate model parameter
+ dynamically
+Message-ID: <20180722123231.1cde7180@bbrezillon>
+In-Reply-To: <20180720151527.16038-35-miquel.raynal@bootlin.com>
 References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
-        <20180720151527.16038-34-miquel.raynal@bootlin.com>
+        <20180720151527.16038-35-miquel.raynal@bootlin.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -70,116 +70,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 17:15:25 +0200
+On Fri, 20 Jul 2018 17:15:26 +0200
 Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-> Both nand_scan_ident() and nand_scan_tail() helpers used to be called
-> directly from controller drivers that needed to tweak some ECC-related
-> parameters before nand_scan_tail(). This separation prevented dynamic
-> allocations during the phase of NAND identification, which was
-> inconvenient.
-> 
-> All controller drivers have been moved to use nand_scan(), in
-> conjunction with the chip->ecc.[attach|detach]_chip() hooks that
-> actually do the required tweaking sequence between both ident/tail
-> calls, allowing programmers to use dynamic allocation as they need all
-> across the scanning sequence.
-> 
-> Declare nand_scan_[ident|tail]() statically now.
+> Thanks to the migration of all drivers to use nand_scan() and the
+> related nand_controller_ops, we can now allocate data during the
+> detection phase. Let's do it first for the NAND model parameter which
+> is allocated in nand_detect().
 > 
 > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+
 > ---
->  drivers/mtd/nand/raw/nand_base.c | 16 +++++++++-------
->  include/linux/mtd/rawnand.h      |  9 ++-------
->  2 files changed, 11 insertions(+), 14 deletions(-)
+>  drivers/mtd/nand/raw/nand_base.c | 52 +++++++++++++++++++++++++++++++---------
+>  include/linux/mtd/rawnand.h      |  2 +-
+>  2 files changed, 42 insertions(+), 12 deletions(-)
 > 
 > diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index e7f135c100c2..da99232702a4 100644
+> index da99232702a4..8645f655e5b0 100644
 > --- a/drivers/mtd/nand/raw/nand_base.c
 > +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5924,7 +5924,7 @@ static int nand_dt_init(struct nand_chip *chip)
+> @@ -5225,8 +5225,11 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  
+>  	sanitize_string(p->manufacturer, sizeof(p->manufacturer));
+>  	sanitize_string(p->model, sizeof(p->model));
+> -	strncpy(chip->parameters.model, p->model,
+> -		sizeof(chip->parameters.model) - 1);
+> +	chip->parameters.model = kstrdup(p->model, GFP_KERNEL);
+> +	if (!chip->parameters.model) {
+> +		ret = -ENOMEM;
+> +		goto free_onfi_param_page;
+> +	}
+>  
+>  	mtd->writesize = le32_to_cpu(p->byte_per_page);
+>  
+> @@ -5356,8 +5359,11 @@ static int nand_flash_detect_jedec(struct nand_chip *chip)
+>  
+>  	sanitize_string(p->manufacturer, sizeof(p->manufacturer));
+>  	sanitize_string(p->model, sizeof(p->model));
+> -	strncpy(chip->parameters.model, p->model,
+> -		sizeof(chip->parameters.model) - 1);
+> +	chip->parameters.model = kstrdup(p->model, GFP_KERNEL);
+> +	if (!chip->parameters.model) {
+> +		ret = -ENOMEM;
+> +		goto free_jedec_param_page;
+> +	}
+>  
+>  	mtd->writesize = le32_to_cpu(p->byte_per_page);
+>  
+> @@ -5546,8 +5552,9 @@ static bool find_full_id_nand(struct nand_chip *chip,
+>  		chip->onfi_timing_mode_default =
+>  					type->onfi_timing_mode_default;
+>  
+> -		strncpy(chip->parameters.model, type->name,
+> -			sizeof(chip->parameters.model) - 1);
+> +		chip->parameters.model = kstrdup(type->name, GFP_KERNEL);
+> +		if (!chip->parameters.model)
+> +			return false;
+>  
+>  		return true;
+>  	}
+> @@ -5706,8 +5713,9 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
+>  	if (!type->name)
+>  		return -ENODEV;
+>  
+> -	strncpy(chip->parameters.model, type->name,
+> -		sizeof(chip->parameters.model) - 1);
+> +	chip->parameters.model = kstrdup(type->name, GFP_KERNEL);
+> +	if (!chip->parameters.model)
+> +		return -ENOMEM;
+>  
+>  	chip->chipsize = (uint64_t)type->chipsize << 20;
+>  
+> @@ -5737,7 +5745,9 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
+>  			mtd->name);
+>  		pr_warn("bus width %d instead of %d bits\n", busw ? 16 : 8,
+>  			(chip->options & NAND_BUSWIDTH_16) ? 16 : 8);
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +
+> +		goto free_detect_allocation;
+>  	}
+>  
+>  	nand_decode_bbm_options(chip);
+> @@ -5774,6 +5784,11 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
+>  		(int)(chip->chipsize >> 20), nand_is_slc(chip) ? "SLC" : "MLC",
+>  		mtd->erasesize >> 10, mtd->writesize, mtd->oobsize);
+>  	return 0;
+> +
+> +free_detect_allocation:
+> +	kfree(chip->parameters.model);
+> +
+> +	return ret;
 >  }
 >  
->  /**
-> - * nand_scan_ident - [NAND Interface] Scan for the NAND device
-> + * nand_scan_ident - Scan for the NAND device
->   * @mtd: MTD device structure
->   * @maxchips: number of chips to scan for, returns immediately if 0
->   * @table: alternative NAND ID table
-> @@ -5932,9 +5932,13 @@ static int nand_dt_init(struct nand_chip *chip)
->   * This is the first phase of the normal nand_scan() function. It reads the
->   * flash ID and sets up MTD fields accordingly.
->   *
-> + * This helper used to be called directly from controller drivers that needed
-> + * to tweak some ECC-related parameters before nand_scan_tail(). This separation
-> + * prevented dynamic allocations during this phase which was unconvenient and
-> + * as been banned for the benefit of the ->init_ecc()/cleanup_ecc() hooks.
->   */
-> -int nand_scan_ident(struct mtd_info *mtd, int maxchips,
-> -		    struct nand_flash_dev *table)
-> +static int nand_scan_ident(struct mtd_info *mtd, int maxchips,
-> +			   struct nand_flash_dev *table)
->  {
->  	int i, nand_maf_id, nand_dev_id;
->  	struct nand_chip *chip = mtd_to_nand(mtd);
-> @@ -6016,7 +6020,6 @@ int nand_scan_ident(struct mtd_info *mtd, int maxchips,
->  
+>  static const char * const nand_ecc_modes[] = {
+> @@ -6021,6 +6036,11 @@ static int nand_scan_ident(struct mtd_info *mtd, int maxchips,
 >  	return 0;
 >  }
-> -EXPORT_SYMBOL(nand_scan_ident);
 >  
+> +static void nand_scan_ident_cleanup(struct nand_chip *chip)
+> +{
+> +	kfree(chip->parameters.model);
+> +}
+> +
 >  static int nand_set_ecc_soft_ops(struct mtd_info *mtd)
 >  {
-> @@ -6393,14 +6396,14 @@ static bool nand_ecc_strength_good(struct mtd_info *mtd)
->  }
->  
->  /**
-> - * nand_scan_tail - [NAND Interface] Scan for the NAND device
-> + * nand_scan_tail - Scan for the NAND device
->   * @mtd: MTD device structure
->   *
->   * This is the second phase of the normal nand_scan() function. It fills out
->   * all the uninitialized function pointers with the defaults and scans for a
->   * bad block table if appropriate.
->   */
-> -int nand_scan_tail(struct mtd_info *mtd)
-> +static int nand_scan_tail(struct mtd_info *mtd)
->  {
 >  	struct nand_chip *chip = mtd_to_nand(mtd);
->  	struct nand_ecc_ctrl *ecc = &chip->ecc;
-> @@ -6724,7 +6727,6 @@ int nand_scan_tail(struct mtd_info *mtd)
+> @@ -6764,11 +6784,18 @@ int nand_scan_with_ids(struct mtd_info *mtd, int maxchips,
+>  
+>  	ret = nand_attach(chip);
+>  	if (ret)
+> -		return ret;
+> +		goto cleanup_ident;
+>  
+>  	ret = nand_scan_tail(mtd);
+>  	if (ret)
+> -		nand_detach(chip);
+> +		goto detach_chip;
+> +
+> +	return 0;
+> +
+> +detach_chip:
+> +	nand_detach(chip);
+> +cleanup_ident:
+> +	nand_scan_ident_cleanup(chip);
 >  
 >  	return ret;
 >  }
-> -EXPORT_SYMBOL(nand_scan_tail);
+> @@ -6800,6 +6827,9 @@ void nand_cleanup(struct nand_chip *chip)
 >  
->  static int nand_attach(struct nand_chip *chip)
->  {
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index a20c78e25878..a928771a7ae4 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -36,14 +36,9 @@ static inline int nand_scan(struct mtd_info *mtd, int max_chips)
+>  	/* Free controller specific allocations after chip identification */
+>  	nand_detach(chip);
+> +
+> +	/* Free identification phase allocations */
+> +	nand_scan_ident_cleanup(chip);
 >  }
 >  
->  /*
-> - * Separate phases of nand_scan(), allowing board driver to intervene
-> - * and override command or ECC setup according to flash type.
-> + * Unregister the MTD device and free resources held by the NAND device, must be
-> + * called on error after a successful nand_scan().
-
-Nope. You're mixing nand_cleanup() and nand_release(). nand_release()
-should not be used because it ignores mtd_device_unregister() and might
-call nand_cleanup() on an object that is still being exposed to the MTD
-layer. Your comment applies to nand_cleanup() though ;-).
-
+>  EXPORT_SYMBOL_GPL(nand_cleanup);
+> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+> index a928771a7ae4..5723d940a47d 100644
+> --- a/include/linux/mtd/rawnand.h
+> +++ b/include/linux/mtd/rawnand.h
+> @@ -482,7 +482,7 @@ struct onfi_params {
 >   */
-> -int nand_scan_ident(struct mtd_info *mtd, int max_chips,
-> -			   struct nand_flash_dev *table);
-> -int nand_scan_tail(struct mtd_info *mtd);
-> -
-> -/* Unregister the MTD device and free resources held by the NAND device */
->  void nand_release(struct mtd_info *mtd);
->  
->  /* Internal helper for board drivers which need to override command function */
+>  struct nand_parameters {
+>  	/* Generic parameters */
+> -	char model[100];
+> +	const char *model;
+>  	bool supports_set_get_features;
+>  	DECLARE_BITMAP(set_feature_list, ONFI_FEATURE_NUMBER);
+>  	DECLARE_BITMAP(get_feature_list, ONFI_FEATURE_NUMBER);
 
