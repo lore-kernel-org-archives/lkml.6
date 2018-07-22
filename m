@@ -2,156 +2,149 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA7BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE60C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A96B920874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:12:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A96B920874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 10ECD20858
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:29:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10ECD20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729844AbeGVHHg (ORCPT
+        id S1727992AbeGVHZ2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 03:07:36 -0400
-Received: from mga11.intel.com ([192.55.52.93]:37222 "EHLO mga11.intel.com"
+        Sun, 22 Jul 2018 03:25:28 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57805 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728630AbeGVHHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 03:07:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jul 2018 23:11:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,388,1526367600"; 
-   d="scan'208";a="218015893"
-Received: from allen-box.sh.intel.com ([10.239.48.172])
-  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2018 23:11:25 -0700
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
-        yi.y.sun@intel.com, peterx@redhat.com,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [RFC PATCH 06/10] iommu: Add iommu_set_bus API interface
-Date:   Sun, 22 Jul 2018 14:09:29 +0800
-Message-Id: <1532239773-15325-7-git-send-email-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
-References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
+        id S1727764AbeGVHZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 03:25:27 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B54D2207B4; Sun, 22 Jul 2018 08:29:51 +0200 (CEST)
+Received: from bbrezillon (unknown [37.173.105.99])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 034B02072F;
+        Sun, 22 Jul 2018 08:29:40 +0200 (CEST)
+Date:   Sun, 22 Jul 2018 08:29:39 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        miquel.raynal@bootlin.com, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] drivers/memory/Kconfig: Add CONFIG_OF dependency
+Message-ID: <20180722082939.2de739f1@bbrezillon>
+In-Reply-To: <a83ff193-be57-f566-cafb-132075025b56@infradead.org>
+References: <20180721200049.7553-1-anders.roxell@linaro.org>
+        <a83ff193-be57-f566-cafb-132075025b56@infradead.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds iommu_set_bus API by adding a new set_bus ops in the
-iommu_ops structure. A vendor IOMMU driver could either specify
-its callback or safely ignore it. This interface could be used
-to set the iommu methods used for a particular non-pci bus. One
-consumer of this interface could be vfio/mdev bus when the mdev
-devices could be exclusively protected by the IOMMU units.
++Arnd, Rob and the DT ML.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Liu Yi L <yi.l.liu@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/iommu.c | 23 +++++++++++++++++++++++
- include/linux/iommu.h | 12 ++++++++++++
- 2 files changed, 35 insertions(+)
+On Sat, 21 Jul 2018 14:53:47 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 63b3756..b22b0a7 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1976,3 +1976,26 @@ int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids)
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(iommu_fwspec_add_ids);
-+
-+int iommu_set_bus(struct bus_type *bus)
-+{
-+	struct iommu_device *iommu;
-+	int ret = -ENODEV;
-+
-+	spin_lock(&iommu_device_lock);
-+	/*
-+	 * Iterate over iommu list and try setting bus with
-+	 * each iommu until a successful setting.
-+	 */
-+	list_for_each_entry(iommu, &iommu_device_list, list) {
-+		if (iommu->ops->set_bus) {
-+			ret = iommu->ops->set_bus(bus, iommu);
-+			if (!ret)
-+				break;
-+		}
-+	}
-+	spin_unlock(&iommu_device_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(iommu_set_bus);
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 19938ee..2679796 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -48,6 +48,7 @@ struct bus_type;
- struct device;
- struct iommu_domain;
- struct notifier_block;
-+struct iommu_device;
- 
- /* iommu fault flags */
- #define IOMMU_FAULT_READ	0x0
-@@ -187,6 +188,7 @@ struct iommu_resv_region {
-  * @domain_get_windows: Return the number of windows for a domain
-  * @of_xlate: add OF master IDs to iommu grouping
-  * @pgsize_bitmap: bitmap of all possible supported page sizes
-+ * @set_bus: set iommu ops for a non-pci bus
+> On 07/21/2018 01:00 PM, Anders Roxell wrote:
+> > JZ4780_NEMC doesn't depend on OF, and if OF isn't enabled we get this
+> > error:
+> > drivers/memory/jz4780-nemc.c: In function ‘jz4780_nemc_num_banks’:
+> > drivers/memory/jz4780-nemc.c:72:10: error: implicit declaration of
+> >  function ‘of_read_number’; did you mean ‘down_read_nested’?
+> >  [-Werror=implicit-function-declaration]
+> >    bank = of_read_number(prop, 1);
+> >           ^~~~~~~~~~~~~~
+> >           down_read_nested
+
+Looks like of.h defines stubs so that people can compile-test without
+CONFIG_OF selected. Maybe we should move of_read_number() and
+of_read_ulong() out of the #ifdef CONFIG_OF section.
+
+Alternatively, we could patch jz4780-nemc.c to not use of_read_number
+and instead rely on of_read_property_u32_index() +
+of_property_count_elems_of_size() + of_n_{addr,size}_cells():
+
+--->8---
+diff --git a/drivers/memory/jz4780-nemc.c b/drivers/memory/jz4780-nemc.c
+index bcf06adefc96..9ad7abc6983a 100644
+--- a/drivers/memory/jz4780-nemc.c
++++ b/drivers/memory/jz4780-nemc.c
+@@ -63,14 +63,21 @@ struct jz4780_nemc {
   */
- struct iommu_ops {
- 	bool (*capable)(enum iommu_cap);
-@@ -235,6 +237,9 @@ struct iommu_ops {
- 	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
- 	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
- 
-+	/* Set iommu ops for a bus */
-+	int (*set_bus)(struct bus_type *bus, struct iommu_device *iommu);
+ unsigned int jz4780_nemc_num_banks(struct device *dev)
+ {
+-       const __be32 *prop;
+-       unsigned int bank, count = 0;
+        unsigned long referenced = 0;
+-       int i = 0;
+-
+-       while ((prop = of_get_address(dev->of_node, i++, NULL, NULL))) {
+-               bank = of_read_number(prop, 1);
+-               if (!(referenced & BIT(bank))) {
++       int nelems, elemsize, i = 0;
++       unsigned int count = 0;
 +
- 	unsigned long pgsize_bitmap;
- };
- 
-@@ -412,6 +417,8 @@ void iommu_fwspec_free(struct device *dev);
- int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids);
- const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode);
- 
-+int iommu_set_bus(struct bus_type *bus);
++       /* #address-cells = 2 and #size-cells = 1, hence  */
++       elemsize = of_n_addr_cells(dev->of_node) +
++                  of_n_size_cells(dev->of_node);
++       nelems = of_property_count_elems_of_size(dev->of_node, "reg", elemsize);
++       for (i = 0; i < nelems; i++) {
++               u32 bank;
 +
- #else /* CONFIG_IOMMU_API */
++               if (!of_property_read_u32_index(dev->of_node, "reg",
++                                               i * elemsize, &bank) &&
++                   bank >= 1 && bank < JZ4780_NEMC_NUM_BANKS &&
++                   !(referenced & BIT(bank))) {
+                        referenced |= BIT(bank);
+                        count++;
+                }
+@@ -269,10 +276,9 @@ static int jz4780_nemc_probe(struct platform_device *pdev)
+        struct jz4780_nemc *nemc;
+        struct resource *res;
+        struct device_node *child;
+-       const __be32 *prop;
+-       unsigned int bank;
+        unsigned long referenced;
+        int i, ret;
++       u32 bank;
  
- struct iommu_ops {};
-@@ -696,6 +703,11 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
- 	return NULL;
- }
- 
-+static inline int iommu_set_bus(struct bus_type *bus)
-+{
-+	return -ENODEV;
-+}
+        nemc = devm_kzalloc(dev, sizeof(*nemc), GFP_KERNEL);
+        if (!nemc)
+@@ -316,10 +322,27 @@ static int jz4780_nemc_probe(struct platform_device *pdev)
+         * registered for it.
+         */
+        for_each_child_of_node(nemc->dev->of_node, child) {
++               int nelems, elemsize;
 +
- #endif /* CONFIG_IOMMU_API */
- 
- #endif /* __LINUX_IOMMU_H */
--- 
-2.7.4
-
+                referenced = 0;
+                i = 0;
+-               while ((prop = of_get_address(child, i++, NULL, NULL))) {
+-                       bank = of_read_number(prop, 1);
++               elemsize = of_n_addr_cells(dev->of_node) +
++                          of_n_size_cells(dev->of_node);
++               nelems = of_property_count_elems_of_size(dev->of_node, "reg",
++                                                        elemsize);
++               for (i = 0; i < nelems; i++) {
++                       u32 bank;
++
++                       ret = of_property_read_u32_index(dev->of_node, "reg",
++                                                        i * elemsize, &bank);
++                       if (ret) {
++                               dev_err(nemc->dev,
++                                       "failed to read bank %d of %pOF (err = %d)\n",
++                                       i, child, ret);
++                               referenced = 0;
++                               break;
++                       }
++
+                        if (bank < 1 || bank >= JZ4780_NEMC_NUM_BANKS) {
+                                dev_err(nemc->dev,
+                                        "%pOF requests invalid bank %u\n",
