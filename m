@@ -2,101 +2,160 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA518C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADE9C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9145420850
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:30:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B358220854
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 22:50:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="tzVnxjOS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9145420850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YMh2kNRR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B358220854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731031AbeGVX2Q (ORCPT
+        id S1730798AbeGVXsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 19:28:16 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:34161 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730722AbeGVX2P (ORCPT
+        Sun, 22 Jul 2018 19:48:14 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:42101 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730429AbeGVXsO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 19:28:15 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 962138365E
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 10:29:58 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail; t=1532298598;
-        bh=EwtXqXX95vGObhKKCjYIeUmFB0a525boSHXYlls969w=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=tzVnxjOSahL0sVxJyc2jbMSJjIJCYL+s2x9dGVWo0ei4A4OHzeP8C6EBDLOcRBhvx
-         Oto6tRMi75bs+Gna5D9EmQx4GUgzhcrMNZbFUSoTcb58HlssCVULltSvCvc+HnR4dJ
-         cVdLlHC1MXvV9/BeDSbyNzVDppza2lp0+857QlRc=
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5b5505670001>; Mon, 23 Jul 2018 10:29:59 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1156.6; Mon, 23 Jul 2018 10:29:58 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Mon, 23 Jul 2018 10:29:58 +1200
-From:   Theuns Verwoerd <Theuns.Verwoerd@alliedtelesis.co.nz>
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-CC:     David Woodhouse <dwmw2@infradead.org>,
-        "linux-mtd @ lists . infradead . org" <linux-mtd@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] Secure deletion under JFFS2
-Thread-Topic: [PATCH 0/2] Secure deletion under JFFS2
-Thread-Index: AQHUH7qBk8c9Ntxibk6iCpnqihACd6Sa1W4AgAA4/IA=
-Date:   Sun, 22 Jul 2018 22:29:58 +0000
-Message-ID: <bc19f9b8-fccc-67e8-00af-1d83e5fd508a@alliedtelesis.co.nz>
-References: <cover.1532043059.git.theuns.verwoerd@alliedtelesis.co.nz>
- <CAFLxGvyqZNLeRgxGvNNnc-zsPydYLisEB3eX0R5CVCEhEuN4QQ@mail.gmail.com>
-In-Reply-To: <CAFLxGvyqZNLeRgxGvNNnc-zsPydYLisEB3eX0R5CVCEhEuN4QQ@mail.gmail.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.32.16.78]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5A350C2E054BAC4AB3571C2908C43D3E@atlnz.lc>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Sun, 22 Jul 2018 19:48:14 -0400
+Received: by mail-yb0-f195.google.com with SMTP id c10-v6so6594259ybf.9;
+        Sun, 22 Jul 2018 15:49:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=A7C+IQtUBjQpU57XgReRLYs7kX27lQ6UC81xs0vzL7c=;
+        b=YMh2kNRRFvozIUoU3NO2ZmrumteG88E0kMVRj+X23JL4CIWwCwt3Bl8+QhavEFiY8k
+         gU56wGMAvyhplOR/T02fxLyRC3VV5h7QFPQAHd8cixh3ZMaz2Irkmz0TEvOkEJyIgIJ6
+         CdFifX7kLyU1KLLSnw0G+cMdZTxT4nUO7GTk7JwU6uY/bTI1Q3AVwAaC5H0RlEl1JcPW
+         JEJmNnpD6jV8Wz0RlGvUoYRTr030jCyY3AtRdVb5VnauOe4hCLWIcYihS9x3Acswkzp2
+         DVGYNIpHy0c6bbJ57Ed+iDGTEXmLNAiWKJdq+z+a4wRzj5r2pIBpnGeCGBPSz3Zxsctg
+         nfkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=A7C+IQtUBjQpU57XgReRLYs7kX27lQ6UC81xs0vzL7c=;
+        b=U1ZXvghBrO7OHoU15ZMpFa2K6CJRE4JMz+dgMlR2Mynz+73Zij+L+r6bADEX6e7M49
+         WEYvQKqRFInaOmzwQb9cYWWbdkLBy4kZagIA7mdOfU/iW4YHXpuF8HY59g5eCcxLllIm
+         /vsACFGRvfB6PQ/GumYwwIzLmMPf/Iw2Ya6HAWO6J74eHMobkYtonNgFqbBVhBXUtQKC
+         6CAyHyIVlA1GBKC2t9pQKzC+ROu+5EbEY4Q24bKPpzKOwAGabOFtBC8Hi+3xiRVJT+Z3
+         74px/xXJwu2p6pRbvGuoCgk6eZ8MYgwgrFQuGYekyyVsb23Q9hZ8JWET8MKIsd4IxJCs
+         JiZg==
+X-Gm-Message-State: AOUpUlEdGdg3AeIB2xS4Yu7DE0EFjUouuq87By1T3ohEXx6LyK+PhteZ
+        LnfbLiMxo+EOpFdOJ4J8CVo=
+X-Google-Smtp-Source: AAOMgpcRXf6dNhGXgJf5dNlKCFopBOYYZcA52PQEPLFIKy062Qv1RrzyPtYXySUikrD9Abv8TNL7fA==
+X-Received: by 2002:a25:6f84:: with SMTP id k126-v6mr5591015ybc.419.1532299796331;
+        Sun, 22 Jul 2018 15:49:56 -0700 (PDT)
+Received: from localhost ([72.188.97.40])
+        by smtp.gmail.com with ESMTPSA id h3-v6sm3587167ywd.47.2018.07.22.15.49.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 22 Jul 2018 15:49:55 -0700 (PDT)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     jic23@kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, fabrice.gasnier@st.com,
+        benjamin.gaignard@st.com, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, akpm@linux-foundation.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v9 00/11] Introduce the Counter subsystem
+Date:   Sun, 22 Jul 2018 18:49:49 -0400
+Message-Id: <cover.1532298882.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA3LzIzLzIwMTggMDc6MDYgQU0sIFJpY2hhcmQgV2VpbmJlcmdlciB3cm90ZToNCj4g
-T24gRnJpLCBKdWwgMjAsIDIwMTggYXQgMTo1MCBBTSwgVGhldW5zIFZlcndvZXJkDQo+IDx0aGV1
-bnMudmVyd29lcmRAYWxsaWVkdGVsZXNpcy5jby5uej4gd3JvdGU6DQo+PiBTZWN1cml0eSBjZXJ0
-aWZpY2F0aW9ucyBzdWNoIGFzIEZJUFMgcmVxdWlyZSB0aGUgY2FwYWJpbGl0eSB0byBzZWN1cmVs
-eQ0KPj4gZGVsZXRlIGZpbGVzLCB3aGljaCBpcyBwcm9ibGVtYXRpYyB1bmRlciBKRkZTMidzIGxv
-Zy1iYXNlZCBtb2RlbC4gIFdlIGNhbg0KPiBDYW4geW91IHBsZWFzZSBiZSBhIGxpdHRsZSBtb3Jl
-IHNwZWNpZmljIGFib3V0IHRoZSBjZXJ0aWZpY2F0aW9ucz8NCmh0dHBzOi8vd3d3Lm5pYXAtY2Nl
-dnMub3JnL0RvY3VtZW50c19hbmRfR3VpZGFuY2Uvdmlld190ZC5jZm0/dGRfaWQ9MTMzDQoNCmdp
-dmVzIHNvbWUgbGV2ZWwgb2YgY29udGV4dC7CoCBJIGJlbGlldmUgYm90aCBGSVBTIGFuZCBDQyBo
-YXZlIHNpbWlsYXIgDQpleHBlY3RhdGlvbnMgYXJvdW5kIGtleSBkZWxldGlvbi4NCj4gVGhlc2Ug
-ZGF5cyBzZWN1cmUgZGVsZXRpb24gYXQgZmlsZSBzeXN0ZW0gbGV2ZWwgaXMgYWxtb3N0IGltcG9z
-c2libGUgdG8gYWNoaWV2ZQ0KPiBzaW5jZSB5b3UgZG9uJ3QgaGF2ZSBmdWxsIGNvbnRyb2wgb2Yg
-dGhlIHN0b3JhZ2Ugc3RhY2suDQo+IEkga25vdywgSSBrbm93LCBJbiB0aGUgcmF3IGZsYXNoIGNh
-c2Ugd2UgaGF2ZSwgYnV0IHN0aWxsLiBJdCBtYWtlcw0KPiB0aGluZ3MgdmVyeSBjb21wbGljYXRl
-ZC4NCj4NCj4gQSBjb21tb24gYXBwcm9hY2ggZG8gZGVsZXRlIGEgZmlsZSBpbiBhIHNlY3VyZSB3
-YXkgaXMgaGF2aW5nIGl0DQo+IGVuY3J5cHRlZCBhbmQgdXBvbiBkZWxldGlvbg0KPiB5b3UgZm9y
-Z2V0IHRoZSBrZXkuDQo+IFdvdWxkbid0IHRoYXQgd29yayBmb3IgeW91IHRvbz8NClRvIHJldGFp
-biBncmFudWxhcml0eSBmb3IgbWFuYWdpbmcgaW5kaXZpZHVhbCBrZXlzLCB5b3UnZCByZXF1aXJl
-IGEgMToxIA0Ka2V5LXRvLWFjY2Vzcy1rZXkgKGt0YWspLsKgIEJlY2F1c2Uga2V5cyBhcmUgZXhw
-ZWN0ZWQgdG8gYmUgcGVyc2lzdGVudCwgDQpzbyBtdXN0IHRoZSBrdGFrIGJlIC0gYXQgd2hpY2gg
-cG9pbnQgd2UndmUgcmVwbGFjZWQgdGhlIHJlcXVpcmVtZW50IGZvciANCnNlY3VyZWx5IGRlbGV0
-aW5nIGEga2V5IHdpdGggb25lIHRvIHNlY3VyZWx5IGRlbGV0ZSBhIGt0YWsuDQooSW4gYWRkaXRp
-b24sIHNpbmNlIHRoaXMgYXBwcm9hY2ggZmFsbHMgb3V0c2lkZSB0aGUgc3BlY2lmaWMgbGFuZ3Vh
-Z2UgDQp1c2VkIGluIHRoZSBjZXJ0aWZpY2F0aW9uIGd1aWRhbmNlIGRvY3VtZW50cywgaXQnZCBu
-ZWVkIHRvIGJlIGp1c3RpZmllZCANCmluIGRldGFpbCwgd2hpY2ggYWRkcyByaXNrLikNCg0KUmVn
-YXJkcywNCg0KVGhldW5zDQpLUk4=
+Changes in v9:
+ - Prefix exported symbols with "counter_" to make counter namespace
+   explicit and clear
+ - Replace scnprintf and snprintf lines with sprintf in 104-quad-8.c
+   since we're dealing with sysfs files
+
+This revision is functionally identical to the last; changes in this
+version were made to improve code clarity. Andrew Morton suggested
+improving the names of the exported symbols to clean up the Counter
+subsytem namespace. This revision adds a "counter_" prefix to the
+exported symbols to keep the namespace tidy and these symbols as
+clearly part of the Counter subsystem.
+
+Andrew Morton also brought up a good point that the Generic Counter
+"signal" terminology could conflict with the existing established use of
+the term in other areas of the Linux kernel. I've changed the major
+exported symbols in counter.h that used the "signal_" naming covention
+to now use a "counter_signal_" naming convention in order to help
+prevent this confusion; I've made similar changes to symbols in
+counter.c as well. If this naming still causes trouble, we can consider
+alternative names for this component.
+
+William Breathitt Gray
+
+Benjamin Gaignard (2):
+  counter: Add STM32 Timer quadrature encoder
+  dt-bindings: counter: Document stm32 quadrature encoder
+
+Fabrice Gasnier (2):
+  counter: stm32-lptimer: add counter device
+  dt-bindings: counter: Adjust dt-bindings for STM32 lptimer move
+
+William Breathitt Gray (7):
+  counter: Introduce the Generic Counter interface
+  counter: Documentation: Add Generic Counter sysfs documentation
+  docs: Add Generic Counter interface documentation
+  iio: 104-quad-8: Update license boilerplate
+  counter: 104-quad-8: Add Generic Counter interface support
+  counter: 104-quad-8: Documentation: Add Generic Counter sysfs
+    documentation
+  iio: counter: Add deprecation markings for IIO Counter attributes
+
+ Documentation/ABI/testing/sysfs-bus-counter   |  230 +++
+ .../ABI/testing/sysfs-bus-counter-104-quad-8  |   36 +
+ Documentation/ABI/testing/sysfs-bus-iio       |    8 +
+ .../testing/sysfs-bus-iio-counter-104-quad-8  |   16 +
+ .../{iio => }/counter/stm32-lptimer-cnt.txt   |    0
+ .../bindings/counter/stm32-timer-cnt.txt      |   31 +
+ .../devicetree/bindings/mfd/stm32-lptimer.txt |    2 +-
+ .../devicetree/bindings/mfd/stm32-timers.txt  |    7 +
+ Documentation/driver-api/generic-counter.rst  |  342 ++++
+ Documentation/driver-api/index.rst            |    1 +
+ MAINTAINERS                                   |   15 +-
+ drivers/Kconfig                               |    2 +
+ drivers/Makefile                              |    1 +
+ drivers/{iio => }/counter/104-quad-8.c        |  782 +++++++-
+ drivers/counter/Kconfig                       |   51 +
+ drivers/{iio => }/counter/Makefile            |    5 +-
+ drivers/counter/counter.c                     | 1567 +++++++++++++++++
+ drivers/{iio => }/counter/stm32-lptimer-cnt.c |  361 +++-
+ drivers/counter/stm32-timer-cnt.c             |  390 ++++
+ drivers/iio/Kconfig                           |    1 -
+ drivers/iio/Makefile                          |    1 -
+ drivers/iio/counter/Kconfig                   |   34 -
+ include/linux/counter.h                       |  510 ++++++
+ include/linux/counter_enum.h                  |   45 +
+ 24 files changed, 4352 insertions(+), 86 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-counter
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-counter-104-quad-8
+ rename Documentation/devicetree/bindings/{iio => }/counter/stm32-lptimer-cnt.txt (100%)
+ create mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+ create mode 100644 Documentation/driver-api/generic-counter.rst
+ rename drivers/{iio => }/counter/104-quad-8.c (44%)
+ create mode 100644 drivers/counter/Kconfig
+ rename drivers/{iio => }/counter/Makefile (46%)
+ create mode 100644 drivers/counter/counter.c
+ rename drivers/{iio => }/counter/stm32-lptimer-cnt.c (48%)
+ create mode 100644 drivers/counter/stm32-timer-cnt.c
+ delete mode 100644 drivers/iio/counter/Kconfig
+ create mode 100644 include/linux/counter.h
+ create mode 100644 include/linux/counter_enum.h
+
+-- 
+2.18.0
+
