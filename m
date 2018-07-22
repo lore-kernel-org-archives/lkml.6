@@ -3,74 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB71C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 09:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE339C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 09:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 215C52086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 09:02:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 215C52086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id 92D1120874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 09:11:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92D1120874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbeGVJ6r (ORCPT
+        id S1728322AbeGVKHt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 05:58:47 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:32826 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727990AbeGVJ6q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 05:58:46 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1fhAGA-0000tu-6X; Sun, 22 Jul 2018 11:02:34 +0200
-Date:   Sun, 22 Jul 2018 11:02:34 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Shaochun Chen <cscnull@gmail.com>
-Cc:     pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        davem@davemloft.net, johannes.berg@intel.com, pombredanne@nexb.com,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        Jason@zx2c4.com, dsahern@gmail.com, lucien.xin@gmail.com,
-        ktkhai@virtuozzo.com, xiyou.wangcong@gmail.com,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        netdev@vger.kernel.org, tom@quantonium.net
-Subject: Re: [PATCH] netlink: fix memory leak
-Message-ID: <20180722090234.bttpk2xmwf4d7hfo@breakpoint.cc>
-References: <20180722024925.3176-1-cscnull@gmail.com>
+        Sun, 22 Jul 2018 06:07:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50939 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728053AbeGVKHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 06:07:49 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 45C9BD0EB11DE;
+        Sun, 22 Jul 2018 17:11:37 +0800 (CST)
+Received: from linux-work.huawei.com (10.67.189.174) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.382.0; Sun, 22 Jul 2018 17:11:28 +0800
+From:   nixiaoming <nixiaoming@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <nixiaoming@huawei.com>
+Subject: [PATCH] Delete invalid assignment statements in do_sendfile
+Date:   Sun, 22 Jul 2018 16:37:08 +0800
+Message-ID: <20180722083708.46865-1-nixiaoming@huawei.com>
+X-Mailer: git-send-email 2.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180722024925.3176-1-cscnull@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.174]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shaochun Chen <cscnull@gmail.com> wrote:
+Assigning value -EINVAL to "retval" here, but that stored value is
+overwritten before it can be used.
 
-[ CC Tom Herbert ]
+retval = -EINVAL;
+....
+retval = rw_verify_area(WRITE, out.file, &out_pos, count);
 
-> and the memory which pointed by control->data will leak. so if netlink_dump
-> start fail, call control->done to free the memory.
+value_overwrite: Overwriting previous write to "retval" with value
+from rw_verify_area
 
-Tom, I was about to suggest moving extra allocations for dumps
-into a ->start() callback whereever possible.
+delete invalid assignment statements
 
-However, it looks like ->done() is not guaranteed to be called even if
-->start() was invoked, but it seems at least ila assumes ->done always
-cleans up after ->start.
+Signed-off-by: n00202754 <nixiaoming@huawei.com>
+---
+ fs/read_write.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I am looking at netlink_dump(); it calls ->done() only after the dump
-callback was invoked.
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 153f8f6..9ab202c 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1407,7 +1407,6 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 		goto fput_in;
+ 	if (!(out.file->f_mode & FMODE_WRITE))
+ 		goto fput_out;
+-	retval = -EINVAL;
+ 	in_inode = file_inode(in.file);
+ 	out_inode = file_inode(out.file);
+ 	out_pos = out.file->f_pos;
+-- 
+2.10.1
 
-In nf_tables_api.c case it might be possible to defer allocations until
-->dump() is called for first time via cb_args but I don't think its
-going to be any better than cleaning up manually after netlink_dump_start()
-returned an error.
-
-Any better ideas or advice on how to procceed?
-
-Thanks!
