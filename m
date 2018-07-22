@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E248DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8808C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E9D320874
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E9D320874
+	by mail.kernel.org (Postfix) with ESMTP id A524C20874
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 06:11:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A524C20874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbeGVHGk (ORCPT
+        id S1728302AbeGVHGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 03:06:40 -0400
+        Sun, 22 Jul 2018 03:06:43 -0400
 Received: from mga02.intel.com ([134.134.136.20]:8994 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727817AbeGVHGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 03:06:39 -0400
+        id S1727768AbeGVHGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 03:06:42 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jul 2018 23:11:08 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jul 2018 23:11:12 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,388,1526367600"; 
-   d="scan'208";a="218015801"
+   d="scan'208";a="218015809"
 Received: from allen-box.sh.intel.com ([10.239.48.172])
-  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2018 23:11:05 -0700
+  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2018 23:11:08 -0700
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -40,119 +40,79 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
         yi.y.sun@intel.com, peterx@redhat.com,
         iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [RFC PATCH 00/10] vfio/mdev: IOMMU aware mediated device
-Date:   Sun, 22 Jul 2018 14:09:23 +0800
-Message-Id: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
+        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [RFC PATCH 01/10] iommu/vt-d: Get iommu device for a mediated device
+Date:   Sun, 22 Jul 2018 14:09:24 +0800
+Message-Id: <1532239773-15325-2-git-send-email-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
+References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch adds the support to get the iommu device for a mediated
+device. The assumption is that each mediated device is a minimal
+assignable set of a physical PCI device. Hence, we should use the
+iommu device of the parent PCI device to manage the translation.
 
-The Mediate Device is a framework for fine-grained physical device
-sharing across the isolated domains. Currently the mdev framework
-is designed to be independent of the platform IOMMU support. As the
-result, the DMA isolation relies on the mdev parent device in a
-vendor specific way.
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>
+Cc: Liu Yi L <yi.l.liu@intel.com>
+Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel-iommu.c |  6 ++++++
+ drivers/iommu/intel-pasid.h | 16 ++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-There are several cases where a mediated device could be protected
-and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
-[1] introduces a new translation mode called 'scalable mode', which
-enables PASID-granular translations. The vt-d scalable mode is the
-key ingredient for Scalable I/O Virtualization [2] [3] which allows
-sharing a device in minimal possible granularity (ADI - Assignable
-Device Interface).
-
-A mediated device backed by an ADI could be protected and isolated
-by the IOMMU since 1) the parent device supports tagging an unique
-PASID to all DMA traffic out of the mediated device; and 2) the DMA
-translation unit (IOMMU) supports the PASID granular translation.
-We can apply IOMMU protection and isolation to this kind of devices
-just as what we are doing with an assignable PCI device.
-
-In order to distinguish the IOMMU-capable mediated devices from those
-which still need to rely on parent devices, this patch set adds a
-domain type attribute to each mdev.
-
-enum mdev_domain_type {
-       DOMAIN_TYPE_EXTERNAL,   /* Use the external domain and all
-                                * IOMMU staff controlled by the
-                                * parent device driver.
-                                */
-       DOMAIN_TYPE_INHERITANCE,/* Use the same domain as the parent device. */
-       DOMAIN_TYPE_PRIVATE,    /* Capable of having a private domain. For an
-                                * example, the parent device is able to bind
-                                * a specific PASID for a mediated device and
-                                * transfering data with the asigned PASID.
-                                */
-};
-
-The mdev parent device driver could opt-in whether an mdev is IOMMU
-capable when the device is created by invoking below interface within
-its @create callback:
-
-int mdev_set_domain_type(struct device *dev,
-                         enum mdev_domain_type type);
-
-In vfio_iommu_type1_attach_group(), a domain will be found and assigned
-to the group according to the domain type attributes of mdev devices in
-the group.
-
-Besides above, we still need below changes to sport IOMMU-capable mdev
-device:
-a) The platform specific iommu ops should be set to mdev bus. So that,
-   the vfio/mdev framework could call iommu APIs.
-b) The iommu driver should be changed to support setting up the translation
-   structures for a mediated device.
-
-This patch series extends both IOMMU and vfio components to support
-mdev device passing through when it could be isolated and protected
-by the IOMMU units. The first part of this series (PATCH 1/10 ~ 5/10)
-makes the Intel IOMMU driver to be aware of a mediated device. The
-second part (PATCH 6/10 ~ 8/10) sets the iommu ops for the mdev bus.
-The last part (PATCH 9/10 ~ 10/10) adds the domain type attribute to
-a mdev device and allocates an iommu domain if it is IOMMU-capable.
-
-This patch series depends on a patch set posted here [4] for discussion
-which added the support for scalable mode in Intel IOMMU driver.
-
-References:
-[1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
-[2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
-[3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
-[4] https://lkml.org/lkml/2018/7/16/62
-
-Best regards,
-Lu Baolu
-
-Lu Baolu (10):
-  iommu/vt-d: Get iommu device for a mediated device
-  iommu/vt-d: Alloc domain for a mediated device
-  iommu/vt-d: Allocate groups for mediated devices
-  iommu/vt-d: Get pasid table for a mediated device
-  iommu/vt-d: Setup DMA remapping for mediated devices
-  iommu: Add iommu_set_bus API interface
-  iommu/vt-d: Add set_bus iommu ops
-  vfio/mdev: Set iommu ops for mdev bus
-  vfio/mdev: Add mediated device domain type
-  vfio/type1: Allocate domain for mediated device
-
- drivers/iommu/intel-iommu.c      | 127 ++++++++++++++++++++++++++++++++++++---
- drivers/iommu/intel-pasid.c      |  16 ++++-
- drivers/iommu/intel-pasid.h      |  16 +++++
- drivers/iommu/iommu.c            |  23 +++++++
- drivers/vfio/mdev/mdev_core.c    |  30 ++++++++-
- drivers/vfio/mdev/mdev_driver.c  |  10 +++
- drivers/vfio/mdev/mdev_private.h |   1 +
- drivers/vfio/vfio_iommu_type1.c  |  43 +++++++++----
- include/linux/intel-iommu.h      |   5 ++
- include/linux/iommu.h            |  12 ++++
- include/linux/mdev.h             |  22 +++++++
- 11 files changed, 282 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 7d198ea..fc3ac1c 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -767,6 +767,12 @@ static struct intel_iommu *device_to_iommu(struct device *dev, u8 *bus, u8 *devf
+ 	if (iommu_dummy(dev))
+ 		return NULL;
+ 
++	if (dev_is_mdev(dev)) {
++		dev = dev_mdev_parent(dev);
++		if (WARN_ON(!dev_is_pci(dev)))
++			return NULL;
++	}
++
+ 	if (dev_is_pci(dev)) {
+ 		struct pci_dev *pf_pdev;
+ 
+diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
+index 518df72..46cde66 100644
+--- a/drivers/iommu/intel-pasid.h
++++ b/drivers/iommu/intel-pasid.h
+@@ -35,6 +35,22 @@ struct pasid_table {
+ 	struct list_head	dev;		/* device list */
+ };
+ 
++static inline bool dev_is_mdev(struct device *dev)
++{
++	if (!dev)
++		return false;
++
++	return !strcmp(dev->bus->name, "mdev");
++}
++
++static inline struct device *dev_mdev_parent(struct device *dev)
++{
++	if (WARN_ON(!dev_is_mdev(dev)))
++		return NULL;
++
++	return dev->parent;
++}
++
+ extern u32 intel_pasid_max_id;
+ int intel_pasid_alloc_id(void *ptr, int start, int end, gfp_t gfp);
+ void intel_pasid_free_id(int pasid);
 -- 
 2.7.4
 
