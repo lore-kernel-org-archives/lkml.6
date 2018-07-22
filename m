@@ -2,112 +2,152 @@ Return-Path: <SRS0=OrLK=KG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19536ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 03:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE0CECDE5F
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 03:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3C520856
-	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 03:12:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3C520856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 429DC20863
+	for <linux-kernel@archiver.kernel.org>; Sun, 22 Jul 2018 03:17:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qxTof6J3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 429DC20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbeGVEGs (ORCPT
+        id S1727237AbeGVEMm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 00:06:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:53831 "EHLO mga17.intel.com"
+        Sun, 22 Jul 2018 00:12:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbeGVEGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 00:06:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jul 2018 20:11:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,387,1526367600"; 
-   d="scan'208";a="217992805"
-Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
-  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2018 20:11:44 -0700
-Date:   Sat, 21 Jul 2018 21:11:44 -0600
-From:   Ross Zwisler <ross.zwisler@linux.intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH 1/5] radix tree test suite: fix mapshift build target
-Message-ID: <20180722031144.GA12948@linux.intel.com>
-References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
- <20180503192430.7582-2-ross.zwisler@linux.intel.com>
- <20180715230052.GA6486@bombadil.infradead.org>
- <20180716160710.GA2287@linux.intel.com>
- <20180716195249.GA14380@bombadil.infradead.org>
- <20180716210820.GA17164@linux.intel.com>
- <20180717024132.GC7934@bombadil.infradead.org>
- <20180721234550.GB1691@dastard>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180721234550.GB1691@dastard>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1725779AbeGVEMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 00:12:41 -0400
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5548320856;
+        Sun, 22 Jul 2018 03:17:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532229458;
+        bh=NWZqgztxLEZcmPvCdFlF/n+nsElqCdlDMrT8HLtGwBI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=qxTof6J3TCVMPvVJ02dNVFq2LeYqZNpH+1IXQ3xA4BDEd11o7l5CO9Lf2JgOvnR5v
+         bRGqKhCJb2fmbIRq1d/FAIGwH7YkWqaO+ZC6Q6sSVvwBdRvSzi9vmO8BlBSTW0UXuK
+         0zJn/t6h74jFYFR/VTRL6RE3gsb8NiXjXWoLy8i4=
+Date:   Sun, 22 Jul 2018 12:17:34 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Francis Deslauriers <francis.deslauriers@efficios.com>,
+        rostedt@goodmis.org, peterz@infradead.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        lkp@01.org
+Subject: Re: [lkp-robot] [tracing]  ecadccb31b:
+ kernel_selftests.ftrace.ftracetest.fail
+Message-Id: <20180722121734.9fc08975427d9d4ff31ba0ce@kernel.org>
+In-Reply-To: <20180721184032.01b1b6d70e0dd3b0f32aac95@kernel.org>
+References: <20180721024113.GI12513@shao2-debian>
+        <20180721184032.01b1b6d70e0dd3b0f32aac95@kernel.org>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 22, 2018 at 09:45:50AM +1000, Dave Chinner wrote:
-> On Mon, Jul 16, 2018 at 07:41:32PM -0700, Matthew Wilcox wrote:
-> > On Mon, Jul 16, 2018 at 03:08:20PM -0600, Ross Zwisler wrote:
-> > > On Mon, Jul 16, 2018 at 12:52:49PM -0700, Matthew Wilcox wrote:
-> > > > On Mon, Jul 16, 2018 at 10:07:10AM -0600, Ross Zwisler wrote:
-> > > <>
-> > > > OK ... what version of make are you using?  Because this works fine for me:
-> > > > 
-> > > > $ git clone linux clean
-> > > > $ cd clean
-> > > > $ git checkout v4.17
-> > > > $ cd tools/testing/radix-tree/ 
-> > > > $ git revert 8d9fa88edd5e360b71765feeadb915d4066c9684
-> > > > $ make
-> > > > 
-> > > > $ make --version
-> > > > GNU Make 4.1
-> > > > Built for x86_64-pc-linux-gnu
-> > > > 
-> > > > It's Debian's Version: 4.1-9.1
-> > > 
-> > > $ make --version
-> > > GNU Make 4.2.1
-> > > Built for x86_64-redhat-linux-gnu
-> > > 
-> > > The one from Fedora 27.
-> > 
-> > Huh.  I just tried 4.2.1-1.1 from Debian unstable and that doesn't
-> > produce the problem either.  I'm not sure how to proceed at this point.
-> > I'm really not a makefile expert.
-> 
-> This smells like a problem we just hit with make 4.2.1 in fedora 28
-> in fstests - the regex expanstion has been screwed up such that
-> things like [a-z] will match [A-Z] and other things as well. Debian
-> is unaffected, apparently fedora has a backport of stuff from the
-> as-yet-unreleased next version of make/glibc. See this thread:
-> 
-> https://www.spinics.net/lists/fstests/msg10200.html
-> 
-> Try setting LANG=C and seeing if the problem goes away....
+On Sat, 21 Jul 2018 18:40:32 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Hey Dave, we root caused this difference to to be the fact that I had 'make'
-aliased to 'make -j32' in my .bashrc.  Matthew was running a singled threaded
-build, while I was running a multi-threaded one.  When Matthew ran a
-multi-threaded build, he was able to reproduce the issue.
+> Hi,
+> 
+> OK, I'll handle this.
+> The reason why this error is that kprobe event tests probe ftrace itself for test.
 
-So, essentially I think that the makefile just needs to be enhanced so that
-all the dependencies are explicit to allow multi-threaded builds to work
-properly.
+So one possible fix is below patch.
+
+Another possible way to fix is to allow instrumentation on trace_kprobe.c as
+same as trace_selftest_dynamic.c .
+
+Thank you,
+
+-----
+selftests/ftrace: Fix kprobe string testcase to not probe notrace function
+
+From: Masami Hiramatsu <mhiramat@kernel.org>
+
+Fix kprobe string argument testcase to not probe notrace
+function. Instead, it probes tracefs function which must
+be available with ftrace.
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ .../ftrace/test.d/kprobe/kprobe_args_string.tc     |   30 ++++++++------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
+
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+index a000256..1ad70cd 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+@@ -9,28 +9,22 @@ echo > kprobe_events
+ 
+ case `uname -m` in
+ x86_64)
+-  ARG2=%si
+-  OFFS=8
++  ARG1=%di
+ ;;
+ i[3456]86)
+-  ARG2=%cx
+-  OFFS=4
++  ARG1=%ax
+ ;;
+ aarch64)
+-  ARG2=%x1
+-  OFFS=8
++  ARG1=%x0
+ ;;
+ arm*)
+-  ARG2=%r1
+-  OFFS=4
++  ARG1=%r0
+ ;;
+ ppc64*)
+-  ARG2=%r4
+-  OFFS=8
++  ARG1=%r3
+ ;;
+ ppc*)
+-  ARG2=%r4
+-  OFFS=4
++  ARG1=%r3
+ ;;
+ *)
+   echo "Please implement other architecture here"
+@@ -38,17 +32,17 @@ ppc*)
+ esac
+ 
+ : "Test get argument (1)"
+-echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
++echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string" > kprobe_events
+ echo 1 > events/kprobes/testprobe/enable
+-! echo test >> kprobe_events
+-tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
++echo "p:test _do_fork" >> kprobe_events
++grep -qe "testprobe.* arg1=\"test\"" trace
+ 
+ echo 0 > events/kprobes/testprobe/enable
+ : "Test get argument (2)"
+-echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
++echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string arg2=+0(${ARG1}):string" > kprobe_events
+ echo 1 > events/kprobes/testprobe/enable
+-! echo test1 test2 >> kprobe_events
+-tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
++echo "p:test _do_fork" >> kprobe_events
++grep -qe "testprobe.* arg1=\"test\" arg2=\"test\"" trace
+ 
+ echo 0 > events/enable
+ echo > kprobe_events
