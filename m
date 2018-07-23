@@ -2,113 +2,96 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F964ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF04CECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE11D20647
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:33:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 782AF2064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:34:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OodYqxgS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE11D20647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=markrailton-com.20150623.gappssmtp.com header.i=@markrailton-com.20150623.gappssmtp.com header.b="jB138+S7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782AF2064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=markrailton.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388176AbeGWWgS (ORCPT
+        id S2388184AbeGWWhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:36:18 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41097 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388052AbeGWWgS (ORCPT
+        Mon, 23 Jul 2018 18:37:18 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45838 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388096AbeGWWhS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:36:18 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y10-v6so342158pfn.8
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:33:10 -0700 (PDT)
+        Mon, 23 Jul 2018 18:37:18 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s16-v6so2193024edq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=fyAHSROpRYFFVw5kEfjbZbLFe4lOE/YZUVuTP00qnj8=;
-        b=OodYqxgS3nB9EF+Qy+MeJ4s5Dp49TXSncJ3m3GIYOGMLuN0d+lfYTf6+rjgcjHdJdT
-         inFNGZGJvKGi9o93QcYGQ/t4tKbZTb1Xt476GUul1zP1zhLr9ddgOlQxrv2iWT/zcgkD
-         XYB1ax5LB/SNMq3Qdz530NcbO90S+AClE/A5HbJQTXKFf2HqvuzjjifJH0bxsSTBfAog
-         V6HG8VZzMsR3UtWMe+5bB5vjnJj6dK7aAXAY/hVywKiXfcioDZgywDrGfMKHH6X1bDDu
-         F3LLtsKDMYoelMrUzwZyAfR1kj4KMz7I4SPPN3S3H6+eXgzHN/cqfD+8TY1o2q35oimV
-         rlGw==
+        d=markrailton-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=p4CcBbI9qnoxMfBLrFAndFOAuVPK1L1aWfe8Ms7Ghvo=;
+        b=jB138+S7sIR8M68l7mYfKwa5wiPeUEJK+chrfTJg9QIPWH7GBsDenksIFRN9Vp8pB5
+         0atKC7O+VmLmQdqmsZqiRws4Rq+2e7P1ZTKtSFEmd628mltBCh2rkT0K8o0RRFczss8K
+         xE7JdJSovuQK8xaW01InCbJNM0tk2phRxQHvQztBVvmDI+62hNwLPfaWqFH8nyXqMY+G
+         vPYdCGXD2XpIZruaU7KLT29zWcD8C7G3lvSDkn03nx7nAmltN5eBt+WmOqMmhPVRcT9W
+         iRsgEEW9l352oEeyt5przME2VMajt+jWr6jpL+iWxgwIdlp2eOu7vqaBn4H1KahxWSWh
+         M3bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=fyAHSROpRYFFVw5kEfjbZbLFe4lOE/YZUVuTP00qnj8=;
-        b=fUowIBQsoStO8CoIPmQtdg61aAf43CtZOHjAcjeE5gxPH5ZnONjc55+XskueWN8Qff
-         qiNx+rR7hUWkpglTEfcQ4g6dyw/Om6/tspAzYap8FAoKkfmsvXyIRJ/65k62wG2j0W6p
-         5bSUkCnKzxvPJikVGiz2IEqpDu2PODT59DUm/7OcpIykDZYO7Gh/iNsSHh1UHELHhOBS
-         /EqBcst0L5XhnVRNLFjXjQotCp55GzXeUm+itRamWcNFEFdlx7UAoIzxc/kT2jWOFH9p
-         xKRnLBgF9TyzAhp0kp3EcGuG3KTFXqBNWQj5qYbOy7gfhhX4tPVz/UqPqLB+db8jn/Xx
-         pSgw==
-X-Gm-Message-State: AOUpUlH39xTZbiwxynUsuL2VPSbslYCwv4mcL+oIjqgU39q7O2QybN88
-        YHQQBsSkMVqyeghKc2WNLgPhrw==
-X-Google-Smtp-Source: AAOMgpfafSX9JppaTCUhKu537mw5iOmv6rvE5zP1Ac0OajqVJhxbFzPt1SaNTuxB/5tejqb1jzmBhA==
-X-Received: by 2002:a63:4951:: with SMTP id y17-v6mr13956367pgk.32.1532381590170;
-        Mon, 23 Jul 2018 14:33:10 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id y5-v6sm9032128pfj.169.2018.07.23.14.33.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 14:33:09 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 14:33:08 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Yang Shi <yang.shi@linux.alibaba.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kirill@shutemov.name, hughd@google.com, aaron.lu@intel.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: thp: remove use_zero_page sysfs knob
-In-Reply-To: <alpine.DEB.2.21.1807231323460.105582@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.21.1807231427550.103523@chino.kir.corp.google.com>
-References: <1532110430-115278-1-git-send-email-yang.shi@linux.alibaba.com> <20180720123243.6dfc95ba061cd06e05c0262e@linux-foundation.org> <alpine.DEB.2.21.1807201300290.224013@chino.kir.corp.google.com> <3238b5d2-fd89-a6be-0382-027a24a4d3ad@linux.alibaba.com>
- <alpine.DEB.2.21.1807201401390.231119@chino.kir.corp.google.com> <20180722035156.GA12125@bombadil.infradead.org> <alpine.DEB.2.21.1807231323460.105582@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=p4CcBbI9qnoxMfBLrFAndFOAuVPK1L1aWfe8Ms7Ghvo=;
+        b=dvTzXpxE/OMHNUCYyCSKAnCIS7x0sBQ3zDc9AcLOB5mlZnhkeyhmkoSFkKfT3ftkuw
+         JtdFNtKtRwuJAYMdYJLh0LxwaVpkBRyazaD2GQ+UKdPa00TN/EZ8oItawSHOotPuI5KJ
+         BAtOJ2cSmozCo80nda7DfgBA23Lkak0LAbi+620KxU22QO+LCFnckhGkKQiuCh7LiNzw
+         Ze6ywrvbVQkuQF5E2hJxScjCNxZgaS5vgkEbKdfDCMpy7TsOpyncP1tX53eo4jhUP+eB
+         0rt1OlC3XV4dVb2s+FEFXp1DiTg+uVpLwpiqInhvV4bztAAJ68Evcu57sNP8PibZnlms
+         v7Ag==
+X-Gm-Message-State: AOUpUlHA/EmJtfEGnanYzOBHm5NqLbg3k254oCgkzsfOKqTzNV2dysMN
+        Z+FLfQaGxyHNYeX9j91EIVd45A==
+X-Google-Smtp-Source: AAOMgpeJmSUdQ19q+Ofb7X1A5JpGdMME+laga3CMU8TZzX3LQo2Yox6wZSAkzfuIBILOuVo1kqANFg==
+X-Received: by 2002:aa7:c1c5:: with SMTP id d5-v6mr15882857edp.270.1532381649123;
+        Mon, 23 Jul 2018 14:34:09 -0700 (PDT)
+Received: from localhost.localdomain ([109.255.141.80])
+        by smtp.gmail.com with ESMTPSA id x21-v6sm4937420eds.78.2018.07.23.14.34.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 14:34:08 -0700 (PDT)
+From:   Mark Railton <mark@markrailton.com>
+To:     boris.ostrovsky@oracle.com, jgross@suse.com
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        Mark Railton <mark@markrailton.com>
+Subject: [PATCH] Drivers: Xen: xlate_mmu.c: Fixed comment layout
+Date:   Mon, 23 Jul 2018 22:34:04 +0100
+Message-Id: <20180723213404.20720-1-mark@markrailton.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Jul 2018, David Rientjes wrote:
+Fixed issue with multi line comment
 
-> > > The huge zero page can be reclaimed under memory pressure and, if it is, 
-> > > it is attempted to be allocted again with gfp flags that attempt memory 
-> > > compaction that can become expensive.  If we are constantly under memory 
-> > > pressure, it gets freed and reallocated millions of times always trying to 
-> > > compact memory both directly and by kicking kcompactd in the background.
-> > > 
-> > > It likely should also be per node.
-> > 
-> > Have you benchmarked making the non-huge zero page per-node?
-> > 
-> 
-> Not since we disable it :)  I will, though.  The more concerning issue for 
-> us, modulo CVE-2017-1000405, is the cpu cost of constantly directly 
-> compacting memory for allocating the hzp in real time after it has been 
-> reclaimed.  We've observed this happening tens or hundreds of thousands 
-> of times on some systems.  It will be 2MB per node on x86 if the data 
-> suggests we should make it NUMA aware, I don't think the cost is too high 
-> to leave it persistently available even under memory pressure if 
-> use_zero_page is enabled.
-> 
+Signed-off-by: Mark Railton <mark@markrailton.com>
+---
+ drivers/xen/xlate_mmu.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Measuring access latency to 4GB of memory on Naples I observe ~6.7% 
-slower access latency intrasocket and ~14% slower intersocket.
+diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+index 23f1387b3ef7..3b03bc1641ed 100644
+--- a/drivers/xen/xlate_mmu.c
++++ b/drivers/xen/xlate_mmu.c
+@@ -151,8 +151,9 @@ int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
+ 	struct remap_data data;
+ 	unsigned long range = DIV_ROUND_UP(nr, XEN_PFN_PER_PAGE) << PAGE_SHIFT;
+ 
+-	/* Kept here for the purpose of making sure code doesn't break
+-	   x86 PVOPS */
++	/* Kept here for the purpose of making sure code doesn't
++	 * break x86 PVOPS
++	 */
+ 	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
+ 
+ 	data.fgfn = gfn;
+-- 
+2.17.1
 
-use_zero_page is currently a simple thp flag, meaning it rejects writes 
-where val != !!val, so perhaps it would be best to overload it with 
-additional options?  I can imagine 0x2 defining persistent allocation so 
-that the hzp is not freed when the refcount goes to 0 and 0x4 defining if 
-the hzp should be per node.  Implementing persistent allocation fixes our 
-concern with it, so I'd like to start there.  Comments?
