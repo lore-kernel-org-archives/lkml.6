@@ -2,123 +2,140 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7DCECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF0AECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D29F20875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:12:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29A4420875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:19:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="TFwZLITo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D29F20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Elo8++oj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29A4420875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387968AbeGWNNl (ORCPT
+        id S2387999AbeGWNUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:13:41 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34145 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387861AbeGWNNk (ORCPT
+        Mon, 23 Jul 2018 09:20:24 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42351 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387910AbeGWNUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:13:40 -0400
-Received: by mail-oi0-f65.google.com with SMTP id 13-v6so693657ois.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 05:12:46 -0700 (PDT)
+        Mon, 23 Jul 2018 09:20:24 -0400
+Received: by mail-lj1-f194.google.com with SMTP id f1-v6so357429ljc.9;
+        Mon, 23 Jul 2018 05:19:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ZUE5mYUf3UVFVuA0Yt9wuWT1APpygM0z+Xja8I6EJw4=;
-        b=TFwZLIToArlnBIICAiAYCh6ca9ExnNhljlyvmeHPb876rNPejf2jJOO1yK2ODVV8pW
-         5/UK0cOtqi4Vf4HOQBNPA1DW8WXm0DSx1cjmp/EogUUUWR423qnXMhXeuHk1y3HwIbRN
-         370nx798iXd+3JbvVNm0oQnbN+COQCIvfrGJ8=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Hv32lahhaRqGCgdud2Rs8jGB7WzXUbmwdFisszOca0M=;
+        b=Elo8++oj3KacK1tHDAwDHSIeL9K1YiGlyUndptjuEgeZFdpa2xxKuyQNI95HyaoVSS
+         PzNQFtlZdIAVM5ixsQQpQYJ5Lli6CrVoM7z8fgVEOgojx/mzyk3CPQsckGhNISamJZkE
+         q8G55X3oQbIR4COdArquxk3a3Yp+1+QL/27IWZAK1cLvqVNG9FCP5DTNFvDWUqu3p0oo
+         tCxpn2AF/GuTtcNxdnY97+Z8CH7Dd1zYX4O3FiKXH5Ux8jvHJpbuFjR+fDFb/1dx/3mt
+         PTqIqVeTTw3ZJ0xn+7s19lRIihwzw7P8vxxmGD3xISxPtBT/ZRZh/zIXhEjdYXJinDD+
+         Fx3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ZUE5mYUf3UVFVuA0Yt9wuWT1APpygM0z+Xja8I6EJw4=;
-        b=m5sFxf/bkBjS8FUQfMxkfdYtqJiAUDoJNiyGxHBUTs4GhHopyynJJTiLr4847Ov0xU
-         wVNnO4+peFvJAc/EdVo0FU8D/mg29+QoEBG1tzkeonQUUl8Ae0gmX5JMXdWEYvfojRnZ
-         p1RGeLg7upNc8DPRR5vD4F0WQb9OGqtOWYhABfokf8JRnZQrUPdACkmnCTZaxDwTR7kw
-         99mpqeFPi3fcAukZmZjEv7vilbsnDE5qJ/T/EyAYn6mg8MumeqJyrFCPZ8cbCUKItj6T
-         IjYow7MUtWmd5xuoUwhmsjgRA1Qqb7VxlryL0/FvGY2ipEfgOrbwOxzutO3T8ir+W022
-         xNog==
-X-Gm-Message-State: AOUpUlE1ltqKGeHjSlWMfkgXZRzsbn/5/382RYKtyd0AvoUfqKjJHQ5g
-        LgvvIwv+u9pech3XOIn09TuQgYz1zKFN8O/e5lN8XA==
-X-Google-Smtp-Source: AAOMgpeFQP21kEqnxicGBvX59iyqaG5+Ljtq0G8ekrS+vsfxtrM9fHI7EzOWNDzyvKFdsgcxAU6fSAuU3cLMr8SfJog=
-X-Received: by 2002:aca:c257:: with SMTP id s84-v6mr8845721oif.104.1532347965577;
- Mon, 23 Jul 2018 05:12:45 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:113c:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 05:12:44
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <CACT4Y+bKU8f4jVENYHX=fzNVd95A4vce2F=UCV12paVNFv-LNg@mail.gmail.com>
-References: <000000000000bc17b60571a60434@google.com> <CACT4Y+bKU8f4jVENYHX=fzNVd95A4vce2F=UCV12paVNFv-LNg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 23 Jul 2018 14:12:44 +0200
-Message-ID: <CAJfpegsKWGZ4LVeQXrrCr47+Bch4yfOWcWMFSniQsRzjRof=RQ@mail.gmail.com>
-Subject: Re: INFO: task hung in fuse_reverse_inval_entry
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzbot <syzbot+bb6d800770577a083f8c@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Hv32lahhaRqGCgdud2Rs8jGB7WzXUbmwdFisszOca0M=;
+        b=a8tqjO2zk5iBn9oN6lz9EH2FzQmwbwPc0FvPtInEnh0TI0k0L7T+uw8SSUimIaqISm
+         dSMrCqxUP7+RvLXpVpMALnHHgq2oHNRlFl9mwF9eQKhAUdzEFyOQuo+ERKj4CofLTYVu
+         tySxMbTzgPchL1dHqop72b9JYRNmTtYHFexkZ7CtJ/rbmYo2xES0hO90IliQcuve+ZAJ
+         DEaxh60K1lpJj07e0bBqhe/k5hgie3j+XIWhjQ8pRB4j1v2rKR5jiecw4rGkLYMDj44Z
+         WrEyPjxZg6SqWfV9af3Ob1iQOSx+GYAIOS4L1Bln+HOPL7hRnkk2Qx0sbznnoNSiSThf
+         nIaw==
+X-Gm-Message-State: AOUpUlFotZyCc/ASzeU8RydSEd6eyS1pvy/BqRqutAuUlj3Ry8M07w+W
+        n7f0Lp/xFoyXTNHCfYqzBQ4=
+X-Google-Smtp-Source: AAOMgpcENSq91pcjhawmEbZ6Wzv3uhPFyG5kXFNvqNA7pW2YCZmmE7xZkitIcGAFM3Eu6ZOyCXobgA==
+X-Received: by 2002:a2e:9448:: with SMTP id o8-v6mr8635385ljh.34.1532348366641;
+        Mon, 23 Jul 2018 05:19:26 -0700 (PDT)
+Received: from debian-tom.lan ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
+        by smtp.gmail.com with ESMTPSA id w12-v6sm1824757lji.63.2018.07.23.05.19.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 05:19:25 -0700 (PDT)
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+To:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net
+Cc:     asmadeus@codewreck.org, jiangyiwen@huawei.com, davem@davemloft.net,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
+        Tomas Bortoli <tomasbortoli@gmail.com>
+Subject: [PATCH] net/p9/trans_fd.c: fix double list_del()
+Date:   Mon, 23 Jul 2018 14:19:02 +0200
+Message-Id: <20180723121902.20201-1-tomasbortoli@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 10:11 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Mon, Jul 23, 2018 at 9:59 AM, syzbot
-> <syzbot+bb6d800770577a083f8c@syzkaller.appspotmail.com> wrote:
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    d72e90f33aa4 Linux 4.18-rc6
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1324f794400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=68af3495408deac5
->> dashboard link: https://syzkaller.appspot.com/bug?extid=bb6d800770577a083f8c
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11564d1c400000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fc570c400000
->
->
-> Hi fuse maintainers,
->
-> We are seeing a bunch of such deadlocks in fuse on syzbot. As far as I
-> understand this is mostly working-as-intended (parts about deadlocks
-> in Documentation/filesystems/fuse.txt). The intended way to resolve
-> this is aborting connections via fusectl, right?
+A double list_del(&req->req_list) is possible in p9_fd_cancel() as
+shown by Syzbot. To prevent it we have to ensure that we have the
+client->lock when deleting the list. Furthermore, we have to update
+the status of the request before releasing the lock, to prevent the
+race.
 
-Yes.  Alternative is with "umount -f".
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Reported-by: syzbot+735d926e9d1317c3310c@syzkaller.appspotmail.com
+---
+ net/9p/trans_fd.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-> The doc says "Under
-> the fuse control filesystem each connection has a directory named by a
-> unique number". The question is: if I start a process and this process
-> can mount fuse, how do I kill it? I mean: totally and certainly get
-> rid of it right away? How do I find these unique numbers for the
-> mounts it created?
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index a64b01c56e30..370c6c69a05c 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -199,15 +199,14 @@ static void p9_mux_poll_stop(struct p9_conn *m)
+ static void p9_conn_cancel(struct p9_conn *m, int err)
+ {
+ 	struct p9_req_t *req, *rtmp;
+-	unsigned long flags;
+ 	LIST_HEAD(cancel_list);
+ 
+ 	p9_debug(P9_DEBUG_ERROR, "mux %p err %d\n", m, err);
+ 
+-	spin_lock_irqsave(&m->client->lock, flags);
++	spin_lock(&m->client->lock);
+ 
+ 	if (m->err) {
+-		spin_unlock_irqrestore(&m->client->lock, flags);
++		spin_unlock(&m->client->lock);
+ 		return;
+ 	}
+ 
+@@ -219,7 +218,6 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
+ 	list_for_each_entry_safe(req, rtmp, &m->unsent_req_list, req_list) {
+ 		list_move(&req->req_list, &cancel_list);
+ 	}
+-	spin_unlock_irqrestore(&m->client->lock, flags);
+ 
+ 	list_for_each_entry_safe(req, rtmp, &cancel_list, req_list) {
+ 		p9_debug(P9_DEBUG_ERROR, "call back req %p\n", req);
+@@ -228,6 +226,7 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
+ 			req->t_err = err;
+ 		p9_client_cb(m->client, req, REQ_STATUS_ERROR);
+ 	}
++	spin_unlock(&m->client->lock);
+ }
+ 
+ static __poll_t
+@@ -370,12 +369,12 @@ static void p9_read_work(struct work_struct *work)
+ 		if (m->req->status != REQ_STATUS_ERROR)
+ 			status = REQ_STATUS_RCVD;
+ 		list_del(&m->req->req_list);
+-		spin_unlock(&m->client->lock);
+ 		p9_client_cb(m->client, m->req, status);
+ 		m->rc.sdata = NULL;
+ 		m->rc.offset = 0;
+ 		m->rc.capacity = 0;
+ 		m->req = NULL;
++		spin_unlock(&m->client->lock);
+ 	}
+ 
+ end_clear:
+-- 
+2.11.0
 
-It is the device number found in st_dev for the mount.  Other than
-doing stat(2) it is possible to find out the device number by reading
-/proc/$PID/mountinfo  (third field).
-
-> Taking into account that there is usually no
-> operator attached to each server, I wonder if kernel could somehow
-> auto-abort fuse on kill?
-
-Depends on what the fuse server is sleeping on.   If it's trying to
-acquire an inode lock (e.g. unlink(2)), which is classical way to
-deadlock a fuse filesystem, then it will go into an uninterruptible
-sleep.  There's no way in which that process can be killed except to
-force a release of the offending lock, which can only be done by
-aborting the request that is being performed while holding that lock.
-
-Thanks,
-Miklos
