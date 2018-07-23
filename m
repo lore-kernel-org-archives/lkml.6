@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B16ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4680ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE04A20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE04A20854
+	by mail.kernel.org (Postfix) with ESMTP id 9A0E220882
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0E220882
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389531AbeGWNc2 (ORCPT
+        id S2389557AbeGWNcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:32:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46464 "EHLO
+        Mon, 23 Jul 2018 09:32:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46474 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388575AbeGWNc0 (ORCPT
+        with ESMTP id S2388575AbeGWNca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:32:26 -0400
+        Mon, 23 Jul 2018 09:32:30 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEE57BDB;
-        Mon, 23 Jul 2018 12:31:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92A65BDB;
+        Mon, 23 Jul 2018 12:31:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Couzens <lynxis@fe80.eu>,
+        stable@vger.kernel.org, Patrick Talbert <ptalbert@redhat.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 23/28] net: usb: asix: replace mii_nway_restart in resume path
-Date:   Mon, 23 Jul 2018 14:25:23 +0200
-Message-Id: <20180723122426.900247173@linuxfoundation.org>
+Subject: [PATCH 4.9 24/28] net: Dont copy pfmemalloc flag in __copy_skb_header()
+Date:   Mon, 23 Jul 2018 14:25:24 +0200
+Message-Id: <20180723122426.962510903@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122425.241418073@linuxfoundation.org>
 References: <20180723122425.241418073@linuxfoundation.org>
@@ -50,42 +51,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Couzens <lynxis@fe80.eu>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-[ Upstream commit 5c968f48021a9b3faa61ac2543cfab32461c0e05 ]
+[ Upstream commit 8b7008620b8452728cadead460a36f64ed78c460 ]
 
-mii_nway_restart is not pm aware which results in a rtnl deadlock.
-Implement mii_nway_restart manual by setting BMCR_ANRESTART if
-BMCR_ANENABLE is set.
+The pfmemalloc flag indicates that the skb was allocated from
+the PFMEMALLOC reserves, and the flag is currently copied on skb
+copy and clone.
 
-To reproduce:
-* plug an asix based usb network interface
-* wait until the device enters PM (~5 sec)
-* `ip link set eth1 up` will never return
+However, an skb copied from an skb flagged with pfmemalloc
+wasn't necessarily allocated from PFMEMALLOC reserves, and on
+the other hand an skb allocated that way might be copied from an
+skb that wasn't.
 
-Fixes: d9fe64e51114 ("net: asix: Add in_pm parameter")
-Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
+So we should not copy the flag on skb copy, and rather decide
+whether to allow an skb to be associated with sockets unrelated
+to page reclaim depending only on how it was allocated.
+
+Move the pfmemalloc flag before headers_start[0] using an
+existing 1-bit hole, so that __copy_skb_header() doesn't copy
+it.
+
+When cloning, we'll now take care of this flag explicitly,
+contravening to the warning comment of __skb_clone().
+
+While at it, restore the newline usage introduced by commit
+b19372273164 ("net: reorganize sk_buff for faster
+__copy_skb_header()") to visually separate bytes used in
+bitfields after headers_start[0], that was gone after commit
+a9e419dc7be6 ("netfilter: merge ctinfo into nfct pointer storage
+area"), and describe the pfmemalloc flag in the kernel-doc
+structure comment.
+
+This doesn't change the size of sk_buff or cacheline boundaries,
+but consolidates the 15 bits hole before tc_index into a 2 bytes
+hole before csum, that could now be filled more easily.
+
+Reported-by: Patrick Talbert <ptalbert@redhat.com>
+Fixes: c93bdd0e03e8 ("netvm: allow skb allocation to use PFMEMALLOC reserves")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/asix_devices.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/linux/skbuff.h |   10 +++++-----
+ net/core/skbuff.c      |    2 ++
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -640,10 +640,12 @@ static void ax88772_restore_phy(struct u
- 				     priv->presvd_phy_advertise);
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -602,6 +602,7 @@ static inline bool skb_mstamp_after(cons
+  *	@hash: the packet hash
+  *	@queue_mapping: Queue mapping for multiqueue devices
+  *	@xmit_more: More SKBs are pending for this queue
++ *	@pfmemalloc: skbuff was allocated from PFMEMALLOC reserves
+  *	@ndisc_nodetype: router type (from link layer)
+  *	@ooo_okay: allow the mapping of a socket to a queue to be changed
+  *	@l4_hash: indicate hash is a canonical 4-tuple hash over transport
+@@ -692,7 +693,7 @@ struct sk_buff {
+ 				peeked:1,
+ 				head_frag:1,
+ 				xmit_more:1,
+-				__unused:1; /* one bit hole */
++				pfmemalloc:1;
+ 	kmemcheck_bitfield_end(flags1);
  
- 		/* Restore BMCR */
-+		if (priv->presvd_phy_bmcr & BMCR_ANENABLE)
-+			priv->presvd_phy_bmcr |= BMCR_ANRESTART;
+ 	/* fields enclosed in headers_start/headers_end are copied
+@@ -712,19 +713,18 @@ struct sk_buff {
+ 
+ 	__u8			__pkt_type_offset[0];
+ 	__u8			pkt_type:3;
+-	__u8			pfmemalloc:1;
+ 	__u8			ignore_df:1;
+ 	__u8			nfctinfo:3;
+-
+ 	__u8			nf_trace:1;
 +
- 		asix_mdio_write_nopm(dev->net, dev->mii.phy_id, MII_BMCR,
- 				     priv->presvd_phy_bmcr);
- 
--		mii_nway_restart(&dev->mii);
- 		priv->presvd_phy_advertise = 0;
- 		priv->presvd_phy_bmcr = 0;
- 	}
+ 	__u8			ip_summed:2;
+ 	__u8			ooo_okay:1;
+ 	__u8			l4_hash:1;
+ 	__u8			sw_hash:1;
+ 	__u8			wifi_acked_valid:1;
+ 	__u8			wifi_acked:1;
+-
+ 	__u8			no_fcs:1;
++
+ 	/* Indicates the inner headers are valid in the skbuff. */
+ 	__u8			encapsulation:1;
+ 	__u8			encap_hdr_csum:1;
+@@ -732,11 +732,11 @@ struct sk_buff {
+ 	__u8			csum_complete_sw:1;
+ 	__u8			csum_level:2;
+ 	__u8			csum_bad:1;
+-
+ #ifdef CONFIG_IPV6_NDISC_NODETYPE
+ 	__u8			ndisc_nodetype:2;
+ #endif
+ 	__u8			ipvs_property:1;
++
+ 	__u8			inner_protocol_type:1;
+ 	__u8			remcsum_offload:1;
+ #ifdef CONFIG_NET_SWITCHDEV
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -904,6 +904,8 @@ static struct sk_buff *__skb_clone(struc
+ 	n->cloned = 1;
+ 	n->nohdr = 0;
+ 	n->peeked = 0;
++	if (skb->pfmemalloc)
++		n->pfmemalloc = 1;
+ 	n->destructor = NULL;
+ 	C(tail);
+ 	C(end);
 
 
