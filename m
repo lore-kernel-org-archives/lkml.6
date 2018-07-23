@@ -2,127 +2,113 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5AAECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1041EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD99C20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:56:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD99C20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 85FC320856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:56:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Cm4Ujzp+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85FC320856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388302AbeGWW7O (ORCPT
+        id S2388310AbeGWW7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:59:14 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58109 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388052AbeGWW7N (ORCPT
+        Mon, 23 Jul 2018 18:59:38 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46254 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388137AbeGWW7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:59:13 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 0A35B80388; Mon, 23 Jul 2018 23:55:57 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 23:55:57 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
-Message-ID: <20180723215557.GA3935@amd>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
- <20180723140925.GA4285@amd>
- <CA+55aFynT9Sp7CbnB=GqLbns7GFZbv3pDSQm_h0jFvJpz3ES+g@mail.gmail.com>
- <20180723213830.GA4632@amd>
- <39A1C149-DA03-46D1-801F-0205DCD69A36@amacapital.net>
+        Mon, 23 Jul 2018 18:59:38 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h14-v6so2101937wrw.13
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:56:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NsrF/6LDNI04b15Z28E8AJAidUKkkXlorkEs92scaew=;
+        b=Cm4Ujzp+xN485hZHOrwbkoT8CqNLh4qGxxvThMpvEuZ1KuSjzGY2Fq6HO6gnDjyfFe
+         kQDF9wQcgXyjMkqDNqYKLbaLrTBiDx9Qlq9cNB/JnMDiqH5vPsFo6n5jNu3yA78b008Q
+         lKpCAhgc9Hp/X/lEOJ08sGIhPUDe85Pi4PbpKEFThpjKiiWh25KN/dl9z8O2+rdRdCCk
+         XgvSDkYZFaMuD6lnCT26eT5Jxo6L8J0I/9OHE6nn6sBl8KDntyzdbrafATTAQMbl31EB
+         KXo0PqMv3/1o+JLBF1CdGCw62Vwkg8y5iU7Awzs69qnrkKE/quLyDbJ2UEuZxC8X6gt1
+         Lyvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NsrF/6LDNI04b15Z28E8AJAidUKkkXlorkEs92scaew=;
+        b=eUCcPt3XEasZzECM67KtPEhD0mxRgRoL+CfgptnbuwLv0HVsH0ilsORUMmWR2M/uK1
+         FXlk3+VgOr63y4TzSsEkAynsTpcjeOl0Jt6VIa2JkMcaByEdjaYRwvKlia+kFpUNhfOj
+         8fmx9n8UItV5CPMEHxhGThG/hxbInpc92FRbMFo01jNUtWsOE4gbC5LU2TXfIjiT004T
+         t8Neq+MXkZvm2tZGPWNAypSfes5z6DmD60zA04eT03OSjMx6xxpMpwRA4MPX+ZwN54KO
+         KdUY1BLnA4Z/adWg3kvNc34d+Oo/Islsbj3swz8WQJqmU6oUQ5h/RqKS9oSs+8CopE2Y
+         XRyQ==
+X-Gm-Message-State: AOUpUlHg7YCnIyV10EmYg2xncUkyrJfA2uOgpugH3JUm6EsrcsWzKNes
+        FHxCkYRp3AMo4vYAJKGnofpG9O3PWkQXqw==
+X-Google-Smtp-Source: AAOMgpfLlmtjOzP20eyme3oGg4Li1o5hW4Qr+JCTdFTH/1vn2M7nQzJpy7uw+Cp2KuTxipkiKH+l8Q==
+X-Received: by 2002:adf:c08c:: with SMTP id d12-v6mr9201284wrf.268.1532382983849;
+        Mon, 23 Jul 2018 14:56:23 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id v188-v6sm7510683wme.43.2018.07.23.14.56.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 14:56:23 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fhioW-0007qI-4U; Mon, 23 Jul 2018 15:56:20 -0600
+Date:   Mon, 23 Jul 2018 15:56:20 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: add support for partial reads
+Message-ID: <20180723215620.GH532@ziepe.ca>
+References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+ <20180723201956.GB26824@linux.intel.com>
+ <fb053916-f6e8-3266-14d7-128e062b6a92@intel.com>
+ <1532380412.4112.22.camel@HansenPartnership.com>
+ <7441b5ef-18d8-13aa-ef4d-40fe684c9218@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <39A1C149-DA03-46D1-801F-0205DCD69A36@amacapital.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <7441b5ef-18d8-13aa-ef4d-40fe684c9218@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 23, 2018 at 02:38:08PM -0700, Tadeusz Struk wrote:
+> On 07/23/2018 02:13 PM, James Bottomley wrote:
+> > The current patch does, you even provided a use case in your last email
+> >  (it's do command to get sizing followed by do command with correctly
+> > sized buffer). 
+> 
+> The example I provided was: #1 send a command, #2 read the response header
+> (10 bytes), get the actual response size from the header and then #3 read
+> the full response (response size - size of the header bytes).
 
---zYM0uCDKw75PZbzx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The proposed patch doesn't clear the data_pending if the entire buffer
+is not consumed, so of course it is ABI breaking, that really isn't OK.
 
-Hi!
+> > However, if you tie it to O_NONBLOCK, it won't because no-one currently
+> > opens the TPM device non blocking so it's an ABI conformant
+> > discriminator of the uses.  Tying to O_NONBLOCK should be simple
+> > because it's in file->f_flags.
+> 
+> I think that it might be an option. Especially that I have this on top of
+> the async patch. Let's discuss this when Jarkko is back.
 
-> > What I want is "if A can ptrace B, and B has pti disabled, A can have
-> > pti disabled as well". Now.. I see someone may want to have it
-> > per-thread, because for stuff like javascript JIT, thread may have
-> > rights to call ptrace, but is unable to call ptrace because JIT
-> > removed that ability... hmm...
->=20
-> No, you don=E2=80=99t want that. The problem is that Meltdown isn=E2=80=
-=99t a problem that exists in isolation. It=E2=80=99s very plausible that J=
-avaScript code could trigger a speculation attack that, with PTI off, could=
- read kernel memory.
+Maybe you could do this by requiring the userspace to call pread()
+with a non-zero offset to get the trailing segment of the last
+executed command and leave normal read/pread(off=0) with the semantics
+as they have today.
 
-Yeah, the web browser threads that run javascript code should have PTI
-on. But maybe I want the rest of web browser with PTI off.
-
-So... yes, I see why someone may want it per-thread (and not
-per-process).
-
-I guess per-process would be good enough for me. Actually, maybe even
-per-uid. I don't have any fancy security here, so anything running uid
-0 and 1000 is close enough to trusted.
-
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---zYM0uCDKw75PZbzx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltWTu0ACgkQMOfwapXb+vLAHgCgwm6vHy+tGQo0EQEDMfrLuUJl
-GoQAn1fCFV/6RZlLyzusdi9BI7Xn3jNe
-=edDv
------END PGP SIGNATURE-----
-
---zYM0uCDKw75PZbzx--
+Jason
