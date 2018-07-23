@@ -2,120 +2,170 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A87ABECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B76CDECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52EBE20846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:24:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZO/O37n1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52EBE20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6995B20846
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:26:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6995B20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728228AbeGWEXN (ORCPT
+        id S1728308AbeGWEZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 00:23:13 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44289 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728107AbeGWEXN (ORCPT
+        Mon, 23 Jul 2018 00:25:09 -0400
+Received: from lucky1.263xmail.com ([211.157.147.133]:50563 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728168AbeGWEZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 00:23:13 -0400
-Received: by mail-pl0-f68.google.com with SMTP id m16-v6so7620159pls.11;
-        Sun, 22 Jul 2018 20:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4J1koG4+EGfcsIqa6o7V7IMGrrz9tyBAcg5wvF1hAro=;
-        b=ZO/O37n1BrvctJNO5U7d81ZjYEYtSXUjFac4czg/nRteXRWmqEzfYO3fG8GDB6hTdv
-         vt1cRLDUFHRecLsmzGdN2YskPfrBJ/377g1LiTIEVsvQckEaWqOz4EgF8DNPRIbzJyKE
-         TMK5RIT1H5QfmlaRP/0ikNtnjUfhDXEGOQlR6JVZaZqEwq7ytHQKSkTPgYKDFZKCY+p+
-         78RxnYF1pPfLWhjFOWvLK1LpBSJl2iHCqj0OEHGnlvEnoRnmnx/TbLUGIeXfj9eoQf0Z
-         SnwYGX7/31I4TO+3AS5BGPkNUoFy6u/juWktH9YgZ33vrbvK51Fk/MyUXEZEPF5toKk9
-         5Ybg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4J1koG4+EGfcsIqa6o7V7IMGrrz9tyBAcg5wvF1hAro=;
-        b=ZnjbVA5adjp/WVFz0Aq56nOEKrTs9/bZ/DbF2NMBwgrzXFQ3wniTf3goBERdHzYufP
-         QbaHA0bcV85ZtKwGXYagTffH4rpAVr9jVyI5oo97wbrm2buu2r+KFQc+OFPMJJsJaWxH
-         g8YyI/hUK3VbXLFCZHHqWAcfAE890+MK0Q1us3bqPMnNzcc09WTlDjzeCHQGbWxr/Gja
-         Gl6778UO5aU2dhBYpaX2J0KfNFAZ72smivnlbrzfsoEKBx8RN2BfxTupxt0UXWkN3QNe
-         xJywuMESVO3b3iad8Kql2r4F0yz/h7DhGVPam0wcme0dsyHWpi+amZNShc0nENmfkHJP
-         JB0g==
-X-Gm-Message-State: AOUpUlEacoKE4Bf5PRl6iVEvgg5uVkVLUZzOYQ0gZG4Nev9Dm/WQCkJ2
-        U84FDoDc6Zd2l3EI5FVd7pWAyMui
-X-Google-Smtp-Source: AAOMgpdLy4b4GWLL6GS9xjE4c9Zc0SGau6DoKUXiViIHO3ss+gx0E7ObSyDpqwn+nW3Ovmj1TY1lZA==
-X-Received: by 2002:a17:902:561:: with SMTP id 88-v6mr11158501plf.320.1532316250673;
-        Sun, 22 Jul 2018 20:24:10 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:c122:f95a:1d53:1f82])
-        by smtp.gmail.com with ESMTPSA id g85-v6sm19147834pfk.39.2018.07.22.20.24.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 20:24:10 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] bluetooth: bpa10x: Replace GFP_ATOMIC with GFP_KERNEL in bpa10x_send_frame()
-Date:   Mon, 23 Jul 2018 11:24:02 +0800
-Message-Id: <20180723032402.7676-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 23 Jul 2018 00:25:08 -0400
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.138])
+        by lucky1.263xmail.com (Postfix) with ESMTP id AB0A194F59;
+        Mon, 23 Jul 2018 11:18:39 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 6453037E;
+        Mon, 23 Jul 2018 11:18:29 +0800 (CST)
+X-RL-SENDER: tony.xie@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-UNIQUE-TAG: <0b3e9dbb917f36f7608e8a0973e73943>
+X-ATTACHMENT-NUM: 0
+X-SENDER: xxx@rock-chips.com
+X-DNS-TYPE: 0
+Received: from unknown (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith SMTP id 261047JM6O8;
+        Mon, 23 Jul 2018 11:18:32 +0800 (CST)
+From:   Tony Xie <tony.xie@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH 3/5] mfd: dt-bindings: Add RK809 and RK817 device tree bindings document
+Date:   Mon, 23 Jul 2018 11:19:03 +0800
+Message-Id: <1532315945-1094-4-git-send-email-tony.xie@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
+References: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bpa10x_send_frame() is only set to hdev->send, and hdev->send() is never 
-called in atomic context.
+Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
 
-bpa10x_send_frame() calls usb_alloc_urb(), kmalloc() and usb_submit_urb() 
-with GFP_ATOMIC, which is not necessary. 
-GFP_ATOMIC can be replaced with GFP_KERNEL.
-
-This is found by a static analysis tool named DCNS written by myself.
-I also manually check the kernel code before reporting it.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
 ---
- drivers/bluetooth/bpa10x.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/mfd/rk808.txt | 55 +++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/drivers/bluetooth/bpa10x.c b/drivers/bluetooth/bpa10x.c
-index c6f7cc57db14..d1c2adf08576 100644
---- a/drivers/bluetooth/bpa10x.c
-+++ b/drivers/bluetooth/bpa10x.c
-@@ -289,7 +289,7 @@ static int bpa10x_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+index 91b6522..31c9f3d 100644
+--- a/Documentation/devicetree/bindings/mfd/rk808.txt
++++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
+ The rk8xx family current members:
+ rk805
+ rk808
++rk809
++rk817
+ rk818
  
- 	skb->dev = (void *) hdev;
+ Required properties:
+ - compatible: "rockchip,rk805"
+ - compatible: "rockchip,rk808"
++- compatible: "rockchip,rk809"
++- compatible: "rockchip,rk817"
+ - compatible: "rockchip,rk818"
+ - reg: I2C slave address
+ - interrupt-parent: The parent interrupt controller.
+@@ -46,6 +50,28 @@ Optional RK808 properties:
+   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+   very quickly with no slow ramp time.
  
--	urb = usb_alloc_urb(0, GFP_ATOMIC);
-+	urb = usb_alloc_urb(0, GFP_KERNEL);
- 	if (!urb)
- 		return -ENOMEM;
++Optional RK809 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for SWITCH_REG1
++- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
++
++Optional RK817 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for BOOST
++- vcc9-supply:  The input supply for OTG_SWITCH
++
+ Optional RK818 properties:
+ - vcc1-supply:  The input supply for DCDC_REG1
+ - vcc2-supply:  The input supply for DCDC_REG2
+@@ -87,6 +113,28 @@ number as described in RK808 datasheet.
+ 	- SWITCH_REGn
+ 		- valid values for n are 1 to 2
  
-@@ -298,7 +298,7 @@ static int bpa10x_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
++Following regulators of the RK809 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK808 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 5.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- SWITCH_REGn
++		- valid values for n are 1 to 2.
++
++Following regulators of the RK817 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK818 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 4.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- BOOST
++	- OTG_SWITCH
++
+ Following regulators of the RK818 PMIC block are supported. Note that
+ the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+ number as described in RK818 datasheet.
+@@ -99,6 +147,13 @@ number as described in RK818 datasheet.
+ 	- HDMI_SWITCH
+ 	- OTG_SWITCH
  
- 	switch (hci_skb_pkt_type(skb)) {
- 	case HCI_COMMAND_PKT:
--		dr = kmalloc(sizeof(*dr), GFP_ATOMIC);
-+		dr = kmalloc(sizeof(*dr), GFP_KERNEL);
- 		if (!dr) {
- 			usb_free_urb(urb);
- 			return -ENOMEM;
-@@ -343,7 +343,7 @@ static int bpa10x_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
- 
- 	usb_anchor_urb(urb, &data->tx_anchor);
- 
--	err = usb_submit_urb(urb, GFP_ATOMIC);
-+	err = usb_submit_urb(urb, GFP_KERNEL);
- 	if (err < 0) {
- 		bt_dev_err(hdev, "urb %p submission failed", urb);
- 		kfree(urb->setup_packet);
++There are three pins needed to config, named "gpio_ts" "gpio_gt" "gpio_slp".
++	The gpio_gt and gpio_ts pins support the gpio function.
++	The gpio_slp pin is for controlling the pmic states, as below:
++		- reset
++		- power down
++		- sleep
++
+ Standard regulator bindings are used inside regulator subnodes. Check
+   Documentation/devicetree/bindings/regulator/regulator.txt
+ for more details
 -- 
-2.17.0
+1.9.1
+
 
