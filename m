@@ -7,108 +7,158 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EABECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D77C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C75A2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A92E520858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:01:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PA7WA5+P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C75A2086A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Da85itih"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92E520858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731319AbeGWD4r (ORCPT
+        id S1726446AbeGWEA2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 23:56:47 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36000 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731274AbeGWD4r (ORCPT
+        Mon, 23 Jul 2018 00:00:28 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35278 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725754AbeGWEA2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 23:56:47 -0400
-Received: by mail-pg1-f195.google.com with SMTP id s7-v6so7710605pgv.3
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 19:57:50 -0700 (PDT)
+        Mon, 23 Jul 2018 00:00:28 -0400
+Received: by mail-pl0-f65.google.com with SMTP id w3-v6so7598131plq.2
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 20:01:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=wZi1hgIOhqzvqJjtWeAsAnWiKY8V9AQjM/hnwopbNUc=;
-        b=PA7WA5+P+cdaMz0qsmFKYs1l0VrbMHRA2kpNg9Zt/M2emlnxoi7NMMIY4TGp4TBQi4
-         23/9FcLaDZ568rmRRSZrlpRLMaPvRHoVIcsgZSCR5SAvYt4UPCK+0aKQ3lmzsUqbFJl7
-         THKAx1eTren3QIa1OKngsPoaUbYYtStXiOEkQ=
+        bh=GbcTQteZutnrrp0ElE4r3n5F20XUyMblfKc3J+fOsFo=;
+        b=Da85itihHX5wgStCUxWD2nFl6v7xTDNODyLsDgjWOnfk9KYPaDfc5QGTlLOyxtFiFu
+         qIOTEo2NxDizfWggWhwtmAthjLV5uWNrQZti0K506txKy2Cl7s3e2kUxGr51OgV22NDS
+         b9OCCIQUVEHT4d/5yivFHkeMhUf3eX/009Sjk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wZi1hgIOhqzvqJjtWeAsAnWiKY8V9AQjM/hnwopbNUc=;
-        b=p7DG709tGBKLSgrBF6c9hQblNhhhwKNwgALqOvhQLuFbdXfS0ro3GXamRfBBmbnZ3R
-         sdZTDhApUaOX64NkjK09Ma1xvFmwV8GTlpv8jGoAflP15Y3Um/xnvGp7rjR/eGjVPnx1
-         yHIWYN4i8pD2dAczByJ3MGbA7cupuwLGLl4V4YVyeZTkX6rG+brk8IsrDSWJ6W8JGC6P
-         59WewjZdw4yfLae2XpTPqdUPMnunsChzKoOq0mOpD8tuPy70KcUTY2PnuT79tLO4Oz04
-         lrKBdfuMsJGDFHVTbHtlaZ5PoNWQ4MXEeXowMCV6TfsnmHpqVFnqwOotfManaF4BN8UE
-         xMLQ==
-X-Gm-Message-State: AOUpUlG8VKJQx2j6n7inv8wwvn+JopBCbO+LdEdTd82nhcXB2CGfJn9N
-        8GeuDU0iEU0EOmB4KI8y3+CVgw==
-X-Google-Smtp-Source: AAOMgpcLHZxAs17id3m4banBUcS0RvpNdBZUxa/nzxHB/l2m9B+yRXAm2hxQbjRiGgHQhkySg1VNkg==
-X-Received: by 2002:a65:62cd:: with SMTP id m13-v6mr10437534pgv.280.1532314670283;
-        Sun, 22 Jul 2018 19:57:50 -0700 (PDT)
+        bh=GbcTQteZutnrrp0ElE4r3n5F20XUyMblfKc3J+fOsFo=;
+        b=Q0+tEGgRJ4YKrIFMIq4FidwxKJP9V/ChMjHpRRQJdng0rsoR7O0y143upXdf2Q0FTl
+         qFwG4kzgW/+3hV/pUuyz93SOKq95ZZ7QrecL8Iw1Yk6jPCMKJTkkCMKmGUnBRSR+I+bc
+         kbTt1U88dU/AtOI6ohyOeEUnVooQJXZ3FrlhUMIuDSpP5IOewcDJM+K2v390Cgq/epZP
+         DfWu2jQniV5xLheH/JtPLOyUxB6s6cjyaP176lCpb788QeqthZfUKIGt6ffT5jOJsqKQ
+         QO3aqIx3x7AaIaE1OTvhWo+DYOBDJ/QrGro00eUiQzjGU49nApmrj04ddzebUz5dtRW7
+         is2g==
+X-Gm-Message-State: AOUpUlEbubfzpko0N+0iXuSK7Ere34+/7RuTsBMUHVrfodXM72rrVw8A
+        ahQ7jOzx/u3FUz9nNN5j7PNNrA==
+X-Google-Smtp-Source: AAOMgpc2yePkGXoXPxwz/uyALuVFjZ08QhVcY7xCuad/ohWOOnHqU4SQND0r1cZcdY5DnKnpb/RuHQ==
+X-Received: by 2002:a17:902:8c88:: with SMTP id t8-v6mr11087554plo.117.1532314889916;
+        Sun, 22 Jul 2018 20:01:29 -0700 (PDT)
 Received: from localhost ([122.172.26.112])
-        by smtp.gmail.com with ESMTPSA id r19-v6sm11400535pgo.68.2018.07.22.19.57.49
+        by smtp.gmail.com with ESMTPSA id o27-v6sm15152698pfj.35.2018.07.22.20.01.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 19:57:49 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 08:27:47 +0530
+        Sun, 22 Jul 2018 20:01:29 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 08:31:27 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: spear: fix stmpe811 interrupt properties
-Message-ID: <20180723025747.ykxeqogyfn6wskvo@vireshk-i7>
-References: <20180720075356.26156-1-marcel@ziswiler.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Ruchi Kandoi <kandoiruchi@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v2] cpufreq: trace frequency limits change
+Message-ID: <20180723030127.7v5aymf246gfsf5x@vireshk-i7>
+References: <20180720222114.200311-1-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180720075356.26156-1-marcel@ziswiler.com>
+In-Reply-To: <20180720222114.200311-1-joel@joelfernandes.org>
 User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-07-18, 09:53, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 20-07-18, 15:21, Joel Fernandes wrote:
+> From: Ruchi Kandoi <kandoiruchi@google.com>
 > 
-> The property "irq-over-gpio" simply does not exist (this is nowadays
-> actually auto detected) and the property "irq-gpios" is actually called
-> "irq-gpios".
-
-  "irq-gpio" ?
-
+> systrace used for tracing for Android systems has carried a patch for
+> many years in the Android tree that traces when the cpufreq limits
+> change.  With the help of this information, systrace can know when the
+> policy limits change and can visually display the data. Lets add
+> upstream support for the same.
 > 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
+> Signed-off-by: Ruchi Kandoi <kandoiruchi@google.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 > ---
+> v1->v2: Minor changes suggested by Viresh
 > 
->  arch/arm/boot/dts/spear320-hmi.dts | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  Documentation/trace/events-power.rst |  1 +
+>  drivers/cpufreq/cpufreq.c            |  1 +
+>  include/trace/events/power.h         | 25 +++++++++++++++++++++++++
+>  3 files changed, 27 insertions(+)
 > 
-> diff --git a/arch/arm/boot/dts/spear320-hmi.dts b/arch/arm/boot/dts/spear320-hmi.dts
-> index 0d0da1f65f0e..d2d1fe944407 100644
-> --- a/arch/arm/boot/dts/spear320-hmi.dts
-> +++ b/arch/arm/boot/dts/spear320-hmi.dts
-> @@ -241,8 +241,7 @@
->  					#address-cells = <1>;
->  					#size-cells = <0>;
->  					reg = <0x41>;
-> -					irq-over-gpio;
-> -					irq-gpios = <&gpiopinctrl 29 0x4>;
-> +					irq-gpio = <&gpiopinctrl 29 0x4>;
->  					id = <0>;
->  					blocks = <0x5>;
->  					irq-trigger = <0x1>;
+> diff --git a/Documentation/trace/events-power.rst b/Documentation/trace/events-power.rst
+> index a77daca75e30..2ef318962e29 100644
+> --- a/Documentation/trace/events-power.rst
+> +++ b/Documentation/trace/events-power.rst
+> @@ -27,6 +27,7 @@ cpufreq.
+>  
+>    cpu_idle		"state=%lu cpu_id=%lu"
+>    cpu_frequency		"state=%lu cpu_id=%lu"
+> +  cpu_frequency_limits	"min=%lu max=%lu cpu_id=%lu"
+>  
+>  A suspend event is used to indicate the system going in and out of the
+>  suspend mode:
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index b0dfd3222013..4fd935df101e 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -2236,6 +2236,7 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
+>  
+>  	policy->min = new_policy->min;
+>  	policy->max = new_policy->max;
+> +	trace_cpu_frequency_limits(policy->min, policy->max, policy->cpu);
+>  
+>  	policy->cached_target_freq = UINT_MAX;
+>  
+> diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+> index 908977d69783..f5bec45108b6 100644
+> --- a/include/trace/events/power.h
+> +++ b/include/trace/events/power.h
+> @@ -148,6 +148,31 @@ DEFINE_EVENT(cpu, cpu_frequency,
+>  	TP_ARGS(frequency, cpu_id)
+>  );
+>  
+> +TRACE_EVENT(cpu_frequency_limits,
+> +
+> +	TP_PROTO(unsigned int min_freq, unsigned int max_freq,
+> +		unsigned int cpu_id),
+> +
+> +	TP_ARGS(min_freq, max_freq, cpu_id),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(u32, min_freq)
+> +		__field(u32, max_freq)
+> +		__field(u32, cpu_id)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->min_freq = min_freq;
+> +		__entry->max_freq = max_freq;
+> +		__entry->cpu_id = cpu_id;
+> +	),
+> +
+> +	TP_printk("min=%lu max=%lu cpu_id=%lu",
+> +		  (unsigned long)__entry->min_freq,
+> +		  (unsigned long)__entry->max_freq,
+> +		  (unsigned long)__entry->cpu_id)
+> +);
+> +
+>  TRACE_EVENT(device_pm_callback_start,
+>  
+>  	TP_PROTO(struct device *dev, const char *pm_ops, int event),
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
 viresh
