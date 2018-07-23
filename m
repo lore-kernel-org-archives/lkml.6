@@ -3,29 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98983ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E59C8ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 505CD20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:29:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505CD20856
+	by mail.kernel.org (Postfix) with ESMTP id 9F63520856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:29:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F63520856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388694AbeGWObE (ORCPT
+        id S2388704AbeGWObM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 10:31:04 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:52041 "EHLO cstnet.cn"
+        Mon, 23 Jul 2018 10:31:12 -0400
+Received: from smtp21.cstnet.cn ([159.226.251.21]:52028 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387986AbeGWO3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388087AbeGWO3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Jul 2018 10:29:35 -0400
-X-Greylist: delayed 392 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Jul 2018 10:29:33 EDT
 Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-01 (Coremail) with SMTP id qwCowAD3_5sl1lVbkm7cEA--.63S4;
-        Mon, 23 Jul 2018 21:21:14 +0800 (CST)
+        by APP-01 (Coremail) with SMTP id qwCowAD3_5sl1lVbkm7cEA--.63S11;
+        Mon, 23 Jul 2018 21:21:25 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
 To:     tglx@linutronix.de, bp@alien8.de, thomas.lendacky@amd.com,
         mingo@redhat.com, hpa@zytor.com, peterz@infradead.org,
@@ -35,30 +34,30 @@ To:     tglx@linutronix.de, bp@alien8.de, thomas.lendacky@amd.com,
         trenn@suse.com, shuah@kernel.org, JBeulich@suse.com, x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         kvm@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: [PATCH v2 02/17] x86/cache: get Dhyana cache size/leaves and setup cache cpumap
-Date:   Mon, 23 Jul 2018 21:20:22 +0800
-Message-Id: <1532352037-7151-3-git-send-email-puwen@hygon.cn>
+Subject: [PATCH v2 09/17] x86/bugs: add lfence mitigation to spectre v2 and no meltdown for Hygon
+Date:   Mon, 23 Jul 2018 21:20:29 +0800
+Message-Id: <1532352037-7151-10-git-send-email-puwen@hygon.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532352037-7151-1-git-send-email-puwen@hygon.cn>
 References: <1532352037-7151-1-git-send-email-puwen@hygon.cn>
-X-CM-TRANSID: qwCowAD3_5sl1lVbkm7cEA--.63S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxurWrAr4DtFykWFyxCr43trb_yoWruw4kpr
-        W29w4rJF4xWa4fC3s8Ar4kXw4fZrykKa1xK347Ga4rAanrZr18Xrn5Kw13Ar98Zw4rCw4S
-        qF40gr13KF1rJF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUBEb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+X-CM-TRANSID: qwCowAD3_5sl1lVbkm7cEA--.63S11
+X-Coremail-Antispam: 1UD129KBjvJXoW3WrW7AF18uF1UAw1xCrW7urg_yoW7XFW5pF
+        yIqFW8JryfAwsay34kXF98XFWrZr1kJ3W7uryUur98ZayFyry8WF1Sqr4xXF98Aa1fWr40
+        qFn8XFs5GF10q37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUP2b7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
         0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-        8067AKxVWUXwA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF
-        64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcV
-        CY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE
-        c7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzV
-        Aqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm
-        72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI
-        1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWU
-        JVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7V
-        AKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j
-        6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIx
-        AIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07beyIUUUUUU
-        =
+        8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28C
+        jxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI
+        8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E
+        87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2
+        IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4UJVWx
+        Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2
+        IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+        wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc4
+        0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AK
+        xVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JV
+        WxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU5hX
+        o3UUUUU==
 X-Originating-IP: [182.150.46.145]
 X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,139 +65,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hygon Dhyana processor has the topology extensions bit in CPUID.
-With this bit kernel can get the cache info. So add support
-in cpuid4_cache_lookup_regs() to get the correct cache size.
+To share codes between AMD and Hygon to mitigate Spectre V2 Retpoline
+vulnerability, rename macros SPECTRE_V2_RETPOLINE_MINIMAL_AMD to
+SPECTRE_V2_RETPOLINE_MINIMAL_LFENCE, and SPECTRE_V2_CMD_RETPOLINE_AMD
+to SPECTRE_V2_CMD_RETPOLINE_LFENCE.
 
-Dhyana also find num_cache_leaves via CPUID leaf 0x8000001d, so
-add Hygon support in find_num_cache_leaves().
-
-Also add cacheinfo_hygon_init_llc_id() and init_hygon_cacheinfo()
-functions to initialize Dhyana cache info. Setup cache cpumap in
-the same way as AMD does.
+As Hygon processors is not affected by meltdown vulnerability as AMD's,
+so add exception in array cpu_no_meltdown[] for it.
 
 Signed-off-by: Pu Wen <puwen@hygon.cn>
 ---
- arch/x86/include/asm/cacheinfo.h |  1 +
- arch/x86/kernel/cpu/cacheinfo.c  | 31 +++++++++++++++++++++++++++++--
- arch/x86/kernel/cpu/cpu.h        |  1 +
- arch/x86/kernel/cpu/hygon.c      |  3 +++
- 4 files changed, 34 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |  4 ++--
+ arch/x86/kernel/cpu/bugs.c           | 28 +++++++++++++++-------------
+ arch/x86/kernel/cpu/common.c         |  1 +
+ 3 files changed, 18 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/include/asm/cacheinfo.h b/arch/x86/include/asm/cacheinfo.h
-index e958e28..86b63c7 100644
---- a/arch/x86/include/asm/cacheinfo.h
-+++ b/arch/x86/include/asm/cacheinfo.h
-@@ -3,5 +3,6 @@
- #define _ASM_X86_CACHEINFO_H
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index f6f6c63..aad6b9c 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -211,9 +211,9 @@
+ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_NONE,
+ 	SPECTRE_V2_RETPOLINE_MINIMAL,
+-	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
++	SPECTRE_V2_RETPOLINE_MINIMAL_LFENCE,
+ 	SPECTRE_V2_RETPOLINE_GENERIC,
+-	SPECTRE_V2_RETPOLINE_AMD,
++	SPECTRE_V2_RETPOLINE_LFENCE,
+ 	SPECTRE_V2_IBRS,
+ };
  
- void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id);
-+void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id);
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 5c0ea39..5d0ba61 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -121,15 +121,15 @@ enum spectre_v2_mitigation_cmd {
+ 	SPECTRE_V2_CMD_FORCE,
+ 	SPECTRE_V2_CMD_RETPOLINE,
+ 	SPECTRE_V2_CMD_RETPOLINE_GENERIC,
+-	SPECTRE_V2_CMD_RETPOLINE_AMD,
++	SPECTRE_V2_CMD_RETPOLINE_LFENCE,
+ };
  
- #endif /* _ASM_X86_CACHEINFO_H */
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 0c5fcbd..dc1b934 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -602,6 +602,10 @@ cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *this_leaf)
- 		else
- 			amd_cpuid4(index, &eax, &ebx, &ecx);
- 		amd_init_l3_cache(this_leaf, index);
-+	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
-+		cpuid_count(0x8000001d, index, &eax.full,
-+			    &ebx.full, &ecx.full, &edx);
-+		amd_init_l3_cache(this_leaf, index);
+ static const char *spectre_v2_strings[] = {
+ 	[SPECTRE_V2_NONE]			= "Vulnerable",
+ 	[SPECTRE_V2_RETPOLINE_MINIMAL]		= "Vulnerable: Minimal generic ASM retpoline",
+-	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
++	[SPECTRE_V2_RETPOLINE_MINIMAL_LFENCE]	= "Vulnerable: Minimal LFENCE ASM retpoline",
+ 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+-	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
++	[SPECTRE_V2_RETPOLINE_LFENCE]		= "Mitigation: Full LFENCE retpoline",
+ };
+ 
+ #undef pr_fmt
+@@ -260,7 +260,7 @@ static const struct {
+ 	{ "off",               SPECTRE_V2_CMD_NONE,              false },
+ 	{ "on",                SPECTRE_V2_CMD_FORCE,             true },
+ 	{ "retpoline",         SPECTRE_V2_CMD_RETPOLINE,         false },
+-	{ "retpoline,amd",     SPECTRE_V2_CMD_RETPOLINE_AMD,     false },
++	{ "retpoline,lfence",     SPECTRE_V2_CMD_RETPOLINE_LFENCE,     false },
+ 	{ "retpoline,generic", SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
+ 	{ "auto",              SPECTRE_V2_CMD_AUTO,              false },
+ };
+@@ -292,16 +292,17 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+ 	}
+ 
+ 	if ((cmd == SPECTRE_V2_CMD_RETPOLINE ||
+-	     cmd == SPECTRE_V2_CMD_RETPOLINE_AMD ||
++	     cmd == SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
+ 	     cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC) &&
+ 	    !IS_ENABLED(CONFIG_RETPOLINE)) {
+ 		pr_err("%s selected but not compiled in. Switching to AUTO select\n", mitigation_options[i].option);
+ 		return SPECTRE_V2_CMD_AUTO;
+ 	}
+ 
+-	if (cmd == SPECTRE_V2_CMD_RETPOLINE_AMD &&
++	if (cmd == SPECTRE_V2_CMD_RETPOLINE_LFENCE &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON &&
+ 	    boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
+-		pr_err("retpoline,amd selected but CPU is not AMD. Switching to AUTO select\n");
++		pr_err("retpoline,amd selected but CPU is not AMD or Hygon. Switching to AUTO select\n");
+ 		return SPECTRE_V2_CMD_AUTO;
+ 	}
+ 
+@@ -352,9 +353,9 @@ static void __init spectre_v2_select_mitigation(void)
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
+ 			goto retpoline_auto;
+ 		break;
+-	case SPECTRE_V2_CMD_RETPOLINE_AMD:
++	case SPECTRE_V2_CMD_RETPOLINE_LFENCE:
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
+-			goto retpoline_amd;
++			goto retpoline_lfence;
+ 		break;
+ 	case SPECTRE_V2_CMD_RETPOLINE_GENERIC:
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
+@@ -369,14 +370,15 @@ static void __init spectre_v2_select_mitigation(void)
+ 	return;
+ 
+ retpoline_auto:
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
+-	retpoline_amd:
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
++	retpoline_lfence:
+ 		if (!boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
+ 			pr_err("Spectre mitigation: LFENCE not serializing, switching to generic retpoline\n");
+ 			goto retpoline_generic;
+ 		}
+-		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
+-					 SPECTRE_V2_RETPOLINE_MINIMAL_AMD;
++		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_LFENCE :
++					 SPECTRE_V2_RETPOLINE_MINIMAL_LFENCE;
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE_AMD);
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
  	} else {
- 		cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &edx);
- 	}
-@@ -625,7 +629,8 @@ static int find_num_cache_leaves(struct cpuinfo_x86 *c)
- 	union _cpuid4_leaf_eax	cache_eax;
- 	int 			i = -1;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index eb4cb3e..06b3168 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -968,6 +968,7 @@ static const __initconst struct x86_cpu_id cpu_no_speculation[] = {
  
--	if (c->x86_vendor == X86_VENDOR_AMD)
-+	if (c->x86_vendor == X86_VENDOR_AMD ||
-+	    c->x86_vendor == X86_VENDOR_HYGON)
- 		op = 0x8000001d;
- 	else
- 		op = 4;
-@@ -678,6 +683,22 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
- 	}
- }
+ static const __initconst struct x86_cpu_id cpu_no_meltdown[] = {
+ 	{ X86_VENDOR_AMD },
++	{ X86_VENDOR_HYGON },
+ 	{}
+ };
  
-+void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
-+{
-+	/*
-+	 * We may have multiple LLCs if L3 caches exist, so check if we
-+	 * have an L3 cache by looking at the L3 cache CPUID leaf.
-+	 */
-+	if (!cpuid_edx(0x80000006))
-+		return;
-+
-+	/*
-+	 * LLC is at the core complex level.
-+	 * Core complex ID is ApicId[3] for these processors.
-+	 */
-+	per_cpu(cpu_llc_id, cpu) = c->apicid >> 3;
-+}
-+
- void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- {
- 
-@@ -691,6 +712,11 @@ void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- 	}
- }
- 
-+void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
-+{
-+	num_cache_leaves = find_num_cache_leaves(c);
-+}
-+
- void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- {
- 	/* Cache sizes */
-@@ -913,7 +939,8 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
- 	int index_msb, i;
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 
--	if (c->x86_vendor == X86_VENDOR_AMD) {
-+	if (c->x86_vendor == X86_VENDOR_AMD ||
-+	    c->x86_vendor == X86_VENDOR_HYGON) {
- 		if (__cache_amd_cpumap_setup(cpu, index, base))
- 			return;
- 	}
-diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
-index 38216f6..c2ba596 100644
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -53,6 +53,7 @@ extern u32 get_scattered_cpuid_leaf(unsigned int level,
- 				    enum cpuid_regs_idx reg);
- extern void init_intel_cacheinfo(struct cpuinfo_x86 *c);
- extern void init_amd_cacheinfo(struct cpuinfo_x86 *c);
-+extern void init_hygon_cacheinfo(struct cpuinfo_x86 *c);
- 
- extern void detect_num_cpu_cores(struct cpuinfo_x86 *c);
- extern int detect_extended_topology(struct cpuinfo_x86 *c);
-diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
-index cc296e5..0d77b91 100644
---- a/arch/x86/kernel/cpu/hygon.c
-+++ b/arch/x86/kernel/cpu/hygon.c
-@@ -85,6 +85,7 @@ static void hygon_get_topology(struct cpuinfo_x86 *c)
- 		if (!err)
- 			c->x86_coreid_bits = get_count_order(c->x86_max_cores);
- 
-+		cacheinfo_amd_init_llc_id(c, cpu, node_id);
- 	} else if (cpu_has(c, X86_FEATURE_NODEID_MSR)) {
- 		u64 value;
- 
-@@ -315,6 +316,8 @@ static void init_hygon(struct cpuinfo_x86 *c)
- 		srat_detect_node(c);
- 	}
- 
-+	init_hygon_cacheinfo(c);
-+
- 	set_cpu_cap(c, X86_FEATURE_K8);
- 
- 	if (cpu_has(c, X86_FEATURE_XMM2)) {
 -- 
 2.7.4
 
