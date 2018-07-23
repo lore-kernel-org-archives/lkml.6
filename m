@@ -2,100 +2,104 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EA5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F9CECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1553320874
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:14:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1553320874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3119220874
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:17:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dn07Y9nV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3119220874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387992AbeGWJOf (ORCPT
+        id S2388032AbeGWJRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 05:14:35 -0400
-Received: from mga18.intel.com ([134.134.136.126]:41789 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387808AbeGWJOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 05:14:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 01:14:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,392,1526367600"; 
-   d="scan'208";a="59010652"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga008.jf.intel.com with ESMTP; 23 Jul 2018 01:12:40 -0700
-Message-ID: <cd311a1b46eca9b9238a8071a211a7974154ac31.camel@linux.intel.com>
-Subject: Re: [PATCH] nfc: fdp: remove redundant pointer 'client'
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Colin King <colin.king@canonical.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        linux-wireless@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 23 Jul 2018 11:12:39 +0300
-In-Reply-To: <20180720181643.21340-1-colin.king@canonical.com>
-References: <20180720181643.21340-1-colin.king@canonical.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 23 Jul 2018 05:17:46 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:44128 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387913AbeGWJRq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 05:17:46 -0400
+Received: by mail-io0-f193.google.com with SMTP id q19-v6so14827044ioh.11;
+        Mon, 23 Jul 2018 01:17:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=4SUSVghtR8cJSSEtC6Yyuq7vsCKy6nQKkr2feOCLezA=;
+        b=Dn07Y9nViRkCIsibiYwPIzk5/vyVX+lDLVLcoDZ2awl8sxuPK9aoc94wfc6Gty5ABG
+         ebBYwb+fJzFsPuJwnLO0CXyg1iA3cieatqBRgMFQbHZtGcTGn5KUL+6jjsm/ItzdfO1C
+         DFMHuMzs2RqWsnOAPi0aPBmmNaJYrG17YZsMzH7Ep6S964x7bDWD6rnXObuEm2j6YBtv
+         ERjS7GiVHOrXOiRvirN6O+3FoNdm55XZb3Ir+6P5XWujVh62N6xrooGtqtWLApPK2JTH
+         zyJvv7P7RCI+la46oUO4RGk/PzlHHjvTChjzbXzpqIHROCauUmVngRJ01IFx95OVbGL+
+         FETA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4SUSVghtR8cJSSEtC6Yyuq7vsCKy6nQKkr2feOCLezA=;
+        b=IR9ax3vwnxaxO90RZLW6KFMvpW1Vf3Ny/vmf51qeSfjFLHEVrf3AMkJlWb37trMagA
+         DbX0f427j66Utsfg/vSm7tvpuO6BX/Oi5/alI3c7hsbc5nLvTSFw8UWMQxWQk29ORTnG
+         bV+TYTB4TVPGbgvahBd7R+i2MB5DSbjsvbO99yzFsWfBFBHz20CLp38fT1zFaBSbVaIB
+         Zue9C/qQiG/SF9u+ri6rV2jZxfDmDSKAfdU0H05z9ku3a4oXpy6062M+lAX8zee56JgH
+         knMKMqsndIopigVXNAFD7Vfg7OyDtJIaUjilNzjUuLTAUnXdUM3/i/iH41R9Rdp1LTXd
+         txeg==
+X-Gm-Message-State: AOUpUlGq0VtXEXhl+RVI9Ympb0WHY9p+0Hj79MhFqnN7oii9VgyIXOpS
+        eGSWDi944k1kw0RsCxpvO7I=
+X-Google-Smtp-Source: AAOMgpcVKkK0nuHmodiDMdtuVhv5XE5p0Be7yI+RlLI2bzTuH8QZBSBuFKdhj0VedVYInJWqEYA/3Q==
+X-Received: by 2002:a6b:760c:: with SMTP id g12-v6mr7451856iom.276.1532333865076;
+        Mon, 23 Jul 2018 01:17:45 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:c122:f95a:1d53:1f82])
+        by smtp.gmail.com with ESMTPSA id r139-v6sm3006555ita.14.2018.07.23.01.17.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 01:17:44 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        tglx@linutronix.de, pombredanne@nexb.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] crypto: cavium: nitrox: Replace GFP_ATOMIC with GFP_KERNEL in crypto_alloc_context()
+Date:   Mon, 23 Jul 2018 16:14:26 +0800
+Message-Id: <20180723081426.31780-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-20 at 19:16 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer 'client' is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'client' set but not used [-Wunused-but-set-
-> variable]
+crypto_alloc_context() is only called by nitrox_skcipher_init(), which is
+never called in atomic context.
 
-Oh, thanks! It seems I had missed this when did a refactoring.
+crypto_alloc_context() calls dma_pool_alloc() with GFP_ATOMIC,
+which is not necessary.
+GFP_ATOMIC can be replaced with GFP_KERNEL.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This is found by a static analysis tool named DCNS written by myself.
+I also manually check the kernel code before reporting it.
 
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/nfc/fdp/i2c.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/nfc/fdp/i2c.c b/drivers/nfc/fdp/i2c.c
-> index 70a970c7375c..5d3ea63e405f 100644
-> --- a/drivers/nfc/fdp/i2c.c
-> +++ b/drivers/nfc/fdp/i2c.c
-> @@ -210,7 +210,6 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy
-> *phy, struct sk_buff **skb)
->  static irqreturn_t fdp_nci_i2c_irq_thread_fn(int irq, void *phy_id)
->  {
->  	struct fdp_i2c_phy *phy = phy_id;
-> -	struct i2c_client *client;
->  	struct sk_buff *skb;
->  	int r;
->  
-> @@ -219,8 +218,6 @@ static irqreturn_t fdp_nci_i2c_irq_thread_fn(int
-> irq, void *phy_id)
->  		return IRQ_NONE;
->  	}
->  
-> -	client = phy->i2c_dev;
-> -
->  	r = fdp_nci_i2c_read(phy, &skb);
->  
->  	if (r == -EREMOTEIO)
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/crypto/cavium/nitrox/nitrox_lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_lib.c b/drivers/crypto/cavium/nitrox/nitrox_lib.c
+index 4fdc921ba611..ebe267379ac9 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_lib.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_lib.c
+@@ -148,7 +148,7 @@ void *crypto_alloc_context(struct nitrox_device *ndev)
+ 	void *vaddr;
+ 	dma_addr_t dma;
+ 
+-	vaddr = dma_pool_alloc(ndev->ctx_pool, (GFP_ATOMIC | __GFP_ZERO), &dma);
++	vaddr = dma_pool_alloc(ndev->ctx_pool, (GFP_KERNEL | __GFP_ZERO), &dma);
+ 	if (!vaddr)
+ 		return NULL;
+ 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.17.0
+
