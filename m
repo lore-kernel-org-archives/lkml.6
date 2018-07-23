@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 976F0ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B493ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C96D20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C96D20854
+	by mail.kernel.org (Postfix) with ESMTP id AA26820854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA26820854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388650AbeGWN2f (ORCPT
+        id S2388663AbeGWN2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:28:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45472 "EHLO
+        Mon, 23 Jul 2018 09:28:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45480 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387940AbeGWN2e (ORCPT
+        with ESMTP id S2387940AbeGWN2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:28:34 -0400
+        Mon, 23 Jul 2018 09:28:37 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37FC2BB3;
-        Mon, 23 Jul 2018 12:27:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 32FB9BB3;
+        Mon, 23 Jul 2018 12:27:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sanjeev Bansal <sanjeevb.bansal@broadcom.com>,
-        Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
+        Greg Rose <gvrose8192@gmail.com>,
+        William Tu <u9012063@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 50/63] tg3: Add higher cpu clock for 5762.
-Date:   Mon, 23 Jul 2018 14:24:56 +0200
-Message-Id: <20180723122448.258636791@linuxfoundation.org>
+Subject: [PATCH 4.17 51/63] net: ip6_gre: get ipv6hdr after skb_cow_head()
+Date:   Mon, 23 Jul 2018 14:24:57 +0200
+Message-Id: <20180723122448.292357671@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -53,39 +53,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sanjeev Bansal <sanjeevb.bansal@broadcom.com>
+From: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
 
-[ Upstream commit 3a498606bb04af603a46ebde8296040b2de350d1 ]
+[ Upstream commit b7ed879425be371905d856410d19e9a42a62bcf3 ]
 
-This patch has fix for TX timeout while running bi-directional
-traffic with 100 Mbps using 5762.
+A KASAN:use-after-free bug was found related to ip6-erspan
+while running selftests/net/ip6_gre_headroom.sh
 
-Signed-off-by: Sanjeev Bansal <sanjeevb.bansal@broadcom.com>
-Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
-Reviewed-by: Michael Chan <michael.chan@broadcom.com>
+It happens because of following sequence:
+- ipv6hdr pointer is obtained from skb
+- skb_cow_head() is called, skb->head memory is reallocated
+- old data is accessed using ipv6hdr pointer
+
+skb_cow_head() call was added in e41c7c68ea77 ("ip6erspan: make sure
+enough headroom at xmit."), but looking at the history there was a
+chance of similar bug because gre_handle_offloads() and pskb_trim()
+can also reallocate skb->head memory. Fixes tag points to commit
+which introduced possibility of this bug.
+
+This patch moves ipv6hdr pointer assignment after skb_cow_head() call.
+
+Fixes: 5a963eb61b7c ("ip6_gre: Add ERSPAN native tunnel support")
+Signed-off-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+Reviewed-by: Greg Rose <gvrose8192@gmail.com>
+Acked-by: William Tu <u9012063@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/tg3.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ net/ipv6/ip6_gre.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -9289,6 +9289,15 @@ static int tg3_chip_reset(struct tg3 *tp
- 
- 	tg3_restore_clk(tp);
- 
-+	/* Increase the core clock speed to fix tx timeout issue for 5762
-+	 * with 100Mbps link speed.
-+	 */
-+	if (tg3_asic_rev(tp) == ASIC_REV_5762) {
-+		val = tr32(TG3_CPMU_CLCK_ORIDE_ENABLE);
-+		tw32(TG3_CPMU_CLCK_ORIDE_ENABLE, val |
-+		     TG3_CPMU_MAC_ORIDE_ENABLE);
-+	}
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -927,7 +927,6 @@ tx_err:
+ static netdev_tx_t ip6erspan_tunnel_xmit(struct sk_buff *skb,
+ 					 struct net_device *dev)
+ {
+-	struct ipv6hdr *ipv6h = ipv6_hdr(skb);
+ 	struct ip6_tnl *t = netdev_priv(dev);
+ 	struct dst_entry *dst = skb_dst(skb);
+ 	struct net_device_stats *stats;
+@@ -998,6 +997,8 @@ static netdev_tx_t ip6erspan_tunnel_xmit
+ 			goto tx_err;
+ 		}
+ 	} else {
++		struct ipv6hdr *ipv6h = ipv6_hdr(skb);
 +
- 	/* Reprobe ASF enable state.  */
- 	tg3_flag_clear(tp, ENABLE_ASF);
- 	tp->phy_flags &= ~(TG3_PHYFLG_1G_ON_VAUX_OK |
+ 		switch (skb->protocol) {
+ 		case htons(ETH_P_IP):
+ 			memset(&(IPCB(skb)->opt), 0, sizeof(IPCB(skb)->opt));
 
 
