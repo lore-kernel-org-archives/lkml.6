@@ -3,96 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A37ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AC6ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 811FD20875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:43:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 811FD20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=freebsd.org
+	by mail.kernel.org (Postfix) with ESMTP id AFB2120685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:43:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB2120685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388330AbeGWLoN (ORCPT
+        id S2388237AbeGWLoG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:44:13 -0400
-Received: from mx2.freebsd.org ([8.8.178.116]:48668 "EHLO mx2.freebsd.org"
+        Mon, 23 Jul 2018 07:44:06 -0400
+Received: from mail.us.es ([193.147.175.20]:58996 "EHLO mail.us.es"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388159AbeGWLoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:44:11 -0400
-Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
+        id S2388021AbeGWLoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:44:05 -0400
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 4C1474B0FA
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 12:41:31 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 3DA25DA4CC
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 12:41:31 +0200 (CEST)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 25188DA4D6; Mon, 23 Jul 2018 12:41:31 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 049B1DA4C1;
+        Mon, 23 Jul 2018 12:41:29 +0200 (CEST)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Mon, 23 Jul 2018 12:41:29 +0200 (CEST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx2.freebsd.org (Postfix) with ESMTPS id 14CA46ECB5;
-        Mon, 23 Jul 2018 10:43:37 +0000 (UTC)
-        (envelope-from manu@freebsd.org)
-Received: from smtp.freebsd.org (smtp.freebsd.org [96.47.72.83])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "smtp.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx1.freebsd.org (Postfix) with ESMTPS id 0D2F076310;
-        Mon, 23 Jul 2018 10:43:36 +0000 (UTC)
-        (envelope-from manu@freebsd.org)
-Received: from skull.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: manu)
-        by smtp.freebsd.org (Postfix) with ESMTPSA id D74039B94;
-        Mon, 23 Jul 2018 10:43:34 +0000 (UTC)
-        (envelope-from manu@freebsd.org)
-From:   Emmanuel Vadot <manu@freebsd.org>
-To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        srinivas.kandagatla@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Emmanuel Vadot <manu@freebsd.org>
-Subject: [PATCH 4/4] arm64: dts: allwinner: h5: Add SID for H5
-Date:   Mon, 23 Jul 2018 12:42:55 +0200
-Message-Id: <20180723104255.94244-4-manu@freebsd.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180723104255.94244-1-manu@freebsd.org>
-References: <20180723104255.94244-1-manu@freebsd.org>
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id B2AE64265A5C;
+        Mon, 23 Jul 2018 12:41:28 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 12:43:27 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     shaochun chen <cscnull@gmail.com>
+Cc:     Florian Westphal <fw@strlen.de>,
+        David Miller <davem@davemloft.net>,
+        kadlec <kadlec@blackhole.kfki.hu>,
+        "johannes.berg" <johannes.berg@intel.com>, jason <Jason@zx2c4.com>,
+        ktkhai <ktkhai@virtuozzo.com>,
+        "lucien.xin" <lucien.xin@gmail.com>,
+        "xiyou.wangcong" <xiyou.wangcong@gmail.com>,
+        dsahern <dsahern@gmail.com>,
+        netfilter-devel <netfilter-devel@vger.kernel.org>,
+        tom <tom@quantonium.net>, netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] netlink: fix memory leak of dump
+Message-ID: <20180723104327.rmptoqx7gzvwvbra@salvia>
+References: <20180722143354.23722-1-cscnull@gmail.com>
+ <20180722163925.gdfkndldatsoae6x@breakpoint.cc>
+ <20180722.100755.19840167505550163.davem@davemloft.net>
+ <20180722180910.wcwhantwpm2nfxet@breakpoint.cc>
+ <20180723091551.mwhltw4ujm4bylvj@salvia>
+ <20180723092818.ztsfsnqzxgzrauim@breakpoint.cc>
+ <CAKDdixCx5za07R9KdyohsZjJqzdTpE3mR1+4TwY5xjeBGVeTjg@mail.gmail.com>
+ <CAKDdixBBd08eKvk-hJtwPy46u2uzihRCh_KdEMF3xG1ZJ6oNsg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKDdixBBd08eKvk-hJtwPy46u2uzihRCh_KdEMF3xG1ZJ6oNsg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SID controller on H5 look the same as the one present in the A64.
-But in case we find some difference one day at a compatible string
-of it's own and a fallback to the A64 one.
+On Mon, Jul 23, 2018 at 06:34:36PM +0800, shaochun chen wrote:
+> I have a question: we will try_module_get in __netlink_dump_start(),
+> but why we need to call try_module_get again in  nft_netlink_dump_start ??
 
-Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
----
- .../devicetree/bindings/nvmem/allwinner,sunxi-sid.txt        | 1 +
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi                 | 5 +++++
- 2 files changed, 6 insertions(+)
+Because they refer to two different modules. nfnetlink is multiplexing
+all netfilter subsystem through one single netlink bus.
 
-diff --git a/Documentation/devicetree/bindings/nvmem/allwinner,sunxi-sid.txt b/Documentation/devicetree/bindings/nvmem/allwinner,sunxi-sid.txt
-index e319fe5e205a..99c4ba6a3f61 100644
---- a/Documentation/devicetree/bindings/nvmem/allwinner,sunxi-sid.txt
-+++ b/Documentation/devicetree/bindings/nvmem/allwinner,sunxi-sid.txt
-@@ -7,6 +7,7 @@ Required properties:
-   "allwinner,sun8i-a83t-sid"
-   "allwinner,sun8i-h3-sid"
-   "allwinner,sun50i-a64-sid"
-+  "allwinner,sun50i-h5-sid"
- 
- - reg: Should contain registers location and length
- 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-index 62d646baac3c..28183bf77164 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-@@ -129,3 +129,8 @@
- 		     <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 	compatible = "allwinner,sun50i-h5-pinctrl";
- };
-+
-+&sid {
-+	compatible = "allwinner,sun50i-h5-sid",
-+		     "allwinner,sun50i-a64-sid";
-+};
--- 
-2.17.0
-
+At the time that decision was made, there were concerns about netlink
+running out of busses.
