@@ -2,160 +2,172 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A95BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6753FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E456020852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:20:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E456020852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2740520874
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:22:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2740520874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388243AbeGWSXC (ORCPT
+        id S2388277AbeGWSYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:23:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51794 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387859AbeGWSXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:23:02 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E08E472642;
-        Mon, 23 Jul 2018 17:20:47 +0000 (UTC)
-Received: from [10.36.116.25] (ovpn-116-25.ams2.redhat.com [10.36.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 984CA2156897;
-        Mon, 23 Jul 2018 17:20:44 +0000 (UTC)
-Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
-To:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Petr Tesarik <ptesarik@suse.cz>
-References: <20180720123422.10127-1-david@redhat.com>
- <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
- <20180723123043.GD31229@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
-Date:   Mon, 23 Jul 2018 19:20:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 23 Jul 2018 14:24:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:37288 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388002AbeGWSYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:24:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A48C218A;
+        Mon, 23 Jul 2018 10:22:20 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 051DA3F6A8;
+        Mon, 23 Jul 2018 10:22:17 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 18:22:15 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v2 08/12] sched/core: uclamp: extend cpu's cgroup
+ controller
+Message-ID: <20180723172215.GG2683@e110439-lin>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com>
+ <20180716082906.6061-9-patrick.bellasi@arm.com>
+ <20180723153040.GG1934745@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <20180723123043.GD31229@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 23 Jul 2018 17:20:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 23 Jul 2018 17:20:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723153040.GG1934745@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.07.2018 14:30, Michal Hocko wrote:
-> On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
->> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
->>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
->>> So reserved pages might be access by dump tools although nobody except
->>> the owner should touch them.
->>
->> Are you sure about that? Or maybe I understand wrong. Maybe it changed
->> recently, but IIRC pages that are backing memmap (struct pages) are also
->> PG_reserved. And you definitely do want those in the dump.
+On 23-Jul 08:30, Tejun Heo wrote:
+> Hello,
+
+Hi Tejun!
+ 
+> On Mon, Jul 16, 2018 at 09:29:02AM +0100, Patrick Bellasi wrote:
+> > The cgroup's CPU controller allows to assign a specified (maximum)
+> > bandwidth to the tasks of a group. However this bandwidth is defined and
+> > enforced only on a temporal base, without considering the actual
+> > frequency a CPU is running on. Thus, the amount of computation completed
+> > by a task within an allocated bandwidth can be very different depending
+> > on the actual frequency the CPU is running that task.
+> > The amount of computation can be affected also by the specific CPU a
+> > task is running on, especially when running on asymmetric capacity
+> > systems like Arm's big.LITTLE.
 > 
-> You are right. reserve_bootmem_region will make all early bootmem
-> allocations (including those backing memmaps) PageReserved. I have asked
-> several times but I haven't seen a satisfactory answer yet. Why do we
-> even care for kdump about those. If they are reserved the nobody should
-> really look at those specific struct pages and manipulate them. Kdump
-> tools are using a kernel interface to read the content. If the specific
-> content is backed by a non-existing memory then they should simply not
-> return anything.
+> One basic problem I have with this patchset is that what's being
+> described is way more generic than what actually got implemented.
+> What's described is computation bandwidth control but what's
+> implemented is just frequency clamping.
+
+What I meant to describe is that we already have a computation
+bandwidth control mechanism which is working quite fine for the
+scheduling classes it applies to, i.e. CFS and RT.
+
+For these classes we are usually happy with just a _best effort_
+allocation of the bandwidth: nothing enforced in strict terms. Indeed,
+there is not (at least not in kernel space) a tracking of the actual
+available and allocated bandwidth. If we need strict enforcement, we
+already have DL with its CBS servers.
+
+However, the "best effort" bandwidth control we have for CFS and RT
+can be further improved if, instead of just looking at time spent on
+CPUs, we provide some more hints to the scheduler to know at which
+min/max "MIPS" we want to consume the (best effort) time we have been
+allocated on a CPU.
+
+Such a simple extension is still quite useful to satisfy many use-case
+we have, mainly on mobile systems, like the ones I've described in the
+   "Newcomer's Short Abstract (Updated)"
+section of the cover letter:
+   https://lore.kernel.org/lkml/20180716082906.6061-1-patrick.bellasi@arm.com/T/#u
+
+> So, there are fundamental discrepancies between
+> description+interface vs. what it actually does.
+
+Perhaps then I should just change the description to make it less
+generic...
+
+> I really don't think that's something we can fix up later.
+
+... since, really, I don't think we can get to the point to extend
+later this interface to provide the strict bandwidth enforcement you
+are thinking about.
+
+This would not be a fixup, but something really close to
+re-implementing what we already have with the DL class.
+
+> > These attributes:
+> > 
+> > a) are available only for non-root nodes, both on default and legacy
+> >    hierarchies
+> > b) do not enforce any constraints and/or dependency between the parent
+> >    and its child nodes, thus relying on the delegation model and
+> >    permission settings defined by the system management software
 > 
+> cgroup does host attributes which only concern the cgroup itself and
+> thus don't need any hierarchical behaviors on their own, but what's
+> being implemented does control resource allocation,
 
-"new kernel" provides an interface to read memory from "old kernel".
+I'm not completely sure to get your point here.
 
-The new kernel has no idea about
-- which memory was added/online in the old kernel
-- where struct pages of the old kernel are and what their content is
-- which memory is save to touch and which not
+Maybe it all depends on what we mean by "control resource allocation".
 
-Dump tools figure all that out by interpreting the VMCORE. They e.g.
-identify "struct pages" and see if they should be dumped. The "new
-kernel" only allows to read that memory. It cannot hinder to crash the
-system (e.g. if a dump tool would try to read a hwpoison page).
+AFAIU, currently both the CFS and RT bandwidth controllers allow you
+to define how much CPU time a group of tasks can use. It does that by
+looking just within the group: there is no enforced/required relation
+between the bandwidth assigned to a group and the bandwidth assigned
+to its parent, siblings and/or children.
 
-So how should the "new kernel" know if a page can be touched or not?
+The resource control allocation is eventually enforced "indirectly" by
+means of the fact that, based on tasks priorities and cgroup shares,
+the scheduler will prefer to pick and run "more frequently" and
+"longer" certain tasks instead of others.
 
-The *only* way would be to have an interface to the hypervisor where we
-"sense" if a memory location is safe to touch. I remember that xen or
-hyper-v does that - they fake a zero page in that case, after querying
-the hypervisor. But this does not sound like a clean approach to me,
-especially es we need yet another hypervisor interface to sense for
-memory provided via "some" device.
+Thus I would say that the resource allocation control is already
+performed by the combined action of:
+A) priorities / shares to favor certain tasks over others
+B) period & bandwidth to further bias the scheduler in _not_ selecting
+  tasks which already executed for the configured amount of time.
 
-If we can find a way to just tag pages as "don't touch", it would be the
-easiest and cleanest solution in my opinion.
+> and what you're describing inherently breaks the delegation model.
+
+What I describe here is just an additional hint to the scheduler which
+enrich the above described model. Provided A and B are already
+satisfied, when a task gets a chance to run it will be executed at a
+min/max configured frequency. That's really all... there is not
+additional impact on "resources allocation".
+
+I don't see why you say that this breaks the delegation model?
+
+Maybe an example can help to better explain what you mean?
+
+Best,
+Patrick
 
 -- 
+#include <best/regards.h>
 
-Thanks,
-
-David / dhildenb
+Patrick Bellasi
