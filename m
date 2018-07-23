@@ -2,127 +2,112 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DE8ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F74ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2665F20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:14:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2665F20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 86C6A20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:15:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rCdI97aE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86C6A20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388600AbeGWQQc (ORCPT
+        id S2388608AbeGWQRC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:16:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48468 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388115AbeGWQQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 12:16:31 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5094281A4EA2;
-        Mon, 23 Jul 2018 15:14:49 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C4268111CD37;
-        Mon, 23 Jul 2018 15:14:39 +0000 (UTC)
-Date:   Mon, 23 Jul 2018 11:11:48 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, cgroups@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-audit@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, carlos@redhat.com,
-        dhowells@redhat.com, viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
-Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 02/10] audit: log container
- info of syscalls
-Message-ID: <20180723151148.hyu4jqy2etp5afpt@madcap2.tricolour.ca>
-References: <cover.1528304203.git.rgb@redhat.com>
- <5467262.rd0RIe6TW9@x2>
- <20180722205510.eh2n7bcd52454dwj@madcap2.tricolour.ca>
- <3318670.y8SpQ3RC2W@x2>
+        Mon, 23 Jul 2018 12:17:02 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:43951 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388115AbeGWQRC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 12:17:02 -0400
+Received: by mail-pl0-f67.google.com with SMTP id o7-v6so352615plk.10;
+        Mon, 23 Jul 2018 08:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JsiGHBYuR0+zpkz1YVrSp6YypJNxVI6YvYA0TVkczs4=;
+        b=rCdI97aERt4gFOUOKEf2y0uBQ/AVG/FHGLzahTR82O8JS4BoIiZW7tf3qiuLyXRXdI
+         V/qg0eVH9uK4Q6ZjhOYO7eFLtuP7udsiz8Qsk3LF4DG+jA5DLL3ULyqQvGgfnKk9QjCT
+         1NewX5s58pFoDkKQ3rnKPBdlFvko42KDIF8W3aQbhCCGBLtKqSG77wZZBTstjyuyX0yd
+         KLABjdSA0/bjQGGqAjfmZ9Cc6FHBMeXid0UPuB+fPwySsUtI7QJK9P7tTVUuI86vqXYX
+         MQib1p6wH+SoCM/Oy9vGc9r9Dk6OOXwqpOMZoFY0dsk4qL98ZbBGzpPEZGwWLYydkq4f
+         FvqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JsiGHBYuR0+zpkz1YVrSp6YypJNxVI6YvYA0TVkczs4=;
+        b=rrubHy03aVzmivV3uxtuQ61uEtSAWsvaBRY06m+Ym50AiWydHxVkKWbf4QK2ogYyyk
+         2C6uiQMA7sQZAvOfpNrEplm9tky7+7Vo25DCu6cVB/f9RhBrutiekVQhwXArC2ZwbuPk
+         +QbzFRcGSMsTrrPxWyTHY7ld9BiYC3SiWE4FNXV+6/RvYyt5b/p076iQZ8GTEqTZ+E0N
+         9v1foL6eerSZYnSMgKP6bBFZSRM5hfHw3lPkqVsMMKA7np+2Mi8jxH7jjnHvDlBKNSXX
+         yLBtwWT93+LN8W23kxPdGB/OwCbR2vIjm1bnI6t5gbQAEZ7T6jnB99DkvHNnISfiJAok
+         YalQ==
+X-Gm-Message-State: AOUpUlEuIGUTDIJQb3IxrMrGfd04iLLdfaiH/p8IEECCzlvJ3jeTsYH5
+        wtTSU4PgNb8m2+rR8HMtHGyFCoe8
+X-Google-Smtp-Source: AAOMgpeL1NrqkMd5zbwxXpAqguXnZQpxYybrbLMNb7LJlkJOepwh1qMmED4ko3ofurogQgKpsklnCQ==
+X-Received: by 2002:a17:902:2f84:: with SMTP id t4-v6mr13204745plb.87.1532358920691;
+        Mon, 23 Jul 2018 08:15:20 -0700 (PDT)
+Received: from [192.168.1.5] ([110.78.147.217])
+        by smtp.googlemail.com with ESMTPSA id l85-v6sm17040739pfk.34.2018.07.23.08.15.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 08:15:20 -0700 (PDT)
+Subject: Re: [PATCH] option: Do not try to bind to ADB interfaces
+To:     Romain Izard <romain.izard.pro@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable <stable@vger.kernel.org>
+References: <20180723140220.7166-1-romain.izard.pro@gmail.com>
+From:   Lars Melin <larsm17@gmail.com>
+Message-ID: <73f2233a-cafd-a477-0c0a-260be832777d@gmail.com>
+Date:   Mon, 23 Jul 2018 22:15:03 +0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3318670.y8SpQ3RC2W@x2>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 23 Jul 2018 15:14:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 23 Jul 2018 15:14:49 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
+In-Reply-To: <20180723140220.7166-1-romain.izard.pro@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-23 09:19, Steve Grubb wrote:
-> On Sunday, July 22, 2018 4:55:10 PM EDT Richard Guy Briggs wrote:
-> > On 2018-07-22 09:32, Steve Grubb wrote:
-> > > On Saturday, July 21, 2018 4:29:30 PM EDT Richard Guy Briggs wrote:
-> > > > > > + * audit_log_contid - report container info
-> > > > > > + * @tsk: task to be recorded
-> > > > > > + * @context: task or local context for record
-> > > > > > + * @op: contid string description
-> > > > > > + */
-> > > > > > +int audit_log_contid(struct task_struct *tsk,
-> > > > > > +                            struct audit_context *context, char
-> > > > > > *op)
-> > > > > > +{
-> > > > > > +       struct audit_buffer *ab;
-> > > > > > +
-> > > > > > +       if (!audit_contid_set(tsk))
-> > > > > > +               return 0;
-> > > > > > +       /* Generate AUDIT_CONTAINER record with container ID */
-> > > > > > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER);
-> > > > > > +       if (!ab)
-> > > > > > +               return -ENOMEM;
-> > > > > > +       audit_log_format(ab, "op=%s contid=%llu",
-> > > > > > +                        op, audit_get_contid(tsk));
-> > > > > 
-> > > > > Can you explain your reason for including an "op" field in this
-> > > > > record
-> > > > > type?  I've been looking at the rest of the patches in this patchset
-> > > > > and it seems to be used more as an indicator of the record's
-> > > > > generating context rather than any sort of audit container ID
-> > > > > operation.
-> > > > 
-> > > > "action" might work, but that's netfilter and numeric... "kind"?
-> > > > Nothing else really seems to fit from a field name, type or lack of
-> > > > searchability perspective.
-> > > > 
-> > > > Steve, do you have an opinion?
-> > > 
-> > > We only have 1 sample event where we have op=task. What are the other
-> > > possible values?
-> > 
-> > For the AUDIT_CONTAINER record we have op= "task", "target" (from the
-> > ptrace and signals patch), "tty".
-> > 
-> > For the AUDIT_CONTAINER_ID record we have "op=set".
+On 7/23/2018 21:02, Romain Izard wrote:
+> Some modems now use the Android Debug Bridge to provide a debugging
+> interface, and some phones can also export serial ports managed by the
+> "option" driver.
 > 
-> Since the purpose of this record is to log the container id, I think that is 
-> all that is needed. We can get the context from the other records in the 
-> event. I'd suggest dropping the "op" field.
+> The ADB daemon running in userspace tries to use USB interfaces with
+> bDeviceClass=0xFF, bDeviceSubClass=0x42, bDeviceProtocol=1
+> 
+> Prevent the option driver from binding to those interfaces, as they
+> will not be serial ports.
 
-Ok, the information above it for two different audit container
-identifier records.  Which one should drop the "op=" field?  Both?  Or
-just the AUDIT_CONTAINER record?  The AUDIT_CONTAINER_ID record (which
-might be renamed) could use it to distinguish a "set" record from a
-dropped audit container identifier that is no longer registered by any
-task or namespace.
+You are assuming that an interface with these attributes are always a
+ADB interface - that is wrong. Vendor specific class (0xff) is not
+standardized to be something specific.
 
-> -Steve
 
-- RGB
+> This can fix issues like:
+> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=781256
+> 
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+You are trying to solve a 4++ years old bug report where it was assumed 
+that the option driver was the culprit. The device in question, a 
+Qualcomm modem with vid/pid 05c6:9025 has never been included in option.
+
+
+rgds
+Lars
+
+
