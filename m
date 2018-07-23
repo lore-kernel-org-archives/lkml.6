@@ -2,151 +2,162 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CB3ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AE6ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF46E20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:40:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYTmOZn9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF46E20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 533E020852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:40:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 533E020852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388720AbeGWQmT (ORCPT
+        id S2388664AbeGWQmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:42:19 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34026 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387831AbeGWQmS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Jul 2018 12:42:18 -0400
-Received: by mail-qt0-f195.google.com with SMTP id m13-v6so1063323qth.1;
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35908 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388144AbeGWQmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 12:42:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 682E380D;
         Mon, 23 Jul 2018 08:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=Y3ROiEKf1jGLoB6Yk9HRSDvRLfvA2IMy8StZB/Zmq1E=;
-        b=XYTmOZn9tOeAKn8DUeasJefje4X2g8ffkRfkpFDXthvQPWkkzWOJD2xjP9QYeWHjh6
-         A4Ijz8gJEdJWzyy8KqF0lV3ZQok7edxLzTDtrK3cAbCW9aTsJQUL2dWRYhsO6zyJ6P5W
-         ZHYEWVn3A45CYJiSSg28yXuRyApQuTc1pVp2Tp/20ocW3mE0CBuc3Ygxm4Xl6xJ/e+Rr
-         N1K/BiXHavdIMHcjmpEwuWkK/2hIMY25NXJav/4jVj7jTZGD3ghZmjEtE9Lc1tGLWwL9
-         nGBVn1cLAkmBco1wwrtotnAKHpw6pqkxokOSSJZFc0vDIt03d4a1CPP5igluH7cQwKqo
-         Mlvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=Y3ROiEKf1jGLoB6Yk9HRSDvRLfvA2IMy8StZB/Zmq1E=;
-        b=YYkj+XAHH0onapHzT3Ekr9x5z38mEGRdNBV6B1qI7DAwHV8FNekIRye7RCjDXkAT8V
-         67M/H5XC9Bmo3iNlWq7C8bigUAFHEttVopGpbx7jflfcPNvBEBrT9LEf2HqhfcNICwsN
-         QsjgSP3wyyANXWgoLVRBQ4jUqLTeNJ70ZBH0JR5o3Mx/UVeuHAn6s/S8KV5P1L9BKTzP
-         MwLlUMAjqtgGW34Xc1mnnrOrVcRXCLpbc0ivT5caPyBfCA4ayF6n5QXN7lsLpVxYwlA/
-         7AdibzZT/r1XHZ/SkndPBRh/5IouwWMZUMENFRB+Xm9GVwhCLR4u/puQc1ZZ8X8pelyL
-         lkUw==
-X-Gm-Message-State: AOUpUlFfervTVgl69zrR+UMJ5zSJq12LRT3im9z+2UKB1JdkqMg1RX4n
-        0NbuxBWpKxpBFK0oA8F7Y3AGtyo0heIsufm2F2lZXrLv
-X-Google-Smtp-Source: AAOMgpcm0Ae/rc582zfsccdh7fCArW37o+NT1zW/Ob9O/Hv3GiH1VIN8ANG3TAFaT9sNyYTjlXVmKRWv9r3WgFR8Kus=
-X-Received: by 2002:a0c:afb8:: with SMTP id s53-v6mr11647100qvc.164.1532360429934;
- Mon, 23 Jul 2018 08:40:29 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD7143F237;
+        Mon, 23 Jul 2018 08:40:27 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 16:40:25 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v2 10/12] sched/core: uclamp: use TG's clamps to restrict
+ Task's clamps
+Message-ID: <20180723154025.GF2683@e110439-lin>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com>
+ <20180716082906.6061-11-patrick.bellasi@arm.com>
+ <CAJuCfpFnj2g3+ZpR4fP4yqfxs0zd=c-Zehr2XM7m_C+WdL9jNA@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 08:40:29
- -0700 (PDT)
-In-Reply-To: <20180723114107.664164d2@bbrezillon>
-References: <20180721200049.7553-1-anders.roxell@linaro.org>
- <a83ff193-be57-f566-cafb-132075025b56@infradead.org> <20180722082939.2de739f1@bbrezillon>
- <CAK8P3a1_8OSqyKsbw+m3ZzLWfPqDK4ynG3WoPTk+K2uJJsiq5A@mail.gmail.com> <20180723114107.664164d2@bbrezillon>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 23 Jul 2018 17:40:29 +0200
-X-Google-Sender-Auth: rU6qj8z_Kexr8FNm9nkkBcOmRFw
-Message-ID: <CAK8P3a10SsWuPXzOyRcNKa+ukvj_Gq13JyDTngoU8DJu6_MR0Q@mail.gmail.com>
-Subject: Re: [PATCH] drivers/memory/Kconfig: Add CONFIG_OF dependency
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpFnj2g3+ZpR4fP4yqfxs0zd=c-Zehr2XM7m_C+WdL9jNA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 11:41 AM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> On Mon, 23 Jul 2018 11:34:43 +0200
-> Arnd Bergmann <arnd@arndb.de> wrote:
->
->> On Sun, Jul 22, 2018 at 8:29 AM, Boris Brezillon
->> <boris.brezillon@bootlin.com> wrote:
->> > +Arnd, Rob and the DT ML.
->> >
->> > On Sat, 21 Jul 2018 14:53:47 -0700
->> > Randy Dunlap <rdunlap@infradead.org> wrote:
->> >
->> >> On 07/21/2018 01:00 PM, Anders Roxell wrote:
->> >> > JZ4780_NEMC doesn't depend on OF, and if OF isn't enabled we get th=
-is
->> >> > error:
->> >> > drivers/memory/jz4780-nemc.c: In function =E2=80=98jz4780_nemc_num_=
-banks=E2=80=99:
->> >> > drivers/memory/jz4780-nemc.c:72:10: error: implicit declaration of
->> >> >  function =E2=80=98of_read_number=E2=80=99; did you mean =E2=80=98d=
-own_read_nested=E2=80=99?
->> >> >  [-Werror=3Dimplicit-function-declaration]
->> >> >    bank =3D of_read_number(prop, 1);
->> >> >           ^~~~~~~~~~~~~~
->> >> >           down_read_nested
->> >
->> > Looks like of.h defines stubs so that people can compile-test without
->> > CONFIG_OF selected. Maybe we should move of_read_number() and
->> > of_read_ulong() out of the #ifdef CONFIG_OF section.
->>
->> That seems fine, though the added dependency seems appropriate
->> here as well. of_read_number() is rarely used, and for the most part in
->> powerpc specific code that is guaranteed to have CONFIG_OF enabled,
->> so it's not that likely to cause many more problems.
->
-> Ok, then I'll let Miquel apply Anders' patch to the NAND tree.
->
-> Thanks for your feedback.
+On 21-Jul 20:05, Suren Baghdasaryan wrote:
+> On Mon, Jul 16, 2018 at 1:29 AM, Patrick Bellasi
+> <patrick.bellasi@arm.com> wrote:
+> > When a task's util_clamp value is configured via sched_setattr(2), this
+> > value has to be properly accounted in the corresponding clamp group
+> > every time the task is enqueued and dequeued. When cgroups are also in
+> > use, per-task clamp values have to be aggregated to those of the CPU's
+> > controller's Task Group (TG) in which the task is currently living.
+> >
+> > Let's update uclamp_cpu_get() to provide aggregation between the task
+> > and the TG clamp values. Every time a task is enqueued, it will be
+> > accounted in the clamp_group which defines the smaller clamp between the
+> > task specific value and its TG value.
+> 
+> So choosing smallest for both UCLAMP_MIN and UCLAMP_MAX means the
+> least boosted value and the most clamped value between syscall and TG
+> will be used.
 
-My randconfig build bot just ran into a second problem with this driver
-with CONFIG_GPIOLIB disabled:
+Right
 
-drivers/mtd/nand/raw/jz4740_nand.c: In function 'jz_nand_dev_ready':
-drivers/mtd/nand/raw/jz4740_nand.c:133:9: error: implicit declaration
-of function 'gpiod_get_value_cansleep'; did you mean
-'gpio_get_value_cansleep'? [-Werror=3Dimplicit-function-declaration]
-  return gpiod_get_value_cansleep(nand->busy_gpio);
-         ^~~~~~~~~~~~~~~~~~~~~~~~
-         gpio_get_value_cansleep
-drivers/mtd/nand/raw/jz4740_nand.c: In function 'jz_nand_probe':
-drivers/mtd/nand/raw/jz4740_nand.c:388:20: error: implicit declaration
-of function 'devm_gpiod_get_optional'; did you mean
-'devm_gpio_request_one'? [-Werror=3Dimplicit-function-declaration]
-  nand->busy_gpio =3D devm_gpiod_get_optional(&pdev->dev, "busy", GPIOD_IN)=
-;
-                    ^~~~~~~~~~~~~~~~~~~~~~~
-                    devm_gpio_request_one
-drivers/mtd/nand/raw/jz4740_nand.c:388:64: error: 'GPIOD_IN'
-undeclared (first use in this function); did you mean 'GPIOF_IN'?
-  nand->busy_gpio =3D devm_gpiod_get_optional(&pdev->dev, "busy", GPIOD_IN)=
-;
-                                                                ^~~~~~~~
-                                                                GPIOF_IN
+> My understanding is that boost means "at least this much" and clamp
+> means "at most this much".
 
+Right
 
-We could add another dependency here or (my preference) include
-linux/gpio/consumer.h to fix that. Do you want a separate patch for
-it, or should Anders send a combined patch?
+> So to satisfy both TG and syscall requirements I think you would
+> need to choose the largest value for UCLAMP_MIN and the smallest one
+> for UCLAMP_MAX, meaning the most boosted and most clamped range.
+> Current implementation choses the least boosted value, so
+> effectively one of the UCLAMP_MIN requirements (either from TG or
+> from syscall) are being ignored...  Could you please clarify why
+> this choice is made?
 
-      Arnd
+The TG values are always used to specify a _restriction_ on
+task-specific values.
+
+Thus, if you look or example at the CPU mask for a task, you can have
+a task with affinity to CPUs 0-1, currently running on a cgroup with
+cpuset.cpus=0... then the task can run only on CPU 0 (althought its
+affinity includes CPU1 too).
+
+Same we do here: if a task has util_min=10, but it's running in a
+cgroup with cpu.util_min=0, then it will not be boosted.
+
+IOW, this allows to implement a "nice" policy at task level, where a
+task (via syscall) can decide to be less boosted with respect to its
+group but never more boosted. The same task can also decide to be more
+clamped, but not less clamped then its current group.
+
+[...]
+
+> > @@ -982,18 +989,30 @@ static inline void uclamp_cpu_get_id(struct task_struct *p,
+> >         int clamp_value;
+> >         int group_id;
+> >
+> > -       /* No task specific clamp values: nothing to do */
+> >         group_id = p->uclamp[clamp_id].group_id;
+> > +       clamp_value = p->uclamp[clamp_id].value;
+> > +#ifdef CONFIG_UCLAMP_TASK_GROUP
+> > +       /* Use TG's clamp value to limit task specific values */
+> > +       if (group_id == UCLAMP_NONE ||
+> > +           clamp_value >= task_group(p)->uclamp[clamp_id].value) {
+> 
+> Not a big deal but do you need to override if (clamp_value ==
+> task_group(p)->uclamp[clamp_id].value)? Maybe:
+> -           clamp_value >= task_group(p)->uclamp[clamp_id].value) {
+> +          clamp_value > task_group(p)->uclamp[clamp_id].value) {
+
+Good point, yes... the override is not really changing anything here.
+Will fix this!
+
+> > +               clamp_value = task_group(p)->uclamp[clamp_id].value;
+> > +               group_id = task_group(p)->uclamp[clamp_id].group_id;
+> > +       }
+> > +#else
+> > +       /* No task specific clamp values: nothing to do */
+> >         if (group_id == UCLAMP_NONE)
+> >                 return;
+> > +#endif
+> >
+> >         /* Reference count the task into its current group_id */
+> >         uc_grp = &rq->uclamp.group[clamp_id][0];
+> >         uc_grp[group_id].tasks += 1;
+> >
+> > +       /* Track the effective clamp group */
+> > +       p->uclamp_group_id[clamp_id] = group_id;
+> > +
+> >         /* Force clamp update on idle exit */
+> >         uc_cpu = &rq->uclamp;
+> > -       clamp_value = p->uclamp[clamp_id].value;
+> >         if (unlikely(uc_cpu->flags & UCLAMP_FLAG_IDLE)) {
+> >                 if (clamp_id == UCLAMP_MAX)
+> >                         uc_cpu->flags &= ~UCLAMP_FLAG_IDLE;
+
+[...]
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
