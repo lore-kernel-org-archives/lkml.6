@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9A9ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70446ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C4F420854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C4F420854
+	by mail.kernel.org (Postfix) with ESMTP id 2BC8120854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BC8120854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388490AbeGWN1y (ORCPT
+        id S2388507AbeGWN15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:27:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45334 "EHLO
+        Mon, 23 Jul 2018 09:27:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45342 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387882AbeGWN1y (ORCPT
+        with ESMTP id S2387882AbeGWN15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:27:54 -0400
+        Mon, 23 Jul 2018 09:27:57 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90D62AEF;
-        Mon, 23 Jul 2018 12:26:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 571FBB14;
+        Mon, 23 Jul 2018 12:26:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.17 21/63] ARC: mm: allow mprotect to make stack mappings executable
-Date:   Mon, 23 Jul 2018 14:24:27 +0200
-Message-Id: <20180723122447.164815257@linuxfoundation.org>
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 39/63] lib/rhashtable: consider param->min_size when setting initial table size
+Date:   Mon, 23 Jul 2018 14:24:45 +0200
+Message-Id: <20180723122447.857706794@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -49,44 +51,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vineet Gupta <vgupta@synopsys.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-commit 93312b6da4df31e4102ce5420e6217135a16c7ea upstream.
+[ Upstream commit 107d01f5ba10f4162c38109496607eb197059064 ]
 
-mprotect(EXEC) was failing for stack mappings as default vm flags was
-missing MAYEXEC.
+rhashtable_init() currently does not take into account the user-passed
+min_size parameter unless param->nelem_hint is set as well. As such,
+the default size (number of buckets) will always be HASH_DEFAULT_SIZE
+even if the smallest allowed size is larger than that. Remediate this
+by unconditionally calling into rounded_hashtable_size() and handling
+things accordingly.
 
-This was triggered by glibc test suite nptl/tst-execstack testcase
-
-What is surprising is that despite running LTP for years on, we didn't
-catch this issue as it lacks a directed test case.
-
-gcc dejagnu tests with nested functions also requiring exec stack work
-fine though because they rely on the GNU_STACK segment spit out by
-compiler and handled in kernel elf loader.
-
-This glibc case is different as the stack is non exec to begin with and
-a dlopen of shared lib with GNU_STACK segment triggers the exec stack
-proceedings using a mprotect(PROT_EXEC) which was broken.
-
-CC: stable@vger.kernel.org
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arc/include/asm/page.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/rhashtable.c |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/arch/arc/include/asm/page.h
-+++ b/arch/arc/include/asm/page.h
-@@ -105,7 +105,7 @@ typedef pte_t * pgtable_t;
- #define virt_addr_valid(kaddr)  pfn_valid(virt_to_pfn(kaddr))
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -923,8 +923,16 @@ EXPORT_SYMBOL_GPL(rhashtable_walk_stop);
  
- /* Default Permissions for stack/heaps pages (Non Executable) */
--#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE)
-+#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
+ static size_t rounded_hashtable_size(const struct rhashtable_params *params)
+ {
+-	return max(roundup_pow_of_two(params->nelem_hint * 4 / 3),
+-		   (unsigned long)params->min_size);
++	size_t retsize;
++
++	if (params->nelem_hint)
++		retsize = max(roundup_pow_of_two(params->nelem_hint * 4 / 3),
++			      (unsigned long)params->min_size);
++	else
++		retsize = max(HASH_DEFAULT_SIZE,
++			      (unsigned long)params->min_size);
++
++	return retsize;
+ }
  
- #define WANT_PAGE_VIRTUAL   1
+ static u32 rhashtable_jhash2(const void *key, u32 length, u32 seed)
+@@ -981,8 +989,6 @@ int rhashtable_init(struct rhashtable *h
+ 	struct bucket_table *tbl;
+ 	size_t size;
  
+-	size = HASH_DEFAULT_SIZE;
+-
+ 	if ((!params->key_len && !params->obj_hashfn) ||
+ 	    (params->obj_hashfn && !params->obj_cmpfn))
+ 		return -EINVAL;
+@@ -1009,8 +1015,7 @@ int rhashtable_init(struct rhashtable *h
+ 
+ 	ht->p.min_size = max_t(u16, ht->p.min_size, HASH_MIN_SIZE);
+ 
+-	if (params->nelem_hint)
+-		size = rounded_hashtable_size(&ht->p);
++	size = rounded_hashtable_size(&ht->p);
+ 
+ 	if (params->locks_mul)
+ 		ht->p.locks_mul = roundup_pow_of_two(params->locks_mul);
 
 
