@@ -6,280 +6,183 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E7CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F84CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7645720874
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C7C720858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:55:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AaSOE1s6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Bnoy1dhj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7645720874
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RBuN1sJW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Bp/QATOq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C7C720858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387849AbeGWGxO (ORCPT
+        id S1728294AbeGWGyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 02:53:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46148 "EHLO
+        Mon, 23 Jul 2018 02:54:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46766 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728017AbeGWGxO (ORCPT
+        with ESMTP id S1728176AbeGWGyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 02:53:14 -0400
+        Mon, 23 Jul 2018 02:54:44 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 185D16074D; Mon, 23 Jul 2018 05:53:43 +0000 (UTC)
+        id 5C5A5606CF; Mon, 23 Jul 2018 05:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532325224;
-        bh=ziXkyQtGS+BCjCFwHMgs2RjsjU0MHF2K0nChqfcQi+c=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=AaSOE1s60prPxHWGlKxrdKMwjheBIC6dQ/PRmbFRc7xP0pRu26JyLOXY//Sh/ywwz
-         4d9pKP9wSIfJRZRU+Ejfx9cKEqfhQQ8/zFQbw+deFjjo4VW5zZLZG03spxRUd8Kk28
-         xikD9How+dJmpPw3TaRnGQ0OpXQYCjeeAwzdG9mo=
-Received: from mail-qt0-f175.google.com (mail-qt0-f175.google.com [209.85.216.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8DD5060B12;
-        Mon, 23 Jul 2018 05:53:42 +0000 (UTC)
+        s=default; t=1532325313;
+        bh=EtY7BSCswnKVaKP1GorHu935jf0ml8B9WzazBgnaN7o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RBuN1sJWryn40+Xn4ZcpSmjPBzjH/c5iJEfHZvEOeRxIMjTjf0s0D5LZNb3TP3Glb
+         ZqP/1QcJy20EoQGC+vtQfyu2EFOyTsOEi5AhjZtf3TOwdXEh9eCOVGS7uM7Ma84vld
+         mCIhtsLaO0ozmi3yrPiCIehNDwHU1Oj7t90MBwYk=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 6631C602BC;
+        Mon, 23 Jul 2018 05:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532325222;
-        bh=ziXkyQtGS+BCjCFwHMgs2RjsjU0MHF2K0nChqfcQi+c=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Bnoy1dhjkblkoSV/YRcbzIGh3u1NNRyEvzI18LoqjzYygxbkXrIIXuzb2eT/1Hpir
-         IH0LFO/Gp/QcVJVEOcea8oTHt1LLTcicCD/EZmwKskRg0HHSVBOUSPUaNc/X6J8gb0
-         rAv7eJpvSddioS62rUXKR8xGdpIncDHjHgQa3QXE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8DD5060B12
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt0-f175.google.com with SMTP id y5-v6so15448105qti.12;
-        Sun, 22 Jul 2018 22:53:42 -0700 (PDT)
-X-Gm-Message-State: AOUpUlE3tNKg9XrLMgtALKDx2RbToHwTTf7OltpzxRY6M9HluHoC81qH
-        qJa5NXyZySa9QA2jvIn7zUkNa5j4z35moND6rHI=
-X-Google-Smtp-Source: AAOMgpf2H2ppcLoJ8xzSca7jVUfn3XSHDoUx86IlvH3KDnnO4ONBSSxubpJdTaez+aI2JWo2qpwg5gV5Wq3qWMCBBOU=
-X-Received: by 2002:a0c:c489:: with SMTP id u9-v6mr9934888qvi.11.1532325221720;
- Sun, 22 Jul 2018 22:53:41 -0700 (PDT)
+        s=default; t=1532325312;
+        bh=EtY7BSCswnKVaKP1GorHu935jf0ml8B9WzazBgnaN7o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Bp/QATOqO2FttD47f5w3syElB8V6/+/CE49eLoe5e+vnfAKqFl2GpCo7Y9RefdMC9
+         Kqkq9wD32+jfeME4rqVKh9CzvVQYEsnryPu8tAmT7t5pnjI93L7ePI+VYHkdEsaF0Y
+         O2KsWDjEAamqr+5anhzI2vDbg2/WbbLTlBd3IqR8=
 MIME-Version: 1.0
-Received: by 2002:ac8:f25:0:0:0:0:0 with HTTP; Sun, 22 Jul 2018 22:53:41 -0700 (PDT)
-In-Reply-To: <20180719101539.6104-1-vivek.gautam@codeaurora.org>
-References: <20180719101539.6104-1-vivek.gautam@codeaurora.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Mon, 23 Jul 2018 11:23:41 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iER6_1MoCWJZeTsXja_ykOz32-3LB_EVNCm6uQWyh5mAA@mail.gmail.com>
-Message-ID: <CAFp+6iER6_1MoCWJZeTsXja_ykOz32-3LB_EVNCm6uQWyh5mAA@mail.gmail.com>
-Subject: Re: [PATCH v13 0/4] iommu/arm-smmu: Add runtime pm/sleep support
-To:     Joerg Roedel <joro@8bytes.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        Lukas Wunner <lukas@wunner.de>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "robh+dt" <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 23 Jul 2018 11:25:12 +0530
+From:   kgunda@codeaurora.org
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com,
+        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V4 4/8] backlight: qcom-wled: Rename PM8941* to WLED3
+In-Reply-To: <9aff8c23-7c72-eaee-9d59-424cd34be4ac@linaro.org>
+References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
+ <1531131741-19971-5-git-send-email-kgunda@codeaurora.org>
+ <9aff8c23-7c72-eaee-9d59-424cd34be4ac@linaro.org>
+Message-ID: <cc903e5fb06344731e75f078bdf42401@codeaurora.org>
+X-Sender: kgunda@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 3:45 PM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> This series provides the support for turning on the arm-smmu's
-> clocks/power domains using runtime pm. This is done using
-> device links between smmu and client devices. The device link
-> framework keeps the two devices in correct order for power-cycling
-> across runtime PM or across system-wide PM.
->
-> With addition of a new device link flag DL_FLAG_AUTOREMOVE_SUPPLIER [8]
-> (available in linux-next of Rafael's linux-pm tree [9]), the device links
-> created between arm-smmu and its clients will be automatically purged
-> when arm-smmu driver unbinds from its device.
->
-> As not all implementations support clock/power gating, we are checking
-> for a valid 'smmu->dev's pm_domain' to conditionally enable the runtime
-> power management for such smmu implementations that can support it.
-> Otherwise, the clocks are turned to be always on in .probe until .remove.
-> With conditional runtime pm now, we avoid touching dev->power.lock
-> in fastpaths for smmu implementations that don't need to do anything
-> useful with pm_runtime.
-> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
-> calls in map/unmap callbacks so that the clients do not have to
-> worry about handling any of the arm-smmu's power.
->
-> This series also adds support for Qcom's arm-smmu-v2 variant that
-> has different clocks and power requirements.
->
-> Previous version of this patch series is @ [2].
->
-> Tested this series on msm8996, and sdm845 after pulling in Rafael's linux-pm
-> linux-next[9] and Joerg's iommu next[10] branches.
-
-Hi Rafael,
-
-If the changes look good to you now, can you please consider giving your Ack.
-Thanks.
-
-Hi Robin, Will,
-If the series looks good to you, and if there's a chance, can you
-please consider
-picking this series for 4.19. Thanks.
-
-Best regards
-Vivek
-
->
-> [v13]
->    Addressing Rafael's comments:
->    * Added .suspend pm callback to disable the clocks in system wide suspend.
->    * Added corresponding clock enable in .resume pm callback.
->    * Explicitly enabling/disabling the clocks now when runtime PM is disabled.
->    * device_link_add() doesn't depend on pm_runtime_enabled() as we can
->      use device links across system suspend/resume too.
->
->    Addressing Robin's comments:
->    * Making device_link_add failures as non-fatal.
->
->    * Removed IOMMU_OF_DECLARE() declaration as we don't need this after Rob's
->      patch that removed all of these declarations.
->
-> [v12]
->    * Use new device link's flag introduced in [8] -
->      DL_FLAG_AUTOREMOVE_SUPPLIER. With this devices links are automatically
->      purged when arm-smmu driver unbinds.
->    * Using pm_runtime_force_suspend() instead of pm_runtime_disable() to
->      avoid following warning from arm_smmu_device_remove()
->
->      [295711.537507] ------------[ cut here ]------------
->      [295711.544226] Unpreparing enabled smmu_mdp_ahb_clk
->      [295711.549099] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:697
->                      clk_core_unprepare+0xd8/0xe0
->      ...
->      [295711.674073] Call trace:
->      [295711.679454]  clk_core_unprepare+0xd8/0xe0
->      [295711.682059]  clk_unprepare+0x28/0x40
->      [295711.685964]  clk_bulk_unprepare+0x28/0x40
->      [295711.689701]  arm_smmu_device_remove+0x88/0xd8
->      [295711.693692]  arm_smmu_device_shutdown+0xc/0x18
->      [295711.698120]  platform_drv_shutdown+0x20/0x30
->
-> [v11]
->    * Some more cleanups for device link. We don't need an explicit
->      delete for device link from the driver, but just set the flag
->      DL_FLAG_AUTOREMOVE.
->      device_link_add() API description says -
->      "If the DL_FLAG_AUTOREMOVE is set, the link will be removed
->      automatically when the consumer device driver unbinds."
->    * Addressed the comments for 'smmu' in arm_smmu_map/unmap().
->    * Dropped the patch [7] that introduced device_link_del_dev() API.
->
-> [v10]
->    * Introduce device_link_del_dev() API to delete the link between
->      given consumer and supplier devices. The users of device link
->      do not need to store link pointer to delete the link later.
->      They can straightaway use this API by passing consumer and
->      supplier devices.
->    * Made corresponding changes to arm-smmu driver patch handling the
->      device links.
->    * Dropped the patch [6] that was adding device_link_find() API to
->      device core layer. device_link_del_dev() serves the purpose to
->      directly delete the link between two given devices.
->
-> [v9]
->    * Removed 'rpm_supported' flag, instead checking on pm_domain
->      to enable runtime pm.
->    * Creating device link only when the runtime pm is enabled, as we
->      don't need a device link besides managing the power dependency
->      between supplier and consumer devices.
->    * Introducing a patch to add device_link_find() API that finds
->      and existing link between supplier and consumer devices.
->      Also, made necessary change to device_link_add() to use this API.
->    * arm_smmu_remove_device() now uses this device_link_find() to find
->      the device link between smmu device and the master device, and then
->      delete this link.
->    * Dropped the destroy_domain_context() fix [5] as it was rather,
->      introducing catastrophically bad problem by destroying
->      'good dev's domain context.
->    * Added 'Reviwed-by' tag for Tomasz's review.
->
-> [v8]
->    * Major change -
->      - Added a flag 'rpm_supported' which each platform that supports
->        runtime pm, can enable, and we enable runtime_pm over arm-smmu
->        only when this flag is set.
->      - Adding the conditional pm_runtime_get/put() calls to .map, .unmap
->        and .attach_dev ops.
->      - Dropped the patch [3] that exported pm_runtim_get/put_suupliers(),
->        and also dropped the user driver patch [4] for these APIs.
->
->    * Clock code further cleanup
->      - doing only clk_bulk_enable() and clk_bulk_disable() in runtime pm
->        callbacks. We shouldn't be taking a slow path (clk_prepare/unprepare())
->        from these runtime pm callbacks. Thereby, moved clk_bulk_prepare() to
->        arm_smmu_device_probe(), and clk_bulk_unprepare() to
->        arm_smmu_device_remove().
->      - clk data filling to a common method arm_smmu_fill_clk_data() that
->        fills the clock ids and number of clocks.
->
->    * Addressed other nits and comments
->      - device_link_add() error path fixed.
->      - Fix for checking negative error value from pm_runtime_get_sync().
->      - Documentation redo.
->
->    * Added another patch fixing the error path in arm_smmu_attach_dev()
->      to destroy allocated domain context.
->
-> [v7]
->    * Addressed review comments given by Robin Murphy -
->      - Added device_link_del() in .remove_device path.
->      - Error path cleanup in arm_smmu_add_device().
->      - Added pm_runtime_get/put_sync() in .remove path, and replaced
->         pm_runtime_force_suspend() with pm_runtime_disable().
->      - clk_names cleanup in arm_smmu_init_clks()
->    * Added 'Reviewed-by' given by Rob H.
->
-> ** Change logs for previous versions is available in last series [4].
->
->
-> [1] https://patchwork.kernel.org/patch/10204925/
-> [2] https://lkml.org/lkml/2018/7/8/124
-> [3] https://patchwork.kernel.org/patch/10204945/
-> [4] https://patchwork.kernel.org/patch/10204925/
-> [5] https://patchwork.kernel.org/patch/10254105/
-> [6] https://patchwork.kernel.org/patch/10277975/
-> [7] https://patchwork.kernel.org/patch/10281613/
-> [8] https://patchwork.kernel.org/patch/10491481/
-> [9] https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=linux-next
-> [10] https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/log/?h=next
->
-> Sricharan R (3):
->   iommu/arm-smmu: Add pm_runtime/sleep ops
->   iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
->   iommu/arm-smmu: Add the device_link between masters and smmu
->
-> Vivek Gautam (1):
->   iommu/arm-smmu: Add support for qcom,smmu-v2 variant
->
->  .../devicetree/bindings/iommu/arm,smmu.txt         |  42 +++++
->  drivers/iommu/arm-smmu.c                           | 192 +++++++++++++++++++--
->  2 files changed, 224 insertions(+), 10 deletions(-)
->
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
->
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-
-
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+On 2018-07-20 18:53, Daniel Thompson wrote:
+> On 09/07/18 11:22, Kiran Gunda wrote:
+>> Rename the PM8941* references as WLED3 to make the
+>> driver generic and have WLED support for other PMICs.
+>> 
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> ---
+>> Changes from V3:
+>> 	- Changed the MODULE_DESCRIPTION
+>> 
+>>   drivers/video/backlight/qcom-wled.c | 248 
+>> ++++++++++++++++++------------------
+>>   1 file changed, 125 insertions(+), 123 deletions(-)
+>> 
+>> diff --git a/drivers/video/backlight/qcom-wled.c 
+>> b/drivers/video/backlight/qcom-wled.c
+>> index 0b6d219..3cd6e75 100644
+>> --- a/drivers/video/backlight/qcom-wled.c
+>> +++ b/drivers/video/backlight/qcom-wled.c
+>> @@ -18,77 +18,79 @@
+>>   #include <linux/regmap.h>
+>>     /* From DT binding */
+>> -#define PM8941_WLED_DEFAULT_BRIGHTNESS		2048
+>> +#define WLED_DEFAULT_BRIGHTNESS				2048
+>>   -#define PM8941_WLED_REG_VAL_BASE		0x40
+>> -#define  PM8941_WLED_REG_VAL_MAX		0xFFF
+>> +#define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
+>> +#define WLED3_CTRL_REG_VAL_BASE				0x40
+>>   -#define PM8941_WLED_REG_MOD_EN			0x46
+>> -#define  PM8941_WLED_REG_MOD_EN_BIT		BIT(7)
+>> -#define  PM8941_WLED_REG_MOD_EN_MASK		BIT(7)
+>> +/* WLED3 control registers */
+>> +#define WLED3_CTRL_REG_MOD_EN				0x46
+>> +#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
+>> +#define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
+>>   -#define PM8941_WLED_REG_SYNC			0x47
+>> -#define  PM8941_WLED_REG_SYNC_MASK		0x07
+>> -#define  PM8941_WLED_REG_SYNC_LED1		BIT(0)
+>> -#define  PM8941_WLED_REG_SYNC_LED2		BIT(1)
+>> -#define  PM8941_WLED_REG_SYNC_LED3		BIT(2)
+>> -#define  PM8941_WLED_REG_SYNC_ALL		0x07
+>> -#define  PM8941_WLED_REG_SYNC_CLEAR		0x00
+>> +#define WLED3_CTRL_REG_FREQ				0x4c
+>> +#define  WLED3_CTRL_REG_FREQ_MASK			0x0f
+>>   -#define PM8941_WLED_REG_FREQ			0x4c
+>> -#define  PM8941_WLED_REG_FREQ_MASK		0x0f
+>> +#define WLED3_CTRL_REG_OVP				0x4d
+>> +#define  WLED3_CTRL_REG_OVP_MASK			0x03
+>>   -#define PM8941_WLED_REG_OVP			0x4d
+>> -#define  PM8941_WLED_REG_OVP_MASK		0x03
+>> +#define WLED3_CTRL_REG_ILIMIT				0x4e
+>> +#define  WLED3_CTRL_REG_ILIMIT_MASK			0x07
+>>   -#define PM8941_WLED_REG_BOOST			0x4e
+>> -#define  PM8941_WLED_REG_BOOST_MASK		0x07
+>> +/* WLED3 sink registers */
+>> +#define WLED3_SINK_REG_SYNC				0x47
+>> +#define  WLED3_SINK_REG_SYNC_MASK			0x07
+>> +#define  WLED3_SINK_REG_SYNC_LED1			BIT(0)
+>> +#define  WLED3_SINK_REG_SYNC_LED2			BIT(1)
+>> +#define  WLED3_SINK_REG_SYNC_LED3			BIT(2)
+>> +#define  WLED3_SINK_REG_SYNC_ALL			0x07
+>> +#define  WLED3_SINK_REG_SYNC_CLEAR			0x00
+>>   -#define PM8941_WLED_REG_SINK			0x4f
+>> -#define  PM8941_WLED_REG_SINK_MASK		0xe0
+>> -#define  PM8941_WLED_REG_SINK_SHFT		0x05
+>> +#define WLED3_SINK_REG_CURR_SINK			0x4f
+>> +#define  WLED3_SINK_REG_CURR_SINK_MASK			0xe0
+>> +#define  WLED3_SINK_REG_CURR_SINK_SHFT			0x05
+>>   -/* Per-'string' registers below */
+>> -#define PM8941_WLED_REG_STR_OFFSET		0x10
+>> +/* WLED3 per-'string' registers below */
+>> +#define WLED3_SINK_REG_STR_OFFSET			0x10
+>>   -#define PM8941_WLED_REG_STR_MOD_EN_BASE		0x60
+>> -#define  PM8941_WLED_REG_STR_MOD_MASK		BIT(7)
+>> -#define  PM8941_WLED_REG_STR_MOD_EN		BIT(7)
+>> +#define WLED3_SINK_REG_STR_MOD_EN_BASE			0x60
+>> +#define  WLED3_SINK_REG_STR_MOD_MASK			BIT(7)
+>> +#define  WLED3_SINK_REG_STR_MOD_EN			BIT(7)
+>>   -#define PM8941_WLED_REG_STR_SCALE_BASE		0x62
+>> -#define  PM8941_WLED_REG_STR_SCALE_MASK		0x1f
+>> +#define WLED3_SINK_REG_STR_FULL_SCALE_CURR		0x62
+>> +#define  WLED3_SINK_REG_STR_FULL_SCALE_CURR_MASK	0x1f
+>>   -#define PM8941_WLED_REG_STR_MOD_SRC_BASE	0x63
+>> -#define  PM8941_WLED_REG_STR_MOD_SRC_MASK	0x01
+>> -#define  PM8941_WLED_REG_STR_MOD_SRC_INT	0x00
+>> -#define  PM8941_WLED_REG_STR_MOD_SRC_EXT	0x01
+>> +#define WLED3_SINK_REG_STR_MOD_SRC_BASE			0x63
+>> +#define  WLED3_SINK_REG_STR_MOD_SRC_MASK		0x01
+>> +#define  WLED3_SINK_REG_STR_MOD_SRC_INT			0x00
+>> +#define  WLED3_SINK_REG_STR_MOD_SRC_EXT			0x01
+>>   -#define PM8941_WLED_REG_STR_CABC_BASE		0x66
+>> -#define  PM8941_WLED_REG_STR_CABC_MASK		BIT(7)
+>> -#define  PM8941_WLED_REG_STR_CABC_EN		BIT(7)
+>> +#define WLED3_SINK_REG_STR_CABC_BASE			0x66
+>> +#define  WLED3_SINK_REG_STR_CABC_MASK			BIT(7)
+>> +#define  WLED3_SINK_REG_STR_CABC_EN			BIT(7)
+>>   -struct pm8941_wled_config {
+>> -	u32 i_boost_limit;
+>> +struct wled_config {
+>> +	u32 boost_i_limit;
+>>   	u32 ovp;
+>>   	u32 switch_freq;
+>>   	u32 num_strings;
+>> -	u32 i_limit;
+>> +	u32 string_i_limit;
+> 
+> This patch implements a grand renaming and I have no objections to
+> including change for boost_i_limit and string_i_limit in it. I'd
+> prefer it to be mentioned in the patch header though.
+> 
+> Once that is done:
+> 
+> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Thanks Daneil. I will include it in the patch header in next series.
