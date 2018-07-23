@@ -2,130 +2,151 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1E2ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6729BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F51120779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:28:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F51120779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 17C0920779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:28:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acQFN1mE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C0920779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388554AbeGWPaL (ORCPT
+        id S2388575AbeGWPaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 11:30:11 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:16317 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388197AbeGWPaK (ORCPT
+        Mon, 23 Jul 2018 11:30:15 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44128 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388556AbeGWPaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 11:30:10 -0400
-Received: from [192.168.90.67] (61.170.236.39) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 23 Jul
- 2018 22:28:42 +0800
-Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock
- controller
-To:     Kevin Hilman <khilman@baylibre.com>
-References: <20180710163658.6175-1-yixun.lan@amlogic.com>
- <20180710163658.6175-2-yixun.lan@amlogic.com>
- <20180711194346.GA32414@rob-hp-laptop>
- <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
- <CABGGisw64MpYx7Pvp+XGt6gfZzie6EKeHdchqS6CPDjmAHBuVA@mail.gmail.com>
- <5442a2e8-eb49-2aa8-e53e-8db88cd0bd58@amlogic.com>
- <CAL_Jsq+r+7BaJAPBn3L26sdxATVyDiuC=V3xE+yz0-27q0RJhA@mail.gmail.com>
- <8bf565d3-dbfd-e06d-7076-ba78d7a2e766@amlogic.com>
- <7hbmay3ut6.fsf@baylibre.com>
-CC:     <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From:   Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <405ff057-a14e-f9eb-19e0-8d467dda35a1@amlogic.com>
-Date:   Mon, 23 Jul 2018 22:28:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Mon, 23 Jul 2018 11:30:13 -0400
+Received: by mail-qt0-f195.google.com with SMTP id b15-v6so777252qtp.11;
+        Mon, 23 Jul 2018 07:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=UNe3nx21mFWEOS2eWlqfnBvaQPHzv3U5Bt15snZh8Ak=;
+        b=acQFN1mEe3bc/nZBLmo+IjFCllIMoZK7xrGvI328JQ5EUPO3h8nkQe0XGmLQ8tKXeP
+         6yTXP1fGvnTPreDeD9xn9Gzpmlw6cNHNltvh9MOIpqH0/7Sk12AssdYwHcr7x1H+bRXa
+         zU51c4iTyexY5QjGLIMTcZbD3HUEqh1bVKhLggPObAJ25iKPyr/KbtCurQ92fTrDAyNe
+         dcRj0PMBEa2/Bxd2jmbe6EvMIYeUF5cZ+ygzFsTPHK5GHXxt7vjIv5n66ChqvYP35c9i
+         mCjeOg1YyDRXJE6PvqYHYDk1JQJqlfvFMkbJWdnxp0jyvHa8PFFwiN8EJL0NytEyJKK8
+         bMWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=UNe3nx21mFWEOS2eWlqfnBvaQPHzv3U5Bt15snZh8Ak=;
+        b=N7NKJgL7QU43XYrKHUel+aSFXXAermNGFx4keBpGL+TeEU27pWzldjtCf3sHyQcCc0
+         SpnJprkjSBxCc1BoVWdhqSJU+1KOntn9FoOcCowC4F5Uo/fRqaWLlJxDeGT1vZQ81hcM
+         WKo/3s/i2X/JmpQPd9IiDE8dxzJ4p7QYVYheO7V51RW5x/OklFh0DKp5gGsNHm53S0Gw
+         Ra/dZIXBln/X/Tl3KEaPKsctBeX/qlbb4+Q7z3l8vOCknBPDE8zYAdTu9mXiPhq2SdDG
+         86OAEFoYijEmsfI+zsw0W7Hp+bE6xE9fUmQe7+hy63U4jkRi8DjBW45s6PQfuoOyXfBX
+         GiTQ==
+X-Gm-Message-State: AOUpUlEyDABvUP+LvqjE+ucb/8MBpgrpCCXFSsswqXbfaWhM8nrpfSGE
+        WO6UPtk4Pw3LhtRPozikoD71Q7cXB3UHsxqzjeQ=
+X-Google-Smtp-Source: AAOMgpe2BGxWgWPzN+azfW9XnM6+TKW1VGePph6uF4SBgiOeNy3dgL7HWsNFjpscZbiZGlBOX/0dmNqj21fMbQgUBPI=
+X-Received: by 2002:aed:3b5d:: with SMTP id q29-v6mr11864087qte.389.1532356121681;
+ Mon, 23 Jul 2018 07:28:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7hbmay3ut6.fsf@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [61.170.236.39]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 07:28:41
+ -0700 (PDT)
+In-Reply-To: <20180716122125.175792-1-maco@android.com>
+References: <20180716122125.175792-1-maco@android.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 23 Jul 2018 16:28:41 +0200
+X-Google-Sender-Auth: 3dNcFMI93dqgcfqklcV2hnl_fZ4
+Message-ID: <CAK8P3a1F2j3PL2ng7xw9TbCQqwn_U+1D5ChH+v8qWVrxOfW3xw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Symbol namespaces
+To:     Martijn Coenen <maco@android.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oliver Neukum <oneukum@suse.com>, Jessica Yu <jeyu@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>,
+        Sandeep Patil <sspatil@google.com>, malchev@google.com,
+        Joel Fernandes <joelaf@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Kevin
+On Mon, Jul 16, 2018 at 2:21 PM, Martijn Coenen <maco@android.com> wrote:
+> As of Linux 4.17, there are more than 30000 exported symbols
+> in the kernel. There seems to be some consensus amongst
+> kernel devs that the export surface is too large, and hard
+> to reason about.
+>
+> Generally, these symbols fall in one of these categories:
+> 1) Symbols actually meant for drivers
+> 2) Symbols that are only exported because functionality is
+>    split over multiple modules, yet they really shouldn't
+>    be used by modules outside of their own subsystem
+> 3) Symbols really only meant for in-tree use
+>
+> When module developers try to upstream their code, it
+> regularly turns out that they are using exported symbols
+> that they really shouldn't be using. This problem is even
+> bigger for drivers that are currently out-of-tree, which
+> may be using many symbols that they shouldn't be using,
+> and that break when those symbols are removed or modified.
+>
+> This patch allows subsystem maintainers to partition their
+> exported symbols into separate namespaces, and module
+> authors to import such namespaces only when needed.
+>
+> This allows subsystem maintainers to more easily limit
+> availability of these namespaced symbols to other parts of
+> the kernel. It can also be used to partition the set of
+> exported symbols for documentation purposes; for example,
+> a set of symbols that is really only used for debugging
+> could be in a "SUBSYSTEM_DEBUG" namespace.
 
-On 07/23/2018 10:12 PM, Kevin Hilman wrote:
-> Yixun Lan <yixun.lan@amlogic.com> writes:
-> 
-> [...]
-> 
->>>
->>>> Second, we might like to convert eMMC driver to also use mmc-clkc model.
->>>
->>> IMO, this should be done as part of merging this series. Otherwise, we
->>> have duplicated code for the same thing.
->>
->> IMO, I'd leave this out of this series, since this patch series is quite
->> complete as itself. Although, the downside is code duplication.
->>
->> Still, I need to hear Jerome, or Kevin's option, to see if or how we
->> should proceed the eMMC's clock conversion.
->>
->> I could think of three option myself
->> 1) don't do the conversion, downside is code duplication, upside is NO
->> DT change, no compatibility issue
->> 2) add a syscon node into eMMC DT node, then only convert clock part
->> into this mmc-clkc model, while still leave other eMMC register access
->> as the usual iomap way (still no race condition)
->> 3) convert all eMMC register access by using regmap interface.
->>
->> both 2) and 3) need to update the DT.
->>
->> and probably 2) is a compromise way, and 1) is also OK, 3) is probably
->> the worst way due to dramatically change (I think this was already
->> rejected in the previous discussion)
-> 
-> Because the devices (NAND and eMMC_C) are mutually exclusive, taking the
-> step-by-step approach is fine (and preferred) by me.
-> 
-> Phase 1:
-> - add new mmc-clk provider
-> - add NAND driver using new mmc-clk provider
-> - boards using NAND should ensure emmc_c is disabled in DT
-> 
-> This allows us to not touch the MMC driver or existing upstream
-> bindings.  Yes, this means there is duplicate code in the MMC driver and
-> the new mmc-clk provider, but that can be removed in the next phase.
-> 
-Great, the approach to address this issue is reasonable.
-We'd like to focus on phase 1 first, thanks
+This looks nice. I don't want to overload you with additional
+requests, but it might be good to think about how this can
+be taken further, if we want to actually convert large
+parts of the kernel to it. I have two ideas:
 
-> Phase 2:
-> - convert MMC driver to use new mmc-clk provider
-> - update MMC users in DT and bindings
-> 
-Ok.
+- It would be nice to have a simple mechanism in Kconfig
+  to put all symbols in a module into a namespace that is
+  derived from KBUILD_MODNAME, to avoid having to
+  annotate every symbol separately. This could be similar
+  to how we ended up dealing with EXPORT_NO_SYMBOLS
+  in the linux-2.4 days, with the goal of eventually having
+  a namespace for each symbol. Similarly, we could pass
+  a number of default namespaces through the Makefile,
+  e.g. if we have a directory that has lots of drivers that all
+  import the symbols from a common subsystem module.
 
+- If this is possible to implement, it would be great to have
+  a way to limit the globally visible symbols in a module
+  to the ones that are explicitly exported  even when a that
+  module is built-in rather than loadable. Not sure how this
+  is best done though. A couple of things can be done with
+  objcopy, or possibly by reintroducing partial linking (which
+  was removed not too long ago).
 
-Yixun
+        Arnd
