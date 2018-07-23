@@ -2,122 +2,222 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3067ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 083BEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BE420852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:04:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84BE420852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 9AA2520874
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:06:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQsUzt49"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AA2520874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388184AbeGWXHu (ORCPT
+        id S2388175AbeGWXKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 19:07:50 -0400
-Received: from www62.your-server.de ([213.133.104.62]:34137 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388139AbeGWXHu (ORCPT
+        Mon, 23 Jul 2018 19:10:03 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37454 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388052AbeGWXKC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 19:07:50 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fhiwR-00051Z-Fy; Tue, 24 Jul 2018 00:04:31 +0200
-Received: from [99.0.85.34] (helo=localhost.localdomain)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fhiwR-000DFE-1r; Tue, 24 Jul 2018 00:04:31 +0200
-Subject: Re: bisected: 4.18-rc* regression: x86-32 troubles (with timers?)
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
-References: <alpine.LRH.2.21.1807041414080.3671@math.ut.ee>
- <CAK8P3a1RkNc_kShHBJ6QENrQheQi=C93DmnknC1S_uJDcTDqww@mail.gmail.com>
- <alpine.LRH.2.21.1807051254050.21817@math.ut.ee>
- <alpine.LRH.2.21.1807151803010.17406@math.ut.ee>
- <CAK8P3a2NtB_FmiSjrzZb=HoshEzo+MP2xwafC3QcMg79rffipg@mail.gmail.com>
- <alpine.LRH.2.21.1807161948380.27791@math.ut.ee>
- <alpine.LRH.2.21.1807162200180.27791@math.ut.ee>
- <alpine.LRH.2.21.1807202339490.8506@math.ut.ee>
- <alpine.LRH.2.21.1807210154100.8506@math.ut.ee>
- <CAK8P3a19pCbn5Ns0jVqGTiSmGj4AOgjWL0CQtAA-sYRqY4Gvjw@mail.gmail.com>
- <32227088-7754-c160-8046-e860f42ca91c@iogearbox.net>
- <alpine.LRH.2.21.1807232322430.11834@math.ut.ee>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <4a48811d-4094-ee4c-33ca-2cf0446a6313@iogearbox.net>
-Date:   Tue, 24 Jul 2018 00:04:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 23 Jul 2018 19:10:02 -0400
+Received: by mail-wr1-f65.google.com with SMTP id q10-v6so2145534wrd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 15:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=f9CwJybbmeWTDoE+D+UII72glveE4p8tyuFt4BymySs=;
+        b=XQsUzt49JrSp4vTZ5V/I5hAeOloUPs020Jq2aDnb5GCq005YYnmmv9XcS4T4vrIv79
+         hh6TAJZp/km2AxAmgIVhgV5ZJhJayaL8bGbN17jyBxVcOWWXY4BbYxiVJ1bcSgW03ynU
+         ba4LQEGOeZ94ciqu/ziGRjIJOZGxlWLYOytdcJ44SZgy1zo+aIYEBaoSDxFBpkEdbBu/
+         gLppd9leJbQF5wG3s8tWXXTxLf/+asu5V6mEN+Q14loUVBjehkFjb6YA7U+PUFso0jri
+         PUf5Jm10Yc+tpO+CGOxcqJyXb1SB7zl/Wbx7DvqI/wB9GhgxHqtY4touuw8Bh+u/L84z
+         mvcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=f9CwJybbmeWTDoE+D+UII72glveE4p8tyuFt4BymySs=;
+        b=oX+9mFTP5CIxNqHHl7ja95gBTsUI0ZXviUCGDf1x9M5p7v5vrgQPsrSznEg8U7h+fo
+         j4QdhhaPtuKLYspGoMedj4rBNqjGIn9k4nABQWYBQdU+/iDEb8ADUAE1M0MIS8fuer2h
+         HG9n9ZYmhPo1aYAo9xYndkbmh+0C2QOLH+9mpKpY+xF0qXK5U9g0xB7cmyWEq2oEp248
+         H30sjrfLSfuXFQVDU0lmJ69U0prkaUrdMBHi4+Hy9o3pLgXKCOji/mydprDRLCDmLSnt
+         AZCmpLItMobUr64XaU0FTmMxM5nFjr0V6asze5ppdN1JmYbc4svLtGkRjFgGL5UJyJuj
+         2SSw==
+X-Gm-Message-State: AOUpUlFnEDGk9N+pAvkinVzhHKYlDq4Ekj6e0c6bYzT5jnG3pq5YrHOX
+        8oqKs4PDaTxOFJ8EeD+NKyRZK0p/RqboBVPa2fs=
+X-Google-Smtp-Source: AAOMgpc5OewjcjdEgIzQd4FJPuH5aq7bn9HW0ITCXgqlT1CuQvIjHtnvk37GqRUadN6iVDjnFIW6lu3wZQjLdr5G4Lg=
+X-Received: by 2002:a5d:6401:: with SMTP id z1-v6mr9646844wru.64.1532383604483;
+ Mon, 23 Jul 2018 15:06:44 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1807232322430.11834@math.ut.ee>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24776/Mon Jul 23 18:44:17 2018)
+Received: by 2002:a1c:7507:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 15:06:43
+ -0700 (PDT)
+In-Reply-To: <20180723221002.736e0830@bbrezillon>
+References: <20171206025342.7266-1-Zhiqiang.Hou@nxp.com> <20171206025342.7266-3-Zhiqiang.Hou@nxp.com>
+ <20180723181350.GA58212@ban.mtv.corp.google.com> <20180723221002.736e0830@bbrezillon>
+From:   Brian Norris <computersforpeace@gmail.com>
+Date:   Mon, 23 Jul 2018 15:06:43 -0700
+Message-ID: <CAN8TOE904WXMScHo1b2jhusz-L8eGBK=gzUUX079ZVfiFk+HoQ@mail.gmail.com>
+Subject: Re: [PATCHv3 2/2] mtd: m25p80: restore the status of SPI flash when exiting
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Zhiqiang Hou <Zhiqiang.Hou@nxp.com>, linux-mtd@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 10:34 PM, Meelis Roos wrote:
->>>> Now this seems more relevant:
->>>>
->>>> mroos@rx100s2:~/linux$ nice git bisect good
->>>> 24dea04767e6e5175f4750770281b0c17ac6a2fb is the first bad commit
->>>> commit 24dea04767e6e5175f4750770281b0c17ac6a2fb
->>>> Author: Daniel Borkmann <daniel@iogearbox.net>
->>>> Date:   Fri May 4 01:08:23 2018 +0200
->>>>
->>>>     bpf, x32: remove ld_abs/ld_ind
->>>>
->>>>     Since LD_ABS/LD_IND instructions are now removed from the core and
->>>>     reimplemented through a combination of inlined BPF instructions and
->>>>     a slow-path helper, we can get rid of the complexity from x32 JIT.
->>>
->>> This does seem much more likely than the previous bisection, given
->>> that you ended up in an x86-32 specific commit (the subject says x32,
->>> but that is a mistake). I also checked that systemd indeed does
->>> call into bpf in a number of places, possibly for the journald socket.
->>>
->>> OTOH, it's still hard to tell how that commit can have ended up
->>> corrupting the clock read function in systemd. To cross-check,
->>> could you try reverting that commit on the latest kernel and see
->>> if it still works?
+Hi Boris,
+
+On Mon, Jul 23, 2018 at 1:10 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Mon, 23 Jul 2018 11:13:50 -0700
+> Brian Norris <computersforpeace@gmail.com> wrote:
+>> I noticed this got merged, but I wanted to put my 2 cents in here:
+>
+> I wish you had replied to this thread when it was posted (more than
+> 6 months ago). Reverting the patch now implies making some people
+> unhappy because they'll have to resort to their old out-of-tree
+> hacks :-(.
+
+I'd say I'm sorry for not following things closely these days, but I'm
+not really that sorry. There are plenty of other capable hands. And if
+y'all shoot yourselves in the foot, so be it. This patch isn't going
+to blow things up, but now that I did finally notice it (because it
+happened to show up in a list of backports I was looking at), I
+thought better late than never to remind you.
+
+For way of notification: Marek already noticed that we've started down
+a slippery slope months ago:
+
+https://lkml.org/lkml/2018/4/8/141
+Re: [PATCH] mtd: spi-nor: clear Extended Address Reg on switch to
+3-byte addressing.
+
+I'm not quite sure why that wasn't taken to its logical conclusion --
+that the hack should be reverted.
+
+This problem has been noted many times already, and we've always
+stayed on the side of *avoiding* this hack. A few references from a
+search of my email:
+
+http://lists.infradead.org/pipermail/linux-mtd/2013-March/046343.html
+[PATCH 1/3] mtd: m25p80: utilize dedicated 4-byte addressing commands
+
+http://lists.infradead.org/pipermail/barebox/2014-September/020682.html
+[RFC] MTD m25p80 3-byte addressing and boot problem
+
+http://lists.infradead.org/pipermail/linux-mtd/2015-February/057683.html
+[PATCH 2/2] m25p80: if supported put chip to deep power down if not used
+
+>> On Wed, Dec 06, 2017 at 10:53:42AM +0800, Zhiqiang Hou wrote:
+>> > From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>> >
+>> > Restore the status to be compatible with legacy devices.
+>> > Take Freescale eSPI boot for example, it copies (in 3 Byte
+>> > addressing mode) the RCW and bootloader images from SPI flash
+>> > without firing a reset signal previously, so the reboot command
+>> > will fail without reseting the addressing mode of SPI flash.
+>> > This patch implement .shutdown function to restore the status
+>> > in reboot process, and add the same operation to the .remove
+>> > function.
 >>
->> I would be curious as well about that whether revert would make it
->> work. What's the value of sysctl net.core.bpf_jit_enable ? Does it
->> change anything if you set it to 0 (only interpreter) or 1 (JIT
->> enabled). Seems a bit strange to me that bisect ended at this commit
->> given the issue you have. The JIT itself was also new in this window
->> fwiw. In any case some more debug info would be great to have.
-> 
-> net.core.bpf_jit_enable is 1.
-> 
-> Since it breaks bootup, I can not easily change the value at runtime (it 
-> would be postfactum). Do you mean changing the 
-> CONFIG_BPF_JIT_ALWAYS_ON=y option?
+>> We have previously rejected this patch multiple times, because the above
+>> comment demonstrates a broken product.
+>
+> If we were to only support working HW parts, I fear Linux would not
+> support a lot of HW (that's even more true when it comes to flashes :P).
 
-Yeah if you chance it to N, and don't have any fixed /etc/sysctl.conf
-setting, then you'll boot up with interpreter first (net.core.bpf_jit_enable
-as 0). Curious whether that works just fine for you.
+You stopped allowing UBI to attach to MLC NAND recently, no? That
+sounds like almost the same boat -- you've probably killed quite a few
+shitty products, if they were to use mainline directly.
 
-> Anyway, I started compile of v4.18-rc5 that was the latest I tested, 
-> with the commit in question reverted. Will see if I can test tomorrow 
-> morning. But I will leave tomorrow for a week and can only test further 
-> things if they happen to boot fine (no manual reboot possible for a 
-> week).
+Anyway, that's derailing the issue. Supporting broken hardware isn't
+something you try to do by applying the same hack to all systems. You
+normally try to apply your hack as narrowly as possible. You seem to
+imply that below. So maybe that's a solution to move forward with. But
+I'd personally be just as happy to see the patch reverted.
 
-Ok, thanks, please keep us posted on the outcome with the revert. Right
-now I would doubt it's related resp. changes anything on the issue, but
-lets see.
+>> You cannot guarantee that all
+>> reboots will invoke the .shutdown() method -- what about crashes? What
+>> about watchdog resets? IIUC, those will hit the same broken behavior,
+>> and have unexepcted behavior in your bootloader.
+>
+> Yes, there are corner cases that are not addressed with this approach,
 
-Thanks,
-Daniel
+Is a system crash really a corner case? :D
+
+> but it still seems to improve things. Of course, that means the
+> user should try to re-route all HW reset sources to SW ones (RESET input
+> pin muxed to the GPIO controller, watchdog generating an interrupt
+> instead of directly asserting the RESET output pin), which is not always
+> possible, but even when it's not, isn't it better to have a setup that
+> works fine 99% of the time instead of 50% of the time?
+
+Perhaps, but not at the expense of future development. And
+realistically, no one is doing that if they have this hack. Most
+people won't even know that this hack is protecting them at all (so
+again, they won't try to mitigate the problem any further).
+
+>> I suppose one could argue for doing this in remove(), but AIUI you're
+>> just papering over system bugs by introducing the shutdown() function
+>> here. Thus, I'd prefer we drop the shutdown() method to avoid misleading
+>> other users of this driver.
+>
+> I understand your point. But if the problem is about making sure people
+> designing new boards get that right, why not complaining at probe time
+> when things are wrong?
+>
+> I mean, spi_nor_restore() seems to only do something on very specific
+> NORs (those on which a SW RESET does not resets the addressing
+> mode).
+
+The point isn't that SW RESET doesn't reset the addressing mode -- it
+does on any flash I've seen. The point is that most systems are built
+around a stateless assumption in these flash. IIRC, there wasn't even
+a SW RESET command at all until these "huge" flash came around and
+stateful addressing modes came about. So boot ROMs and bootloaders
+would have to be updated to start figuring out when/how to do this SW
+RESET. And once two vendors start doing it differently (I'm not sure:
+have they done this already? I think so) it's no longer something a
+boot ROM will get right.
+
+The only way to get this stuff right is to have a hardware reset, or
+else to avoid all of the stateful modes in software.
+
+> So, how about adding a flag that says "my board has the NOR HW
+> RESET pin wired" (there would be a DT props to set that flag). Then you
+> add a WARN_ON() when this flag is not set and a NOR chip impacted by
+> this bug is detected.
+
+I'd kinda prefer the reverse. There really isn't a need to document
+anything for a working system (software usually can't control this
+RESET pin). The burden should be on the b0rked system to document
+where it needs unsound hacks to survive.
+
+> This way you make sure people are informed that
+> they're doing something wrong, and for those who can't change their HW
+> (because it's already widely deployed), you have a fix that improve
+> things.
+
+Or even better: put this hack behind a DT flag, so that one has to
+admit that their board design is broken before it will even do
+anything. Proposal: "linux,badly-designed-flash-reset".
+
+But, I'd prefer just (partially?) reverting this, and let the authors
+submit something that works. We're not obligated to keep bad hacks in
+the kernel.
+
+Brian
