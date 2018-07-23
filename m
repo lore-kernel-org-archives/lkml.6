@@ -2,187 +2,120 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F84CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93124ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C7C720858
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:55:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RBuN1sJW";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Bp/QATOq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C7C720858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id F08C120858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:57:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08C120858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbeGWGyo (ORCPT
+        id S2387816AbeGWG4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 02:54:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46766 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728176AbeGWGyo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 02:54:44 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5C5A5606CF; Mon, 23 Jul 2018 05:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532325313;
-        bh=EtY7BSCswnKVaKP1GorHu935jf0ml8B9WzazBgnaN7o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RBuN1sJWryn40+Xn4ZcpSmjPBzjH/c5iJEfHZvEOeRxIMjTjf0s0D5LZNb3TP3Glb
-         ZqP/1QcJy20EoQGC+vtQfyu2EFOyTsOEi5AhjZtf3TOwdXEh9eCOVGS7uM7Ma84vld
-         mCIhtsLaO0ozmi3yrPiCIehNDwHU1Oj7t90MBwYk=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 6631C602BC;
-        Mon, 23 Jul 2018 05:55:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532325312;
-        bh=EtY7BSCswnKVaKP1GorHu935jf0ml8B9WzazBgnaN7o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Bp/QATOqO2FttD47f5w3syElB8V6/+/CE49eLoe5e+vnfAKqFl2GpCo7Y9RefdMC9
-         Kqkq9wD32+jfeME4rqVKh9CzvVQYEsnryPu8tAmT7t5pnjI93L7ePI+VYHkdEsaF0Y
-         O2KsWDjEAamqr+5anhzI2vDbg2/WbbLTlBd3IqR8=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 23 Jul 2018 11:25:12 +0530
-From:   kgunda@codeaurora.org
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        lee.jones@linaro.org, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V4 4/8] backlight: qcom-wled: Rename PM8941* to WLED3
-In-Reply-To: <9aff8c23-7c72-eaee-9d59-424cd34be4ac@linaro.org>
-References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
- <1531131741-19971-5-git-send-email-kgunda@codeaurora.org>
- <9aff8c23-7c72-eaee-9d59-424cd34be4ac@linaro.org>
-Message-ID: <cc903e5fb06344731e75f078bdf42401@codeaurora.org>
-X-Sender: kgunda@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Mon, 23 Jul 2018 02:56:38 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:24346 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726943AbeGWG4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 02:56:38 -0400
+X-Greylist: delayed 952 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Jul 2018 02:56:37 EDT
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id A32921351163F6BD2E92;
+        Mon, 23 Jul 2018 13:41:17 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w6N5fClO026933;
+        Mon, 23 Jul 2018 13:41:12 +0800 (GMT-8)
+        (envelope-from chen.lin130@zte.com.cn)
+Received: from localhost.localdomain ([10.75.10.200])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018072313411423-1253827 ;
+          Mon, 23 Jul 2018 13:41:14 +0800 
+From:   Chen Lin <chen.lin130@zte.com.cn>
+To:     mingo@redhat.com, peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org, jiang.biao2@zte.com.cn,
+        zhong.weidong@zte.com.cn, tan.hu@zte.com.cn.cn,
+        Chen Lin <cheng.lin130@zte.com.cn>, Tan Hu <tan.hu@zte.com.cn>
+Subject: [PATCH] sched/numa: do not balance tasks onto isolated cpus
+Date:   Mon, 23 Jul 2018 13:39:30 +0800
+Message-Id: <1532324370-80651-1-git-send-email-chen.lin130@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-07-23 13:41:14,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-07-23 13:41:12,
+        Serialize complete at 2018-07-23 13:41:12
+X-MAIL: mse01.zte.com.cn w6N5fClO026933
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-20 18:53, Daniel Thompson wrote:
-> On 09/07/18 11:22, Kiran Gunda wrote:
->> Rename the PM8941* references as WLED3 to make the
->> driver generic and have WLED support for other PMICs.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> ---
->> Changes from V3:
->> 	- Changed the MODULE_DESCRIPTION
->> 
->>   drivers/video/backlight/qcom-wled.c | 248 
->> ++++++++++++++++++------------------
->>   1 file changed, 125 insertions(+), 123 deletions(-)
->> 
->> diff --git a/drivers/video/backlight/qcom-wled.c 
->> b/drivers/video/backlight/qcom-wled.c
->> index 0b6d219..3cd6e75 100644
->> --- a/drivers/video/backlight/qcom-wled.c
->> +++ b/drivers/video/backlight/qcom-wled.c
->> @@ -18,77 +18,79 @@
->>   #include <linux/regmap.h>
->>     /* From DT binding */
->> -#define PM8941_WLED_DEFAULT_BRIGHTNESS		2048
->> +#define WLED_DEFAULT_BRIGHTNESS				2048
->>   -#define PM8941_WLED_REG_VAL_BASE		0x40
->> -#define  PM8941_WLED_REG_VAL_MAX		0xFFF
->> +#define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
->> +#define WLED3_CTRL_REG_VAL_BASE				0x40
->>   -#define PM8941_WLED_REG_MOD_EN			0x46
->> -#define  PM8941_WLED_REG_MOD_EN_BIT		BIT(7)
->> -#define  PM8941_WLED_REG_MOD_EN_MASK		BIT(7)
->> +/* WLED3 control registers */
->> +#define WLED3_CTRL_REG_MOD_EN				0x46
->> +#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
->> +#define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
->>   -#define PM8941_WLED_REG_SYNC			0x47
->> -#define  PM8941_WLED_REG_SYNC_MASK		0x07
->> -#define  PM8941_WLED_REG_SYNC_LED1		BIT(0)
->> -#define  PM8941_WLED_REG_SYNC_LED2		BIT(1)
->> -#define  PM8941_WLED_REG_SYNC_LED3		BIT(2)
->> -#define  PM8941_WLED_REG_SYNC_ALL		0x07
->> -#define  PM8941_WLED_REG_SYNC_CLEAR		0x00
->> +#define WLED3_CTRL_REG_FREQ				0x4c
->> +#define  WLED3_CTRL_REG_FREQ_MASK			0x0f
->>   -#define PM8941_WLED_REG_FREQ			0x4c
->> -#define  PM8941_WLED_REG_FREQ_MASK		0x0f
->> +#define WLED3_CTRL_REG_OVP				0x4d
->> +#define  WLED3_CTRL_REG_OVP_MASK			0x03
->>   -#define PM8941_WLED_REG_OVP			0x4d
->> -#define  PM8941_WLED_REG_OVP_MASK		0x03
->> +#define WLED3_CTRL_REG_ILIMIT				0x4e
->> +#define  WLED3_CTRL_REG_ILIMIT_MASK			0x07
->>   -#define PM8941_WLED_REG_BOOST			0x4e
->> -#define  PM8941_WLED_REG_BOOST_MASK		0x07
->> +/* WLED3 sink registers */
->> +#define WLED3_SINK_REG_SYNC				0x47
->> +#define  WLED3_SINK_REG_SYNC_MASK			0x07
->> +#define  WLED3_SINK_REG_SYNC_LED1			BIT(0)
->> +#define  WLED3_SINK_REG_SYNC_LED2			BIT(1)
->> +#define  WLED3_SINK_REG_SYNC_LED3			BIT(2)
->> +#define  WLED3_SINK_REG_SYNC_ALL			0x07
->> +#define  WLED3_SINK_REG_SYNC_CLEAR			0x00
->>   -#define PM8941_WLED_REG_SINK			0x4f
->> -#define  PM8941_WLED_REG_SINK_MASK		0xe0
->> -#define  PM8941_WLED_REG_SINK_SHFT		0x05
->> +#define WLED3_SINK_REG_CURR_SINK			0x4f
->> +#define  WLED3_SINK_REG_CURR_SINK_MASK			0xe0
->> +#define  WLED3_SINK_REG_CURR_SINK_SHFT			0x05
->>   -/* Per-'string' registers below */
->> -#define PM8941_WLED_REG_STR_OFFSET		0x10
->> +/* WLED3 per-'string' registers below */
->> +#define WLED3_SINK_REG_STR_OFFSET			0x10
->>   -#define PM8941_WLED_REG_STR_MOD_EN_BASE		0x60
->> -#define  PM8941_WLED_REG_STR_MOD_MASK		BIT(7)
->> -#define  PM8941_WLED_REG_STR_MOD_EN		BIT(7)
->> +#define WLED3_SINK_REG_STR_MOD_EN_BASE			0x60
->> +#define  WLED3_SINK_REG_STR_MOD_MASK			BIT(7)
->> +#define  WLED3_SINK_REG_STR_MOD_EN			BIT(7)
->>   -#define PM8941_WLED_REG_STR_SCALE_BASE		0x62
->> -#define  PM8941_WLED_REG_STR_SCALE_MASK		0x1f
->> +#define WLED3_SINK_REG_STR_FULL_SCALE_CURR		0x62
->> +#define  WLED3_SINK_REG_STR_FULL_SCALE_CURR_MASK	0x1f
->>   -#define PM8941_WLED_REG_STR_MOD_SRC_BASE	0x63
->> -#define  PM8941_WLED_REG_STR_MOD_SRC_MASK	0x01
->> -#define  PM8941_WLED_REG_STR_MOD_SRC_INT	0x00
->> -#define  PM8941_WLED_REG_STR_MOD_SRC_EXT	0x01
->> +#define WLED3_SINK_REG_STR_MOD_SRC_BASE			0x63
->> +#define  WLED3_SINK_REG_STR_MOD_SRC_MASK		0x01
->> +#define  WLED3_SINK_REG_STR_MOD_SRC_INT			0x00
->> +#define  WLED3_SINK_REG_STR_MOD_SRC_EXT			0x01
->>   -#define PM8941_WLED_REG_STR_CABC_BASE		0x66
->> -#define  PM8941_WLED_REG_STR_CABC_MASK		BIT(7)
->> -#define  PM8941_WLED_REG_STR_CABC_EN		BIT(7)
->> +#define WLED3_SINK_REG_STR_CABC_BASE			0x66
->> +#define  WLED3_SINK_REG_STR_CABC_MASK			BIT(7)
->> +#define  WLED3_SINK_REG_STR_CABC_EN			BIT(7)
->>   -struct pm8941_wled_config {
->> -	u32 i_boost_limit;
->> +struct wled_config {
->> +	u32 boost_i_limit;
->>   	u32 ovp;
->>   	u32 switch_freq;
->>   	u32 num_strings;
->> -	u32 i_limit;
->> +	u32 string_i_limit;
-> 
-> This patch implements a grand renaming and I have no objections to
-> including change for boost_i_limit and string_i_limit in it. I'd
-> prefer it to be mentioned in the patch header though.
-> 
-> Once that is done:
-> 
-> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Thanks Daneil. I will include it in the patch header in next series.
+From: Chen Lin <cheng.lin130@zte.com.cn>
+
+NUMA balancing has not taken *isolcpus(isolated cpus)* into 
+consideration. It may migrate tasks onto isolated cpus and the 
+migrated tasks will never escape from the isolated cpus, which will
+break the isolation provided by *isolcpus* boot parameter and 
+intrduce various problems.
+
+This patch ensure NUMA balancing not to balance tasks onto iaolated
+cpus. 
+
+Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
+Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+ kernel/sched/core.c | 9 ++++++---
+ kernel/sched/fair.c | 3 ++-
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index fe365c9..f9ce90c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1302,10 +1302,12 @@ int migrate_swap(struct task_struct *cur, struct task_struct *p)
+ 	if (!cpu_active(arg.src_cpu) || !cpu_active(arg.dst_cpu))
+ 		goto out;
+
+-	if (!cpumask_test_cpu(arg.dst_cpu, &arg.src_task->cpus_allowed))
++	if ((!cpumask_test_cpu(arg.dst_cpu, &arg.src_task->cpus_allowed))
++            || cpumask_test_cpu(arg.dst_cpu, cpu_isolated_map))
+ 		goto out;
+
+-	if (!cpumask_test_cpu(arg.src_cpu, &arg.dst_task->cpus_allowed))
++	if ((!cpumask_test_cpu(arg.src_cpu, &arg.dst_task->cpus_allowed))
++            || cpumask_test_cpu(arg.src_cpu, cpu_isolated_map))
+ 		goto out;
+
+ 	trace_sched_swap_numa(cur, arg.src_cpu, p, arg.dst_cpu);
+@@ -5508,7 +5510,8 @@ int migrate_task_to(struct task_struct *p, int target_cpu)
+ 	if (curr_cpu == target_cpu)
+ 		return 0;
+
+-	if (!cpumask_test_cpu(target_cpu, &p->cpus_allowed))
++	if ((!cpumask_test_cpu(target_cpu, &p->cpus_allowed))
++            || cpumask_test_cpu(target_cpu, cpu_isolated_map))
+ 		return -EINVAL;
+
+ 	/* TODO: This is not properly updating schedstats */
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 2f0a0be..a91f8fe 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1724,7 +1724,8 @@ static void task_numa_find_cpu(struct task_numa_env *env,
+
+ 	for_each_cpu(cpu, cpumask_of_node(env->dst_nid)) {
+ 		/* Skip this CPU if the source task cannot migrate */
+-		if (!cpumask_test_cpu(cpu, &env->p->cpus_allowed))
++		if ((!cpumask_test_cpu(cpu, &env->p->cpus_allowed))
++                    || cpumask_test_cpu(cpu, cpu_isolated_map))
+ 			continue;
+
+ 		env->dst_cpu = cpu;
+--
+1.8.3.1
+
