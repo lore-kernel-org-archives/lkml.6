@@ -6,145 +6,125 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F62ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5591CECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0829820854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:12:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0829820854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1251520854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:12:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1251520854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388490AbeGWROD (ORCPT
+        id S2388561AbeGWROi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:14:03 -0400
-Received: from mga04.intel.com ([192.55.52.120]:31587 "EHLO mga04.intel.com"
+        Mon, 23 Jul 2018 13:14:38 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58934 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387970AbeGWROD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:14:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 09:12:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
-   d="scan'208";a="242587604"
-Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
-  by orsmga005.jf.intel.com with ESMTP; 23 Jul 2018 09:12:06 -0700
-Subject: Re: [PATCH v6 06/13] mm, dev_pagemap: Do not clear ->mapping on final
- put
-To:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org,
-        Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, linux-mm@kvack.org,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, hch@lst.de
-References: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153154380137.34503.3754023882460956800.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Dave Jiang <dave.jiang@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
- 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
- o6nmKbYpUAltQObU2w==
-Message-ID: <3fcb3c8a-2a41-7c78-edde-066c10110d34@intel.com>
-Date:   Mon, 23 Jul 2018 09:12:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S2388447AbeGWROi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 13:14:38 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B793A20733; Mon, 23 Jul 2018 18:12:40 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7131A2069C;
+        Mon, 23 Jul 2018 18:12:40 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 18:12:39 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Subject: Re: [PATCH] drivers/memory/Kconfig: Add CONFIG_OF dependency
+Message-ID: <20180723181239.61dba0e1@bbrezillon>
+In-Reply-To: <CAK8P3a10SsWuPXzOyRcNKa+ukvj_Gq13JyDTngoU8DJu6_MR0Q@mail.gmail.com>
+References: <20180721200049.7553-1-anders.roxell@linaro.org>
+        <a83ff193-be57-f566-cafb-132075025b56@infradead.org>
+        <20180722082939.2de739f1@bbrezillon>
+        <CAK8P3a1_8OSqyKsbw+m3ZzLWfPqDK4ynG3WoPTk+K2uJJsiq5A@mail.gmail.com>
+        <20180723114107.664164d2@bbrezillon>
+        <CAK8P3a10SsWuPXzOyRcNKa+ukvj_Gq13JyDTngoU8DJu6_MR0Q@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <153154380137.34503.3754023882460956800.stgit@dwillia2-desk3.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome,
-Is it possible to get an ack for this? Thanks!
+On Mon, 23 Jul 2018 17:40:29 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-On 07/13/2018 09:50 PM, Dan Williams wrote:
-> MEMORY_DEVICE_FS_DAX relies on typical page semantics whereby ->mapping
-> is only ever cleared by truncation, not final put.
+> On Mon, Jul 23, 2018 at 11:41 AM, Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> > On Mon, 23 Jul 2018 11:34:43 +0200
+> > Arnd Bergmann <arnd@arndb.de> wrote:
+> >  
+> >> On Sun, Jul 22, 2018 at 8:29 AM, Boris Brezillon
+> >> <boris.brezillon@bootlin.com> wrote:  
+> >> > +Arnd, Rob and the DT ML.
+> >> >
+> >> > On Sat, 21 Jul 2018 14:53:47 -0700
+> >> > Randy Dunlap <rdunlap@infradead.org> wrote:
+> >> >  
+> >> >> On 07/21/2018 01:00 PM, Anders Roxell wrote:  
+> >> >> > JZ4780_NEMC doesn't depend on OF, and if OF isn't enabled we get this
+> >> >> > error:
+> >> >> > drivers/memory/jz4780-nemc.c: In function ‘jz4780_nemc_num_banks’:
+> >> >> > drivers/memory/jz4780-nemc.c:72:10: error: implicit declaration of
+> >> >> >  function ‘of_read_number’; did you mean ‘down_read_nested’?
+> >> >> >  [-Werror=implicit-function-declaration]
+> >> >> >    bank = of_read_number(prop, 1);
+> >> >> >           ^~~~~~~~~~~~~~
+> >> >> >           down_read_nested  
+> >> >
+> >> > Looks like of.h defines stubs so that people can compile-test without
+> >> > CONFIG_OF selected. Maybe we should move of_read_number() and
+> >> > of_read_ulong() out of the #ifdef CONFIG_OF section.  
+> >>
+> >> That seems fine, though the added dependency seems appropriate
+> >> here as well. of_read_number() is rarely used, and for the most part in
+> >> powerpc specific code that is guaranteed to have CONFIG_OF enabled,
+> >> so it's not that likely to cause many more problems.  
+> >
+> > Ok, then I'll let Miquel apply Anders' patch to the NAND tree.
+> >
+> > Thanks for your feedback.  
 > 
-> Without this fix dax pages may forget their mapping association at the
-> end of every page pin event.
+> My randconfig build bot just ran into a second problem with this driver
+> with CONFIG_GPIOLIB disabled:
 > 
-> Move this atypical behavior that HMM wants into the HMM ->page_free()
-> callback.
+> drivers/mtd/nand/raw/jz4740_nand.c: In function 'jz_nand_dev_ready':
+> drivers/mtd/nand/raw/jz4740_nand.c:133:9: error: implicit declaration
+> of function 'gpiod_get_value_cansleep'; did you mean
+> 'gpio_get_value_cansleep'? [-Werror=implicit-function-declaration]
+>   return gpiod_get_value_cansleep(nand->busy_gpio);
+>          ^~~~~~~~~~~~~~~~~~~~~~~~
+>          gpio_get_value_cansleep
+> drivers/mtd/nand/raw/jz4740_nand.c: In function 'jz_nand_probe':
+> drivers/mtd/nand/raw/jz4740_nand.c:388:20: error: implicit declaration
+> of function 'devm_gpiod_get_optional'; did you mean
+> 'devm_gpio_request_one'? [-Werror=implicit-function-declaration]
+>   nand->busy_gpio = devm_gpiod_get_optional(&pdev->dev, "busy", GPIOD_IN);
+>                     ^~~~~~~~~~~~~~~~~~~~~~~
+>                     devm_gpio_request_one
+> drivers/mtd/nand/raw/jz4740_nand.c:388:64: error: 'GPIOD_IN'
+> undeclared (first use in this function); did you mean 'GPIOF_IN'?
+>   nand->busy_gpio = devm_gpiod_get_optional(&pdev->dev, "busy", GPIOD_IN);
+>                                                                 ^~~~~~~~
+>                                                                 GPIOF_IN
 > 
-> Cc: <stable@vger.kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Fixes: d2c997c0f145 ("fs, dax: use page->mapping...")
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  kernel/memremap.c |    1 -
->  mm/hmm.c          |    2 ++
->  2 files changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/kernel/memremap.c b/kernel/memremap.c
-> index 5857267a4af5..62603634a1d2 100644
-> --- a/kernel/memremap.c
-> +++ b/kernel/memremap.c
-> @@ -339,7 +339,6 @@ void __put_devmap_managed_page(struct page *page)
->  		__ClearPageActive(page);
->  		__ClearPageWaiters(page);
->  
-> -		page->mapping = NULL;
->  		mem_cgroup_uncharge(page);
->  
->  		page->pgmap->page_free(page, page->pgmap->data);
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index de7b6bf77201..f9d1d89dec4d 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -963,6 +963,8 @@ static void hmm_devmem_free(struct page *page, void *data)
->  {
->  	struct hmm_devmem *devmem = data;
->  
-> +	page->mapping = NULL;
-> +
->  	devmem->ops->free(devmem, page);
->  }
->  
-> 
-> _______________________________________________
-> Linux-nvdimm mailing list
-> Linux-nvdimm@lists.01.org
-> https://lists.01.org/mailman/listinfo/linux-nvdimm
-> 
+> We could add another dependency here or (my preference) include
+> linux/gpio/consumer.h to fix that. Do you want a separate patch for
+> it, or should Anders send a combined patch?
+
+I already fixed that one last week [1], it's been applied yet.
+
+Thanks,
+
+Boris
+
+[1]http://patchwork.ozlabs.org/patch/946614/
