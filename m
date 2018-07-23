@@ -2,108 +2,103 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3891CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F270ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB27220671
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:37:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B413420856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:37:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z4rkj4kj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB27220671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NyfuUUKE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B413420856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388076AbeGWTjj (ORCPT
+        id S2388109AbeGWTkY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 15:39:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59118 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388012AbeGWTjj (ORCPT
+        Mon, 23 Jul 2018 15:40:24 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:38070 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387998AbeGWTkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 15:39:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cXjbJbCCdqudrGYots11vdQIWwURgKOxoWes9lvTPBU=; b=Z4rkj4kjYSel0LsyblscGSzom
-        g6diQjO0OhUhPV2nWdGtwXI5nTLlWnZJ3O/yTmnPHCd2lWVADRr6eAFf6YePk7KyYrquMSFooo8Nm
-        0oy8D/O5mppH3vWYIPcZdjtHy8pewA7n6e9q6lGGSvG80njCzCTARx47zGOLDD05gTNjCJXz9Trdb
-        SZw6rd39vdJm9cfhFEG9P9WOrgcAEolMOQuz9KRK9AfJX4P07vuXQZWo2/tnMtodcfSdOt/nCH0PZ
-        GMw05/Tvk5xDeRGH7hy4KaG3EzgyX7fKVa0etv8YxQ5E3WVxGrFPNB8Rwm24WwZ07SRSLc47K9Y4L
-        pWs+OVz2w==;
-Received: from 177.41.135.13.dynamic.adsl.gvt.net.br ([177.41.135.13] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhfhg-0002Pq-82; Mon, 23 Jul 2018 18:37:04 +0000
-Date:   Mon, 23 Jul 2018 15:36:57 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     pali.rohar@gmail.com, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
-        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
-        clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?UTF-8?B?TWF0aWpldmnEhw==?= <filip.matijevic.pz@gmail.com>,
-        mchehab@s-opensource.com, sakari.ailus@iki.fi,
-        linux-media@vger.kernel.org, hans.verkuil@cisco.com
-Subject: Re: [PATCH, libv4l]: Make libv4l2 usable on devices with complex
- pipeline
-Message-ID: <20180723153649.73337c0f@coco.lan>
-In-Reply-To: <20180719205344.GA12098@amd>
-References: <20180708213258.GA18217@amd>
-        <20180719205344.GA12098@amd>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 23 Jul 2018 15:40:24 -0400
+Received: by mail-qt0-f194.google.com with SMTP id y19-v6so1652729qto.5;
+        Mon, 23 Jul 2018 11:37:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MbfWKhbX3O44X9s3sfMfPY0/G8ANIrSbpr/SpFtq2ps=;
+        b=NyfuUUKE54BY4KpuXncAnrh/0M/RRGdqvJKIvNWWvpsyIRb6TCpagMDoDQnh6wH4tZ
+         d+avkBzyPVkkCIF8v1jDv6MellJ/bRsoKeOsbl/6syJSqusmHOeMmZoJ2hPnhWPrvRZE
+         3KHQC+bHbInAKMTRBAo+qEzkkhz5W1WaA7Y2hfJHAbOYN3mq8rYjMQxyhFCim32oWbsy
+         FGY0FaaMHtjbkPs9tO5vj691fHYGm4rCzHpo8JY5F2OY+41DlRxcUTHr5pnLhQPIAxQy
+         CKBGzZKW7UrZYyg8VbEiWnvI2vNBPQYzfFfFdkNDSzYwi2Mqra84gl68kRzNXVz7ztn5
+         18EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MbfWKhbX3O44X9s3sfMfPY0/G8ANIrSbpr/SpFtq2ps=;
+        b=SoJb90jGiYv4jxjw0H6kgfwSnJa3pV3HYfRBAwHDAeViQOvKLpkcM5yUfXDlID74dw
+         gT/CdRKeAJIbHu+kf/3M5XzcXrZbQgV9lmZ+zID+MSiRveNyKieVicC2IIwF5BZMh+F4
+         7OZ6omZIl+uYLuR6YVKqRtiioTGCKHkCk5lfq2qKpv4+VSyUqWJ6BPLn5pDCnemErMOL
+         wrIGDia3rBNt7cvpFRYqpf0ugcBmDmSj8x92ujONUGhQ1bm9SRcmOP3QlF4To53ePQMy
+         MaOkXTNDWH6Kky3O67bvXN0c0jBP85KNFJrPZZP9dWT9Tg9upuI6ZvHFMhHEqce/lgQ8
+         HAyg==
+X-Gm-Message-State: AOUpUlF54q/VjSmKYuA/FeixseRYG8QhhGgMUIO2FlexAcq8SCry6TbL
+        iz+pmSE2Y0GSdqcWCkJ6cMwFi3sF4KI=
+X-Google-Smtp-Source: AAOMgpfLscwm6oJiPBTjIM4u70qxbee/MNrMJHHBgGsgRKzapla75QTlZhfUfwftBk6nfxRYyeN7Sg==
+X-Received: by 2002:ac8:1a90:: with SMTP id x16-v6mr12542064qtj.160.1532371073101;
+        Mon, 23 Jul 2018 11:37:53 -0700 (PDT)
+Received: from [192.168.44.96] (65.sub-174-226-2.myvzw.com. [174.226.2.65])
+        by smtp.gmail.com with ESMTPSA id z23-v6sm6570410qka.25.2018.07.23.11.37.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 11:37:52 -0700 (PDT)
+Subject: Re: [PATCH 1/2] Add sw2_sw4 voltage table to cpcap regulator.
+To:     Mark Brown <broonie@kernel.org>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <e411faa3-7d42-710f-a18a-a4fdd764b60a@gmail.com>
+ <20180723181318.GG13981@sirena.org.uk>
+From:   Peter Geis <pgwipeout@gmail.com>
+Message-ID: <95929e34-eeb4-f3a4-daa1-0b89dd60f570@gmail.com>
+Date:   Mon, 23 Jul 2018 14:37:50 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180723181318.GG13981@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
-
-Em Thu, 19 Jul 2018 22:53:44 +0200
-Pavel Machek <pavel@ucw.cz> escreveu:
-
-> On Sun 2018-07-08 23:32:58, Pavel Machek wrote:
-> > 
-> > Add support for opening multiple devices in v4l2_open(), and for
-> > mapping controls between devices.
-> > 
-> > This is necessary for complex devices, such as Nokia N900.
-> > 
-> > Signed-off-by: Pavel Machek <pavel@ucw.cz>  
+On 07/23/2018 02:13 PM, Mark Brown wrote:
+> On Mon, Jul 23, 2018 at 01:58:26PM -0400, Peter Geis wrote:
+>> SW2 and SW4 use a shared table to provide voltage to the cpu core and
+>> devices on Tegra hardware.
+>> Added this table to the cpcap regulator driver as the first step to
+>> supporting this device on Tegra.
 > 
-> Ping?
+> This also doesn't apply against current code (though it does now parse
+> OK), please check and resend - make sure you don't have other out of
+> tree changes and are using an up to date kernel (ideally my regulator
+> for-next branch) as a base.
 > 
-> There's a lot of work to do on libv4l2... timely patch handling would
-> be nice.
+Good Afternoon,
 
-As we're be start working at the new library in order to support
-complex cameras, and I don't want to prevent you keeping doing your
-work, IMHO the best way to keep doing it would be to create two
-libv4l2 forks:
-
-	- one to be used by you - meant to support N900 camera;
-	- another one to be used by Google/Intel people that will
-	  be working at the Complex camera.
-
-This way, we can proceed with the development without causing
-instability to v4l-utils. Once we have the projects done at the
-separate repositories, we can work on merging them back upstream.
-
-So, please send me, in priv, a .ssh key for me to add you an
-account at linuxtv.org. I'll send you instructions about how to
-use the new account.
+I thought it was my error in the patches being stripped, unfortunately 
+it seems to be a known Gmail behavior.
+Any ideas on how to get around it?
 
 Thanks,
-Mauro
+Peter
