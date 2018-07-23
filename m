@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E6BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D717ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1FA220854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1FA220854
+	by mail.kernel.org (Postfix) with ESMTP id 5BDC820854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDC820854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388260AbeGWMEt (ORCPT
+        id S2388474AbeGWMGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:04:49 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:40018 "EHLO extserv.mm-sol.com"
+        Mon, 23 Jul 2018 08:06:21 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:40019 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388213AbeGWMEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:04:48 -0400
+        id S2388216AbeGWMEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 08:04:49 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 353EDCD6F;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 46C91CD72;
         Mon, 23 Jul 2018 14:04:03 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v3 32/35] media: camss: Add support for 10-bit grayscale formats
-Date:   Mon, 23 Jul 2018 14:02:49 +0300
-Message-Id: <1532343772-27382-33-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH v3 35/35] media: v4l2-ioctl: Add format descriptions for packed Bayer raw14 pixel formats
+Date:   Mon, 23 Jul 2018 14:02:52 +0300
+Message-Id: <1532343772-27382-36-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
 References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
@@ -41,197 +41,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for 10-bit packed V4L2_PIX_FMT_Y10P (on 8x16 and 8x96)
-and unpacked V4L2_PIX_FMT_Y10 (on 8x96 only) pixel formats.
+This removes warning "Unknown pixelformat" for the following formats:
+        V4L2_PIX_FMT_SBGGR14P
+        V4L2_PIX_FMT_SGBRG14P
+        V4L2_PIX_FMT_SGRBG14P
+        V4L2_PIX_FMT_SRGGB14P
 
+CC: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- drivers/media/platform/qcom/camss/camss-csid.c   | 50 +++++++++++++++++++-----
- drivers/media/platform/qcom/camss/camss-csiphy.c |  2 +
- drivers/media/platform/qcom/camss/camss-ispif.c  |  6 ++-
- drivers/media/platform/qcom/camss/camss-vfe.c    |  3 ++
- drivers/media/platform/qcom/camss/camss-video.c  |  6 +++
- 5 files changed, 56 insertions(+), 11 deletions(-)
+ drivers/media/v4l2-core/v4l2-ioctl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-index 0b7f90d..a581377 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid.c
-@@ -193,7 +193,14 @@ static const struct csid_format csid_formats_8x16[] = {
- 		DECODE_FORMAT_UNCOMPRESSED_12_BIT,
- 		12,
- 		1,
--	}
-+	},
-+	{
-+		MEDIA_BUS_FMT_Y10_1X10,
-+		DATA_TYPE_RAW_10BIT,
-+		DECODE_FORMAT_UNCOMPRESSED_10_BIT,
-+		10,
-+		1,
-+	},
- };
- 
- static const struct csid_format csid_formats_8x96[] = {
-@@ -336,7 +343,14 @@ static const struct csid_format csid_formats_8x96[] = {
- 		DECODE_FORMAT_UNCOMPRESSED_14_BIT,
- 		14,
- 		1,
--	}
-+	},
-+	{
-+		MEDIA_BUS_FMT_Y10_1X10,
-+		DATA_TYPE_RAW_10BIT,
-+		DECODE_FORMAT_UNCOMPRESSED_10_BIT,
-+		10,
-+		1,
-+	},
- };
- 
- static u32 csid_find_code(u32 *code, unsigned int n_code,
-@@ -379,6 +393,16 @@ static u32 csid_src_pad_code(struct csid_device *csid, u32 sink_code,
- 			return csid_find_code(src_code, ARRAY_SIZE(src_code),
- 					      index, src_req_code);
- 		}
-+		case MEDIA_BUS_FMT_Y10_1X10:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_Y10_1X10,
-+				MEDIA_BUS_FMT_Y10_2X8_PADHI_LE,
-+			};
-+
-+			return csid_find_code(src_code, ARRAY_SIZE(src_code),
-+					      index, src_req_code);
-+		}
- 		default:
- 			if (index > 0)
- 				return 0;
-@@ -682,15 +706,21 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
- 		val |= CAMSS_CSID_CID_n_CFG_RDI_EN;
- 		val |= df << CAMSS_CSID_CID_n_CFG_DECODE_FORMAT_SHIFT;
- 		val |= CAMSS_CSID_CID_n_CFG_RDI_MODE_RAW_DUMP;
--		if (csid->camss->version == CAMSS_8x96 &&
--			csid->fmt[MSM_CSID_PAD_SINK].code ==
--					MEDIA_BUS_FMT_SBGGR10_1X10 &&
--			csid->fmt[MSM_CSID_PAD_SRC].code ==
--					MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE) {
--			val |= CAMSS_CSID_CID_n_CFG_RDI_MODE_PLAIN_PACKING;
--			val |= CAMSS_CSID_CID_n_CFG_PLAIN_FORMAT_16;
--			val |= CAMSS_CSID_CID_n_CFG_PLAIN_ALIGNMENT_LSB;
-+
-+		if (csid->camss->version == CAMSS_8x96) {
-+			u32 sink_code = csid->fmt[MSM_CSID_PAD_SINK].code;
-+			u32 src_code = csid->fmt[MSM_CSID_PAD_SRC].code;
-+
-+			if ((sink_code == MEDIA_BUS_FMT_SBGGR10_1X10 &&
-+			     src_code == MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE) ||
-+			    (sink_code == MEDIA_BUS_FMT_Y10_1X10 &&
-+			     src_code == MEDIA_BUS_FMT_Y10_2X8_PADHI_LE)) {
-+				val |= CAMSS_CSID_CID_n_CFG_RDI_MODE_PLAIN_PACKING;
-+				val |= CAMSS_CSID_CID_n_CFG_PLAIN_FORMAT_16;
-+				val |= CAMSS_CSID_CID_n_CFG_PLAIN_ALIGNMENT_LSB;
-+			}
- 		}
-+
- 		writel_relaxed(val, csid->base +
- 			       CAMSS_CSID_CID_n_CFG(ver, cid));
- 
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index 0b7bf1e..924f854 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -48,6 +48,7 @@ static const struct csiphy_format csiphy_formats_8x16[] = {
- 	{ MEDIA_BUS_FMT_SGBRG12_1X12, 12 },
- 	{ MEDIA_BUS_FMT_SGRBG12_1X12, 12 },
- 	{ MEDIA_BUS_FMT_SRGGB12_1X12, 12 },
-+	{ MEDIA_BUS_FMT_Y10_1X10, 10 },
- };
- 
- static const struct csiphy_format csiphy_formats_8x96[] = {
-@@ -71,6 +72,7 @@ static const struct csiphy_format csiphy_formats_8x96[] = {
- 	{ MEDIA_BUS_FMT_SGBRG14_1X14, 14 },
- 	{ MEDIA_BUS_FMT_SGRBG14_1X14, 14 },
- 	{ MEDIA_BUS_FMT_SRGGB14_1X14, 14 },
-+	{ MEDIA_BUS_FMT_Y10_1X10, 10 },
- };
- 
- /*
-diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
-index 649596a..02f84bc 100644
---- a/drivers/media/platform/qcom/camss/camss-ispif.c
-+++ b/drivers/media/platform/qcom/camss/camss-ispif.c
-@@ -120,6 +120,7 @@ static const u32 ispif_formats_8x16[] = {
- 	MEDIA_BUS_FMT_SGBRG12_1X12,
- 	MEDIA_BUS_FMT_SGRBG12_1X12,
- 	MEDIA_BUS_FMT_SRGGB12_1X12,
-+	MEDIA_BUS_FMT_Y10_1X10,
- };
- 
- static const u32 ispif_formats_8x96[] = {
-@@ -144,6 +145,8 @@ static const u32 ispif_formats_8x96[] = {
- 	MEDIA_BUS_FMT_SGBRG14_1X14,
- 	MEDIA_BUS_FMT_SGRBG14_1X14,
- 	MEDIA_BUS_FMT_SRGGB14_1X14,
-+	MEDIA_BUS_FMT_Y10_1X10,
-+	MEDIA_BUS_FMT_Y10_2X8_PADHI_LE,
- };
- 
- /*
-@@ -687,7 +690,8 @@ static void ispif_config_pack(struct ispif_device *ispif, u32 code,
- {
- 	u32 addr, val;
- 
--	if (code != MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE)
-+	if (code != MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE &&
-+	    code != MEDIA_BUS_FMT_Y10_2X8_PADHI_LE)
- 		return;
- 
- 	switch (intf) {
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 269b7c8..053e55d 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -70,6 +70,7 @@ static const struct vfe_format formats_rdi_8x16[] = {
- 	{ MEDIA_BUS_FMT_SGBRG12_1X12, 12 },
- 	{ MEDIA_BUS_FMT_SGRBG12_1X12, 12 },
- 	{ MEDIA_BUS_FMT_SRGGB12_1X12, 12 },
-+	{ MEDIA_BUS_FMT_Y10_1X10, 10 },
- };
- 
- static const struct vfe_format formats_pix_8x16[] = {
-@@ -101,6 +102,8 @@ static const struct vfe_format formats_rdi_8x96[] = {
- 	{ MEDIA_BUS_FMT_SGBRG14_1X14, 14 },
- 	{ MEDIA_BUS_FMT_SGRBG14_1X14, 14 },
- 	{ MEDIA_BUS_FMT_SRGGB14_1X14, 14 },
-+	{ MEDIA_BUS_FMT_Y10_1X10, 10 },
-+	{ MEDIA_BUS_FMT_Y10_2X8_PADHI_LE, 16 },
- };
- 
- static const struct vfe_format formats_pix_8x96[] = {
-diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
-index 2e19bc8..c9bb0d0 100644
---- a/drivers/media/platform/qcom/camss/camss-video.c
-+++ b/drivers/media/platform/qcom/camss/camss-video.c
-@@ -74,6 +74,8 @@ static const struct camss_format_info formats_rdi_8x16[] = {
- 	  { { 1, 1 } }, { { 1, 1 } }, { 12 } },
- 	{ MEDIA_BUS_FMT_SRGGB12_1X12, V4L2_PIX_FMT_SRGGB12P, 1,
- 	  { { 1, 1 } }, { { 1, 1 } }, { 12 } },
-+	{ MEDIA_BUS_FMT_Y10_1X10, V4L2_PIX_FMT_Y10P, 1,
-+	  { { 1, 1 } }, { { 1, 1 } }, { 10 } },
- };
- 
- static const struct camss_format_info formats_rdi_8x96[] = {
-@@ -119,6 +121,10 @@ static const struct camss_format_info formats_rdi_8x96[] = {
- 	  { { 1, 1 } }, { { 1, 1 } }, { 14 } },
- 	{ MEDIA_BUS_FMT_SRGGB14_1X14, V4L2_PIX_FMT_SRGGB14P, 1,
- 	  { { 1, 1 } }, { { 1, 1 } }, { 14 } },
-+	{ MEDIA_BUS_FMT_Y10_1X10, V4L2_PIX_FMT_Y10P, 1,
-+	  { { 1, 1 } }, { { 1, 1 } }, { 10 } },
-+	{ MEDIA_BUS_FMT_Y10_2X8_PADHI_LE, V4L2_PIX_FMT_Y10, 1,
-+	  { { 1, 1 } }, { { 1, 1 } }, { 16 } },
- };
- 
- static const struct camss_format_info formats_pix_8x16[] = {
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index 2e3b1f0..e8f7c89 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1260,6 +1260,10 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_PIX_FMT_SGBRG12P:	descr = "12-bit Bayer GBGB/RGRG Packed"; break;
+ 	case V4L2_PIX_FMT_SGRBG12P:	descr = "12-bit Bayer GRGR/BGBG Packed"; break;
+ 	case V4L2_PIX_FMT_SRGGB12P:	descr = "12-bit Bayer RGRG/GBGB Packed"; break;
++	case V4L2_PIX_FMT_SBGGR14P:	descr = "14-bit Bayer BGBG/GRGR Packed"; break;
++	case V4L2_PIX_FMT_SGBRG14P:	descr = "14-bit Bayer GBGB/RGRG Packed"; break;
++	case V4L2_PIX_FMT_SGRBG14P:	descr = "14-bit Bayer GRGR/BGBG Packed"; break;
++	case V4L2_PIX_FMT_SRGGB14P:	descr = "14-bit Bayer RGRG/GBGB Packed"; break;
+ 	case V4L2_PIX_FMT_SBGGR16:	descr = "16-bit Bayer BGBG/GRGR"; break;
+ 	case V4L2_PIX_FMT_SGBRG16:	descr = "16-bit Bayer GBGB/RGRG"; break;
+ 	case V4L2_PIX_FMT_SGRBG16:	descr = "16-bit Bayer GRGR/BGBG"; break;
 -- 
 2.7.4
 
