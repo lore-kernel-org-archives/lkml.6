@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 321E5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D91ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8FE820854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:04:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8FE820854
+	by mail.kernel.org (Postfix) with ESMTP id 119FB20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:04:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 119FB20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388301AbeGWMEt (ORCPT
+        id S2388407AbeGWMFb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:04:49 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:39958 "EHLO extserv.mm-sol.com"
+        Mon, 23 Jul 2018 08:05:31 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:39957 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388179AbeGWMEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:04:48 -0400
+        id S2388166AbeGWMEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 08:04:49 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 42979CD71;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 17C11CD6A;
         Mon, 23 Jul 2018 14:04:03 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v3 34/35] media: camss: csid: Add support for events triggered by user controls
-Date:   Mon, 23 Jul 2018 14:02:51 +0300
-Message-Id: <1532343772-27382-35-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH v3 27/35] media: camss: vfe: Different format support on source pad
+Date:   Mon, 23 Jul 2018 14:02:44 +0300
+Message-Id: <1532343772-27382-28-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
 References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
@@ -41,45 +41,230 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changing a user control value can trigger an event to other
-users. Add support for that.
+Rework the format selection on the source pad. Make the format
+on the source pad selectable amongst a list of formats. This
+list can be different for each sink pad format.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- drivers/media/platform/qcom/camss/camss-csid.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/media/platform/qcom/camss/camss-vfe.c | 172 ++++++++++++++++++++------
+ 1 file changed, 135 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-index a581377..b50eb96 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid.c
-@@ -17,6 +17,7 @@
- #include <linux/regulator/consumer.h>
- #include <media/media-entity.h>
- #include <media/v4l2-device.h>
-+#include <media/v4l2-event.h>
- #include <media/v4l2-subdev.h>
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+index 6fc2be5..b3d2cbf 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+@@ -127,6 +127,131 @@ static u8 vfe_get_bpp(const struct vfe_format *formats,
+ 	return formats[0].bpp;
+ }
  
- #include "camss-csid.h"
-@@ -1266,6 +1267,8 @@ static int csid_link_setup(struct media_entity *entity,
++static u32 vfe_find_code(u32 *code, unsigned int n_code,
++			 unsigned int index, u32 req_code)
++{
++	int i;
++
++	if (!req_code && (index >= n_code))
++		return 0;
++
++	for (i = 0; i < n_code; i++)
++		if (req_code) {
++			if (req_code == code[i])
++				return req_code;
++		} else {
++			if (i == index)
++				return code[i];
++		}
++
++	return code[0];
++}
++
++static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
++			    unsigned int index, u32 src_req_code)
++{
++	struct vfe_device *vfe = to_vfe(line);
++
++	if (vfe->camss->version == CAMSS_8x16)
++		switch (sink_code) {
++		case MEDIA_BUS_FMT_YUYV8_2X8:
++		{
++			u32 src_code[] = {
++				MEDIA_BUS_FMT_YUYV8_2X8,
++				MEDIA_BUS_FMT_YUYV8_1_5X8,
++			};
++
++			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
++					     index, src_req_code);
++		}
++		case MEDIA_BUS_FMT_YVYU8_2X8:
++		{
++			u32 src_code[] = {
++				MEDIA_BUS_FMT_YVYU8_2X8,
++				MEDIA_BUS_FMT_YVYU8_1_5X8,
++			};
++
++			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
++					     index, src_req_code);
++		}
++		case MEDIA_BUS_FMT_UYVY8_2X8:
++		{
++			u32 src_code[] = {
++				MEDIA_BUS_FMT_UYVY8_2X8,
++				MEDIA_BUS_FMT_UYVY8_1_5X8,
++			};
++
++			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
++					     index, src_req_code);
++		}
++		case MEDIA_BUS_FMT_VYUY8_2X8:
++		{
++			u32 src_code[] = {
++				MEDIA_BUS_FMT_VYUY8_2X8,
++				MEDIA_BUS_FMT_VYUY8_1_5X8,
++			};
++
++			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
++					     index, src_req_code);
++		}
++		default:
++			if (index > 0)
++				return 0;
++
++			return sink_code;
++		}
++	else if (vfe->camss->version == CAMSS_8x96)
++		switch (sink_code) {
++		case MEDIA_BUS_FMT_YUYV8_2X8:
++		{
++			u32 src_code[] = {
++				MEDIA_BUS_FMT_YUYV8_2X8,
++				MEDIA_BUS_FMT_YUYV8_1_5X8,
++			};
++
++			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
++					     index, src_req_code);
++		}
++		case MEDIA_BUS_FMT_YVYU8_2X8:
++		{
++			u32 src_code[] = {
++				MEDIA_BUS_FMT_YVYU8_2X8,
++				MEDIA_BUS_FMT_YVYU8_1_5X8,
++			};
++
++			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
++					     index, src_req_code);
++		}
++		case MEDIA_BUS_FMT_UYVY8_2X8:
++		{
++			u32 src_code[] = {
++				MEDIA_BUS_FMT_UYVY8_2X8,
++				MEDIA_BUS_FMT_UYVY8_1_5X8,
++			};
++
++			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
++					     index, src_req_code);
++		}
++		case MEDIA_BUS_FMT_VYUY8_2X8:
++		{
++			u32 src_code[] = {
++				MEDIA_BUS_FMT_VYUY8_2X8,
++				MEDIA_BUS_FMT_VYUY8_1_5X8,
++			};
++
++			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
++					     index, src_req_code);
++		}
++		default:
++			if (index > 0)
++				return 0;
++
++			return sink_code;
++		}
++	else
++		return 0;
++}
++
+ /*
+  * vfe_reset - Trigger reset on VFE module and wait to complete
+  * @vfe: VFE device
+@@ -1387,11 +1512,11 @@ static void vfe_try_format(struct vfe_line *line,
  
- static const struct v4l2_subdev_core_ops csid_core_ops = {
- 	.s_power = csid_set_power,
-+	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-+	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
- };
+ 	case MSM_VFE_PAD_SRC:
+ 		/* Set and return a format same as sink pad */
+-
+ 		code = fmt->code;
  
- static const struct v4l2_subdev_video_ops csid_video_ops = {
-@@ -1311,7 +1314,8 @@ int msm_csid_register_entity(struct csid_device *csid,
+-		*fmt = *__vfe_get_format(line, cfg, MSM_VFE_PAD_SINK,
+-					 which);
++		*fmt = *__vfe_get_format(line, cfg, MSM_VFE_PAD_SINK, which);
++
++		fmt->code = vfe_src_pad_code(line, fmt->code, 0, code);
  
- 	v4l2_subdev_init(sd, &csid_v4l2_ops);
- 	sd->internal_ops = &csid_v4l2_internal_ops;
--	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-+	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
-+		     V4L2_SUBDEV_FL_HAS_EVENTS;
- 	snprintf(sd->name, ARRAY_SIZE(sd->name), "%s%d",
- 		 MSM_CSID_NAME, csid->id);
- 	v4l2_set_subdevdata(sd, csid);
+ 		if (line->id == VFE_LINE_PIX) {
+ 			struct v4l2_rect *rect;
+@@ -1400,34 +1525,6 @@ static void vfe_try_format(struct vfe_line *line,
+ 
+ 			fmt->width = rect->width;
+ 			fmt->height = rect->height;
+-
+-			switch (fmt->code) {
+-			case MEDIA_BUS_FMT_YUYV8_2X8:
+-				if (code == MEDIA_BUS_FMT_YUYV8_1_5X8)
+-					fmt->code = MEDIA_BUS_FMT_YUYV8_1_5X8;
+-				else
+-					fmt->code = MEDIA_BUS_FMT_YUYV8_2X8;
+-				break;
+-			case MEDIA_BUS_FMT_YVYU8_2X8:
+-				if (code == MEDIA_BUS_FMT_YVYU8_1_5X8)
+-					fmt->code = MEDIA_BUS_FMT_YVYU8_1_5X8;
+-				else
+-					fmt->code = MEDIA_BUS_FMT_YVYU8_2X8;
+-				break;
+-			case MEDIA_BUS_FMT_UYVY8_2X8:
+-			default:
+-				if (code == MEDIA_BUS_FMT_UYVY8_1_5X8)
+-					fmt->code = MEDIA_BUS_FMT_UYVY8_1_5X8;
+-				else
+-					fmt->code = MEDIA_BUS_FMT_UYVY8_2X8;
+-				break;
+-			case MEDIA_BUS_FMT_VYUY8_2X8:
+-				if (code == MEDIA_BUS_FMT_VYUY8_1_5X8)
+-					fmt->code = MEDIA_BUS_FMT_VYUY8_1_5X8;
+-				else
+-					fmt->code = MEDIA_BUS_FMT_VYUY8_2X8;
+-				break;
+-			}
+ 		}
+ 
+ 		break;
+@@ -1531,7 +1628,6 @@ static int vfe_enum_mbus_code(struct v4l2_subdev *sd,
+ 			      struct v4l2_subdev_mbus_code_enum *code)
+ {
+ 	struct vfe_line *line = v4l2_get_subdevdata(sd);
+-	struct v4l2_mbus_framefmt *format;
+ 
+ 	if (code->pad == MSM_VFE_PAD_SINK) {
+ 		if (code->index >= line->nformats)
+@@ -1539,13 +1635,15 @@ static int vfe_enum_mbus_code(struct v4l2_subdev *sd,
+ 
+ 		code->code = line->formats[code->index].code;
+ 	} else {
+-		if (code->index > 0)
+-			return -EINVAL;
++		struct v4l2_mbus_framefmt *sink_fmt;
+ 
+-		format = __vfe_get_format(line, cfg, MSM_VFE_PAD_SINK,
+-					  code->which);
++		sink_fmt = __vfe_get_format(line, cfg, MSM_VFE_PAD_SINK,
++					    code->which);
+ 
+-		code->code = format->code;
++		code->code = vfe_src_pad_code(line, sink_fmt->code,
++					      code->index, 0);
++		if (!code->code)
++			return -EINVAL;
+ 	}
+ 
+ 	return 0;
 -- 
 2.7.4
 
