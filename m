@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EA5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A261ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6DE020685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6DE020685
+	by mail.kernel.org (Postfix) with ESMTP id B6D7B20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D7B20880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389259AbeGWNrn (ORCPT
+        id S2389307AbeGWNrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51134 "EHLO
+        Mon, 23 Jul 2018 09:47:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388511AbeGWNrm (ORCPT
+        with ESMTP id S2388246AbeGWNro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:42 -0400
+        Mon, 23 Jul 2018 09:47:44 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 607B4CAF;
-        Mon, 23 Jul 2018 12:45:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B85FCCB0;
+        Mon, 23 Jul 2018 12:45:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
         David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 058/107] x86/bugs/intel: Set proper CPU features and setup RDS
-Date:   Mon, 23 Jul 2018 14:41:52 +0200
-Message-Id: <20180723122415.894335213@linuxfoundation.org>
+Subject: [PATCH 4.4 060/107] x86/bugs/AMD: Add support to disable RDS on Fam[15, 16, 17]h if requested
+Date:   Mon, 23 Jul 2018 14:41:54 +0200
+Message-Id: <20180723122416.047823258@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -57,33 +57,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 772439717dbf703b39990be58d8d4e3e4ad0598a upstream
+commit 764f3c21588a059cd783c6ba0734d4db2d72822d upstream
 
-Intel CPUs expose methods to:
+AMD does not need the Speculative Store Bypass mitigation to be enabled.
 
- - Detect whether RDS capability is available via CPUID.7.0.EDX[31],
+The parameters for this are already available and can be done via MSR
+C001_1020. Each family uses a different bit in that MSR for this.
 
- - The SPEC_CTRL MSR(0x48), bit 2 set to enable RDS.
+[ tglx: Expose the bit mask via a variable and move the actual MSR fiddling
+  	into the bugs code as that's the right thing to do and also required
+	to prepare for dynamic enable/disable ]
 
- - MSR_IA32_ARCH_CAPABILITIES, Bit(4) no need to enable RRS.
+[ Srivatsa: Removed __ro_after_init for 4.4.y ]
 
-With that in mind if spec_store_bypass_disable=[auto,on] is selected set at
-boot-time the SPEC_CTRL MSR to enable RDS if the platform requires it.
-
-Note that this does not fix the KVM case where the SPEC_CTRL is exposed to
-guests which can muck with it, see patch titled :
- KVM/SVM/VMX/x86/spectre_v2: Support the combination of guest and host IBRS.
-
-And for the firmware (IBRS to be set), see patch titled:
- x86/spectre_v2: Read SPEC_CTRL MSR during boot and re-use reserved bits
-
-[ tglx: Distangled it from the intel implementation and kept the call order ]
-
+Suggested-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -94,141 +85,168 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/msr-index.h |    6 ++++++
- arch/x86/kernel/cpu/bugs.c       |   30 ++++++++++++++++++++++++++++--
- arch/x86/kernel/cpu/common.c     |   10 ++++++----
- arch/x86/kernel/cpu/cpu.h        |    3 +++
- arch/x86/kernel/cpu/intel.c      |    1 +
- 5 files changed, 44 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/cpufeatures.h   |    1 +
+ arch/x86/include/asm/nospec-branch.h |    4 ++++
+ arch/x86/kernel/cpu/amd.c            |   26 ++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/bugs.c           |   27 ++++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/common.c         |    4 ++++
+ 5 files changed, 61 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -35,6 +35,7 @@
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
- #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
- #define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
-+#define SPEC_CTRL_RDS			(1 << 2)   /* Reduced Data Speculation */
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -204,6 +204,7 @@
+ #define X86_FEATURE_USE_IBPB	( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled*/
+ #define X86_FEATURE_USE_IBRS_FW	( 7*32+22) /* "" Use IBRS during runtime firmware calls */
+ #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE	( 7*32+23) /* "" Disable Speculative Store Bypass. */
++#define X86_FEATURE_AMD_RDS	(7*32+24)  /* "" AMD RDS implementation */
  
- #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
- #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
-@@ -56,6 +57,11 @@
- #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
- #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
- #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
-+#define ARCH_CAP_RDS_NO			(1 << 4)   /*
-+						    * Not susceptible to Speculative Store Bypass
-+						    * attack, so no Reduced Data Speculation control
-+						    * required.
-+						    */
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -199,6 +199,10 @@ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_DISABLE,
+ };
  
- #define MSR_IA32_BBL_CR_CTL		0x00000119
- #define MSR_IA32_BBL_CR_CTL3		0x0000011e
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -116,7 +116,7 @@ static enum spectre_v2_mitigation spectr
++/* AMD specific Speculative Store Bypass MSR data */
++extern u64 x86_amd_ls_cfg_base;
++extern u64 x86_amd_ls_cfg_rds_mask;
++
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
  
- void x86_spec_ctrl_set(u64 val)
- {
--	if (val & ~SPEC_CTRL_IBRS)
-+	if (val & ~(SPEC_CTRL_IBRS | SPEC_CTRL_RDS))
- 		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
- 	else
- 		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
-@@ -443,8 +443,28 @@ static enum ssb_mitigation_cmd __init __
- 		break;
- 	}
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -9,6 +9,7 @@
+ #include <asm/processor.h>
+ #include <asm/apic.h>
+ #include <asm/cpu.h>
++#include <asm/nospec-branch.h>
+ #include <asm/smp.h>
+ #include <asm/pci-direct.h>
+ #include <asm/delay.h>
+@@ -519,6 +520,26 @@ static void bsp_init_amd(struct cpuinfo_
  
--	if (mode != SPEC_STORE_BYPASS_NONE)
-+	/*
-+	 * We have three CPU feature flags that are in play here:
-+	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
-+	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
-+	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
-+	 */
-+	if (mode != SPEC_STORE_BYPASS_NONE) {
- 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
+ 	if (cpu_has(c, X86_FEATURE_MWAITX))
+ 		use_mwaitx_delay();
++
++	if (c->x86 >= 0x15 && c->x86 <= 0x17) {
++		unsigned int bit;
++
++		switch (c->x86) {
++		case 0x15: bit = 54; break;
++		case 0x16: bit = 33; break;
++		case 0x17: bit = 10; break;
++		default: return;
++		}
 +		/*
-+		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
-+		 * a completely different MSR and bit dependent on family.
++		 * Try to cache the base value so further operations can
++		 * avoid RMW. If that faults, do not enable RDS.
 +		 */
-+		switch (boot_cpu_data.x86_vendor) {
-+		case X86_VENDOR_INTEL:
-+			x86_spec_ctrl_base |= SPEC_CTRL_RDS;
-+			x86_spec_ctrl_set(SPEC_CTRL_RDS);
-+			break;
-+		case X86_VENDOR_AMD:
-+			break;
++		if (!rdmsrl_safe(MSR_AMD64_LS_CFG, &x86_amd_ls_cfg_base)) {
++			setup_force_cpu_cap(X86_FEATURE_RDS);
++			setup_force_cpu_cap(X86_FEATURE_AMD_RDS);
++			x86_amd_ls_cfg_rds_mask = 1ULL << bit;
 +		}
 +	}
-+
- 	return mode;
  }
  
-@@ -458,6 +478,12 @@ static void ssb_select_mitigation()
- 
- #undef pr_fmt
- 
-+void x86_spec_ctrl_setup_ap(void)
-+{
-+	if (boot_cpu_has(X86_FEATURE_IBRS))
-+		x86_spec_ctrl_set(x86_spec_ctrl_base & (SPEC_CTRL_IBRS | SPEC_CTRL_RDS));
-+}
+ static void early_init_amd(struct cpuinfo_x86 *c)
+@@ -794,6 +815,11 @@ static void init_amd(struct cpuinfo_x86
+ 	/* AMD CPUs don't reset SS attributes on SYSRET, Xen does. */
+ 	if (!cpu_has(c, X86_FEATURE_XENPV))
+ 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
 +
- #ifdef CONFIG_SYSFS
++	if (boot_cpu_has(X86_FEATURE_AMD_RDS)) {
++		set_cpu_cap(c, X86_FEATURE_RDS);
++		set_cpu_cap(c, X86_FEATURE_AMD_RDS);
++	}
+ }
  
- ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -859,7 +859,11 @@ static void __init cpu_set_bug_bits(stru
+ #ifdef CONFIG_X86_32
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -40,6 +40,13 @@ static u64 x86_spec_ctrl_base;
+  */
+ static u64 x86_spec_ctrl_mask = ~SPEC_CTRL_IBRS;
+ 
++/*
++ * AMD specific MSR info for Speculative Store Bypass control.
++ * x86_amd_ls_cfg_rds_mask is initialized in identify_boot_cpu().
++ */
++u64 x86_amd_ls_cfg_base;
++u64 x86_amd_ls_cfg_rds_mask;
++
+ void __init check_bugs(void)
  {
- 	u64 ia32_cap = 0;
- 
--	if (!x86_match_cpu(cpu_no_spec_store_bypass))
-+	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
-+		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
-+
-+	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
-+	   !(ia32_cap & ARCH_CAP_RDS_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
- 
- 	if (x86_match_cpu(cpu_no_speculation))
-@@ -871,9 +875,6 @@ static void __init cpu_set_bug_bits(stru
- 	if (x86_match_cpu(cpu_no_meltdown))
- 		return;
- 
--	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
--		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
--
- 	/* Rogue Data Cache Load? No! */
- 	if (ia32_cap & ARCH_CAP_RDCL_NO)
- 		return;
-@@ -1216,6 +1217,7 @@ void identify_secondary_cpu(struct cpuin
- 	enable_sep_cpu();
- #endif
- 	mtrr_ap_init();
-+	x86_spec_ctrl_setup_ap();
- }
- 
- struct msr_range {
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -46,4 +46,7 @@ extern const struct cpu_dev *const __x86
- 
- extern void get_cpu_cap(struct cpuinfo_x86 *c);
- extern void cpu_detect_cache_sizes(struct cpuinfo_x86 *c);
-+
-+extern void x86_spec_ctrl_setup_ap(void);
-+
- #endif /* ARCH_X86_CPU_H */
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -119,6 +119,7 @@ static void early_init_intel(struct cpui
- 		setup_clear_cpu_cap(X86_FEATURE_STIBP);
- 		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
- 		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
-+		setup_clear_cpu_cap(X86_FEATURE_RDS);
- 	}
+ 	identify_boot_cpu();
+@@ -51,7 +58,8 @@ void __init check_bugs(void)
  
  	/*
+ 	 * Read the SPEC_CTRL MSR to account for reserved bits which may
+-	 * have unknown values.
++	 * have unknown values. AMD64_LS_CFG MSR is cached in the early AMD
++	 * init code as it is not enumerated and depends on the family.
+ 	 */
+ 	if (boot_cpu_has(X86_FEATURE_IBRS))
+ 		rdmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+@@ -153,6 +161,14 @@ void x86_spec_ctrl_restore_host(u64 gues
+ }
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_restore_host);
+ 
++static void x86_amd_rds_enable(void)
++{
++	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_rds_mask;
++
++	if (boot_cpu_has(X86_FEATURE_AMD_RDS))
++		wrmsrl(MSR_AMD64_LS_CFG, msrval);
++}
++
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
+ 
+@@ -442,6 +458,11 @@ static enum ssb_mitigation_cmd __init __
+ 
+ 	switch (cmd) {
+ 	case SPEC_STORE_BYPASS_CMD_AUTO:
++		/*
++		 * AMD platforms by default don't need SSB mitigation.
++		 */
++		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
++			break;
+ 	case SPEC_STORE_BYPASS_CMD_ON:
+ 		mode = SPEC_STORE_BYPASS_DISABLE;
+ 		break;
+@@ -468,6 +489,7 @@ static enum ssb_mitigation_cmd __init __
+ 			x86_spec_ctrl_set(SPEC_CTRL_RDS);
+ 			break;
+ 		case X86_VENDOR_AMD:
++			x86_amd_rds_enable();
+ 			break;
+ 		}
+ 	}
+@@ -489,6 +511,9 @@ void x86_spec_ctrl_setup_ap(void)
+ {
+ 	if (boot_cpu_has(X86_FEATURE_IBRS))
+ 		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
++
++	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
++		x86_amd_rds_enable();
+ }
+ 
+ #ifdef CONFIG_SYSFS
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -851,6 +851,10 @@ static const __initconst struct x86_cpu_
+ 	{ X86_VENDOR_CENTAUR,	5,					},
+ 	{ X86_VENDOR_INTEL,	5,					},
+ 	{ X86_VENDOR_NSC,	5,					},
++	{ X86_VENDOR_AMD,	0x12,					},
++	{ X86_VENDOR_AMD,	0x11,					},
++	{ X86_VENDOR_AMD,	0x10,					},
++	{ X86_VENDOR_AMD,	0xf,					},
+ 	{ X86_VENDOR_ANY,	4,					},
+ 	{}
+ };
 
 
