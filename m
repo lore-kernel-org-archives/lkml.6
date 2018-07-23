@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AD0ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF54BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 819A020880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:50:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 819A020880
+	by mail.kernel.org (Postfix) with ESMTP id 98CC420856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:50:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CC420856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388795AbeGWNvR (ORCPT
+        id S2389590AbeGWNsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:51:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51698 "EHLO
+        Mon, 23 Jul 2018 09:48:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388217AbeGWNsE (ORCPT
+        with ESMTP id S2388674AbeGWNsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:04 -0400
+        Mon, 23 Jul 2018 09:48:03 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E300C94;
-        Mon, 23 Jul 2018 12:46:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82AC2CA1;
+        Mon, 23 Jul 2018 12:46:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 090/107] x86/speculation: Add virtualized speculative store bypass disable support
-Date:   Mon, 23 Jul 2018 14:42:24 +0200
-Message-Id: <20180723122418.000920675@linuxfoundation.org>
+Subject: [PATCH 4.4 088/107] x86/speculation: Handle HT correctly on AMD
+Date:   Mon, 23 Jul 2018 14:42:22 +0200
+Message-Id: <20180723122417.905662046@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -56,23 +56,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 11fb0683493b2da112cd64c9dada221b52463bf7 upstream
+commit 1f50ddb4f4189243c05926b842dc1a0332195f31 upstream
 
-Some AMD processors only support a non-architectural means of enabling
-speculative store bypass disable (SSBD).  To allow a simplified view of
-this to a guest, an architectural definition has been created through a new
-CPUID bit, 0x80000008_EBX[25], and a new MSR, 0xc001011f.  With this, a
-hypervisor can virtualize the existence of this definition and provide an
-architectural method for using SSBD to a guest.
+The AMD64_LS_CFG MSR is a per core MSR on Family 17H CPUs. That means when
+hyperthreading is enabled the SSBD bit toggle needs to take both cores into
+account. Otherwise the following situation can happen:
 
-Add the new CPUID feature, the new MSR and update the existing SSBD
-support to use this MSR when present.
+CPU0		CPU1
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+disable SSB
+		disable SSB
+		enable  SSB <- Enables it for the Core, i.e. for CPU0 as well
+
+So after the SSB enable on CPU1 the task on CPU0 runs with SSB enabled
+again.
+
+On Intel the SSBD control is per core as well, but the synchronization
+logic is implemented behind the per thread SPEC_CTRL MSR. It works like
+this:
+
+  CORE_SPEC_CTRL = THREAD0_SPEC_CTRL | THREAD1_SPEC_CTRL
+
+i.e. if one of the threads enables a mitigation then this affects both and
+the mitigation is only disabled in the core when both threads disabled it.
+
+Add the necessary synchronization logic for AMD family 17H. Unfortunately
+that requires a spinlock to serialize the access to the MSR, but the locks
+are only shared between siblings.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -82,74 +98,197 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/cpufeatures.h |    1 +
- arch/x86/include/asm/msr-index.h   |    2 ++
- arch/x86/kernel/cpu/bugs.c         |    4 +++-
- arch/x86/kernel/process.c          |   13 ++++++++++++-
- 4 files changed, 18 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/spec-ctrl.h |    6 +
+ arch/x86/kernel/process.c        |  125 +++++++++++++++++++++++++++++++++++++--
+ arch/x86/kernel/smpboot.c        |    5 +
+ 3 files changed, 130 insertions(+), 6 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -269,6 +269,7 @@
- #define X86_FEATURE_AMD_IBPB	(13*32+12) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_AMD_IBRS	(13*32+14) /* Indirect Branch Restricted Speculation */
- #define X86_FEATURE_AMD_STIBP	(13*32+15) /* Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_VIRT_SSBD	(13*32+25) /* Virtualized Speculative Store Bypass Disable */
- 
- /* Thermal and Power Management Leaf, CPUID level 0x00000006 (eax), word 14 */
- #define X86_FEATURE_DTHERM	(14*32+ 0) /* Digital Thermal Sensor */
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -328,6 +328,8 @@
- #define MSR_AMD64_IBSOPDATA4		0xc001103d
- #define MSR_AMD64_IBS_REG_COUNT_MAX	8 /* includes MSR_AMD64_IBSBRTARGET */
- 
-+#define MSR_AMD64_VIRT_SPEC_CTRL	0xc001011f
-+
- /* Fam 16h MSRs */
- #define MSR_F16H_L2I_PERF_CTL		0xc0010230
- #define MSR_F16H_L2I_PERF_CTR		0xc0010231
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -203,7 +203,9 @@ static void x86_amd_ssb_disable(void)
- {
- 	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_ssbd_mask;
- 
--	if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-+	if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
-+		wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, SPEC_CTRL_SSBD);
-+	else if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
- 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -33,6 +33,12 @@ static inline u64 ssbd_tif_to_amd_ls_cfg
+ 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
  }
  
++#ifdef CONFIG_SMP
++extern void speculative_store_bypass_ht_init(void);
++#else
++static inline void speculative_store_bypass_ht_init(void) { }
++#endif
++
+ extern void speculative_store_bypass_update(void);
+ 
+ #endif
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -308,6 +308,15 @@ static __always_inline void amd_set_core
+@@ -199,22 +199,135 @@ static inline void switch_to_bitmap(stru
+ 	}
  }
- #endif
  
-+static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
+-static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
++#ifdef CONFIG_SMP
++
++struct ssb_state {
++	struct ssb_state	*shared_state;
++	raw_spinlock_t		lock;
++	unsigned int		disable_state;
++	unsigned long		local_state;
++};
++
++#define LSTATE_SSB	0
++
++static DEFINE_PER_CPU(struct ssb_state, ssb_state);
++
++void speculative_store_bypass_ht_init(void)
 +{
++	struct ssb_state *st = this_cpu_ptr(&ssb_state);
++	unsigned int this_cpu = smp_processor_id();
++	unsigned int cpu;
++
++	st->local_state = 0;
++
 +	/*
-+	 * SSBD has the same definition in SPEC_CTRL and VIRT_SPEC_CTRL,
-+	 * so ssbd_tif_to_spec_ctrl() just works.
++	 * Shared state setup happens once on the first bringup
++	 * of the CPU. It's not destroyed on CPU hotunplug.
 +	 */
-+	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
++	if (st->shared_state)
++		return;
++
++	raw_spin_lock_init(&st->lock);
++
++	/*
++	 * Go over HT siblings and check whether one of them has set up the
++	 * shared state pointer already.
++	 */
++	for_each_cpu(cpu, topology_sibling_cpumask(this_cpu)) {
++		if (cpu == this_cpu)
++			continue;
++
++		if (!per_cpu(ssb_state, cpu).shared_state)
++			continue;
++
++		/* Link it to the state of the sibling: */
++		st->shared_state = per_cpu(ssb_state, cpu).shared_state;
++		return;
++	}
++
++	/*
++	 * First HT sibling to come up on the core.  Link shared state of
++	 * the first HT sibling to itself. The siblings on the same core
++	 * which come up later will see the shared state pointer and link
++	 * themself to the state of this CPU.
++	 */
++	st->shared_state = st;
 +}
 +
- static __always_inline void intel_set_ssb_state(unsigned long tifn)
++/*
++ * Logic is: First HT sibling enables SSBD for both siblings in the core
++ * and last sibling to disable it, disables it for the whole core. This how
++ * MSR_SPEC_CTRL works in "hardware":
++ *
++ *  CORE_SPEC_CTRL = THREAD0_SPEC_CTRL | THREAD1_SPEC_CTRL
++ */
++static __always_inline void amd_set_core_ssb_state(unsigned long tifn)
  {
- 	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
-@@ -317,7 +326,9 @@ static __always_inline void intel_set_ss
+-	u64 msr;
++	struct ssb_state *st = this_cpu_ptr(&ssb_state);
++	u64 msr = x86_amd_ls_cfg_base;
  
- static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
+-	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
+-		msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
++	if (!static_cpu_has(X86_FEATURE_ZEN)) {
++		msr |= ssbd_tif_to_amd_ls_cfg(tifn);
+ 		wrmsrl(MSR_AMD64_LS_CFG, msr);
++		return;
++	}
++
++	if (tifn & _TIF_SSBD) {
++		/*
++		 * Since this can race with prctl(), block reentry on the
++		 * same CPU.
++		 */
++		if (__test_and_set_bit(LSTATE_SSB, &st->local_state))
++			return;
++
++		msr |= x86_amd_ls_cfg_ssbd_mask;
++
++		raw_spin_lock(&st->shared_state->lock);
++		/* First sibling enables SSBD: */
++		if (!st->shared_state->disable_state)
++			wrmsrl(MSR_AMD64_LS_CFG, msr);
++		st->shared_state->disable_state++;
++		raw_spin_unlock(&st->shared_state->lock);
+ 	} else {
+-		msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
+-		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
++		if (!__test_and_clear_bit(LSTATE_SSB, &st->local_state))
++			return;
++
++		raw_spin_lock(&st->shared_state->lock);
++		st->shared_state->disable_state--;
++		if (!st->shared_state->disable_state)
++			wrmsrl(MSR_AMD64_LS_CFG, msr);
++		raw_spin_unlock(&st->shared_state->lock);
+ 	}
+ }
++#else
++static __always_inline void amd_set_core_ssb_state(unsigned long tifn)
++{
++	u64 msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
++
++	wrmsrl(MSR_AMD64_LS_CFG, msr);
++}
++#endif
++
++static __always_inline void intel_set_ssb_state(unsigned long tifn)
++{
++	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
++
++	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
++}
++
++static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
++{
++	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++		amd_set_core_ssb_state(tifn);
++	else
++		intel_set_ssb_state(tifn);
++}
+ 
+ void speculative_store_bypass_update(void)
  {
--	if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-+	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
-+		amd_set_ssb_virt_state(tifn);
-+	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
- 		amd_set_core_ssb_state(tifn);
- 	else
- 		intel_set_ssb_state(tifn);
++	preempt_disable();
+ 	__speculative_store_bypass_update(current_thread_info()->flags);
++	preempt_enable();
+ }
+ 
+ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -75,6 +75,7 @@
+ #include <asm/i8259.h>
+ #include <asm/realmode.h>
+ #include <asm/misc.h>
++#include <asm/spec-ctrl.h>
+ 
+ /* Number of siblings per CPU package */
+ int smp_num_siblings = 1;
+@@ -217,6 +218,8 @@ static void notrace start_secondary(void
+ 	 */
+ 	check_tsc_sync_target();
+ 
++	speculative_store_bypass_ht_init();
++
+ 	/*
+ 	 * Lock vector_lock and initialize the vectors on this cpu
+ 	 * before setting the cpu online. We must set it online with
+@@ -1209,6 +1212,8 @@ void __init native_smp_prepare_cpus(unsi
+ 	set_mtrr_aps_delayed_init();
+ 
+ 	smp_quirk_init_udelay();
++
++	speculative_store_bypass_ht_init();
+ }
+ 
+ void arch_enable_nonboot_cpus_begin(void)
 
 
