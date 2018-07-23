@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC03BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AF4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E2E420880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:29:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2E420880
+	by mail.kernel.org (Postfix) with ESMTP id 2D35D20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:29:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D35D20880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389003AbeGWNaB (ORCPT
+        id S2389012AbeGWNaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:30:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45780 "EHLO
+        Mon, 23 Jul 2018 09:30:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45792 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387998AbeGWNaA (ORCPT
+        with ESMTP id S2387998AbeGWNaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:30:00 -0400
+        Mon, 23 Jul 2018 09:30:03 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1481FBB3;
-        Mon, 23 Jul 2018 12:29:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9AE9BDB;
+        Mon, 23 Jul 2018 12:29:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: [PATCH 4.14 17/44] vfio/pci: Fix potential Spectre v1
-Date:   Mon, 23 Jul 2018 14:24:53 +0200
-Message-Id: <20180723122438.279932573@linuxfoundation.org>
+        stable@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 18/44] vfio/spapr: Use IOMMU pageshift rather than pagesize
+Date:   Mon, 23 Jul 2018 14:24:54 +0200
+Message-Id: <20180723122438.335516434@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
 References: <20180723122437.447870153@linuxfoundation.org>
@@ -51,55 +52,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-commit 0e714d27786ce1fb3efa9aac58abc096e68b1c2a upstream.
+commit 1463edca6734d42ab4406fa2896e20b45478ea36 upstream.
 
-info.index can be indirectly controlled by user-space, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+The size is always equal to 1 page so let's use this. Later on this will
+be used for other checks which use page shifts to check the granularity
+of access.
 
-This issue was detected with the help of Smatch:
+This should cause no behavioral change.
 
-drivers/vfio/pci/vfio_pci.c:734 vfio_pci_ioctl()
-warn: potential spectre issue 'vdev->region'
-
-Fix this by sanitizing info.index before indirectly using it to index
-vdev->region
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Cc: stable@vger.kernel.org # v4.12+
+Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
+Acked-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vfio/pci/vfio_pci.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/vfio/vfio_iommu_spapr_tce.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -28,6 +28,7 @@
- #include <linux/uaccess.h>
- #include <linux/vfio.h>
- #include <linux/vgaarb.h>
-+#include <linux/nospec.h>
+--- a/drivers/vfio/vfio_iommu_spapr_tce.c
++++ b/drivers/vfio/vfio_iommu_spapr_tce.c
+@@ -457,13 +457,13 @@ static void tce_iommu_unuse_page(struct
+ }
  
- #include "vfio_pci_private.h"
+ static int tce_iommu_prereg_ua_to_hpa(struct tce_container *container,
+-		unsigned long tce, unsigned long size,
++		unsigned long tce, unsigned long shift,
+ 		unsigned long *phpa, struct mm_iommu_table_group_mem_t **pmem)
+ {
+ 	long ret = 0;
+ 	struct mm_iommu_table_group_mem_t *mem;
  
-@@ -746,6 +747,9 @@ static long vfio_pci_ioctl(void *device_
- 			if (info.index >=
- 			    VFIO_PCI_NUM_REGIONS + vdev->num_regions)
- 				return -EINVAL;
-+			info.index = array_index_nospec(info.index,
-+							VFIO_PCI_NUM_REGIONS +
-+							vdev->num_regions);
+-	mem = mm_iommu_lookup(container->mm, tce, size);
++	mem = mm_iommu_lookup(container->mm, tce, 1ULL << shift);
+ 	if (!mem)
+ 		return -EINVAL;
  
- 			i = info.index - VFIO_PCI_NUM_REGIONS;
+@@ -487,7 +487,7 @@ static void tce_iommu_unuse_page_v2(stru
+ 	if (!pua)
+ 		return;
+ 
+-	ret = tce_iommu_prereg_ua_to_hpa(container, *pua, IOMMU_PAGE_SIZE(tbl),
++	ret = tce_iommu_prereg_ua_to_hpa(container, *pua, tbl->it_page_shift,
+ 			&hpa, &mem);
+ 	if (ret)
+ 		pr_debug("%s: tce %lx at #%lx was not cached, ret=%d\n",
+@@ -609,7 +609,7 @@ static long tce_iommu_build_v2(struct tc
+ 				entry + i);
+ 
+ 		ret = tce_iommu_prereg_ua_to_hpa(container,
+-				tce, IOMMU_PAGE_SIZE(tbl), &hpa, &mem);
++				tce, tbl->it_page_shift, &hpa, &mem);
+ 		if (ret)
+ 			break;
  
 
 
