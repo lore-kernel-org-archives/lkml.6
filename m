@@ -2,107 +2,139 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A71ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B781EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B34B920856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:39:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE8D2064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:39:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="aqqN8v7s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34B920856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWb3UJkY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE8D2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388227AbeGWWmH (ORCPT
+        id S2388236AbeGWWmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:42:07 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38489 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388151AbeGWWmH (ORCPT
+        Mon, 23 Jul 2018 18:42:46 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42093 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388135AbeGWWmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:42:07 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v14-v6so2098646wro.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:38:58 -0700 (PDT)
+        Mon, 23 Jul 2018 18:42:46 -0400
+Received: by mail-pl0-f65.google.com with SMTP id z7-v6so764830plo.9;
+        Mon, 23 Jul 2018 14:39:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=8FDskwpmSla9CJp78cSwPvcyGMeCAp5auc8Du6fRaXA=;
-        b=aqqN8v7s+Ei9PYO5pAoZwCoWypgWUWCmmWoofST4afH+MvnvPhLSyjhDb8u415QtI5
-         3G5Q/OzLejlmuYJ24WSHUX9ME7mEtk6m0crReRC3l3CXLFPxKrSWQaskuLVQ7IWjhu0I
-         3Sehv9IPI1VaPOriWhP0ktQbReJea9DXOXPNbxJjz83R9HAYXoPcLfiFR8AMiENIhLsz
-         B3ZpEKywCAcP4ffIirP0ZEI6LV9xNHvjVHh/CJouwntYjdJOCilXCkvbblZgSy30zdEs
-         PcR6PxQPsioFlxMXQao5CJrV1/3PFfs1l3DgNGep3UhoxQyEdj2I4EH2Qkg/gpwaLuP5
-         fJIA==
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=RG9go1qbzNWlPgt1ByJ1dgOs9189IFz+a0PH4YawvEw=;
+        b=RWb3UJkYIuaK6TMXaEmipGRlfMroaYv6fFa/J3F3v+UT7oPu2DpdzoUUl4Ja3s99Ep
+         wFGaH9WDQHqRJBtuWtWjv9Vn/yVQjkP6HesdlnQkIFvnlQ6HFkjO+mtA7D2bzhI2J0+v
+         eHNytdgH/sVO2hhonSzjfFoVjNQlKyHwWTfhIC+ol8auduIpkuG5qEylrvTmAt1DSC+z
+         FRf7BejaA6CLm4G4ciZAHZ7zNxBNdYEpWGQjLbH1cG1xcnTqMW/HTc6opuvoiXc8bjtM
+         QqdX5AUVg0y4o9D4w8vzsxcXZ0z4Ij8NgQhRr7BbzzIXh9J2XXEAPRQqfvrk4WOC4D5Z
+         7UIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=8FDskwpmSla9CJp78cSwPvcyGMeCAp5auc8Du6fRaXA=;
-        b=GupmYSKkroyZ4nb5YtaFtJCmvkNbGjopyVD4lRj8JxGOaKpJqBq12Vscd2jJlcEkY9
-         inSCw5sZNgE79qFbdOZFr0Rj0ssbuOxBCPJXrR4BzOj703hsDQJGtQYLEfci9IwhqRx0
-         xBYRZ+dHUQ/BFycWFNr6BrFdBAdh60TSjr0sgceDBIpXq+tfLgaQh2WawTumxM0fSCeh
-         DOTwWPklKz3oUEYbkvXvOxnWXvDahWDjmbLYvzxqUUadBm33S5Xvk8Jg5JkE5exrHDTQ
-         AZWMT/rzP3FfvUaClCgOaY8VXdkutIB66fFsWZseYkFEsi2hrpPn/iHm5BUPSAgX+/Z5
-         n3Ig==
-X-Gm-Message-State: AOUpUlEyjShVRLMUP5cu1jGTmY7Pjgi4kDvsD5islJhA7kAb+C9DM4u5
-        fmadZWS2hEQLWXwAI4BhdS2f5g==
-X-Google-Smtp-Source: AAOMgpc99yFmKjWTfU4K6w0OGfN7BAY34bwzpWjc6kCz3OmbBWdm1ys2SZRoItcF3Ngdjrkhs5cyeQ==
-X-Received: by 2002:adf:ae01:: with SMTP id x1-v6mr10234511wrc.45.1532381937662;
-        Mon, 23 Jul 2018 14:38:57 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id c124-v6sm11742352wma.47.2018.07.23.14.38.55
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=RG9go1qbzNWlPgt1ByJ1dgOs9189IFz+a0PH4YawvEw=;
+        b=tLfCu56oDguac1/du97EMqNbgDqxeAVoM1bLj9KMW8k5yciqPDB7kopeF3nbsxPzKl
+         5Rldm376AUDLdoUoKPVPOBsFmsPOjprFIx4Vv/mxF5NtGYywYorZ6vgh29A95hXKvLWD
+         h5Jwe2fus5cauPD6K9/gkzilZ5LSUJeq5rL4T0e0vYrpr4T72JrLiq45JUGVGnu4pDjW
+         xNB3yRJW/Dbn8yhpUQ9zMX2Vf/xGtYRzgUZDogv2XIuanngozngLn82pbncgaLdLYibL
+         1cs001RJdDT00iqLUszkBvvaKWUfiUFl+zztjylHnjHXN1aq4bEATyNVfrefe3gJFbsI
+         nP1A==
+X-Gm-Message-State: AOUpUlHRnPgB2Yheuh4gYH/fRuW0C1dTluhPrd2DTuaLSWeMXZyKB5nr
+        kM23ik+9D4PDa0nXEQzHo60=
+X-Google-Smtp-Source: AAOMgpcF/P8ty6d9NDuiLYyvn25KwmwXAVe8bWVIb0kq2YuKaWvqx1P7F+iHvzuE8KhV2YkxC2ic9A==
+X-Received: by 2002:a17:902:4101:: with SMTP id e1-v6mr14442177pld.205.1532381976727;
+        Mon, 23 Jul 2018 14:39:36 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id p64-v6sm15926952pfa.47.2018.07.23.14.39.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 14:38:57 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fhiXb-0005mY-KH; Mon, 23 Jul 2018 15:38:51 -0600
-Date:   Mon, 23 Jul 2018 15:38:51 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        Alex Vesker <valex@mellanox.com>,
-        Erez Shitrit <erezsh@mellanox.com>,
-        Feras Daoud <ferasda@mellanox.com>,
-        Kees Cook <keescook@chromium.org>,
-        Evgenii Smirnov <evgenii.smirnov@profitbricks.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Denis Lunev <den@virtuozzo.com>,
-        Konstantin Khorenko <khorenko@virtuozzo.com>
-Subject: Re: [PATCH] IPoIB: use kvzalloc to allocate an array of bucket
- pointers
-Message-ID: <20180723213851.GA22162@ziepe.ca>
-References: <1531144263-24717-1-git-send-email-jan.dakinevich@virtuozzo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1531144263-24717-1-git-send-email-jan.dakinevich@virtuozzo.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 23 Jul 2018 14:39:36 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        David Miller <davem@davemloft.net>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] media: staging: omap4iss: Include asm/cacheflush.h after generic includes
+Date:   Mon, 23 Jul 2018 14:39:33 -0700
+Message-Id: <1532381973-11856-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 04:51:03PM +0300, Jan Dakinevich wrote:
-> This table by default takes 32KiB which is 3rd memory order. Meanwhile,
-> this memory is not aimed for DMA operation and could be safely allocated
-> by vmalloc.
-> 
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-> Reviewed-by: Håkon Bugge <haakon.bugge@oracle.com>
-> ---
->  drivers/infiniband/ulp/ipoib/ipoib_main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Including asm/cacheflush.h first results in the following build error when
+trying to build sparc32:allmodconfig.
 
-Applied to for-next, thanks
+In file included from arch/sparc/include/asm/page.h:10:0,
+                 from arch/sparc/include/asm/string_32.h:13,
+                 from arch/sparc/include/asm/string.h:7,
+                 from include/linux/string.h:20,
+                 from include/linux/bitmap.h:9,
+                 from include/linux/cpumask.h:12,
+                 from arch/sparc/include/asm/smp_32.h:15,
+                 from arch/sparc/include/asm/smp.h:7,
+                 from arch/sparc/include/asm/switch_to_32.h:5,
+                 from arch/sparc/include/asm/switch_to.h:7,
+                 from arch/sparc/include/asm/ptrace.h:120,
+                 from arch/sparc/include/asm/thread_info_32.h:19,
+                 from arch/sparc/include/asm/thread_info.h:7,
+                 from include/linux/thread_info.h:38,
+                 from arch/sparc/include/asm/current.h:15,
+                 from include/linux/mutex.h:14,
+                 from include/linux/notifier.h:14,
+                 from include/linux/clk.h:17,
+                 from drivers/staging/media/omap4iss/iss_video.c:15:
+include/linux/highmem.h: In function 'clear_user_highpage':
+include/linux/highmem.h:137:31: error:
+	passing argument 1 of 'sparc_flush_page_to_ram' from incompatible
+	pointer type
 
-Jason
+Include generic includes files first to fix the problem.
+
+Fixes: fc96d58c10162 ("[media] v4l: omap4iss: Add support for OMAP4 camera interface - Video devices")
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Miller <davem@davemloft.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/staging/media/omap4iss/iss_video.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/staging/media/omap4iss/iss_video.c
+index a3a83424a926..16478fe9e3f8 100644
+--- a/drivers/staging/media/omap4iss/iss_video.c
++++ b/drivers/staging/media/omap4iss/iss_video.c
+@@ -11,7 +11,6 @@
+  * (at your option) any later version.
+  */
+ 
+-#include <asm/cacheflush.h>
+ #include <linux/clk.h>
+ #include <linux/mm.h>
+ #include <linux/pagemap.h>
+@@ -24,6 +23,8 @@
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-mc.h>
+ 
++#include <asm/cacheflush.h>
++
+ #include "iss_video.h"
+ #include "iss.h"
+ 
+-- 
+2.7.4
+
