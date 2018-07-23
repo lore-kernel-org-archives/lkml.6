@@ -2,100 +2,166 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD58ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423F4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3894820779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:42:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3894820779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id F3EC320779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:43:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EC320779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388767AbeGWRoA (ORCPT
+        id S2388819AbeGWRpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:44:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55638 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388368AbeGWRoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:44:00 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 23 Jul 2018 13:45:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47628 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388368AbeGWRpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 13:45:32 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0745020779;
-        Mon, 23 Jul 2018 16:41:55 +0000 (UTC)
-Date:   Mon, 23 Jul 2018 12:41:54 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Snild Dolkow <snild@sony.com>
-Cc:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Yoshitaka Seto <yoshitaka.seto@sony.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-        KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: [PATCH RESEND] kthread, tracing: Don't expose half-written comm
- when creating kthreads
-Message-ID: <20180723124154.14ef0679@gandalf.local.home>
-In-Reply-To: <7749ed7d-50d5-4b95-fbd2-b056a1fff957@sony.com>
-References: <20180723134210.54013-1-snild@sony.com>
-        <20180723095550.08203a24@gandalf.local.home>
-        <9d762b4e-20a7-578f-90c8-10a044921d67@sony.com>
-        <20180723113741.66df3b50@gandalf.local.home>
-        <7749ed7d-50d5-4b95-fbd2-b056a1fff957@sony.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id A892CBD9E;
+        Mon, 23 Jul 2018 16:43:28 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F22E2156897;
+        Mon, 23 Jul 2018 16:43:27 +0000 (UTC)
+Date:   Mon, 23 Jul 2018 12:40:35 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Eric Paris <eparis@parisplace.org>, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH ghak59 V1 3/6] audit: exclude user records from
+ syscall context
+Message-ID: <20180723164035.wkazolpmpf3mvdxw@madcap2.tricolour.ca>
+References: <cover.1529003588.git.rgb@redhat.com>
+ <907e32319825bb6336a662f4f6f6d173f56f3226.1529003588.git.rgb@redhat.com>
+ <CAHC9VhSKcxHScr-ZNQU3iVrqhU4CDKW7tpn3e+NBKAAmnpRP4g@mail.gmail.com>
+ <20180712214608.ed4chli7mdc7ymin@madcap2.tricolour.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712214608.ed4chli7mdc7ymin@madcap2.tricolour.ca>
+User-Agent: NeoMutt/20180512
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 23 Jul 2018 16:43:28 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 23 Jul 2018 16:43:28 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Jul 2018 17:49:36 +0200
-Snild Dolkow <snild@sony.com> wrote:
-
-> On 07/23/2018 05:37 PM, Steven Rostedt wrote:
-
-> Will add:
+On 2018-07-12 17:46, Richard Guy Briggs wrote:
+> On 2018-06-28 18:11, Paul Moore wrote:
+> > On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > Since the function audit_log_common_recv_msg() is shared by a number of
+> > > AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
+> > > and since the AUDIT_CONFIG_CHANGE message type has been converted to a
+> > > syscall accompanied record type, special-case the AUDIT_USER_* range of
+> > > messages so they remain standalone records.
+> > >
+> > > See: https://github.com/linux-audit/audit-kernel/issues/59
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  kernel/audit.c | 12 +++++++++---
+> > >  1 file changed, 9 insertions(+), 3 deletions(-)
+> > 
+> > I think this is fine, but see my previous comment about combining 2/6
+> > and 3/6 as a safety measure.
 > 
-> 		/*
-> 		 * task is already visible to other tasks, so updating
-> 		 * COMM must be protected.
-> 		 */
+> This one I left as a seperate patch for discussion.  We'd previously
+> talked about connecting all possible records with syscall records if
+> they exist, but this one I'm unsure about, since we don't really care
+> what userspace process is issuing this message.  It is just the message
+> content itself that is important.  Or is it?  Are we concerned about
+> CAP_AUDIT_WRITE holders/abusers and want as much info about them as we
+> can get in case they go rogue or pear-shaped?
 
-Thanks.
+I'm waiting on re-spinning this patchset because of this open question.
 
+Is connecting AUDIT_USER* records desirable or a liability?
+
+> > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > index e469234..c8c2efc 100644
+> > > --- a/kernel/audit.c
+> > > +++ b/kernel/audit.c
+> > > @@ -1057,7 +1057,8 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
+> > >         return err;
+> > >  }
+> > >
+> > > -static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+> > > +static void __audit_log_common_recv_msg(struct audit_context *context,
+> > > +                                       struct audit_buffer **ab, u16 msg_type)
+> > >  {
+> > >         uid_t uid = from_kuid(&init_user_ns, current_uid());
+> > >         pid_t pid = task_tgid_nr(current);
+> > > @@ -1067,7 +1068,7 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+> > >                 return;
+> > >         }
+> > >
+> > > -       *ab = audit_log_start(audit_context(), GFP_KERNEL, msg_type);
+> > > +       *ab = audit_log_start(context, GFP_KERNEL, msg_type);
+> > >         if (unlikely(!*ab))
+> > >                 return;
+> > >         audit_log_format(*ab, "pid=%d uid=%u", pid, uid);
+> > > @@ -1075,6 +1076,11 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+> > >         audit_log_task_context(*ab);
+> > >  }
+> > >
+> > > +static inline void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+> > > +{
+> > > +       __audit_log_common_recv_msg(audit_context(), ab, msg_type);
+> > > +}
+> > > +
+> > >  int is_audit_feature_set(int i)
+> > >  {
+> > >         return af.features & AUDIT_FEATURE_TO_MASK(i);
+> > > @@ -1341,7 +1347,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+> > >                                 if (err)
+> > >                                         break;
+> > >                         }
+> > > -                       audit_log_common_recv_msg(&ab, msg_type);
+> > > +                       __audit_log_common_recv_msg(NULL, &ab, msg_type);
+> > >                         if (msg_type != AUDIT_USER_TTY)
+> > >                                 audit_log_format(ab, " msg='%.*s'",
+> > >                                                  AUDIT_MESSAGE_TEXT_MAX,
+> > > --
+> > > 1.8.3.1
+> > >
+> > 
+> > 
+> > -- 
+> > paul moore
+> > www.paul-moore.com
+> > 
+> > --
+> > Linux-audit mailing list
+> > Linux-audit@redhat.com
+> > https://www.redhat.com/mailman/listinfo/linux-audit
 > 
-> Any issues with the commit message? Reading it back again now, it doesn't
-> seem quite as clear as when I wrote it.
-
-Yeah, I think it does need some updates:
-
-> There was a window for racing when task->comm was being written. The
-
-It would be nice to explain this race window in more detail.
-
-> vsnprintf function writes 16 bytes, then counts the rest, then null
-> terminates. In the meantime, other threads could see the non-terminated
-> comm value. In our case, it got into the trace system's saved cmdlines
-> and could cause stack corruption when strcpy'd out of there.
-
-Perhaps add in the change log something about the fact that the
-vsprintf() is performed on the COMM when the task is visible to other
-tasks, and that could cause problems if other tasks read the COMM (like
-in tracing) without updating it properly with set_task_comm().
-
--- Steve
-
-
+> - RGB
 > 
-> The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
-> likely needed because of this bug.
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
 > 
-> Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
+> --
+> Linux-audit mailing list
+> Linux-audit@redhat.com
+> https://www.redhat.com/mailman/listinfo/linux-audit
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
