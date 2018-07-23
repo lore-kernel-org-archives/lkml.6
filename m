@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B509ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4ED8ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6F220854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D6F220854
+	by mail.kernel.org (Postfix) with ESMTP id 6D48920854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D48920854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389301AbeGWNba (ORCPT
+        id S2389311AbeGWNbe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:31:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46254 "EHLO
+        Mon, 23 Jul 2018 09:31:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46264 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387849AbeGWNba (ORCPT
+        with ESMTP id S2387849AbeGWNbd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:31:30 -0400
+        Mon, 23 Jul 2018 09:31:33 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 144F4BDB;
-        Mon, 23 Jul 2018 12:30:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11764BDB;
+        Mon, 23 Jul 2018 12:30:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Couzens <lynxis@fe80.eu>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 40/44] net: usb: asix: replace mii_nway_restart in resume path
-Date:   Mon, 23 Jul 2018 14:25:16 +0200
-Message-Id: <20180723122439.349944840@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@kernel.org
+Subject: [PATCH 4.14 41/44] alpha: fix osf_wait4() breakage
+Date:   Mon, 23 Jul 2018 14:25:17 +0200
+Message-Id: <20180723122439.386652717@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
 References: <20180723122437.447870153@linuxfoundation.org>
@@ -50,42 +51,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Couzens <lynxis@fe80.eu>
+From: Al Viro <viro@ZenIV.linux.org.uk>
 
-[ Upstream commit 5c968f48021a9b3faa61ac2543cfab32461c0e05 ]
+commit f88a333b44318643282b8acc92af90deda441f5e upstream.
 
-mii_nway_restart is not pm aware which results in a rtnl deadlock.
-Implement mii_nway_restart manual by setting BMCR_ANRESTART if
-BMCR_ANENABLE is set.
+kernel_wait4() expects a userland address for status - it's only
+rusage that goes as a kernel one (and needs a copyout afterwards)
 
-To reproduce:
-* plug an asix based usb network interface
-* wait until the device enters PM (~5 sec)
-* `ip link set eth1 up` will never return
+[ Also, fix the prototype of kernel_wait4() to have that __user
+  annotation   - Linus ]
 
-Fixes: d9fe64e51114 ("net: asix: Add in_pm parameter")
-Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 92ebce5ac55d ("osf_wait4: switch to kernel_wait4()")
+Cc: stable@kernel.org # v4.13+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/usb/asix_devices.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -642,10 +642,12 @@ static void ax88772_restore_phy(struct u
- 				     priv->presvd_phy_advertise);
+---
+ arch/alpha/kernel/osf_sys.c |    5 +----
+ include/linux/sched/task.h  |    2 +-
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -1183,13 +1183,10 @@ SYSCALL_DEFINE2(osf_getrusage, int, who,
+ SYSCALL_DEFINE4(osf_wait4, pid_t, pid, int __user *, ustatus, int, options,
+ 		struct rusage32 __user *, ur)
+ {
+-	unsigned int status = 0;
+ 	struct rusage r;
+-	long err = kernel_wait4(pid, &status, options, &r);
++	long err = kernel_wait4(pid, ustatus, options, &r);
+ 	if (err <= 0)
+ 		return err;
+-	if (put_user(status, ustatus))
+-		return -EFAULT;
+ 	if (!ur)
+ 		return err;
+ 	if (put_tv32(&ur->ru_utime, &r.ru_utime))
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -75,7 +75,7 @@ extern long _do_fork(unsigned long, unsi
+ extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
+ struct task_struct *fork_idle(int);
+ extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
+-extern long kernel_wait4(pid_t, int *, int, struct rusage *);
++extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
  
- 		/* Restore BMCR */
-+		if (priv->presvd_phy_bmcr & BMCR_ANENABLE)
-+			priv->presvd_phy_bmcr |= BMCR_ANRESTART;
-+
- 		asix_mdio_write_nopm(dev->net, dev->mii.phy_id, MII_BMCR,
- 				     priv->presvd_phy_bmcr);
+ extern void free_task(struct task_struct *tsk);
  
--		mii_nway_restart(&dev->mii);
- 		priv->presvd_phy_advertise = 0;
- 		priv->presvd_phy_bmcr = 0;
- 	}
 
 
