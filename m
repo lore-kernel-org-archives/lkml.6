@@ -1,345 +1,180 @@
 Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA42ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF7DECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2738820852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:27:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FOPU+rkF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KjbVGh8O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2738820852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B100620852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:30:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B100620852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388224AbeGWS3j (ORCPT
+        id S2388192AbeGWScR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:29:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46774 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387986AbeGWS3j (ORCPT
+        Mon, 23 Jul 2018 14:32:17 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:55067 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388002AbeGWScR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:29:39 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 474F36085F; Mon, 23 Jul 2018 17:27:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532366843;
-        bh=qwvRd75+Tj6GjL+VBBvKmsXRkhJtzqvBAL1XOvzNshM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FOPU+rkFCDITwr8Oe7zDD/fp1Ys9d2tqHTb5XoaBod65LVTAn90jvTuS1YzNkCX4X
-         fHR/cur/Ce8TBwTQB0OUTxDvWzYNdLIOmoE/931uYYo6ykLYp6ebIUh+Ps25NTxGfQ
-         3PGstIVgBnU2tcoekqE7A3EUixL4zwaZ8LkBfB1I=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3BDB1606AC;
-        Mon, 23 Jul 2018 17:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532366842;
-        bh=qwvRd75+Tj6GjL+VBBvKmsXRkhJtzqvBAL1XOvzNshM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KjbVGh8O1MCoSg1IMdQUS2eWQNZv6AhXbl8gSnEEYkUwk/6wLcICzhE7vYGHs1ndM
-         2n1zJHlbK0CuUiuS81/TXk5xfEtuUrGd64J5cpoMgBLBv8WeNPfOvGjwDljxIqh9vr
-         BzOLRa5VMmOXgP8ERBkI9/FW/rIhnZIe0dh73dZE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3BDB1606AC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: pull-request: wireless-drivers-next 2018-07-23
-Date:   Mon, 23 Jul 2018 20:27:17 +0300
-Message-ID: <87tvopx3pm.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 23 Jul 2018 14:32:17 -0400
+Received: by mail-it0-f71.google.com with SMTP id l8-v6so1385527ita.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 10:30:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=5xgtIgkFFkgLjt0Td1si6NWhJWd+RuJC9QX6Xw8TZx0=;
+        b=NVcWmBStOhB3XHF4EhmC59RlerkvyxnBdf6CQxGJmIIYAwwS0FT4mxnLsUmnJ+9ZBp
+         uaab3T9JN10CByJONMjMisG3xo1ZE6IXb8sztYougSUObN+ic/yFFbB71yFIKQv5xjT+
+         7QhyfT4iihAB7i5uts7RgHjNVbfVipSNwG+oV0pPpBmc4U+dCDX0oF2RjP/rw8i8TbT9
+         79Qrakne7ClLllG9lFByS+JZn9Y87WbdguV312g6bXK549oMgvmBAokwE3xexbgxvSvj
+         N/XY84hh5pszHLt7mjYXplm6vPtrf0iZN5/LaJ8YhbTcYyPmtCp0LPewaMfQGDt9pRxS
+         gRpQ==
+X-Gm-Message-State: AOUpUlGw4lzRdlgWZQZ+PI3t0NxH+qt11NOQnPv6kwaC0kGVyeYWEFbV
+        9uiIpCf7ujBtRXMRIIWGEj4TI3+L8BEjbJU33ml7uvfSC4p2
+X-Google-Smtp-Source: AAOMgpfbkrNe8+3sQN6LFRxGKev4xSHX2oVkMrW9/M/PaJErtwmlwAIwBM0ovqgVm9Cer8/Nb+j8PXPSVGaJpEsd13P2UeIuc7ZS
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a24:b14a:: with SMTP id c10-v6mr6412910itj.4.1532367001724;
+ Mon, 23 Jul 2018 10:30:01 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 10:30:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cdb5450571adfe40@google.com>
+Subject: KASAN: use-after-free Read in rds_cong_queue_updates (2)
+From:   syzbot <syzbot+470ae97a39f16146af45@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, santosh.shilimkar@oracle.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+Hello,
 
-this first pull request for 4.19 got delayed as I was on vacation for
-two weeks. I was supposed to send this before my vacation but didn't
-manage to do it due to other urgent stuff, but I'll try to catch up with
-everything this week so that we get everything ready on time for 4.19.
+syzbot found the following crash on:
 
-More info in the signed tag below and please let me know if there are
-any problems.
+HEAD commit:    fcf4793e278e tls: check RCV_SHUTDOWN in tls_wait_data
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=1738cb2c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c0bdc4175608181c
+dashboard link: https://syzkaller.appspot.com/bug?extid=470ae97a39f16146af45
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Kalle
+Unfortunately, I don't have any reproducer for this crash yet.
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+470ae97a39f16146af45@syzkaller.appspotmail.com
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+==================================================================
+BUG: KASAN: use-after-free in atomic_read  
+include/asm-generic/atomic-instrumented.h:21 [inline]
+BUG: KASAN: use-after-free in refcount_read include/linux/refcount.h:42  
+[inline]
+BUG: KASAN: use-after-free in check_net include/net/net_namespace.h:237  
+[inline]
+BUG: KASAN: use-after-free in rds_destroy_pending net/rds/rds.h:902 [inline]
+BUG: KASAN: use-after-free in rds_cong_queue_updates+0x25d/0x5b0  
+net/rds/cong.c:226
+Read of size 4 at addr ffff88019f180144 by task kworker/u4:1/23
 
-are available in the git repository at:
+CPU: 1 PID: 23 Comm: kworker/u4:1 Not tainted 4.18.0-rc5+ #18
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: krdsd rds_send_worker
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+  refcount_read include/linux/refcount.h:42 [inline]
+  check_net include/net/net_namespace.h:237 [inline]
+  rds_destroy_pending net/rds/rds.h:902 [inline]
+  rds_cong_queue_updates+0x25d/0x5b0 net/rds/cong.c:226
+  rds_recv_rcvbuf_delta.part.3+0x332/0x3e0 net/rds/recv.c:123
+  rds_recv_rcvbuf_delta net/rds/recv.c:382 [inline]
+  rds_recv_incoming+0x85a/0x1320 net/rds/recv.c:382
+  rds_loop_xmit+0x16a/0x340 net/rds/loop.c:95
+  rds_send_xmit+0x1343/0x29c0 net/rds/send.c:355
+  rds_send_worker+0x153/0x300 net/rds/threads.c:199
+  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+  kthread+0x345/0x410 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next=
-.git tags/wireless-drivers-next-for-davem-2018-07-23
+Allocated by task 4564:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  kmem_cache_zalloc include/linux/slab.h:697 [inline]
+  net_alloc net/core/net_namespace.c:383 [inline]
+  copy_net_ns+0x15b/0x4d0 net/core/net_namespace.c:423
+  create_new_namespaces+0x6ad/0x900 kernel/nsproxy.c:107
+  unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
+  ksys_unshare+0x723/0xfb0 kernel/fork.c:2419
+  __do_sys_unshare kernel/fork.c:2487 [inline]
+  __se_sys_unshare kernel/fork.c:2485 [inline]
+  __x64_sys_unshare+0x31/0x40 kernel/fork.c:2485
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-for you to fetch changes up to 4a07ed51cae18765c76d9aede5b9830d42db1546:
+Freed by task 23:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+  net_free net/core/net_namespace.c:399 [inline]
+  net_drop_ns.part.14+0x129/0x150 net/core/net_namespace.c:406
+  net_drop_ns net/core/net_namespace.c:405 [inline]
+  cleanup_net+0x6bb/0xb50 net/core/net_namespace.c:541
+  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+  kthread+0x345/0x410 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
 
-  mt76x2: debugfs: add sw pulse statistics to dfs debugfs (2018-07-04 18:16=
-:01 +0300)
+The buggy address belongs to the object at ffff88019f180140
+  which belongs to the cache net_namespace of size 8704
+The buggy address is located 4 bytes inside of
+  8704-byte region [ffff88019f180140, ffff88019f182340)
+The buggy address belongs to the page:
+page:ffffea00067c6000 count:1 mapcount:0 mapping:ffff8801d9be9e40 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea00067d5a08 ffffea00067b3a08 ffff8801d9be9e40
+raw: 0000000000000000 ffff88019f180140 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
 
-----------------------------------------------------------------
-wireless-drivers-next patches for 4.19
+Memory state around the buggy address:
+  ffff88019f180000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff88019f180080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88019f180100: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                            ^
+  ffff88019f180180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88019f180200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
-The first set of patches for 4.19. Only smaller features and bug
-fixes, not really anything major. Also included are changes to
-include/linux/bitfield.h, we agreed with Johannes that it makes sense
-to apply them via wireless-drivers-next.
 
-Major changes:
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-ath10k
-
-* support channel 173
-
-* fix spectral scan for QCA9984 and QCA9888 chipsets
-
-ath6kl
-
-* add support for Dell Wireless 1537
-
-ti wlcore
-
-* add support for runtime PM
-
-* enable runtime PM autosuspend support
-
-qtnfmac
-
-* support changing MAC address
-
-* enable source MAC address randomization support
-
-libertas
-
-* fix suspend and resume for SDIO cards
-
-mt76
-
-* add software DFS radar pattern detector for mt76x2 based devices
-
-----------------------------------------------------------------
-Andrey Shevchenko (1):
-      qtnfmac: enable source MAC address randomization support
-
-Arnd Bergmann (2):
-      zd1211rw: stop using deprecated get_seconds()
-      ipw2x00: track time using boottime
-
-Ben Greear (1):
-      ath10k: support use of channel 173
-
-Brian Norris (6):
-      ath10k: use crash_dump enum instead of magic numbers
-      ath10k: snoc: use module_platform_driver() macro
-      ath10k: snoc: use correct bus-specific pointer in RX retry
-      ath10k: snoc: stop including pci.h
-      ath10k: snoc: drop unused WCN3990_CE_ATTR_FLAGS
-      ath10k: snoc: sort include files
-
-Colin Ian King (3):
-      ath10k: fix memory leak of tpc_stats
-      ath9k: debug: fix spelling mistake "WATHDOG" -> "WATCHDOG"
-      brcmsmac: make function wlc_phy_workarounds_nphy_rev1 static
-
-Dan Carpenter (1):
-      rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
-
-Daniel Mack (1):
-      libertas: fix suspend and resume for SDIO connected cards
-
-Eyal Reizer (1):
-      wlcore: Use generic runtime pm calls for wowlan elp configuration
-
-Felix Fietkau (9):
-      mt76: fix beacon timer drift
-      mt76: fix threshold for gain adjustment
-      mt76: fix swapped values for RXO-18 in gain control
-      mt76: adjust AGC control register 26 based on gain for VHT80
-      mt76: clear false CCA counters after changing gain settings
-      mt76: fix variable gain adjustment range
-      mt76: add a debugfs file to dump agc calibration information
-      mt76: track ewma rssi for gain adjustment per station
-      mt76: improve gain adjustment in noisy environments
-
-Govind Singh (1):
-      ath10k: handle resource init failure case
-
-Gustavo A. R. Silva (5):
-      ath10k: htt_tx: mark expected switch fall-throughs
-      ath5k: mark expected switch fall-through
-      ath6kl: mark expected switch fall-throughs
-      ath9k: mark expected switch fall-throughs
-      wlcore: Fix memory leak in wlcore_cmd_wait_for_event_or_timeout
-
-Guy Chronister (1):
-      ath6kl: add support for Dell Wireless 1537
-
-Igor Mitsyanko (1):
-      qtnfmac: implement net_device_ops callback to set MAC address
-
-Johannes Berg (3):
-      bitfield: fix *_encode_bits()
-      bitfield: add u8 helpers
-      bitfield: add tests
-
-Kalle Valo (1):
-      Merge ath-next from git://git.kernel.org/.../kvalo/ath.git
-
-Karthikeyan Periyasamy (1):
-      ath10k: fix spectral scan for QCA9984 and QCA9888 chipsets
-
-Lorenzo Bianconi (5):
-      mt76x2: fix mrr idx/count estimation in mt76x2_mac_fill_tx_status()
-      mt76: introduce mt76_{incr,decr} utility routines
-      mt76x2: dfs: add sw event ring buffer
-      mt76x2: dfs: add sw pattern detector
-      mt76x2: debugfs: add sw pulse statistics to dfs debugfs
-
-Niklas Cassel (1):
-      ath10k: do not mix spaces and tabs in Kconfig
-
-Omer Efrat (1):
-      wireless-drivers: use BIT_ULL for NL80211_STA_INFO_ attribute types
-
-Rafa=C5=82 Mi=C5=82ecki (5):
-      brcmfmac: detect firmware support for monitor interface
-      brcmfmac: detect firmware support for radiotap monitor frames
-      brcmfmac: handle msgbuf packets marked with monitor mode flag
-      brcmfmac: define more bits for the flags of struct brcmf_sta_info_le
-      brcmfmac: update STA info struct to the v5
-
-Sebastian Andrzej Siewior (3):
-      libertas_tf: use irqsave() in USB's complete callback
-      libertas: use irqsave() in USB's complete callback
-      zd1211rw: use irqsave() in USB's complete callback
-
-Stefan Agner (1):
-      brcmsmac: fix wrap around in conversion from constant to s16
-
-Surabhi Vishnoi (1):
-      ath10k: skip data calibration for non-bmi target
-
-Tony Lindgren (7):
-      wlcore: Add missing PM call for wlcore_cmd_wait_for_event_or_timeout()
-      wlcore: Make sure PM calls are paired
-      wlcore: Add support for runtime PM
-      wlcore: Fix misplaced PM call for scan_complete_work()
-      wlcore: Fix timout errors after recovery
-      wlcore: Make sure firmware is initialized in wl1271_op_add_interface()
-      wlcore: Enable runtime PM autosuspend support
-
-Varsha Rao (2):
-      brcmsmac: Remove unnecessary parentheses
-      net: ipw2x00: Replace NULL comparison with !priv
-
-Wei Yongjun (1):
-      ath10k: make some functions static
-
-Xinming Hu (1):
-      mwifiex: uap: do not chok ethernet header in bridge path
-
-YueHaibing (4):
-      ath10k: fix incorrect size of dma_free_coherent in ath10k_ce_alloc_sr=
-c_ring_64
-      ath10k: use dma_zalloc_coherent instead of allocator/memset
-      atmel: use memdup_user to simplify the code
-      atmel: using strlcpy() to avoid possible buffer overflows
-
- drivers/net/wireless/ath/ath10k/Kconfig            |  24 +-
- drivers/net/wireless/ath/ath10k/ce.c               |   2 +-
- drivers/net/wireless/ath/ath10k/ce.h               |  42 ++
- drivers/net/wireless/ath/ath10k/core.c             |  19 +-
- drivers/net/wireless/ath/ath10k/core.h             |   3 +-
- drivers/net/wireless/ath/ath10k/debug.c            |  21 +-
- drivers/net/wireless/ath/ath10k/htt_tx.c           |   4 +-
- drivers/net/wireless/ath/ath10k/hw.h               |   3 +
- drivers/net/wireless/ath/ath10k/mac.c              |   7 +-
- drivers/net/wireless/ath/ath10k/pci.h              |  42 --
- drivers/net/wireless/ath/ath10k/snoc.c             |  47 +-
- drivers/net/wireless/ath/ath10k/snoc.h             |   1 -
- drivers/net/wireless/ath/ath10k/spectral.c         |   2 +-
- drivers/net/wireless/ath/ath10k/wmi.c              |  14 +-
- drivers/net/wireless/ath/ath5k/pcu.c               |   1 +
- drivers/net/wireless/ath/ath6kl/cfg80211.c         |  17 +-
- drivers/net/wireless/ath/ath6kl/sdio.c             |   1 +
- drivers/net/wireless/ath/ath9k/ar5008_phy.c        |   2 +
- drivers/net/wireless/ath/ath9k/ar9002_phy.c        |   1 +
- drivers/net/wireless/ath/ath9k/debug.c             |   2 +-
- drivers/net/wireless/ath/ath9k/main.c              |   1 +
- drivers/net/wireless/ath/wil6210/cfg80211.c        |  18 +-
- drivers/net/wireless/atmel/atmel.c                 |  14 +-
- .../broadcom/brcm80211/brcmfmac/cfg80211.c         |  40 +-
- .../wireless/broadcom/brcm80211/brcmfmac/core.c    |  25 +
- .../wireless/broadcom/brcm80211/brcmfmac/core.h    |   2 +
- .../wireless/broadcom/brcm80211/brcmfmac/feature.c |   2 +
- .../wireless/broadcom/brcm80211/brcmfmac/feature.h |   6 +-
- .../broadcom/brcm80211/brcmfmac/fwil_types.h       |  43 +-
- .../wireless/broadcom/brcm80211/brcmfmac/msgbuf.c  |  18 +
- .../broadcom/brcm80211/brcmsmac/phy/phy_cmn.c      |   2 +-
- .../broadcom/brcm80211/brcmsmac/phy/phy_n.c        |   2 +-
- .../broadcom/brcm80211/brcmsmac/phy/phy_qmath.c    |   2 +-
- drivers/net/wireless/intel/ipw2x00/ipw2100.c       |  18 +-
- drivers/net/wireless/intel/ipw2x00/ipw2100.h       |  12 +-
- drivers/net/wireless/intel/ipw2x00/ipw2200.c       |   6 +-
- drivers/net/wireless/intel/ipw2x00/ipw2200.h       |   6 +-
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |   6 +-
- drivers/net/wireless/marvell/libertas/cfg.c        |  12 +-
- drivers/net/wireless/marvell/libertas/dev.h        |   1 +
- drivers/net/wireless/marvell/libertas/if_sdio.c    |  30 +-
- drivers/net/wireless/marvell/libertas/if_usb.c     |   7 +-
- drivers/net/wireless/marvell/libertas_tf/if_usb.c  |   8 +-
- drivers/net/wireless/marvell/mwifiex/cfg80211.c    |  14 +-
- drivers/net/wireless/marvell/mwifiex/uap_txrx.c    |  52 +-
- drivers/net/wireless/mediatek/mt76/mt76.h          |  12 +
- drivers/net/wireless/mediatek/mt76/mt76x2.h        |  16 +-
- .../net/wireless/mediatek/mt76/mt76x2_debugfs.c    |  22 +
- drivers/net/wireless/mediatek/mt76/mt76x2_dfs.c    | 377 ++++++++++++++-
- drivers/net/wireless/mediatek/mt76/mt76x2_dfs.h    |  64 +++
- drivers/net/wireless/mediatek/mt76/mt76x2_mac.c    |  39 +-
- drivers/net/wireless/mediatek/mt76/mt76x2_main.c   |   7 +-
- drivers/net/wireless/mediatek/mt76/mt76x2_phy.c    | 107 ++++-
- drivers/net/wireless/mediatek/mt76/mt76x2_tx.c     |  33 ++
- drivers/net/wireless/quantenna/qtnfmac/cfg80211.c  |   3 +
- drivers/net/wireless/quantenna/qtnfmac/commands.c  |  57 ++-
- drivers/net/wireless/quantenna/qtnfmac/core.c      |  25 +
- drivers/net/wireless/quantenna/qtnfmac/qlink.h     |  20 +
- drivers/net/wireless/rndis_wlan.c                  |   6 +-
- drivers/net/wireless/ti/wl18xx/debugfs.c           |  29 +-
- drivers/net/wireless/ti/wlcore/acx.c               |   1 -
- drivers/net/wireless/ti/wlcore/cmd.c               |  10 +
- drivers/net/wireless/ti/wlcore/debugfs.c           |  90 ++--
- drivers/net/wireless/ti/wlcore/main.c              | 528 ++++++++++++++---=
-----
- drivers/net/wireless/ti/wlcore/ps.c                | 146 ------
- drivers/net/wireless/ti/wlcore/ps.h                |   3 -
- drivers/net/wireless/ti/wlcore/scan.c              |  13 +-
- drivers/net/wireless/ti/wlcore/sysfs.c             |  13 +-
- drivers/net/wireless/ti/wlcore/testmode.c          |  20 +-
- drivers/net/wireless/ti/wlcore/tx.c                |  10 +-
- drivers/net/wireless/ti/wlcore/vendor_cmd.c        |  30 +-
- drivers/net/wireless/ti/wlcore/wlcore.h            |   1 -
- drivers/net/wireless/ti/wlcore/wlcore_i.h          |   1 -
- drivers/net/wireless/zydas/zd1211rw/zd_chip.c      |   2 +-
- drivers/net/wireless/zydas/zd1211rw/zd_usb.c       |  21 +-
- include/linux/bitfield.h                           |   7 +-
- lib/Kconfig.debug                                  |   7 +
- lib/Makefile                                       |   1 +
- lib/test_bitfield.c                                | 168 +++++++
- 79 files changed, 1787 insertions(+), 704 deletions(-)
- create mode 100644 lib/test_bitfield.c
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
