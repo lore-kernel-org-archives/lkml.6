@@ -2,173 +2,202 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1584ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 129C4ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A98020852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B520320852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:04:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="EBF7tHz0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A98020852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xR9xwQfa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B520320852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388504AbeGWQEQ (ORCPT
+        id S2388211AbeGWQFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:04:16 -0400
-Received: from mail-eopbgr700054.outbound.protection.outlook.com ([40.107.70.54]:14571
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387852AbeGWQEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 12:04:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yC6pGsLy8GNSXYqwcZND1tUJe1Jqtr92XlvOks1726U=;
- b=EBF7tHz0VXomtondz72zgKU2WYL1hS6mm+7jA72HyObBg3X9ft4pT6Yuh7yu35zsCLdiFbMM6RlpKI/usGYzUNx23Hs0DYB4+HzHp3EpLRP5m9tUpsRJMwJR9eefaNxPli6oh+FagMmx5a3GEoHq8Mb2T66HgoYK2pPG6Czeclc=
-Received: from BN6PR02CA0077.namprd02.prod.outlook.com (2603:10b6:405:60::18)
- by CY1PR0201MB1914.namprd02.prod.outlook.com (2a01:111:e400:527e::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.973.21; Mon, 23 Jul
- 2018 15:02:27 +0000
-Received: from SN1NAM02FT046.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::200) by BN6PR02CA0077.outlook.office365.com
- (2603:10b6:405:60::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.973.16 via Frontend
- Transport; Mon, 23 Jul 2018 15:02:26 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- SN1NAM02FT046.mail.protection.outlook.com (10.152.72.191) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.995.12
- via Frontend Transport; Mon, 23 Jul 2018 15:02:26 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:43463 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
-        (envelope-from <manish.narani@xilinx.com>)
-        id 1fhcLx-0008L6-UT; Mon, 23 Jul 2018 08:02:25 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <manish.narani@xilinx.com>)
-        id 1fhcLs-0008VL-RS; Mon, 23 Jul 2018 08:02:20 -0700
-Received: from xsj-pvapsmtp01 (mailhost.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w6NF2Cw6013225;
-        Mon, 23 Jul 2018 08:02:12 -0700
-Received: from [172.23.64.106] (helo=xhdvnc125.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <mnarani@xilinx.com>)
-        id 1fhcLj-0008RS-Sx; Mon, 23 Jul 2018 08:02:12 -0700
-Received: by xhdvnc125.xilinx.com (Postfix, from userid 16987)
-        id F111E121473; Mon, 23 Jul 2018 20:32:10 +0530 (IST)
-From:   Manish Narani <manish.narani@xilinx.com>
-To:     <lakshmi.sai.krishna.potthuri@xilinx.com>,
-        <manish.narani@xilinx.com>, <michal.simek@xilinx.com>,
-        <pmeerw@pmeerw.net>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <jic23@kernel.org>
-CC:     <anirudh@xilinx.com>, <sgoud@xilinx.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>
-Subject: [PATCH v2 0/4] iio: adc: xilinx: XADC driver Enhancements and bug fixes
-Date:   Mon, 23 Jul 2018 20:31:59 +0530
-Message-ID: <1532358123-23485-1-git-send-email-manish.narani@xilinx.com>
-X-Mailer: git-send-email 2.1.1
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(39860400002)(136003)(2980300002)(438002)(199004)(189003)(72206003)(336012)(52956003)(106466001)(14444005)(90966002)(47776003)(486006)(44832011)(51416003)(186003)(26005)(476003)(6266002)(2616005)(126002)(426003)(4326008)(103686004)(478600001)(356003)(50226002)(36386004)(6666003)(5660300001)(81156014)(8676002)(81166006)(8936002)(106002)(50466002)(316002)(42186006)(16586007)(110136005)(54906003)(36756003)(48376002)(305945005)(2201001)(63266004)(2906002)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0201MB1914;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT046;1:WlLzXYxxGxe5pKW63vWQILg8oHjmGH1q8ERmJ5vR5wlBPQYwgDphrk3bc+Js7EkSOyR5B4D/b4gnbk0tWQqfK3zEBhEQiubz5M49+UpaAsHiUjVoQVwZ8cQdifXYdmRU
+        Mon, 23 Jul 2018 12:05:53 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35232 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388047AbeGWQFx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 12:05:53 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6NEwrHH024923;
+        Mon, 23 Jul 2018 15:03:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=oVxKBhOYTL0Pz+6RlFamxs+O4YVfyefRs/fm6lLxe3I=;
+ b=xR9xwQfaHHmSkkN7TfatkVQjQYnO1OdTV6dD+9TA0SLqVMnnzJMzuCuDfnx5wMo1rKrQ
+ kJIZZRqmr7nyKBlGY0nlXiMnL/MI/+dQR6PCpTCg0bjdOUcmfwRQPYmuPyU//ksFRPwO
+ W2VCDKaSYC1ZmICKpu2BbfOORYG7CCsvr0ZNfk4eMmmfztDjMG2DAhbwBJMpgoyZggjx
+ 5qhtSMwqIMS8U57LRWAe8rhhGQtwYFwNDif9wBbw4h4U+f5kaUOtuOOp9bIFYNKWX7LY
+ qUHO44sDGdi6u6UAelKofUOvTvL8W0f7VfvjF/eKM4EDJlid9d33dRkaTFhthhVKuI2W QA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kbwfpmwss-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Jul 2018 15:03:46 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6NF3ibW002383
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Jul 2018 15:03:44 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6NF3gAX015700;
+        Mon, 23 Jul 2018 15:03:42 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 23 Jul 2018 08:03:42 -0700
+Subject: Re: [PATCH 2/2] xen/pv: Call get_cpu_address_sizes to set
+ x86_virt/phys_bits
+To:     "M. Vefa Bicakci" <m.v.b@runbox.com>, linux-kernel@vger.kernel.org
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        stable@vger.kernel.org
+References: <20180721194909.23903-1-m.v.b@runbox.com>
+ <20180721194909.23903-2-m.v.b@runbox.com>
+ <90bc371d-a296-51b3-8b78-62106c9690de@oracle.com>
+ <d85c93da-4549-a7c1-af48-9c62cba8ae71@runbox.com>
+ <13b774d7-bc8c-039a-fbc0-52318f535883@runbox.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <8c17dccf-d382-0ba4-612c-8c674f5dd9e0@oracle.com>
+Date:   Mon, 23 Jul 2018 11:04:09 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2256146f-63b6-43b4-081b-08d5f0ad4dad
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:CY1PR0201MB1914;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0201MB1914;3:MzSNZund+xwUYJZLmK7KFQraikHEFGhZMMTOiYOVf4UnXVbJTTgmCrN0L1Sz/l9dedfEG1fm1k3oMW+JEhyE4+PbGNP8b2L1oaY8sOatgMRmWryQvyNS2etZLICPVyGCTc+RDbR614RRjyZgL6gNgbkmoPfLP4SYGF5Cq+KeNgIrWgp6YMkY5tczZJ05nRfq8RpMOjt/VE2Gw86DKoXVIervu7jD3Xz7MYz0pI6Wb3foeXL8GoWBhF3QmDkmp1gwGV6dwcAzApwyUXoFPcagc+p4wvqYLkDdKo4H2xZIzXSs0QXDC0yEOWk5zgWNBgD9ffaF2ugUq823qzD1KU62ALI51AeHcoeLau3qFi0jdQU=;25:rDw3zoS4/AIx3e7OGHQd4EKMqUoLZGwpC/mFbyTQCkSOk0LEpnnMxXaB8OZFMsoK4s2OqZN7abqwyLvHASWrjj7q218cq8gYYq3wSQQB9YxuRjrlSRgouiNWndLffwQftJ9makRRWbClmF1w8dqaM9hlZ1ks6QP9EbZTbO3HIivDXORetd+4Fu/d3bWt9phBWOzMsDm3TTsTehuNg6tQX7hjIx9KmM7jlavlIrL5JWi+Y4QsnL3bieTZEpu3i4l86CAuISswNio/qdM5aX6YPKJ05dZQqZVmJWqon7/QCzb9HC1dOt9GqlUWeImu0nM9THgEKc/uwhuOeFfRJAWYTw==
-X-MS-TrafficTypeDiagnostic: CY1PR0201MB1914:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0201MB1914;31:up88QHskdIrEyvnqdjrHJsYXvI7am6N6+i13mL7/dYJVUYXJOQPUrfodNv5DOH+sleUmOvEnwMs6WysPNR1IupDPXyw9PeSaP8oGnrYtCYIcQoX2a099EQupzHyVZnf0NFh3b0AyIA53zBDtzZouK1YSZ6IbzCRJL1GqyRPQdDKihxkfr5unTVmthzrCo6mXmbvkgk3JA1hoxm2VO2geH3nCv9SmHe28aEuiNchss8Y=;20:6JO9H1Q93X/XsV6VhTbeQ0dWtz1JN8c2HOK18k1K3LBc+UvinPZp4gKAvsK7jNV36SwnKTe3EMdqBTOApzcrY8ASUwOX533/8Z93uiJYC64vDF8Z+pCtFJSXyqckP99XBkdXlt8+oe6VYpKBH/l9XLx2z/8mplPqE3810LCMTyW/3HhqmkKTISlukger7nTnG9sQJsS4rvn2depXJ4UCVR3rizYjSAwPiomQOWjMCFx8oCLDV+BRBsH5YhuwX9FD156/FmGh9B2WLxdPpjJxeWqUfapzgvjOdajbdhS9TMNoDnpXYiF9jLVfptDKvT2QJ30t0Hh6MaTS05czzSRWHSgf7yZOkcrjcNKP/HvEpkDtYWE6i3WPTuqqZzX2O+5UvlAOpLD5s26zn5d2c6WPtJMB2UYyPZf56jbnM87xtPGsK9bYMWPngS0wkADCQBqyZwCgKzyzX4CBO5t6SGLRm1c0KbeXYG5SG8lBq7zZ8HHY8H9m47nKeJjLWUidVw4G
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <CY1PR0201MB19140CD6CC87C50040BC2DDBC1560@CY1PR0201MB1914.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93004095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:CY1PR0201MB1914;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0201MB1914;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0201MB1914;4:crHcBN1yxx9tTPhOMZMIF+Gxu8Q4KPVkNOKuQLy9yWBAlN6s7oY7baG/ykt4fxnZvmfRThjPL6g1Us+5m0i+trk524t76ROs54/pGlwVFrOK0nNzDBlEGkzJi89+kjW86iJftMrJ7JtBiFTzAzC7AiYa+Nl1PPASt7s1vFdR4Hq1UgyhvZl4L3+JouODwR6rwqpsC6hL0XXN5uGugLVmCjUFoxcvBzpRqfEtsQo4uXEYDJWCJB4gYEdXJ3qwS+xQcxgu+uLWVtZatTY/0V+W8A==
-X-Forefront-PRVS: 0742443479
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR0201MB1914;23:/obHhapDtFG9ok7Vqmuq9zwoWWO8cFQ5m6jM0dM?=
- =?us-ascii?Q?PIRzOwLF9VyPN5hfFGDPYX6wwfRM6Q8DbikSxcstTJuJUl7upRoeLrVQ8UcP?=
- =?us-ascii?Q?TtQyhIS886BITDUmB34SqxCmkyLhmjN8E0Vo2eRHE/L6KWoFkf6tbg+iXLqt?=
- =?us-ascii?Q?O9yCJAxJ8uohSTln+tOgOuum1c48minsJgF34O02K3HKCquPkBQNSWxXFIxE?=
- =?us-ascii?Q?s1Fk+KYwbqTEduUgvCZlBU0P57Bw7FSBK9J6lgYDzkktuwO6bjOOqcHF9ndJ?=
- =?us-ascii?Q?teseJT72glKVp8N8BU6hOdGkeoUmUOUf4pQXu7JsA9P2y5ULbO/UyP+2LLxn?=
- =?us-ascii?Q?nVzEGYufFIfRlqS1ZZYxpjxRib74EDUJoSK0cY6s4V5u9+oS1h4f7IJ6c6pj?=
- =?us-ascii?Q?nrwHAjBnV0hsFuc5orcVuabUBBmof+vNh/7KY++dtirJJydj7pnoANsBbLDt?=
- =?us-ascii?Q?u7Ysviq75eIOiDUFhWuwY3MvIlWT4beLnLW1vt40l56K4M57RL46b7SzU9Sa?=
- =?us-ascii?Q?PROZiLn2cKr57cKYJseW/azKVd7Afrv60/N/vhnvjbyXsIblFWKgLhrJ0JF1?=
- =?us-ascii?Q?2vzwbTlPdwGe5BJr/krl+taZvWb4mBoNgo48/Lb3lifni0e8Arkewwxpw9nC?=
- =?us-ascii?Q?SeacVp3124VQ4P9rf6AtiaQJM1GBQW6t9Tuvu8yfC994o4Py+LAHMom1UurB?=
- =?us-ascii?Q?7qz+9AJIkrMjK/6BfpXm74HHXgKtbLETFxXyAEWN/U0tZQtK7XDoeYb+LGNi?=
- =?us-ascii?Q?tnkSl8X3OnAEA1lcEBNzaViyBBzRqNQK2wZ0Sp3WnpPhoHUqFcyGuylq/STn?=
- =?us-ascii?Q?cG3ikH9v5YnNSLMsh2I+b63Me76DMksZvlF0nTYppiDPu/Dg+dAnHg1Mee3s?=
- =?us-ascii?Q?Pwl//IuAYD0c6Ztxf4xnxMVImhg2Onhl1W93BwaVwSQ9zk40Pt5dSqLNW/Ei?=
- =?us-ascii?Q?7KVsdB9LV3Je5zSJxAdyLYqdj+nrNOSY6kkxx11hZerlwITGVngFg6FPD6eN?=
- =?us-ascii?Q?OBzSVm8H10uTT6Zz6vNY/P1WvwMkPZJrYlyX7TQ2wUmp3MncEbBEAlxIPqZ3?=
- =?us-ascii?Q?oeR1aCM4DT7XsVsF3pp57UHbPUbFTZ4+sAA6yLLqotUKiXtYeVie73q5kwK2?=
- =?us-ascii?Q?Ur41BelZa79J8vDwFv3r3ZkxaeljfmzumUV+VffDu06daf2KhhQWJOMzFZYJ?=
- =?us-ascii?Q?Gq6NzwNn6N3eHs9I=3D?=
-X-Microsoft-Antispam-Message-Info: 6kHmPMUeAvnlmY+XWkJYJkr/5IJJzgdI5sMTLuR8KolcxBcCGsuVs5j/o5ph6WaUbLKijyw8QeJJM0AIQa5RSjJ3iq9Pey+FcnkhKrR5Mifmr3jA/8VIZchHMKxKyi6IjLL7zAI46ViZo2ic8t2dwQv5iXzHOcPGKB+scFC8NzAbdSkwXUs8yY1WVXoQsxJLF7CNhn3WB/MZ8T5d0Wt7bVn4Rtkix5AoS5LKsPFiIloSV1bXiMPsgIRyw11/zQnGN31XRSTGa02PjiAN0Geot2UcPGgvKE9XNQpKiM0pdj3HRdtDQAAKSLA2+ES3NAP2G2lwLCkCzFSXbRGewYjb+xFKna2pX+UN5/CeRl6ILxc=
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0201MB1914;6:iwZNKv9QkC5zfQV3HAqyBFRa2DUaWpkeHktjtdVsfomr2lmdRWASFHxbopzDMZl7ia8uYKxfXgnkDm7GPlQJ64PA1uaoanXDqHrXxEAXF7vzKCTjni88J1gzOj6gt3bVfHdEH7Pr9HdI3vi96dKYcxrfdKTho7ki5jWgbkSMrCRaxbEdP+D566r886LYRcRt+pAS5LSm/tdUngEccWYJGjBs1rrQxN6JWF5HuD1e1NIRTVc1VxKomW63V6vByAdzPgeQd5e2mYszYgRlA4K1aF/3b3tAHWwAVJ6pY1jq6iU1JhfraH+ctNVX8NclG1en1dHK5IdQPsxd3obQUMK4PfT5e3w14ivBBwVcu+eYMDEHNLfTFUs0FVpkNqDNCWeLLXcW587qelOkSXtFX1X0W2y1eTDep+jdt9PehB8xri4pSkl6Mqr4zkSfSQVO1sbwBzuELz2Pn6bnZSLdtEAIqg==;5:GFHtw9uiPgQP+bA/CjlEso6EKn+yua2C3Iqo7tQanIeYTrUuQ7p+1W/0nlSHDBLb508A8SNljGTXjpS328ZcmBrzeGmSTgRjWcqd7rymFmm4LSiTQ8+cHRaPYOkA+kHBVqiShZ+j/H0ca/kSQyGc+f4ATjVE0/jxDrBGXa2Oh1A=;7:gDFKi8lIPMDyFPcDLhJ3VSa94NMGFCZN/6WklylUIz9AKqKaA3ynDaFaIqQ8sb17GMb2mZGtrMQqR1vUiVrP1ivtRZTArBYyvljyK/k8V0VsAOEHaNPeAx2ekDmxjYOR0k9N1NI+xzWTJMwKl28wnm/M/6Vzunjp2IobCz5OUhsoyce6pIrSJ9artH27qHi/ZGuMCqkMQafs2xmkPOKWSYhwiUmxN57X1q+6NWX5sQ31nFDZGKwfkwv9Q+5zpOjo
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2018 15:02:26.3174
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2256146f-63b6-43b4-081b-08d5f0ad4dad
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0201MB1914
+In-Reply-To: <13b774d7-bc8c-039a-fbc0-52318f535883@runbox.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8962 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807230171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series resolves code style problems as reported by code analysis
-tools.
+On 07/22/2018 11:57 AM, M. Vefa Bicakci wrote:
+> On 07/21/2018 07:17 PM, M. Vefa Bicakci wrote:
+>> On 07/21/2018 05:25 PM, Boris Ostrovsky wrote:
+>>> On 07/21/2018 03:49 PM, M. Vefa Bicakci wrote:
+>>>> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+>>>> index 439a94bf89ad..87afb000142a 100644
+>>>> --- a/arch/x86/xen/enlighten_pv.c
+>>>> +++ b/arch/x86/xen/enlighten_pv.c
+>>>> @@ -1257,6 +1257,7 @@ asmlinkage __visible void __init
+>>>> xen_start_kernel(void)
+>>>>       /* Work out if we support NX */
+>>>>       get_cpu_cap(&boot_cpu_data);
+>>>> +    get_cpu_address_sizes(&boot_cpu_data);
+>>>>       x86_configure_nx();
+>>>
+>>>
+>>> Have you observed any problems without this call? get_cpu_cap() is only
+>>> called here to set X86_FEATURE_NX, and is then called again, together
+>>> with get_cpu_address_sizes(), from early_identify_cpu().
+>>
+>> Thank you for the reviews! Without the call to get_cpu_address_sizes,
+>> paravirtualized virtual machines do not boot up kernels with versions
+>> 4.17 and up at all; this includes dom0 and domU. No domU logs are
+>> generated in dom0's /var/log/xen/console/ directory either, despite
+>> having earlyprintk=xen on the kernel command line for my test domU.
+>
+> Hello Boris,
+>
+> I debugged this further with a debugging version of Xen (so that I can
+> get early kernel print-outs via the "xen_raw_console_write" function),
+> and I found the root cause of the boot up failure.
+>
+> In summary, the issue is due to the following call path in version
+> 4.17 (and higher, I assume), which the kernel goes through /only/ when
+> CONFIG_DEBUG_VIRTUAL is enabled:
+>
+> enlighten_pv.c::xen_start_kernel
+>   mmu_pv.c::xen_reserve_special_pages
+>     page.h::__pa
+>       physaddr.c::__phys_addr
+>         physaddr.h::phys_addr_valid // uses boot_cpu_data.x86_phys_bits
+>
+> The return value of phys_addr_valid is used with the VIRTUAL_BUG_ON
+> macro,
+> which evaluates to BUG_ON in case CONFIG_DEBUG_VIRTUAL is enabled.
 
-Changes in v2:
-	- From the first version of patches, 2 patches are dropped in this
-	  series.
-	- In the v1 patch set, 1/4 was not required as the issue is in
-	  checkpatch.pl script and not in the code.
-	- In the v1 patch set 2/4 was applied on togreg branch of iio.git
-	- for 3/4 patch in v1 patch set, the patch is broken up in 2 patches
-	  in this series as per review comments. They are now 1/4 and 2/4 in
-	  this series.
-	- 4/4 patch in the v1 patch set was basically to resolve coverity
-	  warning for platform_get_irq() in xadc_remove function, but that was
-	  causing potential race condition. Fixed that in this series (3/4).
-	- A new patch is added in this series for moving request_irq() before
-	  enabling interrupts.
+
+Ah, that's why it hasn't been detected.
 
 
-Manish Narani (4):
-  iio: adc: xilinx: Check for return values in clk related functions
-  iio: adc: xilinx: limit pcap clock frequency value
-  iio: adc: xilinx: Remove platform_get_irq from xadc_remove function
-  iio: adc: xilinx: Move request_irq before enabling interrupts
+>
+> It looks like the call to get_cpu_address_size is required in the
+> xen_start_kernel function. Perhaps there is a more elegant way to
+> resolve this issue as well.
+>
+> Another approach could be to check in the phys_addr_valid function
+> whether
+> boot_cpu_data.x86_phys_bits has been initialized or not, I think, but
+> I am
+> not sure about the correctness of this approach.
 
- drivers/iio/adc/xilinx-xadc-core.c | 40 +++++++++++++++++++++++++++++---------
- drivers/iio/adc/xilinx-xadc.h      |  1 +
- 2 files changed, 32 insertions(+), 9 deletions(-)
 
--- 
-2.1.1
+No, I think your patch is good. The only thing I'd suggest is to move
+the call a few lines down. The way it is placed now may create
+impression that we are calling get_cpu_address_sizes() to figure out NX
+support.
 
+
+-boris
