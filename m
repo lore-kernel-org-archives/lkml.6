@@ -1,135 +1,145 @@
 Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 526CEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBFAECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0974A20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:32:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 849AB20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:33:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="kqhB592v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0974A20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="kiFtOrw3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849AB20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389545AbeGWNca (ORCPT
+        id S2388766AbeGWNeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:32:30 -0400
-Received: from mail-sg2apc01on0129.outbound.protection.outlook.com ([104.47.125.129]:33472
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389519AbeGWNc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:32:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3XT8Ldm/ZPmuJFNOrIS0TpEZiluhjKoPQ8WhOHN3UoI=;
- b=kqhB592vqORf0EOzZo3peE9yDjHZH02ojKXtRcHHNlnYSoo0vsUp1tm/mPtSoi8uX4bHGsIJN9tWkfkKRbWXQ7ArOBTagf0XWiSbHFNRLdYsowW5kF+4DVIRCr0+aSum0aKNHBIkSc18xebV29FM2IO9XpfXVld4z5lNh7r0GhU=
-Received: from SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM (10.170.136.145) by
- SG2P15301MB0032.APCP153.PROD.OUTLOOK.COM (10.170.136.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.2; Mon, 23 Jul 2018 12:31:22 +0000
-Received: from SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM
- ([fe80::f916:a637:8730:be25]) by SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM
- ([fe80::f916:a637:8730:be25%4]) with mapi id 15.20.1017.000; Mon, 23 Jul 2018
- 12:31:22 +0000
-From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
-CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [Resend PATCH] KVM/x86: Move X86_CR4_OSXSAVE check into
- kvm_valid_sregs()
-Thread-Topic: [Resend PATCH] KVM/x86: Move X86_CR4_OSXSAVE check into
- kvm_valid_sregs()
-Thread-Index: AQHUIoEQuP+K20xWXUS3BXuD3kRNIw==
-Date:   Mon, 23 Jul 2018 12:31:21 +0000
-Message-ID: <20180723123108.15685-1-Tianyu.Lan@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tianyu.Lan@microsoft.com; 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SG2P15301MB0032;6:MPJc3ikOj0LbulUmADASD2krV/RoZ0XvsuoPDcGnvPbvyCCChi1djl5JVKcxNo5/Oj7iXemJF1RbHIOJZa6zVRPbAvaAjGWjJ0dZtEsRP9bR4uVa1+fvUbup24u/1MPlTuBD4vxLt1+Y4danFgpH4Ewq5yG/qYEWmmOKXmQ7E5PLP7vFtb59HLFbI+5K5yC4Z8fin8y3/iX6Uqd3p6XkagaijGXIPE9JY8/SBZR0ozbzoVy/llYGVQM4rb7P+81x/D4UhwxH14R1HnJ6BKEl5L3IGT4S/p5A7HMqy9Oy39KtY/GbAqL+nwqXbsxupQ0q6h4xquu0UllhfgZ6rzqU08z0VDZfYg1R4qPNsuxzbXq69IwzotD9KtZ+aYhwO+UWwoB9lFpa4YrIWTYBpMSl6ZTSIsqKzmPI6jr8eoBumR1yy9dnOd3rKLDd4UaAZ7P71w5QNARlLBeq5R/M086JKg==;5:OYPYHQhpBDsMjAJUBlbTQVHJY7Lv0F2m6L81q6fHCA/q0GDp4Hvn8aEJ5t0dyjkZnsApwX+jAC1wx9kXujMH3U+Y64h4XLxTv1SWfSHiEg7tN4vZFYiYBFbuyY35U1KwhIZUnR+RRJQigsmddO/drdgLshZYFrnhsY9y9MnrbYQ=;7:uwRFoUjCaFDFDSZq9XyuZ82p9b75TrMLatNftGxm/vCv3LguBEr2N+nN4NovCbojSD5upEWggS7yTZKeRW4Fwl5iQY4bBDCZzz3nclhRkdp0WXfhgawQUfMuCDAF2shTjHy2wDfGlSz2z1TQo6sr38q198L6dqnSejoelDNbxms6h85Pcpac7I6Kw3BYeZ29hReQAXYXvfppZPhAmW2py2b18LQ6d1Agpfi4NAZl4E0ErEZtjvgqPBCAMzN+jKwE
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 8402507b-e47b-43f3-29fc-08d5f09832f5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(2017052603328)(7193020);SRVR:SG2P15301MB0032;
-x-ms-traffictypediagnostic: SG2P15301MB0032:
-x-microsoft-antispam-prvs: <SG2P15301MB0032C2A1BAE893973C9C02AE92560@SG2P15301MB0032.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SG2P15301MB0032;BCL:0;PCL:0;RULEID:;SRVR:SG2P15301MB0032;
-x-forefront-prvs: 0742443479
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(396003)(136003)(39860400002)(189003)(199004)(106356001)(3846002)(4326008)(5660300001)(486006)(97736004)(1076002)(1671002)(109986005)(2616005)(476003)(26005)(54906003)(86612001)(6116002)(316002)(256004)(22452003)(59246006)(99286004)(478600001)(53936002)(6506007)(6486002)(102836004)(86362001)(10290500003)(25786009)(72206003)(6436002)(2900100001)(7736002)(2906002)(68736007)(66066001)(10090500001)(8936002)(81166006)(305945005)(81156014)(14454004)(6512007)(36756003)(105586002)(5250100002)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:SG2P15301MB0032;H:SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: HgLkme+4RLLHSj+1LKAR9RD+QEmc/g14uL9RbFYYL/xeE9b4AewLcKYBasJHHwIyh4UX1Si0arO3uzM5h6T39y62Fm5aadHt8KfVKF22jg0Qt7/PiD4TKOd94Mlu4SKl4xbS8Vw1hUIbGIY1FPC3gK0irY6+BVVOZegK2gc7w43trL4Q7/BwRwYL0VbCvef9bZp4SeKNTB7TQMLvI8ac+Oq2P7ia1r0iz/Ph2r81fJAsZlwdRHdbNw3SYGCxff0SGQvEAcVGJFwYOBWVcJqHXRyv5oleGOvCKXHkEke9Id6q52+y6KxGaOrxIw7wlVjTIcMjdDU/4BXcOVyPYEWwPJbLeQTsBCrMCvzhgs1nFxY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 23 Jul 2018 09:34:09 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34917 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387956AbeGWNeJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 09:34:09 -0400
+Received: by mail-oi0-f65.google.com with SMTP id i12-v6so792941oik.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 05:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=YxlAy4AVdefMtO4348qcH8D7Xq5kPHwrbqPswzbOznE=;
+        b=kiFtOrw3wiyTG1K09IWZ+YUPHSJZHPVcweHu2R0jDTugrKpSGwi1s4lz3jDLag8haj
+         Fy8N2IdSWNYepw6S5mCUqGqgdO2rFk9rCOpihyl5GwinS3sy2K6hotIcIzZabbY/kJ2y
+         ets/jnPOrevs1XXFLx2nknBE7EY8+a/nfkDQE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=YxlAy4AVdefMtO4348qcH8D7Xq5kPHwrbqPswzbOznE=;
+        b=CcUKX0MqMBqCE/BjNfLZ8pqMxC/xjhY2RCqefESQX/q1p3nEacUMlPbRwZ/nQb8gz5
+         JL73CO6DXe112eDdHIVwhl3k+6HlDbcz2CFa2+iyIsdTF74NVgDWsDard007V9H7c1bF
+         p+wmp8FL9vAKDrhh89Ae3Fv4Vo20FWh8D+DsbbpK4vWZ2eFYT4BMSy3R+N9ul7bW+JZs
+         f8lrHWLT521cIN/Z2+abcw1zPoNJ3NX58jG7wAKLNGLuGiuhCIW9ngZBMekOLTAqgHmQ
+         N5/GMo3/KnslzNaM8PkLBlQnsrvPPZwOppAM+GQBt/BxfOhaB90zjNesdtQDTtBr9PZA
+         B77Q==
+X-Gm-Message-State: AOUpUlF6yPtMh4CrM7IpwtGQKOoTM0EH8yMTrdB2994F/cSyMJlQrIj0
+        xBnu6tVgZjwZV9ATarz20y1BUz0JBQXYcjmSWmGBBw==
+X-Google-Smtp-Source: AAOMgpeiMBJ8SeC5n/WKfF/wYPoYuUInRXV+iTvd3dTRKpMNdxp+hnRT5ZCFQX+njLLaWMyHk1Z9cuqQygLINEN8dW4=
+X-Received: by 2002:aca:c257:: with SMTP id s84-v6mr8917431oif.104.1532349189253;
+ Mon, 23 Jul 2018 05:33:09 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8402507b-e47b-43f3-29fc-08d5f09832f5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2018 12:31:21.8462
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2P15301MB0032
-To:     unlisted-recipients:; (no To-header on input)
+Received: by 2002:a9d:113c:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 05:33:08
+ -0700 (PDT)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <CACT4Y+ZbRi=0kRiR-j-SkngsB_QuALfnOX5nGF4agQD-weFsew@mail.gmail.com>
+References: <000000000000bc17b60571a60434@google.com> <CACT4Y+bKU8f4jVENYHX=fzNVd95A4vce2F=UCV12paVNFv-LNg@mail.gmail.com>
+ <CAJfpegsKWGZ4LVeQXrrCr47+Bch4yfOWcWMFSniQsRzjRof=RQ@mail.gmail.com> <CACT4Y+ZbRi=0kRiR-j-SkngsB_QuALfnOX5nGF4agQD-weFsew@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 23 Jul 2018 14:33:08 +0200
+Message-ID: <CAJfpegs0by5OJ7iqtg6L3T1w2RrFRiU6yRufVNbt=tNpJCbf2A@mail.gmail.com>
+Subject: Re: INFO: task hung in fuse_reverse_inval_entry
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+bb6d800770577a083f8c@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-X86_CR4_OSXSAVE check belongs to sregs check and so move into
-kvm_valid_sregs().
+On Mon, Jul 23, 2018 at 2:22 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Mon, Jul 23, 2018 at 2:12 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>> On Mon, Jul 23, 2018 at 10:11 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>>> On Mon, Jul 23, 2018 at 9:59 AM, syzbot
+>>> <syzbot+bb6d800770577a083f8c@syzkaller.appspotmail.com> wrote:
+>>>> Hello,
+>>>>
+>>>> syzbot found the following crash on:
+>>>>
+>>>> HEAD commit:    d72e90f33aa4 Linux 4.18-rc6
+>>>> git tree:       upstream
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1324f794400000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=68af3495408deac5
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=bb6d800770577a083f8c
+>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11564d1c400000
+>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fc570c400000
+>>>
+>>>
+>>> Hi fuse maintainers,
+>>>
+>>> We are seeing a bunch of such deadlocks in fuse on syzbot. As far as I
+>>> understand this is mostly working-as-intended (parts about deadlocks
+>>> in Documentation/filesystems/fuse.txt). The intended way to resolve
+>>> this is aborting connections via fusectl, right?
+>>
+>> Yes.  Alternative is with "umount -f".
+>>
+>>> The doc says "Under
+>>> the fuse control filesystem each connection has a directory named by a
+>>> unique number". The question is: if I start a process and this process
+>>> can mount fuse, how do I kill it? I mean: totally and certainly get
+>>> rid of it right away? How do I find these unique numbers for the
+>>> mounts it created?
+>>
+>> It is the device number found in st_dev for the mount.  Other than
+>> doing stat(2) it is possible to find out the device number by reading
+>> /proc/$PID/mountinfo  (third field).
+>
+> Thanks. I will try to figure out fusectl connection numbers and see if
+> it's possible to integrate aborting into syzkaller.
+>
+>>> Taking into account that there is usually no
+>>> operator attached to each server, I wonder if kernel could somehow
+>>> auto-abort fuse on kill?
+>>
+>> Depends on what the fuse server is sleeping on.   If it's trying to
+>> acquire an inode lock (e.g. unlink(2)), which is classical way to
+>> deadlock a fuse filesystem, then it will go into an uninterruptible
+>> sleep.  There's no way in which that process can be killed except to
+>> force a release of the offending lock, which can only be done by
+>> aborting the request that is being performed while holding that lock.
+>
+> I understand that it is not killed today, but I am asking if we can
+> make it killable. It's all code that we can change, and if a human
+> operator can do it, it can be done pure programmatically on kill too,
+> right?
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- arch/x86/kvm/x86.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Hmm, you mean if a process is in an uninterruptible sleep trying to
+acquire a lock on a fuse filesystem and is killed, then the fuse
+filesystem should be aborted?
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 153564db7980..5c9acdbb2020 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8045,6 +8045,10 @@ EXPORT_SYMBOL_GPL(kvm_task_switch);
-=20
- static int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
- {
-+	if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
-+			(sregs->cr4 & X86_CR4_OSXSAVE))
-+		return  -EINVAL;
-+
- 	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG)) {
- 		/*
- 		 * When EFER.LME and CR0.PG are set, the processor is in
-@@ -8075,10 +8079,6 @@ static int __set_sregs(struct kvm_vcpu *vcpu, struct=
- kvm_sregs *sregs)
- 	struct desc_ptr dt;
- 	int ret =3D -EINVAL;
-=20
--	if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
--			(sregs->cr4 & X86_CR4_OSXSAVE))
--		goto out;
--
- 	if (kvm_valid_sregs(vcpu, sregs))
- 		goto out;
-=20
---=20
-2.14.3
+Even if we'd manage to implement that, it's a large backward
+incompatibility risk.
+
+I don't argue that it can be done, but I would definitely argue *if*
+it should be done.
+
+Thanks,
+Miklos
