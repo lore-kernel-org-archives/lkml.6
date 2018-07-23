@@ -2,174 +2,211 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A836ECDE5F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48A6ECDFB8
 	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 07:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF6320779
+	by mail.kernel.org (Postfix) with ESMTP id 5DD1520878
 	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 07:48:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF6320779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PR+6IrOw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DD1520878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388078AbeGWIrz (ORCPT
+        id S2388113AbeGWIsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 04:47:55 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36985 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388002AbeGWIrz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 04:47:55 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1fhVZT-0007uo-Mf; Mon, 23 Jul 2018 09:47:55 +0200
-Received: from mfe by dude.hi.pengutronix.de with local (Exim 4.91)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1fhVZS-0007lf-JV; Mon, 23 Jul 2018 09:47:54 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org
-Cc:     fabio.estevam@nxp.com, devicetree@vger.kernel.org,
-        kernel@pengutronix.de, Anson.Huang@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] regulator: pfuze100: add support to en-/disable switch regulators
-Date:   Mon, 23 Jul 2018 09:47:47 +0200
-Message-Id: <20180723074747.9328-3-m.felsch@pengutronix.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180723074747.9328-1-m.felsch@pengutronix.de>
-References: <20180723074747.9328-1-m.felsch@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 23 Jul 2018 04:48:00 -0400
+Received: from mail-sg2apc01on0092.outbound.protection.outlook.com ([104.47.125.92]:24479
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388002AbeGWIr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 04:47:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g6RfPrblGnwjXb4RMyS9NWxtgTUMCrJ0Tz7ugaxdX3Y=;
+ b=PR+6IrOw90sIvqRVNqqN59rAFNv4n+yheorUd0eamR5qRYFxFFJqFQsvqH0UB97wsKvUUCXVTselMNNU+K/R0v4xv/vZlNulVTx2SkGudM3tTWqmdADnfMRov6mFdv7hadPVOVcRUfKjkMswQXlQeaswPaFyYwlXEWS/UNlu6Ko=
+Received: from SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM (10.170.136.145) by
+ SG2P15301MB0063.APCP153.PROD.OUTLOOK.COM (10.170.136.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.1; Mon, 23 Jul 2018 07:47:58 +0000
+Received: from SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM
+ ([fe80::f916:a637:8730:be25]) by SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM
+ ([fe80::f916:a637:8730:be25%4]) with mapi id 15.20.1017.000; Mon, 23 Jul 2018
+ 07:47:57 +0000
+From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
+CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] KVM: Compile hv_remote_flush_tlb() and check_ept_pointer()
+ when CONFIG_HYPERV is enabled.
+Thread-Topic: [PATCH] KVM: Compile hv_remote_flush_tlb() and
+ check_ept_pointer() when CONFIG_HYPERV is enabled.
+Thread-Index: AQHUIll4KTxoeOfqCUGRiILNDH573A==
+Date:   Mon, 23 Jul 2018 07:47:57 +0000
+Message-ID: <20180723074747.14231-1-Tianyu.Lan@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SG2P15301MB0063;6:R7Bp7oaiDDHnva51adImYPEj5UrYRgygs8O7FiD8cR4Aj6BRCYTfiW/mzf3VWEi+zV2DrCCaXkNxJ7JtJCZ0+hq1gK8k9VLky6celXXshiLFigvyS0R+9G1pguJGmIyz81H5e6LjWL8Hvy4G9T6pK+DqteF6TAfP6Nv2K4nLoaPy4xz8b2hQhHlKND3TuaNeRPkDeUysPx6Kw9X18KsdRbXMNyfNwk9UlFQiRuLatVNeUME+y8WSbi8mAJzIo9/JXUS02bxI6V6PEhF7CNuctnwaTG7J1UjRTSZnlJ0SrY82Dw3lbeJc7e4zOK9J+SvP0TEIEE5Uw2kXWn1JYNeqEwz0vfDkUeqwrmF39oKKph/O4EQVM5h9UDJ4Zlc9vCph4j6U6kYjEROFcRdDUrNLWuPHEnFNsd+ZOXzS4sZosfnGEAjqpA0GAcPIPIBaPo27/nT9jSZP2DDqX05nxNS/Mw==;5:Xwk2vtdgOG6f5JuoC+wp6Scmm45bUAasQRQEqSlu9OWLCnUH36x2wFPNDq8pbbsCII4Xn2NzFoy9xMcKNZmBWjWb4Qp6jZiAR1mUohmPgopqyQMx8FOMUMhtJfSS2Iw3XFlw87wKlCS/RHPkNZKMGC8r2I/VobRGYy+bbSW2QXY=;7:Wz9VnpZ08Tu5oH7KuyAf+XdFrhiqKGjsHAuEfotjHjJQTMyEOujFS3uGB+2qtR6kuPlU7fmu8ZzJwn+xqCzqkQEMtacWi/Vwqu9sZvQbC/bjw2uohXmqj5ExdJz7nUIyRDWc+Lv6WTTMsLU0GFY4/21yI0CKkaiTBUHMxbA/xBdC8zTvrEtitEP2Ye291QGbd4YRc9P6kf4eoAZp8I71UXTktxqoLUKN02UGlFSeFQB7VFylqtZnSeRxBAG7THkx
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: ffca6283-f784-4c59-055f-08d5f0709b8d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(2017052603328)(7193020);SRVR:SG2P15301MB0063;
+x-ms-traffictypediagnostic: SG2P15301MB0063:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tianyu.Lan@microsoft.com; 
+x-microsoft-antispam-prvs: <SG2P15301MB00636129C6E1CA2F90280F6E92560@SG2P15301MB0063.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:SG2P15301MB0063;BCL:0;PCL:0;RULEID:;SRVR:SG2P15301MB0063;
+x-forefront-prvs: 0742443479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(136003)(376002)(366004)(199004)(189003)(6116002)(59246006)(97736004)(86612001)(3846002)(1076002)(10290500003)(10090500001)(54906003)(53936002)(36756003)(4326008)(25786009)(106356001)(105586002)(72206003)(256004)(6486002)(22452003)(86362001)(14454004)(316002)(478600001)(99286004)(7736002)(1671002)(5250100002)(305945005)(6512007)(5660300001)(476003)(2616005)(6436002)(8936002)(14444005)(102836004)(6506007)(486006)(2900100001)(68736007)(109986005)(26005)(66066001)(1857600001)(2906002)(81156014)(8676002)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:SG2P15301MB0063;H:SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: LyBjBNdGR6YgKH2xWkUDNvHTcbFv+5r0QNABhLbcjek+ujcrqUwvfMVLJ3b5aTG92B6L6gbNwXzhSASEwFSxnqtZKdrfNMKIIk99e9HFzFAHqAxZyCDoPcDinzSzBDvuk5ZE42Oi9EDszTYuYC9BrwP++dhc/4WUl+Yc3zJiPFqlTg70DawIb85O8o2a7dEdFrdZwXTPFtFTZDOBJNTyq7UNjuhTvA/1noWSMqZpqercKm6pYazEANCdnVbCcy1ughhMqg/AujaxHJoASMwoTfp2vPsdBrG4uC+3DHwOMX5ExbdeQADbUMG6EB5UXFVAeLVBoLSjW8/0eUDtSW6HDJeyPwQEfuuMYpsJD76M9iY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffca6283-f784-4c59-055f-08d5f0709b8d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2018 07:47:57.5082
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2P15301MB0063
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add enable/disable support for switch regulators on pfuze100.
+This patch is to avoid compilation warning when CONFIG_HYPERV isn't enabled=
+.
 
-Based on commit 5fe156f1cab4 ("regulator: pfuze100: add enable/disable for
-switch") which is reverted due to boot regressions by commit 464a5686e6c9
-("regulator: Revert "regulator: pfuze100: add enable/disable for switch"").
-Disabling the switch regulators will only be done if the user specifies
-"fsl,pfuze-support-disable-sw" in its device tree to keep backward
-compatibility with current dtb's [1].
-
-[1] https://patchwork.kernel.org/patch/10490381/
-
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-
+Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 ---
-Changes in V3:
-  - Change dt binding, add -sw suffix
+ arch/x86/kvm/vmx.c | 84 +++++++++++++++++++++++++++-----------------------=
+----
+ 1 file changed, 42 insertions(+), 42 deletions(-)
 
-Changes in v2:
-  - Don't trick the framework, use a seperate ops struct
-    to register the correct callbacks.
-  - Set the desc en/disable_val and enable_time only if it necessary
-  - Change the dt property binding
-
-Changes since https://patchwork.kernel.org/patch/10405723/
-  - Use DT property to keep backward compatibility
-  - Use the default register val 0x8 as enable_val
-
- drivers/regulator/pfuze100-regulator.c | 36 ++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index cde6eda1d283..31c3a236120a 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -17,6 +17,8 @@
- #include <linux/slab.h>
- #include <linux/regmap.h>
- 
-+#define PFUZE_FLAG_DISABLE_SW	BIT(1)
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 16ea8b629416..2f379e575940 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1367,6 +1367,48 @@ static void evmcs_sanitize_exec_ctrls(struct vmcs_co=
+nfig *vmcs_conf)
+ 	 *	GUEST_IA32_RTIT_CTL		=3D 0x00002814,
+ 	 */
+ }
 +
- #define PFUZE_NUMREGS		128
- #define PFUZE100_VOL_OFFSET	0
- #define PFUZE100_STANDBY_OFFSET	1
-@@ -50,10 +52,12 @@ struct pfuze_regulator {
- 	struct regulator_desc desc;
- 	unsigned char stby_reg;
- 	unsigned char stby_mask;
-+	bool sw_reg;
- };
- 
- struct pfuze_chip {
- 	int	chip_id;
-+	int     flags;
- 	struct regmap *regmap;
- 	struct device *dev;
- 	struct pfuze_regulator regulator_descs[PFUZE100_MAX_REGULATOR];
-@@ -170,6 +174,17 @@ static const struct regulator_ops pfuze100_sw_regulator_ops = {
- 	.set_ramp_delay = pfuze100_set_ramp_delay,
- };
- 
-+static const struct regulator_ops pfuze100_sw_disable_regulator_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_linear,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+	.set_ramp_delay = pfuze100_set_ramp_delay,
-+};
++/* check_ept_pointer() should be under protection of ept_pointer_lock. */
++static void check_ept_pointer(struct kvm *kvm)
++{
++	struct kvm_vcpu *vcpu;
++	u64 tmp_eptp =3D INVALID_PAGE;
++	int i;
 +
- static const struct regulator_ops pfuze100_swb_regulator_ops = {
- 	.enable = regulator_enable_regmap,
- 	.disable = regulator_disable_regmap,
-@@ -209,9 +224,12 @@ static const struct regulator_ops pfuze100_swb_regulator_ops = {
- 			.uV_step = (step),	\
- 			.vsel_reg = (base) + PFUZE100_VOL_OFFSET,	\
- 			.vsel_mask = 0x3f,	\
-+			.enable_reg = (base) + PFUZE100_MODE_OFFSET,	\
-+			.enable_mask = 0xf,	\
- 		},	\
- 		.stby_reg = (base) + PFUZE100_STANDBY_OFFSET,	\
- 		.stby_mask = 0x3f,	\
-+		.sw_reg = true,		\
- 	}
- 
- #define PFUZE100_SWB_REG(_chip, _name, base, mask, voltages)	\
-@@ -471,6 +489,9 @@ static int pfuze_parse_regulators_dt(struct pfuze_chip *chip)
- 	if (!np)
- 		return -EINVAL;
- 
-+	if (of_property_read_bool(np, "fsl,pfuze-support-disable-sw"))
-+		chip->flags |= PFUZE_FLAG_DISABLE_SW;
-+
- 	parent = of_get_child_by_name(np, "regulators");
- 	if (!parent) {
- 		dev_err(dev, "regulators node not found\n");
-@@ -703,6 +724,21 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
- 			}
- 		}
- 
-+		/*
-+		 * Allow SW regulators to turn off. Checking it trough a flag is
-+		 * a workaround to keep the backward compatibility with existing
-+		 * old dtb's which may relay on the fact that we didn't disable
-+		 * the switched regulator till yet.
-+		 */
-+		if (pfuze_chip->flags & PFUZE_FLAG_DISABLE_SW) {
-+			if (pfuze_chip->regulator_descs[i].sw_reg) {
-+				desc->ops = &pfuze100_sw_disable_regulator_ops;
-+				desc->enable_val = 0x8;
-+				desc->disable_val = 0x0;
-+				desc->enable_time = 500;
-+			}
++	kvm_for_each_vcpu(i, vcpu, kvm) {
++		if (!VALID_PAGE(tmp_eptp)) {
++			tmp_eptp =3D to_vmx(vcpu)->ept_pointer;
++		} else if (tmp_eptp !=3D to_vmx(vcpu)->ept_pointer) {
++			to_kvm_vmx(kvm)->ept_pointers_match
++				=3D EPT_POINTERS_MISMATCH;
++			return;
 +		}
++	}
 +
- 		config.dev = &client->dev;
- 		config.init_data = init_data;
- 		config.driver_data = pfuze_chip;
--- 
-2.18.0
-
++	to_kvm_vmx(kvm)->ept_pointers_match =3D EPT_POINTERS_MATCH;
++}
++
++static int hv_remote_flush_tlb(struct kvm *kvm)
++{
++	int ret;
++
++	spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
++
++	if (to_kvm_vmx(kvm)->ept_pointers_match =3D=3D EPT_POINTERS_CHECK)
++		check_ept_pointer(kvm);
++
++	if (to_kvm_vmx(kvm)->ept_pointers_match !=3D EPT_POINTERS_MATCH) {
++		ret =3D -ENOTSUPP;
++		goto out;
++	}
++
++	ret =3D hyperv_flush_guest_mapping(
++			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
++
++out:
++	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
++	return ret;
++}
+ #else /* !IS_ENABLED(CONFIG_HYPERV) */
+ static inline void evmcs_write64(unsigned long field, u64 value) {}
+ static inline void evmcs_write32(unsigned long field, u32 value) {}
+@@ -4827,48 +4869,6 @@ static inline void __vmx_flush_tlb(struct kvm_vcpu *=
+vcpu, int vpid,
+ 	}
+ }
+=20
+-/* check_ept_pointer() should be under protection of ept_pointer_lock. */
+-static void check_ept_pointer(struct kvm *kvm)
+-{
+-	struct kvm_vcpu *vcpu;
+-	u64 tmp_eptp =3D INVALID_PAGE;
+-	int i;
+-
+-	kvm_for_each_vcpu(i, vcpu, kvm) {
+-		if (!VALID_PAGE(tmp_eptp)) {
+-			tmp_eptp =3D to_vmx(vcpu)->ept_pointer;
+-		} else if (tmp_eptp !=3D to_vmx(vcpu)->ept_pointer) {
+-			to_kvm_vmx(kvm)->ept_pointers_match
+-				=3D EPT_POINTERS_MISMATCH;
+-			return;
+-		}
+-	}
+-
+-	to_kvm_vmx(kvm)->ept_pointers_match =3D EPT_POINTERS_MATCH;
+-}
+-
+-static int hv_remote_flush_tlb(struct kvm *kvm)
+-{
+-	int ret;
+-
+-	spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+-
+-	if (to_kvm_vmx(kvm)->ept_pointers_match =3D=3D EPT_POINTERS_CHECK)
+-		check_ept_pointer(kvm);
+-
+-	if (to_kvm_vmx(kvm)->ept_pointers_match !=3D EPT_POINTERS_MATCH) {
+-		ret =3D -ENOTSUPP;
+-		goto out;
+-	}
+-
+-	ret =3D hyperv_flush_guest_mapping(
+-			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
+-
+-out:
+-	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+-	return ret;
+-}
+-
+ static void vmx_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
+ {
+ 	__vmx_flush_tlb(vcpu, to_vmx(vcpu)->vpid, invalidate_gpa);
+--=20
+2.14.3
