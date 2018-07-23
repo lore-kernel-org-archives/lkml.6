@@ -2,122 +2,120 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE297ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3217ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E70F20685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E70F20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id AF18F20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:43:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nCKKape8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF18F20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388156AbeGWUoZ (ORCPT
+        id S2388154AbeGWUpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 16:44:25 -0400
-Received: from www62.your-server.de ([213.133.104.62]:50103 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbeGWUoZ (ORCPT
+        Mon, 23 Jul 2018 16:45:54 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:43069 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387981AbeGWUpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 16:44:25 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fhgiC-0002fX-B9; Mon, 23 Jul 2018 21:41:40 +0200
-Received: from [99.0.85.34] (helo=localhost.localdomain)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fhgiC-000Waq-11; Mon, 23 Jul 2018 21:41:40 +0200
-Subject: Re: bisected: 4.18-rc* regression: x86-32 troubles (with timers?)
-To:     Arnd Bergmann <arnd@arndb.de>, Meelis Roos <mroos@linux.ee>
-Cc:     Linux Kernel list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
-References: <alpine.LRH.2.21.1807041414080.3671@math.ut.ee>
- <CAK8P3a1RkNc_kShHBJ6QENrQheQi=C93DmnknC1S_uJDcTDqww@mail.gmail.com>
- <alpine.LRH.2.21.1807051254050.21817@math.ut.ee>
- <alpine.LRH.2.21.1807151803010.17406@math.ut.ee>
- <CAK8P3a2NtB_FmiSjrzZb=HoshEzo+MP2xwafC3QcMg79rffipg@mail.gmail.com>
- <alpine.LRH.2.21.1807161948380.27791@math.ut.ee>
- <alpine.LRH.2.21.1807162200180.27791@math.ut.ee>
- <alpine.LRH.2.21.1807202339490.8506@math.ut.ee>
- <alpine.LRH.2.21.1807210154100.8506@math.ut.ee>
- <CAK8P3a19pCbn5Ns0jVqGTiSmGj4AOgjWL0CQtAA-sYRqY4Gvjw@mail.gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <32227088-7754-c160-8046-e860f42ca91c@iogearbox.net>
-Date:   Mon, 23 Jul 2018 21:41:36 +0200
+        Mon, 23 Jul 2018 16:45:54 -0400
+Received: by mail-qk0-f193.google.com with SMTP id z74-v6so1184781qkb.10;
+        Mon, 23 Jul 2018 12:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cU/JK1pky+WuQWjGb/Vigco0DfO7Z1CjrJsl/yKvTqQ=;
+        b=nCKKape8gkSO61w1VBD11Ihmyjh3FhptW7hDcqxPauSgdk0MnEae8+lDgqqif/qDhv
+         naXnvYecoNimOcn6eYHwpL6keDyva75mIbM35id+jgocCvURYDPQwkEiEnw0gleqciml
+         0W9qruIujauXW2bXK+PurM4Wg1GoQhKSmM1dDakRvyG83BoMj/w8Ig98AJQO/dlvBPVo
+         IJJ+oSjr0QEsLx3dYMDwT1BAUXZEO3E5mv6V4tyC3xkWysxOPMV5NiEjntfvHrO9Z/rI
+         xNYYJK7EwuZQUwRVVH9TW+0KO3fod8KBILu7k/5OAozsAEAoD3V8TT5AmOPFEAwv4k/S
+         AmMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cU/JK1pky+WuQWjGb/Vigco0DfO7Z1CjrJsl/yKvTqQ=;
+        b=toFhA1lPaxc+rYCelzkg23KkZswIQmzFy6bmZvdmWYGk3jdRdEdd5mqhqS9EMJkrhL
+         pX1uJEhZ+gJD8fDH+47ntbh/+4mQkPRtPSIB4hj2aC8xaF6xVhPeTXRUEnBxfBRRGjyJ
+         DdjuNaOlu8kK/ZKwA+22ZjWDVjfjJyTwX+JcBSmIoNyXfv1TerzpnfrUzX47Xyx34ZAR
+         /NphpgENSmA3xQtbdeMS0tPtjoUUPl6Sa9j3BtXTGaMt7Pw2aK//8G4iUJlgrDB9JWf/
+         MDTw75uaIe/s263tjaKMRKaTTyAOwA8NfUQZ4bIbapaWLFSII2+zKzhDLq/dMb0DgYVc
+         a2Qg==
+X-Gm-Message-State: AOUpUlE2mqAAAXm/UKvhSSn3AQ6L1WiBne7eS6i6PHDvYjyOoNbMCnKT
+        L2Yb/ZS2+bbqFcS4fP0ba7yj2tJ0OgA=
+X-Google-Smtp-Source: AAOMgpdTWuPwB4kzIIrv6w0GDl4Zb6Z60rrOfW+Kc17NDMt6Uar0Bqe8hVabI1bKxtFtc4PgHBk8hw==
+X-Received: by 2002:a37:ef0f:: with SMTP id j15-v6mr9828477qkk.399.1532374990376;
+        Mon, 23 Jul 2018 12:43:10 -0700 (PDT)
+Received: from [192.168.44.96] (65.sub-174-226-2.myvzw.com. [174.226.2.65])
+        by smtp.gmail.com with ESMTPSA id m40-v6sm1508705qtb.63.2018.07.23.12.43.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 12:43:10 -0700 (PDT)
+Subject: Re: [PATCH 1/2] Add sw2_sw4 voltage table to cpcap regulator.
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <e411faa3-7d42-710f-a18a-a4fdd764b60a@gmail.com>
+ <20180723181318.GG13981@sirena.org.uk>
+ <95929e34-eeb4-f3a4-daa1-0b89dd60f570@gmail.com> <3459086.gtf8SULmVS@dimapc>
+From:   Peter Geis <pgwipeout@gmail.com>
+Message-ID: <215117b3-ca46-ff0e-a494-0fdf674bec8c@gmail.com>
+Date:   Mon, 23 Jul 2018 15:43:07 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a19pCbn5Ns0jVqGTiSmGj4AOgjWL0CQtAA-sYRqY4Gvjw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <3459086.gtf8SULmVS@dimapc>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24776/Mon Jul 23 18:44:17 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Meelis, Arnd,
-
-On 07/23/2018 06:03 PM, Arnd Bergmann wrote:
-> On Sat, Jul 21, 2018 at 1:01 AM, Meelis Roos <mroos@linux.ee> wrote:
->> Added netdev and Daniel Borkmann - please see
->> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1724795.html
->> for the original report. It seems to be about BPF instead.
->>
->> Meanwhile I have found more machines with the trouble. Still no clear
->> mark in the config - some x86-32 machines that have
->> CONFIG_BPF=y
->> CONFIG_BPF_SYSCALL=y
->> CONFIG_BPF_JIT_ALWAYS_ON=y
->> are working fine.
->>
->>> The new bisect seems to have also led me to a strange commit. This time
->>> I tried to be careful and tested most on two reboots before classifying
->>> as good.
+On 07/23/2018 03:20 PM, Dmitry Osipenko wrote:
+> On Monday, 23 July 2018 21:37:50 MSK Peter Geis wrote:
+>> On 07/23/2018 02:13 PM, Mark Brown wrote:
+>>> On Mon, Jul 23, 2018 at 01:58:26PM -0400, Peter Geis wrote:
+>>>> SW2 and SW4 use a shared table to provide voltage to the cpu core and
+>>>> devices on Tegra hardware.
+>>>> Added this table to the cpcap regulator driver as the first step to
+>>>> supporting this device on Tegra.
 >>>
->>> However, f4e3ec0d573e was suspicious - it failed to autoload e1000 but
->>> had no other errors. On both boots with this kernel, modprobe e1000 and
->>> ifup -a made the system work so I assumed it was good, while it might
->>> not have been. Will try bisecting with f4e3ec0d573e marked bad.
+>>> This also doesn't apply against current code (though it does now parse
+>>> OK), please check and resend - make sure you don't have other out of
+>>> tree changes and are using an up to date kernel (ideally my regulator
+>>> for-next branch) as a base.
 >>
->> Now this seems more relevant:
+>> Good Afternoon,
 >>
->> mroos@rx100s2:~/linux$ nice git bisect good
->> 24dea04767e6e5175f4750770281b0c17ac6a2fb is the first bad commit
->> commit 24dea04767e6e5175f4750770281b0c17ac6a2fb
->> Author: Daniel Borkmann <daniel@iogearbox.net>
->> Date:   Fri May 4 01:08:23 2018 +0200
->>
->>     bpf, x32: remove ld_abs/ld_ind
->>
->>     Since LD_ABS/LD_IND instructions are now removed from the core and
->>     reimplemented through a combination of inlined BPF instructions and
->>     a slow-path helper, we can get rid of the complexity from x32 JIT.
+>> I thought it was my error in the patches being stripped, unfortunately
+>> it seems to be a known Gmail behavior.
+>> Any ideas on how to get around it?
 > 
-> This does seem much more likely than the previous bisection, given
-> that you ended up in an x86-32 specific commit (the subject says x32,
-> but that is a mistake). I also checked that systemd indeed does
-> call into bpf in a number of places, possibly for the journald socket.
+> Use the "git send-email" instead of email client.
 > 
-> OTOH, it's still hard to tell how that commit can have ended up
-> corrupting the clock read function in systemd. To cross-check,
-> could you try reverting that commit on the latest kernel and see
-> if it still works?
+> You need to create and send out patches using git, that will be something like
+> this:
+> 
+> 1) "git format-patch -v1 -2 ..." to make patches
+> 2) "git send-email --smtp-server=smtp.gmail.com --smtp-
+> user=pgwipeout@gmail.com --smtp-encryption=tls --smtp-server-port=587 --
+> suppress-cc=all --confirm=always --to 'Mark Brown <broonie@kernel.org>' --cc
+> 'linux-tegra@vger.kernel.org' --cc 'linux-kernel@vger.kernel.org' ...
+> 00*.patch" to send out the patches
+> 
 
-I would be curious as well about that whether revert would make it
-work. What's the value of sysctl net.core.bpf_jit_enable ? Does it
-change anything if you set it to 0 (only interpreter) or 1 (JIT
-enabled). Seems a bit strange to me that bisect ended at this commit
-given the issue you have. The JIT itself was also new in this window
-fwiw. In any case some more debug info would be great to have.
-
-Thanks,
-Daniel
+As always, thanks Dmitry!
+Resent through git this time.
