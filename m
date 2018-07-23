@@ -2,94 +2,124 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA029ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396E3ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9ED20846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:26:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="g43GusH6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E9ED20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F1C3520846
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:26:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1C3520846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388201AbeGWL03 (ORCPT
+        id S2388207AbeGWL1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:26:29 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46172 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388021AbeGWL03 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:26:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IjwUTK31Y60RUYUzSEmtCudBoq41y0iMRGY/RuDISTg=; b=g43GusH6lTvZRfzyDtOrwC2EL
-        bXCzHvLwuZeGbwCRS5EMsYlfCU1DXDXNMNPkUHZWngygk+eKGc46eTnT30eGVBnCPGnDDs7YPdVKQ
-        g5cBRllt78lNJbxrnw5MzIt0zFfBXWrirxsBNQUkIQAZ1qQVhbJkL1/IOcd7ojMmTdQ4U=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fhY2N-0003xp-W6; Mon, 23 Jul 2018 10:25:56 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BB30A112387B; Mon, 23 Jul 2018 11:25:55 +0100 (BST)
-Date:   Mon, 23 Jul 2018 11:25:55 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Peter Geis <pgwipeout@gmail.com>
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/2] Add sw2_sw4 voltage table to cpcap regulator.
-Message-ID: <20180723102555.GB13981@sirena.org.uk>
-References: <17c10727-cab3-4736-281a-d4ace1cdbb82@gmail.com>
+        Mon, 23 Jul 2018 07:27:06 -0400
+Received: from mga06.intel.com ([134.134.136.31]:62236 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388021AbeGWL1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:27:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 03:26:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
+   d="scan'208";a="74686894"
+Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
+  by fmsmga001.fm.intel.com with ESMTP; 23 Jul 2018 03:26:29 -0700
+Message-ID: <5B55AE56.5030404@intel.com>
+Date:   Mon, 23 Jul 2018 18:30:46 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
-Content-Disposition: inline
-In-Reply-To: <17c10727-cab3-4736-281a-d4ace1cdbb82@gmail.com>
-X-Cookie: If in doubt, mumble.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        peterx@redhat.com
+Subject: Re: [PATCH v36 2/5] virtio_balloon: replace oom notifier with shrinker
+References: <1532075585-39067-1-git-send-email-wei.w.wang@intel.com> <1532075585-39067-3-git-send-email-wei.w.wang@intel.com> <20180722174125-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180722174125-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/22/2018 10:48 PM, Michael S. Tsirkin wrote:
+> On Fri, Jul 20, 2018 at 04:33:02PM +0800, Wei Wang wrote:
+>>   
+>> +static unsigned long virtio_balloon_shrinker_scan(struct shrinker *shrinker,
+>> +						  struct shrink_control *sc)
+>> +{
+>> +	unsigned long pages_to_free = balloon_pages_to_shrink,
+>> +		      pages_freed = 0;
+>> +	struct virtio_balloon *vb = container_of(shrinker,
+>> +					struct virtio_balloon, shrinker);
+>> +
+>> +	/*
+>> +	 * One invocation of leak_balloon can deflate at most
+>> +	 * VIRTIO_BALLOON_ARRAY_PFNS_MAX balloon pages, so we call it
+>> +	 * multiple times to deflate pages till reaching
+>> +	 * balloon_pages_to_shrink pages.
+>> +	 */
+>> +	while (vb->num_pages && pages_to_free) {
+>> +		pages_to_free = balloon_pages_to_shrink - pages_freed;
+>> +		pages_freed += leak_balloon(vb, pages_to_free);
+>> +	}
+>> +	update_balloon_size(vb);
+> Are you sure that this is never called if count returned 0?
 
---NDin8bjvE/0mNLFQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes. Please see do_shrink_slab, it just returns if count is 0.
 
-On Sat, Jul 21, 2018 at 07:23:31AM -0400, Peter Geis wrote:
-> Re-sending due to email address typo.
->=20
-> SW2 and SW4 use a shared table to provide voltage to the cpu core and
-> devices on Tegra hardware.
-> Added this table to the cpcap regulator driver as the first step to
-> supporting this device on Tegra.
+>
+>> +
+>> +	return pages_freed / VIRTIO_BALLOON_PAGES_PER_PAGE;
+>> +}
+>> +
+>> +static unsigned long virtio_balloon_shrinker_count(struct shrinker *shrinker,
+>> +						   struct shrink_control *sc)
+>> +{
+>> +	struct virtio_balloon *vb = container_of(shrinker,
+>> +					struct virtio_balloon, shrinker);
+>> +
+>> +	/*
+>> +	 * We continue to use VIRTIO_BALLOON_F_DEFLATE_ON_OOM to handle the
+>> +	 * case when shrinker needs to be invoked to relieve memory pressure.
+>> +	 */
+>> +	if (!virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
+>> +		return 0;
+> So why not skip notifier registration when deflate on oom
+> is clear?
 
-I'm missing patch 2 here, what's going on?
+Sounds good, thanks.
 
---NDin8bjvE/0mNLFQ
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+>   	vb->vb_dev_info.inode->i_mapping->a_ops = &balloon_aops;
+>   #endif
+> +	err = virtio_balloon_register_shrinker(vb);
+> +	if (err)
+> +		goto out_del_vqs;
+>   
+> So we can get scans before device is ready. Leak will fail
+> then. Why not register later after device is ready?
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltVrTIACgkQJNaLcl1U
-h9DhkQf/alsJh+YMHB+9qoz+MsbIQ+p8iq2xCD8FGkvxPA9Mu3B9QjaWJxflqDq5
-EJPP+WN1nwIpnso6A1hWe4q2wuj3tPwiE7WOQEHowwYX3xAXQ17/P+kKUTA/9iy/
-FLhalC0SqOtAw7qjt8syt9kOMqZeZ9LggAI2VX5T8VQVDzUcBTpn82W0eqlcDO6T
-MpH0U4PKqsdjV6tOmrv9XZjDC4oRueJMQqdjueaDfrqjdqbIzfkP93p58kMqWCz/
-FF/ZostvRGDZ5bpUUOhP4akmn6HDPbA0VJM2M9bw9sZRVSGGkCNlV5bdwsKEaGAJ
-JEH+20nCypHzvvuQMma7mTwOMr89Ig==
-=47xC
------END PGP SIGNATURE-----
+Probably no.
 
---NDin8bjvE/0mNLFQ--
+- it would be better not to set device ready when register_shrinker failed.
+- When the device isn't ready, ballooning won't happen, that is, 
+vb->num_pages will be 0, which results in shrinker_count=0 and 
+shrinker_scan won't be called.
+
+So I think it would be better to have shrinker registered before 
+device_ready.
+
+Best,
+Wei
