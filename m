@@ -2,100 +2,109 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E6FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DF6ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 287362064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:38:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 287362064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ADC4C2064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:38:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OrxCn2zF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADC4C2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388181AbeGWWlR (ORCPT
+        id S2388194AbeGWWlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:41:17 -0400
-Received: from mga06.intel.com ([134.134.136.31]:27112 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388088AbeGWWlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:41:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 14:38:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
-   d="scan'208";a="242668947"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.153])
-  by orsmga005.jf.intel.com with ESMTP; 23 Jul 2018 14:38:08 -0700
-Subject: Re: [PATCH] tpm: add support for partial reads
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
- <20180723201956.GB26824@linux.intel.com>
- <fb053916-f6e8-3266-14d7-128e062b6a92@intel.com>
- <1532380412.4112.22.camel@HansenPartnership.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <7441b5ef-18d8-13aa-ef4d-40fe684c9218@intel.com>
-Date:   Mon, 23 Jul 2018 14:38:08 -0700
+        Mon, 23 Jul 2018 18:41:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34660 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388088AbeGWWla (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 18:41:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=plvNO2omLlVIj8YTfETVX+6OOFle1CON1LAkwNfAVEY=; b=OrxCn2zFBjmVJKmoIPJ1BolAo
+        fGpPGf/jvxVpOV0FqCYahZ5d2AsA1oU89UG+Ezswz3rBlcgoG0UFcphVTSMvTqXprw1pvu7PEixms
+        MAfxmoJZS4g+IDjlHSuh8XUagBjW2aYeWJl07eJk6oBNqK0p9EFmd5dtR4lctiLUehkLaBidVSsNy
+        QWEqTbkt7+IQXSqwOlhP1WZqIFTm8XLgBnecquUXYJY6wzklY0CcgrhBYukyqmko4+G2bFqfESnkZ
+        PQ0i1yEBDmfxZ6nB84+CWwQMQY+aofs+jhqxLfNePoP5eRxkJdBcHt9APN+mXrSOSs+fRjcUzrokM
+        0YdqNtmnA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhiX7-0007Zd-9E; Mon, 23 Jul 2018 21:38:21 +0000
+Subject: Re: [PATCH] Drivers: Xen: xlate_mmu.c: Fixed comment layout
+To:     Mark Railton <mark@markrailton.com>, boris.ostrovsky@oracle.com,
+        jgross@suse.com
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180723213404.20720-1-mark@markrailton.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e0b30ab8-d418-cbe0-d03c-a0aee1d48367@infradead.org>
+Date:   Mon, 23 Jul 2018 14:38:20 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1532380412.4112.22.camel@HansenPartnership.com>
+In-Reply-To: <20180723213404.20720-1-mark@markrailton.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 02:13 PM, James Bottomley wrote:
-> The current patch does, you even provided a use case in your last email
->  (it's do command to get sizing followed by do command with correctly
-> sized buffer). 
+On 07/23/2018 02:34 PM, Mark Railton wrote:
+> Fixed issue with multi line comment
 
-The example I provided was: #1 send a command, #2 read the response header
-(10 bytes), get the actual response size from the header and then #3 read
-the full response (response size - size of the header bytes).
+Fix [not Fixed]
 
 > 
-> However, if you tie it to O_NONBLOCK, it won't because no-one currently
-> opens the TPM device non blocking so it's an ABI conformant
-> discriminator of the uses.  Tying to O_NONBLOCK should be simple
-> because it's in file->f_flags.
+> Signed-off-by: Mark Railton <mark@markrailton.com>
+> ---
+>  drivers/xen/xlate_mmu.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+> index 23f1387b3ef7..3b03bc1641ed 100644
+> --- a/drivers/xen/xlate_mmu.c
+> +++ b/drivers/xen/xlate_mmu.c
+> @@ -151,8 +151,9 @@ int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
+>  	struct remap_data data;
+>  	unsigned long range = DIV_ROUND_UP(nr, XEN_PFN_PER_PAGE) << PAGE_SHIFT;
+>  
+> -	/* Kept here for the purpose of making sure code doesn't break
+> -	   x86 PVOPS */
+> +	/* Kept here for the purpose of making sure code doesn't
+> +	 * break x86 PVOPS
+> +	 */
 
-I think that it might be an option. Especially that I have this on top of
-the async patch. Let's discuss this when Jarkko is back.
+That is still not the preferred kernel multi-line comment style.
+Documentation/process/coding-style.rst says:
 
-Thanks,
+	/*
+	 * This is the preferred style for multi-line
+	 * comments in the Linux kernel source code.
+	 * Please use it consistently.
+	 *
+	 * Description:  A column of asterisks on the left side,
+	 * with beginning and ending almost-blank lines.
+	 */
+
+although Networking code has a slightly different preferred style (as in
+your patch).
+
+>  	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
+>  
+>  	data.fgfn = gfn;
+> 
+
+
 -- 
-Tadeusz
+~Randy
