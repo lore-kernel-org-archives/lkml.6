@@ -2,80 +2,104 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D36E2ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07730ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8539120671
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:08:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8539120671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AB2BC20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:14:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="upwuGWDS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB2BC20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbeGXALm (ORCPT
+        id S1728416AbeGXARf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 20:11:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37190 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725198AbeGXALm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 20:11:42 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 54B22550CF;
-        Mon, 23 Jul 2018 23:08:13 +0000 (UTC)
-Received: from t450s.home (ovpn-116-105.phx2.redhat.com [10.3.116.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1291C309128B;
-        Mon, 23 Jul 2018 23:08:13 +0000 (UTC)
-Date:   Mon, 23 Jul 2018 17:08:12 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 2/2] PCI: NVMe device specific reset quirk
-Message-ID: <20180723170812.177a7161@t450s.home>
-In-Reply-To: <20180723224507.GA11656@localhost.localdomain>
-References: <20180723221533.4371.90064.stgit@gimli.home>
-        <20180723222431.4371.25962.stgit@gimli.home>
-        <20180723224507.GA11656@localhost.localdomain>
+        Mon, 23 Jul 2018 20:17:35 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38221 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbeGXARf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 20:17:35 -0400
+Received: by mail-pl0-f65.google.com with SMTP id b1-v6so859775pls.5
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 16:14:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=zBPWpeH57F6/tjsSw+QBzTw+lzqan3p3N7Xzh6Ivt7I=;
+        b=upwuGWDSjSN0Lry0GjvIWMMpVaJY1EtE0YFgKHpUnnZSMN0O+iTsZ+k14QUrBgrCdS
+         RbAdPW4GJqnQtgVQrO5hRICQgMzSTcibrSUVIdqeJPCh2Ij2lg7NFk+ImHkW9I+gjKou
+         v/IZCpQJXs9RUQ0bqUbM1Tk1pQvC7wwgyEAsNooQTn1iEnKZd0ijtKIPz+EH0+W9WuAx
+         4jPCvSqHCxfyNlG2OH8WNIys3D/aXA+NyiQT6cKU/vK+DEZxPWevUPLZnu6mXtdcR8MN
+         2mH7JIGfGExZeJ/0LJ85B3jBLtZNsCUJb7kiaaPvoZcvW8VPCzBG7P6w8GJdy53v5yP0
+         3iuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=zBPWpeH57F6/tjsSw+QBzTw+lzqan3p3N7Xzh6Ivt7I=;
+        b=aWV8ParG9UCX76AQSlu8/1mlUpBaQWZh3XxcbIX+HUEy9ZAuAV3838y/unOmYqMdjM
+         SBwAdOPojKK6pug9rN7PeFtohnjkRildT2GS03RD+9F8EHByZQuJF6SXKJ6zfikSTjt2
+         5m7++nFoxSmGW2I5/6RMG9tFtmN21PCs6J45kEnqBOGiq97CeVifyYA4pjoO0UvYwy3H
+         gopAnuhRIk0jobao7SCw7DkWPqCiyYvGFYhUrzChNvFdsebFGHCNIIosN9zYxHQWXxa5
+         Cp2vjyWu26HKpuYu6XZim3uinfu9YDOJ2q3vHZ9T33WWVjkXKCeoHDe2GTP/zd+/bPGX
+         gdQw==
+X-Gm-Message-State: AOUpUlHXfjNuxMn8Mfp3C1GSQkFCf8a1WxrPklaBWcGvoaEnQNW8IvuY
+        x2YWMrddNDaW1kS55X3cVpUw8g==
+X-Google-Smtp-Source: AAOMgpfUbDCVwveHSbydOkA+ZfbM/NqP3oxA/1TFx8ZmlRIh1GRhAEaMC8tSWwCYUZ2duLGqA60G7g==
+X-Received: by 2002:a17:902:1:: with SMTP id 1-v6mr14697853pla.167.1532387644332;
+        Mon, 23 Jul 2018 16:14:04 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id x66-v6sm21225862pff.123.2018.07.23.16.14.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 16:14:03 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 16:14:02 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, hughd@google.com,
+        aaron.lu@intel.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: thp: remove use_zero_page sysfs knob
+In-Reply-To: <91caed46-6437-a137-0dbc-dadd113f8d58@linux.alibaba.com>
+Message-ID: <alpine.DEB.2.21.1807231610260.196032@chino.kir.corp.google.com>
+References: <1532110430-115278-1-git-send-email-yang.shi@linux.alibaba.com> <20180720210626.5bnyddmn4avp2l3x@kshutemo-mobl1> <3118b646-681e-a2aa-dc7b-71d4821fa50f@linux.alibaba.com> <alpine.DEB.2.21.1807231329080.105582@chino.kir.corp.google.com>
+ <91caed46-6437-a137-0dbc-dadd113f8d58@linux.alibaba.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 23 Jul 2018 23:08:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Jul 2018 16:45:08 -0600
-Keith Busch <keith.busch@intel.com> wrote:
+On Mon, 23 Jul 2018, Yang Shi wrote:
 
-> On Mon, Jul 23, 2018 at 04:24:31PM -0600, Alex Williamson wrote:
-> > Take advantage of NVMe devices using a standard interface to quiesce
-> > the controller prior to reset, including device specific delays before
-> > and after that reset.  This resolves several NVMe device assignment
-> > scenarios with two different vendors.  The Intel DC P3700 controller
-> > has been shown to only work as a VM boot device on the initial VM
-> > startup, failing after reset or reboot, and also fails to initialize
-> > after hot-plug into a VM.  Adding a delay after FLR resolves these
-> > cases.  The Samsung SM961/PM961 (960 EVO) sometimes fails to return
-> > from FLR with the PCI config space reading back as -1.  A reproducible
-> > instance of this behavior is resolved by clearing the enable bit in
-> > the configuration register and waiting for the ready status to clear
-> > (disabling the NVMe controller) prior to FLR.
-> > 
-> > As all NVMe devices make use of this standard interface and the NVMe
-> > specification also requires PCIe FLR support, we can apply this quirk
-> > to all devices with matching class code.  
+> > > I agree to keep it for a while to let that security bug cool down,
+> > > however, if
+> > > there is no user anymore, it sounds pointless to still keep a dead knob.
+> > > 
+> > It's not a dead knob.  We use it, and for reasons other than
+> > CVE-2017-1000405.  To mitigate the cost of constantly compacting memory to
+> > allocate it after it has been freed due to memry pressure, we can either
+> > continue to disable it, allow it to be persistently available, or use a
+> > new value for use_zero_page to specify it should be persistently
+> > available.
 > 
-> Shouldn't this go in the nvme driver's reset_prepare/reset_done callbacks?
+> My understanding is the cost of memory compaction is *not* unique for huge
+> zero page, right? It is expected when memory pressure is met, even though huge
+> zero page is disabled.
+> 
 
-The scenario I'm trying to fix is device assignment, the nvme driver
-isn't in play there.  The device is bound to the vfio-pci driver at the
-time of these resets.  Thanks,
-
-Alex
+It's caused by fragmentation, not necessarily memory pressure.  We've 
+disabled it because compacting for tens of thousands of huge zero pages in 
+the background has a noticeable impact on cpu.  Additionally, if the hzp 
+cannot be allocated at runtime it increases the rss of applications that 
+map it, making it unpredictable.  Making it persistent, as I've been 
+suggesting, fixes these issues.
