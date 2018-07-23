@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2F7ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001E1ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 779E020875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACFC120875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:52:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LLKMqQb1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 779E020875
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrQoblpY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACFC120875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388301AbeGWVxz (ORCPT
+        id S2388319AbeGWVzC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:53:55 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54636 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388161AbeGWVxy (ORCPT
+        Mon, 23 Jul 2018 17:55:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38424 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388054AbeGWVxr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:53:54 -0400
-Received: by mail-wm0-f67.google.com with SMTP id c14-v6so413196wmb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:50:55 -0700 (PDT)
+        Mon, 23 Jul 2018 17:53:47 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v14-v6so1997487wro.5
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:50:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Av0CJmxQz3UTLL1rs3jzjBY1wWc1pDHVb6ZSaIA95I0=;
-        b=LLKMqQb19TrMFy62KFsQYkmLE/RjrJeGoeCUHggtxN+/50sZ+iEwRez5KEr6eCE/CJ
-         a3ZHGErDO7jlsgfHhHbeBj7snARuG5UCXdwiNtWDNmOP1V2gZtXKikRd3wysVkbUCs8t
-         P8m4nVvumCFBzXZI/Ofpe09Y1vBQQlaPc3PhcjNUnWcglAFa8v1ScsG+a9GilO3jHtlt
-         TH3Y/KUL/vKsB8+QBfVwxkPKY5aZ7297vcqEJeKtFyZvB4mI1fjcDF45tC9Nvyxn7c39
-         LMixRiGwxWlcmzzNbaqDuD+cIw5Z8OrnrU7Ud+iXJCetV7uKM6TzhbgcOD4m7/6vGaw7
-         4+aQ==
+        bh=UFekeI44osU5U79EV9VIkAYwZ8wovxZtzV8MfSYG+B8=;
+        b=DrQoblpYn56aY46SxqW1EJDYy1gLcpy/VpL4SfPu0qGlIBghGGxFvGK7UdWy4oQrFl
+         2PkYbauWGPGBVsFmwVxdoob3GsTlSP5iG27kmElMRgaz2qXxBTOa1FsFhUwY/sNHfSBK
+         /jmDsNU3CLNsNVULmDELkX01dDT4E1IRtGX4EuEYqhPZt0WMCHpgpEh0ygc4Dq7JOWoN
+         pTa3BqSb7w6N4KGWoENKUdmRbaiMo69CypoNHV9Wi7iaNNTyLUw15DLOXrHODWpEjdwb
+         5pK+FEMf5hEL4xf6+LOvBu/EIDY693EBLZp2SL/GsS2wA1/yQR7E51bUoM0nl9kaYnV5
+         ACJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Av0CJmxQz3UTLL1rs3jzjBY1wWc1pDHVb6ZSaIA95I0=;
-        b=N39hdjv3hNeIAl7oebYyiTFOhkrI9Fm0cH7hDx9yeHfF+PffS4BjpnMqBuI+iYrtY/
-         TH9vlcPAu/f5FOMUUCnjNgZU0JfYCFhZx51yI4xgLjV+Da1O1IurMpKmNOLxAuMUlpeB
-         Z2vndndYmBvXhGvg1+b54FZNrmrc19LFPZmpQ/LiMDCH8FHHprJ7GHnDHDQVzmIda0M+
-         4floRa0auTqVPqesgQpFyma0FY7qGLIMCmsSkVlVPOEkehQk+Qcg/3p/yy2m+IhlGzuj
-         vOnWSZtaYJAfjLvHrQsyPNRe7eyWX29YLMlqXCDXHCznxLDy6hE1mZh1DB5AN/lbayLn
-         3JLQ==
-X-Gm-Message-State: AOUpUlF5sZt23R3kX+xq5CVUPQ3pHSrWO8Go5FCR24CQf2201WQ8cS7A
-        3qj0EXbEzzVewjNifC/QteFkToM+
-X-Google-Smtp-Source: AAOMgpdROLVv/wFjUJHJpIfOONf/nxh10Tjuvg7U9IjAEWYXLAyDyCgjP9v2pXYPnJUrwkZOaaprFQ==
-X-Received: by 2002:a1c:8313:: with SMTP id f19-v6mr273693wmd.144.1532379054654;
-        Mon, 23 Jul 2018 13:50:54 -0700 (PDT)
+        bh=UFekeI44osU5U79EV9VIkAYwZ8wovxZtzV8MfSYG+B8=;
+        b=NW3tM8CZefafZTtbuPxFOj55FCS+dakReW9Wld52L0HiesGnBAlLPpfEsaceI29t4k
+         bhfg6ae2U4zfe8KfQQmPx9O7ppHBOkj9curCSq9UUhJak6Jcox2W0xY7VVgpts2Ifo6A
+         m39kE0NGJM2c2rweEdVhYd3zvz+17sAoP8G8w+q97jRs7xcIONc2n2zvfrBrMcc6WoNT
+         joffTplRTaneSjqWcmd4TZ2t4J+gpWmOAZhrDXA/29prpC+w9Xs+y+8EkxVEyZ8xviIt
+         ysiqf/vmaJxerOWV7IUPar/GLU2T5cpRsFKezXHW7SPLEVM6eqOq0m9f2safn8wCRSmi
+         TaVw==
+X-Gm-Message-State: AOUpUlHrgsmxSuk68uYYzbtE4UPkRNIPGYxayhaVkYIbbqKXFHGponQS
+        yDicmgqkia2QIlrZaRBSsq5vWjq8
+X-Google-Smtp-Source: AAOMgpfikILwiXhL2bF/Ik2pIUhpEhc6duLtto3NWZLq8K9bjqOy/ksFcn69I+e2kJo/lv2xPPqNkg==
+X-Received: by 2002:a5d:528f:: with SMTP id c15-v6mr9606192wrv.102.1532379048488;
+        Mon, 23 Jul 2018 13:50:48 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id b123-v6sm14921874wma.24.2018.07.23.13.50.53
+        by smtp.gmail.com with ESMTPSA id b123-v6sm14921874wma.24.2018.07.23.13.50.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 13:50:53 -0700 (PDT)
+        Mon, 23 Jul 2018 13:50:47 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 07/15] staging:rtl8192u: Remove unused union QOS_INFO_FIELD - Style
-Date:   Mon, 23 Jul 2018 21:50:23 +0100
-Message-Id: <20180723205031.19816-8-johnfwhitmore@gmail.com>
+Subject: [PATCH 03/15] staging:rtl8192u: Remove unused QOS definitions - Style
+Date:   Mon, 23 Jul 2018 21:50:19 +0100
+Message-Id: <20180723205031.19816-4-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723205031.19816-1-johnfwhitmore@gmail.com>
 References: <20180723205031.19816-1-johnfwhitmore@gmail.com>
@@ -74,112 +74,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The union QOS_INFO_FIELD is unused in code so has been removed from source.
-This change is a coding style change so should have no impact on runtime
-code execution.
+Remove the unused QOS related types.
+
+Since definitions are not used simply remove from code. This change is
+a coding style change and should not impact runtime execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- .../staging/rtl8192u/ieee80211/rtl819x_Qos.h  | 86 -------------------
- 1 file changed, 86 deletions(-)
+ .../staging/rtl8192u/ieee80211/rtl819x_Qos.h  | 22 -------------------
+ 1 file changed, 22 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-index 90f5939c9ecc..e0c51c5c6816 100644
+index fb2745da5844..a83abaf3a2ea 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-@@ -9,92 +9,6 @@
+@@ -4,25 +4,6 @@
  
- #define WMM_PARAM_ELEMENT_SIZE	(8+(4*AC_PARAM_SIZE))
+ #define	MAX_WMMELE_LENGTH	64
  
 -//
--// QoS Info Field
--// Ref:
--//	1. WMM spec 2.2.1: WME Information Element, p.11.
--//	2. 8185 QoS code: QOS_INFO [def. in QoS_mp.h]
+-// QoS mode.
+-// enum 0, 1, 2, 4: since we can use the OR(|) operation.
 -//
--typedef	union _QOS_INFO_FIELD {
--	u8	charData;
+-// QOS_MODE is redefined for enum can't be ++, | under C++ compiler, 2006.05.17, by rcnjko.
+-//typedef	enum _QOS_MODE{
+-//	QOS_DISABLE		= 0,
+-//	QOS_WMM			= 1,
+-//	QOS_EDCA			= 2,
+-//	QOS_HCCA			= 4,
+-//}QOS_MODE,*PQOS_MODE;
+-//
+-#define QOS_DISABLE		0
+-#define QOS_WMM			1
+-#define QOS_WMMSA		2
+-#define QOS_EDCA		4
+-#define QOS_HCCA		8
+-#define QOS_WMM_UAPSD		16   //WMM Power Save, 2006-06-14 Isaiah
 -
--	struct {
--		u8		ucParameterSetCount:4;
--		u8		ucReserved:4;
--	} WMM;
--
--	struct {
--		//Ref WMM_Specification_1-1.pdf, 2006-06-13 Isaiah
--		u8		ucAC_VO_UAPSD:1;
--		u8		ucAC_VI_UAPSD:1;
--		u8		ucAC_BE_UAPSD:1;
--		u8		ucAC_BK_UAPSD:1;
--		u8		ucReserved1:1;
--		u8		ucMaxSPLen:2;
--		u8		ucReserved2:1;
--
--	} ByWmmPsSta;
--
--	struct {
--		//Ref WMM_Specification_1-1.pdf, 2006-06-13 Isaiah
--		u8		ucParameterSetCount:4;
--		u8		ucReserved:3;
--		u8		ucApUapsd:1;
--	} ByWmmPsAp;
--
--	struct {
--		u8		ucAC3_UAPSD:1;
--		u8		ucAC2_UAPSD:1;
--		u8		ucAC1_UAPSD:1;
--		u8		ucAC0_UAPSD:1;
--		u8		ucQAck:1;
--		u8		ucMaxSPLen:2;
--		u8		ucMoreDataAck:1;
--	} By11eSta;
--
--	struct {
--		u8		ucParameterSetCount:4;
--		u8		ucQAck:1;
--		u8		ucQueueReq:1;
--		u8		ucTXOPReq:1;
--		u8		ucReserved:1;
--	} By11eAp;
--
--	struct {
--		u8		ucReserved1:4;
--		u8		ucQAck:1;
--		u8		ucReserved2:2;
--		u8		ucMoreDataAck:1;
--	} ByWmmsaSta;
--
--	struct {
--		u8		ucReserved1:4;
--		u8		ucQAck:1;
--		u8		ucQueueReq:1;
--		u8		ucTXOPReq:1;
--		u8		ucReserved2:1;
--	} ByWmmsaAp;
--
--	struct {
--		u8		ucAC3_UAPSD:1;
--		u8		ucAC2_UAPSD:1;
--		u8		ucAC1_UAPSD:1;
--		u8		ucAC0_UAPSD:1;
--		u8		ucQAck:1;
--		u8		ucMaxSPLen:2;
--		u8		ucMoreDataAck:1;
--	} ByAllSta;
--
--	struct {
--		u8		ucParameterSetCount:4;
--		u8		ucQAck:1;
--		u8		ucQueueReq:1;
--		u8		ucTXOPReq:1;
--		u8		ucApUapsd:1;
--	} ByAllAp;
--
--} QOS_INFO_FIELD, *PQOS_INFO_FIELD;
+ #define AC_PARAM_SIZE	4
+ #define WMM_PARAM_ELE_BODY_LEN	18
+ 
+@@ -506,14 +487,11 @@ typedef struct _BSS_QOS {
+ 	AC_PARAM		AcParameter[4];
+ } BSS_QOS, *PBSS_QOS;
+ 
 -
  //
- // ACI to AC coding.
- // Ref: WMM spec 2.2.2: WME Parameter Element, p.13.
+ // Ref: sQoSCtlLng and QoSCtl definition in 8185 QoS code.
+ //#define QoSCtl   ((	(Adapter->bRegQoS) && (Adapter->dot11QoS.QoSMode &(QOS_EDCA|QOS_HCCA))	  )  ?sQoSCtlLng:0)
+ //
+ #define sQoSCtlLng			2
+-#define	QOS_CTRL_LEN(_QosMode)		((_QosMode > QOS_DISABLE) ? sQoSCtlLng : 0)
+-
+ 
+ //Added by joseph
+ //UP Mapping to AC, using in MgntQuery_SequenceNumber() and maybe for DSCP
 -- 
 2.18.0
 
