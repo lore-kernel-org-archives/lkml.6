@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E785ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423A3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2316720854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2316720854
+	by mail.kernel.org (Postfix) with ESMTP id EA52E20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA52E20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388800AbeGWN3H (ORCPT
+        id S2388814AbeGWN3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:29:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45578 "EHLO
+        Mon, 23 Jul 2018 09:29:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45590 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388770AbeGWN3G (ORCPT
+        with ESMTP id S2388361AbeGWN3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:29:06 -0400
+        Mon, 23 Jul 2018 09:29:09 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1FBC6BDB;
-        Mon, 23 Jul 2018 12:28:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C4EDC0A;
+        Mon, 23 Jul 2018 12:28:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        stable@kernel.org
-Subject: [PATCH 4.17 60/63] alpha: fix osf_wait4() breakage
-Date:   Mon, 23 Jul 2018 14:25:06 +0200
-Message-Id: <20180723122448.624282129@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Herrmann <aherrmann@suse.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.17 24/63] cpufreq: intel_pstate: Register when ACPI PCCH is present
+Date:   Mon, 23 Jul 2018 14:24:30 +0200
+Message-Id: <20180723122447.280988894@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -51,54 +51,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@ZenIV.linux.org.uk>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit f88a333b44318643282b8acc92af90deda441f5e upstream.
+commit 95d6c0857e54b788982746071130d822a795026b upstream.
 
-kernel_wait4() expects a userland address for status - it's only
-rusage that goes as a kernel one (and needs a copyout afterwards)
+Currently, intel_pstate doesn't register if _PSS is not present on
+HP Proliant systems, because it expects the firmware to take over
+CPU performance scaling in that case.  However, if ACPI PCCH is
+present, the firmware expects the kernel to use it for CPU
+performance scaling and the pcc-cpufreq driver is loaded for that.
 
-[ Also, fix the prototype of kernel_wait4() to have that __user
-  annotation   - Linus ]
+Unfortunately, the firmware interface used by that driver is not
+scalable for fundamental reasons, so pcc-cpufreq is way suboptimal
+on systems with more than just a few CPUs.  In fact, it is better to
+avoid using it at all.
 
-Fixes: 92ebce5ac55d ("osf_wait4: switch to kernel_wait4()")
-Cc: stable@kernel.org # v4.13+
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+For this reason, modify intel_pstate to look for ACPI PCCH if _PSS
+is not present and register if it is there.  Also prevent the
+pcc-cpufreq driver from trying to initialize itself if intel_pstate
+has been registered already.
+
+Fixes: fbbcdc0744da (intel_pstate: skip the driver if ACPI has power mgmt option)
+Reported-by: Andreas Herrmann <aherrmann@suse.com>
+Reviewed-by: Andreas Herrmann <aherrmann@suse.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Tested-by: Andreas Herrmann <aherrmann@suse.com>
+Cc: 4.16+ <stable@vger.kernel.org> # 4.16+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/alpha/kernel/osf_sys.c |    5 +----
- include/linux/sched/task.h  |    2 +-
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ drivers/cpufreq/intel_pstate.c |   17 ++++++++++++++++-
+ drivers/cpufreq/pcc-cpufreq.c  |    4 ++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
---- a/arch/alpha/kernel/osf_sys.c
-+++ b/arch/alpha/kernel/osf_sys.c
-@@ -1183,13 +1183,10 @@ SYSCALL_DEFINE2(osf_getrusage, int, who,
- SYSCALL_DEFINE4(osf_wait4, pid_t, pid, int __user *, ustatus, int, options,
- 		struct rusage32 __user *, ur)
- {
--	unsigned int status = 0;
- 	struct rusage r;
--	long err = kernel_wait4(pid, &status, options, &r);
-+	long err = kernel_wait4(pid, ustatus, options, &r);
- 	if (err <= 0)
- 		return err;
--	if (put_user(status, ustatus))
--		return -EFAULT;
- 	if (!ur)
- 		return err;
- 	if (put_tv_to_tv32(&ur->ru_utime, &r.ru_utime))
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -75,7 +75,7 @@ extern long _do_fork(unsigned long, unsi
- extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
- struct task_struct *fork_idle(int);
- extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
--extern long kernel_wait4(pid_t, int *, int, struct rusage *);
-+extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -2179,6 +2179,18 @@ static bool __init intel_pstate_no_acpi_
+ 	return true;
+ }
  
- extern void free_task(struct task_struct *tsk);
++static bool __init intel_pstate_no_acpi_pcch(void)
++{
++	acpi_status status;
++	acpi_handle handle;
++
++	status = acpi_get_handle(NULL, "\\_SB", &handle);
++	if (ACPI_FAILURE(status))
++		return true;
++
++	return !acpi_has_method(handle, "PCCH");
++}
++
+ static bool __init intel_pstate_has_acpi_ppc(void)
+ {
+ 	int i;
+@@ -2238,7 +2250,10 @@ static bool __init intel_pstate_platform
+ 
+ 	switch (plat_info[idx].data) {
+ 	case PSS:
+-		return intel_pstate_no_acpi_pss();
++		if (!intel_pstate_no_acpi_pss())
++			return false;
++
++		return intel_pstate_no_acpi_pcch();
+ 	case PPC:
+ 		return intel_pstate_has_acpi_ppc() && !force_load;
+ 	}
+--- a/drivers/cpufreq/pcc-cpufreq.c
++++ b/drivers/cpufreq/pcc-cpufreq.c
+@@ -580,6 +580,10 @@ static int __init pcc_cpufreq_init(void)
+ {
+ 	int ret;
+ 
++	/* Skip initialization if another cpufreq driver is there. */
++	if (cpufreq_get_current_driver())
++		return 0;
++
+ 	if (acpi_disabled)
+ 		return 0;
  
 
 
