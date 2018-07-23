@@ -2,186 +2,396 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5819ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6FFECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7A320880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7A320880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E39ED2088E
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZL/AqlV2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E39ED2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389883AbeGWNsx (ORCPT
+        id S2389897AbeGWNsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 23 Jul 2018 09:48:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388599AbeGWNsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Jul 2018 09:48:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52054 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388389AbeGWNsw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:52 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43EABBB3;
-        Mon, 23 Jul 2018 12:47:47 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.4 107/107] ubi: fastmap: Erase outdated anchor PEBs during attach
-Date:   Mon, 23 Jul 2018 14:42:41 +0200
-Message-Id: <20180723122418.865465132@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
-References: <20180723122413.003644357@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+Received: from localhost (unknown [14.52.27.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06E9520685;
+        Mon, 23 Jul 2018 12:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532350069;
+        bh=ZOsAzcrP1TkDBrzImU3Rtn4poIIiL3gCkNZYOjjyZnQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZL/AqlV2/LB40mScrwpPs0P+EgFhhMd5M98q15CIFWkYm8JS1nuI8K+FVFRsrWY4R
+         p95PQL1Sx2bjRO1f9QDOtCktE3oV2yIW36aC9WQSdNQKhaMpR0TmX43PPoA+KTFfJE
+         386qQzDZEdr9OXeW+RYs7v4F49pk1Aqz2Jbvpoys=
+Date:   Mon, 23 Jul 2018 21:47:47 +0900
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: split discard command in prior to block layer
+Message-ID: <20180723124747.GB19644@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180708141433.24182-1-chao@kernel.org>
+ <20180715012700.GA11571@jaegeuk-macbookpro.roam.corp.google.com>
+ <4f2fafdd-eb5a-0dcd-272b-65aac5080677@kernel.org>
+ <20180715031308.GI11571@jaegeuk-macbookpro.roam.corp.google.com>
+ <30b14b7b-4036-d8a7-c477-0f578449e18d@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <30b14b7b-4036-d8a7-c477-0f578449e18d@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On 07/15, Chao Yu wrote:
+> On 2018/7/15 11:13, Jaegeuk Kim wrote:
+> > On 07/15, Chao Yu wrote:
+> >> Hi Jaegeuk,
+> >>
+> >> On 2018/7/15 9:27, Jaegeuk Kim wrote:
+> >>> On 07/08, Chao Yu wrote:
+> >>>> From: Chao Yu <yuchao0@huawei.com>
+> >>>>
+> >>>> Some devices has small max_{hw,}discard_sectors, so that in
+> >>>> __blkdev_issue_discard(), one big size discard bio can be split
+> >>>> into multiple small size discard bios, result in heavy load in IO
+> >>>> scheduler and device, which can hang other sync IO for long time.
+> >>>>
+> >>>> Now, f2fs is trying to control discard commands more elaboratively,
+> >>>> in order to make less conflict in between discard IO and user IO
+> >>>> to enhance application's performance, so in this patch, we will
+> >>>> split discard bio in f2fs in prior to in block layer to reduce
+> >>>> issuing multiple discard bios in a short time.
+> >>>
+> >>> Can we just change __submit_discard_cmd() to submit the large candidate
+> >>> partially and adjust lstart in the original candidate?
+> >>
+> >> Yep, could you check __submit_discard_cmd() implementation below? Does that
+> >> match the thoughts from you?
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>>
+> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>> ---
+> >>>> v2:
+> >>>> - change to split discard command entry before submission.
+> >>>>  fs/f2fs/f2fs.h    |  13 +++---
+> >>>>  fs/f2fs/segment.c | 117 +++++++++++++++++++++++++++++++++++++-----------------
+> >>>>  2 files changed, 86 insertions(+), 44 deletions(-)
+> >>>>
+> >>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>>> index c48b655d5d8d..359526d88d3f 100644
+> >>>> --- a/fs/f2fs/f2fs.h
+> >>>> +++ b/fs/f2fs/f2fs.h
+> >>>> @@ -178,7 +178,6 @@ enum {
+> >>>>  
+> >>>>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+> >>>>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+> >>>> -#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+> >>>>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+> >>>>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+> >>>>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+> >>>> @@ -709,22 +708,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+> >>>>  }
+> >>>>  
+> >>>>  static inline bool __is_discard_mergeable(struct discard_info *back,
+> >>>> -						struct discard_info *front)
+> >>>> +			struct discard_info *front, unsigned int max_len)
+> >>>>  {
+> >>>>  	return (back->lstart + back->len == front->lstart) &&
+> >>>> -		(back->len + front->len < DEF_MAX_DISCARD_LEN);
+> >>>> +		(back->len + front->len <= max_len);
+> >>>>  }
+> >>>>  
+> >>>>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+> >>>> -						struct discard_info *back)
+> >>>> +			struct discard_info *back, unsigned int max_len)
+> >>>>  {
+> >>>> -	return __is_discard_mergeable(back, cur);
+> >>>> +	return __is_discard_mergeable(back, cur, max_len);
+> >>>>  }
+> >>>>  
+> >>>>  static inline bool __is_discard_front_mergeable(struct discard_info *cur,
+> >>>> -						struct discard_info *front)
+> >>>> +			struct discard_info *front, unsigned int max_len)
+> >>>>  {
+> >>>> -	return __is_discard_mergeable(cur, front);
+> >>>> +	return __is_discard_mergeable(cur, front, max_len);
+> >>>>  }
+> >>>>  
+> >>>>  static inline bool __is_extent_mergeable(struct extent_info *back,
+> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>>> index f7f56dd091b4..cbf8f3f9a8e7 100644
+> >>>> --- a/fs/f2fs/segment.c
+> >>>> +++ b/fs/f2fs/segment.c
+> >>>> @@ -966,17 +966,24 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+> >>>>  	}
+> >>>>  }
+> >>>>  
+> >>>> -
+> > 
+> > ===================== BEGIN
+> > 
+> >>>> +static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>>> +				struct block_device *bdev, block_t lstart,
+> >>>> +				block_t start, block_t len);
+> >>>>  /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+> >>>>  static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>  						struct discard_policy *dpolicy,
+> >>>> -						struct discard_cmd *dc)
+> >>>> +						struct discard_cmd *dc,
+> >>>> +						unsigned int *issued)
+> >>>>  {
+> >>>> +	struct block_device *bdev = dc->bdev;
+> >>>> +	struct request_queue *q = bdev_get_queue(bdev);
+> >>>> +	unsigned int max_discard_blocks =
+> >>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+> >>>>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> >>>>  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
+> >>>>  					&(dcc->fstrim_list) : &(dcc->wait_list);
+> >>>> -	struct bio *bio = NULL;
+> >>>>  	int flag = dpolicy->sync ? REQ_SYNC : 0;
+> >>>> +	block_t lstart, start, len, total_len;
+> >>>>  
+> >>>>  	if (dc->state != D_PREP)
+> >>>>  		return;
+> >>>> @@ -984,30 +991,63 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>  	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+> >>>>  		return;
+> >>>>  
+> >>>> -	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
+> >>>> -
+> >>>> -	dc->error = __blkdev_issue_discard(dc->bdev,
+> >>>> -				SECTOR_FROM_BLOCK(dc->start),
+> >>>> -				SECTOR_FROM_BLOCK(dc->len),
+> >>>> -				GFP_NOFS, 0, &bio);
+> >>>> -	if (!dc->error) {
+> >>>> -		/* should keep before submission to avoid D_DONE right away */
+> >>>> -		dc->state = D_SUBMIT;
+> >>>> -		atomic_inc(&dcc->issued_discard);
+> >>>> -		atomic_inc(&dcc->issing_discard);
+> >>>> -		if (bio) {
+> >>>> -			bio->bi_private = dc;
+> >>>> -			bio->bi_end_io = f2fs_submit_discard_endio;
+> >>>> -			bio->bi_opf |= flag;
+> >>>> -			submit_bio(bio);
+> >>>> -			list_move_tail(&dc->list, wait_list);
+> >>>> -			__check_sit_bitmap(sbi, dc->start, dc->start + dc->len);
+> >>>> -
+> >>>> -			f2fs_update_iostat(sbi, FS_DISCARD, 1);
+> >>>> +	trace_f2fs_issue_discard(bdev, dc->start, dc->len);
+> >>>> +
+> >>>> +	lstart = dc->lstart;
+> >>>> +	start = dc->start;
+> >>>> +	len = dc->len;
+> >>>> +	total_len = len;
+> >>>> +
+> >>>> +	while (total_len && *issued < dpolicy->max_requests) {
+> >>>> +		struct bio *bio = NULL;
+> >>>> +
+> >>>> +		if (len > max_discard_blocks)
+> >>>> +			len = max_discard_blocks;
+> >>>> +
+> >>>> +		dc->error = __blkdev_issue_discard(bdev,
+> >>>> +					SECTOR_FROM_BLOCK(start),
+> >>>> +					SECTOR_FROM_BLOCK(len),
+> >>>> +					GFP_NOFS, 0, &bio);
+> >>>> +		if (!dc->error) {
+> >>>> +			/*
+> >>>> +			 * should keep before submission to avoid D_DONE
+> >>>> +			 * right away
+> >>>> +			 */
+> >>>> +			dc->state = D_SUBMIT;
+> >>>> +			dc->len = len;
+> >>>> +			atomic_inc(&dcc->issued_discard);
+> >>>> +			atomic_inc(&dcc->issing_discard);
+> >>>> +			if (bio) {
+> >>>> +				bio->bi_private = dc;
+> >>>> +				bio->bi_end_io = f2fs_submit_discard_endio;
+> >>>> +				bio->bi_opf |= flag;
+> >>>> +				submit_bio(bio);
+> >>>> +				list_move_tail(&dc->list, wait_list);
+> >>>> +				__check_sit_bitmap(sbi, dc->start,
+> >>>> +							dc->start + dc->len);
+> >>>> +
+> >>>> +				f2fs_update_iostat(sbi, FS_DISCARD, 1);
+> >>>> +			}
+> >>>> +		} else {
+> >>>> +			__remove_discard_cmd(sbi, dc);
+> > 
+> > Keep the original one, since it's partially failed?
+> 
+> During __submit_discard_cmd(), we are trying to split original dc into multiple
+> dc, and once we failed to submit some of them, we will remove corresponding dc,
+> the removal logic is the same as before, not being changed...
+> 
+> If we want to keep failed dc and do retry, we'd better add another patch for
+> that, right?
 
-------------------
+I thought removing failed portion of the dc.
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
+> 
+> > 
+> >>>> +			return;
+> >>>> +		}
+> >>>> +		lstart += len;
+> >>>> +		start += len;
+> >>>> +		total_len -= len;
+> >>>> +		len = total_len;
+> >>>> +		(*issued)++;
+> >>>> +
+> >>>> +		if (len) {
+> >>>> +			__update_discard_tree_range(sbi, bdev, lstart,
+> >>>> +								start, len);
+> > 
+> > Do we really need this? We already grabbed one candidate which was not merged
+> > well.
+> 
+> You mean submitting multiple bios based on one large size dc?
 
-commit f78e5623f45bab2b726eec29dc5cefbbab2d0b1c upstream.
+Yes.
 
-The fastmap update code might erase the current fastmap anchor PEB
-in case it doesn't find any new free PEB. When a power cut happens
-in this situation we must not have any outdated fastmap anchor PEB
-on the device, because that would be used to attach during next
-boot.
-The easiest way to make that sure is to erase all outdated fastmap
-anchor PEBs synchronously during attach.
+> 
+> Previously, one bio references to one dc as below, in end_io, it will change
+> dc->state which can be detected by its own waiter.
+> 
+> 	bio->bi_private = dc;
+> 	bio->bi_end_io = f2fs_submit_discard_endio;
+> 	bio->bi_opf |= flag;
+> 
+> If multiple bios reference to one dc, it will be more complicated to handle
+> that. How do you think?
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Fixes: dbb7d2a88d2a ("UBI: Add fastmap core")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I was concerned about too many entries in the lists. How about adding a refcnt
+to count how many bios were issued on the dc?
 
----
- drivers/mtd/ubi/wl.c |   77 +++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 57 insertions(+), 20 deletions(-)
+Thanks,
 
---- a/drivers/mtd/ubi/wl.c
-+++ b/drivers/mtd/ubi/wl.c
-@@ -1509,6 +1509,46 @@ static void shutdown_work(struct ubi_dev
- }
- 
- /**
-+ * erase_aeb - erase a PEB given in UBI attach info PEB
-+ * @ubi: UBI device description object
-+ * @aeb: UBI attach info PEB
-+ * @sync: If true, erase synchronously. Otherwise schedule for erasure
-+ */
-+static int erase_aeb(struct ubi_device *ubi, struct ubi_ainf_peb *aeb, bool sync)
-+{
-+	struct ubi_wl_entry *e;
-+	int err;
-+
-+	e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
-+	if (!e)
-+		return -ENOMEM;
-+
-+	e->pnum = aeb->pnum;
-+	e->ec = aeb->ec;
-+	ubi->lookuptbl[e->pnum] = e;
-+
-+	if (sync) {
-+		err = sync_erase(ubi, e, false);
-+		if (err)
-+			goto out_free;
-+
-+		wl_tree_add(e, &ubi->free);
-+		ubi->free_count++;
-+	} else {
-+		err = schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false);
-+		if (err)
-+			goto out_free;
-+	}
-+
-+	return 0;
-+
-+out_free:
-+	wl_entry_destroy(ubi, e);
-+
-+	return err;
-+}
-+
-+/**
-  * ubi_wl_init - initialize the WL sub-system using attaching information.
-  * @ubi: UBI device description object
-  * @ai: attaching information
-@@ -1545,17 +1585,9 @@ int ubi_wl_init(struct ubi_device *ubi,
- 	list_for_each_entry_safe(aeb, tmp, &ai->erase, u.list) {
- 		cond_resched();
- 
--		e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
--		if (!e)
--			goto out_free;
--
--		e->pnum = aeb->pnum;
--		e->ec = aeb->ec;
--		ubi->lookuptbl[e->pnum] = e;
--		if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false)) {
--			wl_entry_destroy(ubi, e);
-+		err = erase_aeb(ubi, aeb, false);
-+		if (err)
- 			goto out_free;
--		}
- 
- 		found_pebs++;
- 	}
-@@ -1615,6 +1647,8 @@ int ubi_wl_init(struct ubi_device *ubi,
- 			ubi_assert(!ubi->lookuptbl[e->pnum]);
- 			ubi->lookuptbl[e->pnum] = e;
- 		} else {
-+			bool sync = false;
-+
- 			/*
- 			 * Usually old Fastmap PEBs are scheduled for erasure
- 			 * and we don't have to care about them but if we face
-@@ -1624,18 +1658,21 @@ int ubi_wl_init(struct ubi_device *ubi,
- 			if (ubi->lookuptbl[aeb->pnum])
- 				continue;
- 
--			e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
--			if (!e)
--				goto out_free;
-+			/*
-+			 * The fastmap update code might not find a free PEB for
-+			 * writing the fastmap anchor to and then reuses the
-+			 * current fastmap anchor PEB. When this PEB gets erased
-+			 * and a power cut happens before it is written again we
-+			 * must make sure that the fastmap attach code doesn't
-+			 * find any outdated fastmap anchors, hence we erase the
-+			 * outdated fastmap anchor PEBs synchronously here.
-+			 */
-+			if (aeb->vol_id == UBI_FM_SB_VOLUME_ID)
-+				sync = true;
- 
--			e->pnum = aeb->pnum;
--			e->ec = aeb->ec;
--			ubi_assert(!ubi->lookuptbl[e->pnum]);
--			ubi->lookuptbl[e->pnum] = e;
--			if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false)) {
--				wl_entry_destroy(ubi, e);
-+			err = erase_aeb(ubi, aeb, sync);
-+			if (err)
- 				goto out_free;
--			}
- 		}
- 
- 		found_pebs++;
-
-
+> 
+> Thanks,
+> 
+> > 
+> >>>> +			dc = (struct discard_cmd *)f2fs_lookup_rb_tree(
+> >>>> +						&dcc->root, NULL, lstart);
+> >>>> +			f2fs_bug_on(sbi, !dc);
+> >>>>  		}
+> >>>> -	} else {
+> >>>> -		__remove_discard_cmd(sbi, dc);
+> >>>>  	}
+> >>>> +
+> >>>> +	return;
+> >>>>  }
+> > 
+> > ======================= END
+> > 
+> > 
+> >>>>  
+> >>>>  static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
+> >>>> @@ -1088,10 +1128,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>>>  	struct discard_cmd *dc;
+> >>>>  	struct discard_info di = {0};
+> >>>>  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> >>>> +	struct request_queue *q = bdev_get_queue(bdev);
+> >>>> +	unsigned int max_discard_blocks =
+> >>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+> >>>>  	block_t end = lstart + len;
+> >>>>  
+> >>>> -	mutex_lock(&dcc->cmd_lock);
+> >>>> -
+> >>>>  	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
+> >>>>  					NULL, lstart,
+> >>>>  					(struct rb_entry **)&prev_dc,
+> >>>> @@ -1131,7 +1172,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>>>  
+> >>>>  		if (prev_dc && prev_dc->state == D_PREP &&
+> >>>>  			prev_dc->bdev == bdev &&
+> >>>> -			__is_discard_back_mergeable(&di, &prev_dc->di)) {
+> >>>> +			__is_discard_back_mergeable(&di, &prev_dc->di,
+> >>>> +							max_discard_blocks)) {
+> >>>>  			prev_dc->di.len += di.len;
+> >>>>  			dcc->undiscard_blks += di.len;
+> >>>>  			__relocate_discard_cmd(dcc, prev_dc);
+> >>>> @@ -1142,7 +1184,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>>>  
+> >>>>  		if (next_dc && next_dc->state == D_PREP &&
+> >>>>  			next_dc->bdev == bdev &&
+> >>>> -			__is_discard_front_mergeable(&di, &next_dc->di)) {
+> >>>> +			__is_discard_front_mergeable(&di, &next_dc->di,
+> >>>> +							max_discard_blocks)) {
+> >>>>  			next_dc->di.lstart = di.lstart;
+> >>>>  			next_dc->di.len += di.len;
+> >>>>  			next_dc->di.start = di.start;
+> >>>> @@ -1165,8 +1208,6 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>>>  		node = rb_next(&prev_dc->rb_node);
+> >>>>  		next_dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+> >>>>  	}
+> >>>> -
+> >>>> -	mutex_unlock(&dcc->cmd_lock);
+> >>>>  }
+> >>>>  
+> >>>>  static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>> @@ -1181,7 +1222,9 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>  
+> >>>>  		blkstart -= FDEV(devi).start_blk;
+> >>>>  	}
+> >>>> +	mutex_lock(&SM_I(sbi)->dcc_info->cmd_lock);
+> >>>>  	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
+> >>>> +	mutex_unlock(&SM_I(sbi)->dcc_info->cmd_lock);
+> >>>>  	return 0;
+> >>>>  }
+> >>>>  
+> >>>> @@ -1220,9 +1263,9 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+> >>>>  		}
+> >>>>  
+> >>>>  		dcc->next_pos = dc->lstart + dc->len;
+> >>>> -		__submit_discard_cmd(sbi, dpolicy, dc);
+> >>>> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> >>>>  
+> >>>> -		if (++issued >= dpolicy->max_requests)
+> >>>> +		if (issued >= dpolicy->max_requests)
+> >>>>  			break;
+> >>>>  next:
+> >>>>  		node = rb_next(&dc->rb_node);
+> >>>> @@ -1277,9 +1320,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>  				break;
+> >>>>  			}
+> >>>>  
+> >>>> -			__submit_discard_cmd(sbi, dpolicy, dc);
+> >>>> +			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> >>>>  
+> >>>> -			if (++issued >= dpolicy->max_requests)
+> >>>> +			if (issued >= dpolicy->max_requests)
+> >>>>  				break;
+> >>>>  		}
+> >>>>  		blk_finish_plug(&plug);
+> >>>> @@ -2475,9 +2518,9 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+> >>>>  			goto skip;
+> >>>>  		}
+> >>>>  
+> >>>> -		__submit_discard_cmd(sbi, dpolicy, dc);
+> >>>> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> >>>>  
+> >>>> -		if (++issued >= dpolicy->max_requests) {
+> >>>> +		if (issued >= dpolicy->max_requests) {
+> >>>>  			start = dc->lstart + dc->len;
+> >>>>  
+> >>>>  			blk_finish_plug(&plug);
+> >>>> -- 
+> >>>> 2.16.2.17.g38e79b1fd
