@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05113ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 714E7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7BBD20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:10:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7BBD20856
+	by mail.kernel.org (Postfix) with ESMTP id 3550520856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:10:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3550520856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388325AbeGWPMP (ORCPT
+        id S2388347AbeGWPMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 11:12:15 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9668 "EHLO huawei.com"
+        Mon, 23 Jul 2018 11:12:18 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55384 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388097AbeGWPMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 11:12:15 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 77D29BB099410;
-        Mon, 23 Jul 2018 22:10:40 +0800 (CST)
+        id S2388282AbeGWPMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 11:12:17 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E113C64FD628F;
+        Mon, 23 Jul 2018 22:10:45 +0800 (CST)
 Received: from huawei.com (10.113.189.234) by DGGEMS404-HUB.china.huawei.com
  (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Mon, 23 Jul 2018
- 22:10:34 +0800
+ 22:10:36 +0800
 From:   Yunlong Song <yunlong.song@huawei.com>
 To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
         <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
@@ -35,9 +35,9 @@ CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
         <shengyong1@huawei.com>, <heyunlei@huawei.com>,
         <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/5] f2fs: add cur_victim_sec for BG_GC to avoid skipping BG_GC victim
-Date:   Mon, 23 Jul 2018 22:10:19 +0800
-Message-ID: <1532355022-163029-3-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH 3/5] f2fs: clear_bit the SSR selected section in the victim_secmap
+Date:   Mon, 23 Jul 2018 22:10:20 +0800
+Message-ID: <1532355022-163029-4-git-send-email-yunlong.song@huawei.com>
 X-Mailer: git-send-email 1.8.5.2
 In-Reply-To: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
 References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
@@ -50,171 +50,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If f2fs aborts BG_GC, then the section bit of victim_secmap will be set,
-which will cause the section skipped in the future get_victim of BG_GC.
-In a worst case that each section in the victim_secmap is set and there
-are enough free sections (so FG_GC can not be triggered), then BG_GC
-will skip all the sections and cannot find any victims, causing BG_GC
-failed each time. Besides, SSR also uses BG_GC to get ssr segment, if
-many sections in the victim_secmap are set, then SSR cannot get a proper
-ssr segment to allocate blocks, which makes SSR inefficiently. To fix
-this problem, we can add cur_victim_sec for BG_GC similar like that in
-FG_GC to avoid selecting the same section repeatedly.
+SSR uses get_victim to select ssr segment to allocate data blocks, which
+makes the previous result of victim_secmap inaccurately, so we would
+better clear the bit of the section in the victim_secmap.
 
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/f2fs.h              |  3 ++-
- fs/f2fs/gc.c                | 15 +++++++++------
- fs/f2fs/segment.h           |  3 ++-
- fs/f2fs/super.c             |  3 ++-
- include/trace/events/f2fs.h | 18 ++++++++++++------
- 5 files changed, 27 insertions(+), 15 deletions(-)
+ fs/f2fs/gc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 57a8851..f8a7b42 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1217,7 +1217,8 @@ struct f2fs_sb_info {
- 	/* for cleaning operations */
- 	struct mutex gc_mutex;			/* mutex for GC */
- 	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
--	unsigned int cur_victim_sec;		/* current victim section num */
-+	unsigned int cur_fg_victim_sec;		/* current FG_GC victim section num */
-+	unsigned int cur_bg_victim_sec;		/* current BG_GC victim section num */
- 	unsigned int gc_mode;			/* current GC state */
- 	/* for skip statistic */
- 	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 2ba470d..705d419 100644
+index 705d419..0e7a265 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -367,8 +367,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 
- 		if (sec_usage_check(sbi, secno))
- 			goto next;
--		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
--			goto next;
- 
- 		cost = get_gc_cost(sbi, segno, &p);
- 
-@@ -391,14 +389,17 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 		if (p.alloc_mode == LFS) {
- 			secno = GET_SEC_FROM_SEG(sbi, p.min_segno);
- 			if (gc_type == FG_GC)
--				sbi->cur_victim_sec = secno;
--			else
-+				sbi->cur_fg_victim_sec = secno;
-+			else {
+@@ -394,7 +394,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
  				set_bit(secno, dirty_i->victim_secmap);
-+				sbi->cur_bg_victim_sec = secno;
-+			}
- 		}
+ 				sbi->cur_bg_victim_sec = secno;
+ 			}
+-		}
++		} else
++			clear_bit(secno, dirty_i->victim_secmap);
  		*result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
  
  		trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
--				sbi->cur_victim_sec,
-+				sbi->cur_fg_victim_sec,
-+				sbi->cur_bg_victim_sec,
- 				prefree_segments(sbi), free_segments(sbi));
- 	}
- out:
-@@ -1098,7 +1099,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 	}
- 
- 	if (gc_type == FG_GC)
--		sbi->cur_victim_sec = NULL_SEGNO;
-+		sbi->cur_fg_victim_sec = NULL_SEGNO;
-+	else
-+		sbi->cur_bg_victim_sec = NULL_SEGNO;
- 
- 	if (!sync) {
- 		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 5049551..b21bb96 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -787,7 +787,8 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
- 
- static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
- {
--	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
-+	if (IS_CURSEC(sbi, secno) || (sbi->cur_fg_victim_sec == secno) ||
-+		(sbi->cur_bg_victim_sec == secno))
- 		return true;
- 	return false;
- }
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7187885..ef69ebf 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2386,7 +2386,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->root_ino_num = le32_to_cpu(raw_super->root_ino);
- 	sbi->node_ino_num = le32_to_cpu(raw_super->node_ino);
- 	sbi->meta_ino_num = le32_to_cpu(raw_super->meta_ino);
--	sbi->cur_victim_sec = NULL_SECNO;
-+	sbi->cur_fg_victim_sec = NULL_SECNO;
-+	sbi->cur_bg_victim_sec = NULL_SECNO;
- 	sbi->max_victim_search = DEF_MAX_VICTIM_SEARCH;
- 
- 	sbi->dir_level = DEF_DIR_LEVEL;
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 7956989..0f01f82 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -693,10 +693,12 @@
- TRACE_EVENT(f2fs_get_victim,
- 
- 	TP_PROTO(struct super_block *sb, int type, int gc_type,
--			struct victim_sel_policy *p, unsigned int pre_victim,
-+			struct victim_sel_policy *p, unsigned int pre_fg_victim,
-+			unsigned int pre_bg_victim,
- 			unsigned int prefree, unsigned int free),
- 
--	TP_ARGS(sb, type, gc_type, p, pre_victim, prefree, free),
-+	TP_ARGS(sb, type, gc_type, p, pre_fg_victim, pre_bg_victim,
-+		prefree, free),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
-@@ -707,7 +709,8 @@
- 		__field(unsigned int,	victim)
- 		__field(unsigned int,	cost)
- 		__field(unsigned int,	ofs_unit)
--		__field(unsigned int,	pre_victim)
-+		__field(unsigned int,	pre_fg_victim)
-+		__field(unsigned int,	pre_bg_victim)
- 		__field(unsigned int,	prefree)
- 		__field(unsigned int,	free)
- 	),
-@@ -721,14 +724,16 @@
- 		__entry->victim		= p->min_segno;
- 		__entry->cost		= p->min_cost;
- 		__entry->ofs_unit	= p->ofs_unit;
--		__entry->pre_victim	= pre_victim;
-+		__entry->pre_fg_victim	= pre_fg_victim;
-+		__entry->pre_bg_victim	= pre_bg_victim;
- 		__entry->prefree	= prefree;
- 		__entry->free		= free;
- 	),
- 
- 	TP_printk("dev = (%d,%d), type = %s, policy = (%s, %s, %s), "
- 		"victim = %u, cost = %u, ofs_unit = %u, "
--		"pre_victim_secno = %d, prefree = %u, free = %u",
-+		"pre_fg_victim_secno = %d, pre_bg_victim_secno = %d, "
-+		"prefree = %u, free = %u",
- 		show_dev(__entry->dev),
- 		show_data_type(__entry->type),
- 		show_gc_type(__entry->gc_type),
-@@ -737,7 +742,8 @@
- 		__entry->victim,
- 		__entry->cost,
- 		__entry->ofs_unit,
--		(int)__entry->pre_victim,
-+		(int)__entry->pre_fg_victim,
-+		(int)__entry->pre_bg_victim,
- 		__entry->prefree,
- 		__entry->free)
- );
 -- 
 1.8.5.2
 
