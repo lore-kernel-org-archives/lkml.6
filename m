@@ -2,332 +2,149 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4695ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C727DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 387EE20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 753FA20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:37:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="LmGl+gkq";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b9Okv6Lt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387EE20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="QcpeHb4D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753FA20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388212AbeGWSjp (ORCPT
+        id S2388137AbeGWSkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:39:45 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:37374 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388055AbeGWSjp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:39:45 -0400
-Received: by mail-vk0-f66.google.com with SMTP id v72-v6so726637vkd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 10:37:27 -0700 (PDT)
+        Mon, 23 Jul 2018 14:40:12 -0400
+Received: from mail-eopbgr690139.outbound.protection.outlook.com ([40.107.69.139]:22560
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387995AbeGWSkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:40:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=P09zNO3uF7ZJt3hV9vd9nvJzDjGyrO/aodgrjQE0xGQ=;
-        b=LmGl+gkq/Tvc2EIgxOYGX4dzwQiVCUC8TeLr7/nUP4/w5QhOVXUjvGY2db+Hp90I4Y
-         ScykfnCBvlQtw2w33gyt+ygbWSq4cj2MjEvdUMhQYdx7yJtS3mI4+D9e9NoU4Tf+NgJu
-         dnKpHUWIlYEt3dVuJM76sW5y2PHwLy0/wWYY+mrAthzigcN5r5FJ1e096Z2RTgFS0/LR
-         QX/14OC9nsxfjRWZ5yZI7ztM2c8OQ4XkUyFOWyGufU4E3+pt9BEm8t4fJGwNbu+HVC6j
-         RETiBZikOU5kRHPK9zo0AXRnrfpF4Qb5Tgrp+9ygyiQoAHWI0ub5GaBFe6RaACtUMGa+
-         rrew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=P09zNO3uF7ZJt3hV9vd9nvJzDjGyrO/aodgrjQE0xGQ=;
-        b=b9Okv6LtnrnlFxiQAr51k6Op+7Nl2Ad/ti9ZJUXP80BJi+cG8J6ex1qXhgX6ltiyuD
-         IrR+2E3xbxGNstxWewkRuH5G9mjCsyP1+guojKb0a1w3cIItIZiREYqu6QZ0IROT6ga7
-         X0t48pZ/kKEKXZxQhYi0aRG4dx/IAE5x5KQmQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=P09zNO3uF7ZJt3hV9vd9nvJzDjGyrO/aodgrjQE0xGQ=;
-        b=uVTJrqD1g+D+ZdV78xFXMqZoJibV0s/RykIuy88kp+wB9bG49qXvcJLQQc4s37ejY/
-         Vz4FJcZ16eNV9Hor5xxAANXsFe6eXfymjBvQiXyJfm4KsIAehhwl5rCv4cNyU94tOmsG
-         x0EPz8/0tfAPqOT0owQQD5PAc1+0N7f1x0ABrw0GibyTirmpmZrk3Bk9hDVlbVlYMyIb
-         vZV62T0XUINa++KVLxfw1qdisgaOuV8UK+U3q1MwjB0OviEV13EipwF54BWSpTDYzhIs
-         qOGZkP7+53WSr5sKejGWDQqee/HJ+foYc4Hf+mXs7XzMxySe27otIsaNT73GtSXybKoA
-         3UJw==
-X-Gm-Message-State: AOUpUlHF5M4l2xg+4wtpWVVwYKGJmyj+1i0Xl+Yacb20smK4flzAfgFZ
-        J3KViHjSFA675xkZvTG81S0zBRajrCXeUZ/Ux8f2LQ==
-X-Google-Smtp-Source: AAOMgpcEuh13GwFYNaL78PaGN3puU9QvoeZbhDXZcx2JXGZoyqqBhQyLGIfsrFR9SeJ3LhKrV698LV8YW4/0tGL9vSw=
-X-Received: by 2002:a1f:c541:: with SMTP id v62-v6mr7655369vkf.99.1532367446438;
- Mon, 23 Jul 2018 10:37:26 -0700 (PDT)
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pfFuWeiWHmMWgqwIs0KozekcH/fD4kuIHWSPjQKvAvk=;
+ b=QcpeHb4DAkFZi8lanoYp+FUypjPpxde14L7de8LRSm4pqAgNxQfP0Ui1+JHwMZJ3M66koFiS1oh+Btl1cz1mSTT2EhRm4P7D7mryK0tpucQaabPxPj+tD/HAYuq2HUVjLkIpydPWXmBpW77Ocp2/BWcdLAGxz0tcDMTEQ55euKE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+Received: from localhost (4.16.204.77) by
+ BYAPR08MB4934.namprd08.prod.outlook.com (2603:10b6:a03:6a::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.21; Mon, 23 Jul 2018 17:37:50 +0000
+Date:   Mon, 23 Jul 2018 10:37:47 -0700
+From:   Paul Burton <paul.burton@mips.com>
+To:     =?utf-8?B?6ZmI5Y2O5omN?= <chenhc@lemote.com>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        wuzhangjin <wuzhangjin@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MIPS: Change definition of cpu_relax() for Loongson-3
+Message-ID: <20180723173747.kdeoyhie7jur25zm@pburton-laptop>
+References: <1531467477-9952-1-git-send-email-chenhc@lemote.com>
+ <20180717175232.ea7pi2bqswnzmznc@pburton-laptop>
+ <CAAhV-H5_==ZdKTOJTNXkRBTqmr5cxFvcaVabfNarEiQt_LvHZQ@mail.gmail.com>
+ <20180719211547.7hlkkljnmtbdubot@pburton-laptop>
+ <tencent_49EB501232FD02AC001F9E93@qq.com>
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 10:37:25 -0700 (PDT)
-In-Reply-To: <CAL_Jsq+X=RZK-GU+9LqK-0O1A=cYeudhHvvnrXm6xv=j1Ck4_w@mail.gmail.com>
-References: <20180706233142.166296-1-dianders@chromium.org>
- <20180720141059.GA3064@rob-hp-laptop> <CAD=FV=WzjZBYV+yjekC-GGgjyWNbdGX=ZwesQMQhiYHZLyzhzA@mail.gmail.com>
- <CAL_JsqKZUB3P_Z_pRG-Udx0wgWtSjzgF=Rc3t8Xf2n2uZkV3Qw@mail.gmail.com>
- <CAD=FV=XBCeKUrfMCppfhetWNWLJWzsbiBkQnTugoXDff-0SD5w@mail.gmail.com> <CAL_Jsq+X=RZK-GU+9LqK-0O1A=cYeudhHvvnrXm6xv=j1Ck4_w@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 23 Jul 2018 10:37:25 -0700
-X-Google-Sender-Auth: khn9gOMPgsKBZP5PkohlFHhj5wQ
-Message-ID: <CAD=FV=UDq8oq+nKsa2mZWvAUueUFxEUSYz2JoZ=E7e131SOR=g@mail.gmail.com>
-Subject: Re: [PATCH] phy: qcom-qmp: Fix dts bindings to reflect reality
-To:     Rob Herring <robh@kernel.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Varadarajan Narayanan <varada@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tencent_49EB501232FD02AC001F9E93@qq.com>
+User-Agent: NeoMutt/20180716
+X-Originating-IP: [4.16.204.77]
+X-ClientProxiedBy: DM5PR2001CA0009.namprd20.prod.outlook.com
+ (2603:10b6:4:16::19) To BYAPR08MB4934.namprd08.prod.outlook.com
+ (2603:10b6:a03:6a::15)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d6e063a0-083d-4c1f-b0ba-08d5f0c3033f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(5600073)(711020)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB4934;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4934;3:INCq1CkPE3mflQGhMagAevfu/DIh68A4LAaZ1SEAZzsHFQ/NmuDfrgYmL3NQtw+RrM8D3Ycw8YOxPizmBfJJUyr7JVGPvMJ5MRwpaUa1J/L3mAyTETH9raZQy0Fj/Hykf+hwnN2zQdXi93NaO83pvRWjjXNenPIlN2NWcL2KOhstfVMZWPDaddz+YuvWI2i1pQsQXe6+gsVMHR52O56nA/LXyhKIrLrPXn4TuypRv8nihHQIP5L79pD/DjZSe0Bf;25:BoDC3BGDkjcZVaPQrwAurbog5OhrjSfv2CZqo7WqHjJihpcJWS77QA+gpjW8z4igJIYK1R5hMe3pPQkuzKpxaupkFji1NB4hJy+o1DiH4eTbZ/5zbs3tFkgW74t3+KK6ooGpVlB7I/NNUO/8VWwL1jFEGSA0lHqmlUecAsxPlvrlMG4FZ3isjnHRx3R+e87d3W/q8EUX0wviKB7turahvYgrtle87p/J5tCfoFypsIO3q3S6j4rId863K6aJgyjyEcjNtpqeXizWMV6+GMuRXaklq3h25QzlkMaIAroQm9PFObH+lGRVai/EO8+JArx0Q/ubZykhaYupZupq5+2Pdg==;31:9B77YHD+5vOyIIQ8Tvcjl7FEtxHvI0WkddvwX4JfvTDjNhw/0WH5naL+XU9S40CaeNFEBT3Jzr0WZm80X1mdWBWOBom3yasJ8jXbQ1O6AANeE7P/+jnMmfi0j+pB4VyxVeTHek7F9tbpz4Z866+dwrs8SELxp4+Emv9GDTVHI4wXkq9Datic2pJHCQi2me1utecf2BKnN24hs8aKflEP30nhVHbNlv0TfUHp9hBG2J4=
+X-MS-TrafficTypeDiagnostic: BYAPR08MB4934:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4934;20:zI5s1jsPBqYTAwPIjzGzYixVp2biISrcgzRbpiE3Oc3MXU7l3mUArYE9pLMntY2/t440ccGwgxQoUu4l5qlGx3u7Oib0joUBHuosfev/UGMTc3DP8L7kHZDirJ/vwIjj9eU7W9pFrm3ebNXORBdhV+FltNofOkiJsvS8/gcM5pmCl71sKaaE1GdOne/WNfCbOSNdVy04E6v1IJNM+YYgKMkI0WGHQ4AgdVirLGLnUHctl6dNtaFjKh0Gk3BroxZN;4:/us1ob4A+smuIXy+rjqGTwP9VmjbT/tmC5s4VXYxFy4mLxAO4y1d9IWNYgbqgoxxgndOrhxDtKedyOocrBs+P6iXSKf9jmr9mf+cupsBPgip7DGhFVpI4NBMkX+KCUjeJPozmeg661HPCJLgX4HayOFODtPOjHYXQoxpb2G7NxzrXYkdwukPRPKFAOwK3L4SeoDGCpdlIDsQJHePKct3yAeYJJW8baWPPk3KmtR43Z9EObQsOrSxYeh7FMNA35S66kFc0vBm12AwYi1qffmd5Q==
+X-Microsoft-Antispam-PRVS: <BYAPR08MB4934227DA74C3207096D27DAC1560@BYAPR08MB4934.namprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(10201501046)(3002001)(149027)(150027)(6041310)(2016111802025)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(6072148)(6043046)(201708071742011)(7699016);SRVR:BYAPR08MB4934;BCL:0;PCL:0;RULEID:;SRVR:BYAPR08MB4934;
+X-Forefront-PRVS: 0742443479
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(7916004)(39840400004)(376002)(346002)(136003)(366004)(396003)(189003)(199004)(50466002)(305945005)(386003)(16526019)(105586002)(2906002)(8936002)(7416002)(186003)(93886005)(76506005)(5660300001)(106356001)(476003)(52116002)(446003)(6666003)(4326008)(8676002)(6916009)(33896004)(2486003)(7736002)(11346002)(68736007)(25786009)(26005)(9686003)(42882007)(956004)(478600001)(52146003)(23676004)(316002)(229853002)(58126008)(66066001)(33716001)(53936002)(2870700001)(54906003)(6246003)(1076002)(6116002)(47776003)(44832011)(97736004)(3846002)(6486002)(39060400002)(81156014)(486006)(81166006)(76176011)(6496006);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR08MB4934;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWUFQUjA4TUI0OTM0OzIzOnYwdzZJaFBDN2g1R3pUeGI2RzFtQ3ArRTVE?=
+ =?utf-8?B?TU9HYTFYOXpBekdlM1hlWHNEdnQ5anlKbVVkUUQrYUI5SUpPMW1JUm1NdG1D?=
+ =?utf-8?B?KytDTVc4SFJ1SWl5NXExQkVmTmJWT0Nxc2V2ajJUWG4zY3FXSmE0aXV3UE1Q?=
+ =?utf-8?B?U1A1SVBPaCtvNXRmNEZENTdZbXNDRmpUM3p1QkIzejB5N2ttUVNZMnBFT0h6?=
+ =?utf-8?B?RkJFc1RVQnpGWGcvSnFDbmkwR0FNOWNaMFpoaGdWekJGMk12ekRTVEZEaWNH?=
+ =?utf-8?B?K1ZteXpJUDArTUdTS0l4ZVppTi9LR3VMZmthWGNVU1J1SFowSnl1NGk3WFFz?=
+ =?utf-8?B?TUN4ZUFTMTNVWWxjeEJnVVVnTmVVR1lwTjNPdGhET1RVajBJOUllUFRmSDVt?=
+ =?utf-8?B?V0VTa25xYzJkMkxyM1FoMEVuUGVxbzJNS3lEaDA0MWlEcngwOWJ1Um8yRytj?=
+ =?utf-8?B?MGthdk1ZdzZzUHJ0S3psMTJIV1Eyb3VEdHVEZjRmcDJ2WWJCQ1ZXdUFEWFl3?=
+ =?utf-8?B?LzVqRnBZL3l2VDVWNmRyQlFlNHE4bEZtR0JrMVlCVlRPVGZXZkRZSldlREdQ?=
+ =?utf-8?B?bWdFVlZ4VVpRbDNTVkhFZ1hvcGxZa2NNbjRCMzFudUdjcmRySWVjMUU0NkJj?=
+ =?utf-8?B?YndHdmIvelRvUXBJZDFYUjgxNGlOTVlLdlEyODc3MGpwaTJCaDFjZXVyeEta?=
+ =?utf-8?B?eVlvanNZQURac2dhQUlJbUZIQXhIQkNrbjZjTkNzbGlGTjBMWWVnTVJGT29m?=
+ =?utf-8?B?RjVoYXdvaklLVlR6Y08rRVBmcXFKb0phL0J1eHV5Q2pjRTZhZGE2d1JHTExD?=
+ =?utf-8?B?d0I5eHZaL2gwSVR1YWNFODF4Y0o4OE5KcXlKWkZJWkt2U3d5MzRMWW5kcHNh?=
+ =?utf-8?B?dVlubXBWd25JSmFDL08xTVQ5YXh2U1V0bTNoU2dmYkVkSmZ5c0xXNjBJSW42?=
+ =?utf-8?B?MkYwMmdNU2E3clhYYjR3cWVsNlBPZnllcVYyRjM1czBvbDNZRFV0eGp1K1cz?=
+ =?utf-8?B?Z1YwcUpLRXJ6WlN0RE1aYTAya3E0SjZ5UEdJYllKVTVRR2dTTlJnWXJUaytE?=
+ =?utf-8?B?WHJ1K1BjMkk4RVpLcHF6SkZxaHRwWlRkdmFyMWFETVRDU0VTU1FGMlE3ZnVY?=
+ =?utf-8?B?THdGOFFMbUlPRFJ5SDYxaUtVbC9zT2hIR21kQ2p0QmZMNmUzYkRoWitxTFNz?=
+ =?utf-8?B?UnhtWnZ3aGcyR216bUMwckYvZnBXTkVtRkFiSXlKcThucFRSZE55cE11VlJp?=
+ =?utf-8?B?bUdmeXFMWDk0ZkkydERJU3hTSnlXdUtJZkNZKzZlLzhyODhpUWk4UWFtaVk0?=
+ =?utf-8?B?aUxidVJBczFta2NKVE5DUlgzL0RReVBEWjJLL3h3NHZDcXdwYTlzelF5a3h6?=
+ =?utf-8?B?ZUZURlQ3MjVVQTkreE5UMDBUdHFnZk03dXBmV0hyM2d1L3o4WlI3R1plUi9w?=
+ =?utf-8?B?SmhtQ1pTcnlVRlEweVhtcHNaRzFFRlc5eWRtZjF5NjduVG1yckVJajZINFhp?=
+ =?utf-8?B?MjQ3a2h4a3RtTmR5bkdKQXJsaE1jV1Blano0aHdVQkE5bGcwRG5kRDdCRyt5?=
+ =?utf-8?B?TXhnMUIySno4cmFFSitZblR3TkNYajlwTGhXNFBsV3BSSG5rVjZnT0tvRGMr?=
+ =?utf-8?B?R0pCM3lIZHVJQk1rVTByNEN2UUZhWk4rM1hybjBoU1VwQXg3Y25Kb0x0c1hr?=
+ =?utf-8?B?cjJINWh6akYrdTZCZk43Z2JzMFJUVUI5ZVRrN0lWREp6RytqOUNVVXZKeUhR?=
+ =?utf-8?B?VUNaSWFVOHBKZlN1M2xqWlQxUklMNExiSG90Y3JJcTRJbTJRL2ZPb2ZKZVl2?=
+ =?utf-8?B?NnhHalZ5NXk3eWRGN25Eekh6eThtR3ZnNU1JRUJkQlUrNGd2c2xSSkh0cm5n?=
+ =?utf-8?B?NitjZU9rVFpFMkJBNE9sQkpwT1dkQnROUFA4YVRJVEZ5V0liWENxQmVBYUlh?=
+ =?utf-8?B?ZlJwbWp5bmhBPT0=?=
+X-Microsoft-Antispam-Message-Info: Hnq9Fdpn11RMqDcj8g1XoHKf9DKy2uJ+2mDKZARybPX8Qeg8DFe5WN5+KjrYKrZhxRIVjS/nT5qTSyYAp7k6Pe1ETJg0bHsN3q5M5+LUt6Z0coCMqFbCSKejFWdpUjmS052P+5/EmhGNZ/APBCQ2d4xuy3MWsd24HVt9FAVBVVyJHLsQbdnrZRhBCgLkAmyMCcwrBa8ow7kXz7rV5ZVbkaTgx0Bai5tX5ewwNAoppeXDV5ma/7EhSMagObT8owjDx5X+kZVyAXVq7rvahhytrzJgc3wTnr6gdbbWC+99MHpjAD0R//YdJeOk6exsynU4geMY9etM4ibxkh0PY1QyffVk1WbFjwdjaph9R0RYjbw=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4934;6:F1EnLAs0lkM/hbt3QMm99jfntMK5hvHYnxZ3sGVExrl41aidma79wpSQf/hiWY0K1Wj0r6cbYdHfjAl6aIrc26Tf1YL9s8gzzlLqpcL3q9f3DbH+vREJ4hIeoiLdk62W4WCzIbdrkqYS83JKjyg9g2c4i3zQdazlu7QtYYHai7PWvgO7giw+hM7LA2rSk5kS3FoiLxYqc70LkTq3phCU1QUIR/1x6yX5HTlcCSjJ6ECJBE/jedRkcPaZXfgNl54SQsi+nTTQdb3fvRIMEHEWmFd0uDcr/MWaXVA9IA93Hbvy9Mz4vOETvf1wNbeCriikwWcmhHDCzXXLBC/YrqTkpAXgfR9sJQiMBCYdDFG4QDY7wBic+QkjPufxxbSASxnbqXBktBx7MUCpR5EdbcA92BWtjEkcRoNFK5lv9I4YgQjgrHuxJ7zhmlapGZOcXWzjI+8+xXf3URcXL9hX31hrdw==;5:xTcWRLs356YXP1/tgCwdYkT0kRJFpi+Vt+I8uhrLEpXOElQzAJtU0xkW2vYKpa/bJSBB+S5T0zBKmHcl9UZzuTFFpBs9WahJYEQwQfHHoziJnLKxhT4tpu0WwvtgehuW9RvCafUPTM2xnkarzJy6Cudd7r6XXByuh68dpnWoQTc=;7:IA8txtpANkNRYcf+WXGF/J7vcQPVVS2fXBAVSvITPVD+CVPPy/s2ybwj3mNKzXCzAkM4IiH6obE3xySw6prbsy/0O0T5w3mLhPG/aJoujZ6+NupF4M5DfgbYKufjaigJZ3QzrGnwtajEpUCheTF89rZm7mv3S6PUVkAKU3q5rv2fknxfKGu3JujRVds+AAZG+CCK+sgeYenQ4m917D8Wn2IRzGmcfNc85jrs5YSsJFa7S1CMKK20ex89FNOA/C2F
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2018 17:37:50.4400 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6e063a0-083d-4c1f-b0ba-08d5f0c3033f
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB4934
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Huacai,
 
-On Mon, Jul 23, 2018 at 7:04 AM, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Jul 20, 2018 at 11:54 AM Doug Anderson <dianders@chromium.org> wrote:
->>
->> Hi,
->>
->> On Fri, Jul 20, 2018 at 10:26 AM, Rob Herring <robh@kernel.org> wrote:
->> > On Fri, Jul 20, 2018 at 9:13 AM Doug Anderson <dianders@chromium.org> wrote:
->> >>
->> >> Rob,
->> >>
->> >> On Fri, Jul 20, 2018 at 7:10 AM, Rob Herring <robh@kernel.org> wrote:
->> >> > On Fri, Jul 06, 2018 at 04:31:42PM -0700, Douglas Anderson wrote:
->> >> >> A few patches have landed for the qcom-qmp PHY that affect how you
->> >> >> would write a device tree node.  ...yet the bindings weren't updated.
->> >> >> Let's remedy the situation and make the bindings refelect reality.
->> >> >
->> >> > "dt-bindings: phy: ..." for the subject.
->> >>
->> >> Sorry.  Every subsystem has different conventions for this so I
->> >> usually just do a "git log" on the file and make my best guess.  I'll
->> >> try to remember this for next time though.
->> >
->> > NP. I'd like to add this info to MAINTAINERS or maybe a git commit
->> > hook could figure this out automagically.
->> >
->> >> In this case, though, it looks like this already landed.  I see this
->> >> patch in Kishon's next branch.
->> >>
->> >>
->> >> >> Fixes: efb05a50c956 ("phy: qcom-qmp: Add support for QMP V3 USB3 PHY")
->> >> >> Fixes: ac0d239936bd ("phy: qcom-qmp: Add support for runtime PM")
->> >> >> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> >> >> ---
->> >> >>
->> >> >>  .../devicetree/bindings/phy/qcom-qmp-phy.txt       | 14 ++++++++++++--
->> >> >>  1 file changed, 12 insertions(+), 2 deletions(-)
->> >> >>
->> >> >> diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> >> >> index 266a1bb8bb6e..0c7629e88bf3 100644
->> >> >> --- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> >> >> +++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> >> >> @@ -12,7 +12,14 @@ Required properties:
->> >> >>              "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
->> >> >>              "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845.
->> >> >>
->> >> >> - - reg: offset and length of register set for PHY's common serdes block.
->> >> >> + - reg:
->> >> >> +   - For "qcom,sdm845-qmp-usb3-phy":
->> >> >> +     - index 0: address and length of register set for PHY's common serdes
->> >> >> +       block.
->> >> >> +     - named register "dp_com" (using reg-names): address and length of the
->> >> >> +       DP_COM control block.
->> >> >
->> >> > You need to list reg-names and what are the names for the other 2
->> >> > regions?
->> >>
->> >> Here's the code works.  You can tell me how you want this expressed in
->> >> the bindings:
->> >>
->> >> * In all cases the driver maps its main memory range (for the common
->> >> serdes block) without specifying any name.  This is equivalent to
->> >> asking for index 0.
->> >>
->> >> * For "qcom,sdm845-qmp-usb3-phy" the driver requests a second memory
->> >> range by name using the name "dp_com".
->> >>
->> >> ...basically the driver is inconsistent between using names and
->> >> indices and I was trying to document that fact.
->> >
->> > That's fine as long as the indices are fixed.
->> >
->> >>
->> >> I guess options:
->> >>
->> >> 1. I could reword this so it's clearer (open to suggestions)
->> >>
->> >> 2. I could add something to the bindings saying that the first reg
->> >> name should be "reg-base" or something.  Then the question is whether
->> >> we should go to the code and start enforcing that.  If we do choose to
->> >> enforce it then it's technically breaking compatibility (though I
->> >> doubt there is any real dts in the wild).  If we don't choose to
->> >> enforce it then why did we bother saying what it should be named?
->> >
->> > I think you need to state index 1 is dp_com (and only for
->> > "qcom,sdm845-qmp-usb3-phy") and a name for index 0. 'reg-base' doesn't
->> > seem great, but I don't have another suggestion.
->>
->> ...but why do we bother giving "dp_com" a name if we're saying it has
->> to be index 1?  It feels like the author of the driver was trying to
->> transition from specifying to specifying registers by index to
->> specifying them by name, but left the first register specified by
->> index for compatibility (or code simplicity?).  It seems like the
->> whole point of referring to things by name is to _not_ force the index
->> number.
->
-> No. Specifying the order and indexes is how bindings are done.
-> "-names" is extra information, not a license to change the rules.
+On Sat, Jul 21, 2018 at 09:35:59AM +0800, 陈华才 wrote:
+> SFB can improve the memory bandwidth as much as 30%, and we are
+> planning to enable SFB by default. So, we want to control cpu_relax()
+> under CONFIG_CPU_LOONGSON3, not under CONFIG_LOONGSON3_ENHANCEMENT.
 
-OK.
+OK, applied to mips-next for 4.19 with changes to the commit message &
+comment.
 
-Just for context: I'm not trying to be argumentative or anything--I
-just seem to be lacking a fundamental understanding of why reg-names
-exists and when it should be used.  I'm trying to ask questions so I
-can have a better intuition here and submit better patches / do better
-reviews.  I'm sorry if I'm coming off as a jerk.  :(  I'm not trying
-to be.
-
-Do you happen to know if there's anything written up that explains all
-the conventions around reg-names and I can just read that?
-
-
-For context, it seems to me that clocks and registers have different
-conventions, but I certainly could be wrong.  From what I've seen
-clocks are often specified in bindings by name and referred to in code
-by name.  Conversely reg-names seems to be highly discouraged and
-people are told to just refer to them by index.  The difference
-between the two always seemed strange to me, though I always assumed
-it was because it was more common to just have one or two register
-ranges but a whole chunk of clocks (and more get added over time as
-the driver matures).
-
-
->> I'm imagining a future compatible string that adds yet another address
->> range.  Presumably we'd refer to this by name too.  In that case both
->> of these would be fine:
->>
->> reg = <0xa x>, <0xb x>, <0xc x>;
->> reg-names = "reg-base", "dp_com", "new_range"
->>
->> reg = <0xa x>, <0xc x>, <0xb x>;
->> reg-names = "reg-base", "new_range", "dp_com"
->
-> But why. There is absolutely no need to support both of these.
-
-I guess I'm trying to understand the motivation for reg-names.  If you
-say that something must be index 1 and also have reg-name of "dp_com"
-then the reg-name isn't buying us anything and maybe the more proper
-fix is to change the driver to work by index and drop the whole name
-thing here?  Should I do that?
-
-
-> What you could need to support is this:
->
-> reg-names = "reg-base", "new_range";
->
-> The order is still fixed, but we have optional entries in the middle.
-> And that is the case when using -names is helpful. Otherwise, "-names"
-> is just unnecessary bloat to DT.
-
-From what you're saying the _only_ reason you'd ever want to use
-reg-names is if there is an optional register range.  Is that right?
-
-
-I think for me intuitively I expect that drivers will change and
-expand over time and I'd expect more / different (and maybe optional)
-ranges to be added.  In general I feel like named registers scales
-better with less complexity.
-
-
->> > For the driver, it's not the driver's job to enforce any of this.
->>
->> Sure, but anything that the driver doesn't enforce people will get
->> wrong.  In other words if we say that the name of the first register
->> ought to be "reg-base" but don't enforce it then someone will later
->> come in and say it's stupid that one of the names uses a dash and the
->> other an underscore.  They'll change "reg-base" and it will work.
->> Someone else will decide that "reg-base" is a dumb name and will
->> change it to "serdes".  It will still work.  Now we have a bindings
->> that claims "reg-base" and lots of different device trees in practice.
->
-> You are arguing against making the binding stricter and then worrying
-> about the driver getting things wrong. Stricter bindings leave less to
-> interpretation by the driver and less chance to get things wrong.
-> Unless "anything goes" and then the binding can never be "wrong".
-
-I guess I'm saying that my intuition says that over-specifying things
-seems bad to me.  The driver will either ask for a register by name or
-by index and not both.  In my mind either is a fine way to do it so as
-long as the driver and the binding is consistent then we have a
-functioning system.  Specifying that people have to do get both the
-index and name right basically gives people twice as many places to do
-things wrong.
-
-
-> Again, it is not the kernel's job to validate bindings even though we
-> have little else right now. That will change soon hopefully.
->
->> If the whole "keep things compatible" is important then what matters
->> more is what's happening in practice, not what's should happen in
->> theory.
->>
->> IMO if the driver isn't enforcing that the first field be called
->> "reg-base" then it shouldn't be in the bindings doc.
->>
->>
->> BTW: I use the name "reg-base" in my example because that's what the
->> register was named in downstream device trees that I found.  Even if
->> the name isn't terribly appealing, if it's not terribly objectionable
->> I'd rather pick something that's closer to what people used in
->> practice.
->
-> I don't really care. People just make shit up anyway.
->
->>
->> ---
->>
->> How about this?
->
-> No.
->
->>
->> - reg:
->>   - For "qcom,sdm845-qmp-usb3-phy" (names mapped by reg-names):
->>     - "reg-base": address and length of register set for PHY's common serdes
->>       block.  MUST BE THE FIRST RANGE LISTED IN THE LIST (AKA index 0).  Note
->>       that the name of "reg-base" is suggested but not enforced.
->>     - "dp-com": address and length of the DP_COM control block.
->>   - For all others (only one range--don't use reg-names)
->>     - offset and length of register set for PHY's common serdes block.
-
-OK, I guess I will try again then and you can tell me when I get it
-right (unless you tell me I should just change the driver to not use
-named registers at all).  How about:
-
-- reg:
-  - For "qcom,sdm845-qmp-usb3-phy":
-    - index 0: address and length of register set for PHY's common serdes
-               block.
-    - index 1: address and length of the DP_COM control block.
-  - For all others:
-    - index 0: address and length of register set for PHY's common serdes
-               block.
-- reg-names:
-  - For "qcom,sdm845-qmp-usb3-phy":
-    - Should be: "reg-base", "dp_com"
-  - For all others:
-    - The reg-names property shouldn't be defined.
-
-
--Doug
+Thanks,
+    Paul
