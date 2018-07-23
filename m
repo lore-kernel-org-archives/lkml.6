@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E359ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13977ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBFFA20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBFFA20854
+	by mail.kernel.org (Postfix) with ESMTP id CDD4220854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD4220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388688AbeGWN2n (ORCPT
+        id S2388705AbeGWN2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:28:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45496 "EHLO
+        Mon, 23 Jul 2018 09:28:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45508 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387940AbeGWN2n (ORCPT
+        with ESMTP id S2387940AbeGWN2p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:28:43 -0400
+        Mon, 23 Jul 2018 09:28:45 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB402BB3;
-        Mon, 23 Jul 2018 12:27:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82EE5BDB;
+        Mon, 23 Jul 2018 12:27:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+f0d9d7cba052f9344b03@syzkaller.appspotmail.com,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 53/63] sctp: fix the issue that pathmtu may be set lower than MINSEGMENT
-Date:   Mon, 23 Jul 2018 14:24:59 +0200
-Message-Id: <20180723122448.365212840@linuxfoundation.org>
+Subject: [PATCH 4.17 54/63] hv_netvsc: Fix napi reschedule while receive completion is busy
+Date:   Mon, 23 Jul 2018 14:25:00 +0200
+Message-Id: <20180723122448.399067759@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -54,50 +52,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-[ Upstream commit a65925475571953da12a9bc2082aec29d4e2c0e7 ]
+[ Upstream commit 6b81b193b83e87da1ea13217d684b54fccf8ee8a ]
 
-After commit b6c5734db070 ("sctp: fix the handling of ICMP Frag Needed
-for too small MTUs"), sctp_transport_update_pmtu would refetch pathmtu
-from the dst and set it to transport's pathmtu without any check.
+If out ring is full temporarily and receive completion cannot go out,
+we may still need to reschedule napi if certain conditions are met.
+Otherwise the napi poll might be stopped forever, and cause network
+disconnect.
 
-The new pathmtu may be lower than MINSEGMENT if the dst is obsolete and
-updated by .get_dst() in sctp_transport_update_pmtu. In this case, it
-could have a smaller MTU as well, and thus we should validate it
-against MINSEGMENT instead.
-
-Syzbot reported a warning in sctp_mtu_payload caused by this.
-
-This patch refetches the pathmtu by calling sctp_dst_mtu where it does
-the check against MINSEGMENT.
-
-v1->v2:
-  - refetch the pathmtu by calling sctp_dst_mtu instead as Marcelo's
-    suggestion.
-
-Fixes: b6c5734db070 ("sctp: fix the handling of ICMP Frag Needed for too small MTUs")
-Reported-by: syzbot+f0d9d7cba052f9344b03@syzkaller.appspotmail.com
-Suggested-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Fixes: 7426b1a51803 ("netvsc: optimize receive completions")
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/transport.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/hyperv/netvsc.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
---- a/net/sctp/transport.c
-+++ b/net/sctp/transport.c
-@@ -273,7 +273,7 @@ bool sctp_transport_update_pmtu(struct s
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -1291,6 +1291,7 @@ int netvsc_poll(struct napi_struct *napi
+ 	struct hv_device *device = netvsc_channel_to_device(channel);
+ 	struct net_device *ndev = hv_get_drvdata(device);
+ 	int work_done = 0;
++	int ret;
  
- 	if (dst) {
- 		/* Re-fetch, as under layers may have a higher minimum size */
--		pmtu = SCTP_TRUNC4(dst_mtu(dst));
-+		pmtu = sctp_dst_mtu(dst);
- 		change = t->pathmtu != pmtu;
+ 	/* If starting a new interval */
+ 	if (!nvchan->desc)
+@@ -1302,16 +1303,18 @@ int netvsc_poll(struct napi_struct *napi
+ 		nvchan->desc = hv_pkt_iter_next(channel, nvchan->desc);
  	}
- 	t->pathmtu = pmtu;
+ 
+-	/* If send of pending receive completions suceeded
+-	 *   and did not exhaust NAPI budget this time
+-	 *   and not doing busy poll
++	/* Send any pending receive completions */
++	ret = send_recv_completions(ndev, net_device, nvchan);
++
++	/* If it did not exhaust NAPI budget this time
++	 *  and not doing busy poll
+ 	 * then re-enable host interrupts
+-	 *     and reschedule if ring is not empty.
++	 *  and reschedule if ring is not empty
++	 *   or sending receive completion failed.
+ 	 */
+-	if (send_recv_completions(ndev, net_device, nvchan) == 0 &&
+-	    work_done < budget &&
++	if (work_done < budget &&
+ 	    napi_complete_done(napi, work_done) &&
+-	    hv_end_read(&channel->inbound) &&
++	    (ret || hv_end_read(&channel->inbound)) &&
+ 	    napi_schedule_prep(napi)) {
+ 		hv_begin_read(&channel->inbound);
+ 		__napi_schedule(napi);
 
 
