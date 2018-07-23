@@ -6,137 +6,125 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17619ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2C9ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFA5220856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:33:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA5220856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 72F0220852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:35:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F0220852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388748AbeGWRfn (ORCPT
+        id S2388716AbeGWRhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:35:43 -0400
-Received: from mga14.intel.com ([192.55.52.115]:60500 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388397AbeGWRfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:35:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 09:33:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
-   d="scan'208";a="248156159"
-Received: from sandybridge-desktop.sh.intel.com (HELO sandybridge-desktop) ([10.239.160.116])
-  by fmsmga006.fm.intel.com with ESMTP; 23 Jul 2018 09:32:59 -0700
-Date:   Tue, 24 Jul 2018 00:38:48 +0800
-From:   Yu Chen <yu.c.chen@intel.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Oliver Neukum <oneukum@suse.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>,
-        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gu, Kookoo" <kookoo.gu@intel.com>,
-        "Zhang, Rui" <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180723163848.GB4503@sandybridge-desktop>
-References: <cover.1531924968.git.yu.c.chen@intel.com>
- <20180718202235.GA4132@amd>
- <20180718235851.GA22170@sandybridge-desktop>
- <20180719110149.GA4679@amd>
- <20180719132003.GA30981@sandybridge-desktop>
- <20180720102532.GA20284@amd>
- <1532346156.3057.11.camel@suse.com>
- <20180723122227.GA30092@amd>
+        Mon, 23 Jul 2018 13:37:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52630 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388283AbeGWRhH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 13:37:07 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6NGU7fc016151
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 12:35:05 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kdha9w89a-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 12:35:04 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Mon, 23 Jul 2018 17:30:00 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 23 Jul 2018 17:29:57 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6NGTuMW39387146
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Jul 2018 16:29:56 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8C78EA405B;
+        Mon, 23 Jul 2018 19:30:11 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 694AEA4040;
+        Mon, 23 Jul 2018 19:30:10 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Mon, 23 Jul 2018 19:30:10 +0100 (BST)
+Date:   Mon, 23 Jul 2018 09:29:54 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 00/19]  Fixes for sched/numa_balancing
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180723135700.GX2458@hirez.programming.kicks-ass.net>
+ <20180723150954.GI30345@linux.vnet.ibm.com>
+ <20180723152147.GE2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180723122227.GA30092@amd>
+In-Reply-To: <20180723152147.GE2494@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18072316-0020-0000-0000-000002AA0480
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072316-0021-0000-0000-000020F690F7
+Message-Id: <20180723162954.GA2699@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-23_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=789 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807230186
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-On Mon, Jul 23, 2018 at 02:22:27PM +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > > > 2. Ideally kernel memory should be encrypted by the
-> > > >    kernel itself. We have uswsusp to support user
-> > > >    space hibernation, however doing the encryption
-> > > >    in kernel space has more advantages:
-> > > >    2.1 Not having to transfer plain text kernel memory to
-> > > >        user space. Per Lee, Chun-Yi, uswsusp is disabled
-> > > >        when the kernel is locked down:
-> > > >        https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/
-> > > >        linux-fs.git/commit/?h=lockdown-20180410&
-> > > >        id=8732c1663d7c0305ae01ba5a1ee4d2299b7b4612
-> > > >        due to:
-> > > >        "There have some functions be locked-down because
-> > > >        there have no appropriate mechanisms to check the
-> > > >        integrity of writing data."
-> > > >        https://patchwork.kernel.org/patch/10476751/
-> > > 
-> > > So your goal is to make hibernation compatible with kernel
-> > > lockdown? Do your patches provide sufficient security that hibernation
-> > > can be enabled with kernel lockdown?
-> > 
-> > OK, maybe I am dense, but if the key comes from user space, will that
-> > be enough?
-> 
-> Yes, that seems to be one of problems of Yu Chen's patchset.
-> 
-It is a trade off to derive the key in user space, we once
-tried to derive the key in user space, and people suggested
-a better way is to do it in user space. And there is a similar
-user case of kernel using key from user space is derived from ecryptfs
-for ext4.
-> > > > Joey Lee and I had a discussion on his previous work at
-> > > > https://patchwork.kernel.org/patch/10476751
-> > > > We collaborate on this task and his snapshot signature
-> > > > feature can be based on this patch set.
-> > > 
-> > > Well, his work can also work without your patchset, right?
-> > 
-> > Yes. But you are objecting to encryption in kernel space at all,
-> > aren't you?
-> 
-> I don't particulary love the idea of doing hibernation encryption in
-> the kernel, correct.
-> 
-> But we have this weird thing called secure boot, some people seem to
-> want. So we may need some crypto in the kernel -- but I'd like
-> something that works with uswsusp, too. Plus, it is mandatory that
-> patch explains what security guarantees they want to provide against
-> what kinds of attacks...
-> 
-> Lee, Chun-Yi's patch seemed more promising.				Pavel
-> 
-The only difference between Chun-Yi's hibernation encrytion solution
-and our solution is that his strategy encrypts the snapshot from sratch, 
-and ours encryts each page before them going to block device. The benefit
-of his solution is that the snapshot can be encrypt in kernel first
-thus the uswsusp is allowed  to read it to user space even kernel
-is lock down. And I had a discussion with Chun-Yi that we can use
-his snapshot solution to make uswsusp happy, and we share the crypto
-help code and he can also use our user provided key for his signature.
-From this point of view, our code are actually the same, except that
-we can help clean up the code and also enhance some encrytion process
-for his solution. I don't know why you don't like encryption in kernel, 
-because from my point of view, without encryption hibernation in kernel,
-uswsusp could not be enabled if kernel is lock down : -) Or do I miss something?
-Best,
-Yu
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+* Peter Zijlstra <peterz@infradead.org> [2018-07-23 17:21:47]:
 
+> On Mon, Jul 23, 2018 at 08:09:55AM -0700, Srikar Dronamraju wrote:
+> 
+> > > >   sched/numa: Stop multiple tasks from moving to the cpu at the same time
+> > 
+> > This patch has go-ahead from Mel and Rik and no outstanding comments.
+> 
+> I left it out because it's part of the big xchg() mess.
+> 
+> In particular:
+> 
+> +       if (xchg(&rq->numa_migrate_on, 1))
+> +               return;
+> +
+> +       if (env->best_cpu != -1) {
+> +               rq = cpu_rq(env->best_cpu);
+> +               WRITE_ONCE(rq->numa_migrate_on, 0);
+> +       }
+> 
+> I'm again confused by clearing numa_migrate_on at this point..
+
+First task choose a cpu to swap/migrate, sets the cpu to best_cpu and
+also numa_migrate_on.  Next it finds a better cpu to swap/move. Now if
+the task is able to move to the better cpu, then it should clear
+numa_migrate_on on the previous best_cpu.
+
+If we dont reset numa_migrate_on on finding a better cpu, the
+numa_migrate_on stays set for the previous cpu, causing previous cpu to
+never be a target of numa balance.
+
+
+> 
+> > > >   sched/numa: Updation of scan period need not be in lock
+> > 
+> > I didnt see any comments for this apart from an ack from Rik.
+> > + It thought it was trivial and shouldnt have any side-effect.
+> 
+> Oh, my bad I actually have this one.
+> 
 
