@@ -2,81 +2,64 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3217ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E6BECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF18F20685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07F6A20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:45:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nCKKape8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF18F20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eJswprYl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F6A20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388154AbeGWUpy (ORCPT
+        id S2388069AbeGWUsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 16:45:54 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:43069 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387981AbeGWUpy (ORCPT
+        Mon, 23 Jul 2018 16:48:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47706 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728295AbeGWUsP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 16:45:54 -0400
-Received: by mail-qk0-f193.google.com with SMTP id z74-v6so1184781qkb.10;
-        Mon, 23 Jul 2018 12:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cU/JK1pky+WuQWjGb/Vigco0DfO7Z1CjrJsl/yKvTqQ=;
-        b=nCKKape8gkSO61w1VBD11Ihmyjh3FhptW7hDcqxPauSgdk0MnEae8+lDgqqif/qDhv
-         naXnvYecoNimOcn6eYHwpL6keDyva75mIbM35id+jgocCvURYDPQwkEiEnw0gleqciml
-         0W9qruIujauXW2bXK+PurM4Wg1GoQhKSmM1dDakRvyG83BoMj/w8Ig98AJQO/dlvBPVo
-         IJJ+oSjr0QEsLx3dYMDwT1BAUXZEO3E5mv6V4tyC3xkWysxOPMV5NiEjntfvHrO9Z/rI
-         xNYYJK7EwuZQUwRVVH9TW+0KO3fod8KBILu7k/5OAozsAEAoD3V8TT5AmOPFEAwv4k/S
-         AmMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cU/JK1pky+WuQWjGb/Vigco0DfO7Z1CjrJsl/yKvTqQ=;
-        b=toFhA1lPaxc+rYCelzkg23KkZswIQmzFy6bmZvdmWYGk3jdRdEdd5mqhqS9EMJkrhL
-         pX1uJEhZ+gJD8fDH+47ntbh/+4mQkPRtPSIB4hj2aC8xaF6xVhPeTXRUEnBxfBRRGjyJ
-         DdjuNaOlu8kK/ZKwA+22ZjWDVjfjJyTwX+JcBSmIoNyXfv1TerzpnfrUzX47Xyx34ZAR
-         /NphpgENSmA3xQtbdeMS0tPtjoUUPl6Sa9j3BtXTGaMt7Pw2aK//8G4iUJlgrDB9JWf/
-         MDTw75uaIe/s263tjaKMRKaTTyAOwA8NfUQZ4bIbapaWLFSII2+zKzhDLq/dMb0DgYVc
-         a2Qg==
-X-Gm-Message-State: AOUpUlE2mqAAAXm/UKvhSSn3AQ6L1WiBne7eS6i6PHDvYjyOoNbMCnKT
-        L2Yb/ZS2+bbqFcS4fP0ba7yj2tJ0OgA=
-X-Google-Smtp-Source: AAOMgpdTWuPwB4kzIIrv6w0GDl4Zb6Z60rrOfW+Kc17NDMt6Uar0Bqe8hVabI1bKxtFtc4PgHBk8hw==
-X-Received: by 2002:a37:ef0f:: with SMTP id j15-v6mr9828477qkk.399.1532374990376;
-        Mon, 23 Jul 2018 12:43:10 -0700 (PDT)
-Received: from [192.168.44.96] (65.sub-174-226-2.myvzw.com. [174.226.2.65])
-        by smtp.gmail.com with ESMTPSA id m40-v6sm1508705qtb.63.2018.07.23.12.43.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 12:43:10 -0700 (PDT)
-Subject: Re: [PATCH 1/2] Add sw2_sw4 voltage table to cpcap regulator.
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <e411faa3-7d42-710f-a18a-a4fdd764b60a@gmail.com>
- <20180723181318.GG13981@sirena.org.uk>
- <95929e34-eeb4-f3a4-daa1-0b89dd60f570@gmail.com> <3459086.gtf8SULmVS@dimapc>
-From:   Peter Geis <pgwipeout@gmail.com>
-Message-ID: <215117b3-ca46-ff0e-a494-0fdf674bec8c@gmail.com>
-Date:   Mon, 23 Jul 2018 15:43:07 -0400
+        Mon, 23 Jul 2018 16:48:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KFXfBM+02EAeAzzsw2otKVz7VEkhl3Hev3vG44mC52g=; b=eJswprYl5/v62DzBvfPao2vtS
+        UPVYElrHMNdGAkJRCVhWFH+td38zGMftITm0g6Ym9uQAyT3BVBFK4OwvgoiEQXfYHqzZ0J9kRdNg5
+        +0lc03zy/nEAU0GeQyxvze3PsU8CO400g2QXJt12Bj9DZAZnsuyMl+o0fymrIJsHMJzF7SSCS4xhd
+        E1Vfl48nTPGjwKHaTWNatiHf+NcOAqHBOL6xhbqzwyNbBxDREd0iCaOdUhKE4FktLLLM1OfSjbn3G
+        DbCKIoB1XWTHTQJN0HnEmwgyLmkPa0fT2LnrDGz6v0kO3iz6v42QKnN958Cq2VOrtsRjJEaojRczm
+        Sgfb9BOQg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhglu-0002S8-D7; Mon, 23 Jul 2018 19:45:30 +0000
+Subject: Re: arch/arc/ allmodconfig
+To:     "Ofer Levi(SW)" <oferle@mellanox.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Cc:     Leon Romanovsky <leonro@mellanox.com>,
+        Meir Lichtinger <meirl@mellanox.com>
+References: <e074d0ae-6d79-d21a-2278-15d516bb943e@infradead.org>
+ <C2D7FE5348E1B147BCA15975FBA23075012B0724EB@US01WEMBX2.internal.synopsys.com>
+ <AM0PR05MB42600653CF591791731CCCD8DA510@AM0PR05MB4260.eurprd05.prod.outlook.com>
+ <DB6PR05MB4597A63819F227B17652B5B2B2560@DB6PR05MB4597.eurprd05.prod.outlook.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <82c3e518-a579-7df9-4c3f-8ecb5615b6d7@infradead.org>
+Date:   Mon, 23 Jul 2018 12:45:26 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <3459086.gtf8SULmVS@dimapc>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <DB6PR05MB4597A63819F227B17652B5B2B2560@DB6PR05MB4597.eurprd05.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,38 +67,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 03:20 PM, Dmitry Osipenko wrote:
-> On Monday, 23 July 2018 21:37:50 MSK Peter Geis wrote:
->> On 07/23/2018 02:13 PM, Mark Brown wrote:
->>> On Mon, Jul 23, 2018 at 01:58:26PM -0400, Peter Geis wrote:
->>>> SW2 and SW4 use a shared table to provide voltage to the cpu core and
->>>> devices on Tegra hardware.
->>>> Added this table to the cpcap regulator driver as the first step to
->>>> supporting this device on Tegra.
->>>
->>> This also doesn't apply against current code (though it does now parse
->>> OK), please check and resend - make sure you don't have other out of
->>> tree changes and are using an up to date kernel (ideally my regulator
->>> for-next branch) as a base.
->>
->> Good Afternoon,
->>
->> I thought it was my error in the patches being stripped, unfortunately
->> it seems to be a known Gmail behavior.
->> Any ideas on how to get around it?
+On 07/23/2018 01:34 AM, Ofer Levi(SW) wrote:
+> Hi Vineet, randy
 > 
-> Use the "git send-email" instead of email client.
+> Indeed this structure is missing, following is a patch based on linux-4.17.9.
+> Sorry about that.
 > 
-> You need to create and send out patches using git, that will be something like
-> this:
+> Thanks
 > 
-> 1) "git format-patch -v1 -2 ..." to make patches
-> 2) "git send-email --smtp-server=smtp.gmail.com --smtp-
-> user=pgwipeout@gmail.com --smtp-encryption=tls --smtp-server-port=587 --
-> suppress-cc=all --confirm=always --to 'Mark Brown <broonie@kernel.org>' --cc
-> 'linux-tegra@vger.kernel.org' --cc 'linux-kernel@vger.kernel.org' ...
-> 00*.patch" to send out the patches
+> 
+> diff -uprN linux-4.17.9.org/arch/arc/plat-eznps/include/plat/ctop.h linux-4.17.9/arch/arc/plat-eznps/include/plat/ctop.h
+> --- linux-4.17.9.org/arch/arc/plat-eznps/include/plat/ctop.h    2018-07-22 16:16:09.000000000 +0300
+> +++ linux-4.17.9/arch/arc/plat-eznps/include/plat/ctop.h        2018-07-23 11:18:12.179402620 +0300
+> @@ -143,6 +143,15 @@ struct nps_host_reg_gim_p_int_dst {
+>  };
+>  
+>  /* AUX registers definition */
+> +struct nps_host_reg_aux_dpc {
+> +       union {
+> +               struct {
+> +                       u32 ien:1, men:1, hen:1, reserved:29;
+> +               };
+> +               u32 value;
+> +       };
+> +};
+> +
+>  struct nps_host_reg_aux_udmc {
+>         union {
+>                 struct {
 > 
 
-As always, thanks Dmitry!
-Resent through git this time.
+Thanks, this fixes the build error.
+
+I will not that outlook is not the best email client that you could use for
+sending Linux patches.  I don't know if you generated the patch with spaces
+or tabs being used for indentation, but above, it contains all leading spaces
+for indentation, which is Not Good.
+
+
+-- 
+~Randy
