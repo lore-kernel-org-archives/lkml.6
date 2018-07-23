@@ -3,45 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F95CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41661ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E11EC20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:10:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11EC20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D58D320874
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:10:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D58D320874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388119AbeGWVM5 (ORCPT
+        id S2388141AbeGWVNe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:12:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36793 "EHLO mail.bootlin.com"
+        Mon, 23 Jul 2018 17:13:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728293AbeGWVM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:12:56 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3A0C320737; Mon, 23 Jul 2018 22:10:06 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E33CB203EC;
-        Mon, 23 Jul 2018 22:10:05 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 22:10:02 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Brian Norris <computersforpeace@gmail.com>
-Cc:     Zhiqiang Hou <Zhiqiang.Hou@nxp.com>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dwmw2@infradead.org,
-        boris.brezillon@free-electrons.com, marek.vasut@gmail.com,
-        richard@nod.at, cyrille.pitchen@wedev4u.fr
-Subject: Re: [PATCHv3 2/2] mtd: m25p80: restore the status of SPI flash when
- exiting
-Message-ID: <20180723221002.736e0830@bbrezillon>
-In-Reply-To: <20180723181350.GA58212@ban.mtv.corp.google.com>
-References: <20171206025342.7266-1-Zhiqiang.Hou@nxp.com>
-        <20171206025342.7266-3-Zhiqiang.Hou@nxp.com>
-        <20180723181350.GA58212@ban.mtv.corp.google.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1728087AbeGWVNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 17:13:34 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB1C020854;
+        Mon, 23 Jul 2018 20:10:43 +0000 (UTC)
+Date:   Mon, 23 Jul 2018 16:10:41 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Lai Jiangshan <jiangshanlai@gmail.com>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, oleg@redhat.com,
+        Eric Dumazet <edumazet@google.com>, davem@davemloft.net,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: Consolidating RCU-bh, RCU-preempt, and RCU-sched
+Message-ID: <20180723161041.5375b54f@gandalf.local.home>
+In-Reply-To: <CAJhGHyCYxPNSM9fZgUHW7jFR0M3DFGn4HdQGfpRnzfnrL2yyYA@mail.gmail.com>
+References: <20180713000249.GA16907@linux.vnet.ibm.com>
+        <CAJhGHyCYxPNSM9fZgUHW7jFR0M3DFGn4HdQGfpRnzfnrL2yyYA@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -50,72 +52,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brian,
 
-On Mon, 23 Jul 2018 11:13:50 -0700
-Brian Norris <computersforpeace@gmail.com> wrote:
+Sorry for the late reply, just came back from the Caribbean :-) :-) :-)
 
-> Hello,
+On Fri, 13 Jul 2018 11:47:18 +0800
+Lai Jiangshan <jiangshanlai@gmail.com> wrote:
+
+> On Fri, Jul 13, 2018 at 8:02 AM, Paul E. McKenney
+> <paulmck@linux.vnet.ibm.com> wrote:
+> > Hello!
+> >
+> > I now have a semi-reasonable prototype of changes consolidating the
+> > RCU-bh, RCU-preempt, and RCU-sched update-side APIs in my -rcu tree.
+> > There are likely still bugs to be fixed and probably other issues as well,
+> > but a prototype does exist.
+
+What's the rational for all this churn? Linus's complaining that there
+are too many RCU variants?
+
+
+> >
+> > Assuming continued good rcutorture results and no objections, I am
+> > thinking in terms of this timeline:
+> >
+> > o       Preparatory work and cleanups are slated for the v4.19 merge window.
+> >
+> > o       The actual consolidation and post-consolidation cleanup is slated
+> >         for the merge window after v4.19 (v5.0?).  These cleanups include
+> >         the replacements called out below within the RCU implementation
+> >         itself (but excluding kernel/rcu/sync.c, see question below).
+> >
+> > o       Replacement of now-obsolete update APIs is slated for the second
+> >         merge window after v4.19 (v5.1?).  The replacements are currently
+> >         expected to be as follows:
+> >
+> >         synchronize_rcu_bh() -> synchronize_rcu()
+> >         synchronize_rcu_bh_expedited() -> synchronize_rcu_expedited()
+> >         call_rcu_bh() -> call_rcu()
+> >         rcu_barrier_bh() -> rcu_barrier()
+> >         synchronize_sched() -> synchronize_rcu()
+> >         synchronize_sched_expedited() -> synchronize_rcu_expedited()
+> >         call_rcu_sched() -> call_rcu()
+> >         rcu_barrier_sched() -> rcu_barrier()
+> >         get_state_synchronize_sched() -> get_state_synchronize_rcu()
+> >         cond_synchronize_sched() -> cond_synchronize_rcu()
+> >         synchronize_rcu_mult() -> synchronize_rcu()
+> >
+> >         I have done light testing of these replacements with good results.
+> >
+> > Any objections to this timeline?
+> >
+> > I also have some questions on the ultimate end point.  I have default
+> > choices, which I will likely take if there is no discussion.
+> >
+> > o
+> >         Currently, I am thinking in terms of keeping the per-flavor
+> >         read-side functions.  For example, rcu_read_lock_bh() would
+> >         continue to disable softirq, and would also continue to tell
+> >         lockdep about the RCU-bh read-side critical section.  However,
+> >         synchronize_rcu() will wait for all flavors of read-side critical
+> >         sections, including those introduced by (say) preempt_disable(),
+> >         so there will no longer be any possibility of mismatching (say)
+> >         RCU-bh readers with RCU-sched updaters.
+> >
+> >         I could imagine other ways of handling this, including:
+> >
+> >         a.      Eliminate rcu_read_lock_bh() in favor of
+> >                 local_bh_disable() and so on.  Rely on lockdep
+> >                 instrumentation of these other functions to identify RCU
+> >                 readers, introducing such instrumentation as needed.  I am
+> >                 not a fan of this approach because of the large number of
+> >                 places in the Linux kernel where interrupts, preemption,
+> >                 and softirqs are enabled or disabled "behind the scenes".
+> >
+> >         b.      Eliminate rcu_read_lock_bh() in favor of rcu_read_lock(),
+> >                 and required callers to also disable softirqs, preemption,
+> >                 or whatever as needed.  I am not a fan of this approach
+> >                 because it seems a lot less convenient to users of RCU-bh
+> >                 and RCU-sched.
+> >
+> >         At the moment, I therefore favor keeping the RCU-bh and RCU-sched
+> >         read-side APIs.  But are there better approaches?  
 > 
-> I noticed this got merged, but I wanted to put my 2 cents in here:
-
-I wish you had replied to this thread when it was posted (more than
-6 months ago). Reverting the patch now implies making some people
-unhappy because they'll have to resort to their old out-of-tree
-hacks :-(.
-
+> Hello, Paul
 > 
-> On Wed, Dec 06, 2017 at 10:53:42AM +0800, Zhiqiang Hou wrote:
-> > From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> > 
-> > Restore the status to be compatible with legacy devices.
-> > Take Freescale eSPI boot for example, it copies (in 3 Byte
-> > addressing mode) the RCW and bootloader images from SPI flash
-> > without firing a reset signal previously, so the reboot command
-> > will fail without reseting the addressing mode of SPI flash.
-> > This patch implement .shutdown function to restore the status
-> > in reboot process, and add the same operation to the .remove
-> > function.  
+> Since local_bh_disable() will be guaranteed to be protected by RCU
+> and more general. I'm afraid it will be preferred over
+> rcu_read_lock_bh() which will be gradually being phased out.
 > 
-> We have previously rejected this patch multiple times, because the above
-> comment demonstrates a broken product.
+> In other words, keeping the RCU-bh read-side APIs will be a slower
+> version of the option A. So will the same approach for the RCU-sched.
+> But it'll still be better than the hurrying option A, IMHO.
 
-If we were to only support working HW parts, I fear Linux would not
-support a lot of HW (that's even more true when it comes to flashes :P).
+Now when all this gets done, is synchronize_rcu() going to just wait
+for everything to pass? (scheduling, RCU readers, softirqs, etc) Is
+there any worry about lengthening the time of synchronize_rcu?
 
-> You cannot guarantee that all
-> reboots will invoke the .shutdown() method -- what about crashes? What
-> about watchdog resets? IIUC, those will hit the same broken behavior,
-> and have unexepcted behavior in your bootloader.
+-- Steve
 
-Yes, there are corner cases that are not addressed with this approach,
-but it still seems to improve things. Of course, that means the
-user should try to re-route all HW reset sources to SW ones (RESET input
-pin muxed to the GPIO controller, watchdog generating an interrupt
-instead of directly asserting the RESET output pin), which is not always
-possible, but even when it's not, isn't it better to have a setup that
-works fine 99% of the time instead of 50% of the time?
 
-> 
-> I suppose one could argue for doing this in remove(), but AIUI you're
-> just papering over system bugs by introducing the shutdown() function
-> here. Thus, I'd prefer we drop the shutdown() method to avoid misleading
-> other users of this driver.
+> >
+> > o       How should kernel/rcu/sync.c be handled?  Here are some
+> >         possibilities:
+> >
+> >         a.      Leave the full gp_ops[] array and simply translate
+> >                 the obsolete update-side functions to their RCU
+> >                 equivalents.
+> >
+> >         b.      Leave the current gp_ops[] array, but only have
+> >                 the RCU_SYNC entry.  The __INIT_HELD field would
+> >                 be set to a function that was OK with being in an
+> >                 RCU read-side critical section, an interrupt-disabled
+> >                 section, etc.
+> >
+> >                 This allows for possible addition of SRCU functionality.
+> >                 It is also a trivial change.  Note that the sole user
+> >                 of sync.c uses RCU_SCHED_SYNC, and this would need to
+> >                 be changed to RCU_SYNC.
+> >
+> >                 But is it likely that we will ever add SRCU?
+> >
+> >         c.      Eliminate that gp_ops[] array, hard-coding the function
+> >                 pointers into their call sites.
+> >
+> >         I don't really have a preference.  Left to myself, I will be lazy
+> >         and take option #a.  Are there better approaches?
+> >
+> > o       Currently, if a lock related to the scheduler's rq or pi locks is
+> >         held across rcu_read_unlock(), that lock must be held across the
+> >         entire read-side critical section in order to avoid deadlock.
+> >         Now that the end of the RCU read-side critical section is
+> >         deferred until sometime after interrupts are re-enabled, this
+> >         requirement could be lifted.  However, because the end of the RCU
+> >         read-side critical section is detected sometime after interrupts
+> >         are re-enabled, this means that a low-priority RCU reader might
+> >         remain priority-boosted longer than need be, which could be a
+> >         problem when running real-time workloads.
+> >
+> >         My current thought is therefore to leave this constraint in
+> >         place.  Thoughts?
+> >
+> > Anything else that I should be worried about?  ;-)
+> >
+> >                                                         Thanx, Paul
+> >  
 
-I understand your point. But if the problem is about making sure people
-designing new boards get that right, why not complaining at probe time
-when things are wrong?
-
-I mean, spi_nor_restore() seems to only do something on very specific
-NORs (those on which a SW RESET does not resets the addressing
-mode). So, how about adding a flag that says "my board has the NOR HW
-RESET pin wired" (there would be a DT props to set that flag). Then you
-add a WARN_ON() when this flag is not set and a NOR chip impacted by
-this bug is detected. This way you make sure people are informed that
-they're doing something wrong, and for those who can't change their HW
-(because it's already widely deployed), you have a fix that improve
-things.
-
-Regards,
-
-Boris
