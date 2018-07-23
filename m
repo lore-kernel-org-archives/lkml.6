@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AC0ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441B8ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CF620854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CF620854
+	by mail.kernel.org (Postfix) with ESMTP id 02AD020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02AD020854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389268AbeGWNbW (ORCPT
+        id S2389279AbeGWNbZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:31:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46222 "EHLO
+        Mon, 23 Jul 2018 09:31:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46232 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387849AbeGWNbV (ORCPT
+        with ESMTP id S2387849AbeGWNbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:31:21 -0400
+        Mon, 23 Jul 2018 09:31:24 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B53E4BDB;
-        Mon, 23 Jul 2018 12:30:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B525BB3;
+        Mon, 23 Jul 2018 12:30:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YOKOTA Hiroshi <yokota.hgml@gmail.com>,
+        stable@vger.kernel.org, Po-Hsu Lin <po-hsu.lin@canonical.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 08/44] ALSA: hda/realtek - Add Panasonic CF-SZ6 headset jack quirk
-Date:   Mon, 23 Jul 2018 14:24:44 +0200
-Message-Id: <20180723122437.845023097@linuxfoundation.org>
+Subject: [PATCH 4.14 09/44] ALSA: hda: add mute led support for HP ProBook 455 G5
+Date:   Mon, 23 Jul 2018 14:24:45 +0200
+Message-Id: <20180723122437.885076907@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
 References: <20180723122437.447870153@linuxfoundation.org>
@@ -50,31 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YOKOTA Hiroshi <yokota.hgml@gmail.com>
+From: Po-Hsu Lin <po-hsu.lin@canonical.com>
 
-commit 0fca97a29b83e3f315c14ed2372cfd0f9ee0a006 upstream.
+commit 9a6249d2a145226ec1b294116fcb08744cf7ab56 upstream.
 
-This adds some required quirk when uses headset or headphone on
-Panasonic CF-SZ6.
+Audio mute led does not work on HP ProBook 455 G5,
+this can be fixed by using CXT_FIXUP_MUTE_LED_GPIO to support it.
 
-Signed-off-by: YOKOTA Hiroshi <yokota.hgml@gmail.com>
+BugLink: https://bugs.launchpad.net/bugs/1781763
+Reported-by: James Buren
+Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
+ sound/pci/hda/patch_conexant.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6402,6 +6402,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x10cf, 0x1629, "Lifebook U7x7", ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x10cf, 0x1845, "Lifebook U904", ALC269_FIXUP_LIFEBOOK_EXTMIC),
- 	SND_PCI_QUIRK(0x10ec, 0x10f2, "Intel Reference board", ALC700_FIXUP_INTEL_REFERENCE),
-+	SND_PCI_QUIRK(0x10f7, 0x8338, "Panasonic CF-SZ6", ALC269_FIXUP_HEADSET_MODE),
- 	SND_PCI_QUIRK(0x144d, 0xc109, "Samsung Ativ book 9 (NP900X3G)", ALC269_FIXUP_INV_DMIC),
- 	SND_PCI_QUIRK(0x144d, 0xc740, "Samsung Ativ book 8 (NP870Z5G)", ALC269_FIXUP_ATIV_BOOK_8),
- 	SND_PCI_QUIRK(0x1458, 0xfa53, "Gigabyte BXBT-2807", ALC283_FIXUP_HEADSET_MIC),
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -965,6 +965,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
+ 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
++	SND_PCI_QUIRK(0x103c, 0x836e, "HP ProBook 455 G5", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
 
 
