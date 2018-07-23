@@ -2,136 +2,203 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 585F1ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 672E8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E3C020880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E3C020880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DEA720854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DEA720854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388410AbeGWN1f (ORCPT
+        id S2388425AbeGWN1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:27:35 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:52698 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387882AbeGWN1d (ORCPT
+        Mon, 23 Jul 2018 09:27:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45278 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387882AbeGWN1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:27:33 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fhZur-0001Eb-Dv; Mon, 23 Jul 2018 08:26:17 -0400
-Message-ID: <1532348776.26425.7.camel@surriel.com>
-Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
-From:   Rik van Riel <riel@surriel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-s390@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Mike Galbraith <efault@gmx.de>,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Date:   Mon, 23 Jul 2018 08:26:16 -0400
-In-Reply-To: <20180720083016.GN2494@hirez.programming.kicks-ass.net>
-References: <20180716190337.26133-1-riel@surriel.com>
-         <20180716190337.26133-5-riel@surriel.com>
-         <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com>
-         <B6566AA4-2E8A-43BD-A224-0F6D4747B8FB@surriel.com>
-         <F93A3335-4830-4E36-9179-D0FA5D640C8A@amacapital.net>
-         <B976CC13-D014-433A-83DE-F8DF9AB4F421@surriel.com>
-         <CALCETrWDiMhgiR3f8n0jdWcW31EDJ+Waq0wh5sMDutfigANGnA@mail.gmail.com>
-         <CALCETrXLMsSBChDvrms-omwYV4LHT30GenDjbnD-+LTg55yPow@mail.gmail.com>
-         <20180720083016.GN2494@hirez.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-4vkrqBG7jdk4C2JsdnAu"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Mon, 23 Jul 2018 09:27:37 -0400
+Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87CB5BE1;
+        Mon, 23 Jul 2018 12:26:39 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Karol Herbst <karolherbst@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+Subject: [PATCH 4.17 33/63] drm/nouveau: Use drm_connector_list_iter_* for iterating connectors
+Date:   Mon, 23 Jul 2018 14:24:39 +0200
+Message-Id: <20180723122447.625632404@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
+References: <20180723122446.351334162@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
---=-4vkrqBG7jdk4C2JsdnAu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-On Fri, 2018-07-20 at 10:30 +0200, Peter Zijlstra wrote:
-> On Thu, Jul 19, 2018 at 10:04:09AM -0700, Andy Lutomirski wrote:
-> > I added some more arch maintainers.  The idea here is that, on x86
-> > at
-> > least, task->active_mm and all its refcounting is pure
-> > overhead.  When
-> > a process exits, __mmput() gets called, but the core kernel has a
-> > longstanding "optimization" in which other tasks (kernel threads
-> > and
-> > idle tasks) may have ->active_mm pointing at this mm.  This is
-> > nasty,
-> > complicated, and hurts performance on large systems, since it
-> > requires
-> > extra atomic operations whenever a CPU switches between real users
-> > threads and idle/kernel threads.
-> >=20
-> > It's also almost completely worthless on x86 at least, since
-> > __mmput()
-> > frees pagetables, and that operation *already* forces a remote TLB
-> > flush, so we might as well zap all the active_mm references at the
-> > same time.
->=20
-> So I disagree that active_mm is complicated (the code is less than
-> ideal
-> but that is actually fixable). And aside from the process exit case,
-> it
-> does avoid CR3 writes when switching between user and kernel threads
-> (which can be far more often than exit if you have longer running
-> tasks).
->=20
-> Now agreed, recent x86 work has made that less important.
->=20
-> And I of course also agree that not doing those refcount atomics is
-> better.
+From: Lyude Paul <lyude@redhat.com>
 
-It might be cleaner to keep the ->active_mm pointer
-in place for now (at least in the first patch), even=20
-on architectures where we end up dropping the refcounting.
+commit 22b76bbe089cd901f5260ecb9a3dc41f9edb97a0 upstream.
 
-That way the code is more similar everywhere, and
-we just get rid of the expensive instructions.
+Every codepath in nouveau that loops through the connector list
+currently does so using the old method, which is prone to race
+conditions from MST connectors being created and destroyed. This has
+been causing a multitude of problems, including memory corruption from
+trying to access connectors that have already been freed!
 
-Let me try coding this up...
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
+Cc: Karol Herbst <karolherbst@gmail.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---=20
-All Rights Reversed.
---=-4vkrqBG7jdk4C2JsdnAu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+---
+ drivers/gpu/drm/nouveau/nouveau_backlight.c |    6 ++++--
+ drivers/gpu/drm/nouveau/nouveau_connector.c |    9 +++++++--
+ drivers/gpu/drm/nouveau/nouveau_connector.h |   14 ++++++++++----
+ drivers/gpu/drm/nouveau/nouveau_display.c   |   10 ++++++++--
+ 4 files changed, 29 insertions(+), 10 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+--- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
++++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
+@@ -267,6 +267,7 @@ nouveau_backlight_init(struct drm_device
+ 	struct nouveau_drm *drm = nouveau_drm(dev);
+ 	struct nvif_device *device = &drm->client.device;
+ 	struct drm_connector *connector;
++	struct drm_connector_list_iter conn_iter;
+ 
+ 	INIT_LIST_HEAD(&drm->bl_connectors);
+ 
+@@ -275,7 +276,8 @@ nouveau_backlight_init(struct drm_device
+ 		return 0;
+ 	}
+ 
+-	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
++	drm_connector_list_iter_begin(dev, &conn_iter);
++	drm_for_each_connector_iter(connector, &conn_iter) {
+ 		if (connector->connector_type != DRM_MODE_CONNECTOR_LVDS &&
+ 		    connector->connector_type != DRM_MODE_CONNECTOR_eDP)
+ 			continue;
+@@ -292,7 +294,7 @@ nouveau_backlight_init(struct drm_device
+ 			break;
+ 		}
+ 	}
+-
++	drm_connector_list_iter_end(&conn_iter);
+ 
+ 	return 0;
+ }
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.c
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+@@ -1208,14 +1208,19 @@ nouveau_connector_create(struct drm_devi
+ 	struct nouveau_display *disp = nouveau_display(dev);
+ 	struct nouveau_connector *nv_connector = NULL;
+ 	struct drm_connector *connector;
++	struct drm_connector_list_iter conn_iter;
+ 	int type, ret = 0;
+ 	bool dummy;
+ 
+-	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
++	drm_connector_list_iter_begin(dev, &conn_iter);
++	drm_for_each_connector_iter(connector, &conn_iter) {
+ 		nv_connector = nouveau_connector(connector);
+-		if (nv_connector->index == index)
++		if (nv_connector->index == index) {
++			drm_connector_list_iter_end(&conn_iter);
+ 			return connector;
++		}
+ 	}
++	drm_connector_list_iter_end(&conn_iter);
+ 
+ 	nv_connector = kzalloc(sizeof(*nv_connector), GFP_KERNEL);
+ 	if (!nv_connector)
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.h
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.h
+@@ -65,14 +65,20 @@ nouveau_crtc_connector_get(struct nouvea
+ {
+ 	struct drm_device *dev = nv_crtc->base.dev;
+ 	struct drm_connector *connector;
++	struct drm_connector_list_iter conn_iter;
++	struct nouveau_connector *nv_connector = NULL;
+ 	struct drm_crtc *crtc = to_drm_crtc(nv_crtc);
+ 
+-	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+-		if (connector->encoder && connector->encoder->crtc == crtc)
+-			return nouveau_connector(connector);
++	drm_connector_list_iter_begin(dev, &conn_iter);
++	drm_for_each_connector_iter(connector, &conn_iter) {
++		if (connector->encoder && connector->encoder->crtc == crtc) {
++			nv_connector = nouveau_connector(connector);
++			break;
++		}
+ 	}
++	drm_connector_list_iter_end(&conn_iter);
+ 
+-	return NULL;
++	return nv_connector;
+ }
+ 
+ struct drm_connector *
+--- a/drivers/gpu/drm/nouveau/nouveau_display.c
++++ b/drivers/gpu/drm/nouveau/nouveau_display.c
+@@ -406,6 +406,7 @@ nouveau_display_init(struct drm_device *
+ 	struct nouveau_display *disp = nouveau_display(dev);
+ 	struct nouveau_drm *drm = nouveau_drm(dev);
+ 	struct drm_connector *connector;
++	struct drm_connector_list_iter conn_iter;
+ 	int ret;
+ 
+ 	ret = disp->init(dev);
+@@ -413,10 +414,12 @@ nouveau_display_init(struct drm_device *
+ 		return ret;
+ 
+ 	/* enable hotplug interrupts */
+-	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
++	drm_connector_list_iter_begin(dev, &conn_iter);
++	drm_for_each_connector_iter(connector, &conn_iter) {
+ 		struct nouveau_connector *conn = nouveau_connector(connector);
+ 		nvif_notify_get(&conn->hpd);
+ 	}
++	drm_connector_list_iter_end(&conn_iter);
+ 
+ 	/* enable flip completion events */
+ 	nvif_notify_get(&drm->flip);
+@@ -429,6 +432,7 @@ nouveau_display_fini(struct drm_device *
+ 	struct nouveau_display *disp = nouveau_display(dev);
+ 	struct nouveau_drm *drm = nouveau_drm(dev);
+ 	struct drm_connector *connector;
++	struct drm_connector_list_iter conn_iter;
+ 
+ 	if (!suspend) {
+ 		if (drm_drv_uses_atomic_modeset(dev))
+@@ -441,10 +445,12 @@ nouveau_display_fini(struct drm_device *
+ 	nvif_notify_put(&drm->flip);
+ 
+ 	/* disable hotplug interrupts */
+-	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
++	drm_connector_list_iter_begin(dev, &conn_iter);
++	drm_for_each_connector_iter(connector, &conn_iter) {
+ 		struct nouveau_connector *conn = nouveau_connector(connector);
+ 		nvif_notify_put(&conn->hpd);
+ 	}
++	drm_connector_list_iter_end(&conn_iter);
+ 
+ 	drm_kms_helper_poll_disable(dev);
+ 	disp->fini(dev);
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAltVyWkACgkQznnekoTE
-3oNp5ggAhb/ScHMhsqjYPCfu5/gdUlsB46K5xr9f8ZxmVN0LNF0x4n0AROsADMQw
-LLsM+EagLWYMdXjKeI5xCsMu2nwcm9aAqdONRkyjGbgIbupzjHNNMqRNa4NxB+dZ
-t9mMgAbnGv+2HLxbIsb6zhb1ckdHkaLipv8llItk8orYkdb5WWtnvdQC6UHBr+0e
-5eJuQiarWkHorhoqlXCh3Zc1ZinxSTlOFzmVAf+Vw0n0qjMcq1pPelsA9ynJPJM+
-9NwXsdodm38ppTpXIPKAQb4NF73JgxtqaUZuPQmiasaUo3czZq67uQZin6v7iC+H
-g2oK4ygHmep6StVwfzfx/FtsnTsqbg==
-=BJ7M
------END PGP SIGNATURE-----
-
---=-4vkrqBG7jdk4C2JsdnAu--
 
