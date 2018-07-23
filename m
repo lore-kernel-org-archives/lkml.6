@@ -2,383 +2,175 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA989ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEA0ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:11:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 658FA20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:10:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 658FA20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DC6920856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:11:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="KftyVuyV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC6920856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388272AbeGWTM2 (ORCPT
+        id S2388299AbeGWTOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 15:12:28 -0400
-Received: from mga17.intel.com ([192.55.52.151]:9334 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387861AbeGWTM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 15:12:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 11:10:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
-   d="scan'208";a="75216521"
-Received: from skyhawk.jf.intel.com (HELO [10.7.150.62]) ([10.7.150.62])
-  by orsmga001.jf.intel.com with ESMTP; 23 Jul 2018 11:10:03 -0700
-Subject: Re: [PATCH i2c-next] i2c: aspeed: Handle master/slave combined irq
- events properly
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Vernon Mauery <vernon.mauery@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-References: <20180723174808.4007-1-jae.hyun.yoo@linux.intel.com>
-From:   James Feist <james.feist@linux.intel.com>
-Message-ID: <58d31319-83c0-969b-e3fd-4273818929fc@linux.intel.com>
-Date:   Mon, 23 Jul 2018 11:10:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Mon, 23 Jul 2018 15:14:06 -0400
+Received: from mail-he1eur01on0078.outbound.protection.outlook.com ([104.47.0.78]:5462
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387907AbeGWTOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 15:14:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+4l7/sZKFV1cgh9E1tbpDPPYvCiMmrV2AST665VuwSc=;
+ b=KftyVuyVcHLOQisWQWN4yRZDtGH2BQg0evee97nqTOK51WWU6f3JX9AisJKB6H8VvV07bYmLQeHdYP+y5noQZ3Ss5xyIlWdi4aXsHfEzwAPowjkDoXMr4Cbdg/cleiolTd7roRkRkbxHR2xwK4S0vKk8GlHamd/hXl1urcWLNVo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=danielj@mellanox.com; 
+Received: from [10.12.146.131] (208.176.44.194) by
+ AM4PR0501MB2258.eurprd05.prod.outlook.com (2603:10a6:200:53::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.973.16; Mon, 23 Jul
+ 2018 18:11:27 +0000
+Subject: Re: [PATCH] IB/mlx5: avoid binding a new mpi unit to the same devices
+ repeatedly
+To:     Qing Huang <qing.huang@oracle.com>,
+        Or Gerlitz <gerlitz.or@gmail.com>,
+        Parav Pandit <parav@mellanox.com>
+Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Doug Ledford <dledford@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>, gerald.gibson@oracle.com
+References: <20180713235021.18141-1-qing.huang@oracle.com>
+ <CAJ3xEMi5zF83aA_SWfYT+JtWGGhqRhLyTKe-qYwevSBLuiK=cA@mail.gmail.com>
+ <dc4d502c-bc3c-46e3-a984-41271951a5f7@mellanox.com>
+ <556984ea-c35f-197d-0e45-16272da3f604@oracle.com>
+From:   Daniel Jurgens <danielj@mellanox.com>
+Message-ID: <f2a5d82c-f65c-152d-5545-0d50a4e5e150@mellanox.com>
+Date:   Mon, 23 Jul 2018 13:11:12 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180723174808.4007-1-jae.hyun.yoo@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <556984ea-c35f-197d-0e45-16272da3f604@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [208.176.44.194]
+X-ClientProxiedBy: MWHPR19CA0091.namprd19.prod.outlook.com
+ (2603:10b6:320:1f::29) To AM4PR0501MB2258.eurprd05.prod.outlook.com
+ (2603:10a6:200:53::7)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9d300fd2-50cf-47a7-a77d-08d5f0c7b6f3
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600073)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM4PR0501MB2258;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0501MB2258;3:4rq39SVqjwJ3dvF09Yd3sctuUfHuCmcdDtLz6l+N+quF+LcDCz2Qr4H8oafAlFK1zwk/J8XEEw6vQNJlEYoAItrN+LgjbnSXU/qpDGWFTCVnLg3mt0hS09LFiaduCKiVgw+b5V/u7dcBctwDUZo7PAG0fw9VpuCaupw9NaxyRdrfYyOmPAP8UocNKNaS2sdZ/rlFLSfhpcYgl8e7k4SiQHiKqUfunVNf4aVe2aEiEffMjhmVKsH6jjOjBv/xsc3r;25:fJwVmZlvSJS+WADScUiFCxOHtE0yoCjNa8tv6wobkwz5OevWejHRKXZfNx+nPE9RdhnjeU5Wsp++woC6gvpKXItYnHsv7gJIGnDzCfssiHkz1iKpWpbCu7B9IN3lrXLPDN0L0O/DjM5lVKNmBVhk6iVzfFZ1RJeQzx5SkRmxKPdRiTzPKo5gVJUvyz1lTdRFkJKU5y/K/A0Vvv38XNmYyiY/0Bj0Eziz5cjjetsC2bDxgo5PEpSAThDrN0+qrvkeO1qbFKJeWccBav2D4rhou2xWzZj1QUtcB/OoHMODPhlaEBgJi7ntpwnLsmvBRR9dH9bYiwnU+7zRP0hnLcg7SQ==;31:ySEm3kie1qd72n2MBsKLkRqz/V1ak9CCEMXcyj3mhy/lFrhPR3IM8OdRfLwMo3EYH553JAAVg1KNM8D74xGXh5Pv/UCk1HThEVyfFn3LA0hIbpq+W4ZTm+SBmLUV8NDVJtvb/5rnxMpDB/K5rCggp4HXFuYXcazDP6pVf2yHM4R5QMN0t3COEobjPrWw1u+XDTMLAOaqysXoWEBqbCZNyp9Suc2UIpAC34kJOwqdgHc=
+X-MS-TrafficTypeDiagnostic: AM4PR0501MB2258:
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0501MB2258;20:bu04h/4jT8PNk98Yo3Ir65jR6jYI6FWcUMl8azybj3aXXpt+iCb4U7OCI2sIgHFwqFP8LvXjyaWPm8pWYoocdDQYyXzMF3KfygJRmTAFUgO1k/b6ZZNQWU3/k2ZvlTYmfWeMWb62pAhn3D8CVYSK/xuEUN5T3kf95VpuqVHtMhHWKbB5pXhMlx3GCClC9o697Z+XvTyz8pyO/RpzKnp5EiHOZ+/tr6XaObP5/3zyybXWFCWgmBocXbxNWgvRnnat1ineupJQIbei3R8ETSx9sWiZUeSm7auprVf55NsNlHo1QqASJ3vdIRdsZGn7g38XpCgs9NMqv4g8xcmFv2LVbiXn6j5lQGx1WSaa3Hc0qPU9UJPnz8rZcx+yHEtbMq8f7rSM8fP+Ctp+tgsqd0qQcS9U9qIgKnHvisnA3G1496sW6s5zh9LID5A8cIoOnsa9kl9T+IFScHWblZOSnYvNquJym0nyY+rL2QdGqmQPPKePZXx1JyKJnkIlfkAL/edy;4:PnU3SSBqiSs1YNBAW+yWSfZgLDV3FefSWVXsJs9VkH3EjOR3Lnu97p4+JsRcON8jXADGsl2IqLUxhrDD0Y4/mm1JqEXfOEdOL1H4auSRIHZFe4DuWD2mjhXDdHvrfTFrBa9qbpfSpzgx76nqOxHoTRqbCyjF6DS4lcz6krlAYrqOVQM0Svu2pOjNLmJqCRLtMTveaataRyqGxpdQvK0ch1vBptAYTIVx/CTVe4p6pSVFjOTUnl4oxjXrR7XYUMZ802hP1lTJNATgzIJMFzpn9IH8uGOoZzV+m71ZsslFYnAny9OpqYcf/wBZY70mtxGOkE0bexC2D0IH1cjeHwO/BTyj7CX/968HiK2wUWtdxEU=
+X-Microsoft-Antispam-PRVS: <AM4PR0501MB2258CD23595CBF02D98CD9F4C4560@AM4PR0501MB2258.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(146099531331640);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AM4PR0501MB2258;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0501MB2258;
+X-Forefront-PRVS: 0742443479
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(396003)(376002)(346002)(39860400002)(366004)(136003)(199004)(189003)(6306002)(53546011)(229853002)(65956001)(386003)(6636002)(66066001)(2906002)(39060400002)(86362001)(446003)(47776003)(81156014)(65806001)(64126003)(81166006)(6666003)(6246003)(5660300001)(93886005)(6486002)(31696002)(6116002)(3846002)(2870700001)(8936002)(11346002)(68736007)(31686004)(65826007)(305945005)(76176011)(8676002)(52116002)(26005)(77096007)(23676004)(52146003)(2486003)(14444005)(97736004)(53936002)(186003)(956004)(4326008)(16526019)(2616005)(478600001)(36756003)(106356001)(50466002)(966005)(486006)(25786009)(16576012)(105586002)(316002)(3260700006)(476003)(110136005)(7736002)(54906003)(58126008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0501MB2258;H:[10.12.146.131];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTRQUjA1MDFNQjIyNTg7MjM6UURqaDFtektiQnlZb0sreG5oaytsWTlh?=
+ =?utf-8?B?QXdaTlV6VlZiZmdDNHZHQXhId0Z1aDVtVlk2WkJ5bVpSakdtN21ucFBEZnlk?=
+ =?utf-8?B?cHVZOE1vU1lxQ1BqYlVDb0oweDlXRDZ2Ynh5c09hZld3S3JwbnZ6Vm9BeUNw?=
+ =?utf-8?B?NTEvWVBIQ2gwcUtkSkNTZGhXd21LZXhOT2hXVi8wWUFyN1haamZDdWZJK3J0?=
+ =?utf-8?B?SWo4VVpPL1ZUb2xMcmNLTFdDMEFuSWVMZFdOQlljM3RMdWttdzIzdkIwaHIz?=
+ =?utf-8?B?ZU12QlRRQlJsK0YzL3FOMkxWUExrOTZiR1FxSVdGUGd3L0tCZmFtUC9kSjBr?=
+ =?utf-8?B?M3l0UEZGUGhkKyt1VW5BUitwdnp1R01zcXR3K2lXVFNQSEhLa0krUlZ4SGQw?=
+ =?utf-8?B?ODMxVk1PY0FpVWpZbW1UOW9PbjFCS1dHUDBibnNXRi9kZ1JZbm5rQm9YRlJJ?=
+ =?utf-8?B?V2h4ZEJhVTZNN2pzU2Z3Tm9tZkZDOXBhV2h3WDhiZFN2aEo3NWo0bzBhbjVX?=
+ =?utf-8?B?RWMzdkdYTC9TekRseElManRoc2huQys4YWo0RldHVFN4WVV4dm9Yc1NRSkVT?=
+ =?utf-8?B?bTloeTBWeGhNMDR5aEpRREQzbE42Qk84c1FMaVB2bUZCK1ZRWWw4SWU2NEJU?=
+ =?utf-8?B?d3IwcE5qQk56NW1uWFNqbnhuMUdqVi8vQXFGeS9ZNVp0REYydm9jRm5rSkE2?=
+ =?utf-8?B?V2QwUFI1WE5JNGFhdzQrR2k5SnZ6dlRhY1VaL0ErakxhN1lBTXNSRS9wbms2?=
+ =?utf-8?B?ZjVTOWlWVDU1b1NGQ1lBM0lMOG9Eb3JxWXg1b0wwYVZwZ0NNQXpxSGdhM0l6?=
+ =?utf-8?B?ZGQzVjRySGlLMlZXMStrMncranlCbzUrUFRlakhSTlYrVGcyb2ZPMVpGRVJq?=
+ =?utf-8?B?RWEvTmJ0SkNYeTduNjhMM0hnY1lCYzZvNWxXVWRJbmlOV1NGUisyZjNkd1Vu?=
+ =?utf-8?B?NWNDRG1tS1ZrYWowQmZFMGhGVzFyTUhmS3QyV3cxcmJtbjB6cnRFVHBETnFQ?=
+ =?utf-8?B?M25jcEhrQjJXYUx1cUdOc2JyUGticktoNDVCaHZWbmJaWm03d3lic0dFR0do?=
+ =?utf-8?B?ZTRmRFRJcTIwb3hEeE81TitqQjVJT2M0NmhTTVhibHJRY0xJY2NTQW9CWkdQ?=
+ =?utf-8?B?ZXpxUzRHcU5nUU1xOUpBYTZlOE5RKzMvNHZHY1BtRkhuVENNaUJOQmQ1ZURP?=
+ =?utf-8?B?SGd1Sm5PNVpKLytnZ2UxU21uQ0Vwbjg5YmhWSGtLRnRNNis5VDV6cnpXRTlJ?=
+ =?utf-8?B?YzBJYXZURERDY25YeG5ZeHNkMzUwL1JyQmV6ZUVQNFhVZENWcm93QUdQNndD?=
+ =?utf-8?B?T0pnL21jQ1JIUksreG02SEVma1p1aEVsemlFTnlRQ2dmUFUrckFhL3R3ZEZx?=
+ =?utf-8?B?K2xobUR4Nkp6KzZjT2sxSXhZUnViSndacTRLYStDc2Z3NXFuWTZRc25vYzMy?=
+ =?utf-8?B?ZjlVYXhKa3pBU0FuNXRwcGRLZHRodWV5WDdBeGo2UWVzVU95c2NGS2FrQnJ5?=
+ =?utf-8?B?R0ZFczgreTVqRStLS0wyVitTU1NlRngxU0NPZndIcFBhTjcyZjIwQjZKdVBJ?=
+ =?utf-8?B?SEQ0TU1TNWxlVDRDV2dzM3ZXZm4ra05zWHZHVVU2UkJNOXZpWW9wN1pQMmRY?=
+ =?utf-8?B?NkFVbEYvS3JiaHVQOGREYlh3QXlkd0xNS0Y0RlNia3krZFdrc21KOVVCRzZP?=
+ =?utf-8?B?SXpJRS9FYWxEZ0U3VkFmL3RnVjNhdzN5RVRCUEhtWHQ3VkNuS0FMOUVaZ0lZ?=
+ =?utf-8?B?SW1UbFFrbG1PNC9xbEI5UjJKaHI1dmJla2gwdmtNakRYRU5RY0RLWE9KWTNZ?=
+ =?utf-8?B?VHN6ZW9zN1FhR2grTGR1MnpzaWNGOGJOR1FRTXlIVFFtaEFMQTR1VDJ4cmVl?=
+ =?utf-8?B?NjJEWHh2TGtHL2hpZFFrM1ByNFZWU2xabEFOOHVQd1dkVHdRcmdLWWJIdnhT?=
+ =?utf-8?B?VFE1dWlQSVBDSWR4cC8wa05TN0RZRFJ6R3JvaDQwZGNMb0hMblRVdXFlSkt2?=
+ =?utf-8?B?MSsrZ2tvZ1pUTEhEV2hhZThzUU12WFFiZmN3U1dZQkVOZ3hpTUY1QjA4a2lU?=
+ =?utf-8?B?RUlnMlc4ZU1EcEErb1lOaFpmcGFBSVF4d3ZZVEVWK0ZhNVVmSE1BVVovSk9L?=
+ =?utf-8?Q?6P4iTf8+hWFZmFmsorkfS4C9g=3D?=
+X-Microsoft-Antispam-Message-Info: hQrFKHi4k5KDvjOGr07foaGzB4TEQ2Qxl0JJdL62MpEay1BPyQ8PmohzHvhLp0cXWEKYtHFWUDPF395PBwKoSJaOR+L4oswwiP8X5Cvfc3VPI7u9b8J4x+3tCuta4/pWNckGcmBPVWyIhy2RBXtsec/gNgZN/QHXdLCjffSBaIwCb28GT5ceJxbOFQHVfpPg7y3frf8Ji9Fnb31pNEi+Re4xvvNhYFjJ6eYZoRgkEG0+w5ReNcC7RGp07WJRYrbJSTk6zMc3xi12HzGYdM3FoS5fvC3XuyhlbVyHQlYqwXSF1nlnd315z8Pm6hgoalCXGsPEp35g4UNk99+o8tb+RUcVaSlAfov/IKnRttOzv0w=
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0501MB2258;6:WNn0R54xbZTHFNiJvDqeBSTYviY5bcz9kHU0K6zYoiZ8WwVd28MArk1N0KlNrmojZWja/o03gk0JKuUSlqIcqieaeKUxNdDo6Vi3rUHQIlj7ES5xma7jADGb344+VMndy82aXfmkMYXqYwljK7thikL+qQ61cf+Xrh6nEpGe/apEFjhe57lYIZvvnYdgO7PL2RsfiXcqHvV+yGO0sZOoXdSPcWGYkwPCTDsvkG6qhuNYtxTieIF8MnIzXZeqkCGmP5nGgYB4dJczYalNZPfEfowv0qS8M+iB3CxaHt5bc7OvYDLQu74Z35AjojkPGMF5/UegHK9kxId79tL7ZrkBZZk2E4dGZfM/jftx6fvtQZyaVi0A66n7849cGJPEZbHP5V5pUuTKVJSLx5xQYesWEd8TbTyvWyBrLt1HdpPzj6CYWbkhUWnQ0XqbQutmuDVEu5FJNAXuUDXuSe6u/fwKOQ==;5:YHpy/WJNJWwky8Qp+0Q7k7ETq6lh5ZbFCIcs0HX6JciFM/AtcXC2aCnuJD8iQR4jwDI9cdBUDsTrbU8CaSExJD0UgwVAw3goAT5sU/QW5ZxSjyCLunIxHQSeTakKm3XCgSox4U1WvZhuJLPpRjYu4jA4iz215kkDIfpGJRj7DPA=;7:QNwbA6PFifY42z4Rmx1yj/HdLtxwhMfBPpK4rf6D6kx2KBkxJItXvn6SfNj+r223dJ9kT3/6w3Vg1l9mixf4BepgQcIaM6NhiOo13g/hSL2TFTdDuqu3m2DfvzkTliy4eZe+Bk0gUEpHegKumgbMWkx6sE5K2LqsY9gY5xnVv1s17+YIF9kkVdUpcjJ2aI8E2Y1RiGLlBgZ2TxRnrP7cxGGFeO+quLLw1YAeDJj6um+4spoBpvyHZGuRLRreRlns
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2018 18:11:27.8403
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d300fd2-50cf-47a7-a77d-08d5f0c7b6f3
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0501MB2258
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 10:48 AM, Jae Hyun Yoo wrote:
-> In most of cases, interrupt bits are set one by one but there are
-> also a lot of other cases that Aspeed I2C IP sends multiple
-> interrupt bits with combining master and slave events using a
-> single interrupt call. It happens much in multi-master environment
 
-much more
 
-> than single-master. For an example, when master is waiting for a
-> NORMAL_STOP interrupt in its MASTER_STOP state, SLAVE_MATCH and
-> RX_DONE interrupts could come along with the NORMAL_STOP in case of
-> an another master immediately sends data just after acquiring the
-> bus. In this case, the NORMAL_STOP interrupt should be handled
-> by master_irq and the SLAVE_MATCH and RX_DONE interrupts should be
-> handled by slave_irq. This commit modifies irq hadling logic to
-> handle the master/slave combined events properly.
-> 
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> ---
->   drivers/i2c/busses/i2c-aspeed.c | 137 ++++++++++++++++++--------------
->   1 file changed, 76 insertions(+), 61 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-> index efb89422d496..24d43f143a55 100644
-> --- a/drivers/i2c/busses/i2c-aspeed.c
-> +++ b/drivers/i2c/busses/i2c-aspeed.c
-> @@ -82,6 +82,11 @@
->   #define ASPEED_I2CD_INTR_RX_DONE			BIT(2)
->   #define ASPEED_I2CD_INTR_TX_NAK				BIT(1)
->   #define ASPEED_I2CD_INTR_TX_ACK				BIT(0)
-> +#define ASPEED_I2CD_INTR_ERRORS						       \
-> +		(ASPEED_I2CD_INTR_SDA_DL_TIMEOUT |			       \
-> +		 ASPEED_I2CD_INTR_SCL_TIMEOUT |				       \
-> +		 ASPEED_I2CD_INTR_ABNORMAL |				       \
-> +		 ASPEED_I2CD_INTR_ARBIT_LOSS)
->   #define ASPEED_I2CD_INTR_ALL						       \
->   		(ASPEED_I2CD_INTR_SDA_DL_TIMEOUT |			       \
->   		 ASPEED_I2CD_INTR_BUS_RECOVER_DONE |			       \
-> @@ -150,6 +155,7 @@ struct aspeed_i2c_bus {
->   	int				cmd_err;
->   	/* Protected only by i2c_lock_bus */
->   	int				master_xfer_result;
-> +	u32				irq_status;
->   #if IS_ENABLED(CONFIG_I2C_SLAVE)
->   	struct i2c_client		*slave;
->   	enum aspeed_i2c_slave_state	slave_state;
-> @@ -229,36 +235,30 @@ static int aspeed_i2c_recover_bus(struct aspeed_i2c_bus *bus)
->   #if IS_ENABLED(CONFIG_I2C_SLAVE)
->   static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
->   {
-> -	u32 command, irq_status, status_ack = 0;
-> +	u32 command, status_ack = 0;
->   	struct i2c_client *slave = bus->slave;
-> -	bool irq_handled = true;
->   	u8 value;
->   
-> -	if (!slave) {
-> -		irq_handled = false;
-> -		goto out;
-> -	}
-> +	if (!slave)
-> +		return false;
->   
->   	command = readl(bus->base + ASPEED_I2C_CMD_REG);
-> -	irq_status = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
->   
->   	/* Slave was requested, restart state machine. */
-> -	if (irq_status & ASPEED_I2CD_INTR_SLAVE_MATCH) {
-> +	if (bus->irq_status & ASPEED_I2CD_INTR_SLAVE_MATCH) {
->   		status_ack |= ASPEED_I2CD_INTR_SLAVE_MATCH;
->   		bus->slave_state = ASPEED_I2C_SLAVE_START;
->   	}
->   
->   	/* Slave is not currently active, irq was for someone else. */
-> -	if (bus->slave_state == ASPEED_I2C_SLAVE_STOP) {
-> -		irq_handled = false;
-> -		goto out;
-> -	}
-> +	if (bus->slave_state == ASPEED_I2C_SLAVE_STOP)
-> +		return false;
->   
->   	dev_dbg(bus->dev, "slave irq status 0x%08x, cmd 0x%08x\n",
-> -		irq_status, command);
-> +		bus->irq_status, command);
->   
->   	/* Slave was sent something. */
-> -	if (irq_status & ASPEED_I2CD_INTR_RX_DONE) {
-> +	if (bus->irq_status & ASPEED_I2CD_INTR_RX_DONE) {
->   		value = readl(bus->base + ASPEED_I2C_BYTE_BUF_REG) >> 8;
->   		/* Handle address frame. */
->   		if (bus->slave_state == ASPEED_I2C_SLAVE_START) {
-> @@ -273,28 +273,29 @@ static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
->   	}
->   
->   	/* Slave was asked to stop. */
-> -	if (irq_status & ASPEED_I2CD_INTR_NORMAL_STOP) {
-> +	if (bus->irq_status & ASPEED_I2CD_INTR_NORMAL_STOP) {
->   		status_ack |= ASPEED_I2CD_INTR_NORMAL_STOP;
->   		bus->slave_state = ASPEED_I2C_SLAVE_STOP;
->   	}
-> -	if (irq_status & ASPEED_I2CD_INTR_TX_NAK) {
-> +	if (bus->irq_status & ASPEED_I2CD_INTR_TX_NAK) {
->   		status_ack |= ASPEED_I2CD_INTR_TX_NAK;
->   		bus->slave_state = ASPEED_I2C_SLAVE_STOP;
->   	}
-> +	if (bus->irq_status & ASPEED_I2CD_INTR_TX_ACK) {
-> +		status_ack |= ASPEED_I2CD_INTR_TX_ACK;
-> +	}
->   
->   	switch (bus->slave_state) {
->   	case ASPEED_I2C_SLAVE_READ_REQUESTED:
-> -		if (irq_status & ASPEED_I2CD_INTR_TX_ACK)
-> +		if (bus->irq_status & ASPEED_I2CD_INTR_TX_ACK)
->   			dev_err(bus->dev, "Unexpected ACK on read request.\n");
->   		bus->slave_state = ASPEED_I2C_SLAVE_READ_PROCESSED;
-> -
->   		i2c_slave_event(slave, I2C_SLAVE_READ_REQUESTED, &value);
->   		writel(value, bus->base + ASPEED_I2C_BYTE_BUF_REG);
->   		writel(ASPEED_I2CD_S_TX_CMD, bus->base + ASPEED_I2C_CMD_REG);
->   		break;
->   	case ASPEED_I2C_SLAVE_READ_PROCESSED:
-> -		status_ack |= ASPEED_I2CD_INTR_TX_ACK;
-> -		if (!(irq_status & ASPEED_I2CD_INTR_TX_ACK))
-> +		if (!(bus->irq_status & ASPEED_I2CD_INTR_TX_ACK))
->   			dev_err(bus->dev,
->   				"Expected ACK after processed read.\n");
->   		i2c_slave_event(slave, I2C_SLAVE_READ_PROCESSED, &value);
-> @@ -317,14 +318,8 @@ static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
->   		break;
->   	}
->   
-> -	if (status_ack != irq_status)
-> -		dev_err(bus->dev,
-> -			"irq handled != irq. expected %x, but was %x\n",
-> -			irq_status, status_ack);
-> -	writel(status_ack, bus->base + ASPEED_I2C_INTR_STS_REG);
-> -
-> -out:
-> -	return irq_handled;
-> +	bus->irq_status ^= status_ack;
-> +	return !bus->irq_status;
->   }
->   #endif /* CONFIG_I2C_SLAVE */
->   
-> @@ -382,19 +377,19 @@ static int aspeed_i2c_is_irq_error(u32 irq_status)
->   
->   static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->   {
-> -	u32 irq_status, status_ack = 0, command = 0;
-> +	u32 status_ack = 0, command = 0;
->   	struct i2c_msg *msg;
->   	u8 recv_byte;
->   	int ret;
->   
-> -	irq_status = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
-> -	/* Ack all interrupt bits. */
-> -	writel(irq_status, bus->base + ASPEED_I2C_INTR_STS_REG);
-> -
-> -	if (irq_status & ASPEED_I2CD_INTR_BUS_RECOVER_DONE) {
-> +	if (bus->irq_status & ASPEED_I2CD_INTR_BUS_RECOVER_DONE) {
->   		bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
->   		status_ack |= ASPEED_I2CD_INTR_BUS_RECOVER_DONE;
->   		goto out_complete;
-> +	} else {
-> +		/* Master is not currently active, irq was for someone else. */
-> +		if (bus->master_state == ASPEED_I2C_MASTER_INACTIVE)
-> +			goto out_no_complete;
->   	}
->   
->   	/*
-> @@ -402,20 +397,23 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->   	 * should clear the command queue effectively taking us back to the
->   	 * INACTIVE state.
->   	 */
-> -	ret = aspeed_i2c_is_irq_error(irq_status);
-> -	if (ret < 0) {
-> +	ret = aspeed_i2c_is_irq_error(bus->irq_status);
-> +	if (ret) {
->   		dev_dbg(bus->dev, "received error interrupt: 0x%08x\n",
-> -			irq_status);
-> +			bus->irq_status);
->   		bus->cmd_err = ret;
->   		bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
-> +		status_ack |= (bus->irq_status & ASPEED_I2CD_INTR_ERRORS);
->   		goto out_complete;
->   	}
->   
->   	/* We are in an invalid state; reset bus to a known state. */
->   	if (!bus->msgs) {
-> -		dev_err(bus->dev, "bus in unknown state\n");
-> +		dev_err(bus->dev, "bus in unknown state irq_status: 0x%x\n",
-> +			bus->irq_status);
->   		bus->cmd_err = -EIO;
-> -		if (bus->master_state != ASPEED_I2C_MASTER_STOP)
-> +		if (bus->master_state != ASPEED_I2C_MASTER_STOP &&
-> +		    bus->master_state != ASPEED_I2C_MASTER_INACTIVE)
->   			aspeed_i2c_do_stop(bus);
->   		goto out_no_complete;
->   	}
-> @@ -427,8 +425,14 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->   	 * then update the state and handle the new state below.
->   	 */
->   	if (bus->master_state == ASPEED_I2C_MASTER_START) {
-> -		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
-> -			pr_devel("no slave present at %02x\n", msg->addr);
-> +		if (unlikely(!(bus->irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
-> +			if (unlikely(!(bus->irq_status &
-> +				     ASPEED_I2CD_INTR_TX_NAK))) {
-> +				bus->cmd_err = -ENXIO;
-> +				bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
-> +				goto out_complete;
-> +			}
-> +			pr_devel("no slave present at %02x", msg->addr);
-Missing line feed character
->   			status_ack |= ASPEED_I2CD_INTR_TX_NAK;
->   			bus->cmd_err = -ENXIO;
->   			aspeed_i2c_do_stop(bus);
-> @@ -447,11 +451,12 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->   
->   	switch (bus->master_state) {
->   	case ASPEED_I2C_MASTER_TX:
-> -		if (unlikely(irq_status & ASPEED_I2CD_INTR_TX_NAK)) {
-> +		if (unlikely(bus->irq_status & ASPEED_I2CD_INTR_TX_NAK)) {
->   			dev_dbg(bus->dev, "slave NACKed TX\n");
->   			status_ack |= ASPEED_I2CD_INTR_TX_NAK;
->   			goto error_and_stop;
-> -		} else if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
-> +		} else if (unlikely(!(bus->irq_status &
-> +				      ASPEED_I2CD_INTR_TX_ACK))) {
->   			dev_err(bus->dev, "slave failed to ACK TX\n");
->   			goto error_and_stop;
->   		}
-> @@ -470,11 +475,11 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->   		goto out_no_complete;
->   	case ASPEED_I2C_MASTER_RX_FIRST:
->   		/* RX may not have completed yet (only address cycle) */
-> -		if (!(irq_status & ASPEED_I2CD_INTR_RX_DONE))
-> +		if (!(bus->irq_status & ASPEED_I2CD_INTR_RX_DONE))
->   			goto out_no_complete;
->   		/* fallthrough intended */
->   	case ASPEED_I2C_MASTER_RX:
-> -		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_RX_DONE))) {
-> +		if (unlikely(!(bus->irq_status & ASPEED_I2CD_INTR_RX_DONE))) {
->   			dev_err(bus->dev, "master failed to RX\n");
->   			goto error_and_stop;
->   		}
-> @@ -505,8 +510,11 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->   		}
->   		goto out_no_complete;
->   	case ASPEED_I2C_MASTER_STOP:
-> -		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_NORMAL_STOP))) {
-> -			dev_err(bus->dev, "master failed to STOP\n");
-> +		if (unlikely(!(bus->irq_status &
-> +			       ASPEED_I2CD_INTR_NORMAL_STOP))) {
-> +			dev_err(bus->dev,
-> +				"master failed to STOP irq_status:0x%x\n",
-> +				bus->irq_status);
->   			bus->cmd_err = -EIO;
->   			/* Do not STOP as we have already tried. */
->   		} else {
-> @@ -518,7 +526,7 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->   	case ASPEED_I2C_MASTER_INACTIVE:
->   		dev_err(bus->dev,
->   			"master received interrupt 0x%08x, but is inactive\n",
-> -			irq_status);
-> +			bus->irq_status);
->   		bus->cmd_err = -EIO;
->   		/* Do not STOP as we should be inactive. */
->   		goto out_complete;
-> @@ -540,33 +548,40 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->   		bus->master_xfer_result = bus->msgs_index + 1;
->   	complete(&bus->cmd_complete);
->   out_no_complete:
-> -	if (irq_status != status_ack)
-> -		dev_err(bus->dev,
-> -			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
-> -			irq_status, status_ack);
-> -	return !!irq_status;
-> +	bus->irq_status ^= status_ack;
-> +	return !bus->irq_status;
->   }
->   
->   static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->   {
->   	struct aspeed_i2c_bus *bus = dev_id;
-> -	bool ret;
-> +	u32 irq_received;
->   
->   	spin_lock(&bus->lock);
-> +	irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
-> +	bus->irq_status = irq_received;
->   
->   #if IS_ENABLED(CONFIG_I2C_SLAVE)
-> -	if (aspeed_i2c_slave_irq(bus)) {
-> -		dev_dbg(bus->dev, "irq handled by slave.\n");
-> -		ret = true;
-> -		goto out;
-> +	if (bus->master_state != ASPEED_I2C_MASTER_INACTIVE) {
-> +		if (!aspeed_i2c_master_irq(bus))
-> +			aspeed_i2c_slave_irq(bus);
-> +	} else {
-> +		if (!aspeed_i2c_slave_irq(bus))
-> +			aspeed_i2c_master_irq(bus);
->   	}
-> +#else
-> +	aspeed_i2c_master_irq(bus);
->   #endif /* CONFIG_I2C_SLAVE */
->   
-> -	ret = aspeed_i2c_master_irq(bus);
-> +	if (bus->irq_status)
-> +		dev_err(bus->dev,
-> +			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
-> +			irq_received, irq_received ^ bus->irq_status);
->   
-> -out:
-> +	/* Ack all interrupt bits. */
-> +	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
->   	spin_unlock(&bus->lock);
-> -	return ret ? IRQ_HANDLED : IRQ_NONE;
-> +	return bus->irq_status ? IRQ_NONE : IRQ_HANDLED;
->   }
->   
->   static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
-> 
+On 7/23/2018 10:36 AM, Qing Huang wrote:
+>
+> Hi Daniel/Parav,
+>
+> Have you got a chance to review this patch? Thanks!
+Hi Qing, sorry for the delay, I just got back to the office today. I don't agree with the proposed fix, I provided an alternative suggestion below.
+>
+>>> Or.
+>>>
+>>>> Reported-by: Gerald Gibson <gerald.gibson@oracle.com>
+>>>> Signed-off-by: Qing Huang <qing.huang@oracle.com>
+>>>> ---
+>>>>   drivers/infiniband/hw/mlx5/main.c | 3 ++-
+>>>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+>>>> index b3ba9a2..1ddd1d3 100644
+>>>> --- a/drivers/infiniband/hw/mlx5/main.c
+>>>> +++ b/drivers/infiniband/hw/mlx5/main.c
+>>>> @@ -6068,7 +6068,8 @@ static void *mlx5_ib_add_slave_port(struct mlx5_core_dev *mdev, u8 port_num)
+>>>>
+>>>>          mutex_lock(&mlx5_ib_multiport_mutex);
+>>>>          list_for_each_entry(dev, &mlx5_ib_dev_list, ib_dev_list) {
+>>>> -               if (dev->sys_image_guid == mpi->sys_image_guid)
+>>>> +               if (dev->sys_image_guid == mpi->sys_image_guid &&
+>>>> +                   !dev->port[mlx5_core_native_port_num(mdev) - 1].mp.mpi)
+You shouldn't check the mpi field that without holding the lock in the mp structure. Prefer you change the print from a warning in mlx5_ib_bind_slave_port to a debug message.
+
+>>>>                          bound = mlx5_ib_bind_slave_port(dev, mpi);
+>>>>
+>>>>                  if (bound) {
+>>>> -- 
+>>>> 2.9.3
+>>>>
+>>>> -- 
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
