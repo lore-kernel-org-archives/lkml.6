@@ -2,144 +2,70 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D16CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB86ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 516A120856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:09:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516A120856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 4A0B420856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:10:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A0B420856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388300AbeGWPKy (ORCPT
+        id S2388183AbeGWPML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 11:10:54 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47956 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388099AbeGWPKy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 11:10:54 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 4D9CB804A2; Mon, 23 Jul 2018 16:09:26 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 16:09:25 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        jroedel@suse.de, Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
-Message-ID: <20180723140925.GA4285@amd>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
+        Mon, 23 Jul 2018 11:12:11 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9667 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388099AbeGWPML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 11:12:11 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 65D09ED36F85D;
+        Mon, 23 Jul 2018 22:10:35 +0800 (CST)
+Received: from huawei.com (10.113.189.234) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Mon, 23 Jul 2018
+ 22:10:28 +0800
+From:   Yunlong Song <yunlong.song@huawei.com>
+To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/5] f2fs: fix and improve for victim_secmap
+Date:   Mon, 23 Jul 2018 22:10:17 +0800
+Message-ID: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
-Content-Disposition: inline
-In-Reply-To: <1532103744-31902-1-git-send-email-joro@8bytes.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.113.189.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There are some fixes and improvements for using with victim_secmap.
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yunlong Song (5):
+  f2fs: clear victim_secmap when section has full valid blocks
+  f2fs: add cur_victim_sec for BG_GC to avoid skipping BG_GC victim
+  f2fs: clear_bit the SSR selected section in the victim_secmap
+  f2fs: let BG_GC check every dirty segments and gc over a threshold
+  f2fs: add proc entry to show victim_secmap bitmap
 
-Hi!
+ fs/f2fs/f2fs.h              |  5 ++++-
+ fs/f2fs/gc.c                | 39 ++++++++++++++++++++++++++++++---------
+ fs/f2fs/segment.c           |  4 +++-
+ fs/f2fs/segment.h           | 12 +++++++++++-
+ fs/f2fs/super.c             |  3 ++-
+ fs/f2fs/sysfs.c             | 25 +++++++++++++++++++++++++
+ include/trace/events/f2fs.h | 18 ++++++++++++------
+ 7 files changed, 87 insertions(+), 19 deletions(-)
 
-> here are 3 patches which update the PTI-x86-32 patches recently merged
-> into the tip-tree. The patches are ordered by importance:
+-- 
+1.8.5.2
 
-It seems PTI is now in -next. I'll test that soon.
-
-Meanwhile... it looks like gcc is not slowed down significantly, but
-other stuff sees 30% .. 40% slowdowns... which is rather
-significant.
-
-Would it be possible to have per-process control of kpti? I have
-some processes where trading of speed for security would make sense.
-
-Best regards,
-								Pavel
-
-cd ~/g/tui/nowcast
-time ./nowcast -x (30%)
-KPTI: 139.25user 73.65system 269.90 (4m29.901s) elapsed 78.88%CPU
-      133.35user 73.15system 228.80 (3m48.802s) elapsed 90.25%CPU
-      140.51user 74.21system 218.33 (3m38.338s) elapsed 98.34%CPU
-      133.85user 75.89system 212.02 (3m32.026s) elapsed 98.93%CPU (no chrom=
-ium)
-      139.34user 75.00system 235.75 (3m55.752s) elapsed 90.92%CPU
-     =20
-4.18: 116.99user 43.79system 217.65 (3m37.653s) elapsed 73.87%CPU
-      115.14user 43.97system 178.85 (2m58.855s) elapsed 88.96%CPU
-      128.47user 47.22system 178.24 (2m58.245s) elapsed 98.57%CPU
-      132.30user 49.27system 184.40 (3m4.408s) elapsed 98.46%CPU
-      134.88user 48.59system 186.67 (3m6.673s) elapsed 98.29%CPU
-      132.15user 48.65system 524.68 (8m44.684s) elapsed 34.46%CPU
-      120.38user 45.45system 168.72 (2m48.720s) elapsed 98.29%CPU
-     =20
-time cat /dev/urandom | head -c 10000000 |  bzip2 -9 - | wc -c (40%)
-v4.18: 4.57user 0.23system 4.64 (0m4.644s) elapsed 103.53%CPU
-       4.86user 0.23system 4.95 (0m4.952s) elapsed 102.81%CPU
-       5.13user 0.22system 5.19 (0m5.190s) elapsed 103.14%CPU
-KPTI:  6.39user 0.48system 6.74 (0m6.747s) elapsed 101.96%CPU
-       6.66user 0.41system 6.91 (0m6.912s) elapsed 102.51%CPU
-       6.53user 0.51system 6.91 (0m6.919s) elapsed 101.99%CPU
-
-v4l-utils: make clean, time make
-v4.18: 191.93user 11.00system 211.19 (3m31.191s) elapsed 96.09%CPU
-       221.21user 14.69system 248.73 (4m8.734s) elapsed 94.84%CPU
-       198.35user 11.61system 211.39 (3m31.392s) elapsed 99.32%CPU
-       204.87user 11.69system 217.97 (3m37.971s) elapsed 99.35%CPU
-       203.68user 11.88system 217.29 (3m37.291s) elapsed 99.20%CPU
-KPTI:  156.45user 40.08system 204.77 (3m24.777s) elapsed 95.97%CPU
-       183.32user 38.64system 225.03 (3m45.031s) elapsed 98.63%CPU
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltV4ZUACgkQMOfwapXb+vK9BQCgm16A64iYQ44YNBiSaJr98m5v
-4iEAn1EsSZFdDWhAgAGh64B/6Io8GbyD
-=8oHa
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
