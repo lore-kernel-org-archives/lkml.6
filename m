@@ -2,163 +2,120 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D77C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A993CC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A92E520858
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:01:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Da85itih"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92E520858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 65B7D20779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:03:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65B7D20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbeGWEA2 (ORCPT
+        id S1727450AbeGWECF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 00:00:28 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:35278 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725754AbeGWEA2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 00:00:28 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w3-v6so7598131plq.2
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 20:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GbcTQteZutnrrp0ElE4r3n5F20XUyMblfKc3J+fOsFo=;
-        b=Da85itihHX5wgStCUxWD2nFl6v7xTDNODyLsDgjWOnfk9KYPaDfc5QGTlLOyxtFiFu
-         qIOTEo2NxDizfWggWhwtmAthjLV5uWNrQZti0K506txKy2Cl7s3e2kUxGr51OgV22NDS
-         b9OCCIQUVEHT4d/5yivFHkeMhUf3eX/009Sjk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GbcTQteZutnrrp0ElE4r3n5F20XUyMblfKc3J+fOsFo=;
-        b=Q0+tEGgRJ4YKrIFMIq4FidwxKJP9V/ChMjHpRRQJdng0rsoR7O0y143upXdf2Q0FTl
-         qFwG4kzgW/+3hV/pUuyz93SOKq95ZZ7QrecL8Iw1Yk6jPCMKJTkkCMKmGUnBRSR+I+bc
-         kbTt1U88dU/AtOI6ohyOeEUnVooQJXZ3FrlhUMIuDSpP5IOewcDJM+K2v390Cgq/epZP
-         DfWu2jQniV5xLheH/JtPLOyUxB6s6cjyaP176lCpb788QeqthZfUKIGt6ffT5jOJsqKQ
-         QO3aqIx3x7AaIaE1OTvhWo+DYOBDJ/QrGro00eUiQzjGU49nApmrj04ddzebUz5dtRW7
-         is2g==
-X-Gm-Message-State: AOUpUlEbubfzpko0N+0iXuSK7Ere34+/7RuTsBMUHVrfodXM72rrVw8A
-        ahQ7jOzx/u3FUz9nNN5j7PNNrA==
-X-Google-Smtp-Source: AAOMgpc2yePkGXoXPxwz/uyALuVFjZ08QhVcY7xCuad/ohWOOnHqU4SQND0r1cZcdY5DnKnpb/RuHQ==
-X-Received: by 2002:a17:902:8c88:: with SMTP id t8-v6mr11087554plo.117.1532314889916;
-        Sun, 22 Jul 2018 20:01:29 -0700 (PDT)
-Received: from localhost ([122.172.26.112])
-        by smtp.gmail.com with ESMTPSA id o27-v6sm15152698pfj.35.2018.07.22.20.01.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 20:01:29 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 08:31:27 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Ruchi Kandoi <kandoiruchi@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v2] cpufreq: trace frequency limits change
-Message-ID: <20180723030127.7v5aymf246gfsf5x@vireshk-i7>
-References: <20180720222114.200311-1-joel@joelfernandes.org>
+        Mon, 23 Jul 2018 00:02:05 -0400
+Received: from nautica.notk.org ([91.121.71.147]:52507 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725754AbeGWECF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 00:02:05 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 67A91C009; Mon, 23 Jul 2018 05:03:06 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 05:02:51 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Tomas Bortoli <tomasbortoli@gmail.com>
+Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
+        jiangyiwen@huawei.com, davem@davemloft.net,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+Subject: Re: [PATCH] net/9p/trans_fd.c: fix double list_del() and race in
+ access
+Message-ID: <20180723030251.GB24608@nautica>
+References: <20180720132801.22749-1-tomasbortoli@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180720222114.200311-1-joel@joelfernandes.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180720132801.22749-1-tomasbortoli@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-07-18, 15:21, Joel Fernandes wrote:
-> From: Ruchi Kandoi <kandoiruchi@google.com>
-> 
-> systrace used for tracing for Android systems has carried a patch for
-> many years in the Android tree that traces when the cpufreq limits
-> change.  With the help of this information, systrace can know when the
-> policy limits change and can visually display the data. Lets add
-> upstream support for the same.
-> 
-> Signed-off-by: Ruchi Kandoi <kandoiruchi@google.com>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Tomas Bortoli wrote on Fri, Jul 20, 2018:
+> This patch uses list_del_init() instead of list_del() to eliminate
+> "req_list". This to prevent double list_del()'s calls to the same list
+> from provoking a GPF. Furthermore, this patch fixes an access to
+> "req_list" that was made without getting the relative lock.
+
+Please see comment about locking.
+
+As for list_del to list_del_init, it feels a little wrong to me, but I
+don't have a better idea so let's go with that.
+Do you know what happened to trigger this? one thread running
+p9_conn_cancel then the other thread doing p9_fd_cancel ?
+
+> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+> Reported-by: syzbot+735d926e9d1317c3310c@syzkaller.appspotmail.com
 > ---
-> v1->v2: Minor changes suggested by Viresh
 > 
->  Documentation/trace/events-power.rst |  1 +
->  drivers/cpufreq/cpufreq.c            |  1 +
->  include/trace/events/power.h         | 25 +++++++++++++++++++++++++
->  3 files changed, 27 insertions(+)
+>  net/9p/trans_fd.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/Documentation/trace/events-power.rst b/Documentation/trace/events-power.rst
-> index a77daca75e30..2ef318962e29 100644
-> --- a/Documentation/trace/events-power.rst
-> +++ b/Documentation/trace/events-power.rst
-> @@ -27,6 +27,7 @@ cpufreq.
+> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+> index a64b01c56e30..131bb1f059e6 100644
+> --- a/net/9p/trans_fd.c
+> +++ b/net/9p/trans_fd.c
+> @@ -223,7 +223,9 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
 >  
->    cpu_idle		"state=%lu cpu_id=%lu"
->    cpu_frequency		"state=%lu cpu_id=%lu"
-> +  cpu_frequency_limits	"min=%lu max=%lu cpu_id=%lu"
->  
->  A suspend event is used to indicate the system going in and out of the
->  suspend mode:
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index b0dfd3222013..4fd935df101e 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -2236,6 +2236,7 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
->  
->  	policy->min = new_policy->min;
->  	policy->max = new_policy->max;
-> +	trace_cpu_frequency_limits(policy->min, policy->max, policy->cpu);
->  
->  	policy->cached_target_freq = UINT_MAX;
->  
-> diff --git a/include/trace/events/power.h b/include/trace/events/power.h
-> index 908977d69783..f5bec45108b6 100644
-> --- a/include/trace/events/power.h
-> +++ b/include/trace/events/power.h
-> @@ -148,6 +148,31 @@ DEFINE_EVENT(cpu, cpu_frequency,
->  	TP_ARGS(frequency, cpu_id)
->  );
->  
-> +TRACE_EVENT(cpu_frequency_limits,
-> +
-> +	TP_PROTO(unsigned int min_freq, unsigned int max_freq,
-> +		unsigned int cpu_id),
-> +
-> +	TP_ARGS(min_freq, max_freq, cpu_id),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(u32, min_freq)
-> +		__field(u32, max_freq)
-> +		__field(u32, cpu_id)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->min_freq = min_freq;
-> +		__entry->max_freq = max_freq;
-> +		__entry->cpu_id = cpu_id;
-> +	),
-> +
-> +	TP_printk("min=%lu max=%lu cpu_id=%lu",
-> +		  (unsigned long)__entry->min_freq,
-> +		  (unsigned long)__entry->max_freq,
-> +		  (unsigned long)__entry->cpu_id)
-> +);
-> +
->  TRACE_EVENT(device_pm_callback_start,
->  
->  	TP_PROTO(struct device *dev, const char *pm_ops, int event),
+>  	list_for_each_entry_safe(req, rtmp, &cancel_list, req_list) {
+>  		p9_debug(P9_DEBUG_ERROR, "call back req %p\n", req);
+> -		list_del(&req->req_list);
+> +		spin_lock_irqsave(&m->client->lock, flags);
+> +		list_del_init(&req->req_list);
+> +		spin_unlock_irqrestore(&m->client->lock, flags);
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Just locking around one item if you're afraid it might change won't be
+enough - list_for_each_entry_safe is only "safe" from removing the
+current element from the list yourself, not from other threads messing
+with it, so you'd need to lock around the whole loop if that's what
+you're protecting against.
 
--- 
-viresh
+(Also, since I've taken the other patchs to change spin locks on
+client->lock to spin_lock instead of spin_lock_irqsave, please use that
+function for new locking of that variable - in general just basing your
+patchs off linux-next's master branch is a good idea.)
+
+>  		if (!req->t_err)
+>  			req->t_err = err;
+>  		p9_client_cb(m->client, req, REQ_STATUS_ERROR);
+> @@ -369,7 +371,7 @@ static void p9_read_work(struct work_struct *work)
+>  		spin_lock(&m->client->lock);
+>  		if (m->req->status != REQ_STATUS_ERROR)
+>  			status = REQ_STATUS_RCVD;
+> -		list_del(&m->req->req_list);
+> +		list_del_init(&m->req->req_list);
+>  		spin_unlock(&m->client->lock);
+>  		p9_client_cb(m->client, m->req, status);
+>  		m->rc.sdata = NULL;
+> @@ -684,7 +686,7 @@ static int p9_fd_cancel(struct p9_client *client, struct p9_req_t *req)
+>  	spin_lock(&client->lock);
+>  
+>  	if (req->status == REQ_STATUS_UNSENT) {
+> -		list_del(&req->req_list);
+> +		list_del_init(&req->req_list);
+>  		req->status = REQ_STATUS_FLSHD;
+>  		ret = 0;
+>  	}
+> @@ -701,7 +703,7 @@ static int p9_fd_cancelled(struct p9_client *client, struct p9_req_t *req)
+>  	 * remove it from the list.
+>  	 */
+>  	spin_lock(&client->lock);
+> -	list_del(&req->req_list);
+> +	list_del_init(&req->req_list);
+>  	spin_unlock(&client->lock);
+>  
+>  	return 0;
