@@ -2,151 +2,129 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD0DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBDDECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96F012064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:22:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iAgGII9K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F012064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 04A5120671
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:23:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A5120671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388220AbeGWXZm (ORCPT
+        id S2388226AbeGWX06 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 19:25:42 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48812 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388139AbeGWXZm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 19:25:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=SEv6adUqf6MyrLKas0jvqvHSUNCHgEyx1LEp8ET9iU8=; b=iAgGII9Kta/1jWK+wY+g8B2x9j
-        COadczDUhbbJ5gDSzKXG9foNCS1mN66R0Lc1wRCGntFmG1un3zQfN5wNbRdrfG4SXKP7CcGykNm1s
-        0VYByBp6oJBIau5fGjOZo59lLLPVYcUwcBv307sufWxi2A8lKMiXti+bCd5PPBuqcoEbCj0RT/W1v
-        Zi4ku68yDjUO/92h13Ay4z0mJ0aoBSv2Di3XHL4xqz8cKlm+3QIZNgrfKP/0iYMUUAWbcPuu6oRAD
-        5qwvuZKU6s6clhO8JImOymQbW4e9M+SVVJjze6loeTv1CjCJxS7kFpp0sKDW5vxqLLZ7lqwzCmCVm
-        bRsClIiA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhjDH-0002h4-Vy; Mon, 23 Jul 2018 22:21:56 +0000
-Subject: Re: [PATCH v7 08/12] mfd: intel-peci-client: Add PECI client MFD
- driver
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
-        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
-        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        David Kershner <david.kershner@unisys.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-doc@vger.kernel.org,
-        openbmc@lists.ozlabs.org,
-        James Feist <james.feist@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20180723214751.1733-1-jae.hyun.yoo@linux.intel.com>
- <20180723214751.1733-9-jae.hyun.yoo@linux.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c1abe3ec-fc26-d8b0-c769-e9295577ac05@infradead.org>
-Date:   Mon, 23 Jul 2018 15:21:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 23 Jul 2018 19:26:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57558 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388088AbeGWX05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 19:26:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B182CAF3D;
+        Mon, 23 Jul 2018 22:23:35 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Brian Norris <computersforpeace@gmail.com>
+Date:   Tue, 24 Jul 2018 08:23:27 +1000
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+Subject: Re: [PATCH] mtd: spi-nor: clear Extended Address Reg on switch to 3-byte addressing.
+In-Reply-To: <CAN8TOE-+XpeQ0eLEW3YdAGGtuw5reeuJRZvnMb+QquJycJWLQA@mail.gmail.com>
+References: <874lkmw54j.fsf@notabene.neil.brown.name> <61e255fa-ece4-5566-d63a-730aaa25f18c@gmail.com> <87sh85uzu3.fsf@notabene.neil.brown.name> <a3bb28f9-1185-3dbb-1a1f-1bfe03a8798c@gmail.com> <87efjnvpjl.fsf@notabene.neil.brown.name> <CAN8TOE9Pr2i4tXu8mGuY7xSY5bU_r7UhQ9SxfqYg_M4YDUt0ew@mail.gmail.com> <87tvoppqwa.fsf@notabene.neil.brown.name> <CAN8TOE-+XpeQ0eLEW3YdAGGtuw5reeuJRZvnMb+QquJycJWLQA@mail.gmail.com>
+Message-ID: <87lga1pp5s.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <20180723214751.1733-9-jae.hyun.yoo@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 02:47 PM, Jae Hyun Yoo wrote:
-> This commit adds PECI client MFD driver.
-> 
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Andrew Jeffery <andrew@aj.id.au>
-> Cc: James Feist <james.feist@linux.intel.com>
-> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-> Cc: Joel Stanley <joel@jms.id.au>
-> Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
-> ---
->  drivers/mfd/Kconfig                   |  14 ++
->  drivers/mfd/Makefile                  |   1 +
->  drivers/mfd/intel-peci-client.c       | 182 ++++++++++++++++++++++++++
->  include/linux/mfd/intel-peci-client.h |  81 ++++++++++++
->  4 files changed, 278 insertions(+)
->  create mode 100644 drivers/mfd/intel-peci-client.c
->  create mode 100644 include/linux/mfd/intel-peci-client.h
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index f3fa516011ec..e38b591479d4 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -595,6 +595,20 @@ config MFD_INTEL_MSIC
->  	  Passage) chip. This chip embeds audio, battery, GPIO, etc.
->  	  devices used in Intel Medfield platforms.
->  
-> +config MFD_INTEL_PECI_CLIENT
-> +	bool "Intel PECI client"
-> +	depends on (PECI || COMPILE_TEST)
-> +	select MFD_CORE
-> +	help
-> +	  If you say yes to this option, support will be included for the
-> +	  multi-funtional Intel PECI (Platform Environment Control Interface)
+--=-=-=
+Content-Type: text/plain
 
-	  multi-functional
+On Mon, Jul 23 2018, Brian Norris wrote:
 
-> +	  client. PECI is a one-wire bus interface that provides a communication
-> +	  channel from PECI clients in Intel processors and chipset components
-> +	  to external monitoring or control devices.
-> +
-> +	  Additional drivers must be enabled in order to use the functionality
-> +	  of the device.
-> +
->  config MFD_IPAQ_MICRO
->  	bool "Atmel Micro ASIC (iPAQ h3100/h3600/h3700) Support"
->  	depends on SA1100_H3100 || SA1100_H3600
+> Hi Neil,
+>
+> On Mon, Jul 23, 2018 at 2:45 PM, NeilBrown <neil@brown.name> wrote:
+>> On Mon, Jul 23 2018, Brian Norris wrote:
+>>> On Mon, Apr 9, 2018 at 6:05 PM, NeilBrown <neil@brown.name> wrote:
+>>>> On Mon, Apr 09 2018, Marek Vasut wrote:
+>>>>> On 04/08/2018 11:56 PM, NeilBrown wrote:
+>>>>>> were added to Linux.  They appear to be designed to address a very
+>>>>>> similar situation to mine.  Unfortunately they aren't complete as the
+>>>>>> code to disable 4-byte addressing doesn't follow documented requirements
+>>>>>> (at least for winbond) and doesn't work as intended (at least in one
+>>>>>> case - mine). This code should either be fixed (e.g. with my patch), or removed.
+>>>
+>>> I would (and already did) vote for removal. The shutdown() hook just
+>>> papers over bugs and leads people to think that it is a good solution.
+>>> There's a reason we rejected such patches repeatedly in the past. This
+>>> one slipped through.
+>>
+>> Hi Brian,
+>>  thanks for your thoughts.
+>>  Could you just clarify what you see as the end-game.
+>>  Do you have an alternate approach which can provide reliability for the
+>>  various hardware which currently seems to need these patches?
+>>  Or do you propose that people with this hardware should suffer
+>>  a measurably lower level of reliability than they currently enjoy?
+>
+> I'd suggest following the original thread, which I resurrected:
+>
+> [PATCHv3 2/2] mtd: m25p80: restore the status of SPI flash when exiting
+> https://lkml.org/lkml/2018/7/23/1207
+> https://patchwork.ozlabs.org/patch/845022/
 
+Thanks for the links.
 
--- 
-~Randy
+>
+> I suppose I could CC you on future replies...
+
+No need (though I wouldn't object).  Thanks for the heads-up!
+
+>
+> My current summary: I'd prefer the hack be much more narrowly applied,
+> with a big warning, if we apply it at all. But if we don't merge
+> something to narrow the use of the hack, then yes, I'd prefer a
+> degraded experience for crappy products over today's status quo.
+>
+I'm strongly against degrading experience - partly because it could be
+my experiences, partly because it seems to go against the pragmatic
+basis of Linux - we build this thing because it is useful.
+I don't object to highly focuses handling of specific "quirks" - that
+seems to be an established pattern in Linux.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltWVV8ACgkQOeye3VZi
+gbm8Mw//fiJVOzAYnlgDpxWdpKCNi5tZJdrgb6F/Q/blclyGYdT3OgjUh49Cke8b
+/lixlGRbVM5nRDyLMB0TgeU6Jkb6IeVCA0rC6Vtdizo/kXy61taINap/TysuIrka
+HOlkIBzVYW8FQtsQ1BLNHheLRTMKUUrHJrG4aKfMqGi+rzJ6Xw0HL2F3QwtQL4Hy
+BXNXLUaLJf+HPhTuOgn9/rOICSnJkv0AQIwNc8w6gfyxdOjycGLirCrLFr5fWEcm
+kn/+IY8Esv1uZCJHVwvniawwuMclJUz/kYsyK7B3fEBtlxS4WyKEL1wC7j+cy5WT
+W/CWXRRHK2uMd0qigAweCwHUcURqG/tmGtQ0IdIDs/f96Rv46JBTH50+gssR+wkj
+x5bWxbNCksPD9fKaie0KcdSXA99N3RwA1Y+0wtYEirBjtFeWg/W9oOK1toEf8RPF
+49d/GqtPaXjDGJCgnhDSCke6WVr0CrDHQvXk0tf7jD37f8A2QNkTs/LtTFSGgNJ5
+Ztrwbhz2Bmid99NzvcTfVpDJEKPMHBrXHLFtFE9lfdaYL2k7/VW9/uh7p0j2Wsxt
+YsRbTvLpTz+Wsjl1vNqnVNO9XyNK8vfMAmZC930F6MrERzNlBMW1TMGkk7QwiiIJ
+V53UoIdxDS53mQ+q9P/UAkfYkLeZ3ok/nV/pGVi23jgC0f++o3U=
+=yw0/
+-----END PGP SIGNATURE-----
+--=-=-=--
