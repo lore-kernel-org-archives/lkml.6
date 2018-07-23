@@ -2,120 +2,88 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DDDECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CF5ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF2C20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF2C20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id F3A8720854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:07:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BTU0rhef"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A8720854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388841AbeGWSJa (ORCPT
+        id S2388905AbeGWSJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:09:30 -0400
-Received: from gateway22.websitewelcome.com ([192.185.46.233]:29557 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388200AbeGWSJa (ORCPT
+        Mon, 23 Jul 2018 14:09:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54484 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388200AbeGWSJx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:09:30 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id C5B4614D0F
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 12:07:20 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id heIBfY8E5bXuJheIafezpl; Mon, 23 Jul 2018 12:07:20 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=58708 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fheIA-000ctJ-B5; Mon, 23 Jul 2018 12:06:38 -0500
-Date:   Mon, 23 Jul 2018 12:06:37 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>
-Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] scsi: mptfusion: Fix potential Spectre v1
-Message-ID: <20180723170637.GA19396@embeddedor.com>
+        Mon, 23 Jul 2018 14:09:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=T3WvCznmAx9tET1JqyrE3eU50YVuYPxWbVmmaX4VHow=; b=BTU0rhefCndHdmKT7Ohs+WOeD
+        bRkQpswCVaOYl/be+sarh6HJGeVdxBxhLx26n63fQje/pQXZo+VpI7oiXgVRAklHp2o1utg7lJcU/
+        ZcBnafiuJz/vmnON4B+vgV+1ll8Nyiz5O0BzMZ2fJjgtc0oSkIUNSVxVT3VENnorI1JmS1VvJAbRF
+        Dwdn08tmVHMWaJ+7ib0/G0hfU1ne70EINKzGhZ4WXKcKMmx5NvXgvvzapmXVvP9C0WYP0DpfWbiUT
+        K97wH7PuhlAoYfQia/we/sLgyubG/CfbxWVcpVWEoSxwNm+BdWaeyDyjH9SA4PS7EyFY+wqOSziBP
+        WSwUzcgxg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fheJD-0004O0-Pl; Mon, 23 Jul 2018 17:07:43 +0000
+Subject: Re: [PATCH] btrfs: fix size_t format string
+To:     dsterba@suse.cz, Arnd Bergmann <arnd@arndb.de>,
+        Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
+        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Su Yue <suy.fnst@cn.fujitsu.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180717135236.3673195-1-arnd@arndb.de>
+ <20180717150400.GA3126@twin.jikos.cz>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <544184a7-25ae-55a6-3e81-0e1fa1e5cd1d@infradead.org>
+Date:   Mon, 23 Jul 2018 10:07:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fheIA-000ctJ-B5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:58708
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180717150400.GA3126@twin.jikos.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-port can be indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+On 07/17/2018 08:04 AM, David Sterba wrote:
+> On Tue, Jul 17, 2018 at 03:52:27PM +0200, Arnd Bergmann wrote:
+>> The newly added check_block_group_item() function causes a build warning
+>> on 32-bit architectures:
+>>
+>> fs/btrfs/tree-checker.c: In function 'check_block_group_item':
+>> fs/btrfs/tree-checker.c:404:41: error: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'unsigned int' [-Werror=format=]
+>>
+>> The type of a sizeof() expression is size_t, which is correctly printed
+>> using the %zu format string.
+>>
+>> Fixes: 9dc16aad5660 ("btrfs: tree-checker: Verify block_group_item")
+> 
+> Folded to the commit, thanks.
+> 
 
-This issue was detected with the help of Smatch:
+Hi David,
+Where did this patch end up?  linux-next-20180723 is still showing this
+format warning.
 
-drivers/message/fusion/mptctl.c:1360 mptctl_getiocinfo() warn:
-potential spectre issue 'ioc->pfacts'
-
-Fix this by sanitizing port before using it to index ioc->pfacts
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/message/fusion/mptctl.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
-index 4470630..6751a40 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -66,6 +66,9 @@
- #include <scsi/scsi_host.h>
- #include <scsi/scsi_tcq.h>
- 
-+/* Hardening for Spectre-v1 */
-+#include <linux/nospec.h>
-+
- #define COPYRIGHT	"Copyright (c) 1999-2008 LSI Corporation"
- #define MODULEAUTHOR	"LSI Corporation"
- #include "mptbase.h"
-@@ -1306,7 +1309,7 @@ mptctl_getiocinfo (unsigned long arg, unsigned int data_size)
- 		kfree(karg);
- 		return -EINVAL;
- 	}
--	port = karg->hdr.port;
-+	port = array_index_nospec(karg->hdr.port, 2);
- 
- 	karg->port = port;
- 	pdev = (struct pci_dev *) ioc->pcidev;
+thanks,
 -- 
-2.7.4
-
+~Randy
