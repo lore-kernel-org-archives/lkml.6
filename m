@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0E6ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DC4ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2186020685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:27:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2186020685
+	by mail.kernel.org (Postfix) with ESMTP id 5BCCE20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:27:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BCCE20685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388313AbeGWV3y (ORCPT
+        id S2388329AbeGWV34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:29:54 -0400
-Received: from sauhun.de ([88.99.104.3]:51256 "EHLO pokefinder.org"
+        Mon, 23 Jul 2018 17:29:56 -0400
+Received: from sauhun.de ([88.99.104.3]:51290 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388149AbeGWV3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:29:52 -0400
+        id S2388280AbeGWV3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 17:29:55 -0400
 Received: from localhost (p54B3377D.dip0.t-ipconnect.de [84.179.55.125])
-        by pokefinder.org (Postfix) with ESMTPSA id 9EE2A631A4C;
-        Mon, 23 Jul 2018 22:26:57 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id B5D24631A53;
+        Mon, 23 Jul 2018 22:27:01 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length' quirk
-Date:   Mon, 23 Jul 2018 22:26:12 +0200
-Message-Id: <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 11/12] i2c: xlr: use core to detect 'no zero length' quirk
+Date:   Mon, 23 Jul 2018 22:26:15 +0200
+Message-Id: <20180723202617.15230-12-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
 References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
@@ -51,31 +48,52 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Only build tested.
 
- drivers/i2c/busses/i2c-tegra.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-xlr.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 60c8561fbe65..437294ea2f0a 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -684,9 +684,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+diff --git a/drivers/i2c/busses/i2c-xlr.c b/drivers/i2c/busses/i2c-xlr.c
+index 484bfa15d58e..34cd4b308540 100644
+--- a/drivers/i2c/busses/i2c-xlr.c
++++ b/drivers/i2c/busses/i2c-xlr.c
+@@ -173,9 +173,6 @@ static int xlr_i2c_tx(struct xlr_i2c_private *priv,  u16 len,
+ 	u8 offset;
+ 	u32 xfer;
  
- 	tegra_i2c_flush_fifos(i2c_dev);
- 
--	if (msg->len == 0)
--		return -EINVAL;
+-	if (!len)
+-		return -EOPNOTSUPP;
 -
- 	i2c_dev->msg_buf = msg->buf;
- 	i2c_dev->msg_buf_remaining = msg->len;
- 	i2c_dev->msg_err = I2C_ERR_NONE;
-@@ -831,6 +828,7 @@ static const struct i2c_algorithm tegra_i2c_algo = {
+ 	offset = buf[0];
+ 	xlr_i2c_wreg(priv->iobase, XLR_I2C_ADDR, offset);
+ 	xlr_i2c_wreg(priv->iobase, XLR_I2C_DEVADDR, addr);
+@@ -241,9 +238,6 @@ static int xlr_i2c_rx(struct xlr_i2c_private *priv, u16 len, u8 *buf, u16 addr)
+ 	unsigned long timeout, stoptime, checktime;
+ 	int nbytes, timedout;
  
- /* payload size is only 12 bit */
- static const struct i2c_adapter_quirks tegra_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
- 	.max_read_len = 4096,
- 	.max_write_len = 4096,
+-	if (!len)
+-		return -EOPNOTSUPP;
+-
+ 	xlr_i2c_wreg(priv->iobase, XLR_I2C_CFG,
+ 			XLR_I2C_CFG_NOADDR | priv->cfg->cfg_extra);
+ 	xlr_i2c_wreg(priv->iobase, XLR_I2C_BYTECNT, len - 1);
+@@ -340,6 +334,10 @@ static const struct i2c_algorithm xlr_i2c_algo = {
+ 	.functionality	= xlr_func,
  };
+ 
++static const struct i2c_adapter_quirks xlr_i2c_quirks = {
++	.flags = I2C_AQ_NO_ZERO_LEN,
++};
++
+ static const struct xlr_i2c_config xlr_i2c_config_default = {
+ 	.status_busy	= XLR_I2C_BUS_BUSY,
+ 	.cfg_extra	= 0,
+@@ -427,6 +425,7 @@ static int xlr_i2c_probe(struct platform_device *pdev)
+ 	priv->adap.owner	= THIS_MODULE;
+ 	priv->adap.algo_data	= priv;
+ 	priv->adap.algo		= &xlr_i2c_algo;
++	priv->adap.quirks	= &xlr_i2c_quirks;
+ 	priv->adap.nr		= pdev->id;
+ 	priv->adap.class	= I2C_CLASS_HWMON;
+ 	snprintf(priv->adap.name, sizeof(priv->adap.name), "xlr-i2c");
 -- 
 2.11.0
 
