@@ -2,147 +2,173 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A50ACC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAA4C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6047C20779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 253BB20779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:07:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="esRV64x/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6047C20779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PJhaCcRV";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mgw5m8l9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 253BB20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387792AbeGWEFx (ORCPT
+        id S2387811AbeGWEGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 00:05:53 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45612 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387758AbeGWEFw (ORCPT
+        Mon, 23 Jul 2018 00:06:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51008 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeGWEGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 00:05:52 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 94-v6so7605752ple.12
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 20:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=IN5o1a/MR10AYDmv1CeefaHwvyUbJkVcoUSVobDTOvY=;
-        b=esRV64x/mvP4nCgS0gMM0Cbypt4nS8+gKdsJ1dO/MPHdGQ6f2Lk81Npj8L8HZAdc1c
-         6kGOlh3XcH94KZTAUnTqhU3LI8TasnnN2Qg74U2Ipoz7IhLEVyQ8gSxZQHyHqEYNJEyd
-         nuqrPe4+R+sT9ZT59/orGkHzmw1Ruh3Dv6lcw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IN5o1a/MR10AYDmv1CeefaHwvyUbJkVcoUSVobDTOvY=;
-        b=tX1sac7Il7Nob8/Kc5Q0HFHd1J+lDxK4tyz181hK6mXVXf+8uhSGKc4CtX9aPV7TBM
-         EwusQP8BgD+LiRMrVF0mt5iHcMBQA8Xfps+ACN5Bc4dgaXgiSkZJHigU8bB/OT6WBqmq
-         ZjgDJquiHoVNDvG4oFgJPSCcqR7zD3LML0QVTenR0Zne/4ZD3eABOR5mM9stHdevhzdS
-         oBA609kRTIsyjJKD+ePc0ctt/JVWLf6sUJQCdW77DVYieaLVLEEV/Z0+8gHArKbd2SoX
-         qmxMlSuIj2o/ZfJKXxHyHU8Fhgj84taAh+7qHmWjo8tayP0jLjY9q16d6GtTTBmuEmAF
-         /EMw==
-X-Gm-Message-State: AOUpUlFS2Gn17/YeaT5kLy1IsF6h5SHmH9fgelHh3Opq5VmiCYgsrtge
-        YE/6TsCmYG36+VPDeomJ0FlgfQ==
-X-Google-Smtp-Source: AAOMgpdX57PXt/0exz6wwt6ERA+LMBBHn6c5hy3bJ+xgrkEZ/zL0s4/gPL3uJGQR9jM+5H4MpUEVvQ==
-X-Received: by 2002:a17:902:2e83:: with SMTP id r3-v6mr11326905plb.80.1532315213661;
-        Sun, 22 Jul 2018 20:06:53 -0700 (PDT)
-Received: from localhost ([122.172.26.112])
-        by smtp.gmail.com with ESMTPSA id f5-v6sm13092634pgn.34.2018.07.22.20.06.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 20:06:53 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Wei Xu <xuwei5@hisilicon.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Mon, 23 Jul 2018 00:06:13 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1FBE660BE1; Mon, 23 Jul 2018 03:07:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532315233;
+        bh=fKRHmpveHnxqMdrFhKP9RdAadoPKpmpvBtNU4U6d2rI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PJhaCcRVs/ql3lASCcGYXqW4GdW39yurGfsXAReQDci2DEvGvuN1EfXGsc2hpPULj
+         SecHVLVms+CPo9leqg12nHALP0+tWaz4OfsrcYdXJCMg+UN32v/K5MC/eiOs3bSGhd
+         cAduHrkryNvZ/d88i6O1LOFhdR8j63DzxMKNCis0=
+Received: from [10.206.24.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: asutoshd@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 65EF660285;
+        Mon, 23 Jul 2018 03:07:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532315230;
+        bh=fKRHmpveHnxqMdrFhKP9RdAadoPKpmpvBtNU4U6d2rI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Mgw5m8l9FRn29N9uly5Os29hsyt1dD5Q7U95jd7ivyPio9NkboyDakgD3t+ZzOhtF
+         HlwoilboxBVISrDJKJm6en5norOYvbj59Whm1sV07r7NJj6lqSGWJw1rz1nuW2K1sU
+         Fj+MvT7KhTybwbu94YarYtvBnlZ4Zm4KLygRmV+M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65EF660285
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH v1 7/9] scsi: ufs: add UFS power collapse support during
+ hibern8
+To:     Subhash Jadavani <subhashj@codeaurora.org>
+Cc:     cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: hisilicon: Add missing clocks property for CPUs
-Date:   Mon, 23 Jul 2018 08:36:42 +0530
-Message-Id: <6de0dde994326b3fdc2b746e22fdf1afe18067d2.1532315177.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
+References: <cover.1530880006.git.asutoshd@codeaurora.org>
+ <13f4fbc290b5e3cfea95f49d65ddb2bf99a15cdb.1530880007.git.asutoshd@codeaurora.org>
+ <e14fff20f9464677967fac6d9c5b905c@codeaurora.org>
+From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <8607cabf-e6ae-0a53-2139-d2279d458a9c@codeaurora.org>
+Date:   Mon, 23 Jul 2018 08:37:04 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <e14fff20f9464677967fac6d9c5b905c@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clocks property should either be present for all the CPUs of a
-cluster or none. If these are present only for a subset of CPUs of a
-cluster then things will start falling apart as soon as the CPUs are
-brought online in a different order. For example, this will happen
-because the operating system looks for such properties in the CPU node
-it is trying to bring up, so that it can register a cooling device.
+On 7/21/2018 5:28 AM, Subhash Jadavani wrote:
+> On 2018-07-06 05:30, Asutosh Das wrote:
+>> From: Subhash Jadavani <subhashj@codeaurora.org>
+>>
+>> UFS host controller hardware may allow the host controller
+>> to be power collapsed when UFS link is hibern8 state, this
+>> change allows the UFS host controller to be power collapsed
+>> during hibern8.
+>>
+>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+>> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+>> ---
+>>  drivers/scsi/ufs/ufshcd.c |  8 ++++++--
+>>  drivers/scsi/ufs/ufshcd.h | 13 ++++++++++++-
+>>  2 files changed, 18 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>> index 40d9c35..50588cf 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -7673,13 +7673,17 @@ static int ufshcd_vreg_set_hpm(struct ufs_hba 
+>> *hba)
+>>
+>>  static void ufshcd_hba_vreg_set_lpm(struct ufs_hba *hba)
+>>  {
+>> -    if (ufshcd_is_link_off(hba))
+>> +    if (ufshcd_is_link_off(hba) ||
+>> +        (ufshcd_is_link_hibern8(hba)
+>> +         && ufshcd_is_power_collapse_during_hibern8_allowed(hba)))
+>>          ufshcd_setup_hba_vreg(hba, false);
+> 
+> I guess we have to handle the UFS host controller power collapse via 
+> "power-domains" which would requires us to specify the "power-domains" 
+> attribute under UFS controller's DT node and then linux core power 
+> framework should automatically collapse the UFS controller post runtime 
+> suspend. This also means we can't power collapse UFS controller 
+> aggressively (as part of clock gating) but it should still be fine from 
+> power point of view.
+> 
+>>  }
+>>
+>>  static void ufshcd_hba_vreg_set_hpm(struct ufs_hba *hba)
+>>  {
+>> -    if (ufshcd_is_link_off(hba))
+>> +    if (ufshcd_is_link_off(hba) ||
+>> +        (ufshcd_is_link_hibern8(hba)
+>> +         && ufshcd_is_power_collapse_during_hibern8_allowed(hba)))
+>>          ufshcd_setup_hba_vreg(hba, true);
+>>  }
+>>
+>> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+>> index f79a639..8c5f987 100644
+>> --- a/drivers/scsi/ufs/ufshcd.h
+>> +++ b/drivers/scsi/ufs/ufshcd.h
+>> @@ -728,7 +728,12 @@ struct ufs_hba {
+>>       * to do background operation when it's active but it might degrade
+>>       * the performance of ongoing read/write operations.
+>>       */
+>> -#define UFSHCD_CAP_KEEP_AUTO_BKOPS_ENABLED_EXCEPT_SUSPEND (1 << 5)
+>> +#define UFSHCD_CAP_KEEP_AUTO_BKOPS_ENABLED_EXCEPT_SUSPEND (1 << 6)
+>> +    /*
+>> +     * If host controller hardware can be power collapsed when UFS 
+>> link is
+>> +     * in hibern8 then enable this cap.
+>> +     */
+>> +#define UFSHCD_CAP_POWER_COLLAPSE_DURING_HIBERN8 (1 << 7)
+>>
+>>      struct devfreq *devfreq;
+>>      struct ufs_clk_scaling clk_scaling;
+>> @@ -764,6 +769,12 @@ static inline bool
+>> ufshcd_is_hibern8_on_idle_allowed(struct ufs_hba *hba)
+>>      return hba->caps & UFSHCD_CAP_HIBERN8_ENTER_ON_IDLE;
+>>  }
+>>
+>> +static inline bool ufshcd_is_power_collapse_during_hibern8_allowed(
+>> +                        struct ufs_hba *hba)
+>> +{
+>> +    return !!(hba->caps & UFSHCD_CAP_POWER_COLLAPSE_DURING_HIBERN8);
+>> +}
+>> +
+>>  static inline bool ufshcd_is_intr_aggr_allowed(struct ufs_hba *hba)
+>>  {
+>>  /* DWC UFS Core has the Interrupt aggregation feature but is not 
+>> detectable*/
+> 
 
-Add missing clocks property.
+Thanks. I'll check the 'power-domains' part and get back with the changes.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-index 919d36b91bf3..aec9e371c2a7 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-@@ -99,6 +99,7 @@
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
- 			next-level-cache = <&CLUSTER0_L2>;
-+			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
-@@ -111,6 +112,7 @@
- 			reg = <0x0 0x2>;
- 			enable-method = "psci";
- 			next-level-cache = <&CLUSTER0_L2>;
-+			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
-@@ -123,6 +125,7 @@
- 			reg = <0x0 0x3>;
- 			enable-method = "psci";
- 			next-level-cache = <&CLUSTER0_L2>;
-+			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
-@@ -135,6 +138,7 @@
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
- 			next-level-cache = <&CLUSTER1_L2>;
-+			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
-@@ -147,6 +151,7 @@
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
- 			next-level-cache = <&CLUSTER1_L2>;
-+			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
-@@ -159,6 +164,7 @@
- 			reg = <0x0 0x102>;
- 			enable-method = "psci";
- 			next-level-cache = <&CLUSTER1_L2>;
-+			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
-@@ -171,6 +177,7 @@
- 			reg = <0x0 0x103>;
- 			enable-method = "psci";
- 			next-level-cache = <&CLUSTER1_L2>;
-+			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
 -- 
-2.18.0.rc1.242.g61856ae69a2c
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
