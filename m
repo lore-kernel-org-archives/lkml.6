@@ -2,716 +2,1548 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOCALPART_IN_SUBJECT,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D3FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D4AECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8471320685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:00:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2881C20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:01:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SZTpnwYc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8471320685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H1FhOEe8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NDj9gmcK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2881C20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388252AbeGWLBI (ORCPT
+        id S2388318AbeGWLBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:01:08 -0400
-Received: from ozlabs.org ([203.11.71.1]:44015 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388071AbeGWLBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:01:08 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 23 Jul 2018 07:01:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39518 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388071AbeGWLBu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:01:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5677E608C8; Mon, 23 Jul 2018 10:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532340083;
+        bh=cs2CkN5rLLd50+7ue6JF9SASQK1DNMGJ5zgzfjrZk3k=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=H1FhOEe8vnBT7RE9/Xpj/xdGGp6zEF4FxPPQWWVopbqiKiM/4uoO/yBcLGLiTtNb3
+         Wm8WjAmayIXv7R3fXFThUbRlXuqhPu7mQ/cgNRb0wV8D0D+iwUBZXevm+XRdARsUuB
+         DreZTX1icKarjc5ka3FFIjy8NhxKgB2AZNpxPfSY=
+Received: from [10.252.222.164] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41YxnZ5CWkz9s3N;
-        Mon, 23 Jul 2018 20:00:34 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532340034;
-        bh=euesMIrkGgY+pPMdTzBb2X0UVOe3ZleZthEDbufw7L0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=SZTpnwYcOsaKjipJ4ceFbQellU5SBXcJ58zbZp1dNYr/8wIrKR/f+yJxEGDY2SH5J
-         z0/8caLb5Sy8wupFEcw6jt7yOMymdF5xiaqIsiilS8U2RrsNEghWIQAhyXYINqziAE
-         u0PmKRJNDZA+47UrnOSo0T9svXU05m3GMSye++1W/CGgewYQ1Y8FPv6ciCSsKpKIZJ
-         gAVNF3CLf9Fd0kHa/QJRZJZ6snMB8oLUSyrgihgFoFUIZkyPWt9BL3GEPg3gtnhF5m
-         5rD9d16BPt8Kun6d5HJglutt5jnQozo7d/NR1UMRnCZqUne1JG7UZjGD3VDGrzJHZz
-         cxv5g12vjfUlg==
-Date:   Mon, 23 Jul 2018 20:00:32 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jul 23
-Message-ID: <20180723200032.221a8f18@canb.auug.org.au>
+        (Authenticated sender: vviswana@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 893B060588;
+        Mon, 23 Jul 2018 10:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532340078;
+        bh=cs2CkN5rLLd50+7ue6JF9SASQK1DNMGJ5zgzfjrZk3k=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NDj9gmcKR5NfGfnsElaBTFclfXd0Q/ZoyzVnWTO1/HfMHIH2EtlU0mVdZ1PSZ4iiT
+         MmcafDmVkyO1Aom3EFqE07JudrSQdg7Sgvhm6LnpQqP/olE/LOQpn92cNTV34758wX
+         6o/f48eoTLP/w4ki1dzN73h2Z9rTtbN3NCEnswGk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 893B060588
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
+Subject: Re: [PATCH RFC 2/7] mmc: core: devfreq: Add devfreq based clock
+ scaling support
+To:     Sayali Lokhande <sayalil@codeaurora.org>, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
+        asutoshd@codeaurora.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, bjorn.andersson@linaro.org,
+        riteshh@codeaurora.org, vbadigan@codeaurora.org,
+        Talel Shenhar <tatias@codeaurora.org>
+References: <1531475583-7050-1-git-send-email-sayalil@codeaurora.org>
+ <1531475583-7050-3-git-send-email-sayalil@codeaurora.org>
+From:   Vijay Viswanath <vviswana@codeaurora.org>
+Message-ID: <36492d8e-9cc7-0462-5366-3612a4214136@codeaurora.org>
+Date:   Mon, 23 Jul 2018 15:31:11 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tDif7Mr/O8TRGtup5+t4KHz"; protocol="application/pgp-signature"
+In-Reply-To: <1531475583-7050-3-git-send-email-sayalil@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/tDif7Mr/O8TRGtup5+t4KHz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Sayali,
 
-Hi all,
+On 7/13/2018 3:22 PM, Sayali Lokhande wrote:
+> This change adds the use of devfreq to MMC.
+> Both eMMC and SD card will use it.
+> For some workloads, such as video playback, it isn't
+> necessary for these cards to run at high speed.
+> Running at lower frequency, for example 52MHz, in such
+> cases can still meet the deadlines for data transfers.
+> Scaling down the clock frequency dynamically has power
+> savings not only because the bus is running at lower frequency
+> but also has an advantage of scaling down the system core
+> voltage, if supported.
+> Provide an ondemand clock scaling support similar to the
+> cpufreq ondemand governor having two thresholds,
+> up_threshold and down_threshold to decide whether to
+> increase the frequency or scale it down respectively.
+> The sampling interval is in the order of milliseconds.
+> If sampling interval is too low, frequent switching of
+> frequencies can lead to high power consumption and if
+> sampling interval is too high, the clock scaling logic
+> would take long time to realize that the underlying
+> hardware (controller and card) is busy and scale up
+> the clocks.
+> 
+> Signed-off-by: Talel Shenhar <tatias@codeaurora.org>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>   .../devicetree/bindings/mmc/sdhci-msm.txt          |  10 +
+>   drivers/mmc/core/core.c                            | 560 +++++++++++++++++++++
+>   drivers/mmc/core/core.h                            |   7 +
+>   drivers/mmc/core/debugfs.c                         |  46 ++
+>   drivers/mmc/core/host.c                            |   8 +
+>   drivers/mmc/core/mmc.c                             | 200 +++++++-
+>   drivers/mmc/core/sd.c                              |  72 ++-
+>   drivers/mmc/host/sdhci-msm.c                       |  37 ++
+>   drivers/mmc/host/sdhci-pltfm.c                     |  11 +
+>   drivers/mmc/host/sdhci.c                           |  27 +
+>   drivers/mmc/host/sdhci.h                           |   8 +
+>   include/linux/mmc/card.h                           |   5 +
+>   include/linux/mmc/host.h                           |  70 +++
+>   13 files changed, 1059 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> index 502b3b8..bd8470a 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> @@ -26,6 +26,15 @@ Required properties:
+>   	"cal"	- reference clock for RCLK delay calibration (optional)
+>   	"sleep"	- sleep clock for RCLK delay calibration (optional)
+>   
+> +Optional Properties:
+> +- qcom,devfreq,freq-table - specifies supported frequencies for clock scaling.
+> +				    Clock scaling logic shall toggle between these frequencies based
+> +				    on card load. In case the defined frequencies are over or below
+> +				    the supported card frequencies, they will be overridden
+> +				    during card init. In case this entry is not supplied,
+> +				    the driver will construct one based on the card
+> +				    supported max and min frequencies.
+> +				    The frequencies must be ordered from lowest to highest.
+>   Example:
+>   
+>   	sdhc_1: sdhci@f9824900 {
+> @@ -43,6 +52,7 @@ Example:
+>   
+>   		clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
+>   		clock-names = "core", "iface";
+> +		qcom,devfreq,freq-table = <52000000 200000000>;
+>   	};
+>   
+>   	sdhc_2: sdhci@f98a4900 {
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index 281826d..0eaee42 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -14,6 +14,7 @@
+>   #include <linux/init.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/completion.h>
+> +#include <linux/devfreq.h>
+>   #include <linux/device.h>
+>   #include <linux/delay.h>
+>   #include <linux/pagemap.h>
+> @@ -112,6 +113,556 @@ static inline void mmc_should_fail_request(struct mmc_host *host,
+>   
+>   #endif /* CONFIG_FAIL_MMC_REQUEST */
+>   
+> +static bool mmc_is_data_request(struct mmc_request *mmc_request)
+> +{
+> +	switch (mmc_request->cmd->opcode) {
+> +	case MMC_READ_SINGLE_BLOCK:
+> +	case MMC_READ_MULTIPLE_BLOCK:
+> +	case MMC_WRITE_BLOCK:
+> +	case MMC_WRITE_MULTIPLE_BLOCK:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +static void mmc_clk_scaling_start_busy(struct mmc_host *host, bool lock_needed)
+> +{
+> +	struct mmc_devfeq_clk_scaling *clk_scaling = &host->clk_scaling;
+> +
+> +	if (!clk_scaling->enable)
+> +		return;
+> +
+> +	if (lock_needed)
+> +		spin_lock_bh(&clk_scaling->lock);
+> +
+> +	clk_scaling->start_busy = ktime_get();
+> +	clk_scaling->is_busy_started = true;
+> +
+> +	if (lock_needed)
+> +		spin_unlock_bh(&clk_scaling->lock);
+> +}
+> +
+> +static void mmc_clk_scaling_stop_busy(struct mmc_host *host, bool lock_needed)
+> +{
+> +	struct mmc_devfeq_clk_scaling *clk_scaling = &host->clk_scaling;
+> +
+> +	if (!clk_scaling->enable)
+> +		return;
+> +
+> +	if (lock_needed)
+> +		spin_lock_bh(&clk_scaling->lock);
+> +
+> +	if (!clk_scaling->is_busy_started) {
+> +		WARN_ON(1);
+> +		goto out;
+> +	}
+> +
+> +	clk_scaling->total_busy_time_us +=
+> +		ktime_to_us(ktime_sub(ktime_get(),
+> +			clk_scaling->start_busy));
+> +	pr_debug("%s: accumulated busy time is %lu usec\n",
+> +		mmc_hostname(host), clk_scaling->total_busy_time_us);
+> +	clk_scaling->is_busy_started = false;
+> +
+> +out:
+> +	if (lock_needed)
+> +		spin_unlock_bh(&clk_scaling->lock);
+> +}
+> +
+> +/**
+> + * mmc_can_scale_clk() - Check clock scaling capability
+> + * @host: pointer to mmc host structure
+> + */
+> +bool mmc_can_scale_clk(struct mmc_host *host)
+> +{
+> +	if (!host) {
+> +		pr_err("bad host parameter\n");
+> +		WARN_ON(1);
+> +		return false;
+> +	}
+> +
+> +	return host->caps2 & MMC_CAP2_CLK_SCALE;
+> +}
+> +EXPORT_SYMBOL(mmc_can_scale_clk);
+> +
+> +static int mmc_devfreq_get_dev_status(struct device *dev,
+> +		struct devfreq_dev_status *status)
+> +{
+> +	struct mmc_host *host = container_of(dev, struct mmc_host, class_dev);
+> +	struct mmc_devfeq_clk_scaling *clk_scaling;
+> +
+> +	if (!host) {
+> +		pr_err("bad host parameter\n");
+> +		WARN_ON(1);
+> +		return -EINVAL;
+> +	}
+> +
+> +	clk_scaling = &host->clk_scaling;
+> +
+> +	if (!clk_scaling->enable)
+> +		return 0;
+> +
+> +	spin_lock_bh(&clk_scaling->lock);
+> +
+> +	/* accumulate the busy time of ongoing work */
+> +	memset(status, 0, sizeof(*status));
+> +	if (clk_scaling->is_busy_started) {
+> +			mmc_clk_scaling_stop_busy(host, false);
+> +			mmc_clk_scaling_start_busy(host, false);
+> +	}
+> +
+> +	status->busy_time = clk_scaling->total_busy_time_us;
+> +	status->total_time = ktime_to_us(ktime_sub(ktime_get(),
+> +		clk_scaling->measure_interval_start));
+> +	clk_scaling->total_busy_time_us = 0;
+> +	status->current_frequency = clk_scaling->curr_freq;
+> +	clk_scaling->measure_interval_start = ktime_get();
+> +
+> +	pr_debug("%s: status: load = %lu%% - total_time=%lu busy_time = %lu, clk=%lu\n",
+> +		mmc_hostname(host),
+> +		(status->busy_time*100)/status->total_time,
+> +		status->total_time, status->busy_time,
+> +		status->current_frequency);
+> +
+> +	spin_unlock_bh(&clk_scaling->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static bool mmc_is_valid_state_for_clk_scaling(struct mmc_host *host)
+> +{
+> +	struct mmc_card *card = host->card;
+> +	u32 status;
+> +
+> +	/*
+> +	 * If the current partition type is RPMB, clock switching may not
+> +	 * work properly as sending tuning command (CMD21) is illegal in
+> +	 * this mode.
+> +	 */
+> +	if (!card || (mmc_card_mmc(card) &&
+> +			(card->part_curr == EXT_CSD_PART_CONFIG_ACC_RPMB ||
+> +			mmc_card_doing_bkops(card))))
+> +		return false;
+> +
+> +	if (mmc_send_status(card, &status)) {
+> +		pr_err("%s: Get card status fail\n", mmc_hostname(card->host));
+> +		return false;
+> +	}
+> +
+> +	return R1_CURRENT_STATE(status) == R1_STATE_TRAN;
+> +}
+> +
+> +int mmc_clk_update_freq(struct mmc_host *host,
+> +		unsigned long freq, enum mmc_load state)
+> +{
+> +	int err = 0;
+> +
+> +	if (!host) {
+> +		pr_err("bad host parameter\n");
+> +		WARN_ON(1);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* make sure the card supports the frequency we want */
+> +	if (unlikely(freq > host->card->clk_scaling_highest)) {
+> +		freq = host->card->clk_scaling_highest;
+> +		pr_warn("%s: %s: frequency was overridden to %lu\n",
+> +				mmc_hostname(host), __func__,
+> +				host->card->clk_scaling_highest);
+> +	}
+> +
+> +	if (unlikely(freq < host->card->clk_scaling_lowest)) {
+> +		freq = host->card->clk_scaling_lowest;
+> +		pr_warn("%s: %s: frequency was overridden to %lu\n",
+> +			mmc_hostname(host), __func__,
+> +			host->card->clk_scaling_lowest);
+> +	}
+> +
+> +	if (freq == host->clk_scaling.curr_freq)
+> +		goto out;
+> +
+> +	if (host->ops->notify_load) {
+> +		err = host->ops->notify_load(host, state);
+> +		if (err) {
+> +			pr_err("%s: %s: fail on notify_load\n",
+> +				mmc_hostname(host), __func__);
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	if (!mmc_is_valid_state_for_clk_scaling(host)) {
+> +		pr_debug("%s: invalid state for clock scaling - skipping",
+> +			mmc_hostname(host));
+> +		goto invalid_state;
+> +	}
+> +
+> +	err = host->bus_ops->change_bus_speed(host, &freq);
+> +	if (!err)
+> +		host->clk_scaling.curr_freq = freq;
+> +	else
+> +		pr_err("%s: %s: failed (%d) at freq=%lu\n",
+> +			mmc_hostname(host), __func__, err, freq);
+> +
+> +invalid_state:
+> +	if (err) {
+> +		/* restore previous state */
+> +		if (host->ops->notify_load)
+> +			if (host->ops->notify_load(host,
+> +				host->clk_scaling.state))
+> +				pr_err("%s: %s: fail on notify_load restore\n",
+> +					mmc_hostname(host), __func__);
+> +	}
+> +out:
+> +	return err;
+> +}
+> +EXPORT_SYMBOL(mmc_clk_update_freq);
+> +
+> +static int mmc_devfreq_set_target(struct device *dev,
+> +				unsigned long *freq, u32 devfreq_flags)
+> +{
+> +	struct mmc_host *host = container_of(dev, struct mmc_host, class_dev);
+> +	struct mmc_devfeq_clk_scaling *clk_scaling;
+> +	int err = 0;
+> +	int abort;
+> +	unsigned long pflags = current->flags;
+> +
+> +	/* Ensure scaling would happen even in memory pressure conditions */
+> +	current->flags |= PF_MEMALLOC;
+> +
+> +	if (!(host && freq)) {
+> +		pr_err("%s: unexpected host/freq parameter\n", __func__);
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	clk_scaling = &host->clk_scaling;
+> +
+> +	if (!clk_scaling->enable)
+> +		goto out;
+> +
+> +	pr_debug("%s: target freq = %lu (%s)\n", mmc_hostname(host),
+> +		*freq, current->comm);
+> +
+> +	if ((clk_scaling->curr_freq == *freq) ||
+> +		clk_scaling->skip_clk_scale_freq_update)
+> +		goto out;
+> +
 
-Changes since 20180720:
+Suppose devfreq issued a low_freq request while mmc is handling a 
+request already issued to card (so mmc host is claimed by issuing 
+context). So we will set target freq to LOW_FREQ and quit from here.
+Now, if devfreq comes again and issues a HIGH_FREQ request (before mmc 
+thread had a chance to change the freq to LOW in mmc_deferred_scaling), 
+we will skip this devfreq request (since current freq is high already). 
+Then, when mmc thread comes, it will execute deferred scaling to LOW_FREQ.
 
-Dropped trees: xarray, ida (complex conflicts)
+How about comparing *freq with clk_scaling->target_freq ?
 
-The drm-msm tree gained a conflict against the drm tree and a build
-failure due to an interaction with the drm tree for which I added a
-merge fix patch.
+> +	/* No need to scale the clocks if they are gated */
+> +	if (!host->ios.clock)
+> +		goto out;
+> +
+> +	spin_lock_bh(&clk_scaling->lock);
+> +	if (clk_scaling->clk_scaling_in_progress) {
+> +		pr_debug("%s: clocks scaling is already in-progress by mmc thread\n",
+> +			mmc_hostname(host));
+> +		spin_unlock_bh(&clk_scaling->lock);
+> +		goto out;
+> +	}
+> +	clk_scaling->need_freq_change = true;
+> +	clk_scaling->target_freq = *freq;
+> +	clk_scaling->state = *freq < clk_scaling->curr_freq ?
+> +		MMC_LOAD_LOW : MMC_LOAD_HIGH;
+> +	spin_unlock_bh(&clk_scaling->lock);
+> +
+> +	abort = __mmc_claim_host(host, NULL, &clk_scaling->devfreq_abort);
+> +	if (abort)
+> +		goto out;
+> +
+> +	/*
+> +	 * In case we were able to claim host there is no need to
+> +	 * defer the frequency change. It will be done now
+> +	 */
+> +	clk_scaling->need_freq_change = false;
+> +
+> +	err = mmc_clk_update_freq(host, *freq, clk_scaling->state);
+> +	if (err && err != -EAGAIN) {
+> +		pr_err("%s: clock scale to %lu failed with error %d\n",
+> +			mmc_hostname(host), *freq, err);
+> +	} else {
+> +		pr_debug("%s: clock change to %lu finished successfully (%s)\n",
+> +			mmc_hostname(host), *freq, current->comm);
+> +	}
+> +
+> +	mmc_release_host(host);
+> +out:
+> +	current->flags &= ~PF_MEMALLOC;
+> +	current->flags |= pflags & PF_MEMALLOC;
+> +	return err;
+> +}
+> +
+> +/**
+> + * mmc_deferred_scaling() - scale clocks from data path (mmc thread context)
+> + * @host: pointer to mmc host structure
+> + *
+> + * This function does clock scaling in case "need_freq_change" flag was set
+> + * by the clock scaling logic.
+> + */
+> +void mmc_deferred_scaling(struct mmc_host *host)
+> +{
+> +	unsigned long target_freq;
+> +	int err;
+> +
+> +	if (!host->clk_scaling.enable)
+> +		return;
+> +
+> +	spin_lock_bh(&host->clk_scaling.lock);
+> +
+> +	if (host->clk_scaling.clk_scaling_in_progress ||
+> +		!(host->clk_scaling.need_freq_change)) {
+> +		spin_unlock_bh(&host->clk_scaling.lock);
+> +		return;
+> +	}
+> +
+> +
+> +	atomic_inc(&host->clk_scaling.devfreq_abort);
+> +	target_freq = host->clk_scaling.target_freq;
+> +	host->clk_scaling.clk_scaling_in_progress = true;
+> +	host->clk_scaling.need_freq_change = false;
+> +	spin_unlock_bh(&host->clk_scaling.lock);
+> +	pr_debug("%s: doing deferred frequency change (%lu) (%s)\n",
+> +				mmc_hostname(host),
+> +				target_freq, current->comm);
+> +
+> +	err = mmc_clk_update_freq(host, target_freq,
+> +		host->clk_scaling.state);
+> +	if (err && err != -EAGAIN) {
+> +		pr_err("%s: failed on deferred scale clocks (%d)\n",
+> +			mmc_hostname(host), err);
+> +	} else {
+> +		pr_debug("%s: clocks were successfully scaled to %lu (%s)\n",
+> +			mmc_hostname(host),
+> +			target_freq, current->comm);
+> +	}
+> +	host->clk_scaling.clk_scaling_in_progress = false;
+> +	atomic_dec(&host->clk_scaling.devfreq_abort);
+> +}
+> +EXPORT_SYMBOL(mmc_deferred_scaling);
+> +
+> +static int mmc_devfreq_create_freq_table(struct mmc_host *host)
+> +{
+> +	int i;
+> +	struct mmc_devfeq_clk_scaling *clk_scaling = &host->clk_scaling;
+> +
+> +	pr_debug("%s: supported: lowest=%lu, highest=%lu\n",
+> +		mmc_hostname(host),
+> +		host->card->clk_scaling_lowest,
+> +		host->card->clk_scaling_highest);
+> +
+> +	/*
+> +	 * Create the frequency table and initialize it with default values.
+> +	 * Initialize it with platform specific frequencies if the frequency
+> +	 * table supplied by platform driver is present, otherwise initialize
+> +	 * it with min and max frequencies supported by the card.
+> +	 */
+> +	if (!clk_scaling->freq_table) {
+> +		if (clk_scaling->pltfm_freq_table_sz)
+> +			clk_scaling->freq_table_sz =
+> +				clk_scaling->pltfm_freq_table_sz;
+> +		else
+> +			clk_scaling->freq_table_sz = 2;
+> +
+> +		clk_scaling->freq_table = kzalloc(
+> +			(clk_scaling->freq_table_sz *
+> +			sizeof(*(clk_scaling->freq_table))), GFP_KERNEL);
+> +		if (!clk_scaling->freq_table)
+> +			return -ENOMEM;
+> +
+> +		if (clk_scaling->pltfm_freq_table) {
+> +			memcpy(clk_scaling->freq_table,
+> +				clk_scaling->pltfm_freq_table,
+> +				(clk_scaling->pltfm_freq_table_sz *
+> +				sizeof(*(clk_scaling->pltfm_freq_table))));
+> +		} else {
+> +			pr_debug("%s: no frequency table defined -  setting default\n",
+> +				mmc_hostname(host));
+> +			clk_scaling->freq_table[0] =
+> +				host->card->clk_scaling_lowest;
+> +			clk_scaling->freq_table[1] =
+> +				host->card->clk_scaling_highest;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	if (host->card->clk_scaling_lowest >
+> +		clk_scaling->freq_table[0])
+> +		pr_debug("%s: frequency table undershot possible freq\n",
+> +			mmc_hostname(host));
+> +
+> +	for (i = 0; i < clk_scaling->freq_table_sz; i++) {
+> +		if (clk_scaling->freq_table[i] <=
+> +			host->card->clk_scaling_highest)
+> +			continue;
+> +		clk_scaling->freq_table[i] =
+> +			host->card->clk_scaling_highest;
+> +		clk_scaling->freq_table_sz = i + 1;
+> +		pr_debug("%s: frequency table overshot possible freq (%d)\n",
+> +				mmc_hostname(host), clk_scaling->freq_table[i]);
+> +		break;
+> +	}
+> +
+> +out:
+> +	/**
+> +	 * devfreq requires unsigned long type freq_table while the
+> +	 * freq_table in clk_scaling is un32. Here allocates an individual
+> +	 * memory space for it and release it when exit clock scaling.
+> +	 */
+> +	clk_scaling->devfreq_profile.freq_table =  kzalloc(
+> +			clk_scaling->freq_table_sz *
+> +			sizeof(*(clk_scaling->devfreq_profile.freq_table)),
+> +			GFP_KERNEL);
+> +	if (!clk_scaling->devfreq_profile.freq_table)
+> +		return -ENOMEM;
+> +	clk_scaling->devfreq_profile.max_state = clk_scaling->freq_table_sz;
+> +
+> +	for (i = 0; i < clk_scaling->freq_table_sz; i++) {
+> +		clk_scaling->devfreq_profile.freq_table[i] =
+> +			clk_scaling->freq_table[i];
+> +		pr_debug("%s: freq[%d] = %u\n",
+> +			mmc_hostname(host), i, clk_scaling->freq_table[i]);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * mmc_init_devfreq_clk_scaling() - Initialize clock scaling
+> + * @host: pointer to mmc host structure
+> + *
+> + * Initialize clock scaling for supported hosts. It is assumed that the caller
+> + * ensure clock is running at maximum possible frequency before calling this
+> + * function. Shall use struct devfreq_simple_ondemand_data to configure
+> + * governor.
+> + */
+> +int mmc_init_clk_scaling(struct mmc_host *host)
+> +{
+> +	int err;
+> +
+> +	if (!host || !host->card) {
+> +		pr_err("%s: unexpected host/card parameters\n",
+> +			__func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!mmc_can_scale_clk(host) ||
+> +		!host->bus_ops->change_bus_speed) {
+> +		pr_debug("%s: clock scaling is not supported\n",
+> +			mmc_hostname(host));
+> +		return 0;
+> +	}
+> +
+> +	pr_debug("registering %s dev (%p) to devfreq",
+> +		mmc_hostname(host),
+> +		mmc_classdev(host));
+> +
+> +	if (host->clk_scaling.devfreq) {
+> +		pr_err("%s: dev is already registered for dev %p\n",
+> +			mmc_hostname(host),
+> +			mmc_dev(host));
+> +		return -EPERM;
+> +	}
+> +	spin_lock_init(&host->clk_scaling.lock);
+> +	atomic_set(&host->clk_scaling.devfreq_abort, 0);
+> +	host->clk_scaling.curr_freq = host->ios.clock;
+> +	host->clk_scaling.clk_scaling_in_progress = false;
+> +	host->clk_scaling.need_freq_change = false;
+> +	host->clk_scaling.is_busy_started = false;
+> +
+> +	host->clk_scaling.devfreq_profile.polling_ms =
+> +		host->clk_scaling.polling_delay_ms;
+> +	host->clk_scaling.devfreq_profile.get_dev_status =
+> +		mmc_devfreq_get_dev_status;
+> +	host->clk_scaling.devfreq_profile.target = mmc_devfreq_set_target;
+> +	host->clk_scaling.devfreq_profile.initial_freq = host->ios.clock;
+> +
+> +	host->clk_scaling.ondemand_gov_data.simple_scaling = true;
+> +	host->clk_scaling.ondemand_gov_data.upthreshold =
+> +		host->clk_scaling.upthreshold;
+> +	host->clk_scaling.ondemand_gov_data.downdifferential =
+> +		host->clk_scaling.upthreshold - host->clk_scaling.downthreshold;
+> +
+> +	err = mmc_devfreq_create_freq_table(host);
+> +	if (err) {
+> +		pr_err("%s: fail to create devfreq frequency table\n",
+> +			mmc_hostname(host));
+> +		return err;
+> +	}
+> +
+> +	pr_debug("%s: adding devfreq with: upthreshold=%u downthreshold=%u polling=%u\n",
+> +		mmc_hostname(host),
+> +		host->clk_scaling.ondemand_gov_data.upthreshold,
+> +		host->clk_scaling.ondemand_gov_data.downdifferential,
+> +		host->clk_scaling.devfreq_profile.polling_ms);
+> +	host->clk_scaling.devfreq = devfreq_add_device(
+> +		mmc_classdev(host),
+> +		&host->clk_scaling.devfreq_profile,
+> +		"simple_ondemand",
+> +		&host->clk_scaling.ondemand_gov_data);
+> +	if (!host->clk_scaling.devfreq) {
+> +		pr_err("%s: unable to register with devfreq\n",
+> +			mmc_hostname(host));
+> +		return -EPERM;
+> +	}
+> +
+> +	pr_debug("%s: clk scaling is enabled for device %s (%p) with devfreq %p (clock = %uHz)\n",
+> +		mmc_hostname(host),
+> +		dev_name(mmc_classdev(host)),
+> +		mmc_classdev(host),
+> +		host->clk_scaling.devfreq,
+> +		host->ios.clock);
+> +
+> +	host->clk_scaling.enable = true;
+> +
+> +	return err;
+> +}
+> +EXPORT_SYMBOL(mmc_init_clk_scaling);
+> +
+> +/**
+> + * mmc_exit_devfreq_clk_scaling() - Disable clock scaling
+> + * @host: pointer to mmc host structure
+> + *
+> + * Disable clock scaling permanently.
+> + */
+> +int mmc_exit_clk_scaling(struct mmc_host *host)
+> +{
+> +	int err;
+> +
+> +	if (!host) {
+> +		pr_err("%s: bad host parameter\n", __func__);
+> +		WARN_ON(1);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!mmc_can_scale_clk(host))
+> +		return 0;
+> +
+> +	if (!host->clk_scaling.devfreq) {
+> +		pr_err("%s: %s: no devfreq is assosiated with this device\n",
+> +			mmc_hostname(host), __func__);
+> +		return -EPERM;
+> +	}
+> +
+> +	err = devfreq_remove_device(host->clk_scaling.devfreq);
+> +	if (err) {
+> +		pr_err("%s: remove devfreq failed (%d)\n",
+> +			mmc_hostname(host), err);
+> +		return err;
+> +	}
+> +
+> +	kfree(host->clk_scaling.devfreq_profile.freq_table);
+> +
+> +	host->clk_scaling.devfreq = NULL;
+> +	atomic_set(&host->clk_scaling.devfreq_abort, 1);
+> +
+> +	kfree(host->clk_scaling.freq_table);
+> +	host->clk_scaling.freq_table = NULL;
+> +
+> +	pr_debug("%s: devfreq was removed\n", mmc_hostname(host));
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(mmc_exit_clk_scaling);
+> +
+>   static inline void mmc_complete_cmd(struct mmc_request *mrq)
+>   {
+>   	if (mrq->cap_cmd_during_tfr && !completion_done(&mrq->cmd_completion))
+> @@ -143,6 +694,9 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
+>   	struct mmc_command *cmd = mrq->cmd;
+>   	int err = cmd->error;
+>   
+> +	if (host->clk_scaling.is_busy_started)
+> +		mmc_clk_scaling_stop_busy(host, true);
+> +
+>   	/* Flag re-tuning needed on CRC errors */
+>   	if ((cmd->opcode != MMC_SEND_TUNING_BLOCK &&
+>   	    cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200) &&
+> @@ -354,6 +908,12 @@ int mmc_start_request(struct mmc_host *host, struct mmc_request *mrq)
+>   		return err;
+>   
+>   	led_trigger_event(host->led, LED_FULL);
+> +
+> +	if (mmc_is_data_request(mrq)) {
+> +		mmc_deferred_scaling(host);
+> +		mmc_clk_scaling_start_busy(host, true);
+> +	}
+> +
+>   	__mmc_start_request(host, mrq);
+>   
+>   	return 0;
+> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+> index 9d8f09a..fc0a9b7 100644
+> --- a/drivers/mmc/core/core.h
+> +++ b/drivers/mmc/core/core.h
+> @@ -34,6 +34,7 @@ struct mmc_bus_ops {
+>   	int (*shutdown)(struct mmc_host *);
+>   	int (*hw_reset)(struct mmc_host *);
+>   	int (*sw_reset)(struct mmc_host *);
+> +	int (*change_bus_speed)(struct mmc_host *, unsigned long *);
+>   };
+>   
+>   void mmc_attach_bus(struct mmc_host *host, const struct mmc_bus_ops *ops);
+> @@ -46,6 +47,8 @@ struct device_node *mmc_of_find_child_device(struct mmc_host *host,
+>   
+>   void mmc_set_chip_select(struct mmc_host *host, int mode);
+>   void mmc_set_clock(struct mmc_host *host, unsigned int hz);
+> +int mmc_clk_update_freq(struct mmc_host *host,
+> +		unsigned long freq, enum mmc_load state);
+>   void mmc_set_bus_mode(struct mmc_host *host, unsigned int mode);
+>   void mmc_set_bus_width(struct mmc_host *host, unsigned int width);
+>   u32 mmc_select_voltage(struct mmc_host *host, u32 ocr);
+> @@ -91,6 +94,10 @@ static inline void mmc_delay(unsigned int ms)
+>   void mmc_add_card_debugfs(struct mmc_card *card);
+>   void mmc_remove_card_debugfs(struct mmc_card *card);
+>   
+> +extern bool mmc_can_scale_clk(struct mmc_host *host);
+> +extern int mmc_init_clk_scaling(struct mmc_host *host);
+> +extern int mmc_exit_clk_scaling(struct mmc_host *host);
+> +
+>   int mmc_execute_tuning(struct mmc_card *card);
+>   int mmc_hs200_to_hs400(struct mmc_card *card);
+>   int mmc_hs400_to_hs200(struct mmc_card *card);
+> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
+> index d2275c5..630ca8e 100644
+> --- a/drivers/mmc/core/debugfs.c
+> +++ b/drivers/mmc/core/debugfs.c
+> @@ -225,6 +225,43 @@ static int mmc_clock_opt_set(void *data, u64 val)
+>   DEFINE_SIMPLE_ATTRIBUTE(mmc_clock_fops, mmc_clock_opt_get, mmc_clock_opt_set,
+>   	"%llu\n");
+>   
+> +#include <linux/delay.h>
+> +
+> +static int mmc_scale_get(void *data, u64 *val)
+> +{
+> +	struct mmc_host *host = data;
+> +
+> +	*val = host->clk_scaling.curr_freq;
+> +
+> +	return 0;
+> +}
+> +
+> +static int mmc_scale_set(void *data, u64 val)
+> +{
+> +	int err = 0;
+> +	struct mmc_host *host = data;
+> +
+> +	mmc_claim_host(host);
+> +
+> +	/* change frequency from sysfs manually */
+> +	err = mmc_clk_update_freq(host, val, host->clk_scaling.state);
+> +	if (err == -EAGAIN)
+> +		err = 0;
+> +	else if (err)
+> +		pr_err("%s: clock scale to %llu failed with error %d\n",
+> +			mmc_hostname(host), val, err);
+> +	else
+> +		pr_debug("%s: clock change to %llu finished successfully (%s)\n",
+> +			mmc_hostname(host), val, current->comm);
+> +
+> +	mmc_release_host(host);
+> +
+> +	return err;
+> +}
+> +
+> +DEFINE_SIMPLE_ATTRIBUTE(mmc_scale_fops, mmc_scale_get, mmc_scale_set,
+> +	"%llu\n");
+> +
+>   void mmc_add_host_debugfs(struct mmc_host *host)
+>   {
+>   	struct dentry *root;
+> @@ -253,6 +290,15 @@ void mmc_add_host_debugfs(struct mmc_host *host)
+>   			&mmc_clock_fops))
+>   		goto err_node;
+>   
+> +	if (!debugfs_create_file("scale", 0600, root, host,
+> +		&mmc_scale_fops))
+> +		goto err_node;
+> +
+> +	if (!debugfs_create_bool("skip_clk_scale_freq_update",
+> +		0600, root,
+> +		&host->clk_scaling.skip_clk_scale_freq_update))
+> +		goto err_node;
+> +
+>   #ifdef CONFIG_FAIL_MMC_REQUEST
+>   	if (fail_request)
+>   		setup_fault_attr(&fail_default_attr, fail_request);
+> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> index abf9e88..1e46aa4 100644
+> --- a/drivers/mmc/core/host.c
+> +++ b/drivers/mmc/core/host.c
+> @@ -32,6 +32,10 @@
+>   #include "pwrseq.h"
+>   #include "sdio_ops.h"
+>   
+> +#define MMC_DEVFRQ_DEFAULT_UP_THRESHOLD 35
+> +#define MMC_DEVFRQ_DEFAULT_DOWN_THRESHOLD 5
+> +#define MMC_DEVFRQ_DEFAULT_POLLING_MSEC 100
+> +
+>   #define cls_dev_to_mmc_host(d)	container_of(d, struct mmc_host, class_dev)
+>   
+>   static DEFINE_IDA(mmc_host_ida);
+> @@ -435,6 +439,10 @@ int mmc_add_host(struct mmc_host *host)
+>   		return err;
+>   
+>   	led_trigger_register_simple(dev_name(&host->class_dev), &host->led);
+> +	host->clk_scaling.upthreshold = MMC_DEVFRQ_DEFAULT_UP_THRESHOLD;
+> +	host->clk_scaling.downthreshold = MMC_DEVFRQ_DEFAULT_DOWN_THRESHOLD;
+> +	host->clk_scaling.polling_delay_ms = MMC_DEVFRQ_DEFAULT_POLLING_MSEC;
+> +	host->clk_scaling.skip_clk_scale_freq_update = false;
+>   
+>   #ifdef CONFIG_DEBUG_FS
+>   	mmc_add_host_debugfs(host);
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 4466f5d..c8aedf3 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -1526,6 +1526,170 @@ static int mmc_hs200_tuning(struct mmc_card *card)
+>   }
+>   
+>   /*
+> + * Scale down from HS400 to HS in order to allow frequency change.
+> + * This is needed for cards that doesn't support changing frequency in HS400
+> + */
+> +static int mmc_scale_low(struct mmc_host *host, unsigned long freq)
+> +{
+> +	int err = 0;
+> +
+> +	mmc_set_timing(host, MMC_TIMING_LEGACY);
+> +	mmc_set_clock(host, MMC_HIGH_26_MAX_DTR);
+> +
+> +	err = mmc_select_hs(host->card);
+> +	if (err) {
+> +		pr_err("%s: %s: scaling low: failed (%d)\n",
+> +		       mmc_hostname(host), __func__, err);
+> +		return err;
+> +	}
+> +
+> +	err = mmc_select_bus_width(host->card);
+> +	if (err < 0) {
+> +		pr_err("%s: %s: select_bus_width failed(%d)\n",
+> +			mmc_hostname(host), __func__, err);
+> +		return err;
+> +	}
+> +
+> +	mmc_set_clock(host, freq);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Scale UP from HS to HS200/H400
+> + */
+> +static int mmc_scale_high(struct mmc_host *host)
+> +{
+> +	int err = 0;
+> +
+> +	if (mmc_card_ddr52(host->card)) {
+> +		mmc_set_timing(host, MMC_TIMING_LEGACY);
+> +		mmc_set_clock(host, MMC_HIGH_26_MAX_DTR);
+> +	}
+> +
+> +	if (!host->card->ext_csd.strobe_support) {
+> +		if (!(host->card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS200)) {
+> +			pr_err("%s: %s: card does not support HS200\n",
+> +				mmc_hostname(host), __func__);
+> +			WARN_ON(1);
+> +			return -EPERM;
+> +		}
+> +
+> +		err = mmc_select_hs200(host->card);
+> +		if (err) {
+> +			pr_err("%s: %s: selecting HS200 failed (%d)\n",
+> +				mmc_hostname(host), __func__, err);
+> +			return err;
+> +		}
+> +
+> +		mmc_set_bus_speed(host->card);
+> +
+> +		err = mmc_hs200_tuning(host->card);
+> +		if (err) {
+> +			pr_err("%s: %s: hs200 tuning failed (%d)\n",
+> +				mmc_hostname(host), __func__, err);
+> +			return err;
+> +		}
+> +
+> +		if (!(host->card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS400)) {
+> +			pr_debug("%s: card does not support HS400\n",
+> +				mmc_hostname(host));
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	err = mmc_select_hs400(host->card);
+> +	if (err) {
+> +		pr_err("%s: %s: select hs400 failed (%d)\n",
+> +			mmc_hostname(host), __func__, err);
+> +		return err;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static int mmc_set_clock_bus_speed(struct mmc_card *card, unsigned long freq)
+> +{
+> +	int err = 0;
+> +
+> +	if (freq == MMC_HS200_MAX_DTR)
+> +		err = mmc_scale_high(card->host);
+> +	else
+> +		err = mmc_scale_low(card->host, freq);
+> +
+> +	return err;
+> +}
+> +
+> +static inline unsigned long mmc_ddr_freq_accommodation(unsigned long freq)
+> +{
+> +	if (freq == MMC_HIGH_DDR_MAX_DTR)
+> +		return freq;
+> +
+> +	return freq/2;
+> +}
+> +
+> +/**
+> + * mmc_change_bus_speed() - Change MMC card bus frequency at runtime
+> + * @host: pointer to mmc host structure
+> + * @freq: pointer to desired frequency to be set
+> + *
+> + * Change the MMC card bus frequency at runtime after the card is
+> + * initialized. Callers are expected to make sure of the card's
+> + * state (DATA/RCV/TRANSFER) before changing the frequency at runtime.
+> + *
+> + * If the frequency to change is greater than max. supported by card,
+> + * *freq is changed to max. supported by card. If it is less than min.
+> + * supported by host, *freq is changed to min. supported by host.
+> + * Host is assumed to be calimed while calling this funciton.
+> + */
+> +static int mmc_change_bus_speed(struct mmc_host *host, unsigned long *freq)
+> +{
+> +	int err = 0;
+> +	struct mmc_card *card;
+> +	unsigned long actual_freq;
+> +
+> +	card = host->card;
+> +
+> +	if (!card || !freq) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +	actual_freq = *freq;
+> +
+> +	WARN_ON(!host->claimed);
+> +
+> +	/*
+> +	 * For scaling up/down HS400 we'll need special handling,
+> +	 * for other timings we can simply do clock frequency change
+> +	 */
+> +	if (mmc_card_hs400(card) ||
+> +		(!mmc_card_hs200(host->card) && *freq == MMC_HS200_MAX_DTR)) {
+> +		err = mmc_set_clock_bus_speed(card, *freq);
+> +		if (err) {
+> +			pr_err("%s: %s: failed (%d)to set bus and clock speed (freq=%lu)\n",
+> +				mmc_hostname(host), __func__, err, *freq);
+> +			goto out;
+> +		}
+> +	} else if (mmc_card_hs200(host->card)) {
+> +		mmc_set_clock(host, *freq);
+> +		err = mmc_hs200_tuning(host->card);
+> +		if (err) {
+> +			pr_warn("%s: %s: tuning execution failed %d\n",
+> +				mmc_hostname(card->host),
+> +				__func__, err);
+> +			mmc_set_clock(host, host->clk_scaling.curr_freq);
+> +		}
+> +	} else {
+> +		if (mmc_card_ddr52(host->card))
+> +			actual_freq = mmc_ddr_freq_accommodation(*freq);
+> +		mmc_set_clock(host, actual_freq);
+> +	}
+> +
+> +out:
+> +	return err;
+> +}
+> +
+> +/*
+>    * Handle the detection and initialisation of a card.
+>    *
+>    * In the case of a resume, "oldcard" will contain the card
+> @@ -1751,6 +1915,16 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+>   		}
+>   	}
+>   
+> +	card->clk_scaling_lowest = host->f_min;
+> +	if ((card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS400) ||
+> +			(card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS200))
+> +		card->clk_scaling_highest = card->ext_csd.hs200_max_dtr;
+> +	else if ((card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS) ||
+> +			(card->mmc_avail_type & EXT_CSD_CARD_TYPE_DDR_52))
+> +		card->clk_scaling_highest = card->ext_csd.hs_max_dtr;
+> +	else
+> +		card->clk_scaling_highest = card->csd.max_dtr;
+> +
+>   	/*
+>   	 * Choose the power class with selected bus interface
+>   	 */
+> @@ -1942,6 +2116,7 @@ static int mmc_poweroff_notify(struct mmc_card *card, unsigned int notify_type)
+>    */
+>   static void mmc_remove(struct mmc_host *host)
+>   {
+> +	mmc_exit_clk_scaling(host);
+>   	mmc_remove_card(host->card);
+>   	host->card = NULL;
+>   }
+> @@ -2064,6 +2239,13 @@ static int mmc_shutdown(struct mmc_host *host)
+>   	int err = 0;
+>   
+>   	/*
+> +	 * Exit clock scaling so that it doesn't kick in after
+> +	 * power off notification is sent
+> +	 */
+> +	if (host->caps2 & MMC_CAP2_CLK_SCALE)
+> +		mmc_exit_clk_scaling(host);
+> +
+> +	/*
+>   	 * In a specific case for poweroff notify, we need to resume the card
+>   	 * before we can shutdown it properly.
+>   	 */
+> @@ -2132,6 +2314,7 @@ static int mmc_can_reset(struct mmc_card *card)
+>   static int _mmc_hw_reset(struct mmc_host *host)
+>   {
+>   	struct mmc_card *card = host->card;
+> +	int ret;
+>   
+>   	/*
+>   	 * In the case of recovery, we can't expect flushing the cache to work
+> @@ -2151,7 +2334,15 @@ static int _mmc_hw_reset(struct mmc_host *host)
+>   		mmc_power_cycle(host, card->ocr);
+>   		mmc_pwrseq_reset(host);
+>   	}
+> -	return mmc_init_card(host, card->ocr, card);
+> +
+> +	ret = mmc_init_card(host, card->ocr, card);
+> +	if (ret) {
+> +		pr_err("%s: %s: mmc_init_card failed (%d)\n",
+> +			mmc_hostname(host), __func__, ret);
+> +		return ret;
+> +	}
+> +
+> +	return ret;
+>   }
+>   
+>   static const struct mmc_bus_ops mmc_ops = {
+> @@ -2164,6 +2355,7 @@ static int _mmc_hw_reset(struct mmc_host *host)
+>   	.alive = mmc_alive,
+>   	.shutdown = mmc_shutdown,
+>   	.hw_reset = _mmc_hw_reset,
+> +	.change_bus_speed = mmc_change_bus_speed,
+>   };
+>   
+>   /*
+> @@ -2220,6 +2412,12 @@ int mmc_attach_mmc(struct mmc_host *host)
+>   		goto remove_card;
+>   
+>   	mmc_claim_host(host);
+> +	err = mmc_init_clk_scaling(host);
+> +	if (err) {
+> +		mmc_release_host(host);
+> +		goto remove_card;
+> +	}
+> +
+>   	return 0;
+>   
+>   remove_card:
+> diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+> index d0d9f90..40144c1 100644
+> --- a/drivers/mmc/core/sd.c
+> +++ b/drivers/mmc/core/sd.c
+> @@ -892,7 +892,10 @@ unsigned mmc_sd_get_max_clock(struct mmc_card *card)
+>   {
+>   	unsigned max_dtr = (unsigned int)-1;
+>   
+> -	if (mmc_card_hs(card)) {
+> +	if (mmc_card_uhs(card)) {
+> +		if (max_dtr > card->sw_caps.uhs_max_dtr)
+> +			max_dtr = card->sw_caps.uhs_max_dtr;
+> +	} else if (mmc_card_hs(card)) {
+>   		if (max_dtr > card->sw_caps.hs_max_dtr)
+>   			max_dtr = card->sw_caps.hs_max_dtr;
+>   	} else if (max_dtr > card->csd.max_dtr) {
+> @@ -1059,6 +1062,9 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
+>   		}
+>   	}
+>   
+> +	card->clk_scaling_highest = mmc_sd_get_max_clock(card);
+> +	card->clk_scaling_lowest = host->f_min;
+> +
+>   	if (host->caps2 & MMC_CAP2_AVOID_3_3V &&
+>   	    host->ios.signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+>   		pr_err("%s: Host failed to negotiate down from 3.3V\n",
+> @@ -1082,6 +1088,7 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
+>    */
+>   static void mmc_sd_remove(struct mmc_host *host)
+>   {
+> +	mmc_exit_clk_scaling(host);
+>   	mmc_remove_card(host->card);
+>   	host->card = NULL;
+>   }
+> @@ -1228,6 +1235,62 @@ static int mmc_sd_hw_reset(struct mmc_host *host)
+>   	return mmc_sd_init_card(host, host->card->ocr, host->card);
+>   }
+>   
+> +/**
+> + * mmc_sd_change_bus_speed() - Change SD card bus frequency at runtime
+> + * @host: pointer to mmc host structure
+> + * @freq: pointer to desired frequency to be set
+> + *
+> + * Change the SD card bus frequency at runtime after the card is
+> + * initialized. Callers are expected to make sure of the card's
+> + * state (DATA/RCV/TRANSFER) beforing changing the frequency at runtime.
+> + *
+> + * If the frequency to change is greater than max. supported by card,
+> + * *freq is changed to max. supported by card and if it is less than min.
+> + * supported by host, *freq is changed to min. supported by host.
+> + */
+> +static int mmc_sd_change_bus_speed(struct mmc_host *host, unsigned long *freq)
+> +{
+> +	int err = 0;
+> +	struct mmc_card *card;
+> +
+> +	mmc_claim_host(host);
+> +	/*
+> +	 * Assign card pointer after claiming host to avoid race
+> +	 * conditions that may arise during removal of the card.
+> +	 */
+> +	card = host->card;
+> +
+> +	/* sanity checks */
+> +	if (!card || !freq) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	mmc_set_clock(host, (unsigned int) (*freq));
+> +
+> +	if (!mmc_host_is_spi(card->host) && mmc_card_uhs(card)
+> +			&& card->host->ops->execute_tuning) {
+> +		/*
+> +		 * We try to probe host driver for tuning for any
+> +		 * frequency, it is host driver responsibility to
+> +		 * perform actual tuning only when required.
+> +		 */
+> +		err = card->host->ops->execute_tuning(card->host,
+> +				MMC_SEND_TUNING_BLOCK);
+> +
+> +		if (err) {
+> +			pr_warn("%s: %s: tuning execution failed %d. Restoring to previous clock %lu\n",
+> +				   mmc_hostname(card->host), __func__, err,
+> +				   host->clk_scaling.curr_freq);
+> +			mmc_set_clock(host, host->clk_scaling.curr_freq);
+> +		}
+> +	}
+> +
+> +out:
+> +	mmc_release_host(host);
+> +	return err;
+> +}
+> +
+>   static const struct mmc_bus_ops mmc_sd_ops = {
+>   	.remove = mmc_sd_remove,
+>   	.detect = mmc_sd_detect,
+> @@ -1238,6 +1301,7 @@ static int mmc_sd_hw_reset(struct mmc_host *host)
+>   	.alive = mmc_sd_alive,
+>   	.shutdown = mmc_sd_suspend,
+>   	.hw_reset = mmc_sd_hw_reset,
+> +	.change_bus_speed = mmc_sd_change_bus_speed,
+>   };
+>   
+>   /*
+> @@ -1292,6 +1356,12 @@ int mmc_attach_sd(struct mmc_host *host)
+>   		goto remove_card;
+>   
+>   	mmc_claim_host(host);
+> +	err = mmc_init_clk_scaling(host);
+> +	if (err) {
+> +		mmc_release_host(host);
+> +		goto remove_card;
+> +	}
+> +
+>   	return 0;
+>   
+>   remove_card:
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index b5519a5..e9fe8c6 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -1705,6 +1705,43 @@ static int sdhci_msm_register_vreg(struct sdhci_msm_host *msm_host)
+>   
+>   MODULE_DEVICE_TABLE(of, sdhci_msm_dt_match);
+>   
+> +int sdhci_msm_dt_get_array(struct device *dev, const char *prop_name,
+> +				 u32 **out, int *len, u32 size)
+> +{
+> +	int ret = 0;
+> +	struct device_node *np = dev->of_node;
+> +	size_t sz;
+> +	u32 *arr = NULL;
+> +
+> +	if (!of_get_property(np, prop_name, len)) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +	sz = *len = *len / sizeof(*arr);
+> +	if (sz <= 0 || (size > 0 && (sz > size))) {
+> +		dev_err(dev, "%s invalid size\n", prop_name);
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	arr = devm_kzalloc(dev, sz * sizeof(*arr), GFP_KERNEL);
+> +	if (!arr) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	ret = of_property_read_u32_array(np, prop_name, arr, sz);
+> +	if (ret < 0) {
+> +		dev_err(dev, "%s failed reading array %d\n", prop_name, ret);
+> +		goto out;
+> +	}
+> +	*out = arr;
+> +out:
+> +	if (ret)
+> +		*len = 0;
+> +	return ret;
+> +}
+> +
+>   static const struct sdhci_ops sdhci_msm_ops = {
+>   	.reset = sdhci_reset,
+>   	.set_clock = sdhci_msm_set_clock,
+> diff --git a/drivers/mmc/host/sdhci-pltfm.c b/drivers/mmc/host/sdhci-pltfm.c
+> index 02bea61..354fc68 100644
+> --- a/drivers/mmc/host/sdhci-pltfm.c
+> +++ b/drivers/mmc/host/sdhci-pltfm.c
+> @@ -36,6 +36,9 @@
+>   #endif
+>   #include "sdhci-pltfm.h"
+>   
+> +int sdhci_msm_dt_get_array(struct device *dev, const char *prop_name,
+> +				 u32 **out, int *len, u32 size);
+> +
+>   unsigned int sdhci_pltfm_clk_get_max_clock(struct sdhci_host *host)
+>   {
+>   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -101,6 +104,14 @@ void sdhci_get_of_property(struct platform_device *pdev)
+>   
+>   	of_property_read_u32(np, "clock-frequency", &pltfm_host->clock);
+>   
+> +	if (sdhci_msm_dt_get_array(&pdev->dev, "qcom,devfreq,freq-table",
+> +			&host->mmc->clk_scaling.pltfm_freq_table,
+> +			&host->mmc->clk_scaling.pltfm_freq_table_sz, 0))
+> +		pr_debug("no clock scaling frequencies were supplied\n");
+> +	else if (!host->mmc->clk_scaling.pltfm_freq_table ||
+> +			!host->mmc->clk_scaling.pltfm_freq_table_sz)
+> +		pr_err("bad dts clock scaling frequencies\n");
+> +
+>   	if (of_find_property(np, "keep-power-in-suspend", NULL))
+>   		host->mmc->pm_caps |= MMC_PM_KEEP_POWER;
+>   
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 162b9af..f0aafab 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -2427,6 +2427,32 @@ static void sdhci_card_event(struct mmc_host *mmc)
+>   	spin_unlock_irqrestore(&host->lock, flags);
+>   }
+>   
+> +static inline void sdhci_update_power_policy(struct sdhci_host *host,
+> +		enum sdhci_power_policy policy)
+> +{
+> +	host->power_policy = policy;
+> +}
+> +
+> +static int sdhci_notify_load(struct mmc_host *mmc, enum mmc_load state)
+> +{
+> +	int err = 0;
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +
+> +	switch (state) {
+> +	case MMC_LOAD_HIGH:
+> +		sdhci_update_power_policy(host, SDHCI_PERFORMANCE_MODE);
+> +		break;
+> +	case MMC_LOAD_LOW:
+> +		sdhci_update_power_policy(host, SDHCI_POWER_SAVE_MODE);
+> +		break;
+> +	default:
+> +		err = -EINVAL;
+> +		break;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>   static const struct mmc_host_ops sdhci_ops = {
+>   	.request	= sdhci_request,
+>   	.post_req	= sdhci_post_req,
+> @@ -2441,6 +2467,7 @@ static void sdhci_card_event(struct mmc_host *mmc)
+>   	.execute_tuning			= sdhci_execute_tuning,
+>   	.card_event			= sdhci_card_event,
+>   	.card_busy	= sdhci_card_busy,
+> +	.notify_load = sdhci_notify_load,
+>   };
+>   
+>   /*****************************************************************************\
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 3b0c97a..740471f 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -346,6 +346,12 @@ enum sdhci_cookie {
+>   	COOKIE_MAPPED,		/* mapped by sdhci_prepare_data() */
+>   };
+>   
+> +enum sdhci_power_policy {
+> +	SDHCI_PERFORMANCE_MODE,
+> +	SDHCI_POWER_SAVE_MODE,
+> +	SDHCI_POWER_POLICY_NUM /* Always keep this one last */
+> +};
+> +
+>   struct sdhci_host {
+>   	/* Data set by hardware interface driver */
+>   	const char *hw_name;	/* Hardware bus name */
+> @@ -562,6 +568,8 @@ struct sdhci_host {
+>   	/* Delay (ms) between tuning commands */
+>   	int			tuning_delay;
+>   
+> +	enum sdhci_power_policy power_policy;
+> +
+>   	/* Host SDMA buffer boundary. */
+>   	u32			sdma_boundary;
+>   
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index de73778..c713581 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -245,6 +245,10 @@ struct mmc_card {
+>   	struct mmc_host		*host;		/* the host this device belongs to */
+>   	struct device		dev;		/* the device */
+>   	u32			ocr;		/* the current OCR setting */
+> +	unsigned long		clk_scaling_lowest;	/* lowest scaleable*/
+> +							/* frequency */
+> +	unsigned long		clk_scaling_highest;	/* highest scaleable */
+> +
+>   	unsigned int		rca;		/* relative card address of device */
+>   	unsigned int		type;		/* card type */
+>   #define MMC_TYPE_MMC		0		/* MMC card */
+> @@ -308,6 +312,7 @@ struct mmc_card {
+>   	unsigned int    nr_parts;
+>   
+>   	unsigned int		bouncesz;	/* Bounce buffer size */
+> +	unsigned int		part_curr;
+>   };
+>   
+>   static inline bool mmc_large_sector(struct mmc_card *card)
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index 64300a4..321ab39 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -12,6 +12,7 @@
+>   
+>   #include <linux/sched.h>
+>   #include <linux/device.h>
+> +#include <linux/devfreq.h>
+>   #include <linux/fault-inject.h>
+>   
+>   #include <linux/mmc/core.h>
+> @@ -82,6 +83,12 @@ struct mmc_ios {
+>   
+>   struct mmc_host;
+>   
+> +/* states to represent load on the host */
+> +enum mmc_load {
+> +	MMC_LOAD_HIGH,
+> +	MMC_LOAD_LOW,
+> +};
+> +
+>   struct mmc_host_ops {
+>   	/*
+>   	 * It is optional for the host to implement pre_req and post_req in
+> @@ -161,6 +168,7 @@ struct mmc_host_ops {
+>   	 */
+>   	int	(*multi_io_quirk)(struct mmc_card *card,
+>   				  unsigned int direction, int blk_size);
+> +	int	(*notify_load)(struct mmc_host *, enum mmc_load);
+>   };
+>   
+>   struct mmc_cqe_ops {
+> @@ -260,9 +268,60 @@ struct mmc_ctx {
+>   	struct task_struct *task;
+>   };
+>   
+> +/**
+> + * struct mmc_devfeq_clk_scaling - main context for MMC clock scaling logic
+> + *
+> + * @lock: spinlock to protect statistics
+> + * @devfreq: struct that represent mmc-host as a client for devfreq
+> + * @devfreq_profile: MMC device profile, mostly polling interval and callbacks
+> + * @ondemand_gov_data: struct supplied to ondemmand governor (thresholds)
+> + * @state: load state, can be HIGH or LOW. used to notify mmc_host_ops callback
+> + * @start_busy: timestamped armed once a data request is started
+> + * @measure_interval_start: timestamped armed once a measure interval started
+> + * @devfreq_abort: flag to sync between different contexts relevant to devfreq
+> + * @skip_clk_scale_freq_update: flag that enable/disable frequency change
+> + * @freq_table_sz: table size of frequencies supplied to devfreq
+> + * @freq_table: frequencies table supplied to devfreq
+> + * @curr_freq: current frequency
+> + * @polling_delay_ms: polling interval for status collection used by devfreq
+> + * @upthreshold: up-threshold supplied to ondemand governor
+> + * @downthreshold: down-threshold supplied to ondemand governor
+> + * @need_freq_change: flag indicating if a frequency change is required
+> + * @clk_scaling_in_progress: flag indicating if there's ongoing frequency change
+> + * @is_busy_started: flag indicating if a request is handled by the HW
+> + * @enable: flag indicating if the clock scaling logic is enabled for this host
+> + */
+> +struct mmc_devfeq_clk_scaling {
+> +	spinlock_t	lock;
+> +	struct		devfreq *devfreq;
+> +	struct		devfreq_dev_profile devfreq_profile;
+> +	struct		devfreq_simple_ondemand_data ondemand_gov_data;
+> +	enum mmc_load	state;
+> +	ktime_t		start_busy;
+> +	ktime_t		measure_interval_start;
+> +	atomic_t	devfreq_abort;
+> +	bool		skip_clk_scale_freq_update;
+> +	int		freq_table_sz;
+> +	int		pltfm_freq_table_sz;
+> +	u32		*freq_table;
+> +	u32		*pltfm_freq_table;
+> +	unsigned long	total_busy_time_us;
+> +	unsigned long	target_freq;
+> +	unsigned long	curr_freq;
+> +	unsigned long	polling_delay_ms;
+> +	unsigned int	upthreshold;
+> +	unsigned int	downthreshold;
+> +	bool		need_freq_change;
+> +	bool		clk_scaling_in_progress;
+> +	bool		is_busy_started;
+> +	bool		enable;
+> +};
+> +
+> +
+>   struct mmc_host {
+>   	struct device		*parent;
+>   	struct device		class_dev;
+> +	struct mmc_devfeq_clk_scaling	clk_scaling;
+>   	int			index;
+>   	const struct mmc_host_ops *ops;
+>   	struct mmc_pwrseq	*pwrseq;
+> @@ -360,6 +419,7 @@ struct mmc_host {
+>   #define MMC_CAP2_CQE		(1 << 23)	/* Has eMMC command queue engine */
+>   #define MMC_CAP2_CQE_DCMD	(1 << 24)	/* CQE can issue a direct command */
+>   #define MMC_CAP2_AVOID_3_3V	(1 << 25)	/* Host must negotiate down from 3.3V */
+> +#define MMC_CAP2_CLK_SCALE      (1 << 26)       /* Allow dynamic clk scaling */
+>   
+>   	int			fixed_drv_type;	/* fixed driver type for non-removable media */
+>   
+> @@ -523,6 +583,16 @@ static inline int mmc_regulator_set_vqmmc(struct mmc_host *mmc,
+>   u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
+>   int mmc_regulator_get_supply(struct mmc_host *mmc);
+>   
+> +static inline void mmc_host_clear_sdr104(struct mmc_host *host)
+> +{
+> +	host->caps &= ~MMC_CAP_UHS_SDR104;
+> +}
+> +
+> +static inline void mmc_host_set_sdr104(struct mmc_host *host)
+> +{
+> +	host->caps |= MMC_CAP_UHS_SDR104;
+> +}
+> +
+>   static inline int mmc_card_is_removable(struct mmc_host *host)
+>   {
+>   	return !(host->caps & MMC_CAP_NONREMOVABLE);
+> 
 
-The kvm-arm tree gained a conflict against the arm64 tree.
-
-The driver-core tree gained a conflict against the net-next tree.
-
-The xarray tree gained complex conflicts against the nvdimm tree so I have
-dropped it for today (along with the ida tree that is built on top of it).
-
-The akpm-current tree gained a conflict against Linus' tree and also a
-build failure for which I reverted a commit.
-
-Non-merge commits (relative to Linus' tree): 7606
- 7110 files changed, 316203 insertions(+), 143278 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log
-files in the Next directory.  Between each merge, the tree was built
-with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-multi_v7_defconfig for arm and a native build of tools/perf. After
-the final fixups (if any), I do an x86_64 modules_install followed by
-builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-and sparc64 defconfig. And finally, a simple boot test of the powerpc
-pseries_le_defconfig kernel in qemu (with and without kvm enabled).
-
-Below is a summary of the state of the merge.
-
-I am currently merging 285 trees (counting Linus' and 65 trees of bug
-fix patches pending for the current merge release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---=20
-Cheers,
-Stephen Rothwell
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master (d72e90f33aa4 Linux 4.18-rc6)
-Merging fixes/master (147a89bc71e7 Merge tag 'kconfig-v4.17' of git://git.k=
-ernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild)
-Merging kbuild-current/fixes (9d3cce1e8b85 Linux 4.18-rc5)
-Merging arc-current/for-curr (af1fc5baa724 ARCv2: [plat-hsdk]: Save accl re=
-g pair by default)
-Merging arm-current/fixes (b4c7e2bd2eb4 ARM: 8780/1: ftrace: Only set kerne=
-l memory back to read-only after boot)
-Merging arm64-fixes/for-next/fixes (2fd8eb4ad871 arm64: neon: Fix function =
-may_use_simd() return error status)
-Merging m68k-current/for-linus (b12c8a70643f m68k: Set default dma mask for=
- platform devices)
-Merging powerpc-fixes/fixes (b03897cf318d powerpc/powernv: Fix save/restore=
- of SPRG3 on entry/exit from stop (idle))
-Merging sparc/master (1aaccb5fa0ea Merge tag 'rtc-4.18' of git://git.kernel=
-.org/pub/scm/linux/kernel/git/abelloni/linux)
-Merging fscrypt-current/for-stable (ae64f9bd1d36 Linux 4.15-rc2)
-Merging net/master (c9ce1fa1c24b net: prevent ISA drivers from building on =
-PPC32)
-Merging bpf/master (7c3e8b642bad bpf: Use option "help" in the llvm-objcopy=
- test)
-Merging ipsec/master (7284fdf39a91 esp6: fix memleak on error path in esp6_=
-input)
-Merging netfilter/master (6613b6173dee netfilter: conntrack: dccp: treat SY=
-NC/SYNCACK as invalid if no prior state)
-Merging ipvs/master (0026129c8629 rhashtable: add restart routine in rhasht=
-able_free_and_destroy())
-Merging wireless-drivers/master (248c690a2dc8 Merge tag 'wireless-drivers-f=
-or-davem-2018-07-03' of git://git.kernel.org/pub/scm/linux/kernel/git/kvalo=
-/wireless-drivers)
-Merging mac80211/master (5cf3006cc81d nl80211: Add a missing break in parse=
-_station_flags)
-Merging rdma-fixes/for-rc (d63c46734c54 RDMA/mlx5: Fix memory leak in mlx5_=
-ib_create_srq() error path)
-Merging sound-current/for-linus (f3d737b6340b ALSA: hda/realtek - Yet anoth=
-er Clevo P950 quirk entry)
-Merging sound-asoc-fixes/for-linus (0b86b757f5d7 Merge branch 'asoc-4.18' i=
-nto asoc-linus)
-Merging regmap-fixes/for-linus (9d3cce1e8b85 Linux 4.18-rc5)
-Merging regulator-fixes/for-linus (ce1e5093e95a Merge branch 'regulator-4.1=
-8' into regulator-linus)
-Merging spi-fixes/for-linus (525e437354b6 Merge branch 'spi-4.18' into spi-=
-linus)
-Merging pci-current/for-linus (270ed733e689 PCI: v3-semi: Fix I/O space pag=
-e leak)
-Merging driver-core.current/driver-core-linus (722e5f2b1eec driver core: Pa=
-rtially revert "driver core: correct device's shutdown order")
-Merging tty.current/tty-linus (021c91791a5e Linux 4.18-rc3)
-Merging usb.current/usb-linus (249a32b7eeb3 usb: core: handle hub C_PORT_OV=
-ER_CURRENT condition)
-Merging usb-gadget-fixes/fixes (eec24f2a0d4d usb: gadget: f_uac2: fix endia=
-nness of 'struct cntrl_*_lay3')
-Merging usb-serial-fixes/usb-linus (9d3cce1e8b85 Linux 4.18-rc5)
-Merging usb-chipidea-fixes/ci-for-usb-stable (a930d8bd94d8 usb: chipidea: A=
-lways build ULPI code)
-Merging phy/fixes (ad5003300b07 phy: mapphone-mdm6600: Fix wrong enum used =
-for status lines)
-Merging staging.current/staging-linus (b96fba8d5855 staging: speakup: fix w=
-raparound in uaccess length check)
-Merging char-misc.current/char-misc-linus (9d3cce1e8b85 Linux 4.18-rc5)
-Merging input-current/for-linus (384cf4285b34 Input: i8042 - add Lenovo LaV=
-ie Z to the i8042 reset list)
-Merging crypto-current/master (46d8c4b28652 crypto: padlock-aes - Fix Nano =
-workaround data corruption)
-Merging ide/master (1aaccb5fa0ea Merge tag 'rtc-4.18' of git://git.kernel.o=
-rg/pub/scm/linux/kernel/git/abelloni/linux)
-Merging vfio-fixes/for-linus (0e714d27786c vfio/pci: Fix potential Spectre =
-v1)
-Merging kselftest-fixes/fixes (ce397d215ccd Linux 4.18-rc1)
-Merging modules-fixes/modules-linus (be71eda5383f module: Fix display of wr=
-ong module .text address)
-Merging slave-dma-fixes/fixes (1e4b044d2251 Linux 4.18-rc4)
-Merging backlight-fixes/for-backlight-fixes (ce397d215ccd Linux 4.18-rc1)
-Merging mtd-fixes/master (aa7eee8a143a mtd: spi-nor: cadence-quadspi: Fix d=
-irect mode write timeouts)
-Merging nand-fixes/nand/fixes (ee02f73e04c0 mtd: nand: atmel: Fix EDO mode =
-check)
-Merging spi-nor-fixes/spi-nor/fixes (7928b2cbe55b Linux 4.16-rc1)
-Merging mfd-fixes/for-mfd-fixes (ce397d215ccd Linux 4.18-rc1)
-Merging v4l-dvb-fixes/fixes (0ca54b290541 media: rc: be less noisy when dri=
-ver misbehaves)
-Merging reset-fixes/reset/fixes (e6914365fd28 reset: uniphier: fix USB cloc=
-k line for LD20)
-Merging mips-fixes/mips-fixes (bc88ad2efd11 MIPS: ath79: fix register addre=
-ss in ath79_ddr_wb_flush())
-Merging omap-fixes/fixes (d3f6daede246 ARM: dts: omap4-droid4: fix dts w.r.=
-t. pwm)
-Merging kvm-fixes/master (63aff65573d7 kvm: x86: vmx: fix vpid leak)
-Merging kvms390-fixes/master (f4a551b72358 KVM: s390: vsie: fix < 8k check =
-for the itdba)
-Merging hwmon-fixes/hwmon (1e4b044d2251 Linux 4.18-rc4)
-Merging nvdimm-fixes/libnvdimm-fixes (ee6581ceba7f nfit: fix unchecked dere=
-ference in acpi_nfit_ctl)
-Merging btrfs-fixes/next-fixes (0b7162742121 Merge branch 'for-next-current=
--v4.18-20180717' into next-fixes)
-Merging vfs-fixes/fixes (9ba546c01976 aio: don't expose __aio_sigset in uap=
-i)
-Merging dma-mapping-fixes/for-linus (7ec916f82c48 Revert "iommu/intel-iommu=
-: Enable CONFIG_DMA_DIRECT_OPS=3Dy and clean up intel_{alloc,free}_coherent=
-()")
-Merging drivers-x86-fixes/fixes (9d3cce1e8b85 Linux 4.18-rc5)
-Merging samsung-krzk-fixes/fixes (ce397d215ccd Linux 4.18-rc1)
-Merging pinctrl-samsung-fixes/pinctrl-fixes (ce397d215ccd Linux 4.18-rc1)
-Merging devicetree-fixes/dt/linus (b9952b5218ad of: overlay: update phandle=
- cache on overlay apply and remove)
-Merging scsi-fixes/fixes (b4146c4929ef scsi: qla2xxx: Return error when TMF=
- returns)
-Merging drm-fixes/drm-fixes (02e546eaccea Merge branch 'linux-4.18' of git:=
-//github.com/skeggsb/linux into drm-fixes)
-Merging drm-intel-fixes/for-linux-next-fixes (09d2da310d61 Merge tag 'gvt-f=
-ixes-2018-07-11' of https://github.com/intel/gvt-linux into drm-intel-fixes)
-Merging mmc-fixes/fixes (3b1074bf9817 mmc: mxcmmc: Fix missing parentheses =
-and brace)
-Merging rtc-fixes/rtc-fixes (fd6792bb022e rtc: fix alarm read and set offse=
-t)
-Merging drm-misc-fixes/for-linux-next-fixes (d530b5f1ca0b drm: re-enable er=
-ror handling)
-Merging kbuild/for-next (d5a57dff2213 Merge branch 'kconfig' into for-next)
-Merging leaks/leaks-next (9f84a0f7f1a6 leaking_addresses: check if file nam=
-e contains address)
-Merging uuid/for-next (c0020756315e efi: switch to use new generic UUID API)
-Merging dma-mapping/for-next (2550bbfd4952 dma-direct: don't crash on devic=
-e without dma_mask)
-Merging asm-generic/master (a71e7c44ffb7 io: change writeX_relaxed() to rem=
-ove barriers)
-Merging arc/for-next (4fbd8d194f06 Linux 4.15-rc1)
-Merging arm/for-next (52e19c3c1eaf Merge branches 'clkdev', 'fixes', 'misc'=
- and 'spectre' into for-next)
-Merging arm-perf/for-next/perf (c13207905340 arm64: perf: Add support for c=
-haining event counters)
-Merging arm-soc/for-next (b2df9d609df1 ARM: Document merges)
-Merging actions/for-next (35afadd11222 Merge branch 'v4.19/drivers' into ne=
-xt)
-Merging alpine/alpine/for-next (7928b2cbe55b Linux 4.16-rc1)
-Merging amlogic/for-next (b3fd49121640 Merge branch 'v4.19/dt64' into tmp/a=
-ml-rebuild)
-CONFLICT (content): Merge conflict in arch/arm64/boot/dts/amlogic/Makefile
-CONFLICT (content): Merge conflict in Documentation/devicetree/bindings/arm=
-/amlogic.txt
-Merging aspeed/for-next (403d991cce7d Merge branches 'defconfig-for-v4.19' =
-and 'dt-for-v4.19' into for-next)
-Merging at91/at91-next (f45853da06e3 Merge tag 'at91-ab-4.19-soc' of git://=
-git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux into at91-next)
-Merging bcm2835/for-next (5997adb14985 Merge branch anholt/bcm2835-defconfi=
-g-64-next into for-next)
-CONFLICT (content): Merge conflict in drivers/hwmon/Kconfig
-CONFLICT (content): Merge conflict in drivers/firmware/raspberrypi.c
-Merging imx-mxs/for-next (7586f152bcad Merge branch 'imx/defconfig' into fo=
-r-next)
-Merging keystone/next (ed3bf0f321b9 Merge branch 'for_4.19/drivers-soc' int=
-o next)
-Merging mediatek/for-next (b75253e66bc5 Merge branch 'v4.18-next/soc' into =
-for-next)
-Merging mvebu/for-next (23b7c60b80f6 Merge branch 'mvebu/dt64' into mvebu/f=
-or-next)
-Merging omap/for-next (d356801075c5 Merge branch 'omap-for-v4.19/dt' into f=
-or-next)
-Merging reset/reset/next (d903779b58be reset: meson: add meson audio arb dr=
-iver)
-Merging qcom/for-next (76b9e7f947f1 Merge tag 'qcom-defconfig-for-4.19' int=
-o all-for-4.19)
-Merging realtek/for-next (2b6286eb7ab8 Merge branch 'v4.15/dt64' into next)
-Merging renesas/next (77ac2a5fc496 Merge branches 'arm-defconfig-for-v4.19'=
-, 'arm-soc-for-v4.19', 'arm-dt-for-v4.19', 'arm64-dt-for-v4.19' and 'dt-bin=
-dings-for-v4.19' into next)
-Merging rockchip/for-next (75589311007d Merge branch 'v4.19-armsoc/dts64' i=
-nto for-next)
-Merging samsung/for-next (bebc6082da0a Linux 4.14)
-Merging samsung-krzk/for-next (44c29c1f2c9f Merge branch 'for-v4.19/exynos5=
-440-removal-drivers' into for-next)
-Merging sunxi/sunxi/for-next (51c756fe7803 Merge branch 'sunxi/dt64-for-4.1=
-9' into sunxi/for-next)
-Merging tegra/for-next (f29cfb31cf00 Merge branch for-4.19/arm64/dt into fo=
-r-next)
-Merging arm64/for-next/core (11527b3e0b57 arm64: Drop asmlinkage qualifier =
-from syscall_trace_{enter,exit})
-Merging clk/clk-next (4db3ff7a7f11 Merge branch 'clk-qcom-rpmh' into clk-ne=
-xt)
-Merging clk-samsung/for-next (e8cf870f253b clk: samsung: simplify getting .=
-drvdata)
-Merging c6x/for-linux-next (31b02fe54206 c6x: switch to NO_BOOTMEM)
-Merging h8300/h8300-next (54692056a201 h8300: Correct signature of test_bit=
-())
-Merging m68k/for-next (cd629147324c m68k/defconfig: Update defconfigs for v=
-4.18-rc1)
-Merging m68knommu/for-next (a23aa852f423 m68knommu: Fix typos in Coldfire 5=
-272 DMA debug code)
-Merging microblaze/next (ed207a743444 microblaze: remove consistent_sync an=
-d consistent_sync_page)
-Merging mips/mips-next (788654285da7 mips: mm: Discard ioremap_cacheable_co=
-w() method)
-CONFLICT (content): Merge conflict in arch/mips/kernel/process.c
-Merging nds32/next (d2516b16bcbc nds32: fix logic for module)
-Merging nios2/for-next (3d9644ef9a0f nios2: Use read_persistent_clock64() i=
-nstead of read_persistent_clock())
-Merging openrisc/for-next (ae15a41a6414 openrisc: entry: Fix delay slot exc=
-eption detection)
-Merging parisc-hd/for-next (ce397d215ccd Linux 4.18-rc1)
-Merging powerpc/next (ce57c6610cc2 Merge branch 'topic/ppc-kvm' into next)
-CONFLICT (content): Merge conflict in drivers/vfio/vfio_iommu_spapr_tce.c
-Merging fsl/next (c095ff93f901 powerpc/sysdev: change CPM GPIO to platform_=
-device)
-Merging risc-v/for-next (021c91791a5e Linux 4.18-rc3)
-Merging s390/features (cd0ed39dc9e8 s390/tape: replace PTR_RET with PTR_ERR=
-_OR_ZERO)
-Merging sparc-next/master (1aaccb5fa0ea Merge tag 'rtc-4.18' of git://git.k=
-ernel.org/pub/scm/linux/kernel/git/abelloni/linux)
-Merging sh/for-next (ac21fc2dcb40 sh: switch to NO_BOOTMEM)
-Merging uml/linux-next (5ec9121195a4 um: Fix raw interface options)
-Merging xtensa/xtensa-for-next (cb6db64ef5a9 Merge branch 'xtensa-dma-fixes=
-' into xtensa-for-next)
-Merging fscrypt/master (e1cc40e5d42a fscrypt: log the crypto algorithm impl=
-ementations)
-Merging befs/for-next (55d945e2e4aa fs: befs: btree: Fixed some coding stan=
-dard issues)
-Merging btrfs/next (29dcea88779c Linux 4.17)
-Merging btrfs-kdave/for-next (6f383855b92d Merge branch 'for-next-next-v4.1=
-9-20180716' into for-next-20180716)
-Merging ceph/master (8b8f53af1ed9 ceph: fix dentry leak in splice_dentry())
-Merging cifs/for-next (887e4f50dc55 smb3: snapshot mounts are read-only and=
- make sure info is displayable about the mount)
-Merging configfs/for-next (cc57c07343bd configfs: fix registered group remo=
-val)
-Merging ecryptfs/next (5dcea554d5ce eCryptfs: fix a couple type promotion b=
-ugs)
-Merging ext3/for_next (6aee47d7f61e Pull in fsnotify cleanups from Amir and=
- new inotify IN_MASK_CREATE flag support.)
-Merging ext4/dev (a0d2ee74e814 ext4: import extended attributes chapter fro=
-m wiki page)
-Merging f2fs/dev (ea1ac43174f9 f2fs: avoid potential deadlock in f2fs_sbi_s=
-tore)
-Merging fuse/for-next (8139306548ab fuse: convert last timespec use to time=
-spec64)
-Merging jfs/jfs-next (bd646104ac5a jfs: use time64_t for otime)
-Merging nfs/linux-next (7b0df92ac121 pNFS/flexfiles: Process writeback rese=
-nds from nfsiod context as well)
-Merging nfs-anna/linux-next (ffbfa2ce88f1 sunrpc: Fix latency trace point c=
-rashes)
-Merging nfsd/nfsd-next (32620db998a5 NFSD stop ongoing async copies on clie=
-nt shutdown)
-Merging orangefs/for-next (f35cf2ab06b6 orangefs: remove redundant pointer =
-orangefs_inode)
-Merging overlayfs/overlayfs-next (989974c80457 ovl: Enable metadata only fe=
-ature)
-Merging ubifs/linux-next (f5a926dd5298 mtd: ubi: Update ubi-media.h to dual=
- license)
-Merging v9fs/9p-next (74622fbdedde net/9p/trans_virtio.c: fix some spell mi=
-stakes in comments)
-Merging xfs/for-next (efe803277364 xfs: Initialize variables in xfs_alloc_g=
-et_rec before using them)
-Merging file-locks/locks-next (1cf8e5de4055 fs/lock: show locks taken by pr=
-ocesses from another pidns)
-Merging vfs/for-next (f6756d7df991 Merge branch 'work.misc' into for-next)
-CONFLICT (content): Merge conflict in include/linux/fs.h
-Merging vfs-miklos/next (0eb8af4916a5 vfs: use helper for calling f_op->fsy=
-nc())
-Merging printk/for-next (7973c51853f8 Merge branch 'for-4.19-nmi' into for-=
-next)
-Merging pci/next (b3dd889f1a82 Merge branch 'remotes/lorenzo/pci/vmd')
-CONFLICT (content): Merge conflict in drivers/pci/controller/pci-aardvark.c
-Merging pstore/for-next/pstore (e698aaf37f9f pstore: fix crypto dependencie=
-s without compression)
-Merging hid/for-next (57194b035942 Merge branch 'for-4.19/upstream' into fo=
-r-next)
-Merging i2c/i2c/for-next (1ca65fa64943 Merge branch 'i2c/for-4.19' into i2c=
-/for-next)
-Merging dmi/master (7f73745fec52 firmware: dmi: Add access to the SKU ID st=
-ring)
-Merging hwmon-staging/hwmon-next (f1fd4a4db777 hwmon: Add NPCM7xx PWM and F=
-an driver)
-Merging jc_docs/docs-next (6b4c1360e8ad Documentation: Add powerpc options =
-for spec_store_bypass_disable)
-Merging v4l-dvb/master (39fbb88165b2 media: bpf: ensure bpf program is free=
-d on detach)
-Merging v4l-dvb-next/master (f10379aad39e media: include/video/omapfb_dss.h=
-: use IS_ENABLED())
-Merging fbdev/fbdev-for-next (34db50e55656 efifb: Copy the ACPI BGRT boot g=
-raphics to the framebuffer)
-Merging pm/linux-next (45414aea93b5 Merge branch 'acpi-battery' into linux-=
-next)
-Merging cpupower/cpupower (ce397d215ccd Linux 4.18-rc1)
-Merging idle/next (8a5776a5f498 Linux 4.14-rc4)
-Merging opp/opp/linux-next (c5c2a97b3ac7 PM / OPP: Update voltage in case f=
-req =3D=3D old_freq)
-Merging thermal/next (e9ed3ee61aa6 Merge branches 'thermal-core' and 'therm=
-al-intel' into next)
-Merging thermal-soc/next (1d32d387967c thermal: ti-soc-thermal: remove dead=
- code)
-Merging ieee1394/for-next (188775181bc0 firewire-ohci: work around oversize=
-d DMA reads on JMicron controllers)
-Merging dlm/next (da3627c30d22 dlm: remove O_NONBLOCK flag in sctp_connect_=
-to_sock)
-Merging swiotlb/linux-next (4855c92dbb7b xen-swiotlb: fix the check conditi=
-on for xen_swiotlb_free_coherent)
-Merging rdma/for-next (c012691508f5 IB/cm: Remove cma_multicast->igmp_joine=
-d)
-CONFLICT (content): Merge conflict in drivers/infiniband/core/uverbs_cmd.c
-Merging net-next/master (07300f774fec nfp: avoid buffer leak when FW commun=
-ication fails)
-CONFLICT (content): Merge conflict in net/smc/smc_ib.c
-Merging bpf-next/master (8ae71e76cf1f Merge branch 'bpf-offload-sharing')
-Merging ipsec-next/master (03dc7a35fcc8 ipv6: xfrm: use 64-bit timestamps)
-Merging mlx5-next/mlx5-next (048f31437ac5 net/mlx5: Fix tristate and descri=
-ption for MLX5 module)
-Merging netfilter-next/master (24c458c485c8 netfilter: nf_osf: add missing =
-definitions to header file)
-Merging nfc-next/master (1f008cfec5d5 NFC: fdp: Fix unused variable warning=
-s)
-Merging ipvs-next/master (66c524acfb51 netfilter: conntrack: remove l3proto=
- abstraction)
-CONFLICT (content): Merge conflict in net/netfilter/Makefile
-CONFLICT (content): Merge conflict in net/netfilter/Kconfig
-CONFLICT (content): Merge conflict in net/ipv6/netfilter/Kconfig
-Merging wireless-drivers-next/master (4a07ed51cae1 mt76x2: debugfs: add sw =
-pulse statistics to dfs debugfs)
-Merging bluetooth/master (b71c69c26b49 Bluetooth: Use lock_sock_nested in b=
-t_accept_enqueue)
-Merging mac80211-next/master (518ea3c54eb7 mac80211_hwsim: Add support for =
-HE)
-Merging gfs2/for-next (e2b8bd8c3088 gfs2: remove redundant variable 'moved')
-Merging mtd/mtd/next (d70420bcd447 mtd: adapt misleading comment in mtd_oob=
-_ops structure)
-Merging nand/nand/next (db4a671e39ff mtd: rawnand: add hooks that may be ca=
-lled during nand_scan())
-Merging spi-nor/spi-nor/next (a3804084ddf0 mtd: spi-nor: stm32-quadspi: rep=
-lace "%p" with "%pK")
-Merging crypto/master (0e7d4d932ffc crypto: sharah - Unregister correct alg=
-orithms for SAHARA 3)
-Merging drm/drm-next (500775074f88 Merge branch 'drm-next-4.19' of git://pe=
-ople.freedesktop.org/~agd5f/linux into drm-next)
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_irq.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_gem.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/powerplay/smumgr/=
-smu7_smumgr.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/dc/inc/dc=
-_link_ddc.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/dc/dce/dc=
-e_mem_input.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/dc/core/d=
-c_link_ddc.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/amdgpu_dm=
-/amdgpu_dm_services.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/amdgpu_dm=
-/amdgpu_dm_mst_types.c
-Applying: drm/i915/kvmgt: merge fixup for "Check the pfn got from vfio_pin_=
-pages"
-Merging drm-panel/drm/panel/for-next (e4bac408b084 drm/panel: simple: Add s=
-upport for Winstar WF35LTIACD)
-Merging drm-intel/for-linux-next (6f15a7de86c8 drm/i915/dsc: Add missing _M=
-MIO() from PPS registers)
-Merging drm-tegra/drm/tegra/for-next (6134534ca24f drm/tegra: Add kerneldoc=
- for UAPI)
-Merging drm-misc/for-linux-next (106b6c39c870 drm/print: Fix DRM_DEBUG_DP m=
-acro)
-Merging drm-msm/msm-next (010148c5b155 drm/msm: rework vblank event handlin=
-g in dpu_crtc)
-CONFLICT (content): Merge conflict in drivers/gpu/drm/msm/dsi/dsi_manager.c
-Applying: drm: msm: merge fix for drm_plane_helper_disable() API change
-Merging hdlcd/for-upstream/hdlcd (f73e8b825315 drm/arm: Replace instances o=
-f drm_dev_unref with drm_dev_put.)
-Merging mali-dp/for-upstream/mali-dp (e368fc75c190 drm/arm/malidp: Added th=
-e late system pm functions)
-Merging sunxi-drm/sunxi-drm/for-next (7dafb83edd32 Merge branches 'sunxi/dr=
-m-fixes-for-4.13' and 'sunxi/drm-for-4.14' into sunxi-drm/for-next)
-Merging imx-drm/imx-drm/next (81f2b25addde drm/imx: Remove unused field imx=
-_drm_device.pipes)
-Merging etnaviv/etnaviv/next (f6ffbd4fc1a1 drm/etnaviv: replace license tex=
-t with SPDX tags)
-Merging kconfig/for-next (bebc6082da0a Linux 4.14)
-Merging regmap/for-next (6714e53130ba Merge branch 'regmap-4.19' into regma=
-p-next)
-Merging sound/for-next (d10ee9c54236 ALSA: timer: catch invalid timer objec=
-t creation)
-Merging sound-asoc/for-next (64e942d9d98c Merge branch 'asoc-4.19' into aso=
-c-next)
-Merging modules/modules-next (4d58e7034d19 ARM: module: fix modsign build e=
-rror)
-Merging input/next (2b6e68119c47 Input: gpio_keys - add missing include to =
-gpio_keys.h)
-Merging block/for-next (e7a0c1f1ee45 Merge branch 'for-4.19/block' into for=
--next)
-Merging lightnvm/for-next (1c6286f26301 lightnvm: fix some error code in pb=
-lk-init.c)
-Merging device-mapper/for-next (d284f8248c72 dm writecache: support optiona=
-l offset for start of device)
-Merging pcmcia/pcmcia-next (c3a5307873d4 pcmcia: Use module_pcmcia_driver f=
-or scsi drivers)
-Merging mmc/next (44350993d01c mmc: tegra: Add and use tegra_sdhci_get_max_=
-clock())
-Merging kgdb/kgdb-next (2cf2f0d5b91f kdb: use memmove instead of overlappin=
-g memcpy)
-Merging md/for-next (685dbcaa25be drivers/md/raid5: Use irqsave variant of =
-atomic_dec_and_lock())
-Merging mfd/for-mfd-next (99266311865e mfd: axp20x: Support AXP806 in I2C m=
-ode)
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_display.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/Kconfig
-Merging backlight/for-backlight-next (858c5dfc8c33 backlight: adp8860: Mark=
- expected switch fall-through)
-Merging battery/for-next (9c7272412bc5 power: supply: lego_ev3_battery: fix=
- Vce offset)
-Merging regulator/for-next (23a9f57ff66e Merge branch 'regulator-4.19' into=
- regulator-next)
-Merging security/next-testing (530a13df0b0b Merge branch 'next-general' int=
-o next-testing)
-Merging apparmor/apparmor-next (24b87a16fee0 apparmor: Fix failure to audit=
- context info in build_change_hat)
-Merging integrity/next-integrity (3dd0f18c70d9 EVM: fix return value check =
-in evm_write_xattrs())
-Merging keys/keys-next (1e684d3820d8 pkcs7: Set the module licence to preve=
-nt tainting)
-Merging selinux/next (631d2b490569 selinux: constify write_op[])
-Merging tpmdd/next (776afd171925 ima: Get rid of ima_used_chip and use ima_=
-tpm_chip !=3D NULL instead)
-Merging watchdog/master (9d3cce1e8b85 Linux 4.18-rc5)
-Merging iommu/next (a8cfa7c8491c Merge branches 'iommu/fixes', 'arm/shmobil=
-e', 'arm/renesas', 'arm/msm', 'x86/amd', 'x86/vt-d' and 'core' into next)
-Merging dwmw2-iommu/master (d8a5b80568a9 Linux 4.15)
-Merging vfio/next (c1abca96b252 samples: mbochs: add DMA_SHARED_BUFFER depe=
-ndency)
-Merging trivial/for-next (75a24b822d38 kfifo: fix inaccurate comment)
-Merging audit/next (baa2a4fdd525 audit: fix use-after-free in audit_add_wat=
-ch)
-Merging devicetree/for-next (3a6372daddeb dt-bindings: sound: wm8994: docum=
-ent wlf,csnaddr-pd property)
-Merging mailbox/mailbox-for-next (f83d1cfc8bcd mailbox/drivers/hisi: Consol=
-idate the Kconfig for the MAILBOX)
-Merging spi/for-next (484d5c6c7aad Merge branch 'spi-4.19' into spi-next)
-Merging tip/auto-latest (fc3d25e1c8f6 Merge branch 'x86/timers')
-Merging clockevents/clockevents/next (6bd9549d8a7d clocksource/drivers/arc_=
-timer: Add comments about locking while read GFRC)
-Merging edac/linux_next (345fb0a9a634 Merge tag 'edac_for_4.11' of git://gi=
-t.kernel.org/pub/scm/linux/kernel/git/bp/bp)
-Merging edac-amd/for-next (6663484b4e2d EDAC, thunderx: Remove VLA usage)
-Merging irqchip/irq/irqchip-next (6a88c221acba ARM: dts: stm32: Add exti su=
-pport to stm32mp157 pinctrl)
-Merging ftrace/for-next (a9235b544a0a ring-buffer: Fix typo in comment)
-Merging rcu/rcu/next (d57fa29ddc3c Merge LKMM and RCU commits)
-Merging kvm/linux-next (6f0d349d922b Merge git://git.kernel.org/pub/scm/lin=
-ux/kernel/git/davem/net)
-Merging kvm-arm/next (b0960b9569db KVM: arm: Add 32bit get/set events suppo=
-rt)
-CONFLICT (content): Merge conflict in arch/arm64/include/asm/cpucaps.h
-Merging kvm-mips/next (dc44abd6aad2 KVM: MIPS/Emulate: Properly implement T=
-LBR for T&E)
-Merging kvm-ppc/kvm-ppc-next (0abb75b7a16d KVM: PPC: Book3S HV: Fix constan=
-t size warning)
-Merging kvms390/next (a3da7b4a3be5 KVM: s390: add etoken support for guests)
-Merging xen-tip/linux-next (0ce0bba4e5e0 xen: setup pv irq ops vector earli=
-er)
-Merging percpu/for-next (b3a5d1119944 percpu_ref: Update doc to dissuade us=
-ers from depending on internal RCU grace periods)
-Merging workqueues/for-next (66448bc274ca workqueue: move function definiti=
-ons within CONFIG_SMP block)
-Merging drivers-x86/for-next (c2e2a618eb71 platform/x86: toshiba_acpi: Fix =
-defined but not used build warnings)
-Merging chrome-platform/for-next (40291fb75123 Merge tag 'ib-platform-chrom=
-e-mfd-move-cros-ec-transport-for-4.19' into working-branch-for-4.19)
-Merging hsi/for-next (ce397d215ccd Linux 4.18-rc1)
-Merging leds/for-next (6f7b0bad8839 usb: simplify usbport trigger)
-Merging ipmi/for-next (a4fb7ddc6356 ipmi: kcs_bmc: don't change device name)
-Merging driver-core/driver-core-next (e16f4f3e0b7d base: core: Remove WARN_=
-ON from link dependencies check)
-CONFLICT (content): Merge conflict in fs/sysfs/group.c
-CONFLICT (content): Merge conflict in drivers/iommu/ipmmu-vmsa.c
-Merging usb/usb-next (12dcaeb77e67 usb: usbtmc: Add ioctl for termination c=
-haracter)
-Merging usb-gadget/next (47265c067c0d usb: dwc2: gadget: Fix coverity issue)
-Merging usb-serial/usb-next (c8acfe0aadbe USB: serial: cp210x: implement GP=
-IO support for CP2102N)
-Merging usb-chipidea-next/ci-for-usb-next (ba0ab35a81de usb: chipidea: tegr=
-a: Use aligned DMA on Tegra114/124)
-Merging phy-next/next (d5f5ee1a16a4 phy: berlin: switch to SPDX license ide=
-ntifier)
-Merging tty/tty-next (f4c6fbc96eb1 vt: drop unused struct vt_struct)
-Merging char-misc/char-misc-next (bce5c2ea350f uio: add SPDX license tags)
-Merging extcon/extcon-next (8a9dbb779fe8 extcon: Release locking when sendi=
-ng the notification of connector state)
-Merging staging/staging-next (9005feae4785 staging: rtl8712: remove redunda=
-nt pointer 'nic')
-CONFLICT (modify/delete): drivers/staging/skein/skein_generic.c deleted in =
-staging/staging-next and modified in HEAD. Version HEAD of drivers/staging/=
-skein/skein_generic.c left in tree.
-$ git rm -f drivers/staging/skein/skein_generic.c
-Applying: Revert "Revert "staging:r8188eu: Use lib80211 to support TKIP""
-Merging mux/for-next (6a3d4baac84a mux: add mux_control_get_optional() API)
-Merging slave-dma/next (e1966eb8a1b1 Merge branch 'topic/renesas' into next)
-Merging cgroup/for-next (e4f8d81c738d cgroup/tracing: Move taking of spin l=
-ock out of trace event handlers)
-Merging scsi/for-next (d92f5db64445 Merge branch 'misc' into for-next)
-CONFLICT (modify/delete): lib/percpu_ida.c deleted in scsi/for-next and mod=
-ified in HEAD. Version HEAD of lib/percpu_ida.c left in tree.
-CONFLICT (content): Merge conflict in MAINTAINERS
-$ git rm -f lib/percpu_ida.c
-Merging scsi-mkp/for-next (f4e34f2a5dd9 scsi: hisi_sas: Add SATA FIS check =
-for v3 hw)
-Merging target-updates/for-next (1c130ae00b76 iscsi-target: make sure to wa=
-ke up sleeping login worker)
-Merging target-bva/for-next (60cc43fc8884 Linux 4.17-rc1)
-Merging libata/for-next (48ffb6b32df8 Merge branch 'for-4.18-fixes' into fo=
-r-next)
-Applying: Revert "ata: ahci_platform: allow disabling of hotplug to save po=
-wer"
-Merging vhost/linux-next (2eb98105f8c7 virtio: update the comments for tran=
-sport features)
-Merging rpmsg/for-next (3d065621c921 Merge branches 'hwspinlock-next', 'rpm=
-sg-next' and 'rproc-next' into for-next)
-Merging gpio/for-next (d166d33c1862 Merge branch 'devel' into for-next)
-Merging pinctrl/for-next (b283cec1c680 Merge branch 'devel' into for-next)
-Merging pinctrl-samsung/for-next (ce397d215ccd Linux 4.18-rc1)
-Merging pwm/for-next (19ad2b75c643 pwm: mxs: Switch to SPDX identifier)
-Merging userns/for-next (04035aa33a12 proc: Don't change mount options on r=
-emount failure.)
-CONFLICT (content): Merge conflict in fs/proc/root.c
-CONFLICT (content): Merge conflict in fs/proc/internal.h
-CONFLICT (content): Merge conflict in fs/proc/inode.c
-Merging ktest/for-next (6cd110a91f52 ktest: Take submenu into account for g=
-rub2 menus)
-Merging random/dev (067954f27faa random: add a config option to trust the C=
-PU's hwrng)
-Merging aio/master (2a8a98673c13 fs: aio: fix the increment of aio-nr and c=
-ounting against aio-max-nr)
-Merging kselftest/next (d2d49495b5c0 selftests: vDSO - fix to return KSFT_S=
-KIP when test couldn't be run)
-Merging y2038/y2038 (e264abeaf9da pstore: Remove bogus format string defini=
-tion)
-Merging livepatching/for-next (0eb53cdd58f5 Merge branch 'for-4.19/upstream=
-' into for-next)
-Merging coresight/next (1f0a504d39ae coresight: tpiu: Fix disabling timeout=
-s)
-Merging rtc/rtc-next (7e580769b79f rtc: ds1307: support m41t11 variant)
-Merging nvdimm/libnvdimm-for-next (823b1d57266d Merge branch 'djiang5/for-4=
-.19/dax-memory-failure' into libnvdimm-for-next)
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/mcheck/mce.c
-Merging at24/at24/for-next (ce397d215ccd Linux 4.18-rc1)
-Merging ntb/ntb-next (b1ce023ae8a2 ntb_netdev: fix sleep time mismatch)
-Merging kspp/for-next/kspp (9edc4161661e Merge branch 'for-next/usercopy' i=
-nto for-next/kspp)
-Merging init_task/init_task (e1e871aff3de Expand INIT_STRUCT_PID and remove)
-Merging cisco/for-next (ce397d215ccd Linux 4.18-rc1)
-Merging xarray/xarray (4c8e6fcba165 radix tree: Remove radix_tree_clear_tag=
-s)
-CONFLICT (content): Merge conflict in fs/dax.c
-CONFLICT (content): Merge conflict in MAINTAINERS
-$ git reset --hard HEAD
-Merging fsi/master (fea9cf321c91 fsi: Move various master definitions to a =
-common header)
-Merging siox/siox/next (1e4b044d2251 Linux 4.18-rc4)
-Merging ida/ida (eafb6e79625d ida: Convert to XArray)
-CONFLICT (content): Merge conflict in fs/dax.c
-CONFLICT (content): Merge conflict in MAINTAINERS
-$ git reset --hard HEAD
-Merging akpm-current/current (ebd319901941 ipc/util.c: update return value =
-of ipc_getref from int to bool)
-CONFLICT (content): Merge conflict in mm/mmap.c
-CONFLICT (content): Merge conflict in kernel/cgroup/cgroup.c
-CONFLICT (content): Merge conflict in include/linux/sched.h
-CONFLICT (content): Merge conflict in include/linux/bitops.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-Applying: fixup for bit.h/bitops.h merge
-$ git checkout -b akpm remotes/origin/akpm/master
-Applying: drivers/hwtracing/intel_th/msu.c: change return type to vm_fault_t
-Applying: fs/nfs/file.c: use new return type vm_fault_t
-Applying: fs/afs: use new return type vm_fault_t
-Applying: treewide: correct "differenciate" and "instanciate" typos
-Applying: fs/proc/vmcore.c: hide vmcoredd_mmap_dumps() for nommu builds
-Applying: drivers/gpu/drm/gma500/: change return type to vm_fault_t
-Applying: drivers/media/platform/sti/delta/delta-ipc.c: fix read buffer ove=
-rflow
-Merging akpm/master (3f8cb09b13be drivers/media/platform/sti/delta/delta-ip=
-c.c: fix read buffer overflow)
-Applying: Revert "proc/kcore: add vmcoreinfo note to /proc/kcore"
-
---Sig_/tDif7Mr/O8TRGtup5+t4KHz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltVp0AACgkQAVBC80lX
-0Gx8egf/RTE5DihbckD/iPmLl43iDeB6bvZ6sKJahueA8b8h7oOIn9M81nc1IZoq
-hT65n1yE8JjrzOyMbNZxzHKBdft21VukdBvy1X9oV/uAUss/4epY11SMsVt3YSxF
-iUcC3V4hBTfilw4etH0QhijRxtxDJEjVGJ6y/vPWviEilHMILVBrrRK+z5JwqSZm
-bFce9J/tb9uOV6e4fyR9g2fC3p8jR0ihNO+7MMk0lILbHEMMSQ43mA/PvL6zdCcJ
-kQ7my+TzipMWEjrSFLAGK6XL5fwevUZ2lfPDxOk6tkOb+psYz79wAgAOXaU0qKGl
-bDDrSFqhG7KQp0NH216Ba6utyoTuLQ==
-=epzN
------END PGP SIGNATURE-----
-
---Sig_/tDif7Mr/O8TRGtup5+t4KHz--
+Thanks,
+Vijay
