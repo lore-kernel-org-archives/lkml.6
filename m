@@ -2,76 +2,69 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B346ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BD5ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F6120854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:59:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSSs1aU6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F6120854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EBD2920854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:00:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD2920854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388142AbeGWWCs (ORCPT
+        id S2388178AbeGWWDQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:02:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47302 "EHLO mail.kernel.org"
+        Mon, 23 Jul 2018 18:03:16 -0400
+Received: from mga14.intel.com ([192.55.52.115]:9879 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728370AbeGWWCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:02:47 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62A1820854;
-        Mon, 23 Jul 2018 20:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532379587;
-        bh=L/xWlUfvko5IoaJrb9vvwhPVET+6e+vD5antTfRvGUY=;
-        h=Subject:From:To:Cc:Date:From;
-        b=WSSs1aU6TNBh4Hk2/09qMgzEdlfaDe7brVR4FoP1t9Hivuv5jKefBU0D+eXUL6zY1
-         Wm0nahKTv8ensonXvKCJN9DeyLY5tG/eOTomMN3Sw3YAAcd1n2+pgiexRmIQeLP1vv
-         rVy1ScPc8e28H+dH55ibv8f19NxtgxBy8StPfQf4=
-Subject: [PATCH] vxge: Remove unnecessary include of <linux/pci_hotplug.h>
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jon Mason <jdmason@kudzu.us>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 23 Jul 2018 15:59:46 -0500
-Message-ID: <153237958637.172194.6734539971240967379.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S2388139AbeGWWDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 18:03:16 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 14:00:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
+   d="scan'208";a="73843501"
+Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
+  by fmsmga004.fm.intel.com with ESMTP; 23 Jul 2018 14:00:15 -0700
+Date:   Mon, 23 Jul 2018 14:00:15 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Michal Hocko <mhocko@kernel.org>, linux-ia64@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] ia64: switch to NO_BOOTMEM
+Message-ID: <20180723210015.GA7058@agluck-desk>
+References: <1532325418-22617-1-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532325418-22617-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Mon, Jul 23, 2018 at 08:56:54AM +0300, Mike Rapoport wrote:
+> Hi,
+> 
+> These patches convert ia64 to use NO_BOOTMEM.
+> 
+> The first two patches are cleanups, the third patches reduces usage of
+> 'struct bootmem_data' for easier transition and the forth patch actually
+> replaces bootmem with memblock + nobootmem.
+> 
+> I've tested the sim_defconfig with the ski simulator and build tested other
+> defconfigs.
 
-The vxge driver doesn't need anything provided by pci_hotplug.h, so remove
-the unnecessary include of it.
+Boots OK on my real ia64 system.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/net/ethernet/neterion/vxge/vxge-config.c |    1 -
- 1 file changed, 1 deletion(-)
+Unless somebody else sees an issue I'll push to Linus nest merge window.
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-index 358ed6118881..a2c0a93ca8b6 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-@@ -14,7 +14,6 @@
- #include <linux/vmalloc.h>
- #include <linux/etherdevice.h>
- #include <linux/pci.h>
--#include <linux/pci_hotplug.h>
- #include <linux/slab.h>
- 
- #include "vxge-traffic.h"
-
+-Tony
