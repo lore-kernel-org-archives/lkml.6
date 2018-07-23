@@ -2,78 +2,89 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1EEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670BFECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 309E020875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:59:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 309E020875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id 21CED20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:03:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21CED20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387965AbeGWMAE (ORCPT
+        id S2387922AbeGWMDq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:00:04 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:35512 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387864AbeGWMAD (ORCPT
+        Mon, 23 Jul 2018 08:03:46 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53581 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387849AbeGWMDp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:00:03 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1fhYYd-0008LV-UY; Mon, 23 Jul 2018 12:59:16 +0200
-Date:   Mon, 23 Jul 2018 12:59:15 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     shaochun chen <cscnull@gmail.com>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        David Miller <davem@davemloft.net>,
-        kadlec <kadlec@blackhole.kfki.hu>,
-        "johannes.berg" <johannes.berg@intel.com>, jason <Jason@zx2c4.com>,
-        ktkhai <ktkhai@virtuozzo.com>,
-        "lucien.xin" <lucien.xin@gmail.com>,
-        "xiyou.wangcong" <xiyou.wangcong@gmail.com>,
-        dsahern <dsahern@gmail.com>,
-        netfilter-devel <netfilter-devel@vger.kernel.org>,
-        tom <tom@quantonium.net>, netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] netlink: fix memory leak of dump
-Message-ID: <20180723105915.a6vx5t7htcclez3k@breakpoint.cc>
-References: <20180722143354.23722-1-cscnull@gmail.com>
- <20180722163925.gdfkndldatsoae6x@breakpoint.cc>
- <20180722.100755.19840167505550163.davem@davemloft.net>
- <20180722180910.wcwhantwpm2nfxet@breakpoint.cc>
- <20180723091551.mwhltw4ujm4bylvj@salvia>
- <20180723092818.ztsfsnqzxgzrauim@breakpoint.cc>
- <CAKDdixCx5za07R9KdyohsZjJqzdTpE3mR1+4TwY5xjeBGVeTjg@mail.gmail.com>
- <CAKDdixBBd08eKvk-hJtwPy46u2uzihRCh_KdEMF3xG1ZJ6oNsg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKDdixBBd08eKvk-hJtwPy46u2uzihRCh_KdEMF3xG1ZJ6oNsg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 23 Jul 2018 08:03:45 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1fhYcD-0003L2-FP; Mon, 23 Jul 2018 13:02:57 +0200
+Message-ID: <1532343774.3501.8.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/3] reset: imx7: Fix always writing bits as 0
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, kernel@pengutronix.de,
+        linux-imx@nxp.com
+Date:   Mon, 23 Jul 2018 13:02:54 +0200
+In-Reply-To: <1532338865.3163.95.camel@pengutronix.de>
+References: <cover.1532090446.git.leonard.crestez@nxp.com>
+         <54f436a1d2a11a379af642a3327312367ef95343.1532090446.git.leonard.crestez@nxp.com>
+         <1532338865.3163.95.camel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-shaochun chen <cscnull@gmail.com> wrote:
-> I have a question: we will try_module_get in __netlink_dump_start(),
+On Mon, 2018-07-23 at 11:41 +0200, Lucas Stach wrote:
+> As this doesn't depend on any other patch in this series, I think it
+> would be fine if Philipp takes this patch through the reset tree.
+> 
+> Regards,
+> Lucas
+> 
+> Am Freitag, den 20.07.2018, 15:47 +0300 schrieb Leonard Crestez:
+> > Right now the only user of reset-imx7 is pci-imx6 and the
+> > reset_control_assert and deassert calls on pciephy_reset don't toggle
+> > the PCIEPHY_BTN and PCIEPHY_G_RST bits as expected. Fix this by writing
+> > 1 or 0 respectively.
+> > 
+> > The reference manual is not very clear regarding SRC_PCIEPHY_RCR but for
+> > other registers like MIPIPHY and HSICPHY the bits are explicitly
+> > documented as "1 means assert, 0 means deassert".
+> > 
+> > The values are still reversed for IMX7_RESET_PCIE_CTRL_APPS_EN.
+> > 
+> > > Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> > > Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-Thats too late, we release rcu read lock before this, so the module
-implementing ->dump might have been removed already.
+Thank you, applied to reset/fixes.
 
-> but why we need to call try_module_get again in  nft_netlink_dump_start ??
-
-Its the other way around.
-This is the first try_module_get; at this point we still hold rcu read
-lock.
-
-If nf_tables module is being removed, try_module_get will fail and
-we can error out.
-
-If it succeeds, its safe to drop the rcu read lock.
+regards
+Philipp
