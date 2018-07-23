@@ -2,127 +2,268 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC88ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06977ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E38AF20685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:59:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E38AF20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B57920875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:03:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzJ8grvW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B57920875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388490AbeGWOAr (ORCPT
+        id S2388135AbeGWOE7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 10:00:47 -0400
-Received: from mga02.intel.com ([134.134.136.20]:38182 "EHLO mga02.intel.com"
+        Mon, 23 Jul 2018 10:04:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388245AbeGWOAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 10:00:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 05:59:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
-   d="scan'208";a="218299434"
-Received: from sssawant-mobl1.amr.corp.intel.com (HELO [10.252.132.170]) ([10.252.132.170])
-  by orsmga004.jf.intel.com with ESMTP; 23 Jul 2018 05:59:27 -0700
-Subject: Re: [RFC 2/2] x86/pti/64: Remove the SYSCALL64 entry trampoline
-To:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <cover.1532281180.git.luto@kernel.org>
- <1e3d01ce04315218d3f8ee269528bb774a4d1d60.1532281180.git.luto@kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <bdca2ca6-6081-7d6f-9c17-a15446ffbb20@linux.intel.com>
-Date:   Mon, 23 Jul 2018 05:59:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2387965AbeGWOE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 10:04:59 -0400
+Received: from localhost (unknown [14.52.27.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB3A020685;
+        Mon, 23 Jul 2018 13:03:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532351030;
+        bh=GJT8bUVsxs/iT88RSzZP3tsc5Icxu8Ew6EonkH5kD84=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CzJ8grvWqTpezJF04NsepkZNpxkRZJFUJmLj8+sxPX/23sY85ym7LdHKpllcsL2RS
+         06m47h4scVcGP30GcdLqfMeegwOSL6O1OtMK+fiAWASa3lHbyVJZBd6jUqrZKpIJ5S
+         I/CKnMUpS+2F+oJKOPeEf1fV66Bjfu3ZJKnEgeIE=
+Date:   Mon, 23 Jul 2018 22:03:46 +0900
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH 1/3] f2fs: turn off atomic writes when deteting abnormal
+ behaviors
+Message-ID: <20180723130346.GD19644@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180715011112.11475-1-jaegeuk@kernel.org>
+ <29151284-ef34-2eb2-1060-7e214fe8834a@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1e3d01ce04315218d3f8ee269528bb774a4d1d60.1532281180.git.luto@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29151284-ef34-2eb2-1060-7e214fe8834a@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/22/2018 10:45 AM, Andy Lutomirski wrote:
->  static void __init pti_clone_user_shared(void)
->  {
-> +	unsigned cpu;
-> +
->  	pti_clone_p4d(CPU_ENTRY_AREA_BASE);
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		/*
-> +		 * The SYSCALL64 entry code needs to be able to find the
-> +		 * thread stack and needs one word of scratch space in which
-> +		 * to spill a register.  All of this lives in the TSS, in
-> +		 * the sp1 and sp2 slots.
-> +		 */
+On 07/16, Chao Yu wrote:
+> On 2018/7/15 9:11, Jaegeuk Kim wrote:
+> > In order to prevent abusing atomic writes by abnormal users, we've added a
+> > threshold, 20% over memory footprint, which disallows further atomic writes.
+> > Previously, however, SQLite doesn't know the files became normal, so that
+> > it could write stale data and commit on revoked normal database file.
+> > 
+> > Once f2fs detects such the abnormal behavior, this patch simply disables
+> > all the atomic operations such as:
+> > - write_begin() gives EINVAL to avoid stale data writes, and SQLite will call
+> >   F2FS_IOC_ABORT_VOLATILE_WRITE to notify aborting the transaction,
+> > - F2FS_IOC_START_ATOMIC_WRITE gives EINVAL for SQLite to fall back normal
+> >   journal_mode,
+> > - F2FS_IOC_COMMIT_ATOMIC_WRITE gives EINVAL, if the file was revoked, so that
+> >   Framework retries to submit the transaction given propagated SQLite error.
+> > 
+> > Note that, this patch also turns off atomic operations, if foreground GC tries
+> > to move atomic files too frequently.
+> 
+> Well, how about just keeping original implementation: shutdown atomic write for
+> those files which are really affect fggc? Since intention of the original
+> behavior is targeting to abnormal atomic write usage, e.g. open atomic_write
+> file for very long time, then fggc will be blocked each time when moving its
+> block. So shutdown it, fggc will recover.
 
-I had to remind myself about the r/o cpu_entry_area alias here.  Should
-we maybe call it out explicitly?
+The point here is stopping sqlite to keep going wrong data writes even after
+we already revoked blocks.
 
-/*
- * The TSS is also mapped read-only into the cpu_entry_area.
- * The cpu_entry_area copy is used r/o by the hardware for the
- * hardware stack switching, like interrupt entry.
- *
- * The copies being mapped here are the normal r/w per-cpu
- * areas.  We need r/w because we spill a register here.
- */
+Thanks,
 
-BTW, since we have this alias, do we still *need* the r/o cpu_entry_area
-alias?  Or do we still get some value from keeping the thing referenced
-by hardware r/o?
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/data.c    |  7 ++++---
+> >  fs/f2fs/f2fs.h    |  4 ++--
+> >  fs/f2fs/file.c    |  6 +++++-
+> >  fs/f2fs/gc.c      |  4 +---
+> >  fs/f2fs/segment.c | 21 +++++++++++----------
+> >  5 files changed, 23 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 5e53d210e222..c9e75aa61c24 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -2247,8 +2247,9 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+> >  	trace_f2fs_write_begin(inode, pos, len, flags);
+> >  
+> >  	if (f2fs_is_atomic_file(inode) &&
+> > -			!f2fs_available_free_memory(sbi, INMEM_PAGES)) {
+> > -		err = -ENOMEM;
+> > +			(is_sbi_flag_set(sbi, SBI_DISABLE_ATOMIC_WRITE) ||
+> > +			!f2fs_available_free_memory(sbi, INMEM_PAGES))) {
+> > +		err = -EINVAL;
+> >  		drop_atomic = true;
+> >  		goto fail;
+> >  	}
+> > @@ -2331,7 +2332,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+> >  	f2fs_put_page(page, 1);
+> >  	f2fs_write_failed(mapping, pos + len);
+> >  	if (drop_atomic)
+> > -		f2fs_drop_inmem_pages_all(sbi, false);
+> > +		f2fs_disable_atomic_write(sbi);
+> >  	return err;
+> >  }
+> >  
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 4d8b1de83143..1d5c8d543eda 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -621,7 +621,6 @@ enum {
+> >  
+> >  enum {
+> >  	GC_FAILURE_PIN,
+> > -	GC_FAILURE_ATOMIC,
+> >  	MAX_GC_FAILURE
+> >  };
+> >  
+> > @@ -1066,6 +1065,7 @@ enum {
+> >  	SBI_POR_DOING,				/* recovery is doing or not */
+> >  	SBI_NEED_SB_WRITE,			/* need to recover superblock */
+> >  	SBI_NEED_CP,				/* need to checkpoint */
+> > +	SBI_DISABLE_ATOMIC_WRITE,		/* turn off atomic write */
+> >  };
+> >  
+> >  enum {
+> > @@ -2833,7 +2833,7 @@ void f2fs_destroy_node_manager_caches(void);
+> >   */
+> >  bool f2fs_need_SSR(struct f2fs_sb_info *sbi);
+> >  void f2fs_register_inmem_page(struct inode *inode, struct page *page);
+> > -void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure);
+> > +void f2fs_disable_atomic_write(struct f2fs_sb_info *sbi);
+> >  void f2fs_drop_inmem_pages(struct inode *inode);
+> >  void f2fs_drop_inmem_page(struct inode *inode, struct page *page);
+> >  int f2fs_commit_inmem_pages(struct inode *inode);
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 6880c6f78d58..b029a4ed3bb0 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -1682,6 +1682,9 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >  	if (!S_ISREG(inode->i_mode))
+> >  		return -EINVAL;
+> >  
+> > +	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_DISABLE_ATOMIC_WRITE))
+> > +		return -EINVAL;
+> > +
+> >  	ret = mnt_want_write_file(filp);
+> >  	if (ret)
+> >  		return ret;
+> > @@ -1750,7 +1753,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+> >  		if (!ret) {
+> >  			clear_inode_flag(inode, FI_ATOMIC_FILE);
+> > -			F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
+> >  			stat_dec_atomic_write(inode);
+> >  		}
+> >  	} else {
+> > @@ -1853,6 +1855,8 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+> >  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+> >  	}
+> >  
+> > +	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> > +
+> >  	inode_unlock(inode);
+> >  
+> >  	mnt_drop_write_file(filp);
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index 9093be6e7a7d..6d762f3cdfc7 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -629,7 +629,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >  		goto out;
+> >  
+> >  	if (f2fs_is_atomic_file(inode)) {
+> > -		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
+> >  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
+> >  		goto out;
+> >  	}
+> > @@ -745,7 +744,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+> >  		goto out;
+> >  
+> >  	if (f2fs_is_atomic_file(inode)) {
+> > -		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
+> >  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
+> >  		goto out;
+> >  	}
+> > @@ -1100,7 +1098,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >  		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> >  			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
+> >  				skipped_round * 2 >= round)
+> > -				f2fs_drop_inmem_pages_all(sbi, true);
+> > +				f2fs_disable_atomic_write(sbi);
+> >  			segno = NULL_SEGNO;
+> >  			goto gc_more;
+> >  		}
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 9efce174c51a..05877a2f1894 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -274,11 +274,14 @@ static int __revoke_inmem_pages(struct inode *inode,
+> >  	return err;
+> >  }
+> >  
+> > -void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
+> > +void f2fs_disable_atomic_write(struct f2fs_sb_info *sbi)
+> >  {
+> >  	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
+> >  	struct inode *inode;
+> >  	struct f2fs_inode_info *fi;
+> > +
+> > +	/* just turn it off */
+> > +	set_sbi_flag(sbi, SBI_DISABLE_ATOMIC_WRITE);
+> >  next:
+> >  	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
+> >  	if (list_empty(head)) {
+> > @@ -290,17 +293,16 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
+> >  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> >  
+> >  	if (inode) {
+> > -		if (gc_failure) {
+> > -			if (fi->i_gc_failures[GC_FAILURE_ATOMIC])
+> > -				goto drop;
+> > -			goto skip;
+> > +		inode_lock(inode);
+> > +		/* need to check whether it was already revoked */
+> > +		if (f2fs_is_atomic_file(inode)) {
+> > +			f2fs_drop_inmem_pages(inode);
+> > +			set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >  		}
+> > -drop:
+> > -		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> > -		f2fs_drop_inmem_pages(inode);
+> > +		inode_unlock(inode);
+> >  		iput(inode);
+> >  	}
+> > -skip:
+> > +
+> >  	congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >  	cond_resched();
+> >  	goto next;
+> > @@ -320,7 +322,6 @@ void f2fs_drop_inmem_pages(struct inode *inode)
+> >  	mutex_unlock(&fi->inmem_lock);
+> >  
+> >  	clear_inode_flag(inode, FI_ATOMIC_FILE);
+> > -	fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
+> >  	stat_dec_atomic_write(inode);
+> >  }
+> >  
+> > 
