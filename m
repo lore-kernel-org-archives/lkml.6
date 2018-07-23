@@ -2,66 +2,77 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C61ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03942ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A76A720875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:33:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A76A720875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sonarnerd.net
+	by mail.kernel.org (Postfix) with ESMTP id 88A6F20647
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:33:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88A6F20647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388100AbeGWJdM (ORCPT
+        id S2388117AbeGWJdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 05:33:12 -0400
-Received: from rankki.sonarnerd.net ([194.142.149.154]:27062 "EHLO
-        mail.sonarnerd.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387978AbeGWJdL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 05:33:11 -0400
-X-Greylist: delayed 387 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Jul 2018 05:33:11 EDT
-Received: from [IPv6:fc00::2] (porkkala.uworld [IPv6:fc00::2])
-        by mail.sonarnerd.net (Postfix) with ESMTP id 2158323111A;
-        Mon, 23 Jul 2018 11:26:41 +0300 (EEST)
-Subject: Re: [PATCH] alsa/usb-audio: Topping DX7s quirk for DSD interface
-To:     Yue Wang <yuleopen@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Nobutaka Okabe <nob77413@gmail.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Alberto Aguirre <albaguirre@gmail.com>,
-        alsa-devel@alsa-project.org
-References: <20180723080208.44235-1-yuleopen@gmail.com>
-From:   Jussi Laako <jussi@sonarnerd.net>
-Message-ID: <133b10a8-95d0-7882-39dc-c3cf8f80aaab@sonarnerd.net>
-Date:   Mon, 23 Jul 2018 11:26:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 23 Jul 2018 05:33:43 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9666 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387974AbeGWJdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 05:33:43 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CE870B80DF30C;
+        Mon, 23 Jul 2018 16:33:33 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Mon, 23 Jul 2018
+ 16:33:26 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>,
+        <yoshfuji@linux-ipv6.org>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] ipv6: sr: Use kmemdup instead of duplicating it in parse_nla_srh
+Date:   Mon, 23 Jul 2018 16:33:19 +0800
+Message-ID: <20180723083319.19144-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20180723080208.44235-1-yuleopen@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Replace calls to kmalloc followed by a memcpy with a direct call to
+kmemdup.
 
-> +	case USB_ID(0x152a, 0x8750): /* Topping DX7s */
-0x152a is Thesycon's VID and if it's based on XMOS I'd recommend to try 
-adding the 0x152a VID to the generic DSD capability auto-detect list 
-instead of this old device specific list.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/ipv6/seg6_local.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-I consider it very likely that it would work that way and at the same 
-time also cover all other devices with the same firmware and Thesycon's VID.
+diff --git a/net/ipv6/seg6_local.c b/net/ipv6/seg6_local.c
+index cd6e4ca..e1025b4 100644
+--- a/net/ipv6/seg6_local.c
++++ b/net/ipv6/seg6_local.c
+@@ -637,12 +637,10 @@ static int parse_nla_srh(struct nlattr **attrs, struct seg6_local_lwt *slwt)
+ 	if (!seg6_validate_srh(srh, len))
+ 		return -EINVAL;
+ 
+-	slwt->srh = kmalloc(len, GFP_KERNEL);
++	slwt->srh = kmemdup(srh, len, GFP_KERNEL);
+ 	if (!slwt->srh)
+ 		return -ENOMEM;
+ 
+-	memcpy(slwt->srh, srh, len);
+-
+ 	slwt->headroom += len;
+ 
+ 	return 0;
+-- 
+2.7.0
 
 
-Best regards,
-
-	- Jussi
