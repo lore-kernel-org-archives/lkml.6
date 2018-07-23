@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B994ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EA5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F371B20685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F371B20685
+	by mail.kernel.org (Postfix) with ESMTP id E6DE020685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6DE020685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389219AbeGWNrj (ORCPT
+        id S2389259AbeGWNrn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50966 "EHLO
+        Mon, 23 Jul 2018 09:47:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389197AbeGWNrj (ORCPT
+        with ESMTP id S2388511AbeGWNrm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:39 -0400
+        Mon, 23 Jul 2018 09:47:42 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5309CA8;
-        Mon, 23 Jul 2018 12:45:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 607B4CAF;
+        Mon, 23 Jul 2018 12:45:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,9 +38,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 055/107] x86/bugs: Expose /sys/../spec_store_bypass
-Date:   Mon, 23 Jul 2018 14:41:49 +0200
-Message-Id: <20180723122415.718682346@linuxfoundation.org>
+Subject: [PATCH 4.4 058/107] x86/bugs/intel: Set proper CPU features and setup RDS
+Date:   Mon, 23 Jul 2018 14:41:52 +0200
+Message-Id: <20180723122415.894335213@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -59,15 +59,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit c456442cd3a59eeb1d60293c26cbe2ff2c4e42cf upstream
+commit 772439717dbf703b39990be58d8d4e3e4ad0598a upstream
 
-Add the sysfs file for the new vulerability. It does not do much except
-show the words 'Vulnerable' for recent x86 cores.
+Intel CPUs expose methods to:
 
-Intel cores prior to family 6 are known not to be vulnerable, and so are
-some Atoms and some Xeon Phi.
+ - Detect whether RDS capability is available via CPUID.7.0.EDX[31],
 
-It assumes that older Cyrix, Centaur, etc. cores are immune.
+ - The SPEC_CTRL MSR(0x48), bit 2 set to enable RDS.
+
+ - MSR_IA32_ARCH_CAPABILITIES, Bit(4) no need to enable RRS.
+
+With that in mind if spec_store_bypass_disable=[auto,on] is selected set at
+boot-time the SPEC_CTRL MSR to enable RDS if the platform requires it.
+
+Note that this does not fix the KVM case where the SPEC_CTRL is exposed to
+guests which can muck with it, see patch titled :
+ KVM/SVM/VMX/x86/spectre_v2: Support the combination of guest and host IBRS.
+
+And for the firmware (IBRS to be set), see patch titled:
+ x86/spectre_v2: Read SPEC_CTRL MSR during boot and re-use reserved bits
+
+[ tglx: Distangled it from the intel implementation and kept the call order ]
 
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -82,116 +94,141 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- Documentation/ABI/testing/sysfs-devices-system-cpu |    1 
- arch/x86/include/asm/cpufeatures.h                 |    1 
- arch/x86/kernel/cpu/bugs.c                         |    5 ++++
- arch/x86/kernel/cpu/common.c                       |   23 +++++++++++++++++++++
- drivers/base/cpu.c                                 |    8 +++++++
- include/linux/cpu.h                                |    2 +
- 6 files changed, 40 insertions(+)
+ arch/x86/include/asm/msr-index.h |    6 ++++++
+ arch/x86/kernel/cpu/bugs.c       |   30 ++++++++++++++++++++++++++++--
+ arch/x86/kernel/cpu/common.c     |   10 ++++++----
+ arch/x86/kernel/cpu/cpu.h        |    3 +++
+ arch/x86/kernel/cpu/intel.c      |    1 +
+ 5 files changed, 44 insertions(+), 6 deletions(-)
 
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -276,6 +276,7 @@ What:		/sys/devices/system/cpu/vulnerabi
- 		/sys/devices/system/cpu/vulnerabilities/meltdown
- 		/sys/devices/system/cpu/vulnerabilities/spectre_v1
- 		/sys/devices/system/cpu/vulnerabilities/spectre_v2
-+		/sys/devices/system/cpu/vulnerabilities/spec_store_bypass
- Date:		January 2018
- Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
- Description:	Information about CPU vulnerabilities
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -315,5 +315,6 @@
- #define X86_BUG_CPU_MELTDOWN	X86_BUG(14) /* CPU is affected by meltdown attack and needs kernel page table isolation */
- #define X86_BUG_SPECTRE_V1	X86_BUG(15) /* CPU is affected by Spectre variant 1 attack with conditional branches */
- #define X86_BUG_SPECTRE_V2	X86_BUG(16) /* CPU is affected by Spectre variant 2 attack with indirect branches */
-+#define X86_BUG_SPEC_STORE_BYPASS X86_BUG(17) /* CPU is affected by speculative store bypass attack */
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -35,6 +35,7 @@
+ #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
+ #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
+ #define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
++#define SPEC_CTRL_RDS			(1 << 2)   /* Reduced Data Speculation */
  
- #endif /* _ASM_X86_CPUFEATURES_H */
+ #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
+ #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
+@@ -56,6 +57,11 @@
+ #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
+ #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
+ #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
++#define ARCH_CAP_RDS_NO			(1 << 4)   /*
++						    * Not susceptible to Speculative Store Bypass
++						    * attack, so no Reduced Data Speculation control
++						    * required.
++						    */
+ 
+ #define MSR_IA32_BBL_CR_CTL		0x00000119
+ #define MSR_IA32_BBL_CR_CTL3		0x0000011e
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -403,4 +403,9 @@ ssize_t cpu_show_spectre_v2(struct devic
+@@ -116,7 +116,7 @@ static enum spectre_v2_mitigation spectr
+ 
+ void x86_spec_ctrl_set(u64 val)
  {
- 	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V2);
- }
+-	if (val & ~SPEC_CTRL_IBRS)
++	if (val & ~(SPEC_CTRL_IBRS | SPEC_CTRL_RDS))
+ 		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
+ 	else
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
+@@ -443,8 +443,28 @@ static enum ssb_mitigation_cmd __init __
+ 		break;
+ 	}
+ 
+-	if (mode != SPEC_STORE_BYPASS_NONE)
++	/*
++	 * We have three CPU feature flags that are in play here:
++	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
++	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
++	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
++	 */
++	if (mode != SPEC_STORE_BYPASS_NONE) {
+ 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
++		/*
++		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
++		 * a completely different MSR and bit dependent on family.
++		 */
++		switch (boot_cpu_data.x86_vendor) {
++		case X86_VENDOR_INTEL:
++			x86_spec_ctrl_base |= SPEC_CTRL_RDS;
++			x86_spec_ctrl_set(SPEC_CTRL_RDS);
++			break;
++		case X86_VENDOR_AMD:
++			break;
++		}
++	}
 +
-+ssize_t cpu_show_spec_store_bypass(struct device *dev, struct device_attribute *attr, char *buf)
+ 	return mode;
+ }
+ 
+@@ -458,6 +478,12 @@ static void ssb_select_mitigation()
+ 
+ #undef pr_fmt
+ 
++void x86_spec_ctrl_setup_ap(void)
 +{
-+	return cpu_show_common(dev, attr, buf, X86_BUG_SPEC_STORE_BYPASS);
++	if (boot_cpu_has(X86_FEATURE_IBRS))
++		x86_spec_ctrl_set(x86_spec_ctrl_base & (SPEC_CTRL_IBRS | SPEC_CTRL_RDS));
 +}
- #endif
++
+ #ifdef CONFIG_SYSFS
+ 
+ ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -835,10 +835,33 @@ static const __initconst struct x86_cpu_
- 	{}
- };
- 
-+static const __initconst struct x86_cpu_id cpu_no_spec_store_bypass[] = {
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PINEVIEW	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_LINCROFT	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PENWELL		},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CLOVERVIEW	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CEDARVIEW	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT1	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_AIRMONT		},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT2	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_MERRIFIELD	},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_CORE_YONAH		},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNL		},
-+	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNM		},
-+	{ X86_VENDOR_CENTAUR,	5,					},
-+	{ X86_VENDOR_INTEL,	5,					},
-+	{ X86_VENDOR_NSC,	5,					},
-+	{ X86_VENDOR_ANY,	4,					},
-+	{}
-+};
-+
- static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+@@ -859,7 +859,11 @@ static void __init cpu_set_bug_bits(stru
  {
  	u64 ia32_cap = 0;
  
-+	if (!x86_match_cpu(cpu_no_spec_store_bypass))
-+		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+-	if (!x86_match_cpu(cpu_no_spec_store_bypass))
++	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
++		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
 +
++	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
++	   !(ia32_cap & ARCH_CAP_RDS_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+ 
  	if (x86_match_cpu(cpu_no_speculation))
+@@ -871,9 +875,6 @@ static void __init cpu_set_bug_bits(stru
+ 	if (x86_match_cpu(cpu_no_meltdown))
  		return;
  
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -518,14 +518,22 @@ ssize_t __weak cpu_show_spectre_v2(struc
- 	return sprintf(buf, "Not affected\n");
+-	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
+-		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+-
+ 	/* Rogue Data Cache Load? No! */
+ 	if (ia32_cap & ARCH_CAP_RDCL_NO)
+ 		return;
+@@ -1216,6 +1217,7 @@ void identify_secondary_cpu(struct cpuin
+ 	enable_sep_cpu();
+ #endif
+ 	mtrr_ap_init();
++	x86_spec_ctrl_setup_ap();
  }
  
-+ssize_t __weak cpu_show_spec_store_bypass(struct device *dev,
-+					  struct device_attribute *attr, char *buf)
-+{
-+	return sprintf(buf, "Not affected\n");
-+}
+ struct msr_range {
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -46,4 +46,7 @@ extern const struct cpu_dev *const __x86
+ 
+ extern void get_cpu_cap(struct cpuinfo_x86 *c);
+ extern void cpu_detect_cache_sizes(struct cpuinfo_x86 *c);
 +
- static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
- static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
- static DEVICE_ATTR(spectre_v2, 0444, cpu_show_spectre_v2, NULL);
-+static DEVICE_ATTR(spec_store_bypass, 0444, cpu_show_spec_store_bypass, NULL);
++extern void x86_spec_ctrl_setup_ap(void);
++
+ #endif /* ARCH_X86_CPU_H */
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -119,6 +119,7 @@ static void early_init_intel(struct cpui
+ 		setup_clear_cpu_cap(X86_FEATURE_STIBP);
+ 		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
+ 		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_RDS);
+ 	}
  
- static struct attribute *cpu_root_vulnerabilities_attrs[] = {
- 	&dev_attr_meltdown.attr,
- 	&dev_attr_spectre_v1.attr,
- 	&dev_attr_spectre_v2.attr,
-+	&dev_attr_spec_store_bypass.attr,
- 	NULL
- };
- 
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -46,6 +46,8 @@ extern ssize_t cpu_show_spectre_v1(struc
- 				   struct device_attribute *attr, char *buf);
- extern ssize_t cpu_show_spectre_v2(struct device *dev,
- 				   struct device_attribute *attr, char *buf);
-+extern ssize_t cpu_show_spec_store_bypass(struct device *dev,
-+					  struct device_attribute *attr, char *buf);
- 
- extern __printf(4, 5)
- struct device *cpu_device_create(struct device *parent, void *drvdata,
+ 	/*
 
 
