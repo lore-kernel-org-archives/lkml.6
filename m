@@ -2,594 +2,336 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DEA2ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7FFECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A6CD20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:09:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FzA1Qlmr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A6CD20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 08CD220854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:09:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08CD220854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388441AbeGWLKE (ORCPT
+        id S2388457AbeGWLKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:10:04 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42063 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388375AbeGWLKE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:10:04 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y4-v6so44390pgp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 03:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0AYsQVVvkAudhQ8W3erJsSjPpr4BhaYyQ4yH9RJW23w=;
-        b=FzA1Qlmry4SX600KVhNjuN7WnRTv/4lxBwYnDV3Ch7QBU4HPEvpAjnMx2akv3DY+BB
-         WIfzoVs7rK8xUrEUHg7SdZXJ6K2suFRZWPQ+cYfQu/Q5wFpbgPDtt0pe402HL5luBAWD
-         prkxw5t3nRCUsWPn2PtfD3MRFSStb+TKlXirQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0AYsQVVvkAudhQ8W3erJsSjPpr4BhaYyQ4yH9RJW23w=;
-        b=PE0Mqb8gCu1pcA4NPS9ruG1z1P5Q+85HyP4QtkLjpI8qCVKL6P4rxhOSV4khXecSIn
-         T/nagqhHzcHaNtCa2t5w7ri+ENkYeA30SJxHP4ej7SjYN7B3gaM0XG0WwMEQyOKCdKV0
-         jC+ULw5SYnHg1tfYi1RRrICheC0it9P5p1MKIiIi+4uZJ1Fqt5FkUU2/sTCWKH4ly+MQ
-         ZSpErp7aUyYqKYk8va752iMA0EtGmESe0Eju1ohWnc8+KFIChZgjs3qa86c/LaT1KqTh
-         tuJ0UEIpYuT4jf3pjhz/tgRzyq5GT2iVKayUyhd6PyHbzUn2TKyoouU7wpD6/lANARfb
-         U1Pw==
-X-Gm-Message-State: AOUpUlH1zcQsRdUZdomYy8lVtVR9nCJNOJYXyaMpmGa5OXIXa1VqC0KO
-        IHz33Q+NkvOHK4qWfrakxn1Qjg==
-X-Google-Smtp-Source: AAOMgpcD2L4ELuydfffFr/zH6igBIVD77lGh7UuYrn7gSS6+SgptdCuDJtazYN+u5kq3vSI7RJ7N2A==
-X-Received: by 2002:a65:538e:: with SMTP id x14-v6mr11432439pgq.388.1532340576918;
-        Mon, 23 Jul 2018 03:09:36 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id e82-v6sm13470698pfk.87.2018.07.23.03.09.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 23 Jul 2018 03:09:35 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>,
-        Jason Wu <jason.wu@unisoc.com>, zhang.lyra@gmail.com
-Subject: [PATCH V4 6/7] mmc: sdhci-sprd: added Spreadtrum's initial host controller
-Date:   Mon, 23 Jul 2018 18:08:27 +0800
-Message-Id: <1532340508-8749-7-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532340508-8749-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1532340508-8749-1-git-send-email-zhang.chunyan@linaro.org>
+        Mon, 23 Jul 2018 07:10:08 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:50693 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388375AbeGWLKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:10:07 -0400
+Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id A97612012BA07C;
+        Mon, 23 Jul 2018 12:09:37 +0200 (CEST)
+Subject: Re: MSI B350M MORTAR: `AMD-Vi: Unable to write to IOMMU perf
+ counter.` and `pci 0000:00:00.2: can't derive routing for PCI INT A`
+To:     =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <605ca165-0071-eb7f-4c0d-b1e76ddd0e05@molgen.mpg.de>
+ <20180720123153.GC18541@8bytes.org>
+From:   Paul Menzel <pmenzel+linux-iommu@molgen.mpg.de>
+Message-ID: <d2c5ee4a-e72b-672e-ae30-7b3cd5a43c63@molgen.mpg.de>
+Date:   Mon, 23 Jul 2018 12:09:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180720123153.GC18541@8bytes.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms080609080103040107060400"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+This is a cryptographically signed message in MIME format.
 
-This patch adds the initial support of Secure Digital Host Controller
-Interface compliant controller found in some latest Spreadtrum chipsets.
-This patch has been tested on the version of SPRD-R11 controller.
+--------------ms080609080103040107060400
+Content-Type: multipart/mixed;
+ boundary="------------A529CF20E19C5183D8DADD40"
+Content-Language: en-US
 
-R11 is a variant based on SD v4.0 specification.
+This is a multi-part message in MIME format.
+--------------A529CF20E19C5183D8DADD40
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-With this driver, R11 mmc can be initialized, can be mounted, read and
-written.
+Dear J=C3=B6rg,
 
-Original-by: Billows Wu <billows.wu@spreadtrum.com>
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/mmc/host/Kconfig      |  13 ++
- drivers/mmc/host/Makefile     |   1 +
- drivers/mmc/host/sdhci-sprd.c | 455 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 469 insertions(+)
- create mode 100644 drivers/mmc/host/sdhci-sprd.c
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 0581c19..c5424dc 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -581,6 +581,19 @@ config MMC_SDRICOH_CS
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called sdricoh_cs.
- 
-+config MMC_SDHCI_SPRD
-+	tristate "Spreadtrum SDIO host Controller"
-+	depends on ARCH_SPRD
-+	depends on MMC_SDHCI_PLTFM
-+	select MMC_SDHCI_IO_ACCESSORS
-+	help
-+	  This selects the SDIO Host Controller in Spreadtrum
-+	  SoCs, this driver supports R11(IP version: R11P0).
-+
-+	  If you have a controller with this interface, say Y or M here.
-+
-+	  If unsure, say N.
-+
- config MMC_TMIO_CORE
- 	tristate
- 
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 85dc132..b0b6802 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -89,6 +89,7 @@ obj-$(CONFIG_MMC_SDHCI_ST)		+= sdhci-st.o
- obj-$(CONFIG_MMC_SDHCI_MICROCHIP_PIC32)	+= sdhci-pic32.o
- obj-$(CONFIG_MMC_SDHCI_BRCMSTB)		+= sdhci-brcmstb.o
- obj-$(CONFIG_MMC_SDHCI_OMAP)		+= sdhci-omap.o
-+obj-$(CONFIG_MMC_SDHCI_SPRD)		+= sdhci-sprd.o
- obj-$(CONFIG_MMC_CQHCI)			+= cqhci.o
- 
- ifeq ($(CONFIG_CB710_DEBUG),y)
-diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-new file mode 100644
-index 0000000..b467ed5
---- /dev/null
-+++ b/drivers/mmc/host/sdhci-sprd.c
-@@ -0,0 +1,455 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Secure Digital Host Controller
-+//
-+// Copyright (C) 2018 Spreadtrum, Inc.
-+// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+
-+#include <linux/delay.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/highmem.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_gpio.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+
-+#include "sdhci-pltfm.h"
-+
-+#define SDHCI_SPRD_REG_32_DLL_DLY_OFFSET	0x208
-+#define  SDHCIBSPRD_IT_WR_DLY_INV		BIT(5)
-+#define  SDHCI_SPRD_BIT_CMD_DLY_INV		BIT(13)
-+#define  SDHCI_SPRD_BIT_POSRD_DLY_INV		BIT(21)
-+#define  SDHCI_SPRD_BIT_NEGRD_DLY_INV		BIT(29)
-+
-+#define SDHCI_SPRD_REG_32_BUSY_POSI		0x250
-+#define  SDHCI_SPRD_BIT_OUTR_CLK_AUTO_EN	BIT(25)
-+#define  SDHCI_SPRD_BIT_INNR_CLK_AUTO_EN	BIT(24)
-+
-+#define SDHCI_SPRD_REG_DEBOUNCE		0x28C
-+#define  SDHCI_SPRD_BIT_DLL_BAK		BIT(0)
-+#define  SDHCI_SPRD_BIT_DLL_VAL		BIT(1)
-+
-+#define  SDHCI_SPRD_INT_SIGNAL_MASK	0x1B7F410B
-+
-+/* SDHCI_HOST_CONTROL2 */
-+#define  SDHCI_SPRD_CTRL_HS200		0x0005
-+#define  SDHCI_SPRD_CTRL_HS400		0x0006
-+
-+/*
-+ * According to the standard specification, BIT(3) of SDHCI_SOFTWARE_RESET is
-+ * reserved, and only used on Spreadtrum's design, the hardware cannot work
-+ * if this bit is cleared.
-+ * 1 : normal work
-+ * 0 : hardware reset
-+ */
-+#define  SDHCI_HW_RESET_CARD		BIT(3)
-+
-+#define SDHCI_SPRD_MAX_CUR		0xFFFFFF
-+#define SDHCI_SPRD_CLK_MAX_DIV		1023
-+
-+#define SDHCI_SPRD_CLK_DEF_RATE		26000000
-+
-+struct sdhci_sprd_host {
-+	u32 version;
-+	struct clk *clk_sdio;
-+	struct clk *clk_enable;
-+	u32 base_rate;
-+};
-+
-+#define TO_SPRD_HOST(host) sdhci_pltfm_priv(sdhci_priv(host))
-+
-+static void sdhci_sprd_init_config(struct sdhci_host *host)
-+{
-+	u16 val;
-+
-+	/* set dll backup mode */
-+	val = sdhci_readl(host, SDHCI_SPRD_REG_DEBOUNCE);
-+	val |= SDHCI_SPRD_BIT_DLL_BAK | SDHCI_SPRD_BIT_DLL_VAL;
-+	sdhci_writel(host, val, SDHCI_SPRD_REG_DEBOUNCE);
-+}
-+
-+static inline u32 sdhci_sprd_readl(struct sdhci_host *host, int reg)
-+{
-+	if (unlikely(reg == SDHCI_MAX_CURRENT))
-+		return SDHCI_SPRD_MAX_CUR;
-+
-+	return readl_relaxed(host->ioaddr + reg);
-+}
-+
-+static inline void sdhci_sprd_writel(struct sdhci_host *host, u32 val, int reg)
-+{
-+	/* SDHCI_MAX_CURRENT is reserved on Spreadtrum's platform */
-+	if (unlikely(reg == SDHCI_MAX_CURRENT))
-+		return;
-+
-+	if (unlikely(reg == SDHCI_SIGNAL_ENABLE || reg == SDHCI_INT_ENABLE))
-+		val = val & SDHCI_SPRD_INT_SIGNAL_MASK;
-+
-+	writel_relaxed(val, host->ioaddr + reg);
-+}
-+
-+static inline void sdhci_sprd_writeb(struct sdhci_host *host, u8 val, int reg)
-+{
-+	/*
-+	 * Since BIT(3) of SDHCI_SOFTWARE_RESET is reserved according to the
-+	 * standard specification, sdhci_reset() write this register directly
-+	 * without checking other reserved bits, that will clear BIT(3) which
-+	 * is defined as hardware reset on Spreadtrum's platform and clearing
-+	 * it by mistake will lead the card not work. So here we need to work
-+	 * around it.
-+	 */
-+	if (unlikely(reg == SDHCI_SOFTWARE_RESET)) {
-+		if (readb_relaxed(host->ioaddr + reg) & SDHCI_HW_RESET_CARD)
-+			val |= SDHCI_HW_RESET_CARD;
-+	}
-+
-+	writeb_relaxed(val, host->ioaddr + reg);
-+}
-+
-+static inline void sdhci_sprd_sd_clk_off(struct sdhci_host *host)
-+{
-+	u16 ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+
-+	ctrl &= ~SDHCI_CLOCK_CARD_EN;
-+	sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
-+}
-+
-+static inline void
-+sdhci_sprd_set_dll_invert(struct sdhci_host *host, u32 mask, bool en)
-+{
-+	u32 dll_dly_offset;
-+
-+	dll_dly_offset = sdhci_readl(host, SDHCI_SPRD_REG_32_DLL_DLY_OFFSET);
-+	if (en)
-+		dll_dly_offset |= mask;
-+	else
-+		dll_dly_offset &= ~mask;
-+	sdhci_writel(host, dll_dly_offset, SDHCI_SPRD_REG_32_DLL_DLY_OFFSET);
-+}
-+
-+static inline u32 sdhci_sprd_calc_div(u32 base_clk, u32 clk)
-+{
-+	u32 div;
-+
-+	/* select 2x clock source */
-+	if (base_clk <= clk * 2)
-+		return 0;
-+
-+	div = (u32) (base_clk / (clk * 2));
-+
-+	if ((base_clk / div) > (clk * 2))
-+		div++;
-+
-+	if (div > SDHCI_SPRD_CLK_MAX_DIV)
-+		div = SDHCI_SPRD_CLK_MAX_DIV;
-+
-+	if (div % 2)
-+		div = (div + 1) / 2;
-+	else
-+		div = div / 2;
-+
-+	return div;
-+}
-+
-+static inline void _sdhci_sprd_set_clock(struct sdhci_host *host,
-+					unsigned int clk)
-+{
-+	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-+	u32 div, val, mask;
-+
-+	div = sdhci_sprd_calc_div(sprd_host->base_rate, clk);
-+
-+	clk |= ((div & 0x300) >> 2) | ((div & 0xFF) << 8);
-+	sdhci_enable_clk(host, clk);
-+
-+	/* enable auto gate sdhc_enable_auto_gate */
-+	val = sdhci_readl(host, SDHCI_SPRD_REG_32_BUSY_POSI);
-+	mask = SDHCI_SPRD_BIT_OUTR_CLK_AUTO_EN |
-+	       SDHCI_SPRD_BIT_INNR_CLK_AUTO_EN;
-+	if (mask != (val & mask)) {
-+		val |= mask;
-+		sdhci_writel(host, val, SDHCI_SPRD_REG_32_BUSY_POSI);
-+	}
-+}
-+
-+static void sdhci_sprd_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	bool en = false;
-+
-+	if (clock == 0) {
-+		sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-+	} else if (clock != host->clock) {
-+		sdhci_sprd_sd_clk_off(host);
-+		_sdhci_sprd_set_clock(host, clock);
-+
-+		if (clock <= 400000)
-+			en = true;
-+		sdhci_sprd_set_dll_invert(host, SDHCI_SPRD_BIT_CMD_DLY_INV |
-+					  SDHCI_SPRD_BIT_POSRD_DLY_INV, en);
-+	} else {
-+		_sdhci_sprd_set_clock(host, clock);
-+	}
-+}
-+
-+static unsigned int sdhci_sprd_get_max_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-+
-+	return clk_round_rate(sprd_host->clk_sdio, ULONG_MAX);
-+}
-+
-+static unsigned int sdhci_sprd_get_min_clock(struct sdhci_host *host)
-+{
-+	return 400000;
-+}
-+
-+static void sdhci_sprd_set_uhs_signaling(struct sdhci_host *host,
-+					 unsigned int timing)
-+{
-+	u16 ctrl_2;
-+
-+	if (timing == host->timing)
-+		return;
-+
-+	ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-+	/* Select Bus Speed Mode for host */
-+	ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
-+	switch (timing) {
-+	case MMC_TIMING_UHS_SDR12:
-+		ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
-+		break;
-+	case MMC_TIMING_MMC_HS:
-+	case MMC_TIMING_SD_HS:
-+	case MMC_TIMING_UHS_SDR25:
-+		ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
-+		break;
-+	case MMC_TIMING_UHS_SDR50:
-+		ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
-+		break;
-+	case MMC_TIMING_UHS_SDR104:
-+		ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
-+		break;
-+	case MMC_TIMING_UHS_DDR50:
-+	case MMC_TIMING_MMC_DDR52:
-+		ctrl_2 |= SDHCI_CTRL_UHS_DDR50;
-+		break;
-+	case MMC_TIMING_MMC_HS200:
-+		ctrl_2 |= SDHCI_SPRD_CTRL_HS200;
-+		break;
-+	case MMC_TIMING_MMC_HS400:
-+		ctrl_2 |= SDHCI_SPRD_CTRL_HS400;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
-+}
-+
-+static void sdhci_sprd_hw_reset(struct sdhci_host *host)
-+{
-+	int val;
-+
-+	/*
-+	 * Note: don't use sdhci_writeb() API here since it is redirected to
-+	 * sdhci_sprd_writeb() in which we have a workaround for
-+	 * SDHCI_SOFTWARE_RESET which would make bit SDHCI_HW_RESET_CARD can
-+	 * not be cleared.
-+	 */
-+	val = readb_relaxed(host->ioaddr + SDHCI_SOFTWARE_RESET);
-+	val &= ~SDHCI_HW_RESET_CARD;
-+	writeb_relaxed(val, host->ioaddr + SDHCI_SOFTWARE_RESET);
-+	/* wait for 10 us */
-+	usleep_range(10, 20);
-+
-+	val |= SDHCI_HW_RESET_CARD;
-+	writeb_relaxed(val, host->ioaddr + SDHCI_SOFTWARE_RESET);
-+	usleep_range(300, 500);
-+}
-+
-+static struct sdhci_ops sdhci_sprd_ops = {
-+	.read_l = sdhci_sprd_readl,
-+	.write_l = sdhci_sprd_writel,
-+	.write_b = sdhci_sprd_writeb,
-+	.set_clock = sdhci_sprd_set_clock,
-+	.get_max_clock = sdhci_sprd_get_max_clock,
-+	.get_min_clock = sdhci_sprd_get_min_clock,
-+	.set_bus_width = sdhci_set_bus_width,
-+	.reset = sdhci_reset,
-+	.set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
-+	.hw_reset = sdhci_sprd_hw_reset,
-+};
-+
-+static const struct sdhci_pltfm_data sdhci_sprd_pdata = {
-+	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
-+	.quirks2 = SDHCI_QUIRK2_BROKEN_HS200,
-+	.ops = &sdhci_sprd_ops,
-+};
-+
-+static int sdhci_sprd_probe(struct platform_device *pdev)
-+{
-+	struct sdhci_host *host;
-+	struct sdhci_sprd_host *sprd_host;
-+	struct clk *clk;
-+	int ret = 0;
-+
-+	host = sdhci_pltfm_init(pdev, &sdhci_sprd_pdata, sizeof(*sprd_host));
-+	if (IS_ERR(host))
-+		return PTR_ERR(host);
-+
-+	host->dma_mask = DMA_BIT_MASK(64);
-+	pdev->dev.dma_mask = &host->dma_mask;
-+
-+	host->mmc->caps = MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED |
-+		MMC_CAP_ERASE | MMC_CAP_CMD23;
-+	ret = mmc_of_parse(host->mmc);
-+	if (ret)
-+		goto pltfm_free;
-+
-+	sprd_host = TO_SPRD_HOST(host);
-+
-+	clk = devm_clk_get(&pdev->dev, "sdio");
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto pltfm_free;
-+	}
-+	sprd_host->clk_sdio = clk;
-+	sprd_host->base_rate = clk_get_rate(sprd_host->clk_sdio);
-+	if (!sprd_host->base_rate)
-+		sprd_host->base_rate = SDHCI_SPRD_CLK_DEF_RATE;
-+
-+	clk = devm_clk_get(&pdev->dev, "enable");
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto pltfm_free;
-+	}
-+	sprd_host->clk_enable = clk;
-+
-+	ret = clk_prepare_enable(sprd_host->clk_sdio);
-+	if (ret)
-+		goto pltfm_free;
-+
-+	clk_prepare_enable(sprd_host->clk_enable);
-+	if (ret)
-+		goto clk_disable;
-+
-+	sdhci_sprd_init_config(host);
-+	host->version = sdhci_readw(host, SDHCI_HOST_VERSION);
-+	sprd_host->version = ((host->version & SDHCI_VENDOR_VER_MASK) >>
-+			       SDHCI_VENDOR_VER_SHIFT);
-+
-+	pm_runtime_get_noresume(&pdev->dev);
-+	pm_runtime_set_active(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_suspend_ignore_children(&pdev->dev, 1);
-+
-+	sdhci_enable_v4_mode(host);
-+	ret = sdhci_add_host(host);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to add mmc host: %d\n", ret);
-+		goto pm_runtime_disable;
-+	}
-+
-+	pm_runtime_mark_last_busy(&pdev->dev);
-+	pm_runtime_put_autosuspend(&pdev->dev);
-+
-+	return 0;
-+
-+pm_runtime_disable:
-+	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_set_suspended(&pdev->dev);
-+
-+	clk_disable_unprepare(sprd_host->clk_enable);
-+
-+clk_disable:
-+	clk_disable_unprepare(sprd_host->clk_sdio);
-+
-+pltfm_free:
-+	sdhci_pltfm_free(pdev);
-+	return ret;
-+}
-+
-+static int sdhci_sprd_remove(struct platform_device *pdev)
-+{
-+	struct sdhci_host *host = platform_get_drvdata(pdev);
-+	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-+	struct mmc_host *mmc = host->mmc;
-+
-+	mmc_remove_host(mmc);
-+	clk_disable_unprepare(sprd_host->clk_sdio);
-+	clk_disable_unprepare(sprd_host->clk_enable);
-+
-+	mmc_free_host(mmc);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sdhci_sprd_of_match[] = {
-+	{ .compatible = "sprd,sdhci-r11", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sdhci_sprd_of_match);
-+
-+#ifdef CONFIG_PM
-+static int sdhci_sprd_runtime_suspend(struct device *dev)
-+{
-+	struct sdhci_host *host = dev_get_drvdata(dev);
-+	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-+
-+	sdhci_runtime_suspend_host(host);
-+
-+	clk_disable_unprepare(sprd_host->clk_sdio);
-+	clk_disable_unprepare(sprd_host->clk_enable);
-+
-+	return 0;
-+}
-+
-+static int sdhci_sprd_runtime_resume(struct device *dev)
-+{
-+	struct sdhci_host *host = dev_get_drvdata(dev);
-+	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-+	int ret;
-+
-+	ret = clk_prepare_enable(sprd_host->clk_enable);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_prepare_enable(sprd_host->clk_sdio);
-+	if (ret) {
-+		clk_disable_unprepare(sprd_host->clk_enable);
-+		return ret;
-+	}
-+
-+	sdhci_runtime_resume_host(host);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops sdhci_sprd_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+	SET_RUNTIME_PM_OPS(sdhci_sprd_runtime_suspend,
-+			   sdhci_sprd_runtime_resume, NULL)
-+};
-+
-+static struct platform_driver sdhci_sprd_driver = {
-+	.probe = sdhci_sprd_probe,
-+	.remove = sdhci_sprd_remove,
-+	.driver = {
-+		.name = "sdhci_sprd_r11",
-+		.of_match_table = of_match_ptr(sdhci_sprd_of_match),
-+		.pm = &sdhci_sprd_pm_ops,
-+	},
-+};
-+module_platform_driver(sdhci_sprd_driver);
-+
-+MODULE_DESCRIPTION("Spreadtrum sdio host controller r11 driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:sdhci-sprd-r11");
--- 
-2.7.4
+On 07/20/18 14:31, J=C3=B6rg R=C3=B6del wrote:
 
+> On Tue, Jul 17, 2018 at 06:02:07PM +0200, Paul Menzel wrote:
+>> $ dmesg
+>> [=E2=80=A6]
+>> [    0.145696] calling  pci_iommu_init+0x0/0x3f @ 1
+>> [    0.145719] AMD-Vi: Unable to write to IOMMU perf counter.
+>=20
+> This is likely a firmware issue. Either the IVRS ACPI table is incorrec=
+t
+
+Please find the output from
+
+    sudo iasl -d -p /dev/shm/ivrs.dsl /sys/firmware/acpi/tables/IVRS
+
+attached.
+
+[    0.000000] ACPI: IVRS 0x000000009D3D8588 0000D0 (v02 AMD    AMD IVRS =
+00000001 AMD  00000000)
+
+> or the BIOS did not enable the performance counter feature in the IOMMU=
+
+> hardware.
+
+Is it possible to check that from the OS side?
+
+> Are you running on the latest BIOS?
+
+Yes, I am even using a =E2=80=9Cbeta=E2=80=9C one from [1].
+
+DMI: MSI MS-7A37/B350M MORTAR (MS-7A37), BIOS 1.G1 05/17/2018
+
+
+Kind regards,
+
+Paul
+
+
+[1]: http://msi-ftp.de:8080/main.html?download&weblink=3D99df4e98c25ca3dc=
+f0f6e7f8366cc1c7&realfilename=3D7A37_1g1.zip
+
+--------------A529CF20E19C5183D8DADD40
+Content-Type: text/x-dsl;
+ name="ivrs.dsl"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="ivrs.dsl"
+
+/*
+ * Intel ACPI Component Architecture
+ * AML/ASL+ Disassembler version 20180629 (64-bit version)
+ * Copyright (c) 2000 - 2018 Intel Corporation
+ *=20
+ * Disassembly of /sys/firmware/acpi/tables/IVRS, Mon Jul 23 12:07:58 201=
+8
+ *
+ * ACPI Data Table [IVRS]
+ *
+ * Format: [HexOffset DecimalOffset ByteLength]  FieldName : FieldValue
+ */
+
+[000h 0000   4]                    Signature : "IVRS"    [I/O Virtualizat=
+ion Reporting Structure]
+[004h 0004   4]                 Table Length : 000000D0
+[008h 0008   1]                     Revision : 02
+[009h 0009   1]                     Checksum : 7C
+[00Ah 0010   6]                       Oem ID : "AMD  "
+[010h 0016   8]                 Oem Table ID : "AMD IVRS"
+[018h 0024   4]                 Oem Revision : 00000001
+[01Ch 0028   4]              Asl Compiler ID : "AMD "
+[020h 0032   4]        Asl Compiler Revision : 00000000
+
+[024h 0036   4]          Virtualization Info : 00203041
+[028h 0040   8]                     Reserved : 0000000000000000
+
+[030h 0048   1]                Subtable Type : 10 [Hardware Definition Bl=
+ock]
+[031h 0049   1]                        Flags : B0
+[032h 0050   2]                       Length : 0048
+[034h 0052   2]                     DeviceId : 0002
+
+[036h 0054   2]            Capability Offset : 0040
+[038h 0056   8]                 Base Address : 00000000FEB80000
+[040h 0064   2]            PCI Segment Group : 0000
+[042h 0066   2]          Virtualization Info : 0000
+[044h 0068   4]                     Reserved : 80048F6E
+
+[048h 0072   1]                   Entry Type : 03
+[049h 0073   2]                    Device ID : 0008
+[04Bh 0075   1]                 Data Setting : 00
+
+[04Ch 0076   1]                   Entry Type : 04
+[04Dh 0077   2]                    Device ID : FFFE
+[04Fh 0079   1]                 Data Setting : 00
+
+[050h 0080   1]                   Entry Type : 43
+[051h 0081   2]                    Device ID : FF00
+[053h 0083   1]                 Data Setting : 00
+[054h 0084   1]                     Reserved : 00
+[055h 0085   2]        Source Used Device ID : 00A4
+[057h 0087   1]                     Reserved : 00
+
+[058h 0088   1]                   Entry Type : 04
+[059h 0089   2]                    Device ID : FFFF
+[05Bh 0091   1]                 Data Setting : 00
+
+[05Ch 0092   1]                   Entry Type : 00
+[05Dh 0093   2]                    Device ID : 0000
+[05Fh 0095   1]                 Data Setting : 00
+
+[060h 0096   1]                   Entry Type : 48
+[061h 0097   2]                    Device ID : 0000
+[063h 0099   1]                 Data Setting : 00
+[064h 0100   1]                       Handle : 00
+[065h 0101   2]        Source Used Device ID : 00A0
+[067h 0103   1]                      Variety : 02
+
+[068h 0104   1]                   Entry Type : 48
+[069h 0105   2]                    Device ID : 0000
+[06Bh 0107   1]                 Data Setting : D7
+[06Ch 0108   1]                       Handle : 05
+[06Dh 0109   2]        Source Used Device ID : 00A0
+[06Fh 0111   1]                      Variety : 01
+
+[070h 0112   1]                   Entry Type : 48
+[071h 0113   2]                    Device ID : 0000
+[073h 0115   1]                 Data Setting : 00
+[074h 0116   1]                       Handle : 06
+[075h 0117   2]        Source Used Device ID : 0001
+[077h 0119   1]                      Variety : 01
+
+[078h 0120   1]                Subtable Type : 11 [Unknown Subtable Type]=
+
+[079h 0121   1]                        Flags : B0
+[07Ah 0122   2]                       Length : 0058
+[07Ch 0124   2]                     DeviceId : 0002
+
+**** Unknown IVRS subtable type 0x11
+
+Raw Table Data: Length 208 (0xD0)
+
+    0000: 49 56 52 53 D0 00 00 00 02 7C 41 4D 44 20 20 00  // IVRS.....|A=
+MD  .
+    0010: 41 4D 44 20 49 56 52 53 01 00 00 00 41 4D 44 20  // AMD IVRS...=
+=2EAMD=20
+    0020: 00 00 00 00 41 30 20 00 00 00 00 00 00 00 00 00  // ....A0 ....=
+=2E....
+    0030: 10 B0 48 00 02 00 40 00 00 00 B8 FE 00 00 00 00  // ..H...@....=
+=2E....
+    0040: 00 00 00 00 6E 8F 04 80 03 08 00 00 04 FE FF 00  // ....n......=
+=2E....
+    0050: 43 00 FF 00 00 A4 00 00 04 FF FF 00 00 00 00 00  // C..........=
+=2E....
+    0060: 48 00 00 00 00 A0 00 02 48 00 00 D7 05 A0 00 01  // H.......H..=
+=2E....
+    0070: 48 00 00 00 06 01 00 01 11 B0 58 00 02 00 40 00  // H.........X=
+=2E..@.
+    0080: 00 00 B8 FE 00 00 00 00 00 00 00 00 00 02 04 00  // ...........=
+=2E....
+    0090: DA 4A 29 22 EF 77 4F 00 00 00 00 00 00 00 00 00  // .J)".wO....=
+=2E....
+    00A0: 03 08 00 00 04 FE FF 00 43 00 FF 00 00 A4 00 00  // ........C..=
+=2E....
+    00B0: 04 FF FF 00 00 00 00 00 48 00 00 00 00 A0 00 02  // ........H..=
+=2E....
+    00C0: 48 00 00 D7 05 A0 00 01 48 00 00 00 06 01 00 01  // H.......H..=
+=2E....
+
+--------------A529CF20E19C5183D8DADD40--
+
+--------------ms080609080103040107060400
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
+NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
+BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
+A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
+59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
+G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
+rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
+OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
+Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
+VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
+IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
+BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
+dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
+Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
+L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
+Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
+dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
+YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
+/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
+jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
+dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
+wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
+qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
+/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
+A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
+VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
+MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
+DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
+DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
+enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
+peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
+6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
++2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
+ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
+AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
+FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
+ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
+dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
+Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
+dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
+dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
+BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
+dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
+AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
+Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
+aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
+GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
+fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
+1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
+EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
+LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
+RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
+SIb3DQEJBTEPFw0xODA3MjMxMDA5MzdaMC8GCSqGSIb3DQEJBDEiBCD9RPPWi8OLZXiB2iMY
+VZ1mttvHHIStaxDG++UwYGlajzBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
+BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
+MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
+bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
+gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAJb7
+L/3J90spkk9hbWu497jt2tOf/lMWgDbRZQGIbsl4hHL9rNgqqXmsujA6C1S1QQAveM4EgbtC
+0+uSsfHkalkmmle7u2GXsiQbwkeXIyH9B/po04GleKGWQ2nzg7Y3+PgvBUBiN93crKTyOKIL
+tm3o213fA91WrsTyoWjN2hWz0NOrI5aNENQZQkuaPjZkl1ooT0C4GoqF15GOvlNgaF3M3yBP
+A5IHnTNuaubbSTnbxDTtTDiY/qwgZIK//wgC2yyds8oPcWGs/whVlNJcbQUuS3A1FikToRZG
+rpiOs8Rl0glvhCSA6N8szaf0UXkJGpYuzK0UTeiZIggYNukeMGQAAAAAAAA=
+--------------ms080609080103040107060400--
