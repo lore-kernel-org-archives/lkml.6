@@ -2,114 +2,126 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26755ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 04:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8336ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 04:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF6020846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 04:50:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF6020846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+	by mail.kernel.org (Postfix) with ESMTP id 458B320846
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 04:55:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=castello.eng.br header.i=@castello.eng.br header.b="b5ph9s0X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458B320846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=castello.eng.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387751AbeGWFuA (ORCPT
+        id S1728200AbeGWFyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 01:50:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52494 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727765AbeGWFuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 01:50:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 686ACAE9F;
-        Mon, 23 Jul 2018 04:50:40 +0000 (UTC)
-Date:   Sun, 22 Jul 2018 21:50:35 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: [PATCH v2] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
-Message-ID: <20180723045035.h6jfsfdmgx55ljot@linux-r8p5>
-References: <1532036397-19449-1-git-send-email-longman@redhat.com>
- <20180719215456.5ho3udhfoqlkh75a@linux-r8p5>
- <00e98205-606a-a121-36c2-dedaeae1d0bb@redhat.com>
- <CANRm+CyHfvBKVKNk+pKF+s6+1seZ8c+NyjHuepT2Mf+4Cdd-2w@mail.gmail.com>
- <20180723044257.m7pjrnp7jjqggqij@linux-r8p5>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180723044257.m7pjrnp7jjqggqij@linux-r8p5>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        Mon, 23 Jul 2018 01:54:47 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.107]:35861 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726781AbeGWFyq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 01:54:46 -0400
+X-Greylist: delayed 1505 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Jul 2018 01:54:46 EDT
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 3C414753D
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 23:09:41 -0500 (CDT)
+Received: from br164.hostgator.com.br ([192.185.176.180])
+        by cmsmtp with SMTP
+        id hSAHf4nUuPvAdhSAHf949R; Sun, 22 Jul 2018 23:09:41 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=castello.eng.br; s=default; h=References:In-Reply-To:Message-Id:Date:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xbVF/gG+TGE44CgZMh960mEdaHIB1v2hHfiYYFUNTK8=; b=b5ph9s0XBW9J0Y/Hz+97ESsL2
+        j5LfZNZJKf7EPTh2i5Qm4TBQm9OEqTf0ccA1AavSxYewnq/xuJevc/qGdIs90+96vjxXlNp0PV1gU
+        iYxxa7/KkJFRlNaZj9V5B9bP3YA+wOIzfWYjlv7MlddzpE8UNt7LIruhg84FoZvfKkoZEl8Gkd1aN
+        ZLz2X/DzVLlN1r86ZFu+kh4ZiWXZSNysL+Q6sRf/TMZcTbsk1wen7AD04Ecu06Oc7ed/JxkbohXOF
+        wTnWkda74XbEf6AqctAdu0YMVXR6fZ+8t0Tu2a6+fgxCS5lO8qvh8VFfnsi1+CkICkJ0smVo2+hKe
+        HOGt99EPg==;
+Received: from [191.189.20.114] (port=7927 helo=localhost.localdomain)
+        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <matheus@castello.eng.br>)
+        id 1fhSAG-001oyu-BT; Mon, 23 Jul 2018 01:09:40 -0300
+From:   Matheus Castello <matheus@castello.eng.br>
+To:     sre@kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>
+Subject: [PATCH 4/4] power: supply: max17040: Send uevent in SOC changes
+Date:   Mon, 23 Jul 2018 00:08:16 -0400
+Message-Id: <20180723040816.19455-5-matheus@castello.eng.br>
+X-Mailer: git-send-email 2.13.3
+In-Reply-To: <20180723040816.19455-1-matheus@castello.eng.br>
+References: <20180723040816.19455-1-matheus@castello.eng.br>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.189.20.114
+X-Source-L: No
+X-Exim-ID: 1fhSAG-001oyu-BT
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (localhost.localdomain) [191.189.20.114]:7927
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 29
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 22 Jul 2018, Davidlohr Bueso wrote:
+Add check for changes in state of charge from delayed work, so
+in case of changes we call power_supply_changed to send an uevent.
 
->On Mon, 23 Jul 2018, Wanpeng Li wrote:
->
->>On Fri, 20 Jul 2018 at 06:03, Waiman Long <longman@redhat.com> wrote:
->>>
->>>On 07/19/2018 05:54 PM, Davidlohr Bueso wrote:
->>>> On Thu, 19 Jul 2018, Waiman Long wrote:
->>>>
->>>>> On a VM with only 1 vCPU, the locking fast paths will always be
->>>>> successful. In this case, there is no need to use the the PV qspinlock
->>>>> code which has higher overhead on the unlock side than the native
->>>>> qspinlock code.
->>>>>
->>>>> The xen_pvspin veriable is also turned off in this 1 vCPU case to
->
->s/veriable
-> variable
->
->>>>> eliminate unneeded pvqspinlock initialization in xen_init_lock_cpu()
->>>>> which is run after xen_init_spinlocks().
->>>>
->>>> Wouldn't kvm also want this?
->>>>
->>>> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
->>>> index a37bda38d205..95aceb692010 100644
->>>> --- a/arch/x86/kernel/kvm.c
->>>> +++ b/arch/x86/kernel/kvm.c
->>>> @@ -457,7 +457,8 @@ static void __init sev_map_percpu_data(void)
->>>> static void __init kvm_smp_prepare_cpus(unsigned int max_cpus)
->>>> {
->>>>     native_smp_prepare_cpus(max_cpus);
->>>> -    if (kvm_para_has_hint(KVM_HINTS_REALTIME))
->>>> +    if (num_possible_cpus() == 1 ||
->>>> +        kvm_para_has_hint(KVM_HINTS_REALTIME))
->>>>         static_branch_disable(&virt_spin_lock_key);
->>>> }
->>>
->>>That doesn't really matter as the slowpath will never get executed in
->>>the 1 vCPU case.
->
->How does this differ then from xen, then? I mean, same principle applies.
->
->>
->>So this is not needed in kvm tree?
->>https://git.kernel.org/pub/scm/virt/kvm/kvm.git/commit/?h=queue&id=3a792199004ec335346cc607d62600a399a7ee02
->
->Hmm I would think that my patch would be more appropiate as it actually does
->what the comment says.
+power_supply_changed send an uevent for alert user space about
+changes, is useful for example to user space apps made changes in
+UI battery level or made other decisions.
 
-Both would be needed actually yes, but also disabling the virt_spin_lock_key
-would be more robust imo.
+Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+---
+ drivers/power/supply/max17040_battery.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks,
-Davidlohr
+diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
+index 3efa52d32b44..72915ac9e13b 100644
+--- a/drivers/power/supply/max17040_battery.c
++++ b/drivers/power/supply/max17040_battery.c
+@@ -202,14 +202,22 @@ static void max17040_get_of_data(struct max17040_chip *chip)
+ static void max17040_work(struct work_struct *work)
+ {
+ 	struct max17040_chip *chip;
++	u16 last_soc;
+ 
+ 	chip = container_of(work, struct max17040_chip, work.work);
+ 
++	/* store SOC for check change */
++	last_soc = chip->soc;
++
+ 	max17040_get_vcell(chip->client);
+ 	max17040_get_soc(chip->client);
+ 	max17040_get_online(chip->client);
+ 	max17040_get_status(chip->client);
+ 
++	/* check changes and send uevent */
++	if (last_soc != chip->soc)
++		power_supply_changed(chip->battery);
++
+ 	queue_delayed_work(system_power_efficient_wq, &chip->work,
+ 			   MAX17040_DELAY);
+ }
+-- 
+2.13.3
+
