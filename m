@@ -2,107 +2,147 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91432ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E377ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4943B20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:07:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4943B20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C963020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:08:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NgKHu3kR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C963020854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388307AbeGWLIA (ORCPT
+        id S2388336AbeGWLJR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:08:00 -0400
-Received: from mga04.intel.com ([192.55.52.120]:16315 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388190AbeGWLH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:07:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 03:07:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
-   d="asc'?scan'208";a="73683831"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
-  by fmsmga004.fm.intel.com with ESMTP; 23 Jul 2018 03:06:56 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Pengbo Mu <pengbo.mu@nxp.com>, kbuild test robot <lkp@intel.com>
-Cc:     "kbuild-all\@01.org" <kbuild-all@01.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Ran Wang <ran.wang_1@nxp.com>
-Subject: RE: [PATCH] usb: dwc3: call set incr burst type func()
-In-Reply-To: <AM0PR0402MB37475F43B0F16F462F8CD623F4560@AM0PR0402MB3747.eurprd04.prod.outlook.com>
-References: <1532316853-29184-1-git-send-email-pengbo.mu@nxp.com> <201807231412.97HYMoRm%fengguang.wu@intel.com> <AM0PR0402MB37475F43B0F16F462F8CD623F4560@AM0PR0402MB3747.eurprd04.prod.outlook.com>
-Date:   Mon, 23 Jul 2018 13:03:43 +0300
-Message-ID: <87muui46bk.fsf@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+        Mon, 23 Jul 2018 07:09:17 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40877 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388043AbeGWLJR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:09:17 -0400
+Received: by mail-pl0-f65.google.com with SMTP id s17-v6so27714plp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 03:08:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Rw9RlSwjc5mOTeGzIBOBPdNtEr8wmRWOL0Zk2nBVV8g=;
+        b=NgKHu3kRW4/opugi3BxT8NhpinvQYdpyqkNjbdJO5ONhnKhreef797WiZ4bGBWoccc
+         7Zh+KrqERsSvkC1v9gJK/5HK9MGwzbO/ESaXmRNnrtnsKWGcYQggxeeWg7dPoWLckQV8
+         sjtKfqLyR2vSKuWIhmRJP112W6yAbJOLuaCJ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Rw9RlSwjc5mOTeGzIBOBPdNtEr8wmRWOL0Zk2nBVV8g=;
+        b=iueF2997ioX3VZC7dpbet6N4zZc4WVRpl1I9KacQzo67uFCWwpAk0cL6NX56iW7Kqj
+         8661bKrlzWWjRLXzR8jH1WUjgaaHRAjWMpBufjqrkU4tGocp9EV5hsfg6QRNvWFhL8Gr
+         IRpd5wbze1ObJ9k+ox9DUBdmcbo6k0u1lRodII1ZqTOxSGqI6EuZdVr7+KYexoQ3V5G1
+         oJLueZPcDE6Gq5ZRd8jZsmu66Fc3WtFQ/SCAqGIe+C7lNm3Lv8smCf1MMlyG3r6SmT+T
+         vKCmjJohenwUB7LvKWeevaCZf5oh0mky3aqxc71q+1uOnJkQV4maN879BScY3K0wfi+w
+         XkYA==
+X-Gm-Message-State: AOUpUlE6ci3yst6ivem6PDFuqLeY0MxK8ob1gsdVEubz4FkXSsLqPlv1
+        MVqUd37YYZG33wfFeLyf1H83iQ==
+X-Google-Smtp-Source: AAOMgpemRWIlXBz74CA98czO8QuT3D6IfsWqr3URwqmrrXe/repw3w0pcKBI8DE4xBkW8T+1UG84YQ==
+X-Received: by 2002:a17:902:7688:: with SMTP id m8-v6mr12228669pll.338.1532340530835;
+        Mon, 23 Jul 2018 03:08:50 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id e82-v6sm13470698pfk.87.2018.07.23.03.08.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 23 Jul 2018 03:08:49 -0700 (PDT)
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>,
+        Jason Wu <jason.wu@unisoc.com>, zhang.lyra@gmail.com
+Subject: [PATCH V4 0/7] mmc: add support for sdhci 4.0
+Date:   Mon, 23 Jul 2018 18:08:21 +0800
+Message-Id: <1532340508-8749-1-git-send-email-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+From the SD host controller version 4.0 on, SDHCI implementation either
+is version 3 compatible or version 4 mode. This patch-set covers those
+changes which are common for SDHCI 4.0 version, regardless of whether
+they are used with SD or eMMC storage devices.
 
+This patchset also added a new sdhci driver for Spreadtrum's controller
+which supports v4.0 mode.
 
-Hi,
+This patchset has been tested on Spreadtrum's mobile phone, emmc can be
+initialized, mounted, read and written, with these changes for common
+sdhci framework and sdhci-sprd driver.
 
-(no top-posting)
+Changes from V3:
+* Addressed comments from Adrian:
+- set "Host Control 2" when enabled v4 mode, and do the same for reset-for-all in sdhci_do_reset();
+- Moved "v4_mode" above to the private;
+- Change the subject of patch 2/7;
+- Use %pad to pirnt dma_addr_t;
+- Adjusted to not clear SDHCI_USE_SDMA for v4 mode in sdhci_setup_host();
+- Changed the function name to sdhci_can_64bit_dma() instead of sdhci_use_64bit_dma;
+- Adjusted to write SDHCI_CTRL_64BIT_ADDR when we decide to use 64-bit DMA in V4 mode,
+  rather than check the register to decide if use 64-bit DMA;
+- Added a comments for using dma_zalloc_coherent() to replace dma_alloc_coherent();
+- Added SDHCI_SPEC_420;
+- Set 16-bit block count register to zero conditionally when using 32-bit block count;
+- Adjusted to Use 32-bit block count register only for v4.10 v4 mode;
+- Added the rules used for AUTO CMD23/12 to AUTO CMD as well;
+- Moved the selection of Host Control 2 register CMD23 Enable to sdhci_init() from Spreadtrum's driver;
+- Used usleep_range() to replace udelay();
+- Added the checks for clk_prepare_enable().
+* Added comments for Spreadtrum's specific changes to the register SDHCI_SOFTWARE_RESET;
 
-Pengbo Mu <pengbo.mu@nxp.com> writes:
-> Hi,
->
-> The following is my compile result:
->   ...
->   LD [M]  sound/soc/codecs/snd-soc-ak4613.ko
->   LD [M]  sound/soc/generic/snd-soc-audio-graph-card.ko
->   LD [M]  sound/soc/generic/snd-soc-simple-card-utils.ko
->   LD [M]  sound/soc/generic/snd-soc-simple-card.ko
->   LD [M]  sound/soc/sh/rcar/snd-soc-rcar.ko
-> ret:0
-> These patches are based on mainline , and my version is linux-4.18-rc5. L=
-ast week , I pulled my upstream branch to the latest.
-> I didn't see error log in this version.
-> By the way , this is my git tree --- git://git.kernel.org/pub/scm/linux/k=
-ernel/git/gregkh/usb.git .
-> Please tell me which tree could suitably develop patch for upstream.
+Changes from V2:
+* Addressed comments from Adrian:
+- Added sdhci_enable_v4_mode() for enabling v4 mode instead of determining by reading from registers;
+- Added support for 64-bit SDMA address in v4 mode;
+- Dropped the changes of ADMA2 data aglinment;
+- Added support for "Auto Cmd Auto Select".
+* Rebased on v4.18-rc2.
+* Dealt with a few issues in sdhci-sprd:
+- Save return value of mmc_of_parse();
+- Add checking for clk_prepare_enable();
+- Use BIT() macro instead.
 
-this is a result of you sending this patch outside of the series it
-belongs to. Just resend the full series and things should be okay. Also,
-as Greg already mentioned, please write changelogs that explain WHY the
-change was made.
+Changes from v1:
+* Addressed comments from Ulf:
+ - Add dt-bindings for Spreadtrum sdhci;
+ - Use assigned-clocks* DT bindings to set default source of sdio clock;
+ - Removed unuseful print;
+ - Removed two functions which are not used;
+ - Add back the missing pm_runtime_put_autosuspend() after adding sdhci host.
 
-=2D-=20
-balbi
+* Changed Spreadtrum sdhci driver name to sdhci-sprd.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Chunyan Zhang (7):
+  mmc: sdhci: add sd host v4 mode
+  mmc: sdhci: Change SDMA address register for v4 mode
+  mmc: sdhci: add ADMA2 64-bit addressing support for V4 mode
+  mmc: sdhci: add 32-bit block count support for v4 mode
+  mmc: sdhci: add Auto CMD Auto Select support
+  mmc: sdhci-sprd: added Spreadtrum's initial host controller
+  dt-bindings: sdhci-sprd: Add bindings for the sdhci-sprd controller
 
------BEGIN PGP SIGNATURE-----
+ .../devicetree/bindings/mmc/sdhci-sprd.txt         |  41 ++
+ drivers/mmc/host/Kconfig                           |  13 +
+ drivers/mmc/host/Makefile                          |   1 +
+ drivers/mmc/host/sdhci-sprd.c                      | 455 +++++++++++++++++++++
+ drivers/mmc/host/sdhci.c                           | 223 +++++++---
+ drivers/mmc/host/sdhci.h                           |  23 +-
+ 6 files changed, 708 insertions(+), 48 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
+ create mode 100644 drivers/mmc/host/sdhci-sprd.c
 
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltVp/8ACgkQzL64meEa
-mQZ2VxAAv7V3woXkA7lNKO53IPGRqTjD7IiF5mM/vkfL9W71VSX5GqWBw/qKMYO3
-2nVnzdmRi0XGQ0pswT8y1vmTPNGarTcup13JLPAxkxyqGvcfEgrE+RRfxMlLvpou
-Tdq0FKQCYw42Jx1OM8YS6DgDr3mvebnhIbDOdjUYwE2mHXu1omT3kXJos+X9LGMi
-pgL6DaGxqAWwPvHuCsrxzzsrS4sSY+o08ptBPqgo9NAUPwqpku7t9X+6EfiA2Hry
-2Gbl9fLlxY74Z/Pn8o2GfeVyDxZxjFl5BueY92vSiv1JH8Fz3NmAp6vHMD6xJhfb
-Umr8Yet+VLhhl8I1pqIEDFynGs0GuQ4LBnnOJZuAxjrS47kdZ6WRFbwAO+GLLZcp
-/SXffD88pyKOcVN4fLWP7bzZFqSq5ndhHVL0Nv2zdCNB0T/d7v3RYLArbpRCphkH
-LbuR/ZLzkDLOPgSOwJ9SxR0uD6qboIcRsAjk/SKwScSMCfKdnYW+Cq3FQAGjq1xw
-zAqmNiT0J/1I8WmKJ8YnZ7FSPYqdDOSFjdQmUFRab5pOFQLy7NYmQMBcg2uikW8Z
-mYm7zYe+okI9NoEXTz65OyRYx+aSIydK0Al6jLwK5fYQfKgfi3Nuveskx+AvXE+T
-PXkFfxP1sl8frTzanOa48n+ROlATM8VBJntEqr4WgWNlZrd9pw4=
-=rxoQ
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+2.7.4
+
