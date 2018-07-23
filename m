@@ -2,100 +2,119 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9781CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3F7ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50E2620875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:52:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1JTxPej"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E2620875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 884CF20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:54:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884CF20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387968AbeGWLx3 (ORCPT
+        id S2387937AbeGWLy7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:53:29 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37642 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387815AbeGWLx3 (ORCPT
+        Mon, 23 Jul 2018 07:54:59 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33395 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387830AbeGWLy7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:53:29 -0400
-Received: by mail-wr1-f66.google.com with SMTP id q10-v6so231942wrd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 03:52:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=SljYlLx9vuqJRCmQm4WsAgKQ/v4WCYbeMzWfC03y7Ts=;
-        b=I1JTxPejfBj2GJCNmuU5XeX6hRoIvgTErZaH6nTWnFbWTeskdryoBCbOs1XCs+QXbw
-         zE/MO7dVvleAR3EJnDQ1kQy2uLucGENXNOp/HK0pCuv/25Uy8iCkKoAGT9Gm7OCu8C8G
-         oNLipCpdcNaVuD/iQ10JSXCS8zbo0+YXGswkhkt9X7Cj8eMV5yZNEP7v7eb+21N8Lv01
-         zhhL/GaJA4FjsvkqMK/xAjEvqxf0MhymOprAC4DHbzYTvw80rA8b0OP+bz7MgrVXyQgv
-         pb77SexONb4sCcyraRURwrD+SVLvoFphE+GFbez+2FOx7vO739FJpy96FHUFCJt2JZjO
-         YbSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=SljYlLx9vuqJRCmQm4WsAgKQ/v4WCYbeMzWfC03y7Ts=;
-        b=pBd/3Q0DR7SiYfk2RYrTL9eYJ7HWBJYQFyDmFMrxS4pQCUuggtPjLlQA0EexuH3vJB
-         W5sUle2W9ECC3I3QjwPnfph4r98rLmiQRPO8MpbZcXrXyJ8lJV6Pz6USCqh0q4qfl+HP
-         61BRmzDcC2al3uhhRSHriWEjC1SuU7Jk9/Mi4FXQk7yHgjxJFWROB9y1PUNgEoY4yMuI
-         gfOEdkZ0U07l3ihZaKJLmtoysZ31Q08DeF4S4CwcdD9Am+5weD4CNpG14KqVFW1vnvK+
-         ZgniQYZx+qKFRUtU1QiEaB6wjMHDCEvmsh9CrL7L/YM2EWutYldb5utJJYIkqXGZ9arn
-         uAvg==
-X-Gm-Message-State: AOUpUlGNbsy6kpIhPW5TtciK+D1lS3uQaz8OPcMsGwfS02uHLWKc8Keq
-        B5cubfb97CAViw25945K0lU=
-X-Google-Smtp-Source: AAOMgpdjpVJPGsvRPTG1iiOJkK1szqwRNtZbbhs3R/7nBbaJyo0U0ARwPFI5PTjiFL2VJkEYnOZLTg==
-X-Received: by 2002:adf:c4a7:: with SMTP id m36-v6mr8180078wrf.103.1532343171714;
-        Mon, 23 Jul 2018 03:52:51 -0700 (PDT)
-Received: from minipc.home ([2a00:23c4:9115:8700:622a:51b1:f14a:b2fd])
-        by smtp.gmail.com with ESMTPSA id w204-v6sm1846577wmw.5.2018.07.23.03.52.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 03:52:51 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 11:54:29 +0100
-From:   Laurence Rochfort <laurence.rochfort@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christian Gromm <christian.gromm@microchip.com>,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
-Cc:     laurence.rochfort@gmail.com
-Subject: [PATCH] staging: most: Use NULL pointer not plain integer
-Message-ID: <20180723105429.GA7428@minipc.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Mon, 23 Jul 2018 07:54:59 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fhYTm-0002BQ-Hy; Mon, 23 Jul 2018 12:54:14 +0200
+Message-ID: <1532343252.3163.99.camel@pengutronix.de>
+Subject: Re: [PATCH v3 3/3] dmaengine: imx-sdma: allocate max 20 bds for one
+ transfer
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Robin Gong <yibin.gong@nxp.com>, vkoul@kernel.org,
+        dan.j.williams@intel.com, s.hauer@pengutronix.de,
+        linux@armlinux.org.uk
+Cc:     dmaengine@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 23 Jul 2018 12:54:12 +0200
+In-Reply-To: <1532367972-29707-4-git-send-email-yibin.gong@nxp.com>
+References: <1532367972-29707-1-git-send-email-yibin.gong@nxp.com>
+         <1532367972-29707-4-git-send-email-yibin.gong@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning: Using plain integer as NULL pointer
+Am Dienstag, den 24.07.2018, 01:46 +0800 schrieb Robin Gong:
+> If multi-bds used in one transfer, all bds should be consisten
+> memory.To easily follow it, enlarge the dma pool size into 20 bds,
+> and it will report error if the number of bds is over than 20. For
+> dmatest, the max count for single transfer is NUM_BD *
+> SDMA_BD_MAX_CNT = 20 * 65535 = ~1.28MB.
 
-Signed-off-by: Laurence Rochfort <laurence.rochfort@gmail.com>
----
- drivers/staging/most/dim2/dim2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Both the commit message and the comment need a lot more care to
+actually tell what this commit is trying to achieve. Currently I don't
+follow at all. What does "consisten" mean? Do you mean BDs should be
+contiguous in memory?
 
-diff --git a/drivers/staging/most/dim2/dim2.c b/drivers/staging/most/dim2/dim2.c
-index fe90a7c..31fbc1a 100644
---- a/drivers/staging/most/dim2/dim2.c
-+++ b/drivers/staging/most/dim2/dim2.c
-@@ -785,7 +785,7 @@ static int dim2_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	dev->disable_platform = pdata ? pdata->disable : 0;
-+	dev->disable_platform = pdata ? pdata->disable : NULL;
- 
- 	dev_info(&pdev->dev, "sync: num of frames per sub-buffer: %u\n", fcnt);
- 	hal_ret = dim_startup(dev->io_base, dev->clk_speed, fcnt);
--- 
-2.9.5
+What do you gain by over-allocating each BD by a factor of 20?
 
+Regards,
+Lucas
+
+> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> ---
+>  drivers/dma/imx-sdma.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> index b4ec2d2..5973489 100644
+> --- a/drivers/dma/imx-sdma.c
+> +++ b/drivers/dma/imx-sdma.c
+> @@ -298,6 +298,15 @@ struct sdma_context_data {
+> >  	u32  scratch7;
+>  } __attribute__ ((packed));
+>  
+> +/*
+> + * All bds in one transfer should be consitent on SDMA. To easily follow it,just
+> + * set the dma pool size as the enough bds. For example, in dmatest case, the
+> + * max 20 bds means the max for single transfer is NUM_BD * SDMA_BD_MAX_CNT = 20
+> + * * 65535 = ~1.28MB. 20 bds supposed to be enough basically.If it's still not
+> + * enough in some specific cases, enlarge it here.Warning message would also
+> + * appear if the bd numbers is over than 20.
+> + */
+> +#define NUM_BD 20
+>  
+>  struct sdma_engine;
+>  
+> @@ -1273,7 +1282,7 @@ static int sdma_alloc_chan_resources(struct dma_chan *chan)
+> >  		goto disable_clk_ahb;
+>  
+> >  	sdmac->bd_pool = dma_pool_create("bd_pool", chan->device->dev,
+> > -				sizeof(struct sdma_buffer_descriptor),
+> > +				NUM_BD * sizeof(struct sdma_buffer_descriptor),
+> >  				32, 0);
+>  
+> >  	return 0;
+> @@ -1314,6 +1323,12 @@ static struct sdma_desc *sdma_transfer_init(struct sdma_channel *sdmac,
+>  {
+> >  	struct sdma_desc *desc;
+>  
+> > +	if (bds > NUM_BD) {
+> > +		dev_err(sdmac->sdma->dev, "%d bds exceed the max %d\n",
+> > +			bds, NUM_BD);
+> > +		goto err_out;
+> > +	}
+> +
+> >  	desc = kzalloc((sizeof(*desc)), GFP_NOWAIT);
+> >  	if (!desc)
+> >  		goto err_out;
