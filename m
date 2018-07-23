@@ -2,124 +2,175 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 396E3ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06CBECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1C3520846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:26:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1C3520846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8890B20878
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:27:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jDm7JZp1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bAHp1j+q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8890B20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388207AbeGWL1G (ORCPT
+        id S2388218AbeGWL1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:27:06 -0400
-Received: from mga06.intel.com ([134.134.136.31]:62236 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388021AbeGWL1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:27:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 03:26:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
-   d="scan'208";a="74686894"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Jul 2018 03:26:29 -0700
-Message-ID: <5B55AE56.5030404@intel.com>
-Date:   Mon, 23 Jul 2018 18:30:46 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Mon, 23 Jul 2018 07:27:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47478 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388065AbeGWL1q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:27:46 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 83D9D605FD; Mon, 23 Jul 2018 10:27:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532341634;
+        bh=g9oX/RN+C3jdSyckQhEW/WOOWqmV6ab67sbl0m+wTBw=;
+        h=Date:From:To:Subject:In-Reply-To:References:From;
+        b=jDm7JZp1kXm03iCl1P6qXvdyo9ypAJnSjxGxT97YtH2MaxDBp1ZOja9GZrgp+EjXb
+         zZzLIdnP5PdgNddwqbQHCD6Rx6r7HaSMl9kUIqm7oq9UPlXIflZEEZ8mnGHrjzd0ic
+         SNkfJc1nMB1x4KEzO5Cn7uNc4Uc/eXX1cGbvHIBk=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id E5331605A4;
+        Mon, 23 Jul 2018 10:27:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532341625;
+        bh=g9oX/RN+C3jdSyckQhEW/WOOWqmV6ab67sbl0m+wTBw=;
+        h=Date:From:To:Subject:In-Reply-To:References:From;
+        b=bAHp1j+qxKv3zHjZ+TAeJEOuWSkv1xUrOgAlgRgx7HXERNzSIbIdsWn2SMYDiUk2h
+         ffucf7KyvJsjWNh5kqhU5lvd9/VLjvtqWxIHn0N8Ec6I4IKQkxuLRuhmpmrAXYi1rw
+         +DfzkLfU+smhHjRzo6SRfw109DlHkvmEpszSVslE=
 MIME-Version: 1.0
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com
-Subject: Re: [PATCH v36 2/5] virtio_balloon: replace oom notifier with shrinker
-References: <1532075585-39067-1-git-send-email-wei.w.wang@intel.com> <1532075585-39067-3-git-send-email-wei.w.wang@intel.com> <20180722174125-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180722174125-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Mon, 23 Jul 2018 15:57:04 +0530
+From:   dkota@codeaurora.org
+To:     kbuild-all@01.org, timur@codeaurora.org, swboyd@chromium.org,
+        broonie@kernel.org, mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>, alokc@codeaurora.org
+Subject: Re: [PATCH V2] spi: spi-geni-qcom: Add SPI driver support for GENI
+ based QUP
+In-Reply-To: <201807210707.BLvlaScm%fengguang.wu@intel.com>
+References: <1532087461-3474-2-git-send-email-dkota@codeaurora.org>
+ <201807210707.BLvlaScm%fengguang.wu@intel.com>
+Message-ID: <891441f9f95f5d1f387cb9ffb9df1515@codeaurora.org>
+X-Sender: dkota@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/22/2018 10:48 PM, Michael S. Tsirkin wrote:
-> On Fri, Jul 20, 2018 at 04:33:02PM +0800, Wei Wang wrote:
->>   
->> +static unsigned long virtio_balloon_shrinker_scan(struct shrinker *shrinker,
->> +						  struct shrink_control *sc)
->> +{
->> +	unsigned long pages_to_free = balloon_pages_to_shrink,
->> +		      pages_freed = 0;
->> +	struct virtio_balloon *vb = container_of(shrinker,
->> +					struct virtio_balloon, shrinker);
->> +
->> +	/*
->> +	 * One invocation of leak_balloon can deflate at most
->> +	 * VIRTIO_BALLOON_ARRAY_PFNS_MAX balloon pages, so we call it
->> +	 * multiple times to deflate pages till reaching
->> +	 * balloon_pages_to_shrink pages.
->> +	 */
->> +	while (vb->num_pages && pages_to_free) {
->> +		pages_to_free = balloon_pages_to_shrink - pages_freed;
->> +		pages_freed += leak_balloon(vb, pages_to_free);
->> +	}
->> +	update_balloon_size(vb);
-> Are you sure that this is never called if count returned 0?
+On 2018-07-21 05:07, kbuild test robot wrote:
+> Hi Girish,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on spi/for-next]
+> [also build test ERROR on v4.18-rc5 next-20180720]
+> [if your patch is applied to the wrong git tree, please drop us a note
+> to help improve the system]
+> 
+> url:
+> https://github.com/0day-ci/linux/commits/Dilip-Kota/spi-spi-geni-qcom-Add-SPI-driver-support-for-GENI-based-QUP/20180721-034916
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+> for-next
+> config: ia64-allmodconfig (attached as .config)
+> compiler: ia64-linux-gcc (GCC) 8.1.0
+> reproduce:
+>         wget
+> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+> -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=8.1.0 make.cross ARCH=ia64
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from drivers/spi/spi-geni-qcom.c:11:
+>    drivers/spi/spi-geni-qcom.c: In function
+> 'spi_geni_prepare_transfer_hardware':
+>>> include/linux/qcom-geni-se.h:238:9: error: 'version' undeclared 
+>>> (first use in this function); did you mean 'vm_region'?
+>      step = version & HW_VER_STEP_MASK; \
+>             ^~~~~~~
+>    drivers/spi/spi-geni-qcom.c:256:3: note: in expansion of macro
+> 'geni_se_get_wrapper_version'
+>       geni_se_get_wrapper_version(se, major, minor, step);
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/qcom-geni-se.h:238:9: note: each undeclared
+> identifier is reported only once for each function it appears in
+>      step = version & HW_VER_STEP_MASK; \
+>             ^~~~~~~
+>    drivers/spi/spi-geni-qcom.c:256:3: note: in expansion of macro
+> 'geni_se_get_wrapper_version'
+>       geni_se_get_wrapper_version(se, major, minor, step);
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> --
+>    In file included from drivers//spi/spi-geni-qcom.c:11:
+>    drivers//spi/spi-geni-qcom.c: In function
+> 'spi_geni_prepare_transfer_hardware':
+>>> include/linux/qcom-geni-se.h:238:9: error: 'version' undeclared 
+>>> (first use in this function); did you mean 'vm_region'?
+>      step = version & HW_VER_STEP_MASK; \
+>             ^~~~~~~
+>    drivers//spi/spi-geni-qcom.c:256:3: note: in expansion of macro
+> 'geni_se_get_wrapper_version'
+>       geni_se_get_wrapper_version(se, major, minor, step);
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/qcom-geni-se.h:238:9: note: each undeclared
+> identifier is reported only once for each function it appears in
+>      step = version & HW_VER_STEP_MASK; \
+>             ^~~~~~~
+>    drivers//spi/spi-geni-qcom.c:256:3: note: in expansion of macro
+> 'geni_se_get_wrapper_version'
+>       geni_se_get_wrapper_version(se, major, minor, step);
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> vim +238 include/linux/qcom-geni-se.h
+> 
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30  231
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30  232  #define
+> geni_se_get_wrapper_version(se, major, minor, step) do { \
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30  233  	u32 ver; \
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30  234  \
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30  235  	ver =
+> geni_se_get_qup_hw_version(se); \
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30  236  	major = (ver &
+> HW_VER_MAJOR_MASK) >> HW_VER_MAJOR_SHFT; \
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30  237  	minor = (ver &
+> HW_VER_MINOR_MASK) >> HW_VER_MINOR_SHFT; \
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30 @238  	step = version
+> & HW_VER_STEP_MASK; \
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30  239  } while (0)
+> eddac5af Karthikeyan Ramasubramanian 2018-03-30  240
+> 
+> :::::: The code at line 238 was first introduced by commit
+> :::::: eddac5af06546d2e7a0730e3dc02dde3dc91098a soc: qcom: Add GENI
+> based QUP Wrapper driver
+> 
+> :::::: TO: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
+> :::::: CC: Andy Gross <andy.gross@linaro.org>
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology 
+> Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel 
+> Corporation
 
-Yes. Please see do_shrink_slab, it just returns if count is 0.
 
->
->> +
->> +	return pages_freed / VIRTIO_BALLOON_PAGES_PER_PAGE;
->> +}
->> +
->> +static unsigned long virtio_balloon_shrinker_count(struct shrinker *shrinker,
->> +						   struct shrink_control *sc)
->> +{
->> +	struct virtio_balloon *vb = container_of(shrinker,
->> +					struct virtio_balloon, shrinker);
->> +
->> +	/*
->> +	 * We continue to use VIRTIO_BALLOON_F_DEFLATE_ON_OOM to handle the
->> +	 * case when shrinker needs to be invoked to relieve memory pressure.
->> +	 */
->> +	if (!virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
->> +		return 0;
-> So why not skip notifier registration when deflate on oom
-> is clear?
+HI,
 
-Sounds good, thanks.
+For now please ignore the PATCHSET 2. I will upload a new PATCHSET 
+addressing all the comments of patchset 1 with detailed description.
+Sorry for the inconvenience.
 
-
->   	vb->vb_dev_info.inode->i_mapping->a_ops = &balloon_aops;
->   #endif
-> +	err = virtio_balloon_register_shrinker(vb);
-> +	if (err)
-> +		goto out_del_vqs;
->   
-> So we can get scans before device is ready. Leak will fail
-> then. Why not register later after device is ready?
-
-Probably no.
-
-- it would be better not to set device ready when register_shrinker failed.
-- When the device isn't ready, ballooning won't happen, that is, 
-vb->num_pages will be 0, which results in shrinker_count=0 and 
-shrinker_scan won't be called.
-
-So I think it would be better to have shrinker registered before 
-device_ready.
-
-Best,
-Wei
+Regards,
+Dilip
