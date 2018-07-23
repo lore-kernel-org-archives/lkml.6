@@ -3,95 +3,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977A9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4175EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55F5A20899
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:47:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55F5A20899
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E909B20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:52:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E909B20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388424AbeGWOsp (ORCPT
+        id S2388166AbeGWOyP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 10:48:45 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54256 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388129AbeGWOsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 10:48:30 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F15A12093A; Mon, 23 Jul 2018 15:47:07 +0200 (CEST)
-Received: from windsurf (176.199.29.109.rev.sfr.net [109.29.199.176])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8D9FC20717;
-        Mon, 23 Jul 2018 15:46:57 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 15:46:57 +0200
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/sh: use slow path for get_user_pages_fast() on SMP
-Message-ID: <20180723154657.3872fa70@windsurf>
-In-Reply-To: <474bbdcc-d78f-faa0-b2c3-3650cc870b36@cogentembedded.com>
-References: <20180615155237.8166-1-thomas.petazzoni@bootlin.com>
-        <474bbdcc-d78f-faa0-b2c3-3650cc870b36@cogentembedded.com>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 23 Jul 2018 10:54:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44806 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388005AbeGWOyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 10:54:15 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 187CD401DEA8;
+        Mon, 23 Jul 2018 13:52:53 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 720432156898;
+        Mon, 23 Jul 2018 13:52:52 +0000 (UTC)
+Subject: Re: [PATCH v2] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
+To:     Davidlohr Bueso <dave@stgolabs.net>,
+        Wanpeng Li <kernellwp@gmail.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <1532036397-19449-1-git-send-email-longman@redhat.com>
+ <20180719215456.5ho3udhfoqlkh75a@linux-r8p5>
+ <00e98205-606a-a121-36c2-dedaeae1d0bb@redhat.com>
+ <CANRm+CyHfvBKVKNk+pKF+s6+1seZ8c+NyjHuepT2Mf+4Cdd-2w@mail.gmail.com>
+ <20180723044257.m7pjrnp7jjqggqij@linux-r8p5>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <434efa92-844d-46d0-65c4-86eb6365f024@redhat.com>
+Date:   Mon, 23 Jul 2018 09:52:52 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180723044257.m7pjrnp7jjqggqij@linux-r8p5>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 13:52:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 13:52:53 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 07/23/2018 12:42 AM, Davidlohr Bueso wrote:
+> On Mon, 23 Jul 2018, Wanpeng Li wrote:
+>
+>> On Fri, 20 Jul 2018 at 06:03, Waiman Long <longman@redhat.com> wrote:
+>>>
+>>> On 07/19/2018 05:54 PM, Davidlohr Bueso wrote:
+>>> > On Thu, 19 Jul 2018, Waiman Long wrote:
+>>> >
+>>> >> On a VM with only 1 vCPU, the locking fast paths will always be
+>>> >> successful. In this case, there is no need to use the the PV
+>>> qspinlock
+>>> >> code which has higher overhead on the unlock side than the native
+>>> >> qspinlock code.
+>>> >>
+>>> >> The xen_pvspin veriable is also turned off in this 1 vCPU case to
+>
+> s/veriable
+>  variable
+>
+>>> >> eliminate unneeded pvqspinlock initialization in xen_init_lock_cpu()
+>>> >> which is run after xen_init_spinlocks().
+>>> >
+>>> > Wouldn't kvm also want this?
+>>> >
+>>> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+>>> > index a37bda38d205..95aceb692010 100644
+>>> > --- a/arch/x86/kernel/kvm.c
+>>> > +++ b/arch/x86/kernel/kvm.c
+>>> > @@ -457,7 +457,8 @@ static void __init sev_map_percpu_data(void)
+>>> > static void __init kvm_smp_prepare_cpus(unsigned int max_cpus)
+>>> > {
+>>> >     native_smp_prepare_cpus(max_cpus);
+>>> > -    if (kvm_para_has_hint(KVM_HINTS_REALTIME))
+>>> > +    if (num_possible_cpus() == 1 ||
+>>> > +        kvm_para_has_hint(KVM_HINTS_REALTIME))
+>>> >         static_branch_disable(&virt_spin_lock_key);
+>>> > }
+>>>
+>>> That doesn't really matter as the slowpath will never get executed in
+>>> the 1 vCPU case.
+>
+> How does this differ then from xen, then? I mean, same principle applies.
 
-On Fri, 15 Jun 2018 19:04:45 +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 06/15/2018 06:52 PM, Thomas Petazzoni wrote:
-> 
-> > The fast path of get_user_pages_fast() disables IRQs and then does:
-> > 
-> >  - gup_pud_range()
-> >    - gup_pmd_range()
-> >      - gup_pte_range()
-> >        - flush_dcache_page()
-> > 
-> > However, flush_dcache_page() makes a smp_call_function(), and using
-> > smp_call_function() when IRQs are disabled is not allowed.
-> > 
-> > In order to work around this problem, this commit prevents the fast
-> > path from get_user_pages_fast() from being used on SMP, and directly  
->        ^^^^ of?
->    Else it sounds a bit tautological...
+I am not saying this patch is wrong. I am just saying that this is not
+necessary.
 
-Yes, agreed.
+In the xen case, they have a single variable that controls if
+pvqspinlock should be used and turn off all the knobs accordingly. There
+is no such equivalent in kvm. We had talked about that in the past, but
+didn't come to a conclusion. In the 1 vCPU case, the most important
+thing is to not use the pvqspinlock unlock path which add unneeded
+runtime overhead.
 
-I can fix that up for a v2, or perhaps such a small typo can be fixed
-while applying the patches.
+The others just have a slight boot time overhead. For me, they are
+optional. So I don't bother to add code to explicit turn them off as the
+result will be the same with or without them.
 
-Could someone review and/or merge those patches ?
+>
+>>
+>> So this is not needed in kvm tree?
+>> https://git.kernel.org/pub/scm/virt/kvm/kvm.git/commit/?h=queue&id=3a792199004ec335346cc607d62600a399a7ee02
+>>
+>
+> Hmm I would think that my patch would be more appropiate as it
+> actually does
+> what the comment says.
 
-I sent four patches, which are still pending:
+The static key controls the behavior of the locking slowpath which will
+not be executed at all. So it is essentially a no-op.
 
-  [PATCH] arch/sh: kernel: use KERN_CONT in print_sh_insn()
-  [PATCH] arch/sh: kernel: use KERN_CONT in dump_mem()
-  [PATCH] arch/sh: fix SH4 flush_dcache_all() for SMP
-  [PATCH] arch/sh: use slow path for get_user_pages_fast() on SMP
+-Longman
 
-Note that this last one is more a workaround than a proper fix. It does
-the job, but there is very likely a better solution, and I was hoping
-to get some insights/suggestions.
-
-Thanks a lot,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
