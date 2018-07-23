@@ -2,403 +2,415 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC293ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB43FECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 678EF20858
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678EF20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2234020858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:59:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KCTo5YkB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2234020858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387899AbeGWG4s (ORCPT
+        id S2387842AbeGWG7H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 02:56:48 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59250 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387880AbeGWG4r (ORCPT
+        Mon, 23 Jul 2018 02:59:07 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34413 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728230AbeGWG7G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 02:56:47 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6N5rv5q135646
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 01:57:16 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kd96g08gd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 01:57:16 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 23 Jul 2018 06:57:13 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 23 Jul 2018 06:57:12 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6N5vB2k36569156
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 23 Jul 2018 05:57:11 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5319FA4057;
-        Mon, 23 Jul 2018 08:57:26 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C271FA405F;
-        Mon, 23 Jul 2018 08:57:24 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.108])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 23 Jul 2018 08:57:24 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 23 Jul 2018 08:57:08 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-ia64@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 4/4] ia64: switch to NO_BOOTMEM
-Date:   Mon, 23 Jul 2018 08:56:58 +0300
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532325418-22617-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1532325418-22617-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18072305-4275-0000-0000-0000029C3DB9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072305-4276-0000-0000-000037A46DCC
-Message-Id: <1532325418-22617-5-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-22_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807230070
+        Mon, 23 Jul 2018 02:59:06 -0400
+Received: by mail-pl0-f66.google.com with SMTP id f6-v6so7790759plo.1
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 22:59:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=apOMCTZXpt8k8qp/eu7+lazL3WrqAy27aO9Kza+Pq/g=;
+        b=KCTo5YkBhGfJRpboYDCOlZOr9NxwrhxYfoEaOm5a1h6Wyu4/vOxecdi+4LXqmffGz7
+         paOl/YS96KtcMcHGP4kPr1zykmCW2TykAXdDB9QMpjPxENuulnzW2rXTPYF5b0nC+iQh
+         mBdoh/YIgc4dpS/4xTleRbimiXgbvP8gHo1hghp30bGiLJVyw32aqYtl0v2TyNkyasdb
+         6hek3zFb1+1I4Na7yOj6fLjVAEoiEWTqsrAL6UTxV1YSZpJoTqKub1wg7+G4v1ndEdW9
+         XBgcmKyD9h766Ij2vv5rJFTr+PdNzszKWKWS6Ka2YdHOmnISvdNjiP2WjPv7CGfOZd+g
+         TQBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=apOMCTZXpt8k8qp/eu7+lazL3WrqAy27aO9Kza+Pq/g=;
+        b=cGX+2+4QRmpo0BW9s95QKPxPac9AOWaXON+asIByo8WmcGAGVxJiQGSBkcZqd6HsaK
+         O0KjDTIb0jL1Pryl+87ZgnQKgTTUPV/PUT0oC+nwlNiIu5aqiOsbM+smGNrWkXT+GPkx
+         vo7iQIVo1b+ZWHong2p6G9b8SBT/Cq9lRAw8X1Qpp+7YMi5zCa2uUmYAZTge7wAMwJdd
+         KLOhSGjtTfYj0W2xCExgr/4vkDRDDpNl0y1hlAfIZSi7uEpZqynFldN2Yk2XtdKa6Mgr
+         HjLpbK+LZaYorZSWPi+BHIGyXuxWXeKts7wmZSbpngZgB4dy62SZRo8tEh+mrw2TjGzn
+         l0rg==
+X-Gm-Message-State: AOUpUlFyY71X8lIfdhTq7eOX+pQ2rYIdxERG67heevtFxvX9F20vatBA
+        xvf1RduIG2LoXBElRMvhLbMC4ljz4P3DD2qcpoEntw==
+X-Google-Smtp-Source: AAOMgpcUn0wr4e3URJk7z9t97h3bwx7T1QR6F8k+biGevRc+Qr8eUE1U+FOsV5yoVdhnpahNHindDK/eAAkq6EIyb60=
+X-Received: by 2002:a17:902:d710:: with SMTP id w16-v6mr11630639ply.93.1532325575045;
+ Sun, 22 Jul 2018 22:59:35 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Sun, 22 Jul 2018 22:59:14
+ -0700 (PDT)
+In-Reply-To: <00000000000037578b057186966f@google.com>
+References: <00000000000037578b057186966f@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 23 Jul 2018 07:59:14 +0200
+Message-ID: <CACT4Y+bsYhE+0W0EsPpvWmAwu5vzkVmrnsnwym_ofwePaAO7fQ@mail.gmail.com>
+Subject: Re: KASAN: stack-out-of-bounds Read in locks_remove_posix
+To:     syzbot <syzbot+5855b4355079756bf451@syzkaller.appspotmail.com>
+Cc:     Bruce Fields <bfields@fieldses.org>, jlayton@kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since ia64 already uses memblock to register available physical memory it
-is only required to move the calls to register_active_ranges() that wrap
-memblock_add_node() earlier and replace bootmem memory reservations with
-memblock_reserve(). Of course, all the code that find the place to put the
-bootmem bitmap is removed.
+On Sat, Jul 21, 2018 at 8:29 PM, syzbot
+<syzbot+5855b4355079756bf451@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    8ae71e76cf1f Merge branch 'bpf-offload-sharing'
+> git tree:       bpf-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17724d1c400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=89129667b46496c3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5855b4355079756bf451
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1193eee0400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c5c9dc400000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+5855b4355079756bf451@syzkaller.appspotmail.com
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- arch/ia64/Kconfig        |  1 +
- arch/ia64/kernel/setup.c | 11 ++++++-
- arch/ia64/mm/contig.c    | 71 ++++------------------------------------------
- arch/ia64/mm/discontig.c | 74 ++++--------------------------------------------
- 4 files changed, 22 insertions(+), 135 deletions(-)
+Looks like the same bpf map bug:
 
-diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-index ff86142..107b138 100644
---- a/arch/ia64/Kconfig
-+++ b/arch/ia64/Kconfig
-@@ -31,6 +31,7 @@ config IA64
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_MEMBLOCK
- 	select HAVE_MEMBLOCK_NODE_MAP
-+	select NO_BOOTMEM
- 	select HAVE_VIRT_CPU_ACCOUNTING
- 	select ARCH_HAS_DMA_MARK_CLEAN
- 	select ARCH_HAS_SG_CHAIN
-diff --git a/arch/ia64/kernel/setup.c b/arch/ia64/kernel/setup.c
-index ad43cbf..b042d0c 100644
---- a/arch/ia64/kernel/setup.c
-+++ b/arch/ia64/kernel/setup.c
-@@ -32,6 +32,7 @@
- #include <linux/delay.h>
- #include <linux/cpu.h>
- #include <linux/kernel.h>
-+#include <linux/memblock.h>
- #include <linux/reboot.h>
- #include <linux/sched/mm.h>
- #include <linux/sched/clock.h>
-@@ -383,8 +384,16 @@ reserve_memory (void)
- 
- 	sort_regions(rsvd_region, num_rsvd_regions);
- 	num_rsvd_regions = merge_regions(rsvd_region, num_rsvd_regions);
--}
- 
-+	/* reserve all regions except the end of memory marker with meblock */
-+	for (n = 0; n < num_rsvd_regions - 1; n++) {
-+		struct rsvd_region *region = &rsvd_region[n];
-+		phys_addr_t addr = __pa(region->start);
-+		phys_addr_t size = region->end - region->start;
-+
-+		memblock_reserve(addr, size);
-+	}
-+}
- 
- /**
-  * find_initrd - get initrd parameters from the boot parameter structure
-diff --git a/arch/ia64/mm/contig.c b/arch/ia64/mm/contig.c
-index 1835144..e2e40bb 100644
---- a/arch/ia64/mm/contig.c
-+++ b/arch/ia64/mm/contig.c
-@@ -34,53 +34,6 @@ static unsigned long max_gap;
- /* physical address where the bootmem map is located */
- unsigned long bootmap_start;
- 
--/**
-- * find_bootmap_location - callback to find a memory area for the bootmap
-- * @start: start of region
-- * @end: end of region
-- * @arg: unused callback data
-- *
-- * Find a place to put the bootmap and return its starting address in
-- * bootmap_start.  This address must be page-aligned.
-- */
--static int __init
--find_bootmap_location (u64 start, u64 end, void *arg)
--{
--	u64 needed = *(unsigned long *)arg;
--	u64 range_start, range_end, free_start;
--	int i;
--
--#if IGNORE_PFN0
--	if (start == PAGE_OFFSET) {
--		start += PAGE_SIZE;
--		if (start >= end)
--			return 0;
--	}
--#endif
--
--	free_start = PAGE_OFFSET;
--
--	for (i = 0; i < num_rsvd_regions; i++) {
--		range_start = max(start, free_start);
--		range_end   = min(end, rsvd_region[i].start & PAGE_MASK);
--
--		free_start = PAGE_ALIGN(rsvd_region[i].end);
--
--		if (range_end <= range_start)
--			continue; /* skip over empty range */
--
--		if (range_end - range_start >= needed) {
--			bootmap_start = __pa(range_start);
--			return -1;	/* done */
--		}
--
--		/* nothing more available in this segment */
--		if (range_end == end)
--			return 0;
--	}
--	return 0;
--}
--
- #ifdef CONFIG_SMP
- static void *cpu_data;
- /**
-@@ -196,8 +149,6 @@ setup_per_cpu_areas(void)
- void __init
- find_memory (void)
- {
--	unsigned long bootmap_size;
--
- 	reserve_memory();
- 
- 	/* first find highest page frame number */
-@@ -205,21 +156,12 @@ find_memory (void)
- 	max_low_pfn = 0;
- 	efi_memmap_walk(find_max_min_low_pfn, NULL);
- 	max_pfn = max_low_pfn;
--	/* how many bytes to cover all the pages */
--	bootmap_size = bootmem_bootmap_pages(max_pfn) << PAGE_SHIFT;
- 
--	/* look for a location to hold the bootmap */
--	bootmap_start = ~0UL;
--	efi_memmap_walk(find_bootmap_location, &bootmap_size);
--	if (bootmap_start == ~0UL)
--		panic("Cannot find %ld bytes for bootmap\n", bootmap_size);
--
--	bootmap_size = init_bootmem_node(NODE_DATA(0),
--			(bootmap_start >> PAGE_SHIFT), 0, max_pfn);
--
--	/* Free all available memory, then mark bootmem-map as being in use. */
--	efi_memmap_walk(filter_rsvd_memory, free_bootmem);
--	reserve_bootmem(bootmap_start, bootmap_size, BOOTMEM_DEFAULT);
-+#ifdef CONFIG_VIRTUAL_MEM_MAP
-+	efi_memmap_walk(filter_memory, register_active_ranges);
-+#else
-+	memblock_add_node(0, PFN_PHYS(max_low_pfn), 0);
-+#endif
- 
- 	find_initrd();
- 
-@@ -244,7 +186,6 @@ paging_init (void)
- 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
- 
- #ifdef CONFIG_VIRTUAL_MEM_MAP
--	efi_memmap_walk(filter_memory, register_active_ranges);
- 	efi_memmap_walk(find_largest_hole, (u64 *)&max_gap);
- 	if (max_gap < LARGE_GAP) {
- 		vmem_map = (struct page *) 0;
-@@ -268,8 +209,6 @@ paging_init (void)
- 
- 		printk("Virtual mem_map starts at 0x%p\n", mem_map);
- 	}
--#else /* !CONFIG_VIRTUAL_MEM_MAP */
--	memblock_add_node(0, PFN_PHYS(max_low_pfn), 0);
- #endif /* !CONFIG_VIRTUAL_MEM_MAP */
- 	free_area_init_nodes(max_zone_pfns);
- 	zero_page_memmap_ptr = virt_to_page(ia64_imva(empty_zero_page));
-diff --git a/arch/ia64/mm/discontig.c b/arch/ia64/mm/discontig.c
-index 8e99d8e..1928d57 100644
---- a/arch/ia64/mm/discontig.c
-+++ b/arch/ia64/mm/discontig.c
-@@ -20,6 +20,7 @@
- #include <linux/nmi.h>
- #include <linux/swap.h>
- #include <linux/bootmem.h>
-+#include <linux/memblock.h>
- #include <linux/acpi.h>
- #include <linux/efi.h>
- #include <linux/nodemask.h>
-@@ -264,7 +265,6 @@ static void __init fill_pernode(int node, unsigned long pernode,
- {
- 	void *cpu_data;
- 	int cpus = early_nr_cpus_node(node);
--	struct bootmem_data *bdp = &bootmem_node_data[node];
- 
- 	mem_data[node].pernode_addr = pernode;
- 	mem_data[node].pernode_size = pernodesize;
-@@ -279,8 +279,6 @@ static void __init fill_pernode(int node, unsigned long pernode,
- 
- 	mem_data[node].node_data = __va(pernode);
- 	pernode += L1_CACHE_ALIGN(sizeof(struct ia64_node_data));
--
--	pgdat_list[node]->bdata = bdp;
- 	pernode += L1_CACHE_ALIGN(sizeof(pg_data_t));
- 
- 	cpu_data = per_cpu_node_setup(cpu_data, node);
-@@ -320,14 +318,11 @@ static int __init find_pernode_space(unsigned long start, unsigned long len,
- 				     int node)
- {
- 	unsigned long spfn, epfn;
--	unsigned long pernodesize = 0, pernode, pages, mapsize;
-+	unsigned long pernodesize = 0, pernode;
- 
- 	spfn = start >> PAGE_SHIFT;
- 	epfn = (start + len) >> PAGE_SHIFT;
- 
--	pages = mem_data[node].max_pfn - mem_data[node].min_pfn;
--	mapsize = bootmem_bootmap_pages(pages) << PAGE_SHIFT;
--
- 	/*
- 	 * Make sure this memory falls within this node's usable memory
- 	 * since we may have thrown some away in build_maps().
-@@ -347,32 +342,13 @@ static int __init find_pernode_space(unsigned long start, unsigned long len,
- 	pernode = NODEDATA_ALIGN(start, node);
- 
- 	/* Is this range big enough for what we want to store here? */
--	if (start + len > (pernode + pernodesize + mapsize))
-+	if (start + len > (pernode + pernodesize))
- 		fill_pernode(node, pernode, pernodesize);
- 
- 	return 0;
- }
- 
- /**
-- * free_node_bootmem - free bootmem allocator memory for use
-- * @start: physical start of range
-- * @len: length of range
-- * @node: node where this range resides
-- *
-- * Simply calls the bootmem allocator to free the specified ranged from
-- * the given pg_data_t's bdata struct.  After this function has been called
-- * for all the entries in the EFI memory map, the bootmem allocator will
-- * be ready to service allocation requests.
-- */
--static int __init free_node_bootmem(unsigned long start, unsigned long len,
--				    int node)
--{
--	free_bootmem_node(pgdat_list[node], start, len);
--
--	return 0;
--}
--
--/**
-  * reserve_pernode_space - reserve memory for per-node space
-  *
-  * Reserve the space used by the bootmem maps & per-node space in the boot
-@@ -381,28 +357,17 @@ static int __init free_node_bootmem(unsigned long start, unsigned long len,
-  */
- static void __init reserve_pernode_space(void)
- {
--	unsigned long base, size, pages;
--	struct bootmem_data *bdp;
-+	unsigned long base, size;
- 	int node;
- 
- 	for_each_online_node(node) {
--		pg_data_t *pdp = pgdat_list[node];
--
- 		if (node_isset(node, memory_less_mask))
- 			continue;
- 
--		bdp = pdp->bdata;
--
--		/* First the bootmem_map itself */
--		pages = mem_data[node].max_pfn - mem_data[node].min_pfn;
--		size = bootmem_bootmap_pages(pages) << PAGE_SHIFT;
--		base = __pa(bdp->node_bootmem_map);
--		reserve_bootmem_node(pdp, base, size, BOOTMEM_DEFAULT);
--
- 		/* Now the per-node space */
- 		size = mem_data[node].pernode_size;
- 		base = __pa(mem_data[node].pernode_addr);
--		reserve_bootmem_node(pdp, base, size, BOOTMEM_DEFAULT);
-+		memblock_reserve(base, size);
- 	}
- }
- 
-@@ -522,6 +487,7 @@ void __init find_memory(void)
- 	int node;
- 
- 	reserve_memory();
-+	efi_memmap_walk(filter_memory, register_active_ranges);
- 
- 	if (num_online_nodes() == 0) {
- 		printk(KERN_ERR "node info missing!\n");
-@@ -541,34 +507,6 @@ void __init find_memory(void)
- 		if (mem_data[node].min_pfn)
- 			node_clear(node, memory_less_mask);
- 
--	efi_memmap_walk(filter_memory, register_active_ranges);
--
--	/*
--	 * Initialize the boot memory maps in reverse order since that's
--	 * what the bootmem allocator expects
--	 */
--	for (node = MAX_NUMNODES - 1; node >= 0; node--) {
--		unsigned long pernode, pernodesize, map;
--		struct bootmem_data *bdp;
--
--		if (!node_online(node))
--			continue;
--		else if (node_isset(node, memory_less_mask))
--			continue;
--
--		bdp = &bootmem_node_data[node];
--		pernode = mem_data[node].pernode_addr;
--		pernodesize = mem_data[node].pernode_size;
--		map = pernode + pernodesize;
--
--		init_bootmem_node(pgdat_list[node],
--				  map>>PAGE_SHIFT,
--				  mem_data[node].min_pfn,
--				  mem_data[node].max_pfn);
--	}
--
--	efi_memmap_walk(filter_rsvd_memory, free_node_bootmem);
--
- 	reserve_pernode_space();
- 	memory_less_nodes();
- 	initialize_pernode_data();
--- 
-2.7.4
+#syz fix: bpf: sockhash, disallow bpf_tcp_close and update in parallel
 
+> ==================================================================
+> kasan: CONFIG_KASAN_INLINE enabled
+> BUG: KASAN: stack-out-of-bounds in locks_inode include/linux/fs.h:1061
+> [inline]
+> BUG: KASAN: stack-out-of-bounds in locks_remove_posix+0x787/0x890
+> fs/locks.c:2468
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> Read of size 8 at addr ffff8801b7644e18 by task syz-executor473/4469
+>
+> general protection fault: 0000 [#1] SMP KASAN
+> CPU: 1 PID: 4469 Comm: syz-executor473 Not tainted 4.18.0-rc3+ #58
+> CPU: 0 PID: 17562 Comm: syz-executor473 Not tainted 4.18.0-rc3+ #58
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:__read_seqcount_begin include/linux/seqlock.h:113 [inline]
+> RIP: 0010:raw_read_seqcount_begin include/linux/seqlock.h:148 [inline]
+> RIP: 0010:hrtimer_active+0x1fb/0x440 kernel/time/hrtimer.c:1327
+> Call Trace:
+> Code:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+> ff
+> 80
+> 38
+> 00
+> 0f
+>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+> 85
+> f3
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+> 01
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> 00
+>  locks_inode include/linux/fs.h:1061 [inline]
+>  locks_remove_posix+0x787/0x890 fs/locks.c:2468
+> 00 48
+> 8b
+> 85
+> f0 fe
+> ff
+> ff 4c
+> 8d
+> 6b
+> 10
+> 48
+> 89
+> 9d
+> 58
+> ff
+> ff
+> ff
+> c6
+>  filp_close+0x1bb/0x250 fs/open.c:1182
+> 00
+> f8
+> 4c
+> 89
+>  close_files fs/file.c:388 [inline]
+>  put_files_struct+0x26f/0x3a0 fs/file.c:416
+> e8
+> 48
+> c1
+> e8
+>  exit_files+0x83/0xb0 fs/file.c:445
+> 03
+>  do_exit+0xf61/0x2750 kernel/exit.c:860
+> 41
+> c6
+> 06
+> 04
+> <42>
+> 0f
+> b6
+> 14
+> 38
+> 4c
+> 89
+> e8
+> 83
+> e0
+> 07
+> 83
+> c0
+> 03
+> 38
+> d0
+> 7c
+> 08
+> 84
+> d2
+> 0f
+> 85
+> RSP: 0018:ffff8801dae07850 EFLAGS: 00010002
+> RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff8158c5a9
+> RDX: 0000000000010000 RSI: ffffffff816a4140 RDI: ffff8801b688e3d0
+> RBP: ffff8801dae07990 R08: ffff8801dae07968 R09: fffffbfff02be35c
+> R10: fffffbfff02be35d R11: ffffffff815f1aeb R12: ffff8801b688d730
+> R13: 0000000000000010 R14: ffffed003b5c0f15 R15: dffffc0000000000
+> FS:  00000000024e2880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f8e1116ce78 CR3: 00000001c4e12000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <IRQ>
+>  do_group_exit+0x177/0x440 kernel/exit.c:968
+>  entity_tick kernel/sched/fair.c:4520 [inline]
+>  task_tick_fair+0x60/0x320 kernel/sched/fair.c:9934
+>  get_signal+0x88e/0x1970 kernel/signal.c:2468
+>  scheduler_tick+0x18b/0x430 kernel/sched/core.c:3087
+>  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
+>  update_process_times+0x51/0x70 kernel/time/timer.c:1641
+>  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+>  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+>  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+>  __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
+>  exit_to_usermode_loop+0x2e0/0x370 arch/x86/entry/common.c:162
+>  prepare_exit_to_usermode+0x342/0x3b0 arch/x86/entry/common.c:197
+>  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+>  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
+>  retint_user+0x8/0x18
+> RIP: 0033:lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+> Code:
+> 10
+> 49
+> c1
+> e9
+>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+> 09
+>  </IRQ>
+> 41
+> Modules linked in:
+> 57
+> 49 83 f1
+> Dumping ftrace buffer:
+> 01
+>    (ftrace buffer empty)
+> 48
+> ---[ end trace e84c0149ab776256 ]---
+> 8b
+> RIP: 0010:__read_seqcount_begin include/linux/seqlock.h:113 [inline]
+> RIP: 0010:raw_read_seqcount_begin include/linux/seqlock.h:148 [inline]
+> RIP: 0010:hrtimer_active+0x1fb/0x440 kernel/time/hrtimer.c:1327
+> bd
+> Code:
+> 30 ff
+> ff
+> ff
+> 80
+> ff
+> 38
+> 8b
+> 00
+> b5
+> 0f
+> 2c
+> 85
+> ff
+> f3
+> ff
+> 01
+> ff
+> 00
+> 41
+> 00
+> 83
+> 48
+> e1
+> 8b
+> 01
+> 85
+> 65
+> f0 fe
+> 4c
+> ff
+> 8b
+> ff
+> 24
+> 4c
+> 25
+> 8d
+> 40
+> 6b
+> ee
+> 10
+> 01
+> 48
+> 00
+> 89
+> e8
+> 9d
+> dc
+> 58
+> 8e
+> ff
+> ff
+> ff
+> ff
+> ff
+> <49>
+> c6
+> 8d
+> 00
+> bc
+> f8
+> 24
+> 4c
+> 34
+> 89
+> 08
+> e8
+> 00
+> 48
+> 00
+> c1 e8
+> 48
+> 03
+> b8
+> 41
+> 00
+> c6
+> 00
+> 06
+> 00 00
+> 04
+> 00
+> <42>
+> fc
+> 0f
+> ff
+> b6
+> df 48
+> 14
+> 89
+> 38
+> fa
+> 4c 89
+> 48
+> e8
+> 83
+> RSP: 002b:00007ffe727cd790 EFLAGS: 00010217
+> e0
+> 07
+> RAX: 0000000000000000 RBX: 00007ffe727cd8c0 RCX: 0000000000473990
+> 83
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007ffe727cd790
+> c0
+> RBP: 0000000000001eb0 R08: 0000000000000001 R09: 00000000024e2880
+> 03
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000001eb0
+> 38 d0
+> R13: 00000000000233be R14: 00007ffe727cd8e8 R15: 0000000000000003
+> 7c
+>
+> 08
+> Allocated by task 4466:
+> 84
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> d2
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+> 0f
+>  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+> 85
+>  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+>  __d_alloc+0xc8/0xd50 fs/dcache.c:1616
+> RSP: 0018:ffff8801dae07850 EFLAGS: 00010002
+>  d_alloc_pseudo+0x1d/0x30 fs/dcache.c:1744
+>  create_pipe_files+0x42c/0x950 fs/pipe.c:753
+> RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff8158c5a9
+>  __do_pipe_flags+0x45/0x250 fs/pipe.c:802
+> RDX: 0000000000010000 RSI: ffffffff816a4140 RDI: ffff8801b688e3d0
+>  do_pipe2+0x9d/0x310 fs/pipe.c:850
+> RBP: ffff8801dae07990 R08: ffff8801dae07968 R09: fffffbfff02be35c
+>  __do_sys_pipe fs/pipe.c:873 [inline]
+>  __se_sys_pipe fs/pipe.c:871 [inline]
+>  __x64_sys_pipe+0x33/0x40 fs/pipe.c:871
+> R10: fffffbfff02be35d R11: ffffffff815f1aeb R12: ffff8801b688d730
+>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> R13: 0000000000000010 R14: ffffed003b5c0f15 R15: dffffc0000000000
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> FS:  00000000024e2880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+>
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f8e1116ce78 CR3: 00000001c4e12000 CR4: 00000000001406f0
+> Freed by task 0:
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> (stack is not available)
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/00000000000037578b057186966f%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
