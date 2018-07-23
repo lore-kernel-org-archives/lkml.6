@@ -2,972 +2,288 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A83ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070CAECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E39B720874
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:52:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E39B720874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id B258C20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:52:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B258C20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388169AbeGWJwI (ORCPT
+        id S2388174AbeGWJwu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 05:52:08 -0400
-Received: from mx.socionext.com ([202.248.49.38]:26929 "EHLO mx.socionext.com"
+        Mon, 23 Jul 2018 05:52:50 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44361 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387908AbeGWJwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 05:52:07 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 23 Jul 2018 17:51:56 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 081C660034;
-        Mon, 23 Jul 2018 17:51:56 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 23 Jul 2018 17:51:55 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 733F640390;
-        Mon, 23 Jul 2018 17:51:55 +0900 (JST)
-Received: from aegis.e01.socionext.com (unknown [10.213.134.210])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 4B8DF120455;
-        Mon, 23 Jul 2018 17:51:55 +0900 (JST)
-From:   Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH v5] media: dvb-frontends: add Socionext MN88443x ISDB-S/T demodulator driver
-Date:   Mon, 23 Jul 2018 17:51:50 +0900
-Message-Id: <20180723085150.24266-1-suzuki.katsuhiro@socionext.com>
-X-Mailer: git-send-email 2.18.0
+        id S2388056AbeGWJwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 05:52:50 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id AD6EF208FF; Mon, 23 Jul 2018 10:52:38 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BAF3A2095C;
+        Mon, 23 Jul 2018 10:52:21 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 10:52:22 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Tony Xie <tony.xie@rock-chips.com>
+Cc:     heiko@sntech.de, broonie@kernel.org, lee.jones@linaro.org,
+        a.zummo@towertech.it, sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH 4/5] RTC: RK808: add RTC driver for RK809 and RK817.
+Message-ID: <20180723085222.GA16671@piout.net>
+References: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
+ <1532315945-1094-5-git-send-email-tony.xie@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532315945-1094-5-git-send-email-tony.xie@rock-chips.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a frontend driver for the Socionext/Panasonic
-MN884434 and MN884433 ISDB-S/T demodulators.
+Hi,
 
-The maximum and minimum frequency of MN88443x comes from
-ISDB-S and ISDB-T so frequency range is the following:
-  - ISDB-S (BS/CS110 IF frequency, Local freq 10.678GHz)
-    - Min: BS-1: 1032MHz
-    - Max: ND24: 2070MHz
-  - ISDB-T
-    - Min: ch13: 470MHz
-    - Max: ch62: 770MHz
+The subject should be rtc: rk808: add RK809 and RK817 support
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+With that fixed:
 
----
+On 23/07/2018 11:19:04+0800, Tony Xie wrote:
+> RK809 and RK817 are power management IC chips for multimedia products.
+> Most of their functions and registers are same, including the rtc.
+> 
+> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Changes since v4:
-  - Remove SC1501A support.
-    This driver is written and tested for MN88443x, I misunderstood
-    spec of SC1501A. SC1501A has not compatibility with MN88443x.
+> ---
+>  drivers/rtc/Kconfig     |  4 +--
+>  drivers/rtc/rtc-rk808.c | 68 +++++++++++++++++++++++++++++++++++++++----------
+>  2 files changed, 56 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index a2ba5db..1aaf935 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -371,11 +371,11 @@ config RTC_DRV_MAX77686
+>  	  will be called rtc-max77686.
+>  
+>  config RTC_DRV_RK808
+> -	tristate "Rockchip RK805/RK808/RK818 RTC"
+> +	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
+>  	depends on MFD_RK808
+>  	help
+>  	  If you say yes here you will get support for the
+> -	  RTC of RK805, RK808 and RK818 PMIC.
+> +	  RTC of RK805, RK809 and RK817, RK808 and RK818 PMIC.
+>  
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called rk808-rtc.
+> diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
+> index 739c0d4..5bacdaf 100644
+> --- a/drivers/rtc/rtc-rk808.c
+> +++ b/drivers/rtc/rtc-rk808.c
+> @@ -50,9 +50,18 @@
+>  #define NUM_TIME_REGS	(RK808_WEEKS_REG - RK808_SECONDS_REG + 1)
+>  #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
+>  
+> +struct rk_rtc_compat_reg {
+> +	unsigned int ctrl_reg;
+> +	unsigned int status_reg;
+> +	unsigned int alarm_seconds_reg;
+> +	unsigned int int_reg;
+> +	unsigned int seconds_reg;
+> +};
+> +
+>  struct rk808_rtc {
+>  	struct rk808 *rk808;
+>  	struct rtc_device *rtc;
+> +	struct rk_rtc_compat_reg *creg;
+>  	int irq;
+>  };
+>  
+> @@ -101,7 +110,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+>  	int ret;
+>  
+>  	/* Force an update of the shadowed registers right now */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+>  				 BIT_RTC_CTRL_REG_RTC_GET_TIME);
+>  	if (ret) {
+> @@ -115,7 +124,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+>  	 * 32khz. If we clear the GET_TIME bit here, the time of i2c transfer
+>  	 * certainly more than 31.25us: 16 * 2.5us at 400kHz bus frequency.
+>  	 */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+>  				 0);
+>  	if (ret) {
+> @@ -123,7 +132,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+>  		return ret;
+>  	}
+>  
+> -	ret = regmap_bulk_read(rk808->regmap, RK808_SECONDS_REG,
+> +	ret = regmap_bulk_read(rk808->regmap, rk808_rtc->creg->seconds_reg,
+>  			       rtc_data, NUM_TIME_REGS);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to bulk read rtc_data: %d\n", ret);
+> @@ -166,7 +175,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  	rtc_data[6] = bin2bcd(tm->tm_wday);
+>  
+>  	/* Stop RTC while updating the RTC registers */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M);
+>  	if (ret) {
+> @@ -174,14 +183,14 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  		return ret;
+>  	}
+>  
+> -	ret = regmap_bulk_write(rk808->regmap, RK808_SECONDS_REG,
+> +	ret = regmap_bulk_write(rk808->regmap, rk808_rtc->creg->seconds_reg,
+>  				rtc_data, NUM_TIME_REGS);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to bull write rtc_data: %d\n", ret);
+>  		return ret;
+>  	}
+>  	/* Start RTC again */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M, 0);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to update RTC control: %d\n", ret);
+> @@ -199,8 +208,13 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	uint32_t int_reg;
+>  	int ret;
+>  
+> -	ret = regmap_bulk_read(rk808->regmap, RK808_ALARM_SECONDS_REG,
+> +	ret = regmap_bulk_read(rk808->regmap,
+> +			       rk808_rtc->creg->alarm_seconds_reg,
+>  			       alrm_data, NUM_ALARM_REGS);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to read RTC alarm date REG: %d\n", ret);
+> +		return ret;
+> +	}
+>  
+>  	alrm->time.tm_sec = bcd2bin(alrm_data[0] & SECONDS_REG_MSK);
+>  	alrm->time.tm_min = bcd2bin(alrm_data[1] & MINUTES_REG_MAK);
+> @@ -210,7 +224,7 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	alrm->time.tm_year = (bcd2bin(alrm_data[5] & YEARS_REG_MSK)) + 100;
+>  	rockchip_to_gregorian(&alrm->time);
+>  
+> -	ret = regmap_read(rk808->regmap, RK808_RTC_INT_REG, &int_reg);
+> +	ret = regmap_read(rk808->regmap, rk808_rtc->creg->int_reg, &int_reg);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to read RTC INT REG: %d\n", ret);
+>  		return ret;
+> @@ -231,7 +245,7 @@ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
+>  	struct rk808 *rk808 = rk808_rtc->rk808;
+>  	int ret;
+>  
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+>  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M, 0);
+>  
+>  	return ret;
+> @@ -242,7 +256,7 @@ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
+>  	struct rk808 *rk808 = rk808_rtc->rk808;
+>  	int ret;
+>  
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+>  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M,
+>  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
+>  
+> @@ -274,7 +288,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	alrm_data[4] = bin2bcd(alrm->time.tm_mon + 1);
+>  	alrm_data[5] = bin2bcd(alrm->time.tm_year - 100);
+>  
+> -	ret = regmap_bulk_write(rk808->regmap, RK808_ALARM_SECONDS_REG,
+> +	ret = regmap_bulk_write(rk808->regmap,
+> +				rk808_rtc->creg->alarm_seconds_reg,
+>  				alrm_data, NUM_ALARM_REGS);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to bulk write: %d\n", ret);
+> @@ -318,7 +333,7 @@ static irqreturn_t rk808_alarm_irq(int irq, void *data)
+>  	struct i2c_client *client = rk808->i2c;
+>  	int ret;
+>  
+> -	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
+> +	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+>  			   RTC_STATUS_MASK);
+>  	if (ret) {
+>  		dev_err(&client->dev,
+> @@ -371,6 +386,22 @@ static int rk808_rtc_resume(struct device *dev)
+>  static SIMPLE_DEV_PM_OPS(rk808_rtc_pm_ops,
+>  	rk808_rtc_suspend, rk808_rtc_resume);
+>  
+> +static struct rk_rtc_compat_reg rk808_creg = {
+> +	.ctrl_reg = RK808_RTC_CTRL_REG,
+> +	.status_reg = RK808_RTC_STATUS_REG,
+> +	.alarm_seconds_reg = RK808_ALARM_SECONDS_REG,
+> +	.int_reg = RK808_RTC_INT_REG,
+> +	.seconds_reg = RK808_SECONDS_REG,
+> +};
+> +
+> +static struct rk_rtc_compat_reg rk817_creg = {
+> +	.ctrl_reg = RK817_RTC_CTRL_REG,
+> +	.status_reg = RK817_RTC_STATUS_REG,
+> +	.alarm_seconds_reg = RK817_ALARM_SECONDS_REG,
+> +	.int_reg = RK817_RTC_INT_REG,
+> +	.seconds_reg = RK817_SECONDS_REG,
+> +};
+> +
+>  static int rk808_rtc_probe(struct platform_device *pdev)
+>  {
+>  	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+> @@ -381,11 +412,20 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+>  	if (rk808_rtc == NULL)
+>  		return -ENOMEM;
+>  
+> +	switch (rk808->variant) {
+> +	case RK809_ID:
+> +	case RK817_ID:
+> +		rk808_rtc->creg = &rk817_creg;
+> +		break;
+> +	default:
+> +		rk808_rtc->creg = &rk808_creg;
+> +		break;
+> +	}
+>  	platform_set_drvdata(pdev, rk808_rtc);
+>  	rk808_rtc->rk808 = rk808;
+>  
+>  	/* start rtc running by default, and use shadowed timer. */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M |
+>  				 BIT_RTC_CTRL_REG_RTC_READSEL_M,
+>  				 BIT_RTC_CTRL_REG_RTC_READSEL_M);
+> @@ -395,7 +435,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
+> +	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+>  			   RTC_STATUS_MASK);
+>  	if (ret) {
+>  		dev_err(&pdev->dev,
+> -- 
+> 1.9.1
+> 
+> 
 
-Changes since v3:
-  - Add symbol rate for ISDB-S
-  - Describe max/min frequency in Hz (not kHz)
-  - Depends on Mauro's DVB core fixes
-    https://patchwork.linuxtv.org/patch/50886/
-    https://patchwork.linuxtv.org/patch/50887/
-    https://patchwork.linuxtv.org/patch/50888/
-
-Changes since v2:
-  - Fix frequency max and min
-
-Changes since v1:
-  - Fix sparse warning about type of constant
-  - Use div_s64() instead of divide operator
----
- drivers/media/dvb-frontends/Kconfig    |  10 +
- drivers/media/dvb-frontends/Makefile   |   1 +
- drivers/media/dvb-frontends/mn88443x.c | 802 +++++++++++++++++++++++++
- drivers/media/dvb-frontends/mn88443x.h |  27 +
- 4 files changed, 840 insertions(+)
- create mode 100644 drivers/media/dvb-frontends/mn88443x.c
- create mode 100644 drivers/media/dvb-frontends/mn88443x.h
-
-diff --git a/drivers/media/dvb-frontends/Kconfig b/drivers/media/dvb-frontends/Kconfig
-index 9ecaa9d0744a..048285134cdf 100644
---- a/drivers/media/dvb-frontends/Kconfig
-+++ b/drivers/media/dvb-frontends/Kconfig
-@@ -739,6 +739,16 @@ config DVB_TC90522
- 	  Toshiba TC90522 2xISDB-S 8PSK + 2xISDB-T OFDM demodulator.
- 	  Say Y when you want to support this frontend.
- 
-+config DVB_MN88443X
-+	tristate "Socionext MN88443x"
-+	depends on DVB_CORE && I2C
-+	select REGMAP_I2C
-+	default m if !MEDIA_SUBDRV_AUTOSELECT
-+	help
-+	  A driver for Socionext/Panasonic MN884433 and MN884434
-+	  ISDB-S + ISDB-T demodulator.
-+	  Say Y when you want to support this frontend.
-+
- comment "Digital terrestrial only tuners/PLL"
- 	depends on DVB_CORE
- 
-diff --git a/drivers/media/dvb-frontends/Makefile b/drivers/media/dvb-frontends/Makefile
-index 67a783fd5ed0..779dfd027b24 100644
---- a/drivers/media/dvb-frontends/Makefile
-+++ b/drivers/media/dvb-frontends/Makefile
-@@ -125,6 +125,7 @@ obj-$(CONFIG_DVB_AF9033) += af9033.o
- obj-$(CONFIG_DVB_AS102_FE) += as102_fe.o
- obj-$(CONFIG_DVB_GP8PSK_FE) += gp8psk-fe.o
- obj-$(CONFIG_DVB_TC90522) += tc90522.o
-+obj-$(CONFIG_DVB_MN88443X) += mn88443x.o
- obj-$(CONFIG_DVB_HORUS3A) += horus3a.o
- obj-$(CONFIG_DVB_ASCOT2E) += ascot2e.o
- obj-$(CONFIG_DVB_HELENE) += helene.o
-diff --git a/drivers/media/dvb-frontends/mn88443x.c b/drivers/media/dvb-frontends/mn88443x.c
-new file mode 100644
-index 000000000000..73bd04dbd118
---- /dev/null
-+++ b/drivers/media/dvb-frontends/mn88443x.c
-@@ -0,0 +1,802 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Socionext MN88443x series demodulator driver for ISDB-S/ISDB-T.
-+//
-+// Copyright (c) 2018 Socionext Inc.
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/of_device.h>
-+#include <linux/regmap.h>
-+#include <media/dvb_math.h>
-+
-+#include "sc1501a.h"
-+
-+/* ISDB-S registers */
-+#define ATSIDU_S                                    0x2f
-+#define ATSIDL_S                                    0x30
-+#define TSSET_S                                     0x31
-+#define AGCREAD_S                                   0x5a
-+#define CPMON1_S                                    0x5e
-+#define   CPMON1_S_FSYNC                              BIT(5)
-+#define   CPMON1_S_ERRMON                             BIT(4)
-+#define   CPMON1_S_SIGOFF                             BIT(3)
-+#define   CPMON1_S_W2LOCK                             BIT(2)
-+#define   CPMON1_S_W1LOCK                             BIT(1)
-+#define   CPMON1_S_DW1LOCK                            BIT(0)
-+#define TRMON_S                                     0x60
-+#define BERCNFLG_S                                  0x68
-+#define   BERCNFLG_S_BERVRDY                          BIT(5)
-+#define   BERCNFLG_S_BERVCHK                          BIT(4)
-+#define   BERCNFLG_S_BERDRDY                          BIT(3)
-+#define   BERCNFLG_S_BERDCHK                          BIT(2)
-+#define CNRDXU_S                                    0x69
-+#define CNRDXL_S                                    0x6a
-+#define CNRDYU_S                                    0x6b
-+#define CNRDYL_S                                    0x6c
-+#define BERVRDU_S                                   0x71
-+#define BERVRDL_S                                   0x72
-+#define DOSET1_S                                    0x73
-+
-+/* Primary ISDB-T */
-+#define PLLASET1                                    0x00
-+#define PLLASET2                                    0x01
-+#define PLLBSET1                                    0x02
-+#define PLLBSET2                                    0x03
-+#define PLLSET                                      0x04
-+#define OUTCSET                                     0x08
-+#define   OUTCSET_CHDRV_8MA                           0xff
-+#define   OUTCSET_CHDRV_4MA                           0x00
-+#define PLDWSET                                     0x09
-+#define   PLDWSET_NORMAL                             0x00
-+#define   PLDWSET_PULLDOWN                           0xff
-+#define HIZSET1                                     0x0a
-+#define HIZSET2                                     0x0b
-+
-+/* Secondary ISDB-T (for MN884434 only) */
-+#define RCVSET                                      0x00
-+#define TSSET1_M                                    0x01
-+#define TSSET2_M                                    0x02
-+#define TSSET3_M                                    0x03
-+#define INTACSET                                    0x08
-+#define HIZSET3                                     0x0b
-+
-+/* ISDB-T registers */
-+#define TSSET1                                      0x05
-+#define   TSSET1_TSASEL_MASK                          GENMASK(4, 3)
-+#define   TSSET1_TSASEL_ISDBT                         (0x0 << 3)
-+#define   TSSET1_TSASEL_ISDBS                         (0x1 << 3)
-+#define   TSSET1_TSASEL_NONE                          (0x2 << 3)
-+#define   TSSET1_TSBSEL_MASK                          GENMASK(2, 1)
-+#define   TSSET1_TSBSEL_ISDBS                         (0x0 << 1)
-+#define   TSSET1_TSBSEL_ISDBT                         (0x1 << 1)
-+#define   TSSET1_TSBSEL_NONE                          (0x2 << 1)
-+#define TSSET2                                      0x06
-+#define TSSET3                                      0x07
-+#define   TSSET3_INTASEL_MASK                         GENMASK(7, 6)
-+#define   TSSET3_INTASEL_T                            (0x0 << 6)
-+#define   TSSET3_INTASEL_S                            (0x1 << 6)
-+#define   TSSET3_INTASEL_NONE                         (0x2 << 6)
-+#define   TSSET3_INTBSEL_MASK                         GENMASK(5, 4)
-+#define   TSSET3_INTBSEL_S                            (0x0 << 4)
-+#define   TSSET3_INTBSEL_T                            (0x1 << 4)
-+#define   TSSET3_INTBSEL_NONE                         (0x2 << 4)
-+#define OUTSET2                                     0x0d
-+#define PWDSET                                      0x0f
-+#define   PWDSET_OFDMPD_MASK                          GENMASK(3, 2)
-+#define   PWDSET_OFDMPD_DOWN                          BIT(3)
-+#define   PWDSET_PSKPD_MASK                           GENMASK(1, 0)
-+#define   PWDSET_PSKPD_DOWN                           BIT(1)
-+#define CLKSET1_T                                   0x11
-+#define MDSET_T                                     0x13
-+#define   MDSET_T_MDAUTO_MASK                         GENMASK(7, 4)
-+#define   MDSET_T_MDAUTO_AUTO                         (0xf << 4)
-+#define   MDSET_T_MDAUTO_MANUAL                       (0x0 << 4)
-+#define   MDSET_T_FFTS_MASK                           GENMASK(3, 2)
-+#define   MDSET_T_FFTS_MODE1                          (0x0 << 2)
-+#define   MDSET_T_FFTS_MODE2                          (0x1 << 2)
-+#define   MDSET_T_FFTS_MODE3                          (0x2 << 2)
-+#define   MDSET_T_GI_MASK                             GENMASK(1, 0)
-+#define   MDSET_T_GI_1_32                             (0x0 << 0)
-+#define   MDSET_T_GI_1_16                             (0x1 << 0)
-+#define   MDSET_T_GI_1_8                              (0x2 << 0)
-+#define   MDSET_T_GI_1_4                              (0x3 << 0)
-+#define MDASET_T                                    0x14
-+#define ADCSET1_T                                   0x20
-+#define   ADCSET1_T_REFSEL_MASK                       GENMASK(1, 0)
-+#define   ADCSET1_T_REFSEL_2V                         (0x3 << 0)
-+#define   ADCSET1_T_REFSEL_1_5V                       (0x2 << 0)
-+#define   ADCSET1_T_REFSEL_1V                         (0x1 << 0)
-+#define NCOFREQU_T                                  0x24
-+#define NCOFREQM_T                                  0x25
-+#define NCOFREQL_T                                  0x26
-+#define FADU_T                                      0x27
-+#define FADM_T                                      0x28
-+#define FADL_T                                      0x29
-+#define AGCSET2_T                                   0x2c
-+#define   AGCSET2_T_IFPOLINV_INC                      BIT(0)
-+#define   AGCSET2_T_RFPOLINV_INC                      BIT(1)
-+#define AGCV3_T                                     0x3e
-+#define MDRD_T                                      0xa2
-+#define   MDRD_T_SEGID_MASK                           GENMASK(5, 4)
-+#define   MDRD_T_SEGID_13                             (0x0 << 4)
-+#define   MDRD_T_SEGID_1                              (0x1 << 4)
-+#define   MDRD_T_SEGID_3                              (0x2 << 4)
-+#define   MDRD_T_FFTS_MASK                            GENMASK(3, 2)
-+#define   MDRD_T_FFTS_MODE1                           (0x0 << 2)
-+#define   MDRD_T_FFTS_MODE2                           (0x1 << 2)
-+#define   MDRD_T_FFTS_MODE3                           (0x2 << 2)
-+#define   MDRD_T_GI_MASK                              GENMASK(1, 0)
-+#define   MDRD_T_GI_1_32                              (0x0 << 0)
-+#define   MDRD_T_GI_1_16                              (0x1 << 0)
-+#define   MDRD_T_GI_1_8                               (0x2 << 0)
-+#define   MDRD_T_GI_1_4                               (0x3 << 0)
-+#define SSEQRD_T                                    0xa3
-+#define   SSEQRD_T_SSEQSTRD_MASK                      GENMASK(3, 0)
-+#define   SSEQRD_T_SSEQSTRD_RESET                     (0x0 << 0)
-+#define   SSEQRD_T_SSEQSTRD_TUNING                    (0x1 << 0)
-+#define   SSEQRD_T_SSEQSTRD_AGC                       (0x2 << 0)
-+#define   SSEQRD_T_SSEQSTRD_SEARCH                    (0x3 << 0)
-+#define   SSEQRD_T_SSEQSTRD_CLOCK_SYNC                (0x4 << 0)
-+#define   SSEQRD_T_SSEQSTRD_FREQ_SYNC                 (0x8 << 0)
-+#define   SSEQRD_T_SSEQSTRD_FRAME_SYNC                (0x9 << 0)
-+#define   SSEQRD_T_SSEQSTRD_SYNC                      (0xa << 0)
-+#define   SSEQRD_T_SSEQSTRD_LOCK                      (0xb << 0)
-+#define AGCRDU_T                                    0xa8
-+#define AGCRDL_T                                    0xa9
-+#define CNRDU_T                                     0xbe
-+#define CNRDL_T                                     0xbf
-+#define BERFLG_T                                    0xc0
-+#define   BERFLG_T_BERDRDY                            BIT(7)
-+#define   BERFLG_T_BERDCHK                            BIT(6)
-+#define   BERFLG_T_BERVRDYA                           BIT(5)
-+#define   BERFLG_T_BERVCHKA                           BIT(4)
-+#define   BERFLG_T_BERVRDYB                           BIT(3)
-+#define   BERFLG_T_BERVCHKB                           BIT(2)
-+#define   BERFLG_T_BERVRDYC                           BIT(1)
-+#define   BERFLG_T_BERVCHKC                           BIT(0)
-+#define BERRDU_T                                    0xc1
-+#define BERRDM_T                                    0xc2
-+#define BERRDL_T                                    0xc3
-+#define BERLENRDU_T                                 0xc4
-+#define BERLENRDL_T                                 0xc5
-+#define ERRFLG_T                                    0xc6
-+#define   ERRFLG_T_BERDOVF                            BIT(7)
-+#define   ERRFLG_T_BERVOVFA                           BIT(6)
-+#define   ERRFLG_T_BERVOVFB                           BIT(5)
-+#define   ERRFLG_T_BERVOVFC                           BIT(4)
-+#define   ERRFLG_T_NERRFA                             BIT(3)
-+#define   ERRFLG_T_NERRFB                             BIT(2)
-+#define   ERRFLG_T_NERRFC                             BIT(1)
-+#define   ERRFLG_T_NERRF                              BIT(0)
-+#define DOSET1_T                                    0xcf
-+
-+#define CLK_LOW            4000000
-+#define CLK_DIRECT         20200000
-+#define CLK_MAX            25410000
-+
-+#define S_T_FREQ           8126984 /* 512 / 63 MHz */
-+
-+struct mn88443x_spec {
-+	bool primary;
-+};
-+
-+struct mn88443x_priv {
-+	const struct mn88443x_spec *spec;
-+
-+	struct dvb_frontend fe;
-+	struct clk *mclk;
-+	struct gpio_desc *reset_gpio;
-+	u32 clk_freq;
-+	u32 if_freq;
-+
-+	/* Common */
-+	bool use_clkbuf;
-+
-+	/* ISDB-S */
-+	struct i2c_client *client_s;
-+	struct regmap *regmap_s;
-+
-+	/* ISDB-T */
-+	struct i2c_client *client_t;
-+	struct regmap *regmap_t;
-+};
-+
-+static void mn88443x_cmn_power_on(struct mn88443x_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	clk_prepare_enable(chip->mclk);
-+
-+	gpiod_set_value_cansleep(chip->reset_gpio, 1);
-+	usleep_range(100, 1000);
-+	gpiod_set_value_cansleep(chip->reset_gpio, 0);
-+
-+	if (chip->spec->primary) {
-+		regmap_write(r_t, OUTCSET, OUTCSET_CHDRV_8MA);
-+		regmap_write(r_t, PLDWSET, PLDWSET_NORMAL);
-+		regmap_write(r_t, HIZSET1, 0x80);
-+		regmap_write(r_t, HIZSET2, 0xe0);
-+	} else {
-+		regmap_write(r_t, HIZSET3, 0x8f);
-+	}
-+}
-+
-+static void mn88443x_cmn_power_off(struct mn88443x_priv *chip)
-+{
-+	gpiod_set_value_cansleep(chip->reset_gpio, 1);
-+
-+	clk_disable_unprepare(chip->mclk);
-+}
-+
-+static void mn88443x_s_sleep(struct mn88443x_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	regmap_update_bits(r_t, PWDSET, PWDSET_PSKPD_MASK,
-+			   PWDSET_PSKPD_DOWN);
-+}
-+
-+static void mn88443x_s_wake(struct mn88443x_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	regmap_update_bits(r_t, PWDSET, PWDSET_PSKPD_MASK, 0);
-+}
-+
-+static void mn88443x_s_tune(struct mn88443x_priv *chip,
-+			    struct dtv_frontend_properties *c)
-+{
-+	struct regmap *r_s = chip->regmap_s;
-+
-+	regmap_write(r_s, ATSIDU_S, c->stream_id >> 8);
-+	regmap_write(r_s, ATSIDL_S, c->stream_id);
-+	regmap_write(r_s, TSSET_S, 0);
-+}
-+
-+static int mn88443x_s_read_status(struct mn88443x_priv *chip,
-+				  struct dtv_frontend_properties *c,
-+				  enum fe_status *status)
-+{
-+	struct regmap *r_s = chip->regmap_s;
-+	u32 cpmon, tmpu, tmpl, flg;
-+	u64 tmp;
-+
-+	/* Sync detection */
-+	regmap_read(r_s, CPMON1_S, &cpmon);
-+
-+	*status = 0;
-+	if (cpmon & CPMON1_S_FSYNC)
-+		*status |= FE_HAS_VITERBI | FE_HAS_SYNC | FE_HAS_LOCK;
-+	if (cpmon & CPMON1_S_W2LOCK)
-+		*status |= FE_HAS_SIGNAL | FE_HAS_CARRIER;
-+
-+	/* Signal strength */
-+	c->strength.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	if (*status & FE_HAS_SIGNAL) {
-+		u32 agc;
-+
-+		regmap_read(r_s, AGCREAD_S, &tmpu);
-+		agc = tmpu << 8;
-+
-+		c->strength.len = 1;
-+		c->strength.stat[0].scale = FE_SCALE_RELATIVE;
-+		c->strength.stat[0].uvalue = agc;
-+	}
-+
-+	/* C/N rate */
-+	c->cnr.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	if (*status & FE_HAS_VITERBI) {
-+		u32 cnr = 0, x, y, d;
-+		u64 d_3 = 0;
-+
-+		regmap_read(r_s, CNRDXU_S, &tmpu);
-+		regmap_read(r_s, CNRDXL_S, &tmpl);
-+		x = (tmpu << 8) | tmpl;
-+		regmap_read(r_s, CNRDYU_S, &tmpu);
-+		regmap_read(r_s, CNRDYL_S, &tmpl);
-+		y = (tmpu << 8) | tmpl;
-+
-+		/* CNR[dB]: 10 * log10(D) - 30.74 / D^3 - 3 */
-+		/*   D = x^2 / (2^15 * y - x^2) */
-+		d = (y << 15) - x * x;
-+		if (d > 0) {
-+			/* (2^4 * D)^3 = 2^12 * D^3 */
-+			/* 3.074 * 2^(12 + 24) = 211243671486 */
-+			d_3 = div_u64(16 * x * x, d);
-+			d_3 = d_3 * d_3 * d_3;
-+			if (d_3)
-+				d_3 = div_u64(211243671486ULL, d_3);
-+		}
-+
-+		if (d_3) {
-+			/* 0.3 * 2^24 = 5033164 */
-+			tmp = (s64)2 * intlog10(x) - intlog10(abs(d)) - d_3
-+				- 5033164;
-+			cnr = div_u64(tmp * 10000, 1 << 24);
-+		}
-+
-+		if (cnr) {
-+			c->cnr.len = 1;
-+			c->cnr.stat[0].scale = FE_SCALE_DECIBEL;
-+			c->cnr.stat[0].uvalue = cnr;
-+		}
-+	}
-+
-+	/* BER */
-+	c->post_bit_error.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+	c->post_bit_count.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	regmap_read(r_s, BERCNFLG_S, &flg);
-+
-+	if ((*status & FE_HAS_VITERBI) && (flg & BERCNFLG_S_BERVRDY)) {
-+		u32 bit_err, bit_cnt;
-+
-+		regmap_read(r_s, BERVRDU_S, &tmpu);
-+		regmap_read(r_s, BERVRDL_S, &tmpl);
-+		bit_err = (tmpu << 8) | tmpl;
-+		bit_cnt = (1 << 13) * 204;
-+
-+		if (bit_cnt) {
-+			c->post_bit_error.len = 1;
-+			c->post_bit_error.stat[0].scale = FE_SCALE_COUNTER;
-+			c->post_bit_error.stat[0].uvalue = bit_err;
-+			c->post_bit_count.len = 1;
-+			c->post_bit_count.stat[0].scale = FE_SCALE_COUNTER;
-+			c->post_bit_count.stat[0].uvalue = bit_cnt;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void mn88443x_t_sleep(struct mn88443x_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	regmap_update_bits(r_t, PWDSET, PWDSET_OFDMPD_MASK,
-+			   PWDSET_OFDMPD_DOWN);
-+}
-+
-+static void mn88443x_t_wake(struct mn88443x_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	regmap_update_bits(r_t, PWDSET, PWDSET_OFDMPD_MASK, 0);
-+}
-+
-+static bool mn88443x_t_is_valid_clk(u32 adckt, u32 if_freq)
-+{
-+	if (if_freq == DIRECT_IF_57MHZ) {
-+		if (adckt >= CLK_DIRECT && adckt <= 21000000)
-+			return true;
-+		if (adckt >= 25300000 && adckt <= CLK_MAX)
-+			return true;
-+	} else if (if_freq == DIRECT_IF_44MHZ) {
-+		if (adckt >= 25000000 && adckt <= CLK_MAX)
-+			return true;
-+	} else if (if_freq >= LOW_IF_4MHZ && if_freq < DIRECT_IF_44MHZ) {
-+		if (adckt >= CLK_DIRECT && adckt <= CLK_MAX)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int mn88443x_t_set_freq(struct mn88443x_priv *chip)
-+{
-+	struct device *dev = &chip->client_s->dev;
-+	struct regmap *r_t = chip->regmap_t;
-+	s64 adckt, nco, ad_t;
-+	u32 m, v;
-+
-+	/* Clock buffer (but not supported) or XTAL */
-+	if (chip->clk_freq >= CLK_LOW && chip->clk_freq < CLK_DIRECT) {
-+		chip->use_clkbuf = true;
-+		regmap_write(r_t, CLKSET1_T, 0x07);
-+
-+		adckt = 0;
-+	} else {
-+		chip->use_clkbuf = false;
-+		regmap_write(r_t, CLKSET1_T, 0x00);
-+
-+		adckt = chip->clk_freq;
-+	}
-+	if (!mn88443x_t_is_valid_clk(adckt, chip->if_freq)) {
-+		dev_err(dev, "Invalid clock, CLK:%d, ADCKT:%lld, IF:%d\n",
-+			chip->clk_freq, adckt, chip->if_freq);
-+		return -EINVAL;
-+	}
-+
-+	/* Direct IF or Low IF */
-+	if (chip->if_freq == DIRECT_IF_57MHZ ||
-+	    chip->if_freq == DIRECT_IF_44MHZ)
-+		nco = adckt * 2 - chip->if_freq;
-+	else
-+		nco = -((s64)chip->if_freq);
-+	nco = div_s64(nco << 24, adckt);
-+	ad_t = div_s64(adckt << 22, S_T_FREQ);
-+
-+	regmap_write(r_t, NCOFREQU_T, nco >> 16);
-+	regmap_write(r_t, NCOFREQM_T, nco >> 8);
-+	regmap_write(r_t, NCOFREQL_T, nco);
-+	regmap_write(r_t, FADU_T, ad_t >> 16);
-+	regmap_write(r_t, FADM_T, ad_t >> 8);
-+	regmap_write(r_t, FADL_T, ad_t);
-+
-+	/* Level of IF */
-+	m = ADCSET1_T_REFSEL_MASK;
-+	v = ADCSET1_T_REFSEL_1_5V;
-+	regmap_update_bits(r_t, ADCSET1_T, m, v);
-+
-+	/* Polarity of AGC */
-+	v = AGCSET2_T_IFPOLINV_INC | AGCSET2_T_RFPOLINV_INC;
-+	regmap_update_bits(r_t, AGCSET2_T, v, v);
-+
-+	/* Lower output level of AGC */
-+	regmap_write(r_t, AGCV3_T, 0x00);
-+
-+	regmap_write(r_t, MDSET_T, 0xfa);
-+
-+	return 0;
-+}
-+
-+static void mn88443x_t_tune(struct mn88443x_priv *chip,
-+			    struct dtv_frontend_properties *c)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+	u32 m, v;
-+
-+	m = MDSET_T_MDAUTO_MASK | MDSET_T_FFTS_MASK | MDSET_T_GI_MASK;
-+	v = MDSET_T_MDAUTO_AUTO | MDSET_T_FFTS_MODE3 | MDSET_T_GI_1_8;
-+	regmap_update_bits(r_t, MDSET_T, m, v);
-+
-+	regmap_write(r_t, MDASET_T, 0);
-+}
-+
-+static int mn88443x_t_read_status(struct mn88443x_priv *chip,
-+				  struct dtv_frontend_properties *c,
-+				  enum fe_status *status)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+	u32 seqrd, st, flg, tmpu, tmpm, tmpl;
-+	u64 tmp;
-+
-+	/* Sync detection */
-+	regmap_read(r_t, SSEQRD_T, &seqrd);
-+	st = seqrd & SSEQRD_T_SSEQSTRD_MASK;
-+
-+	*status = 0;
-+	if (st >= SSEQRD_T_SSEQSTRD_SYNC)
-+		*status |= FE_HAS_VITERBI | FE_HAS_SYNC | FE_HAS_LOCK;
-+	if (st >= SSEQRD_T_SSEQSTRD_FRAME_SYNC)
-+		*status |= FE_HAS_SIGNAL | FE_HAS_CARRIER;
-+
-+	/* Signal strength */
-+	c->strength.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	if (*status & FE_HAS_SIGNAL) {
-+		u32 agc;
-+
-+		regmap_read(r_t, AGCRDU_T, &tmpu);
-+		regmap_read(r_t, AGCRDL_T, &tmpl);
-+		agc = (tmpu << 8) | tmpl;
-+
-+		c->strength.len = 1;
-+		c->strength.stat[0].scale = FE_SCALE_RELATIVE;
-+		c->strength.stat[0].uvalue = agc;
-+	}
-+
-+	/* C/N rate */
-+	c->cnr.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	if (*status & FE_HAS_VITERBI) {
-+		u32 cnr;
-+
-+		regmap_read(r_t, CNRDU_T, &tmpu);
-+		regmap_read(r_t, CNRDL_T, &tmpl);
-+
-+		if (tmpu || tmpl) {
-+			/* CNR[dB]: 10 * (log10(65536 / value) + 0.2) */
-+			/* intlog10(65536) = 80807124, 0.2 * 2^24 = 3355443 */
-+			tmp = (u64)80807124 - intlog10((tmpu << 8) | tmpl)
-+				+ 3355443;
-+			cnr = div_u64(tmp * 10000, 1 << 24);
-+		} else {
-+			cnr = 0;
-+		}
-+
-+		c->cnr.len = 1;
-+		c->cnr.stat[0].scale = FE_SCALE_DECIBEL;
-+		c->cnr.stat[0].uvalue = cnr;
-+	}
-+
-+	/* BER */
-+	c->post_bit_error.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+	c->post_bit_count.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	regmap_read(r_t, BERFLG_T, &flg);
-+
-+	if ((*status & FE_HAS_VITERBI) && (flg & BERFLG_T_BERVRDYA)) {
-+		u32 bit_err, bit_cnt;
-+
-+		regmap_read(r_t, BERRDU_T, &tmpu);
-+		regmap_read(r_t, BERRDM_T, &tmpm);
-+		regmap_read(r_t, BERRDL_T, &tmpl);
-+		bit_err = (tmpu << 16) | (tmpm << 8) | tmpl;
-+
-+		regmap_read(r_t, BERLENRDU_T, &tmpu);
-+		regmap_read(r_t, BERLENRDL_T, &tmpl);
-+		bit_cnt = ((tmpu << 8) | tmpl) * 203 * 8;
-+
-+		if (bit_cnt) {
-+			c->post_bit_error.len = 1;
-+			c->post_bit_error.stat[0].scale = FE_SCALE_COUNTER;
-+			c->post_bit_error.stat[0].uvalue = bit_err;
-+			c->post_bit_count.len = 1;
-+			c->post_bit_count.stat[0].scale = FE_SCALE_COUNTER;
-+			c->post_bit_count.stat[0].uvalue = bit_cnt;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int mn88443x_sleep(struct dvb_frontend *fe)
-+{
-+	struct mn88443x_priv *chip = fe->demodulator_priv;
-+
-+	mn88443x_s_sleep(chip);
-+	mn88443x_t_sleep(chip);
-+
-+	return 0;
-+}
-+
-+static int mn88443x_set_frontend(struct dvb_frontend *fe)
-+{
-+	struct mn88443x_priv *chip = fe->demodulator_priv;
-+	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
-+	struct regmap *r_s = chip->regmap_s;
-+	struct regmap *r_t = chip->regmap_t;
-+	u8 tssel = 0, intsel = 0;
-+
-+	if (c->delivery_system == SYS_ISDBS) {
-+		mn88443x_s_wake(chip);
-+		mn88443x_t_sleep(chip);
-+
-+		tssel = TSSET1_TSASEL_ISDBS;
-+		intsel = TSSET3_INTASEL_S;
-+	} else if (c->delivery_system == SYS_ISDBT) {
-+		mn88443x_s_sleep(chip);
-+		mn88443x_t_wake(chip);
-+
-+		mn88443x_t_set_freq(chip);
-+
-+		tssel = TSSET1_TSASEL_ISDBT;
-+		intsel = TSSET3_INTASEL_T;
-+	}
-+
-+	regmap_update_bits(r_t, TSSET1,
-+			   TSSET1_TSASEL_MASK | TSSET1_TSBSEL_MASK,
-+			   tssel | TSSET1_TSBSEL_NONE);
-+	regmap_write(r_t, TSSET2, 0);
-+	regmap_update_bits(r_t, TSSET3,
-+			   TSSET3_INTASEL_MASK | TSSET3_INTBSEL_MASK,
-+			   intsel | TSSET3_INTBSEL_NONE);
-+
-+	regmap_write(r_t, DOSET1_T, 0x95);
-+	regmap_write(r_s, DOSET1_S, 0x80);
-+
-+	if (c->delivery_system == SYS_ISDBS)
-+		mn88443x_s_tune(chip, c);
-+	else if (c->delivery_system == SYS_ISDBT)
-+		mn88443x_t_tune(chip, c);
-+
-+	if (fe->ops.tuner_ops.set_params) {
-+		if (fe->ops.i2c_gate_ctrl)
-+			fe->ops.i2c_gate_ctrl(fe, 1);
-+		fe->ops.tuner_ops.set_params(fe);
-+		if (fe->ops.i2c_gate_ctrl)
-+			fe->ops.i2c_gate_ctrl(fe, 0);
-+	}
-+
-+	return 0;
-+}
-+
-+static int mn88443x_get_tune_settings(struct dvb_frontend *fe,
-+				      struct dvb_frontend_tune_settings *s)
-+{
-+	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
-+
-+	s->min_delay_ms = 850;
-+
-+	if (c->delivery_system == SYS_ISDBS) {
-+		s->max_drift = 30000 * 2 + 1;
-+		s->step_size = 30000;
-+	} else if (c->delivery_system == SYS_ISDBT) {
-+		s->max_drift = 142857 * 2 + 1;
-+		s->step_size = 142857 * 2;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mn88443x_read_status(struct dvb_frontend *fe, enum fe_status *status)
-+{
-+	struct mn88443x_priv *chip = fe->demodulator_priv;
-+	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
-+
-+	if (c->delivery_system == SYS_ISDBS)
-+		return mn88443x_s_read_status(chip, c, status);
-+
-+	if (c->delivery_system == SYS_ISDBT)
-+		return mn88443x_t_read_status(chip, c, status);
-+
-+	return -EINVAL;
-+}
-+
-+static const struct dvb_frontend_ops mn88443x_ops = {
-+	.delsys = { SYS_ISDBS, SYS_ISDBT },
-+	.info = {
-+		.name = "Socionext MN88443x",
-+		.frequency_min_hz =  470 * MHz,
-+		.frequency_max_hz = 2071 * MHz,
-+		.symbol_rate_min  = 28860000,
-+		.symbol_rate_max  = 28860000,
-+		.caps = FE_CAN_INVERSION_AUTO | FE_CAN_FEC_AUTO |
-+			FE_CAN_QAM_AUTO | FE_CAN_TRANSMISSION_MODE_AUTO |
-+			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO,
-+	},
-+
-+	.sleep                   = mn88443x_sleep,
-+	.set_frontend            = mn88443x_set_frontend,
-+	.get_tune_settings       = mn88443x_get_tune_settings,
-+	.read_status             = mn88443x_read_status,
-+};
-+
-+static const struct regmap_config regmap_config = {
-+	.reg_bits   = 8,
-+	.val_bits   = 8,
-+	.cache_type = REGCACHE_NONE,
-+};
-+
-+static int mn88443x_probe(struct i2c_client *client,
-+			  const struct i2c_device_id *id)
-+{
-+	struct mn88443x_config *conf = client->dev.platform_data;
-+	struct mn88443x_priv *chip;
-+	struct device *dev = &client->dev;
-+	int ret;
-+
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	if (dev->of_node)
-+		chip->spec = of_device_get_match_data(dev);
-+	else
-+		chip->spec = (struct mn88443x_spec *)id->driver_data;
-+	if (!chip->spec)
-+		return -EINVAL;
-+
-+	chip->mclk = devm_clk_get(dev, "mclk");
-+	if (IS_ERR(chip->mclk) && !conf) {
-+		dev_err(dev, "Failed to request mclk: %ld\n",
-+			PTR_ERR(chip->mclk));
-+		return PTR_ERR(chip->mclk);
-+	}
-+
-+	ret = of_property_read_u32(dev->of_node, "if-frequency",
-+				   &chip->if_freq);
-+	if (ret && !conf) {
-+		dev_err(dev, "Failed to load IF frequency: %d.\n", ret);
-+		return ret;
-+	}
-+
-+	chip->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+						   GPIOD_OUT_HIGH);
-+	if (IS_ERR(chip->reset_gpio)) {
-+		dev_err(dev, "Failed to request reset_gpio: %ld\n",
-+			PTR_ERR(chip->reset_gpio));
-+		return PTR_ERR(chip->reset_gpio);
-+	}
-+
-+	if (conf) {
-+		chip->mclk = conf->mclk;
-+		chip->if_freq = conf->if_freq;
-+		chip->reset_gpio = conf->reset_gpio;
-+
-+		*conf->fe = &chip->fe;
-+	}
-+
-+	chip->client_s = client;
-+	chip->regmap_s = devm_regmap_init_i2c(chip->client_s, &regmap_config);
-+	if (IS_ERR(chip->regmap_s))
-+		return PTR_ERR(chip->regmap_s);
-+
-+	/*
-+	 * Chip has two I2C addresses for each satellite/terrestrial system.
-+	 * ISDB-T uses address ISDB-S + 4, so we register a dummy client.
-+	 */
-+	chip->client_t = i2c_new_dummy(client->adapter, client->addr + 4);
-+	if (!chip->client_t)
-+		return -ENODEV;
-+
-+	chip->regmap_t = devm_regmap_init_i2c(chip->client_t, &regmap_config);
-+	if (IS_ERR(chip->regmap_t)) {
-+		ret = PTR_ERR(chip->regmap_t);
-+		goto err_i2c_t;
-+	}
-+
-+	chip->clk_freq = clk_get_rate(chip->mclk);
-+
-+	memcpy(&chip->fe.ops, &mn88443x_ops, sizeof(mn88443x_ops));
-+	chip->fe.demodulator_priv = chip;
-+	i2c_set_clientdata(client, chip);
-+
-+	mn88443x_cmn_power_on(chip);
-+	mn88443x_s_sleep(chip);
-+	mn88443x_t_sleep(chip);
-+
-+	return 0;
-+
-+err_i2c_t:
-+	i2c_unregister_device(chip->client_t);
-+
-+	return ret;
-+}
-+
-+static int mn88443x_remove(struct i2c_client *client)
-+{
-+	struct mn88443x_priv *chip = i2c_get_clientdata(client);
-+
-+	mn88443x_cmn_power_off(chip);
-+
-+	i2c_unregister_device(chip->client_t);
-+
-+	return 0;
-+}
-+
-+static const struct mn88443x_spec mn88443x_spec_pri = {
-+	.primary = true,
-+};
-+
-+static const struct mn88443x_spec mn88443x_spec_sec = {
-+	.primary = false,
-+};
-+
-+static const struct of_device_id mn88443x_of_match[] = {
-+	{ .compatible = "socionext,mn884433",   .data = &mn88443x_spec_pri, },
-+	{ .compatible = "socionext,mn884434-0", .data = &mn88443x_spec_pri, },
-+	{ .compatible = "socionext,mn884434-1", .data = &mn88443x_spec_sec, },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mn88443x_of_match);
-+
-+static const struct i2c_device_id mn88443x_i2c_id[] = {
-+	{ "mn884433",   (kernel_ulong_t)&mn88443x_spec_pri },
-+	{ "mn884434-0", (kernel_ulong_t)&mn88443x_spec_pri },
-+	{ "mn884434-1", (kernel_ulong_t)&mn88443x_spec_sec },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, mn88443x_i2c_id);
-+
-+static struct i2c_driver mn88443x_driver = {
-+	.driver = {
-+		.name = "mn88443x",
-+		.of_match_table = of_match_ptr(mn88443x_of_match),
-+	},
-+	.probe    = mn88443x_probe,
-+	.remove   = mn88443x_remove,
-+	.id_table = mn88443x_i2c_id,
-+};
-+
-+module_i2c_driver(mn88443x_driver);
-+
-+MODULE_AUTHOR("Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>");
-+MODULE_DESCRIPTION("Socionext MN88443x series demodulator driver.");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/media/dvb-frontends/mn88443x.h b/drivers/media/dvb-frontends/mn88443x.h
-new file mode 100644
-index 000000000000..b19aaf6a1ea3
---- /dev/null
-+++ b/drivers/media/dvb-frontends/mn88443x.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Socionext MN88443x series demodulator driver for ISDB-S/ISDB-T.
-+ *
-+ * Copyright (c) 2018 Socionext Inc.
-+ */
-+
-+#ifndef MN88443X_H
-+#define MN88443X_H
-+
-+#include <media/dvb_frontend.h>
-+
-+/* ISDB-T IF frequency */
-+#define DIRECT_IF_57MHZ    57000000
-+#define DIRECT_IF_44MHZ    44000000
-+#define LOW_IF_4MHZ        4000000
-+
-+struct mn88443x_config {
-+	struct clk *mclk;
-+	u32 if_freq;
-+	struct gpio_desc *reset_gpio;
-+
-+	/* Everything after that is returned by the driver. */
-+	struct dvb_frontend **fe;
-+};
-+
-+#endif /* MN88443X_H */
 -- 
-2.18.0
-
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
