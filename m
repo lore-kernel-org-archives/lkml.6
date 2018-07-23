@@ -4,84 +4,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A05CECDE5F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A08ECDFBB
 	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E79FB20899
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E70420883
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:55:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kkmL0Lz5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79FB20899
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u1rSIgrt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E70420883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388058AbeGWPvY (ORCPT
+        id S2388111AbeGWPxM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 11:51:24 -0400
-Received: from mail-ed1-f47.google.com ([209.85.208.47]:35758 "EHLO
-        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387877AbeGWPvY (ORCPT
+        Mon, 23 Jul 2018 11:53:12 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34300 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387910AbeGWPxM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 11:51:24 -0400
-Received: by mail-ed1-f47.google.com with SMTP id e6-v6so1218260edr.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 07:49:48 -0700 (PDT)
+        Mon, 23 Jul 2018 11:53:12 -0400
+Received: by mail-oi0-f68.google.com with SMTP id 13-v6so1625768ois.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 07:51:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=J0cV6AEIxjbxhU5BZhWUG7zw+ASvVedTWE8Wx+4/vwE=;
-        b=kkmL0Lz5uxU3o3Gpsbki6Oc801GQPbh7iDnR0x/MaA3+KRoc8oxY8gdFLnr8PwA1Vv
-         mSOgLbuansG7dOo1xGVHKGCC9EVw2uXi3w56Mz5a1n2jHSq1prdo+aN0HXeaj3OGYz0I
-         hiG/AuDmm8tJlwXhx3MXKRa5pQVvKhl0x6s/368HbQ9Hv5Qc+yQj4bDEScl0wFvntBw4
-         0/qSJUzMWRzsgssNE2HZW9PHpgorDpzbZar/lmPz4tFI5J6w2i/0HGL70RI1cWmSikj4
-         5hfn+Zg6mF02cn3MjT0gzkfN3MQ4oHVdarmwnampN+jrkZm+bgNzI4egS1mdrkv/Q881
-         CeIQ==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=q3AjcYW0zP7DBA6DnYLJI16arwQ6xbmIVgLdwfjyJd8=;
+        b=u1rSIgrtbCjvxl4s057wjfmG6+tcLaaIr6ZHcCc80rkZhKIWUA7OPRyQ9HBtDOjt4F
+         g7gJSRDrI247urqzmboQcgsX1mYZb6ZHjX4tncGFPC+l+JMU0UBAmSvzWfDeO40w07Wh
+         8OjL/96jJdvKPWmpYZsE/wtCaZkZRGJ+NE2i9gmEF5EdLKPIHgkdT1RDIMk561TJTfCO
+         OMXN/qDdEbQmurJupMyljukjCIqrpNKil4pWNveAeZ0zx6bPmByKn3VrF5Hd3dtfxtn2
+         WI+fr0giNCYo6nyM8RpEIKGRYT4WEShu1wydqe/MUb9HZQD6L8PJLo7ALojM+zHBerFN
+         U2IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=J0cV6AEIxjbxhU5BZhWUG7zw+ASvVedTWE8Wx+4/vwE=;
-        b=YchiHy3fPV+sv3T0KmOFcJjoAFMIPViZ33qgVfp24KLQSAlFUfHycFgRBXix0dS5Jl
-         BCw+f8OvYQbRL3whUGvt/fsALZGObNUy1+p1/IY0JIsg33rXwiE35LyfL31K+hM7KgTq
-         rKbBoB9l2XHIFqw4WZ18rOOgXGEZU1WGEbAy4UW5QIZ4Lj9Gc0+LfIjfOjmG1Kwpd7ix
-         sgX2sNQw2DpNoOdZuitOswv4uvPNIvZ0DVpLE7wjphke1VO9Ta9D3TJ0bgKF3Dx6tpum
-         Pzxq3SPdyvV1tB9pqydIlAgCDnL7eXx/Xp03OA7mQjKc+DW2n4nl2rtx+Dz6IZIU0C06
-         cqXg==
-X-Gm-Message-State: AOUpUlHApraq3On0WkfFSCVxxx6aRQy9aoyLxq/7F3GcFQ413dYAwB7m
-        rwFuTk1gTck7hI4PZx5n/1WxlTh0
-X-Google-Smtp-Source: AAOMgpf+x99J+tkG47nWz7z6wSjsMv3YOBd2ePbIZgWuMd/ZOOFgmSqJp3wjr9bzIai7qx/QJinHOw==
-X-Received: by 2002:a50:b1bc:: with SMTP id m57-v6mr14681849edd.3.1532357387768;
-        Mon, 23 Jul 2018 07:49:47 -0700 (PDT)
-Received: from [10.218.54.27] (54-240-197-235.amazon.com. [54.240.197.235])
-        by smtp.gmail.com with ESMTPSA id c7-v6sm2550194edi.79.2018.07.23.07.49.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 07:49:47 -0700 (PDT)
-To:     linux-kernel@vger.kernel.org
-From:   Gal Pressman <pressmangal@gmail.com>
-Subject: Fault injection stacktrace filter for x86-64?
-Message-ID: <a075185b-b610-c08d-33fd-a2c4c9c2323a@gmail.com>
-Date:   Mon, 23 Jul 2018 17:49:45 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=q3AjcYW0zP7DBA6DnYLJI16arwQ6xbmIVgLdwfjyJd8=;
+        b=a93ezVW68HeoOD7pEvGdQsEO16ZYi9U/f8+STa9b+5CmMYhEXlWLjFwa5Hk3kJ529h
+         eQdTdJ3ZMzXqkpcr3arcZObBBNquwPLsfHKPWAMewVKCh4ISqUclnUQmJftyr73X879n
+         mjPGI6WWhRjXJNQE5h4Q5WiXdLWXuf6yvWPy5F0ydm2XlQnDISCmWOB+A0y+RsxuTMaE
+         0XzZexgCYpOAt0xh/nbLT4P3qk0lxb7tm7PxXOe8DULTOqvNzXJDLy77W2grwYnqxrjl
+         01/iKmAqmz5SnuDIP5TL5e2uWjvM6l5RVqyjH7gBr8FD2Ng6zRHI6aa9zQsT+JA5QMZt
+         lNtw==
+X-Gm-Message-State: AOUpUlG0EbGTr/c6PtJt/aFZ9jtKR9sTASAhMLJw7/of7Bj+NAO5Dm3s
+        Mo02SshYHm/pw2ImKQgC12GuEyVDTuUe02H+1cU=
+X-Google-Smtp-Source: AAOMgpfzySYtMVQBkdW4RA654En7/8IC7ZB+WRBZ/SIh6B0phrj4hP2zTi+u+BsGO9uC3GB+NLhGPkWT7LSHFKUJnr8=
+X-Received: by 2002:aca:ac54:: with SMTP id v81-v6mr8264073oie.1.1532357495918;
+ Mon, 23 Jul 2018 07:51:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4a:c984:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 07:51:35
+ -0700 (PDT)
+In-Reply-To: <88CBCB04-43F6-4353-82F7-20A67AD49B65@amacapital.net>
+References: <9548e10a-7403-425e-bf1f-b1eb9d055d99@intel.com>
+ <CAMe9rOrHowBX06nihdRRmEqhV8v7cs+PwVY7JYQFpUFOnHC71A@mail.gmail.com>
+ <f22ee1e2-9a35-697f-50ab-543ac1631c89@intel.com> <CAMe9rOpPwtPd-R+D9=iDYgbFtnP+=akWic-QBKwq9wKa7uadEQ@mail.gmail.com>
+ <2022d212-62f2-a163-2493-abecfbafa07b@intel.com> <CAMe9rOqc0oVw+ZLXCM-nrtPb1OiPFBeHt+Lsx+6K6y=t3HSVhA@mail.gmail.com>
+ <cbb38230-9c57-905b-3a11-e2717c5aa615@intel.com> <CAMe9rOqh9saaULM_+jNtzfYarbZScm+6KCEyibxxqn7GLvKwzA@mail.gmail.com>
+ <CAMe9rOpV89jWhvAZtqOJnc0eXzRYiLF5pLWRcdb7-kKLigj4rQ@mail.gmail.com>
+ <067e2d5d-1abf-efd4-cb50-992ba5ca6748@intel.com> <20180711183126.yo7eyqpd4ggb5kcr@codemonkey.org.uk>
+ <9A6C6EEB-85D8-4F59-95ED-EB4DA5947BCA@amacapital.net> <f3e2ca08-e22d-f16c-1c2e-9fb1985771ef@intel.com>
+ <CAMe9rOpBm71hnzG0wx=2qaWKHYNE30JJOT=Jt4i+Vqs3Xb4qBQ@mail.gmail.com>
+ <CAMe9rOoX-x-YezXc_1EE9F0Nv3_SuzN+paXsTO11gcTykMr4Tw@mail.gmail.com>
+ <CALCETrUwUdmRAfaKsP0dGXriU=EdoWs69XMwJwxDOLY_9G+1tw@mail.gmail.com>
+ <CAMe9rOr_9zsAKMxQaxka8RWCXC8Jc7svdG3tKcp6Q+_EDTC=Zg@mail.gmail.com> <88CBCB04-43F6-4353-82F7-20A67AD49B65@amacapital.net>
+From:   "H.J. Lu" <hjl.tools@gmail.com>
+Date:   Mon, 23 Jul 2018 07:51:35 -0700
+Message-ID: <CAMe9rOqzvPARD6srX5BZym2ah1Ga4Z_QuJNQV-GG3d3tQ3RKCg@mail.gmail.com>
+Subject: Re: Kernel 4.17.4 lockup
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Dave Jones <davej@codemonkey.org.uk>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to commit [1], dwarf2 unwinder had some issues that prevented the
-fault injection stacktrace filter from working on x86-64.
+On Fri, Jul 20, 2018 at 2:35 PM, Andy Lutomirski <luto@amacapital.net> wrot=
+e:
+>
+>> On Jul 16, 2018, at 6:05 AM, H.J. Lu <hjl.tools@gmail.com> wrote:
+>>
+>>> On Fri, Jul 13, 2018 at 7:08 PM, Andy Lutomirski <luto@amacapital.net> =
+wrote:
+>>> I'm not at all convinced that this is the problem, but the series here
+>>> will give a better diagnostic if the issue really is an IRQ stack
+>>> overflow:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/log/?h=
+=3Dx86/guard_pages
+>>>
+>>
+>> This kernel won't boot with this configure file.
+>
+> Bah humbug. You=E2=80=99ll need to turn KASAN off (and maybe even compile=
+ it out entirely) if you want to test this. I need to bug the KASAN folks t=
+o unbreak their interaction with stacks in vmap space.  It=E2=80=99s been b=
+roken literally forever, but I keep incorrectly imagining that it=E2=80=99s=
+ been fixed already.
+>
 
-Does anyone know whether this issue still exists 11 years later?
-Are there any objections to revert this patch?
+This particular kernel oops has been fixed by kernel 4.17.7.  But now
+I am running into
+another kernel oops:
 
-Gal
+https://bugzilla.redhat.com/show_bug.cgi?id=3D1597559
 
-[1] 6d690dcac92a ("fault injection: disable stacktrace filter for x86-64")
+--=20
+H.J.
