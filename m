@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D43C4ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9A9ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90B8420854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B8420854
+	by mail.kernel.org (Postfix) with ESMTP id 5C4F420854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C4F420854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388476AbeGWN1w (ORCPT
+        id S2388490AbeGWN1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:27:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45326 "EHLO
+        Mon, 23 Jul 2018 09:27:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45334 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387882AbeGWN1v (ORCPT
+        with ESMTP id S2387882AbeGWN1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:27:51 -0400
+        Mon, 23 Jul 2018 09:27:54 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B18E0AEF;
-        Mon, 23 Jul 2018 12:26:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90D62AEF;
+        Mon, 23 Jul 2018 12:26:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Herbert <tom@herbertland.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 38/63] ipv6: ila: select CONFIG_DST_CACHE
-Date:   Mon, 23 Jul 2018 14:24:44 +0200
-Message-Id: <20180723122447.822705565@linuxfoundation.org>
+        stable@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.17 21/63] ARC: mm: allow mprotect to make stack mappings executable
+Date:   Mon, 23 Jul 2018 14:24:27 +0200
+Message-Id: <20180723122447.164815257@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -51,42 +49,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Vineet Gupta <vgupta@synopsys.com>
 
-[ Upstream commit 83ed7d1fe2d2d4a11b30660dec20168bb473d9c1 ]
+commit 93312b6da4df31e4102ce5420e6217135a16c7ea upstream.
 
-My randconfig builds came across an old missing dependency for ILA:
+mprotect(EXEC) was failing for stack mappings as default vm flags was
+missing MAYEXEC.
 
-ERROR: "dst_cache_set_ip6" [net/ipv6/ila/ila.ko] undefined!
-ERROR: "dst_cache_get" [net/ipv6/ila/ila.ko] undefined!
-ERROR: "dst_cache_init" [net/ipv6/ila/ila.ko] undefined!
-ERROR: "dst_cache_destroy" [net/ipv6/ila/ila.ko] undefined!
+This was triggered by glibc test suite nptl/tst-execstack testcase
 
-We almost never run into this by accident because randconfig builds
-end up selecting DST_CACHE from some other tunnel protocol, and this
-one appears to be the only one missing the explicit 'select'.
+What is surprising is that despite running LTP for years on, we didn't
+catch this issue as it lacks a directed test case.
 
->From all I can tell, this problem first appeared in linux-4.9
-when dst_cache support got added to ILA.
+gcc dejagnu tests with nested functions also requiring exec stack work
+fine though because they rely on the GNU_STACK segment spit out by
+compiler and handled in kernel elf loader.
 
-Fixes: 79ff2fc31e0f ("ila: Cache a route to translated address")
-Cc: Tom Herbert <tom@herbertland.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This glibc case is different as the stack is non exec to begin with and
+a dlopen of shared lib with GNU_STACK segment triggers the exec stack
+proceedings using a mprotect(PROT_EXEC) which was broken.
+
+CC: stable@vger.kernel.org
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/Kconfig
-+++ b/net/ipv6/Kconfig
-@@ -108,6 +108,7 @@ config IPV6_MIP6
- config IPV6_ILA
- 	tristate "IPv6: Identifier Locator Addressing (ILA)"
- 	depends on NETFILTER
-+	select DST_CACHE
- 	select LWTUNNEL
- 	---help---
- 	  Support for IPv6 Identifier Locator Addressing (ILA).
+---
+ arch/arc/include/asm/page.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/arc/include/asm/page.h
++++ b/arch/arc/include/asm/page.h
+@@ -105,7 +105,7 @@ typedef pte_t * pgtable_t;
+ #define virt_addr_valid(kaddr)  pfn_valid(virt_to_pfn(kaddr))
+ 
+ /* Default Permissions for stack/heaps pages (Non Executable) */
+-#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE)
++#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
+ 
+ #define WANT_PAGE_VIRTUAL   1
+ 
 
 
