@@ -2,598 +2,117 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1D1ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A56ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C59CB20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:33:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C59CB20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 42E3A20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:34:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQtx9AMF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42E3A20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388257AbeGWKeG (ORCPT
+        id S2388222AbeGWKfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 06:34:06 -0400
-Received: from regular1.263xmail.com ([211.150.99.137]:60471 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388080AbeGWKeG (ORCPT
+        Mon, 23 Jul 2018 06:35:04 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46255 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388080AbeGWKfD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 06:34:06 -0400
-Received: from cl?rock-chips.com (unknown [192.168.167.190])
-        by regular1.263xmail.com (Postfix) with ESMTP id 718F2DD11;
-        Mon, 23 Jul 2018 17:33:43 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 6FE383AF;
-        Mon, 23 Jul 2018 17:32:58 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: cl@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: cl@rock-chips.com
-X-UNIQUE-TAG: <6fca14e0e834b63c79a0466cdea3576a>
-X-ATTACHMENT-NUM: 0
-X-SENDER: cl@rock-chips.com
-X-DNS-TYPE: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 32409RH83B6;
-        Mon, 23 Jul 2018 17:33:35 +0800 (CST)
-From:   <cl@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        klaus.goger@theobroma-systems.com, hjc@rock-chips.com,
-        jagan@amarulasolutions.com, djw@t-chip.com.cn,
-        jacob-chen@iotwrt.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        frank.wang@rock-chips.com, lgirdwood@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, gregkh@linuxfoundation.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        yamada.masahiro@socionext.com, arnd@arndb.de,
-        zhangqing@rock-chips.com, shawn.lin@rock-chips.com,
-        kever.yang@rock-chips.com, david.wu@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com,
-        sugar.zhang@rock-chips.com, huibin.hong@rock-chips.com,
-        william.wu@rock-chips.com, sandy.huang@rock-chips.com,
-        Liang Chen <cl@rock-chips.com>
-Subject: [PATCH v2 6/6] arm64: dts: rockchip: add PX30 eavluation board devicetree
-Date:   Mon, 23 Jul 2018 17:33:01 +0800
-Message-Id: <1532338381-4370-1-git-send-email-cl@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1532337924-4185-1-git-send-email-cl@rock-chips.com>
-References: <1532337924-4185-1-git-send-email-cl@rock-chips.com>
+        Mon, 23 Jul 2018 06:35:03 -0400
+Received: by mail-qk0-f195.google.com with SMTP id o2-v6so9734801qkc.13;
+        Mon, 23 Jul 2018 02:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=efbnVRUR7iRAArMuxIsJRcpCswVAQzKA//9khjmBDrA=;
+        b=WQtx9AMFY006zHiM73sP9jUkQzqLFZZjHaA0PzBk+ZgK86CMEg2tjNLBBaRAlZ6URl
+         DcO14v57hlIkFetJuu6hrxfnjSjMZEzFWfQ+upbXklSJmIPbB1xd1Hd33mTQ2+RgvH0s
+         FfGXxjfGpX2kvdWJVmj0kBL/O/3a5KqljLQgkmSKtzbr1VLDIN+Sbu129ArK3VPD8ahA
+         tOpjTi+jSI++mHRLZ63v1SlxhDgqnxP4lje4dJrNmMWM0m/2NP+7uA9MHs2iTOq8HJyD
+         OIPcMpmr22XSYSFrcKVe8SfdRXoHUbQUhhUGti19Jr5oMZucN8WQjCbydmUq1vWVqBoI
+         1BWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=efbnVRUR7iRAArMuxIsJRcpCswVAQzKA//9khjmBDrA=;
+        b=IWrMeGfEceYx3SkGF3WZzua9byxlQZJNkztxddyL6eIRzIFuf4yID67OG02bd+GY1D
+         XAdfewaLE9OunMJyYjs2paDuCRoyKc73fcdQr6eEhVWDCtEJgAXOlSs4VYPed32+5RdM
+         +Kf5KzxYqcWgrnqRzl6odmq2mM2/Vb7PLlO3bn48R9Hn6LagkER0/ZPMUcEtwX5WW2zC
+         +Sv2pGGg8vL8mhLVNTwet8MeWWl9eR06/LmAiZXvEY7eKchZMMh1Vd2mach8+7Wkalv0
+         WsPDvZe2Y0mfHXSjexBBm29ObsOVsxTmwm+J1c+VQCZ4if/kkJZEUmEzspgjW20QH4/O
+         isUA==
+X-Gm-Message-State: AOUpUlFPiigTUJUz+2ohENxHs4bkGDrMx8eYXavxF2ovkNsxj88V+WuJ
+        /nX7p1P9rVyNsVwF4e4D9rQ79d1gms3cOvFfmpQ=
+X-Google-Smtp-Source: AAOMgpet3YcR42Bd13zzNFYfyb2Y1j6mhtU5dontrdCSr3RP0ZWlCuENhj3mBFIzsLj6cQXJjIKp8y45lm6k1J8ZXEY=
+X-Received: by 2002:a37:2a65:: with SMTP id q98-v6mr10470375qkh.174.1532338484487;
+ Mon, 23 Jul 2018 02:34:44 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 02:34:43
+ -0700 (PDT)
+In-Reply-To: <20180722082939.2de739f1@bbrezillon>
+References: <20180721200049.7553-1-anders.roxell@linaro.org>
+ <a83ff193-be57-f566-cafb-132075025b56@infradead.org> <20180722082939.2de739f1@bbrezillon>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 23 Jul 2018 11:34:43 +0200
+X-Google-Sender-Auth: 1kgq8wsrABrxCoJ15lyTe8l6il0
+Message-ID: <CAK8P3a1_8OSqyKsbw+m3ZzLWfPqDK4ynG3WoPTk+K2uJJsiq5A@mail.gmail.com>
+Subject: Re: [PATCH] drivers/memory/Kconfig: Add CONFIG_OF dependency
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liang Chen <cl@rock-chips.com>
+On Sun, Jul 22, 2018 at 8:29 AM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> +Arnd, Rob and the DT ML.
+>
+> On Sat, 21 Jul 2018 14:53:47 -0700
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+>> On 07/21/2018 01:00 PM, Anders Roxell wrote:
+>> > JZ4780_NEMC doesn't depend on OF, and if OF isn't enabled we get this
+>> > error:
+>> > drivers/memory/jz4780-nemc.c: In function =E2=80=98jz4780_nemc_num_ban=
+ks=E2=80=99:
+>> > drivers/memory/jz4780-nemc.c:72:10: error: implicit declaration of
+>> >  function =E2=80=98of_read_number=E2=80=99; did you mean =E2=80=98down=
+_read_nested=E2=80=99?
+>> >  [-Werror=3Dimplicit-function-declaration]
+>> >    bank =3D of_read_number(prop, 1);
+>> >           ^~~~~~~~~~~~~~
+>> >           down_read_nested
+>
+> Looks like of.h defines stubs so that people can compile-test without
+> CONFIG_OF selected. Maybe we should move of_read_number() and
+> of_read_ulong() out of the #ifdef CONFIG_OF section.
 
-This patch add px30-evb.dts for PX30 evaluation board.
-Tested on PX30 evb.
+That seems fine, though the added dependency seems appropriate
+here as well. of_read_number() is rarely used, and for the most part in
+powerpc specific code that is guaranteed to have CONFIG_OF enabled,
+so it's not that likely to cause many more problems.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Liang Chen <cl@rock-chips.com>
----
- Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
- arch/arm64/boot/dts/rockchip/Makefile              |   1 +
- arch/arm64/boot/dts/rockchip/px30-evb.dts          | 473 +++++++++++++++++++++
- 3 files changed, 478 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/px30-evb.dts
+> Alternatively, we could patch jz4780-nemc.c to not use of_read_number
+> and instead rely on of_read_property_u32_index() +
+> of_property_count_elems_of_size() + of_n_{addr,size}_cells():
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
-index 1c1d62d..e33b23a 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.txt
-+++ b/Documentation/devicetree/bindings/arm/rockchip.txt
-@@ -158,6 +158,10 @@ Rockchip platforms device tree bindings
-     Required root node properties:
-       - compatible = "rockchip,rv1108-evb", "rockchip,rv1108";
- 
-+- Rockchip PX30 evb:
-+    Required root node properties:
-+      - compatible = "rockchip,px30-evb", "rockchip,px30";
-+
- - Rockchip RK3368 evb:
-     Required root node properties:
-       - compatible = "rockchip,rk3368-evb-act8846", "rockchip,rk3368";
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 48a83f8..19aa9c6 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -14,3 +14,4 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-kevin.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-evb.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/px30-evb.dts b/arch/arm64/boot/dts/rockchip/px30-evb.dts
-new file mode 100644
-index 0000000..11dbe1a
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/px30-evb.dts
-@@ -0,0 +1,473 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2018 Fuzhou Rockchip Electronics Co., Ltd
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+#include "px30.dtsi"
-+
-+/ {
-+	model = "Rockchip PX30 EVB";
-+	compatible = "rockchip,px30-evb", "rockchip,px30";
-+
-+	adc-keys {
-+		compatible = "adc-keys";
-+		io-channels = <&saradc 2>;
-+		io-channel-names = "buttons";
-+		poll-interval = <100>;
-+		keyup-threshold-microvolt = <1800000>;
-+
-+		esc-key {
-+			linux,code = <KEY_ESC>;
-+			label = "esc";
-+			press-threshold-microvolt = <1310000>;
-+		};
-+
-+		home-key {
-+			linux,code = <KEY_HOME>;
-+			label = "home";
-+			press-threshold-microvolt = <624000>;
-+		};
-+
-+		menu-key {
-+			linux,code = <KEY_MENU>;
-+			label = "menu";
-+			press-threshold-microvolt = <987000>;
-+		};
-+
-+		vol-down-key {
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			label = "volume down";
-+			press-threshold-microvolt = <300000>;
-+		};
-+
-+		vol-up-key {
-+			linux,code = <KEY_VOLUMEUP>;
-+			label = "volume up";
-+			press-threshold-microvolt = <17000>;
-+		};
-+	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm1 0 25000 0>;
-+		brightness-levels = <0 255>;
-+		num-interpolated-steps = <255>;
-+		default-brightness-level = <200>;
-+	};
-+
-+	chosen {
-+		bootargs = "console=ttyS2,1500000n8";
-+	};
-+
-+	sdio_pwrseq: sdio-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wifi_enable_h>;
-+
-+		/*
-+		 * On the module itself this is one of these (depending
-+		 * on the actual card populated):
-+		 * - SDIO_RESET_L_WL_REG_ON
-+		 * - PDN (power down when low)
-+		 */
-+		reset-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>; /* GPIO3_A4 */
-+	};
-+
-+	vcc_phy: vcc-phy-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_phy";
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vcc5v0_sys: vccsys {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc5v0_sys";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+};
-+
-+&cpu0 {
-+	cpu-supply = <&vdd_arm>;
-+};
-+
-+&display_subsystem {
-+	status = "okay";
-+};
-+
-+&emmc {
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&gmac {
-+	phy-supply = <&vcc_phy>;
-+	clock_in_out = "output";
-+	snps,reset-gpio = <&gpio2 13 GPIO_ACTIVE_LOW>;
-+	snps,reset-active-low;
-+	snps,reset-delays-us = <0 50000 50000>;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	rk809: pmic@20 {
-+		compatible = "rockchip,rk809";
-+		reg = <0x20>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_int>;
-+		rockchip,system-power-controller;
-+		wakeup-source;
-+		#clock-cells = <1>;
-+		clock-output-names = "rk808-clkout1", "rk808-clkout2";
-+
-+		vcc1-supply = <&vcc5v0_sys>;
-+		vcc2-supply = <&vcc5v0_sys>;
-+		vcc3-supply = <&vcc5v0_sys>;
-+		vcc4-supply = <&vcc5v0_sys>;
-+		vcc5-supply = <&vcc3v3_sys>;
-+		vcc6-supply = <&vcc3v3_sys>;
-+		vcc7-supply = <&vcc3v3_sys>;
-+		vcc8-supply = <&vcc3v3_sys>;
-+		vcc9-supply = <&vcc5v0_sys>;
-+
-+		pwrkey {
-+			status = "okay";
-+		};
-+
-+		regulators {
-+			vdd_logic: DCDC_REG1 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <6001>;
-+				regulator-initial-mode = <0x2>;
-+				regulator-name = "vdd_logic";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <950000>;
-+				};
-+			};
-+
-+			vdd_arm: DCDC_REG2 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <6001>;
-+				regulator-initial-mode = <0x2>;
-+				regulator-name = "vdd_arm";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+					regulator-suspend-microvolt = <950000>;
-+				};
-+			};
-+
-+			vcc_ddr: DCDC_REG3 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-name = "vcc_ddr";
-+				regulator-initial-mode = <0x2>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
-+			};
-+
-+			vcc_3v0: DCDC_REG4 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-initial-mode = <0x2>;
-+				regulator-name = "vcc_3v0";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3000000>;
-+				};
-+			};
-+
-+			vcc_1v0: LDO_REG1 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vcc_1v0";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1000000>;
-+				};
-+			};
-+
-+			vcc1v8_soc: LDO_REG2 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+
-+				regulator-name = "vcc1v8_soc";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1800000>;
-+				};
-+			};
-+
-+			vdd1v0_soc: LDO_REG3 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+
-+				regulator-name = "vcc1v0_soc";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1000000>;
-+				};
-+			};
-+
-+			vcc3v0_pmu: LDO_REG4 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+
-+				regulator-name = "vcc3v0_pmu";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3000000>;
-+
-+				};
-+			};
-+
-+			vccio_sd: LDO_REG5 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+
-+				regulator-name = "vccio_sd";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3300000>;
-+				};
-+			};
-+
-+			vcc_sd: LDO_REG6 {
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+
-+				regulator-name = "vcc_sd";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3300000>;
-+
-+				};
-+			};
-+
-+			vcc2v8_dvp: LDO_REG7 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+
-+				regulator-name = "vcc2v8_dvp";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+					regulator-suspend-microvolt = <2800000>;
-+				};
-+			};
-+
-+			vcc1v8_dvp: LDO_REG8 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+
-+				regulator-name = "vcc1v8_dvp";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1800000>;
-+				};
-+			};
-+
-+			vdd1v5_dvp: LDO_REG9 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1500000>;
-+				regulator-max-microvolt = <1500000>;
-+
-+				regulator-name = "vdd1v5_dvp";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+					regulator-suspend-microvolt = <1500000>;
-+				};
-+			};
-+
-+			vcc3v3_sys: DCDC_REG5 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vcc3v3_sys";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3300000>;
-+				};
-+			};
-+
-+			vcc3v3_lcd: SWITCH_REG1 {
-+				regulator-boot-on;
-+				regulator-name = "vcc3v3_lcd";
-+			};
-+
-+			vcc5v0_host: SWITCH_REG2 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-name = "vcc5v0_host";
-+			};
-+		};
-+	};
-+};
-+
-+&i2s1_2ch {
-+	status = "okay";
-+	#sound-dai-cells = <0>;
-+};
-+
-+&io_domains {
-+	status = "okay";
-+
-+	vccio1-supply = <&vcc1v8_soc>;
-+	vccio2-supply = <&vccio_sd>;
-+	vccio3-supply = <&vcc_3v0>;
-+	vccio4-supply = <&vcc3v0_pmu>;
-+	vccio5-supply = <&vcc_3v0>;
-+};
-+
-+&pinctrl {
-+	headphone {
-+		hp_det: hp-det {
-+			rockchip,pins = <2 RK_PB0 RK_FUNC_GPIO &pcfg_pull_down>;
-+		};
-+	};
-+
-+	pmic {
-+		pmic_int: pmic_int {
-+			rockchip,pins =
-+				<0 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+
-+		soc_slppin_gpio: soc_slppin_gpio {
-+			rockchip,pins =
-+				<0 RK_PA4 RK_FUNC_GPIO &pcfg_output_low>;
-+		};
-+
-+		soc_slppin_slp: soc_slppin_slp {
-+			rockchip,pins =
-+				<0 RK_PA4 RK_FUNC_1 &pcfg_pull_none>;
-+		};
-+
-+		soc_slppin_rst: soc_slppin_rst {
-+			rockchip,pins =
-+				<0 RK_PA4 RK_FUNC_2 &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sdio-pwrseq {
-+		wifi_enable_h: wifi-enable-h {
-+			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&pmu_io_domains {
-+	status = "okay";
-+
-+	pmuio1-supply = <&vcc3v0_pmu>;
-+	pmuio2-supply = <&vcc3v0_pmu>;
-+};
-+
-+&pwm1 {
-+	status = "okay";
-+};
-+
-+&saradc {
-+	status = "okay";
-+	vref-supply = <&vcc1v8_soc>;
-+};
-+
-+&sdmmc {
-+	bus-width = <4>;
-+	cap-mmc-highspeed;
-+	cap-sd-highspeed;
-+	card-detect-delay = <800>;
-+	/*cd-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>; [> CD GPIO <]*/
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	vqmmc-supply = <&vccio_sd>;
-+	vmmc-supply = <&vcc_sd>;
-+	status = "okay";
-+};
-+
-+&sdio {
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	keep-power-in-suspend;
-+	non-removable;
-+	mmc-pwrseq = <&sdio_pwrseq>;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_xfer &uart1_cts>;
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&usb20_otg {
-+	status = "okay";
-+};
-+
-+&usb_host0_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host0_ohci {
-+	status = "okay";
-+};
-+
-+&vopb {
-+	status = "okay";
-+};
-+
-+&vopb_mmu {
-+	status = "okay";
-+};
-+
-+&vopl {
-+	status = "okay";
-+};
-+
-+&vopl_mmu {
-+	status = "okay";
-+};
--- 
-1.9.1
+That seems noticeably longer for no good reason, I'd go with either
+the header file change you suggested or Anders' patch.
 
-
+       Arnd
