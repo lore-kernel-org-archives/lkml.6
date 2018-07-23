@@ -2,78 +2,96 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E53ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 044A5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F10720883
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F10720883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BE2B720882
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE2B720882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389361AbeGWNbp (ORCPT
+        id S2389378AbeGWNby (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:31:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43904 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388079AbeGWNbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:31:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4A9F2AE18;
-        Mon, 23 Jul 2018 12:30:44 +0000 (UTC)
-Date:   Mon, 23 Jul 2018 14:30:43 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
-        <marcandre.lureau@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Petr Tesarik <ptesarik@suse.cz>
-Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
-Message-ID: <20180723123043.GD31229@dhcp22.suse.cz>
-References: <20180720123422.10127-1-david@redhat.com>
- <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
+        Mon, 23 Jul 2018 09:31:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46340 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388578AbeGWNbx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 09:31:53 -0400
+Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E251BC77;
+        Mon, 23 Jul 2018 12:30:53 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dewet Thibaut <thibaut.dewet@nokia.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: [PATCH 4.9 03/28] x86/MCE: Remove min interval polling limitation
+Date:   Mon, 23 Jul 2018 14:25:03 +0200
+Message-Id: <20180723122425.489838341@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180723122425.241418073@linuxfoundation.org>
+References: <20180723122425.241418073@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
-> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
-> > Dumping tools (like makedumpfile) right now don't exclude reserved pages.
-> > So reserved pages might be access by dump tools although nobody except
-> > the owner should touch them.
-> 
-> Are you sure about that? Or maybe I understand wrong. Maybe it changed
-> recently, but IIRC pages that are backing memmap (struct pages) are also
-> PG_reserved. And you definitely do want those in the dump.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-You are right. reserve_bootmem_region will make all early bootmem
-allocations (including those backing memmaps) PageReserved. I have asked
-several times but I haven't seen a satisfactory answer yet. Why do we
-even care for kdump about those. If they are reserved the nobody should
-really look at those specific struct pages and manipulate them. Kdump
-tools are using a kernel interface to read the content. If the specific
-content is backed by a non-existing memory then they should simply not
-return anything.
--- 
-Michal Hocko
-SUSE Labs
+------------------
+
+From: Dewet Thibaut <thibaut.dewet@nokia.com>
+
+commit fbdb328c6bae0a7c78d75734a738b66b86dffc96 upstream.
+
+commit b3b7c4795c ("x86/MCE: Serialize sysfs changes") introduced a min
+interval limitation when setting the check interval for polled MCEs.
+However, the logic is that 0 disables polling for corrected MCEs, see
+Documentation/x86/x86_64/machinecheck. The limitation prevents disabling.
+
+Remove this limitation and allow the value 0 to disable polling again.
+
+Fixes: b3b7c4795c ("x86/MCE: Serialize sysfs changes")
+Signed-off-by: Dewet Thibaut <thibaut.dewet@nokia.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+[ Massage commit message. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180716084927.24869-1-alexander.sverdlin@nokia.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/kernel/cpu/mcheck/mce.c |    3 ---
+ 1 file changed, 3 deletions(-)
+
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -2397,9 +2397,6 @@ static ssize_t store_int_with_restart(st
+ 	if (check_interval == old_check_interval)
+ 		return ret;
+ 
+-	if (check_interval < 1)
+-		check_interval = 1;
+-
+ 	mutex_lock(&mce_sysfs_mutex);
+ 	mce_restart();
+ 	mutex_unlock(&mce_sysfs_mutex);
+
+
