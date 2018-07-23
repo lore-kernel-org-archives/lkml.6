@@ -2,159 +2,135 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B27E2ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8585CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6A320854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:17:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6A320854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 36EBE20875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:17:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oJK9oqyG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36EBE20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388594AbeGWRTN (ORCPT
+        id S2388636AbeGWRTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:19:13 -0400
-Received: from mga04.intel.com ([192.55.52.120]:31873 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388126AbeGWRTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:19:13 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 09:17:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
-   d="scan'208";a="58777133"
-Received: from sandybridge-desktop.sh.intel.com (HELO sandybridge-desktop) ([10.239.160.116])
-  by orsmga007.jf.intel.com with ESMTP; 23 Jul 2018 09:17:13 -0700
-Date:   Tue, 24 Jul 2018 00:23:02 +0800
-From:   Yu Chen <yu.c.chen@intel.com>
-To:     Oliver Neukum <oneukum@suse.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>,
-        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gu, Kookoo" <kookoo.gu@intel.com>,
-        "Zhang, Rui" <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180723162302.GA4503@sandybridge-desktop>
-References: <cover.1531924968.git.yu.c.chen@intel.com>
- <20180718202235.GA4132@amd>
- <20180718235851.GA22170@sandybridge-desktop>
- <20180719110149.GA4679@amd>
- <20180719132003.GA30981@sandybridge-desktop>
- <20180720102532.GA20284@amd>
- <1532346156.3057.11.camel@suse.com>
+        Mon, 23 Jul 2018 13:19:40 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36991 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388147AbeGWRTk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 13:19:40 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q10-v6so1297150wrd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 09:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cRCRWxPa5qhRdztjFVMXQMWVdzdRusjpODKHDjNtIpQ=;
+        b=oJK9oqyGMmqDX4tysDZpRJLCSEyrPZ1Bz6Wq4maicB36VaC1gB79X4ikJk2NLyLL7Q
+         41Trmh+y9QMHe3B77u/zO0Gg4YGOIhiJga1JwVjHBAoYheB4g+3CBaQHz0zDwJK6vlmY
+         SmDf6PSTjO/nZlXfkDqS2pngqDy+D9V6k4H/YW72NJEWrcSjy7/P29Q0S/Fgme5PKeBO
+         Z1LHPlKrxz9E1BzSLqIZHUJx2MhnvsXdlGo5DvbQnUyYQSiXtuL3ctUn/m2eSXmyWtmF
+         j5YKYhl8HUumFxqr7Sv5LetznIqf22hsuBMoTGABKnqR2/ofIZta6P6FIJQ/BuOIUG/O
+         DcKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cRCRWxPa5qhRdztjFVMXQMWVdzdRusjpODKHDjNtIpQ=;
+        b=QaDuen6Nvs9xtHb1WlOnBmqIrWlpTUkwNcCVB/h1bb0qRsdVHw/Tm0qP7g/K29Yoyu
+         LkQpNHaAwJhQy26FzcOWsQ+MbhvOhp79OkkNnNH8738nlzZcmJl54JSD+wbczcUZqbyR
+         z72kHiAQfT9jP5EONeGboimRJw9o1eMK9bMA2gUWz+H5J1JmPqhM3O/xDzowSv8EVbic
+         NYDkU6Ok+tlhjzLBLl6w08OxmRNbAqVUqyrL9MVaf8CVyAQ5g7+p/TwK1Fuzd6vHbQzb
+         ALhVhK+maPVHB6fkpzASRQ7xfU/DLFNS3I0oX83qMbcBP2L/nXGnOSdPk+NXvzsiqjBm
+         6XEg==
+X-Gm-Message-State: AOUpUlFB1FfuS9Gzi8jDmUZiG5SF1vkGWhM280FE2aLQRWndfqyOgr25
+        VgQuqOEdOxZOdenKCeNUlWIXadQI1baZWyaI3KIyqA==
+X-Google-Smtp-Source: AAOMgpfxybzKGagctgj/woisP8++Qqqco2w53v3rdxjUXagzvwD+BbaotOynmjC1MQIenaPhp2a88M0ZyLWKsG3Ytog=
+X-Received: by 2002:adf:b112:: with SMTP id l18-v6mr9609874wra.101.1532362661769;
+ Mon, 23 Jul 2018 09:17:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532346156.3057.11.camel@suse.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1531994807-25639-1-git-send-email-jing.xia@unisoc.com>
+ <20180719104345.GV7193@dhcp22.suse.cz> <CALvZod55Ku7U3soLtuYY_HL2_mMp5+OT-hngdZkPRGN9xm1a9Q@mail.gmail.com>
+ <20180723064441.GA17905@dhcp22.suse.cz>
+In-Reply-To: <20180723064441.GA17905@dhcp22.suse.cz>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Mon, 23 Jul 2018 09:17:28 -0700
+Message-ID: <CALvZod5UwJp8cM3OcjCDadkjKgAnGHj8XVcgjFk5Thcst02MAQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: memcg: fix use after free in mem_cgroup_iter()
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     jing.xia.mail@gmail.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        chunyan.zhang@unisoc.com, Cgroups <cgroups@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Mon, Jul 23, 2018 at 01:42:36PM +0200, Oliver Neukum wrote:
-> On Fr, 2018-07-20 at 12:25 +0200, Pavel Machek wrote:
-> > Hi!
-> 
-> Hello,
-> 
-> > > Let me paste the log here:
-> > > 
-> > > 1. (This is not to compare with uswsusp but other
-> > >     tools) One advantage is: Users do not have to
-> > >     encrypt the whole swap partition as other tools.
-> > 
-> > Well.. encrypting the partition seems like good idea anyway.
-> 
-> Yes, but it is a policy decision the kernel should not force.
-> STD needs to work anyway.
+On Sun, Jul 22, 2018 at 11:44 PM Michal Hocko <mhocko@kernel.org> wrote:
 >
-If the swap partition is too large, and there's low usage
-of memory, then it might a little time costly to encrypt
-the whole partition. You are right, people has choice to
-choose which mode they like.
-> > > 2. Ideally kernel memory should be encrypted by the
-> > >    kernel itself. We have uswsusp to support user
-> > >    space hibernation, however doing the encryption
-> > >    in kernel space has more advantages:
-> > >    2.1 Not having to transfer plain text kernel memory to
-> > >        user space. Per Lee, Chun-Yi, uswsusp is disabled
-> > >        when the kernel is locked down:
-> > >        https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/
-> > >        linux-fs.git/commit/?h=lockdown-20180410&
-> > >        id=8732c1663d7c0305ae01ba5a1ee4d2299b7b4612
-> > >        due to:
-> > >        "There have some functions be locked-down because
-> > >        there have no appropriate mechanisms to check the
-> > >        integrity of writing data."
-> > >        https://patchwork.kernel.org/patch/10476751/
-> > 
-> > So your goal is to make hibernation compatible with kernel
-> > lockdown? Do your patches provide sufficient security that hibernation
-> > can be enabled with kernel lockdown?
-> 
-> OK, maybe I am dense, but if the key comes from user space, will that
-> be enough?
-> 
-Good point, we once tried to generate key in kernel, but people
-suggest to generate key in userspace and provide it to the
-kernel, which is what ecryptfs do currently, so it seems this
-should also be safe for encryption in kernel.
-https://www.spinics.net/lists/linux-crypto/msg33145.html
-Thus Chun-Yi's signature can use EFI key and both the key from
-user space.
-Best,
-Yu
-> > >    2.2 Not having to copy each page to user space
-> > >        one by one not in parallel, which might introduce
-> > >        significant amount of copy_to_user() and it might
-> > >        not be efficient on servers having large amount of DRAM.
-> > 
-> > So how big speedup can be attributed by not doing copy_to_user?
-> 
-> That would be an argument for compression in kernel space.
-> Not encrpting would always be faster.
-> 
-> > >    2.3 Distribution has requirement to do snapshot
-> > >        signature for verification, which can be built
-> > >        by leveraging this patch set.
-> > 
-> > Signatures can be done by uswsusp, too, right?
-> 
-> Not if you want to keep the chain of trust intact. User space
-> is not signed.
-> 
-> > >    2.4 The encryption is in the kernel, so it doesn't
-> > >        have to worry too much about bugs in user space
-> > >        utilities and similar, for example.
-> > 
-> > Answer to bugs in userspace is _not_ to move code from userspace to kernel.
-> 
-> Indeed.
-> 
-> > > Joey Lee and I had a discussion on his previous work at
-> > > https://patchwork.kernel.org/patch/10476751
-> > > We collaborate on this task and his snapshot signature
-> > > feature can be based on this patch set.
-> > 
-> > Well, his work can also work without your patchset, right?
-> 
-> Yes. But you are objecting to encryption in kernel space at all,
-> aren't you?
-> 
-> 	Regards
-> 		Oliver
-> 
+> On Thu 19-07-18 09:23:10, Shakeel Butt wrote:
+> > On Thu, Jul 19, 2018 at 3:43 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > >
+> > > [CC Andrew]
+> > >
+> > > On Thu 19-07-18 18:06:47, Jing Xia wrote:
+> > > > It was reported that a kernel crash happened in mem_cgroup_iter(),
+> > > > which can be triggered if the legacy cgroup-v1 non-hierarchical
+> > > > mode is used.
+> > > >
+> > > > Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b8f
+> > > > ......
+> > > > Call trace:
+> > > >   mem_cgroup_iter+0x2e0/0x6d4
+> > > >   shrink_zone+0x8c/0x324
+> > > >   balance_pgdat+0x450/0x640
+> > > >   kswapd+0x130/0x4b8
+> > > >   kthread+0xe8/0xfc
+> > > >   ret_from_fork+0x10/0x20
+> > > >
+> > > >   mem_cgroup_iter():
+> > > >       ......
+> > > >       if (css_tryget(css))    <-- crash here
+> > > >           break;
+> > > >       ......
+> > > >
+> > > > The crashing reason is that mem_cgroup_iter() uses the memcg object
+> > > > whose pointer is stored in iter->position, which has been freed before
+> > > > and filled with POISON_FREE(0x6b).
+> > > >
+> > > > And the root cause of the use-after-free issue is that
+> > > > invalidate_reclaim_iterators() fails to reset the value of
+> > > > iter->position to NULL when the css of the memcg is released in non-
+> > > > hierarchical mode.
+> > >
+> > > Well, spotted!
+> > >
+> > > I suspect
+> > > Fixes: 6df38689e0e9 ("mm: memcontrol: fix possible memcg leak due to interrupted reclaim")
+> > >
+> > > but maybe it goes further into past. I also suggest
+> > > Cc: stable
+> > >
+> > > even though the non-hierarchical mode is strongly discouraged.
+> >
+> > Why not set root_mem_cgroup's use_hierarchy to true by default on
+> > init? If someone wants non-hierarchical mode, they can explicitly set
+> > it to false.
+>
+> We do not change defaults under users feet usually.
+
+Then how non-hierarchical mode is being discouraged currently? I don't
+see any comments in the docs.
+
+Shakeel
