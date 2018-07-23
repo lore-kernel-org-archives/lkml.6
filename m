@@ -2,166 +2,77 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423F4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E63AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3EC320779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:43:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EC320779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3450320779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:43:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3450320779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388819AbeGWRpc (ORCPT
+        id S2388879AbeGWRpk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:45:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47628 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388368AbeGWRpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:45:32 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A892CBD9E;
-        Mon, 23 Jul 2018 16:43:28 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F22E2156897;
-        Mon, 23 Jul 2018 16:43:27 +0000 (UTC)
-Date:   Mon, 23 Jul 2018 12:40:35 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Eric Paris <eparis@parisplace.org>, linux-audit@redhat.com,
+        Mon, 23 Jul 2018 13:45:40 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:44722 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388830AbeGWRpk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 13:45:40 -0400
+Received: from localhost (unknown [172.58.43.225])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 35D39108CF57A;
+        Mon, 23 Jul 2018 09:43:34 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 09:43:32 -0700 (PDT)
+Message-Id: <20180723.094332.1263746631250670875.davem@davemloft.net>
+To:     shubhrajyoti.datta@xilinx.com
+Cc:     netdev@vger.kernel.org, michal.simek@xilinx.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH ghak59 V1 3/6] audit: exclude user records from
- syscall context
-Message-ID: <20180723164035.wkazolpmpf3mvdxw@madcap2.tricolour.ca>
-References: <cover.1529003588.git.rgb@redhat.com>
- <907e32319825bb6336a662f4f6f6d173f56f3226.1529003588.git.rgb@redhat.com>
- <CAHC9VhSKcxHScr-ZNQU3iVrqhU4CDKW7tpn3e+NBKAAmnpRP4g@mail.gmail.com>
- <20180712214608.ed4chli7mdc7ymin@madcap2.tricolour.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180712214608.ed4chli7mdc7ymin@madcap2.tricolour.ca>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 23 Jul 2018 16:43:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 23 Jul 2018 16:43:28 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
+Subject: Re: [PATCH] net: axienet: Fix double deregister of mdio
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1532335127-10683-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+References: <1532335127-10683-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 23 Jul 2018 09:43:37 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-12 17:46, Richard Guy Briggs wrote:
-> On 2018-06-28 18:11, Paul Moore wrote:
-> > On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > Since the function audit_log_common_recv_msg() is shared by a number of
-> > > AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
-> > > and since the AUDIT_CONFIG_CHANGE message type has been converted to a
-> > > syscall accompanied record type, special-case the AUDIT_USER_* range of
-> > > messages so they remain standalone records.
-> > >
-> > > See: https://github.com/linux-audit/audit-kernel/issues/59
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  kernel/audit.c | 12 +++++++++---
-> > >  1 file changed, 9 insertions(+), 3 deletions(-)
-> > 
-> > I think this is fine, but see my previous comment about combining 2/6
-> > and 3/6 as a safety measure.
-> 
-> This one I left as a seperate patch for discussion.  We'd previously
-> talked about connecting all possible records with syscall records if
-> they exist, but this one I'm unsure about, since we don't really care
-> what userspace process is issuing this message.  It is just the message
-> content itself that is important.  Or is it?  Are we concerned about
-> CAP_AUDIT_WRITE holders/abusers and want as much info about them as we
-> can get in case they go rogue or pear-shaped?
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Date: Mon, 23 Jul 2018 14:08:47 +0530
 
-I'm waiting on re-spinning this patchset because of this open question.
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
+> index 16c3bfb..757a3b3 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
+> @@ -218,6 +218,7 @@ int axienet_mdio_setup(struct axienet_local *lp, struct device_node *np)
+>         ret = of_mdiobus_register(bus, np1);
+>         if (ret) {
+>                 mdiobus_free(bus);
+> +               lp->mii_bus = NULL;
+>                 return ret;
+>         }
 
-Is connecting AUDIT_USER* records desirable or a liability?
+Your patch was corrupted by your email client, in particular it has transformed TAB
+characters into SPACEs.
 
-> > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > index e469234..c8c2efc 100644
-> > > --- a/kernel/audit.c
-> > > +++ b/kernel/audit.c
-> > > @@ -1057,7 +1057,8 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
-> > >         return err;
-> > >  }
-> > >
-> > > -static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > > +static void __audit_log_common_recv_msg(struct audit_context *context,
-> > > +                                       struct audit_buffer **ab, u16 msg_type)
-> > >  {
-> > >         uid_t uid = from_kuid(&init_user_ns, current_uid());
-> > >         pid_t pid = task_tgid_nr(current);
-> > > @@ -1067,7 +1068,7 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > >                 return;
-> > >         }
-> > >
-> > > -       *ab = audit_log_start(audit_context(), GFP_KERNEL, msg_type);
-> > > +       *ab = audit_log_start(context, GFP_KERNEL, msg_type);
-> > >         if (unlikely(!*ab))
-> > >                 return;
-> > >         audit_log_format(*ab, "pid=%d uid=%u", pid, uid);
-> > > @@ -1075,6 +1076,11 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > >         audit_log_task_context(*ab);
-> > >  }
-> > >
-> > > +static inline void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > > +{
-> > > +       __audit_log_common_recv_msg(audit_context(), ab, msg_type);
-> > > +}
-> > > +
-> > >  int is_audit_feature_set(int i)
-> > >  {
-> > >         return af.features & AUDIT_FEATURE_TO_MASK(i);
-> > > @@ -1341,7 +1347,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> > >                                 if (err)
-> > >                                         break;
-> > >                         }
-> > > -                       audit_log_common_recv_msg(&ab, msg_type);
-> > > +                       __audit_log_common_recv_msg(NULL, &ab, msg_type);
-> > >                         if (msg_type != AUDIT_USER_TTY)
-> > >                                 audit_log_format(ab, " msg='%.*s'",
-> > >                                                  AUDIT_MESSAGE_TEXT_MAX,
-> > > --
-> > > 1.8.3.1
-> > >
-> > 
-> > 
-> > -- 
-> > paul moore
-> > www.paul-moore.com
-> > 
-> > --
-> > Linux-audit mailing list
-> > Linux-audit@redhat.com
-> > https://www.redhat.com/mailman/listinfo/linux-audit
-> 
-> - RGB
-> 
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
-> 
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
+Please fix this, email the patch to yourself as a test, and please do
+not send the patch here to the list again until you can successfully
+apply the patch you receive in that test email.
 
-- RGB
+> This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+This is inappropriate for postings to this mailing list, please disable this footer
+if you would like to post here.
+
+Thank you.
