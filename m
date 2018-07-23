@@ -2,137 +2,102 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B40E2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B89CECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787E720852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:07:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787E720852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0552B20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:08:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="GHiv7SkR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0552B20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388210AbeGWXKs (ORCPT
+        id S2388213AbeGWXLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 19:10:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:20496 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388052AbeGWXKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 19:10:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 15:07:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
-   d="scan'208";a="69301496"
-Received: from ray.jf.intel.com (HELO [10.24.8.238]) ([10.24.8.238])
-  by orsmga003.jf.intel.com with ESMTP; 23 Jul 2018 15:07:31 -0700
-Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
-To:     Josh Poimboeuf <jpoimboe@redhat.com>, Pavel Machek <pavel@ucw.cz>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
- <20180723140925.GA4285@amd>
- <CA+55aFynT9Sp7CbnB=GqLbns7GFZbv3pDSQm_h0jFvJpz3ES+g@mail.gmail.com>
- <20180723213830.GA4632@amd> <20180723215958.jozblzq4sv7gp7uj@treble>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <f654c085-d07c-5047-0d59-e2f88b00e921@intel.com>
-Date:   Mon, 23 Jul 2018 15:07:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 23 Jul 2018 19:11:44 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:56045 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388105AbeGWXLn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 19:11:43 -0400
+Received: by mail-wm0-f65.google.com with SMTP id f21-v6so554720wmc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 15:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ysg63dtrR5zXVNM1XeDRu/vIWLmKfI5yyeI33Vyn0qk=;
+        b=GHiv7SkRf5X3eDH2JDQD/7CW88wj+48qsY8hbFCTjz4lqkEOvwLfYFlup1ChnLxxmD
+         PwhLA8ncwVbaLuVFR8n0i8fAqft9R2xGGr5pditqMy+vITF95TcU9NMEfpD3g9zMiTMU
+         qJZ2f6+Ki2iDb7rmx2zIRmvzNJFpQBlQYASVwkGpyXmBNQ6u6vCEMhOLlQSVTW5Cqps9
+         +cIOZxLaqY0yuB8CkK0TkXCyE8rt5v4cxLgcr9xH4aRN/6wVyhibX54mTjY2b5yhUfqc
+         DzduqGzLYaDY54wjnLx+Pulw0iaHnvs3B0P6HU13atrx3mYZilFMSVixrHtFG+dsKJW9
+         ec6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ysg63dtrR5zXVNM1XeDRu/vIWLmKfI5yyeI33Vyn0qk=;
+        b=qB8Mhf3udqds5hHvYM3VO9Zxd5cjm0dIZ/u9OtiT/Kz+O+DK4LHWiBwCcc/8skw5Tt
+         1QsdFNwU6WWTGS4YGBcGWooE+na12I2aqeCMtuPKUtj0UuDx0rLYHHKNiXvZNYOZ1FXm
+         lwQ+tp6WApY0IoNzUoTx+Gew1uiJcpTxHAZ8OhymDPUxt92vYE1D0tnrPZDHuMj6jlXO
+         x8QYQglJn+S1I9CNoHDgDlsrtjgrggy+N5qhHVlsmaj8I2GhnUE0kikRJY60aD/QucJU
+         0yixJlJxRw9ckpv6URZSeVcd86nsDthMi65hLdb5yvsZwHuFh4ezf+k124XwRWYt4Qpo
+         GH4Q==
+X-Gm-Message-State: AOUpUlFvDutGJm3Q+prWNJVnueXz0ZpOqM6G+J8xiIJVnIFtOnAkodsq
+        9vJWChxve1b24j3Kato/xMDugw==
+X-Google-Smtp-Source: AAOMgpezkvNF2gh7CGJgby7zsuVFdxjEA7Rd926FtFBN8lUaY9+7AQMrm39ubgROqly5xhFkZSed3A==
+X-Received: by 2002:a1c:1509:: with SMTP id 9-v6mr372164wmv.142.1532383706040;
+        Mon, 23 Jul 2018 15:08:26 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id a13-v6sm11668886wrf.93.2018.07.23.15.08.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 15:08:25 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fhj0A-000831-3t; Mon, 23 Jul 2018 16:08:22 -0600
+Date:   Mon, 23 Jul 2018 16:08:22 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: add support for partial reads
+Message-ID: <20180723220822.GJ532@ziepe.ca>
+References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+ <20180723201956.GB26824@linux.intel.com>
+ <fb053916-f6e8-3266-14d7-128e062b6a92@intel.com>
+ <1532380412.4112.22.camel@HansenPartnership.com>
+ <7441b5ef-18d8-13aa-ef4d-40fe684c9218@intel.com>
+ <20180723215620.GH532@ziepe.ca>
+ <dabf6cf5-e62c-721f-9f19-18da34d52ec1@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180723215958.jozblzq4sv7gp7uj@treble>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dabf6cf5-e62c-721f-9f19-18da34d52ec1@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 02:59 PM, Josh Poimboeuf wrote:
-> On Mon, Jul 23, 2018 at 11:38:30PM +0200, Pavel Machek wrote:
->> But for now I'd like at least "global" option of turning pti on/off
->> during runtime for benchmarking. Let me see...
->>
->> Something like this, or is it going to be way more complex? Does
->> anyone have patch by chance?
-> RHEL/CentOS has a global PTI enable/disable, which uses stop_machine().
+On Mon, Jul 23, 2018 at 03:00:20PM -0700, Tadeusz Struk wrote:
+> On 07/23/2018 02:56 PM, Jason Gunthorpe wrote:
+> > The proposed patch doesn't clear the data_pending if the entire buffer
+> > is not consumed, so of course it is ABI breaking, that really isn't OK.
+> 
+> The data_pending will be cleared by the timeout handler if the user doesn't
+> read the response fully before the timeout expires. The is the same situation
+> if the user would not read the response at all.
 
-Let's not forget PTI's NX-for-userspace in the kernel page tables.  That
-provides Spectre V2 mitigation as well as Meltdown.
+That causes write() to fail with EBUSY
+
+NAK from me on breaking the ABI like this
+
+Jason
