@@ -2,35 +2,35 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A89ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AAAECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A4820856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:48:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A4820856
+	by mail.kernel.org (Postfix) with ESMTP id 1078220856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:49:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1078220856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388392AbeGWWwG (ORCPT
+        id S2388408AbeGWWwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:52:06 -0400
+        Mon, 23 Jul 2018 18:52:09 -0400
 Received: from mga09.intel.com ([134.134.136.24]:8908 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388340AbeGWWwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:52:05 -0400
+        id S2388340AbeGWWwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 18:52:08 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 14:48:54 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 14:48:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
-   d="scan'208";a="66923146"
+   d="scan'208";a="66923156"
 Received: from maru.jf.intel.com ([10.54.51.80])
-  by FMSMGA003.fm.intel.com with ESMTP; 23 Jul 2018 14:48:53 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Jul 2018 14:48:55 -0700
 From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 To:     Jean Delvare <jdelvare@suse.com>,
         Guenter Roeck <linux@roeck-us.net>,
@@ -69,12 +69,10 @@ Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
         linux-aspeed@lists.ozlabs.org, linux-doc@vger.kernel.org,
         openbmc@lists.ozlabs.org,
         Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-Subject: [PATCH v7 08/12] mfd: intel-peci-client: Add PECI client MFD driver
-Date:   Mon, 23 Jul 2018 14:47:47 -0700
-Message-Id: <20180723214751.1733-9-jae.hyun.yoo@linux.intel.com>
+        Jason M Biils <jason.m.bills@linux.intel.com>
+Subject: [PATCH v7 09/12] Documentation: hwmon: Add documents for PECI hwmon client drivers
+Date:   Mon, 23 Jul 2018 14:47:48 -0700
+Message-Id: <20180723214751.1733-10-jae.hyun.yoo@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723214751.1733-1-jae.hyun.yoo@linux.intel.com>
 References: <20180723214751.1733-1-jae.hyun.yoo@linux.intel.com>
@@ -83,337 +81,164 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds PECI client MFD driver.
+This commit adds hwmon documents for PECI cputemp and dimmtemp drivers.
 
 Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>
-Cc: James Feist <james.feist@linux.intel.com>
+Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+Reviewed-by: James Feist <james.feist@linux.intel.com>
+Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
 ---
- drivers/mfd/Kconfig                   |  14 ++
- drivers/mfd/Makefile                  |   1 +
- drivers/mfd/intel-peci-client.c       | 182 ++++++++++++++++++++++++++
- include/linux/mfd/intel-peci-client.h |  81 ++++++++++++
- 4 files changed, 278 insertions(+)
- create mode 100644 drivers/mfd/intel-peci-client.c
- create mode 100644 include/linux/mfd/intel-peci-client.h
+ Documentation/hwmon/peci-cputemp  | 78 +++++++++++++++++++++++++++++++
+ Documentation/hwmon/peci-dimmtemp | 50 ++++++++++++++++++++
+ 2 files changed, 128 insertions(+)
+ create mode 100644 Documentation/hwmon/peci-cputemp
+ create mode 100644 Documentation/hwmon/peci-dimmtemp
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f3fa516011ec..e38b591479d4 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -595,6 +595,20 @@ config MFD_INTEL_MSIC
- 	  Passage) chip. This chip embeds audio, battery, GPIO, etc.
- 	  devices used in Intel Medfield platforms.
- 
-+config MFD_INTEL_PECI_CLIENT
-+	bool "Intel PECI client"
-+	depends on (PECI || COMPILE_TEST)
-+	select MFD_CORE
-+	help
-+	  If you say yes to this option, support will be included for the
-+	  multi-funtional Intel PECI (Platform Environment Control Interface)
-+	  client. PECI is a one-wire bus interface that provides a communication
-+	  channel from PECI clients in Intel processors and chipset components
-+	  to external monitoring or control devices.
-+
-+	  Additional drivers must be enabled in order to use the functionality
-+	  of the device.
-+
- config MFD_IPAQ_MICRO
- 	bool "Atmel Micro ASIC (iPAQ h3100/h3600/h3700) Support"
- 	depends on SA1100_H3100 || SA1100_H3600
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 2852a6042ecf..29e2cacc58bd 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -203,6 +203,7 @@ obj-$(CONFIG_MFD_INTEL_LPSS)	+= intel-lpss.o
- obj-$(CONFIG_MFD_INTEL_LPSS_PCI)	+= intel-lpss-pci.o
- obj-$(CONFIG_MFD_INTEL_LPSS_ACPI)	+= intel-lpss-acpi.o
- obj-$(CONFIG_MFD_INTEL_MSIC)	+= intel_msic.o
-+obj-$(CONFIG_MFD_INTEL_PECI_CLIENT)	+= intel-peci-client.o
- obj-$(CONFIG_MFD_PALMAS)	+= palmas.o
- obj-$(CONFIG_MFD_VIPERBOARD)    += viperboard.o
- obj-$(CONFIG_MFD_RC5T583)	+= rc5t583.o rc5t583-irq.o
-diff --git a/drivers/mfd/intel-peci-client.c b/drivers/mfd/intel-peci-client.c
+diff --git a/Documentation/hwmon/peci-cputemp b/Documentation/hwmon/peci-cputemp
 new file mode 100644
-index 000000000000..d7702cf1ea50
+index 000000000000..821a9258f2e6
 --- /dev/null
-+++ b/drivers/mfd/intel-peci-client.c
-@@ -0,0 +1,182 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 Intel Corporation
++++ b/Documentation/hwmon/peci-cputemp
+@@ -0,0 +1,78 @@
++Kernel driver peci-cputemp
++==========================
 +
-+#include <linux/bitfield.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/intel-peci-client.h>
-+#include <linux/module.h>
-+#include <linux/peci.h>
-+#include <linux/of_device.h>
++Supported chips:
++	One of Intel server CPUs listed below which is connected to a PECI bus.
++		* Intel Xeon E5/E7 v3 server processors
++			Intel Xeon E5-14xx v3 family
++			Intel Xeon E5-24xx v3 family
++			Intel Xeon E5-16xx v3 family
++			Intel Xeon E5-26xx v3 family
++			Intel Xeon E5-46xx v3 family
++			Intel Xeon E7-48xx v3 family
++			Intel Xeon E7-88xx v3 family
++		* Intel Xeon E5/E7 v4 server processors
++			Intel Xeon E5-16xx v4 family
++			Intel Xeon E5-26xx v4 family
++			Intel Xeon E5-46xx v4 family
++			Intel Xeon E7-48xx v4 family
++			Intel Xeon E7-88xx v4 family
++		* Intel Xeon Scalable server processors
++			Intel Xeon Bronze family
++			Intel Xeon Silver family
++			Intel Xeon Gold family
++			Intel Xeon Platinum family
++	Addresses scanned: PECI client address 0x30 - 0x37
++	Datasheet: Available from http://www.intel.com/design/literature.htm
 +
-+enum cpu_gens {
-+	CPU_GEN_HSX = 0, /* Haswell Xeon */
-+	CPU_GEN_BRX,     /* Broadwell Xeon */
-+	CPU_GEN_SKX,     /* Skylake Xeon */
-+};
++Author:
++	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 +
-+static struct mfd_cell peci_functions[] = {
-+	{
-+		.name = "peci-cputemp",
-+		.of_compatible = "intel,peci-cputemp",
-+	},
-+	{
-+		.name = "peci-dimmtemp",
-+		.of_compatible = "intel,peci-dimmtemp",
-+	},
-+};
++Description
++-----------
 +
-+static const struct cpu_gen_info cpu_gen_info_table[] = {
-+	[CPU_GEN_HSX] = {
-+		.family        = 6, /* Family code */
-+		.model         = INTEL_FAM6_HASWELL_X,
-+		.core_max      = CORE_MAX_ON_HSX,
-+		.chan_rank_max = CHAN_RANK_MAX_ON_HSX,
-+		.dimm_idx_max  = DIMM_IDX_MAX_ON_HSX },
-+	[CPU_GEN_BRX] = {
-+		.family        = 6, /* Family code */
-+		.model         = INTEL_FAM6_BROADWELL_X,
-+		.core_max      = CORE_MAX_ON_BDX,
-+		.chan_rank_max = CHAN_RANK_MAX_ON_BDX,
-+		.dimm_idx_max  = DIMM_IDX_MAX_ON_BDX },
-+	[CPU_GEN_SKX] = {
-+		.family        = 6, /* Family code */
-+		.model         = INTEL_FAM6_SKYLAKE_X,
-+		.core_max      = CORE_MAX_ON_SKX,
-+		.chan_rank_max = CHAN_RANK_MAX_ON_SKX,
-+		.dimm_idx_max  = DIMM_IDX_MAX_ON_SKX },
-+};
++This driver implements a generic PECI hwmon feature which provides Digital
++Thermal Sensor (DTS) thermal readings of the CPU package and CPU cores that are
++accessible using the PECI Client Command Suite via the processor PECI client.
 +
-+static int peci_client_get_cpu_gen_info(struct peci_mfd *priv)
-+{
-+	u32 cpu_id;
-+	int i, rc;
++All temperature values are given in millidegree Celsius and will be measurable
++only when the target CPU is powered on.
 +
-+	rc = peci_get_cpu_id(priv->adapter, priv->addr, &cpu_id);
-+	if (rc)
-+		return rc;
++sysfs attributes
++----------------
 +
-+	for (i = 0; i < ARRAY_SIZE(cpu_gen_info_table); i++) {
-+		if (FIELD_GET(CPU_ID_FAMILY_MASK, cpu_id) +
-+			FIELD_GET(CPU_ID_EXT_FAMILY_MASK, cpu_id) ==
-+				cpu_gen_info_table[i].family &&
-+		    FIELD_GET(CPU_ID_MODEL_MASK, cpu_id) ==
-+			FIELD_GET(LOWER_NIBBLE_MASK,
-+				  cpu_gen_info_table[i].model) &&
-+		    FIELD_GET(CPU_ID_EXT_MODEL_MASK, cpu_id) ==
-+			FIELD_GET(UPPER_NIBBLE_MASK,
-+				  cpu_gen_info_table[i].model)) {
-+			break;
-+		}
-+	}
++temp1_label		"Die"
++temp1_input		Provides current die temperature of the CPU package.
++temp1_max		Provides thermal control temperature of the CPU package
++			which is also known as Tcontrol.
++temp1_crit		Provides shutdown temperature of the CPU package which
++			is also known as the maximum processor junction
++			temperature, Tjmax or Tprochot.
++temp1_crit_hyst		Provides the hysteresis value from Tcontrol to Tjmax of
++			the CPU package.
 +
-+	if (i >= ARRAY_SIZE(cpu_gen_info_table))
-+		return -ENODEV;
++temp2_label		"Tcontrol"
++temp2_input		Provides current Tcontrol temperature of the CPU
++			package which is also known as Fan Temperature target.
++			Indicates the relative value from thermal monitor trip
++			temperature at which fans should be engaged.
++temp2_crit		Provides Tcontrol critical value of the CPU package
++			which is same to Tjmax.
 +
-+	priv->gen_info = &cpu_gen_info_table[i];
++temp3_label		"Tthrottle"
++temp3_input		Provides current Tthrottle temperature of the CPU
++			package. Used for throttling temperature. If this value
++			is allowed and lower than Tjmax - the throttle will
++			occur and reported at lower than Tjmax.
 +
-+	return 0;
-+}
++temp4_label		"Tjmax"
++temp4_input		Provides the maximum junction temperature, Tjmax of the
++			CPU package.
 +
-+bool peci_temp_need_update(struct temp_data *temp)
-+{
-+	if (temp->valid &&
-+	    time_before(jiffies, temp->last_updated + UPDATE_INTERVAL))
-+		return false;
-+
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(peci_temp_need_update);
-+
-+void peci_temp_mark_updated(struct temp_data *temp)
-+{
-+	temp->valid = 1;
-+	temp->last_updated = jiffies;
-+}
-+EXPORT_SYMBOL_GPL(peci_temp_mark_updated);
-+
-+int peci_client_command(struct peci_mfd *priv, enum peci_cmd cmd, void *vmsg)
-+{
-+	return peci_command(priv->adapter, cmd, vmsg);
-+}
-+EXPORT_SYMBOL_GPL(peci_client_command);
-+
-+int peci_client_rd_pkg_cfg_cmd(struct peci_mfd *priv, u8 mbx_idx,
-+			       u16 param, u8 *data)
-+{
-+	struct peci_rd_pkg_cfg_msg msg;
-+	int rc;
-+
-+	msg.addr = priv->addr;
-+	msg.index = mbx_idx;
-+	msg.param = param;
-+	msg.rx_len = 4;
-+
-+	rc = peci_command(priv->adapter, PECI_CMD_RD_PKG_CFG, &msg);
-+	if (!rc)
-+		memcpy(data, msg.pkg_config, 4);
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL_GPL(peci_client_rd_pkg_cfg_cmd);
-+
-+static int peci_client_probe(struct peci_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct peci_mfd *priv;
-+	int rc;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, priv);
-+	priv->client = client;
-+	priv->dev = dev;
-+	priv->adapter = client->adapter;
-+	priv->addr = client->addr;
-+	priv->cpu_no = client->addr - PECI_BASE_ADDR;
-+
-+	snprintf(priv->name, PECI_NAME_SIZE, "peci_client.cpu%d", priv->cpu_no);
-+
-+	rc = peci_client_get_cpu_gen_info(priv);
-+	if (rc)
-+		return rc;
-+
-+	rc = devm_mfd_add_devices(priv->dev, priv->cpu_no, peci_functions,
-+				  ARRAY_SIZE(peci_functions), NULL, 0, NULL);
-+	if (rc < 0) {
-+		dev_err(priv->dev, "devm_mfd_add_devices failed: %d\n", rc);
-+		return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id peci_client_of_table[] = {
-+	{ .compatible = "intel,peci-client" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, peci_client_of_table);
-+#endif
-+
-+static const struct peci_device_id peci_client_ids[] = {
-+	{ .name = "peci-client", .driver_data = 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(peci, peci_client_ids);
-+
-+static struct peci_driver peci_client_driver = {
-+	.probe    = peci_client_probe,
-+	.id_table = peci_client_ids,
-+	.driver   = {
-+			.name           = "peci-client",
-+			.of_match_table =
-+				of_match_ptr(peci_client_of_table),
-+	},
-+};
-+module_peci_driver(peci_client_driver);
-+
-+MODULE_AUTHOR("Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>");
-+MODULE_DESCRIPTION("PECI client MFD driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/mfd/intel-peci-client.h b/include/linux/mfd/intel-peci-client.h
++temp[5-*]_label		Provides string "Core X", where X is resolved core
++			number.
++temp[5-*]_input		Provides current temperature of each core.
++temp[5-*]_max		Provides thermal control temperature of the core.
++temp[5-*]_crit		Provides shutdown temperature of the core.
++temp[5-*]_crit_hyst	Provides the hysteresis value from Tcontrol to Tjmax of
++			the core.
+diff --git a/Documentation/hwmon/peci-dimmtemp b/Documentation/hwmon/peci-dimmtemp
 new file mode 100644
-index 000000000000..7ec272cddceb
+index 000000000000..c54f2526188c
 --- /dev/null
-+++ b/include/linux/mfd/intel-peci-client.h
-@@ -0,0 +1,81 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018 Intel Corporation */
++++ b/Documentation/hwmon/peci-dimmtemp
+@@ -0,0 +1,50 @@
++Kernel driver peci-dimmtemp
++===========================
 +
-+#ifndef __LINUX_MFD_PECI_CLIENT_H
-+#define __LINUX_MFD_PECI_CLIENT_H
++Supported chips:
++	One of Intel server CPUs listed below which is connected to a PECI bus.
++		* Intel Xeon E5/E7 v3 server processors
++			Intel Xeon E5-14xx v3 family
++			Intel Xeon E5-24xx v3 family
++			Intel Xeon E5-16xx v3 family
++			Intel Xeon E5-26xx v3 family
++			Intel Xeon E5-46xx v3 family
++			Intel Xeon E7-48xx v3 family
++			Intel Xeon E7-88xx v3 family
++		* Intel Xeon E5/E7 v4 server processors
++			Intel Xeon E5-16xx v4 family
++			Intel Xeon E5-26xx v4 family
++			Intel Xeon E5-46xx v4 family
++			Intel Xeon E7-48xx v4 family
++			Intel Xeon E7-88xx v4 family
++		* Intel Xeon Scalable server processors
++			Intel Xeon Bronze family
++			Intel Xeon Silver family
++			Intel Xeon Gold family
++			Intel Xeon Platinum family
++	Addresses scanned: PECI client address 0x30 - 0x37
++	Datasheet: Available from http://www.intel.com/design/literature.htm
 +
-+#include <linux/peci.h>
++Author:
++	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 +
-+#if IS_ENABLED(CONFIG_X86)
-+#include <asm/intel-family.h>
-+#else
-+/**
-+ * Architectures other than x86 cannot include the header file so define these
-+ * at here. These are needed for detecting type of client x86 CPUs behind a PECI
-+ * connection.
-+ */
-+#define INTEL_FAM6_HASWELL_X   0x3F
-+#define INTEL_FAM6_BROADWELL_X 0x4F
-+#define INTEL_FAM6_SKYLAKE_X   0x55
-+#endif
++Description
++-----------
 +
-+#define LOWER_NIBBLE_MASK      GENMASK(3, 0)
-+#define UPPER_NIBBLE_MASK      GENMASK(7, 4)
++This driver implements a generic PECI hwmon feature which provides Digital
++Thermal Sensor (DTS) thermal readings of DIMM components that are accessible
++using the PECI Client Command Suite via the processor PECI client.
 +
-+#define CPU_ID_MODEL_MASK      GENMASK(7, 4)
-+#define CPU_ID_FAMILY_MASK     GENMASK(11, 8)
-+#define CPU_ID_EXT_MODEL_MASK  GENMASK(19, 16)
-+#define CPU_ID_EXT_FAMILY_MASK GENMASK(27, 20)
++All temperature values are given in millidegree Celsius and will be measurable
++only when the target CPU is powered on.
 +
-+#define CORE_MAX_ON_HSX        18 /* Max number of cores on Haswell */
-+#define CHAN_RANK_MAX_ON_HSX   8  /* Max number of channel ranks on Haswell */
-+#define DIMM_IDX_MAX_ON_HSX    3  /* Max DIMM index per channel on Haswell */
++sysfs attributes
++----------------
 +
-+#define CORE_MAX_ON_BDX        24 /* Max number of cores on Broadwell */
-+#define CHAN_RANK_MAX_ON_BDX   4  /* Max number of channel ranks on Broadwell */
-+#define DIMM_IDX_MAX_ON_BDX    3  /* Max DIMM index per channel on Broadwell */
++temp[N]_label		Provides string "DIMM CI", where C is DIMM channel and
++			I is DIMM index of the populated DIMM.
++temp[N]_input		Provides current temperature of the populated DIMM.
 +
-+#define CORE_MAX_ON_SKX        28 /* Max number of cores on Skylake */
-+#define CHAN_RANK_MAX_ON_SKX   6  /* Max number of channel ranks on Skylake */
-+#define DIMM_IDX_MAX_ON_SKX    2  /* Max DIMM index per channel on Skylake */
-+
-+#define CORE_NUMS_MAX          CORE_MAX_ON_SKX
-+#define CHAN_RANK_MAX          CHAN_RANK_MAX_ON_HSX
-+#define DIMM_IDX_MAX           DIMM_IDX_MAX_ON_HSX
-+#define DIMM_NUMS_MAX          (CHAN_RANK_MAX * DIMM_IDX_MAX)
-+
-+#define TEMP_TYPE_PECI         6 /* Sensor type 6: Intel PECI */
-+
-+#define UPDATE_INTERVAL        HZ
-+
-+struct temp_data {
-+	uint  valid;
-+	s32   value;
-+	ulong last_updated;
-+};
-+
-+struct cpu_gen_info {
-+	u16  family;
-+	u8   model;
-+	uint core_max;
-+	uint chan_rank_max;
-+	uint dimm_idx_max;
-+};
-+
-+struct peci_mfd {
-+	struct peci_client *client;
-+	struct device *dev;
-+	struct peci_adapter *adapter;
-+	char name[PECI_NAME_SIZE];
-+	u8 addr;
-+	uint cpu_no;
-+	const struct cpu_gen_info *gen_info;
-+};
-+
-+bool peci_temp_need_update(struct temp_data *temp);
-+void peci_temp_mark_updated(struct temp_data *temp);
-+int  peci_client_command(struct peci_mfd *mfd, enum peci_cmd cmd, void *vmsg);
-+int  peci_client_rd_pkg_cfg_cmd(struct peci_mfd *mfd, u8 mbx_idx,
-+				u16 param, u8 *data);
-+
-+#endif /* __LINUX_MFD_PECI_CLIENT_H */
++Note:
++	DIMM temperature attributes will appear when the client CPU's BIOS
++	completes memory training and testing.
 -- 
 2.18.0
 
