@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C3EECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F39ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE0B920881
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE0B920881
+	by mail.kernel.org (Postfix) with ESMTP id D327020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D327020854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388243AbeGWMEs (ORCPT
+        id S2388476AbeGWMGb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:04:48 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:39964 "EHLO extserv.mm-sol.com"
+        Mon, 23 Jul 2018 08:06:31 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:40017 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388116AbeGWMEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:04:46 -0400
+        id S2388115AbeGWMEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 08:04:48 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id C5DFDCD63;
-        Mon, 23 Jul 2018 14:04:02 +0300 (EEST)
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 293E2CD6D;
+        Mon, 23 Jul 2018 14:04:03 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v3 20/35] media: camss: csiphy: Unify lane handling
-Date:   Mon, 23 Jul 2018 14:02:37 +0300
-Message-Id: <1532343772-27382-21-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH v3 30/35] media: camss: csid: MIPI10 to Plain16 format conversion
+Date:   Mon, 23 Jul 2018 14:02:47 +0300
+Message-Id: <1532343772-27382-31-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
 References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
@@ -41,119 +41,203 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Restructure lane configuration so it is simpler and will allow
-similar (although not the same) handling for different hardware
-versions.
+Use the PRDI mode on 8x96 to allow to configure RAW MIPI10
+to Plain16 format conversion.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- .../platform/qcom/camss/camss-csiphy-2ph-1-0.c     | 48 ++++++++++++----------
- drivers/media/platform/qcom/camss/camss-csiphy.c   |  4 +-
- drivers/media/platform/qcom/camss/camss-csiphy.h   |  3 +-
- 3 files changed, 29 insertions(+), 26 deletions(-)
+ drivers/media/platform/qcom/camss/camss-csid.c  | 33 ++++++++++++-
+ drivers/media/platform/qcom/camss/camss-ispif.c | 64 +++++++++++++++++++++++++
+ drivers/media/platform/qcom/camss/camss-vfe.c   |  1 +
+ drivers/media/platform/qcom/camss/camss-video.c |  2 +
+ 4 files changed, 99 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
-index 7325906..5f499be 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
-@@ -86,7 +86,7 @@ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
- {
- 	struct csiphy_lanes_cfg *c = &cfg->csi2->lane_cfg;
- 	u8 settle_cnt;
--	u8 val;
-+	u8 val, l = 0;
- 	int i = 0;
- 
- 	settle_cnt = csiphy_settle_cnt_calc(pixel_clock, bpp, c->num_data,
-@@ -104,34 +104,38 @@ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
- 	val = cfg->combo_mode << 4;
- 	writel_relaxed(val, csiphy->base + CAMSS_CSI_PHY_GLBL_RESET);
- 
--	while (lane_mask) {
--		if (lane_mask & 0x1) {
--			writel_relaxed(0x10, csiphy->base +
--				       CAMSS_CSI_PHY_LNn_CFG2(i));
--			writel_relaxed(settle_cnt, csiphy->base +
--				       CAMSS_CSI_PHY_LNn_CFG3(i));
--			writel_relaxed(0x3f, csiphy->base +
--				       CAMSS_CSI_PHY_INTERRUPT_MASKn(i));
--			writel_relaxed(0x3f, csiphy->base +
--				       CAMSS_CSI_PHY_INTERRUPT_CLEARn(i));
--		}
--
--		lane_mask >>= 1;
--		i++;
-+	for (i = 0; i <= c->num_data; i++) {
-+		if (i == c->num_data)
-+			l = c->clk.pos;
-+		else
-+			l = c->data[i].pos;
+diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
+index 8fd7909..8e9d724 100644
+--- a/drivers/media/platform/qcom/camss/camss-csid.c
++++ b/drivers/media/platform/qcom/camss/camss-csid.c
+@@ -32,6 +32,15 @@
+ 			(((v) == CAMSS_8x16 ? 0x010 : 0x014) + 0x4 * (n))
+ #define CAMSS_CSID_CID_n_CFG(v, n)	\
+ 			(((v) == CAMSS_8x16 ? 0x020 : 0x024) + 0x4 * (n))
++#define CAMSS_CSID_CID_n_CFG_ISPIF_EN	BIT(0)
++#define CAMSS_CSID_CID_n_CFG_RDI_EN	BIT(1)
++#define CAMSS_CSID_CID_n_CFG_DECODE_FORMAT_SHIFT	4
++#define CAMSS_CSID_CID_n_CFG_PLAIN_FORMAT_8		(0 << 8)
++#define CAMSS_CSID_CID_n_CFG_PLAIN_FORMAT_16		(1 << 8)
++#define CAMSS_CSID_CID_n_CFG_PLAIN_ALIGNMENT_LSB	(0 << 9)
++#define CAMSS_CSID_CID_n_CFG_PLAIN_ALIGNMENT_MSB	(1 << 9)
++#define CAMSS_CSID_CID_n_CFG_RDI_MODE_RAW_DUMP		(0 << 10)
++#define CAMSS_CSID_CID_n_CFG_RDI_MODE_PLAIN_PACKING	(1 << 10)
+ #define CAMSS_CSID_IRQ_CLEAR_CMD(v)	((v) == CAMSS_8x16 ? 0x060 : 0x064)
+ #define CAMSS_CSID_IRQ_MASK(v)		((v) == CAMSS_8x16 ? 0x064 : 0x068)
+ #define CAMSS_CSID_IRQ_STATUS(v)	((v) == CAMSS_8x16 ? 0x068 : 0x06c)
+@@ -330,6 +339,16 @@ static u32 csid_src_pad_code(struct csid_device *csid, u32 sink_code,
+ 		return sink_code;
+ 	} else if (csid->camss->version == CAMSS_8x96) {
+ 		switch (sink_code) {
++		case MEDIA_BUS_FMT_SBGGR10_1X10:
++		{
++			u32 src_code[] = {
++				MEDIA_BUS_FMT_SBGGR10_1X10,
++				MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE,
++			};
 +
-+		writel_relaxed(0x10, csiphy->base +
-+			       CAMSS_CSI_PHY_LNn_CFG2(l));
-+		writel_relaxed(settle_cnt, csiphy->base +
-+			       CAMSS_CSI_PHY_LNn_CFG3(l));
-+		writel_relaxed(0x3f, csiphy->base +
-+			       CAMSS_CSI_PHY_INTERRUPT_MASKn(l));
-+		writel_relaxed(0x3f, csiphy->base +
-+			       CAMSS_CSI_PHY_INTERRUPT_CLEARn(l));
- 	}
++			return csid_find_code(src_code, ARRAY_SIZE(src_code),
++					      index, src_req_code);
++		}
+ 		default:
+ 			if (index > 0)
+ 				return 0;
+@@ -629,7 +648,19 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ 		writel_relaxed(val, csid->base +
+ 			       CAMSS_CSID_CID_LUT_VC_n(ver, vc));
+ 
+-		val = (df << 4) | 0x3;
++		val = CAMSS_CSID_CID_n_CFG_ISPIF_EN;
++		val |= CAMSS_CSID_CID_n_CFG_RDI_EN;
++		val |= df << CAMSS_CSID_CID_n_CFG_DECODE_FORMAT_SHIFT;
++		val |= CAMSS_CSID_CID_n_CFG_RDI_MODE_RAW_DUMP;
++		if (csid->camss->version == CAMSS_8x96 &&
++			csid->fmt[MSM_CSID_PAD_SINK].code ==
++					MEDIA_BUS_FMT_SBGGR10_1X10 &&
++			csid->fmt[MSM_CSID_PAD_SRC].code ==
++					MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE) {
++			val |= CAMSS_CSID_CID_n_CFG_RDI_MODE_PLAIN_PACKING;
++			val |= CAMSS_CSID_CID_n_CFG_PLAIN_FORMAT_16;
++			val |= CAMSS_CSID_CID_n_CFG_PLAIN_ALIGNMENT_LSB;
++		}
+ 		writel_relaxed(val, csid->base +
+ 			       CAMSS_CSID_CID_n_CFG(ver, cid));
+ 
+diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
+index ed1cca0..707bca6 100644
+--- a/drivers/media/platform/qcom/camss/camss-ispif.c
++++ b/drivers/media/platform/qcom/camss/camss-ispif.c
+@@ -76,6 +76,13 @@
+ 					(0x254 + 0x200 * (m) + 0x4 * (n))
+ #define ISPIF_VFE_m_RDI_INTF_n_CID_MASK(m, n)	\
+ 					(0x264 + 0x200 * (m) + 0x4 * (n))
++/* PACK_CFG registers are 8x96 only */
++#define ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0(m, n)	\
++					(0x270 + 0x200 * (m) + 0x4 * (n))
++#define ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_1(m, n)	\
++					(0x27c + 0x200 * (m) + 0x4 * (n))
++#define ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0_CID_c_PLAIN(c)	\
++					(1 << ((cid % 8) * 4))
+ #define ISPIF_VFE_m_PIX_INTF_n_STATUS(m, n)	\
+ 					(0x2c0 + 0x200 * (m) + 0x4 * (n))
+ #define ISPIF_VFE_m_RDI_INTF_n_STATUS(m, n)	\
+@@ -128,6 +135,7 @@ static const u32 ispif_formats_8x96[] = {
+ 	MEDIA_BUS_FMT_SGBRG10_1X10,
+ 	MEDIA_BUS_FMT_SGRBG10_1X10,
+ 	MEDIA_BUS_FMT_SRGGB10_1X10,
++	MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE,
+ 	MEDIA_BUS_FMT_SBGGR12_1X12,
+ 	MEDIA_BUS_FMT_SGBRG12_1X12,
+ 	MEDIA_BUS_FMT_SGRBG12_1X12,
+@@ -662,6 +670,54 @@ static void ispif_config_irq(struct ispif_device *ispif, enum ispif_intf intf,
  }
  
--static void csiphy_lanes_disable(struct csiphy_device *csiphy, u8 lane_mask)
-+static void csiphy_lanes_disable(struct csiphy_device *csiphy,
-+				 struct csiphy_config *cfg)
- {
-+	struct csiphy_lanes_cfg *c = &cfg->csi2->lane_cfg;
-+	u8 l = 0;
- 	int i = 0;
- 
--	while (lane_mask) {
--		if (lane_mask & 0x1)
--			writel_relaxed(0x0, csiphy->base +
--				       CAMSS_CSI_PHY_LNn_CFG2(i));
-+	for (i = 0; i <= c->num_data; i++) {
-+		if (i == c->num_data)
-+			l = c->clk.pos;
+ /*
++ * ispif_config_pack - Config packing for PRDI mode
++ * @ispif: ISPIF device
++ * @code: media bus format code
++ * @intf: VFE interface
++ * @cid: desired CID to handle
++ * @vfe: VFE HW module id
++ * @enable: enable or disable
++ */
++static void ispif_config_pack(struct ispif_device *ispif, u32 code,
++			      enum ispif_intf intf, u8 cid, u8 vfe, u8 enable)
++{
++	u32 addr, val;
++
++	if (code != MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE)
++		return;
++
++	switch (intf) {
++	case RDI0:
++		if (cid < 8)
++			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0(vfe, 0);
 +		else
-+			l = c->data[i].pos;
++			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_1(vfe, 0);
++		break;
++	case RDI1:
++		if (cid < 8)
++			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0(vfe, 1);
++		else
++			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_1(vfe, 1);
++		break;
++	case RDI2:
++		if (cid < 8)
++			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0(vfe, 2);
++		else
++			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_1(vfe, 2);
++		break;
++	default:
++		return;
++	}
++
++	if (enable)
++		val = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0_CID_c_PLAIN(cid);
++	else
++		val = 0;
++
++	writel_relaxed(val, ispif->base + addr);
++}
++
++/*
+  * ispif_set_intf_cmd - Set command to enable/disable interface
+  * @ispif: ISPIF device
+  * @cmd: interface command
+@@ -729,6 +785,10 @@ static int ispif_set_stream(struct v4l2_subdev *sd, int enable)
+ 		ispif_select_csid(ispif, intf, csid, vfe, 1);
+ 		ispif_select_cid(ispif, intf, cid, vfe, 1);
+ 		ispif_config_irq(ispif, intf, vfe, 1);
++		if (to_camss(ispif)->version == CAMSS_8x96)
++			ispif_config_pack(ispif,
++					  line->fmt[MSM_ISPIF_PAD_SINK].code,
++					  intf, cid, vfe, 1);
+ 		ispif_set_intf_cmd(ispif, CMD_ENABLE_FRAME_BOUNDARY,
+ 				   intf, vfe, vc);
+ 	} else {
+@@ -742,6 +802,10 @@ static int ispif_set_stream(struct v4l2_subdev *sd, int enable)
+ 			return ret;
  
--		lane_mask >>= 1;
--		i++;
-+		writel_relaxed(0x0, csiphy->base +
-+			       CAMSS_CSI_PHY_LNn_CFG2(l));
- 	}
- 
- 	writel_relaxed(0x0, csiphy->base + CAMSS_CSI_PHY_GLBL_PWR_CFG);
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index 14a9a66..99686f9 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -292,9 +292,7 @@ static int csiphy_stream_on(struct csiphy_device *csiphy)
-  */
- static void csiphy_stream_off(struct csiphy_device *csiphy)
- {
--	u8 lane_mask = csiphy_get_lane_mask(&csiphy->cfg.csi2->lane_cfg);
--
--	csiphy->ops->lanes_disable(csiphy, lane_mask);
-+	csiphy->ops->lanes_disable(csiphy, &csiphy->cfg);
- }
- 
- 
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
-index 8f61b7d..07e5906 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.h
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
-@@ -51,7 +51,8 @@ struct csiphy_hw_ops {
- 	void (*lanes_enable)(struct csiphy_device *csiphy,
- 			     struct csiphy_config *cfg,
- 			     u32 pixel_clock, u8 bpp, u8 lane_mask);
--	void (*lanes_disable)(struct csiphy_device *csiphy, u8 lane_mask);
-+	void (*lanes_disable)(struct csiphy_device *csiphy,
-+			      struct csiphy_config *cfg);
- 	irqreturn_t (*isr)(int irq, void *dev);
- };
- 
+ 		mutex_lock(&ispif->config_lock);
++		if (to_camss(ispif)->version == CAMSS_8x96)
++			ispif_config_pack(ispif,
++					  line->fmt[MSM_ISPIF_PAD_SINK].code,
++					  intf, cid, vfe, 0);
+ 		ispif_config_irq(ispif, intf, vfe, 0);
+ 		ispif_select_cid(ispif, intf, cid, vfe, 0);
+ 		ispif_select_csid(ispif, intf, csid, vfe, 0);
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+index 314eed9..69735da 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+@@ -92,6 +92,7 @@ static const struct vfe_format formats_rdi_8x96[] = {
+ 	{ MEDIA_BUS_FMT_SGBRG10_1X10, 10 },
+ 	{ MEDIA_BUS_FMT_SGRBG10_1X10, 10 },
+ 	{ MEDIA_BUS_FMT_SRGGB10_1X10, 10 },
++	{ MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE, 16 },
+ 	{ MEDIA_BUS_FMT_SBGGR12_1X12, 12 },
+ 	{ MEDIA_BUS_FMT_SGBRG12_1X12, 12 },
+ 	{ MEDIA_BUS_FMT_SGRBG12_1X12, 12 },
+diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
+index e6e114a..28d53bf 100644
+--- a/drivers/media/platform/qcom/camss/camss-video.c
++++ b/drivers/media/platform/qcom/camss/camss-video.c
+@@ -101,6 +101,8 @@ static const struct camss_format_info formats_rdi_8x96[] = {
+ 	  { { 1, 1 } }, { { 1, 1 } }, { 10 } },
+ 	{ MEDIA_BUS_FMT_SRGGB10_1X10, V4L2_PIX_FMT_SRGGB10P, 1,
+ 	  { { 1, 1 } }, { { 1, 1 } }, { 10 } },
++	{ MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE, V4L2_PIX_FMT_SBGGR10, 1,
++	  { { 1, 1 } }, { { 1, 1 } }, { 16 } },
+ 	{ MEDIA_BUS_FMT_SBGGR12_1X12, V4L2_PIX_FMT_SBGGR12P, 1,
+ 	  { { 1, 1 } }, { { 1, 1 } }, { 12 } },
+ 	{ MEDIA_BUS_FMT_SGBRG12_1X12, V4L2_PIX_FMT_SGBRG12P, 1,
 -- 
 2.7.4
 
