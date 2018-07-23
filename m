@@ -2,133 +2,87 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 001E1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7EEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACFC120875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:52:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrQoblpY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACFC120875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E649420875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:53:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E649420875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388319AbeGWVzC (ORCPT
+        id S2388188AbeGWV43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:55:02 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38424 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388054AbeGWVxr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:53:47 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v14-v6so1997487wro.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UFekeI44osU5U79EV9VIkAYwZ8wovxZtzV8MfSYG+B8=;
-        b=DrQoblpYn56aY46SxqW1EJDYy1gLcpy/VpL4SfPu0qGlIBghGGxFvGK7UdWy4oQrFl
-         2PkYbauWGPGBVsFmwVxdoob3GsTlSP5iG27kmElMRgaz2qXxBTOa1FsFhUwY/sNHfSBK
-         /jmDsNU3CLNsNVULmDELkX01dDT4E1IRtGX4EuEYqhPZt0WMCHpgpEh0ygc4Dq7JOWoN
-         pTa3BqSb7w6N4KGWoENKUdmRbaiMo69CypoNHV9Wi7iaNNTyLUw15DLOXrHODWpEjdwb
-         5pK+FEMf5hEL4xf6+LOvBu/EIDY693EBLZp2SL/GsS2wA1/yQR7E51bUoM0nl9kaYnV5
-         ACJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UFekeI44osU5U79EV9VIkAYwZ8wovxZtzV8MfSYG+B8=;
-        b=NW3tM8CZefafZTtbuPxFOj55FCS+dakReW9Wld52L0HiesGnBAlLPpfEsaceI29t4k
-         bhfg6ae2U4zfe8KfQQmPx9O7ppHBOkj9curCSq9UUhJak6Jcox2W0xY7VVgpts2Ifo6A
-         m39kE0NGJM2c2rweEdVhYd3zvz+17sAoP8G8w+q97jRs7xcIONc2n2zvfrBrMcc6WoNT
-         joffTplRTaneSjqWcmd4TZ2t4J+gpWmOAZhrDXA/29prpC+w9Xs+y+8EkxVEyZ8xviIt
-         ysiqf/vmaJxerOWV7IUPar/GLU2T5cpRsFKezXHW7SPLEVM6eqOq0m9f2safn8wCRSmi
-         TaVw==
-X-Gm-Message-State: AOUpUlHrgsmxSuk68uYYzbtE4UPkRNIPGYxayhaVkYIbbqKXFHGponQS
-        yDicmgqkia2QIlrZaRBSsq5vWjq8
-X-Google-Smtp-Source: AAOMgpfikILwiXhL2bF/Ik2pIUhpEhc6duLtto3NWZLq8K9bjqOy/ksFcn69I+e2kJo/lv2xPPqNkg==
-X-Received: by 2002:a5d:528f:: with SMTP id c15-v6mr9606192wrv.102.1532379048488;
-        Mon, 23 Jul 2018 13:50:48 -0700 (PDT)
-Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id b123-v6sm14921874wma.24.2018.07.23.13.50.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 13:50:47 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 03/15] staging:rtl8192u: Remove unused QOS definitions - Style
-Date:   Mon, 23 Jul 2018 21:50:19 +0100
-Message-Id: <20180723205031.19816-4-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180723205031.19816-1-johnfwhitmore@gmail.com>
-References: <20180723205031.19816-1-johnfwhitmore@gmail.com>
+        Mon, 23 Jul 2018 17:56:29 -0400
+Received: from mga09.intel.com ([134.134.136.24]:6124 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388038AbeGWV43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 17:56:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 13:53:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
+   d="scan'208";a="218424956"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.153])
+  by orsmga004.jf.intel.com with ESMTP; 23 Jul 2018 13:53:14 -0700
+Subject: Re: [PATCH] tpm: add support for partial reads
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+ <20180723201956.GB26824@linux.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <fb053916-f6e8-3266-14d7-128e062b6a92@intel.com>
+Date:   Mon, 23 Jul 2018 13:53:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180723201956.GB26824@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unused QOS related types.
+On 07/23/2018 01:19 PM, Jarkko Sakkinen wrote:
+> In this case I do not have any major evidence of any major benefit *and*
+> the change breaks the ABI.
 
-Since definitions are not used simply remove from code. This change is
-a coding style change and should not impact runtime execution.
-
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- .../staging/rtl8192u/ieee80211/rtl819x_Qos.h  | 22 -------------------
- 1 file changed, 22 deletions(-)
-
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-index fb2745da5844..a83abaf3a2ea 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-@@ -4,25 +4,6 @@
- 
- #define	MAX_WMMELE_LENGTH	64
- 
--//
--// QoS mode.
--// enum 0, 1, 2, 4: since we can use the OR(|) operation.
--//
--// QOS_MODE is redefined for enum can't be ++, | under C++ compiler, 2006.05.17, by rcnjko.
--//typedef	enum _QOS_MODE{
--//	QOS_DISABLE		= 0,
--//	QOS_WMM			= 1,
--//	QOS_EDCA			= 2,
--//	QOS_HCCA			= 4,
--//}QOS_MODE,*PQOS_MODE;
--//
--#define QOS_DISABLE		0
--#define QOS_WMM			1
--#define QOS_WMMSA		2
--#define QOS_EDCA		4
--#define QOS_HCCA		8
--#define QOS_WMM_UAPSD		16   //WMM Power Save, 2006-06-14 Isaiah
--
- #define AC_PARAM_SIZE	4
- #define WMM_PARAM_ELE_BODY_LEN	18
- 
-@@ -506,14 +487,11 @@ typedef struct _BSS_QOS {
- 	AC_PARAM		AcParameter[4];
- } BSS_QOS, *PBSS_QOS;
- 
--
- //
- // Ref: sQoSCtlLng and QoSCtl definition in 8185 QoS code.
- //#define QoSCtl   ((	(Adapter->bRegQoS) && (Adapter->dot11QoS.QoSMode &(QOS_EDCA|QOS_HCCA))	  )  ?sQoSCtlLng:0)
- //
- #define sQoSCtlLng			2
--#define	QOS_CTRL_LEN(_QosMode)		((_QosMode > QOS_DISABLE) ? sQoSCtlLng : 0)
--
- 
- //Added by joseph
- //UP Mapping to AC, using in MgntQuery_SequenceNumber() and maybe for DSCP
+As I said before - this does not break the ABI.
+As for the benefits - it help user space in how they implement the receive
+path. Application does not need to provide a 4K buffer for every read even
+if the response is, for instance 8 bytes long.
+Thanks,
 -- 
-2.18.0
-
+Tadeusz
