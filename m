@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3608ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE617ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 682D520880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 682D520880
+	by mail.kernel.org (Postfix) with ESMTP id 7499820685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7499820685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389605AbeGWNsE (ORCPT
+        id S2389657AbeGWNsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:48:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51470 "EHLO
+        Mon, 23 Jul 2018 09:48:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388574AbeGWNsD (ORCPT
+        with ESMTP id S2388574AbeGWNsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:03 -0400
+        Mon, 23 Jul 2018 09:48:05 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5897BC7A;
-        Mon, 23 Jul 2018 12:46:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23D38C37;
+        Mon, 23 Jul 2018 12:46:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
         David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 089/107] x86/bugs, KVM: Extend speculation control for VIRT_SPEC_CTRL
-Date:   Mon, 23 Jul 2018 14:42:23 +0200
-Message-Id: <20180723122417.955005630@linuxfoundation.org>
+Subject: [PATCH 4.4 065/107] x86/process: Optimize TIF_NOTSC switch
+Date:   Mon, 23 Jul 2018 14:41:59 +0200
+Message-Id: <20180723122416.407490961@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -58,27 +58,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit ccbcd2674472a978b48c91c1fbfb66c0ff959f24 upstream
+commit 5a920155e388ec22a22e0532fb695b9215c9b34d upstream
 
-AMD is proposing a VIRT_SPEC_CTRL MSR to handle the Speculative Store
-Bypass Disable via MSR_AMD64_LS_CFG so that guests do not have to care
-about the bit position of the SSBD bit and thus facilitate migration.
-Also, the sibling coordination on Family 17H CPUs can only be done on
-the host.
+Provide and use a toggle helper instead of doing it with a branch.
 
-Extend x86_spec_ctrl_set_guest() and x86_spec_ctrl_restore_host() with an
-extra argument for the VIRT_SPEC_CTRL MSR.
+x86_64: arch/x86/kernel/process.o
+text	   data	    bss	    dec	    hex
+3008	   8577	     16	  11601	   2d51 Before
+2976       8577      16	  11569	   2d31 After
 
-Hand in 0 from VMX and in SVM add a new virt_spec_ctrl member to the CPU
-data structure which is going to be used in later patches for the actual
-implementation.
+i386: arch/x86/kernel/process.o
+text	   data	    bss	    dec	    hex
+2925	   8673	      8	  11606	   2d56 Before
+2893	   8673       8	  11574	   2d36 After
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: http://lkml.kernel.org/r/20170214081104.9244-4-khuey@kylehuey.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[ Srivatsa: Backported to 4.4.y, skipping the KVM changes in this patch. ]
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
 Reviewed-by: Alexey Makhalov <amakhalov@vmware.com>
@@ -86,64 +86,83 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/spec-ctrl.h |    9 ++++++---
- arch/x86/kernel/cpu/bugs.c       |   20 ++++++++++++++++++--
- 2 files changed, 24 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/tlbflush.h |   10 ++++++++++
+ arch/x86/kernel/process.c       |   22 ++++------------------
+ 2 files changed, 14 insertions(+), 18 deletions(-)
 
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -10,10 +10,13 @@
-  * the guest has, while on VMEXIT we restore the host view. This
-  * would be easier if SPEC_CTRL were architecturally maskable or
-  * shadowable for guests but this is not (currently) the case.
-- * Takes the guest view of SPEC_CTRL MSR as a parameter.
-+ * Takes the guest view of SPEC_CTRL MSR as a parameter and also
-+ * the guest's version of VIRT_SPEC_CTRL, if emulated.
-  */
--extern void x86_spec_ctrl_set_guest(u64);
--extern void x86_spec_ctrl_restore_host(u64);
-+extern void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl,
-+				    u64 guest_virt_spec_ctrl);
-+extern void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl,
-+				       u64 guest_virt_spec_ctrl);
- 
- /* AMD specific Speculative Store Bypass MSR data */
- extern u64 x86_amd_ls_cfg_base;
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -149,7 +149,15 @@ u64 x86_spec_ctrl_get_default(void)
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -111,6 +111,16 @@ static inline void cr4_clear_bits(unsign
+ 	}
  }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
  
--void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl)
-+/**
-+ * x86_spec_ctrl_set_guest - Set speculation control registers for the guest
-+ * @guest_spec_ctrl:		The guest content of MSR_SPEC_CTRL
-+ * @guest_virt_spec_ctrl:	The guest controlled bits of MSR_VIRT_SPEC_CTRL
-+ *				(may get translated to MSR_AMD64_LS_CFG bits)
-+ *
-+ * Avoids writing to the MSR if the content/bits are the same
-+ */
-+void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl)
++static inline void cr4_toggle_bits(unsigned long mask)
++{
++	unsigned long cr4;
++
++	cr4 = this_cpu_read(cpu_tlbstate.cr4);
++	cr4 ^= mask;
++	this_cpu_write(cpu_tlbstate.cr4, cr4);
++	__write_cr4(cr4);
++}
++
+ /* Read the CR4 shadow. */
+ static inline unsigned long cr4_read_shadow(void)
  {
- 	u64 host = x86_spec_ctrl_base;
- 
-@@ -166,7 +174,15 @@ void x86_spec_ctrl_set_guest(u64 guest_s
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -130,11 +130,6 @@ void flush_thread(void)
+ 	fpu__clear(&tsk->thread.fpu);
  }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_set_guest);
  
--void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl)
-+/**
-+ * x86_spec_ctrl_restore_host - Restore host speculation control registers
-+ * @guest_spec_ctrl:		The guest content of MSR_SPEC_CTRL
-+ * @guest_virt_spec_ctrl:	The guest controlled bits of MSR_VIRT_SPEC_CTRL
-+ *				(may get translated to MSR_AMD64_LS_CFG bits)
-+ *
-+ * Avoids writing to the MSR if the content/bits are the same
-+ */
-+void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl)
+-static void hard_disable_TSC(void)
+-{
+-	cr4_set_bits(X86_CR4_TSD);
+-}
+-
+ void disable_TSC(void)
  {
- 	u64 host = x86_spec_ctrl_base;
+ 	preempt_disable();
+@@ -143,15 +138,10 @@ void disable_TSC(void)
+ 		 * Must flip the CPU state synchronously with
+ 		 * TIF_NOTSC in the current running context.
+ 		 */
+-		hard_disable_TSC();
++		cr4_set_bits(X86_CR4_TSD);
+ 	preempt_enable();
+ }
  
+-static void hard_enable_TSC(void)
+-{
+-	cr4_clear_bits(X86_CR4_TSD);
+-}
+-
+ static void enable_TSC(void)
+ {
+ 	preempt_disable();
+@@ -160,7 +150,7 @@ static void enable_TSC(void)
+ 		 * Must flip the CPU state synchronously with
+ 		 * TIF_NOTSC in the current running context.
+ 		 */
+-		hard_enable_TSC();
++		cr4_clear_bits(X86_CR4_TSD);
+ 	preempt_enable();
+ }
+ 
+@@ -234,12 +224,8 @@ void __switch_to_xtra(struct task_struct
+ 		wrmsrl(MSR_IA32_DEBUGCTLMSR, debugctl);
+ 	}
+ 
+-	if ((tifp ^ tifn) & _TIF_NOTSC) {
+-		if (tifn & _TIF_NOTSC)
+-			hard_disable_TSC();
+-		else
+-			hard_enable_TSC();
+-	}
++	if ((tifp ^ tifn) & _TIF_NOTSC)
++		cr4_toggle_bits(X86_CR4_TSD);
+ }
+ 
+ /*
 
 
