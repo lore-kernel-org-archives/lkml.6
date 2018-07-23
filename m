@@ -2,149 +2,132 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A03ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68172ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE96B20779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:09:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="NvcX3HH0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE96B20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id 21D8620779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:10:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D8620779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388159AbeGWQK5 (ORCPT
+        id S2388229AbeGWQLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:10:57 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:42107 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388042AbeGWQK5 (ORCPT
+        Mon, 23 Jul 2018 12:11:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46776 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387831AbeGWQLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 12:10:57 -0400
-Received: by mail-oi0-f66.google.com with SMTP id n84-v6so1700205oib.9
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 08:09:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gOIU6Fx97Gx3e5QXaoHB5ib9jh9Ws2P+yxqInVKs3G8=;
-        b=NvcX3HH0NEyWZ1b/7Wmrn0vM0R/2YjpK0zk+BHoEIhu4HkeIoe1SAfCUQeivFANw0f
-         /Zzwefc2g9xk6qfVahkZG1eUcd2DXdkaMjaVkXHDimwqtnICuXWS/ZuRRX/aXKOI6nC4
-         s1CWECN7j+wiDcF5f1ksm/vGLXT+YVQyNVjMU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=gOIU6Fx97Gx3e5QXaoHB5ib9jh9Ws2P+yxqInVKs3G8=;
-        b=kWlqda+vAu3hlZwlzauZrPkXnHiJXLS6aPvSDujAoMW3lOeGVjTn5G2SlKv3avqEcE
-         oPJ2GKM56mXApWU0XwnuFvZ23A1c1fastOnmjACx+wZMaC182kWJlL99XruE4zZjGvyU
-         powhdcL9R198qCE2o/kZfVWk/M7rUG8hxCD+1Te41j+rfiDVZ1QdOfpojHn3q945ZeOR
-         jDiVFSX9Cn1yOTRdh0Ui6rvROpH6GDq74BXoxwBgu5/QfyFMTbH7OWodVJxR/I3YTqC5
-         f1fvshczILlJrhS/fYJPLeaA/FtoqNNIiGjHBHef9yyhmUSHLXljRxhpae1CjMCT+Vdu
-         KeUg==
-X-Gm-Message-State: AOUpUlG56IzWa4KnV46o5EPj/H0nacm4IbJ+3wuHa8UVNZyGgEKgnZPv
-        ygR3ar5njy5eQCQzwA+fjicoalM4FdFyQlUmXuwDJg==
-X-Google-Smtp-Source: AAOMgpdtBebd0z4zUKCISWCiedJxiUZk7xOo/pkcLc9/dEIOlbEGZY1ajuBAZY2hYngE9SIhTmWv85x7C2ysKpSfJsA=
-X-Received: by 2002:aca:ce0f:: with SMTP id e15-v6mr9428763oig.13.1532358556720;
- Mon, 23 Jul 2018 08:09:16 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:113c:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 08:09:15
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <CACT4Y+Y2ec4-ywG+FWocir6XXkwt-11qD+SAFwswtG2Ng6BS4A@mail.gmail.com>
-References: <000000000000bc17b60571a60434@google.com> <CACT4Y+bKU8f4jVENYHX=fzNVd95A4vce2F=UCV12paVNFv-LNg@mail.gmail.com>
- <CAJfpegsKWGZ4LVeQXrrCr47+Bch4yfOWcWMFSniQsRzjRof=RQ@mail.gmail.com>
- <CACT4Y+ZbRi=0kRiR-j-SkngsB_QuALfnOX5nGF4agQD-weFsew@mail.gmail.com>
- <CAJfpegs0by5OJ7iqtg6L3T1w2RrFRiU6yRufVNbt=tNpJCbf2A@mail.gmail.com>
- <CACT4Y+bSnJjtgeLdusj6czbH8080XfRs2b8L0V4R0TAixqxX6Q@mail.gmail.com>
- <CAJfpegvYHYUMdo14J_of10rmg0krjd_eiATJ3D4+XqaNys9bqQ@mail.gmail.com> <CACT4Y+Y2ec4-ywG+FWocir6XXkwt-11qD+SAFwswtG2Ng6BS4A@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 23 Jul 2018 17:09:15 +0200
-Message-ID: <CAJfpeguni8JReXKXU_yUFqBfHav1-JFHfHzhxc=kaXu3ME6Qsw@mail.gmail.com>
-Subject: Re: INFO: task hung in fuse_reverse_inval_entry
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Mon, 23 Jul 2018 12:11:43 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6NF9Rvd020258
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 11:10:03 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kdhc187ja-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 11:10:03 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Mon, 23 Jul 2018 16:10:01 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 23 Jul 2018 16:09:57 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6NF9uCV38404348
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Jul 2018 15:09:56 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A50AE11C04A;
+        Mon, 23 Jul 2018 18:10:11 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8213211C050;
+        Mon, 23 Jul 2018 18:10:10 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Mon, 23 Jul 2018 18:10:10 +0100 (BST)
+Date:   Mon, 23 Jul 2018 08:09:55 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzbot <syzbot+bb6d800770577a083f8c@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 00/19]  Fixes for sched/numa_balancing
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180723135700.GX2458@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20180723135700.GX2458@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18072315-0008-0000-0000-000002568C25
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072315-0009-0000-0000-000021BCFADE
+Message-Id: <20180723150954.GI30345@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-23_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807230173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 3:37 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Mon, Jul 23, 2018 at 3:05 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+* Peter Zijlstra <peterz@infradead.org> [2018-07-23 15:57:00]:
 
->> Biggest conceptual problem: your definition of fuse-server is weak.
->> Take the following example: process A is holding the fuse device fd
->> and is forwarding requests and replies to/from process B via a pipe.
->> So basically A is just a proxy that does nothing interesting, the
->> "real" server is B.  But according to your definition B is not a
->> server, only A is.
+> On Wed, Jun 20, 2018 at 10:32:41PM +0530, Srikar Dronamraju wrote:
+> > Srikar Dronamraju (19):
+> >   sched/numa: Remove redundant field.
+> >   sched/numa: Evaluate move once per node
+> >   sched/numa: Simplify load_too_imbalanced
+> >   sched/numa: Set preferred_node based on best_cpu
+> >   sched/numa: Use task faults only if numa_group is not yet setup
+> >   sched/debug: Reverse the order of printing faults
+> >   sched/numa: Skip nodes that are at hoplimit
+> >   sched/numa: Remove unused task_capacity from numa_stats
+> >   sched/numa: Modify migrate_swap to accept additional params
+> >   sched/numa: Restrict migrating in parallel to the same node.
+> >   sched/numa: Remove numa_has_capacity
+> >   sched/numa: Use group_weights to identify if migration degrades locality
+> >   sched/numa: Move task_placement closer to numa_migrate_preferred
 >
-> I proposed to abort fuse conn when all fuse device fd's are "killed"
-> (all processes having the fd opened are killed). So if _only_ process
-> B is killed, then, yes, it will still hang. However if A is killed or
-> both A and B (say, process group, everything inside of pid namespace,
-> etc) then the deadlock will be autoresolved without human
-> intervention.
+> I took the above, but left the below for next time.
 
-Okay, so you're saying:
 
-1) when process gets SIGKILL and is uninterruptible sleep mark process as doomed
-2) for a particular fuse instance find set of fuse device fd
-references that are in non-doomed tasks; if there are none then abort
-fuse instance
-
-Right?
-
-The above is not an implementation proposal, just to get us on the
-same page regarding the concept.
-
->> And this is just a simple example, parts of the server might be on
->> different machines, etc...  It's impossible to automatically detect if
->> a process is acting as a fuse server or not.
 >
-> It does not seem we need the precise definition. If no one ever can
-> write anything into the fd, we can safely abort the connection (?).
+> >   sched/numa: Stop multiple tasks from moving to the cpu at the same time
 
-Seems to me so.
+This patch has go-ahead from Mel and Rik and no outstanding comments.
 
-> If
-> we don't, we can either get that the process exits normally and the
-> connection is doomed anyway, so no difference in behavior, or we can
-> get a deadlock.
+In my analysis, I did find a lot of cases where the same cpu ended up
+being the target. + I am not sure you can apply "sched/numa: Restrict
+migrating in parallel to the same node" cleanly without this patch.
+
+So I am a bit confused. If possible, please clarify.
+
+> >   mm/migrate: Use xchg instead of spinlock
+
+Will try with spin_trylock and get back.
+
+> >   sched/numa: Updation of scan period need not be in lock
+
+I didnt see any comments for this apart from an ack from Rik.
++ It thought it was trivial and shouldnt have any side-effect.
+
+> >   sched/numa: Detect if node actively handling migration
+> >   sched/numa: Pass destination cpu as a parameter to migrate_task_rq
+> >   sched/numa: Reset scan rate whenever task moves across nodes
 >
->> We could let the fuse server itself notify the kernel that it's a fuse
->> server.  That might help in the cases where the deadlock is
->> accidental, but obviously not in the case when done by a malicious
->> agent.  I'm not sure it's worth the effort.   Also I have no idea how
->> the respective maintainers would take the idea of "kill hooks"...   It
->> would probably be a lot of work for little gain.
->
-> What looks wrong to me here is that fuse is only (?) subsystem in
-> kernel that stops SIGKILL from working and requires complex custom
-> dance performed by a human operator (which is not necessary there at
-> all). Say, if a process has opened a socket, whatever, I don't need to
-> locate and abort something in socketctl fs, just SIGKILL. If a
-> processes has opened a file, I don't need to locate the fd in /proc
-> and abort it, just SIGKILL. If a process has created an ipc object, I
-> don't need to do any special dance, just SIGKILL. fuse is somehow very
-> special, if we have more such cases, it definitely won't scale.
-> I understand that there can be implementation difficulties, but
-> fundamentally that's how things should work -- choose target
-> processes, kill, done, right?
 
-Yes, it would be nice.
-
-But I'm not sure it will fly due to implementation difficulties.  It's
-definitely not  a high prio feature currently for me, but I'll happily
-accept patches.
-
-Thanks,
-Miklos
