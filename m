@@ -6,84 +6,97 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F330CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F390AECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF7E020846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:28:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF7E020846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C54120846
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:32:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C54120846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388347AbeGWL2v (ORCPT
+        id S2388179AbeGWLdZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:28:51 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38550 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387906AbeGWL2v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:28:51 -0400
-Received: from 1-161-144-158.dynamic-ip.hinet.net ([1.161.144.158] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1fhY4f-0002V4-Mb; Mon, 23 Jul 2018 10:28:18 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     ulf.hansson@linaro.org, stern@rowland.harvard.edu,
-        bauer.chen@realtek.com, ricky_wu@realtek.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 5/5] misc: rtsx_usb: / memstick: rtsx_usb_ms: Avoid long delay before system suspend
-Date:   Mon, 23 Jul 2018 18:27:44 +0800
-Message-Id: <20180723102744.15140-6-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180723102744.15140-1-kai.heng.feng@canonical.com>
-References: <20180723102744.15140-1-kai.heng.feng@canonical.com>
+        Mon, 23 Jul 2018 07:33:25 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:56400 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388056AbeGWLdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:33:25 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 61DBB20001C;
+        Mon, 23 Jul 2018 12:32:51 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1CD4A20008C;
+        Mon, 23 Jul 2018 12:32:51 +0200 (CEST)
+Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id BA23F40C94;
+        Mon, 23 Jul 2018 03:32:50 -0700 (MST)
+Received: from mega.am.freescale.net ([10.192.208.232])
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w6NAWluA028031;
+        Mon, 23 Jul 2018 03:32:47 -0700
+From:   Pengbo Mu <pengbo.mu@nxp.com>
+To:     Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ran.wang_1@nxp.com, pengbo.mu@nxp.com
+Subject: [PATCH v6 1/4] usb: dwc3: add global soc bus configuration reg0
+Date:   Mon, 23 Jul 2018 18:32:36 +0800
+Message-Id: <1532341959-3478-1-git-send-email-pengbo.mu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's a long power-on delay at the end of rtsx_usb_ms_set_param().
-This delay is noticeable right before system suspend.
+Add the macro definition for global soc bus configuration
+register 0
 
-To prevent already suspended memstick host from getting powered on by PM
-core, use DPM_FLAG_SMART_SUSPEND to avoid the situation.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Changming Huang <jerry.huang@nxp.com>
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+Signed-off-by: Pengbo Mu <pengbo.mu@nxp.com>
 ---
- drivers/memstick/host/rtsx_usb_ms.c | 4 ++++
- drivers/misc/cardreader/rtsx_usb.c  | 1 +
- 2 files changed, 5 insertions(+)
+Changes in v6:
+ - delete some register unrelated
+Changes in v5:
+ - no change
+Changes in v4:
+ - no change
+Changes in v3:
+ - no change
+Changes in v2:
+ - split the patch
+ - add more macro definition for soc bus configuration register
+---
+ drivers/usb/dwc3/core.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/rtsx_usb_ms.c
-index 622497554a5a..85eaf688962f 100644
---- a/drivers/memstick/host/rtsx_usb_ms.c
-+++ b/drivers/memstick/host/rtsx_usb_ms.c
-@@ -772,6 +772,10 @@ static int rtsx_usb_ms_drv_probe(struct platform_device *pdev)
- 	msh->set_param = rtsx_usb_ms_set_param;
- 	msh->caps = MEMSTICK_CAP_PAR4;
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index 285ce0e..213b939 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -163,6 +163,17 @@
  
-+	/* DPM_FLAG_LEAVE_SUSPENDED is not needed, the parent device will wake
-+	 * up memstick host.
-+	 */
-+	dev_pm_set_driver_flags(&pdev->dev, DPM_FLAG_SMART_SUSPEND);
- 	pm_runtime_set_active(ms_dev(host));
- 	pm_runtime_enable(ms_dev(host));
+ /* Bit fields */
  
-diff --git a/drivers/misc/cardreader/rtsx_usb.c b/drivers/misc/cardreader/rtsx_usb.c
-index fed83453e5c5..3c1942f9653f 100644
---- a/drivers/misc/cardreader/rtsx_usb.c
-+++ b/drivers/misc/cardreader/rtsx_usb.c
-@@ -671,6 +671,7 @@ static int rtsx_usb_probe(struct usb_interface *intf,
- 		goto out_init_fail;
- 
- #ifdef CONFIG_PM
-+	dev_pm_set_driver_flags(&intf->dev, DPM_FLAG_SMART_SUSPEND | DPM_FLAG_LEAVE_SUSPENDED);
- 	intf->needs_remote_wakeup = 1;
- 	usb_enable_autosuspend(usb_dev);
- #endif
++/* Global SoC Bus Configuration INCRx Register 0 */
++#define DWC3_GSBUSCFG0_INCR256BRSTENA	(1 << 7) /* INCR256 burst */
++#define DWC3_GSBUSCFG0_INCR128BRSTENA	(1 << 6) /* INCR128 burst */
++#define DWC3_GSBUSCFG0_INCR64BRSTENA	(1 << 5) /* INCR64 burst */
++#define DWC3_GSBUSCFG0_INCR32BRSTENA	(1 << 4) /* INCR32 burst */
++#define DWC3_GSBUSCFG0_INCR16BRSTENA	(1 << 3) /* INCR16 burst */
++#define DWC3_GSBUSCFG0_INCR8BRSTENA	(1 << 2) /* INCR8 burst */
++#define DWC3_GSBUSCFG0_INCR4BRSTENA	(1 << 1) /* INCR4 burst */
++#define DWC3_GSBUSCFG0_INCRBRSTENA	(1 << 0) /* undefined length enable */
++#define DWC3_GSBUSCFG0_INCRBRST_MASK	0xff
++
+ /* Global Debug Queue/FIFO Space Available Register */
+ #define DWC3_GDBGFIFOSPACE_NUM(n)	((n) & 0x1f)
+ #define DWC3_GDBGFIFOSPACE_TYPE(n)	(((n) << 5) & 0x1e0)
 -- 
-2.17.1
+2.7.4
 
