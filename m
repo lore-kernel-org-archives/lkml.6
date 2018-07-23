@@ -2,93 +2,131 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39686ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D053ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB88620854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:42:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB88620854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 1649920854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:44:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1649920854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388070AbeGWMnP (ORCPT
+        id S2388105AbeGWMpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:43:15 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53590 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387847AbeGWMnP (ORCPT
+        Mon, 23 Jul 2018 08:45:13 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61576 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387922AbeGWMpM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:43:15 -0400
-Received: by mail-wm0-f67.google.com with SMTP id s9-v6so798773wmh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 04:42:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ia8dj8GP0dO3KcoBP71MGqZ7p7UT8Jn2L+gYB5Nml/w=;
-        b=ngVfKCcDMIsxm9Y0MnUsAWrPTOnZQ3McDTO1h6Ouzabp+ZGFeif4r7yA4yGh1VExD/
-         10xjlb0ygnaoUJJ1wyQqntPISuGwxUGETTuNc6K1PqcS4KK38lnZNVoecqkt1Feg/uT9
-         KND829GOSX3u21SjzsJcS9RzO3y4WXyxuob34Af7ZbUTYO6Dk5uugNkc2yeBTSntS9GL
-         K04ChdNAKm7f1yy2Y2hR3R78L/773w0f1hfUWssr5aPiugXAA30UWBdWZQmksSmw+t5e
-         lKlYD1szjzxSf74T2G3ah3Bp0FA5F/U10jQ7U8quXBM3k2EZY1Knlx7wlZp8YCdWs/8F
-         tYLg==
-X-Gm-Message-State: AOUpUlGaeGmntQjz6JMjadZ3ZUK7nrl79pGv8wQuUjNo04KkgTk88wgZ
-        +1r1+LUyXi3f3TosoJ2zdcw=
-X-Google-Smtp-Source: AAOMgpdpy6GxXy52SxSUl20oayFguvqBpfxOLbkhqu835LXb8df+T8xJh3KMN/SCs8iLRHUERF1l8Q==
-X-Received: by 2002:a1c:93d2:: with SMTP id v201-v6mr7049146wmd.77.1532346146001;
-        Mon, 23 Jul 2018 04:42:26 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id j131-v6sm9239040wmb.25.2018.07.23.04.42.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 04:42:25 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id B1B0A124257; Mon, 23 Jul 2018 13:42:24 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 13:42:24 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, pasha.tatashin@oracle.com,
-        vbabka@suse.cz, aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v2 3/5] mm/page_alloc: Optimize free_area_init_core
-Message-ID: <20180723114224.GA7104@techadventures.net>
-References: <20180719132740.32743-1-osalvador@techadventures.net>
- <20180719132740.32743-4-osalvador@techadventures.net>
- <20180719134417.GC7193@dhcp22.suse.cz>
- <20180719140327.GB10988@techadventures.net>
- <20180719151555.GH7193@dhcp22.suse.cz>
- <20180719205235.GA14010@techadventures.net>
- <20180720100327.GA19478@techadventures.net>
- <20180723083519.GG17905@dhcp22.suse.cz>
+        Mon, 23 Jul 2018 08:45:12 -0400
+Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 6053d99af2727ef5; Mon, 23 Jul 2018 13:44:22 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     lenb@kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: Re: [PATCH] Revert "ACPI / bus: Parse tables as term_list for Dell XPS 9570 and Precision M5530"
+Date:   Mon, 23 Jul 2018 13:42:37 +0200
+Message-ID: <5241523.N3ikpBZNhp@aspire.rjw.lan>
+In-Reply-To: <20180719110030.9483-1-kai.heng.feng@canonical.com>
+References: <20180719110030.9483-1-kai.heng.feng@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180723083519.GG17905@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 10:35:19AM +0200, Michal Hocko wrote:
-> No, I do not think this is much better. Why do we need to separate those
-> functions out? I think you are too focused on the current function
-> without a broader context. Think about it. We have two code paths.
-> Early initialization and the hotplug. The two are subtly different in
-> some aspects. Maybe reusing free_area_init_core is the wrong thing and
-> we should have a dedicated subset of this function. This would make the
-> code more clear probably. You wouldn't have to think which part of
-> free_area_init_core is special and what has to be done if this function
-> was to be used in a different context. See my point?
+On Thursday, July 19, 2018 1:00:30 PM CEST Kai-Heng Feng wrote:
+> This reverts commit 36904703aeeeb6cd31993f1353c8325006229f9a.
+> 
+> Since commit 5a8361f7ecce ("ACPICA: Integrate package handling with
+> module-level code"), acpi_gbl_execute_tables_as_methods is always true,
+> so we can remove the quirk for XPS 9570/Precision M5530.
+> 
+> Cc: Erik Schmauss <erik.schmauss@intel.com>
+> Cc: Mario Limonciello <mario.limonciello@dell.com>
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+>  drivers/acpi/bus.c | 38 +++++++-------------------------------
+>  1 file changed, 7 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+> index 84b4a62018eb..f61f8927d843 100644
+> --- a/drivers/acpi/bus.c
+> +++ b/drivers/acpi/bus.c
+> @@ -66,37 +66,10 @@ static int set_copy_dsdt(const struct dmi_system_id *id)
+>  	return 0;
+>  }
+>  #endif
+> -static int set_gbl_term_list(const struct dmi_system_id *id)
+> -{
+> -	acpi_gbl_execute_tables_as_methods = 1;
+> -	return 0;
+> -}
+>  
+> -static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
+> -	/*
+> -	 * Touchpad on Dell XPS 9570/Precision M5530 doesn't work under I2C
+> -	 * mode.
+> -	 * https://bugzilla.kernel.org/show_bug.cgi?id=198515
+> -	 */
+> -	{
+> -		.callback = set_gbl_term_list,
+> -		.ident = "Dell Precision M5530",
+> -		.matches = {
+> -			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> -			DMI_MATCH(DMI_PRODUCT_NAME, "Precision M5530"),
+> -		},
+> -	},
+> -	{
+> -		.callback = set_gbl_term_list,
+> -		.ident = "Dell XPS 15 9570",
+> -		.matches = {
+> -			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> -			DMI_MATCH(DMI_PRODUCT_NAME, "XPS 15 9570"),
+> -		},
+> -	},
+> +static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
+>  	/*
+>  	 * Invoke DSDT corruption work-around on all Toshiba Satellite.
+> -	 * DSDT will be copied to memory.
+>  	 * https://bugzilla.kernel.org/show_bug.cgi?id=14679
+>  	 */
+>  	{
+> @@ -110,7 +83,7 @@ static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
+>  	{}
+>  };
+>  #else
+> -static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
+> +static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
+>  	{}
+>  };
+>  #endif
+> @@ -1060,8 +1033,11 @@ void __init acpi_early_init(void)
+>  
+>  	acpi_permanent_mmap = true;
+>  
+> -	/* Check machine-specific quirks */
+> -	dmi_check_system(acpi_quirks_dmi_table);
+> +	/*
+> +	 * If the machine falls into the DMI check table,
+> +	 * DSDT will be copied to memory
+> +	 */
+> +	dmi_check_system(dsdt_dmi_table);
+>  
+>  	status = acpi_reallocate_root_table();
+>  	if (ACPI_FAILURE(status)) {
+> 
 
-Yes, I see your point now.
-I will think about it with a wider approach.
+Applied, thanks!
 
-Thanks
--- 
-Oscar Salvador
-SUSE L3
+
