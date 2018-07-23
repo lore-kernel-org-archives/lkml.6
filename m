@@ -2,145 +2,107 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBA4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F3EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FEA820854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 110BE20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:46:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="I/7GpVFQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FEA820854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ragnatech.se
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iNyLl/Vw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110BE20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbeGWVtK (ORCPT
+        id S1728451AbeGWVtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:49:10 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38875 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728367AbeGWVtK (ORCPT
+        Mon, 23 Jul 2018 17:49:17 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:32837 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728369AbeGWVtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:49:10 -0400
-Received: by mail-lj1-f195.google.com with SMTP id p6-v6so1692228ljc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:46:12 -0700 (PDT)
+        Mon, 23 Jul 2018 17:49:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r5-v6so1211803pgv.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:46:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=dAXSd2EnRP+gL6XfCUP1+8UfeP3EVi29NpStfd5o+XY=;
-        b=I/7GpVFQhDY9zq5zvQnY0Gn7PwLlK8tl5R0XmRdRRMW57islZ+z/59CaklnudpV5xg
-         ifNzT8jyDYvO+jWbusjmanHMr1jvLDrfjOrAkyf5rr68MTTSpboeHxaLi5Ne+fc9dzh7
-         rwGvdG4BF5AlR+/pROpQA0BssuBOZEEPmiSYepjOwri2igLlEbS0WMN18zsHKUnoofhh
-         xBB0MIakeX+DukC8GIT+LbHO+NJtv0foJdi9ERVyOhhSgCm4Qe04UZVzupYsf8mIIkRN
-         yjlaPThaI5RPP3V8NYE1remeIi1neMcsTg7jOFQXpVr44iO1E1QUjfi6obiR8kJ0tMAj
-         +oYA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bTpCZJm0w8EJVk9lSXRq6DLWEvagSV3npe+zkaXb9ps=;
+        b=iNyLl/Vw9fvO/xh4s/f+b2lRpOoWajhkmnKKTZTPqaYoR7Ar3gk2kjqDJ8gvzYpspd
+         y6llveh4xQ6NwHDug4WPya+lGHDNFYy1fx7G6XsAyyIoaQAOgNFTF9xqiG0/tYeqM9LO
+         YtK4tXmgKPwWRCdlCevddG4X+2tV1t34ByTlwwjMjz2QqdEtadapRbRbmzXwTjxyLo7m
+         IuDEmSIwdOTd42yVU4/fo37QHTfbHEj/jahtKsP/T+0WWgMeHW4mHXHPl4VU+ufrSsQO
+         DuOaubjhvcwuLJnCiJLD3DN/d+t+TyGouSOW6XjsTkjUvIYgLLsjrcvpAp7inNLRQsJa
+         wmFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dAXSd2EnRP+gL6XfCUP1+8UfeP3EVi29NpStfd5o+XY=;
-        b=nUDeQXSQBNW1TPjaeWd4G60oWOIG+q4SJ4u/NK2PwzHQ8tSIcQZdo28sWwwhPANC3l
-         fe5bT+WHb4cQBGhPmRXwxXVlWv0ZgNhb6j+9jHcSkRjFUJQx9EnCpADcpZyIIUQfE9mv
-         eMa/14dM0SODBRUFlg3FIzxakn2Yfgtgznz6XdTxVcGnbH3eXIgxZ97siGwNlV+y7GG9
-         dBAxsRp1vYv+byNBkXQOr/NEboaqeGnhJiGHDhfEUXcNQpW9hRzMPIwcu6PyhC2M59pz
-         0R/DjmlyzCkn/AkZA3DD8+Z9McvjUOX3HGVyOQKooBrAD75qt7FGsE4UlEg/9DwZNsUD
-         BBTQ==
-X-Gm-Message-State: AOUpUlFRZ5G+lVt9ls4PzTjUWCFd6L8OqNP9ZjL6GYWZxlEab685UBdA
-        BGF3IK44V+m3Msy6Co17o/foFA==
-X-Google-Smtp-Source: AAOMgpds0y6PVG4DAF3EFDxte/ulE/SgdJTKThbIfkbXinLCkaslAHWAiCHW8yapAbXTNu/OhRaihg==
-X-Received: by 2002:a2e:8:: with SMTP id 8-v6mr9894877lja.112.1532378772297;
-        Mon, 23 Jul 2018 13:46:12 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id r64-v6sm1543180lff.90.2018.07.23.13.46.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 13:46:11 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 22:46:10 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/12] i2c: rcar: use core to detect 'no zero length'
- quirk
-Message-ID: <20180723204610.GH1432@bigcity.dyn.berto.se>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-11-wsa+renesas@sang-engineering.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bTpCZJm0w8EJVk9lSXRq6DLWEvagSV3npe+zkaXb9ps=;
+        b=kgeXcOnSuN4CSEULrlWIw74odhrnYyX3HC/iYF2FnYBD0fknyeVKAmCxoeBD1GewL1
+         DzwFe3cs6Z0bZaq5bYr9neMsnyOok2YRWO0e8ewqnjkZv1HoKPpHrAM0TTLtD0OcsINS
+         Rfb9SNrJf3Xne//Ii17pXyXZmBphXxMcUGG+NGWg9dA9qj6jriwox7FdMBKNmWTxPScM
+         3rx2Ii08tSyfiJcKHeEGKEpednWGgf8+FVsnkJiNWzuZiG5SqRwr6hGHXHe5KBTTMW+g
+         wY/Krg0YGqrnHjyYzgkfNlKHj8IL1LULQglSUC+Vturj/HGplBIaUewWVHTJ4XIIkV0c
+         ImNw==
+X-Gm-Message-State: AOUpUlGI9lKT/pD6UtLSsSIpr0yPV+OhmBq1/dhMFRWjoLTw1QKaOQk7
+        j6E0NA7nQiBdbWHFnQmLS5ZnKmdx
+X-Google-Smtp-Source: AAOMgpcoZhai/q43Q4frn9w/RnPPcK/iQyJpa9A1b4pzCOiaSKif79nVfP0iCgm1AtNzbyufa0t7Sg==
+X-Received: by 2002:a63:735d:: with SMTP id d29-v6mr13709312pgn.156.1532378780024;
+        Mon, 23 Jul 2018 13:46:20 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id t21-v6sm17122246pfi.73.2018.07.23.13.46.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 13:46:18 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 13:46:17 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 4.18-rc6
+Message-ID: <20180723204617.GA14487@roeck-us.net>
+References: <CA+55aFzMheDA-2z=MdGgJrz-REcrknb+4OEvRKaJipm+x6xEhw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180723202617.15230-11-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CA+55aFzMheDA-2z=MdGgJrz-REcrknb+4OEvRKaJipm+x6xEhw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
-
-Thanks for your work.
-
-On 2018-07-23 22:26:14 +0200, Wolfram Sang wrote:
-> And don't reimplement in the driver.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> 
->  drivers/i2c/busses/i2c-rcar.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-> index 2688520110d1..791a4aa34fdd 100644
-> --- a/drivers/i2c/busses/i2c-rcar.c
-> +++ b/drivers/i2c/busses/i2c-rcar.c
-> @@ -796,14 +796,8 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
->  	if (ret < 0)
->  		goto out;
->  
-> -	for (i = 0; i < num; i++) {
-> -		/* This HW can't send STOP after address phase */
-> -		if (msgs[i].len == 0) {
-> -			ret = -EOPNOTSUPP;
-> -			goto out;
-> -		}
-> +	for (i = 0; i < num; i++)
->  		rcar_i2c_request_dma(priv, msgs + i);
-> -	}
->  
->  	/* init first message */
->  	priv->msg = msgs;
-> @@ -890,6 +884,10 @@ static const struct i2c_algorithm rcar_i2c_algo = {
->  	.unreg_slave	= rcar_unreg_slave,
->  };
->  
-> +static const struct i2c_adapter_quirks rcar_i2c_quirks = {
-> +	.flags = I2C_AQ_NO_ZERO_LEN,
-> +};
-> +
->  static const struct of_device_id rcar_i2c_dt_ids[] = {
->  	{ .compatible = "renesas,i2c-r8a7778", .data = (void *)I2C_RCAR_GEN1 },
->  	{ .compatible = "renesas,i2c-r8a7779", .data = (void *)I2C_RCAR_GEN1 },
-> @@ -943,6 +941,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
->  	adap->dev.parent = dev;
->  	adap->dev.of_node = dev->of_node;
->  	adap->bus_recovery_info = &rcar_i2c_bri;
-> +	adap->quirks = &rcar_i2c_quirks;
->  	i2c_set_adapdata(adap, priv);
->  	strlcpy(adap->name, pdev->name, sizeof(adap->name));
->  
-> -- 
-> 2.11.0
+On Sun, Jul 22, 2018 at 02:23:39PM -0700, Linus Torvalds wrote:
+> So this was the week when the other shoe dropped ...  The reason the
+> two previous rc releases were so nice and small was that David hadn't
+> sent me much networking fixes, and they came in this week.
 > 
 
--- 
-Regards,
-Niklas Söderlund
+Build results:
+	total: 134 pass: 133 fail: 1
+Failed builds: 
+	sparc32:allmodconfig 
+Qemu test results:
+	total: 172 pass: 172 fail: 0
+
+The s390 gcc plugins related build error reported previously has not really
+been fixed; after feedback from the s390 maintainers, suggesting that it
+won't get fixed in 4.18, I disabled GCC_PLUGINS for s390 builds. This is
+not my preferred solution, but it beats not testing s390:allmodconfig
+builds at all.
+
+The sparc32 build error is still:
+
+In file included from
+	...
+	from drivers/staging/media/omap4iss/iss_video.c:15:
+include/linux/highmem.h: In function 'clear_user_highpage':
+include/linux/highmem.h:137:31: error:
+	passing argument 1 of 'sparc_flush_page_to_ram' from incompatible pointer type
+
+due to a missing declaration of 'struct page', as previously reported.
+
+Guenter
