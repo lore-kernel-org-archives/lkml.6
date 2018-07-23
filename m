@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CC5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD93CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE2A220854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE2A220854
+	by mail.kernel.org (Postfix) with ESMTP id 68C8520854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:32:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68C8520854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389624AbeGWNcx (ORCPT
+        id S2389632AbeGWNc4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:32:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46560 "EHLO
+        Mon, 23 Jul 2018 09:32:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46568 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388638AbeGWNcw (ORCPT
+        with ESMTP id S2388432AbeGWNcz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:32:52 -0400
+        Mon, 23 Jul 2018 09:32:55 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E96CA40B;
-        Mon, 23 Jul 2018 12:31:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B71C840B;
+        Mon, 23 Jul 2018 12:31:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 15/28] ipv6: fix useless rol32 call on hash
-Date:   Mon, 23 Jul 2018 14:25:15 +0200
-Message-Id: <20180723122426.156442626@linuxfoundation.org>
+Subject: [PATCH 4.9 16/28] lib/rhashtable: consider param->min_size when setting initial table size
+Date:   Mon, 23 Jul 2018 14:25:16 +0200
+Message-Id: <20180723122426.192114453@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122425.241418073@linuxfoundation.org>
 References: <20180723122425.241418073@linuxfoundation.org>
@@ -50,33 +51,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit 169dc027fb02492ea37a0575db6a658cf922b854 ]
+[ Upstream commit 107d01f5ba10f4162c38109496607eb197059064 ]
 
-The rol32 call is currently rotating hash but the rol'd value is
-being discarded. I believe the current code is incorrect and hash
-should be assigned the rotated value returned from rol32.
+rhashtable_init() currently does not take into account the user-passed
+min_size parameter unless param->nelem_hint is set as well. As such,
+the default size (number of buckets) will always be HASH_DEFAULT_SIZE
+even if the smallest allowed size is larger than that. Remediate this
+by unconditionally calling into rounded_hashtable_size() and handling
+things accordingly.
 
-Thanks to David Lebrun for spotting this.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/ipv6.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/rhashtable.c |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -794,7 +794,7 @@ static inline __be32 ip6_make_flowlabel(
- 	 * to minimize possbility that any useful information to an
- 	 * attacker is leaked. Only lower 20 bits are relevant.
- 	 */
--	rol32(hash, 16);
-+	hash = rol32(hash, 16);
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -783,8 +783,16 @@ EXPORT_SYMBOL_GPL(rhashtable_walk_stop);
  
- 	flowlabel = (__force __be32)hash & IPV6_FLOWLABEL_MASK;
+ static size_t rounded_hashtable_size(const struct rhashtable_params *params)
+ {
+-	return max(roundup_pow_of_two(params->nelem_hint * 4 / 3),
+-		   (unsigned long)params->min_size);
++	size_t retsize;
++
++	if (params->nelem_hint)
++		retsize = max(roundup_pow_of_two(params->nelem_hint * 4 / 3),
++			      (unsigned long)params->min_size);
++	else
++		retsize = max(HASH_DEFAULT_SIZE,
++			      (unsigned long)params->min_size);
++
++	return retsize;
+ }
  
+ static u32 rhashtable_jhash2(const void *key, u32 length, u32 seed)
+@@ -841,8 +849,6 @@ int rhashtable_init(struct rhashtable *h
+ 	struct bucket_table *tbl;
+ 	size_t size;
+ 
+-	size = HASH_DEFAULT_SIZE;
+-
+ 	if ((!params->key_len && !params->obj_hashfn) ||
+ 	    (params->obj_hashfn && !params->obj_cmpfn))
+ 		return -EINVAL;
+@@ -869,8 +875,7 @@ int rhashtable_init(struct rhashtable *h
+ 
+ 	ht->p.min_size = max(ht->p.min_size, HASH_MIN_SIZE);
+ 
+-	if (params->nelem_hint)
+-		size = rounded_hashtable_size(&ht->p);
++	size = rounded_hashtable_size(&ht->p);
+ 
+ 	/* The maximum (not average) chain length grows with the
+ 	 * size of the hash table, at a rate of (log N)/(log log N).
 
 
