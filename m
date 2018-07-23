@@ -6,108 +6,100 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D94EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1BBECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 106DE20779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:00:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38C5A20779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:01:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="vo8iXNml"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 106DE20779
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="h44cSYVr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C5A20779
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388862AbeGWSDF (ORCPT
+        id S2388904AbeGWSDp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:03:05 -0400
-Received: from mail-eopbgr40041.outbound.protection.outlook.com ([40.107.4.41]:36744
+        Mon, 23 Jul 2018 14:03:45 -0400
+Received: from mail-eopbgr40077.outbound.protection.outlook.com ([40.107.4.77]:16672
         "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388329AbeGWSDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:03:04 -0400
+        id S2388236AbeGWSDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:03:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lDZKIHyR2034iUyRWQVawtltx+astMShveJjBdzqC+Y=;
- b=vo8iXNmllFkxJun3vOpUrUJBfK9I33fIp7uB0fNaEiYUgQOuqNGofIIe1zs4cxw7DPmNd5wxxc7HRSui7V3hvObXxVp/C1tZsjddR1lKCFFsBMOO3ueHAdgtR4+Sr+LD+kyfcsLDJw6ZwCMQeHrEps2H4rJMSf8RbJm2qwlUFLw=
+ bh=3xe4bTCOnz+rR7Mysxu8fEOPpliQmrKVSBXiujyPOj8=;
+ b=h44cSYVrKx2WmHzWAuya+p4sqKhvxC3eLsLUklKt7sHw5Hy9r4nJn9RnYg/IBNcIBpkIiPdLOMj9pEiFbYb/pzdOGwLwE/jyz4JVxbZz8PsBZPUYy3n1Vrhdm1bAMEXC9AIxZoLqfF7BYA//X3NycE4yBcGLeHpKeJ8XXC6UmIo=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=roy.pledge@nxp.com; 
 Received: from rhuath.am.freescale.net (64.157.242.222) by
  VI1PR04MB4494.eurprd04.prod.outlook.com (2603:10a6:803:69::21) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.16; Mon, 23 Jul 2018 17:00:46 +0000
+ 15.20.973.16; Mon, 23 Jul 2018 17:00:51 +0000
 From:   Roy Pledge <roy.pledge@nxp.com>
 To:     devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
         gregkh@linuxfoundation.org, leoyang.li@nxp.com
 Cc:     laurentiu.tudor@nxp.com, ruxandra.radulescu@nxp.com,
         horia.geanta@nxp.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
-        catalin.marinas@arm.com, robin.murphy@arm.com
-Subject: [PATCH v2 1/4] staging: fsl-dpaa2/eth: move generic FD defines to DPIO
-Date:   Mon, 23 Jul 2018 12:00:22 -0500
-Message-Id: <20180723170025.2259-2-roy.pledge@nxp.com>
+        catalin.marinas@arm.com, robin.murphy@arm.com,
+        Roy Pledge <roy.pledge@nxp.com>
+Subject: [PATCH v2 3/4] drivers/staging: Remove fsl-mc driver from staging
+Date:   Mon, 23 Jul 2018 12:00:24 -0500
+Message-Id: <20180723170025.2259-4-roy.pledge@nxp.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180723170025.2259-1-roy.pledge@nxp.com>
 References: <20180723170025.2259-1-roy.pledge@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Reply-to: roy.pledge@nxp.com
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain
 X-Originating-IP: [64.157.242.222]
 X-ClientProxiedBy: SN6PR1501CA0021.namprd15.prod.outlook.com
  (2603:10b6:805::34) To VI1PR04MB4494.eurprd04.prod.outlook.com
  (2603:10a6:803:69::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7709d918-d4f1-4ea3-a1ce-08d5f0bdd6c9
+X-MS-Office365-Filtering-Correlation-Id: 8e02fcc9-0ed5-4af1-f574-08d5f0bdd9c6
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4494;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4494;3:4KwJdjx4R/CMTvflFmG3dnMCN8hlYSLWWPUShA3tVEcTeP/6WqcZoX5dUIL2zIG/IZqvMLF73ec5pPNpA3t6AliFCYBToOgzG+xym79t0td+8BI4A+LoqXXSMJsrO13O+SAwzkWbiaJzTPlROtkI/JuUYr+kKRliXCs3dHUuOEjT2VzsyqnFTigWpePyf6QFIKwQs7YmMzDET4p2DMUCAKgU+OPx6C6ly6ixs4v2IUcFCuuVBQVGYJK1FKdDNAl8;25:nG/AsBk6XY0G7hygfkSTiXy0tKXHulbrGV9Y1kxqLIQeS5i8KaCFMC9VSRpfYOgd+3f8JByFgShYASTg4tmD+j6GYoPfEHrgpmP+XHJdfKdXgl4cN714kc6rBW1OkYh4a+pY6ewanx7w/vOO3B5Xq+yhJZeq0EVdMeD5lSSxtOXIC5DvW8K3U9xCQXO20qDzQK5U292ueH5TkGhYfo0JZKjnhdYrqG2CI3qXwHlWGuOotKsMVp/KG/zoZprVgD2nGflwahuZluopzFe4XeaCgYy6fAv7HevXbV4Zw/rQcWnc1VW687f9rMf+jA+iyVP6JF8r9dB4cQgYus0grIgyLA==;31:MPrMZXmaUBjMIZi8C3QCFrMKsb1vY3wJQOA/2UK3+3yH0lURHV+K7FsIi60IVO7tgJNNsI27VbThcTDjxCQBjeDMMoLoEzGsCO0ZjOEfX8vIwykK5B0JAuIJcIYTEg68fXQ6zVwa4f2cC5vVxLYy5/iIUJwU47Re6nU2ZqgLQmAnxOJdh07SgMUtq17q6Kg2ajG4krE0i9O8B5ouju49L0R6Fm1ErQkZ4WiRGw6+TC4=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4494;3:FUGf6iEGLJBlGNH0/2yDF5G+xtDA6WmUZpRpbfIFECcuME2Ec1kZ6cHffqX+a6Hq8bf/AWC+A1R4UXq+mAgDVp+c/0Q2um5svj5B/cdAezVXWYVovMpX2t4ffp+p3KHXMbEfVyjZi3hIAbm4hqUJ4Y0IohjGWxWaqh7zOGcfsDyn60Xg3Im0aeDyD7gYFOd9qLm3kDWZIXI9RLV2eghQokHRM+o3nFFPEYl0o25M8TQDItZ07vMH8joLp7kg8hPD;25:9O7Xh+U+uRtCdpzXH8wrTDF7kg3d+THNTyYGXYg2uRLl+gGsU57qAbphsNxshXy0Io4iyI6ZkhSqDXqyyIFCiGcaFNB/pp79m+/MgXUDxMzRwl+98y8byQeKzHSAZHLj64BOVCWHtuoGCk+Ch6PoEHEHwo3AusjnA8o1SaGusANqKCHnK3wDNX7ikKqEArrjNJEumJQI2YRG5Cv5WBOb75PFlEvlg6eRwrwWVEdUW/LVZAE6nIjW/ndeUgqROcZQYsT6Uh03aHD76slm9FvXUofYgv9mNkv3npJShkgJfpIh+xHU7U3sdvu0Aevmp3eddW7dHd0D2BvHEyeY+5+2VA==;31:havPb8qiWLakWnXn3LXecGhhu0c4kPQHLtERUeK0OBs/9MUlXjr6SH76hdoTlNiJiY3lyKUsi/ixK0gzrIfBT8t+H3GOJFZg3l1sMxNKw7LAqgTohattU1npV7pFKgfo99DQTzxPibD/ThbeEfx9OWcqdw9TRRpmzqorNlsFW8p6d/IHTtOGvnd5n8xmFDjC4qVZDVCIL/ZxR9/oCQDwOEgBapeIqWXAnZjdiOPEegg=
 X-MS-TrafficTypeDiagnostic: VI1PR04MB4494:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4494;20:SgW0vcM5ttDfPpIxbeH3CQyHLGoTdFrjw+dJYTYTrkm+XxVG4nRCmt7xT0ayUm6iY/TOfMgwLt3WnfeLNY1EARa3GQ4rFzcXFXTTE4oFrD6nr1HNdPJUDx3h969KccFR86qNFzvmv627J8W5TUT/57ArUaxnpHRlhw7hAMdZlUwX55c0TCwU1XLv2IkeCMkcCM1+MkegdVkx7PgIUZMMhhhwiRS1aVfDYe8Z2D0BdYA2iOahgUQ6rNHYjgXXLzcDOmMfC2664zKP2BW70lceScDYClwZyT/tksMoBb+MdEePoCLe9lnN7lSafc6B/6brEmAwj0rSZUB+UOumTf15z/SNNJ0AgQrGfreRkLzY+H6RBcfbh5r7jPOJv9hMeg7+7lWE6ur7kW5gUE94ERKsF7ZVzxms3SxOTZTMrigs8aL0lmd1VmKBVqCuf/txyLiim/m5VzSmF1w4uXoPNFbqBUBS/9CXbjhscdVTPmvEOqgngTtjs/KUq+zipe0D9tS2;4:0KgfwQoWhaImRfN/tRhC32MNlKCRIdrUmnLTwTmlNdweeleodYfurd6DztXgPbfFhwxDFwlwSFBQtZLpd185EkS+BMBP/nLRWrSY7lDwXeVqyZOK9B3JufMyRnGkGqV/JIF58L8JO4NlE3bjAPbZLRUy1mClvTJMSpMrZMLpNA60Sb0Lzqb5TORL5sybGrfVdeki1EIBBMHTjAZjrMv9V/LPeh7ZUbOM2ggQZFc8/naBktXcvsHtHNtZVtjA11vNG1pv9PJV/rN3Euwsjsbc/MWka4ihI8usKx5JSAf9HKjZgHAfCvfv1usUmYeF+At/
-X-Microsoft-Antispam-PRVS: <VI1PR04MB4494E27143D5B07AA83A52A286560@VI1PR04MB4494.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4494;20:57MEq63nqfOKukfHEYhK2GL0aQZQCGGCZi7ha/FfNkmwK+riXg12/54Hrr2vWtRC0RdyxcT5g5QhExOqK5h/YRFvoD4H79PRTVAKP+kUcI7MGcJ2gaybfGdgEkb7kYw9ool3H+NotZb7siFq4Ug7oxk79j38OHBgoVJz2HWoEgS4dL9xv26qDjGSLeZz907uuVP52gyaoRfA8pE2JcDBk06DCjZziV1RJg7/PMphaigtOij+ZHfdZQHHxStpIiC/dLzqPoxyK5npxCRYixbtMHO03D19ZTMgco09y91DU1B6+yd9HcV8u8xVNKpeNtxfL2F/2nZOknW67SdwqxFZidvZEZIq0G4HJy8xu9S3FKt7V1WZlRIPxra2UVNdyNCGv46OCcLhV9XyB4vdfBZZcSCj+BI6tfV9XhhGoe46pJGbRrK8txkLbYHVlGLf1aYYX7lhaJ8T/G4iRLxu3eDJdp/FQh7Oi59ziVecR1RyNyT+lwVnoA+hRdQibcyG1QxC;4:gl6bdPEW+LlKL4eu4NyKjE09/O9fKuLq2wtnEHcVnVR4SHtXUV1VI0ujyX8/v8E2pL51l5Ck2c+ogQqegmc/EFE7VusqiBR5pU04lHEd7TaeurPxfCaXra7mJXoRfDDZPw9qgiCVRZ04v66VMXqj36DbIT67MxGusoINMmWX3nLHhOC5sJj8iQ0yfhn/llvGCaJOLITQg7fT/qO9Aoys+bwn0B9n0zqeaJVVAgz9y+pf6WxX9gmEEpF4Ie7PhsSCzeOX5mmt6GqS0rye8adexM2Bb9tR7qHe4OdPusGfcHpb9q6RMH/qjHLMK2hUkc6n
+X-Microsoft-Antispam-PRVS: <VI1PR04MB449473E03C4C7A32EF975E8186560@VI1PR04MB4494.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:VI1PR04MB4494;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4494;
 X-Forefront-PRVS: 0742443479
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(39860400002)(366004)(396003)(189003)(199004)(7736002)(386003)(6506007)(76176011)(105586002)(5660300001)(6666003)(186003)(2906002)(16526019)(6636002)(26005)(47776003)(8936002)(316002)(81156014)(3846002)(6116002)(50226002)(53936002)(476003)(4326008)(68736007)(106356001)(446003)(11346002)(956004)(2616005)(25786009)(14444005)(43066004)(6486002)(575784001)(50466002)(66066001)(52116002)(478600001)(8676002)(23676004)(86362001)(2870700001)(3450700001)(1076002)(44832011)(81166006)(36756003)(486006)(305945005)(6512007)(97736004)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4494;H:rhuath.am.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(39860400002)(366004)(396003)(189003)(199004)(7736002)(386003)(6506007)(76176011)(105586002)(5660300001)(6666003)(186003)(2906002)(16526019)(6636002)(26005)(47776003)(8936002)(316002)(81156014)(3846002)(6116002)(50226002)(53936002)(476003)(4326008)(68736007)(106356001)(446003)(11346002)(956004)(2616005)(25786009)(14444005)(43066004)(6486002)(16586007)(48376002)(50466002)(51416003)(66066001)(52116002)(478600001)(8676002)(86362001)(3450700001)(1076002)(44832011)(81166006)(36756003)(486006)(305945005)(6512007)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4494;H:rhuath.am.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA0TUI0NDk0OzIzOkM4VXB2ZEdCR3gxY0xGM25iSGphYVFUZ1N6?=
- =?utf-8?B?Qkp4ZUdiSXRENDhJRGJjR3FoenlMT1FpaEJXdnZlajdONERZYkpHQXhPQVZL?=
- =?utf-8?B?bGk3d1l6QlI1Wjd2UXhPaW9wR1dGWndaZmhYNWZIb0RpMStQQW94bFQ1a1N0?=
- =?utf-8?B?SnIyTktKR1E0Z3RjdkE1WU1BZlVKTGY0UE1CY3h4Z0RxOEFzbUZ5Z0k4NFRu?=
- =?utf-8?B?d2hJTHo2M0NZd0JSOVZlY2xFZjBGdjRna0dXQ21WOGg0NVhFN3I5dXQ2TlhR?=
- =?utf-8?B?WUpaVjg0ZWZzM1pmamJrS2lOV0VDSzMrRFdIQm1SK1pEc2JPQVY1R2NIZTlm?=
- =?utf-8?B?UmxlRVZRd3AweVNOMVQyek55TFlZRm92K25KSkJmRXVmbFNiMjVpVVVxbjZh?=
- =?utf-8?B?NVIwZUREV3JTN3JjRTVZODJWdlNOT2x5bk9vdzNYVW9rMld3RUpuemhqRlEz?=
- =?utf-8?B?MytqM2dWQTBEaEQza3VpVjBRNXVOUmE0VWphR1BoZXZ3aHExWHV2N0FFNk9q?=
- =?utf-8?B?L3hzVmxsNGROWjZ3ajlHWVhkbmFrbFlSY085Mk9tZW9pLzByNEVLY1hoUXlQ?=
- =?utf-8?B?bi93T1YyOUt3WDBiT0hlNVpyMUd5Y2p6bG03WHd2VE9ncVpOMy8wTjZvZVFN?=
- =?utf-8?B?blg2TW55WmZEK3dLdFY1MkQrOWliRVJHd2ZiaSsycUkvbXBZUUxIa0tlY2N0?=
- =?utf-8?B?Q3o2QTk3ektxM3RQM3F2d3RURzhiNkdQL3YxRnB5VS9vbDYyQ3I5KzBEelRX?=
- =?utf-8?B?MGFGKzlZNXhsZER5NkFZV1JZbEdlSGhTTmpZc2JISnNLMHNVL2txSjBmNzdP?=
- =?utf-8?B?aVlianBzT2xZWW9CMHJHakp6Zm9OT1o0QnNxSDJLWHpKVkNHczA3aWx2MS9v?=
- =?utf-8?B?ekJhMElKTmFGaHFmL1NCNUxoMFhDK01SSk9ZK3JETXh0cEZHeVlUL0MrUFFl?=
- =?utf-8?B?OGNacHVHVzEvR3NTWHVWZFhrVTZUYitKUVA5RHVmMXVFZW9OamJwRk8rQ2xv?=
- =?utf-8?B?emtLVTdnUWhRS0ZyWjd3S0NnUCtDRGlqUEhJNHFja1ZtWExhaG1WNU5yQVZz?=
- =?utf-8?B?ZEFFUzQzYUVjQzVrR21TT0dsWnNnR3pPUFVRRzZsUkFQcTNXczhpTUppQndz?=
- =?utf-8?B?Zk8yVkE2eFdpVklGdWl5emRGZmxyUXQ4ZUdmaDdiRnI4eE9JVUs3emhySHQ5?=
- =?utf-8?B?bVhkZk5oNzlZRkNCRVBsK2lOb2djYVRtYVVGNnd0UGJwRmFOUWRCeHl5RHRj?=
- =?utf-8?B?VnNsQlFlT1owMkVUb2pDVDduQ1EvcXdJUHBOZTdXQVRkeFNhY0ZKaUdSbUpL?=
- =?utf-8?B?elU3ZUlhdmg5YzdvOG4yU25hc25UVlpZWVRzMkVrYUtsMmw2NTBGUzVqZ24w?=
- =?utf-8?B?UDNNK2VjL3BkMW1xMm5JTlVhQnJzT2lqU1QwaFBXYzg3RTM4aENKL3BFQmhG?=
- =?utf-8?B?bzBpQytXb3RRRk5abUZxbkVwWW0ySmprOTVlclFmdE9NZk1xd29MYitTL1Fa?=
- =?utf-8?B?alA0Q2xQWEFHMGRWN1dMU21jOW9hVjFWallPbmdvMzQwWTlENlYwQ3RqbHhj?=
- =?utf-8?B?RWhTOHp3aXRXWDI2ZktZNzk0NXplcWtDM0g1VU5hU1hvVm5QanU2RzB3Witu?=
- =?utf-8?B?emEvdjFZMGFWS0U0VjN5T1RuMHg0V2pZdFFWc1VGSWNmSWlpRnNWeEU3WXRI?=
- =?utf-8?B?WTVBWWpOQ3hZTWYzcFEzMDkxZjRXVmxiUU1kYUorcnA1N083cEdyUFllbC8x?=
- =?utf-8?B?Tk5Yb0RCaVR6Q2RtY2s0dz09?=
-X-Microsoft-Antispam-Message-Info: TV2k/+VqXFFkGxYYQCqdNAzJT+pExl1aEja7whD9h8mshn6k4J6Mkbcq3SnJdUtHcRfWoFQAQaJOUP1r1s4pQqjOY2TxJn0Z8PYBpDkiDu69G0YyVtwPnCAq1vU+z3AwaqoHVngOtHExzB2lfD2HxSgDrpa7QsoLcXk3kiCRU3hjWHFv9S5EA0AS71m+AAvI62WujuH8LuTdU6KmxvJnZV/eEiRRnSSfi2EslKcx90fitR+IVUHUlqEhd2YndtxURXl6T/VsY7XGL9amoOq3ghwA6kjYeogSC7PYdG6c8TU83yfKcLXxUnnZEQd9PhIM1D7TDPQ2JnX8mK+6h7QEZi2kuWVJZIAXCF/lEItNfao=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4494;6:6qHG/QAcMNx16/yyY0ZqXfMD4p60cXc8eEVyZcnAnpb8KeRwYv642koF7AupjaCvTjCYNhm5HviaoRgxHTjP0GAzi7yz4sTHMYzpzEvsyWEKV3UziEn166avp8jkOqQcsstsx4qH7vdTTCBzMvmdrPosTZShAzut+oIYcUDQ9W4xbOEetxaZ1ZISWd5ApkFrdH6uBWaRbrZNKmS9Pg7Ifw+GGDSZwmD/lsrpmxePwX8MSNeBw2Xius1xxuCTXXiYWptyxZ63wRyUE4S5ytmk8KWc6GXPpHdSjkS6M0XS4K2+rBx4ihbLdroekF4PiitrP9fz561VFlo5ZK2RptLLaI5RfyRTISVFXW/rmtw2b7EEn0BOlkVjC+msO0LkPQ1e/gDxwZXRYVsbQhO5eCgRnHWfAGnRUvC4JKh0r+rnJ8h3vIYzouf9QeZREXOpBM4UW164ByY3sqKuchFBgo34rA==;5:LkvIWoeXMF7xW9dWSiFSwC6f+EsU3PG/0DrSvBIuGM+sCbbOxlYber15accoIJNplNQZaq5wdO+BBZ3OuygVKKtGrrkOdtusbS1ZJJkO862pJDPnEix2kG6geBbvl1sdLwQCVHrPG/Zr7yu3Ou6t9k4292FfPotF8mPdvmiGXqs=;7:Cn46CoprVF6+iU54GVnKmfd0HH0C3jF1V+EnIXU+kon8/unwhCFjZvUPSXj/wTN5y2mrRdk5wnncCx5mjRXhHMLMhK2sq8M3JfpskQCV6jhF6F85aFJaDQL8FDpb+MaGiS/GMUB8M4BErSjtEjoGXW1YEQzLbxKFvLzqFSkRUvxzGmocgWEB1c3wX2w3QxWK5Qxnsg4apdVyZNRagLA0QYLd1wS91Zu6TZC1rSGs+/zR6nnVevWQj1E4KD+ASqZO
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB4494;23:ENWOn8gdDzycdfXqRExCI2M7qb8T9GiBM8iYCc6rG?=
+ =?us-ascii?Q?mivYRV9weBmVND/Das6076QXHJCQQN6YN1gcnEZknM9bZD1aB51Eq7FOQt7w?=
+ =?us-ascii?Q?2dE99CSkvQ+JwSvflB/7b34BiAkHH0t8kacRlcYj0ThL0s+maJPUclwTu+Mr?=
+ =?us-ascii?Q?03//JRTlL0CMKygOcZ3WWwN3f4VImmVFoQY9EjrOAFtmlSFaCM/SbpFB3vMf?=
+ =?us-ascii?Q?6/6JU53QWMg141o9zJtnt9LpBfprURDc9JHQS6J7/qocO3S6A/skAoC02Rc0?=
+ =?us-ascii?Q?7KfPN7KDmW1HwpOlxo1P9O7FPo80kxY3eSwsdHai7qNWSLo3pWMzKvrEx/cK?=
+ =?us-ascii?Q?cTHrUb+SqOUe7J9y3xDJ4yr+CuuTAdikAmkHR9A5v9/rZT5BOpcuH4glZnl0?=
+ =?us-ascii?Q?4BpFh6tO2rBbYcHKVJwvfkTLw9j7z/DpiQj5KrrSlVtyoHlci0+BzZOYhq6E?=
+ =?us-ascii?Q?7EPlz/3ox/ELCydFUu9plaOPRhiddiHiyxSZjhmYBFLyPtZwzjd9I/+Fx9Ym?=
+ =?us-ascii?Q?MtYYVSiH+pc573g1Yw0eLlmWwgfuSy66ZbaeMJXArG3IhxMcJoj79L4bzqIc?=
+ =?us-ascii?Q?/Utdj11jvIMm+UqzrHBb2Z/L6v0ksB3Bspp9W+uvI0UbM7hQ+9/eGwjCush4?=
+ =?us-ascii?Q?SJDcx99NrhmF++cKvr3k3oqfTvQRA/5fqx6QLZxUGqcdiOCyDasvtfvgqGTA?=
+ =?us-ascii?Q?QEJJSEktOesenunxHilyAe+Bnc77GeitEM++Ec85eZGppY9OG6M+D6tevwmE?=
+ =?us-ascii?Q?esWjwqpFr+ttJCNsj/9KX/66/4z5fHpIL9ytg+MVt8XWsorFY0cg+pnlFh8X?=
+ =?us-ascii?Q?5RW9pei7l5OXBT6my/+rPaY75B/JahA8CLi/7lPboaqXfm22/nljOBGo4C2R?=
+ =?us-ascii?Q?0cDG4ZTrMM+ha31T4WW7+6NToZ7cFi7DibmgNuvQkG7NNi35FwUc6d77Mmo4?=
+ =?us-ascii?Q?Fh3ZY4V/EYTtLSqGMtkFNwVlyL/y9YAD+jNR61Fqt/AuraRzvzI5R1c7ZPNI?=
+ =?us-ascii?Q?0OHrgpo8LxNgwKcKs/caPNxCu7ZROUy6mZ7WVf6/Yz4rOWt5JJYU9s/8VdwN?=
+ =?us-ascii?Q?xKVALvTOKMR9Nv+mctl21WJRVEN1iLAic97qcsMQ5W6AEmtAUPCpEFU7fcuC?=
+ =?us-ascii?Q?hpdxr7ifGCY62GBMv+OjGJR5To5Ed3kNlfZGDwJfBX1lyxMZZNrOSg1GuDAX?=
+ =?us-ascii?Q?uxljv5HEH0qHXAGBK+JqFPtDAGRHlvcF4+sRDFrdq35JOtwliUqslYdkZ1ph?=
+ =?us-ascii?Q?pC2GXO0MA/rUkCC1nwfbJWGkCi+GLe+3ftx589H?=
+X-Microsoft-Antispam-Message-Info: 6aHTElT8uPH4tmDdT2VI5Oou1VUDphgyzWnLoYENMnRR5j91lXTTkE37EUs+gHuE7kntAS2uTfmv5XpB1QEGrrJ8y9tbtpzXTrRq3NSjQzmNHOtGLCLhj3bRv0PeF/ELCvsZ2v6npoDPGwAVyBUfZjcsrtcMYHlNW5HeG1/jqCV+P+Akozezq7EvLlDNrY6F7B5JPZOcNCRBpoiHnUe+1zOVKryA5iD1mdR97y1+XOrEFmAIr/q9Z3o3Df31rrPOWSwUbjU2aWEpedrFLMjmIGzw/l+AfE2BCwJ5sBJYBResl+Xa+DynwUBgNLzf0wZpGDkzI7DDgIixHdEcvEuPm6XBTfEzzdzkixcexhbMEd8=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4494;6:fJvYk90Z5aHfDa9ZcL1886ouh5UXD7EmpoRf+ldAtB51n9ZCrv5Qz7IrhXK3fl61GOx2BYsrGgW95hhTPn7taUdT0Oq+ZbWXFHKzkSIq3N45SkxGpLimjeJRqwUvzf5qkjhgLexVHm3PUZXi/3CPJq9XOhA7BFFAE8nRwUmhoKdkGTijw3c4HWWnkzQkQqI+VEQxIcx77SDO7JXLlnj2yG00gfi5zkEy6FM/KmQ2WAqhBQpWt7gasPldND7jQlWSM55GlazUOy0PLQhVI7IQoj3i5I/3Ym+tio4KsscWdkSauzGsJvGv9nlVjY6cpmbFc7U47nL2T2IWPiDWZh70KPfdEbKr7qSGiPcPKp11WfnFx4BYUXbxjw6Ab0csAg3z98KUe6kVN4J463WUWLwgAqwKZqZ9dSufKzgOC516an1Phz0DPop66t/Rss+qzZaZFmNWgWQSJweqVFkdXmwKQg==;5:lFyqqz8rGYfRJl1oTabM8v2Jgl8j2d01rqAI3nqkKF9WBHoLVXlWQL0Xbd88aOW5uZhrCTrpKordcz1CNQ3WFb01Jpq+MLN9n1lYhT+IocoMl6/JuPYZZmoNXET6/UR0tOx8vehzF8HDCB+eb84Fp0JsIOWPBmWi0Hc/hoyx9vw=;7:zO5MFc3j8Go2JaJdVswHqR4e9Joj2E7R3NzoGl7AOhwUjYS1Cs2Oxuoy/BDU4gDmgDKHY68+Z6lNivAPFP5Lqcf9434pqYfEMHWWod1SMVKjhGVSxzjNJ9XadyImNw+aK6eD1hpkaf+yhQnOluQTwIizjbzEk5Fk5oiyc0DcjK3r5baxbAUHPu/Uk0zQsj72s7j/7Ha6xSGYLS2OZcTM3MzeJTuWW1TIaI01FPeVdydZ5lyyyqJKXTH2RWRSeAYu
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2018 17:00:46.6910
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2018 17:00:51.5660
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7709d918-d4f1-4ea3-a1ce-08d5f0bdd6c9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e02fcc9-0ed5-4af1-f574-08d5f0bdd9c6
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4494
@@ -116,102 +108,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Horia Geantă <horia.geanta@nxp.com>
+Remove the staging/drivers/fsl-mc directory from the staging
+area now that all the components have been moved to the main
+kernel areas.
 
-Previous commits:
-commit 6e2387e8f19e ("staging: fsl-dpaa2/eth: Add Freescale DPAA2
-Ethernet driver")
-commit 39163c0ce0f4 ("staging: fsl-dpaa2/eth: Errors checking update")
-
-have added bits that are not specific to the WRIOP accelerator.
-
-Move these where they belong (in DPIO) such that other accelerators
-can make use of them.
-
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Acked-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+Signed-off-by: Roy Pledge <roy.pledge@nxp.com>
 ---
- drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c |  4 ++--
- drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h | 18 +++++-------------
- drivers/staging/fsl-mc/include/dpaa2-fd.h      | 12 ++++++++++++
- 3 files changed, 19 insertions(+), 15 deletions(-)
+ drivers/staging/Kconfig             | 2 --
+ drivers/staging/Makefile            | 1 -
+ drivers/staging/fsl-mc/Kconfig      | 2 --
+ drivers/staging/fsl-mc/Makefile     | 3 ---
+ drivers/staging/fsl-mc/bus/Kconfig  | 7 -------
+ drivers/staging/fsl-mc/bus/Makefile | 7 -------
+ 6 files changed, 22 deletions(-)
+ delete mode 100644 drivers/staging/fsl-mc/Kconfig
+ delete mode 100644 drivers/staging/fsl-mc/Makefile
+ delete mode 100644 drivers/staging/fsl-mc/bus/Kconfig
+ delete mode 100644 drivers/staging/fsl-mc/bus/Makefile
 
-diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-index 3963717..d5f0ac5 100644
---- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-+++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-@@ -455,7 +455,7 @@ static int build_sg_fd(struct dpaa2_eth_priv *priv,
- 	dpaa2_fd_set_format(fd, dpaa2_fd_sg);
- 	dpaa2_fd_set_addr(fd, addr);
- 	dpaa2_fd_set_len(fd, skb->len);
--	dpaa2_fd_set_ctrl(fd, DPAA2_FD_CTRL_PTA | DPAA2_FD_CTRL_PTV1);
-+	dpaa2_fd_set_ctrl(fd, FD_CTRL_PTA | FD_CTRL_PTV1);
+diff --git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
+index 75a4804..47b61c3 100644
+--- a/drivers/staging/Kconfig
++++ b/drivers/staging/Kconfig
+@@ -92,8 +92,6 @@ source "drivers/staging/clocking-wizard/Kconfig"
  
- 	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP)
- 		enable_tx_tstamp(fd, sgt_buf);
-@@ -508,7 +508,7 @@ static int build_single_fd(struct dpaa2_eth_priv *priv,
- 	dpaa2_fd_set_offset(fd, (u16)(skb->data - buffer_start));
- 	dpaa2_fd_set_len(fd, skb->len);
- 	dpaa2_fd_set_format(fd, dpaa2_fd_single);
--	dpaa2_fd_set_ctrl(fd, DPAA2_FD_CTRL_PTA | DPAA2_FD_CTRL_PTV1);
-+	dpaa2_fd_set_ctrl(fd, FD_CTRL_PTA | FD_CTRL_PTV1);
+ source "drivers/staging/fbtft/Kconfig"
  
- 	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP)
- 		enable_tx_tstamp(fd, buffer_start);
-diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
-index 905a4e6..9269cb0 100644
---- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
-+++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
-@@ -124,21 +124,13 @@ struct dpaa2_eth_swa {
- #define DPAA2_FD_FRC_FAICFDV		0x0400
- 
- /* Error bits in FD CTRL */
--#define DPAA2_FD_CTRL_UFD		0x00000004
--#define DPAA2_FD_CTRL_SBE		0x00000008
--#define DPAA2_FD_CTRL_FSE		0x00000020
--#define DPAA2_FD_CTRL_FAERR		0x00000040
+-source "drivers/staging/fsl-mc/Kconfig"
 -
--#define DPAA2_FD_RX_ERR_MASK		(DPAA2_FD_CTRL_SBE	| \
--					 DPAA2_FD_CTRL_FAERR)
--#define DPAA2_FD_TX_ERR_MASK		(DPAA2_FD_CTRL_UFD	| \
--					 DPAA2_FD_CTRL_SBE	| \
--					 DPAA2_FD_CTRL_FSE	| \
--					 DPAA2_FD_CTRL_FAERR)
-+#define DPAA2_FD_RX_ERR_MASK		(FD_CTRL_SBE | FD_CTRL_FAERR)
-+#define DPAA2_FD_TX_ERR_MASK		(FD_CTRL_UFD	| \
-+					 FD_CTRL_SBE	| \
-+					 FD_CTRL_FSE	| \
-+					 FD_CTRL_FAERR)
+ source "drivers/staging/fsl-dpaa2/Kconfig"
  
- /* Annotation bits in FD CTRL */
--#define DPAA2_FD_CTRL_PTA		0x00800000
--#define DPAA2_FD_CTRL_PTV1		0x00400000
- #define DPAA2_FD_CTRL_ASAL		0x00020000	/* ASAL = 128B */
- 
- /* Frame annotation status */
-diff --git a/drivers/staging/fsl-mc/include/dpaa2-fd.h b/drivers/staging/fsl-mc/include/dpaa2-fd.h
-index b55b89b..2576aba 100644
---- a/drivers/staging/fsl-mc/include/dpaa2-fd.h
-+++ b/drivers/staging/fsl-mc/include/dpaa2-fd.h
-@@ -67,6 +67,18 @@ struct dpaa2_fd {
- #define SG_FINAL_FLAG_MASK	0x1
- #define SG_FINAL_FLAG_SHIFT	15
- 
-+/* Error bits in FD CTRL */
-+#define FD_CTRL_ERR_MASK	0x000000FF
-+#define FD_CTRL_UFD		0x00000004
-+#define FD_CTRL_SBE		0x00000008
-+#define FD_CTRL_FLC		0x00000010
-+#define FD_CTRL_FSE		0x00000020
-+#define FD_CTRL_FAERR		0x00000040
-+
-+/* Annotation bits in FD CTRL */
-+#define FD_CTRL_PTA		0x00800000
-+#define FD_CTRL_PTV1		0x00400000
-+
- enum dpaa2_fd_format {
- 	dpaa2_fd_single = 0,
- 	dpaa2_fd_list,
+ source "drivers/staging/wilc1000/Kconfig"
+diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
+index e84959a..bfef8f2 100644
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@ -37,7 +37,6 @@ obj-$(CONFIG_CRYPTO_SKEIN)	+= skein/
+ obj-$(CONFIG_UNISYSSPAR)	+= unisys/
+ obj-$(CONFIG_COMMON_CLK_XLNX_CLKWZRD)	+= clocking-wizard/
+ obj-$(CONFIG_FB_TFT)		+= fbtft/
+-obj-$(CONFIG_FSL_MC_BUS)	+= fsl-mc/
+ obj-$(CONFIG_FSL_DPAA2)		+= fsl-dpaa2/
+ obj-$(CONFIG_WILC1000)		+= wilc1000/
+ obj-$(CONFIG_MOST)		+= most/
+diff --git a/drivers/staging/fsl-mc/Kconfig b/drivers/staging/fsl-mc/Kconfig
+deleted file mode 100644
+index 3002229..0000000
+--- a/drivers/staging/fsl-mc/Kconfig
++++ /dev/null
+@@ -1,2 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0
+-source "drivers/staging/fsl-mc/bus/Kconfig"
+diff --git a/drivers/staging/fsl-mc/Makefile b/drivers/staging/fsl-mc/Makefile
+deleted file mode 100644
+index 1468388..0000000
+--- a/drivers/staging/fsl-mc/Makefile
++++ /dev/null
+@@ -1,3 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0
+-# Freescale Management Complex (MC) bus drivers
+-obj-$(CONFIG_FSL_MC_BUS)	+= bus/
+diff --git a/drivers/staging/fsl-mc/bus/Kconfig b/drivers/staging/fsl-mc/bus/Kconfig
+deleted file mode 100644
+index 90f234d..0000000
+--- a/drivers/staging/fsl-mc/bus/Kconfig
++++ /dev/null
+@@ -1,7 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0
+-#
+-# DPAA2 fsl-mc bus
+-#
+-# Copyright (C) 2014-2016 Freescale Semiconductor, Inc.
+-#
+-
+diff --git a/drivers/staging/fsl-mc/bus/Makefile b/drivers/staging/fsl-mc/bus/Makefile
+deleted file mode 100644
+index 2141e4b..0000000
+--- a/drivers/staging/fsl-mc/bus/Makefile
++++ /dev/null
+@@ -1,7 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0
+-#
+-# Freescale Management Complex (MC) bus drivers
+-#
+-# Copyright (C) 2014 Freescale Semiconductor, Inc.
+-#
+-
 -- 
 2.7.4
 
