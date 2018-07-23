@@ -2,142 +2,122 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF668ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBD0ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71A25205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:33:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71A25205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id D24B320858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:37:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24B320858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387975AbeGWHdM (ORCPT
+        id S2387968AbeGWHgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 03:33:12 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:55863 "EHLO hermes.aosc.io"
+        Mon, 23 Jul 2018 03:36:43 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:59570 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387930AbeGWHdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 03:33:12 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 4823B9F5D1;
-        Mon, 23 Jul 2018 06:33:05 +0000 (UTC)
-Message-ID: <f1e7e44df225728bd966dfc4034c57de67470ebe.camel@aosc.io>
-Subject: Re: [PATCH v3 00/18] arm64: allwinner: Add A64 DE2 HDMI support
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Jagan Teki <jagannadh.teki@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Date:   Mon, 23 Jul 2018 14:32:43 +0800
-In-Reply-To: <CAD6G_RQQyS=zeqvhBP8vVf5sHZgLwqX1SP0SKLHea_L4Od3woQ@mail.gmail.com>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
-         <20180718124448.2s2b3jxbsqt46cgu@flea>
-         <CAD6G_RQQyS=zeqvhBP8vVf5sHZgLwqX1SP0SKLHea_L4Od3woQ@mail.gmail.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2387838AbeGWHgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 03:36:43 -0400
+X-Greylist: delayed 982 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Jul 2018 03:36:40 EDT
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 64A256945939D3D88F5C;
+        Mon, 23 Jul 2018 14:20:38 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w6N6K0nf081271;
+        Mon, 23 Jul 2018 14:20:00 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018072314200243-1258612 ;
+          Mon, 23 Jul 2018 14:20:02 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
+        x86@kernel.org, peterz@infradead.org, mingo@redhat.com
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        zhong.weidong@zte.com.cn, jiang.biao2@zte.com.cn,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH] kvm/x86: propagate fetch fault into guest
+Date:   Mon, 23 Jul 2018 22:36:35 +0800
+Message-Id: <1532356595-40747-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-07-23 14:20:02,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-07-23 14:20:00,
+        Serialize complete at 2018-07-23 14:20:00
+X-MAIL: mse01.zte.com.cn w6N6K0nf081271
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018-07-18三的 18:26 +0530，Jagan Teki写道：
-> On Wed, Jul 18, 2018 at 6:14 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Wed, Jul 18, 2018 at 04:24:40PM +0530, Jagan Teki wrote:
-> > > Allwinner A64 has display engine pipeline like other Allwinner
-> > > SOC's A83T/H3/H5.
-> > > 
-> > > A64 behaviour similar to Allwinner A83T where
-> > > Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
-> > > Mixer1 => TCON1 => HDMI
-> > > as per Display System Block Diagram from
-> > > Allwinner_A64_User_Manual_V1.1.pdf
-> > > 
-> > > This is third patch-set followed with previous RFC[1], first and
-> > > second
-> > > series[2][3] and merely concentrated on HDMI pipeline through
-> > > TCON1 and
-> > > rest will add eventually.
-> > > 
-> > > This series fixed previous version comments
-> > > - Rebasing on linux-next
-> > > - sqash all pipeline components in one patch
-> > > - Enable all pipeline components in board dts
-> > > - about documenting fallback compatibles
-> > > - adding new compatible for mixer1
-> > 
-> > You still haven't figured out the SRAM parts. We asked you to fix
-> > this
-> > in the v1 and the v2 already, and we're not going to merge this
-> > without those bits figured out properly.
-> 
-> Sorry I'm not sure what I'm trying to do on SRAM here because the
-> last
-> mail, I have waited for Icenowy changes about simple_fb with sram_c
-> on
-> ccu node and those are merged. can you elaborate please.
+When handling ept misconfig exit, it will call emulate instruction
+with insn_len = 0. The decode instruction function may return a fetch
+fault and should propagate to guest.
 
-Would you mind me advance the patchset a bit and send a PATCH v3.1?
+The problem will result to emulation fail.
+KVM internal error. Suberror: 1
+emulation failure
+EAX=f81a0024 EBX=f6a07000 ECX=f6a0737c EDX=f8be0118
+ESI=f6a0737c EDI=00000021 EBP=f6929f98 ESP=f6929f98
+EIP=f8bdd141 EFL=00010086 [--S--P-] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =007b 00000000 ffffffff 00c0f300 DPL=3 DS   [-WA]
+CS =0060 00000000 ffffffff 00c09b00 DPL=0 CS32 [-RA]
+SS =0068 00000000 ffffffff 00c09300 DPL=0 DS   [-WA]
+DS =007b 00000000 ffffffff 00c0f300 DPL=3 DS   [-WA]
+FS =00d8 2c044000 ffffffff 00809300 DPL=0 DS16 [-WA]
+GS =0033 081a44c8 01000fff 00d0f300 DPL=3 DS   [-WA]
+LDT=0000 00000000 ffffffff 00000000
+TR =0080 f6ea0c80 0000206b 00008b00 DPL=0 TSS32-busy
+GDT=     f6e99000 000000ff
+IDT=     fffbb000 000007ff
+CR0=80050033 CR2=b757d000 CR3=35d31000 CR4=001406d0
 
-I won't finally take the maintainership of the patchset.
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+ arch/x86/kvm/emulate.c | 7 +++++--
+ arch/x86/kvm/x86.c     | 4 +++-
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-> 
-> > 
-> > > Log:
-> > > [    1.450984] Jagan: sun8i_mixer_probe
-> > > [    1.464981] sun4i-drm display-engine: bound 1200000.mixer (ops
-> > > sun8i_mixer_ops)
-> > > [    1.472572] sun4i-drm display-engine: bound 1c0d000.lcd-
-> > > controller (ops sun4i_tcon_ops)
-> > > [    1.480676] sun8i-dw-hdmi 1ee0000.hdmi: Linked as a consumer
-> > > to regulator.10
-> > > [    1.488738] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX
-> > > controller v1.32a with HDCP (sun8i_dw_hdmi_phy)
-> > > [    1.498879] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare
-> > > HDMI I2C bus driver
-> > > [    1.507372] sun4i-drm display-engine: bound 1ee0000.hdmi (ops
-> > > sun8i_dw_hdmi_ops)
-> > > [    1.514778] [drm] Supports vblank timestamp caching Rev 2
-> > > (21.10.2013).
-> > > [    1.521398] [drm] No driver support for vblank timestamp
-> > > query.
-> > > [    1.684611] random: fast init done
-> > > [    2.011575] Console: switching to colour frame buffer device
-> > > 180x56
-> > > [    2.049858] sun4i-drm display-engine: fb0: DRM emulated frame
-> > > buffer device
-> > > [    2.057268] [drm] Initialized sun4i-drm 1.0.0 20150629 for
-> > > display-engine on minor 0
-> > > 
-> > > Note:
-> > > Pine64 boards are unable to get edid by default like other A64
-> > > boards,
-> > > but forcing 'video=HDMI-A-1:1920x1080@60D' kernel command line
-> > > can
-> > > create edid with display on penel
-> > 
-> > Then that needs to be figured out before it's enabled, instead of
-> > having a hack that barely works.
-> 
-> Any suggestion to work.
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index 4c4f426..4779468 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -5105,8 +5105,11 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
+ 		memcpy(ctxt->fetch.data, insn, insn_len);
+ 	else {
+ 		rc = __do_insn_fetch_bytes(ctxt, 1);
+-		if (rc != X86EMUL_CONTINUE)
+-			return rc;
++		if (rc != X86EMUL_CONTINUE) {
++			if (rc == X86EMUL_PROPAGATE_FAULT)
++				ctxt->have_exception = true;
++			return rc;
++		}
+ 	}
+ 
+ 	switch (mode) {
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 0046aa7..a477f92 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6087,8 +6087,10 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
+ 			if (reexecute_instruction(vcpu, cr2, write_fault_to_spt,
+ 						emulation_type))
+ 				return EMULATE_DONE;
+-			if (ctxt->have_exception && inject_emulated_exception(vcpu))
++			if (ctxt->have_exception) {
++				inject_emulated_exception(vcpu);
+ 				return EMULATE_DONE;
++			}
+ 			if (emulation_type & EMULTYPE_SKIP)
+ 				return EMULATE_FAIL;
+ 			return handle_emulation_failure(vcpu, emulation_type);
+-- 
+1.8.3.1
 
