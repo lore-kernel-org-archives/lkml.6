@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4839CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F36ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 079EE20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCA9A20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:53:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWoGD9pk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 079EE20874
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gh/4evC3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA9A20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388429AbeGWS4G (ORCPT
+        id S2388466AbeGWS4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:56:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39330 "EHLO mail.kernel.org"
+        Mon, 23 Jul 2018 14:56:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388181AbeGWS4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:56:06 -0400
+        id S2388181AbeGWS4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:56:09 -0400
 Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D4220856;
-        Mon, 23 Jul 2018 17:53:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D96020854;
+        Mon, 23 Jul 2018 17:53:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532368424;
-        bh=c9bSBtE134rSorKA8mBuzk4Qsygb0k/ndZjIQ+4I6pI=;
+        s=default; t=1532368428;
+        bh=3G1xGdphu9qI0r1LczDRmvPjw20Z3aQGDIrH3q6qK2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XWoGD9pkP5iqR1geXy8zs0REYj5eBLlbwNtsz6e/bGdX+aqMm/tbmNHuvtcWagcbW
-         HvQrS8ZdHQjBNa6FAvXSzK4Ayd6nOnv8+EUdVStVk5TwmwNAw84KX93J/L3XlPs5p7
-         fhTGCF9w/C2jzSIGdr4rAwadYEFL8r9c6DF5mgf8=
+        b=gh/4evC3vS5IiSpkzSte+oehRMu1HRtbx2iji6S1tvpRHPt1b4KiR3uafB+RqrW0P
+         nWmOlsFTlMHrjmECMH57hlsODEXh48H0n2/rRjDR9dlFom3tthW/HhQvyZ9OSkPevb
+         6mo18xWkTB1HeovhT8Fb9S3jWSb0e4iqC6R739nM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -54,9 +54,9 @@ Cc:     =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [RFT v2 04/10] pinctrl: samsung: Add dedicated compatible for S5Pv210 wakeup interrupts
-Date:   Mon, 23 Jul 2018 19:52:56 +0200
-Message-Id: <20180723175302.22535-5-krzk@kernel.org>
+Subject: [RFT v2 05/10] ARM: exynos: Define EINT_WAKEUP_MASK registers for S5Pv210 and Exynos5433
+Date:   Mon, 23 Jul 2018 19:52:57 +0200
+Message-Id: <20180723175302.22535-6-krzk@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180723175302.22535-1-krzk@kernel.org>
 References: <20180723175302.22535-1-krzk@kernel.org>
@@ -65,70 +65,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The S5Pv210 external wakeup interrupts differ from Exynos therefore
-separate compatible is needed.  Duplicate existing flavor specific data
-from exynos4210_wkup_irq_chip and add new compatible for S5Pv210.
-At this point this new compatible does not bring anything new and works
-exactly as existing "samsung,exynos4210-wakeup-eint".
+S5Pv210 and Exynos5433/Exynos7 have different address of
+EINT_WAKEUP_MASK register.  Rename existing S5P_EINT_WAKEUP_MASK to
+avoid confusion and add new ones.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Sylwester Nawrocki <snawrocki@kernel.org>
 Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- .../devicetree/bindings/pinctrl/samsung-pinctrl.txt    |  2 ++
- drivers/pinctrl/samsung/pinctrl-exynos.c               | 18 ++++++++++++++++++
- 2 files changed, 20 insertions(+)
+ arch/arm/mach-exynos/suspend.c              | 2 +-
+ include/linux/soc/samsung/exynos-regs-pmu.h | 6 +++++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index f7700c9e0d0b..843a6cbf4774 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -161,6 +161,8 @@ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
-        found on Samsung S3C2412 and S3C2413 SoCs,
-      - samsung,s3c64xx-wakeup-eint: represents wakeup interrupt controller
-        found on Samsung S3C64xx SoCs,
-+     - samsung,s5pv210-wakeup-eint: represents wakeup interrupt controller
-+       found on Samsung S5Pv210 SoCs,
-      - samsung,exynos4210-wakeup-eint: represents wakeup interrupt controller
-        found on Samsung Exynos4210 and S5PC110/S5PV210 SoCs.
-      - samsung,exynos7-wakeup-eint: represents wakeup interrupt controller
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index a263ddd94945..29d86d704b0c 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -346,6 +346,22 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- /*
-  * irq_chip for wakeup interrupts
-  */
-+static const struct exynos_irq_chip s5pv210_wkup_irq_chip __initconst = {
-+	.chip = {
-+		.name = "s5pv210_wkup_irq_chip",
-+		.irq_unmask = exynos_irq_unmask,
-+		.irq_mask = exynos_irq_mask,
-+		.irq_ack = exynos_irq_ack,
-+		.irq_set_type = exynos_irq_set_type,
-+		.irq_set_wake = exynos_wkup_irq_set_wake,
-+		.irq_request_resources = exynos_irq_request_resources,
-+		.irq_release_resources = exynos_irq_release_resources,
-+	},
-+	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
-+	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
-+	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
-+};
-+
- static const struct exynos_irq_chip exynos4210_wkup_irq_chip __initconst = {
- 	.chip = {
- 		.name = "exynos4210_wkup_irq_chip",
-@@ -380,6 +396,8 @@ static const struct exynos_irq_chip exynos7_wkup_irq_chip __initconst = {
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 0ec52f442b97..991938e19e17 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -272,7 +272,7 @@ static int exynos5420_cpu_suspend(unsigned long arg)
+ static void exynos_pm_set_wakeup_mask(void)
+ {
+ 	/* Set wake-up mask registers */
+-	pmu_raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
++	pmu_raw_writel(exynos_get_eint_wake_mask(), EXYNOS_EINT_WAKEUP_MASK);
+ 	pmu_raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
+ }
  
- /* list of external wakeup controllers supported */
- static const struct of_device_id exynos_wkup_irq_ids[] = {
-+	{ .compatible = "samsung,s5pv210-wakeup-eint",
-+			.data = &s5pv210_wkup_irq_chip },
- 	{ .compatible = "samsung,exynos4210-wakeup-eint",
- 			.data = &exynos4210_wkup_irq_chip },
- 	{ .compatible = "samsung,exynos7-wakeup-eint",
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index 66dcb9ec273a..eb0d240df7a7 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -42,7 +42,7 @@
+ #define EXYNOS_SWRESET				0x0400
+ 
+ #define S5P_WAKEUP_STAT				0x0600
+-#define S5P_EINT_WAKEUP_MASK			0x0604
++#define EXYNOS_EINT_WAKEUP_MASK			0x0604
+ #define S5P_WAKEUP_MASK				0x0608
+ #define S5P_WAKEUP_MASK2				0x0614
+ 
+@@ -180,6 +180,9 @@
+ #define S5P_CORE_WAKEUP_FROM_LOCAL_CFG		(0x3 << 8)
+ #define S5P_CORE_AUTOWAKEUP_EN			(1 << 31)
+ 
++/* Only for S5Pv210 */
++#define S5PV210_EINT_WAKEUP_MASK	0xC004
++
+ /* Only for EXYNOS4210 */
+ #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	0x1154
+ #define S5P_CMU_RESET_LCD1_LOWPWR	0x1174
+@@ -641,6 +644,7 @@
+ 					 | EXYNOS5420_KFC_USE_STANDBY_WFI3)
+ 
+ /* For EXYNOS5433 */
++#define EXYNOS5433_EINT_WAKEUP_MASK				(0x060C)
+ #define EXYNOS5433_USBHOST30_PHY_CONTROL			(0x0728)
+ #define EXYNOS5433_PAD_RETENTION_AUD_OPTION			(0x3028)
+ #define EXYNOS5433_PAD_RETENTION_MMC2_OPTION			(0x30C8)
 -- 
 2.14.1
 
