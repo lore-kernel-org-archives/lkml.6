@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F16CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C5DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03A7D20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A7D20854
+	by mail.kernel.org (Postfix) with ESMTP id 2CEC020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CEC020854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388612AbeGWN21 (ORCPT
+        id S2388626AbeGWN23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:28:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45436 "EHLO
+        Mon, 23 Jul 2018 09:28:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387940AbeGWN20 (ORCPT
+        with ESMTP id S2387940AbeGWN23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:28:26 -0400
+        Mon, 23 Jul 2018 09:28:29 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D7DDC03;
-        Mon, 23 Jul 2018 12:27:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D7A0C0A;
+        Mon, 23 Jul 2018 12:27:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 48/63] rhashtable: add restart routine in rhashtable_free_and_destroy()
-Date:   Mon, 23 Jul 2018 14:24:54 +0200
-Message-Id: <20180723122448.183927751@linuxfoundation.org>
+        stable@vger.kernel.org, Jing Xia <jing.xia.mail@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        chunyan.zhang@unisoc.com, Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 22/63] mm: memcg: fix use after free in mem_cgroup_iter()
+Date:   Mon, 23 Jul 2018 14:24:28 +0200
+Message-Id: <20180723122447.203820656@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -51,137 +55,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Jing Xia <jing.xia.mail@gmail.com>
 
-[ Upstream commit 0026129c8629265bfe5079c1e017fa8543796d9f ]
+commit 9f15bde671355c351cf20d9f879004b234353100 upstream.
 
-rhashtable_free_and_destroy() cancels re-hash deferred work
-then walks and destroys elements. at this moment, some elements can be
-still in future_tbl. that elements are not destroyed.
+It was reported that a kernel crash happened in mem_cgroup_iter(), which
+can be triggered if the legacy cgroup-v1 non-hierarchical mode is used.
 
-test case:
-nft_rhash_destroy() calls rhashtable_free_and_destroy() to destroy
-all elements of sets before destroying sets and chains.
-But rhashtable_free_and_destroy() doesn't destroy elements of future_tbl.
-so that splat occurred.
+Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b8f
+......
+Call trace:
+  mem_cgroup_iter+0x2e0/0x6d4
+  shrink_zone+0x8c/0x324
+  balance_pgdat+0x450/0x640
+  kswapd+0x130/0x4b8
+  kthread+0xe8/0xfc
+  ret_from_fork+0x10/0x20
 
-test script:
-   %cat test.nft
-   table ip aa {
-	   map map1 {
-		   type ipv4_addr : verdict;
-		   elements = {
-			   0 : jump a0,
-			   1 : jump a0,
-			   2 : jump a0,
-			   3 : jump a0,
-			   4 : jump a0,
-			   5 : jump a0,
-			   6 : jump a0,
-			   7 : jump a0,
-			   8 : jump a0,
-			   9 : jump a0,
-		}
-	   }
-	   chain a0 {
-	   }
-   }
-   flush ruleset
-   table ip aa {
-	   map map1 {
-		   type ipv4_addr : verdict;
-		   elements = {
-			   0 : jump a0,
-			   1 : jump a0,
-			   2 : jump a0,
-			   3 : jump a0,
-			   4 : jump a0,
-			   5 : jump a0,
-			   6 : jump a0,
-			   7 : jump a0,
-			   8 : jump a0,
-			   9 : jump a0,
-		   }
-	   }
-	   chain a0 {
-	   }
-   }
-   flush ruleset
+  mem_cgroup_iter():
+      ......
+      if (css_tryget(css))    <-- crash here
+	    break;
+      ......
 
-   %while :; do nft -f test.nft; done
+The crashing reason is that mem_cgroup_iter() uses the memcg object whose
+pointer is stored in iter->position, which has been freed before and
+filled with POISON_FREE(0x6b).
 
-Splat looks like:
-[  200.795603] kernel BUG at net/netfilter/nf_tables_api.c:1363!
-[  200.806944] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[  200.812253] CPU: 1 PID: 1582 Comm: nft Not tainted 4.17.0+ #24
-[  200.820297] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
-[  200.830309] RIP: 0010:nf_tables_chain_destroy.isra.34+0x62/0x240 [nf_tables]
-[  200.838317] Code: 43 50 85 c0 74 26 48 8b 45 00 48 8b 4d 08 ba 54 05 00 00 48 c7 c6 60 6d 29 c0 48 c7 c7 c0 65 29 c0 4c 8b 40 08 e8 58 e5 fd f8 <0f> 0b 48 89 da 48 b8 00 00 00 00 00 fc ff
-[  200.860366] RSP: 0000:ffff880118dbf4d0 EFLAGS: 00010282
-[  200.866354] RAX: 0000000000000061 RBX: ffff88010cdeaf08 RCX: 0000000000000000
-[  200.874355] RDX: 0000000000000061 RSI: 0000000000000008 RDI: ffffed00231b7e90
-[  200.882361] RBP: ffff880118dbf4e8 R08: ffffed002373bcfb R09: ffffed002373bcfa
-[  200.890354] R10: 0000000000000000 R11: ffffed002373bcfb R12: dead000000000200
-[  200.898356] R13: dead000000000100 R14: ffffffffbb62af38 R15: dffffc0000000000
-[  200.906354] FS:  00007fefc31fd700(0000) GS:ffff88011b800000(0000) knlGS:0000000000000000
-[  200.915533] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  200.922355] CR2: 0000557f1c8e9128 CR3: 0000000106880000 CR4: 00000000001006e0
-[  200.930353] Call Trace:
-[  200.932351]  ? nf_tables_commit+0x26f6/0x2c60 [nf_tables]
-[  200.939525]  ? nf_tables_setelem_notify.constprop.49+0x1a0/0x1a0 [nf_tables]
-[  200.947525]  ? nf_tables_delchain+0x6e0/0x6e0 [nf_tables]
-[  200.952383]  ? nft_add_set_elem+0x1700/0x1700 [nf_tables]
-[  200.959532]  ? nla_parse+0xab/0x230
-[  200.963529]  ? nfnetlink_rcv_batch+0xd06/0x10d0 [nfnetlink]
-[  200.968384]  ? nfnetlink_net_init+0x130/0x130 [nfnetlink]
-[  200.975525]  ? debug_show_all_locks+0x290/0x290
-[  200.980363]  ? debug_show_all_locks+0x290/0x290
-[  200.986356]  ? sched_clock_cpu+0x132/0x170
-[  200.990352]  ? find_held_lock+0x39/0x1b0
-[  200.994355]  ? sched_clock_local+0x10d/0x130
-[  200.999531]  ? memset+0x1f/0x40
+And the root cause of the use-after-free issue is that
+invalidate_reclaim_iterators() fails to reset the value of iter->position
+to NULL when the css of the memcg is released in non- hierarchical mode.
 
-V2:
- - free all tables requested by Herbert Xu
-
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/1531994807-25639-1-git-send-email-jing.xia@unisoc.com
+Fixes: 6df38689e0e9 ("mm: memcontrol: fix possible memcg leak due to interrupted reclaim")
+Signed-off-by: Jing Xia <jing.xia.mail@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: <chunyan.zhang@unisoc.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- lib/rhashtable.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -1107,13 +1107,14 @@ void rhashtable_free_and_destroy(struct
- 				 void (*free_fn)(void *ptr, void *arg),
- 				 void *arg)
- {
--	struct bucket_table *tbl;
-+	struct bucket_table *tbl, *next_tbl;
- 	unsigned int i;
+---
+ mm/memcontrol.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -850,7 +850,7 @@ static void invalidate_reclaim_iterators
+ 	int nid;
+ 	int i;
  
- 	cancel_work_sync(&ht->run_work);
- 
- 	mutex_lock(&ht->mutex);
- 	tbl = rht_dereference(ht->tbl, ht);
-+restart:
- 	if (free_fn) {
- 		for (i = 0; i < tbl->size; i++) {
- 			struct rhash_head *pos, *next;
-@@ -1130,7 +1131,12 @@ void rhashtable_free_and_destroy(struct
- 		}
- 	}
- 
-+	next_tbl = rht_dereference(tbl->future_tbl, ht);
- 	bucket_table_free(tbl);
-+	if (next_tbl) {
-+		tbl = next_tbl;
-+		goto restart;
-+	}
- 	mutex_unlock(&ht->mutex);
- }
- EXPORT_SYMBOL_GPL(rhashtable_free_and_destroy);
+-	while ((memcg = parent_mem_cgroup(memcg))) {
++	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
+ 		for_each_node(nid) {
+ 			mz = mem_cgroup_nodeinfo(memcg, nid);
+ 			for (i = 0; i <= DEF_PRIORITY; i++) {
 
 
