@@ -2,202 +2,95 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC417ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D70FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6C420852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:58:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=markrailton-com.20150623.gappssmtp.com header.i=@markrailton-com.20150623.gappssmtp.com header.b="U/CDSBDP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6C420852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=markrailton.com
+	by mail.kernel.org (Postfix) with ESMTP id E52BB20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:00:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52BB20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388186AbeGWXBe (ORCPT
+        id S2388189AbeGWXDV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 19:01:34 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34289 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388104AbeGWXBe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 19:01:34 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h1-v6so2275263eds.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=markrailton-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bi3SF2M0tR16/g7+nrSn5FOWPYu9UciVUneTKogq3FQ=;
-        b=U/CDSBDPmDHaNrqj9tinAWqlCoshn6UGv91KulDt8f8KMDx4sNEemMc8hGxLNTBQYd
-         TFe2dzABj2BZ/rYYsQQLboRCQnhL7C6i58JT08zWs0NKG1Esx+l4ZcduaI15DA3tqDGE
-         wTAqTIt8wFTl1WSkGuYHWq3CiAmtiQ/6wADrCdyag6FmQcKBMmEN3bek2xxg3ZjhxeSt
-         d8zRHZHkScJDV4rjOH500nuxLLanBP8Wz6ewg4w9XeQWfxsRF3Jpd+UCTjHhTxZkTmog
-         hg+uh11ny2Q62jXZtiCTaHx2TWwow1N2lR7opiFIAaWzQ7NWJKp9O3cISHP/v5C3AyDM
-         ag0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bi3SF2M0tR16/g7+nrSn5FOWPYu9UciVUneTKogq3FQ=;
-        b=G2U2KfgqgMeEz4c3nzgIDooG/e/hK5omD/fQJvXT6UmyrhBjwtnKIGLM/K6/QSILNV
-         wcYOTRziBB1yVSqrbjX3Y4GvJlZoftqY4RH3iFFuPTQPh6VTSX3DSfq1d0z4UZIrf5j/
-         lCl2MkiDQN8KV+vd4NCkwpqFdo6Brz+X6iRjfixUOxO178nJooy1J7pXSL6zkTfAW0DB
-         Z7BdbItfQZPl4VZ7JjQKCE0Y67ohhJTzUamMkOMJHcP2Fa1v47agvVYitaICUUThQNSR
-         isRg/R+PVmirQd6PSqft/veAv/qJKMjRsi2QC1OqXccd4jx0OqN3FUgKdytb5tLy9eFL
-         p2tA==
-X-Gm-Message-State: AOUpUlE5OCX4LsdotPhKRJbRJoS94LJEpPoAWJXeSfKYHLLyisMzvNal
-        zqMS/RqlQLiBx9veQjC3kg9kJA==
-X-Google-Smtp-Source: AAOMgpe2gq16fqcTqi0FwW6/egqCaSv9x/dxmfXpQpJKeTFXtBG873fiYa9WFKuo3CYLWTnQU+OG9A==
-X-Received: by 2002:aa7:d717:: with SMTP id t23-v6mr16050557edq.102.1532383097857;
-        Mon, 23 Jul 2018 14:58:17 -0700 (PDT)
-Received: from ZeroCool ([109.255.141.80])
-        by smtp.gmail.com with ESMTPSA id p3-v6sm7400362edp.47.2018.07.23.14.58.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 14:58:16 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 22:58:15 +0100
-From:   Mark Railton <mark@markrailton.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Drivers: Xen: xlate_mmu.c: Fixed comment layout
-Message-ID: <20180723215815.GA23316@ZeroCool>
-References: <20180723213404.20720-1-mark@markrailton.com>
- <e0b30ab8-d418-cbe0-d03c-a0aee1d48367@infradead.org>
- <20180723214011.GA21167@ZeroCool>
- <01b221f3-d923-1abb-0168-bfeba80b9a9a@infradead.org>
- <20180723214804.GA21761@ZeroCool>
- <e8cab255-eb21-fd08-e62b-3afbbe853b84@infradead.org>
+        Mon, 23 Jul 2018 19:03:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39100 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388137AbeGWXDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 19:03:20 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 71F504023132;
+        Mon, 23 Jul 2018 22:00:05 +0000 (UTC)
+Received: from treble (ovpn-121-132.rdu2.redhat.com [10.10.121.132])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 726222026D65;
+        Mon, 23 Jul 2018 22:00:00 +0000 (UTC)
+Date:   Mon, 23 Jul 2018 16:59:58 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
+Message-ID: <20180723215958.jozblzq4sv7gp7uj@treble>
+References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
+ <20180723140925.GA4285@amd>
+ <CA+55aFynT9Sp7CbnB=GqLbns7GFZbv3pDSQm_h0jFvJpz3ES+g@mail.gmail.com>
+ <20180723213830.GA4632@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e8cab255-eb21-fd08-e62b-3afbbe853b84@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180723213830.GA4632@amd>
+User-Agent: NeoMutt/20180323
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 22:00:05 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 22:00:05 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 02:55:12PM -0700, Randy Dunlap wrote:
-> On 07/23/2018 02:48 PM, Mark Railton wrote:
-> > On Mon, Jul 23, 2018 at 02:44:28PM -0700, Randy Dunlap wrote:
-> >> On 07/23/2018 02:40 PM, Mark Railton wrote:
-> >>> On Mon, Jul 23, 2018 at 02:38:20PM -0700, Randy Dunlap wrote:
-> >>>> On 07/23/2018 02:34 PM, Mark Railton wrote:
-> >>>>> Fixed issue with multi line comment
-> >>>>
-> >>>> Fix [not Fixed]
-> >>>>
-> >>>>>
-> >>>>> Signed-off-by: Mark Railton <mark@markrailton.com>
-> >>>>> ---
-> >>>>>  drivers/xen/xlate_mmu.c | 5 +++--
-> >>>>>  1 file changed, 3 insertions(+), 2 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
-> >>>>> index 23f1387b3ef7..3b03bc1641ed 100644
-> >>>>> --- a/drivers/xen/xlate_mmu.c
-> >>>>> +++ b/drivers/xen/xlate_mmu.c
-> >>>>> @@ -151,8 +151,9 @@ int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
-> >>>>>  	struct remap_data data;
-> >>>>>  	unsigned long range = DIV_ROUND_UP(nr, XEN_PFN_PER_PAGE) << PAGE_SHIFT;
-> >>>>>  
-> >>>>> -	/* Kept here for the purpose of making sure code doesn't break
-> >>>>> -	   x86 PVOPS */
-> >>>>> +	/* Kept here for the purpose of making sure code doesn't
-> >>>>> +	 * break x86 PVOPS
-> >>>>> +	 */
-> >>>>
-> >>>> That is still not the preferred kernel multi-line comment style.
-> >>>> Documentation/process/coding-style.rst says:
-> >>>>
-> >>>> 	/*
-> >>>> 	 * This is the preferred style for multi-line
-> >>>> 	 * comments in the Linux kernel source code.
-> >>>> 	 * Please use it consistently.
-> >>>> 	 *
-> >>>> 	 * Description:  A column of asterisks on the left side,
-> >>>> 	 * with beginning and ending almost-blank lines.
-> >>>> 	 */
-> >>>>
-> >>>> although Networking code has a slightly different preferred style (as in
-> >>>> your patch).
-> >>>>
-> >>>>>  	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
-> >>>>>  
-> >>>>>  	data.fgfn = gfn;
-> >>>>>
-> >>>>
-> >>>>
-> >>>> -- 
-> >>>> ~Randy
-> >>>
-> >>> Thank's for the feedback, I'll get that updated now.
-> >>>
-> >>> I'm still kinda new to this, I assume I need to send the new patch via
-> >>> git send-email?
-> >>
-> >> That is one option.  Use whatever works for you.
-> >>
-> >> There are several email clients that also work well.
-> >> See Documentation/process/email-clients.rst.
-> >>
-> >>
-> >> -- 
-> >> ~Randy
-> > 
-> > From 57c8104d2a30020005be16df2ca69ed66f6c4ae9 Mon Sep 17 00:00:00 2001
-> > From: Mark Railton <mark@markrailton.com>
-> > Date: Mon, 23 Jul 2018 22:28:53 +0100
-> > Subject: [PATCH] Drivers: Xen: xlate_mmu.c: Fixed comment layout
-> > 
-> > Fixed issue with multi line comment
-> > 
-> > Signed-off-by: Mark Railton <mark@markrailton.com>
-> > ---
-> >  drivers/xen/xlate_mmu.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
-> > index 23f1387b3ef7..2b77c79f8ce7 100644
-> > --- a/drivers/xen/xlate_mmu.c
-> > +++ b/drivers/xen/xlate_mmu.c
-> > @@ -151,8 +151,10 @@ int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
-> >  	struct remap_data data;
-> >  	unsigned long range = DIV_ROUND_UP(nr, XEN_PFN_PER_PAGE) << PAGE_SHIFT;
-> > 
-> > -	/* Kept here for the purpose of making sure code doesn't break
-> > -	   x86 PVOPS */
-> > +	/*
-> > +	 * Kept here for the purpose of making sure code doesn't
-> > +	 * break x86 PVOPS
-> > +	 */
-> >  	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
-> > 
-> >  	data.fgfn = gfn;
-> > --
-> > 2.17.1
+On Mon, Jul 23, 2018 at 11:38:30PM +0200, Pavel Machek wrote:
+> But for now I'd like at least "global" option of turning pti on/off
+> during runtime for benchmarking. Let me see...
 > 
-> 
-> Hi,
-> 
-> a.  The subject and the patch description should be in present tense, i.e.,
-> Fix instead of Fixed.
-> 
-> b.  Ideally you start a new email thread for new versions of a patch (but Cc:
-> the interested parties).
-> 
-> For the patch itself:
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Thanks.
-> 
-> -- 
-> ~Randy
+> Something like this, or is it going to be way more complex? Does
+> anyone have patch by chance?
 
-Thank you for the feedback, I will make sure to take that on board.
+RHEL/CentOS has a global PTI enable/disable, which uses stop_machine().
 
-Mark
+-- 
+Josh
