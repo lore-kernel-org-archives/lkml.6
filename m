@@ -2,83 +2,127 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD1AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5AAECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1969320854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:56:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1969320854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AD99C20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:56:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD99C20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388284AbeGWW7K (ORCPT
+        id S2388302AbeGWW7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:59:10 -0400
-Received: from mga18.intel.com ([134.134.136.126]:55307 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388052AbeGWW7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:59:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 14:55:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
-   d="scan'208";a="242673569"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by orsmga005.jf.intel.com with ESMTP; 23 Jul 2018 14:55:41 -0700
-Message-ID: <fbac7919db6874c76ef3ac628c8356968bb55d7a.camel@linux.intel.com>
-Subject: Re: HID: intel_ish-hid: tx_buf memory leak on probe/remove
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Anton Vasilyev <vasilyev@ispras.ru>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Even Xu <even.xu@intel.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
-Date:   Mon, 23 Jul 2018 14:55:41 -0700
-In-Reply-To: <a0faf8a7-17ea-0ed3-5bb5-f1e8fb5debf6@ispras.ru>
-References: <a0faf8a7-17ea-0ed3-5bb5-f1e8fb5debf6@ispras.ru>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 23 Jul 2018 18:59:14 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58109 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388052AbeGWW7N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 18:59:13 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 0A35B80388; Mon, 23 Jul 2018 23:55:57 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 23:55:57 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
+Message-ID: <20180723215557.GA3935@amd>
+References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
+ <20180723140925.GA4285@amd>
+ <CA+55aFynT9Sp7CbnB=GqLbns7GFZbv3pDSQm_h0jFvJpz3ES+g@mail.gmail.com>
+ <20180723213830.GA4632@amd>
+ <39A1C149-DA03-46D1-801F-0205DCD69A36@amacapital.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+Content-Disposition: inline
+In-Reply-To: <39A1C149-DA03-46D1-801F-0205DCD69A36@amacapital.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-23 at 20:56 +0300, Anton Vasilyev wrote:
-> ish_dev_init() allocates 512*176 bytes memory for tx_buf and stores
-> it at
-> &dev->wr_free_list_head.link list on ish_probe().
-> But there is no deallocation of this memory in ish_remove() and in 
-> ish_probe()
-> error path.
-> So current intel-ish-ipc provides 88 KB memory leak for each
-> probe/release.
-> 
-> I have two ideas 1) to replace kzalloc allocation by devm_kzalloc,
-Thanks for finding this. We can replace both alloc in this function
-with devm_ calls. Once you have a patch I can test.
 
-Thanks,
-Srinivas 
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> or 2) release memory stored at &dev->wr_free_list_head.link list
-> (and 
-> may be at
-> &dev->wr_processing_list_head.link) in all driver exits.
-> 
-> But I do not know which way is preferable for this case.
-> 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-> --
-> Anton Vasilyev
-> Linux Verification Center, ISPRAS
-> web: http://linuxtesting.org
-> e-mail: vasilyev@ispras.ru
+Hi!
+
+> > What I want is "if A can ptrace B, and B has pti disabled, A can have
+> > pti disabled as well". Now.. I see someone may want to have it
+> > per-thread, because for stuff like javascript JIT, thread may have
+> > rights to call ptrace, but is unable to call ptrace because JIT
+> > removed that ability... hmm...
+>=20
+> No, you don=E2=80=99t want that. The problem is that Meltdown isn=E2=80=
+=99t a problem that exists in isolation. It=E2=80=99s very plausible that J=
+avaScript code could trigger a speculation attack that, with PTI off, could=
+ read kernel memory.
+
+Yeah, the web browser threads that run javascript code should have PTI
+on. But maybe I want the rest of web browser with PTI off.
+
+So... yes, I see why someone may want it per-thread (and not
+per-process).
+
+I guess per-process would be good enough for me. Actually, maybe even
+per-uid. I don't have any fancy security here, so anything running uid
+0 and 1000 is close enough to trusted.
+
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--zYM0uCDKw75PZbzx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltWTu0ACgkQMOfwapXb+vLAHgCgwm6vHy+tGQo0EQEDMfrLuUJl
+GoQAn1fCFV/6RZlLyzusdi9BI7Xn3jNe
+=edDv
+-----END PGP SIGNATURE-----
+
+--zYM0uCDKw75PZbzx--
