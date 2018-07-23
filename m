@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEC6ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6666DECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F74204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F74204EC
+	by mail.kernel.org (Postfix) with ESMTP id 2A03A20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:43:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A03A20880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388969AbeGWNoh (ORCPT
+        id S2389006AbeGWNok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:44:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48444 "EHLO
+        Mon, 23 Jul 2018 09:44:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48536 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388401AbeGWNoh (ORCPT
+        with ESMTP id S2388401AbeGWNoj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:44:37 -0400
+        Mon, 23 Jul 2018 09:44:39 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41D3BBE6;
-        Mon, 23 Jul 2018 12:43:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 259BDC7D;
+        Mon, 23 Jul 2018 12:43:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jing Xia <jing.xia.mail@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        chunyan.zhang@unisoc.com, Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 007/107] mm: memcg: fix use after free in mem_cgroup_iter()
-Date:   Mon, 23 Jul 2018 14:41:01 +0200
-Message-Id: <20180723122413.277396751@linuxfoundation.org>
+        stable@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 008/107] ipv4: Return EINVAL when ping_group_range sysctl doesnt map to user ns
+Date:   Mon, 23 Jul 2018 14:41:02 +0200
+Message-Id: <20180723122413.312352857@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -55,64 +50,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jing Xia <jing.xia.mail@gmail.com>
+From: Tyler Hicks <tyhicks@canonical.com>
 
-commit 9f15bde671355c351cf20d9f879004b234353100 upstream.
+[ Upstream commit 70ba5b6db96ff7324b8cfc87e0d0383cf59c9677 ]
 
-It was reported that a kernel crash happened in mem_cgroup_iter(), which
-can be triggered if the legacy cgroup-v1 non-hierarchical mode is used.
+The low and high values of the net.ipv4.ping_group_range sysctl were
+being silently forced to the default disabled state when a write to the
+sysctl contained GIDs that didn't map to the associated user namespace.
+Confusingly, the sysctl's write operation would return success and then
+a subsequent read of the sysctl would indicate that the low and high
+values are the overflowgid.
 
-Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b8f
-......
-Call trace:
-  mem_cgroup_iter+0x2e0/0x6d4
-  shrink_zone+0x8c/0x324
-  balance_pgdat+0x450/0x640
-  kswapd+0x130/0x4b8
-  kthread+0xe8/0xfc
-  ret_from_fork+0x10/0x20
+This patch changes the behavior by clearly returning an error when the
+sysctl write operation receives a GID range that doesn't map to the
+associated user namespace. In such a situation, the previous value of
+the sysctl is preserved and that range will be returned in a subsequent
+read of the sysctl.
 
-  mem_cgroup_iter():
-      ......
-      if (css_tryget(css))    <-- crash here
-	    break;
-      ......
-
-The crashing reason is that mem_cgroup_iter() uses the memcg object whose
-pointer is stored in iter->position, which has been freed before and
-filled with POISON_FREE(0x6b).
-
-And the root cause of the use-after-free issue is that
-invalidate_reclaim_iterators() fails to reset the value of iter->position
-to NULL when the css of the memcg is released in non- hierarchical mode.
-
-Link: http://lkml.kernel.org/r/1531994807-25639-1-git-send-email-jing.xia@unisoc.com
-Fixes: 6df38689e0e9 ("mm: memcontrol: fix possible memcg leak due to interrupted reclaim")
-Signed-off-by: Jing Xia <jing.xia.mail@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: <chunyan.zhang@unisoc.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/memcontrol.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/sysctl_net_ipv4.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -996,7 +996,7 @@ static void invalidate_reclaim_iterators
- 	int nid, zid;
- 	int i;
- 
--	while ((memcg = parent_mem_cgroup(memcg))) {
-+	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
- 		for_each_node(nid) {
- 			for (zid = 0; zid < MAX_NR_ZONES; zid++) {
- 				mz = &memcg->nodeinfo[nid]->zoneinfo[zid];
+--- a/net/ipv4/sysctl_net_ipv4.c
++++ b/net/ipv4/sysctl_net_ipv4.c
+@@ -141,8 +141,9 @@ static int ipv4_ping_group_range(struct
+ 	if (write && ret == 0) {
+ 		low = make_kgid(user_ns, urange[0]);
+ 		high = make_kgid(user_ns, urange[1]);
+-		if (!gid_valid(low) || !gid_valid(high) ||
+-		    (urange[1] < urange[0]) || gid_lt(high, low)) {
++		if (!gid_valid(low) || !gid_valid(high))
++			return -EINVAL;
++		if (urange[1] < urange[0] || gid_lt(high, low)) {
+ 			low = make_kgid(&init_user_ns, 1);
+ 			high = make_kgid(&init_user_ns, 0);
+ 		}
 
 
