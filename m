@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D59ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 742A2ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44EB20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44EB20854
+	by mail.kernel.org (Postfix) with ESMTP id 394F020880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394F020880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388957AbeGWN3m (ORCPT
+        id S2388966AbeGWN3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:29:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45698 "EHLO
+        Mon, 23 Jul 2018 09:29:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45706 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387998AbeGWN3m (ORCPT
+        with ESMTP id S2387998AbeGWN3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:29:42 -0400
+        Mon, 23 Jul 2018 09:29:45 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D88ACC03;
-        Mon, 23 Jul 2018 12:28:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96256C03;
+        Mon, 23 Jul 2018 12:28:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.14 11/44] ARC: Fix CONFIG_SWAP
-Date:   Mon, 23 Jul 2018 14:24:47 +0200
-Message-Id: <20180723122437.982266643@linuxfoundation.org>
+Subject: [PATCH 4.14 12/44] ARC: configs: Remove CONFIG_INITRAMFS_SOURCE from defconfigs
+Date:   Mon, 23 Jul 2018 14:24:48 +0200
+Message-Id: <20180723122438.035839206@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
 References: <20180723122437.447870153@linuxfoundation.org>
@@ -50,48 +51,166 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <abrodkin@synopsys.com>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
 
-commit 6e3761145a9ba3ce267c330b6bff51cf6a057b06 upstream.
+commit 64234961c145606b36eaa82c47b11be842b21049 upstream.
 
-swap was broken on ARC due to silly copy-paste issue.
+We used to have pre-set CONFIG_INITRAMFS_SOURCE with local path
+to intramfs in ARC defconfigs. This was quite convenient for
+in-house development but not that convenient for newcomers
+who obviusly don't have folders like "arc_initramfs" next to
+the Linux source tree. Which leads to quite surprising failure
+of defconfig building:
+------------------------------->8-----------------------------
+  ../scripts/gen_initramfs_list.sh: Cannot open '../../arc_initramfs_hs/'
+../usr/Makefile:57: recipe for target 'usr/initramfs_data.cpio.gz' failed
+make[2]: *** [usr/initramfs_data.cpio.gz] Error 1
+------------------------------->8-----------------------------
 
-We encode offset from swapcache page in __swp_entry() as (off << 13) but
-were not decoding back in __swp_offset() as (off >> 13) - it was still
-(off << 13).
+So now when more and more people start to deal with our defconfigs
+let's make their life easier with removal of CONFIG_INITRAMFS_SOURCE.
 
-This finally fixes swap usage on ARC.
-
-| # mkswap /dev/sda2
-|
-| # swapon -a -e /dev/sda2
-| Adding 500728k swap on /dev/sda2.  Priority:-2 extents:1 across:500728k
-|
-| # free
-|              total       used       free     shared    buffers     cached
-| Mem:        765104      13456     751648       4736          8       4736
-| -/+ buffers/cache:       8712     756392
-| Swap:       500728          0     500728
-
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Kevin Hilman <khilman@baylibre.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/include/asm/pgtable.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arc/configs/axs101_defconfig          |    1 -
+ arch/arc/configs/axs103_defconfig          |    1 -
+ arch/arc/configs/axs103_smp_defconfig      |    1 -
+ arch/arc/configs/haps_hs_defconfig         |    1 -
+ arch/arc/configs/haps_hs_smp_defconfig     |    1 -
+ arch/arc/configs/hsdk_defconfig            |    1 -
+ arch/arc/configs/nsim_700_defconfig        |    1 -
+ arch/arc/configs/nsim_hs_defconfig         |    1 -
+ arch/arc/configs/nsim_hs_smp_defconfig     |    1 -
+ arch/arc/configs/nsimosci_defconfig        |    1 -
+ arch/arc/configs/nsimosci_hs_defconfig     |    1 -
+ arch/arc/configs/nsimosci_hs_smp_defconfig |    1 -
+ 12 files changed, 12 deletions(-)
 
---- a/arch/arc/include/asm/pgtable.h
-+++ b/arch/arc/include/asm/pgtable.h
-@@ -379,7 +379,7 @@ void update_mmu_cache(struct vm_area_str
- 
- /* Decode a PTE containing swap "identifier "into constituents */
- #define __swp_type(pte_lookalike)	(((pte_lookalike).val) & 0x1f)
--#define __swp_offset(pte_lookalike)	((pte_lookalike).val << 13)
-+#define __swp_offset(pte_lookalike)	((pte_lookalike).val >> 13)
- 
- /* NOPs, to keep generic kernel happy */
- #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
+--- a/arch/arc/configs/axs101_defconfig
++++ b/arch/arc/configs/axs101_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+--- a/arch/arc/configs/axs103_defconfig
++++ b/arch/arc/configs/axs103_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+--- a/arch/arc/configs/axs103_smp_defconfig
++++ b/arch/arc/configs/axs103_smp_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+--- a/arch/arc/configs/haps_hs_defconfig
++++ b/arch/arc/configs/haps_hs_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
+ CONFIG_EXPERT=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_COMPAT_BRK is not set
+--- a/arch/arc/configs/haps_hs_smp_defconfig
++++ b/arch/arc/configs/haps_hs_smp_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+--- a/arch/arc/configs/hsdk_defconfig
++++ b/arch/arc/configs/hsdk_defconfig
+@@ -9,7 +9,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+--- a/arch/arc/configs/nsim_700_defconfig
++++ b/arch/arc/configs/nsim_700_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+--- a/arch/arc/configs/nsim_hs_defconfig
++++ b/arch/arc/configs/nsim_hs_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+--- a/arch/arc/configs/nsim_hs_smp_defconfig
++++ b/arch/arc/configs/nsim_hs_smp_defconfig
+@@ -9,7 +9,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs_hs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+--- a/arch/arc/configs/nsimosci_defconfig
++++ b/arch/arc/configs/nsimosci_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+--- a/arch/arc/configs/nsimosci_hs_defconfig
++++ b/arch/arc/configs/nsimosci_hs_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs_hs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+--- a/arch/arc/configs/nsimosci_hs_smp_defconfig
++++ b/arch/arc/configs/nsimosci_hs_smp_defconfig
+@@ -9,7 +9,6 @@ CONFIG_IKCONFIG_PROC=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs_hs/"
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_KPROBES=y
 
 
