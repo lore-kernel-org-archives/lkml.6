@@ -2,112 +2,179 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AB0ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3EBECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F7CE20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB51120854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:48:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAwtn4Ue"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F7CE20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=markrailton-com.20150623.gappssmtp.com header.i=@markrailton-com.20150623.gappssmtp.com header.b="P5ymQPWN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB51120854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=markrailton.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388190AbeGWWuh (ORCPT
+        id S2388198AbeGWWvS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:50:37 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35330 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388109AbeGWWug (ORCPT
+        Mon, 23 Jul 2018 18:51:18 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36584 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388137AbeGWWvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:50:36 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e6-v6so1303979pgv.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:47:26 -0700 (PDT)
+        Mon, 23 Jul 2018 18:51:18 -0400
+Received: by mail-ed1-f65.google.com with SMTP id k15-v6so2253807edr.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:48:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=sBBg/ZlROUcB8xJRxMUeMIJc2BV5pntlFlG0jWSuGRA=;
-        b=CAwtn4UeeerJlWCys98JVfUY9vn0ho+foi9tHCIQBY/MhQLkORWf1tY+0bfVz1Uhd7
-         qJPpnq17wt7on4yOpPQQYa3ce4Gru8pprDz5S4Dx7/wkdJpi0E7jyh5mS4v/89UZURn4
-         7tWSfoIxzTc//JDmpYzgWILtVAAxwU5xi249GGRtFnW08qQRCkxo/+qfndHxIP5UIi6a
-         viSxEZB2lLFlp20Z3lAERyo/REMQIcI6leRtBmFtz+kY/qA+Z6ID2csX5wUgcFg+flKd
-         YgEple8INQ/8Hsgbz0NTUUC5tgeC0ZHUN9JzYgvxqtCUZSCVf0b7nMrcUVveNRzbIEEs
-         C0Mw==
+        d=markrailton-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dKqyDj3vrA5uJCgjhlfGSPtco1hfjdKUb+O1yIzMhRc=;
+        b=P5ymQPWNwGZ4T/s4BmpU7uxhosyLLWy6wUKBSHeKIrJUivCRN3i3wjiNPSQjc6mUrE
+         Kt3u3cp8YmcuGLtn6QTMz8Aj2+duPY/rGzLQ8eWl4EdYJ6+RRh9W2PHfQd6cIFbuol9q
+         MfsA1ueOQg4V++/MgAbCQ8mrJLY5A2vTnOTVepK5iOChtfEDjmyMDHIcQXa3uo6WsOLu
+         QHU/1AlshyBhxnPZn5I5VtX3KUP3wzp6s66deNPrfrqnO35RYlse1mJ8cqnkxQtE72jD
+         wLbmXsmp/jWeg/CazNM6PS2z9OHCop0HunHMHtKJQjV39KC6pMhSkosmlEm3hV0368RO
+         IGOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=sBBg/ZlROUcB8xJRxMUeMIJc2BV5pntlFlG0jWSuGRA=;
-        b=oUTs1Nnwoezx1Vdocu7E4fuyhd7LR9fM+KXYhx3ZG8JmLZClN1pkrJFEQokK6Hovyf
-         bvASPc0kMDFbtG2l7HWUdxKuFhTHhj98f4yqozdZyDOzcRDCjDVGkDHH2eHaiK39y70y
-         VHYEfp9olI6BvnMOc/AsO4XAgC98O5luq7KpngyxDQOcFoPHDlEOtfIc9LqnVg+O1usE
-         8kcSaoPrOOvIjDOTOJ1ckQbVoCwErTS78cn2sKm6ICegW9L+OxreOAKAxKEvOh5j0vxd
-         kYSJI8dC0m2WkKnupMCSo8/fF9rTscW1k1vh9HQy0O9RK8T+zO/ebqVmTG30skPt8pyQ
-         a8hg==
-X-Gm-Message-State: AOUpUlF4fQ6RRmfRwl166qX4mct8TkGQy4WDAqf8bWgYJy+JOvbibfaf
-        Dz2PQds5ykD8XIxENDYRYe3f9wNg
-X-Google-Smtp-Source: AAOMgpfJ3F9omtcqgt8ffkGykVOtjS6KaQ2EoRTM/6BOXfAW6abfMAFZ8Iuf0gBEPkBvc4SQpaRi/g==
-X-Received: by 2002:a65:4541:: with SMTP id x1-v6mr13481767pgr.26.1532382445967;
-        Mon, 23 Jul 2018 14:47:25 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id m26-v6sm18778250pfi.102.2018.07.23.14.47.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 14:47:25 -0700 (PDT)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] android: binder_alloc: Include asm/cacheflush.h after linux/ include files
-Date:   Mon, 23 Jul 2018 14:47:23 -0700
-Message-Id: <1532382443-14183-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dKqyDj3vrA5uJCgjhlfGSPtco1hfjdKUb+O1yIzMhRc=;
+        b=TQmlqBPaXn60IKqva1vOGshhrDT2gti2OYsXoJgRsC0G2hwKoaupLoYazKdlOR/H3+
+         hf9SodbetXKX96OjSrbV0u73F89dZ0MGIqacEVX7LmZ004x/WEHWV3pbbweKagkTUHbM
+         Mrgx6vp7JaOj2bi3hQXia3CdGMeG1IgUTrVmWnjdRxmJCvBuieZvFpPWuY5jAMmM5WOp
+         t/x4t0edtuqqYrMw0ytXotl7AtDsTixUfAPkjQwzyanI910C/Zx9mQzpPPOYHjjuI6F+
+         /t2pUj4x5+c01KmiNJvo/ErIntA7DHxMI/i9FEcvaZBTwqV0hXOpL2O7tZR2ssVjsbZ9
+         rjkA==
+X-Gm-Message-State: AOUpUlEZHkIhWNmm6S28bAZJIZ3mXB1KYeOCmtXECmGN8hYblfDb8/b/
+        i7eg4WNso/BUYUHOFpMCkKN8OCbyu9WAojWj
+X-Google-Smtp-Source: AAOMgpcasF4AtTssR4h80E3G8fLWMVteurc92WPgE2r4/L1fgsLQx7CjbrDqgOJEdhXNYeDTdyMh+w==
+X-Received: by 2002:a50:9818:: with SMTP id g24-v6mr16161451edb.174.1532382486222;
+        Mon, 23 Jul 2018 14:48:06 -0700 (PDT)
+Received: from ZeroCool ([109.255.141.80])
+        by smtp.gmail.com with ESMTPSA id d15-v6sm4863529edq.31.2018.07.23.14.48.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 14:48:05 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 22:48:04 +0100
+From:   Mark Railton <mark@markrailton.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Drivers: Xen: xlate_mmu.c: Fixed comment layout
+Message-ID: <20180723214804.GA21761@ZeroCool>
+References: <20180723213404.20720-1-mark@markrailton.com>
+ <e0b30ab8-d418-cbe0-d03c-a0aee1d48367@infradead.org>
+ <20180723214011.GA21167@ZeroCool>
+ <01b221f3-d923-1abb-0168-bfeba80b9a9a@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01b221f3-d923-1abb-0168-bfeba80b9a9a@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If asm/cacheflush.h is included first, the following build warnings are
-seen with sparc32 builds.
+On Mon, Jul 23, 2018 at 02:44:28PM -0700, Randy Dunlap wrote:
+> On 07/23/2018 02:40 PM, Mark Railton wrote:
+> > On Mon, Jul 23, 2018 at 02:38:20PM -0700, Randy Dunlap wrote:
+> >> On 07/23/2018 02:34 PM, Mark Railton wrote:
+> >>> Fixed issue with multi line comment
+> >>
+> >> Fix [not Fixed]
+> >>
+> >>>
+> >>> Signed-off-by: Mark Railton <mark@markrailton.com>
+> >>> ---
+> >>>  drivers/xen/xlate_mmu.c | 5 +++--
+> >>>  1 file changed, 3 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+> >>> index 23f1387b3ef7..3b03bc1641ed 100644
+> >>> --- a/drivers/xen/xlate_mmu.c
+> >>> +++ b/drivers/xen/xlate_mmu.c
+> >>> @@ -151,8 +151,9 @@ int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
+> >>>  	struct remap_data data;
+> >>>  	unsigned long range = DIV_ROUND_UP(nr, XEN_PFN_PER_PAGE) << PAGE_SHIFT;
+> >>>  
+> >>> -	/* Kept here for the purpose of making sure code doesn't break
+> >>> -	   x86 PVOPS */
+> >>> +	/* Kept here for the purpose of making sure code doesn't
+> >>> +	 * break x86 PVOPS
+> >>> +	 */
+> >>
+> >> That is still not the preferred kernel multi-line comment style.
+> >> Documentation/process/coding-style.rst says:
+> >>
+> >> 	/*
+> >> 	 * This is the preferred style for multi-line
+> >> 	 * comments in the Linux kernel source code.
+> >> 	 * Please use it consistently.
+> >> 	 *
+> >> 	 * Description:  A column of asterisks on the left side,
+> >> 	 * with beginning and ending almost-blank lines.
+> >> 	 */
+> >>
+> >> although Networking code has a slightly different preferred style (as in
+> >> your patch).
+> >>
+> >>>  	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
+> >>>  
+> >>>  	data.fgfn = gfn;
+> >>>
+> >>
+> >>
+> >> -- 
+> >> ~Randy
+> > 
+> > Thank's for the feedback, I'll get that updated now.
+> > 
+> > I'm still kinda new to this, I assume I need to send the new patch via
+> > git send-email?
+> 
+> That is one option.  Use whatever works for you.
+> 
+> There are several email clients that also work well.
+> See Documentation/process/email-clients.rst.
+> 
+> 
+> -- 
+> ~Randy
 
-In file included from ./arch/sparc/include/asm/cacheflush.h:11:0,
-	from drivers/android/binder_alloc.c:20:
-./arch/sparc/include/asm/cacheflush_32.h:40:37: warning:
-	'struct page' declared inside parameter list
+From 57c8104d2a30020005be16df2ca69ed66f6c4ae9 Mon Sep 17 00:00:00 2001
+From: Mark Railton <mark@markrailton.com>
+Date: Mon, 23 Jul 2018 22:28:53 +0100
+Subject: [PATCH] Drivers: Xen: xlate_mmu.c: Fixed comment layout
 
-Moving the asm/ include after linux/ includes fixes the problem.
+Fixed issue with multi line comment
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Mark Railton <mark@markrailton.com>
 ---
- drivers/android/binder_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/xen/xlate_mmu.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 2628806c64a2..2c258dcf9d72 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -17,7 +17,6 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
--#include <asm/cacheflush.h>
- #include <linux/list.h>
- #include <linux/sched/mm.h>
- #include <linux/module.h>
-@@ -28,6 +27,7 @@
- #include <linux/slab.h>
- #include <linux/sched.h>
- #include <linux/list_lru.h>
-+#include <asm/cacheflush.h>
- #include "binder_alloc.h"
- #include "binder_trace.h"
- 
--- 
-2.7.4
+diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+index 23f1387b3ef7..2b77c79f8ce7 100644
+--- a/drivers/xen/xlate_mmu.c
++++ b/drivers/xen/xlate_mmu.c
+@@ -151,8 +151,10 @@ int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
+ 	struct remap_data data;
+ 	unsigned long range = DIV_ROUND_UP(nr, XEN_PFN_PER_PAGE) << PAGE_SHIFT;
+
+-	/* Kept here for the purpose of making sure code doesn't break
+-	   x86 PVOPS */
++	/*
++	 * Kept here for the purpose of making sure code doesn't
++	 * break x86 PVOPS
++	 */
+ 	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
+
+ 	data.fgfn = gfn;
+--
+2.17.1
+
 
