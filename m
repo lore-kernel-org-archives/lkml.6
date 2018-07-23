@@ -2,121 +2,109 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5A2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0ECECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F1F20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:23:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtsFKhIZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F1F20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 10BE720875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:25:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BE720875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388313AbeGWSZX (ORCPT
+        id S2388140AbeGWS1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:25:23 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39255 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388002AbeGWSZW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:25:22 -0400
-Received: by mail-pg1-f194.google.com with SMTP id g2-v6so847622pgs.6
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 10:23:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z6U6NzqQTICtvDwK/fn8bUHW2tW43DN5qIhaDGwWUpo=;
-        b=YtsFKhIZ9abPLrvRx0xjrYzy7IIehHxeK83H2L0u+PZgximzcH/vNktqRienjf4Utr
-         qDeJo1AldbzopBz1Y/SgaofXc7M6xtsb9I+QdObpggBzhKqeJxDe2pWMbtrVYsx7Nr2J
-         gRITBWwt3x4mTlKKde+v0LPKBgGZUXNpzljtV9nCIUdN+ilVbVkMZh3sU9UoKGXNwn/u
-         sappBjdhRQK/mRst0bh6qBzdXUrCuOJ4jgNZ/GDihyOA+Goi12f+436r8hSG55SjFuLe
-         wigZ4oBhoNLIKcdvlJVzo1eOal7LeM0/QaAsnW5Aljdq2lYAjyYxXc0rex7tOyOLdrGR
-         y65w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z6U6NzqQTICtvDwK/fn8bUHW2tW43DN5qIhaDGwWUpo=;
-        b=tMg/X54XZ8aa4qvcGRwA3zXvQyWPUO5MZZ3OfTDkBCbBSJ+Q/UN8NEx91d2D41LEqU
-         /jEvR5/GePDHx6Bbs4KR7DTKFhGZKE+3tVXv4YaZVAAzOz15npKUq4m4DZZv40iIhHE0
-         hV8a9Yohk0pZPJhA4AnwjdyjdL+PX/n1Ek1GJfY+nz9Tpn54Vb/Arwwy8HADBNSzwPaq
-         Okp2AuBmktykfalZAur7Jikt6FHfm0YhWgIhUkdF2MY5L4SMtOJ5n/ir4o5eNIASBOSr
-         nc8QFAI9zHLEHqRz26SE2vC9w6OCtlBcwJWBg+BXcWyNPpWXdUW40VJzjZNtvVmpLtLS
-         3oHQ==
-X-Gm-Message-State: AOUpUlG634Zp1PmJ/TSEYuyoexhiit+dZcuABNkxUsMg089elvOLuni+
-        /rMITDqvRByggajoPpmhDOA=
-X-Google-Smtp-Source: AAOMgpfEeEIenJNdjbbi4SGEWDLBzcmLcOMHN9NrKjW95W5+pSDUSDrVLr4Z2GAldkmJuvtF3LSNwg==
-X-Received: by 2002:a63:d011:: with SMTP id z17-v6mr12779464pgf.272.1532366588641;
-        Mon, 23 Jul 2018 10:23:08 -0700 (PDT)
-Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
-        by smtp.gmail.com with ESMTPSA id z2-v6sm10684864pgv.12.2018.07.23.10.23.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 10:23:07 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 10:23:05 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Anton Vasilyev <vasilyev@ispras.ru>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Pan Bian <bianpan2016@163.com>, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: Re: [PATCH] firmware: vpd: Fix section enabled flag on
- vpd_section_destroy
-Message-ID: <20180723172305.GD100814@dtor-ws>
-References: <20180723164857.24460-1-vasilyev@ispras.ru>
- <20180723171336.GA15900@roeck-us.net>
+        Mon, 23 Jul 2018 14:27:15 -0400
+Received: from mga12.intel.com ([192.55.52.136]:59052 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387981AbeGWS1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:27:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 10:25:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
+   d="scan'208";a="57215986"
+Received: from alison-desk.jf.intel.com ([10.54.74.53])
+  by fmsmga008.fm.intel.com with ESMTP; 23 Jul 2018 10:25:01 -0700
+Date:   Mon, 23 Jul 2018 10:22:49 -0700
+From:   Alison Schofield <alison.schofield@intel.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv5 10/19] x86/mm: Implement page_keyid() using page_ext
+Message-ID: <20180723172249.GA13530@alison-desk.jf.intel.com>
+References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
+ <20180717112029.42378-11-kirill.shutemov@linux.intel.com>
+ <2166be55-3491-f620-5eb0-6f671a53645f@intel.com>
+ <20180723094517.7sxt62p3h75htppw@kshutemo-mobl1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180723171336.GA15900@roeck-us.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180723094517.7sxt62p3h75htppw@kshutemo-mobl1>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 10:13:36AM -0700, Guenter Roeck wrote:
-> On Mon, Jul 23, 2018 at 07:48:57PM +0300, Anton Vasilyev wrote:
-> > static struct ro_vpd and rw_vpd are initialized by vpd_sections_init()
-> > in vpd_probe() based on header's ro and rw sizes.
-> > In vpd_remove() vpd_section_destroy() performs deinitialization based
-> > on enabled flag, which is set to true by vpd_sections_init().
-> > This leads to call of vpd_section_destroy() on already destroyed section
-> > for probe-release-probe-release sequence if first probe performs
-> > ro_vpd initialization and second probe does not initialize it.
+On Mon, Jul 23, 2018 at 12:45:17PM +0300, Kirill A. Shutemov wrote:
+> On Wed, Jul 18, 2018 at 04:38:02PM -0700, Dave Hansen wrote:
+> > On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
+> > > Store KeyID in bits 31:16 of extended page flags. These bits are unused.
 > > 
+> > I'd love a two sentence remind of what page_ext is and why you chose to
+> > use it.  Yes, you need this.  No, not everybody that you want to review
+> > this patch set knows what it is or why you chose it.
 > 
-> I am not sure if the situation described can be seen in the first place.
-> The second probe would only not perform ro_vpd initialization if it fails
-> prior to that, ie if it fails to allocate memory or if there is a
-> consistency problem. In that case the remove function would not be called.
+> Okay.
 > 
-> However, there is a problem in the code: A partially failed probe will
-> leave the system in inconsistent state. Example: ro section initializes,
-> rw section fails to initialize. The probe will fail, but the ro section
-> will not be destroyed, its sysfs attributes still exist, and its memory
-> is still mapped. It would make more sense to fix _that_ problem.
-> Essentially, vpd_sections_init() should clean up after itself after it
-> fails to initialize a section.
+> > > page_keyid() returns zero until page_ext is ready.
+> > 
+> > Is there any implication of this?  Or does it not matter because we
+> > don't run userspace until after page_ext initialization is done?
 > 
-> Note that I am not convinced that the "enabled" flag is needed in the first
-> place. It is only relevant if vpd_section_destroy() is called, which only
-> happens from the remove function. The remove function is only called if the
-> probe function succeeded. In that case it is always set for both sections.
+> It matters in sense that we shouldn't reference page_ext before it's
+> initialized otherwise we will get garbage and crash.
+> 
+> > > page_ext initializer enables static branch to indicate that
+> > 
+> > 			"enables a static branch"
+> > 
+> > > page_keyid() can use page_ext. The same static branch will gate MKTME
+> > > readiness in general.
+> > 
+> > Can you elaborate on this a bit?  It would also be a nice place to hint
+> > to the folks working hard on the APIs to ensure she checks this.
+> 
+> Okay.
 
-The problem will happen if coreboot memory changes between 2 probes so
-that header.ro_size is not 0 on the first pass and is 0 on the second
-pass. Not quite likely to ever happen in real life, but resetting a flag
-is pretty cheap to not do it.
+At API init time we can check if (MKTME_ENABLED &&  mktme_nr_keyids > 0)
+Sounds like this is another dependency we need to check and 'wait' on?
+It happens after MKTME_ENABLED is set?  Let me know.
 
-Thanks.
-
--- 
-Dmitry
+> 
+> > > We don't yet set KeyID for the page. It will come in the following
+> > > patch that implements prep_encrypted_page(). All pages have KeyID-0 for
+> > > now.
+> > 
+> > It also wouldn't hurt to mention why you don't use an X86_FEATURE_* for
+> > this rather than an explicit static branch.  I'm sure the x86
+> > maintainers will be curious.
+> 
+> Sure.
+> 
+> -- 
+>  Kirill A. Shutemov
