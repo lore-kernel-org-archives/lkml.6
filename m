@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423A3ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B62ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA52E20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA52E20854
+	by mail.kernel.org (Postfix) with ESMTP id 6C91720880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C91720880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388814AbeGWN3K (ORCPT
+        id S2388824AbeGWN3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:29:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45590 "EHLO
+        Mon, 23 Jul 2018 09:29:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45600 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388361AbeGWN3J (ORCPT
+        with ESMTP id S2388279AbeGWN3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:29:09 -0400
+        Mon, 23 Jul 2018 09:29:12 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C4EDC0A;
-        Mon, 23 Jul 2018 12:28:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EDA8C0A;
+        Mon, 23 Jul 2018 12:28:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Herrmann <aherrmann@suse.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.17 24/63] cpufreq: intel_pstate: Register when ACPI PCCH is present
-Date:   Mon, 23 Jul 2018 14:24:30 +0200
-Message-Id: <20180723122447.280988894@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH 4.17 25/63] vfio/pci: Fix potential Spectre v1
+Date:   Mon, 23 Jul 2018 14:24:31 +0200
+Message-Id: <20180723122447.324163158@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -51,85 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 95d6c0857e54b788982746071130d822a795026b upstream.
+commit 0e714d27786ce1fb3efa9aac58abc096e68b1c2a upstream.
 
-Currently, intel_pstate doesn't register if _PSS is not present on
-HP Proliant systems, because it expects the firmware to take over
-CPU performance scaling in that case.  However, if ACPI PCCH is
-present, the firmware expects the kernel to use it for CPU
-performance scaling and the pcc-cpufreq driver is loaded for that.
+info.index can be indirectly controlled by user-space, hence leading
+to a potential exploitation of the Spectre variant 1 vulnerability.
 
-Unfortunately, the firmware interface used by that driver is not
-scalable for fundamental reasons, so pcc-cpufreq is way suboptimal
-on systems with more than just a few CPUs.  In fact, it is better to
-avoid using it at all.
+This issue was detected with the help of Smatch:
 
-For this reason, modify intel_pstate to look for ACPI PCCH if _PSS
-is not present and register if it is there.  Also prevent the
-pcc-cpufreq driver from trying to initialize itself if intel_pstate
-has been registered already.
+drivers/vfio/pci/vfio_pci.c:734 vfio_pci_ioctl()
+warn: potential spectre issue 'vdev->region'
 
-Fixes: fbbcdc0744da (intel_pstate: skip the driver if ACPI has power mgmt option)
-Reported-by: Andreas Herrmann <aherrmann@suse.com>
-Reviewed-by: Andreas Herrmann <aherrmann@suse.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Tested-by: Andreas Herrmann <aherrmann@suse.com>
-Cc: 4.16+ <stable@vger.kernel.org> # 4.16+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fix this by sanitizing info.index before indirectly using it to index
+vdev->region
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/intel_pstate.c |   17 ++++++++++++++++-
- drivers/cpufreq/pcc-cpufreq.c  |    4 ++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ drivers/vfio/pci/vfio_pci.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -2179,6 +2179,18 @@ static bool __init intel_pstate_no_acpi_
- 	return true;
- }
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -28,6 +28,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/vfio.h>
+ #include <linux/vgaarb.h>
++#include <linux/nospec.h>
  
-+static bool __init intel_pstate_no_acpi_pcch(void)
-+{
-+	acpi_status status;
-+	acpi_handle handle;
-+
-+	status = acpi_get_handle(NULL, "\\_SB", &handle);
-+	if (ACPI_FAILURE(status))
-+		return true;
-+
-+	return !acpi_has_method(handle, "PCCH");
-+}
-+
- static bool __init intel_pstate_has_acpi_ppc(void)
- {
- 	int i;
-@@ -2238,7 +2250,10 @@ static bool __init intel_pstate_platform
+ #include "vfio_pci_private.h"
  
- 	switch (plat_info[idx].data) {
- 	case PSS:
--		return intel_pstate_no_acpi_pss();
-+		if (!intel_pstate_no_acpi_pss())
-+			return false;
-+
-+		return intel_pstate_no_acpi_pcch();
- 	case PPC:
- 		return intel_pstate_has_acpi_ppc() && !force_load;
- 	}
---- a/drivers/cpufreq/pcc-cpufreq.c
-+++ b/drivers/cpufreq/pcc-cpufreq.c
-@@ -580,6 +580,10 @@ static int __init pcc_cpufreq_init(void)
- {
- 	int ret;
+@@ -727,6 +728,9 @@ static long vfio_pci_ioctl(void *device_
+ 			if (info.index >=
+ 			    VFIO_PCI_NUM_REGIONS + vdev->num_regions)
+ 				return -EINVAL;
++			info.index = array_index_nospec(info.index,
++							VFIO_PCI_NUM_REGIONS +
++							vdev->num_regions);
  
-+	/* Skip initialization if another cpufreq driver is there. */
-+	if (cpufreq_get_current_driver())
-+		return 0;
-+
- 	if (acpi_disabled)
- 		return 0;
+ 			i = info.index - VFIO_PCI_NUM_REGIONS;
  
 
 
