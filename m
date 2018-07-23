@@ -2,123 +2,122 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF7BECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E53AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D518920880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:56:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D518920880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BE80720856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:56:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LqPPodYc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE80720856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388197AbeGWV70 (ORCPT
+        id S2388177AbeGWV70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 23 Jul 2018 17:59:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42248 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388068AbeGWV70 (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:40411 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388052AbeGWV70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Jul 2018 17:59:26 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6NKsLBJ096538
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 16:56:25 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kdjfkujb3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 16:56:25 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 23 Jul 2018 16:56:24 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 23 Jul 2018 16:56:22 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6NKuLhC7078368
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 23 Jul 2018 20:56:21 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C2F8B2064;
-        Mon, 23 Jul 2018 16:56:05 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1E4ABB205F;
-        Mon, 23 Jul 2018 16:56:05 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 23 Jul 2018 16:56:05 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8455616CA2D3; Mon, 23 Jul 2018 13:56:25 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 13:56:25 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] rhashtable: don't hold lock on first table
- throughout insertion.
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <153086169828.24852.10332573315056854948.stgit@noble>
- <153086175009.24852.7782466383056542839.stgit@noble>
- <20180720075409.kfckhodsnvktift7@gondor.apana.org.au>
- <20180720144152.GW12945@linux.vnet.ibm.com>
- <87muulqq8q.fsf@notabene.neil.brown.name>
- <20180722215446.GH12945@linux.vnet.ibm.com>
- <87h8kqrhi0.fsf@notabene.neil.brown.name>
+Received: by mail-io0-f193.google.com with SMTP id l14-v6so1705783iob.7
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:56:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iUIT79HGIDyUJCTj7MiVddWvAzLDg3NxJc8A3A11Xgk=;
+        b=LqPPodYc8b+k7thdzBRSXQ3H8sORbOnje9H2OW2b7Fx4V7aDtJurU0ZEvu8cq5ZbAB
+         MkWAEqwr55i7fKlujE0N/FmDLo5CWGvFaw4DMAGnp0yrJGAPQnQrGeenAlJ/TZa47DCG
+         qqn6eWmZVMidAZ04eLhgRibiFv7yfn7aaY7cQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iUIT79HGIDyUJCTj7MiVddWvAzLDg3NxJc8A3A11Xgk=;
+        b=IVBOpXLlNS5csAEGC6nZ7TNcChYAhYIaf2xqh00MB8ne1bq0ndnJSnUwD0UMX0pFfY
+         W2hjxYebcibK+4+cvHUkgRZqRdmTjqvVctRm4cNKSiE0hSv5hsJhPgaPJp7PlegbxwP5
+         id4iqJRbx8+PCTvjNhL9DQfgN5XSefmXWPpapgbYuxOvuDjZD94mahseOCepVq+ZlPC7
+         kCKWXj37DD7mmql2BbSAfIeCLGiVv3oEsLU+s+KZxEfmtABO2XVyhcGWUfKf6N8uFIT7
+         Tadi2O5Nq+mDB3akRvzkFrYT+Ob/tch3asHau93TfKGgJlZ+xa+77JCcm9sd7hKk8zLv
+         sb9g==
+X-Gm-Message-State: AOUpUlFuy0wNA18/Trtyxm4EM1qt69mwdKtCnj7K9wVQmhyea4LZkiiL
+        7dW5tQ4irbf9nyhlK9Fvf40EXdoOqVCpRMWOUcc=
+X-Google-Smtp-Source: AAOMgpd5ePKCAx/lxKmn56vej79DGS8IjvTV85cQfkSCiQ29NHlQxkVp7/KdoJMC/0ISyVunCQQ89mwsdNHHx9sg0pI=
+X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr11975564iov.203.1532379386261;
+ Mon, 23 Jul 2018 13:56:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h8kqrhi0.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18072320-0064-0000-0000-0000032E7901
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009419; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01065123; UDB=6.00547110; IPR=6.00842980;
- MB=3.00022285; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-23 20:56:23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072320-0065-0000-0000-00003A0B1785
-Message-Id: <20180723205625.GZ12945@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=619 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807230229
+References: <CA+55aFzMheDA-2z=MdGgJrz-REcrknb+4OEvRKaJipm+x6xEhw@mail.gmail.com>
+ <20180723204617.GA14487@roeck-us.net>
+In-Reply-To: <20180723204617.GA14487@roeck-us.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 23 Jul 2018 13:56:15 -0700
+Message-ID: <CA+55aFyuaEGGksOxv3aAp0THYkAapap-JY65A0A81S0qUE0S+g@mail.gmail.com>
+Subject: Re: Linux 4.18-rc6
+To:     Guenter Roeck <linux@roeck-us.net>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 09:13:43AM +1000, NeilBrown wrote:
-> On Sun, Jul 22 2018, Paul E. McKenney wrote:
-> >
-> > One issue is that the ->func pointer can legitimately be NULL while on
-> > RCU's callback lists.  This happens when someone invokes kfree_rcu()
-> > with the rcu_head structure at the beginning of the enclosing structure.
-> > I could add an offset to avoid this, or perhaps the kmalloc() folks
-> > could be persuaded Rao Shoaib's patch moving kfree_rcu() handling to
-> > the slab allocators, so that RCU only ever sees function pointers in
-> > the ->func field.
-> >
-> > Either way, this should be hidden behind an API to allow adjustments
-> > to be made if needed.  Maybe something like is_after_call_rcu()?
-> > This would (for example) allow debug-object checks to be used to catch
-> > check-after-free bugs.
-> >
-> > Would something of that sort work for you?
-> 
-> Yes, if you could provide an is_after_call_rcu() API, that would
-> perfectly suit my use-case.
+Adding davem for the sparc issue, Martin for the s390 one.
 
-After beating my head against the object-debug code a bit, I have to ask
-if it would be OK for you if the is_after_call_rcu() API also takes the
-function that was passed to RCU.
+On Mon, Jul 23, 2018 at 1:46 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> The s390 gcc plugins related build error reported previously has not really
+> been fixed; after feedback from the s390 maintainers, suggesting that it
+> won't get fixed in 4.18, I disabled GCC_PLUGINS for s390 builds. This is
+> not my preferred solution, but it beats not testing s390:allmodconfig
+> builds at all.
 
-							Thanx, Paul
+Martin - can we just remove the
 
+         select HAVE_GCC_PLUGINS
+
+from the s390 Kconfig file (or perhaps add "if BROKEN" or something to
+disable it).
+
+Because if it's not getting fixed, it shouldn't be exposed.
+
+> The sparc32 build error is still:
+>
+> In file included from
+>         ...
+>         from drivers/staging/media/omap4iss/iss_video.c:15:
+> include/linux/highmem.h: In function 'clear_user_highpage':
+> include/linux/highmem.h:137:31: error:
+>         passing argument 1 of 'sparc_flush_page_to_ram' from incompatible pointer type
+>
+> due to a missing declaration of 'struct page', as previously reported.
+
+Hmm.  I assume it's
+
+    arch/sparc/include/asm/cacheflush_32.h
+
+that wants a forward-declaration of 'struct page', and doesn't include
+any header files.
+
+The fix is presumably to move the
+
+   #include <asm/cacheflush.h>
+
+in drivers/staging/media/omap4iss/iss_video.c down to below the
+<linux/*> includes?
+
+The old patchwork link you had for a fix no longer works, I think
+because the patchwork database got re-generated during the upgrade
+(and the patchwork numbering isn't stable).
+
+Davem?
+
+              Linus
