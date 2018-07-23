@@ -2,107 +2,100 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33CFECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C52ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8592F20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:19:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8592F20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 651D120854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:20:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMoX2Dve"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651D120854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388267AbeGWOVJ (ORCPT
+        id S2388325AbeGWOVL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 10:21:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38054 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388053AbeGWOVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 10:21:08 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7C5A68790F;
-        Mon, 23 Jul 2018 13:19:55 +0000 (UTC)
-Received: from x2.localnet (ovpn-122-239.rdu2.redhat.com [10.10.122.239])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 286D3111CA17;
-        Mon, 23 Jul 2018 13:19:47 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, cgroups@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-audit@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, carlos@redhat.com,
-        dhowells@redhat.com, viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
-Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 02/10] audit: log container info of syscalls
-Date:   Mon, 23 Jul 2018 09:19:47 -0400
-Message-ID: <3318670.y8SpQ3RC2W@x2>
-Organization: Red Hat
-In-Reply-To: <20180722205510.eh2n7bcd52454dwj@madcap2.tricolour.ca>
-References: <cover.1528304203.git.rgb@redhat.com> <5467262.rd0RIe6TW9@x2> <20180722205510.eh2n7bcd52454dwj@madcap2.tricolour.ca>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 23 Jul 2018 13:19:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 23 Jul 2018 13:19:55 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'sgrubb@redhat.com' RCPT:''
+        Mon, 23 Jul 2018 10:21:11 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46706 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388053AbeGWOVK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 10:21:10 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h14-v6so664878wrw.13;
+        Mon, 23 Jul 2018 06:19:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=BObdpk6HN1vRa6o+1/RlFHnMb4FU0uQpaSfZRoJcZ8s=;
+        b=DMoX2Dvewx/sZdU+jLETbYnTbdeJNDOydYlIVogh3RP/72uXXI/PIIxsH0aNm7ylUY
+         laGSbk1SAiKsN1C1ocyAZhAZ3l00Lgufv41am9OShlFZIMV5crWPQpSvj7WuAXKebiTX
+         8gOZhd+pbDpEd8wKEzKPDJ56L9DRc89pTf7E0mRRtw2iq3weLqc6dJTrJrbyRSB6gkR+
+         pOCkxfc8HJhZpKjKRcXPQjVfSB51o8oJTrkRiV+MJiwN62ztdEET6jxErNh++pJOKBCg
+         nvlo1wurFv4aSA3uEwmArnFCpUjfFFy1CjaHucmxdOQUSwfC/mECe1B0PRkPFyIn5R4e
+         OUUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BObdpk6HN1vRa6o+1/RlFHnMb4FU0uQpaSfZRoJcZ8s=;
+        b=PYeiiMJTjSNBTqoVENBUZbqb/FYMXAUsOHW9f5cEuM3XRyb7YsWSnCRSg+DQ83eQcy
+         UNdqRJ7BMLWwRPPDs6f1YMT9P8GmeGFKCAbVh0OGzk/1jb1yJ+hk7WiQZBcytAV9U8Rl
+         50Q8Sseixbu5HPDVPKjutj86LxmJIi3b3Zd7n0TN6oYtoPeQs2YSn2hAE8YP6TBuAYwE
+         mYegX3uBGARegGEN85D+xUdE7eA2NFNSv/grQ9kAm4QYYSH9bPMbWh1yDErSToWF50PS
+         5ppcNUAi8YuiJhZ0lyWnXfQyXu28HekRhSn+wmYOsAjqMiJ/G5giLtB8cP/RlMa0taG0
+         Gmvw==
+X-Gm-Message-State: AOUpUlFsf6NKSrJW6ktLDi/pxf5Wm62SGozQT+tNAzKQmOiIBYq5zwP/
+        hSlGxAjtMDXT85JJkVzU+HY=
+X-Google-Smtp-Source: AAOMgpeUExfpGhaclgivaM62ji8SyjD1N9yfOu7+fcJc9Cpc6TuP+dBvw0Xac7wnxeq8x8LFw4koKQ==
+X-Received: by 2002:adf:96b2:: with SMTP id u47-v6mr8741890wrb.204.1532351996573;
+        Mon, 23 Jul 2018 06:19:56 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:201:1487::2])
+        by smtp.gmail.com with ESMTPSA id t184-v6sm8368459wmf.18.2018.07.23.06.19.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 06:19:55 -0700 (PDT)
+From:   dev-harsh1998 <harshitjain6751@gmail.com>
+To:     trivial@kernel.org
+Cc:     Harshit Jain <harshitjain6751@gmail.com>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Simon Budig <simon.budig@kernelconcepts.de>,
+        Andi Shyti <andi@etezian.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 02/11] touchscreen: ad7877: Use octal permissions
+Date:   Mon, 23 Jul 2018 18:49:17 +0530
+Message-Id: <20180723131954.30739-1-harshitjain6751@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, July 22, 2018 4:55:10 PM EDT Richard Guy Briggs wrote:
-> On 2018-07-22 09:32, Steve Grubb wrote:
-> > On Saturday, July 21, 2018 4:29:30 PM EDT Richard Guy Briggs wrote:
-> > > > > + * audit_log_contid - report container info
-> > > > > + * @tsk: task to be recorded
-> > > > > + * @context: task or local context for record
-> > > > > + * @op: contid string description
-> > > > > + */
-> > > > > +int audit_log_contid(struct task_struct *tsk,
-> > > > > +                            struct audit_context *context, char
-> > > > > *op)
-> > > > > +{
-> > > > > +       struct audit_buffer *ab;
-> > > > > +
-> > > > > +       if (!audit_contid_set(tsk))
-> > > > > +               return 0;
-> > > > > +       /* Generate AUDIT_CONTAINER record with container ID */
-> > > > > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER);
-> > > > > +       if (!ab)
-> > > > > +               return -ENOMEM;
-> > > > > +       audit_log_format(ab, "op=%s contid=%llu",
-> > > > > +                        op, audit_get_contid(tsk));
-> > > > 
-> > > > Can you explain your reason for including an "op" field in this
-> > > > record
-> > > > type?  I've been looking at the rest of the patches in this patchset
-> > > > and it seems to be used more as an indicator of the record's
-> > > > generating context rather than any sort of audit container ID
-> > > > operation.
-> > > 
-> > > "action" might work, but that's netfilter and numeric... "kind"?
-> > > Nothing else really seems to fit from a field name, type or lack of
-> > > searchability perspective.
-> > > 
-> > > Steve, do you have an opinion?
-> > 
-> > We only have 1 sample event where we have op=task. What are the other
-> > possible values?
-> 
-> For the AUDIT_CONTAINER record we have op= "task", "target" (from the
-> ptrace and signals patch), "tty".
-> 
-> For the AUDIT_CONTAINER_ID record we have "op=set".
+WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
++static DEVICE_ATTR(name, S_IRUGO, name ## _show, NULL);
 
-Since the purpose of this record is to log the container id, I think that is 
-all that is needed. We can get the context from the other records in the 
-event. I'd suggest dropping the "op" field.
+Signed-off-by: Harshit Jain <harshitjain6751@gmail.com>
+---
+ drivers/input/touchscreen/ad7877.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--Steve
-
+diff --git a/drivers/input/touchscreen/ad7877.c b/drivers/input/touchscreen/ad7877.c
+index 5cfe477ec992..4b4a9d84195e 100644
+--- a/drivers/input/touchscreen/ad7877.c
++++ b/drivers/input/touchscreen/ad7877.c
+@@ -461,7 +461,7 @@ name ## _show(struct device *dev, struct device_attribute *attr, char *buf) \
+ 		return v; \
+ 	return sprintf(buf, "%u\n", (unsigned) v); \
+ } \
+-static DEVICE_ATTR(name, S_IRUGO, name ## _show, NULL);
++static DEVICE_ATTR(name, 0444, name ## _show, NULL);
+ 
+ SHOW(aux1)
+ SHOW(aux2)
+-- 
+2.17.1
 
