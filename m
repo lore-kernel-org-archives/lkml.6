@@ -5,455 +5,372 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9C9ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1863ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A7E020854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:26:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A7E020854
+	by mail.kernel.org (Postfix) with ESMTP id 4814A20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:26:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4814A20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388706AbeGWQ17 (ORCPT
+        id S2388723AbeGWQ2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:27:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48274 "EHLO mx1.redhat.com"
+        Mon, 23 Jul 2018 12:28:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49140 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387831AbeGWQ16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 12:27:58 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        id S2387831AbeGWQ2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 12:28:05 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B71B5401DED1;
-        Mon, 23 Jul 2018 15:26:13 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3DCCA81A4EAF;
+        Mon, 23 Jul 2018 15:26:20 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1EA91111CD37;
-        Mon, 23 Jul 2018 15:26:12 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 553872026D65;
+        Mon, 23 Jul 2018 15:26:19 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 4/5] vfs: Add superblock notifications
+Subject: [PATCH 5/5] Add sample notification program
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
         linux-kernel@vger.kernel.org, raven@themaw.net,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Date:   Mon, 23 Jul 2018 16:26:11 +0100
-Message-ID: <153235957165.32640.10593983430211812657.stgit@warthog.procyon.org.uk>
+Date:   Mon, 23 Jul 2018 16:26:18 +0100
+Message-ID: <153235957887.32640.8025222191782276269.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
 References: <153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 15:26:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 15:26:13 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 23 Jul 2018 15:26:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 23 Jul 2018 15:26:20 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a superblock event notification facility whereby notifications about
-superblock events, such as I/O errors (EIO), quota limits being hit
-(EDQUOT) and running out of space (ENOSPC) can be reported to a monitoring
-process asynchronously.  Note that this does not cover vfsmount topology
-changes.  mount_notify() is used for that.
+This needs to be linked with -lkeyutils.
 
-Firstly, an event queue needs to be created:
+It is run like:
 
-	fd = open("/dev/event_queue", O_RDWR);
+	./watch_test
 
-then a notification can be set up to report notifications via that queue:
+and watches "/" for mount changes and the current session keyring for key
+changes:
 
-	struct watch_notification_filter filter;
-	memset(&filter, 0, sizeof(filter));
-	filter.subtype_filter[0] = ~0ULL;
-	filter.info_id		 = 0x03000000;
-	sb_notify(AT_FDCWD, "/home/dhowells", 0, fd, &filter);
+	# keyctl add user a a @s
+	1035096409
+	# keyctl unlink 1035096409 @s
+	# mount -t tmpfs none /mnt/nfsv3tcp/
+	# umount /mnt/nfsv3tcp
 
-In this case, it would let me monitor my own homedir for events.
+producing:
 
-Note that the queue can be shared between multiple notifications of various
-types.
-
-[*] QUESTION: Does this want to be per-sb, per-mount_namespace,
-    per-some-new-notify-ns or per-system?  Or do multiple options make
-    sense?
-
-[*] QUESTION: I've done it this way so that anyone could theoretically
-    monitor the superblock of any filesystem they can pathwalk to, but do
-    we need other security controls?
-
-[*] QUESTION: Should the LSM be able to filter the events a queue can
-    receive?  For instance the opener of the queue would grant that queue
-    subject creds (by ->f_cred) that could be used to govern what events
-    could be seen, assuming the target superblock to have some object
-    creds, based on, say, the mounter.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
+	# ./watch_test
+	ptrs h=4 t=2 m=20003
+	NOTIFY[00000004-00000002] ty=0003 sy=0002 i=01000010
+	KEY 2ffc2e5d change=2[linked] aux=1035096409
+	ptrs h=6 t=4 m=20003
+	NOTIFY[00000006-00000004] ty=0003 sy=0003 i=01000010
+	KEY 2ffc2e5d change=3[unlinked] aux=1035096409
+	ptrs h=8 t=6 m=20003
+	NOTIFY[00000008-00000006] ty=0001 sy=0000 i=02000010
+	MOUNT 00000013 change=0[new_mount] aux=168
+	ptrs h=a t=8 m=20003
+	NOTIFY[0000000a-00000008] ty=0001 sy=0001 i=02000010
+	MOUNT 00000013 change=1[unmount] aux=168
 ---
 
- arch/x86/entry/syscalls/syscall_32.tbl |    1 
- arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/Kconfig                             |   12 +++
- fs/super.c                             |  116 ++++++++++++++++++++++++++++++++
- include/linux/fs.h                     |   77 +++++++++++++++++++++
- include/linux/syscalls.h               |    2 +
- include/uapi/linux/watch_queue.h       |   26 +++++++
- kernel/sys_ni.c                        |    3 +
- 8 files changed, 238 insertions(+)
+ samples/Kconfig                  |    6 +
+ samples/Makefile                 |    2 
+ samples/watch_queue/Makefile     |    9 +
+ samples/watch_queue/watch_test.c |  232 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 248 insertions(+), 1 deletion(-)
+ create mode 100644 samples/watch_queue/Makefile
+ create mode 100644 samples/watch_queue/watch_test.c
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 449bbcc19a6d..c9db9d51a7df 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -406,3 +406,4 @@
- 392	i386	fspick			sys_fspick			__ia32_sys_fspick
- 393	i386	fsinfo			sys_fsinfo			__ia32_sys_fsinfo
- 394	i386	mount_notify		sys_mount_notify		__ia32_sys_mount_notify
-+395	i386	sb_notify		sys_sb_notify			__ia32_sys_sb_notify
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f25fa7ff5fb9..17869bf7788a 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -351,6 +351,7 @@
- 340	common	fspick			__x64_sys_fspick
- 341	common	fsinfo			__x64_sys_fsinfo
- 342	common	mount_notify		__x64_sys_mount_notify
-+343	common	sb_notify		__x64_sys_sb_notify
+diff --git a/samples/Kconfig b/samples/Kconfig
+index 1c5658bc6224..dac30cefe895 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -156,4 +156,10 @@ config SAMPLE_MOUNT_API
+ 	help
+ 	  Build example userspace program(s) that use the new mount API.
  
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/Kconfig b/fs/Kconfig
-index cbcca62d32e9..0551abf08504 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -116,6 +116,18 @@ config MOUNT_NOTIFICATIONS
- 	  device to handle the notification buffer and provides the
- 	  mount_notify() system call to enable/disable watchpoints.
- 
-+config SB_NOTIFICATIONS
-+	bool "Superblock event notifications"
-+	select WATCH_QUEUE
++config SAMPLE_WATCH_QUEUE
++	bool "Build example /dev/watch_queue notification consumer"
 +	help
-+	  This option provides support for receiving superblock event
-+	  notifications.  This makes use of the /dev/watch_queue misc device to
-+	  handle the notification buffer and provides the sb_notify() system
-+	  call to enable/disable watches.
++	  Build example userspace program to use the new mount_notify(),
++	  sb_notify() syscalls and the KEYCTL_WATCH_KEY keyctl() function.
 +
-+	  Events can include things like changing between R/W and R/O, EIO
-+	  generation, ENOSPC generation and EDQUOT generation.
+ endif # SAMPLES
+diff --git a/samples/Makefile b/samples/Makefile
+index 31d08cc71a5c..ed545cbf65c8 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -3,4 +3,4 @@
+ obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
+ 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
+ 			   configfs/ connector/ v4l/ trace_printk/ \
+-			   vfio-mdev/ statx/ qmi/ mount_api/
++			   vfio-mdev/ statx/ qmi/ mount_api/ watch_queue/
+diff --git a/samples/watch_queue/Makefile b/samples/watch_queue/Makefile
+new file mode 100644
+index 000000000000..1f20ee2b0add
+--- /dev/null
++++ b/samples/watch_queue/Makefile
+@@ -0,0 +1,9 @@
++# List of programs to build
++hostprogs-$(CONFIG_SAMPLE_WATCH_QUEUE) := watch_test
 +
- source "fs/quota/Kconfig"
- 
- source "fs/autofs/Kconfig"
-diff --git a/fs/super.c b/fs/super.c
-index 3fe5d12b7697..1a1cf517dbd8 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -37,6 +37,8 @@
- #include <linux/user_namespace.h>
- #include <uapi/linux/mount.h>
- #include <linux/fs_context.h>
-+#include <linux/syscalls.h>
-+#include <linux/namei.h>
- #include "internal.h"
- 
- static int thaw_super_locked(struct super_block *sb);
-@@ -320,6 +322,10 @@ void deactivate_locked_super(struct super_block *s)
- {
- 	struct file_system_type *fs = s->s_type;
- 	if (atomic_dec_and_test(&s->s_active)) {
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+		if (s->s_watchers)
-+			remove_watch_list(s->s_watchers);
-+#endif
- 		cleancache_invalidate_fs(s);
- 		unregister_shrinker(&s->s_shrink);
- 		fs->kill_sb(s);
-@@ -997,6 +1003,8 @@ int do_remount_sb(struct super_block *sb, int sb_flags, void *data,
- 	/* Needs to be ordered wrt mnt_is_readonly() */
- 	smp_wmb();
- 	sb->s_readonly_remount = 0;
-+	notify_sb(sb, notify_superblock_readonly,
-+		  remount_ro ? WATCH_INFO_FLAG_0 : 0);
- 
- 	/*
- 	 * Some filesystems modify their metadata via some other path than the
-@@ -1810,3 +1818,111 @@ int vfs_get_tree(struct fs_context *fc)
- 	return ret;
- }
- EXPORT_SYMBOL(vfs_get_tree);
++# Tell kbuild to always build the programs
++always := $(hostprogs-y)
 +
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+/*
-+ * Post superblock notifications.
++HOSTCFLAGS_watch_test.o += -I$(objtree)/usr/include
++
++HOSTLOADLIBES_watch_test += -lkeyutils
+diff --git a/samples/watch_queue/watch_test.c b/samples/watch_queue/watch_test.c
+new file mode 100644
+index 000000000000..cdbaaf5a1163
+--- /dev/null
++++ b/samples/watch_queue/watch_test.c
+@@ -0,0 +1,232 @@
++/* Use /dev/watch_queue to watch for keyring and mount topology changes.
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
 + */
-+void post_sb_notification(struct super_block *s, struct superblock_notification *n)
-+{
-+	post_watch_notification(s->s_watchers, &n->watch, s->s_watch_id);
-+}
 +
-+static void release_sb_watch(struct watch_list *wlist, struct watch *watch)
-+{
-+	struct super_block *s = watch->private;
-+
-+	put_super(s);
-+}
-+
-+/**
-+ * sys_sb_notify - Watch for superblock events.
-+ * @dfd: Base directory to pathwalk from or fd referring to superblock.
-+ * @filename: Path to superblock to place the watch upon
-+ * @at_flags: Pathwalk control flags
-+ * @watch_fd: The watch queue to send notifications to.
-+ * @watch_id: The watch ID to be placed in the notification (-1 to remove watch)
-+ */
-+SYSCALL_DEFINE5(sb_notify,
-+		int, dfd,
-+		const char __user *, filename,
-+		unsigned int, at_flags,
-+		int, watch_fd,
-+		int, watch_id)
-+{
-+	struct watch_queue *wqueue;
-+	struct super_block *s;
-+	struct watch_list *wlist = NULL;
-+	struct watch *watch;
-+	struct path path;
-+	int ret;
-+
-+	if (watch_id < -1 || watch_id > 0xff)
-+		return -EINVAL;
-+
-+	ret = user_path_at(dfd, filename, at_flags, &path);
-+	if (ret)
-+		return ret;
-+
-+	wqueue = get_watch_queue(watch_fd);
-+	if (IS_ERR(wqueue))
-+		goto err_path;
-+
-+	s = path.dentry->d_sb;
-+	if (watch_id >= 0) {
-+		if (!s->s_watchers) {
-+			wlist = kzalloc(sizeof(*wlist), GFP_KERNEL);
-+			if (!wlist)
-+				goto err_wqueue;
-+			INIT_HLIST_HEAD(&wlist->watchers);
-+			spin_lock_init(&wlist->lock);
-+			wlist->release_watch = release_sb_watch;
-+		}
-+
-+		watch = kzalloc(sizeof(*watch), GFP_KERNEL);
-+		if (!watch)
-+			goto err_wlist;
-+
-+		init_watch(watch);
-+		watch->id		= s->s_watch_id;
-+		watch->queue		= wqueue;
-+		watch->private		= s;
-+		watch->info_id		= (u32)watch_id << 24;
-+
-+		down_write(&s->s_umount);
-+		ret = -EIO;
-+		if (atomic_read(&s->s_active)) {
-+			if (!s->s_watchers) {
-+				s->s_watchers = wlist;
-+				wlist = NULL;
-+			}
-+
-+			watch->watch_list = s->s_watchers;
-+			ret = add_watch_to_object(watch);
-+			if (ret == 0) {
-+				spin_lock(&sb_lock);
-+				s->s_count++;
-+				spin_unlock(&sb_lock);
-+			}
-+		}
-+		up_write(&s->s_umount);
-+		if (ret < 0)
-+			kfree(watch);
-+	} else if (s->s_watchers) {
-+		down_write(&s->s_umount);
-+		ret = remove_watch_from_object(s->s_watchers, wqueue,
-+					       s->s_watch_id, false);
-+		up_write(&s->s_umount);
-+	} else {
-+		ret = -EBADSLT;
-+	}
-+
-+err_wlist:
-+	kfree(wlist);
-+err_wqueue:
-+	put_watch_queue(wqueue);
-+err_path:
-+	path_put(&path);
-+	return ret;
-+}
-+#endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bcbe94c0dfe8..6dbc4f9aa6c3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -37,6 +37,7 @@
- #include <linux/uuid.h>
- #include <linux/errseq.h>
- #include <linux/ioprio.h>
++#include <stdbool.h>
++#include <stdarg.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <signal.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <dirent.h>
++#include <errno.h>
++#include <sys/wait.h>
++#include <sys/ioctl.h>
++#include <sys/mman.h>
++#include <poll.h>
++#include <limits.h>
 +#include <linux/watch_queue.h>
- 
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -1463,6 +1464,12 @@ struct super_block {
- 
- 	spinlock_t		s_inode_wblist_lock;
- 	struct list_head	s_inodes_wb;	/* writeback inodes */
++#include <linux/unistd.h>
++#include <linux/keyctl.h>
 +
-+	/* Superblock event notifications */
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+	struct watch_list	*s_watchers;
-+	u64			s_watch_id;
-+#endif
- } __randomize_layout;
- 
- /* Helper functions so that in most cases filesystems will
-@@ -3458,4 +3465,74 @@ static inline bool dir_relax_shared(struct inode *inode)
- extern bool path_noexec(const struct path *path);
- extern void inode_nohighmem(struct inode *inode);
- 
-+extern void post_sb_notification(struct super_block *, struct superblock_notification *);
++#define BUF_SIZE 4
 +
-+/**
-+ * notify_sb: Post simple superblock notification.
-+ * @s: The superblock the notification is about.
-+ * @subtype: The type of notification.
-+ */
-+static inline void notify_sb(struct super_block *s,
-+			     enum superblock_notification_type subtype,
-+			     u32 info)
-+{
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+	if (unlikely(s->s_watchers)) {
-+		struct superblock_notification n = {
-+			.watch.type	= WATCH_TYPE_SB_NOTIFY,
-+			.watch.subtype	= subtype,
-+			.watch.info	= sizeof(n) | info,
-+			.sb_id		= s->s_watch_id,
-+		};
-+
-+		post_sb_notification(s, &n);
-+	}
-+			     
-+#endif
-+}
-+
-+/**
-+ * sb_error: Post superblock error notification.
-+ * @s: The superblock the notification is about.
-+ */
-+static inline int sb_error(struct super_block *s, int error)
-+{
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+	if (unlikely(s->s_watchers)) {
-+		struct superblock_error_notification n = {
-+			.s.watch.type	= WATCH_TYPE_SB_NOTIFY,
-+			.s.watch.subtype = notify_superblock_error,
-+			.s.watch.info	= sizeof(n),
-+			.s.sb_id	= s->s_watch_id,
-+			.error_number	= error,
-+			.error_cookie	= 0,
-+		};
-+
-+		post_sb_notification(s, &n.s);
-+	}
-+#endif
-+	return error;
-+}
-+
-+/**
-+ * sb_EDQUOT: Post superblock quota overrun notification.
-+ * @s: The superblock the notification is about.
-+ */
-+static inline int sb_EQDUOT(struct super_block *s)
-+{
-+#ifdef CONFIG_SB_NOTIFICATIONS
-+	if (unlikely(s->s_watchers)) {
-+		struct superblock_notification n = {
-+			.watch.type	= WATCH_TYPE_SB_NOTIFY,
-+			.watch.subtype	= notify_superblock_edquot,
-+			.watch.info	= sizeof(n),
-+			.sb_id		= s->s_watch_id,
-+		};
-+
-+		post_sb_notification(s, &n);
-+	}
-+#endif
-+	return -EDQUOT;
-+}
-+
- #endif /* _LINUX_FS_H */
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 7db37c58289a..4d852f218949 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -915,6 +915,8 @@ asmlinkage long sys_fsinfo(int dfd, const char __user *path,
- 			   void __user *buffer, size_t buf_size);
- asmlinkage long sys_mount_notify(int dfd, const char __user *path,
- 				 unsigned int at_flags, int watch_fd, int watch_id);
-+asmlinkage long sys_sb_notify(int dfd, const char __user *path,
-+			      unsigned int at_flags, int watch_fd, int watch_id);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
-index 9d8e165e0065..40a3f809c73c 100644
---- a/include/uapi/linux/watch_queue.h
-+++ b/include/uapi/linux/watch_queue.h
-@@ -127,4 +127,30 @@ struct mount_notification {
- 	__u32	changed_mount;		/* The mount that got changed */
- };
- 
-+/*
-+ * Type of superblock notification.
-+ */
-+enum superblock_notification_type {
-+	notify_superblock_readonly	= 0, /* Filesystem toggled between R/O and R/W */
-+	notify_superblock_error		= 1, /* Error in filesystem or blockdev */
-+	notify_superblock_edquot	= 2, /* EDQUOT notification */
-+	notify_superblock_network	= 3, /* Network status change */
++static const char *key_subtypes[] = {
++	[notify_key_instantiated]	= "instantiated",
++	[notify_key_updated]		= "updated",
++	[notify_key_linked]		= "linked",
++	[notify_key_unlinked]		= "unlinked",
++	[notify_key_cleared]		= "cleared",
++	[notify_key_revoked]		= "revoked",
++	[notify_key_invalidated]	= "invalidated",
++	[notify_key_setattr]		= "setattr",
 +};
++
++static void saw_key_change(struct watch_notification *n)
++{
++	struct key_notification *k = (struct key_notification *)n;
++	unsigned int len = n->info & WATCH_INFO_LENGTH;
++
++	if (len != sizeof(struct key_notification))
++		return;
++
++	printf("KEY %08x change=%u[%s] aux=%u\n",
++	       k->key_id, n->subtype, key_subtypes[n->subtype], k->aux);
++}
++
++static const char *mount_subtypes[] = {
++	[notify_mount_new_mount]	= "new_mount",
++	[notify_mount_unmount]		= "unmount",
++	[notify_mount_expiry]		= "expiry",
++	[notify_mount_readonly]		= "readonly",
++	[notify_mount_setattr]		= "setattr",
++	[notify_mount_move_from]	= "move_from",
++	[notify_mount_move_to]		= "move_to",
++};
++
++static long keyctl_watch_key(int key, int watch_fd, int watch_id)
++{
++	return syscall(__NR_keyctl, KEYCTL_WATCH_KEY, key, watch_fd, watch_id);
++}
++
++static void saw_mount_change(struct watch_notification *n)
++{
++	struct mount_notification *m = (struct mount_notification *)n;
++	unsigned int len = n->info & WATCH_INFO_LENGTH;
++
++	if (len != sizeof(struct mount_notification))
++		return;
++
++	printf("MOUNT %08x change=%u[%s] aux=%u\n",
++	       m->triggered_on, n->subtype, mount_subtypes[n->subtype], m->changed_mount);
++}
++
++static const char *super_subtypes[] = {
++	[notify_superblock_readonly]	= "readonly",
++	[notify_superblock_error]	= "error",
++	[notify_superblock_edquot]	= "edquot",
++	[notify_superblock_network]	= "network",
++};
++
++static void saw_super_change(struct watch_notification *n)
++{
++	struct superblock_notification *s = (struct superblock_notification *)n;
++	unsigned int len = n->info & WATCH_INFO_LENGTH;
++
++	if (len < sizeof(struct superblock_notification))
++		return;
++
++	printf("SUPER %08llx change=%u[%s]\n",
++	       s->sb_id, n->subtype, super_subtypes[n->subtype]);
++}
 +
 +/*
-+ * Superblock notification record.
-+ * - watch.type = WATCH_TYPE_MOUNT_NOTIFY
-+ * - watch.subtype = enum superblock_notification_subtype
++ * Consume and display events.
 + */
-+struct superblock_notification {
-+	struct watch_notification watch; /* WATCH_TYPE_SB_NOTIFY */
-+	__u64	sb_id;			/* 64-bit superblock ID [fsinfo_ids::f_sb_id] */
++static int consumer(int fd, struct watch_queue_buffer *buf)
++{
++	struct watch_notification *n;
++	struct pollfd p[1];
++	unsigned int head, tail, mask = buf->meta.mask;
++
++	for (;;) {
++		p[0].fd = fd;
++		p[0].events = POLLIN | POLLERR;
++		p[0].revents = 0;
++
++		if (poll(p, 1, -1) == -1) {
++			perror("poll");
++			break;
++		}
++
++		printf("ptrs h=%x t=%x m=%x\n",
++		       buf->meta.head, buf->meta.tail, buf->meta.mask);
++
++		while (head = buf->meta.head,
++		       tail = buf->meta.tail,
++		       tail != head
++		       ) {
++			asm ("lfence" : : : "memory" );
++			n = &buf->slots[tail & mask];
++			printf("NOTIFY[%08x-%08x] ty=%04x sy=%04x i=%08x\n",
++			       head, tail, n->type, n->subtype, n->info);
++			if ((n->info & WATCH_INFO_LENGTH) == 0)
++				goto out;
++
++			switch (n->type) {
++			case WATCH_TYPE_META:
++				if (n->subtype == watch_meta_removal_notification)
++					printf("REMOVAL of watchpoint %08x\n",
++					       n->info & WATCH_INFO_ID);
++				break;
++			case WATCH_TYPE_MOUNT_NOTIFY:
++				saw_mount_change(n);
++				break;
++			case WATCH_TYPE_SB_NOTIFY:
++				saw_super_change(n);
++				break;
++			case WATCH_TYPE_KEY_NOTIFY:
++				saw_key_change(n);
++				break;
++			}
++
++			tail += (n->info & WATCH_INFO_LENGTH) >> WATCH_LENGTH_SHIFT;
++			asm("mfence" ::: "memory");
++			buf->meta.tail = tail;
++		}
++	}
++
++out:
++	return 0;
++}
++
++static struct watch_notification_filter filter = {
++	.nr_filters	= 3,
++	.__reserved	= 0,
++	.filters = {
++		[0] = {
++			.type			= WATCH_TYPE_MOUNT_NOTIFY,
++			// Reject move-from notifications
++			.subtype_filter[0]	= UINT_MAX & ~(1 << notify_mount_move_from),
++		},
++		[1]	= {
++			.type			= WATCH_TYPE_SB_NOTIFY,
++			// Only accept notification of changes to R/O state
++			.subtype_filter[0]	= (1 << notify_superblock_readonly),
++			// Only accept notifications of change-to-R/O
++			.info_mask		= WATCH_INFO_FLAG_0,
++			.info_filter		= WATCH_INFO_FLAG_0,
++		},
++		[2]	= {
++			.type			= WATCH_TYPE_KEY_NOTIFY,
++			.subtype_filter[0]	= UINT_MAX,
++		},
++	},
 +};
 +
-+struct superblock_error_notification {
-+	struct superblock_notification s; /* subtype = notify_superblock_error */
-+	__u32	error_number;
-+	__u32	error_cookie;
-+};
++int main(int argc, char **argv)
++{
++	struct watch_queue_buffer *buf;
++	size_t page_size;
++	int fd;
 +
- #endif /* _UAPI_LINUX_WATCH_QUEUE_H */
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index f608777be045..3b5aacb8a5a0 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -100,6 +100,9 @@ COND_SYSCALL(quotactl);
- 
- /* fs/read_write.c */
- 
-+/* fs/sb_notify.c */
-+COND_SYSCALL(sb_notify);
++	fd = open("/dev/watch_queue", O_RDWR);
++	if (fd == -1) {
++		perror("/dev/watch_queue");
++		exit(1);
++	}
 +
- /* fs/sendfile.c */
- 
- /* fs/select.c */
++	if (ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE) == -1) {
++		perror("/dev/watch_queue(size)");
++		exit(1);
++	}
++
++	if (ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter) == -1) {
++		perror("/dev/watch_queue(filter)");
++		exit(1);
++	}
++
++	page_size = sysconf(_SC_PAGESIZE);
++	buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
++		   MAP_SHARED, fd, 0);
++	if (buf == MAP_FAILED) {
++		perror("mmap");
++		exit(1);
++	}
++
++	if (keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01) == -1) {
++		perror("keyctl");
++		exit(1);
++	}
++
++	if (syscall(__NR_mount_notify, AT_FDCWD, "/", 0, fd, 0x02) == -1) {
++		perror("mount_notify");
++		exit(1);
++	}
++
++	if (syscall(__NR_sb_notify, AT_FDCWD, "/mnt", 0, fd, 0x03) == -1) {
++		perror("sb_notify");
++		exit(1);
++	}
++
++	return consumer(fd, buf);
++}
 
