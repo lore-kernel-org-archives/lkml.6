@@ -2,129 +2,197 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2C9ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD280ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F0220852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F0220852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DA5920852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:37:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jZofVk37"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA5920852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388716AbeGWRhH (ORCPT
+        id S2388735AbeGWRjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:37:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52630 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388283AbeGWRhH (ORCPT
+        Mon, 23 Jul 2018 13:39:00 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:48575 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388328AbeGWRjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:37:07 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6NGU7fc016151
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 12:35:05 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kdha9w89a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 12:35:04 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Mon, 23 Jul 2018 17:30:00 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 23 Jul 2018 17:29:57 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6NGTuMW39387146
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 23 Jul 2018 16:29:56 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C78EA405B;
-        Mon, 23 Jul 2018 19:30:11 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 694AEA4040;
-        Mon, 23 Jul 2018 19:30:10 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Mon, 23 Jul 2018 19:30:10 +0100 (BST)
-Date:   Mon, 23 Jul 2018 09:29:54 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
+        Mon, 23 Jul 2018 13:39:00 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 7786E10C0443;
+        Mon, 23 Jul 2018 09:36:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1532363818; bh=DdwxYamuIUQ8T+lPNOZFITrRzzFqHFdmHyyHOncyJXo=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=jZofVk37TZqOh+lbNf0e3GqrDHY6CCMKehZkBvDTEmjcpMsgi3kh/4uTkRCmD0zDx
+         wF5xllD6ygWfuLCaHtodnrffjca6LIZBsjVGBFA0ZP7mvBLgscPV24TKXv0cyUZnsd
+         nluMr4KmT6FmaT/qqVIL/X4vFjuYj9Ybz+l8nYYtucNz+9+nZAFnawcyqeC44LqMES
+         BjTV6ZAVGBENIjxVHwXKAPSvB0fWVfIw8vg3/udyjHtV7CkbIhsAe2tJnuD431W34N
+         KaKq0O5jeyaHi+zWBwzZsp0XdOcWIvkjzHgrAZMEMgmjLqne5qiTLlgjQG+ULtq/Zk
+         WNTtcCVdonZHg==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 4197C5CE1;
+        Mon, 23 Jul 2018 09:36:58 -0700 (PDT)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
+ US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
+ 23 Jul 2018 09:36:57 -0700
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     "Ofer Levi(SW)" <oferle@mellanox.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 00/19]  Fixes for sched/numa_balancing
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
- <20180723135700.GX2458@hirez.programming.kicks-ass.net>
- <20180723150954.GI30345@linux.vnet.ibm.com>
- <20180723152147.GE2494@hirez.programming.kicks-ass.net>
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     Leon Romanovsky <leonro@mellanox.com>,
+        Meir Lichtinger <meirl@mellanox.com>
+Subject: Re: arch/arc/ allmodconfig
+Thread-Topic: arch/arc/ allmodconfig
+Thread-Index: AQHUHyKW1M3GsAcZr0iuL832AquqnA==
+Date:   Mon, 23 Jul 2018 16:36:57 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B07F319@us01wembx1.internal.synopsys.com>
+References: <e074d0ae-6d79-d21a-2278-15d516bb943e@infradead.org>
+ <C2D7FE5348E1B147BCA15975FBA23075012B0724EB@US01WEMBX2.internal.synopsys.com>
+ <AM0PR05MB42600653CF591791731CCCD8DA510@AM0PR05MB4260.eurprd05.prod.outlook.com>
+ <DB6PR05MB4597A63819F227B17652B5B2B2560@DB6PR05MB4597.eurprd05.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.104]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20180723152147.GE2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18072316-0020-0000-0000-000002AA0480
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072316-0021-0000-0000-000020F690F7
-Message-Id: <20180723162954.GA2699@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-23_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=789 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807230186
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Peter Zijlstra <peterz@infradead.org> [2018-07-23 17:21:47]:
-
-> On Mon, Jul 23, 2018 at 08:09:55AM -0700, Srikar Dronamraju wrote:
-> 
-> > > >   sched/numa: Stop multiple tasks from moving to the cpu at the same time
-> > 
-> > This patch has go-ahead from Mel and Rik and no outstanding comments.
-> 
-> I left it out because it's part of the big xchg() mess.
-> 
-> In particular:
-> 
-> +       if (xchg(&rq->numa_migrate_on, 1))
-> +               return;
-> +
-> +       if (env->best_cpu != -1) {
-> +               rq = cpu_rq(env->best_cpu);
-> +               WRITE_ONCE(rq->numa_migrate_on, 0);
-> +       }
-> 
-> I'm again confused by clearing numa_migrate_on at this point..
-
-First task choose a cpu to swap/migrate, sets the cpu to best_cpu and
-also numa_migrate_on.  Next it finds a better cpu to swap/move. Now if
-the task is able to move to the better cpu, then it should clear
-numa_migrate_on on the previous best_cpu.
-
-If we dont reset numa_migrate_on on finding a better cpu, the
-numa_migrate_on stays set for the previous cpu, causing previous cpu to
-never be a target of numa balance.
-
-
-> 
-> > > >   sched/numa: Updation of scan period need not be in lock
-> > 
-> > I didnt see any comments for this apart from an ack from Rik.
-> > + It thought it was trivial and shouldnt have any side-effect.
-> 
-> Oh, my bad I actually have this one.
-> 
-
+Hi Ofer,=0A=
+=0A=
+On 07/23/2018 01:34 AM, Ofer Levi(SW) wrote:=0A=
+> Hi Vineet, randy=0A=
+>=0A=
+> Indeed this structure is missing, following is a patch based on linux-4.1=
+7.9.=0A=
+> Sorry about that.=0A=
+>=0A=
+> Thanks=0A=
+>=0A=
+>=0A=
+> diff -uprN linux-4.17.9.org/arch/arc/plat-eznps/include/plat/ctop.h linux=
+-4.17.9/arch/arc/plat-eznps/include/plat/ctop.h=0A=
+> --- linux-4.17.9.org/arch/arc/plat-eznps/include/plat/ctop.h    2018-07-2=
+2 16:16:09.000000000 +0300=0A=
+> +++ linux-4.17.9/arch/arc/plat-eznps/include/plat/ctop.h        2018-07-2=
+3 11:18:12.179402620 +0300=0A=
+> @@ -143,6 +143,15 @@ struct nps_host_reg_gim_p_int_dst {=0A=
+>  };=0A=
+>  =0A=
+>  /* AUX registers definition */=0A=
+> +struct nps_host_reg_aux_dpc {=0A=
+> +       union {=0A=
+> +               struct {=0A=
+> +                       u32 ien:1, men:1, hen:1, reserved:29;=0A=
+> +               };=0A=
+> +               u32 value;=0A=
+> +       };=0A=
+> +};=0A=
+> +=0A=
+>  struct nps_host_reg_aux_udmc {=0A=
+>         union {=0A=
+>                 struct {=0A=
+=0A=
+Thx for this change. Can you please send a proper patch with changelog, cit=
+ing the=0A=
+issue as Reported-by etc.=0A=
+Also if Mellanox is interested in maintaining the NPS port going fwd, someo=
+ne (you=0A=
+?) should add their name to MAINTAINERS file under arch/arc/plat-eznps and =
+send=0A=
+that patch as well.=0A=
+=0A=
+Thx,=0A=
+-Vineet=0A=
+=0A=
+=0A=
+>=0A=
+>=0A=
+>=0A=
+>=0A=
+>> -----Original Message-----=0A=
+>> From: Meir Lichtinger=0A=
+>> Sent: Friday, July 20, 2018 10:19=0A=
+>> To: Vineet Gupta <Vineet.Gupta1@synopsys.com>; Randy Dunlap=0A=
+>> <rdunlap@infradead.org>; LKML <linux-kernel@vger.kernel.org>; linux-=0A=
+>> snps-arc@lists.infradead.org; Ofer Levi(SW) <oferle@mellanox.com>=0A=
+>> Cc: Leon Romanovsky <leonro@mellanox.com>=0A=
+>> Subject: RE: arch/arc/ allmodconfig=0A=
+>>=0A=
+>> Hi Vineet,=0A=
+>> Ofer Levi is now the maintainer of arch/arc/plat-eznps=0A=
+>>=0A=
+>> Ofer,=0A=
+>> Please take care of the issue below=0A=
+>>=0A=
+>> Thanks=0A=
+>>=0A=
+>>=0A=
+>> -----Original Message-----=0A=
+>> From: Vineet Gupta [mailto:Vineet.Gupta1@synopsys.com]=0A=
+>> Sent: Thursday, July 19, 2018 19:22=0A=
+>> To: Randy Dunlap <rdunlap@infradead.org>; LKML <linux-=0A=
+>> kernel@vger.kernel.org>; Vineet Gupta <Vineet.Gupta1@synopsys.com>;=0A=
+>> linux-snps-arc@lists.infradead.org=0A=
+>> Cc: Elad Kanfi <eladkan@mellanox.com>; Leon Romanovsky=0A=
+>> <leonro@mellanox.com>=0A=
+>> Subject: Re: arch/arc/ allmodconfig=0A=
+>>=0A=
+>> +CC some folks from Mellanox=0A=
+>>=0A=
+>> On 07/18/2018 10:37 PM, Randy Dunlap wrote:=0A=
+>>> Hi,=0A=
+>>>=0A=
+>>> When I try to (cross-)build arch/arc/ allmodconfig, I get a syntax erro=
+r here:=0A=
+>>>=0A=
+>>> ./arch/arc/plat-eznps/mtm.c: In function 'mtm_enable_core':=0A=
+>>> ../arch/arc/plat-eznps/mtm.c:113:30: error: storage size of 'dpc' isn't=
+ known=0A=
+>>>   struct nps_host_reg_aux_dpc dpc;=0A=
+>>>                               ^~~=0A=
+>>>=0A=
+>>> There is no struct nps_host_reg_aux_dpc in the kernel tree.=0A=
+>>>=0A=
+>>> Can you do something about this, please?=0A=
+>> Thx for the report Randy. I'm calling out Mellanox folks to see if they =
+can=0A=
+>> provide a fixup, else we will revert the corresponding change.=0A=
+>>=0A=
+>> @Elad, upstream commit 3f9cd874dcc8705 "ARC: [plat-eznps] avoid toggling=
+=0A=
+>> of DPC register" added reference to struct nps_host_reg_aux_dpc but the=
+=0A=
+>> definition is missing. Can you please provide a fixup as I have no idea =
+of that=0A=
+>> platform specific struct.=0A=
+>>=0A=
+>> @ Leon, reaching our to you, since it seems you removed Elad from=0A=
+>> MAINTAINERS file, so I'm not sure if he is still at Mellanox.=0A=
+>> The two folks I worked with on EZCHiip Linux port Noam Camus and Gilad=
+=0A=
+>> have left Mellanox.=0A=
+>> If you or someone from Mellanox are interested in maintaining this platf=
+orm,=0A=
+>> please update the arch/arc/plat-eznps section of MAINTAINERS file.=0A=
+>>=0A=
+>>=0A=
+>> Thx,=0A=
+>> -Vineet=0A=
+=0A=
