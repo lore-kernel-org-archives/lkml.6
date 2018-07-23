@@ -2,117 +2,89 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCB6ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C462AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73BB920856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:38:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73BB920856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 755D720856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:38:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 755D720856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388572AbeGWNjb (ORCPT
+        id S2389350AbeGWNjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:39:31 -0400
-Received: from mga02.intel.com ([134.134.136.20]:37026 "EHLO mga02.intel.com"
+        Mon, 23 Jul 2018 09:39:00 -0400
+Received: from mout.perfora.net ([74.208.4.196]:37595 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388022AbeGWNjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:39:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 05:38:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
-   d="scan'208";a="218295837"
-Received: from sssawant-mobl1.amr.corp.intel.com (HELO [10.252.132.170]) ([10.252.132.170])
-  by orsmga004.jf.intel.com with ESMTP; 23 Jul 2018 05:38:29 -0700
-Subject: Re: [RFC 1/2] x86/entry/64: Use the TSS sp2 slot for rsp_scratch
-To:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <cover.1532281180.git.luto@kernel.org>
- <38b5a24f3c9f519dd7dc98171eb3a3c669fff48c.1532281180.git.luto@kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <854ac759-efec-3e35-59a9-8da35b2b5156@linux.intel.com>
-Date:   Mon, 23 Jul 2018 05:38:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <38b5a24f3c9f519dd7dc98171eb3a3c669fff48c.1532281180.git.luto@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S2388464AbeGWNjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 09:39:00 -0400
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MCJIF-1fq8np2chl-0098A8; Mon, 23 Jul 2018 14:37:53 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 23/26] ARM: tegra: colibri_t30: enable hda over hdmi
+Date:   Mon, 23 Jul 2018 14:36:54 +0200
+Message-Id: <20180723123658.980-24-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180723123658.980-1-marcel@ziswiler.com>
+References: <20180723123658.980-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:GVEYRa0FmaMjRIXEn0Cn1am1T5gpZ6VAF1B1GAtUGfYzvpf90Ad
+ iHrpg6xnu9ZckOAUQO28uF2rZxiT0i7x1HYqa1dWaFW0DvPV1vMPy9/v/vykh4OzjrzV6N6
+ m5OHmnZZ40dwsDf7E7nE9mPSiST2dX26e+v5UpBPflbs5mkaUPYUe+SKlGBe5iEcEu8YfVk
+ etDNYKc1syoXWCJ9sOzIw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:JWV66Z9oA2g=:lXOipROw/Fn0hJO3J8HPcN
+ lfKry2l5XE4yJSSOEehARuJxH3sXON9p6pz/t0aSirwE94S1TECfuYi5nCpTyhB2Rwhchhhfh
+ 4V9IdI/n09gx4gFacH7rib/ZgnRZJDIGeX0xZA0+hVHe31fqU9vs9L+H5ABTC95IX3hRbr5+Z
+ E/6d3eEJ4whqqoZM50lS/L3KT6khEEw/UPAPyOwg9NExTafgJUyVq2SIoH9bV/ukLx6n/hs1N
+ x1yeLccf8qsRUhbpM6w0REvaB/NhxQmshplp3V6YewKdOiHDDVWdTw4UpPVisqZmxnwqxPO9f
+ caUjBrSH4s2WT1cPk7ypc9HsOTReXteq/fhnS8sOj63V9XXBwerpyG3FBXTFF5JtQocvi8vG8
+ lGoKLjz7kdQu9qRVrgRFED6c5r0K0mYm/Tdc6jUgN/XYLamkyYEk8w7aaPo8GpWAl22AIsTm1
+ e6y4fnBqsljYRS20Y8nYVdwUFOUxrNBK2AhKG1JFVK51htEKwpmGawpdqjAuiqRmV6z02C1Hd
+ UTJSpEGjtcHfiECHJk5xRUGkyR1syReEq9u0w9PYXfhQ5KnGkSNOe6Z5/qS2L9kQnrPjNTork
+ OVxSdnx5tyxoK1NrbNyonRHymh6nU9Elixc9LUao/wyi97wGLbWM367og8HPFeE0BODqVdtzD
+ lFQ8ZoY4Csye65M7jwgWrqQLQPdgdUoYDNDuczmUJa7yczh3xpBXBypyKlUD4q628U84=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/22/2018 10:45 AM, Andy Lutomirski wrote:
-> +	/*
-> +	 * sp2 is scratch space used by the SYSCALL64 handler.  Linux does
-> +	 * not use rung 2, so sp2 is not otherwise needed.
-> +	 */
->  	u64			sp2;
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Could we call out the actual thing that we use this slot for, and the
-symbol name so folks can find the corresponding code that does this?
-While I know the spot in entry_64 you're talking about, it might not be
-patently obvious to everyone, and it's also a bit more challenging to
-grep for than normal C code.
+Enable HDA over HDMI.
 
-Maybe:
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-	/*
-	 * Since Linux does not use ring 2, the 'sp2' slot is unused.
-	 * entry_SYSCALL_64 uses this as scratch space to stash the user
-	 * %RSP value.
-	 */
+---
+
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 7f7a693f6e08..d3f72e567d5a 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -911,6 +911,10 @@
+ 		};
+ 	};
+ 
++	hda@70030000 {
++		status = "okay";
++	};
++
+ 	ahub@70080000 {
+ 		i2s@70080500 {
+ 			status = "okay";
+-- 
+2.14.4
+
