@@ -2,169 +2,130 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1767ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97214ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A057F20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:32:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B72520854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:33:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cXbixV5M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A057F20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DquTFBjx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B72520854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388229AbeGWXgA (ORCPT
+        id S2388259AbeGWXhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 19:36:00 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34355 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388109AbeGWXgA (ORCPT
+        Mon, 23 Jul 2018 19:37:13 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45952 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388077AbeGWXhN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 19:36:00 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y5-v6so1378040pgv.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 15:32:38 -0700 (PDT)
+        Mon, 23 Jul 2018 19:37:13 -0400
+Received: by mail-pl0-f68.google.com with SMTP id j8-v6so755677pll.12;
+        Mon, 23 Jul 2018 15:33:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=EpGraUFP5rVrbaxzYKr5ssr6P5HgDOA35NUg7aAZ0VU=;
-        b=cXbixV5MygB0uPugawWI79fVTWO6nO/49pTk5vGHlugbn2XQ7kj8roZL32MEAXX9y4
-         Ip4dxl2+sqFySud/gz/ou92rAcgFPeydX/m9mQkgPq7khpv8vvnjPneAewxnd8MpOzwc
-         6QwoHd2tCpk7zQc8+kZu1uGBCS/WNuLIv92NA=
+        bh=FZJdR1jkBDSmLkiRFzG2HkeNLbztrmwmCUGYLBVOrlY=;
+        b=DquTFBjxa2inNKwIOx7C3LoDZoEIpj55WqE/7Slfq/N4KvK7Z5DlQARwWjmMUKQh9V
+         HoMn6Zb/RGII3+BIki5YotJm1EMhF4CjDVWCy2zSx7eLA3/Hw3s96PAVpdQlB7oqNxfz
+         Ms9d8S7Ols40EwGfzTkGcsly6aDWamD04GAMbNtgvZ4+DsocdApt22mFrmBQ5Oq/0oak
+         YrXZcrtA3hrzSWBGIANrH62kZqSfmrG+++e5bsy/yXIQKsn8n2cLHXyZzDzQZqtb9G2Q
+         dAxVOyOulQAEGVqDqxAqfh3NDtF4Hz7KjLfZaX3cxO2X4+/Tt6KoqiyD7LKJ63fE4pyC
+         zE3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EpGraUFP5rVrbaxzYKr5ssr6P5HgDOA35NUg7aAZ0VU=;
-        b=W+0bTGYQaHthhuLoEO3VuVSINSLLjiZHbiO13lQy1tnzpcbklPBCQSUCJljFFZDZW3
-         KlR0iewzalZaEfUj8z8+8SD/lNfJBFJqset7CFuOTzhgvVY9dmGr5gVIxdhJeYQwKNTO
-         hs+mE1lmmD6zXoV/mFR8MOKRszsuCvBjco33gwumzlJ/DlaVGSlVZ91mIn2QAPoPLa2s
-         /CurSvi9T04UvLowCpOKjuq3QAhe8GkIrzXZG9vhAaMguePj2uIogRSlA8IL34n8Lcdi
-         348sgTnlKz+7p/8M3vuUKLXLsBSPEogh/Wehb4Um38vL4pqReTfsy8cEtJHkQmrJ4XO6
-         CA4w==
-X-Gm-Message-State: AOUpUlHRidbQ/8Y2QyVlUOZnfRBjlpBJXJJa2mr4+zS88KpSERNYDBUW
-        M8OY03fzXABAda5IReN9pjk4kw==
-X-Google-Smtp-Source: AAOMgpfkKfMYjwn1+UBp283LbIBzu2PXKxhPGxzd5Lbq0Y3raGQcWoFEfAlEpAJIJ2kW59kuoAoWjQ==
-X-Received: by 2002:a63:2a0b:: with SMTP id q11-v6mr13805477pgq.36.1532385157694;
-        Mon, 23 Jul 2018 15:32:37 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id y123-v6sm13235340pgy.21.2018.07.23.15.32.36
+        bh=FZJdR1jkBDSmLkiRFzG2HkeNLbztrmwmCUGYLBVOrlY=;
+        b=qVkADgeZiQXEg2gtxLlOZGOid4pVxe9qPLzfh1QwNztxKot9Bc2jbjIYuBMoyFsPqt
+         ZJf9+ySDxwRpFcyB9fKfXQIezPFxdnm38gccDvdI9+Qw48dvBi6mEAls8yGMkagSg21h
+         /vDOVU13Wi3KoBfF4cNL64sR4pC3uAX1nAVd75bcNQSaBUWNZSvheWe3/e7r1AZvnjJT
+         lbD4sHwHu/142lblv3RTzvwCAQbvzJCLyy/lVdV9ga1D7RAvNCpFSy5O4ZAG7/YeCVCb
+         hOEr0yfhULoYlAbdirR0D2RGsVHjtrV1Qm2DYt8AqJw8RPRGDaSocZFRdQRSK6EckyhX
+         HNyA==
+X-Gm-Message-State: AOUpUlHC1RZBxnvcAfNNlH4aVHpo1pWBYl+qaRmyYlymF/U1ata07ZMs
+        aQEOtNuyfUo56w2AKkiLgp1ZiWum
+X-Google-Smtp-Source: AAOMgpdAB3a5Gw1oqtWwb1yfDSJX+01IbTudZ2ynEHXwWYQxLpxD418b8Jm+5TCKk8ULbwE1NOp13w==
+X-Received: by 2002:a17:902:6e09:: with SMTP id u9-v6mr14172235plk.13.1532385230130;
+        Mon, 23 Jul 2018 15:33:50 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id c1-v6sm13640226pfi.142.2018.07.23.15.33.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 15:32:37 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 15:32:36 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v10 1/7] dt-bindings: net: bluetooth: Add device tree
- bindings for QTI chip wcn3990
-Message-ID: <20180723223236.GN129942@google.com>
-References: <20180720133243.6851-1-bgodavar@codeaurora.org>
- <20180720133243.6851-2-bgodavar@codeaurora.org>
+        Mon, 23 Jul 2018 15:33:49 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 15:33:47 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Nick Dyer <nick@shmanahar.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Chris Healy <cphealy@gmail.com>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Nick Dyer <nick.dyer@itdev.co.uk>
+Subject: Re: [PATCH v1 09/10] Input: atmel_mxt_ts - tool type is ignored when
+ slot is closed
+Message-ID: <20180723223347.GJ100814@dtor-ws>
+References: <20180720215122.23558-1-nick@shmanahar.org>
+ <20180720215122.23558-9-nick@shmanahar.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180720133243.6851-2-bgodavar@codeaurora.org>
+In-Reply-To: <20180720215122.23558-9-nick@shmanahar.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 07:02:37PM +0530, Balakrishna Godavarthi wrote:
-> This patch enables regulators for the Qualcomm Bluetooth wcn3990
-> controller.
+On Fri, Jul 20, 2018 at 10:51:21PM +0100, Nick Dyer wrote:
+> From: Nick Dyer <nick.dyer@itdev.co.uk>
 > 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> input_mt_report_slot_state() ignores the tool when the slot is closed.
+> Remove the tool type from these function calls, which has caused a bit of
+> confusion.
+
+Hmm, maybe we could introduce MT_TOOL_NONE or MT_TOOL_INACTIVE and get
+rid of the 3rd parameter? It will require a bit of macro trickery for a
+release or 2...
+
+> 
+> Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
 > ---
-> Changes in v10:
->     * added entry for regulator currents
+>  drivers/input/touchscreen/atmel_mxt_ts.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> Changes in v9:
->     * updated with latest reg handle and names.
->     * updated max-speed definition. 
-> 
-> Changes in v8:
->     * Separated the optional entries between two chips
-> 
-> Changes in v7:
->     * no change.
-> 
-> Changes in v6:
-> 
->     * Changed the oper-speed to max-speed.
-> 
-> Changes in v5:
-> 
->     * Added entry for oper-speed and init-speed.
-> 
-> ---
->  .../bindings/net/qualcomm-bluetooth.txt       | 42 ++++++++++++++++++-
->  1 file changed, 40 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-> index 0ea18a53cc29..ca04c4981048 100644
-> --- a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-> +++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-> @@ -10,12 +10,34 @@ device the slave device is attached to.
->  Required properties:
->   - compatible: should contain one of the following:
->     * "qcom,qca6174-bt"
-> +   * "qcom,wcn3990-bt"
-> +
-> +Optional properties for compatible string qcom,qca6174-bt:
+> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+> index d7023d261458..c31af790ef84 100644
+> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
+> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+> @@ -838,8 +838,7 @@ static void mxt_proc_t9_message(struct mxt_data *data, u8 *message)
+>  		 * have happened.
+>  		 */
+>  		if (status & MXT_T9_RELEASE) {
+> -			input_mt_report_slot_state(input_dev,
+> -						   MT_TOOL_FINGER, 0);
+> +			input_mt_report_slot_state(input_dev, 0, 0);
+>  			mxt_input_sync(data);
+>  		}
 >  
-> -Optional properties:
->   - enable-gpios: gpio specifier used to enable chip
->   - clocks: clock provided to the controller (SUSCLK_32KHZ)
+> @@ -855,7 +854,7 @@ static void mxt_proc_t9_message(struct mxt_data *data, u8 *message)
+>  		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, area);
+>  	} else {
+>  		/* Touch no longer active, close out slot */
+> -		input_mt_report_slot_state(input_dev, MT_TOOL_FINGER, 0);
+> +		input_mt_report_slot_state(input_dev, 0, 0);
+>  	}
 >  
-> -Example:
-> +Optional properties for compatible string qcom,wcn3990-bt:
-> +
-> + - vddio-supply: Bluetooth wcn3990 VDD_IO supply regulator handle.
-> + - vddxo-supply: Bluetooth wcn3990 VDD_XO supply regulator handle.
-> + - vddrf-supply: Bluetooth wcn3990 VDD_RF supply regulator handle.
-> + - vddch0-supply: Bluetooth wcn3990 VDD_CH0 supply regulator handle.
-> +
-> + - If WCN3990 is connected to platform where RPMH PMIC processor is used
-> +   then the load values will be 1uA. if it is connected to platform where RPM
-> +   PMIC processor is used then load value will be 10000 uA.
-> +   if it is connected to different platform, where current values are fixed
-> +   as in data sheet then below property are not required.
+>  	data->update_input = true;
+> -- 
+> 2.17.1
+> 
 
-Please provide details why these magic values are needed for RPMh and
-RPM PMICs.
-
-For RPMh it looks like a value of 1uA would cause the regulator to
-enter idle mode:
-
-static int rpmh_regulator_vrm_set_load(struct regulator_dev *rdev, int load_uA)
-{
-	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-	unsigned int mode;
-
-	if (load_uA >= vreg->hw_data->hpm_min_load_uA)
-		mode = REGULATOR_MODE_NORMAL;
-	else
-		mode = REGULATOR_MODE_IDLE;
-
-	return rpmh_regulator_vrm_set_mode(rdev, mode);
-}
-
-https://patchwork.kernel.org/patch/10524299/
-
-Is that really intended and if so why? It might make sense to save
-power when really in idle mode, but I assume you somehow have to tell
-the regulator to switch to normal mode when BT is used.
-
-I also commented about this on patch "[7/7] Bluetooth: hci_qca: Add
-support for Qualcomm Bluetooth chip wcn3990". I suggest to center the
-discussion here and reply with a link to the other patch.
+-- 
+Dmitry
