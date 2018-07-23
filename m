@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5F8ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 938BCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8C1020854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:25:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C1020854
+	by mail.kernel.org (Postfix) with ESMTP id 51CC620854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51CC620854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388234AbeGWN0x (ORCPT
+        id S2388249AbeGWN0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:26:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45128 "EHLO
+        Mon, 23 Jul 2018 09:26:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45136 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388151AbeGWN0w (ORCPT
+        with ESMTP id S2388151AbeGWN0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:26:52 -0400
+        Mon, 23 Jul 2018 09:26:55 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF57CBC6;
-        Mon, 23 Jul 2018 12:25:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE398BC6;
+        Mon, 23 Jul 2018 12:25:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Po-Hsu Lin <po-hsu.lin@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 17/63] ALSA: hda: add mute led support for HP ProBook 455 G5
-Date:   Mon, 23 Jul 2018 14:24:23 +0200
-Message-Id: <20180723122447.025491376@linuxfoundation.org>
+        stable@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.17 18/63] ARCv2: [plat-hsdk]: Save accl reg pair by default
+Date:   Mon, 23 Jul 2018 14:24:24 +0200
+Message-Id: <20180723122447.059681795@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -50,33 +49,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Po-Hsu Lin <po-hsu.lin@canonical.com>
+From: Vineet Gupta <vgupta@synopsys.com>
 
-commit 9a6249d2a145226ec1b294116fcb08744cf7ab56 upstream.
+commit af1fc5baa724c63ce1733dfcf855bad5ef6078e3 upstream.
 
-Audio mute led does not work on HP ProBook 455 G5,
-this can be fixed by using CXT_FIXUP_MUTE_LED_GPIO to support it.
+This manifsted as strace segfaulting on HSDK because gcc was targetting
+the accumulator registers as GPRs, which kernek was not saving/restoring
+by default.
 
-BugLink: https://bugs.launchpad.net/bugs/1781763
-Reported-by: James Buren
-Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: stable@vger.kernel.org   #4.14+
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arc/Kconfig           |    2 +-
+ arch/arc/plat-hsdk/Kconfig |    2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -965,6 +965,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
- 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
-+	SND_PCI_QUIRK(0x103c, 0x836e, "HP ProBook 455 G5", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -408,7 +408,7 @@ config ARC_HAS_DIV_REM
+ 
+ config ARC_HAS_ACCL_REGS
+ 	bool "Reg Pair ACCL:ACCH (FPU and/or MPY > 6)"
+-	default n
++	default y
+ 	help
+ 	  Depending on the configuration, CPU can contain accumulator reg-pair
+ 	  (also referred to as r58:r59). These can also be used by gcc as GPR so
+--- a/arch/arc/plat-hsdk/Kconfig
++++ b/arch/arc/plat-hsdk/Kconfig
+@@ -7,5 +7,7 @@
+ 
+ menuconfig ARC_SOC_HSDK
+ 	bool "ARC HS Development Kit SOC"
++	depends on ISA_ARCV2
++	select ARC_HAS_ACCL_REGS
+ 	select CLK_HSDK
+ 	select RESET_HSDK
 
 
