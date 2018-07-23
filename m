@@ -2,135 +2,184 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A782DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4D3ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 601FC20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:09:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D6DE20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:12:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CffCcna6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 601FC20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="Iab5QCTh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6DE20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388470AbeGWLKO (ORCPT
+        id S2388341AbeGWLMi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:10:14 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45178 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388443AbeGWLKI (ORCPT
+        Mon, 23 Jul 2018 07:12:38 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43613 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388071AbeGWLMh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:10:08 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i26-v6so8648pfo.12
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 03:09:41 -0700 (PDT)
+        Mon, 23 Jul 2018 07:12:37 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v13-v6so44777pgr.10
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 03:12:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iMrql5pChvk0l0OVuaoPU9zdtIybInbwoq7vsafDp1A=;
-        b=CffCcna69M9mIBu8F3DaqT/aURH/Z9hNxoiO8RCU5b5PMlhWLQQv9L7Gj/38sQQDOk
-         vV0cJJd9U86FHXvtVXrGW2SYs+E2vSneAIVEt3861zJg7ZDoOBdocwrX/WO3CdALndK2
-         rDut3rYidECFgGwUPm3FDxbIXlz9eD+W/+dWY=
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OUS1htVp6+P4rXegZC8xT6XmUfNXx2uDCrdTRyrHXd0=;
+        b=Iab5QCThTYTHyvgOyR5ZJulJ2pJWbal59Q1sQg03+YbPxzKRPRi/YEkRpjz6egGYy5
+         qX/b6NdTixcXrJTtyKC8hbeGoVuVF61Kusz4I0jU6hC0SAiqxS0jg9+OzEwGB1Y8vGUD
+         sPRvaUCxA0J48wIgFFFnbUSyMAwXDCJ0yaAIqoPGaJz1qyl9Bm2FflohfFUC6nzR5bng
+         5rwSufrbsl4izo9kWMu1AvT/Ml/yp3P+hTuM29971dqXIrYHD2YBlbEknYJLhlLUEQ8Y
+         JoICtcTO1SY7jsVwjmqi4NiSw2eRvnoZQxA1TMK3RPiaCEFjrstYnSnvkJtTakDOBQg8
+         wjjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iMrql5pChvk0l0OVuaoPU9zdtIybInbwoq7vsafDp1A=;
-        b=PQr1rqPAhIgvR8Jn8K4npgON3VfP0HYdeL3jcA2eVvYzZ8i/Puv4Y22VSKx5CadSBp
-         x/+kWkelNGB3HUrECo3f+z3Dn8YVNONCT0Pwb2LXRZt6Or8gFO6RjNWa4gRNjkeF8ET8
-         69AnmS4ztJYquKwmVBrxAdwWrvIGaI8Ub5e/80N855YvvpOkQ6Je+cZqrgMCnckVuFdp
-         HGUy6ERqfTrjnNOONYE5zsreDqWLPzO6HoC4eSeRwEDScnSsM8kMWvfp55iE0vIIKVHC
-         9pNaF+kpGdJGtcRSFBZsvyl8QwRD22dTkkZH9THlyE46OkJqpR17CxSj22MJzhzWcEdJ
-         tezg==
-X-Gm-Message-State: AOUpUlGE+kYukaKZmkh7VopcmVBb+mG9ZxEgdciHuXIE+71luPeSF5bt
-        sgNLyN57EFZRdxq8EnaTcyFuig==
-X-Google-Smtp-Source: AAOMgpec4hlV4bTq1n8pNJGaof+3oRH5kf4zpHnn4kVEyZYg0l540MxeoCxAIM2lnvBnxBl1rBRJGA==
-X-Received: by 2002:a62:3545:: with SMTP id c66-v6mr12569338pfa.63.1532340580981;
-        Mon, 23 Jul 2018 03:09:40 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id e82-v6sm13470698pfk.87.2018.07.23.03.09.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 23 Jul 2018 03:09:40 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>,
-        Jason Wu <jason.wu@unisoc.com>, zhang.lyra@gmail.com
-Subject: [PATCH V4 7/7] dt-bindings: sdhci-sprd: Add bindings for the sdhci-sprd controller
-Date:   Mon, 23 Jul 2018 18:08:28 +0800
-Message-Id: <1532340508-8749-8-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532340508-8749-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1532340508-8749-1-git-send-email-zhang.chunyan@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OUS1htVp6+P4rXegZC8xT6XmUfNXx2uDCrdTRyrHXd0=;
+        b=KXnRVY3f9/og1fucIU5bxWFsggDDC/DO6dJeTMWQFf1wcl8dKF0SM0qoXl9bDBnqWb
+         kKf0J1OpqwFp8ch76lxx4gVnqZm1es4Tz7Dpe+sUaWnXELjgJU7rGHk0QkgJg5kurheH
+         3lGpncLl9E51z5/Hr8RJdJ4NZ8ZF7L9PGHLDB9UMPsrJwfFpe9/hnmy9yfESc1poT1Fp
+         l7YzWExWg4hrtxJZ7b5/lclhF0FqPEWW+MihWB9FWmmVlMZ/aqNy78OWQV8YRQpUCD2H
+         C1gvRu15Omld0kfvIt++LFKhGoguW0PgKjljitpd4ym3Y/B7Lq9F1VfRnFYwJ89YnPG8
+         jLyQ==
+X-Gm-Message-State: AOUpUlEolSNEkVq3D7CsxpFEv3bDQaJAWgLDDjQb0gKBKjwNdURwea2y
+        25es2EHgXEKNzKfTaFlGTDtgwQ==
+X-Google-Smtp-Source: AAOMgpe/u+/GchDvhkOAHtwb8MLtyWKB+hlz5ngKXVHBl/sADDZRmR4eeH7ujdGVEDq6jv3pSUUlRg==
+X-Received: by 2002:a63:81c3:: with SMTP id t186-v6mr11872998pgd.413.1532340729969;
+        Mon, 23 Jul 2018 03:12:09 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id d81-v6sm22221549pfj.122.2018.07.23.03.12.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 03:12:09 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 343C1303B2F; Mon, 23 Jul 2018 13:12:03 +0300 (+03)
+Date:   Mon, 23 Jul 2018 13:12:02 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv5 18/19] x86/mm: Handle encrypted memory in
+ page_to_virt() and __pa()
+Message-ID: <20180723101201.wjbaktmerx3yiocd@kshutemo-mobl1>
+References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
+ <20180717112029.42378-19-kirill.shutemov@linux.intel.com>
+ <alpine.DEB.2.21.1807182356520.1689@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807182356520.1689@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+On Thu, Jul 19, 2018 at 12:21:44AM +0200, Thomas Gleixner wrote:
+> On Tue, 17 Jul 2018, Kirill A. Shutemov wrote:
+> 
+> > Per-KeyID direct mappings require changes into how we find the right
+> > virtual address for a page and virt-to-phys address translations.
+> > 
+> > page_to_virt() definition overwrites default macros provided by
+> > <linux/mm.h>. We only overwrite the macros if MTKME is enabled
+> > compile-time.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > ---
+> >  arch/x86/include/asm/mktme.h   | 3 +++
+> >  arch/x86/include/asm/page_64.h | 2 +-
+> >  2 files changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
+> > index ba83fba4f9b3..dbfbd955da98 100644
+> > --- a/arch/x86/include/asm/mktme.h
+> > +++ b/arch/x86/include/asm/mktme.h
+> > @@ -29,6 +29,9 @@ void arch_free_page(struct page *page, int order);
+> >  
+> >  int sync_direct_mapping(void);
+> >  
+> > +#define page_to_virt(x) \
+> > +	(__va(PFN_PHYS(page_to_pfn(x))) + page_keyid(x) * direct_mapping_size)
+> 
+> This really does not belong into the mktme header.
+> 
+> Please make this the unconditional x86 page_to_virt() implementation in
+> asm/page.h, which is the canonical and obvious place for it.
 
-This patch adds the device-tree binding documentation for Spreadtrum
-SDHCI driver.
+Okay. (and I owe Dave a beer on this :P)
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- .../devicetree/bindings/mmc/sdhci-sprd.txt         | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
+> The page_keyid() name is quite generic as well. Can this please have some
+> kind of reference to the underlying mechanism, i.e. mktme?
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt b/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
-new file mode 100644
-index 0000000..45c9978
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
-@@ -0,0 +1,41 @@
-+* Spreadtrum SDHCI controller (sdhci-sprd)
-+
-+The Secure Digital (SD) Host controller on Spreadtrum SoCs provides an interface
-+for MMC, SD and SDIO types of cards.
-+
-+This file documents differences between the core properties in mmc.txt
-+and the properties used by the sdhci-sprd driver.
-+
-+Required properties:
-+- compatible: Should contain "sprd,sdhci-r11".
-+- reg: physical base address of the controller and length.
-+- interrupts: Interrupts used by the SDHCI controller.
-+- clocks: Should contain phandle for the clock feeding the SDHCI controller
-+- clock-names: Should contain the following:
-+	"sdio" - SDIO source clock (required)
-+	"enable" - gate clock which used for enabling/disabling the device (required)
-+
-+Optional properties:
-+- assigned-clocks: the same with "sdio" clock
-+- assigned-clock-parents: the default parent of "sdio" clock
-+
-+Examples:
-+
-+sdio0: sdio@20600000 {
-+	compatible  = "sprd,sdhci-r11";
-+	reg = <0 0x20600000 0 0x1000>;
-+	interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-+
-+	clock-names = "sdio", "enable";
-+	clocks = <&ap_clk CLK_EMMC_2X>,
-+		 <&apahb_gate CLK_EMMC_EB>;
-+	assigned-clocks = <&ap_clk CLK_EMMC_2X>;
-+	assigned-clock-parents = <&rpll CLK_RPLL_390M>;
-+
-+	bus-width = <8>;
-+	non-removable;
-+	no-sdio;
-+	no-sd;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
+Hm. I intentially get the name generic. It used outside arch/x86.
+
+We can have an alias (mktme_page_keyid() ?) to be used in arch/x86 to
+indicate undelying mechanism.
+
+Is it what you want to see?
+
+> Please hide the multiplication with direct_mapping_size in the mktme header
+> as well. It's non interesting for the !MKTME case. Something like:
+> 
+> #define page_to_virt(x) \
+> 	(__va(PFN_PHYS(page_to_pfn(x))) + mktme_page_to_virt_offset(x))
+> 
+> makes it immediately clear where to look and also makes it clear that the
+> offset will be 0 for a !MKTME enabled kernel and (hopefully) for all !MKTME
+> enabled processors as well.
+> 
+> And then have a proper implementation of mktme_page_to_virt_offset() with a
+> proper comment what on earth this is doing. It might be all obvious to you
+> now, but it's completely non obvious for the casual reader and you will
+> have to twist your brain around it 6 month from now as well.
+
+Sure.
+
+> >  #else
+> >  #define mktme_keyid_mask	((phys_addr_t)0)
+> >  #define mktme_nr_keyids		0
+> > diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+> > index f57fc3cc2246..a4f394e3471d 100644
+> > --- a/arch/x86/include/asm/page_64.h
+> > +++ b/arch/x86/include/asm/page_64.h
+> > @@ -24,7 +24,7 @@ static inline unsigned long __phys_addr_nodebug(unsigned long x)
+> >  	/* use the carry flag to determine if x was < __START_KERNEL_map */
+> >  	x = y + ((x > y) ? phys_base : (__START_KERNEL_map - PAGE_OFFSET));
+> >  
+> > -	return x;
+> > +	return x & direct_mapping_mask;
+> 
+> This hunk also lacks any explanation both in the changelog and in form of a
+> comment.
+
+I'll fix it.
+
+> > Per-KeyID direct mappings require changes into how we find the right
+> > virtual address for a page and virt-to-phys address translations.
+> 
+> That's pretty useless as it does just tell about 'changes', but not at all
+> about what kind of changes and why these changes are required. It's really
+> not helpful to assume that everyone stumbling over this will know the whole
+> story especially not 6 month after this has been merged and then someone
+> ends up with a bisect on that change.
+> 
+> While at it, please get rid of the 'we'. We are neither CPUs nor code.
+
+Okay. I'll rewrite this.
+
 -- 
-2.7.4
-
+ Kirill A. Shutemov
