@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D717ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C3EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BDC820854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDC820854
+	by mail.kernel.org (Postfix) with ESMTP id EE0B920881
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE0B920881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388474AbeGWMGV (ORCPT
+        id S2388243AbeGWMEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:06:21 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:40019 "EHLO extserv.mm-sol.com"
+        Mon, 23 Jul 2018 08:04:48 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:39964 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388216AbeGWMEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:04:49 -0400
+        id S2388116AbeGWMEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 08:04:46 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 46C91CD72;
-        Mon, 23 Jul 2018 14:04:03 +0300 (EEST)
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id C5DFDCD63;
+        Mon, 23 Jul 2018 14:04:02 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v3 35/35] media: v4l2-ioctl: Add format descriptions for packed Bayer raw14 pixel formats
-Date:   Mon, 23 Jul 2018 14:02:52 +0300
-Message-Id: <1532343772-27382-36-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH v3 20/35] media: camss: csiphy: Unify lane handling
+Date:   Mon, 23 Jul 2018 14:02:37 +0300
+Message-Id: <1532343772-27382-21-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
 References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
@@ -41,33 +41,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This removes warning "Unknown pixelformat" for the following formats:
-        V4L2_PIX_FMT_SBGGR14P
-        V4L2_PIX_FMT_SGBRG14P
-        V4L2_PIX_FMT_SGRBG14P
-        V4L2_PIX_FMT_SRGGB14P
+Restructure lane configuration so it is simpler and will allow
+similar (although not the same) handling for different hardware
+versions.
 
-CC: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../platform/qcom/camss/camss-csiphy-2ph-1-0.c     | 48 ++++++++++++----------
+ drivers/media/platform/qcom/camss/camss-csiphy.c   |  4 +-
+ drivers/media/platform/qcom/camss/camss-csiphy.h   |  3 +-
+ 3 files changed, 29 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 2e3b1f0..e8f7c89 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1260,6 +1260,10 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 	case V4L2_PIX_FMT_SGBRG12P:	descr = "12-bit Bayer GBGB/RGRG Packed"; break;
- 	case V4L2_PIX_FMT_SGRBG12P:	descr = "12-bit Bayer GRGR/BGBG Packed"; break;
- 	case V4L2_PIX_FMT_SRGGB12P:	descr = "12-bit Bayer RGRG/GBGB Packed"; break;
-+	case V4L2_PIX_FMT_SBGGR14P:	descr = "14-bit Bayer BGBG/GRGR Packed"; break;
-+	case V4L2_PIX_FMT_SGBRG14P:	descr = "14-bit Bayer GBGB/RGRG Packed"; break;
-+	case V4L2_PIX_FMT_SGRBG14P:	descr = "14-bit Bayer GRGR/BGBG Packed"; break;
-+	case V4L2_PIX_FMT_SRGGB14P:	descr = "14-bit Bayer RGRG/GBGB Packed"; break;
- 	case V4L2_PIX_FMT_SBGGR16:	descr = "16-bit Bayer BGBG/GRGR"; break;
- 	case V4L2_PIX_FMT_SGBRG16:	descr = "16-bit Bayer GBGB/RGRG"; break;
- 	case V4L2_PIX_FMT_SGRBG16:	descr = "16-bit Bayer GRGR/BGBG"; break;
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
+index 7325906..5f499be 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
++++ b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
+@@ -86,7 +86,7 @@ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
+ {
+ 	struct csiphy_lanes_cfg *c = &cfg->csi2->lane_cfg;
+ 	u8 settle_cnt;
+-	u8 val;
++	u8 val, l = 0;
+ 	int i = 0;
+ 
+ 	settle_cnt = csiphy_settle_cnt_calc(pixel_clock, bpp, c->num_data,
+@@ -104,34 +104,38 @@ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
+ 	val = cfg->combo_mode << 4;
+ 	writel_relaxed(val, csiphy->base + CAMSS_CSI_PHY_GLBL_RESET);
+ 
+-	while (lane_mask) {
+-		if (lane_mask & 0x1) {
+-			writel_relaxed(0x10, csiphy->base +
+-				       CAMSS_CSI_PHY_LNn_CFG2(i));
+-			writel_relaxed(settle_cnt, csiphy->base +
+-				       CAMSS_CSI_PHY_LNn_CFG3(i));
+-			writel_relaxed(0x3f, csiphy->base +
+-				       CAMSS_CSI_PHY_INTERRUPT_MASKn(i));
+-			writel_relaxed(0x3f, csiphy->base +
+-				       CAMSS_CSI_PHY_INTERRUPT_CLEARn(i));
+-		}
+-
+-		lane_mask >>= 1;
+-		i++;
++	for (i = 0; i <= c->num_data; i++) {
++		if (i == c->num_data)
++			l = c->clk.pos;
++		else
++			l = c->data[i].pos;
++
++		writel_relaxed(0x10, csiphy->base +
++			       CAMSS_CSI_PHY_LNn_CFG2(l));
++		writel_relaxed(settle_cnt, csiphy->base +
++			       CAMSS_CSI_PHY_LNn_CFG3(l));
++		writel_relaxed(0x3f, csiphy->base +
++			       CAMSS_CSI_PHY_INTERRUPT_MASKn(l));
++		writel_relaxed(0x3f, csiphy->base +
++			       CAMSS_CSI_PHY_INTERRUPT_CLEARn(l));
+ 	}
+ }
+ 
+-static void csiphy_lanes_disable(struct csiphy_device *csiphy, u8 lane_mask)
++static void csiphy_lanes_disable(struct csiphy_device *csiphy,
++				 struct csiphy_config *cfg)
+ {
++	struct csiphy_lanes_cfg *c = &cfg->csi2->lane_cfg;
++	u8 l = 0;
+ 	int i = 0;
+ 
+-	while (lane_mask) {
+-		if (lane_mask & 0x1)
+-			writel_relaxed(0x0, csiphy->base +
+-				       CAMSS_CSI_PHY_LNn_CFG2(i));
++	for (i = 0; i <= c->num_data; i++) {
++		if (i == c->num_data)
++			l = c->clk.pos;
++		else
++			l = c->data[i].pos;
+ 
+-		lane_mask >>= 1;
+-		i++;
++		writel_relaxed(0x0, csiphy->base +
++			       CAMSS_CSI_PHY_LNn_CFG2(l));
+ 	}
+ 
+ 	writel_relaxed(0x0, csiphy->base + CAMSS_CSI_PHY_GLBL_PWR_CFG);
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
+index 14a9a66..99686f9 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy.c
++++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+@@ -292,9 +292,7 @@ static int csiphy_stream_on(struct csiphy_device *csiphy)
+  */
+ static void csiphy_stream_off(struct csiphy_device *csiphy)
+ {
+-	u8 lane_mask = csiphy_get_lane_mask(&csiphy->cfg.csi2->lane_cfg);
+-
+-	csiphy->ops->lanes_disable(csiphy, lane_mask);
++	csiphy->ops->lanes_disable(csiphy, &csiphy->cfg);
+ }
+ 
+ 
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
+index 8f61b7d..07e5906 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy.h
++++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
+@@ -51,7 +51,8 @@ struct csiphy_hw_ops {
+ 	void (*lanes_enable)(struct csiphy_device *csiphy,
+ 			     struct csiphy_config *cfg,
+ 			     u32 pixel_clock, u8 bpp, u8 lane_mask);
+-	void (*lanes_disable)(struct csiphy_device *csiphy, u8 lane_mask);
++	void (*lanes_disable)(struct csiphy_device *csiphy,
++			      struct csiphy_config *cfg);
+ 	irqreturn_t (*isr)(int irq, void *dev);
+ };
+ 
 -- 
 2.7.4
 
