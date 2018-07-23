@@ -6,40 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA23ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7FFDECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE2020856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:49:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE2020856
+	by mail.kernel.org (Postfix) with ESMTP id 9B83E20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:49:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B83E20856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388399AbeGWNuN (ORCPT
+        id S2389674AbeGWNsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:50:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51854 "EHLO
+        Mon, 23 Jul 2018 09:48:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51698 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388695AbeGWNsK (ORCPT
+        with ESMTP id S2389644AbeGWNsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:10 -0400
+        Mon, 23 Jul 2018 09:48:07 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4CEFC77;
-        Mon, 23 Jul 2018 12:47:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85521CA4;
+        Mon, 23 Jul 2018 12:46:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Woods <brian.woods@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        boris.ostrovsky@oracle.com, xen-devel@lists.xenproject.org,
-        Ingo Molnar <mingo@kernel.org>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Subject: [PATCH 4.4 098/107] x86/xen: Add call of speculative_store_bypass_ht_init() to PV paths
-Date:   Mon, 23 Jul 2018 14:42:32 +0200
-Message-Id: <20180723122418.416950924@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
+        Alexey Makhalov <amakhalov@vmware.com>,
+        Bo Gan <ganb@vmware.com>
+Subject: [PATCH 4.4 095/107] x86/bugs: Rework spec_ctrl base and mask logic
+Date:   Mon, 23 Jul 2018 14:42:29 +0200
+Message-Id: <20180723122418.270886605@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -56,65 +55,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 74899d92e66663dc7671a8017b3146dcd4735f3b upstream.
+commit be6fcb5478e95bb1c91f489121238deb3abca46a upstream
 
-Commit:
+x86_spec_ctrL_mask is intended to mask out bits from a MSR_SPEC_CTRL value
+which are not to be modified. However the implementation is not really used
+and the bitmask was inverted to make a check easier, which was removed in
+"x86/bugs: Remove x86_spec_ctrl_set()"
 
-  1f50ddb4f418 ("x86/speculation: Handle HT correctly on AMD")
+Aside of that it is missing the STIBP bit if it is supported by the
+platform, so if the mask would be used in x86_virt_spec_ctrl() then it
+would prevent a guest from setting STIBP.
 
-... added speculative_store_bypass_ht_init() to the per-CPU initialization sequence.
+Add the STIBP bit if supported and use the mask in x86_virt_spec_ctrl() to
+sanitize the value which is supplied by the guest.
 
-speculative_store_bypass_ht_init() needs to be called on each CPU for
-PV guests, too.
-
-Reported-by: Brian Woods <brian.woods@amd.com>
-Tested-by: Brian Woods <brian.woods@amd.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Cc: <stable@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: boris.ostrovsky@oracle.com
-Cc: xen-devel@lists.xenproject.org
-Fixes: 1f50ddb4f4189243c05926b842dc1a0332195f31 ("x86/speculation: Handle HT correctly on AMD")
-Link: https://lore.kernel.org/lkml/20180621084331.21228-1-jgross@suse.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
+Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
+Reviewed-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/xen/smp.c |    5 +++++
- 1 file changed, 5 insertions(+)
 
---- a/arch/x86/xen/smp.c
-+++ b/arch/x86/xen/smp.c
-@@ -28,6 +28,7 @@
- #include <xen/interface/vcpu.h>
- #include <xen/interface/xenpmu.h>
+ arch/x86/kernel/cpu/bugs.c |   26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
+
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -41,7 +41,7 @@ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
+  * The vendor and possibly platform specific bits which can be modified in
+  * x86_spec_ctrl_base.
+  */
+-static u64 x86_spec_ctrl_mask = ~SPEC_CTRL_IBRS;
++static u64 x86_spec_ctrl_mask = SPEC_CTRL_IBRS;
  
-+#include <asm/spec-ctrl.h>
- #include <asm/xen/interface.h>
- #include <asm/xen/hypercall.h>
+ /*
+  * AMD specific MSR info for Speculative Store Bypass control.
+@@ -67,6 +67,10 @@ void __init check_bugs(void)
+ 	if (boot_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
+ 		rdmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
  
-@@ -87,6 +88,8 @@ static void cpu_bringup(void)
- 	cpu_data(cpu).x86_max_cores = 1;
- 	set_cpu_sibling_map(cpu);
- 
-+	speculative_store_bypass_ht_init();
++	/* Allow STIBP in MSR_SPEC_CTRL if supported */
++	if (boot_cpu_has(X86_FEATURE_STIBP))
++		x86_spec_ctrl_mask |= SPEC_CTRL_STIBP;
 +
- 	xen_setup_cpu_clockevents();
+ 	/* Select the proper spectre mitigation before patching alternatives */
+ 	spectre_v2_select_mitigation();
  
- 	notify_cpu_starting(cpu);
-@@ -357,6 +360,8 @@ static void __init xen_smp_prepare_cpus(
+@@ -134,18 +138,26 @@ static enum spectre_v2_mitigation spectr
+ void
+ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
+ {
++	u64 msrval, guestval, hostval = x86_spec_ctrl_base;
+ 	struct thread_info *ti = current_thread_info();
+-	u64 msr, host = x86_spec_ctrl_base;
+ 
+ 	/* Is MSR_SPEC_CTRL implemented ? */
+ 	if (static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL)) {
++		/*
++		 * Restrict guest_spec_ctrl to supported values. Clear the
++		 * modifiable bits in the host base value and or the
++		 * modifiable bits from the guest value.
++		 */
++		guestval = hostval & ~x86_spec_ctrl_mask;
++		guestval |= guest_spec_ctrl & x86_spec_ctrl_mask;
++
+ 		/* SSBD controlled in MSR_SPEC_CTRL */
+ 		if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD))
+-			host |= ssbd_tif_to_spec_ctrl(ti->flags);
++			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
+ 
+-		if (host != guest_spec_ctrl) {
+-			msr = setguest ? guest_spec_ctrl : host;
+-			wrmsrl(MSR_IA32_SPEC_CTRL, msr);
++		if (hostval != guestval) {
++			msrval = setguest ? guestval : hostval;
++			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
+ 		}
  	}
- 	set_cpu_sibling_map(0);
- 
-+	speculative_store_bypass_ht_init();
-+
- 	xen_pmu_init(0);
- 
- 	if (xen_smp_intr_init(0))
+ }
+@@ -491,7 +503,7 @@ static enum ssb_mitigation __init __ssb_
+ 		switch (boot_cpu_data.x86_vendor) {
+ 		case X86_VENDOR_INTEL:
+ 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
+-			x86_spec_ctrl_mask &= ~SPEC_CTRL_SSBD;
++			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+ 			break;
+ 		case X86_VENDOR_AMD:
 
 
