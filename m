@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B63ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 01:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3E4C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 01:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDB9420854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 01:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EE2320854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 01:59:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AoWFjrqT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDB9420854
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LCQUREp9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EE2320854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387775AbeGWC6c (ORCPT
+        id S2387802AbeGWC6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 22:58:32 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33462 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387727AbeGWC6c (ORCPT
+        Sun, 22 Jul 2018 22:58:41 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45031 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387689AbeGWC6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 22:58:32 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r5-v6so11060990pgv.0
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 18:59:45 -0700 (PDT)
+        Sun, 22 Jul 2018 22:58:41 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r1-v6so11058064pgp.11
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 18:59:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GtIoJieKMHTN394dMOednMEC4qx4H0+B96ztFdyM5HA=;
-        b=AoWFjrqTENdZ9sLR9tvk1DXtMK9FYxuVEAVx/sMtK6DtxQQP0xrnHfemjwcM4cMMNk
-         GCBLIkc+Vmd6T8VbZxCOrxbZpA3z0bYgz+SzuGUilDfWEtTsBCyvrj1zo1j4cBD/2JtH
-         XwlZXgHsekdRhkURfYmzIZ3JQpB832BHynTqw=
+        bh=aiI32IJC87n1yrLeU9zsbi8Z298a1EB8XLfokLEiOx0=;
+        b=LCQUREp94LJj/UbwQ1WlvKHuiSLfHdIhXSELJpx7EaJq4upi0yxteLLk1mc7kzaU3x
+         OLoD9kzQuzd4FtjdgjWKRwpHM3XgUzE7JeHmskIkS9XID4FzDKDaG5PEcjB8ApEO39o0
+         upnfD+C4KiXUeE8Kk1uKBraH1mqikV89HcYLM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GtIoJieKMHTN394dMOednMEC4qx4H0+B96ztFdyM5HA=;
-        b=eGpXIxNW+oVYhhnTY6QgGgLXcXfvp+3qplrmdRWyZEy6dq7cTpzozLa08TO3P5Ylvg
-         EXCpd73aYWwpTo8WDMN2o5BXw2JxmD0ANP+Znqg+HgOYwrT2pAMjdnS8jHz+ruO+jDjd
-         3Xacp/R9VB3ElU6SA4eJU1zhiqnJCLwrA8W43+S87T0qzyQQvttxG9qkSNHp7f3hhdsy
-         3YO9TTv6RHdQSP3h1nt1x4zjH4nmr/4vZc4o6qqS4FkPkD0+nT617jk5mNMls+ZX+prY
-         qSWSJzO0dscZhqAAjYOuZ6wZPmlf3yecSoNbEyIVnKBHfIIWJ2G9fTslRiQlD4bjmeDR
-         ErZQ==
-X-Gm-Message-State: AOUpUlEGbRjmnb3PHkipL26RlOKJ1Jy2WXs33/StUg+KYuwchKtww7gn
-        ebdsO233XBbZKBtg9sQqu0i0JA==
-X-Google-Smtp-Source: AAOMgpfn7SiEA5UlKYRa4N3WBHYhBXi7Jeb1Cz5AYzBjJQraGUylWAveqkruQzCpcyPtp3v0wHEeng==
-X-Received: by 2002:a62:b40c:: with SMTP id h12-v6mr11414833pfn.18.1532311185039;
-        Sun, 22 Jul 2018 18:59:45 -0700 (PDT)
+        bh=aiI32IJC87n1yrLeU9zsbi8Z298a1EB8XLfokLEiOx0=;
+        b=TRKD3+qXbnxwDO+KnajzYJhdXwXw2t0ZlMnUPdAVVOlLL9t46s6h5a8VPszZzKV6BX
+         t3hSX2507pgLvsKM76kY7KIl2MhSCg9yhg9YKlA1S9bIAEGA5L/c/Iw56Nu5cy4FFu6D
+         x14oa3utatQkxubJ2f5E/zT++YVefRE2fb8ZpVnRzCUlySiRx7x1GUIzYWawc1qQjXgV
+         rEMavYdAVvC4JfCVOJfOarVCzd2diDd8N/7plV8Me+B9Rrw+t/I/sgLJ979WoCuAplfE
+         RehT6JdtnuebVS4msGRuFFnbB76oCu5ORE8NXpL/J/9rjm1WBq7ibTeNM35a0YdrYuMY
+         2hVw==
+X-Gm-Message-State: AOUpUlEoh3HoiQI1/572Tmyo7Kv3lR1rbX0tsPHE73YyC9Sx+a9lAXFC
+        5UwrAe+3qmH1muKQecGGAesR6w==
+X-Google-Smtp-Source: AAOMgpdUGKlezbDWTkcETamQQD5eFuOO+Q9VKBpBzVvcR2cCz/mdf9mvmYcGsNf/cp0/It2ctkykeA==
+X-Received: by 2002:a63:f414:: with SMTP id g20-v6mr10308718pgi.407.1532311193979;
+        Sun, 22 Jul 2018 18:59:53 -0700 (PDT)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id a134-v6sm8384082pfa.158.2018.07.22.18.59.44
+        by smtp.googlemail.com with ESMTPSA id a11-v6sm13539222pfl.66.2018.07.22.18.59.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 18:59:44 -0700 (PDT)
+        Sun, 22 Jul 2018 18:59:53 -0700 (PDT)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
         lenb@kernel.org, ard.biesheuvel@linaro.org
@@ -64,9 +64,9 @@ Cc:     tbaicar@codeaurora.org, bhsharma@redhat.com, dyoung@redhat.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kexec@lists.infradead.org,
         AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v4 4/5] efi/arm: map UEFI memory map even w/o runtime services enabled
-Date:   Mon, 23 Jul 2018 10:57:31 +0900
-Message-Id: <20180723015732.24252-5-takahiro.akashi@linaro.org>
+Subject: [PATCH v4 5/5] arm64: acpi: fix alignment fault in accessing ACPI
+Date:   Mon, 23 Jul 2018 10:57:32 +0900
+Message-Id: <20180723015732.24252-6-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723015732.24252-1-takahiro.akashi@linaro.org>
 References: <20180723015732.24252-1-takahiro.akashi@linaro.org>
@@ -75,58 +75,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Under the current implementation, UEFI memory map will be mapped and made
-available in virtual mappings only if runtime services are enabled.
-But in a later patch, we want to use UEFI memory map in acpi_os_ioremap()
-to create mappings of ACPI tables using memory attributes described in
-UEFI memory map.
-See the following commit:
-    arm64: acpi: fix alignment fault in accessing ACPI tables
+This is a fix against the issue that crash dump kernel may hang up
+during booting, which can happen on any ACPI-based system with "ACPI
+Reclaim Memory."
 
-So, as a first step, arm_enter_runtime_services() is modified, alongside
-Ard's patch[1], so that UEFI memory map will not be freed even if
-efi=noruntime.
+(kernel messages after panic kicked off kdump)
+	   (snip...)
+	Bye!
+	   (snip...)
+	ACPI: Core revision 20170728
+	pud=000000002e7d0003, *pmd=000000002e7c0003, *pte=00e8000039710707
+	Internal error: Oops: 96000021 [#1] SMP
+	Modules linked in:
+	CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.14.0-rc6 #1
+	task: ffff000008d05180 task.stack: ffff000008cc0000
+	PC is at acpi_ns_lookup+0x25c/0x3c0
+	LR is at acpi_ds_load1_begin_op+0xa4/0x294
+	   (snip...)
+	Process swapper/0 (pid: 0, stack limit = 0xffff000008cc0000)
+	Call trace:
+	   (snip...)
+	[<ffff0000084a6764>] acpi_ns_lookup+0x25c/0x3c0
+	[<ffff00000849b4f8>] acpi_ds_load1_begin_op+0xa4/0x294
+	[<ffff0000084ad4ac>] acpi_ps_build_named_op+0xc4/0x198
+	[<ffff0000084ad6cc>] acpi_ps_create_op+0x14c/0x270
+	[<ffff0000084acfa8>] acpi_ps_parse_loop+0x188/0x5c8
+	[<ffff0000084ae048>] acpi_ps_parse_aml+0xb0/0x2b8
+	[<ffff0000084a8e10>] acpi_ns_one_complete_parse+0x144/0x184
+	[<ffff0000084a8e98>] acpi_ns_parse_table+0x48/0x68
+	[<ffff0000084a82cc>] acpi_ns_load_table+0x4c/0xdc
+	[<ffff0000084b32f8>] acpi_tb_load_namespace+0xe4/0x264
+	[<ffff000008baf9b4>] acpi_load_tables+0x48/0xc0
+	[<ffff000008badc20>] acpi_early_init+0x9c/0xd0
+	[<ffff000008b70d50>] start_kernel+0x3b4/0x43c
+	Code: b9008fb9 2a000318 36380054 32190318 (b94002c0)
+	---[ end trace c46ed37f9651c58e ]---
+	Kernel panic - not syncing: Fatal exception
+	Rebooting in 10 seconds..
 
-[1] https://marc.info/?l=linux-efi&m=152930773507524&w=2
+(diagnosis)
+* This fault is a data abort, alignment fault (ESR=0x96000021)
+  during reading out ACPI table.
+* Initial ACPI tables are normally stored in system ram and marked as
+  "ACPI Reclaim memory" by the firmware.
+* After the commit f56ab9a5b73c ("efi/arm: Don't mark ACPI reclaim
+  memory as MEMBLOCK_NOMAP"), those regions are differently handled
+  as they are "memblock-reserved", without NOMAP bit.
+* So they are now excluded from device tree's "usable-memory-range"
+  which kexec-tools determines based on a current view of /proc/iomem.
+* When crash dump kernel boots up, it tries to accesses ACPI tables by
+  mapping them with ioremap(), not ioremap_cache(), in acpi_os_ioremap()
+  since they are no longer part of mapped system ram.
+* Given that ACPI accessor/helper functions are compiled in without
+  unaligned access support (ACPI_MISALIGNMENT_NOT_SUPPORTED),
+  any unaligned access to ACPI tables can cause a fatal panic.
+
+With this patch, acpi_os_ioremap() always honors memory attribute
+information provided by the firmware (EFI) and retaining cacheability
+allows the kernel safe access to ACPI tables.
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Reviewed-by: James Morse <james.morse@arm.com>
 Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reported-by and Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
 ---
- drivers/firmware/efi/arm-runtime.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/arm64/include/asm/acpi.h | 23 ++++++++++++++++-------
+ arch/arm64/kernel/acpi.c      | 11 +++--------
+ 2 files changed, 19 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-index 59a8c0ec94d5..a00934d263c5 100644
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@ -117,6 +117,13 @@ static int __init arm_enable_runtime_services(void)
+diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
+index 0db62a4cbce2..68bc18cb2b85 100644
+--- a/arch/arm64/include/asm/acpi.h
++++ b/arch/arm64/include/asm/acpi.h
+@@ -12,10 +12,12 @@
+ #ifndef _ASM_ACPI_H
+ #define _ASM_ACPI_H
  
- 	efi_memmap_unmap();
++#include <linux/efi.h>
+ #include <linux/memblock.h>
+ #include <linux/psci.h>
  
-+	mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
+ #include <asm/cputype.h>
++#include <asm/io.h>
+ #include <asm/smp_plat.h>
+ #include <asm/tlbflush.h>
+ 
+@@ -29,18 +31,22 @@
+ 
+ /* Basic configuration for ACPI */
+ #ifdef	CONFIG_ACPI
++pgprot_t __acpi_get_mem_attribute(phys_addr_t addr);
 +
-+	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
-+		pr_err("Failed to remap EFI memory map\n");
-+		return 0;
-+	}
+ /* ACPI table mapping after acpi_permanent_mmap is set */
+ static inline void __iomem *acpi_os_ioremap(acpi_physical_address phys,
+ 					    acpi_size size)
+ {
++	/* For normal memory we already have a cacheable mapping. */
++	if (memblock_is_map_memory(phys))
++		return (void __iomem *)__phys_to_virt(phys);
 +
- 	if (efi_runtime_disabled()) {
- 		pr_info("EFI runtime services will be disabled.\n");
- 		return 0;
-@@ -129,13 +136,6 @@ static int __init arm_enable_runtime_services(void)
- 
- 	pr_info("Remapping and enabling EFI services.\n");
- 
--	mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
+ 	/*
+-	 * EFI's reserve_regions() call adds memory with the WB attribute
+-	 * to memblock via early_init_dt_add_memory_arch().
++	 * We should still honor the memory's attribute here because
++	 * crash dump kernel possibly excludes some ACPI (reclaim)
++	 * regions from memblock list.
+ 	 */
+-	if (!memblock_is_memory(phys))
+-		return ioremap(phys, size);
 -
--	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
--		pr_err("Failed to remap EFI memory map\n");
--		return -ENOMEM;
--	}
+-	return ioremap_cache(phys, size);
++	return __ioremap(phys, size, __acpi_get_mem_attribute(phys));
+ }
+ #define acpi_os_ioremap acpi_os_ioremap
+ 
+@@ -129,7 +135,10 @@ static inline const char *acpi_get_enable_method(int cpu)
+  * for compatibility.
+  */
+ #define acpi_disable_cmcff 1
+-pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr);
++static inline pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
++{
++	return __acpi_get_mem_attribute(addr);
++}
+ #endif /* CONFIG_ACPI_APEI */
+ 
+ #ifdef CONFIG_ACPI_NUMA
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index 7b09487ff8fb..ed46dc188b22 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -18,6 +18,7 @@
+ #include <linux/acpi.h>
+ #include <linux/bootmem.h>
+ #include <linux/cpumask.h>
++#include <linux/efi.h>
+ #include <linux/efi-bgrt.h>
+ #include <linux/init.h>
+ #include <linux/irq.h>
+@@ -29,13 +30,9 @@
+ 
+ #include <asm/cputype.h>
+ #include <asm/cpu_ops.h>
++#include <asm/pgtable.h>
+ #include <asm/smp_plat.h>
+ 
+-#ifdef CONFIG_ACPI_APEI
+-# include <linux/efi.h>
+-# include <asm/pgtable.h>
+-#endif
 -
- 	if (!efi_virtmap_init()) {
- 		pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
- 		return -ENOMEM;
+ int acpi_noirq = 1;		/* skip ACPI IRQ initialization */
+ int acpi_disabled = 1;
+ EXPORT_SYMBOL(acpi_disabled);
+@@ -239,8 +236,7 @@ void __init acpi_boot_table_init(void)
+ 	}
+ }
+ 
+-#ifdef CONFIG_ACPI_APEI
+-pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
++pgprot_t __acpi_get_mem_attribute(phys_addr_t addr)
+ {
+ 	/*
+ 	 * According to "Table 8 Map: EFI memory types to AArch64 memory
+@@ -261,4 +257,3 @@ pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
+ 		return __pgprot(PROT_NORMAL_NC);
+ 	return __pgprot(PROT_DEVICE_nGnRnE);
+ }
+-#endif
 -- 
 2.18.0
 
