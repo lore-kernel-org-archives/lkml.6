@@ -2,108 +2,78 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FD7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E53ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B9F720880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B9F720880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F10720883
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F10720883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389373AbeGWNbp (ORCPT
+        id S2389361AbeGWNbp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 23 Jul 2018 09:31:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46304 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388578AbeGWNbo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mx2.suse.de ([195.135.220.15]:43904 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388079AbeGWNbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Jul 2018 09:31:44 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 940F1C75;
-        Mon, 23 Jul 2018 12:30:45 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 39/44] ipv6: make DAD fail with enhanced DAD when nonce length differs
-Date:   Mon, 23 Jul 2018 14:25:15 +0200
-Message-Id: <20180723122439.306294058@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
-References: <20180723122437.447870153@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4A9F2AE18;
+        Mon, 23 Jul 2018 12:30:44 +0000 (UTC)
+Date:   Mon, 23 Jul 2018 14:30:43 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
+        <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
+Message-ID: <20180723123043.GD31229@dhcp22.suse.cz>
+References: <20180720123422.10127-1-david@redhat.com>
+ <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
+> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
+> > Dumping tools (like makedumpfile) right now don't exclude reserved pages.
+> > So reserved pages might be access by dump tools although nobody except
+> > the owner should touch them.
+> 
+> Are you sure about that? Or maybe I understand wrong. Maybe it changed
+> recently, but IIRC pages that are backing memmap (struct pages) are also
+> PG_reserved. And you definitely do want those in the dump.
 
-------------------
-
-From: Sabrina Dubroca <sd@queasysnail.net>
-
-[ Upstream commit e66515999b627368892ccc9b3a13a506f2ea1357 ]
-
-Commit adc176c54722 ("ipv6 addrconf: Implemented enhanced DAD (RFC7527)")
-added enhanced DAD with a nonce length of 6 bytes. However, RFC7527
-doesn't specify the length of the nonce, other than being 6 + 8*k bytes,
-with integer k >= 0 (RFC3971 5.3.2). The current implementation simply
-assumes that the nonce will always be 6 bytes, but others systems are
-free to choose different sizes.
-
-If another system sends a nonce of different length but with the same 6
-bytes prefix, it shouldn't be considered as the same nonce. Thus, check
-that the length of the received nonce is the same as the length we sent.
-
-Ugly scapy test script running on veth0:
-
-def loop():
-    pkt=sniff(iface="veth0", filter="icmp6", count=1)
-    pkt = pkt[0]
-    b = bytearray(pkt[Raw].load)
-    b[1] += 1
-    b += b'\xde\xad\xbe\xef\xde\xad\xbe\xef'
-    pkt[Raw].load = bytes(b)
-    pkt[IPv6].plen += 8
-    # fixup checksum after modifying the payload
-    pkt[IPv6].payload.cksum -= 0x3b44
-    if pkt[IPv6].payload.cksum < 0:
-        pkt[IPv6].payload.cksum += 0xffff
-    sendp(pkt, iface="veth0")
-
-This should result in DAD failure for any address added to veth0's peer,
-but is currently ignored.
-
-Fixes: adc176c54722 ("ipv6 addrconf: Implemented enhanced DAD (RFC7527)")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ndisc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -803,7 +803,7 @@ static void ndisc_recv_ns(struct sk_buff
- 			return;
- 		}
- 	}
--	if (ndopts.nd_opts_nonce)
-+	if (ndopts.nd_opts_nonce && ndopts.nd_opts_nonce->nd_opt_len == 1)
- 		memcpy(&nonce, (u8 *)(ndopts.nd_opts_nonce + 1), 6);
- 
- 	inc = ipv6_addr_is_multicast(daddr);
-
-
+You are right. reserve_bootmem_region will make all early bootmem
+allocations (including those backing memmaps) PageReserved. I have asked
+several times but I haven't seen a satisfactory answer yet. Why do we
+even care for kdump about those. If they are reserved the nobody should
+really look at those specific struct pages and manipulate them. Kdump
+tools are using a kernel interface to read the content. If the specific
+content is backed by a non-existing memory then they should simply not
+return anything.
+-- 
+Michal Hocko
+SUSE Labs
