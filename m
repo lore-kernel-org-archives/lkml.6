@@ -2,135 +2,186 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1954ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 143B2ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A40C20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBEF920852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:22:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oXW8DiAW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A40C20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YsHjrKS/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBEF920852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388291AbeGWTY0 (ORCPT
+        id S2388354AbeGWTZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 15:24:26 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:60560 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388026AbeGWTYZ (ORCPT
+        Mon, 23 Jul 2018 15:25:01 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40266 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388026AbeGWTZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 15:24:25 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6NIJ6MJ015995;
-        Mon, 23 Jul 2018 18:21:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=LM3ihZfel0kKZyTpIpMPiw+pwXGBn7a1frJbkvNryPw=;
- b=oXW8DiAWlTpt1WtfVdDy0a+Y0rwpelslj4DV8tnwNtF/VirBwls5QCOpRwSCXdUMgveI
- E+Qh+7G1ZhHWskKe8Sx/hk2bnKWC29U8nreY36ua1NkST3vVZ7g66+inWgRV25Xmy3OO
- 3oZoSQW8aDmLkjRVwjxC1UEaaU+YSt03s4KaoKnXKajyLiK8tvgq9xzXoXfH1Es0BEW/
- CjlZMMy/pPJ06gPYoJFlVfHtNMmyCs8ah8/uVjBb7WemVY5kEUNnk12ELPjpy+fXwb8a
- 0qi/m1S1XynlauEYzSqNvOJtDozYTqFixpBsRcwmbkJ4GBsbCCo7UcK521BFw6kMHiKi ZA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2kbtbcnwm8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Jul 2018 18:21:37 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6NILagC032240
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Jul 2018 18:21:36 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6NILZ22001841;
-        Mon, 23 Jul 2018 18:21:35 GMT
-Received: from [192.168.1.250] (/76.253.0.199)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 23 Jul 2018 11:21:35 -0700
-Subject: Re: [PATCH] IB/mlx5: avoid binding a new mpi unit to the same devices
- repeatedly
-To:     Daniel Jurgens <danielj@mellanox.com>,
-        Or Gerlitz <gerlitz.or@gmail.com>,
-        Parav Pandit <parav@mellanox.com>
-Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Doug Ledford <dledford@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>, gerald.gibson@oracle.com,
-        Sharon Liu <sharon.s.liu@oracle.com>
-References: <20180713235021.18141-1-qing.huang@oracle.com>
- <CAJ3xEMi5zF83aA_SWfYT+JtWGGhqRhLyTKe-qYwevSBLuiK=cA@mail.gmail.com>
- <dc4d502c-bc3c-46e3-a984-41271951a5f7@mellanox.com>
- <556984ea-c35f-197d-0e45-16272da3f604@oracle.com>
- <f2a5d82c-f65c-152d-5545-0d50a4e5e150@mellanox.com>
-From:   Qing Huang <qing.huang@oracle.com>
-Message-ID: <175e7c33-c12b-7c37-c5b9-127804e599b5@oracle.com>
-Date:   Mon, 23 Jul 2018 11:21:35 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 23 Jul 2018 15:25:01 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e19-v6so1774410edq.7
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 11:22:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UOkiAcRVlAdFGHhBQHpUdRSIbs7FI6a5nUo3q7mpgq4=;
+        b=YsHjrKS/ZnvV1/TOUSz4bb/JemrzhPEhghFxMFgeWarfPF8w+a1aT1tzUAnMwgKcnA
+         oNv5wkyVviBmwaCfw1K7I+0+iDJDkbWUNOVTfAZ+UwstZdwrh8sCFqibpEqw4VYbedf2
+         3eVJYzhs7VsEDUkqfAx+8SrYtZ6R+toiVwrgU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UOkiAcRVlAdFGHhBQHpUdRSIbs7FI6a5nUo3q7mpgq4=;
+        b=n4jVI1b7RhdoOaa97/86RpFqSikeKEXkL6vBOxxCk9bCYnM1PrQxH+vHtkvPiz5c8q
+         o2eL0kvaFs9c3J0ca0fDQctmwfQf1RbYXXxnTj5xcsQmkTKr1OWS/CyW6Y33Rp8ZMsD6
+         mQ0d8W/Qid1KMbLXoXYY1wSNpuvCWlDIRFioG6WcO2nTisqmtAHTe3sXr2XXpF06GpRx
+         jxAQ2pjHAjRfKIV+vssWaqp6QzNRve2ahSf/3EswlgZysaDkWgxW8PeZ1r/cQEBv9Rk7
+         CVIcCSkMG2mrJYFtbNWVgRrQiUrvz3zAsEATJjsgK3qIxz/gKNkJ1vhTLfDu8Ha9nxQk
+         p9Kg==
+X-Gm-Message-State: AOUpUlGfUsOzvrZarcohA7u0EGlzL5kcj52wmh1mR6RUyoNYwcHSakGd
+        yNIGOv8aT4tt/+vWVg5w/PAXROrtpLDZYXIexvvI+g==
+X-Google-Smtp-Source: AAOMgpevSX6AGkq/HPdtwfyWZf6/tvUplpjC5G/NyTifam5AW+IXo36yI2SE4NVHA2sumrRfY6HVFrcDiFM4tJj5OJ0=
+X-Received: by 2002:a50:b2c6:: with SMTP id p64-v6mr15160577edd.293.1532370152726;
+ Mon, 23 Jul 2018 11:22:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <f2a5d82c-f65c-152d-5545-0d50a4e5e150@mellanox.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8963 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807230203
+References: <1531847501-22226-1-git-send-email-suzuki.poulose@arm.com>
+ <1531847501-22226-10-git-send-email-suzuki.poulose@arm.com>
+ <20180719203630.GC9421@xps15> <a68cff9d-51d3-7d86-0a73-c1d3cbbaced3@arm.com>
+In-Reply-To: <a68cff9d-51d3-7d86-0a73-c1d3cbbaced3@arm.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 23 Jul 2018 12:22:21 -0600
+Message-ID: <CANLsYkyN_+uTJZh7YEBPtMPvb8uQNwXvCwn_N4+D12xOVc=MNg@mail.gmail.com>
+Subject: Re: [PATCH v2 09/10] coresight: perf: Remove set_buffer call back
+To:     "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Mike Leach <mike.leach@linaro.org>, coresight@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
-
-
-On 7/23/2018 11:11 AM, Daniel Jurgens wrote:
+On Fri, 20 Jul 2018 at 03:04, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
 >
-> On 7/23/2018 10:36 AM, Qing Huang wrote:
->> Hi Daniel/Parav,
->>
->> Have you got a chance to review this patch? Thanks!
-> Hi Qing, sorry for the delay, I just got back to the office today. I don't agree with the proposed fix, I provided an alternative suggestion below.
->>>> Or.
->>>>
->>>>> Reported-by: Gerald Gibson <gerald.gibson@oracle.com>
->>>>> Signed-off-by: Qing Huang <qing.huang@oracle.com>
->>>>> ---
->>>>>    drivers/infiniband/hw/mlx5/main.c | 3 ++-
->>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
->>>>> index b3ba9a2..1ddd1d3 100644
->>>>> --- a/drivers/infiniband/hw/mlx5/main.c
->>>>> +++ b/drivers/infiniband/hw/mlx5/main.c
->>>>> @@ -6068,7 +6068,8 @@ static void *mlx5_ib_add_slave_port(struct mlx5_core_dev *mdev, u8 port_num)
->>>>>
->>>>>           mutex_lock(&mlx5_ib_multiport_mutex);
->>>>>           list_for_each_entry(dev, &mlx5_ib_dev_list, ib_dev_list) {
->>>>> -               if (dev->sys_image_guid == mpi->sys_image_guid)
->>>>> +               if (dev->sys_image_guid == mpi->sys_image_guid &&
->>>>> +                   !dev->port[mlx5_core_native_port_num(mdev) - 1].mp.mpi)
-> You shouldn't check the mpi field that without holding the lock in the mp structure. Prefer you change the print from a warning in mlx5_ib_bind_slave_port to a debug message.
-Thanks for the review. That works for us too. Will resend the patch.
+> Mathieu,
+>
+> On 19/07/18 21:36, Mathieu Poirier wrote:
+> > On Tue, Jul 17, 2018 at 06:11:40PM +0100, Suzuki K Poulose wrote:
+> >> In coresight perf mode, we need to prepare the sink before
+> >> starting a session, which is done via set_buffer call back.
+> >> We then proceed to enable the tracing. If we fail to start
+> >> the session successfully, we leave the sink configuration
+> >> unchanged. This was fine for the existing backends as they
+> >> don't have any state associated with the buffers. But with
+> >> ETR, we need to keep track of the buffer details and need
+> >> to be cleaned up if we fail. In order to make the operation
+> >> atomic and to avoid yet another call back, we get rid of
+> >> the "set_buffer" call back and pass the buffer details
+> >> via enable() call back to the sink.
+> >
+> > Suzuki,
+> >
+> > I'm not sure I understand the problem you're trying to fix there.  From the
+> > implementation of tmc_enable_etr_sink_perf() in the next patch, wouldn't the
+> > same result been achievable using a callback?
+>
+> We can definitely achieve the results using "set_buffer". But for ETR,
+> we track the "perf_buf" in drvdata->perf_data when we do "set_buffer".
+> But if we failed to enable_path(), we leave the drvdata->perf_data
+> and doesn't clean it up. Now when another session is about to set_buf,
+> we check if perf_data is empty and WARNs otherwise.
+> Because we can't be sure if it belongs to an abandoned session or
+> another active session and we completely messed somewhere in the driver.
+> So, we need a clear_buffer call back if the enable fails, something
+> not really worth. Anyways, there is no point in separating set_buffer
+> and enabling the sink, as the error handling becomes cumbersome as explained
+> above.
+>
+> >
+> > I'm fine with this patch and supportive of getting rid of callbacks if we can, I
+> > just need to understand the exact problem you're after.  From looking a your
+> > code (and the current implementation), if we succeed in setting the memory for
+> > the sink but fail in any of the subsequent steps i.e, enabling the rest of the
+> > compoment on the path or the source, the sink is left unchanged.
+>
+> Yes, thats right. And we should WARN (which I missed in this version) if
+> there is a perf_data already for a disabled ETR. Please see my response to the
+> next patch.
 
-Regards,
-Qing
+The changelog for this patch states the following: "But with ETR, we
+need to keep track of the buffer details and need to be cleaned up if
+we fail."
+
+I did a deep dive in the code and in the current implementation if the
+source fails to be enabled in etm_event_start() the path and the sink
+remains unchanged.  With your patchset this get fixed because a goto
+was added to disable the path when such condition occur.  As such each
+component in the path will see its ->disable() callback invoked.  In
+tmc_disable_etr_sink(), drvdata->perf_data is set to NULL in
+tmc_etr_disable_hw(), so the cleanup on error condition is done
+properly.  As such we wouldn't need a clean_buffer() callback.
+
+As I said I'm in favour of removing the set_buffer() callback but I
+wouldn't associated it with ETR state cleanup.  If the code can be
+rearranged in a way that code can be removed then that alone is enough
+to justify the change.
 
 >
->>>>>                           bound = mlx5_ib_bind_slave_port(dev, mpi);
->>>>>
->>>>>                   if (bound) {
->>>>> -- 
->>>>> 2.9.3
->>>>>
->>>>> -- 
->>>>> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> >> index 3cc4a0b..12a247d 100644
+> >> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> >> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> >> @@ -269,16 +269,11 @@ static void etm_event_start(struct perf_event *event, int flags)
+> >>      path = etm_event_cpu_path(event_data, cpu);
+> >>      /* We need a sink, no need to continue without one */
+> >>      sink = coresight_get_sink(path);
+> >> -    if (WARN_ON_ONCE(!sink || !sink_ops(sink)->set_buffer))
+> >> -            goto fail_end_stop;
+> >> -
+> >> -    /* Configure the sink */
+> >> -    if (sink_ops(sink)->set_buffer(sink, handle,
+> >> -                                   event_data->snk_config))
+> >> +    if (WARN_ON_ONCE(!sink))
+> >>              goto fail_end_stop;
+> >>
+> >>      /* Nothing will happen without a path */
+> >> -    if (coresight_enable_path(path, CS_MODE_PERF))
+> >> +    if (coresight_enable_path(path, CS_MODE_PERF, handle))
+> >
+> > Here we already have a handle on "event_data".  As such I think this is what we
+> > should feed to coresight_enable_path() rather than the handle.  That way we
+> > don't need to call etm_perf_sink_config(), we just use the data.
+>
+> The advantage of passing on the handle is, we could get all the way upto the
+> "perf_event" for the given session. Passing the event_data will loose that
+> information.
+>
+> i.e, perf_event-> |perf_ouput_handle | -> |event_data | -> sink_config
+>                    |  <-event         |    |           |
+>
+> The purpose of the wrapper "etm_perf_sink_config()" is to abstract the way we
+> handle the information under the event_data. i.e, if we decide to make some
+> changes in the way we store event_data, we need to spill the changes every
+> where. But the perf_ouput_handle has much more stable ABI than event_data,
+> hence the choice of passing handle.
 
+I agree that etm_perf_sink_config() has value but it should take a
+void * as parameter (i.e what gets returned from perf_get_aux())
+rather than a perf_output_handle *.
+
+Thanks,
+Mathieu
+
+>
+> Cheers
+> Suzuki
