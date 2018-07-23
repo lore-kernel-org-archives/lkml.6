@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B84F2ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C951EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67D0820880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67D0820880
+	by mail.kernel.org (Postfix) with ESMTP id 84D0B20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D0B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389511AbeGWNcU (ORCPT
+        id S2389517AbeGWNcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:32:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46438 "EHLO
+        Mon, 23 Jul 2018 09:32:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46458 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389497AbeGWNcS (ORCPT
+        with ESMTP id S2388575AbeGWNcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:32:18 -0400
+        Mon, 23 Jul 2018 09:32:24 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 911B6C21;
-        Mon, 23 Jul 2018 12:31:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 15C4FC7A;
+        Mon, 23 Jul 2018 12:31:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Richard Cochran <richardcochran@gmail.com>,
+        Sanjeev Bansal <sanjeevb.bansal@broadcom.com>,
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 20/28] ptp: fix missing break in switch
-Date:   Mon, 23 Jul 2018 14:25:20 +0200
-Message-Id: <20180723122426.474335396@linuxfoundation.org>
+Subject: [PATCH 4.9 22/28] tg3: Add higher cpu clock for 5762.
+Date:   Mon, 23 Jul 2018 14:25:22 +0200
+Message-Id: <20180723122426.695115446@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122425.241418073@linuxfoundation.org>
 References: <20180723122425.241418073@linuxfoundation.org>
@@ -52,31 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Sanjeev Bansal <sanjeevb.bansal@broadcom.com>
 
-[ Upstream commit 9ba8376ce1e2cbf4ce44f7e4bee1d0648e10d594 ]
+[ Upstream commit 3a498606bb04af603a46ebde8296040b2de350d1 ]
 
-It seems that a *break* is missing in order to avoid falling through
-to the default case. Otherwise, checking *chan* makes no sense.
+This patch has fix for TX timeout while running bi-directional
+traffic with 100 Mbps using 5762.
 
-Fixes: 72df7a7244c0 ("ptp: Allow reassigning calibration pin function")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: Sanjeev Bansal <sanjeevb.bansal@broadcom.com>
+Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
+Reviewed-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/ptp/ptp_chardev.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/broadcom/tg3.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/ptp/ptp_chardev.c
-+++ b/drivers/ptp/ptp_chardev.c
-@@ -89,6 +89,7 @@ int ptp_set_pinfunc(struct ptp_clock *pt
- 	case PTP_PF_PHYSYNC:
- 		if (chan != 0)
- 			return -EINVAL;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -9276,6 +9276,15 @@ static int tg3_chip_reset(struct tg3 *tp
+ 
+ 	tg3_restore_clk(tp);
+ 
++	/* Increase the core clock speed to fix tx timeout issue for 5762
++	 * with 100Mbps link speed.
++	 */
++	if (tg3_asic_rev(tp) == ASIC_REV_5762) {
++		val = tr32(TG3_CPMU_CLCK_ORIDE_ENABLE);
++		tw32(TG3_CPMU_CLCK_ORIDE_ENABLE, val |
++		     TG3_CPMU_MAC_ORIDE_ENABLE);
++	}
++
+ 	/* Reprobe ASF enable state.  */
+ 	tg3_flag_clear(tp, ENABLE_ASF);
+ 	tp->phy_flags &= ~(TG3_PHYFLG_1G_ON_VAUX_OK |
 
 
