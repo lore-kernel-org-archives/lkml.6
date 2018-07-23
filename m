@@ -2,109 +2,113 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6506AECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43520ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7FD20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:15:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7FD20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E13D220852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:18:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBoOtjNX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E13D220852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388786AbeGWSRX (ORCPT
+        id S2388839AbeGWSUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:17:23 -0400
-Received: from mga01.intel.com ([192.55.52.88]:55864 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388699AbeGWSRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:17:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 10:15:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
-   d="scan'208";a="56542591"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 23 Jul 2018 10:15:11 -0700
-Received: from [10.252.208.45] (kliang2-mobl1.ccr.corp.intel.com [10.252.208.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 0DC6B580388;
-        Mon, 23 Jul 2018 10:15:09 -0700 (PDT)
-Subject: Re: [PATCH 3/4] perf/x86/intel/ds: Handle PEBS overflow for fixed
- counters
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        vincent.weaver@maine.edu, jolsa@redhat.com, ak@linux.intel.com
-References: <20180309021542.11374-1-kan.liang@linux.intel.com>
- <20180309021542.11374-3-kan.liang@linux.intel.com>
- <20180723145944.GB2458@hirez.programming.kicks-ass.net>
- <20180723162114.GD2512@hirez.programming.kicks-ass.net>
- <e56be489-3f66-8f27-37e4-77b12c1c99f4@linux.intel.com>
-Message-ID: <aa546845-cb9d-969b-fa6a-1c8387831edb@linux.intel.com>
-Date:   Mon, 23 Jul 2018 13:15:08 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 23 Jul 2018 14:20:47 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35361 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388699AbeGWSUr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:20:47 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e6-v6so847313pgv.2;
+        Mon, 23 Jul 2018 10:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nmUr9Cb74F9fIXP3P9WCnn03xoD4AehDWD0zbZrre7Q=;
+        b=eBoOtjNX8WIDZbJDjHx98kTVlNGm637aJKRJBriACM030Fib1EN+Ft65hdLoARTR68
+         laqkpllLuRlXEQIkxFKBr99+wXEslyB7WUJJ0CpM1dye7mLxBoxofyCLY5Rd90wok1+/
+         pXxiyy/Kxq+KGBmPWr0CkiBpNFZoBeEu6dadXw/1o2ACX6ahz29fi2I7ufgqbMW+8CWc
+         9nDSSO+kuJhbaKF05ubKiS38SnDr7ctplL5SNq/UfVsLmPbIIJn1bRahYjcKPI45xLKp
+         0qsQCFmdaHw5hCvT6VMIyKfqTexYbFvNwdqMPPPqBXFyXKxIFZCoWQQ9/fsiIXi67A/u
+         MUBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nmUr9Cb74F9fIXP3P9WCnn03xoD4AehDWD0zbZrre7Q=;
+        b=e3uK3QYR+2hswpk2D7KXQOcoS78Yg04jW8PmfGQvnga8SPATr8SBsSFs+cGsxnCaL7
+         TYjSShQjAFePm6wv29BynayEFmObu48UsPUtSq2IbY4MmP+i1S5y+0nXDXoN2Rbj+oiX
+         wH4Hd5kwS+YHaYNl4ZJp2XsKOEazcpAFRiSRu9eymWiCCdkOD4FhOBf0wihdfpcEu+3L
+         ap7VyaoVwDr2jG7ieEzbwaekSgNbtaaH9UQG0rFPpBrzFkf/q8IWZsPgzeh51Vnxd/K7
+         Lk8nS/KUryMGBlbHG7JIBRVivGbw6c7u+6GirkiP53O07NDKPYOnNDdUB2Acl5bkG1w4
+         jLBw==
+X-Gm-Message-State: AOUpUlH8BXkyX8f65CpeuzWWEjaOop4NSZX1qdzyubTwsQYMu1vU+o3z
+        kfn3uEshdmlGT/M3Fo3RJC0=
+X-Google-Smtp-Source: AAOMgpfjcZM39sGPIbY7oB4riQ0bxH2TiWAWz2F9gQpwGIHHqzxXUYWSq/SfT0Yrmrr8syvNjSanYQ==
+X-Received: by 2002:a63:db4f:: with SMTP id x15-v6mr738490pgi.214.1532366314485;
+        Mon, 23 Jul 2018 10:18:34 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id b73-v6sm18812762pfl.152.2018.07.23.10.18.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 10:18:33 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 10:18:31 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     dev-harsh1998 <harshitjain6751@gmail.com>, trivial@kernel.org,
+        Simon Budig <simon.budig@kernelconcepts.de>,
+        Andi Shyti <andi@etezian.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Joe Perches <joe@perches.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/11] touchscreen: elants: Use octal permissions
+Message-ID: <20180723171831.GC100814@dtor-ws>
+References: <20180723131954.30739-1-harshitjain6751@gmail.com>
+ <20180723131954.30739-4-harshitjain6751@gmail.com>
+ <20180723133200.GA1167@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <e56be489-3f66-8f27-37e4-77b12c1c99f4@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723133200.GA1167@kroah.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 7/23/2018 12:56 PM, Liang, Kan wrote:
+On Mon, Jul 23, 2018 at 03:32:00PM +0200, Greg Kroah-Hartman wrote:
+> On Mon, Jul 23, 2018 at 06:49:20PM +0530, dev-harsh1998 wrote:
+> > WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
+> > +static DEVICE_ATTR(iap_mode, S_IRUGO, show_iap_mode, NULL);
+> > 
+> > WARNING: Symbolic permissions 'S_IWUSR' are not preferred. Consider using octal permissions '0200'.
+> > +static DEVICE_ATTR(update_fw, S_IWUSR, NULL, write_update_fw)
+> > 
+> > WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
+> > +		.dattr = __ATTR(_field, S_IRUGO,			\
+> > 
+> > Signed-off-by: Harshit Jain <harshitjain6751@gmail.com>
 > 
+> This name doesn't match up with the From: line above :(
 > 
-> On 7/23/2018 12:21 PM, Peter Zijlstra wrote:
->> On Mon, Jul 23, 2018 at 04:59:44PM +0200, Peter Zijlstra wrote:
->>> On Thu, Mar 08, 2018 at 06:15:41PM -0800, kan.liang@linux.intel.com 
->>> wrote:
->>>> diff --git a/arch/x86/events/intel/core.c 
->>>> b/arch/x86/events/intel/core.c
->>>> index ef47a418d819..86149b87cce8 100644
->>>> --- a/arch/x86/events/intel/core.c
->>>> +++ b/arch/x86/events/intel/core.c
->>>> @@ -2280,7 +2280,10 @@ static int intel_pmu_handle_irq(struct 
->>>> pt_regs *regs)
->>>>        * counters from the GLOBAL_STATUS mask and we always process 
->>>> PEBS
->>>>        * events via drain_pebs().
->>>>        */
->>>> -    status &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
->>>> +    if (x86_pmu.flags & PMU_FL_PEBS_ALL)
->>>> +        status &= ~(cpuc->pebs_enabled & EXTENDED_PEBS_COUNTER_MASK);
->>>> +    else
->>>> +        status &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
->>>>       /*
->>>>        * PEBS overflow sets bit 62 in the global status register
->>>
->>> Doesn't this re-introduce the problem fixed in commit fd583ad1563be,
->>> where pebs_enabled:32-34 are PEBS Load Latency, instead of fixed
->>> counters?
->>
->> Also, since they 'fixed' that conflict, the PEBS_ALL version could be:
->>
->>     state &= cpuc->pebs_enabled;
->>
->> Right?
-> 
+> Please fix up and try again.
 
-Here, we need to clear the bit for PEBS counters.
-For PEBS_ALL version, it should be
-   status &= ~cpuc->pebs_enabled;
+dtor@dtor-ws:~/kernel/linux-next$ git grep S_IRU | wc -l
+7605
 
+We either need to run a tree-wide script or leave this alone. FWIW I am
+perfectly fine with either octals or symbolic names so I do not see
+benefit of doing conversion for code that is not known to be broken.
 
-Thanks,
-Kan
+Thanks.
+
+-- 
+Dmitry
