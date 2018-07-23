@@ -4,101 +4,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F270ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED03ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B413420856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F30520671
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NyfuUUKE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B413420856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxCHuJ8M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F30520671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388109AbeGWTkY (ORCPT
+        id S2388132AbeGWTlJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 15:40:24 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:38070 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387998AbeGWTkY (ORCPT
+        Mon, 23 Jul 2018 15:41:09 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55782 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387941AbeGWTlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 15:40:24 -0400
-Received: by mail-qt0-f194.google.com with SMTP id y19-v6so1652729qto.5;
-        Mon, 23 Jul 2018 11:37:53 -0700 (PDT)
+        Mon, 23 Jul 2018 15:41:09 -0400
+Received: by mail-it0-f66.google.com with SMTP id 16-v6so196627itl.5;
+        Mon, 23 Jul 2018 11:38:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MbfWKhbX3O44X9s3sfMfPY0/G8ANIrSbpr/SpFtq2ps=;
-        b=NyfuUUKE54BY4KpuXncAnrh/0M/RRGdqvJKIvNWWvpsyIRb6TCpagMDoDQnh6wH4tZ
-         d+avkBzyPVkkCIF8v1jDv6MellJ/bRsoKeOsbl/6syJSqusmHOeMmZoJ2hPnhWPrvRZE
-         3KHQC+bHbInAKMTRBAo+qEzkkhz5W1WaA7Y2hfJHAbOYN3mq8rYjMQxyhFCim32oWbsy
-         FGY0FaaMHtjbkPs9tO5vj691fHYGm4rCzHpo8JY5F2OY+41DlRxcUTHr5pnLhQPIAxQy
-         CKBGzZKW7UrZYyg8VbEiWnvI2vNBPQYzfFfFdkNDSzYwi2Mqra84gl68kRzNXVz7ztn5
-         18EA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=unYw6UEUZWY9EH6Pe677aJdF/DMingwdwFvYemTJ2ok=;
+        b=hxCHuJ8Mv9pOLPQDE64QZwR9tnhmndE+tXEOxSTfN/OdS3I+t7g7zoC3i2AzEW3z3H
+         AlVwgiUw9foi6HsqN8Nl6kB/OfhJNOjYwoDG3c+GEnkwGl8+fnh7X9+qMSxjPzKZ010a
+         Ow3lA98ByBK0uQm8Yl6mV+wdNFHKu68E7O37ZXiU9RBCoikMNCwllpv7pJyUhb77OFOk
+         vMyr6+3TFm8qgDTxfE+MYZHwp/KVrq8Spts9y9TIVOfe4sFo6k9Jh7B8kH0b3NolGVAE
+         sacm6GJwW687NpSox95VHaluMBxG7b27vip/zirRPh58FaqvAJkdc7m4BTSqGxh5ug30
+         UA9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MbfWKhbX3O44X9s3sfMfPY0/G8ANIrSbpr/SpFtq2ps=;
-        b=SoJb90jGiYv4jxjw0H6kgfwSnJa3pV3HYfRBAwHDAeViQOvKLpkcM5yUfXDlID74dw
-         gT/CdRKeAJIbHu+kf/3M5XzcXrZbQgV9lmZ+zID+MSiRveNyKieVicC2IIwF5BZMh+F4
-         7OZ6omZIl+uYLuR6YVKqRtiioTGCKHkCk5lfq2qKpv4+VSyUqWJ6BPLn5pDCnemErMOL
-         wrIGDia3rBNt7cvpFRYqpf0ugcBmDmSj8x92ujONUGhQ1bm9SRcmOP3QlF4To53ePQMy
-         MaOkXTNDWH6Kky3O67bvXN0c0jBP85KNFJrPZZP9dWT9Tg9upuI6ZvHFMhHEqce/lgQ8
-         HAyg==
-X-Gm-Message-State: AOUpUlF54q/VjSmKYuA/FeixseRYG8QhhGgMUIO2FlexAcq8SCry6TbL
-        iz+pmSE2Y0GSdqcWCkJ6cMwFi3sF4KI=
-X-Google-Smtp-Source: AAOMgpfLscwm6oJiPBTjIM4u70qxbee/MNrMJHHBgGsgRKzapla75QTlZhfUfwftBk6nfxRYyeN7Sg==
-X-Received: by 2002:ac8:1a90:: with SMTP id x16-v6mr12542064qtj.160.1532371073101;
-        Mon, 23 Jul 2018 11:37:53 -0700 (PDT)
-Received: from [192.168.44.96] (65.sub-174-226-2.myvzw.com. [174.226.2.65])
-        by smtp.gmail.com with ESMTPSA id z23-v6sm6570410qka.25.2018.07.23.11.37.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 11:37:52 -0700 (PDT)
-Subject: Re: [PATCH 1/2] Add sw2_sw4 voltage table to cpcap regulator.
-To:     Mark Brown <broonie@kernel.org>
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <e411faa3-7d42-710f-a18a-a4fdd764b60a@gmail.com>
- <20180723181318.GG13981@sirena.org.uk>
-From:   Peter Geis <pgwipeout@gmail.com>
-Message-ID: <95929e34-eeb4-f3a4-daa1-0b89dd60f570@gmail.com>
-Date:   Mon, 23 Jul 2018 14:37:50 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=unYw6UEUZWY9EH6Pe677aJdF/DMingwdwFvYemTJ2ok=;
+        b=NDH0HgvfBqdnTouLzNMTmu12qg78mCN4mt5LN5lt+UnZ9QxIZao5XkEFPX+Mj8zERC
+         4mCaiQj0nH9X5fXt8y6fAwE/n2V3KrVvvM6h7Snv308/II8zFVsYc9dcC8UrxCHoFZqY
+         lMi8IKdmrC+KGi43b5lNOtmRKa5Xp164xmM2lVh1lDkX53lNr7Qwguk6HOk1sHlwO4f6
+         uJLi/Qoz9tRfxbzavsnIMimaTLBuiR6JRae16fI4z2scUX5qYC4M5xfMAzZFI5H3RhBa
+         i4p/CpC5oWr1b+kdgIBjbNUbBTMdZ27+oGUsimutDuQmua+gU9w7CYkKUAo3aTqTsVP+
+         LpUg==
+X-Gm-Message-State: AOUpUlHOiD2QGY2MzDhRcpUVx3r6oQ8C9ZObp6+CG97nvKMnMNelkxyk
+        cBFtOxxU0JQbus2jVgpwKJc4QSkBNGERqPlCDPA=
+X-Google-Smtp-Source: AAOMgpcSZ3Epq4EmCvVhQXDCEWVvM/jMoziNsJIzgszuBuWhtawaTeKRXbH9Hs+Y1z46852iIfBIPQ8j7OVK6HV+KDg=
+X-Received: by 2002:a24:7b97:: with SMTP id q145-v6mr130737itc.79.1532371117319;
+ Mon, 23 Jul 2018 11:38:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180723181318.GG13981@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1532090446.git.leonard.crestez@nxp.com> <221deb47d7d38ecd6e0c7636f9a87ab693a3c539.1532090446.git.leonard.crestez@nxp.com>
+ <CAHQ1cqF6TphuN8Ls54YA6bjty-bJF8twYboaG-RM=jox8CeQPA@mail.gmail.com> <42ff53eeea3067b19e3e16bed8392706502c8f23.camel@nxp.com>
+In-Reply-To: <42ff53eeea3067b19e3e16bed8392706502c8f23.camel@nxp.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Mon, 23 Jul 2018 11:38:26 -0700
+Message-ID: <CAHQ1cqF7u2gjwYt1-16u-uimXHZ2SWsquabZSDftQn_yRurhSQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] Revert "ARM: dts: imx7d: Invert legacy PCI irq mapping"
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Richard Zhu <hongxing.zhu@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Jingoo Han <jingoohan1@gmail.com>, linux-imx@nxp.com,
+        lorenzo.pieralisi@arm.com, linux-pm@vger.kernel.org,
+        Fabio Estevam <fabio.estevam@nxp.com>, Joao.Pinto@synopsys.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 02:13 PM, Mark Brown wrote:
-> On Mon, Jul 23, 2018 at 01:58:26PM -0400, Peter Geis wrote:
->> SW2 and SW4 use a shared table to provide voltage to the cpu core and
->> devices on Tegra hardware.
->> Added this table to the cpcap regulator driver as the first step to
->> supporting this device on Tegra.
-> 
-> This also doesn't apply against current code (though it does now parse
-> OK), please check and resend - make sure you don't have other out of
-> tree changes and are using an up to date kernel (ideally my regulator
-> for-next branch) as a base.
-> 
-Good Afternoon,
+On Mon, Jul 23, 2018 at 5:41 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+>
+> On Fri, 2018-07-20 at 08:33 -0700, Andrey Smirnov wrote:
+> > On Fri, Jul 20, 2018 at 5:48 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+> > >
+> > > This reverts commit 1c86c9dd82f859b474474a7fee0d5195da2c9c1d.
+> > >
+> > > That commit followed the reference manual but unfortunately the imx7d
+> > > manual is incorrect.
+> >
+> > I'd also add similar comment to DT file to prevent people from trying
+> > to "fix" this in the future.
+>
+> I'll try to see if I can follow up internally with docs team to get
+> this updated in the next revision of the reference manual.
+>
 
-I thought it was my error in the patches being stripped, unfortunately 
-it seems to be a known Gmail behavior.
-Any ideas on how to get around it?
+Not sure if we are on the same page here, but what I meant is adding
+the same explanation that is in your commit message to Device Tree
+file as well so that if anyone looks at DT code and goes "Huh?" in the
+future, they wouldn't have to research commit history to see the
+reason why things the way they are.
+
+> > Also, this change is going to break QEMU's mapping found here:
+>
+> I had no idea that existed, I guess somebody needs to fix that as well.
+>
+
+I take it it's a no to my "any chance you can fix that as well?" ;-).
+I'll see if I can find time to do that this week.
+
+> Do you have an imx7d board using pci or did you just test in emulation?
+>
+
+I used real i.MX7D Sabre board with i210 network card, when I was
+porting i.MX7 PCIe patches. However, as per note I made in the
+original submission:
+
+https://lkml.org/lkml/2017/10/9/913
+
+this IRQ swap patch came up as a result of "connecting" emulated ICH4
+in QEMU which was using legacy interrupts.
 
 Thanks,
-Peter
+Andrey Smirnov
