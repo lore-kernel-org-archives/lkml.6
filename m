@@ -4,102 +4,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F57ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBADEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF5B720856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F8420856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:33:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="SRuWWUeF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5B720856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=globallogic.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kjHFbsA7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F8420856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388343AbeGWOdf (ORCPT
+        id S2388186AbeGWOel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 10:33:35 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32863 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388271AbeGWOde (ORCPT
+        Mon, 23 Jul 2018 10:34:41 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:58132 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387831AbeGWOel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 10:33:34 -0400
-Received: by mail-lj1-f194.google.com with SMTP id s12-v6so573201ljj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 06:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=globallogic.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=CJFL3Tjfaz4goDPyuaTSoTuKkAhldVh/wuxnng17vQU=;
-        b=SRuWWUeFZnkzIM9U/0uITU7edtRhvBYAQ3l3t/O5jb1dqn+rLM7dCslYuecIlrY4Uk
-         JZtu5iXsRTzf2KoimVDWYzWXnLz7WB0KEAB34OVJCrAPAIGqPE7vezvT7MOyxsXsVkIf
-         5tG3mrC835bRggE0YGZZ5Vrr0RDGu5QGAdMf8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CJFL3Tjfaz4goDPyuaTSoTuKkAhldVh/wuxnng17vQU=;
-        b=MBZ5frluGNoWR97yf7I4vO88Vg+1vhqiIhY6nhaGLUyQ75BkVqaOEj+EHT4QAlrX4m
-         H7FUO9KhQKAB6mbgsvj9PpdqnTNVPqo8brYVO9IBz+CAvOK9VpkVM5gOvkhC+eVv4EGr
-         sJy6Ox5Ipyb3kBtEU/Zo+Moiyxv8NYGXlen6aMa7a4/88Jf7Kyh734dzNKsrKRooxL0X
-         o9tR+caD1Wadg7DaNMzutpaYk8M4xDLj26MXO3N7TLaOTByknFtfAEoXdi4AZnQL0y09
-         cc1SFYe8iWEyqR5rli0QSmMHcQDKup5TnVIClyhKSAjNisorBUydCPRlzDdSx+GlGURL
-         HV3Q==
-X-Gm-Message-State: AOUpUlG3LwoUI7whm8M3oqDemcKRsMH5LytHq6cgKT05lWhJ4o10snl+
-        VpdOmYmg7uQWkR6+69ZznOvNXg==
-X-Google-Smtp-Source: AAOMgpdkBsIFMvAMdmyYqBJh23x5s9Yju1rQIt87xP6yw+GygE3v6j4T+L0P/LRPrDLQn2YgPGL0yQ==
-X-Received: by 2002:a2e:4d51:: with SMTP id a78-v6mr8687333ljb.106.1532352736406;
-        Mon, 23 Jul 2018 06:32:16 -0700 (PDT)
-Received: from roman-VirtualBox.synapse.com ([195.238.92.107])
-        by smtp.gmail.com with ESMTPSA id x23-v6sm1853054ljj.86.2018.07.23.06.32.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 23 Jul 2018 06:32:15 -0700 (PDT)
-From:   roman.stratiienko@globallogic.com
-To:     akarwar@marvell.com
-Cc:     nishants@marvell.com, kvalo@codeaurora.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roman Stratiienko <roman.stratiienko@globallogic.com>
-Subject: [PATCH] mwifiex: Fix skipped vendor specific IEs
-Date:   Mon, 23 Jul 2018 16:31:39 +0300
-Message-Id: <1532352699-3232-1-git-send-email-roman.stratiienko@globallogic.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 23 Jul 2018 10:34:41 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6NDX4Li109495;
+        Mon, 23 Jul 2018 08:33:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1532352784;
+        bh=oolXlqDN+hou4bEIfOYxQ++jK2TNMtDP/+MVNK5r1Q0=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=kjHFbsA7xr4ZlRAAAtS29X0f7Mgkiia7Wa52ko1HJHBfOTojQh960sV7P6MNQtpFr
+         Yq6qEitxJ0WfET/wzK7DImoIOtu7/hUtgCeQzsmHFpZcUdqu7ezFqRPm0tjc0jSiwQ
+         Ye5xl8snPeeLFszqcF5a2d79BWBDC8EQsvka/ld0=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6NDX4tN015560;
+        Mon, 23 Jul 2018 08:33:04 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 23
+ Jul 2018 08:33:03 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 23 Jul 2018 08:33:04 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6NDX3gD022099;
+        Mon, 23 Jul 2018 08:33:03 -0500
+Date:   Mon, 23 Jul 2018 08:33:03 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <geert@linux-m68k.org>
+Subject: Re: [PATCH V2 0/2] firmware: ti_sci: Add host-id as an optional
+ parameter
+Message-ID: <20180723133303.ijekyffgnmesrhhv@kahuna>
+References: <20180716171328.11674-1-nm@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180716171328.11674-1-nm@ti.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Stratiienko <roman.stratiienko@globallogic.com>
+On 17:13-20180716, Nishanth Menon wrote:
+> Please find attached series to enable host-id as an optional dt property.
+> 
+> This is a minor update to V1 -> Mostly to pick up Greet's feedback and Rob's Ack.
+> 
+> V1: https://patchwork.ozlabs.org/cover/931822/
+> 
+> The series is based on v4.18-rc1 and is available here:
+> https://github.com/nmenon/linux-2.6-playground/commits/upstream/v4.18-rc1/k3-1-am6-tisci
+> 
+> Consolidated all patches (including all series) are available here:
+> https://github.com/nmenon/linux-2.6-playground/commits/upstream/v4.18-rc1/k3-am6-integ
+> 
+> Full Boot log (integrated of all series for AM654) is available here:
+>    https://pastebin.ubuntu.com/p/bBFmnzYtCd/
+> 
+> Nishanth Menon (2):
+>   Documentation: dt: keystone: ti-sci: Add optional host-id parameter
+>   firmware: ti_sci: Provide host-id as an optional dt parameter
+> 
+>  .../devicetree/bindings/arm/keystone/ti,sci.txt    |  4 ++++
+>  drivers/firmware/ti_sci.c                          | 24 ++++++++++++++++++----
+>  2 files changed, 24 insertions(+), 4 deletions(-)
 
-Only microsoft specific IE is added by FW
-Let other IEs to pass from userspace
+Santosh,
 
-Signed-off-by: Roman Stratiienko <roman.stratiienko@globallogic.com>
----
- drivers/net/wireless/marvell/mwifiex/ie.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Apologies, I see you have already send your PR for v4.19. Was
+just wondering if this is something we can consider for rc
+cycle OR if you'd consider a followup PR for the same.
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/ie.c b/drivers/net/wireless/marvell/mwifiex/ie.c
-index c488c30..c58b345 100644
---- a/drivers/net/wireless/marvell/mwifiex/ie.c
-+++ b/drivers/net/wireless/marvell/mwifiex/ie.c
-@@ -353,8 +353,16 @@ static int mwifiex_uap_parse_tail_ies(struct mwifiex_private *priv,
- 		case WLAN_EID_HT_OPERATION:
- 		case WLAN_EID_VHT_CAPABILITY:
- 		case WLAN_EID_VHT_OPERATION:
--		case WLAN_EID_VENDOR_SPECIFIC:
- 			break;
-+		case WLAN_EID_VENDOR_SPECIFIC:
-+			/* Skip only Microsoft IE that added by FW
-+			 * Let other vendor specific IE to pass
-+			 */
-+			if (cfg80211_find_vendor_ie(WLAN_OUI_MICROSOFT,
-+						    WLAN_OUI_TYPE_MICROSOFT_WMM,
-+						    (const u8 *)hdr,
-+						    hdr->len + sizeof(struct ieee_types_header)))
-+				break;
- 		default:
- 			memcpy(gen_ie->ie_buffer + ie_len, hdr,
- 			       hdr->len + sizeof(struct ieee_types_header));
 -- 
-2.7.4
-
+Regards,
+Nishanth Menon
