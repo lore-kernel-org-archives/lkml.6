@@ -2,126 +2,85 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E864ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A37FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D705420852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE60C20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:59:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEk5oa2Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D705420852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rCAnr3yC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE60C20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388237AbeGWQBV (ORCPT
+        id S2388273AbeGWQB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:01:21 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35014 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388060AbeGWQBU (ORCPT
+        Mon, 23 Jul 2018 12:01:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40548 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388060AbeGWQB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 12:01:20 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q7-v6so146154pff.2;
-        Mon, 23 Jul 2018 07:59:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+dAUKql/BRjNumc7Al5mWoqSRpfYn7jQynfwgOe3RJk=;
-        b=DEk5oa2ZGMfQ191Xmlc0/dM8etxci1tod2RjsX2Wtky8kDosRepYrkxFcEz3JEyRzL
-         GNe9Xh9fOEG23Utq65LZrC047SrNx1D54gHGAN6jfPT1vJFDpRLrW/RK5+YjP6DNlEw7
-         0fXHoO8RJ/xyV7xkNqDxjVHDEwWqS/zyYtH7gTCgXmiXlO+0Z0E/QlR1iPb5ZKjUsjLY
-         neVro+unXjiBXziph6wq65wenTcbWq5P8RdxRRGFAILunzcR6gCgK8ptgs3EZKI5DFtt
-         9cFxlfDhzYkfFIo6fj9S4T7y/JbBHvjGYbgYh6wWhy+vCkxBbJVXrUPjvYmXbNKBw1Po
-         wCXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+dAUKql/BRjNumc7Al5mWoqSRpfYn7jQynfwgOe3RJk=;
-        b=YJbnbvcfD6GIUohPU8vRWyOCow3FVrF/UCvJyBNpmu7s73pT9Dy5iqurwmjFL5N0Ht
-         d/T+v6mKkYYWt9PM5nIC2aV8selV5HE0nkw01DYYRki0/nQzlADPuLaguWJynnh3nTgR
-         EibxDHTg7isTDfSCackdgVZmknfn0C7xMNVL52Jfvhv6/cRI+NrTcxAkzUNh27facR98
-         qATUkurrKPbSZ7RBbIkr/j7SXOYyT8D9igm26Qd+E5nkYOrfZLZ6jcThGU/z+zpmxRpH
-         S7N2G6Qo2HDFXLnuhw0GfbKiYY7xkuBz5jg8Qc+Q8u/nNOji4+YiRokLyHtWDos3Gvt3
-         ctEg==
-X-Gm-Message-State: AOUpUlGiP5eCihwxyfx93IZH069iJsVEhaj9r2VZONQ0pV+boQhkLO6H
-        4v25u6FZicukoC7vOwjCdZo98GPa
-X-Google-Smtp-Source: AAOMgpeHKaSjeA4gbRxh3Usukhi/xIVUlJrgg+v9cS4Xlsi7QBsBsxG9WoKihh84Q3wfBinrUnLidQ==
-X-Received: by 2002:a65:665a:: with SMTP id z26-v6mr12306987pgv.193.1532357982943;
-        Mon, 23 Jul 2018 07:59:42 -0700 (PDT)
-Received: from localhost.localdomain ([240f:34:212d:1:808a:8cbe:ddb0:64b])
-        by smtp.gmail.com with ESMTPSA id h190-v6sm1851315pgc.50.2018.07.23.07.59.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 23 Jul 2018 07:59:42 -0700 (PDT)
-From:   Akinobu Mita <akinobu.mita@gmail.com>
-To:     linux-media@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH -next v2] regmap: sccb: fix typo and sort headers alphabetically
-Date:   Mon, 23 Jul 2018 23:59:29 +0900
-Message-Id: <1532357969-10612-1-git-send-email-akinobu.mita@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 23 Jul 2018 12:01:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kxZpPRf1XJW825aDEzTaX0FZjL3eNaa3peVdctIsD7A=; b=rCAnr3yCqLyZTDeX+7Nbqf3DW
+        7nI810XbLnMzg8EXQn7d9PvIuxPyp3EdnRqompE/h5nYRTUrG/By3nlY2FtaGX4NCNNF2Vgoc6ULL
+        N9Ku1IVy2CcLQzs5ChoHsGHGwoz4FbHCjpq8wpMLEi77W7MIdTM5+siEJ5Eu4Hiwr3MGCzUbRIOOV
+        95jtIFz/KNMGsRbaSWVnnNWJHZ8rCnVL7mU9cvWkQLf+cJPldlWaVZMHeZgXAi4f0ZUs5JsW/lUMC
+        nV8mI3Fdhc2dxNotsWnwrxLfYbWB0baHuJ7gknLaQDXrx9BaoufAwI2CaXAy8+O6MdiEcz0TaGIqT
+        pL4uULskQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhcJP-0005o9-6G; Mon, 23 Jul 2018 14:59:47 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9820A20275F38; Mon, 23 Jul 2018 16:59:44 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 16:59:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     tglx@linutronix.de, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        vincent.weaver@maine.edu, jolsa@redhat.com, ak@linux.intel.com
+Subject: Re: [PATCH 3/4] perf/x86/intel/ds: Handle PEBS overflow for fixed
+ counters
+Message-ID: <20180723145944.GB2458@hirez.programming.kicks-ass.net>
+References: <20180309021542.11374-1-kan.liang@linux.intel.com>
+ <20180309021542.11374-3-kan.liang@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180309021542.11374-3-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix typos 's/wit/with/' in the comments and sort headers alphabetically
-in order to avoid duplicate includes in future.
+On Thu, Mar 08, 2018 at 06:15:41PM -0800, kan.liang@linux.intel.com wrote:
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index ef47a418d819..86149b87cce8 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -2280,7 +2280,10 @@ static int intel_pmu_handle_irq(struct pt_regs *regs)
+>  	 * counters from the GLOBAL_STATUS mask and we always process PEBS
+>  	 * events via drain_pebs().
+>  	 */
+> -	status &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
+> +	if (x86_pmu.flags & PMU_FL_PEBS_ALL)
+> +		status &= ~(cpuc->pebs_enabled & EXTENDED_PEBS_COUNTER_MASK);
+> +	else
+> +		status &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
+>  
+>  	/*
+>  	 * PEBS overflow sets bit 62 in the global status register
 
-Fixes: bcf7eac3d97f ("regmap: add SCCB support")
-Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Mark Brown <broonie@kernel.org>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
----
-* v2
-- Replace Wolfram's address for Reported-by tag
-- Add Reviewed-by tag
-
- drivers/base/regmap/regmap-sccb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/base/regmap/regmap-sccb.c b/drivers/base/regmap/regmap-sccb.c
-index b6eb876..597042e2 100644
---- a/drivers/base/regmap/regmap-sccb.c
-+++ b/drivers/base/regmap/regmap-sccb.c
-@@ -1,9 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- // Register map access API - SCCB support
- 
--#include <linux/regmap.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
-+#include <linux/regmap.h>
- 
- #include "internal.h"
- 
-@@ -29,7 +29,7 @@ static bool sccb_is_available(struct i2c_adapter *adap)
- 
- /**
-  * regmap_sccb_read - Read data from SCCB slave device
-- * @context: Device that will be interacted wit
-+ * @context: Device that will be interacted with
-  * @reg: Register to be read from
-  * @val: Pointer to store read value
-  *
-@@ -65,7 +65,7 @@ static int regmap_sccb_read(void *context, unsigned int reg, unsigned int *val)
- 
- /**
-  * regmap_sccb_write - Write data to SCCB slave device
-- * @context: Device that will be interacted wit
-+ * @context: Device that will be interacted with
-  * @reg: Register to write to
-  * @val: Value to be written
-  *
--- 
-2.7.4
-
+Doesn't this re-introduce the problem fixed in commit fd583ad1563be,
+where pebs_enabled:32-34 are PEBS Load Latency, instead of fixed
+counters?
