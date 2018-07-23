@@ -2,195 +2,93 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1143ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E86ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5343820846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:08:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5343820846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A5AF20846
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:09:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s0jh5qjf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A5AF20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388125AbeGWKJI (ORCPT
+        id S2388145AbeGWKJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 06:09:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36216 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388048AbeGWKJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 06:09:08 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4B255401DEA8;
-        Mon, 23 Jul 2018 09:08:49 +0000 (UTC)
-Received: from redhat.com (ovpn-120-12.rdu2.redhat.com [10.10.120.12])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B2B982026D65;
-        Mon, 23 Jul 2018 09:08:43 +0000 (UTC)
-Date:   Mon, 23 Jul 2018 12:08:42 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc:     robh@kernel.org, srikar@linux.vnet.ibm.com, aik@ozlabs.ru,
-        jasowang@redhat.com, linuxram@us.ibm.com,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, hch@infradead.org,
-        paulus@samba.org, joe@perches.com, linuxppc-dev@lists.ozlabs.org,
-        elfring@users.sourceforge.net, haren@linux.vnet.ibm.com,
-        david@gibson.dropbear.id.au
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180723120511-mutt-send-email-mst@kernel.org>
-References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
- <20180720161541-mutt-send-email-mst@kernel.org>
- <8f51d2c6-cc0c-9e42-f0fd-a8a33acc8b83@linux.vnet.ibm.com>
+        Mon, 23 Jul 2018 06:09:52 -0400
+Received: from mail-lj1-f174.google.com ([209.85.208.174]:36174 "EHLO
+        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388071AbeGWKJw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 06:09:52 -0400
+Received: by mail-lj1-f174.google.com with SMTP id u7-v6so16231708lji.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 02:09:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=0O90KS3vLqzehirXWrYp7JOhJCwRR1NS7cEEis7eU2E=;
+        b=s0jh5qjfAAE1+VUCPyf6pTcGORrslodD4upZgewPIxCswJo2RMJJLxNQrDolJIwn6m
+         mtp4IxTBm5WXjOeb9W4RidGbGZ28A+LJcV7Bq/pIHfwxd0UW0KxISBMc3m7+obVnZRt2
+         NYUFOUTmMejyMWr1J1e/Q6jLxmcn/+2XkqoVtAAFjvVLOFe4szShDo7Vnb5lykUsomh2
+         H24lJ3hWCcYIvNHf0sjpPxiTS5a23lr+l+pjJEiSba8AvsbavU5bvqeaR7+gfLU3/TfA
+         6bCddwJ7jr745TrvHT/YZ0J/qjFCtQSH1IjcjPMqQ/9MRRNLNvgl88X+Zs8zJwGrl8Wn
+         kw6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=0O90KS3vLqzehirXWrYp7JOhJCwRR1NS7cEEis7eU2E=;
+        b=R/F6wKiMZ+T7x7cPmI72stD4S6Sn6mZTPs47L9/q4rYIbI5jMj44l9JxK2PaPEJEpd
+         /rLDT1ho298vBpoPihprr5INoYG3KBy5CKEx9UhZJ/YD5HqD16gIKoWTljgoi/GVaa3M
+         hvxKlpHfW2SN8b52f2snLCxIkAnVDIy54Dowrujd7KG01x5ngGLGNtEsdR2JMIYbcDOR
+         Kpc9M478int/3fN/OFgm4XWhKhYUXJ5xr5N4h5TVMS8waspSNkEcDVNWYqR48EOindGQ
+         LSEOPmUt+dXwSWOVA0qrDz6G/mL/BgTRXElufqr6Sf/bMVGquHbQ3fEFeRoPftBJl8Ke
+         KIJA==
+X-Gm-Message-State: AOUpUlEloRLpSNXjV0aLqch5x03RtVHz4Ojy2wny8QHH2y1IQrZpzfNI
+        i/9G7Sy0sZFRy8hez6zVskM=
+X-Google-Smtp-Source: AAOMgpf4pnZ42bn0VcyoKFatG2LCDzXg0zTSNwpScEMQZn2/6yAzy2GDbDiP3XNbidJJIl3cEqf7ng==
+X-Received: by 2002:a2e:5810:: with SMTP id m16-v6mr8781617ljb.134.1532336978617;
+        Mon, 23 Jul 2018 02:09:38 -0700 (PDT)
+Received: from [10.17.182.9] (ll-53.209.223.85.sovam.net.ua. [85.223.209.53])
+        by smtp.gmail.com with ESMTPSA id o203-v6sm1317195lff.28.2018.07.23.02.09.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 02:09:37 -0700 (PDT)
+Subject: Re: [PATCH v3] drm: Replace NULL with error value in
+ drm_prime_pages_to_sg
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org,
+        gustavo@padovan.org, jgross@suse.com, boris.ostrovsky@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180719093713.3643-1-andr2000@gmail.com>
+ <20180719102416.7gnzuo4vmax44qv2@mwanda>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <5d26570f-3b29-830c-9b42-97ff44bb774d@gmail.com>
+Date:   Mon, 23 Jul 2018 12:09:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f51d2c6-cc0c-9e42-f0fd-a8a33acc8b83@linux.vnet.ibm.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 09:08:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 09:08:54 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180719102416.7gnzuo4vmax44qv2@mwanda>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 11:58:23AM +0530, Anshuman Khandual wrote:
-> On 07/20/2018 06:46 PM, Michael S. Tsirkin wrote:
-> > On Fri, Jul 20, 2018 at 09:29:37AM +0530, Anshuman Khandual wrote:
-> >> This patch series is the follow up on the discussions we had before about
-> >> the RFC titled [RFC,V2] virtio: Add platform specific DMA API translation
-> >> for virito devices (https://patchwork.kernel.org/patch/10417371/). There
-> >> were suggestions about doing away with two different paths of transactions
-> >> with the host/QEMU, first being the direct GPA and the other being the DMA
-> >> API based translations.
-> >>
-> >> First patch attempts to create a direct GPA mapping based DMA operations
-> >> structure called 'virtio_direct_dma_ops' with exact same implementation
-> >> of the direct GPA path which virtio core currently has but just wrapped in
-> >> a DMA API format. Virtio core must use 'virtio_direct_dma_ops' instead of
-> >> the arch default in absence of VIRTIO_F_IOMMU_PLATFORM flag to preserve the
-> >> existing semantics. The second patch does exactly that inside the function
-> >> virtio_finalize_features(). The third patch removes the default direct GPA
-> >> path from virtio core forcing it to use DMA API callbacks for all devices.
-> >> Now with that change, every device must have a DMA operations structure
-> >> associated with it. The fourth patch adds an additional hook which gives
-> >> the platform an opportunity to do yet another override if required. This
-> >> platform hook can be used on POWER Ultravisor based protected guests to
-> >> load up SWIOTLB DMA callbacks to do the required (as discussed previously
-> >> in the above mentioned thread how host is allowed to access only parts of
-> >> the guest GPA range) bounce buffering into the shared memory for all I/O
-> >> scatter gather buffers to be consumed on the host side.
-> >>
-> >> Please go through these patches and review whether this approach broadly
-> >> makes sense. I will appreciate suggestions, inputs, comments regarding
-> >> the patches or the approach in general. Thank you.
-> > I like how patches 1-3 look. Could you test performance
-> > with/without to see whether the extra indirection through
-> > use of DMA ops causes a measurable slow-down?
-> 
-> I ran this simple DD command 10 times where /dev/vda is a virtio block
-> device of 10GB size.
-> 
-> dd if=/dev/zero of=/dev/vda bs=8M count=1024 oflag=direct
-> 
-> With and without patches bandwidth which has a bit wide range does not
-> look that different from each other.
-> 
-> Without patches
-> ===============
-> 
-> ---------- 1 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 1.95557 s, 4.4 GB/s
-> ---------- 2 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 2.05176 s, 4.2 GB/s
-> ---------- 3 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 1.88314 s, 4.6 GB/s
-> ---------- 4 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 1.84899 s, 4.6 GB/s
-> ---------- 5 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 5.37184 s, 1.6 GB/s
-> ---------- 6 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 1.9205 s, 4.5 GB/s
-> ---------- 7 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 6.85166 s, 1.3 GB/s
-> ---------- 8 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 1.74049 s, 4.9 GB/s
-> ---------- 9 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 6.31699 s, 1.4 GB/s
-> ---------- 10 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 2.47057 s, 3.5 GB/s
-> 
-> 
-> With patches
-> ============
-> 
-> ---------- 1 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 2.25993 s, 3.8 GB/s
-> ---------- 2 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 1.82438 s, 4.7 GB/s
-> ---------- 3 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 1.93856 s, 4.4 GB/s
-> ---------- 4 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 1.83405 s, 4.7 GB/s
-> ---------- 5 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 7.50199 s, 1.1 GB/s
-> ---------- 6 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 2.28742 s, 3.8 GB/s
-> ---------- 7 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 5.74958 s, 1.5 GB/s
-> ---------- 8 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 1.99149 s, 4.3 GB/s
-> ---------- 9 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 5.67647 s, 1.5 GB/s
-> ---------- 10 ---------
-> 1024+0 records in
-> 1024+0 records out
-> 8589934592 bytes (8.6 GB, 8.0 GiB) copied, 2.93957 s, 2.9 GB/s
-> 
-> Does this look okay ?
-
-You want to test IOPS with lots of small writes and using
-raw ramdisk on host.
-
--- 
-MST
+On 07/19/2018 01:24 PM, Dan Carpenter wrote:
+> Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> regards,
+> dan carpenter
+>
+Applied to drm-misc-next
