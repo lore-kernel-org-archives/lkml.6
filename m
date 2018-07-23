@@ -2,106 +2,102 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C5FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DE2C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A4572086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:16:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A4572086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 757F420779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:21:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BqsjbhGq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 757F420779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387771AbeGWDPn (ORCPT
+        id S1731262AbeGWDUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 23:15:43 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:57643 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387743AbeGWDPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 23:15:43 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id D0A4DE8D770D4;
-        Mon, 23 Jul 2018 10:16:49 +0800 (CST)
-Received: from DGGEMM507-MBX.china.huawei.com ([169.254.1.75]) by
- DGGEMM403-HUB.china.huawei.com ([10.3.20.211]) with mapi id 14.03.0382.000;
- Mon, 23 Jul 2018 10:16:50 +0800
-From:   Nixiaoming <nixiaoming@huawei.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>
-CC:     "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>
-Subject: RE: [PATCH] fs/nfsd: Delete invalid assignment statements in
- nfsd4_decode_exchange_id
-Thread-Topic: [PATCH] fs/nfsd: Delete invalid assignment statements in
- nfsd4_decode_exchange_id
-Thread-Index: AQHUIZ3jKVgf1gBCwEC5U/xKcWTyBKSbBbcAgAAF2ICAAAfDAIAAAf2AgAD8nQA=
-Date:   Mon, 23 Jul 2018 02:16:49 +0000
-Message-ID: <E490CD805F7529488761C40FD9D26EF12A710ACE@dggemm507-mbx.china.huawei.com>
-References: <20180722085044.50701-1-nixiaoming@huawei.com>
-         <2C39A9CD-4591-46C8-BB25-5FA2C85149CE@oracle.com>
-         <a6be2d3bf2ff5ac43f82dcb7b29ba32faccbbdaf.camel@hammerspace.com>
-         <8B9E4DFD-F651-4478-A82E-CDB759BB1A69@oracle.com>
- <e0ee80246f7bb7587beac3f8d90f94cc6b7e6aff.camel@hammerspace.com>
-In-Reply-To: <e0ee80246f7bb7587beac3f8d90f94cc6b7e6aff.camel@hammerspace.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.57.88.168]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        Sun, 22 Jul 2018 23:20:15 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46376 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730798AbeGWDUP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 23:20:15 -0400
+Received: by mail-pg1-f196.google.com with SMTP id p23-v6so11087387pgv.13;
+        Sun, 22 Jul 2018 19:21:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=u7xZlJQ5KP9xxRXKk73VOjCWYGFJfRdlavf4Ev+KEaI=;
+        b=BqsjbhGqME3UjTlserDHUGUeNzsEZRFWgK6Q+CRfHwTKSqvv5ow7ItIez2O92t8M3j
+         YtbmXmlE++BFFyyn58lggvWFAWombmuQTRRyekiT7vf+FBJ5LILPydVvmHO8U508vhuM
+         IUuHl+rljojbO+3bbOG21lpCjMItIKKK84oDAVXx1QxE6M5DCIUGGKTUssQo2ielPykk
+         YWYSS9UWN5LUyFj8//B5d/gW87Flt8f2T8NqqYrBVfwGKl+BNlbCGo6WKwK5GwAJEl6s
+         RtSOqYgKcco3S5TfdYIStTeyXOMHb1l4Yx6CdoXg15pPmv45YRIDpRB6za4yGmdnzd0y
+         PaXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=u7xZlJQ5KP9xxRXKk73VOjCWYGFJfRdlavf4Ev+KEaI=;
+        b=uoIXeyQiC9WVvUK+bFuc/+k0Z/5u2j4FaPXBB7C7be57E8XBrgcwWyMlFQh83aa/1D
+         XuCOFBs3JUU0c7Fer5AGiaP9Bv9mPEAyTQtFlem6itUEnBtLDt7o3lUMWGda2iwtaXiA
+         AFVvlyIPQPXyIC8n2ESh9qM6dCHe8TJWxff9oRN+V/LXRLYqJcTcQVNxn5AAsxcb8qUS
+         UXFj2xSp74LPh2eur49x6Eqpdet+1nKS6BGXndSPazyk2aRK0T+O+WPWpaOSgbeWGyEP
+         bX/GpDDhsfY1LPN6uhLtpPl0gUZMrhnUaCHB2NxWwklwxKKpak5k8+UKTjX/p8XEh3CV
+         KYVg==
+X-Gm-Message-State: AOUpUlFnVFKdfNBpeDdy9T0z7ye1zz00v9ahEQjDJwau/lYHkQNmcwWa
+        F5UNAm0emg+6ukFSpNDwOpU82Skh
+X-Google-Smtp-Source: AAOMgpembL3h7T6gzYXbxfplvPJuz+fp4lp/pVtQFJDAFvP0bPeE4Bh9T1m9pLogdQcckn44Sri0Tw==
+X-Received: by 2002:a65:5641:: with SMTP id m1-v6mr10725181pgs.246.1532312484522;
+        Sun, 22 Jul 2018 19:21:24 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:c122:f95a:1d53:1f82])
+        by smtp.gmail.com with ESMTPSA id n18-v6sm13783715pfa.50.2018.07.22.19.21.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 22 Jul 2018 19:21:23 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] block: ioprio: Replace GFP_ATOMIC with GFP_KERNEL in set_task_ioprio()
+Date:   Mon, 23 Jul 2018 10:21:16 +0800
+Message-Id: <20180723022116.6919-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCBKdWwgMjMsIDIwMTggYXQgMzowOCBBTSwgVHJvbmQgTXlrbGVidXN0IHdyb3RlOg0K
-Pk9uIFN1biwgMjAxOC0wNy0yMiBhdCAxNTowMSAtMDQwMCwgQ2h1Y2sgTGV2ZXIgd3JvdGU6DQo+
-PiA+IE9uIEp1bCAyMiwgMjAxOCwgYXQgMjozMyBQTSwgVHJvbmQgTXlrbGVidXN0IDwNCj4+ID4g
-dHJvbmRteUBoYW1tZXJzcGFjZS5jb20+IHdyb3RlOg0KPj4gPiANCj4+ID4gT24gU3VuLCAyMDE4
-LTA3LTIyIGF0IDE0OjEyIC0wNDAwLCBDaHVjayBMZXZlciB3cm90ZToNCj4+ID4gPiA+IE9uIEp1
-bCAyMiwgMjAxOCwgYXQgNDo1MCBBTSwgbml4aWFvbWluZyA8bml4aWFvbWluZ0BodWF3ZWkuY29t
-Pg0KPj4gPiA+ID4gd3JvdGU6DQo+PiA+ID4gPiANCj4+ID4gPiA+IGR1bW15ID0gYmUzMl90b19j
-cHVwKHArKyk7DQo+PiA+ID4gPiBkdW1teSA9IGJlMzJfdG9fY3B1cChwKyspOw0KPj4gPiA+ID4g
-QXNzaWduaW5nIHZhbHVlIHRvICJkdW1teSIgaGVyZSwgYnV0IHRoYXQgc3RvcmVkIHZhbHVlDQo+
-PiA+ID4gPiBpcyBvdmVyd3JpdHRlbiBiZWZvcmUgaXQgY2FuIGJlIHVzZWQuDQo+PiA+ID4gPiAN
-Cj4+ID4gPiA+IGRlbGV0ZSBpbnZhbGlkIGFzc2lnbm1lbnQgc3RhdGVtZW50cyBpbg0KPj4gPiA+
-ID4gbmZzZDRfZGVjb2RlX2V4Y2hhbmdlX2lkDQo+PiA+ID4gPiANCj4+ID4gPiA+IFNpZ25lZC1v
-ZmYtYnk6IG4wMDIwMjc1NCA8bml4aWFvbWluZ0BodWF3ZWkuY29tPg0KPj4gPiA+ID4gLS0tDQo+
-PiA+ID4gPiBmcy9uZnNkL25mczR4ZHIuYyB8IDQgKystLQ0KPj4gPiA+ID4gMSBmaWxlIGNoYW5n
-ZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4+ID4gPiA+IA0KPj4gPiA+ID4g
-ZGlmZiAtLWdpdCBhL2ZzL25mc2QvbmZzNHhkci5jIGIvZnMvbmZzZC9uZnM0eGRyLmMNCj4+ID4g
-PiA+IGluZGV4IGE5Njg0M2MuLjhlNzg1NDEgMTAwNjQ0DQo+PiA+ID4gPiAtLS0gYS9mcy9uZnNk
-L25mczR4ZHIuYw0KPj4gPiA+ID4gKysrIGIvZnMvbmZzZC9uZnM0eGRyLmMNCj4+ID4gPiA+IEBA
-IC0xMzkyLDggKzEzOTIsOCBAQCBuZnNkNF9kZWNvZGVfZXhjaGFuZ2VfaWQoc3RydWN0DQo+PiA+
-ID4gPiBuZnNkNF9jb21wb3VuZGFyZ3MgKmFyZ3AsDQo+PiA+ID4gPiANCj4+ID4gPiA+IAkJLyog
-c3NwX3dpbmRvdyBhbmQgc3NwX251bV9nc3NfaGFuZGxlcyAqLw0KPj4gPiA+ID4gCQlSRUFEX0JV
-Rig4KTsNCj4+ID4gPiA+IC0JCWR1bW15ID0gYmUzMl90b19jcHVwKHArKyk7DQo+PiA+ID4gPiAt
-CQlkdW1teSA9IGJlMzJfdG9fY3B1cChwKyspOw0KPj4gPiA+ID4gKwkJYmUzMl90b19jcHVwKHAr
-Kyk7DQo+PiA+ID4gPiArCQliZTMyX3RvX2NwdXAocCsrKTsNCj4+ID4gPiANCj4+ID4gPiBJZiB0
-aGVzZSB2YWx1ZXMgYXJlIG5vdCB1c2VkLCB3aGF0J3MgdGhlIHBvaW50IG9mIGJ5dGUgc3dhcHBp
-bmcNCj4+ID4gPiB0aGVtPw0KPj4gPiA+IFN1cmVseSAicCArPSAyOyIgc2hvdWxkIGJlIGVub3Vn
-aC4NCj4+ID4gPiANCj4+ID4gPiANCj4+ID4gPiA+IAkJYnJlYWs7DQo+PiA+ID4gPiAJZGVmYXVs
-dDoNCj4+ID4gPiA+IAkJZ290byB4ZHJfZXJyb3I7DQo+PiA+IA0KPj4gPiBHaXZlbiB0aGF0IHRo
-ZSB2YWx1ZSBvZiAncCcgaXNuJ3QgdXNlZCBlaXRoZXIsIHdoeSBub3QganVzdCBkZWxldGUNCj4+
-ID4gdGhvc2UgdHdvIGxpbmVzIGFsdG9nZXRoZXI/DQo+PiANCj4+IFNvdW5kcyBPSywgUkVBRF9C
-VUYgaXMgdHJhY2tpbmcgcHJvZ3Jlc3MgdGhyb3VnaCB0aGUgYnVmZmVyLA0KPj4gYW5kIGl0IGFs
-cmVhZHkgdXBkYXRlcyAicCIgYXMgYSBzaWRlLWVmZmVjdC4NCj4+IA0KPj4gTWlnaHQgdGhlcmUg
-YmUgc29tZSBuZWFyYnkgaW5zdGFuY2VzIG9mIG9wZW4tY29kZWQgInAiIHVwZGF0ZXMNCj4+IHRo
-YXQgY291bGQgYWxzbyBiZSByZW1vdmVkLCBmb3Igc2ltaWxhciByZWFzb25zPw0KPj4gDQo+DQo+
-UHJvYmFibHksIHllcy4gSSBiZWxpZXZlIHRoYXQgd2UndmUgc2FpZCBiZWZvcmUgKGFuZCBCcnVj
-ZSBhZ3JlZWQgYXQNCj50aGUgdGltZSkgdGhhdCB3ZSBzaG91bGQgZ2V0IHJpZCBvZiBSRUFEX0JV
-RigpIGluIGtuZnNkIGFzIGl0IHRlbmRzIHRvDQo+b2JmdXNjYXRlIHRoZXNlIGFzc2lnbm1lbnRz
-IHRvICdwJy4gRG9lcyBhbnlvbmUgaGF2ZSBhbnkgZnJlZSBjeWNsZXMgdG8NCj53b3JrIG9uIHRo
-YXQ/DQo+DQo+LS0gDQo+VHJvbmQgTXlrbGVidXN0DQo+TGludXggTkZTIGNsaWVudCBtYWludGFp
-bmVyLCBIYW1tZXJzcGFjZQ0KPnRyb25kLm15a2xlYnVzdEBoYW1tZXJzcGFjZS5jb20NCj4NCj4N
-Cg0KVGhhbmsgeW91IGZvciB5b3VyIHJldmlldywgDQpJIHdpbGwgdXBkYXRlIHRoZSBwYXRjaCBh
-cyBzb29uIGFzIHBvc3NpYmxlIGJhc2VkIG9uIHlvdXIgY29tbWVudHMuDQoNClRoYW5rcw0KDQoN
-Cg==
+set_task_ioprio() is only called by SYSCALL_DEFINE3(), ext4_fill_super(),
+ext4_remount() and reada_start_machine_worker().
+And these functions are not called in atomic context.
+
+set_task_ioprio() calls get_task_io_context with GFP_ATOMIC, which is
+unnecessary. GFP_ATOMIC can be replaced with GFP_KERNEL.
+
+This is found by a static analysis tool named DCNS written by myself.
+I also manually check the kernel code before reporting it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ block/ioprio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/ioprio.c b/block/ioprio.c
+index 6f5d0b6625e3..42d91ee7080f 100644
+--- a/block/ioprio.c
++++ b/block/ioprio.c
+@@ -51,7 +51,7 @@ int set_task_ioprio(struct task_struct *task, int ioprio)
+ 	if (err)
+ 		return err;
+ 
+-	ioc = get_task_io_context(task, GFP_ATOMIC, NUMA_NO_NODE);
++	ioc = get_task_io_context(task, GFP_KERNEL, NUMA_NO_NODE);
+ 	if (ioc) {
+ 		ioc->ioprio = ioprio;
+ 		put_io_context(ioc);
+-- 
+2.17.0
+
