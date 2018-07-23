@@ -2,1548 +2,531 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D4AECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F8EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2881C20685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:01:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H1FhOEe8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NDj9gmcK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2881C20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 06A4F20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:02:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A4F20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388318AbeGWLBu (ORCPT
+        id S2388328AbeGWLC6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:01:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39518 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388071AbeGWLBu (ORCPT
+        Mon, 23 Jul 2018 07:02:58 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:41114 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388175AbeGWLC6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:01:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5677E608C8; Mon, 23 Jul 2018 10:01:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532340083;
-        bh=cs2CkN5rLLd50+7ue6JF9SASQK1DNMGJ5zgzfjrZk3k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=H1FhOEe8vnBT7RE9/Xpj/xdGGp6zEF4FxPPQWWVopbqiKiM/4uoO/yBcLGLiTtNb3
-         Wm8WjAmayIXv7R3fXFThUbRlXuqhPu7mQ/cgNRb0wV8D0D+iwUBZXevm+XRdARsUuB
-         DreZTX1icKarjc5ka3FFIjy8NhxKgB2AZNpxPfSY=
-Received: from [10.252.222.164] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vviswana@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 893B060588;
-        Mon, 23 Jul 2018 10:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532340078;
-        bh=cs2CkN5rLLd50+7ue6JF9SASQK1DNMGJ5zgzfjrZk3k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NDj9gmcKR5NfGfnsElaBTFclfXd0Q/ZoyzVnWTO1/HfMHIH2EtlU0mVdZ1PSZ4iiT
-         MmcafDmVkyO1Aom3EFqE07JudrSQdg7Sgvhm6LnpQqP/olE/LOQpn92cNTV34758wX
-         6o/f48eoTLP/w4ki1dzN73h2Z9rTtbN3NCEnswGk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 893B060588
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-Subject: Re: [PATCH RFC 2/7] mmc: core: devfreq: Add devfreq based clock
- scaling support
-To:     Sayali Lokhande <sayalil@codeaurora.org>, adrian.hunter@intel.com,
-        ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
-        asutoshd@codeaurora.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, bjorn.andersson@linaro.org,
-        riteshh@codeaurora.org, vbadigan@codeaurora.org,
-        Talel Shenhar <tatias@codeaurora.org>
-References: <1531475583-7050-1-git-send-email-sayalil@codeaurora.org>
- <1531475583-7050-3-git-send-email-sayalil@codeaurora.org>
-From:   Vijay Viswanath <vviswana@codeaurora.org>
-Message-ID: <36492d8e-9cc7-0462-5366-3612a4214136@codeaurora.org>
-Date:   Mon, 23 Jul 2018 15:31:11 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1531475583-7050-3-git-send-email-sayalil@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 23 Jul 2018 07:02:58 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id EA2J1y01C3XaVaC06A2JGY; Mon, 23 Jul 2018 12:02:19 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fhXfW-0001v2-RP
+        for linux-kernel@vger.kernel.org; Mon, 23 Jul 2018 12:02:18 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fhXfW-00028t-PJ
+        for linux-kernel@vger.kernel.org; Mon, 23 Jul 2018 12:02:18 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     linux-kernel@vger.kernel.org
+Subject: Build regressions/improvements in v4.18-rc6
+Date:   Mon, 23 Jul 2018 12:02:18 +0200
+Message-Id: <20180723100218.8193-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sayali,
+Below is the list of build error/warning regressions/improvements in
+v4.18-rc6[1] compared to v4.17[2].
 
-On 7/13/2018 3:22 PM, Sayali Lokhande wrote:
-> This change adds the use of devfreq to MMC.
-> Both eMMC and SD card will use it.
-> For some workloads, such as video playback, it isn't
-> necessary for these cards to run at high speed.
-> Running at lower frequency, for example 52MHz, in such
-> cases can still meet the deadlines for data transfers.
-> Scaling down the clock frequency dynamically has power
-> savings not only because the bus is running at lower frequency
-> but also has an advantage of scaling down the system core
-> voltage, if supported.
-> Provide an ondemand clock scaling support similar to the
-> cpufreq ondemand governor having two thresholds,
-> up_threshold and down_threshold to decide whether to
-> increase the frequency or scale it down respectively.
-> The sampling interval is in the order of milliseconds.
-> If sampling interval is too low, frequent switching of
-> frequencies can lead to high power consumption and if
-> sampling interval is too high, the clock scaling logic
-> would take long time to realize that the underlying
-> hardware (controller and card) is busy and scale up
-> the clocks.
-> 
-> Signed-off-by: Talel Shenhar <tatias@codeaurora.org>
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->   .../devicetree/bindings/mmc/sdhci-msm.txt          |  10 +
->   drivers/mmc/core/core.c                            | 560 +++++++++++++++++++++
->   drivers/mmc/core/core.h                            |   7 +
->   drivers/mmc/core/debugfs.c                         |  46 ++
->   drivers/mmc/core/host.c                            |   8 +
->   drivers/mmc/core/mmc.c                             | 200 +++++++-
->   drivers/mmc/core/sd.c                              |  72 ++-
->   drivers/mmc/host/sdhci-msm.c                       |  37 ++
->   drivers/mmc/host/sdhci-pltfm.c                     |  11 +
->   drivers/mmc/host/sdhci.c                           |  27 +
->   drivers/mmc/host/sdhci.h                           |   8 +
->   include/linux/mmc/card.h                           |   5 +
->   include/linux/mmc/host.h                           |  70 +++
->   13 files changed, 1059 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> index 502b3b8..bd8470a 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> @@ -26,6 +26,15 @@ Required properties:
->   	"cal"	- reference clock for RCLK delay calibration (optional)
->   	"sleep"	- sleep clock for RCLK delay calibration (optional)
->   
-> +Optional Properties:
-> +- qcom,devfreq,freq-table - specifies supported frequencies for clock scaling.
-> +				    Clock scaling logic shall toggle between these frequencies based
-> +				    on card load. In case the defined frequencies are over or below
-> +				    the supported card frequencies, they will be overridden
-> +				    during card init. In case this entry is not supplied,
-> +				    the driver will construct one based on the card
-> +				    supported max and min frequencies.
-> +				    The frequencies must be ordered from lowest to highest.
->   Example:
->   
->   	sdhc_1: sdhci@f9824900 {
-> @@ -43,6 +52,7 @@ Example:
->   
->   		clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
->   		clock-names = "core", "iface";
-> +		qcom,devfreq,freq-table = <52000000 200000000>;
->   	};
->   
->   	sdhc_2: sdhci@f98a4900 {
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index 281826d..0eaee42 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -14,6 +14,7 @@
->   #include <linux/init.h>
->   #include <linux/interrupt.h>
->   #include <linux/completion.h>
-> +#include <linux/devfreq.h>
->   #include <linux/device.h>
->   #include <linux/delay.h>
->   #include <linux/pagemap.h>
-> @@ -112,6 +113,556 @@ static inline void mmc_should_fail_request(struct mmc_host *host,
->   
->   #endif /* CONFIG_FAIL_MMC_REQUEST */
->   
-> +static bool mmc_is_data_request(struct mmc_request *mmc_request)
-> +{
-> +	switch (mmc_request->cmd->opcode) {
-> +	case MMC_READ_SINGLE_BLOCK:
-> +	case MMC_READ_MULTIPLE_BLOCK:
-> +	case MMC_WRITE_BLOCK:
-> +	case MMC_WRITE_MULTIPLE_BLOCK:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static void mmc_clk_scaling_start_busy(struct mmc_host *host, bool lock_needed)
-> +{
-> +	struct mmc_devfeq_clk_scaling *clk_scaling = &host->clk_scaling;
-> +
-> +	if (!clk_scaling->enable)
-> +		return;
-> +
-> +	if (lock_needed)
-> +		spin_lock_bh(&clk_scaling->lock);
-> +
-> +	clk_scaling->start_busy = ktime_get();
-> +	clk_scaling->is_busy_started = true;
-> +
-> +	if (lock_needed)
-> +		spin_unlock_bh(&clk_scaling->lock);
-> +}
-> +
-> +static void mmc_clk_scaling_stop_busy(struct mmc_host *host, bool lock_needed)
-> +{
-> +	struct mmc_devfeq_clk_scaling *clk_scaling = &host->clk_scaling;
-> +
-> +	if (!clk_scaling->enable)
-> +		return;
-> +
-> +	if (lock_needed)
-> +		spin_lock_bh(&clk_scaling->lock);
-> +
-> +	if (!clk_scaling->is_busy_started) {
-> +		WARN_ON(1);
-> +		goto out;
-> +	}
-> +
-> +	clk_scaling->total_busy_time_us +=
-> +		ktime_to_us(ktime_sub(ktime_get(),
-> +			clk_scaling->start_busy));
-> +	pr_debug("%s: accumulated busy time is %lu usec\n",
-> +		mmc_hostname(host), clk_scaling->total_busy_time_us);
-> +	clk_scaling->is_busy_started = false;
-> +
-> +out:
-> +	if (lock_needed)
-> +		spin_unlock_bh(&clk_scaling->lock);
-> +}
-> +
-> +/**
-> + * mmc_can_scale_clk() - Check clock scaling capability
-> + * @host: pointer to mmc host structure
-> + */
-> +bool mmc_can_scale_clk(struct mmc_host *host)
-> +{
-> +	if (!host) {
-> +		pr_err("bad host parameter\n");
-> +		WARN_ON(1);
-> +		return false;
-> +	}
-> +
-> +	return host->caps2 & MMC_CAP2_CLK_SCALE;
-> +}
-> +EXPORT_SYMBOL(mmc_can_scale_clk);
-> +
-> +static int mmc_devfreq_get_dev_status(struct device *dev,
-> +		struct devfreq_dev_status *status)
-> +{
-> +	struct mmc_host *host = container_of(dev, struct mmc_host, class_dev);
-> +	struct mmc_devfeq_clk_scaling *clk_scaling;
-> +
-> +	if (!host) {
-> +		pr_err("bad host parameter\n");
-> +		WARN_ON(1);
-> +		return -EINVAL;
-> +	}
-> +
-> +	clk_scaling = &host->clk_scaling;
-> +
-> +	if (!clk_scaling->enable)
-> +		return 0;
-> +
-> +	spin_lock_bh(&clk_scaling->lock);
-> +
-> +	/* accumulate the busy time of ongoing work */
-> +	memset(status, 0, sizeof(*status));
-> +	if (clk_scaling->is_busy_started) {
-> +			mmc_clk_scaling_stop_busy(host, false);
-> +			mmc_clk_scaling_start_busy(host, false);
-> +	}
-> +
-> +	status->busy_time = clk_scaling->total_busy_time_us;
-> +	status->total_time = ktime_to_us(ktime_sub(ktime_get(),
-> +		clk_scaling->measure_interval_start));
-> +	clk_scaling->total_busy_time_us = 0;
-> +	status->current_frequency = clk_scaling->curr_freq;
-> +	clk_scaling->measure_interval_start = ktime_get();
-> +
-> +	pr_debug("%s: status: load = %lu%% - total_time=%lu busy_time = %lu, clk=%lu\n",
-> +		mmc_hostname(host),
-> +		(status->busy_time*100)/status->total_time,
-> +		status->total_time, status->busy_time,
-> +		status->current_frequency);
-> +
-> +	spin_unlock_bh(&clk_scaling->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static bool mmc_is_valid_state_for_clk_scaling(struct mmc_host *host)
-> +{
-> +	struct mmc_card *card = host->card;
-> +	u32 status;
-> +
-> +	/*
-> +	 * If the current partition type is RPMB, clock switching may not
-> +	 * work properly as sending tuning command (CMD21) is illegal in
-> +	 * this mode.
-> +	 */
-> +	if (!card || (mmc_card_mmc(card) &&
-> +			(card->part_curr == EXT_CSD_PART_CONFIG_ACC_RPMB ||
-> +			mmc_card_doing_bkops(card))))
-> +		return false;
-> +
-> +	if (mmc_send_status(card, &status)) {
-> +		pr_err("%s: Get card status fail\n", mmc_hostname(card->host));
-> +		return false;
-> +	}
-> +
-> +	return R1_CURRENT_STATE(status) == R1_STATE_TRAN;
-> +}
-> +
-> +int mmc_clk_update_freq(struct mmc_host *host,
-> +		unsigned long freq, enum mmc_load state)
-> +{
-> +	int err = 0;
-> +
-> +	if (!host) {
-> +		pr_err("bad host parameter\n");
-> +		WARN_ON(1);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* make sure the card supports the frequency we want */
-> +	if (unlikely(freq > host->card->clk_scaling_highest)) {
-> +		freq = host->card->clk_scaling_highest;
-> +		pr_warn("%s: %s: frequency was overridden to %lu\n",
-> +				mmc_hostname(host), __func__,
-> +				host->card->clk_scaling_highest);
-> +	}
-> +
-> +	if (unlikely(freq < host->card->clk_scaling_lowest)) {
-> +		freq = host->card->clk_scaling_lowest;
-> +		pr_warn("%s: %s: frequency was overridden to %lu\n",
-> +			mmc_hostname(host), __func__,
-> +			host->card->clk_scaling_lowest);
-> +	}
-> +
-> +	if (freq == host->clk_scaling.curr_freq)
-> +		goto out;
-> +
-> +	if (host->ops->notify_load) {
-> +		err = host->ops->notify_load(host, state);
-> +		if (err) {
-> +			pr_err("%s: %s: fail on notify_load\n",
-> +				mmc_hostname(host), __func__);
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	if (!mmc_is_valid_state_for_clk_scaling(host)) {
-> +		pr_debug("%s: invalid state for clock scaling - skipping",
-> +			mmc_hostname(host));
-> +		goto invalid_state;
-> +	}
-> +
-> +	err = host->bus_ops->change_bus_speed(host, &freq);
-> +	if (!err)
-> +		host->clk_scaling.curr_freq = freq;
-> +	else
-> +		pr_err("%s: %s: failed (%d) at freq=%lu\n",
-> +			mmc_hostname(host), __func__, err, freq);
-> +
-> +invalid_state:
-> +	if (err) {
-> +		/* restore previous state */
-> +		if (host->ops->notify_load)
-> +			if (host->ops->notify_load(host,
-> +				host->clk_scaling.state))
-> +				pr_err("%s: %s: fail on notify_load restore\n",
-> +					mmc_hostname(host), __func__);
-> +	}
-> +out:
-> +	return err;
-> +}
-> +EXPORT_SYMBOL(mmc_clk_update_freq);
-> +
-> +static int mmc_devfreq_set_target(struct device *dev,
-> +				unsigned long *freq, u32 devfreq_flags)
-> +{
-> +	struct mmc_host *host = container_of(dev, struct mmc_host, class_dev);
-> +	struct mmc_devfeq_clk_scaling *clk_scaling;
-> +	int err = 0;
-> +	int abort;
-> +	unsigned long pflags = current->flags;
-> +
-> +	/* Ensure scaling would happen even in memory pressure conditions */
-> +	current->flags |= PF_MEMALLOC;
-> +
-> +	if (!(host && freq)) {
-> +		pr_err("%s: unexpected host/freq parameter\n", __func__);
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	clk_scaling = &host->clk_scaling;
-> +
-> +	if (!clk_scaling->enable)
-> +		goto out;
-> +
-> +	pr_debug("%s: target freq = %lu (%s)\n", mmc_hostname(host),
-> +		*freq, current->comm);
-> +
-> +	if ((clk_scaling->curr_freq == *freq) ||
-> +		clk_scaling->skip_clk_scale_freq_update)
-> +		goto out;
-> +
+Summarized:
+  - build errors: +2/-1
+  - build warnings: +222/-46421
 
-Suppose devfreq issued a low_freq request while mmc is handling a 
-request already issued to card (so mmc host is claimed by issuing 
-context). So we will set target freq to LOW_FREQ and quit from here.
-Now, if devfreq comes again and issues a HIGH_FREQ request (before mmc 
-thread had a chance to change the freq to LOW in mmc_deferred_scaling), 
-we will skip this devfreq request (since current freq is high already). 
-Then, when mmc thread comes, it will execute deferred scaling to LOW_FREQ.
+JFYI, when comparing v4.18-rc6[1] to v4.18-rc5[3], the summaries are:
+  - build errors: +0/-104
+  - build warnings: +77/-63
 
-How about comparing *freq with clk_scaling->target_freq ?
+Note that there may be false regressions, as some logs are incomplete.
+Still, they're build errors/warnings.
 
-> +	/* No need to scale the clocks if they are gated */
-> +	if (!host->ios.clock)
-> +		goto out;
-> +
-> +	spin_lock_bh(&clk_scaling->lock);
-> +	if (clk_scaling->clk_scaling_in_progress) {
-> +		pr_debug("%s: clocks scaling is already in-progress by mmc thread\n",
-> +			mmc_hostname(host));
-> +		spin_unlock_bh(&clk_scaling->lock);
-> +		goto out;
-> +	}
-> +	clk_scaling->need_freq_change = true;
-> +	clk_scaling->target_freq = *freq;
-> +	clk_scaling->state = *freq < clk_scaling->curr_freq ?
-> +		MMC_LOAD_LOW : MMC_LOAD_HIGH;
-> +	spin_unlock_bh(&clk_scaling->lock);
-> +
-> +	abort = __mmc_claim_host(host, NULL, &clk_scaling->devfreq_abort);
-> +	if (abort)
-> +		goto out;
-> +
-> +	/*
-> +	 * In case we were able to claim host there is no need to
-> +	 * defer the frequency change. It will be done now
-> +	 */
-> +	clk_scaling->need_freq_change = false;
-> +
-> +	err = mmc_clk_update_freq(host, *freq, clk_scaling->state);
-> +	if (err && err != -EAGAIN) {
-> +		pr_err("%s: clock scale to %lu failed with error %d\n",
-> +			mmc_hostname(host), *freq, err);
-> +	} else {
-> +		pr_debug("%s: clock change to %lu finished successfully (%s)\n",
-> +			mmc_hostname(host), *freq, current->comm);
-> +	}
-> +
-> +	mmc_release_host(host);
-> +out:
-> +	current->flags &= ~PF_MEMALLOC;
-> +	current->flags |= pflags & PF_MEMALLOC;
-> +	return err;
-> +}
-> +
-> +/**
-> + * mmc_deferred_scaling() - scale clocks from data path (mmc thread context)
-> + * @host: pointer to mmc host structure
-> + *
-> + * This function does clock scaling in case "need_freq_change" flag was set
-> + * by the clock scaling logic.
-> + */
-> +void mmc_deferred_scaling(struct mmc_host *host)
-> +{
-> +	unsigned long target_freq;
-> +	int err;
-> +
-> +	if (!host->clk_scaling.enable)
-> +		return;
-> +
-> +	spin_lock_bh(&host->clk_scaling.lock);
-> +
-> +	if (host->clk_scaling.clk_scaling_in_progress ||
-> +		!(host->clk_scaling.need_freq_change)) {
-> +		spin_unlock_bh(&host->clk_scaling.lock);
-> +		return;
-> +	}
-> +
-> +
-> +	atomic_inc(&host->clk_scaling.devfreq_abort);
-> +	target_freq = host->clk_scaling.target_freq;
-> +	host->clk_scaling.clk_scaling_in_progress = true;
-> +	host->clk_scaling.need_freq_change = false;
-> +	spin_unlock_bh(&host->clk_scaling.lock);
-> +	pr_debug("%s: doing deferred frequency change (%lu) (%s)\n",
-> +				mmc_hostname(host),
-> +				target_freq, current->comm);
-> +
-> +	err = mmc_clk_update_freq(host, target_freq,
-> +		host->clk_scaling.state);
-> +	if (err && err != -EAGAIN) {
-> +		pr_err("%s: failed on deferred scale clocks (%d)\n",
-> +			mmc_hostname(host), err);
-> +	} else {
-> +		pr_debug("%s: clocks were successfully scaled to %lu (%s)\n",
-> +			mmc_hostname(host),
-> +			target_freq, current->comm);
-> +	}
-> +	host->clk_scaling.clk_scaling_in_progress = false;
-> +	atomic_dec(&host->clk_scaling.devfreq_abort);
-> +}
-> +EXPORT_SYMBOL(mmc_deferred_scaling);
-> +
-> +static int mmc_devfreq_create_freq_table(struct mmc_host *host)
-> +{
-> +	int i;
-> +	struct mmc_devfeq_clk_scaling *clk_scaling = &host->clk_scaling;
-> +
-> +	pr_debug("%s: supported: lowest=%lu, highest=%lu\n",
-> +		mmc_hostname(host),
-> +		host->card->clk_scaling_lowest,
-> +		host->card->clk_scaling_highest);
-> +
-> +	/*
-> +	 * Create the frequency table and initialize it with default values.
-> +	 * Initialize it with platform specific frequencies if the frequency
-> +	 * table supplied by platform driver is present, otherwise initialize
-> +	 * it with min and max frequencies supported by the card.
-> +	 */
-> +	if (!clk_scaling->freq_table) {
-> +		if (clk_scaling->pltfm_freq_table_sz)
-> +			clk_scaling->freq_table_sz =
-> +				clk_scaling->pltfm_freq_table_sz;
-> +		else
-> +			clk_scaling->freq_table_sz = 2;
-> +
-> +		clk_scaling->freq_table = kzalloc(
-> +			(clk_scaling->freq_table_sz *
-> +			sizeof(*(clk_scaling->freq_table))), GFP_KERNEL);
-> +		if (!clk_scaling->freq_table)
-> +			return -ENOMEM;
-> +
-> +		if (clk_scaling->pltfm_freq_table) {
-> +			memcpy(clk_scaling->freq_table,
-> +				clk_scaling->pltfm_freq_table,
-> +				(clk_scaling->pltfm_freq_table_sz *
-> +				sizeof(*(clk_scaling->pltfm_freq_table))));
-> +		} else {
-> +			pr_debug("%s: no frequency table defined -  setting default\n",
-> +				mmc_hostname(host));
-> +			clk_scaling->freq_table[0] =
-> +				host->card->clk_scaling_lowest;
-> +			clk_scaling->freq_table[1] =
-> +				host->card->clk_scaling_highest;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	if (host->card->clk_scaling_lowest >
-> +		clk_scaling->freq_table[0])
-> +		pr_debug("%s: frequency table undershot possible freq\n",
-> +			mmc_hostname(host));
-> +
-> +	for (i = 0; i < clk_scaling->freq_table_sz; i++) {
-> +		if (clk_scaling->freq_table[i] <=
-> +			host->card->clk_scaling_highest)
-> +			continue;
-> +		clk_scaling->freq_table[i] =
-> +			host->card->clk_scaling_highest;
-> +		clk_scaling->freq_table_sz = i + 1;
-> +		pr_debug("%s: frequency table overshot possible freq (%d)\n",
-> +				mmc_hostname(host), clk_scaling->freq_table[i]);
-> +		break;
-> +	}
-> +
-> +out:
-> +	/**
-> +	 * devfreq requires unsigned long type freq_table while the
-> +	 * freq_table in clk_scaling is un32. Here allocates an individual
-> +	 * memory space for it and release it when exit clock scaling.
-> +	 */
-> +	clk_scaling->devfreq_profile.freq_table =  kzalloc(
-> +			clk_scaling->freq_table_sz *
-> +			sizeof(*(clk_scaling->devfreq_profile.freq_table)),
-> +			GFP_KERNEL);
-> +	if (!clk_scaling->devfreq_profile.freq_table)
-> +		return -ENOMEM;
-> +	clk_scaling->devfreq_profile.max_state = clk_scaling->freq_table_sz;
-> +
-> +	for (i = 0; i < clk_scaling->freq_table_sz; i++) {
-> +		clk_scaling->devfreq_profile.freq_table[i] =
-> +			clk_scaling->freq_table[i];
-> +		pr_debug("%s: freq[%d] = %u\n",
-> +			mmc_hostname(host), i, clk_scaling->freq_table[i]);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * mmc_init_devfreq_clk_scaling() - Initialize clock scaling
-> + * @host: pointer to mmc host structure
-> + *
-> + * Initialize clock scaling for supported hosts. It is assumed that the caller
-> + * ensure clock is running at maximum possible frequency before calling this
-> + * function. Shall use struct devfreq_simple_ondemand_data to configure
-> + * governor.
-> + */
-> +int mmc_init_clk_scaling(struct mmc_host *host)
-> +{
-> +	int err;
-> +
-> +	if (!host || !host->card) {
-> +		pr_err("%s: unexpected host/card parameters\n",
-> +			__func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!mmc_can_scale_clk(host) ||
-> +		!host->bus_ops->change_bus_speed) {
-> +		pr_debug("%s: clock scaling is not supported\n",
-> +			mmc_hostname(host));
-> +		return 0;
-> +	}
-> +
-> +	pr_debug("registering %s dev (%p) to devfreq",
-> +		mmc_hostname(host),
-> +		mmc_classdev(host));
-> +
-> +	if (host->clk_scaling.devfreq) {
-> +		pr_err("%s: dev is already registered for dev %p\n",
-> +			mmc_hostname(host),
-> +			mmc_dev(host));
-> +		return -EPERM;
-> +	}
-> +	spin_lock_init(&host->clk_scaling.lock);
-> +	atomic_set(&host->clk_scaling.devfreq_abort, 0);
-> +	host->clk_scaling.curr_freq = host->ios.clock;
-> +	host->clk_scaling.clk_scaling_in_progress = false;
-> +	host->clk_scaling.need_freq_change = false;
-> +	host->clk_scaling.is_busy_started = false;
-> +
-> +	host->clk_scaling.devfreq_profile.polling_ms =
-> +		host->clk_scaling.polling_delay_ms;
-> +	host->clk_scaling.devfreq_profile.get_dev_status =
-> +		mmc_devfreq_get_dev_status;
-> +	host->clk_scaling.devfreq_profile.target = mmc_devfreq_set_target;
-> +	host->clk_scaling.devfreq_profile.initial_freq = host->ios.clock;
-> +
-> +	host->clk_scaling.ondemand_gov_data.simple_scaling = true;
-> +	host->clk_scaling.ondemand_gov_data.upthreshold =
-> +		host->clk_scaling.upthreshold;
-> +	host->clk_scaling.ondemand_gov_data.downdifferential =
-> +		host->clk_scaling.upthreshold - host->clk_scaling.downthreshold;
-> +
-> +	err = mmc_devfreq_create_freq_table(host);
-> +	if (err) {
-> +		pr_err("%s: fail to create devfreq frequency table\n",
-> +			mmc_hostname(host));
-> +		return err;
-> +	}
-> +
-> +	pr_debug("%s: adding devfreq with: upthreshold=%u downthreshold=%u polling=%u\n",
-> +		mmc_hostname(host),
-> +		host->clk_scaling.ondemand_gov_data.upthreshold,
-> +		host->clk_scaling.ondemand_gov_data.downdifferential,
-> +		host->clk_scaling.devfreq_profile.polling_ms);
-> +	host->clk_scaling.devfreq = devfreq_add_device(
-> +		mmc_classdev(host),
-> +		&host->clk_scaling.devfreq_profile,
-> +		"simple_ondemand",
-> +		&host->clk_scaling.ondemand_gov_data);
-> +	if (!host->clk_scaling.devfreq) {
-> +		pr_err("%s: unable to register with devfreq\n",
-> +			mmc_hostname(host));
-> +		return -EPERM;
-> +	}
-> +
-> +	pr_debug("%s: clk scaling is enabled for device %s (%p) with devfreq %p (clock = %uHz)\n",
-> +		mmc_hostname(host),
-> +		dev_name(mmc_classdev(host)),
-> +		mmc_classdev(host),
-> +		host->clk_scaling.devfreq,
-> +		host->ios.clock);
-> +
-> +	host->clk_scaling.enable = true;
-> +
-> +	return err;
-> +}
-> +EXPORT_SYMBOL(mmc_init_clk_scaling);
-> +
-> +/**
-> + * mmc_exit_devfreq_clk_scaling() - Disable clock scaling
-> + * @host: pointer to mmc host structure
-> + *
-> + * Disable clock scaling permanently.
-> + */
-> +int mmc_exit_clk_scaling(struct mmc_host *host)
-> +{
-> +	int err;
-> +
-> +	if (!host) {
-> +		pr_err("%s: bad host parameter\n", __func__);
-> +		WARN_ON(1);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!mmc_can_scale_clk(host))
-> +		return 0;
-> +
-> +	if (!host->clk_scaling.devfreq) {
-> +		pr_err("%s: %s: no devfreq is assosiated with this device\n",
-> +			mmc_hostname(host), __func__);
-> +		return -EPERM;
-> +	}
-> +
-> +	err = devfreq_remove_device(host->clk_scaling.devfreq);
-> +	if (err) {
-> +		pr_err("%s: remove devfreq failed (%d)\n",
-> +			mmc_hostname(host), err);
-> +		return err;
-> +	}
-> +
-> +	kfree(host->clk_scaling.devfreq_profile.freq_table);
-> +
-> +	host->clk_scaling.devfreq = NULL;
-> +	atomic_set(&host->clk_scaling.devfreq_abort, 1);
-> +
-> +	kfree(host->clk_scaling.freq_table);
-> +	host->clk_scaling.freq_table = NULL;
-> +
-> +	pr_debug("%s: devfreq was removed\n", mmc_hostname(host));
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(mmc_exit_clk_scaling);
-> +
->   static inline void mmc_complete_cmd(struct mmc_request *mrq)
->   {
->   	if (mrq->cap_cmd_during_tfr && !completion_done(&mrq->cmd_completion))
-> @@ -143,6 +694,9 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
->   	struct mmc_command *cmd = mrq->cmd;
->   	int err = cmd->error;
->   
-> +	if (host->clk_scaling.is_busy_started)
-> +		mmc_clk_scaling_stop_busy(host, true);
-> +
->   	/* Flag re-tuning needed on CRC errors */
->   	if ((cmd->opcode != MMC_SEND_TUNING_BLOCK &&
->   	    cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200) &&
-> @@ -354,6 +908,12 @@ int mmc_start_request(struct mmc_host *host, struct mmc_request *mrq)
->   		return err;
->   
->   	led_trigger_event(host->led, LED_FULL);
-> +
-> +	if (mmc_is_data_request(mrq)) {
-> +		mmc_deferred_scaling(host);
-> +		mmc_clk_scaling_start_busy(host, true);
-> +	}
-> +
->   	__mmc_start_request(host, mrq);
->   
->   	return 0;
-> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
-> index 9d8f09a..fc0a9b7 100644
-> --- a/drivers/mmc/core/core.h
-> +++ b/drivers/mmc/core/core.h
-> @@ -34,6 +34,7 @@ struct mmc_bus_ops {
->   	int (*shutdown)(struct mmc_host *);
->   	int (*hw_reset)(struct mmc_host *);
->   	int (*sw_reset)(struct mmc_host *);
-> +	int (*change_bus_speed)(struct mmc_host *, unsigned long *);
->   };
->   
->   void mmc_attach_bus(struct mmc_host *host, const struct mmc_bus_ops *ops);
-> @@ -46,6 +47,8 @@ struct device_node *mmc_of_find_child_device(struct mmc_host *host,
->   
->   void mmc_set_chip_select(struct mmc_host *host, int mode);
->   void mmc_set_clock(struct mmc_host *host, unsigned int hz);
-> +int mmc_clk_update_freq(struct mmc_host *host,
-> +		unsigned long freq, enum mmc_load state);
->   void mmc_set_bus_mode(struct mmc_host *host, unsigned int mode);
->   void mmc_set_bus_width(struct mmc_host *host, unsigned int width);
->   u32 mmc_select_voltage(struct mmc_host *host, u32 ocr);
-> @@ -91,6 +94,10 @@ static inline void mmc_delay(unsigned int ms)
->   void mmc_add_card_debugfs(struct mmc_card *card);
->   void mmc_remove_card_debugfs(struct mmc_card *card);
->   
-> +extern bool mmc_can_scale_clk(struct mmc_host *host);
-> +extern int mmc_init_clk_scaling(struct mmc_host *host);
-> +extern int mmc_exit_clk_scaling(struct mmc_host *host);
-> +
->   int mmc_execute_tuning(struct mmc_card *card);
->   int mmc_hs200_to_hs400(struct mmc_card *card);
->   int mmc_hs400_to_hs200(struct mmc_card *card);
-> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
-> index d2275c5..630ca8e 100644
-> --- a/drivers/mmc/core/debugfs.c
-> +++ b/drivers/mmc/core/debugfs.c
-> @@ -225,6 +225,43 @@ static int mmc_clock_opt_set(void *data, u64 val)
->   DEFINE_SIMPLE_ATTRIBUTE(mmc_clock_fops, mmc_clock_opt_get, mmc_clock_opt_set,
->   	"%llu\n");
->   
-> +#include <linux/delay.h>
-> +
-> +static int mmc_scale_get(void *data, u64 *val)
-> +{
-> +	struct mmc_host *host = data;
-> +
-> +	*val = host->clk_scaling.curr_freq;
-> +
-> +	return 0;
-> +}
-> +
-> +static int mmc_scale_set(void *data, u64 val)
-> +{
-> +	int err = 0;
-> +	struct mmc_host *host = data;
-> +
-> +	mmc_claim_host(host);
-> +
-> +	/* change frequency from sysfs manually */
-> +	err = mmc_clk_update_freq(host, val, host->clk_scaling.state);
-> +	if (err == -EAGAIN)
-> +		err = 0;
-> +	else if (err)
-> +		pr_err("%s: clock scale to %llu failed with error %d\n",
-> +			mmc_hostname(host), val, err);
-> +	else
-> +		pr_debug("%s: clock change to %llu finished successfully (%s)\n",
-> +			mmc_hostname(host), val, current->comm);
-> +
-> +	mmc_release_host(host);
-> +
-> +	return err;
-> +}
-> +
-> +DEFINE_SIMPLE_ATTRIBUTE(mmc_scale_fops, mmc_scale_get, mmc_scale_set,
-> +	"%llu\n");
-> +
->   void mmc_add_host_debugfs(struct mmc_host *host)
->   {
->   	struct dentry *root;
-> @@ -253,6 +290,15 @@ void mmc_add_host_debugfs(struct mmc_host *host)
->   			&mmc_clock_fops))
->   		goto err_node;
->   
-> +	if (!debugfs_create_file("scale", 0600, root, host,
-> +		&mmc_scale_fops))
-> +		goto err_node;
-> +
-> +	if (!debugfs_create_bool("skip_clk_scale_freq_update",
-> +		0600, root,
-> +		&host->clk_scaling.skip_clk_scale_freq_update))
-> +		goto err_node;
-> +
->   #ifdef CONFIG_FAIL_MMC_REQUEST
->   	if (fail_request)
->   		setup_fault_attr(&fail_default_attr, fail_request);
-> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-> index abf9e88..1e46aa4 100644
-> --- a/drivers/mmc/core/host.c
-> +++ b/drivers/mmc/core/host.c
-> @@ -32,6 +32,10 @@
->   #include "pwrseq.h"
->   #include "sdio_ops.h"
->   
-> +#define MMC_DEVFRQ_DEFAULT_UP_THRESHOLD 35
-> +#define MMC_DEVFRQ_DEFAULT_DOWN_THRESHOLD 5
-> +#define MMC_DEVFRQ_DEFAULT_POLLING_MSEC 100
-> +
->   #define cls_dev_to_mmc_host(d)	container_of(d, struct mmc_host, class_dev)
->   
->   static DEFINE_IDA(mmc_host_ida);
-> @@ -435,6 +439,10 @@ int mmc_add_host(struct mmc_host *host)
->   		return err;
->   
->   	led_trigger_register_simple(dev_name(&host->class_dev), &host->led);
-> +	host->clk_scaling.upthreshold = MMC_DEVFRQ_DEFAULT_UP_THRESHOLD;
-> +	host->clk_scaling.downthreshold = MMC_DEVFRQ_DEFAULT_DOWN_THRESHOLD;
-> +	host->clk_scaling.polling_delay_ms = MMC_DEVFRQ_DEFAULT_POLLING_MSEC;
-> +	host->clk_scaling.skip_clk_scale_freq_update = false;
->   
->   #ifdef CONFIG_DEBUG_FS
->   	mmc_add_host_debugfs(host);
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index 4466f5d..c8aedf3 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -1526,6 +1526,170 @@ static int mmc_hs200_tuning(struct mmc_card *card)
->   }
->   
->   /*
-> + * Scale down from HS400 to HS in order to allow frequency change.
-> + * This is needed for cards that doesn't support changing frequency in HS400
-> + */
-> +static int mmc_scale_low(struct mmc_host *host, unsigned long freq)
-> +{
-> +	int err = 0;
-> +
-> +	mmc_set_timing(host, MMC_TIMING_LEGACY);
-> +	mmc_set_clock(host, MMC_HIGH_26_MAX_DTR);
-> +
-> +	err = mmc_select_hs(host->card);
-> +	if (err) {
-> +		pr_err("%s: %s: scaling low: failed (%d)\n",
-> +		       mmc_hostname(host), __func__, err);
-> +		return err;
-> +	}
-> +
-> +	err = mmc_select_bus_width(host->card);
-> +	if (err < 0) {
-> +		pr_err("%s: %s: select_bus_width failed(%d)\n",
-> +			mmc_hostname(host), __func__, err);
-> +		return err;
-> +	}
-> +
-> +	mmc_set_clock(host, freq);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Scale UP from HS to HS200/H400
-> + */
-> +static int mmc_scale_high(struct mmc_host *host)
-> +{
-> +	int err = 0;
-> +
-> +	if (mmc_card_ddr52(host->card)) {
-> +		mmc_set_timing(host, MMC_TIMING_LEGACY);
-> +		mmc_set_clock(host, MMC_HIGH_26_MAX_DTR);
-> +	}
-> +
-> +	if (!host->card->ext_csd.strobe_support) {
-> +		if (!(host->card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS200)) {
-> +			pr_err("%s: %s: card does not support HS200\n",
-> +				mmc_hostname(host), __func__);
-> +			WARN_ON(1);
-> +			return -EPERM;
-> +		}
-> +
-> +		err = mmc_select_hs200(host->card);
-> +		if (err) {
-> +			pr_err("%s: %s: selecting HS200 failed (%d)\n",
-> +				mmc_hostname(host), __func__, err);
-> +			return err;
-> +		}
-> +
-> +		mmc_set_bus_speed(host->card);
-> +
-> +		err = mmc_hs200_tuning(host->card);
-> +		if (err) {
-> +			pr_err("%s: %s: hs200 tuning failed (%d)\n",
-> +				mmc_hostname(host), __func__, err);
-> +			return err;
-> +		}
-> +
-> +		if (!(host->card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS400)) {
-> +			pr_debug("%s: card does not support HS400\n",
-> +				mmc_hostname(host));
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	err = mmc_select_hs400(host->card);
-> +	if (err) {
-> +		pr_err("%s: %s: select hs400 failed (%d)\n",
-> +			mmc_hostname(host), __func__, err);
-> +		return err;
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static int mmc_set_clock_bus_speed(struct mmc_card *card, unsigned long freq)
-> +{
-> +	int err = 0;
-> +
-> +	if (freq == MMC_HS200_MAX_DTR)
-> +		err = mmc_scale_high(card->host);
-> +	else
-> +		err = mmc_scale_low(card->host, freq);
-> +
-> +	return err;
-> +}
-> +
-> +static inline unsigned long mmc_ddr_freq_accommodation(unsigned long freq)
-> +{
-> +	if (freq == MMC_HIGH_DDR_MAX_DTR)
-> +		return freq;
-> +
-> +	return freq/2;
-> +}
-> +
-> +/**
-> + * mmc_change_bus_speed() - Change MMC card bus frequency at runtime
-> + * @host: pointer to mmc host structure
-> + * @freq: pointer to desired frequency to be set
-> + *
-> + * Change the MMC card bus frequency at runtime after the card is
-> + * initialized. Callers are expected to make sure of the card's
-> + * state (DATA/RCV/TRANSFER) before changing the frequency at runtime.
-> + *
-> + * If the frequency to change is greater than max. supported by card,
-> + * *freq is changed to max. supported by card. If it is less than min.
-> + * supported by host, *freq is changed to min. supported by host.
-> + * Host is assumed to be calimed while calling this funciton.
-> + */
-> +static int mmc_change_bus_speed(struct mmc_host *host, unsigned long *freq)
-> +{
-> +	int err = 0;
-> +	struct mmc_card *card;
-> +	unsigned long actual_freq;
-> +
-> +	card = host->card;
-> +
-> +	if (!card || !freq) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +	actual_freq = *freq;
-> +
-> +	WARN_ON(!host->claimed);
-> +
-> +	/*
-> +	 * For scaling up/down HS400 we'll need special handling,
-> +	 * for other timings we can simply do clock frequency change
-> +	 */
-> +	if (mmc_card_hs400(card) ||
-> +		(!mmc_card_hs200(host->card) && *freq == MMC_HS200_MAX_DTR)) {
-> +		err = mmc_set_clock_bus_speed(card, *freq);
-> +		if (err) {
-> +			pr_err("%s: %s: failed (%d)to set bus and clock speed (freq=%lu)\n",
-> +				mmc_hostname(host), __func__, err, *freq);
-> +			goto out;
-> +		}
-> +	} else if (mmc_card_hs200(host->card)) {
-> +		mmc_set_clock(host, *freq);
-> +		err = mmc_hs200_tuning(host->card);
-> +		if (err) {
-> +			pr_warn("%s: %s: tuning execution failed %d\n",
-> +				mmc_hostname(card->host),
-> +				__func__, err);
-> +			mmc_set_clock(host, host->clk_scaling.curr_freq);
-> +		}
-> +	} else {
-> +		if (mmc_card_ddr52(host->card))
-> +			actual_freq = mmc_ddr_freq_accommodation(*freq);
-> +		mmc_set_clock(host, actual_freq);
-> +	}
-> +
-> +out:
-> +	return err;
-> +}
-> +
-> +/*
->    * Handle the detection and initialisation of a card.
->    *
->    * In the case of a resume, "oldcard" will contain the card
-> @@ -1751,6 +1915,16 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
->   		}
->   	}
->   
-> +	card->clk_scaling_lowest = host->f_min;
-> +	if ((card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS400) ||
-> +			(card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS200))
-> +		card->clk_scaling_highest = card->ext_csd.hs200_max_dtr;
-> +	else if ((card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS) ||
-> +			(card->mmc_avail_type & EXT_CSD_CARD_TYPE_DDR_52))
-> +		card->clk_scaling_highest = card->ext_csd.hs_max_dtr;
-> +	else
-> +		card->clk_scaling_highest = card->csd.max_dtr;
-> +
->   	/*
->   	 * Choose the power class with selected bus interface
->   	 */
-> @@ -1942,6 +2116,7 @@ static int mmc_poweroff_notify(struct mmc_card *card, unsigned int notify_type)
->    */
->   static void mmc_remove(struct mmc_host *host)
->   {
-> +	mmc_exit_clk_scaling(host);
->   	mmc_remove_card(host->card);
->   	host->card = NULL;
->   }
-> @@ -2064,6 +2239,13 @@ static int mmc_shutdown(struct mmc_host *host)
->   	int err = 0;
->   
->   	/*
-> +	 * Exit clock scaling so that it doesn't kick in after
-> +	 * power off notification is sent
-> +	 */
-> +	if (host->caps2 & MMC_CAP2_CLK_SCALE)
-> +		mmc_exit_clk_scaling(host);
-> +
-> +	/*
->   	 * In a specific case for poweroff notify, we need to resume the card
->   	 * before we can shutdown it properly.
->   	 */
-> @@ -2132,6 +2314,7 @@ static int mmc_can_reset(struct mmc_card *card)
->   static int _mmc_hw_reset(struct mmc_host *host)
->   {
->   	struct mmc_card *card = host->card;
-> +	int ret;
->   
->   	/*
->   	 * In the case of recovery, we can't expect flushing the cache to work
-> @@ -2151,7 +2334,15 @@ static int _mmc_hw_reset(struct mmc_host *host)
->   		mmc_power_cycle(host, card->ocr);
->   		mmc_pwrseq_reset(host);
->   	}
-> -	return mmc_init_card(host, card->ocr, card);
-> +
-> +	ret = mmc_init_card(host, card->ocr, card);
-> +	if (ret) {
-> +		pr_err("%s: %s: mmc_init_card failed (%d)\n",
-> +			mmc_hostname(host), __func__, ret);
-> +		return ret;
-> +	}
-> +
-> +	return ret;
->   }
->   
->   static const struct mmc_bus_ops mmc_ops = {
-> @@ -2164,6 +2355,7 @@ static int _mmc_hw_reset(struct mmc_host *host)
->   	.alive = mmc_alive,
->   	.shutdown = mmc_shutdown,
->   	.hw_reset = _mmc_hw_reset,
-> +	.change_bus_speed = mmc_change_bus_speed,
->   };
->   
->   /*
-> @@ -2220,6 +2412,12 @@ int mmc_attach_mmc(struct mmc_host *host)
->   		goto remove_card;
->   
->   	mmc_claim_host(host);
-> +	err = mmc_init_clk_scaling(host);
-> +	if (err) {
-> +		mmc_release_host(host);
-> +		goto remove_card;
-> +	}
-> +
->   	return 0;
->   
->   remove_card:
-> diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-> index d0d9f90..40144c1 100644
-> --- a/drivers/mmc/core/sd.c
-> +++ b/drivers/mmc/core/sd.c
-> @@ -892,7 +892,10 @@ unsigned mmc_sd_get_max_clock(struct mmc_card *card)
->   {
->   	unsigned max_dtr = (unsigned int)-1;
->   
-> -	if (mmc_card_hs(card)) {
-> +	if (mmc_card_uhs(card)) {
-> +		if (max_dtr > card->sw_caps.uhs_max_dtr)
-> +			max_dtr = card->sw_caps.uhs_max_dtr;
-> +	} else if (mmc_card_hs(card)) {
->   		if (max_dtr > card->sw_caps.hs_max_dtr)
->   			max_dtr = card->sw_caps.hs_max_dtr;
->   	} else if (max_dtr > card->csd.max_dtr) {
-> @@ -1059,6 +1062,9 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
->   		}
->   	}
->   
-> +	card->clk_scaling_highest = mmc_sd_get_max_clock(card);
-> +	card->clk_scaling_lowest = host->f_min;
-> +
->   	if (host->caps2 & MMC_CAP2_AVOID_3_3V &&
->   	    host->ios.signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
->   		pr_err("%s: Host failed to negotiate down from 3.3V\n",
-> @@ -1082,6 +1088,7 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
->    */
->   static void mmc_sd_remove(struct mmc_host *host)
->   {
-> +	mmc_exit_clk_scaling(host);
->   	mmc_remove_card(host->card);
->   	host->card = NULL;
->   }
-> @@ -1228,6 +1235,62 @@ static int mmc_sd_hw_reset(struct mmc_host *host)
->   	return mmc_sd_init_card(host, host->card->ocr, host->card);
->   }
->   
-> +/**
-> + * mmc_sd_change_bus_speed() - Change SD card bus frequency at runtime
-> + * @host: pointer to mmc host structure
-> + * @freq: pointer to desired frequency to be set
-> + *
-> + * Change the SD card bus frequency at runtime after the card is
-> + * initialized. Callers are expected to make sure of the card's
-> + * state (DATA/RCV/TRANSFER) beforing changing the frequency at runtime.
-> + *
-> + * If the frequency to change is greater than max. supported by card,
-> + * *freq is changed to max. supported by card and if it is less than min.
-> + * supported by host, *freq is changed to min. supported by host.
-> + */
-> +static int mmc_sd_change_bus_speed(struct mmc_host *host, unsigned long *freq)
-> +{
-> +	int err = 0;
-> +	struct mmc_card *card;
-> +
-> +	mmc_claim_host(host);
-> +	/*
-> +	 * Assign card pointer after claiming host to avoid race
-> +	 * conditions that may arise during removal of the card.
-> +	 */
-> +	card = host->card;
-> +
-> +	/* sanity checks */
-> +	if (!card || !freq) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	mmc_set_clock(host, (unsigned int) (*freq));
-> +
-> +	if (!mmc_host_is_spi(card->host) && mmc_card_uhs(card)
-> +			&& card->host->ops->execute_tuning) {
-> +		/*
-> +		 * We try to probe host driver for tuning for any
-> +		 * frequency, it is host driver responsibility to
-> +		 * perform actual tuning only when required.
-> +		 */
-> +		err = card->host->ops->execute_tuning(card->host,
-> +				MMC_SEND_TUNING_BLOCK);
-> +
-> +		if (err) {
-> +			pr_warn("%s: %s: tuning execution failed %d. Restoring to previous clock %lu\n",
-> +				   mmc_hostname(card->host), __func__, err,
-> +				   host->clk_scaling.curr_freq);
-> +			mmc_set_clock(host, host->clk_scaling.curr_freq);
-> +		}
-> +	}
-> +
-> +out:
-> +	mmc_release_host(host);
-> +	return err;
-> +}
-> +
->   static const struct mmc_bus_ops mmc_sd_ops = {
->   	.remove = mmc_sd_remove,
->   	.detect = mmc_sd_detect,
-> @@ -1238,6 +1301,7 @@ static int mmc_sd_hw_reset(struct mmc_host *host)
->   	.alive = mmc_sd_alive,
->   	.shutdown = mmc_sd_suspend,
->   	.hw_reset = mmc_sd_hw_reset,
-> +	.change_bus_speed = mmc_sd_change_bus_speed,
->   };
->   
->   /*
-> @@ -1292,6 +1356,12 @@ int mmc_attach_sd(struct mmc_host *host)
->   		goto remove_card;
->   
->   	mmc_claim_host(host);
-> +	err = mmc_init_clk_scaling(host);
-> +	if (err) {
-> +		mmc_release_host(host);
-> +		goto remove_card;
-> +	}
-> +
->   	return 0;
->   
->   remove_card:
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index b5519a5..e9fe8c6 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -1705,6 +1705,43 @@ static int sdhci_msm_register_vreg(struct sdhci_msm_host *msm_host)
->   
->   MODULE_DEVICE_TABLE(of, sdhci_msm_dt_match);
->   
-> +int sdhci_msm_dt_get_array(struct device *dev, const char *prop_name,
-> +				 u32 **out, int *len, u32 size)
-> +{
-> +	int ret = 0;
-> +	struct device_node *np = dev->of_node;
-> +	size_t sz;
-> +	u32 *arr = NULL;
-> +
-> +	if (!of_get_property(np, prop_name, len)) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +	sz = *len = *len / sizeof(*arr);
-> +	if (sz <= 0 || (size > 0 && (sz > size))) {
-> +		dev_err(dev, "%s invalid size\n", prop_name);
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	arr = devm_kzalloc(dev, sz * sizeof(*arr), GFP_KERNEL);
-> +	if (!arr) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	ret = of_property_read_u32_array(np, prop_name, arr, sz);
-> +	if (ret < 0) {
-> +		dev_err(dev, "%s failed reading array %d\n", prop_name, ret);
-> +		goto out;
-> +	}
-> +	*out = arr;
-> +out:
-> +	if (ret)
-> +		*len = 0;
-> +	return ret;
-> +}
-> +
->   static const struct sdhci_ops sdhci_msm_ops = {
->   	.reset = sdhci_reset,
->   	.set_clock = sdhci_msm_set_clock,
-> diff --git a/drivers/mmc/host/sdhci-pltfm.c b/drivers/mmc/host/sdhci-pltfm.c
-> index 02bea61..354fc68 100644
-> --- a/drivers/mmc/host/sdhci-pltfm.c
-> +++ b/drivers/mmc/host/sdhci-pltfm.c
-> @@ -36,6 +36,9 @@
->   #endif
->   #include "sdhci-pltfm.h"
->   
-> +int sdhci_msm_dt_get_array(struct device *dev, const char *prop_name,
-> +				 u32 **out, int *len, u32 size);
-> +
->   unsigned int sdhci_pltfm_clk_get_max_clock(struct sdhci_host *host)
->   {
->   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -101,6 +104,14 @@ void sdhci_get_of_property(struct platform_device *pdev)
->   
->   	of_property_read_u32(np, "clock-frequency", &pltfm_host->clock);
->   
-> +	if (sdhci_msm_dt_get_array(&pdev->dev, "qcom,devfreq,freq-table",
-> +			&host->mmc->clk_scaling.pltfm_freq_table,
-> +			&host->mmc->clk_scaling.pltfm_freq_table_sz, 0))
-> +		pr_debug("no clock scaling frequencies were supplied\n");
-> +	else if (!host->mmc->clk_scaling.pltfm_freq_table ||
-> +			!host->mmc->clk_scaling.pltfm_freq_table_sz)
-> +		pr_err("bad dts clock scaling frequencies\n");
-> +
->   	if (of_find_property(np, "keep-power-in-suspend", NULL))
->   		host->mmc->pm_caps |= MMC_PM_KEEP_POWER;
->   
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 162b9af..f0aafab 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -2427,6 +2427,32 @@ static void sdhci_card_event(struct mmc_host *mmc)
->   	spin_unlock_irqrestore(&host->lock, flags);
->   }
->   
-> +static inline void sdhci_update_power_policy(struct sdhci_host *host,
-> +		enum sdhci_power_policy policy)
-> +{
-> +	host->power_policy = policy;
-> +}
-> +
-> +static int sdhci_notify_load(struct mmc_host *mmc, enum mmc_load state)
-> +{
-> +	int err = 0;
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +
-> +	switch (state) {
-> +	case MMC_LOAD_HIGH:
-> +		sdhci_update_power_policy(host, SDHCI_PERFORMANCE_MODE);
-> +		break;
-> +	case MMC_LOAD_LOW:
-> +		sdhci_update_power_policy(host, SDHCI_POWER_SAVE_MODE);
-> +		break;
-> +	default:
-> +		err = -EINVAL;
-> +		break;
-> +	}
-> +
-> +	return err;
-> +}
-> +
->   static const struct mmc_host_ops sdhci_ops = {
->   	.request	= sdhci_request,
->   	.post_req	= sdhci_post_req,
-> @@ -2441,6 +2467,7 @@ static void sdhci_card_event(struct mmc_host *mmc)
->   	.execute_tuning			= sdhci_execute_tuning,
->   	.card_event			= sdhci_card_event,
->   	.card_busy	= sdhci_card_busy,
-> +	.notify_load = sdhci_notify_load,
->   };
->   
->   /*****************************************************************************\
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 3b0c97a..740471f 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -346,6 +346,12 @@ enum sdhci_cookie {
->   	COOKIE_MAPPED,		/* mapped by sdhci_prepare_data() */
->   };
->   
-> +enum sdhci_power_policy {
-> +	SDHCI_PERFORMANCE_MODE,
-> +	SDHCI_POWER_SAVE_MODE,
-> +	SDHCI_POWER_POLICY_NUM /* Always keep this one last */
-> +};
-> +
->   struct sdhci_host {
->   	/* Data set by hardware interface driver */
->   	const char *hw_name;	/* Hardware bus name */
-> @@ -562,6 +568,8 @@ struct sdhci_host {
->   	/* Delay (ms) between tuning commands */
->   	int			tuning_delay;
->   
-> +	enum sdhci_power_policy power_policy;
-> +
->   	/* Host SDMA buffer boundary. */
->   	u32			sdma_boundary;
->   
-> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-> index de73778..c713581 100644
-> --- a/include/linux/mmc/card.h
-> +++ b/include/linux/mmc/card.h
-> @@ -245,6 +245,10 @@ struct mmc_card {
->   	struct mmc_host		*host;		/* the host this device belongs to */
->   	struct device		dev;		/* the device */
->   	u32			ocr;		/* the current OCR setting */
-> +	unsigned long		clk_scaling_lowest;	/* lowest scaleable*/
-> +							/* frequency */
-> +	unsigned long		clk_scaling_highest;	/* highest scaleable */
-> +
->   	unsigned int		rca;		/* relative card address of device */
->   	unsigned int		type;		/* card type */
->   #define MMC_TYPE_MMC		0		/* MMC card */
-> @@ -308,6 +312,7 @@ struct mmc_card {
->   	unsigned int    nr_parts;
->   
->   	unsigned int		bouncesz;	/* Bounce buffer size */
-> +	unsigned int		part_curr;
->   };
->   
->   static inline bool mmc_large_sector(struct mmc_card *card)
-> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> index 64300a4..321ab39 100644
-> --- a/include/linux/mmc/host.h
-> +++ b/include/linux/mmc/host.h
-> @@ -12,6 +12,7 @@
->   
->   #include <linux/sched.h>
->   #include <linux/device.h>
-> +#include <linux/devfreq.h>
->   #include <linux/fault-inject.h>
->   
->   #include <linux/mmc/core.h>
-> @@ -82,6 +83,12 @@ struct mmc_ios {
->   
->   struct mmc_host;
->   
-> +/* states to represent load on the host */
-> +enum mmc_load {
-> +	MMC_LOAD_HIGH,
-> +	MMC_LOAD_LOW,
-> +};
-> +
->   struct mmc_host_ops {
->   	/*
->   	 * It is optional for the host to implement pre_req and post_req in
-> @@ -161,6 +168,7 @@ struct mmc_host_ops {
->   	 */
->   	int	(*multi_io_quirk)(struct mmc_card *card,
->   				  unsigned int direction, int blk_size);
-> +	int	(*notify_load)(struct mmc_host *, enum mmc_load);
->   };
->   
->   struct mmc_cqe_ops {
-> @@ -260,9 +268,60 @@ struct mmc_ctx {
->   	struct task_struct *task;
->   };
->   
-> +/**
-> + * struct mmc_devfeq_clk_scaling - main context for MMC clock scaling logic
-> + *
-> + * @lock: spinlock to protect statistics
-> + * @devfreq: struct that represent mmc-host as a client for devfreq
-> + * @devfreq_profile: MMC device profile, mostly polling interval and callbacks
-> + * @ondemand_gov_data: struct supplied to ondemmand governor (thresholds)
-> + * @state: load state, can be HIGH or LOW. used to notify mmc_host_ops callback
-> + * @start_busy: timestamped armed once a data request is started
-> + * @measure_interval_start: timestamped armed once a measure interval started
-> + * @devfreq_abort: flag to sync between different contexts relevant to devfreq
-> + * @skip_clk_scale_freq_update: flag that enable/disable frequency change
-> + * @freq_table_sz: table size of frequencies supplied to devfreq
-> + * @freq_table: frequencies table supplied to devfreq
-> + * @curr_freq: current frequency
-> + * @polling_delay_ms: polling interval for status collection used by devfreq
-> + * @upthreshold: up-threshold supplied to ondemand governor
-> + * @downthreshold: down-threshold supplied to ondemand governor
-> + * @need_freq_change: flag indicating if a frequency change is required
-> + * @clk_scaling_in_progress: flag indicating if there's ongoing frequency change
-> + * @is_busy_started: flag indicating if a request is handled by the HW
-> + * @enable: flag indicating if the clock scaling logic is enabled for this host
-> + */
-> +struct mmc_devfeq_clk_scaling {
-> +	spinlock_t	lock;
-> +	struct		devfreq *devfreq;
-> +	struct		devfreq_dev_profile devfreq_profile;
-> +	struct		devfreq_simple_ondemand_data ondemand_gov_data;
-> +	enum mmc_load	state;
-> +	ktime_t		start_busy;
-> +	ktime_t		measure_interval_start;
-> +	atomic_t	devfreq_abort;
-> +	bool		skip_clk_scale_freq_update;
-> +	int		freq_table_sz;
-> +	int		pltfm_freq_table_sz;
-> +	u32		*freq_table;
-> +	u32		*pltfm_freq_table;
-> +	unsigned long	total_busy_time_us;
-> +	unsigned long	target_freq;
-> +	unsigned long	curr_freq;
-> +	unsigned long	polling_delay_ms;
-> +	unsigned int	upthreshold;
-> +	unsigned int	downthreshold;
-> +	bool		need_freq_change;
-> +	bool		clk_scaling_in_progress;
-> +	bool		is_busy_started;
-> +	bool		enable;
-> +};
-> +
-> +
->   struct mmc_host {
->   	struct device		*parent;
->   	struct device		class_dev;
-> +	struct mmc_devfeq_clk_scaling	clk_scaling;
->   	int			index;
->   	const struct mmc_host_ops *ops;
->   	struct mmc_pwrseq	*pwrseq;
-> @@ -360,6 +419,7 @@ struct mmc_host {
->   #define MMC_CAP2_CQE		(1 << 23)	/* Has eMMC command queue engine */
->   #define MMC_CAP2_CQE_DCMD	(1 << 24)	/* CQE can issue a direct command */
->   #define MMC_CAP2_AVOID_3_3V	(1 << 25)	/* Host must negotiate down from 3.3V */
-> +#define MMC_CAP2_CLK_SCALE      (1 << 26)       /* Allow dynamic clk scaling */
->   
->   	int			fixed_drv_type;	/* fixed driver type for non-removable media */
->   
-> @@ -523,6 +583,16 @@ static inline int mmc_regulator_set_vqmmc(struct mmc_host *mmc,
->   u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
->   int mmc_regulator_get_supply(struct mmc_host *mmc);
->   
-> +static inline void mmc_host_clear_sdr104(struct mmc_host *host)
-> +{
-> +	host->caps &= ~MMC_CAP_UHS_SDR104;
-> +}
-> +
-> +static inline void mmc_host_set_sdr104(struct mmc_host *host)
-> +{
-> +	host->caps |= MMC_CAP_UHS_SDR104;
-> +}
-> +
->   static inline int mmc_card_is_removable(struct mmc_host *host)
->   {
->   	return !(host->caps & MMC_CAP_NONREMOVABLE);
-> 
+Happy fixing! ;-)
 
-Thanks,
-Vijay
+Thanks to the linux-next team for providing the build service.
+
+[1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/d72e90f33aa4709ebecc5005562f52335e106a60/ (233 out of 244 configs)
+[2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/29dcea88779c856c7dc92040a0c01233263101d4/ (all 244 configs)
+[3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/9d3cce1e8b8561fed5f383d22a4d6949db4eadbe/ (235 out of 244 configs)
+
+
+*** ERRORS ***
+
+2 error regressions:
+  + /kisskb/src/include/linux/highmem.h: error: passing argument 1 of 'sparc_flush_page_to_ram' from incompatible pointer type [-Werror=incompatible-pointer-types]:  => 209:20, 233:36, 137:31
+  + error: "__sync_icache_dcache" [drivers/xen/xen-privcmd.ko] undefined!:  => N/A
+
+1 error improvements:
+  - /kisskb/src/include/linux/thread_info.h: error: call to '__bad_copy_from' declared with attribute error: copy source size is too small: 134:19 => 
+
+
+*** WARNINGS ***
+
+[Deleted 26903 lines about "warning: ... [-Wpointer-sign]" on parisc-allmodconfig]
+[Deleted 19308 lines about "warning: -ffunction-sections disabled; it makes profiling impossible [enabled by default]" on parisc-allmodconfig]
+
+222 warning regressions:
+  + /kisskb/src/arch/parisc/include/asm/cmpxchg.h: warning: value computed is not used [-Wunused-value]:  => 48:3
+  + /kisskb/src/arch/parisc/kernel/pci-dma.c: warning: 'proc_pcxl_dma_show' defined but not used [-Wunused-function]:  => 335:12
+  + /kisskb/src/arch/s390/kernel/sysinfo.c: warning: 'sysinfo_show' defined but not used [-Wunused-function]:  => 275:12
+  + /kisskb/src/arch/xtensa/kernel/pci.c: warning: 'pci_ctrl_tail' defined but not used [-Wunused-variable]:  => 45:32
+  + /kisskb/src/crypto/ablkcipher.c: warning: 'strncpy' specified bound 64 equals destination size [-Wstringop-truncation]:  => 448:2, 374:2
+  + /kisskb/src/crypto/async_tx/raid6test.c: warning: 'raid6_dual_recov.constprop.1' uses dynamic stack allocation [enabled by default]:  => 128:1
+  + /kisskb/src/crypto/blkcipher.c: warning: 'strncpy' specified bound 64 equals destination size [-Wstringop-truncation]:  => 513:2
+  + /kisskb/src/drivers/auxdisplay/panel.c: warning: 'strncpy' output may be truncated copying 8 bytes from a string of length 8 [-Wstringop-truncation]:  => 1506:2, 1507:2, 1505:2
+  + /kisskb/src/drivers/devfreq/devfreq.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 593:2
+  + /kisskb/src/drivers/firmware/google/coreboot_table.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]:  => 102:9
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: warning: 'strncpy' output may be truncated copying 19 bytes from a string of length 19 [-Wstringop-truncation]:  => 2291:2
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 3381:2
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/../display/dc/calcs/dce_calcs.c: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 2021:1
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/../display/dc/calcs/dce_calcs.c: warning: the frame size of 1044 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 2731:1
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c: warning: 'amdgpu_set_pp_dpm_mclk' uses dynamic stack allocation [enabled by default]:  => 681:1
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c: warning: 'amdgpu_set_pp_dpm_pcie' uses dynamic stack allocation [enabled by default]:  => 732:1
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c: warning: 'amdgpu_set_pp_dpm_sclk' uses dynamic stack allocation [enabled by default]:  => 631:1
+  + /kisskb/src/drivers/gpu/drm/bridge/cdns-dsi.c: warning: 'cdns_dsi_resume' defined but not used [-Wunused-function]:  => 1340:12
+  + /kisskb/src/drivers/gpu/drm/bridge/cdns-dsi.c: warning: 'cdns_dsi_suspend' defined but not used [-Wunused-function]:  => 1353:12
+  + /kisskb/src/drivers/gpu/drm/i2c/tda9950.c: warning: 'tda9950_write_range' uses dynamic stack allocation [enabled by default]:  => 96:1
+  + /kisskb/src/drivers/gpu/drm/nouveau/nvif/client.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 72:2
+  + /kisskb/src/drivers/gpu/drm/nouveau/nvkm/engine/device/ctrl.c: warning: overflow in conversion from 'int' to '__s8' {aka 'signed char'} changes value from '-251' to '5' [-Woverflow]:  => 60:21
+  + /kisskb/src/drivers/gpu/drm/nouveau/nvkm/engine/device/user.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 192:2
+  + /kisskb/src/drivers/gpu/drm/panel/panel-arm-versatile.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 267:2
+  + /kisskb/src/drivers/infiniband/hw/cxgb4/device.c: warning: 'prev_time' may be used uninitialized in this function [-Wuninitialized]:  => 152:14
+  + /kisskb/src/drivers/infiniband/hw/ocrdma/ocrdma_hw.c: warning: 'strncpy' output may be truncated copying 31 bytes from a string of length 31 [-Wstringop-truncation]:  => 1368:3
+  + /kisskb/src/drivers/isdn/capi/capidrv.c: warning: 'strncpy' output may be truncated copying 19 bytes from a string of length 19 [-Wstringop-truncation]:  => 2302:2
+  + /kisskb/src/drivers/isdn/capi/capidrv.c: warning: 'strncpy' output may be truncated copying 32 bytes from a string of length 49 [-Wstringop-truncation]:  => 2016:3, 1827:3
+  + /kisskb/src/drivers/isdn/i4l/isdn_net.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 2997:2
+  + /kisskb/src/drivers/isdn/i4l/isdn_tty.c: warning: 'strncpy' output may be truncated copying 5 bytes from a string of length 49 [-Wstringop-truncation]:  => 2054:4
+  + /kisskb/src/drivers/isdn/i4l/isdn_tty.c: warning: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Wstringop-truncation]:  => 880:3, 790:3
+  + /kisskb/src/drivers/md/dm-crypt.c: warning: 'crypt_iv_lmk_one.isra.27' uses dynamic stack allocation [enabled by default]:  => 648:1
+  + /kisskb/src/drivers/md/dm-crypt.c: warning: 'crypt_iv_tcw_whitening.isra.26' uses dynamic stack allocation [enabled by default]:  => 795:1
+  + /kisskb/src/drivers/md/dm-log-userspace-base.c: warning: 'strncpy' specified bound 129 equals destination size [-Wstringop-truncation]:  => 226:2
+  + /kisskb/src/drivers/media/platform/fsl-viu.c: warning: "in_be32" redefined [enabled by default]:  => 42:0
+  + /kisskb/src/drivers/media/platform/fsl-viu.c: warning: "out_be32" redefined [enabled by default]:  => 41:0
+  + /kisskb/src/drivers/media/platform/omap3isp/isp.c: warning: 'isp_resume_modules' defined but not used [-Wunused-function]:  => 1008:13
+  + /kisskb/src/drivers/media/platform/omap3isp/isp.c: warning: 'isp_suspend_modules' defined but not used [-Wunused-function]:  => 974:12
+  + /kisskb/src/drivers/misc/c2port/core.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 929:2
+  + /kisskb/src/drivers/net/ethernet/8390/lib8390.c: warning: '____alloc_ei_netdev' defined but not used [-Wunused-function]:  => 988:27
+  + /kisskb/src/drivers/net/ethernet/8390/lib8390.c: warning: '__ei_close' defined but not used [-Wunused-function]:  => 230:12
+  + /kisskb/src/drivers/net/ethernet/8390/lib8390.c: warning: '__ei_get_stats' defined but not used [-Wunused-function]:  => 850:33
+  + /kisskb/src/drivers/net/ethernet/8390/lib8390.c: warning: '__ei_open' defined but not used [-Wunused-function]:  => 201:12
+  + /kisskb/src/drivers/net/ethernet/8390/lib8390.c: warning: '__ei_poll' defined but not used [-Wunused-function]:  => 509:13
+  + /kisskb/src/drivers/net/ethernet/8390/lib8390.c: warning: '__ei_set_multicast_list' defined but not used [-Wunused-function]:  => 950:13
+  + /kisskb/src/drivers/net/ethernet/8390/lib8390.c: warning: '__ei_start_xmit' defined but not used [-Wunused-function]:  => 300:20
+  + /kisskb/src/drivers/net/ethernet/8390/lib8390.c: warning: '__ei_tx_timeout' defined but not used [-Wunused-function]:  => 254:13
+  + /kisskb/src/drivers/net/ethernet/intel/i40e/i40e_ptp.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 697:2
+  + /kisskb/src/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c: warning: overflow in implicit constant conversion [-Woverflow]:  => 543:41
+  + /kisskb/src/drivers/net/ethernet/marvell/sky2.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 4928:3
+  + /kisskb/src/drivers/net/hamradio/hdlcdrv.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 614:4
+  + /kisskb/src/drivers/net/phy/dp83640_reg.h: warning: "PAGE0" redefined:  => 8
+  + /kisskb/src/drivers/net/wireless/broadcom/b43/leds.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 134:2
+  + /kisskb/src/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c: warning: 'strncpy' output truncated before terminating nul copying 3 bytes from a string of the same length [-Wstringop-truncation]:  => 4167:2
+  + /kisskb/src/drivers/net/wireless/intel/iwlwifi/fw/dbg.c: warning: 'strncpy' specified bound 64 equals destination size [-Wstringop-truncation]:  => 753:2
+  + /kisskb/src/drivers/net/wireless/intersil/hostap/hostap_ioctl.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 3611:3
+  + /kisskb/src/drivers/net/wireless/intersil/prism54/isl_ioctl.c: warning: 'strncpy' output may be truncated copying 16 bytes from a string of length 28 [-Wstringop-truncation]:  => 284:2
+  + /kisskb/src/drivers/net/wireless/ray_cs.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 638:3
+  + /kisskb/src/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c: warning: 'strncpy' specified bound 22 equals destination size [-Wstringop-truncation]:  => 149:2
+  + /kisskb/src/drivers/nvme/host/core.c: warning: 'strncpy' output may be truncated copying 223 bytes from a string of length 255 [-Wstringop-truncation]:  => 2061:3
+  + /kisskb/src/drivers/nvme/target/discovery.c: warning: 'strncpy' output truncated copying 8 bytes from a string of length 11 [-Wstringop-truncation]:  => 160:2
+  + /kisskb/src/drivers/nvmem/rave-sp-eeprom.c: warning: 'rave_sp_eeprom_io' uses dynamic stack allocation [enabled by default]:  => 133:1
+  + /kisskb/src/drivers/power/supply/charger-manager.c: warning: 'strncpy' output may be truncated copying 32 bytes from a string of length 32 [-Wstringop-truncation]:  => 488:3
+  + /kisskb/src/drivers/rpmsg/qcom_glink_native.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 1454:3, 1404:3
+  + /kisskb/src/drivers/scsi/3w-sas.c: warning: 'strncpy' output truncated before terminating nul copying 11 bytes from a string of the same length [-Wstringop-truncation]:  => 1328:3
+  + /kisskb/src/drivers/scsi/arcmsr/arcmsr_hba.c: warning: 'strncpy' output truncated before terminating nul copying 16 bytes from a string of the same length [-Wstringop-truncation]:  => 2971:3
+  + /kisskb/src/drivers/scsi/arcmsr/arcmsr_hba.c: warning: 'strncpy' output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]:  => 2973:3
+  + /kisskb/src/drivers/scsi/arcmsr/arcmsr_hba.c: warning: 'strncpy' output truncated before terminating nul copying 8 bytes from a string of the same length [-Wstringop-truncation]:  => 2969:3
+  + /kisskb/src/drivers/scsi/esas2r/esas2r_ioctl.c: warning: 'dma_addr' may be used uninitialized in this function [-Wmaybe-uninitialized]:  => 1910:19
+  + /kisskb/src/drivers/scsi/ips.c: warning: 'strncpy' output may be truncated copying 4 bytes from a string of length 7 [-Wstringop-truncation]:  => 5627:2
+  + /kisskb/src/drivers/scsi/ips.c: warning: 'strncpy' output truncated before terminating nul copying 16 bytes from a string of the same length [-Wstringop-truncation]:  => 4040:2, 3520:6
+  + /kisskb/src/drivers/scsi/ips.c: warning: 'strncpy' output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]:  => 4041:2, 5626:2, 5625:2, 3522:6
+  + /kisskb/src/drivers/scsi/ips.c: warning: 'strncpy' output truncated before terminating nul copying 8 bytes from a string of the same length [-Wstringop-truncation]:  => 2243:2, 3518:6, 4039:2
+  + /kisskb/src/drivers/scsi/ips.c: warning: 'strncpy' specified bound 4 equals destination size [-Wstringop-truncation]:  => 5628:2
+  + /kisskb/src/drivers/scsi/pm8001/pm8001_sas.c: warning: 'strncpy' specified bound 8 equals destination size [-Wstringop-truncation]:  => 886:2
+  + /kisskb/src/drivers/scsi/qla2xxx/qla_mr.c: warning: 'strncpy' output may be truncated copying 64 bytes from a string of length 64 [-Wstringop-truncation]:  => 1890:4, 1888:4, 1882:4, 1892:4, 1886:4
+  + /kisskb/src/drivers/staging/fbtft/fbtft-core.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 774:2
+  + /kisskb/src/drivers/staging/ks7010/ks_wlan_net.c: warning: 'strncpy' output may be truncated copying 16 bytes from a string of length 32 [-Wstringop-truncation]:  => 385:2
+  + /kisskb/src/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 1923:2
+  + /kisskb/src/drivers/staging/rtl8192e/rtllib_softmac.c: warning: 'strncpy' output may be truncated copying 32 bytes from a string of length 32 [-Wstringop-truncation]:  => 1687:5, 1694:5
+  + /kisskb/src/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c: warning: 'strncpy' output may be truncated copying 32 bytes from a string of length 32 [-Wstringop-truncation]:  => 1468:5, 1463:6
+  + /kisskb/src/drivers/staging/rtl8712/rtl871x_ioctl_linux.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 1792:2
+  + /kisskb/src/drivers/staging/rts5208/rtsx_scsi.c: warning: 'strncpy' output truncated copying 28 bytes from a string of length 29 [-Wstringop-truncation]:  => 539:3
+  + /kisskb/src/drivers/staging/rts5208/rtsx_scsi.c: warning: 'strncpy' output truncated copying between 1 and 27 bytes from a string of length 29 [-Wstringop-truncation]:  => 539:3
+  + /kisskb/src/drivers/staging/speakup/kobjects.c: warning: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Wstringop-truncation]:  => 522:2, 391:2
+  + /kisskb/src/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c: warning: 'strncpy' specified bound 128 equals destination size [-Wstringop-truncation]:  => 916:2
+  + /kisskb/src/drivers/target/iscsi/cxgbit/cxgbit_target.c: warning: 'cxgbit_tx_datain_iso.isra.32' uses dynamic stack allocation [enabled by default]:  => 501:1
+  + /kisskb/src/drivers/target/iscsi/iscsi_target_tpg.c: warning: 'strncat' specified bound 1 equals source length [-Wstringop-overflow=]:  => 639:3
+  + /kisskb/src/drivers/target/iscsi/iscsi_target_tpg.c: warning: 'strncat' specified bound 4 equals source length [-Wstringop-overflow=]:  => 640:3
+  + /kisskb/src/drivers/video/fbdev/uvesafb.c: warning: 'strncpy' output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]:  => 425:2
+  + /kisskb/src/drivers/video/fbdev/uvesafb.c: warning: 'strncpy' specified bound 4096 equals destination size [-Wstringop-truncation]:  => 1873:2
+  + /kisskb/src/drivers/video/hdmi.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 175:2
+  + /kisskb/src/drivers/video/hdmi.c: warning: 'strncpy' specified bound 8 equals destination size [-Wstringop-truncation]:  => 174:2
+  + /kisskb/src/fs/ceph/mds_client.c: warning: 'strncpy' output may be truncated copying 64 bytes from a string of length 64 [-Wstringop-truncation]:  => 3647:2
+  + /kisskb/src/fs/cifs/cifsencrypt.c: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]:  => 306:3
+  + /kisskb/src/fs/configfs/symlink.c: warning: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Wstringop-truncation]:  => 67:3
+  + /kisskb/src/fs/ext4/super.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 330:3, 326:2
+  + /kisskb/src/fs/f2fs/namei.c: warning: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Wstringop-truncation]:  => 257:3, 249:3
+  + /kisskb/src/fs/hfsplus/xattr.c: warning: 'strncpy' output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]:  => 416:3
+  + /kisskb/src/fs/kernfs/symlink.c: warning: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Wstringop-truncation]:  => 91:3
+  + /kisskb/src/fs/proc/vmcore.c: warning: 'vmcoredd_mmap_dumps' defined but not used [-Wunused-function]:  => 228:12
+  + /kisskb/src/fs/xfs/xfs_xattr.c: warning: 'strncpy' output may be truncated copying between 5 and 9 bytes from a string of length 9 [-Wstringop-truncation]:  => 142:2
+  + /kisskb/src/include/linux/overflow.h: warning: comparison of distinct pointer types lacks a cast:  => 54:15, 53:15
+  + /kisskb/src/include/net/sock.h: warning: 'sk' may be used uninitialized in this function [-Wuninitialized]:  => 1863:19
+  + /kisskb/src/include/scsi/fc_encode.h: warning: 'strncpy' output may be truncated copying 64 bytes from a string of length 79 [-Wstringop-truncation]:  => 287:3, 275:3
+  + /kisskb/src/include/trace/events/wbt.h: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 141:3, 106:3, 70:3, 36:3
+  + /kisskb/src/include/trace/events/writeback.h: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 375:3, 223:3, 299:3, 179:3, 69:3, 586:3, 660:3, 324:3, 99:3, 277:3
+  + /kisskb/src/kernel/dma/direct.c: warning: format '%zu' expects argument of type 'size_t', but argument 5 has type 'unsigned int' [-Wformat=]:  => 46:26
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 500>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U a00>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U aa0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U dc0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U11e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1460>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U15a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1820>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2a00>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3140>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U31e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U33c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3aa0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3b40>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3dc0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4140>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U41e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5320>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5500>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U56e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5960>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6140>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U68c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6960>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6b40>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6be0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U76e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7a00>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U83c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32, 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U86e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8960>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8aa0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32, 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8d20>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9460>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U95a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U98c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9a00>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9aa0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9d20>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua000>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua1e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua6e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua820>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub140>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub280>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub780>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud280>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud460>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uda00>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Udb40>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Udc80>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Udd20>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32, 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue6e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf0a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf1e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf280>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf640>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf6e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ufaa0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rseq.c: warning: 'rseq_ip_fixup' uses dynamic stack allocation [enabled by default]:  => 249:1
+  + /kisskb/src/kernel/rseq.c: warning: 'rseq_syscall' uses dynamic stack allocation [enabled by default]:  => 301:1
+  + /kisskb/src/lib/kobject.c: warning: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Wstringop-truncation]:  => 128:3
+  + /kisskb/src/lib/test_hexdump.c: warning: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Wstringop-truncation]:  => 84:3
+  + /kisskb/src/lib/test_hexdump.c: warning: 'strncpy' output truncated copying between 0 and 32 bytes from a string of length 32 [-Wstringop-truncation]:  => 98:3
+  + /kisskb/src/lib/xxhash.c: warning: the frame size of 1624 bytes is larger than 1280 bytes [-Wframe-larger-than=]:  => 236:1
+  + /kisskb/src/net/bluetooth/hidp/core.c: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]:  => 778:2
+  + /kisskb/src/net/core/rtnetlink.c: warning: the frame size of 1232 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 3099:1
+  + /kisskb/src/net/core/rtnetlink.c: warning: the frame size of 1280 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 3099:1
+  + /kisskb/src/net/ncsi/ncsi-manage.c: warning: 'vid' may be used uninitialized in this function [-Wuninitialized]:  => 625:19
+  + /kisskb/src/net/netfilter/ipset/ip_set_core.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 1170:2
+  + /kisskb/src/net/tipc/bearer.c: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]:  => 141:2
+  + /kisskb/src/net/tipc/topsrv.c: warning: 'strncpy' specified bound depends on the length of the source argument [-Wstringop-overflow=]:  => 660:2
+  + /kisskb/src/security/selinux/hooks.c: warning: 'strncpy' specified bound 64 equals destination size [-Wstringop-truncation]:  => 6718:2
+  + <stdin>: warning: #warning syscall io_pgetevents not implemented [-Wcpp]:  => 1332:2
+  + <stdin>: warning: #warning syscall rseq not implemented [-Wcpp]:  => 1335:2
+  + warning: "clear_page" [drivers/gpu/drm/ttm/ttm.ko] has no CRC!:  => N/A
+  + warning: "clear_page" [drivers/md/dm-integrity.ko] has no CRC!:  => N/A
+  + warning: "clear_page" [drivers/md/raid456.ko] has no CRC!:  => N/A
+  + warning: "clear_page" [fs/btrfs/btrfs.ko] has no CRC!:  => N/A
+  + warning: "clear_page" [fs/exofs/exofs.ko] has no CRC!:  => N/A
+  + warning: "clear_page" [fs/exofs/libore.ko] has no CRC!:  => N/A
+  + warning: "clear_page" [fs/fuse/fuse.ko] has no CRC!:  => N/A
+  + warning: "clear_page" [fs/gfs2/gfs2.ko] has no CRC!:  => N/A
+  + warning: "clear_page" [fs/ntfs/ntfs.ko] has no CRC!:  => N/A
+  + warning: "clear_page" [fs/ocfs2/dlm/ocfs2_dlm.ko] has no CRC!:  => N/A
+  + warning: "copy_page" [drivers/block/drbd/drbd.ko] has no CRC!:  => N/A
+  + warning: "copy_page" [drivers/gpu/drm/ttm/ttm.ko] has no CRC!:  => N/A
+  + warning: "copy_page" [fs/btrfs/btrfs.ko] has no CRC!:  => N/A
+  + warning: "copy_page" [fs/cachefiles/cachefiles.ko] has no CRC!:  => N/A
+  + warning: "copy_page" [fs/fuse/fuse.ko] has no CRC!:  => N/A
+  + warning: "copy_page" [fs/nilfs2/nilfs2.ko] has no CRC!:  => N/A
+  + warning: EXPORT symbol "clear_page" [vmlinux] version generation failed, symbol will not be versioned.:  => N/A
+  + warning: EXPORT symbol "copy_page" [vmlinux] version generation failed, symbol will not be versioned.:  => N/A
+  + warning: drivers/hwmon/ibmpowernv.o(.text+0xa1c): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label():  => N/A
+  + warning: vmlinux.o (.PPC.EMB.apuinfo): unexpected non-allocatable section.:  => N/A
+  + warning: vmlinux.o(.text+0x35f80): Section mismatch in reference from the function setup_scache() to the function .init.text:loongson3_sc_init():  => N/A
+  + warning: vmlinux.o(.text+0x388c78): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x3894b4): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x390258): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x390a94): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x3aa40): Section mismatch in reference from the function mips_sc_init() to the function .init.text:mips_sc_probe_cm3():  => N/A
+  + warning: vmlinux.o(.text+0x3fec08): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x3ff444): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4b856c): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4b8868): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4c044c): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4c0748): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4e45e54): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label():  => N/A
+  + warning: vmlinux.o(.text+0x5357ec): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x535ae8): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text.unlikely+0x2a44): Section mismatch in reference from the function .remove_pmd_table() to the function .meminit.text:.split_kernel_mapping():  => N/A
+  + warning: vmlinux.o(.text.unlikely+0x2ab4): Section mismatch in reference from the function .remove_pmd_table() to the function .meminit.text:.split_kernel_mapping():  => N/A
+  + warning: vmlinux.o(.text.unlikely+0x2bbc): Section mismatch in reference from the function .remove_pud_table() to the function .meminit.text:.split_kernel_mapping():  => N/A
+  + warning: vmlinux.o(.text.unlikely+0x2cd8): Section mismatch in reference from the function .remove_pud_table() to the function .meminit.text:.split_kernel_mapping():  => N/A
+
+46421 warning improvements:
+  - /kisskb/src/arch/parisc/include/uapi/asm/swab.h: warning: 'b' may be used uninitialized in this function [-Wuninitialized]: 13:2 => 
+  - /kisskb/src/arch/parisc/include/uapi/asm/swab.h: warning: 'clearval' may be used uninitialized in this function [-Wuninitialized]: 34:2 => 
+  - /kisskb/src/arch/parisc/include/uapi/asm/swab.h: warning: 'g' may be used uninitialized in this function [-Wuninitialized]: 13:2 => 
+  - /kisskb/src/arch/parisc/include/uapi/asm/swab.h: warning: 'r' may be used uninitialized in this function [-Wuninitialized]: 13:2 => 
+  - /kisskb/src/arch/powerpc/boot/mpc8xx.c: warning: variable 'div' set but not used [-Wunused-but-set-variable]: 27:26 => 
+  - /kisskb/src/arch/s390/kernel/early.c: warning: 'memmove_early' defined but not used [-Wunused-function]: 313:20 => 
+  - /kisskb/src/arch/sh/math-emu/math.c: warning: statement with no effect [-Wunused-value]/kisskb/src/arch/sh/kernel/cpu/clock-cpg.c: In function 'arch_clk_init':: 108:1 => 
+  - /kisskb/src/arch/x86/net/bpf_jit_comp.c: warning: 'reload_skb_data' may be used uninitialized in this function [-Wuninitialized]: 913:8 => 
+  - /kisskb/src/crypto/async_tx/raid6test.c: warning: 'raid6_dual_recov.constprop.0' uses dynamic stack allocation [enabled by default]: 128:1 => 
+  - /kisskb/src/crypto/cfb.c: warning: 'crypto_cfb_decrypt_inplace' uses dynamic stack allocation [enabled by default]: 179:1 => 
+  - /kisskb/src/crypto/cfb.c: warning: 'crypto_cfb_encrypt_inplace' uses dynamic stack allocation [enabled by default]: 110:1 => 
+  - /kisskb/src/crypto/cfb.c: warning: 'crypto_cfb_final' uses dynamic stack allocation [enabled by default]: 67:1 => 
+  - /kisskb/src/crypto/cipher.c: warning: 'cipher_crypt_unaligned' uses dynamic stack allocation [enabled by default]: 76:1 => 
+  - /kisskb/src/crypto/ctr.c: warning: 'crypto_ctr_crypt_final' uses dynamic stack allocation [enabled by default]: 71:1 => 
+  - /kisskb/src/crypto/ctr.c: warning: 'crypto_ctr_crypt_inplace' uses dynamic stack allocation [enabled by default]: 124:1 => 
+  - /kisskb/src/crypto/cts.c: warning: 'cts_cbc_decrypt' uses dynamic stack allocation [enabled by default]: 221:1 => 
+  - /kisskb/src/crypto/cts.c: warning: 'cts_cbc_encrypt' uses dynamic stack allocation [enabled by default]: 129:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'apply_z' uses dynamic stack allocation [enabled by default]: 720:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'ecc_gen_privkey' uses dynamic stack allocation [enabled by default]: 984:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'ecc_make_pub_key' uses dynamic stack allocation [enabled by default]: 1020:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'ecc_point_double_jacobian' uses dynamic stack allocation [enabled by default]: 708:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'ecc_point_mult.isra.0' uses dynamic stack allocation [enabled by default]: 896:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'vli_mmod_fast' uses dynamic stack allocation [enabled by default]: 533:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'vli_mod_inv' uses dynamic stack allocation [enabled by default]: 632:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'vli_mod_mult_fast' uses dynamic stack allocation [enabled by default]: 543:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'vli_mod_square_fast' uses dynamic stack allocation [enabled by default]: 553:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'xycz_add' uses dynamic stack allocation [enabled by default]: 784:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'xycz_add_c' uses dynamic stack allocation [enabled by default]: 841:1 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'xycz_initial_double' uses dynamic stack allocation [enabled by default]: 743:1 => 
+  - /kisskb/src/crypto/pcbc.c: warning: 'crypto_pcbc_decrypt_inplace.isra.2' uses dynamic stack allocation [enabled by default]: 161:1 => 
+  - /kisskb/src/crypto/pcbc.c: warning: 'crypto_pcbc_encrypt_inplace.isra.3' uses dynamic stack allocation [enabled by default]: 89:1 => 
+  - /kisskb/src/crypto/tcrypt.c: warning: 'do_mult_acipher_op' uses dynamic stack allocation [enabled by default]: 1144:1 => 
+  - /kisskb/src/crypto/tcrypt.c: warning: 'do_mult_aead_op' uses dynamic stack allocation [enabled by default]: 184:1 => 
+  - /kisskb/src/crypto/tcrypt.c: warning: 'test_mb_ahash_cycles' uses dynamic stack allocation [enabled by default]: 782:1 => 
+  - /kisskb/src/crypto/tcrypt.c: warning: 'test_mb_ahash_jiffies' uses dynamic stack allocation [enabled by default]: 746:1 => 
+  - /kisskb/src/drivers/char/tpm/tpm2-cmd.c: warning: 'blob_handle' may be used uninitialized in this function [-Wuninitialized]: 730:24 => 
+  - /kisskb/src/drivers/crypto/inside-secure/safexcel_cipher.c: warning: 'safexcel_cipher_exit_inv' uses dynamic stack allocation [enabled by default]: 470:1 => 
+  - /kisskb/src/drivers/crypto/inside-secure/safexcel_hash.c: warning: 'safexcel_ahash_exit_inv' uses dynamic stack allocation [enabled by default]: 516:1 => 
+  - /kisskb/src/drivers/dma/dmatest.c: warning: 'dmatest_func' uses dynamic stack allocation [enabled by default]: 811:1 => 
+  - /kisskb/src/drivers/gpio/gpio-stmpe.c: warning: 'stmpe_gpio_irq' uses dynamic stack allocation [enabled by default]: 428:1 => 
+  - /kisskb/src/drivers/gpio/gpiolib.c: warning: 'gpiod_get_array_value_complex' uses dynamic stack allocation [enabled by default]: 2757:1 => 
+  - /kisskb/src/drivers/gpio/gpiolib.c: warning: 'gpiod_set_array_value_complex' uses dynamic stack allocation [enabled by default]: 2986:1 => 
+  - /kisskb/src/drivers/gpu/drm/nouveau/nvkm/engine/device/ctrl.c: warning: overflow in implicit constant conversion [-Woverflow]: 60:3 => 
+  - /kisskb/src/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c: warning: 'acr_ls_msgqueue_post_run' uses dynamic stack allocation [enabled by default]: 100:1 => 
+  - /kisskb/src/drivers/iio/temperature/mlx90632.c: warning: 'object_new_raw' may be used uninitialized in this function [-Wuninitialized]: 472:39 => 
+  - /kisskb/src/drivers/iio/temperature/mlx90632.c: warning: 'object_old_raw' may be used uninitialized in this function [-Wuninitialized]: 472:39 => 
+  - /kisskb/src/drivers/input/rmi4/rmi_f11.c: warning: 'abs_fingers' may be used uninitialized in this function [-Wuninitialized]: 631:3 => 
+  - /kisskb/src/drivers/md/dm-crypt.c: warning: 'crypt_iv_lmk_one.isra.29' uses dynamic stack allocation [enabled by default]: 648:1 => 
+  - /kisskb/src/drivers/md/dm-crypt.c: warning: 'crypt_iv_tcw_whitening.isra.28' uses dynamic stack allocation [enabled by default]: 795:1 => 
+  - /kisskb/src/drivers/mfd/arizona-core.c: warning: 'n_subdevs' may be used uninitialized in this function [-Wuninitialized]: 1387:6 => 
+  - /kisskb/src/drivers/mfd/rave-sp.c: warning: 'rave_sp_receive_frame' uses dynamic stack allocation [enabled by default]: 440:1 => 
+  - /kisskb/src/drivers/misc/tifm_7xx1.c: warning: 'tifm_7xx1_resume' uses dynamic stack allocation [enabled by default]: 298:1 => 
+  - /kisskb/src/drivers/mmc/core/pwrseq_simple.c: warning: 'mmc_pwrseq_simple_set_gpios_value.isra.9' uses dynamic stack allocation [enabled by default]: 52:1 => 
+  - /kisskb/src/drivers/mtd/inftlmount.c: warning: 'check_free_sectors.isra.0.constprop.1' uses dynamic stack allocation [enabled by default]: 359:1 => 
+  - /kisskb/src/drivers/mtd/nftlmount.c: warning: 'check_free_sectors.isra.2' uses dynamic stack allocation [enabled by default]: 297:1 => 
+  - /kisskb/src/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c: warning: value computed is not used [-Wunused-value]: 9972:4 => 
+  - /kisskb/src/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c: warning: value computed is not used [-Wunused-value]: 4446:4 => 
+  - /kisskb/src/drivers/net/ethernet/marvell/mvpp2.c: warning: overflow in implicit constant conversion [-Woverflow]: 4366:41 => 
+  - /kisskb/src/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c: warning: 'stmmac_dma_interrupt' uses dynamic stack allocation [enabled by default]: 2117:1 => 
+  - /kisskb/src/drivers/net/gtp.c: warning: 'pktinfo.dev' may be used uninitialized in this function [-Wuninitialized]: 585:3 => 
+  - /kisskb/src/drivers/net/gtp.c: warning: 'pktinfo.fl4.daddr' may be used uninitialized in this function [-Wuninitialized]: 587:22 => 
+  - /kisskb/src/drivers/net/gtp.c: warning: 'pktinfo.fl4.saddr' may be used uninitialized in this function [-Wuninitialized]: 587:22 => 
+  - /kisskb/src/drivers/net/gtp.c: warning: 'pktinfo.gtph_port' may be used uninitialized in this function [-Wuninitialized]: 587:22 => 
+  - /kisskb/src/drivers/net/gtp.c: warning: 'pktinfo.iph' may be used uninitialized in this function [-Wuninitialized]: 589:20 => 
+  - /kisskb/src/drivers/net/gtp.c: warning: 'pktinfo.sk' may be used uninitialized in this function [-Wuninitialized]: 587:22 => 
+  - /kisskb/src/drivers/net/phy/dp83640_reg.h: warning: "PAGE0" redefined [enabled by default]: 8:0 => 
+  - /kisskb/src/drivers/net/wireless/intersil/p54/eeprom.c: warning: assuming signed overflow does not occur when assuming that (X - c) <= X is always true [-Wstrict-overflow]: 461:4, 463:4, 460:4, 462:4 => 
+  - /kisskb/src/drivers/scsi/bfa/bfa_fcs_lport.c: warning: the frame size of 1712 bytes is larger than 1280 bytes [-Wframe-larger-than=]: 2160:1 => 
+  - /kisskb/src/drivers/scsi/dpt_i2o.c: warning: 'adpt_i2o_passthru' uses dynamic stack allocation [enabled by default]: 1893:1 => 
+  - /kisskb/src/drivers/scsi/osd/osd_initiator.c: warning: 'osd_req_decode_sense_full' uses dynamic stack allocation [enabled by default]: 1955:1 => 
+  - /kisskb/src/drivers/scsi/scsi_debug.c: warning: value computed is not used [-Wunused-value]: 1622:2 => 
+  - /kisskb/src/drivers/scsi/ufs/ufshcd.c: warning: 'ufs_get_device_desc' uses dynamic stack allocation [enabled by default]: 6093:1 => 
+  - /kisskb/src/drivers/scsi/ufs/ufshcd.c: warning: 'ufshcd_init_icc_levels' uses dynamic stack allocation [enabled by default]: 5986:1 => 
+  - /kisskb/src/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c: warning: 'vchiq_dump_service_use_state' uses dynamic stack allocation [enabled by default]: 3498:1 => 
+  - /kisskb/src/drivers/target/iscsi/cxgbit/cxgbit_target.c: warning: 'cxgbit_tx_datain_iso.isra.31' uses dynamic stack allocation [enabled by default]: 501:1 => 
+  - /kisskb/src/drivers/usb/host/xhci-tegra.c: warning: 'err' may be used uninitialized in this function [-Wuninitialized]: 552:6 => 
+  - /kisskb/src/fs/btrfs/raid56.c: warning: 'finish_parity_scrub' uses dynamic stack allocation [enabled by default]: 2513:1 => 
+  - /kisskb/src/fs/btrfs/raid56.c: warning: 'finish_rmw' uses dynamic stack allocation [enabled by default]: 1339:1 => 
+  - /kisskb/src/fs/btrfs/ref-verify.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]: 503:2, 592:7, 555:2, 552:6 => 555:2, 503:2
+  - /kisskb/src/fs/ocfs2/namei.c: warning: 'ocfs2_orphan_del' uses dynamic stack allocation [enabled by default]: 2400:1 => 
+  - /kisskb/src/include/linux/string.h: warning: array subscript is above array bounds [-Warray-bounds]: 266:29 => 
+  - /kisskb/src/include/media/v4l2-mediabus.h: warning: 'pix.<U b48>.ycbcr_enc' may be used uninitialized in this function [-Wuninitialized]: 132:22 => 
+  - /kisskb/src/include/media/v4l2-mediabus.h: warning: 'pix.colorspace' may be used uninitialized in this function [-Wuninitialized]: 131:23 => 
+  - /kisskb/src/include/media/v4l2-mediabus.h: warning: 'pix.field' may be used uninitialized in this function [-Wuninitialized]: 130:18 => 
+  - /kisskb/src/include/media/v4l2-mediabus.h: warning: 'pix.quantization' may be used uninitialized in this function [-Wuninitialized]: 133:25 => 
+  - /kisskb/src/include/media/v4l2-mediabus.h: warning: 'pix.xfer_func' may be used uninitialized in this function [-Wuninitialized]: 134:22 => 
+  - /kisskb/src/include/net/netlink.h: warning: assuming signed overflow does not occur when assuming that (X - c) > X is always false [-Wstrict-overflow]: 717:38 => 
+  - /kisskb/src/include/net/route.h: warning: 'pktinfo.rt' may be used uninitialized in this function [-Wuninitialized]: 343:31 => 
+  - /kisskb/src/include/uapi/linux/swab.h: warning: 'b' may be used uninitialized in this function [-Wuninitialized]: 52:9 => 
+  - /kisskb/src/include/uapi/linux/swab.h: warning: 'g' may be used uninitialized in this function [-Wuninitialized]: 52:9 => 
+  - /kisskb/src/include/uapi/linux/swab.h: warning: 'r' may be used uninitialized in this function [-Wuninitialized]: 52:9 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U  a0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 280>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 6e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 780>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 8c0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U16e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1780>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1dc0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33, 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2000>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U20a0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U21e0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2960>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2be0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2f00>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3000>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U30a0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U36e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3780>]' may be used uninitialized in this function [-Wuninitialized]: 127:33, 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3960>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3d20>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3f00>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4000>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5460>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6320>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6640>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U66e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6820>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6a00>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U70a0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7140>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7320>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U85a0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8be0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9280>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9320>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U96e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9c80>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua320>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uae60>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub000>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub0a0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub960>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ube60>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc1e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc3c0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc6e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc780>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc8c0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ucc80>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uce60>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ucf00>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud5a0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud6e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue000>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue640>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue780>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue820>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ueaa0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uedc0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uee60>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf5a0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/lib/reed_solomon/reed_solomon.c: warning: 'decode_rs16' uses dynamic stack allocation [enabled by default]: 373:1 => 
+  - /kisskb/src/lib/reed_solomon/reed_solomon.c: warning: 'decode_rs8' uses dynamic stack allocation [enabled by default]: 329:1 => 
+  - /kisskb/src/lib/xxhash.c: warning: the frame size of 1736 bytes is larger than 1280 bytes [-Wframe-larger-than=]: 236:1 => 
+  - /kisskb/src/net/core/rtnetlink.c: warning: 'rtnl_newlink' uses dynamic stack allocation [enabled by default]: 3083:1 => 
+  - /kisskb/src/net/ipv6/xfrm6_state.c: warning: '__xfrm6_sort' uses dynamic stack allocation [enabled by default]: 84:1 => 
+  - /kisskb/src/net/netfilter/nfnetlink.c: warning: 'nfnetlink_rcv_batch' uses dynamic stack allocation [enabled by default]: 452:1 => 
+  - /kisskb/src/net/netfilter/nfnetlink.c: warning: 'nfnetlink_rcv_msg' uses dynamic stack allocation [enabled by default]: 223:1 => 
+  - /kisskb/src/net/openvswitch/actions.c: warning: 'ovs_fragment' uses dynamic stack allocation [enabled by default]: 943:1 => 
+  - /kisskb/src/net/openvswitch/datapath.c: warning: the frame size of 1456 bytes is larger than 1280 bytes [-Wframe-larger-than=]: 1220:1 => 
+  - /kisskb/src/security/keys/big_key.c: warning: 'big_key_crypt' uses dynamic stack allocation [enabled by default]: 136:1 => 
+  - /kisskb/src/security/keys/dh.c: warning: 'kdf_ctr' uses dynamic stack allocation [enabled by default]: 211:1 => 
+  - /kisskb/src/sound/soc/soc-dapm.c: warning: 'private_value' may be used uninitialized in this function [-Wuninitialized]: 3984:28 => 
+  - arch/m68k/configs/multi_defconfig: warning: symbol value 'm' invalid for NF_TABLES_ARP: 214 => 
+  - arch/m68k/configs/multi_defconfig: warning: symbol value 'm' invalid for NF_TABLES_BRIDGE: 269 => 
+  - arch/m68k/configs/multi_defconfig: warning: symbol value 'm' invalid for NF_TABLES_INET: 108 => 
+  - arch/m68k/configs/multi_defconfig: warning: symbol value 'm' invalid for NF_TABLES_NETDEV: 109 => 
+  - arch/m68k/configs/sun3_defconfig: warning: symbol value 'm' invalid for NF_TABLES_ARP: 200 => 
+  - arch/m68k/configs/sun3_defconfig: warning: symbol value 'm' invalid for NF_TABLES_BRIDGE: 255 => 
+  - arch/m68k/configs/sun3_defconfig: warning: symbol value 'm' invalid for NF_TABLES_INET: 94 => 
+  - arch/m68k/configs/sun3_defconfig: warning: symbol value 'm' invalid for NF_TABLES_NETDEV: 95 => 
+  - warning: EXPORT symbol "___rw_read_enter" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "___rw_read_exit" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "___rw_read_try" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "___rw_write_enter" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "__ashldi3" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "__ashrdi3" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "__copy_1page" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "__divdi3" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "__lshrdi3" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "__muldi3" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "__ndelay" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "__udelay" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "bzero_1page" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "empty_zero_page" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: drivers/hwmon/ibmpowernv.o(.text+0xa3c): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label(): N/A => 
+  - warning: vmlinux.o(.text+0x35cc4c): Section mismatch in reference from the function devm_memremap_pages() to the function .meminit.text:arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x35d528): Section mismatch in reference from the function devm_memremap_pages_release() to the function .meminit.text:arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x35e90): Section mismatch in reference from the function setup_scache() to the function .init.text:loongson3_sc_init(): N/A => 
+  - warning: vmlinux.o(.text+0x377538): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x377d84): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x37f098): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x37f8e4): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x3a950): Section mismatch in reference from the function mips_sc_init() to the function .init.text:mips_sc_probe_cm3(): N/A => 
+  - warning: vmlinux.o(.text+0x3eab28): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x3eb374): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x49a5dc): Section mismatch in reference from the function hmm_devmem_release() to the function .meminit.text:arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x49a950): Section mismatch in reference from the function hmm_devmem_pages_create() to the function .meminit.text:arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x4a708c): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x4a73a8): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x4aefac): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x4af2c8): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x4caf898): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label(): N/A => 
+  - warning: vmlinux.o(.text+0x52196c): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x521c88): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x25e0): Section mismatch in reference from the function .remove_pmd_table() to the function .meminit.text:.split_kernel_mapping(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x2650): Section mismatch in reference from the function .remove_pmd_table() to the function .meminit.text:.split_kernel_mapping(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x2834): Section mismatch in reference from the function .remove_pud_table() to the function .meminit.text:.split_kernel_mapping(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x293c): Section mismatch in reference from the function .remove_pud_table() to the function .meminit.text:.split_kernel_mapping(): N/A => 
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
