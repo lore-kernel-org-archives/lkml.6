@@ -2,108 +2,93 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF060ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3511ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6360620856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2A3520854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:21:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfIqSY07"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6360620856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CW1AKsJU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2A3520854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388729AbeGWRWo (ORCPT
+        id S2388739AbeGWRXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:22:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388510AbeGWRWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:22:44 -0400
-Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D582920854;
-        Mon, 23 Jul 2018 16:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532362846;
-        bh=+J69iIg9oArgpzWcZZEk2Qe2P7D0diw+scQrfvsgcYc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JfIqSY07YvaKoMui6NYR85qhkDcai4Vv8vqxWUxSpze5nU4upkCSsMGLU4kXjwF9V
-         2Ca0M7FDBuTK4qXBgQY3YQ9v6x8SdVrG2R85HnFDI3hGenzn8WzDWNk6CSBJUSVsfe
-         qoQmZR6ACWx+Pg34a5rTNOq3jPt+JxZPKAZhqPfw=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Eric Biggers <ebiggers3@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] net: ethernet: fs-enet: Use generic CRC32 implementation
-Date:   Mon, 23 Jul 2018 18:20:20 +0200
-Message-Id: <20180723162020.6221-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        Mon, 23 Jul 2018 13:23:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40480 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388240AbeGWRXQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 13:23:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Cag7XV2JaOHJFbXZabgfwKD2hWnw7EsJ92fzJQ4p5cI=; b=CW1AKsJUjevhKgvPecMU9imrm
+        2OLrPhLFkQ97e1pPekqv3aHYFquOnCM8vOMZMY802VP8Z2LJM92IDOB0cPi5IcIaYRNgRoj4jjW32
+        PnQyPAewSx2qnYVWT29ZIxPZ1APpFQqYDDLEGc2XKKiOhHMhqn6jp1LVrlEoU8clqnJS37uMTWN//
+        CWGCzRyJ0wpcDp5CqfxjiItGa0Pso5TEpT+jfE5hgnqGsfF9K/xvOszgaRUK6OCGi0NrtQavgiBEr
+        XPn38LeaxDW7cnoRvlvhjxcnybejOLiQHwMO7N37tCtj7RYFJAx4ZkrBPW/OmpgWqAyFRisDWjErf
+        L5kN0vcHw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhdaF-0008Ti-Ps; Mon, 23 Jul 2018 16:21:16 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3E74D2026873D; Mon, 23 Jul 2018 18:21:14 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 18:21:14 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     tglx@linutronix.de, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        vincent.weaver@maine.edu, jolsa@redhat.com, ak@linux.intel.com
+Subject: Re: [PATCH 3/4] perf/x86/intel/ds: Handle PEBS overflow for fixed
+ counters
+Message-ID: <20180723162114.GD2512@hirez.programming.kicks-ass.net>
+References: <20180309021542.11374-1-kan.liang@linux.intel.com>
+ <20180309021542.11374-3-kan.liang@linux.intel.com>
+ <20180723145944.GB2458@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723145944.GB2458@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use generic kernel CRC32 implementation because it:
-1. Should be faster (uses lookup tables),
-2. Removes duplicated CRC generation code,
-3. Uses well-proven algorithm instead of coding it one more time.
+On Mon, Jul 23, 2018 at 04:59:44PM +0200, Peter Zijlstra wrote:
+> On Thu, Mar 08, 2018 at 06:15:41PM -0800, kan.liang@linux.intel.com wrote:
+> > diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> > index ef47a418d819..86149b87cce8 100644
+> > --- a/arch/x86/events/intel/core.c
+> > +++ b/arch/x86/events/intel/core.c
+> > @@ -2280,7 +2280,10 @@ static int intel_pmu_handle_irq(struct pt_regs *regs)
+> >  	 * counters from the GLOBAL_STATUS mask and we always process PEBS
+> >  	 * events via drain_pebs().
+> >  	 */
+> > -	status &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
+> > +	if (x86_pmu.flags & PMU_FL_PEBS_ALL)
+> > +		status &= ~(cpuc->pebs_enabled & EXTENDED_PEBS_COUNTER_MASK);
+> > +	else
+> > +		status &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
+> >  
+> >  	/*
+> >  	 * PEBS overflow sets bit 62 in the global status register
+> 
+> Doesn't this re-introduce the problem fixed in commit fd583ad1563be,
+> where pebs_enabled:32-34 are PEBS Load Latency, instead of fixed
+> counters?
 
-Suggested-by: Eric Biggers <ebiggers3@gmail.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Also, since they 'fixed' that conflict, the PEBS_ALL version could be:
 
----
+	state &= cpuc->pebs_enabled;
 
-Not tested on hardware.
----
- drivers/net/ethernet/freescale/fs_enet/mac-fec.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/fs_enet/mac-fec.c b/drivers/net/ethernet/freescale/fs_enet/mac-fec.c
-index 1fc27c97e3b2..99fe2c210d0f 100644
---- a/drivers/net/ethernet/freescale/fs_enet/mac-fec.c
-+++ b/drivers/net/ethernet/freescale/fs_enet/mac-fec.c
-@@ -18,6 +18,7 @@
- #include <linux/string.h>
- #include <linux/ptrace.h>
- #include <linux/errno.h>
-+#include <linux/crc32.h>
- #include <linux/ioport.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-@@ -176,21 +177,10 @@ static void set_multicast_start(struct net_device *dev)
- static void set_multicast_one(struct net_device *dev, const u8 *mac)
- {
- 	struct fs_enet_private *fep = netdev_priv(dev);
--	int temp, hash_index, i, j;
-+	int temp, hash_index;
- 	u32 crc, csrVal;
--	u8 byte, msb;
--
--	crc = 0xffffffff;
--	for (i = 0; i < 6; i++) {
--		byte = mac[i];
--		for (j = 0; j < 8; j++) {
--			msb = crc >> 31;
--			crc <<= 1;
--			if (msb ^ (byte & 0x1))
--				crc ^= FEC_CRC_POLY;
--			byte >>= 1;
--		}
--	}
-+
-+	crc = ether_crc(6, mac);
- 
- 	temp = (crc & 0x3f) >> 1;
- 	hash_index = ((temp & 0x01) << 4) |
--- 
-2.14.1
-
+Right?
