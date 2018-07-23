@@ -2,134 +2,264 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7E2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806CAECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588CB20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:56:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3280820852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:56:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XytrJVhv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 588CB20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="VWVGbaSw";
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="cx7eyyJk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3280820852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=akkea.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388156AbeGWO5c (ORCPT
+        id S2388202AbeGWO6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 10:57:32 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39699 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387801AbeGWO5c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 10:57:32 -0400
-Received: by mail-ed1-f66.google.com with SMTP id h4-v6so1042800edi.6;
-        Mon, 23 Jul 2018 06:56:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=xhfWSThYJMriuwkKk/i6vmAtdz9cjvGClIlqhTnxW9c=;
-        b=XytrJVhvK+oNKQa3fp7Rd6V4F33voBDE3ApH00ZbRc9zmytXF3Bjo5JE9rIlOYvz/b
-         ejKdAI/L2rdFPWFn41Lpb8t00Po2azcClfUgDLYprPuNWKZ61Ifmll0Kd8zYAgOlZ8X9
-         ZQL3GDkl154NS0/75UqhvPGmmzvVc/DxYuBGyipIjFXsRj9eH8cSFYM7Dt5J/ss5cWS9
-         itOt9epqzihDJq5HGAJtz4U0UFKIpRo4CoqI3cy7QSrWyTYjkD6qkHw0wAez9+0C8DZB
-         aHNOgRnVmlJGO2n2xXqQJZxZCiygqZrxPnVtlsiKmFpmEHC+O38RdeaF2uoIsNbuE7df
-         oRFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xhfWSThYJMriuwkKk/i6vmAtdz9cjvGClIlqhTnxW9c=;
-        b=R4WAFb4y8P/7ueEQOGXJmXOndGDzElr7/O1efURyNj2RNKG5dGduKrjjktgC6gRwJv
-         3zo66BTwXEsBOoMnRusEmBhhQtOO30oBYTkRm9tNl6xTaDGKodTuJ0gCT35fLnN3A+je
-         80Pv0E175bCO40HiEfOH0tjk0u0MgeyepxzfpYya8L3/0InnGKVSWTF0hAQQshsGr8Vy
-         TbRhdCf6c+l264yjX+xN1advaSnEjmgouxIp3jpFOhPnbVu+Xd+w+xGgZn9HPf3bJxom
-         m7hrq2StfqCmkIu+vY0R4FpXN0qz9Ex/CHYZCK61Wc87eNSP4tK2GGPllvVU6ug9jllo
-         pWLg==
-X-Gm-Message-State: AOUpUlH90NylvqWwJErQepSveSO4wej3u2+Yne4o1lUVcBSqKKw0xJn9
-        09EoKOXUn88Rim6Q4oHAu1JbXFQEXzLzTp8e+SYc0g==
-X-Google-Smtp-Source: AAOMgpeWOWGvJCYw6tiQ6HbbsvQ2AMXmikeODEv1rMqom9954BBluYnfQ8ROSA1P1xDcL1ctvkVL4v4KzB7wKz6WpRE=
-X-Received: by 2002:a50:d429:: with SMTP id t41-v6mr14276931edh.75.1532354168482;
- Mon, 23 Jul 2018 06:56:08 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a50:f68b:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 06:56:08
- -0700 (PDT)
-In-Reply-To: <20180723132956.tcsuxychhlhiwz6v@kahuna>
-References: <20180716180607.16526-1-nm@ti.com> <20180723132956.tcsuxychhlhiwz6v@kahuna>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Mon, 23 Jul 2018 19:26:08 +0530
-Message-ID: <CABb+yY1_SBTDPyUNGSr8=tpU4oObz060nJ3NrgR8JyQye23cfg@mail.gmail.com>
-Subject: Re: [PATCH V2 0/6] mailbox: ti-msgmgr: Add support for AM654 Secure Proxy
-To:     Nishanth Menon <nm@ti.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        ", linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 23 Jul 2018 10:58:06 -0400
+Received: from node.akkea.ca ([192.155.83.177]:52926 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387954AbeGWO6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 10:58:05 -0400
+X-Greylist: delayed 319 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Jul 2018 10:58:05 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id 3950454204E;
+        Mon, 23 Jul 2018 13:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1532353885; bh=AXBVMr/6IJETip3yWARfPWFQ+lWGj0s0W6zpsMP6V/s=;
+        h=From:To:Cc:Subject:Date;
+        b=VWVGbaSwGArvxoW6xWhPLqNcKA7LYlEqUQkKrjsGV/g8wvTT7SR8IbhzTft69nDPa
+         4/nXRiRJvUixGa3KXk3QArYD4usyIRw2VoIWP+dc7OrKv9U8bPlVHb/Fu20O3rSj9R
+         T80vuNepWrZueoLnVnVZxKjdvQa0BbtkHFOnafOw=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id gJvVn-w4o3uD; Mon, 23 Jul 2018 13:51:24 +0000 (UTC)
+Received: from midas.localdomain (S0106788a2041785e.cg.shawcable.net [68.144.56.170])
+        by node.akkea.ca (Postfix) with ESMTPSA id 382D154204A;
+        Mon, 23 Jul 2018 13:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1532353884; bh=AXBVMr/6IJETip3yWARfPWFQ+lWGj0s0W6zpsMP6V/s=;
+        h=From:To:Cc:Subject:Date;
+        b=cx7eyyJkUQX4MasrHG7qpxkgclrRbbFiBLr7EYRZTi9+d8twkwe1IhlHd36BE9D4y
+         XpTHrXK3iIfSYEaqok4V25+0CNH42XFLEwbUf/sd+B+PmP8L7Dpuvqb6DcfuN1caOi
+         WORUG7VebwxTbSodM8dTMklw+SH+LvGY/YUENGt8=
+From:   Angus Ainslie <angus@akkea.ca>
+To:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Angus Ainslie <angus@akkea.ca>,
+        Angus Ainslie <angus.ainslie@puri.sm>
+Subject: [PATCH] bq25890_charger.c : add the BQ25896 part
+Date:   Mon, 23 Jul 2018 07:51:17 -0600
+Message-Id: <20180723135117.2090-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 6:59 PM, Nishanth Menon <nm@ti.com> wrote:
-> On 18:06-20180716, Nishanth Menon wrote:
->> The V2 of the series updates a minor comment in binding and picks up Rob's Reviewed-by
->>
->> Since I have'nt seen additional comments, I am assuming things are fine for v4.19.
->>
->> The following series enables support for Secure Proxy in newest addition in TI's SoC
->> portfolio - AM654 SoC (posted previously as RFC).
->>
->> The series is based on v4.18-rc1 and is available here:
->> https://github.com/nmenon/linux-2.6-playground/commits/upstream/v4.18-rc1/k3-1-am6-sproxy
->>
->> There are a couple of follow on patches to be posted as well (Kconfig changes
->> for K3_ARCH and actual dts node changes).
->>
->> Changes since RFC are highlighted in each of the patches, but overall:
->> * The K3 dependency has been broken out into a seperate series independent of
->>   this.
->> * Binding has been seperated out as it's own file (even though the driver is
->>   reused).
->>
->> Consolidated all patches (including all series) are available here:
->> https://github.com/nmenon/linux-2.6-playground/commits/upstream/v4.18-rc1/k3-am6-integ
->>
->> Full Boot log  on AM654 (integrated with all patch series) is available here:
->>    https://pastebin.ubuntu.com/p/bBFmnzYtCd/
->>
->> Nishanth Menon (6):
->>   mailbox: ti-msgmgr: Get rid of unused structure members
->>   mailbox: ti-msgmgr: Allocate Rx channel resources only on request
->>   mailbox: ti-msgmgr: Change message count mask to be descriptor based
->>   mailbox: ti-msgmgr: Move the memory region name to descriptor
->>   dt-bindings: mailbox: Add support for secure proxy threads
->>   mailbox: ti-msgmgr: Add support for Secure Proxy
->>
->>  .../bindings/mailbox/ti,secure-proxy.txt           |  50 +++
->>  drivers/mailbox/ti-msgmgr.c                        | 353 +++++++++++++++++----
->>  2 files changed, 336 insertions(+), 67 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/mailbox/ti,secure-proxy.txt
->
->
-> Jassi,
->
-> I dont see this in next-20180723. You'd asked me to hold off on pings
-> https://lkml.org/lkml/2017/12/16/353 -> so, held off as much as I could
-> before wondering on the status.
->
-I didn't ask you to not ping me. I said I didn't miss your patchset. I
-still didn't.
+Add some debugging to be able to check the proper initialization
+of the BQ25896 part.
 
-Especially for purely platform specific changes, that I don't have
-knowledge about, I leave them to cook in public as long as possible,
-before pulling them in around rc7.
-You submitted V2, 7days ago only and we are at rc6 today. So chill.
+Enable the BQ25896 part.
+
+Add 2 new parameters "voltage_now" and "model_name".
+
+Signed-off-by: Angus Ainslie <angus.ainslie@puri.sm>
+---
+ drivers/power/supply/bq25890_charger.c | 68 ++++++++++++++++++++++----
+ 1 file changed, 58 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/supply/bq25890_charger.c
+index 8e2c41ded171..32cdae15ce40 100644
+--- a/drivers/power/supply/bq25890_charger.c
++++ b/drivers/power/supply/bq25890_charger.c
+@@ -32,6 +32,7 @@
+ #define BQ25890_IRQ_PIN			"bq25890_irq"
+ 
+ #define BQ25890_ID			3
++#define BQ25896_ID			0
+ 
+ enum bq25890_fields {
+ 	F_EN_HIZ, F_EN_ILIM, F_IILIM,				     /* Reg00 */
+@@ -153,8 +154,8 @@ static const struct reg_field bq25890_reg_fields[] = {
+ 	[F_CONV_RATE]		= REG_FIELD(0x02, 6, 6),
+ 	[F_BOOSTF]		= REG_FIELD(0x02, 5, 5),
+ 	[F_ICO_EN]		= REG_FIELD(0x02, 4, 4),
+-	[F_HVDCP_EN]		= REG_FIELD(0x02, 3, 3),
+-	[F_MAXC_EN]		= REG_FIELD(0x02, 2, 2),
++	[F_HVDCP_EN]		= REG_FIELD(0x02, 3, 3),  // reserved on BQ25896
++	[F_MAXC_EN]		= REG_FIELD(0x02, 2, 2),  // reserved on BQ25896
+ 	[F_FORCE_DPM]		= REG_FIELD(0x02, 1, 1),
+ 	[F_AUTO_DPDM_EN]	= REG_FIELD(0x02, 0, 0),
+ 	/* REG03 */
+@@ -163,6 +164,7 @@ static const struct reg_field bq25890_reg_fields[] = {
+ 	[F_OTG_CFG]		= REG_FIELD(0x03, 5, 5),
+ 	[F_CHG_CFG]		= REG_FIELD(0x03, 4, 4),
+ 	[F_SYSVMIN]		= REG_FIELD(0x03, 1, 3),
++	/* MIN_VBAT_SEL on BQ25896 */
+ 	/* REG04 */
+ 	[F_PUMPX_EN]		= REG_FIELD(0x04, 7, 7),
+ 	[F_ICHG]		= REG_FIELD(0x04, 0, 6),
+@@ -181,7 +183,7 @@ static const struct reg_field bq25890_reg_fields[] = {
+ 	[F_CHG_TMR]		= REG_FIELD(0x07, 1, 2),
+ 	[F_JEITA_ISET]		= REG_FIELD(0x07, 0, 0),
+ 	/* REG08 */
+-	[F_BATCMP]		= REG_FIELD(0x08, 6, 7),
++	[F_BATCMP]		= REG_FIELD(0x08, 6, 7), // 5-7 on BQ25896
+ 	[F_VCLAMP]		= REG_FIELD(0x08, 2, 4),
+ 	[F_TREG]		= REG_FIELD(0x08, 0, 1),
+ 	/* REG09 */
+@@ -195,12 +197,13 @@ static const struct reg_field bq25890_reg_fields[] = {
+ 	[F_PUMPX_DN]		= REG_FIELD(0x09, 0, 0),
+ 	/* REG0A */
+ 	[F_BOOSTV]		= REG_FIELD(0x0A, 4, 7),
++	/* PFM_OTG_DIS 3 on BQ25896 */
+ 	[F_BOOSTI]		= REG_FIELD(0x0A, 0, 2),
+ 	/* REG0B */
+ 	[F_VBUS_STAT]		= REG_FIELD(0x0B, 5, 7),
+ 	[F_CHG_STAT]		= REG_FIELD(0x0B, 3, 4),
+ 	[F_PG_STAT]		= REG_FIELD(0x0B, 2, 2),
+-	[F_SDP_STAT]		= REG_FIELD(0x0B, 1, 1),
++	[F_SDP_STAT]		= REG_FIELD(0x0B, 1, 1), // reserved on BQ25896
+ 	[F_VSYS_STAT]		= REG_FIELD(0x0B, 0, 0),
+ 	/* REG0C */
+ 	[F_WD_FAULT]		= REG_FIELD(0x0C, 7, 7),
+@@ -401,6 +404,18 @@ static int bq25890_power_supply_get_property(struct power_supply *psy,
+ 		val->strval = BQ25890_MANUFACTURER;
+ 		break;
+ 
++	case POWER_SUPPLY_PROP_MODEL_NAME:
++		bq->chip_id = bq25890_field_read(bq, F_PN);
++
++		if (bq->chip_id == BQ25890_ID)
++			val->strval = "BQ25890";
++		else if (bq->chip_id == BQ25896_ID)
++			val->strval = "BQ25896";
++		else
++			val->strval = "UNKNOWN";
++
++		break;
++
+ 	case POWER_SUPPLY_PROP_ONLINE:
+ 		val->intval = state.online;
+ 		break;
+@@ -453,6 +468,20 @@ static int bq25890_power_supply_get_property(struct power_supply *psy,
+ 		val->intval = bq25890_find_val(bq->init_data.iterm, TBL_ITERM);
+ 		break;
+ 
++	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
++		if (!state.online) {
++			val->intval = 0;
++			break;
++		}
++
++		ret = bq25890_field_read(bq, F_SYSV); /* read measured value */
++		if (ret < 0)
++			return ret;
++
++		/* converted_val = 2.304V + ADC_val * 20mV (table 10.3.15) */
++		val->intval = 2304000 + ret * 20000;
++		break;
++
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -608,30 +637,43 @@ static int bq25890_hw_init(struct bq25890_device *bq)
+ 	};
+ 
+ 	ret = bq25890_chip_reset(bq);
+-	if (ret < 0)
++	if (ret < 0) {
++		dev_dbg(bq->dev, "BQ259x reset failed %d\n", ret);
+ 		return ret;
++	}
+ 
+ 	/* disable watchdog */
+ 	ret = bq25890_field_write(bq, F_WD, 0);
+-	if (ret < 0)
++	if (ret < 0) {
++		dev_dbg(bq->dev, "disabling watchdog failed %d\n", ret );
+ 		return ret;
++	}
+ 
+ 	/* initialize currents/voltages and other parameters */
+ 	for (i = 0; i < ARRAY_SIZE(init_data); i++) {
+ 		ret = bq25890_field_write(bq, init_data[i].id,
+ 					  init_data[i].value);
+-		if (ret < 0)
++		if (ret < 0) {
++			dev_dbg(bq->dev, "writing init data failed %d\n",
++				ret);
+ 			return ret;
++		}
+ 	}
+ 
+ 	/* Configure ADC for continuous conversions. This does not enable it. */
+ 	ret = bq25890_field_write(bq, F_CONV_RATE, 1);
+-	if (ret < 0)
++	if (ret < 0) {
++		dev_dbg(bq->dev, "Config ADC failed %d\n",
++			ret);
+ 		return ret;
++	}
+ 
+ 	ret = bq25890_get_chip_state(bq, &state);
+-	if (ret < 0)
++	if (ret < 0) {
++		dev_dbg(bq->dev, "BQ2589x get state failed %d\n",
++			ret);
+ 		return ret;
++	}
+ 
+ 	mutex_lock(&bq->lock);
+ 	bq->state = state;
+@@ -644,12 +686,14 @@ static enum power_supply_property bq25890_power_supply_props[] = {
+ 	POWER_SUPPLY_PROP_MANUFACTURER,
+ 	POWER_SUPPLY_PROP_STATUS,
+ 	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_MODEL_NAME,
+ 	POWER_SUPPLY_PROP_HEALTH,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX,
+ 	POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
++	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+ };
+ 
+ static char *bq25890_charger_supplied_to[] = {
+@@ -767,6 +811,9 @@ static int bq25890_fw_read_u32_props(struct bq25890_device *bq)
+ 			if (props[i].optional)
+ 				continue;
+ 
++			printk( KERN_ERR "unable to read property %d %s\n", ret
++				, props[i].name );
++
+ 			return ret;
+ 		}
+ 
+@@ -840,7 +887,7 @@ static int bq25890_probe(struct i2c_client *client,
+ 		return bq->chip_id;
+ 	}
+ 
+-	if (bq->chip_id != BQ25890_ID) {
++	if ((bq->chip_id != BQ25890_ID) && (bq->chip_id != BQ25896_ID)) {
+ 		dev_err(dev, "Chip with ID=%d, not supported!\n", bq->chip_id);
+ 		return -ENODEV;
+ 	}
+@@ -966,6 +1013,7 @@ MODULE_DEVICE_TABLE(i2c, bq25890_i2c_ids);
+ 
+ static const struct of_device_id bq25890_of_match[] = {
+ 	{ .compatible = "ti,bq25890", },
++	{ .compatible = "ti,bq25896", },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, bq25890_of_match);
+-- 
+2.17.1
+
