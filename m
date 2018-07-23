@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E03ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488D6ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D38820854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D38820854
+	by mail.kernel.org (Postfix) with ESMTP id 008BA20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 008BA20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388752AbeGWN26 (ORCPT
+        id S2388767AbeGWN3B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:28:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45546 "EHLO
+        Mon, 23 Jul 2018 09:29:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45558 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387909AbeGWN25 (ORCPT
+        with ESMTP id S2388326AbeGWN3A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:28:57 -0400
+        Mon, 23 Jul 2018 09:29:00 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3210BBDB;
-        Mon, 23 Jul 2018 12:27:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8AE13BE1;
+        Mon, 23 Jul 2018 12:28:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 58/63] ipv6: make DAD fail with enhanced DAD when nonce length differs
-Date:   Mon, 23 Jul 2018 14:25:04 +0200
-Message-Id: <20180723122448.548655519@linuxfoundation.org>
+        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        Ashwin Chaugule <ashwinch@google.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 23/63] mm/huge_memory.c: fix data loss when splitting a file pmd
+Date:   Mon, 23 Jul 2018 14:24:29 +0200
+Message-Id: <20180723122447.241712157@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -51,59 +55,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Hugh Dickins <hughd@google.com>
 
-[ Upstream commit e66515999b627368892ccc9b3a13a506f2ea1357 ]
+commit e1f1b1572e8db87a56609fd05bef76f98f0e456a upstream.
 
-Commit adc176c54722 ("ipv6 addrconf: Implemented enhanced DAD (RFC7527)")
-added enhanced DAD with a nonce length of 6 bytes. However, RFC7527
-doesn't specify the length of the nonce, other than being 6 + 8*k bytes,
-with integer k >= 0 (RFC3971 5.3.2). The current implementation simply
-assumes that the nonce will always be 6 bytes, but others systems are
-free to choose different sizes.
+__split_huge_pmd_locked() must check if the cleared huge pmd was dirty,
+and propagate that to PageDirty: otherwise, data may be lost when a huge
+tmpfs page is modified then split then reclaimed.
 
-If another system sends a nonce of different length but with the same 6
-bytes prefix, it shouldn't be considered as the same nonce. Thus, check
-that the length of the received nonce is the same as the length we sent.
+How has this taken so long to be noticed?  Because there was no problem
+when the huge page is written by a write system call (shmem_write_end()
+calls set_page_dirty()), nor when the page is allocated for a write fault
+(fault_dirty_shared_page() calls set_page_dirty()); but when allocated for
+a read fault (which MAP_POPULATE simulates), no set_page_dirty().
 
-Ugly scapy test script running on veth0:
-
-def loop():
-    pkt=sniff(iface="veth0", filter="icmp6", count=1)
-    pkt = pkt[0]
-    b = bytearray(pkt[Raw].load)
-    b[1] += 1
-    b += b'\xde\xad\xbe\xef\xde\xad\xbe\xef'
-    pkt[Raw].load = bytes(b)
-    pkt[IPv6].plen += 8
-    # fixup checksum after modifying the payload
-    pkt[IPv6].payload.cksum -= 0x3b44
-    if pkt[IPv6].payload.cksum < 0:
-        pkt[IPv6].payload.cksum += 0xffff
-    sendp(pkt, iface="veth0")
-
-This should result in DAD failure for any address added to veth0's peer,
-but is currently ignored.
-
-Fixes: adc176c54722 ("ipv6 addrconf: Implemented enhanced DAD (RFC7527)")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1807111741430.1106@eggly.anvils
+Fixes: d21b9e57c74c ("thp: handle file pages in split_huge_pmd()")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Reported-by: Ashwin Chaugule <ashwinch@google.com>
+Reviewed-by: Yang Shi <yang.shi@linux.alibaba.com>
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: <stable@vger.kernel.org>	[4.8+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ndisc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -811,7 +811,7 @@ static void ndisc_recv_ns(struct sk_buff
+---
+ mm/huge_memory.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2087,6 +2087,8 @@ static void __split_huge_pmd_locked(stru
+ 		if (vma_is_dax(vma))
  			return;
- 		}
- 	}
--	if (ndopts.nd_opts_nonce)
-+	if (ndopts.nd_opts_nonce && ndopts.nd_opts_nonce->nd_opt_len == 1)
- 		memcpy(&nonce, (u8 *)(ndopts.nd_opts_nonce + 1), 6);
- 
- 	inc = ipv6_addr_is_multicast(daddr);
+ 		page = pmd_page(_pmd);
++		if (!PageDirty(page) && pmd_dirty(_pmd))
++			set_page_dirty(page);
+ 		if (!PageReferenced(page) && pmd_young(_pmd))
+ 			SetPageReferenced(page);
+ 		page_remove_rmap(page, true);
 
 
