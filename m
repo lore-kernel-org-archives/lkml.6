@@ -6,32 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 216EEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F3AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB27420685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:45:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB27420685
+	by mail.kernel.org (Postfix) with ESMTP id 8E1E720685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1E720685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388773AbeGWNq6 (ORCPT
+        id S2388789AbeGWNrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:46:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50590 "EHLO
+        Mon, 23 Jul 2018 09:47:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50632 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388007AbeGWNq5 (ORCPT
+        with ESMTP id S2388007AbeGWNrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:46:57 -0400
+        Mon, 23 Jul 2018 09:47:02 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73D90C0A;
-        Mon, 23 Jul 2018 12:43:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23331C7D;
+        Mon, 23 Jul 2018 12:43:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Arjan van de Ven <arjan.van.de.ven@intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
+        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
         Andy Lutomirski <luto@kernel.org>,
         Arjan van de Ven <arjan@linux.intel.com>,
         Borislav Petkov <bp@alien8.de>,
@@ -41,16 +39,15 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, dave.hansen@intel.com,
-        kvm@vger.kernel.org, pbonzini@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 032/107] x86/speculation: Correct Speculation Control microcode blacklist again
-Date:   Mon, 23 Jul 2018 14:41:26 +0200
-Message-Id: <20180723122414.447651362@linuxfoundation.org>
+Subject: [PATCH 4.4 033/107] x86/speculation: Clean up various Spectre related details
+Date:   Mon, 23 Jul 2018 14:41:27 +0200
+Message-Id: <20180723122414.507957312@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -67,31 +64,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Ingo Molnar <mingo@kernel.org>
 
-commit d37fc6d360a404b208547ba112e7dabb6533c7fc upstream.
+commit 21e433bdb95bdf3aa48226fd3d33af608437f293 upstream.
 
-Arjan points out that the Intel document only clears the 0xc2 microcode
-on *some* parts with CPUID 506E3 (INTEL_FAM6_SKYLAKE_DESKTOP stepping 3).
-For the Skylake H/S platform it's OK but for Skylake E3 which has the
-same CPUID it isn't (yet) cleared.
+Harmonize all the Spectre messages so that a:
 
-So removing it from the blacklist was premature. Put it back for now.
+    dmesg | grep -i spectre
 
-Also, Arjan assures me that the 0x84 microcode for Kaby Lake which was
-featured in one of the early revisions of the Intel document was never
-released to the public, and won't be until/unless it is also validated
-as safe. So those can change to 0x80 which is what all *other* versions
-of the doc have identified.
+... gives us most Spectre related kernel boot messages.
 
-Once the retrospective testing of existing public microcodes is done, we
-should be back into a mode where new microcodes are only released in
-batches and we shouldn't even need to update the blacklist for those
-anyway, so this tweaking of the list isn't expected to be a thing which
-keeps happening.
+Also fix a few other details:
 
-Requested-by: Arjan van de Ven <arjan.van.de.ven@intel.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+ - clarify a comment about firmware speculation control
+
+ - s/KPTI/PTI
+
+ - remove various line-breaks that made the code uglier
+
+Acked-by: David Woodhouse <dwmw@amazon.co.uk>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -103,11 +94,7 @@ Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: arjan.van.de.ven@intel.com
-Cc: dave.hansen@intel.com
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Link: http://lkml.kernel.org/r/1518449255-2182-1-git-send-email-dwmw@amazon.co.uk
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -117,30 +104,100 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/kernel/cpu/intel.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -40,13 +40,14 @@ struct sku_microcode {
- 	u32 microcode;
- };
- static const struct sku_microcode spectre_bad_microcodes[] = {
--	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x80 },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
-+	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
- 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
- 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
- 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -162,8 +162,7 @@ static enum spectre_v2_mitigation_cmd __
+ 	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
+ 		return SPECTRE_V2_CMD_NONE;
+ 	else {
+-		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg,
+-					  sizeof(arg));
++		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
+ 		if (ret < 0)
+ 			return SPECTRE_V2_CMD_AUTO;
+ 
+@@ -184,8 +183,7 @@ static enum spectre_v2_mitigation_cmd __
+ 	     cmd == SPECTRE_V2_CMD_RETPOLINE_AMD ||
+ 	     cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC) &&
+ 	    !IS_ENABLED(CONFIG_RETPOLINE)) {
+-		pr_err("%s selected but not compiled in. Switching to AUTO select\n",
+-		       mitigation_options[i].option);
++		pr_err("%s selected but not compiled in. Switching to AUTO select\n", mitigation_options[i].option);
+ 		return SPECTRE_V2_CMD_AUTO;
+ 	}
+ 
+@@ -255,14 +253,14 @@ static void __init spectre_v2_select_mit
+ 			goto retpoline_auto;
+ 		break;
+ 	}
+-	pr_err("kernel not compiled with retpoline; no mitigation available!");
++	pr_err("Spectre mitigation: kernel not compiled with retpoline; no mitigation available!");
+ 	return;
+ 
+ retpoline_auto:
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
+ 	retpoline_amd:
+ 		if (!boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
+-			pr_err("LFENCE not serializing. Switching to generic retpoline\n");
++			pr_err("Spectre mitigation: LFENCE not serializing, switching to generic retpoline\n");
+ 			goto retpoline_generic;
+ 		}
+ 		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
+@@ -280,7 +278,7 @@ retpoline_auto:
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
+ 
+ 	/*
+-	 * If neither SMEP or KPTI are available, there is a risk of
++	 * If neither SMEP nor PTI are available, there is a risk of
+ 	 * hitting userspace addresses in the RSB after a context switch
+ 	 * from a shallow call stack to a deeper one. To prevent this fill
+ 	 * the entire RSB, even when using IBRS.
+@@ -294,21 +292,20 @@ retpoline_auto:
+ 	if ((!boot_cpu_has(X86_FEATURE_KAISER) &&
+ 	     !boot_cpu_has(X86_FEATURE_SMEP)) || is_skylake_era()) {
+ 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+-		pr_info("Filling RSB on context switch\n");
++		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
+ 	}
+ 
+ 	/* Initialize Indirect Branch Prediction Barrier if supported */
+ 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+-		pr_info("Enabling Indirect Branch Prediction Barrier\n");
++		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
+ 	}
+ }
+ 
+ #undef pr_fmt
+ 
+ #ifdef CONFIG_SYSFS
+-ssize_t cpu_show_meltdown(struct device *dev,
+-			  struct device_attribute *attr, char *buf)
++ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
+ 		return sprintf(buf, "Not affected\n");
+@@ -317,16 +314,14 @@ ssize_t cpu_show_meltdown(struct device
+ 	return sprintf(buf, "Vulnerable\n");
+ }
+ 
+-ssize_t cpu_show_spectre_v1(struct device *dev,
+-			    struct device_attribute *attr, char *buf)
++ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
+ 		return sprintf(buf, "Not affected\n");
+ 	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ }
+ 
+-ssize_t cpu_show_spectre_v2(struct device *dev,
+-			    struct device_attribute *attr, char *buf)
++ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+ 		return sprintf(buf, "Not affected\n");
 
 
