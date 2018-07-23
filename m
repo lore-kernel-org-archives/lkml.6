@@ -2,181 +2,220 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7444ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAFDECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:58:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE8620685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:50:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="Qe8NJdwa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE8620685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 847D420685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:58:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 847D420685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388303AbeGWKvH (ORCPT
+        id S2388253AbeGWK6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 06:51:07 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36754 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388175AbeGWKvH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 06:51:07 -0400
-Received: by mail-pl0-f66.google.com with SMTP id e11-v6so14486plb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 02:50:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=seB4p8Ce99OAz1JgNP1URFi4/nGC1mU2hyKPuBYHYm4=;
-        b=Qe8NJdwa+Q4dlh2zHkEFHc6/cZJVppradMxIfeZg9hKxVWJTwMViRXs6Tz5hicHZtY
-         u2dfo0uNdfuLKzfFmr1EljBtvt00PgGYmzyOuKdC0JXELTMiuT+EQgCAZXLvNDu8+bYM
-         3xQej7QCv6TorRzJ68ypR2mQXO+rf4N0hnyvE6K1tza7sPK/Y5rzZIHeRRbmx1iOYl0n
-         DYLu+9QaNS+HDeMgmwQud6PTYk38S93hhMLdA5I/tHkULV989ZL+wYe6zQMZBvmfcal+
-         vTX0rKaLiXqAWXvP04O/oY+MQDmQFT9NsQlfu7pX4V50pJgo51cZQkOP9aT7tWbDQLbA
-         lAnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=seB4p8Ce99OAz1JgNP1URFi4/nGC1mU2hyKPuBYHYm4=;
-        b=Ltbhn3dc851rDVrMB5VtwUVjRwmya5oWxOTNrkLqVH4o9WjmyFqJX4XvORzdGc+cAk
-         ecHslpjSJwlIQwXWC/jg+oW+XAs9GaTprntuXN59qS08VpJ4znZF/rTm141wf5RnUUw3
-         Z2ZAUdtfzUzva0N3LijPND8kJDmX1oEubcqKlXxhsragdPeAWWc5MxZ6++I0AHJ5Qe67
-         YyqSi8Nih9aJ1R6fUZyeHR2CM3jfNemZIeek6UDGxB4KAYQMfZ/pQzwr4wcSc4y+U/vN
-         XKSFjR/8rcwuiEclySFr3NAMn+XkBZ2BMpPtkvPlEEBA3UHSJNsL591C+tC43POnm4Lx
-         t8fw==
-X-Gm-Message-State: AOUpUlFvzMbYPw6Dbp0YuUm67EivY4OX5CbtWcVXENI1ubpVBEtAJmlc
-        /USpBVtCxu9P46+zi37l9iq5nw==
-X-Google-Smtp-Source: AAOMgpd5U8t1XxnatmJ3UHCrYFjTNZcBrvSvX/1oIy+kejyTqKm/z4OH5WU0oFYcy6rdHe7Q5wAgCA==
-X-Received: by 2002:a17:902:bc49:: with SMTP id t9-v6mr12223639plz.116.1532339444601;
-        Mon, 23 Jul 2018 02:50:44 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.40])
-        by smtp.gmail.com with ESMTPSA id d22-v6sm14740187pfk.69.2018.07.23.02.50.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 02:50:44 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 41A5B303A0F; Mon, 23 Jul 2018 12:50:40 +0300 (+03)
-Date:   Mon, 23 Jul 2018 12:50:40 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv5 12/19] x86/mm: Implement prep_encrypted_page() and
- arch_free_page()
-Message-ID: <20180723095040.w67jp7c7cnxezuwp@kshutemo-mobl1>
-References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
- <20180717112029.42378-13-kirill.shutemov@linux.intel.com>
- <a05d800e-4c18-88e0-388c-093fc3dac6ec@intel.com>
+        Mon, 23 Jul 2018 06:58:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59076 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388202AbeGWK6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 06:58:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C5DF80D;
+        Mon, 23 Jul 2018 02:58:09 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E0A33F73C;
+        Mon, 23 Jul 2018 02:58:06 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 10:57:58 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     mingo@kernel.org, mingo@redhat.com
+Cc:     andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
+        boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
+        glider@google.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        parri.andrea@gmail.com, peter@hurleysoftware.com,
+        peterz@infradead.org, tglx@linutronix.de, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 00/12] atomics: generate atomic headers / instrument
+ arm64
+Message-ID: <20180723095757.stwepqrnefsoncgv@lakrids.cambridge.arm.com>
+References: <20180716113017.3909-1-mark.rutland@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a05d800e-4c18-88e0-388c-093fc3dac6ec@intel.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <20180716113017.3909-1-mark.rutland@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 04:53:27PM -0700, Dave Hansen wrote:
-> The description doesn't mention the potential performance implications
-> of this patch.  That's criminal at this point.
-> 
-> > --- a/arch/x86/mm/mktme.c
-> > +++ b/arch/x86/mm/mktme.c
-> > @@ -1,4 +1,5 @@
-> >  #include <linux/mm.h>
-> > +#include <linux/highmem.h>
-> >  #include <asm/mktme.h>
-> >  
-> >  phys_addr_t mktme_keyid_mask;
-> > @@ -49,3 +50,51 @@ int vma_keyid(struct vm_area_struct *vma)
-> >  	prot = pgprot_val(vma->vm_page_prot);
-> >  	return (prot & mktme_keyid_mask) >> mktme_keyid_shift;
-> >  }
-> > +
-> > +void prep_encrypted_page(struct page *page, int order, int keyid, bool zero)
-> > +{
-> > +	int i;
-> > +
-> > +	/* It's not encrypted page: nothing to do */
-> > +	if (!keyid)
-> > +		return;
-> 
-> prep_encrypted_page() is called in the fast path in the page allocator.
-> This out-of-line copy costs a function call for all users and this is
-> also out of the reach of the compiler to understand that keyid!=0 is
-> unlikely.
-> 
-> I think this needs to be treated to the inline-in-the-header treatment.
+On Mon, Jul 16, 2018 at 12:30:05PM +0100, Mark Rutland wrote:
+> Hi Ingo,
 
-Okay. Again as a macros.
+Sorry to ping, but are you happy to pick this up?
 
-> > +	/*
-> > +	 * The hardware/CPU does not enforce coherency between mappings of the
-> > +	 * same physical page with different KeyIDs or encryption keys.
-> > +	 * We are responsible for cache management.
-> > +	 *
-> > +	 * We flush cache before allocating encrypted page
-> > +	 */
-> > +	clflush_cache_range(page_address(page), PAGE_SIZE << order);
+Mark.
+
+> Are you happy to pick this series? Both Will and Peter are happy with v3, and
+> since then I've only made a minor cleanup to the commit messages for patches
+> 8-10 (as requested by Peter), and added Will's Acked-by tags.
 > 
-> It's also worth pointing out that this must be done on the keyid alias
-> direct map, not the normal one.
+> This series scripts the generation of the various atomic headers, to ensure
+> that the various atomic APIs remain consistent, reducing the risk of human
+> error, and simplifying future rework. This fleshes out the instrumented atomics
+> such that arm64 can be migrated over to them.
 > 
-> Wait a sec...  How do we know which direct map to use?
-
-page_address() -> lowmem_page_address() -> page_to_virt()
-
-page_to_virt() returns virtual address from the right direct mapping.
-
-> > +	for (i = 0; i < (1 << order); i++) {
-> > +		/* All pages coming out of the allocator should have KeyID 0 */
-> > +		WARN_ON_ONCE(lookup_page_ext(page)->keyid);
-> > +		lookup_page_ext(page)->keyid = keyid;
-> > +
-> > +		/* Clear the page after the KeyID is set. */
-> > +		if (zero)
-> > +			clear_highpage(page);
-> > +
-> > +		page++;
-> > +	}
-> > +}
-> > +
-> > +void arch_free_page(struct page *page, int order)
-> > +{
-> > +	int i;
-> > +
-> > +	/* It's not encrypted page: nothing to do */
-> > +	if (!page_keyid(page))
-> > +		return;
+> Since v1 [1]:
+> * Use 'p' instead of 'I' for pointer to base int type
+> * Use Peter's patch for ldsem
+> * Rename atomic acquire/release barriers
+> * Handle xchg/cmpxchg variants
+> * Typo fixes
+> * Migrate arm64 to instrumented atomics
 > 
-> Ditto on pushing this to a header.
+> Since v2 [2]:
+> * Drop undefs for __atomic_*_fence()
+> * Rename __atomic_{pre,post}_fence => __atomic_{pre,post}_full_fence()
+> * Restore atomic_long_cond_read_relaxed()
+> * Add Kbuild step to verify atomic headers are up-to-date
+> * Rework arm64 atomic naming
+> * Commit message cleanups
+> * Accumulate acks
 > 
-> > +	clflush_cache_range(page_address(page), PAGE_SIZE << order);
+> Since v3 [3]:
+> * Add Will's Acked-by tags
+> * Clean up rationale for patches 8-10 given we check at kbuild time
 > 
-> OK, how do we know which copy of the direct map to use, here?
-
-The same way as above.
-
-> > +	for (i = 0; i < (1 << order); i++) {
-> > +		/* Check if the page has reasonable KeyID */
-> > +		WARN_ON_ONCE(lookup_page_ext(page)->keyid > mktme_nr_keyids);
-> > +		lookup_page_ext(page)->keyid = 0;
-> > +		page++;
-> > +	}
-> > +}
-> > 
+> The series is based on my atomic API cleanup patches [4], which have been
+> queued in the tip locking/core branch.
 > 
-
--- 
- Kirill A. Shutemov
+> The first six patches clean up some issues with the existing atomic
+> instrumentation, with patch six introducing the header generation
+> infrastructure. The subsequent three patches migrate to each generated header
+> in turn, with the final patch moving arm64 over to the instrumented atomics.
+> 
+> The scripts themselves are mostly POSIX sh (modulo local), without bashisms,
+> and work in dash and bash.
+> 
+> Per Linus request that it is possible to use git grep to inspect the atomic
+> headers [3], the headers are committed (and not generated by kbuild). Since we
+> now expand the fallback definitions inline, each *should* be easier to find
+> with grep. Each header also has a comment at the top with a path to the script
+> used to generate it. 
+> 
+> That scripting comes to ~900 lines, and replaces ~1700 lines of hand-written
+> boilerplate with ~4700 lines of generated code. Some of that increase in line
+> count is due to filling in missing portions of the API (e.g. adding all the
+> ordering variants to the instrumented atomics), while some of that is due to
+> expanding fallbacks in place, and consistently spreading these across multiple
+> lines.
+> 
+> I've build-tested this for x86_64 and arm64 (with and without LSE), and given
+> this some basic boot testing on an Arm Juno platform.
+> 
+> I've pushed the series out to my atomics/generated branch [5], based atop of
+> tip locking/core.
+> 
+> Thanks,
+> Mark.
+> 
+> [1] https://lkml.kernel.org/r/20180529180746.29684-1-mark.rutland@arm.com
+> [2] https://lkml.kernel.org/r/20180625105952.3756-1-mark.rutland@arm.com 
+> [3] https://lkml.kernel.org/r/20180705164053.10073-1-mark.rutland@arm.com
+> [4] https://lkml.kernel.org/r/20180621121321.4761-1-mark.rutland@arm.com
+> [5] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/generated
+> 
+> Mark Rutland (11):
+>   atomics/x86: reduce arch_cmpxchg64*() instrumentation
+>   atomics: simplify cmpxchg() instrumentation
+>   atomics/treewide: instrument xchg()
+>   atomics: instrument cmpxchg_double*()
+>   atomics/treewide: rework ordering barriers
+>   atomics: add common header generation files
+>   atomics: switch to generated fallbacks
+>   atomics: switch to generated atomic-long
+>   atomics: switch to generated instrumentation
+>   atomics: check generated headers are up-to-date
+>   arm64: use instrumented atomics
+> 
+> Peter Zijlstra (1):
+>   atomic/tty: Fix up atomic abuse in ldsem
+> 
+>  Kbuild                                       |   18 +-
+>  MAINTAINERS                                  |    1 +
+>  arch/alpha/include/asm/atomic.h              |    8 +-
+>  arch/arm64/include/asm/atomic.h              |  237 +--
+>  arch/arm64/include/asm/atomic_ll_sc.h        |   28 +-
+>  arch/arm64/include/asm/atomic_lse.h          |   38 +-
+>  arch/arm64/include/asm/cmpxchg.h             |   60 +-
+>  arch/arm64/include/asm/sync_bitops.h         |   16 +-
+>  arch/powerpc/include/asm/atomic.h            |   17 +-
+>  arch/riscv/include/asm/atomic.h              |   17 +-
+>  arch/x86/include/asm/atomic.h                |    2 +-
+>  arch/x86/include/asm/atomic64_64.h           |    2 +-
+>  arch/x86/include/asm/cmpxchg.h               |    2 +-
+>  arch/x86/include/asm/cmpxchg_64.h            |    4 +-
+>  drivers/tty/tty_ldsem.c                      |   82 +-
+>  include/asm-generic/atomic-instrumented.h    | 1770 +++++++++++++++++---
+>  include/asm-generic/atomic-long.h            | 1173 ++++++++++---
+>  include/linux/atomic-fallback.h              | 2294 ++++++++++++++++++++++++++
+>  include/linux/atomic.h                       | 1279 +-------------
+>  include/linux/tty_ldisc.h                    |    4 +-
+>  scripts/atomic/atomic-tbl.sh                 |  186 +++
+>  scripts/atomic/atomics.tbl                   |   41 +
+>  scripts/atomic/check-atomics.sh              |   19 +
+>  scripts/atomic/fallbacks/acquire             |    9 +
+>  scripts/atomic/fallbacks/add_negative        |   16 +
+>  scripts/atomic/fallbacks/add_unless          |   16 +
+>  scripts/atomic/fallbacks/andnot              |    7 +
+>  scripts/atomic/fallbacks/dec                 |    7 +
+>  scripts/atomic/fallbacks/dec_and_test        |   15 +
+>  scripts/atomic/fallbacks/dec_if_positive     |   15 +
+>  scripts/atomic/fallbacks/dec_unless_positive |   14 +
+>  scripts/atomic/fallbacks/fence               |   11 +
+>  scripts/atomic/fallbacks/fetch_add_unless    |   23 +
+>  scripts/atomic/fallbacks/inc                 |    7 +
+>  scripts/atomic/fallbacks/inc_and_test        |   15 +
+>  scripts/atomic/fallbacks/inc_not_zero        |   14 +
+>  scripts/atomic/fallbacks/inc_unless_negative |   14 +
+>  scripts/atomic/fallbacks/read_acquire        |    7 +
+>  scripts/atomic/fallbacks/release             |    8 +
+>  scripts/atomic/fallbacks/set_release         |    7 +
+>  scripts/atomic/fallbacks/sub_and_test        |   16 +
+>  scripts/atomic/fallbacks/try_cmpxchg         |   11 +
+>  scripts/atomic/gen-atomic-fallback.sh        |  181 ++
+>  scripts/atomic/gen-atomic-instrumented.sh    |  182 ++
+>  scripts/atomic/gen-atomic-long.sh            |  101 ++
+>  45 files changed, 5994 insertions(+), 2000 deletions(-)
+>  create mode 100644 include/linux/atomic-fallback.h
+>  create mode 100755 scripts/atomic/atomic-tbl.sh
+>  create mode 100644 scripts/atomic/atomics.tbl
+>  create mode 100755 scripts/atomic/check-atomics.sh
+>  create mode 100644 scripts/atomic/fallbacks/acquire
+>  create mode 100644 scripts/atomic/fallbacks/add_negative
+>  create mode 100644 scripts/atomic/fallbacks/add_unless
+>  create mode 100644 scripts/atomic/fallbacks/andnot
+>  create mode 100644 scripts/atomic/fallbacks/dec
+>  create mode 100644 scripts/atomic/fallbacks/dec_and_test
+>  create mode 100644 scripts/atomic/fallbacks/dec_if_positive
+>  create mode 100644 scripts/atomic/fallbacks/dec_unless_positive
+>  create mode 100644 scripts/atomic/fallbacks/fence
+>  create mode 100644 scripts/atomic/fallbacks/fetch_add_unless
+>  create mode 100644 scripts/atomic/fallbacks/inc
+>  create mode 100644 scripts/atomic/fallbacks/inc_and_test
+>  create mode 100644 scripts/atomic/fallbacks/inc_not_zero
+>  create mode 100644 scripts/atomic/fallbacks/inc_unless_negative
+>  create mode 100644 scripts/atomic/fallbacks/read_acquire
+>  create mode 100644 scripts/atomic/fallbacks/release
+>  create mode 100644 scripts/atomic/fallbacks/set_release
+>  create mode 100644 scripts/atomic/fallbacks/sub_and_test
+>  create mode 100644 scripts/atomic/fallbacks/try_cmpxchg
+>  create mode 100755 scripts/atomic/gen-atomic-fallback.sh
+>  create mode 100755 scripts/atomic/gen-atomic-instrumented.sh
+>  create mode 100755 scripts/atomic/gen-atomic-long.sh
+> 
+> -- 
+> 2.11.0
+> 
