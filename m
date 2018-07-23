@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE617ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B5DECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7499820685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7499820685
+	by mail.kernel.org (Postfix) with ESMTP id 2404620685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2404620685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389657AbeGWNsG (ORCPT
+        id S2389688AbeGWNsI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:48:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51200 "EHLO
+        Mon, 23 Jul 2018 09:48:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51470 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388574AbeGWNsF (ORCPT
+        with ESMTP id S2388725AbeGWNsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:05 -0400
+        Mon, 23 Jul 2018 09:48:07 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23D38C37;
-        Mon, 23 Jul 2018 12:46:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71CEFCA8;
+        Mon, 23 Jul 2018 12:46:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
         David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 065/107] x86/process: Optimize TIF_NOTSC switch
-Date:   Mon, 23 Jul 2018 14:41:59 +0200
-Message-Id: <20180723122416.407490961@linuxfoundation.org>
+Subject: [PATCH 4.4 096/107] x86/speculation, KVM: Implement support for VIRT_SPEC_CTRL/LS_CFG
+Date:   Mon, 23 Jul 2018 14:42:30 +0200
+Message-Id: <20180723122418.320458689@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -58,24 +56,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 5a920155e388ec22a22e0532fb695b9215c9b34d upstream
+commit 47c61b3955cf712cadfc25635bf9bc174af030ea upstream
 
-Provide and use a toggle helper instead of doing it with a branch.
+Add the necessary logic for supporting the emulated VIRT_SPEC_CTRL MSR to
+x86_virt_spec_ctrl().  If either X86_FEATURE_LS_CFG_SSBD or
+X86_FEATURE_VIRT_SPEC_CTRL is set then use the new guest_virt_spec_ctrl
+argument to check whether the state must be modified on the host. The
+update reuses speculative_store_bypass_update() so the ZEN-specific sibling
+coordination can be reused.
 
-x86_64: arch/x86/kernel/process.o
-text	   data	    bss	    dec	    hex
-3008	   8577	     16	  11601	   2d51 Before
-2976       8577      16	  11569	   2d31 After
-
-i386: arch/x86/kernel/process.o
-text	   data	    bss	    dec	    hex
-2925	   8673	      8	  11606	   2d56 Before
-2893	   8673       8	  11574	   2d36 After
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: http://lkml.kernel.org/r/20170214081104.9244-4-khuey@kylehuey.com
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -86,83 +75,63 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/tlbflush.h |   10 ++++++++++
- arch/x86/kernel/process.c       |   22 ++++------------------
- 2 files changed, 14 insertions(+), 18 deletions(-)
+ arch/x86/include/asm/spec-ctrl.h |    6 ++++++
+ arch/x86/kernel/cpu/bugs.c       |   30 ++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -111,6 +111,16 @@ static inline void cr4_clear_bits(unsign
- 	}
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -53,6 +53,12 @@ static inline u64 ssbd_tif_to_spec_ctrl(
+ 	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
  }
  
-+static inline void cr4_toggle_bits(unsigned long mask)
++static inline unsigned long ssbd_spec_ctrl_to_tif(u64 spec_ctrl)
 +{
-+	unsigned long cr4;
-+
-+	cr4 = this_cpu_read(cpu_tlbstate.cr4);
-+	cr4 ^= mask;
-+	this_cpu_write(cpu_tlbstate.cr4, cr4);
-+	__write_cr4(cr4);
++	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
++	return (spec_ctrl & SPEC_CTRL_SSBD) << (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
 +}
 +
- /* Read the CR4 shadow. */
- static inline unsigned long cr4_read_shadow(void)
+ static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
  {
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -130,11 +130,6 @@ void flush_thread(void)
- 	fpu__clear(&tsk->thread.fpu);
- }
- 
--static void hard_disable_TSC(void)
--{
--	cr4_set_bits(X86_CR4_TSD);
--}
--
- void disable_TSC(void)
- {
- 	preempt_disable();
-@@ -143,15 +138,10 @@ void disable_TSC(void)
- 		 * Must flip the CPU state synchronously with
- 		 * TIF_NOTSC in the current running context.
- 		 */
--		hard_disable_TSC();
-+		cr4_set_bits(X86_CR4_TSD);
- 	preempt_enable();
- }
- 
--static void hard_enable_TSC(void)
--{
--	cr4_clear_bits(X86_CR4_TSD);
--}
--
- static void enable_TSC(void)
- {
- 	preempt_disable();
-@@ -160,7 +150,7 @@ static void enable_TSC(void)
- 		 * Must flip the CPU state synchronously with
- 		 * TIF_NOTSC in the current running context.
- 		 */
--		hard_enable_TSC();
-+		cr4_clear_bits(X86_CR4_TSD);
- 	preempt_enable();
- }
- 
-@@ -234,12 +224,8 @@ void __switch_to_xtra(struct task_struct
- 		wrmsrl(MSR_IA32_DEBUGCTLMSR, debugctl);
+ 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -160,6 +160,36 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
+ 		}
  	}
- 
--	if ((tifp ^ tifn) & _TIF_NOTSC) {
--		if (tifn & _TIF_NOTSC)
--			hard_disable_TSC();
--		else
--			hard_enable_TSC();
--	}
-+	if ((tifp ^ tifn) & _TIF_NOTSC)
-+		cr4_toggle_bits(X86_CR4_TSD);
++
++	/*
++	 * If SSBD is not handled in MSR_SPEC_CTRL on AMD, update
++	 * MSR_AMD64_L2_CFG or MSR_VIRT_SPEC_CTRL if supported.
++	 */
++	if (!static_cpu_has(X86_FEATURE_LS_CFG_SSBD) &&
++	    !static_cpu_has(X86_FEATURE_VIRT_SSBD))
++		return;
++
++	/*
++	 * If the host has SSBD mitigation enabled, force it in the host's
++	 * virtual MSR value. If its not permanently enabled, evaluate
++	 * current's TIF_SSBD thread flag.
++	 */
++	if (static_cpu_has(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE))
++		hostval = SPEC_CTRL_SSBD;
++	else
++		hostval = ssbd_tif_to_spec_ctrl(ti->flags);
++
++	/* Sanitize the guest value */
++	guestval = guest_virt_spec_ctrl & SPEC_CTRL_SSBD;
++
++	if (hostval != guestval) {
++		unsigned long tif;
++
++		tif = setguest ? ssbd_spec_ctrl_to_tif(guestval) :
++				 ssbd_spec_ctrl_to_tif(hostval);
++
++		speculative_store_bypass_update(tif);
++	}
  }
+ EXPORT_SYMBOL_GPL(x86_virt_spec_ctrl);
  
- /*
 
 
