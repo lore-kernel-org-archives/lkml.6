@@ -6,102 +6,147 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68376ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA794ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B79920874
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:36:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B79920874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 884E920874
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:37:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884E920874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388286AbeGWXjc (ORCPT
+        id S2388296AbeGWXke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 19:39:32 -0400
-Received: from www62.your-server.de ([213.133.104.62]:36471 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388088AbeGWXjc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 19:39:32 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fhjQz-0002Yv-Rj; Tue, 24 Jul 2018 00:36:05 +0200
-Received: from [99.0.85.34] (helo=localhost.localdomain)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fhjQz-000Aib-Ib; Tue, 24 Jul 2018 00:36:05 +0200
-Subject: Re: [PATCH] bpf: Add Python 3 support to selftests scripts for bpf
-To:     Dan Rue <dan.rue@linaro.org>, Jeremy Cline <jcline@redhat.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Lawrence Brakmo <brakmo@fb.com>,
-        jakub.kicinski@netronome.com
-References: <20180718213610.19618-1-jcline@redhat.com>
- <1aa3dc98-2ab1-7386-d5d9-afd3dbb3fde9@iogearbox.net>
- <dd971e43-3148-5a54-788e-d89835d3638a@redhat.com>
- <20180723173313.ri2uz7srtdtno2hl@linode.therub.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <f26dda36-cbfe-00ec-6a17-b18487a856af@iogearbox.net>
-Date:   Tue, 24 Jul 2018 00:36:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 23 Jul 2018 19:40:34 -0400
+Received: from mga11.intel.com ([192.55.52.93]:48343 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388088AbeGWXke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 19:40:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 15:37:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
+   d="scan'208";a="58866153"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.149]) ([10.7.153.149])
+  by orsmga007.jf.intel.com with ESMTP; 23 Jul 2018 15:37:01 -0700
+Subject: Re: [PATCH v7 08/12] mfd: intel-peci-client: Add PECI client MFD
+ driver
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
+        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
+        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        David Kershner <david.kershner@unisys.com>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Johan Hovold <johan@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-doc@vger.kernel.org,
+        openbmc@lists.ozlabs.org,
+        James Feist <james.feist@linux.intel.com>,
+        Jason M Biils <jason.m.bills@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+References: <20180723214751.1733-1-jae.hyun.yoo@linux.intel.com>
+ <20180723214751.1733-9-jae.hyun.yoo@linux.intel.com>
+ <c1abe3ec-fc26-d8b0-c769-e9295577ac05@infradead.org>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <98051293-6b30-af31-a5c6-56b0e1ac964a@linux.intel.com>
+Date:   Mon, 23 Jul 2018 15:36:58 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180723173313.ri2uz7srtdtno2hl@linode.therub.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <c1abe3ec-fc26-d8b0-c769-e9295577ac05@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24776/Mon Jul 23 18:44:17 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 07:33 PM, Dan Rue wrote:
-> On Mon, Jul 23, 2018 at 10:08:57AM -0400, Jeremy Cline wrote:
->> On 07/20/2018 04:45 PM, Daniel Borkmann wrote:
->>> On 07/18/2018 11:36 PM, Jeremy Cline wrote:
->>>> Adjust tcp_client.py and tcp_server.py to work with Python 3 by using
->>>> the print function, marking string literals as bytes, and using the
->>>> newer exception syntax. This should be functionally equivalent and
->>>> support Python 2.6 through Python 3.7.
->>>>
->>>> Signed-off-by: Jeremy Cline <jcline@redhat.com>
->>>
->>> Thanks for the patch, Jeremy! Given we also have test_offload.py in BPF
->>> kselftests and it is written for python 3 only, it would probably make
->>> sense to adapt the tcp_{client,server}.py towards python 3 as well, so
->>> we wouldn't need to keep extra compat for 2 and have a consistent version
->>> dependency. Lawrence / Jeremy, any objections?
+Hi Randy,
+
+On 7/23/2018 3:21 PM, Randy Dunlap wrote:
+> On 07/23/2018 02:47 PM, Jae Hyun Yoo wrote:
+>> This commit adds PECI client MFD driver.
 >>
->> I certainly don't object to Python 3 only and I'm happy to drop the
->> Python 2 compatibility from this patch if that's okay.
-
-Sounds good, lets do it, please respin with that.
-
-> This (well, along with introducing python in the first place, which took
-> me by surprise), sounds like a policy decision that should be made clear
-> in the kselftest documentation (Documentation/dev-tools/kselftest.rst).
-> Currently, that file does not mention any python requirement.
-
-Right now each selftest subdir has a config file which lists dependencies,
-perhaps it makes sense to have another standardized file there (e.g. 'deps')
-which lists user space dependencies, so it's immediately visible what is
-needed to run all tests from there. Thoughts?
-
-> That said, I agree that python2 support is no longer necessary.
+>> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+>> Cc: Lee Jones <lee.jones@linaro.org>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Andrew Jeffery <andrew@aj.id.au>
+>> Cc: James Feist <james.feist@linux.intel.com>
+>> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+>> Cc: Joel Stanley <joel@jms.id.au>
+>> Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
+>> ---
+>>   drivers/mfd/Kconfig                   |  14 ++
+>>   drivers/mfd/Makefile                  |   1 +
+>>   drivers/mfd/intel-peci-client.c       | 182 ++++++++++++++++++++++++++
+>>   include/linux/mfd/intel-peci-client.h |  81 ++++++++++++
+>>   4 files changed, 278 insertions(+)
+>>   create mode 100644 drivers/mfd/intel-peci-client.c
+>>   create mode 100644 include/linux/mfd/intel-peci-client.h
+>>
+>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+>> index f3fa516011ec..e38b591479d4 100644
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -595,6 +595,20 @@ config MFD_INTEL_MSIC
+>>   	  Passage) chip. This chip embeds audio, battery, GPIO, etc.
+>>   	  devices used in Intel Medfield platforms.
+>>   
+>> +config MFD_INTEL_PECI_CLIENT
+>> +	bool "Intel PECI client"
+>> +	depends on (PECI || COMPILE_TEST)
+>> +	select MFD_CORE
+>> +	help
+>> +	  If you say yes to this option, support will be included for the
+>> +	  multi-funtional Intel PECI (Platform Environment Control Interface)
 > 
-> My use-case (which may be unusual?): We try to run all of kselftest
-> against a variety of kernels and architectures for every push to next,
-> mainline, and stable/lts branches. It seems that this is not a common
-> usecase, but shouldn't it be?
+> 	  multi-functional
+> 
 
-As far as I'm aware the intel lkp-tests bot seems also to regularly run
-the kselftests for x86, if also done from arm side e.g. on latest mainline,
-even better.
+Thanks for your pointing it out. Will fix it.
 
 Thanks,
-Daniel
+
+Jae
+
+>> +	  client. PECI is a one-wire bus interface that provides a communication
+>> +	  channel from PECI clients in Intel processors and chipset components
+>> +	  to external monitoring or control devices.
+>> +
+>> +	  Additional drivers must be enabled in order to use the functionality
+>> +	  of the device.
+>> +
+>>   config MFD_IPAQ_MICRO
+>>   	bool "Atmel Micro ASIC (iPAQ h3100/h3600/h3700) Support"
+>>   	depends on SA1100_H3100 || SA1100_H3600
+> 
+> 
