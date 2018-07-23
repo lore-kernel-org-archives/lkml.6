@@ -6,49 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62E7ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACE2ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72EE420685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72EE420685
+	by mail.kernel.org (Postfix) with ESMTP id 41E1020685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E1020685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388863AbeGWNrR (ORCPT
+        id S2388923AbeGWNrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50770 "EHLO
+        Mon, 23 Jul 2018 09:47:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50852 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388007AbeGWNrR (ORCPT
+        with ESMTP id S2388211AbeGWNrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:17 -0400
+        Mon, 23 Jul 2018 09:47:23 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 055E7CA1;
-        Mon, 23 Jul 2018 12:44:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92C7440B;
+        Mon, 23 Jul 2018 12:44:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
+        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@redhat.com>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
+        gnomes@lxorguk.ukuu.org.uk, ak@linux.intel.com,
+        ashok.raj@intel.com, dave.hansen@intel.com, karahmed@amazon.de,
+        arjan@linux.intel.com, torvalds@linux-foundation.org,
+        peterz@infradead.org, bp@alien8.de, pbonzini@redhat.com,
+        tim.c.chen@linux.intel.com,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
-        Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 038/107] x86/mm: Give each mm TLB flush generation a unique ID
-Date:   Mon, 23 Jul 2018 14:41:32 +0200
-Message-Id: <20180723122414.789067704@linuxfoundation.org>
+        Bo Gan <ganb@vmware.com>, gregkh@linux-foundation.org
+Subject: [PATCH 4.4 022/107] x86/msr: Add definitions for new speculation control MSRs
+Date:   Mon, 23 Jul 2018 14:41:16 +0200
+Message-Id: <20180723122413.977946703@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -65,37 +59,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit f39681ed0f48498b80455095376f11535feea332 upstream.
+(cherry picked from commit 1e340c60d0dd3ae07b5bedc16a0469c14b9f3410)
 
-This adds two new variables to mmu_context_t: ctx_id and tlb_gen.
-ctx_id uniquely identifies the mm_struct and will never be reused.
-For a given mm_struct (and hence ctx_id), tlb_gen is a monotonic
-count of the number of times that a TLB flush has been requested.
-The pair (ctx_id, tlb_gen) can be used as an identifier for TLB
-flush actions and will be used in subsequent patches to reliably
-determine whether all needed TLB flushes have occurred on a given
-CPU.
+Add MSR and bit definitions for SPEC_CTRL, PRED_CMD and ARCH_CAPABILITIES.
 
-This patch is split out for ease of review.  By itself, it has no
-real effect other than creating and updating the new variables.
+See Intel's 336996-Speculative-Execution-Side-Channel-Mitigations.pdf
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Reviewed-by: Nadav Amit <nadav.amit@gmail.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/413a91c24dab3ed0caa5f4e4d017d87b0857f920.1498751203.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: ak@linux.intel.com
+Cc: ashok.raj@intel.com
+Cc: dave.hansen@intel.com
+Cc: karahmed@amazon.de
+Cc: arjan@linux.intel.com
+Cc: torvalds@linux-foundation.org
+Cc: peterz@infradead.org
+Cc: bp@alien8.de
+Cc: pbonzini@redhat.com
+Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
+Link: https://lkml.kernel.org/r/1516896855-7642-5-git-send-email-dwmw@amazon.co.uk
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
@@ -104,76 +92,36 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/mmu.h         |   15 +++++++++++++--
- arch/x86/include/asm/mmu_context.h |    4 ++++
- arch/x86/mm/tlb.c                  |    2 ++
- 3 files changed, 19 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/msr-index.h |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/arch/x86/include/asm/mmu.h
-+++ b/arch/x86/include/asm/mmu.h
-@@ -3,12 +3,18 @@
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -32,6 +32,13 @@
+ #define EFER_FFXSR		(1<<_EFER_FFXSR)
  
- #include <linux/spinlock.h>
- #include <linux/mutex.h>
-+#include <linux/atomic.h>
+ /* Intel MSRs. Some also available on other CPUs */
++#define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
++#define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
++#define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
++
++#define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
++#define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
++
+ #define MSR_IA32_PERFCTR0		0x000000c1
+ #define MSR_IA32_PERFCTR1		0x000000c2
+ #define MSR_FSB_FREQ			0x000000cd
+@@ -45,6 +52,11 @@
+ #define SNB_C3_AUTO_UNDEMOTE		(1UL << 28)
  
- /*
-- * The x86 doesn't have a mmu context, but
-- * we put the segment information here.
-+ * x86 has arch-specific MMU state beyond what lives in mm_struct.
-  */
- typedef struct {
-+	/*
-+	 * ctx_id uniquely identifies this mm_struct.  A ctx_id will never
-+	 * be reused, and zero is not a valid ctx_id.
-+	 */
-+	u64 ctx_id;
+ #define MSR_MTRRcap			0x000000fe
 +
- #ifdef CONFIG_MODIFY_LDT_SYSCALL
- 	struct ldt_struct *ldt;
- #endif
-@@ -24,6 +30,11 @@ typedef struct {
- 	atomic_t perf_rdpmc_allowed;	/* nonzero if rdpmc is allowed */
- } mm_context_t;
++#define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
++#define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
++#define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
++
+ #define MSR_IA32_BBL_CR_CTL		0x00000119
+ #define MSR_IA32_BBL_CR_CTL3		0x0000011e
  
-+#define INIT_MM_CONTEXT(mm)						\
-+	.context = {							\
-+		.ctx_id = 1,						\
-+	}
-+
- void leave_mm(int cpu);
- 
- #endif /* _ASM_X86_MMU_H */
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -11,6 +11,9 @@
- #include <asm/tlbflush.h>
- #include <asm/paravirt.h>
- #include <asm/mpx.h>
-+
-+extern atomic64_t last_mm_ctx_id;
-+
- #ifndef CONFIG_PARAVIRT
- static inline void paravirt_activate_mm(struct mm_struct *prev,
- 					struct mm_struct *next)
-@@ -105,6 +108,7 @@ static inline void enter_lazy_tlb(struct
- static inline int init_new_context(struct task_struct *tsk,
- 				   struct mm_struct *mm)
- {
-+	mm->context.ctx_id = atomic64_inc_return(&last_mm_ctx_id);
- 	init_new_context_ldt(tsk, mm);
- 	return 0;
- }
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -29,6 +29,8 @@
-  *	Implement flush IPI by CALL_FUNCTION_VECTOR, Alex Shi
-  */
- 
-+atomic64_t last_mm_ctx_id = ATOMIC64_INIT(1);
-+
- struct flush_tlb_info {
- 	struct mm_struct *flush_mm;
- 	unsigned long flush_start;
 
 
