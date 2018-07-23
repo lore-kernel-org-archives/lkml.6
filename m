@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C52ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976F0ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F8C20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F8C20854
+	by mail.kernel.org (Postfix) with ESMTP id 4C96D20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C96D20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388637AbeGWN2c (ORCPT
+        id S2388650AbeGWN2f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:28:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45462 "EHLO
+        Mon, 23 Jul 2018 09:28:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45472 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387940AbeGWN2b (ORCPT
+        with ESMTP id S2387940AbeGWN2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:28:31 -0400
+        Mon, 23 Jul 2018 09:28:34 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8140BBB3;
-        Mon, 23 Jul 2018 12:27:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37FC2BB3;
+        Mon, 23 Jul 2018 12:27:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
+        stable@vger.kernel.org,
+        Sanjeev Bansal <sanjeevb.bansal@broadcom.com>,
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 49/63] sch_fq_codel: zero q->flows_cnt when fq_codel_init fails
-Date:   Mon, 23 Jul 2018 14:24:55 +0200
-Message-Id: <20180723122448.219721043@linuxfoundation.org>
+Subject: [PATCH 4.17 50/63] tg3: Add higher cpu clock for 5762.
+Date:   Mon, 23 Jul 2018 14:24:56 +0200
+Message-Id: <20180723122448.258636791@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -50,141 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Sanjeev Bansal <sanjeevb.bansal@broadcom.com>
 
-[ Upstream commit 83fe6b8709f65bc505b10235bd82ece12c4c5099 ]
+[ Upstream commit 3a498606bb04af603a46ebde8296040b2de350d1 ]
 
-When fq_codel_init fails, qdisc_create_dflt will cleanup by using
-qdisc_destroy. This function calls the ->reset() op prior to calling the
-->destroy() op.
+This patch has fix for TX timeout while running bi-directional
+traffic with 100 Mbps using 5762.
 
-Unfortunately, during the failure flow for sch_fq_codel, the ->flows
-parameter is not initialized, so the fq_codel_reset function will null
-pointer dereference.
-
-   kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-   kernel: IP: fq_codel_reset+0x58/0xd0 [sch_fq_codel]
-   kernel: PGD 0 P4D 0
-   kernel: Oops: 0000 [#1] SMP PTI
-   kernel: Modules linked in: i40iw i40e(OE) xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack tun bridge stp llc devlink ebtable_filter ebtables ip6table_filter ip6_tables rpcrdma ib_isert iscsi_target_mod sunrpc ib_iser libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm intel_rapl sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel intel_cstate iTCO_wdt iTCO_vendor_support intel_uncore ib_core intel_rapl_perf mei_me mei joydev i2c_i801 lpc_ich ioatdma shpchp wmi sch_fq_codel xfs libcrc32c mgag200 ixgbe drm_kms_helper isci ttm firewire_ohci
-   kernel:  mdio drm igb libsas crc32c_intel firewire_core ptp pps_core scsi_transport_sas crc_itu_t dca i2c_algo_bit ipmi_si ipmi_devintf ipmi_msghandler [last unloaded: i40e]
-   kernel: CPU: 10 PID: 4219 Comm: ip Tainted: G           OE    4.16.13custom-fq-codel-test+ #3
-   kernel: Hardware name: Intel Corporation S2600CO/S2600CO, BIOS SE5C600.86B.02.05.0004.051120151007 05/11/2015
-   kernel: RIP: 0010:fq_codel_reset+0x58/0xd0 [sch_fq_codel]
-   kernel: RSP: 0018:ffffbfbf4c1fb620 EFLAGS: 00010246
-   kernel: RAX: 0000000000000400 RBX: 0000000000000000 RCX: 00000000000005b9
-   kernel: RDX: 0000000000000000 RSI: ffff9d03264a60c0 RDI: ffff9cfd17b31c00
-   kernel: RBP: 0000000000000001 R08: 00000000000260c0 R09: ffffffffb679c3e9
-   kernel: R10: fffff1dab06a0e80 R11: ffff9cfd163af800 R12: ffff9cfd17b31c00
-   kernel: R13: 0000000000000001 R14: ffff9cfd153de600 R15: 0000000000000001
-   kernel: FS:  00007fdec2f92800(0000) GS:ffff9d0326480000(0000) knlGS:0000000000000000
-   kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-   kernel: CR2: 0000000000000008 CR3: 0000000c1956a006 CR4: 00000000000606e0
-   kernel: Call Trace:
-   kernel:  qdisc_destroy+0x56/0x140
-   kernel:  qdisc_create_dflt+0x8b/0xb0
-   kernel:  mq_init+0xc1/0xf0
-   kernel:  qdisc_create_dflt+0x5a/0xb0
-   kernel:  dev_activate+0x205/0x230
-   kernel:  __dev_open+0xf5/0x160
-   kernel:  __dev_change_flags+0x1a3/0x210
-   kernel:  dev_change_flags+0x21/0x60
-   kernel:  do_setlink+0x660/0xdf0
-   kernel:  ? down_trylock+0x25/0x30
-   kernel:  ? xfs_buf_trylock+0x1a/0xd0 [xfs]
-   kernel:  ? rtnl_newlink+0x816/0x990
-   kernel:  ? _xfs_buf_find+0x327/0x580 [xfs]
-   kernel:  ? _cond_resched+0x15/0x30
-   kernel:  ? kmem_cache_alloc+0x20/0x1b0
-   kernel:  ? rtnetlink_rcv_msg+0x200/0x2f0
-   kernel:  ? rtnl_calcit.isra.30+0x100/0x100
-   kernel:  ? netlink_rcv_skb+0x4c/0x120
-   kernel:  ? netlink_unicast+0x19e/0x260
-   kernel:  ? netlink_sendmsg+0x1ff/0x3c0
-   kernel:  ? sock_sendmsg+0x36/0x40
-   kernel:  ? ___sys_sendmsg+0x295/0x2f0
-   kernel:  ? ebitmap_cmp+0x6d/0x90
-   kernel:  ? dev_get_by_name_rcu+0x73/0x90
-   kernel:  ? skb_dequeue+0x52/0x60
-   kernel:  ? __inode_wait_for_writeback+0x7f/0xf0
-   kernel:  ? bit_waitqueue+0x30/0x30
-   kernel:  ? fsnotify_grab_connector+0x3c/0x60
-   kernel:  ? __sys_sendmsg+0x51/0x90
-   kernel:  ? do_syscall_64+0x74/0x180
-   kernel:  ? entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-   kernel: Code: 00 00 48 89 87 00 02 00 00 8b 87 a0 01 00 00 85 c0 0f 84 84 00 00 00 31 ed 48 63 dd 83 c5 01 48 c1 e3 06 49 03 9c 24 90 01 00 00 <48> 8b 73 08 48 8b 3b e8 6c 9a 4f f6 48 8d 43 10 48 c7 03 00 00
-   kernel: RIP: fq_codel_reset+0x58/0xd0 [sch_fq_codel] RSP: ffffbfbf4c1fb620
-   kernel: CR2: 0000000000000008
-   kernel: ---[ end trace e81a62bede66274e ]---
-
-This is caused because flows_cnt is non-zero, but flows hasn't been
-initialized. fq_codel_init has left the private data in a partially
-initialized state.
-
-To fix this, reset flows_cnt to 0 when we fail to initialize.
-Additionally, to make the state more consistent, also cleanup the flows
-pointer when the allocation of backlogs fails.
-
-This fixes the NULL pointer dereference, since both the for-loop and
-memset in fq_codel_reset will be no-ops when flow_cnt is zero.
-
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Sanjeev Bansal <sanjeevb.bansal@broadcom.com>
+Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
+Reviewed-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_fq_codel.c |   25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/broadcom/tg3.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/net/sched/sch_fq_codel.c
-+++ b/net/sched/sch_fq_codel.c
-@@ -479,23 +479,27 @@ static int fq_codel_init(struct Qdisc *s
- 	q->cparams.mtu = psched_mtu(qdisc_dev(sch));
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -9289,6 +9289,15 @@ static int tg3_chip_reset(struct tg3 *tp
  
- 	if (opt) {
--		int err = fq_codel_change(sch, opt, extack);
-+		err = fq_codel_change(sch, opt, extack);
- 		if (err)
--			return err;
-+			goto init_failure;
- 	}
+ 	tg3_restore_clk(tp);
  
- 	err = tcf_block_get(&q->block, &q->filter_list, sch, extack);
- 	if (err)
--		return err;
-+		goto init_failure;
- 
- 	if (!q->flows) {
- 		q->flows = kvzalloc(q->flows_cnt *
- 					   sizeof(struct fq_codel_flow), GFP_KERNEL);
--		if (!q->flows)
--			return -ENOMEM;
-+		if (!q->flows) {
-+			err = -ENOMEM;
-+			goto init_failure;
-+		}
- 		q->backlogs = kvzalloc(q->flows_cnt * sizeof(u32), GFP_KERNEL);
--		if (!q->backlogs)
--			return -ENOMEM;
-+		if (!q->backlogs) {
-+			err = -ENOMEM;
-+			goto alloc_failure;
-+		}
- 		for (i = 0; i < q->flows_cnt; i++) {
- 			struct fq_codel_flow *flow = q->flows + i;
- 
-@@ -508,6 +512,13 @@ static int fq_codel_init(struct Qdisc *s
- 	else
- 		sch->flags &= ~TCQ_F_CAN_BYPASS;
- 	return 0;
++	/* Increase the core clock speed to fix tx timeout issue for 5762
++	 * with 100Mbps link speed.
++	 */
++	if (tg3_asic_rev(tp) == ASIC_REV_5762) {
++		val = tr32(TG3_CPMU_CLCK_ORIDE_ENABLE);
++		tw32(TG3_CPMU_CLCK_ORIDE_ENABLE, val |
++		     TG3_CPMU_MAC_ORIDE_ENABLE);
++	}
 +
-+alloc_failure:
-+	kvfree(q->flows);
-+	q->flows = NULL;
-+init_failure:
-+	q->flows_cnt = 0;
-+	return err;
- }
- 
- static int fq_codel_dump(struct Qdisc *sch, struct sk_buff *skb)
+ 	/* Reprobe ASF enable state.  */
+ 	tg3_flag_clear(tp, ENABLE_ASF);
+ 	tp->phy_flags &= ~(TG3_PHYFLG_1G_ON_VAUX_OK |
 
 
