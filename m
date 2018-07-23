@@ -6,43 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AE8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85277ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4E520856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4E520856
+	by mail.kernel.org (Postfix) with ESMTP id 43C1B20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C1B20856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388626AbeGWNxX (ORCPT
+        id S2389321AbeGWNrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:53:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51134 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388533AbeGWNrs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Jul 2018 09:47:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51200 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388313AbeGWNrr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 09:47:47 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0ED1C74;
-        Mon, 23 Jul 2018 12:45:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12984CB2;
+        Mon, 23 Jul 2018 12:45:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Garnier <thgarnie@google.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
+        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>, karahmed@amazon.de,
+        peterz@infradead.org, bp@alien8.de,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 028/107] x86/pti: Mark constant arrays as __initconst
-Date:   Mon, 23 Jul 2018 14:41:22 +0200
-Message-Id: <20180723122414.231803248@linuxfoundation.org>
+Subject: [PATCH 4.4 027/107] x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature bits on Intel
+Date:   Mon, 23 Jul 2018 14:41:21 +0200
+Message-Id: <20180723122414.189458177@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -59,27 +55,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-(cherry picked from commit 4bf5d56d429cbc96c23d809a08f63cd29e1a702e)
+(cherry picked from commit 7fcae1118f5fd44a862aa5c3525248e35ee67c3b)
 
-I'm seeing build failures from the two newly introduced arrays that
-are marked 'const' and '__initdata', which are mutually exclusive:
+Despite the fact that all the other code there seems to be doing it, just
+using set_cpu_cap() in early_intel_init() doesn't actually work.
 
-arch/x86/kernel/cpu/common.c:882:43: error: 'cpu_no_speculation' causes a section type conflict with 'e820_table_firmware_init'
-arch/x86/kernel/cpu/common.c:895:43: error: 'cpu_no_meltdown' causes a section type conflict with 'e820_table_firmware_init'
+For CPUs with PKU support, setup_pku() calls get_cpu_cap() after
+c->c_init() has set those feature bits. That resets those bits back to what
+was queried from the hardware.
 
-The correct annotation is __initconst.
+Turning the bits off for bad microcode is easy to fix. That can just use
+setup_clear_cpu_cap() to force them off for all CPUs.
 
-Fixes: fec9434a12f3 ("x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+I was less keen on forcing the feature bits *on* that way, just in case
+of inconsistencies. I appreciate that the kernel is going to get this
+utterly wrong if CPU features are not consistent, because it has already
+applied alternatives by the time secondary CPUs are brought up.
+
+But at least if setup_force_cpu_cap() isn't being used, we might have a
+chance of *detecting* the lack of the corresponding bit and either
+panicking or refusing to bring the offending CPU online.
+
+So ensure that the appropriate feature bits are set within get_cpu_cap()
+regardless of how many extra times it's called.
+
+Fixes: 2961298e ("x86/cpufeatures: Clean up Spectre v2 related CPUID flags")
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Thomas Garnier <thgarnie@google.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180202213959.611210-1-arnd@arndb.de
+Cc: karahmed@amazon.de
+Cc: peterz@infradead.org
+Cc: bp@alien8.de
+Link: https://lkml.kernel.org/r/1517322623-15261-1-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -89,28 +97,85 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/kernel/cpu/common.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/common.c |   21 +++++++++++++++++++++
+ arch/x86/kernel/cpu/intel.c  |   27 ++++++++-------------------
+ 2 files changed, 29 insertions(+), 19 deletions(-)
 
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -817,7 +817,7 @@ static void identify_cpu_without_cpuid(s
- #endif
+@@ -676,6 +676,26 @@ static void apply_forced_caps(struct cpu
+ 	}
  }
  
--static const __initdata struct x86_cpu_id cpu_no_speculation[] = {
-+static const __initconst struct x86_cpu_id cpu_no_speculation[] = {
- 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CEDARVIEW,	X86_FEATURE_ANY },
- 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CLOVERVIEW,	X86_FEATURE_ANY },
- 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_LINCROFT,	X86_FEATURE_ANY },
-@@ -830,7 +830,7 @@ static const __initdata struct x86_cpu_i
- 	{}
- };
++static void init_speculation_control(struct cpuinfo_x86 *c)
++{
++	/*
++	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
++	 * and they also have a different bit for STIBP support. Also,
++	 * a hypervisor might have set the individual AMD bits even on
++	 * Intel CPUs, for finer-grained selection of what's available.
++	 *
++	 * We use the AMD bits in 0x8000_0008 EBX as the generic hardware
++	 * features, which are visible in /proc/cpuinfo and used by the
++	 * kernel. So set those accordingly from the Intel bits.
++	 */
++	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
++		set_cpu_cap(c, X86_FEATURE_IBRS);
++		set_cpu_cap(c, X86_FEATURE_IBPB);
++	}
++	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
++		set_cpu_cap(c, X86_FEATURE_STIBP);
++}
++
+ void get_cpu_cap(struct cpuinfo_x86 *c)
+ {
+ 	u32 eax, ebx, ecx, edx;
+@@ -768,6 +788,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
  
--static const __initdata struct x86_cpu_id cpu_no_meltdown[] = {
-+static const __initconst struct x86_cpu_id cpu_no_meltdown[] = {
- 	{ X86_VENDOR_AMD },
- 	{}
- };
+ 	init_scattered_cpuid_features(c);
++	init_speculation_control(c);
+ }
+ 
+ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -105,28 +105,17 @@ static void early_init_intel(struct cpui
+ 		rdmsr(MSR_IA32_UCODE_REV, lower_word, c->microcode);
+ 	}
+ 
+-	/*
+-	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
+-	 * and they also have a different bit for STIBP support. Also,
+-	 * a hypervisor might have set the individual AMD bits even on
+-	 * Intel CPUs, for finer-grained selection of what's available.
+-	 */
+-	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
+-		set_cpu_cap(c, X86_FEATURE_IBRS);
+-		set_cpu_cap(c, X86_FEATURE_IBPB);
+-	}
+-	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
+-		set_cpu_cap(c, X86_FEATURE_STIBP);
+-
+ 	/* Now if any of them are set, check the blacklist and clear the lot */
+-	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
++	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
++	     cpu_has(c, X86_FEATURE_INTEL_STIBP) ||
++	     cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
+ 	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
+ 		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
+-		clear_cpu_cap(c, X86_FEATURE_IBRS);
+-		clear_cpu_cap(c, X86_FEATURE_IBPB);
+-		clear_cpu_cap(c, X86_FEATURE_STIBP);
+-		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
+-		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_IBRS);
++		setup_clear_cpu_cap(X86_FEATURE_IBPB);
++		setup_clear_cpu_cap(X86_FEATURE_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
++		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
+ 	}
+ 
+ 	/*
 
 
