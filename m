@@ -2,95 +2,199 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D70FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2254EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E52BB20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:00:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52BB20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A8C9820852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:00:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8C9820852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388189AbeGWXDV (ORCPT
+        id S2388213AbeGWXDc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 19:03:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39100 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388137AbeGWXDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 19:03:20 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 71F504023132;
-        Mon, 23 Jul 2018 22:00:05 +0000 (UTC)
-Received: from treble (ovpn-121-132.rdu2.redhat.com [10.10.121.132])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 726222026D65;
-        Mon, 23 Jul 2018 22:00:00 +0000 (UTC)
-Date:   Mon, 23 Jul 2018 16:59:58 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
-Message-ID: <20180723215958.jozblzq4sv7gp7uj@treble>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
- <20180723140925.GA4285@amd>
- <CA+55aFynT9Sp7CbnB=GqLbns7GFZbv3pDSQm_h0jFvJpz3ES+g@mail.gmail.com>
- <20180723213830.GA4632@amd>
+        Mon, 23 Jul 2018 19:03:32 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:50977 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388137AbeGWXDc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 19:03:32 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T5BsFI1_1532383206;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T5BsFI1_1532383206)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 24 Jul 2018 06:00:08 +0800
+Subject: Re: [RFC v5 0/2] mm: zap pages with read mmap_sem in munmap for large
+ mapping
+To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1531956101-8526-1-git-send-email-yang.shi@linux.alibaba.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <d0535691-4abb-b53a-64cf-1ee0ea59fd22@linux.alibaba.com>
+Date:   Mon, 23 Jul 2018 15:00:05 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180723213830.GA4632@amd>
-User-Agent: NeoMutt/20180323
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 22:00:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 23 Jul 2018 22:00:05 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
+In-Reply-To: <1531956101-8526-1-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 11:38:30PM +0200, Pavel Machek wrote:
-> But for now I'd like at least "global" option of turning pti on/off
-> during runtime for benchmarking. Let me see...
-> 
-> Something like this, or is it going to be way more complex? Does
-> anyone have patch by chance?
+Hi folks,
 
-RHEL/CentOS has a global PTI enable/disable, which uses stop_machine().
 
--- 
-Josh
+Any comment on this version?
+
+
+Thanks,
+
+Yang
+
+
+On 7/18/18 4:21 PM, Yang Shi wrote:
+> Background:
+> Recently, when we ran some vm scalability tests on machines with large memory,
+> we ran into a couple of mmap_sem scalability issues when unmapping large memory
+> space, please refer to https://lkml.org/lkml/2017/12/14/733 and
+> https://lkml.org/lkml/2018/2/20/576.
+>
+>
+> History:
+> Then akpm suggested to unmap large mapping section by section and drop mmap_sem
+> at a time to mitigate it (see https://lkml.org/lkml/2018/3/6/784).
+>
+> V1 patch series was submitted to the mailing list per Andrew's suggestion
+> (see https://lkml.org/lkml/2018/3/20/786). Then I received a lot great feedback
+> and suggestions.
+>
+> Then this topic was discussed on LSFMM summit 2018. In the summit, Michal Hocko
+> suggested (also in the v1 patches review) to try "two phases" approach. Zapping
+> pages with read mmap_sem, then doing via cleanup with write mmap_sem (for
+> discussion detail, see https://lwn.net/Articles/753269/)
+>
+>
+> Approach:
+> Zapping pages is the most time consuming part, according to the suggestion from
+> Michal Hocko [1], zapping pages can be done with holding read mmap_sem, like
+> what MADV_DONTNEED does. Then re-acquire write mmap_sem to cleanup vmas.
+>
+> But, we can't call MADV_DONTNEED directly, since there are two major drawbacks:
+>    * The unexpected state from PF if it wins the race in the middle of munmap.
+>      It may return zero page, instead of the content or SIGSEGV.
+>    * Can’t handle VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe mappings, which
+>      is a showstopper from akpm
+>
+> But, some part may need write mmap_sem, for example, vma splitting. So,
+> the design is as follows:
+>          acquire write mmap_sem
+>          lookup vmas (find and split vmas)
+>          detach vmas
+>          deal with special mappings
+>          downgrade_write
+>
+>          zap pages
+>          free page tables
+>          release mmap_sem
+>
+> The vm events with read mmap_sem may come in during page zapping, but
+> since vmas have been detached before, they, i.e. page fault, gup, etc,
+> will not be able to find valid vma, then just return SIGSEGV or -EFAULT
+> as expected.
+>
+> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
+> considered as special mappings. They will be dealt with before zapping
+> pages with write mmap_sem held. Basically, just update vm_flags.
+>
+> And, since they are also manipulated by unmap_single_vma() which is
+> called by unmap_vma() with read mmap_sem held in this case, to
+> prevent from updating vm_flags in read critical section, a new
+> parameter, called "skip_flags" is added to unmap_region(), unmap_vmas()
+> and unmap_single_vma(). If it is true, then just skip unmap those
+> special mappings. Currently, the only place which pass true to this
+> parameter is us.
+>
+> With this approach we don't have to re-acquire mmap_sem again to clean
+> up vmas to avoid race window which might get the address space changed.
+>
+> And, since the lock acquire/release cost is managed to the minimum and
+> almost as same as before, the optimization could be extended to any size
+> of mapping without incuring significant penalty to small mappings.
+>
+> For the time being, just do this in munmap syscall path. Other vm_munmap() or
+> do_munmap() call sites (i.e mmap, mremap, etc) remain intact for stability
+> reason.
+>
+> Changelog:
+> v4 -> v5:
+> * Detach vmas before zapping pages so that we don't have to use VM_DEAD to mark
+>    a being unmapping vma since they have been detached from rbtree when zapping
+>    pages. Per Kirill
+> * Eliminate VM_DEAD stuff
+> * With this change we don't have to re-acquire write mmap_sem to do cleanup.
+>    So, we could eliminate a potential race window
+> * Eliminate PUD_SIZE check, and extend this optimization to all size
+>
+> v3 -> v4:
+> * Extend check_stable_address_space to check VM_DEAD as Michal suggested
+> * Deal with vm_flags update of VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe
+>    mappings with exclusive lock held. The actual unmapping is still done with read
+>    mmap_sem to solve akpm's concern
+> * Clean up vmas with calling do_munmap to prevent from race condition by not
+>    carrying vmas as Kirill suggested
+> * Extracted more common code
+> * Solved some code cleanup comments from akpm
+> * Dropped uprobe and arch specific code, now all the changes are mm only
+> * Still keep PUD_SIZE threshold, if everyone thinks it is better to extend to all
+>    sizes or smaller size, will remove it
+> * Make this optimization 64 bit only explicitly per akpm's suggestion
+>
+> v2 -> v3:
+> * Refactor do_munmap code to extract the common part per Peter's sugestion
+> * Introduced VM_DEAD flag per Michal's suggestion. Just handled VM_DEAD in
+>    x86's page fault handler for the time being. Other architectures will be covered
+>    once the patch series is reviewed
+> * Now lookup vma (find and split) and set VM_DEAD flag with write mmap_sem, then
+>    zap mapping with read mmap_sem, then clean up pgtables and vmas with write
+>    mmap_sem per Peter's suggestion
+>
+> v1 -> v2:
+> * Re-implemented the code per the discussion on LSFMM summit
+>
+>
+> Regression and performance data:
+> Did the below regression test with setting thresh to 4K manually in the code:
+>    * Full LTP
+>    * Trinity (munmap/all vm syscalls)
+>    * Stress-ng: mmap/mmapfork/mmapfixed/mmapaddr/mmapmany/vm
+>    * mm-tests: kernbench, phpbench, sysbench-mariadb, will-it-scale
+>    * vm-scalability
+>
+> With the patches, exclusive mmap_sem hold time when munmap a 80GB address
+> space on a machine with 32 cores of E5-2680 @ 2.70GHz dropped to us level
+> from second.
+>
+> munmap_test-15002 [008]   594.380138: funcgraph_entry: |  vm_munmap_zap_rlock() {
+> munmap_test-15002 [008]   594.380146: funcgraph_entry:      !2485684 us |    unmap_region();
+> munmap_test-15002 [008]   596.865836: funcgraph_exit:       !2485692 us |  }
+>
+> Here the excution time of unmap_region() is used to evaluate the time of
+> holding read mmap_sem, then the remaining time is used with holding
+> exclusive lock.
+>
+> Yang Shi (2):
+>        mm: refactor do_munmap() to extract the common part
+>        mm: mmap: zap pages with read mmap_sem in munmap
+>
+>   include/linux/mm.h |   2 +-
+>   mm/memory.c        |  35 +++++++++++++-----
+>   mm/mmap.c          | 219 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
+>   3 files changed, 199 insertions(+), 57 deletions(-)
+
