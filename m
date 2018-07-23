@@ -2,107 +2,117 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 309CAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7AFECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3EBD20858
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:42:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B885120858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:43:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SH8qtBxO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3EBD20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="srBCHW7m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B885120858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387918AbeGWElM (ORCPT
+        id S2387804AbeGWEmJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 00:41:12 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35816 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387901AbeGWElL (ORCPT
+        Mon, 23 Jul 2018 00:42:09 -0400
+Received: from mail-vk0-f48.google.com ([209.85.213.48]:42733 "EHLO
+        mail-vk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbeGWEmJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 00:41:11 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e6-v6so11215940pgv.2
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 20:42:05 -0700 (PDT)
+        Mon, 23 Jul 2018 00:42:09 -0400
+Received: by mail-vk0-f48.google.com with SMTP id t4-v6so8575583vke.9;
+        Sun, 22 Jul 2018 20:43:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/b+N2DvOUUyA2A2wTJ+2C32b3lKHmvgv0TH8hNrLKeQ=;
-        b=SH8qtBxO6V0TP2KOkm8GkF/Q9kn+8Ey4uPSpi09/Z+5MVoTE0lZHktNT9SwvHT3VBa
-         2wcZf+By/xwSBb9fmTk1Kn+1l3AzwDuPxVLCTbTzLBlydjWemCQXl3uq7KycHsvi90di
-         hLrTRs/sf2rJ8ailSzrYpul57GAyNpG8z6dWs=
+        d=googlemail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=F5tKwLJbVw4k9HBKCMgKOe6xi5iREMSqWWUu7DRRRMI=;
+        b=srBCHW7mfigfkbAuFrbFWZ/33F9IrkLrJoxQ/eseVYSQ7DsT0SHd+1rr9JQ3wytjf6
+         ND4hnTkXOhTVhh1Y7PltpZFnEVZfDBmxfZgDNOzDmj/BzLHxK0CMhN/RYU9NxjmAObit
+         LlPs228jT1kNU/JUrYFIfRQ8OPG2F2RyQqwSRE2s9JMxDjWq25UEC/WptKrFpg3UwTxU
+         lATG5HTGVZdU0nFUBsJ5xcjbWTTw3x0mhdYi0BcA8QRH9sSkDSYyP3lyK/1lIGObSDMU
+         ib996/mmWxWUExIH034M+jjB0p8FHJf2c5WR7MtXPQCcPSyiStUmkBwfksVu8yrGWzkp
+         92eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/b+N2DvOUUyA2A2wTJ+2C32b3lKHmvgv0TH8hNrLKeQ=;
-        b=C9lKGP6mDcZbByVqqdJS6bOiUGhkoqwr6Vp4qCnvSfSLPH5APyvqgGVslmp/XbZZwR
-         ygyxSyTum8PjXQ78clfPYM6pLTvf1iIS6NqDY0ivOwTv6ZtuBdmV3RztBsR0ve+Fh9yc
-         CYQAKV09zmw7pVa1qiRUBXOvI/ZK8Iyif5LOISBq+QMHOT8F0c5B700iLYMopJAyr2L3
-         +2JVAyLFIN46Q2aZk6O9FCmpOuORG94ySWnDnCc3P8KjY4v9/QlM8oBIEWlxEIdoxhZ8
-         TeV3DVvEGmCC/N1IXucwbQ8xuHQVjpZxkyMf/V3/D/SI3/b0Q6Krcto/hZZE5QugGVYi
-         j2dA==
-X-Gm-Message-State: AOUpUlFyyBZ8apWKjvRCCqIwmuNvX86/9SIIAA8xIvaiFMAFsmO46kQY
-        cbRk8ATqvqQVv+qmdghLjkeG
-X-Google-Smtp-Source: AAOMgpdNwMDqrKu63v1ttRBRmRd0IO4DiMadxYTAEMRf7RMvgO297RFdrfYpBMh0/gdDUba9nKLuLg==
-X-Received: by 2002:a63:5758:: with SMTP id h24-v6mr10588414pgm.432.1532317324950;
-        Sun, 22 Jul 2018 20:42:04 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:802:a98c:b568:c01f:49a2:2aa5])
-        by smtp.gmail.com with ESMTPSA id s184-v6sm11340248pfb.56.2018.07.22.20.41.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 20:42:04 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
-Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 6/6] MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
-Date:   Mon, 23 Jul 2018 09:10:25 +0530
-Message-Id: <20180723034025.5763-7-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180723034025.5763-1-manivannan.sadhasivam@linaro.org>
-References: <20180723034025.5763-1-manivannan.sadhasivam@linaro.org>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=F5tKwLJbVw4k9HBKCMgKOe6xi5iREMSqWWUu7DRRRMI=;
+        b=LVa5X5ajcJuxp8ecvBhnTMPycR8pLv0+6tiNHsKH5zA+iecvjI2IuITN2Vx4FnI5+K
+         2V/MKoIDrKmKmCsFHsjMPwOLznUUOk4IpPsIQrf97l3lWwGvkQ7TRmi4pd8eJfVxQYgv
+         kWzgIpJZqLYDbS0XmgMZYCvhRMl38U1xmzmK9LaB6+ZaJS7XEdxPM6m4G30INNHTL8ny
+         WVJ6/wGfZtjyaKSGOCAw1Y28/iEPBp5MqbQBx5oawmzu0pPTTP5aTbAsPTouTq9HTRPt
+         FXLGXboAdzfgX0kf+sX+QQizlfwG5Spgskd6FVICjNwCi6UZaCyc621G6MwCdxNI6kA4
+         LHAg==
+X-Gm-Message-State: AOUpUlGfUM8wQOS6zlXASQi3cV1Jt63/cySOMOMkrBPrC/umuRy+qfW+
+        xqBpIFKOqikg92mzXi/6/sYtEWyu6ywgcCmrQq+Zsw==
+X-Google-Smtp-Source: AAOMgpcumwltIXB/TGJ6pof/znGCsPD3Fzv/nA5lUwWvBTe6xiDLqx/8LzZ1mNjKbhglI7ZVWTlP9w9hOybUZ3n+GIM=
+X-Received: by 2002:a1f:e0d:: with SMTP id 13-v6mr6988079vko.107.1532317381904;
+ Sun, 22 Jul 2018 20:43:01 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:d012:0:0:0:0:0 with HTTP; Sun, 22 Jul 2018 20:43:01
+ -0700 (PDT)
+From:   Ken Moffat <zarniwhoop73@googlemail.com>
+Date:   Mon, 23 Jul 2018 04:43:01 +0100
+Message-ID: <CANVEwpbaU5=wMT_iSh9XrkmbLvqKjx4+v6PDizamaY0gWvk-mg@mail.gmail.com>
+Subject: Does /dev/urandom now block until initialised ?
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-crypto@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for Actions Semiconductor Owl I2C driver under ARM/ACTIONS
+Ted,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+last week you proposed an rfc patch to gather entropy from the CPU's
+hwrng, and I was pleased - until I discovered one of my stalling
+desktop machines does not have a hwrng.  At that point I thought that
+the problem was only from reading /dev/random, so I went away to look
+at persuading the immediate consumer (unbound) to use /dev/urandom.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09b54e9ebc6f..5084c62712fa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1145,12 +1145,14 @@ F:	arch/arm/boot/dts/owl-*
- F:	arch/arm64/boot/dts/actions/
- F:	drivers/clk/actions/
- F:	drivers/clocksource/owl-*
-+F:	drivers/i2c/busses/i2c-owl.c
- F:	drivers/pinctrl/actions/*
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
- F:	include/linux/soc/actions/
- F:	Documentation/devicetree/bindings/arm/actions.txt
- F:	Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-+F:	Documentation/devicetree/bindings/i2c/i2c-owl.txt
- F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
--- 
-2.17.1
+Did that, no change.  Ran strace from the bootscript, confirmed that
+only /dev/urandom was being used, and that it seemed to be blocking.
+Thought maybe this was the olnl problematic bootscript, tried moving
+it to later, but hit the same problem on chronyd (again, seems to use
+urandom). And yes, I probably should have started chronyd first
+anyway, but that's irrelevant to this problem.
 
+BUT: I'm not sure if I've correctly understood what is happening.
+It seems to me that the fix for CVE-2018-1108 (4.17-rc1, 4.16.4)
+means /dev/urandom will now block until fully initialised.
+
+Is that correct and intentional ?
+
+If so, to get the affected desktop machines to boot I seem to have
+some choices:
+
+1. Wait for two and a half minutes (timed on the kaveri, the haswell
+seemed to take a similar time).
+
+2. Sit at the keyboard and start thumping it once userspace has
+started.
+
+3. For the haswell, apply your patch and trust that the CPU has not
+been backdored
+
+4. Run haveged.
+
+The latter certainly lets it boot in a reasonable time, but people
+who understand this seem to regard it as untrustworthy.  For users
+of /dev/urandom that is no big deal, but does it not mean that the
+values from /dev/random will be similarly untrustworthy and
+therefore I should not use this machine for generating long-lived
+secure keys ?
+
+TIA.
+
+=C4=B8en
