@@ -2,167 +2,111 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D00CCECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A12ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E9920846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:23:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E9920846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C4F720846
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:25:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="HvlZd9oS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C4F720846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388196AbeGWLYD (ORCPT
+        id S2388141AbeGWL0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:24:03 -0400
-Received: from mga09.intel.com ([134.134.136.24]:40349 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387887AbeGWLYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:24:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 03:23:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
-   d="scan'208";a="248064003"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga006.fm.intel.com with ESMTP; 23 Jul 2018 03:23:14 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [char-misc-next 3/3] mei: add mei_msg_hdr_init wrapper.
-Date:   Mon, 23 Jul 2018 13:21:24 +0300
-Message-Id: <20180723102124.27788-3-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180723102124.27788-1-tomas.winkler@intel.com>
-References: <20180723102124.27788-1-tomas.winkler@intel.com>
+        Mon, 23 Jul 2018 07:26:14 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45772 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388021AbeGWL0O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:26:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wO+g2Y34hM32cBZw1e18HnlLgpVubsQ0Bk99t/BHUB4=; b=HvlZd9oSewxF64PxuIB3u68MX
+        hbV+y3GkLn8lCrqwkp7/gLzS0nS6mxyvbmW24QlSJxhyARu8DTz/HHDUFHEOoS1hil01eY5Cs9lol
+        xP0eyn59vPCweQOYhAnmZiPoNCl/W3/sij/Kk4ehErPljMa3PQVeF7m7gH0bnhm4a0MdY=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fhY1x-0003xf-0N; Mon, 23 Jul 2018 10:25:29 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B7BEE112387B; Mon, 23 Jul 2018 11:25:28 +0100 (BST)
+Date:   Mon, 23 Jul 2018 11:25:28 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH 2/2] ASoC: tegra: probe deferral error reporting
+Message-ID: <20180723102528.GA13981@sirena.org.uk>
+References: <20180720080424.31505-1-marcel@ziswiler.com>
+ <20180720080424.31505-2-marcel@ziswiler.com>
+ <20180720121612.GC10784@sirena.org.uk>
+ <1532089865.19673.13.camel@toradex.com>
+ <20180721095615.GG16228@sirena.org.uk>
+ <1532167581.19673.21.camel@toradex.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Disposition: inline
+In-Reply-To: <1532167581.19673.21.camel@toradex.com>
+X-Cookie: If in doubt, mumble.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wrap the mei header boilerplate initialization code in
-mei_msg_hdr_init function. On the way remove 'completed'
-field from mei_cl_cb structure as this information
-is already included in the header and is local to particular
-fragment.
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/misc/mei/client.c  | 33 ++++++++++++++++++++-------------
- drivers/misc/mei/mei_dev.h |  2 --
- 2 files changed, 20 insertions(+), 15 deletions(-)
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
-index ca917b84ca5e..207d2f5d5702 100644
---- a/drivers/misc/mei/client.c
-+++ b/drivers/misc/mei/client.c
-@@ -1539,6 +1539,22 @@ int mei_cl_read_start(struct mei_cl *cl, size_t length, const struct file *fp)
- 	return rets;
- }
- 
-+/**
-+ * mei_msg_hdr_init - initialize mei message header
-+ *
-+ * @mei_hdr: mei message header
-+ * @cb: message callback structure
-+ */
-+static void mei_msg_hdr_init(struct mei_msg_hdr *mei_hdr, struct mei_cl_cb *cb)
-+{
-+	mei_hdr->host_addr = mei_cl_host_addr(cb->cl);
-+	mei_hdr->me_addr = mei_cl_me_id(cb->cl);
-+	mei_hdr->length = 0;
-+	mei_hdr->reserved = 0;
-+	mei_hdr->msg_complete = 0;
-+	mei_hdr->internal = cb->internal;
-+}
-+
- /**
-  * mei_cl_irq_write - write a message to device
-  *	from the interrupt thread context
-@@ -1579,12 +1595,6 @@ int mei_cl_irq_write(struct mei_cl *cl, struct mei_cl_cb *cb,
- 		return 0;
- 	}
- 
--	mei_hdr.host_addr = mei_cl_host_addr(cl);
--	mei_hdr.me_addr = mei_cl_me_id(cl);
--	mei_hdr.reserved = 0;
--	mei_hdr.msg_complete = 0;
--	mei_hdr.internal = cb->internal;
--
- 	len = buf->size - cb->buf_idx;
- 	hbuf_slots = mei_hbuf_empty_slots(dev);
- 	if (hbuf_slots < 0) {
-@@ -1593,6 +1603,8 @@ int mei_cl_irq_write(struct mei_cl *cl, struct mei_cl_cb *cb,
- 	}
- 	hbuf_len = mei_slots2data(hbuf_slots) - sizeof(struct mei_msg_hdr);
- 
-+	mei_msg_hdr_init(&mei_hdr, cb);
-+
- 	/**
- 	 * Split the message only if we can write the whole host buffer
- 	 * otherwise wait for next time the host buffer is empty.
-@@ -1616,7 +1628,6 @@ int mei_cl_irq_write(struct mei_cl *cl, struct mei_cl_cb *cb,
- 	cl->status = 0;
- 	cl->writing_state = MEI_WRITING;
- 	cb->buf_idx += mei_hdr.length;
--	cb->completed = mei_hdr.msg_complete == 1;
- 
- 	if (first_chunk) {
- 		if (mei_cl_tx_flow_ctrl_creds_reduce(cl)) {
-@@ -1680,16 +1691,13 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb)
- 	cb->buf_idx = 0;
- 	cl->writing_state = MEI_IDLE;
- 
--	mei_hdr.host_addr = mei_cl_host_addr(cl);
--	mei_hdr.me_addr = mei_cl_me_id(cl);
--	mei_hdr.reserved = 0;
--	mei_hdr.msg_complete = 0;
--	mei_hdr.internal = cb->internal;
- 
- 	rets = mei_cl_tx_flow_ctrl_creds(cl);
- 	if (rets < 0)
- 		goto err;
- 
-+	mei_msg_hdr_init(&mei_hdr, cb);
-+
- 	if (rets == 0) {
- 		cl_dbg(dev, cl, "No flow control credentials: not sending.\n");
- 		rets = len;
-@@ -1726,7 +1734,6 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb)
- 
- 	cl->writing_state = MEI_WRITING;
- 	cb->buf_idx = mei_hdr.length;
--	cb->completed = mei_hdr.msg_complete == 1;
- 
- out:
- 	if (mei_hdr.msg_complete)
-diff --git a/drivers/misc/mei/mei_dev.h b/drivers/misc/mei/mei_dev.h
-index fa543dcfc111..e9f37085a628 100644
---- a/drivers/misc/mei/mei_dev.h
-+++ b/drivers/misc/mei/mei_dev.h
-@@ -175,7 +175,6 @@ struct mei_cl;
-  * @status: io status of the cb
-  * @internal: communication between driver and FW flag
-  * @blocking: transmission blocking mode
-- * @completed: the transfer or reception has completed
-  */
- struct mei_cl_cb {
- 	struct list_head list;
-@@ -187,7 +186,6 @@ struct mei_cl_cb {
- 	int status;
- 	u32 internal:1;
- 	u32 blocking:1;
--	u32 completed:1;
- };
- 
- /**
--- 
-2.14.4
+On Sat, Jul 21, 2018 at 10:06:23AM +0000, Marcel Ziswiler wrote:
+> On Sat, 2018-07-21 at 10:56 +0100, Mark Brown wrote:
 
+> > > > > -		dev_err(&pdev->dev, "no codec-sync GPIO
+> > > > > supplied\n");
+> > > > > +		ret = ac97->sync_gpio;
+
+> And here I assign ret with that return value from of_get_named_gpio(),
+> right?
+
+> > It's not in any way involved in setting the value of ret, whatever
+> > value
+> > that has it's nothing to do with that operation.
+
+> I really do not understand what you are trying to get at, sorry.
+
+Didn't see the above assignment you'd added, sorry.
+
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltVrRcACgkQJNaLcl1U
+h9BPnAf/X7WpWwT+ycthPvj/M4GzQ9pY0c+5oUCBO66OIRz5TjmLDck3P0oSGlwM
+tquV26H2D8YwAjE2QUE9QWH4rMmvObuf+yKEUuBhknCe4Uyk3Jcm3+A+BMtVZQ9d
+9GPCyvwG/MeT2YukiJOlsh7TmVgU5qiPNJc2Gb40zeMJf0TxpEHLMut1vU0rqD5i
+lwrqnD/iep0GhLrZAPIQ8b+kVBT7kQmrzkHf+YuVCmWqcsvPy7lEIfAYuI+OaNuw
+SoF1Yu5t+gMwVgYhxpR/Ta1PHZqapX5yjpWmDtm31052akyXiDXQ0+9p/OOTSO8K
+pxH071GVUcHGZPQ5Id9IFfaP4CnAew==
+=DxoV
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
