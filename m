@@ -2,110 +2,196 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F14ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB99ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A6A20671
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E02920671
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 19:11:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="LnKxaq5U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56A6A20671
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="UJT+isUV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E02920671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388146AbeGWUNP (ORCPT
+        id S2388161AbeGWUNy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 16:13:15 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51408 "EHLO
+        Mon, 23 Jul 2018 16:13:54 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52490 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388056AbeGWUNP (ORCPT
+        with ESMTP id S2388066AbeGWUNx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 16:13:15 -0400
+        Mon, 23 Jul 2018 16:13:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rH5t7SDpri+RVAZb7JtkSMKTmlYOY70IduPRYU7Jiiw=; b=LnKxaq5UzeIx9fGoSzqcpGA49
-        u+Cw63u+jiloiZhMD6XCBK7t6KmnvgIezryTQt3U5h3HPZt5kffEiKSB0KeaLWnFBnnsCN+xhgxGt
-        xKwuwAkxdb6ZRRX1nXh1BoYcCl98Yw63JP8m0W5lRZi1cvtlNInAxp0YcKiWh+c3w7z10=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=qvzB2epprrFfc7ac7P4GluyrGfUzWBAxsaSn5bqQFQg=; b=UJT+isUVVVvX
+        Z5Lq/F90FCrJKpC1dYZAtTXGwxlYGfV7p+IviMWeFzyWqBroclm6CvTF+NzAKMMSwVNsDHz/+6Bb4
+        g51ZxYvgtXzmRentXfiOabQDMuulQVsFxj8QuHg77Y9kzzz7ZR1SiEa7W+ieK6wx2jz/L/DXijh9t
+        v9rLQ=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fhgDg-0004Wx-Mi; Mon, 23 Jul 2018 19:10:08 +0000
+        id 1fhgEk-0004XS-7g; Mon, 23 Jul 2018 19:11:14 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5655E112387B; Mon, 23 Jul 2018 20:10:08 +0100 (BST)
-Date:   Mon, 23 Jul 2018 20:10:08 +0100
+        id 0030E112387B; Mon, 23 Jul 2018 20:11:13 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     cl@rock-chips.com
-Cc:     heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        klaus.goger@theobroma-systems.com, hjc@rock-chips.com,
-        jagan@amarulasolutions.com, djw@t-chip.com.cn,
-        jacob-chen@iotwrt.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        frank.wang@rock-chips.com, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, gregkh@linuxfoundation.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        yamada.masahiro@socionext.com, arnd@arndb.de,
-        zhangqing@rock-chips.com, shawn.lin@rock-chips.com,
-        kever.yang@rock-chips.com, david.wu@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com,
-        sugar.zhang@rock-chips.com, huibin.hong@rock-chips.com,
-        william.wu@rock-chips.com, sandy.huang@rock-chips.com
-Subject: Re: [PATCH v2 3/6] dt-bindings: sound: rockchip-i2s: add description
- for px30
-Message-ID: <20180723191008.GL13981@sirena.org.uk>
-References: <1532337924-4185-1-git-send-email-cl@rock-chips.com>
- <1532337924-4185-4-git-send-email-cl@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="OX2aLCKeO1apYW07"
-Content-Disposition: inline
-In-Reply-To: <1532337924-4185-4-git-send-email-cl@rock-chips.com>
-X-Cookie: If in doubt, mumble.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: pfuze100: add support to en-/disable switch regulators" to the regulator tree
+In-Reply-To: 
+Message-Id: <20180723191114.0030E112387B@debutante.sirena.org.uk>
+Date:   Mon, 23 Jul 2018 20:11:13 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---OX2aLCKeO1apYW07
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   regulator: pfuze100: add support to en-/disable switch regulators
 
-On Mon, Jul 23, 2018 at 05:25:21PM +0800, cl@rock-chips.com wrote:
-> From: Liang Chen <cl@rock-chips.com>
->=20
-> Add "rockchip,px30-i2s", "rockchip,rk3066-i2s" for i2s on px30 platform.
+has been applied to the regulator tree at
 
-Please submit patches using subject lines reflecting the style for the
-subsystem.  This makes it easier for people to identify relevant
-patches.  Look at what existing commits in the area you're changing are
-doing and make sure your subject lines visually resemble what they're
-doing.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
---OX2aLCKeO1apYW07
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltWKA8ACgkQJNaLcl1U
-h9BhLgf/Y0UU7Id4l6ICoIlmMMIaggZlIIZfIWDu4AXODkAXnewyj9blyVs+cdVm
-u5Frz8gAdH51Jm7o3t+JKQcHdl5yYEGi9Yf8Ob3KhbgpuBma3jUY6krtczVDaGdN
-r1QkRRCEmAw0Bxl6olyHG8sq4gFcp1Ixo1/WydCWG4vGr1ryZmsFjZDw1j9N10nJ
-9oHwx3ZqaRUiJAFttkrhSxrYlAK11KHfFjb2Luj6c7tnNATE69+kXkKSlRv/6Y+v
-PM3VEPiSGV7yIDYu6qCnzobhCG+MbkxF8Th5dEu2CjAxdtm7bZfe6kLcuPcBmY64
-WxWcdNYvUCqwYV1EpA4OzaR4zYnYPg==
-=Am74
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---OX2aLCKeO1apYW07--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 9d2fd4f0ddfbc4aa1135000df34caebc02793a26 Mon Sep 17 00:00:00 2001
+From: Marco Felsch <m.felsch@pengutronix.de>
+Date: Mon, 23 Jul 2018 09:47:47 +0200
+Subject: [PATCH] regulator: pfuze100: add support to en-/disable switch
+ regulators
+
+Add enable/disable support for switch regulators on pfuze100.
+
+Based on commit 5fe156f1cab4 ("regulator: pfuze100: add enable/disable for
+switch") which is reverted due to boot regressions by commit 464a5686e6c9
+("regulator: Revert "regulator: pfuze100: add enable/disable for switch"").
+Disabling the switch regulators will only be done if the user specifies
+"fsl,pfuze-support-disable-sw" in its device tree to keep backward
+compatibility with current dtb's [1].
+
+[1] https://patchwork.kernel.org/patch/10490381/
+
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/pfuze100-regulator.c | 36 ++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index cde6eda1d283..31c3a236120a 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -17,6 +17,8 @@
+ #include <linux/slab.h>
+ #include <linux/regmap.h>
+ 
++#define PFUZE_FLAG_DISABLE_SW	BIT(1)
++
+ #define PFUZE_NUMREGS		128
+ #define PFUZE100_VOL_OFFSET	0
+ #define PFUZE100_STANDBY_OFFSET	1
+@@ -50,10 +52,12 @@ struct pfuze_regulator {
+ 	struct regulator_desc desc;
+ 	unsigned char stby_reg;
+ 	unsigned char stby_mask;
++	bool sw_reg;
+ };
+ 
+ struct pfuze_chip {
+ 	int	chip_id;
++	int     flags;
+ 	struct regmap *regmap;
+ 	struct device *dev;
+ 	struct pfuze_regulator regulator_descs[PFUZE100_MAX_REGULATOR];
+@@ -170,6 +174,17 @@ static const struct regulator_ops pfuze100_sw_regulator_ops = {
+ 	.set_ramp_delay = pfuze100_set_ramp_delay,
+ };
+ 
++static const struct regulator_ops pfuze100_sw_disable_regulator_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_linear,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_time_sel = regulator_set_voltage_time_sel,
++	.set_ramp_delay = pfuze100_set_ramp_delay,
++};
++
+ static const struct regulator_ops pfuze100_swb_regulator_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+@@ -209,9 +224,12 @@ static const struct regulator_ops pfuze100_swb_regulator_ops = {
+ 			.uV_step = (step),	\
+ 			.vsel_reg = (base) + PFUZE100_VOL_OFFSET,	\
+ 			.vsel_mask = 0x3f,	\
++			.enable_reg = (base) + PFUZE100_MODE_OFFSET,	\
++			.enable_mask = 0xf,	\
+ 		},	\
+ 		.stby_reg = (base) + PFUZE100_STANDBY_OFFSET,	\
+ 		.stby_mask = 0x3f,	\
++		.sw_reg = true,		\
+ 	}
+ 
+ #define PFUZE100_SWB_REG(_chip, _name, base, mask, voltages)	\
+@@ -471,6 +489,9 @@ static int pfuze_parse_regulators_dt(struct pfuze_chip *chip)
+ 	if (!np)
+ 		return -EINVAL;
+ 
++	if (of_property_read_bool(np, "fsl,pfuze-support-disable-sw"))
++		chip->flags |= PFUZE_FLAG_DISABLE_SW;
++
+ 	parent = of_get_child_by_name(np, "regulators");
+ 	if (!parent) {
+ 		dev_err(dev, "regulators node not found\n");
+@@ -703,6 +724,21 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+ 			}
+ 		}
+ 
++		/*
++		 * Allow SW regulators to turn off. Checking it trough a flag is
++		 * a workaround to keep the backward compatibility with existing
++		 * old dtb's which may relay on the fact that we didn't disable
++		 * the switched regulator till yet.
++		 */
++		if (pfuze_chip->flags & PFUZE_FLAG_DISABLE_SW) {
++			if (pfuze_chip->regulator_descs[i].sw_reg) {
++				desc->ops = &pfuze100_sw_disable_regulator_ops;
++				desc->enable_val = 0x8;
++				desc->disable_val = 0x0;
++				desc->enable_time = 500;
++			}
++		}
++
+ 		config.dev = &client->dev;
+ 		config.init_data = init_data;
+ 		config.driver_data = pfuze_chip;
+-- 
+2.18.0
+
