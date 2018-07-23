@@ -6,48 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F3AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 088C1ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E1E720685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1E720685
+	by mail.kernel.org (Postfix) with ESMTP id A984220685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A984220685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388789AbeGWNrD (ORCPT
+        id S2388810AbeGWNrH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50632 "EHLO
+        Mon, 23 Jul 2018 09:47:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50670 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388007AbeGWNrC (ORCPT
+        with ESMTP id S2388007AbeGWNrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:02 -0400
+        Mon, 23 Jul 2018 09:47:06 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23331C7D;
-        Mon, 23 Jul 2018 12:43:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B03A5C83;
+        Mon, 23 Jul 2018 12:44:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        stable@vger.kernel.org, Joe Konno <joe.konno@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, arjan@linux.intel.com,
+        bp@alien8.de, dan.j.williams@intel.com,
+        dave.hansen@linux.intel.com, dwmw2@infradead.org,
+        dwmw@amazon.co.uk, hpa@zytor.com, jpoimboe@redhat.com,
+        linux-tip-commits@vger.kernel.org, luto@kernel.org,
         Ingo Molnar <mingo@kernel.org>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 033/107] x86/speculation: Clean up various Spectre related details
-Date:   Mon, 23 Jul 2018 14:41:27 +0200
-Message-Id: <20180723122414.507957312@linuxfoundation.org>
+Subject: [PATCH 4.4 035/107] x86/speculation: Add <asm/msr-index.h> dependency
+Date:   Mon, 23 Jul 2018 14:41:29 +0200
+Message-Id: <20180723122414.631160685@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -64,37 +61,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ingo Molnar <mingo@kernel.org>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 21e433bdb95bdf3aa48226fd3d33af608437f293 upstream.
+commit ea00f301285ea2f07393678cd2b6057878320c9d upstream.
 
-Harmonize all the Spectre messages so that a:
+Joe Konno reported a compile failure resulting from using an MSR
+without inclusion of <asm/msr-index.h>, and while the current code builds
+fine (by accident) this needs fixing for future patches.
 
-    dmesg | grep -i spectre
-
-... gives us most Spectre related kernel boot messages.
-
-Also fix a few other details:
-
- - clarify a comment about firmware speculation control
-
- - s/KPTI/PTI
-
- - remove various line-breaks that made the code uglier
-
-Acked-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Reported-by: Joe Konno <joe.konno@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
+Cc: arjan@linux.intel.com
+Cc: bp@alien8.de
+Cc: dan.j.williams@intel.com
+Cc: dave.hansen@linux.intel.com
+Cc: dwmw2@infradead.org
+Cc: dwmw@amazon.co.uk
+Cc: gregkh@linuxfoundation.org
+Cc: hpa@zytor.com
+Cc: jpoimboe@redhat.com
+Cc: linux-tip-commits@vger.kernel.org
+Cc: luto@kernel.org
+Fixes: 20ffa1caecca ("x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support")
+Link: http://lkml.kernel.org/r/20180213132819.GJ25201@hirez.programming.kicks-ass.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -104,100 +96,18 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/kernel/cpu/bugs.c |   25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -162,8 +162,7 @@ static enum spectre_v2_mitigation_cmd __
- 	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
- 		return SPECTRE_V2_CMD_NONE;
- 	else {
--		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg,
--					  sizeof(arg));
-+		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
- 		if (ret < 0)
- 			return SPECTRE_V2_CMD_AUTO;
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -6,6 +6,7 @@
+ #include <asm/alternative.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/cpufeatures.h>
++#include <asm/msr-index.h>
  
-@@ -184,8 +183,7 @@ static enum spectre_v2_mitigation_cmd __
- 	     cmd == SPECTRE_V2_CMD_RETPOLINE_AMD ||
- 	     cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC) &&
- 	    !IS_ENABLED(CONFIG_RETPOLINE)) {
--		pr_err("%s selected but not compiled in. Switching to AUTO select\n",
--		       mitigation_options[i].option);
-+		pr_err("%s selected but not compiled in. Switching to AUTO select\n", mitigation_options[i].option);
- 		return SPECTRE_V2_CMD_AUTO;
- 	}
- 
-@@ -255,14 +253,14 @@ static void __init spectre_v2_select_mit
- 			goto retpoline_auto;
- 		break;
- 	}
--	pr_err("kernel not compiled with retpoline; no mitigation available!");
-+	pr_err("Spectre mitigation: kernel not compiled with retpoline; no mitigation available!");
- 	return;
- 
- retpoline_auto:
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
- 	retpoline_amd:
- 		if (!boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
--			pr_err("LFENCE not serializing. Switching to generic retpoline\n");
-+			pr_err("Spectre mitigation: LFENCE not serializing, switching to generic retpoline\n");
- 			goto retpoline_generic;
- 		}
- 		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
-@@ -280,7 +278,7 @@ retpoline_auto:
- 	pr_info("%s\n", spectre_v2_strings[mode]);
- 
- 	/*
--	 * If neither SMEP or KPTI are available, there is a risk of
-+	 * If neither SMEP nor PTI are available, there is a risk of
- 	 * hitting userspace addresses in the RSB after a context switch
- 	 * from a shallow call stack to a deeper one. To prevent this fill
- 	 * the entire RSB, even when using IBRS.
-@@ -294,21 +292,20 @@ retpoline_auto:
- 	if ((!boot_cpu_has(X86_FEATURE_KAISER) &&
- 	     !boot_cpu_has(X86_FEATURE_SMEP)) || is_skylake_era()) {
- 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
--		pr_info("Filling RSB on context switch\n");
-+		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
- 	}
- 
- 	/* Initialize Indirect Branch Prediction Barrier if supported */
- 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
--		pr_info("Enabling Indirect Branch Prediction Barrier\n");
-+		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
- 	}
- }
- 
- #undef pr_fmt
- 
- #ifdef CONFIG_SYSFS
--ssize_t cpu_show_meltdown(struct device *dev,
--			  struct device_attribute *attr, char *buf)
-+ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
- 		return sprintf(buf, "Not affected\n");
-@@ -317,16 +314,14 @@ ssize_t cpu_show_meltdown(struct device
- 	return sprintf(buf, "Vulnerable\n");
- }
- 
--ssize_t cpu_show_spectre_v1(struct device *dev,
--			    struct device_attribute *attr, char *buf)
-+ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
- 		return sprintf(buf, "Not affected\n");
- 	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- }
- 
--ssize_t cpu_show_spectre_v2(struct device *dev,
--			    struct device_attribute *attr, char *buf)
-+ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
- 		return sprintf(buf, "Not affected\n");
+ /*
+  * Fill the CPU return stack buffer.
 
 
