@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85277ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FE1ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43C1B20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C1B20856
+	by mail.kernel.org (Postfix) with ESMTP id 12C2220856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12C2220856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389321AbeGWNrs (ORCPT
+        id S2388710AbeGWNxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51200 "EHLO
+        Mon, 23 Jul 2018 09:53:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388313AbeGWNrr (ORCPT
+        with ESMTP id S2388511AbeGWNrp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:47 -0400
+        Mon, 23 Jul 2018 09:47:45 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12984CB2;
-        Mon, 23 Jul 2018 12:45:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F5D6C75;
+        Mon, 23 Jul 2018 12:45:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
-        Thomas Gleixner <tglx@linutronix.de>, karahmed@amazon.de,
-        peterz@infradead.org, bp@alien8.de,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 027/107] x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature bits on Intel
-Date:   Mon, 23 Jul 2018 14:41:21 +0200
-Message-Id: <20180723122414.189458177@linuxfoundation.org>
+Subject: [PATCH 4.4 061/107] x86/speculation: Create spec-ctrl.h to avoid include hell
+Date:   Mon, 23 Jul 2018 14:41:55 +0200
+Message-Id: <20180723122416.105905171@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -55,39 +56,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-(cherry picked from commit 7fcae1118f5fd44a862aa5c3525248e35ee67c3b)
+commit 28a2775217b17208811fa43a9e96bd1fdf417b86 upstream
 
-Despite the fact that all the other code there seems to be doing it, just
-using set_cpu_cap() in early_intel_init() doesn't actually work.
+Having everything in nospec-branch.h creates a hell of dependencies when
+adding the prctl based switching mechanism. Move everything which is not
+required in nospec-branch.h to spec-ctrl.h and fix up the includes in the
+relevant files.
 
-For CPUs with PKU support, setup_pku() calls get_cpu_cap() after
-c->c_init() has set those feature bits. That resets those bits back to what
-was queried from the hardware.
-
-Turning the bits off for bad microcode is easy to fix. That can just use
-setup_clear_cpu_cap() to force them off for all CPUs.
-
-I was less keen on forcing the feature bits *on* that way, just in case
-of inconsistencies. I appreciate that the kernel is going to get this
-utterly wrong if CPU features are not consistent, because it has already
-applied alternatives by the time secondary CPUs are brought up.
-
-But at least if setup_force_cpu_cap() isn't being used, we might have a
-chance of *detecting* the lack of the corresponding bit and either
-panicking or refusing to bring the offending CPU online.
-
-So ensure that the appropriate feature bits are set within get_cpu_cap()
-regardless of how many extra times it's called.
-
-Fixes: 2961298e ("x86/cpufeatures: Clean up Spectre v2 related CPUID flags")
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: karahmed@amazon.de
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Link: https://lkml.kernel.org/r/1517322623-15261-1-git-send-email-dwmw@amazon.co.uk
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -97,85 +77,111 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/kernel/cpu/common.c |   21 +++++++++++++++++++++
- arch/x86/kernel/cpu/intel.c  |   27 ++++++++-------------------
- 2 files changed, 29 insertions(+), 19 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   14 --------------
+ arch/x86/include/asm/spec-ctrl.h     |   21 +++++++++++++++++++++
+ arch/x86/kernel/cpu/amd.c            |    2 +-
+ arch/x86/kernel/cpu/bugs.c           |    2 +-
+ arch/x86/kvm/svm.c                   |    2 +-
+ arch/x86/kvm/vmx.c                   |    2 +-
+ 6 files changed, 25 insertions(+), 18 deletions(-)
+ create mode 100644 arch/x86/include/asm/spec-ctrl.h
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -676,6 +676,26 @@ static void apply_forced_caps(struct cpu
- 	}
- }
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -183,26 +183,12 @@ enum spectre_v2_mitigation {
+ extern void x86_spec_ctrl_set(u64);
+ extern u64 x86_spec_ctrl_get_default(void);
  
-+static void init_speculation_control(struct cpuinfo_x86 *c)
-+{
-+	/*
-+	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
-+	 * and they also have a different bit for STIBP support. Also,
-+	 * a hypervisor might have set the individual AMD bits even on
-+	 * Intel CPUs, for finer-grained selection of what's available.
-+	 *
-+	 * We use the AMD bits in 0x8000_0008 EBX as the generic hardware
-+	 * features, which are visible in /proc/cpuinfo and used by the
-+	 * kernel. So set those accordingly from the Intel bits.
-+	 */
-+	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
-+		set_cpu_cap(c, X86_FEATURE_IBRS);
-+		set_cpu_cap(c, X86_FEATURE_IBPB);
-+	}
-+	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
-+		set_cpu_cap(c, X86_FEATURE_STIBP);
-+}
-+
- void get_cpu_cap(struct cpuinfo_x86 *c)
- {
- 	u32 eax, ebx, ecx, edx;
-@@ -768,6 +788,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
- 
- 	init_scattered_cpuid_features(c);
-+	init_speculation_control(c);
- }
- 
- static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -105,28 +105,17 @@ static void early_init_intel(struct cpui
- 		rdmsr(MSR_IA32_UCODE_REV, lower_word, c->microcode);
- 	}
- 
--	/*
--	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
--	 * and they also have a different bit for STIBP support. Also,
--	 * a hypervisor might have set the individual AMD bits even on
--	 * Intel CPUs, for finer-grained selection of what's available.
--	 */
--	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
--		set_cpu_cap(c, X86_FEATURE_IBRS);
--		set_cpu_cap(c, X86_FEATURE_IBPB);
--	}
--	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
--		set_cpu_cap(c, X86_FEATURE_STIBP);
+-/*
+- * On VMENTER we must preserve whatever view of the SPEC_CTRL MSR
+- * the guest has, while on VMEXIT we restore the host view. This
+- * would be easier if SPEC_CTRL were architecturally maskable or
+- * shadowable for guests but this is not (currently) the case.
+- * Takes the guest view of SPEC_CTRL MSR as a parameter.
+- */
+-extern void x86_spec_ctrl_set_guest(u64);
+-extern void x86_spec_ctrl_restore_host(u64);
 -
- 	/* Now if any of them are set, check the blacklist and clear the lot */
--	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
-+	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
-+	     cpu_has(c, X86_FEATURE_INTEL_STIBP) ||
-+	     cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
- 	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
- 		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
--		clear_cpu_cap(c, X86_FEATURE_IBRS);
--		clear_cpu_cap(c, X86_FEATURE_IBPB);
--		clear_cpu_cap(c, X86_FEATURE_STIBP);
--		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
--		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
-+		setup_clear_cpu_cap(X86_FEATURE_IBRS);
-+		setup_clear_cpu_cap(X86_FEATURE_IBPB);
-+		setup_clear_cpu_cap(X86_FEATURE_STIBP);
-+		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
-+		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
- 	}
+ /* The Speculative Store Bypass disable variants */
+ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
+ 	SPEC_STORE_BYPASS_DISABLE,
+ };
  
- 	/*
+-/* AMD specific Speculative Store Bypass MSR data */
+-extern u64 x86_amd_ls_cfg_base;
+-extern u64 x86_amd_ls_cfg_rds_mask;
+-
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
+ 
+--- /dev/null
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_SPECCTRL_H_
++#define _ASM_X86_SPECCTRL_H_
++
++#include <asm/nospec-branch.h>
++
++/*
++ * On VMENTER we must preserve whatever view of the SPEC_CTRL MSR
++ * the guest has, while on VMEXIT we restore the host view. This
++ * would be easier if SPEC_CTRL were architecturally maskable or
++ * shadowable for guests but this is not (currently) the case.
++ * Takes the guest view of SPEC_CTRL MSR as a parameter.
++ */
++extern void x86_spec_ctrl_set_guest(u64);
++extern void x86_spec_ctrl_restore_host(u64);
++
++/* AMD specific Speculative Store Bypass MSR data */
++extern u64 x86_amd_ls_cfg_base;
++extern u64 x86_amd_ls_cfg_rds_mask;
++
++#endif
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -9,7 +9,7 @@
+ #include <asm/processor.h>
+ #include <asm/apic.h>
+ #include <asm/cpu.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
+ #include <asm/smp.h>
+ #include <asm/pci-direct.h>
+ #include <asm/delay.h>
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -12,7 +12,7 @@
+ #include <linux/cpu.h>
+ #include <linux/module.h>
+ 
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
+ #include <asm/cmdline.h>
+ #include <asm/bugs.h>
+ #include <asm/processor.h>
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -37,7 +37,7 @@
+ #include <asm/desc.h>
+ #include <asm/debugreg.h>
+ #include <asm/kvm_para.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
+ 
+ #include <asm/virtext.h>
+ #include "trace.h"
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -48,7 +48,7 @@
+ #include <asm/kexec.h>
+ #include <asm/apic.h>
+ #include <asm/irq_remapping.h>
+-#include <asm/nospec-branch.h>
++#include <asm/spec-ctrl.h>
+ 
+ #include "trace.h"
+ #include "pmu.h"
 
 
