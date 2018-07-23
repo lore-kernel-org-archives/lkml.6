@@ -6,41 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B760ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A114ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EDFC20685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDFC20685
+	by mail.kernel.org (Postfix) with ESMTP id EFA5920882
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFA5920882
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389163AbeGWNre (ORCPT
+        id S2389179AbeGWNrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:34 -0400
+        Mon, 23 Jul 2018 09:47:37 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:50966 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388007AbeGWNrd (ORCPT
+        with ESMTP id S2389016AbeGWNrf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:33 -0400
+        Mon, 23 Jul 2018 09:47:35 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 912C0C87;
-        Mon, 23 Jul 2018 12:44:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5753DC21;
+        Mon, 23 Jul 2018 12:44:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Masters <jcm@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>,
-        David Woodhouse <dwmw@amazon.co.uk>,
+        Ingo Molnar <mingo@kernel.org>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 051/107] x86/bugs: Read SPEC_CTRL MSR during boot and re-use reserved bits
-Date:   Mon, 23 Jul 2018 14:41:45 +0200
-Message-Id: <20180723122415.520868834@linuxfoundation.org>
+Subject: [PATCH 4.4 053/107] x86/cpu: Rename Merrifield2 to Moorefield
+Date:   Mon, 23 Jul 2018 14:41:47 +0200
+Message-Id: <20180723122415.619773915@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -57,30 +59,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit 1b86883ccb8d5d9506529d42dbe1a5257cb30b18 upstream
+commit f5fbf848303c8704d0e1a1e7cabd08fd0a49552f upstream
 
-The 336996-Speculative-Execution-Side-Channel-Mitigations.pdf refers to all
-the other bits as reserved. The Intel SDM glossary defines reserved as
-implementation specific - aka unknown.
+Merrifield2 is actually Moorefield.
 
-As such at bootup this must be taken it into account and proper masking for
-the bits in use applied.
+Rename it accordingly and drop tail digit from Merrifield1.
 
-A copy of this document is available at
-https://bugzilla.kernel.org/show_bug.cgi?id=199511
-
-[ tglx: Made x86_spec_ctrl_base __ro_after_init ]
-[ Srivatsa: Removed __ro_after_init for 4.4.y ]
-
-Suggested-by: Jon Masters <jcm@redhat.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20160906184254.94440-1-andriy.shevchenko@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
 Reviewed-by: Alexey Makhalov <amakhalov@vmware.com>
@@ -88,112 +81,21 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/nospec-branch.h |   24 ++++++++++++++++++++----
- arch/x86/kernel/cpu/bugs.c           |   27 +++++++++++++++++++++++++++
- 2 files changed, 47 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/intel-family.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -172,6 +172,17 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_IBRS,
- };
- 
-+/*
-+ * The Intel specification for the SPEC_CTRL MSR requires that we
-+ * preserve any already set reserved bits at boot time (e.g. for
-+ * future additions that this kernel is not currently aware of).
-+ * We then set any additional mitigation bits that we want
-+ * ourselves and always use this as the base for SPEC_CTRL.
-+ * We also use this when handling guest entry/exit as below.
-+ */
-+extern void x86_spec_ctrl_set(u64);
-+extern u64 x86_spec_ctrl_get_default(void);
-+
- extern char __indirect_thunk_start[];
- extern char __indirect_thunk_end[];
- 
-@@ -208,8 +219,9 @@ void alternative_msr_write(unsigned int
- 
- static inline void indirect_branch_prediction_barrier(void)
- {
--	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
--			      X86_FEATURE_USE_IBPB);
-+	u64 val = PRED_CMD_IBPB;
-+
-+	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB);
- }
- 
- /*
-@@ -220,14 +232,18 @@ static inline void indirect_branch_predi
-  */
- #define firmware_restrict_branch_speculation_start()			\
- do {									\
-+	u64 val = x86_spec_ctrl_get_default() | SPEC_CTRL_IBRS;		\
-+									\
- 	preempt_disable();						\
--	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,	\
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
- 			      X86_FEATURE_USE_IBRS_FW);			\
- } while (0)
- 
- #define firmware_restrict_branch_speculation_end()			\
- do {									\
--	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,			\
-+	u64 val = x86_spec_ctrl_get_default();				\
-+									\
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
- 			      X86_FEATURE_USE_IBRS_FW);			\
- 	preempt_enable();						\
- } while (0)
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -27,6 +27,12 @@
- 
- static void __init spectre_v2_select_mitigation(void);
- 
-+/*
-+ * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-+ * writes to SPEC_CTRL contain whatever reserved bits have been set.
-+ */
-+static u64 x86_spec_ctrl_base;
-+
- void __init check_bugs(void)
- {
- 	identify_boot_cpu();
-@@ -36,6 +42,13 @@ void __init check_bugs(void)
- 		print_cpu_info(&boot_cpu_data);
- 	}
- 
-+	/*
-+	 * Read the SPEC_CTRL MSR to account for reserved bits which may
-+	 * have unknown values.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_IBRS))
-+		rdmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+
- 	/* Select the proper spectre mitigation before patching alternatives */
- 	spectre_v2_select_mitigation();
- 
-@@ -94,6 +107,20 @@ static const char *spectre_v2_strings[]
- 
- static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
- 
-+void x86_spec_ctrl_set(u64 val)
-+{
-+	if (val & ~SPEC_CTRL_IBRS)
-+		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
-+	else
-+		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
-+}
-+EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
-+
-+u64 x86_spec_ctrl_get_default(void)
-+{
-+	return x86_spec_ctrl_base;
-+}
-+EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
- 
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -58,8 +58,8 @@
+ #define INTEL_FAM6_ATOM_SILVERMONT1	0x37 /* BayTrail/BYT / Valleyview */
+ #define INTEL_FAM6_ATOM_SILVERMONT2	0x4D /* Avaton/Rangely */
+ #define INTEL_FAM6_ATOM_AIRMONT		0x4C /* CherryTrail / Braswell */
+-#define INTEL_FAM6_ATOM_MERRIFIELD1	0x4A /* Tangier */
+-#define INTEL_FAM6_ATOM_MERRIFIELD2	0x5A /* Annidale */
++#define INTEL_FAM6_ATOM_MERRIFIELD	0x4A /* Tangier */
++#define INTEL_FAM6_ATOM_MOOREFIELD	0x5A /* Annidale */
+ #define INTEL_FAM6_ATOM_GOLDMONT	0x5C
+ #define INTEL_FAM6_ATOM_DENVERTON	0x5F /* Goldmont Microserver */
+ #define INTEL_FAM6_ATOM_GEMINI_LAKE	0x7A
 
 
