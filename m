@@ -6,33 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 910BDECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BDEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4076220685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4076220685
+	by mail.kernel.org (Postfix) with ESMTP id 1856820685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1856820685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389763AbeGWNs1 (ORCPT
+        id S2389776AbeGWNsa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:48:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51938 "EHLO
+        Mon, 23 Jul 2018 09:48:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388281AbeGWNs0 (ORCPT
+        with ESMTP id S2388281AbeGWNs3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:26 -0400
+        Mon, 23 Jul 2018 09:48:29 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3BDC9BDB;
-        Mon, 23 Jul 2018 12:47:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05D2CBB3;
+        Mon, 23 Jul 2018 12:47:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.4 103/107] ubi: Rework Fastmap attach base code
-Date:   Mon, 23 Jul 2018 14:42:37 +0200
-Message-Id: <20180723122418.669976546@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
+        Alexey Makhalov <amakhalov@vmware.com>,
+        Bo Gan <ganb@vmware.com>
+Subject: [PATCH 4.4 067/107] x86/speculation: Add prctl for Speculative Store Bypass mitigation
+Date:   Mon, 23 Jul 2018 14:42:01 +0200
+Message-Id: <20180723122416.639109622@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -49,389 +55,220 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit fdf10ed710c0aa177e8dfcd84e65e4e5e8e0956b upstream.
+commit a73ec77ee17ec556fe7f165d00314cb7c047b1ac upstream
 
-Introduce a new list to the UBI attach information
-object to be able to deal better with old and corrupted
-Fastmap eraseblocks.
-Also move more Fastmap specific code into fastmap.c.
+Add prctl based control for Speculative Store Bypass mitigation and make it
+the default mitigation for Intel and AMD.
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Andi Kleen provided the following rationale (slightly redacted):
+
+ There are multiple levels of impact of Speculative Store Bypass:
+
+ 1) JITed sandbox.
+    It cannot invoke system calls, but can do PRIME+PROBE and may have call
+    interfaces to other code
+
+ 2) Native code process.
+    No protection inside the process at this level.
+
+ 3) Kernel.
+
+ 4) Between processes.
+
+ The prctl tries to protect against case (1) doing attacks.
+
+ If the untrusted code can do random system calls then control is already
+ lost in a much worse way. So there needs to be system call protection in
+ some way (using a JIT not allowing them or seccomp). Or rather if the
+ process can subvert its environment somehow to do the prctl it can already
+ execute arbitrary code, which is much worse than SSB.
+
+ To put it differently, the point of the prctl is to not allow JITed code
+ to read data it shouldn't read from its JITed sandbox. If it already has
+ escaped its sandbox then it can already read everything it wants in its
+ address space, and do much worse.
+
+ The ability to control Speculative Store Bypass allows to enable the
+ protection selectively without affecting overall system performance.
+
+Based on an initial patch from Tim Chen. Completely rewritten.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
+Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
+Reviewed-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Bo Gan <ganb@vmware.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/ubi/attach.c  |   99 ++++++++++++++++++++++++++++++++--------------
- drivers/mtd/ubi/fastmap.c |   36 +++++++++++++++-
- drivers/mtd/ubi/ubi.h     |   28 ++++++++++++-
- drivers/mtd/ubi/wl.c      |   41 +++++++++++++++----
- 4 files changed, 162 insertions(+), 42 deletions(-)
 
---- a/drivers/mtd/ubi/attach.c
-+++ b/drivers/mtd/ubi/attach.c
-@@ -175,6 +175,40 @@ static int add_corrupted(struct ubi_atta
- }
+ Documentation/kernel-parameters.txt  |    6 ++
+ arch/x86/include/asm/nospec-branch.h |    1 
+ arch/x86/kernel/cpu/bugs.c           |   83 ++++++++++++++++++++++++++++++-----
+ 3 files changed, 79 insertions(+), 11 deletions(-)
+
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -3651,7 +3651,11 @@ bytes respectively. Such letter suffixes
+ 			off    - Unconditionally enable Speculative Store Bypass
+ 			auto   - Kernel detects whether the CPU model contains an
+ 				 implementation of Speculative Store Bypass and
+-				 picks the most appropriate mitigation
++				 picks the most appropriate mitigation.
++			prctl  - Control Speculative Store Bypass per thread
++				 via prctl. Speculative Store Bypass is enabled
++				 for a process by default. The state of the control
++				 is inherited on fork.
  
- /**
-+ * add_fastmap - add a Fastmap related physical eraseblock.
-+ * @ai: attaching information
-+ * @pnum: physical eraseblock number the VID header came from
-+ * @vid_hdr: the volume identifier header
-+ * @ec: erase counter of the physical eraseblock
-+ *
-+ * This function allocates a 'struct ubi_ainf_peb' object for a Fastamp
-+ * physical eraseblock @pnum and adds it to the 'fastmap' list.
-+ * Such blocks can be Fastmap super and data blocks from both the most
-+ * recent Fastmap we're attaching from or from old Fastmaps which will
-+ * be erased.
-+ */
-+static int add_fastmap(struct ubi_attach_info *ai, int pnum,
-+		       struct ubi_vid_hdr *vid_hdr, int ec)
+ 			Not specifying this option is equivalent to
+ 			spec_store_bypass_disable=auto.
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -187,6 +187,7 @@ extern u64 x86_spec_ctrl_get_default(voi
+ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
+ 	SPEC_STORE_BYPASS_DISABLE,
++	SPEC_STORE_BYPASS_PRCTL,
+ };
+ 
+ extern char __indirect_thunk_start[];
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -11,6 +11,8 @@
+ #include <linux/utsname.h>
+ #include <linux/cpu.h>
+ #include <linux/module.h>
++#include <linux/nospec.h>
++#include <linux/prctl.h>
+ 
+ #include <asm/spec-ctrl.h>
+ #include <asm/cmdline.h>
+@@ -411,20 +413,23 @@ enum ssb_mitigation_cmd {
+ 	SPEC_STORE_BYPASS_CMD_NONE,
+ 	SPEC_STORE_BYPASS_CMD_AUTO,
+ 	SPEC_STORE_BYPASS_CMD_ON,
++	SPEC_STORE_BYPASS_CMD_PRCTL,
+ };
+ 
+ static const char *ssb_strings[] = {
+ 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
+-	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled"
++	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled",
++	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl"
+ };
+ 
+ static const struct {
+ 	const char *option;
+ 	enum ssb_mitigation_cmd cmd;
+ } ssb_mitigation_options[] = {
+-	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO }, /* Platform decides */
+-	{ "on",		SPEC_STORE_BYPASS_CMD_ON },   /* Disable Speculative Store Bypass */
+-	{ "off",	SPEC_STORE_BYPASS_CMD_NONE }, /* Don't touch Speculative Store Bypass */
++	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },  /* Platform decides */
++	{ "on",		SPEC_STORE_BYPASS_CMD_ON },    /* Disable Speculative Store Bypass */
++	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },  /* Don't touch Speculative Store Bypass */
++	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL }, /* Disable Speculative Store Bypass via prctl */
+ };
+ 
+ static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
+@@ -474,14 +479,15 @@ static enum ssb_mitigation_cmd __init __
+ 
+ 	switch (cmd) {
+ 	case SPEC_STORE_BYPASS_CMD_AUTO:
+-		/*
+-		 * AMD platforms by default don't need SSB mitigation.
+-		 */
+-		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
+-			break;
++		/* Choose prctl as the default mode */
++		mode = SPEC_STORE_BYPASS_PRCTL;
++		break;
+ 	case SPEC_STORE_BYPASS_CMD_ON:
+ 		mode = SPEC_STORE_BYPASS_DISABLE;
+ 		break;
++	case SPEC_STORE_BYPASS_CMD_PRCTL:
++		mode = SPEC_STORE_BYPASS_PRCTL;
++		break;
+ 	case SPEC_STORE_BYPASS_CMD_NONE:
+ 		break;
+ 	}
+@@ -492,7 +498,7 @@ static enum ssb_mitigation_cmd __init __
+ 	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
+ 	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
+ 	 */
+-	if (mode != SPEC_STORE_BYPASS_NONE) {
++	if (mode == SPEC_STORE_BYPASS_DISABLE) {
+ 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
+ 		/*
+ 		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
+@@ -523,6 +529,63 @@ static void ssb_select_mitigation()
+ 
+ #undef pr_fmt
+ 
++static int ssb_prctl_set(unsigned long ctrl)
 +{
-+	struct ubi_ainf_peb *aeb;
++	bool rds = !!test_tsk_thread_flag(current, TIF_RDS);
 +
-+	aeb = kmem_cache_alloc(ai->aeb_slab_cache, GFP_KERNEL);
-+	if (!aeb)
-+		return -ENOMEM;
++	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
++		return -ENXIO;
 +
-+	aeb->pnum = pnum;
-+	aeb->vol_id = be32_to_cpu(vidh->vol_id);
-+	aeb->sqnum = be64_to_cpu(vidh->sqnum);
-+	aeb->ec = ec;
-+	list_add(&aeb->u.list, &ai->fastmap);
++	if (ctrl == PR_SPEC_ENABLE)
++		clear_tsk_thread_flag(current, TIF_RDS);
++	else
++		set_tsk_thread_flag(current, TIF_RDS);
 +
-+	dbg_bld("add to fastmap list: PEB %d, vol_id %d, sqnum: %llu", pnum,
-+		aeb->vol_id, aeb->sqnum);
++	if (rds != !!test_tsk_thread_flag(current, TIF_RDS))
++		speculative_store_bypass_update();
 +
 +	return 0;
 +}
 +
-+/**
-  * validate_vid_hdr - check volume identifier header.
-  * @ubi: UBI device description object
-  * @vid_hdr: the volume identifier header to check
-@@ -822,18 +856,15 @@ static bool vol_ignored(int vol_id)
-  * @ubi: UBI device description object
-  * @ai: attaching information
-  * @pnum: the physical eraseblock number
-- * @vid: The volume ID of the found volume will be stored in this pointer
-- * @sqnum: The sqnum of the found volume will be stored in this pointer
-  *
-  * This function reads UBI headers of PEB @pnum, checks them, and adds
-  * information about this PEB to the corresponding list or RB-tree in the
-  * "attaching info" structure. Returns zero if the physical eraseblock was
-  * successfully handled and a negative error code in case of failure.
-  */
--static int scan_peb(struct ubi_device *ubi, struct ubi_attach_info *ai,
--		    int pnum, int *vid, unsigned long long *sqnum)
-+static int scan_peb(struct ubi_device *ubi, struct ubi_attach_info *ai, int pnum)
- {
--	long long uninitialized_var(ec);
-+	long long ec;
- 	int err, bitflips = 0, vol_id = -1, ec_err = 0;
- 
- 	dbg_bld("scan PEB %d", pnum);
-@@ -1005,10 +1036,6 @@ static int scan_peb(struct ubi_device *u
- 	}
- 
- 	vol_id = be32_to_cpu(vidh->vol_id);
--	if (vid)
--		*vid = vol_id;
--	if (sqnum)
--		*sqnum = be64_to_cpu(vidh->sqnum);
- 	if (vol_id > UBI_MAX_VOLUMES && !vol_ignored(vol_id)) {
- 		int lnum = be32_to_cpu(vidh->lnum);
- 
-@@ -1049,7 +1076,12 @@ static int scan_peb(struct ubi_device *u
- 	if (ec_err)
- 		ubi_warn(ubi, "valid VID header but corrupted EC header at PEB %d",
- 			 pnum);
--	err = ubi_add_to_av(ubi, ai, pnum, ec, vidh, bitflips);
-+
-+	if (ubi_is_fm_vol(vol_id))
-+		err = add_fastmap(ai, pnum, vidh, ec);
-+	else
-+		err = ubi_add_to_av(ubi, ai, pnum, ec, vidh, bitflips);
-+
- 	if (err)
- 		return err;
- 
-@@ -1198,6 +1230,10 @@ static void destroy_ai(struct ubi_attach
- 		list_del(&aeb->u.list);
- 		kmem_cache_free(ai->aeb_slab_cache, aeb);
- 	}
-+	list_for_each_entry_safe(aeb, aeb_tmp, &ai->fastmap, u.list) {
-+		list_del(&aeb->u.list);
-+		kmem_cache_free(ai->aeb_slab_cache, aeb);
-+	}
- 
- 	/* Destroy the volume RB-tree */
- 	rb = ai->volumes.rb_node;
-@@ -1257,7 +1293,7 @@ static int scan_all(struct ubi_device *u
- 		cond_resched();
- 
- 		dbg_gen("process PEB %d", pnum);
--		err = scan_peb(ubi, ai, pnum, NULL, NULL);
-+		err = scan_peb(ubi, ai, pnum);
- 		if (err < 0)
- 			goto out_vidh;
- 	}
-@@ -1323,6 +1359,7 @@ static struct ubi_attach_info *alloc_ai(
- 	INIT_LIST_HEAD(&ai->free);
- 	INIT_LIST_HEAD(&ai->erase);
- 	INIT_LIST_HEAD(&ai->alien);
-+	INIT_LIST_HEAD(&ai->fastmap);
- 	ai->volumes = RB_ROOT;
- 	ai->aeb_slab_cache = kmem_cache_create("ubi_aeb_slab_cache",
- 					       sizeof(struct ubi_ainf_peb),
-@@ -1349,52 +1386,54 @@ static struct ubi_attach_info *alloc_ai(
-  */
- static int scan_fast(struct ubi_device *ubi, struct ubi_attach_info **ai)
- {
--	int err, pnum, fm_anchor = -1;
--	unsigned long long max_sqnum = 0;
-+	int err, pnum;
-+	struct ubi_attach_info *scan_ai;
- 
- 	err = -ENOMEM;
- 
-+	scan_ai = alloc_ai();
-+	if (!scan_ai)
-+		goto out;
-+
- 	ech = kzalloc(ubi->ec_hdr_alsize, GFP_KERNEL);
- 	if (!ech)
--		goto out;
-+		goto out_ai;
- 
- 	vidh = ubi_zalloc_vid_hdr(ubi, GFP_KERNEL);
- 	if (!vidh)
- 		goto out_ech;
- 
- 	for (pnum = 0; pnum < UBI_FM_MAX_START; pnum++) {
--		int vol_id = -1;
--		unsigned long long sqnum = -1;
- 		cond_resched();
- 
- 		dbg_gen("process PEB %d", pnum);
--		err = scan_peb(ubi, *ai, pnum, &vol_id, &sqnum);
-+		err = scan_peb(ubi, scan_ai, pnum);
- 		if (err < 0)
- 			goto out_vidh;
--
--		if (vol_id == UBI_FM_SB_VOLUME_ID && sqnum > max_sqnum) {
--			max_sqnum = sqnum;
--			fm_anchor = pnum;
--		}
- 	}
- 
- 	ubi_free_vid_hdr(ubi, vidh);
- 	kfree(ech);
- 
--	if (fm_anchor < 0)
--		return UBI_NO_FASTMAP;
--
--	destroy_ai(*ai);
--	*ai = alloc_ai();
--	if (!*ai)
--		return -ENOMEM;
-+	err = ubi_scan_fastmap(ubi, *ai, scan_ai);
-+	if (err) {
-+		/*
-+		 * Didn't attach via fastmap, do a full scan but reuse what
-+		 * we've aready scanned.
-+		 */
-+		destroy_ai(*ai);
-+		*ai = scan_ai;
-+	} else
-+		destroy_ai(scan_ai);
- 
--	return ubi_scan_fastmap(ubi, *ai, fm_anchor);
-+	return err;
- 
- out_vidh:
- 	ubi_free_vid_hdr(ubi, vidh);
- out_ech:
- 	kfree(ech);
-+out_ai:
-+	destroy_ai(scan_ai);
- out:
- 	return err;
- }
---- a/drivers/mtd/ubi/fastmap.c
-+++ b/drivers/mtd/ubi/fastmap.c
-@@ -851,27 +851,57 @@ fail:
- }
- 
- /**
-+ * find_fm_anchor - find the most recent Fastmap superblock (anchor)
-+ * @ai: UBI attach info to be filled
-+ */
-+static int find_fm_anchor(struct ubi_attach_info *ai)
++static int ssb_prctl_get(void)
 +{
-+	int ret = -1;
-+	struct ubi_ainf_peb *aeb;
-+	unsigned long long max_sqnum = 0;
-+
-+	list_for_each_entry(aeb, &ai->fastmap, u.list) {
-+		if (aeb->vol_id == UBI_FM_SB_VOLUME_ID && aeb->sqnum > max_sqnum) {
-+			max_sqnum = aeb->sqnum;
-+			ret = aeb->pnum;
-+		}
++	switch (ssb_mode) {
++	case SPEC_STORE_BYPASS_DISABLE:
++		return PR_SPEC_DISABLE;
++	case SPEC_STORE_BYPASS_PRCTL:
++		if (test_tsk_thread_flag(current, TIF_RDS))
++			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
++		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
++	default:
++		if (boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
++			return PR_SPEC_ENABLE;
++		return PR_SPEC_NOT_AFFECTED;
 +	}
-+
-+	return ret;
 +}
 +
-+/**
-  * ubi_scan_fastmap - scan the fastmap.
-  * @ubi: UBI device object
-  * @ai: UBI attach info to be filled
-- * @fm_anchor: The fastmap starts at this PEB
-+ * @scan_ai: UBI attach info from the first 64 PEBs,
-+ *           used to find the most recent Fastmap data structure
-  *
-  * Returns 0 on success, UBI_NO_FASTMAP if no fastmap was found,
-  * UBI_BAD_FASTMAP if one was found but is not usable.
-  * < 0 indicates an internal error.
-  */
- int ubi_scan_fastmap(struct ubi_device *ubi, struct ubi_attach_info *ai,
--		     int fm_anchor)
-+		     struct ubi_attach_info *scan_ai)
- {
- 	struct ubi_fm_sb *fmsb, *fmsb2;
- 	struct ubi_vid_hdr *vh;
- 	struct ubi_ec_hdr *ech;
- 	struct ubi_fastmap_layout *fm;
--	int i, used_blocks, pnum, ret = 0;
-+	struct ubi_ainf_peb *tmp_aeb, *aeb;
-+	int i, used_blocks, pnum, fm_anchor, ret = 0;
- 	size_t fm_size;
- 	__be32 crc, tmp_crc;
- 	unsigned long long sqnum = 0;
- 
-+	fm_anchor = find_fm_anchor(scan_ai);
-+	if (fm_anchor < 0)
-+		return UBI_NO_FASTMAP;
-+
-+	/* Move all (possible) fastmap blocks into our new attach structure. */
-+	list_for_each_entry_safe(aeb, tmp_aeb, &scan_ai->fastmap, u.list)
-+		list_move_tail(&aeb->u.list, &ai->fastmap);
-+
- 	down_write(&ubi->fm_protect);
- 	memset(ubi->fm_buf, 0, ubi->fm_size);
- 
---- a/drivers/mtd/ubi/ubi.h
-+++ b/drivers/mtd/ubi/ubi.h
-@@ -699,6 +699,8 @@ struct ubi_ainf_volume {
-  * @erase: list of physical eraseblocks which have to be erased
-  * @alien: list of physical eraseblocks which should not be used by UBI (e.g.,
-  *         those belonging to "preserve"-compatible internal volumes)
-+ * @fastmap: list of physical eraseblocks which relate to fastmap (e.g.,
-+ *           eraseblocks of the current and not yet erased old fastmap blocks)
-  * @corr_peb_count: count of PEBs in the @corr list
-  * @empty_peb_count: count of PEBs which are presumably empty (contain only
-  *                   0xFF bytes)
-@@ -727,6 +729,7 @@ struct ubi_attach_info {
- 	struct list_head free;
- 	struct list_head erase;
- 	struct list_head alien;
-+	struct list_head fastmap;
- 	int corr_peb_count;
- 	int empty_peb_count;
- 	int alien_peb_count;
-@@ -907,7 +910,7 @@ int ubi_compare_lebs(struct ubi_device *
- size_t ubi_calc_fm_size(struct ubi_device *ubi);
- int ubi_update_fastmap(struct ubi_device *ubi);
- int ubi_scan_fastmap(struct ubi_device *ubi, struct ubi_attach_info *ai,
--		     int fm_anchor);
-+		     struct ubi_attach_info *scan_ai);
- #else
- static inline int ubi_update_fastmap(struct ubi_device *ubi) { return 0; }
- #endif
-@@ -1116,4 +1119,27 @@ static inline bool ubi_is_fm_vol(int vol
- 	return false;
- }
- 
-+/**
-+ * ubi_find_fm_block - check whether a PEB is part of the current Fastmap.
-+ * @ubi: UBI device description object
-+ * @pnum: physical eraseblock to look for
-+ *
-+ * This function returns a wear leveling object if @pnum relates to the current
-+ * fastmap, @NULL otherwise.
-+ */
-+static inline struct ubi_wl_entry *ubi_find_fm_block(const struct ubi_device *ubi,
-+						     int pnum)
++int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
 +{
-+	int i;
++	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
++		return -ERANGE;
 +
-+	if (ubi->fm) {
-+		for (i = 0; i < ubi->fm->used_blocks; i++) {
-+			if (ubi->fm->e[i]->pnum == pnum)
-+				return ubi->fm->e[i];
-+		}
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssb_prctl_set(ctrl);
++	default:
++		return -ENODEV;
 +	}
-+
-+	return NULL;
 +}
 +
- #endif /* !__UBI_UBI_H__ */
---- a/drivers/mtd/ubi/wl.c
-+++ b/drivers/mtd/ubi/wl.c
-@@ -1598,19 +1598,44 @@ int ubi_wl_init(struct ubi_device *ubi,
- 		}
- 	}
- 
--	dbg_wl("found %i PEBs", found_pebs);
-+	list_for_each_entry(aeb, &ai->fastmap, u.list) {
-+		cond_resched();
++int arch_prctl_spec_ctrl_get(unsigned long which)
++{
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssb_prctl_get();
++	default:
++		return -ENODEV;
++	}
++}
 +
-+		e = ubi_find_fm_block(ubi, aeb->pnum);
-+
-+		if (e) {
-+			ubi_assert(!ubi->lookuptbl[e->pnum]);
-+			ubi->lookuptbl[e->pnum] = e;
-+		} else {
-+			/*
-+			 * Usually old Fastmap PEBs are scheduled for erasure
-+			 * and we don't have to care about them but if we face
-+			 * an power cut before scheduling them we need to
-+			 * take care of them here.
-+			 */
-+			if (ubi->lookuptbl[aeb->pnum])
-+				continue;
- 
--	if (ubi->fm) {
--		ubi_assert(ubi->good_peb_count ==
--			   found_pebs + ubi->fm->used_blocks);
-+			e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
-+			if (!e)
-+				goto out_free;
- 
--		for (i = 0; i < ubi->fm->used_blocks; i++) {
--			e = ubi->fm->e[i];
-+			e->pnum = aeb->pnum;
-+			e->ec = aeb->ec;
-+			ubi_assert(!ubi->lookuptbl[e->pnum]);
- 			ubi->lookuptbl[e->pnum] = e;
-+			if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0)) {
-+				wl_entry_destroy(ubi, e);
-+				goto out_free;
-+			}
- 		}
-+
-+		found_pebs++;
- 	}
--	else
--		ubi_assert(ubi->good_peb_count == found_pebs);
-+
-+	dbg_wl("found %i PEBs", found_pebs);
-+
-+	ubi_assert(ubi->good_peb_count == found_pebs);
- 
- 	reserved_pebs = WL_RESERVED_PEBS;
- 	ubi_fastmap_init(ubi, &reserved_pebs);
+ void x86_spec_ctrl_setup_ap(void)
+ {
+ 	if (boot_cpu_has(X86_FEATURE_IBRS))
 
 
