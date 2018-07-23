@@ -3,48 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF7CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AACECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E1120875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:27:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E1120875
+	by mail.kernel.org (Postfix) with ESMTP id 6CA0820875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:28:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA0820875
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388231AbeGWK2N (ORCPT
+        id S2388248AbeGWK2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 06:28:13 -0400
-Received: from regular1.263xmail.com ([211.150.99.138]:36663 "EHLO
+        Mon, 23 Jul 2018 06:28:19 -0400
+Received: from regular1.263xmail.com ([211.150.99.139]:52548 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388062AbeGWK2M (ORCPT
+        with ESMTP id S2388062AbeGWK2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 06:28:12 -0400
+        Mon, 23 Jul 2018 06:28:18 -0400
 Received: from cl?rock-chips.com (unknown [192.168.167.16])
-        by regular1.263xmail.com (Postfix) with ESMTP id 4AE467A8E;
-        Mon, 23 Jul 2018 17:27:52 +0800 (CST)
+        by regular1.263xmail.com (Postfix) with ESMTP id A00F75624;
+        Mon, 23 Jul 2018 17:27:58 +0800 (CST)
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
 Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id A7028380;
-        Mon, 23 Jul 2018 17:27:47 +0800 (CST)
+        by smtp.263.net (Postfix) with ESMTPA id CB3FA3C6;
+        Mon, 23 Jul 2018 17:27:52 +0800 (CST)
 X-RL-SENDER: cl@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: cl@rock-chips.com
-X-UNIQUE-TAG: <c337efd592da18a1f4e6cf47ff69c37d>
+X-UNIQUE-TAG: <ff3982479dab56ec78db26cdc064f582>
 X-ATTACHMENT-NUM: 0
 X-SENDER: cl@rock-chips.com
 X-DNS-TYPE: 0
 Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 7463OR9J7D;
-        Mon, 23 Jul 2018 17:27:52 +0800 (CST)
+        by smtp.263.net (Postfix) whith SMTP id 7463TBW4G7;
+        Mon, 23 Jul 2018 17:27:58 +0800 (CST)
 From:   <cl@rock-chips.com>
 To:     heiko@sntech.de
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
@@ -64,9 +64,9 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
         sugar.zhang@rock-chips.com, huibin.hong@rock-chips.com,
         william.wu@rock-chips.com, sandy.huang@rock-chips.com,
         Liang Chen <cl@rock-chips.com>
-Subject: [PATCH v2 3/6] dt-bindings: sound: rockchip-i2s: add description for px30
-Date:   Mon, 23 Jul 2018 17:25:21 +0800
-Message-Id: <1532337924-4185-4-git-send-email-cl@rock-chips.com>
+Subject: [PATCH v2 4/6] dt-bindings: rockchip: grf: add grf and pmugrf description for px30
+Date:   Mon, 23 Jul 2018 17:25:22 +0800
+Message-Id: <1532337924-4185-5-git-send-email-cl@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1532337924-4185-1-git-send-email-cl@rock-chips.com>
 References: <1532337924-4185-1-git-send-email-cl@rock-chips.com>
@@ -77,26 +77,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Liang Chen <cl@rock-chips.com>
 
-Add "rockchip,px30-i2s", "rockchip,rk3066-i2s" for i2s on px30 platform.
+This patch adds the compatible of GRF and PMUGRF for PX30 SoCs.
 
 Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Liang Chen <cl@rock-chips.com>
 ---
- Documentation/devicetree/bindings/sound/rockchip-i2s.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/soc/rockchip/grf.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/rockchip-i2s.txt b/Documentation/devicetree/bindings/sound/rockchip-i2s.txt
-index b208a75..54aefab 100644
---- a/Documentation/devicetree/bindings/sound/rockchip-i2s.txt
-+++ b/Documentation/devicetree/bindings/sound/rockchip-i2s.txt
-@@ -7,6 +7,7 @@ Required properties:
+diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.txt b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+index 7dc5ce8..46e27cd 100644
+--- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt
++++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+@@ -13,6 +13,7 @@ On RK3328 SoCs, the GRF adds a section for USB2PHYGRF,
+ Required Properties:
  
- - compatible: should be one of the following:
-    - "rockchip,rk3066-i2s": for rk3066
-+   - "rockchip,px30-i2s", "rockchip,rk3066-i2s": for px30
-    - "rockchip,rk3036-i2s", "rockchip,rk3066-i2s": for rk3036
-    - "rockchip,rk3188-i2s", "rockchip,rk3066-i2s": for rk3188
-    - "rockchip,rk3228-i2s", "rockchip,rk3066-i2s": for rk3228
+ - compatible: GRF should be one of the following:
++   - "rockchip,px30-grf", "syscon": for px30
+    - "rockchip,rk3036-grf", "syscon": for rk3036
+    - "rockchip,rk3066-grf", "syscon": for rk3066
+    - "rockchip,rk3188-grf", "syscon": for rk3188
+@@ -23,6 +24,7 @@ Required Properties:
+    - "rockchip,rk3399-grf", "syscon": for rk3399
+    - "rockchip,rv1108-grf", "syscon": for rv1108
+ - compatible: PMUGRF should be one of the following:
++   - "rockchip,px30-pmugrf", "syscon": for px30
+    - "rockchip,rk3368-pmugrf", "syscon": for rk3368
+    - "rockchip,rk3399-pmugrf", "syscon": for rk3399
+ - compatible: SGRF should be one of the following
 -- 
 1.9.1
 
