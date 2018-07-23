@@ -2,181 +2,151 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 746A3ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1729ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A83C20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:39:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 709FC20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:42:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knTE9Yww"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A83C20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MWuBepB6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709FC20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388276AbeGWXm4 (ORCPT
+        id S2388319AbeGWXp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 19:42:56 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37534 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388140AbeGWXmy (ORCPT
+        Mon, 23 Jul 2018 19:45:58 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33476 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388223AbeGWXp5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 19:42:54 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n7-v6so1383188pgq.4;
-        Mon, 23 Jul 2018 15:39:30 -0700 (PDT)
+        Mon, 23 Jul 2018 19:45:57 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b17-v6so376590pfi.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 15:42:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=sfUUXdvv9Tptx8To/hQ1ZTMBxIfZR+K5Z64QP0FmQPo=;
-        b=knTE9YwwmPPUhRm80Hw/8H9kFzyUIwlTySngRlohGeo7gPwuAC5Jg2xUj7lSvZGYNa
-         tlHsLK99T/ZYg0sad5RiRsE5T8O0wX1QYeqDT04KZb5ubWlCaR+6yfgVkA3ujp26cpji
-         t7oC62yu9Q4Sp9EfxbRp3b2uNLjrRFwo9fgMNw2fndkg8y6zcR5vv/YHDnMhAd+1setf
-         +Q93/Iv4CPzFIZwFxzNCLETHv3KDPfklU4PMw9l+b7b7VqGc9GdqxdCbpIkoE9kKVXFY
-         TXGU/TEqlhqzb/FKc9S4EX+ee2Nu8og2aHFVc++KuCnoilq88KCSfqvo8del2x+yE89c
-         VEnA==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=ibXFQeF0NCfjsnBdh9J6miE8RYtNr5i3hFFO2bWolLs=;
+        b=MWuBepB6fdWrpRg2mzjVWegpnVMPI5Nx93B1NJJGUUtDPGILIz1EZ21DvzOWPPhr+O
+         G5AXTtZLkg3NLezSfTwdOuWrHSlKGxK8Lc08bsdHdwxzrp5TX2ipKMCi6Cdfol7p+YFV
+         jt+wINZcrl2Y66tavVNh11607WlEeLV/HRLa3dIHHWO3UD3OmQKGfn5mkBECRg/DCA2X
+         K+33WuvEAMScubYNeOutXFACvbfOYle0gN8eL7Jbh+VbM0k5+cRyxQM35icWu2vCS6zK
+         Vc+sW0sZPsmCVMcCGK3AQhHkUA2Ryy6a5Nujp19eKu1nFlpAt1rn3scFco1GnARFiIVX
+         Rnhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=sfUUXdvv9Tptx8To/hQ1ZTMBxIfZR+K5Z64QP0FmQPo=;
-        b=mWmEvNcc73UW9mh1Iy/NekAT9yMOyRGbNwt42CmptQhvje0R6q5xVQEITO99qVXcQm
-         DXdjeTZQK3PEuI3vu1Eioc64sjXfHkosvr2KJdlJcdZLv2kTKo14qUU7zn30IVlOLVss
-         DyJ3swXAwjxPE4PlNM4SVte3qk0Bq38/Qv+gEtRzQWfeBwHrnEyTr8BzFW5H5OiasOuv
-         B1fPTpW+rNgRZqrXComxKLSiYKzMZ6BV+QOgm3BEIi8bXCTiNNmknTiEm49ULvj4m+J2
-         wCz5kl518BJBP3PUrfjxT9kKRst4i7U/MvxJId224Y93vLOhWUH4Dlgm6/08L+jJiGRu
-         8PkA==
-X-Gm-Message-State: AOUpUlFKW3I4CE2vDOVttJPNNUGUmZH11bKW7o4GkpdBsGJlR2NnN66S
-        k+TRA1qjR9cre/SKj0fzd9w=
-X-Google-Smtp-Source: AAOMgpcw28oy7VUptYBCC1AHVqrm4xO2Z25YRAQJwuC760+ZaZFdMj0I9McnwujmvKUIDyMnzwOx7A==
-X-Received: by 2002:a65:4545:: with SMTP id x5-v6mr13877755pgr.4.1532385570114;
-        Mon, 23 Jul 2018 15:39:30 -0700 (PDT)
-Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
-        by smtp.gmail.com with ESMTPSA id z10-v6sm14204864pgc.9.2018.07.23.15.39.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 15:39:28 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 15:39:26 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     =?iso-8859-1?Q?Myl=E8ne?= Josserand 
-        <mylene.josserand@bootlin.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, linux-input@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] Input: edt-ft5x06 - Add support for regulator
-Message-ID: <20180723223926.GL100814@dtor-ws>
-References: <20180718182719.29663-1-mylene.josserand@bootlin.com>
- <20180718182719.29663-2-mylene.josserand@bootlin.com>
- <20180718224645.ns7nvqxvqc6huxcz@core>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=ibXFQeF0NCfjsnBdh9J6miE8RYtNr5i3hFFO2bWolLs=;
+        b=alq1drMFYXOMoOwdbI0ngx2Vg9uXLGpwId18dauFkF61J6K7F+KDZ41XEp6jk+LIYq
+         2kAGucg313v8Dux86lIxY/I5fi+zQ3xvNgzcfftA/r/FPgLtaHL2sRkdw+QZjH4EqA/7
+         RaC556fkF6g/eJ9skpSXDi/zKvyC5FkJTkiUFoOEGo3NP/2VXwYsAm4IoJbIPgB1Ea5P
+         QNTlIqomlglOFFBd09B5tN5MUbLPT+jGWhbnbvNtc11ocFZqcHgQuluFTAgSa0qxBhf7
+         WziGRPlrwK1pjKdAT4+7wZJ3MqMxhT5Oeu5puRyYvc1jBYMRclIvSvbOi9/wYN7hqrUh
+         Yo2A==
+X-Gm-Message-State: AOUpUlFy9RDgsgs06Va6MQtnQtGs8w6njudgpxwyfHYaQq883E27zpfT
+        Y6fPrF/a7iggTPFT/ZiDt6L/og==
+X-Google-Smtp-Source: AAOMgpfc0w5Ijh91bQpywzVOJINWUArMf6uoAeW90ZeCrsOGz/tE3eMVnjsVhv7lWcqFvzv6BLWCOg==
+X-Received: by 2002:a65:4c87:: with SMTP id m7-v6mr13679263pgt.98.1532385752365;
+        Mon, 23 Jul 2018 15:42:32 -0700 (PDT)
+Received: from [100.112.68.191] ([104.133.9.111])
+        by smtp.gmail.com with ESMTPSA id z5-v6sm7612938pfi.4.2018.07.23.15.42.31
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 23 Jul 2018 15:42:31 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 15:42:22 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        syzbot <syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: kernel BUG at mm/shmem.c:LINE!
+In-Reply-To: <20180723203628.GA18236@bombadil.infradead.org>
+Message-ID: <alpine.LSU.2.11.1807231531240.2545@eggly.anvils>
+References: <000000000000d624c605705e9010@google.com> <20180709143610.GD2662@bombadil.infradead.org> <alpine.LSU.2.11.1807221856350.5536@eggly.anvils> <20180723140150.GA31843@bombadil.infradead.org> <alpine.LSU.2.11.1807231111310.1698@eggly.anvils>
+ <20180723203628.GA18236@bombadil.infradead.org>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180718224645.ns7nvqxvqc6huxcz@core>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 12:46:45AM +0200, Ondřej Jirman wrote:
-> Hello Mylène,
-> 
-> On Wed, Jul 18, 2018 at 08:27:17PM +0200, Mylène Josserand wrote:
-> > Add the support of regulator to use it as VCC source.
+On Mon, 23 Jul 2018, Matthew Wilcox wrote:
+> On Mon, Jul 23, 2018 at 12:14:41PM -0700, Hugh Dickins wrote:
+> > On Mon, 23 Jul 2018, Matthew Wilcox wrote:
+> > > On Sun, Jul 22, 2018 at 07:28:01PM -0700, Hugh Dickins wrote:
+> > > > Whether or not that fixed syzbot's kernel BUG at mm/shmem.c:815!
+> > > > I don't know, but I'm afraid it has not fixed linux-next breakage of
+> > > > huge tmpfs: I get a similar page_to_pgoff BUG at mm/filemap.c:1466!
+> > > > 
+> > > > Please try something like
+> > > > mount -o remount,huge=always /dev/shm
+> > > > cp /dev/zero /dev/shm
+> > > > 
+> > > > Writing soon crashes in find_lock_entry(), looking up offset 0x201
+> > > > but getting the page for offset 0x3c1 instead.
+> > > 
+> > > Hmm.  I don't see a crash while running that command,
 > > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > ---
-> >  .../bindings/input/touchscreen/edt-ft5x06.txt      |  1 +
-> >  drivers/input/touchscreen/edt-ft5x06.c             | 29 ++++++++++++++++++++++
-> >  2 files changed, 30 insertions(+)
+> > Thanks for looking.
 > > 
-> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> > index 025cf8c9324a..48e975b9c1aa 100644
-> > --- a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> > +++ b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> > @@ -30,6 +30,7 @@ Required properties:
-> >  Optional properties:
-> >   - reset-gpios: GPIO specification for the RESET input
-> >   - wake-gpios:  GPIO specification for the WAKE input
-> > + - vcc-supply:  Regulator that supplies the touchscreen
-> >  
-> >   - pinctrl-names: should be "default"
-> >   - pinctrl-0:   a phandle pointing to the pin settings for the
-> > diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-> > index 1e18ca0d1b4e..aa94494b06b5 100644
-> > --- a/drivers/input/touchscreen/edt-ft5x06.c
-> > +++ b/drivers/input/touchscreen/edt-ft5x06.c
-> > @@ -39,6 +39,7 @@
-> >  #include <linux/input/mt.h>
-> >  #include <linux/input/touchscreen.h>
-> >  #include <linux/of_device.h>
-> > +#include <linux/regulator/consumer.h>
-> >  
-> >  #define WORK_REGISTER_THRESHOLD		0x00
-> >  #define WORK_REGISTER_REPORT_RATE	0x08
-> > @@ -91,6 +92,7 @@ struct edt_ft5x06_ts_data {
-> >  	struct touchscreen_properties prop;
-> >  	u16 num_x;
-> >  	u16 num_y;
-> > +	struct regulator *vcc;
-> >  
-> >  	struct gpio_desc *reset_gpio;
-> >  	struct gpio_desc *wake_gpio;
-> > @@ -991,6 +993,22 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
-> >  
-> >  	tsdata->max_support_points = chip_data->max_support_points;
-> >  
-> > +	tsdata->vcc = devm_regulator_get(&client->dev, "vcc");
-> > +	if (IS_ERR(tsdata->vcc)) {
-> > +		error = PTR_ERR(tsdata->vcc);
-> > +		if (error != -EPROBE_DEFER)
-> > +			dev_err(&client->dev, "failed to request regulator: %d\n",
-> > +				error);
-> > +		return error;
-> > +	}
-> > +
-> > +	error = regulator_enable(tsdata->vcc);
-> > +	if (error < 0) {
-> > +		dev_err(&client->dev, "failed to enable vcc: %d\n",
-> > +			error);
-> > +		return error;
-> > +	}
-> > +
-> >  	tsdata->reset_gpio = devm_gpiod_get_optional(&client->dev,
-> >  						     "reset", GPIOD_OUT_HIGH);
-> >  	if (IS_ERR(tsdata->reset_gpio)) {
-
-You need to disable regulator here. We do not have
-devm_regulator_enable() (and Mark had some concerns about mixing managed
-and unmanaged APIs for regulators so we can't simply introduce it),
-so I'd recommend using devm_add_action_or_reset() and iunstall custom
-action to turn off regulator.
-
-> > @@ -1120,20 +1138,31 @@ static int edt_ft5x06_ts_remove(struct i2c_client *client)
-> >  static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
-> >  {
-> >  	struct i2c_client *client = to_i2c_client(dev);
-> > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
-> >  
-> >  	if (device_may_wakeup(dev))
-> >  		enable_irq_wake(client->irq);
-> >  
-> > +	regulator_disable(tsdata->vcc);
-> > +
+> > It is the VM_BUG_ON_PAGE(page_to_pgoff(page) != offset, page)
+> > in find_lock_entry(). Perhaps you didn't have CONFIG_DEBUG_VM=y
+> > on this occasion? Or you don't think of an oops as a kernel crash,
+> > and didn't notice it in dmesg? I see now that I've arranged for oops
+> > to crash, since I don't like to miss them myself; but it is a very
+> > clean oops, no locks held, so can just kill the process and continue.
 > 
-> How will the touchscreen wakeup the system with interrupt if you power it off
-> on suspend? Perhaps guard this with device_may_wakeup() too? 
+> Usually I run with that turned on, but somehow in my recent messing
+> with my test system, that got turned off.  Once I turned it back on,
+> it spots the bug instantly.
+> 
+> > Or is there something more mysterious stopping it from showing up for
+> > you? It's repeatable for me. When not crashing, that "cp" should fill
+> > up about half of RAM before it hits the implicit tmpfs volume limit;
+> > but I am assuming a not entirely fragmented machine - it does need
+> > to allocate two 2MB pages before hitting the VM_BUG_ON_PAGE().
+> 
+> I tried that too, before noticing that DEBUG_VM was off; raised my test
+> VM's memory from 2GB to 8GB.
+> 
+> > Are you sure that those pages are free, rather than most of them tails
+> > of one of the two compound pages involved? I think it's the same in your
+> > rewrite of struct page, the compound_head field (lru.next), with its low
+> > bit set, were how to recognize a tail page.
+> 
+> Yes, PageTail was set, and so was TAIL_MAPPING (0xdead0000000000400).
+> What was going on was the first 2MB page was being stored at indices
+> 0-511, then the second 2MB page was being stored at indices 64-575
+> instead of 512-1023.
+> 
+> I figured out a fix and pushed it to the 'ida' branch in
+> git://git.infradead.org/users/willy/linux-dax.git
 
-Exactly, it should be in an "else" branch.
+Great, thanks a lot for sorting that out so quickly. But I've cloned
+the tree and don't see today's patch, so assume you've folded the fix
+into an existing commit? If possible, please append the diff of today's
+fix to this thread so that we can try it out. Or if that's difficult,
+please at least tell which files were modified, then I can probably
+work it out from the diff of those files against mmotm.
 
-Thanks.
+Thanks,
+Hugh
 
--- 
-Dmitry
+> 
+> It won't be in linux-next tomorrow because the nvdimm people have
+> just dumped a pile of patches into their tree that conflict with
+> the XArray-DAX rewrite, so Stephen has pulled the XArray tree out
+> of linux-next temporarily.  I didn't have time to sort out the merge
+> conflict today because I judged your bug report more important.
