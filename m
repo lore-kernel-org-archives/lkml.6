@@ -2,88 +2,157 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B513FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEB7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5214D20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:01:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9358A20875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:01:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jYvES1gT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5214D20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJ9KrWPv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9358A20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388257AbeGWPDQ (ORCPT
+        id S2388293AbeGWPDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 11:03:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43668 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387940AbeGWPDQ (ORCPT
+        Mon, 23 Jul 2018 11:03:20 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45638 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387940AbeGWPDU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 11:03:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NWQt7U5xZWX+04emklGrNLrQvySHXzM9x204aMbtzFc=; b=jYvES1gTo9Ljw683DU3BBnbG4
-        dsuMAivJYNZqQjTBYl4/+odZtXRrwP/y/wXW93iaSmeoiSAtJ9b9PrmmBAuGWM/9pIifwFEkg5cWx
-        x8Anb7N4NOeW0Qbc0AMldUh/M1J8ixRx+0MSuxG5KhJCPdSd6gk2adEzkI9A+5maQmk17BcA70jnC
-        JGAnU0XCHsqhOE+QrMlpnr2n0y/fKjpplxCb7IWHU0S2xNGIgDEw+51rOhrQnPS4dcdn3H/ZCthwQ
-        59ku7v4XB42KpxTp6aOsbcS15VcDK5hDHwSGvMQs/XN7FcwG7kaJTCpK0JUlSBFgaAp9GNY7P1gxP
-        zeDRBdjgQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhbPK-0007ZB-S8; Mon, 23 Jul 2018 14:01:50 +0000
-Date:   Mon, 23 Jul 2018 07:01:50 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     syzbot <syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG at mm/shmem.c:LINE!
-Message-ID: <20180723140150.GA31843@bombadil.infradead.org>
-References: <000000000000d624c605705e9010@google.com>
- <20180709143610.GD2662@bombadil.infradead.org>
- <alpine.LSU.2.11.1807221856350.5536@eggly.anvils>
+        Mon, 23 Jul 2018 11:03:20 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t13-v6so814944wrv.12
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 07:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lg0S3wOJQ+3AYb/AAvXtamQFNdrzIfodj1tZqB7dljc=;
+        b=dJ9KrWPvH62bqQuVJVIu2+lNWguULIcqsfYnHq9kfKmoQIj7tGwdpmEXnSamyzrk4L
+         rZHBPjNjHspfnMxdbv1rTTh5LJdhUN0vNtXv6y6rORoVeuFgySpTNoor13sXhC/Iqhh5
+         PjALurWbvJ0LcdG7K00yEoHqZFt0jjOKNj33O8/c4KUIGjMJi34AR3AJisqelmWoOWvu
+         Mb5x65IKo3Lc7+YAMcvVoSD/PSoYXRQkHD0mZP9c3TXvaXsGT0j5bAnqoyqn+Df5dqO7
+         rNTIr4BLqSeHcg+DVDqnYUDmo3ekK+pn2Wra4ZQUQmmEOym6qhscUNcYaOJ9FuJDvY5e
+         8btQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lg0S3wOJQ+3AYb/AAvXtamQFNdrzIfodj1tZqB7dljc=;
+        b=jNbT+s0RLCGWbcDZJLPG8JatFP65z7UFDZWpLYH+nSwIaiEAGMOnADabZj29aQ/T9k
+         MG/xHvpJmi4qWCQAVbT0CCxOyzG1+XWJkffpvgUMECuVn5eShxXNd8CDuDyfDJj4An+R
+         0FPKinNfvOloJ//35t6h4kdvREw6PK4915GEcetcFjG0LER93k+1yXveQ6D7QGLwVdn2
+         RrNrId4wkIkDoDBZMmBag8rARdQAhpbujsGngTdxNcTsQ8eTO+Dtsl3Sh0UKUVz4aEDv
+         j0QNO8VdsO8yR+11EVlr6XcvMZ9OVzPEzPHFctIzFnI3fR9C6CHEKo5sj6PTR5LUTEUE
+         aQLg==
+X-Gm-Message-State: AOUpUlHzQaydhQrKiNEWQ7MVi8LgF86pah1Tc/oAy2WAoHDAchOY3vfx
+        cfp0WkyRAMhIotCRWX8/XQYlPl/+16kaVxAmK6Q=
+X-Google-Smtp-Source: AAOMgpdMem9TjStnj+IWPbPlsgpNSfLvFInM+86RCa0MASF2HP+bykEaQyzUloE0Ka/5/mFSJodHxXcm01FFxCQZc8E=
+X-Received: by 2002:adf:9bc9:: with SMTP id e9-v6mr9160682wrc.240.1532354515405;
+ Mon, 23 Jul 2018 07:01:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.1807221856350.5536@eggly.anvils>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180720180034.3964-1-logang@deltatee.com> <20180720180034.3964-5-logang@deltatee.com>
+In-Reply-To: <20180720180034.3964-5-logang@deltatee.com>
+From:   Allen Hubbe <allenbh@gmail.com>
+Date:   Mon, 23 Jul 2018 10:01:44 -0400
+Message-ID: <CAJ80sat2gx3jaDi3LVDG6GhZ6qKmuKWxyaP_0VoR5k3VfGybqw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] NTB: ntb_pingpong: Choose doorbells based on port number
+To:     logang@deltatee.com
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        Jon Mason <jdmason@kudzu.us>, fancer.lancer@gmail.com,
+        Shyam-sundar.S-k@amd.com, shuah@kernel.org, dmeyer@gigaio.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 22, 2018 at 07:28:01PM -0700, Hugh Dickins wrote:
-> Whether or not that fixed syzbot's kernel BUG at mm/shmem.c:815!
-> I don't know, but I'm afraid it has not fixed linux-next breakage of
-> huge tmpfs: I get a similar page_to_pgoff BUG at mm/filemap.c:1466!
-> 
-> Please try something like
-> mount -o remount,huge=always /dev/shm
-> cp /dev/zero /dev/shm
-> 
-> Writing soon crashes in find_lock_entry(), looking up offset 0x201
-> but getting the page for offset 0x3c1 instead.
+On Fri, Jul 20, 2018 at 2:00 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+>
+> This commit fixes pingpong support for existing drivers that do not
+> implement ntb_default_port_number() and ntb_default_peer_port_number().
+> This is required for hardware (like the crosslink topology of
+> switchtec) which cannot assign reasonable port numbers to each port due
+> to its perfect symmetry.
+>
+> Instead of picking the doorbell to use based on the the index of the
+> peer, we use the peer's port number. This is a bit clearer and easier
+> to understand.
 
-Hmm.  I don't see a crash while running that command, but I do see an RCU
-stall in find_get_entries() called from shmem_undo_range() when running
-'cp' the second time -- ie while truncating the /dev/shm/zero file.
-Maybe I'm seeing the same bug as you, and maybe I'm seeing a different
-one.  Do we have a shmem test suite somewhere?
+Does this solve the issue where two of the the port numbers are the
+same, because of symmetry over a crosslink?  I think the two ports
+with the "same" number should be identified as different peer index,
+even if the port numbers are the same.
 
-> I've spent a while on it, but better turn over to you, Matthew:
-> my guess is that xas_create_range() does not create the layout
-> you expect from it.
+Maybe the port of any peer connected over the crosslink should be the
+local switch's crosslink port.  The local port number might be needed
+to configure translation tables in the local switch.  If a globally
+unique port number is needed, maybe encode a chip number in some high
+bits of the port number?  If a locally unique port number is needed,
+maybe encode a path, that could be useful for configuring address
+translations across multiple crosslinks.  Encoding a path, then each
+port will have a different number, depending on the perspective of the
+source port, which could be confusing (already, peer index is local
+perspective, so can cause the same kind of confusion).  IMO port
+number can be anything useful for specific ntb driver and devices, or
+maybe just be informative, but peer index should be useful for ntb
+client drivers.
 
-I've dumped the XArray tree on my machine and it actually looks fine
-*except* that the pages pointed to are free!  That indicates to me I
-screwed up somebody's reference count somewhere.
+> Fixes: c7aeb0afdcc2 ("NTB: ntb_pp: Add full multi-port NTB API support")
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
+>  drivers/ntb/test/ntb_pingpong.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/ntb/test/ntb_pingpong.c b/drivers/ntb/test/ntb_pingpong.c
+> index 65865e460ab8..18d00eec7b02 100644
+> --- a/drivers/ntb/test/ntb_pingpong.c
+> +++ b/drivers/ntb/test/ntb_pingpong.c
+> @@ -121,15 +121,14 @@ static int pp_find_next_peer(struct pp_ctx *pp)
+>         link = ntb_link_is_up(pp->ntb, NULL, NULL);
+>
+>         /* Find next available peer */
+> -       if (link & pp->nmask) {
+> +       if (link & pp->nmask)
+>                 pidx = __ffs64(link & pp->nmask);
+> -               out_db = BIT_ULL(pidx + 1);
+
+Without +1 here, does this ring the same bell again?
+
+> -       } else if (link & pp->pmask) {
+> +       else if (link & pp->pmask)
+>                 pidx = __ffs64(link & pp->pmask);
+> -               out_db = BIT_ULL(pidx);
+> -       } else {
+> +       else
+>                 return -ENODEV;
+> -       }
+> +
+> +       out_db = BIT_ULL(ntb_peer_port_number(pp->ntb, pidx));
+
+Can it not be made to work with peer index?
+
+>
+>         spin_lock(&pp->lock);
+>         pp->out_pidx = pidx;
+> @@ -303,7 +302,7 @@ static void pp_init_flds(struct pp_ctx *pp)
+>                         break;
+>         }
+>
+> -       pp->in_db = BIT_ULL(pidx);
+> +       pp->in_db = BIT_ULL(lport);
+>         pp->pmask = GENMASK_ULL(pidx, 0) >> 1;
+>         pp->nmask = GENMASK_ULL(pcnt - 1, pidx);
+>
+> @@ -435,4 +434,3 @@ static void __exit pp_exit(void)
+>         debugfs_remove_recursive(pp_dbgfs_topdir);
+>  }
+>  module_exit(pp_exit);
+> -
+> --
+> 2.11.0
