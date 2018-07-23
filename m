@@ -2,163 +2,259 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA490ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD23DECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5474620881
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:19:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A0A120779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:20:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S7BcRt9b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5474620881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="p7XI6YoK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A0A120779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388561AbeGWQVE (ORCPT
+        id S2388598AbeGWQWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:21:04 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38239 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387852AbeGWQVD (ORCPT
+        Mon, 23 Jul 2018 12:22:18 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:37017 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388130AbeGWQWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 12:21:03 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k3-v6so614935pgq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 08:19:21 -0700 (PDT)
+        Mon, 23 Jul 2018 12:22:17 -0400
+Received: by mail-yb0-f194.google.com with SMTP id r3-v6so380307ybo.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 08:20:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=AjUUPyvR0aerapMgloa/wxnWUHh9hZ9fSl1E6f0oM5s=;
-        b=S7BcRt9bwqK7gzBbya8hXOmz9+n4e2YjhcwigfclAGdoELujefWEbNKsIUbCMCljRG
-         2hKAyLY5ZXHpzlnAgLZplfiknJEvYxH0jd8S9s4czepVPBPRx5l+c47T2aXcU3pcQkyH
-         asdPixOa82g96C/h2qMR1Wyl592uInz2TIZfX6dFw+NgzUOe030HrCsWD2uHFg+gkqg0
-         U75OhHb2ejaRujZA5cUc3Kl8R4pyfvLrBjxfhA+ZnhbC+/La3vHPoZaJ3/5Im7Y0iyiM
-         Pi/27WetaHur3G+sdyMrt776QNegOeb8fvy85d8c6/mktAtRkv5IzCZpPRV9BdTPBSOQ
-         8C/Q==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8gUbTY31L9jtetP0QKK3YjtiDCim5q5h65mAiTslKbw=;
+        b=p7XI6YoKQwZcvFSJmHIXpvLWyj5yI6RiKM4gZmxuCD0IVsLKLG0lw/eDMDfwPGL63F
+         iZ3COdpapwZgJ9MlXlPUSW1TBb0wgrG//Uoo8qiXgQa0xofMyjl+HoZNCIvgosV2VOQY
+         uavcNM/30Xnw2t2qQM61jJY7zQ7rJ7jFb21hyvgqp8uP2MFCJyXnf4QBpwHgJ/wHCKUJ
+         4oPh86PH2c6wGHFMIqk61SaeqVlW8r8kA1CAfrUxqVAJn7h3XSLtXl8+QFHIa4rrbrzU
+         CIv2XdUpir8J9aaadztO5V0ziRqzlanyhcMLLoXCH8D4m1iuRp3XEdEyhBQKd0wW/ch1
+         5Xgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=AjUUPyvR0aerapMgloa/wxnWUHh9hZ9fSl1E6f0oM5s=;
-        b=BsI6Nlk3mp5y1yTVeo6aug3ccjwSACZENH5ORbahckN27phNl5HaetB9kOV/gCzmiz
-         SxL+5cX/WR0vdvtJHIIrvp09ve2X1dmpWoeuprUKrpfPou+lWC4bPVN/rc552EmQGstY
-         W3lfaOf6Sa1E8uldabhhrYW2B/iwFFrSJPRXLw6878Sa0NkEh4QZ9H8aGS0WWzinFCZP
-         Pd1rIHOZyffV/8ncZymem1qEtIElgpocQ+QQHPkQyhjjk4TfyaGaDV3+nTT82hkrsdrD
-         FPl/dpKfnlSmJnmGVrAzdZuXYBJKFUb745izNifiNcMU+tKtW+p2vhoFPsbPpqzOVBOl
-         DhgA==
-X-Gm-Message-State: AOUpUlFc/B5CBUEGc+fS0G24va0CVV6cVMDmS0Apiqu50GD1Rw5yAY2t
-        LuEI2NdvNVA0CvEVnbl69GgooXJu28Uw+mHTQvhXpA==
-X-Google-Smtp-Source: AAOMgpegHKYTMsWjxtHwiTkvqR+mcCyidfSle6uvv7l9qjGa07m5D6X9HLpQ1BrpOPVp/N8VbxDO+a80OuXGb9TOGFg=
-X-Received: by 2002:a63:743:: with SMTP id 64-v6mr13017223pgh.216.1532359160897;
- Mon, 23 Jul 2018 08:19:20 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8gUbTY31L9jtetP0QKK3YjtiDCim5q5h65mAiTslKbw=;
+        b=iT45B9y0mZp6y5E6IFOBIQN5OXsIu2aUijK7XN5Vu0yS+WYXMtzw+g7v0vtee2yEIS
+         4+jxSShmr2ujrXYXRG6mdU9VNrmk/dJKRrDdUWokptShVkLYzMzSi9nctIpMnxykC27M
+         1cFubO7VeSqifCLlkIz/EXK5ykilnaQKvOf7mOrHpyltK11VZ6EDyU9lTBF+rEJwoLAv
+         xQwVeNy5vE92QHv5VCsQGF7k6J49IiiN7oSlv5M/txSTT/Gf7sG17zJZGd5HKh9i7QRD
+         bLPimLZFm0A6/JCDFJM6Su1wVF6IsVAvOSi2+Ro9nTJ16a7oiMmEXJaAEFoc+d3p/cu/
+         I0hA==
+X-Gm-Message-State: AOUpUlE+Dr3rvNog/5UfnmCODfSQTbkxCiAcb1BAr+p9k0luEyQLvMPP
+        tgNuJbbfNeBAp8hydkBORqbu9g==
+X-Google-Smtp-Source: AAOMgpfHRpjA8rAf2f0bAIGKHNy+muuSwU8N0MFk37qdq/IsEGDJIiUg7oyJfzD1VA5FZjeHkYPjiw==
+X-Received: by 2002:a25:ae5b:: with SMTP id g27-v6mr7079766ybe.351.1532359234011;
+        Mon, 23 Jul 2018 08:20:34 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:180::1:3a18])
+        by smtp.gmail.com with ESMTPSA id f137-v6sm7774584ywb.52.2018.07.23.08.20.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 08:20:32 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 11:23:23 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>,
+        Linux-MM <linux-mm@kvack.org>, cgroups@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-team@fb.com, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 02/10] mm: workingset: tell cache transitions from
+ workingset thrashing
+Message-ID: <20180723152323.GA3699@cmpxchg.org>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180712172942.10094-3-hannes@cmpxchg.org>
+ <CAK8P3a3Nsmt54-ed_gWNev3CBS6_Sv5QGOw4G0sY4ZXOi1R4_Q@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 23 Jul 2018 08:19:00
- -0700 (PDT)
-In-Reply-To: <CAJfpeguni8JReXKXU_yUFqBfHav1-JFHfHzhxc=kaXu3ME6Qsw@mail.gmail.com>
-References: <000000000000bc17b60571a60434@google.com> <CACT4Y+bKU8f4jVENYHX=fzNVd95A4vce2F=UCV12paVNFv-LNg@mail.gmail.com>
- <CAJfpegsKWGZ4LVeQXrrCr47+Bch4yfOWcWMFSniQsRzjRof=RQ@mail.gmail.com>
- <CACT4Y+ZbRi=0kRiR-j-SkngsB_QuALfnOX5nGF4agQD-weFsew@mail.gmail.com>
- <CAJfpegs0by5OJ7iqtg6L3T1w2RrFRiU6yRufVNbt=tNpJCbf2A@mail.gmail.com>
- <CACT4Y+bSnJjtgeLdusj6czbH8080XfRs2b8L0V4R0TAixqxX6Q@mail.gmail.com>
- <CAJfpegvYHYUMdo14J_of10rmg0krjd_eiATJ3D4+XqaNys9bqQ@mail.gmail.com>
- <CACT4Y+Y2ec4-ywG+FWocir6XXkwt-11qD+SAFwswtG2Ng6BS4A@mail.gmail.com> <CAJfpeguni8JReXKXU_yUFqBfHav1-JFHfHzhxc=kaXu3ME6Qsw@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 23 Jul 2018 17:19:00 +0200
-Message-ID: <CACT4Y+YiGEX7_naGDTDNWCKnjQAisYrmBOYNejasfidaCRP7xA@mail.gmail.com>
-Subject: Re: INFO: task hung in fuse_reverse_inval_entry
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzbot <syzbot+bb6d800770577a083f8c@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3Nsmt54-ed_gWNev3CBS6_Sv5QGOw4G0sY4ZXOi1R4_Q@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 5:09 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Mon, Jul 23, 2018 at 3:37 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
->> On Mon, Jul 23, 2018 at 3:05 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
->
->>> Biggest conceptual problem: your definition of fuse-server is weak.
->>> Take the following example: process A is holding the fuse device fd
->>> and is forwarding requests and replies to/from process B via a pipe.
->>> So basically A is just a proxy that does nothing interesting, the
->>> "real" server is B.  But according to your definition B is not a
->>> server, only A is.
->>
->> I proposed to abort fuse conn when all fuse device fd's are "killed"
->> (all processes having the fd opened are killed). So if _only_ process
->> B is killed, then, yes, it will still hang. However if A is killed or
->> both A and B (say, process group, everything inside of pid namespace,
->> etc) then the deadlock will be autoresolved without human
->> intervention.
->
-> Okay, so you're saying:
->
-> 1) when process gets SIGKILL and is uninterruptible sleep mark process as doomed
-> 2) for a particular fuse instance find set of fuse device fd
-> references that are in non-doomed tasks; if there are none then abort
-> fuse instance
->
-> Right?
+Hi Arnd,
 
+On Mon, Jul 23, 2018 at 03:36:09PM +0200, Arnd Bergmann wrote:
+> On Thu, Jul 12, 2018 at 7:29 PM, Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > How many page->flags does this leave us with on 32-bit?
+> >
+> >         20 bits are always page flags
+> >
+> >         21 if you have an MMU
+> >
+> >         23 with the zone bits for DMA, Normal, HighMem, Movable
+> >
+> >         29 with the sparsemem section bits
+> >
+> >         30 if PAE is enabled
+> >
+> >         31 with this patch.
+> >
+> > So on 32-bit PAE, that leaves 1 bit for distinguishing two NUMA
+> > nodes. If that's not enough, the system can switch to discontigmem and
+> > re-gain the 6 or 7 sparsemem section bits.
+> >
+> > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> 
+> It seems we ran out of bits on arm64 in randconfig builds:
+> 
+> In file included from /git/arm-soc/include/linux/kernel.h:10,
+>                  from /git/arm-soc/arch/arm64/mm/init.c:20:
+> /git/arm-soc/arch/arm64/mm/init.c: In function 'mem_init':
+> /git/arm-soc/include/linux/compiler.h:357:38: error: call to
+> '__compiletime_assert_618' declared with attribute error: BUILD_BUG_ON
+> failed: sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT)
 
-Yes, something like this.
-Perhaps checking for "uninterruptible sleep" is excessive. If it has
-SIGKILL pending it's pretty much doomed already. This info should be
-already available for tasks.
-Not saying that it's better, but what I described was the other way
-around: when a task killed it drops a reference to all opened fuse
-fds, when the last fd is dropped, the connection can be aborted.
+This BUILD_BUG_ON() is to make sure we're sizing the VMEMMAP struct
+page array properly (address space divided by struct page size).
 
+From the code:
 
-> The above is not an implementation proposal, just to get us on the
-> same page regarding the concept.
->
->>> And this is just a simple example, parts of the server might be on
->>> different machines, etc...  It's impossible to automatically detect if
->>> a process is acting as a fuse server or not.
->>
->> It does not seem we need the precise definition. If no one ever can
->> write anything into the fd, we can safely abort the connection (?).
->
-> Seems to me so.
->
->> If
->> we don't, we can either get that the process exits normally and the
->> connection is doomed anyway, so no difference in behavior, or we can
->> get a deadlock.
->>
->>> We could let the fuse server itself notify the kernel that it's a fuse
->>> server.  That might help in the cases where the deadlock is
->>> accidental, but obviously not in the case when done by a malicious
->>> agent.  I'm not sure it's worth the effort.   Also I have no idea how
->>> the respective maintainers would take the idea of "kill hooks"...   It
->>> would probably be a lot of work for little gain.
->>
->> What looks wrong to me here is that fuse is only (?) subsystem in
->> kernel that stops SIGKILL from working and requires complex custom
->> dance performed by a human operator (which is not necessary there at
->> all). Say, if a process has opened a socket, whatever, I don't need to
->> locate and abort something in socketctl fs, just SIGKILL. If a
->> processes has opened a file, I don't need to locate the fd in /proc
->> and abort it, just SIGKILL. If a process has created an ipc object, I
->> don't need to do any special dance, just SIGKILL. fuse is somehow very
->> special, if we have more such cases, it definitely won't scale.
->> I understand that there can be implementation difficulties, but
->> fundamentally that's how things should work -- choose target
->> processes, kill, done, right?
->
-> Yes, it would be nice.
->
-> But I'm not sure it will fly due to implementation difficulties.  It's
-> definitely not  a high prio feature currently for me, but I'll happily
-> accept patches.
+/*
+ * Log2 of the upper bound of the size of a struct page. Used for sizing
+ * the vmemmap region only, does not affect actual memory footprint.
+ * We don't use sizeof(struct page) directly since taking its size here
+ * requires its definition to be available at this point in the inclusion
+ * chain, and it may not be a power of 2 in the first place.
+ */
+#define STRUCT_PAGE_MAX_SHIFT	6
 
-I see. Thanks for bearing with me.
+> Apparently this triggered
+> 
+> #if SECTIONS_WIDTH+ZONES_WIDTH+NODES_SHIFT+LAST_CPUPID_SHIFT <=
+> BITS_PER_LONG - NR_PAGEFLAGS
+> #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
+> #else
+> #define LAST_CPUPID_WIDTH 0
+> #endif
+> 
+> and in turn
+> 
+> #if defined(CONFIG_NUMA_BALANCING) && LAST_CPUPID_WIDTH == 0
+> #define LAST_CPUPID_NOT_IN_PAGE_FLAGS
+> #endif
+> 
+> and that _last_cpupid in struct page made sizeof(struct page) larger than 64.
+> 
+> This is for a randconfig build, see https://pastebin.com/YuwSTah3
+> for the configuration file, some of the relevant options are
+> 
+> CONFIG_64BIT=y
+> CONFIG_MEMCG=y
+> CONFIG_SPARSEMEM=y
+> CONFIG_ARM64_PA_BITS=52
+> CONFIG_ARM64_64K_PAGES=y
+> CONFIG_NR_CPUS=64
+> CONFIG_NUMA_BALANCING=y
+> # CONFIG_SPARSEMEM_VMEMMAP is not set
+
+However, the check isn't conditional on that config option. And when
+VMEMMAP is disabled, we need 22 additional bits to identify the sparse
+memory sections in page->flags as well:
+
+> CONFIG_NODES_SHIFT=2
+> # CONFIG_ARCH_USES_PG_UNCACHED is not set
+> CONFIG_MEMORY_FAILURE=y
+> CONFIG_IDLE_PAGE_TRACKING=y
+> 
+> #define MAX_NR_ZONES 3
+> #define ZONES_SHIFT 2
+> #define MAX_PHYSMEM_BITS 52
+> #define SECTION_SIZE_BITS 30
+> #define SECTIONS_WIDTH 22
+
+^^^ Those we get back with VMEMMAP enabled.
+
+So for configs for which the check is intended, it passes. We just
+need to make it conditional to those.
+
+---
+
+From 1d24635a6c7cd395bad5c29a3b9e5d2e98d9ab84 Mon Sep 17 00:00:00 2001
+From: Johannes Weiner <hannes@cmpxchg.org>
+Date: Mon, 23 Jul 2018 10:18:23 -0400
+Subject: [PATCH] arm64: fix vmemmap BUILD_BUG_ON() triggering on !vmemmap
+ setups
+
+Arnd reports the following arm64 randconfig build error with the PSI
+patches that add another page flag:
+
+  /git/arm-soc/arch/arm64/mm/init.c: In function 'mem_init':
+  /git/arm-soc/include/linux/compiler.h:357:38: error: call to
+  '__compiletime_assert_618' declared with attribute error: BUILD_BUG_ON
+  failed: sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT)
+
+The additional page flag causes other information stored in
+page->flags to get bumped into their own struct page member:
+
+  #if SECTIONS_WIDTH+ZONES_WIDTH+NODES_SHIFT+LAST_CPUPID_SHIFT <=
+  BITS_PER_LONG - NR_PAGEFLAGS
+  #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
+  #else
+  #define LAST_CPUPID_WIDTH 0
+  #endif
+
+  #if defined(CONFIG_NUMA_BALANCING) && LAST_CPUPID_WIDTH == 0
+  #define LAST_CPUPID_NOT_IN_PAGE_FLAGS
+  #endif
+
+which in turn causes the struct page size to exceed the size set in
+STRUCT_PAGE_MAX_SHIFT. This value is an an estimate used to size the
+VMEMMAP page array according to address space and struct page size.
+
+However, the check is performed - and triggers here - on a !VMEMMAP
+config, which consumes an additional 22 page bits for the sparse
+section id. When VMEMMAP is enabled, those bits are returned, cpupid
+doesn't need its own member, and the page passes the VMEMMAP check.
+
+Restrict that check to the situation it was meant to check: that we
+are sizing the VMEMMAP page array correctly.
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ arch/arm64/mm/init.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 1b18b4722420..72c9b6778b0a 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -611,11 +611,13 @@ void __init mem_init(void)
+ 	BUILD_BUG_ON(TASK_SIZE_32			> TASK_SIZE_64);
+ #endif
+ 
++#ifndef CONFIG_SPARSEMEM_VMEMMAP
+ 	/*
+ 	 * Make sure we chose the upper bound of sizeof(struct page)
+-	 * correctly.
++	 * correctly when sizing the VMEMMAP array.
+ 	 */
+ 	BUILD_BUG_ON(sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT));
++#endif
+ 
+ 	if (PAGE_SIZE >= 16384 && get_num_physpages() <= 128) {
+ 		extern int sysctl_overcommit_memory;
+-- 
+2.18.0
+
