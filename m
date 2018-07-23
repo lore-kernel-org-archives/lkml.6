@@ -2,197 +2,120 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A69ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C69ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5B3820852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5701020852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:44:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pktWMPqk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B3820852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="kTPxLD6f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5701020852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388726AbeGWQqB (ORCPT
+        id S2388742AbeGWQqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:46:01 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:32996 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388068AbeGWQqB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 12:46:01 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s12-v6so956469ljj.0;
-        Mon, 23 Jul 2018 08:44:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=S2vp7wIiLTtVes09q9AhvVh/4crBSVkDyIIaM012ufg=;
-        b=pktWMPqkJctUPA7Xl7V2saDPz9eIVEhA9332kwZA5OzcSCpO15CTlWDK+NuiL8HK6C
-         oEZ//Tmxv7GCd6W1re2em9CDw7reVXPOof1/zjyieGSZZooyWb03Bo76XSYsr7IallmR
-         8ZN/ZNAlQ5UNXa1jEVnjpf/mAKqi70927aLCRl2kMvG6ZNyYRTn7Xfriaj/zKxxOqLQu
-         HyHE8WYZiF8YR79tiqcRfwCeKenzWC45gzaolSQzWpj6gc7GcP0r+mNE5d3+t7WUb8Jv
-         yoJRvMb+XlpSmY4Tcu5PVxGVzC9SNEdMNCUeltM7yhZKAoeNjEf3Rea4FhdLOpmhHYJj
-         SM4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=S2vp7wIiLTtVes09q9AhvVh/4crBSVkDyIIaM012ufg=;
-        b=U2G0r0S1nHGD9y1nQmxPbI4B9Y2BZGAa/PW48YzbipoBLwk7+N+v6wN2FvdDUt/Khp
-         jSnc7QI3sCPVzywgB0BXOhMhgsg+fk7AuMsGdjK1YtFJUBGNl+xdAmEa5sUMB6eo/B+o
-         IRWxBe5oju9kOIYjNxFi7y+XCNWvu2ORuHhf1BFSkP0eFssqdwkx9cOjFa1DXT/OOil2
-         KBNnibYmOZYG6xBGB+S/kcdcS03+UfRh+6JP0ORV/+Z2nDSoi0yk+cVOBkrsBrAIp44F
-         auH1amG1jPUTZPcvknb2da6S82/HNyA+R75nc5KxtF8vFt1QfaEhYuLCNjWiBQzgUtnW
-         RiXQ==
-X-Gm-Message-State: AOUpUlHu7KrhCccHzlGJXLX9vf2VNfucUpbIrPDwoyzxoOXtklLvCSlq
-        4/YNzUgpr4n33GA42Y+j2TE=
-X-Google-Smtp-Source: AAOMgpfyW/l5EabBqyw5zchpOLXa5gazb1K7vwV0enEw2ToNEL7WA/fQUyRkMCp7xxuVyHUgnxeqiw==
-X-Received: by 2002:a2e:4103:: with SMTP id o3-v6mr8993428lja.3.1532360651062;
-        Mon, 23 Jul 2018 08:44:11 -0700 (PDT)
-Received: from debian-tom.lan ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
-        by smtp.gmail.com with ESMTPSA id t8-v6sm717345lfd.2.2018.07.23.08.44.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 08:44:10 -0700 (PDT)
-From:   Tomas Bortoli <tomasbortoli@gmail.com>
-To:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net
-Cc:     asmadeus@codewreck.org, davem@davemloft.net,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
-        Tomas Bortoli <tomasbortoli@gmail.com>
-Subject: [PATCH] 9p: validate PDU length
-Date:   Mon, 23 Jul 2018 17:44:04 +0200
-Message-Id: <20180723154404.2406-1-tomasbortoli@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 23 Jul 2018 12:46:11 -0400
+Received: from mail-eopbgr80099.outbound.protection.outlook.com ([40.107.8.99]:30606
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388068AbeGWQqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 12:46:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w08SzPdvvGE4j5HyDzsRQ/sLFR7a/MvX7j/DUbmyKAI=;
+ b=kTPxLD6fRYuheCwzDt3NQE+yV5JeC7Xco6+ZmryppWv71PFCmbe8jPi5mdo6Ia5JmgyuIIeY+9s/oIKkrZkiX22kT9NMTE/UIu0SMGuQ53ZSsHlLOdtJ0bgKqWGb2Ru8hhpolSOfrZB4n4l9UvWO7ahetejE9KTIfLvSaQHm2MA=
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
+ VI1PR0501MB2749.eurprd05.prod.outlook.com (10.172.11.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.16; Mon, 23 Jul 2018 15:44:17 +0000
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::dc61:4a61:b84:357e]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::dc61:4a61:b84:357e%8]) with mapi id 15.20.0973.018; Mon, 23 Jul 2018
+ 15:44:17 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "corbet@lwn.net" <corbet@lwn.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "hsweeten@visionengravers.com" <hsweeten@visionengravers.com>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "vz@mleia.com" <vz@mleia.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH] mtd: nand: fix spelling in driver api documentation
+Thread-Topic: [PATCH] mtd: nand: fix spelling in driver api documentation
+Thread-Index: AQHUH/7NhXdaZjTiwkmcgf7uSZJnDqSc9qwAgAABW4A=
+Date:   Mon, 23 Jul 2018 15:44:17 +0000
+Message-ID: <1532360655.18760.2.camel@toradex.com>
+References: <20180720075334.24254-1-marcel@ziswiler.com>
+         <20180723093924.04af0e2f@lwn.net>
+In-Reply-To: <20180723093924.04af0e2f@lwn.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [46.140.72.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2749;6:fsTjHgjkqNj3Eso+ptCvAguJXQoKZ1DxiWMAM4feDqpnMgU+n4e8NGQZS9heFgq5HeQeXcLxcwNcbjJUwo9Em///Eqw8r85jvDeRlofUrRf2uF+2v4laCG+s0BNSCZUpEE4TlpRaE0AFbazehYcSu+YDLhbalyCsB3hNZg8CxAMFD4A2fCOkAtUaFBbe0jT38P19+LsqrV1yr2sG1B/xCYvAZXosLxiBJvcDM98iY9ALedG6vQY4itxmCB7x7YVOSD59/WKkAz59iOhxfCzeLCrfxZ9meZzg9ASPZMYkQWTOgzP98vYjwXEi4odKKIzJIcq8OGobBp/jJY3JQlDd0JR6m/pkCqvt0edBMpHjUdaRMf+TJqo1fzz93uvw8bxDsYRjNe26VyT+bFImjtfDy4105idhTdPNkEjxNw7tVwIYFdZDBKtltTBpQANe33LcnVF1Nh0Qrp+Di2O7hj5kzg==;5:liwoBz0a/flYMgZJoGw1MVYfULVA666VxfHNvtpfcjrpGHRjdP9CJHrsJzfHN4jB+izGqXskC5MdNtpsLR8zdYpVDWSJGXR0td61KtFg91wiBrd9XpkAmK0eYRbiPVDJuSZX9X6qZ93l79EILA7a8tIBma58I0rC+knWe99uRLY=;7:s4I4Yf5hOqfePFRb99xt0FrA8AOSY8QrFwh3JIrdelVFzpyeYCBVO+2UaHNQxm1SuupGpsvgyl1Xg90qaYqFlh+N7/H7Qm1kdmb1Pi0vg+N1k9oaOE7or9PZ+JmOWhcx4i+HffUeiCEzcVuOsptFp0k52mW7j4uD/dJfXihtZHuWUZevjZAktsPD/Zn+xFGbsdNhBGYZikwcVh2VVtHbVB5rqa7ivcbxH3+udBtOT20E6oCkS+H7GYf+8hKHSif1
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 9688ea93-424a-4641-3d78-08d5f0b3267d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2749;
+x-ms-traffictypediagnostic: VI1PR0501MB2749:
+x-microsoft-antispam-prvs: <VI1PR0501MB27490D8690E68F4F2D8EB2DFFB560@VI1PR0501MB2749.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(3002001)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:VI1PR0501MB2749;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2749;
+x-forefront-prvs: 0742443479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(376002)(396003)(136003)(346002)(366004)(199004)(189003)(54534003)(305945005)(6116002)(66066001)(4326008)(2616005)(486006)(476003)(97736004)(256004)(229853002)(44832011)(11346002)(6246003)(53936002)(36756003)(25786009)(2906002)(6916009)(86362001)(5660300001)(2900100001)(99286004)(446003)(81156014)(76176011)(5250100002)(81166006)(26005)(103116003)(8676002)(1730700003)(2351001)(8936002)(68736007)(186003)(2501003)(6506007)(102836004)(7736002)(105586002)(6436002)(3846002)(316002)(5640700003)(6512007)(54906003)(106356001)(6486002)(478600001)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2749;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Ou51PPBf1XdTeKfrxfDilq8eesXOWGmHo+aZkagWhZSrEP0m+2Pz2kT4tHBMLeZRk+jiB7M/0am/K6GvehjdlH4M9t1CUjshbJe25RBA9N18M+lDgbuNvpKDC2qgcceVqlhEfgQSZq/1CamhsqCNUXyzT/PyDaN5pFzJd/5Ifj1gcrEEzHnSqNA5gq2kloQ0/boSqj3FwN8JEHR8OYJEy8AQqJnhbPlt0FpvQIvKKWWkUftAE95c23FUolPbDoKRPuFAAbwJq0wpNCdzd1cYQk/tMYd6J09/2RKPbqIsCV94cNZtXXDf+foBFpuzumw8nes2sn7D3hnsrRMInTwuBpWhGiQWJ4j8V/FGK6btmbA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E3FA34BB246340429689E5A5F6E7908B@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9688ea93-424a-4641-3d78-08d5f0b3267d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2018 15:44:17.6635
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2749
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds length check for the PDU size.
-The size contained in the header has to match the actual size,
-except for TCP (trans_fd.c) where actual length is not known ahead
-and the header's length will be checked only against the validity
-range.
-
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
----
- net/9p/client.c       | 25 ++++++++++++++++---------
- net/9p/trans_fd.c     |  5 ++++-
- net/9p/trans_rdma.c   |  1 +
- net/9p/trans_virtio.c |  4 +++-
- 4 files changed, 24 insertions(+), 11 deletions(-)
-
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 18c5271910dc..92240ccf476b 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -477,20 +477,11 @@ p9_parse_header(struct p9_fcall *pdu, int32_t *size, int8_t *type, int16_t *tag,
- 	int err;
- 
- 	pdu->offset = 0;
--	if (pdu->size == 0)
--		pdu->size = 7;
- 
- 	err = p9pdu_readf(pdu, 0, "dbw", &r_size, &r_type, &r_tag);
- 	if (err)
- 		goto rewind_and_exit;
- 
--	pdu->size = r_size;
--	pdu->id = r_type;
--	pdu->tag = r_tag;
--
--	p9_debug(P9_DEBUG_9P, "<<< size=%d type: %d tag: %d\n",
--		 pdu->size, pdu->id, pdu->tag);
--
- 	if (type)
- 		*type = r_type;
- 	if (tag)
-@@ -498,6 +489,16 @@ p9_parse_header(struct p9_fcall *pdu, int32_t *size, int8_t *type, int16_t *tag,
- 	if (size)
- 		*size = r_size;
- 
-+	if (pdu->size != r_size || r_size < 7) {
-+		err = -EINVAL;
-+		goto rewind_and_exit;
-+	}
-+
-+	pdu->id = r_type;
-+	pdu->tag = r_tag;
-+
-+	p9_debug(P9_DEBUG_9P, "<<< size=%d type: %d tag: %d\n",
-+		pdu->size, pdu->id, pdu->tag);
- 
- rewind_and_exit:
- 	if (rewind)
-@@ -524,6 +525,12 @@ static int p9_check_errors(struct p9_client *c, struct p9_req_t *req)
- 	int ecode;
- 
- 	err = p9_parse_header(req->rc, NULL, &type, NULL, 0);
-+	if (req->rc->size >= c->msize) {
-+		p9_debug(P9_DEBUG_ERROR,
-+			"requested packet size too big: %d\n",
-+			req->rc->size);
-+			return -EIO;
-+	}
- 	/*
- 	 * dump the response from server
- 	 * This should be after check errors which poplulate pdu_fcall.
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index 588bf88c3305..65533c437b7f 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -324,7 +324,9 @@ static void p9_read_work(struct work_struct *work)
- 	if ((!m->req) && (m->rc.offset == m->rc.capacity)) {
- 		p9_debug(P9_DEBUG_TRANS, "got new header\n");
- 
--		err = p9_parse_header(&m->rc, NULL, NULL, NULL, 0);
-+		/* Header size */
-+		m->rc.size = 7;
-+		err = p9_parse_header(&m->rc, &m->rc.size, NULL, NULL, 0);
- 		if (err) {
- 			p9_debug(P9_DEBUG_ERROR,
- 				 "error parsing header: %d\n", err);
-@@ -369,6 +371,7 @@ static void p9_read_work(struct work_struct *work)
- 	 */
- 	if ((m->req) && (m->rc.offset == m->rc.capacity)) {
- 		p9_debug(P9_DEBUG_TRANS, "got new packet\n");
-+		m->req->rc->size = m->rc.offset;
- 		spin_lock(&m->client->lock);
- 		if (m->req->status != REQ_STATUS_ERROR)
- 			status = REQ_STATUS_RCVD;
-diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
-index 3d414acb7015..2649b2ebf961 100644
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -320,6 +320,7 @@ recv_done(struct ib_cq *cq, struct ib_wc *wc)
- 	if (wc->status != IB_WC_SUCCESS)
- 		goto err_out;
- 
-+	c->rc->size = wc->byte_len;
- 	err = p9_parse_header(c->rc, NULL, NULL, &tag, 1);
- 	if (err)
- 		goto err_out;
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index 05006cbb3361..fc6dc9ca86a4 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -159,8 +159,10 @@ static void req_done(struct virtqueue *vq)
- 		spin_unlock_irqrestore(&chan->lock, flags);
- 		/* Wakeup if anyone waiting for VirtIO ring space. */
- 		wake_up(chan->vc_wq);
--		if (len)
-+		if (len) {
-+			req->rc->size = len;
- 			p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
-+		}
- 	}
- }
- 
--- 
-2.11.0
-
+T24gTW9uLCAyMDE4LTA3LTIzIGF0IDA5OjM5IC0wNjAwLCBKb25hdGhhbiBDb3JiZXQgd3JvdGU6
+DQo+IE9uIEZyaSwgMjAgSnVsIDIwMTggMDk6NTM6MzMgKzAyMDANCj4gTWFyY2VsIFppc3dpbGVy
+IDxtYXJjZWxAemlzd2lsZXIuY29tPiB3cm90ZToNCj4gDQo+ID4gRnJvbTogTWFyY2VsIFppc3dp
+bGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+ID4gDQo+ID4gVGhpcyBmaXhlcyBz
+b21lIHNwZWxsaW5nIG1pc3Rha2VzLg0KPiANCj4gU28gSSBoYXRlIHRvIGNvbXBsYWluIGFib3V0
+IGEgZG9jdW1lbnRhdGlvbiBpbXByb3ZlbWVudCwgYnV0Li4uDQo+IA0KPiA+IA0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0K
+PiA+IA0KPiA+IC0tLQ0KPiA+IA0KPiA+ICBEb2N1bWVudGF0aW9uL2RyaXZlci1hcGkvbXRkbmFu
+ZC5yc3QgfCA0ICsrLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBk
+ZWxldGlvbnMoLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kcml2ZXIt
+YXBpL210ZG5hbmQucnN0DQo+ID4gYi9Eb2N1bWVudGF0aW9uL2RyaXZlci1hcGkvbXRkbmFuZC5y
+c3QNCj4gPiBpbmRleCBkY2Q2MzU5OWY3MDAuLmM1NWE2MDM0YzM5NyAxMDA2NDQNCj4gPiAtLS0g
+YS9Eb2N1bWVudGF0aW9uL2RyaXZlci1hcGkvbXRkbmFuZC5yc3QNCj4gPiArKysgYi9Eb2N1bWVu
+dGF0aW9uL2RyaXZlci1hcGkvbXRkbmFuZC5yc3QNCj4gPiBAQCAtMzc0LDcgKzM3NCw3IEBAIFRo
+ZSBuYW5kIGRyaXZlciBzdXBwb3J0cyB0aHJlZSBkaWZmZXJlbnQgdHlwZXMNCj4gPiBvZiBoYXJk
+d2FyZSBFQ0MuDQo+ID4gIA0KPiA+ICAtICBOQU5EX0VDQ19IVzhfNTEyDQo+ID4gIA0KPiA+IC0g
+ICBIYXJkd2FyZSBFQ0MgZ2VuZXJhdG9yIHByb3ZpZGluZyA2IGJ5dGVzIEVDQyBwZXIgNTEyIGJ5
+dGUuDQo+ID4gKyAgIEhhcmR3YXJlIEVDQyBnZW5lcmF0b3IgcHJvdmlkaW5nIDggYnl0ZXMgRUND
+IHBlciA1MTIgYnl0ZS4NCj4gDQo+IFRoYXQncyBub3QgYSBzcGVsbGluZyBtaXN0YWtlLCB0aGF0
+J3MgYSBmYWN0dWFsIGNoYW5nZS4gIEknbGwgYXBwbHkNCj4gdGhlDQo+IHBhdGNoIHNpbmNlIGl0
+IGFwcGVhcnMgdG8gYmUgY29ycmVjdCwgYnV0IHdpbGwgYmUgdHdlYWtpbmcgdGhlDQo+IGNoYW5n
+ZWxvZy4NCg0KWWVhaCwgcHJvYmFibHkgYSBjb3B5L3Bhc3RlIG1pc3Rha2UuIE5vIHB1biBpbnRl
+bmRlZC4NCg0KPiBUaGFua3MsDQo+IA0KPiBqb24=
