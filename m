@@ -6,41 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C9FECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838D6ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD99120875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:47:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD99120875
+	by mail.kernel.org (Postfix) with ESMTP id 28A9320846
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:47:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A9320846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388373AbeGWKrm (ORCPT
+        id S2388398AbeGWKrp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 06:47:42 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57843 "EHLO
+        Mon, 23 Jul 2018 06:47:45 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58977 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388210AbeGWKrk (ORCPT
+        with ESMTP id S2388210AbeGWKrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 06:47:40 -0400
+        Mon, 23 Jul 2018 06:47:43 -0400
 Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <mkl@pengutronix.de>)
-        id 1fhXQu-0003hw-15; Mon, 23 Jul 2018 11:47:12 +0200
+        id 1fhXQt-0003hu-Ug; Mon, 23 Jul 2018 11:47:12 +0200
 Received: from [IPv6:2001:470:7eea:1122:6c91:b8f:4e84:18d1] (unknown [IPv6:2001:470:7eea:1122:6c91:b8f:4e84:18d1])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
         (Authenticated sender: mkl@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id EB0CC342816;
-        Mon, 23 Jul 2018 08:14:52 +0000 (UTC)
-Subject: Re: [PATCH] can: peak_usb: mark expected switch fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180628174142.GA17081@embeddedor.com>
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 6E8AE34281C;
+        Mon, 23 Jul 2018 08:16:26 +0000 (UTC)
+Subject: Re: [PATCH] apalis_t30: fix can2
+To:     Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org,
+        linux-can@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180625075948.32040-1-marcel@ziswiler.com>
 From:   Marc Kleine-Budde <mkl@pengutronix.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
@@ -217,15 +220,15 @@ Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
  0JY+SHZeV750EBfGeGQm+K9YnErBDk05HXv1uDUJCkU2TUAPR8iigYXH6ySA1wP+o4AbJBGY
  wtoZX7pifOlY2HZZhv7jnTeX0NL7EUVxLIyp8F+Z6fAxUHw94yioGVcur6gJdkBQ85W07HjD
  g2ejS9SYusxFnJozyQ==
-Message-ID: <f6f0bf83-84b1-0cf0-3c78-828b56694b92@pengutronix.de>
-Date:   Mon, 23 Jul 2018 10:14:50 +0200
+Message-ID: <c511af9e-e0d5-f7d8-e6cc-92ea0df7a290@pengutronix.de>
+Date:   Mon, 23 Jul 2018 10:16:23 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180628174142.GA17081@embeddedor.com>
+In-Reply-To: <20180625075948.32040-1-marcel@ziswiler.com>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="GtZDdLRzLjn81QO2ovso2LYLDRpa9X8R0"
+ boundary="Ld08EnLgxkrgaK7Bm8HjfwaGb7NhYotQu"
 X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
 X-SA-Exim-Mail-From: mkl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
@@ -236,35 +239,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---GtZDdLRzLjn81QO2ovso2LYLDRpa9X8R0
-Content-Type: multipart/mixed; boundary="xT716j30djcJ5nwgAp2Vk31O1hyjm5C7G";
+--Ld08EnLgxkrgaK7Bm8HjfwaGb7NhYotQu
+Content-Type: multipart/mixed; boundary="ykCVeTTNicVzTeB6hHfnAlWAgjP5xqIlx";
  protected-headers="v1"
 From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
- Wolfgang Grandegger <wg@grandegger.com>,
- "David S. Miller" <davem@davemloft.net>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <f6f0bf83-84b1-0cf0-3c78-828b56694b92@pengutronix.de>
-Subject: Re: [PATCH] can: peak_usb: mark expected switch fall-throughs
-References: <20180628174142.GA17081@embeddedor.com>
-In-Reply-To: <20180628174142.GA17081@embeddedor.com>
+To: Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org,
+ linux-can@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+ devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Message-ID: <c511af9e-e0d5-f7d8-e6cc-92ea0df7a290@pengutronix.de>
+Subject: Re: [PATCH] apalis_t30: fix can2
+References: <20180625075948.32040-1-marcel@ziswiler.com>
+In-Reply-To: <20180625075948.32040-1-marcel@ziswiler.com>
 
---xT716j30djcJ5nwgAp2Vk31O1hyjm5C7G
+--ykCVeTTNicVzTeB6hHfnAlWAgjP5xqIlx
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
 Content-Transfer-Encoding: quoted-printable
 
-On 06/28/2018 07:41 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+On 06/25/2018 09:59 AM, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 >=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> CAN2 currently fails on probe as follows:
+>=20
+> mcp251x spi1.1: Probe failed, err=3D19
+>=20
+> Fix this by enabling input on pin mux of resp. SPI4 pins.
+>=20
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-applied to linux-can-next.
+I can take this via the linux-can tree. Any acks from the DT people?
 
-Tnx,
 Marc
+
+>=20
+> ---
+>=20
+>  arch/arm/boot/dts/tegra30-apalis.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/=
+tegra30-apalis.dtsi
+> index d1d21ec2a844..9ff6aafd72b3 100644
+> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+> @@ -118,6 +118,7 @@
+>  				nvidia,function =3D "spi4";
+>  				nvidia,pull =3D <TEGRA_PIN_PULL_NONE>;
+>  				nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
+> +				nvidia,enable-input =3D <TEGRA_PIN_ENABLE>;
+>  			};
+>  			/* CAN_INT2 */
+>  			spi2_cs2_n_pw3 {
+>=20
+
 
 --=20
 Pengutronix e.K.                  | Marc Kleine-Budde           |
@@ -273,23 +303,23 @@ Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
 Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
 
---xT716j30djcJ5nwgAp2Vk31O1hyjm5C7G--
+--ykCVeTTNicVzTeB6hHfnAlWAgjP5xqIlx--
 
---GtZDdLRzLjn81QO2ovso2LYLDRpa9X8R0
+--Ld08EnLgxkrgaK7Bm8HjfwaGb7NhYotQu
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAltVjnoACgkQk9IU1zQo
-ZfGelAf5AfQeNzehZW/bovXlJpiWRLU8epG4YOmZG+2xHcsMtidTq7jpJQNhfp3M
-qYJ/7alelstX5GAWT6RYlONZo8IqJ4ps3efKvKidd+D8fQfTAjVDeC7jkRzqt9na
-9+FUF9BSwI7Z0G8bdAcErsre2CJFR5DDABEbrqe3Sn1APeKnDm4S5soMR1EHw3TG
-Z4Cb/N4Lo5nApLTmOcDFSWCAGxHvD8DiPF4QPSsG5MHcjcs8Mv9rfmsxSPqYIlaO
-xtB+iUpqqfuySeBXFusLFDBki+6K+RHqK3bo3Kp+eb3ZAG6xuep2I0PLbN3I5aXo
-8gThfUTp11Te4xKxc7PFh2O3qu+xgQ==
-=R8kB
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAltVjtcACgkQk9IU1zQo
+ZfH+Kgf/SiJUWYSH0+Zy+D4N0mH21tlPglTZm4y1PFD+duuK6DYGE2QbQYd21DE7
+IrBsweupUHq+lNlDMT5+A1mqjNAhi2hCfeFWFGIFjnNWKqSNe7vZh12fkKSZRkQY
+XNXGnVd1q34iJSO7TaDyF5MO9EiSu8dYnpM7dJLSz1YXpvKsPiEzPF7GutXdpogg
+fKVM2oHT64u1xwR+e4f52A8boHp6N4eq5SYjAFG/o42h6mKQYMU2wtJblYBv5t9Q
+hm7OwdFGsI0VPZihwuyMDVQb1YgEnP0C4NhpqL4/tyHhJa24Vgr3FWmY9V/L/Rsy
+QsL5N4OPA9ebGgMrtgOdctKbbwWtBA==
+=azuG
 -----END PGP SIGNATURE-----
 
---GtZDdLRzLjn81QO2ovso2LYLDRpa9X8R0--
+--Ld08EnLgxkrgaK7Bm8HjfwaGb7NhYotQu--
