@@ -3,52 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DACEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E20ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 009C020852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 254C120852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:10:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="mVg1ovD1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 009C020852
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="MmHTvy/K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 254C120852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388925AbeGWSLc (ORCPT
+        id S2388793AbeGWSMq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:11:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45396 "EHLO
+        Mon, 23 Jul 2018 14:12:46 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47476 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388628AbeGWSLb (ORCPT
+        with ESMTP id S2388552AbeGWSMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:11:31 -0400
+        Mon, 23 Jul 2018 14:12:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=kaRebApwsm0Oph4L+tR949m78bTZqIlnBOrRTqDBKz4=; b=mVg1ovD17xEQ
-        QH4CQhdvlB/1c3CMx8amlk4nRBDF9SI/rhT19WwYTdYHGKa8JzgDkfC1t+6AxsifeXZibKGcsmGqi
-        3A7i88sboXF8GzgWvNqNyv22rUZ3J67LOeCFaQdSXb0xkt10nyzWHSsvZQJcoJ+rVZqM33rCNBTEQ
-        Hppos=;
+        List-Archive; bh=kaRebApwsm0Oph4L+tR949m78bTZqIlnBOrRTqDBKz4=; b=MmHTvy/KvPMs
+        LOO9FhbgtsdcvWr9g3a6JLe0i+8k1hlFJva0Xa94wxaLrijvXRNNyMsDEukmcHIXG1g9dY3lZ8D7A
+        /1thIptim6ex2DTx6J3m5xLPIZ0Fjq/LNLe7A7OfOn2TY4Gce78q5olwd6kGhKcNdZwiX15xQLlUl
+        nVHjA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fheKl-0004Nu-6p; Mon, 23 Jul 2018 17:09:19 +0000
+        id 1fheLw-0004O5-PB; Mon, 23 Jul 2018 17:10:32 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id DF633112387B; Mon, 23 Jul 2018 18:09:18 +0100 (BST)
+        id 81AC7112387B; Mon, 23 Jul 2018 18:10:32 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Akinobu Mita <akinobu.mita@gmail.com>
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
 Subject: Applied "regmap: sccb: fix typo and sort headers alphabetically" to the regmap tree
 In-Reply-To: 
-Message-Id: <20180723170918.DF633112387B@debutante.sirena.org.uk>
-Date:   Mon, 23 Jul 2018 18:09:18 +0100 (BST)
+Message-Id: <20180723171032.81AC7112387B@debutante.sirena.org.uk>
+Date:   Mon, 23 Jul 2018 18:10:32 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
