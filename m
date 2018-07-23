@@ -2,210 +2,103 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B1EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7A2ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F6320779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:11:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7F6320779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id DA82320779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:17:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qe2PaTqt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA82320779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387841AbeGWEKw (ORCPT
+        id S1728065AbeGWEQp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 00:10:52 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:50210 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387819AbeGWEKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 00:10:52 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2DB66200063;
-        Mon, 23 Jul 2018 05:11:50 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BE20E200069;
-        Mon, 23 Jul 2018 05:11:49 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 2BC4C40A70;
-        Sun, 22 Jul 2018 20:11:49 -0700 (MST)
-Received: from mega.am.freescale.net ([10.192.208.232])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w6N3BZOt018846;
-        Sun, 22 Jul 2018 20:11:46 -0700
-From:   Pengbo Mu <pengbo.mu@nxp.com>
-To:     Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        ran.wang_1@nxp.com, pengbo.mu@nxp.com
-Subject: [PATCH v6 4/4] arm: arm64: dts: add property snps incr burst type adjustment
-Date:   Mon, 23 Jul 2018 11:11:27 +0800
-Message-Id: <1532315487-23137-4-git-send-email-pengbo.mu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532315487-23137-1-git-send-email-pengbo.mu@nxp.com>
-References: <1532315487-23137-1-git-send-email-pengbo.mu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 23 Jul 2018 00:16:45 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36979 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbeGWEQo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 00:16:44 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n7-v6so11171445pgq.4;
+        Sun, 22 Jul 2018 20:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=zEPh0NPzq/G43tzS/tfNSh0ugM2BW5QJyLQhCe3ksKA=;
+        b=qe2PaTqtS6wD+alBtsRUl9Q62hlUdEGxSPjwQ8iq1j6R8FdGSYlvnjK5B+1VEma1+B
+         0gPhZVJY4IA3TfoltzcybmMRV/XxZKAj1cFnA1ueSquzBkoDKXY4DiYKqHyxuBX5rRu+
+         XVukdh4jIq4WutxkBRLyWcrtJ180C/28EVhHtOrup8K1GrTXYESp7HpJ8PhB0GsZxOWa
+         2VseWyyKDxjYFmtUS033Q9sMoDJVrMwLAZ9lqRzdX3uWYk9gG9XvHvRDHPO+7W0o4Xlo
+         yRnecpzHhRFP2mWtx3zfDCmUvrk360TlkpG4sOTrHEPSUIflmjDJ7rcgFF9d3IV2drvM
+         4KAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zEPh0NPzq/G43tzS/tfNSh0ugM2BW5QJyLQhCe3ksKA=;
+        b=RkOgRgONkgA2m3KbkCDmHuJ4ahP2pz1dGd3rmnjRx8ebJDze34gZpfwcOM3CBAYJVs
+         IZMJsFjB9jCqi27c8F9pN1+Wwl6OZEpZQ3bGUeYkGYUOviwMley1J9abUjI6wxV3bb3t
+         f6L89xgTNpNq0mMh4vNp/3F+aKSIN0XLrQDZJDT62RFTIWH1IBcyzv9mQYjeWgEI0GI8
+         b+zMl1gvbU6aiQSQGkUAeW9QEuGifLLCBsOISyQRJeGV43jusgnpw7mWcs2TMbPs8Q21
+         RaOoQ5X1kZrfgd5GPp5oR95ErdLT5Hmoa/lnCXWK7e6PKY/mTjrBwUL5DRskLxedAjIK
+         d+OA==
+X-Gm-Message-State: AOUpUlEzkM28+uJwCNrrhiexKqzHgCA9Z+cp5FUgBQc4XYvahgqpccco
+        GAUtYB6I+nry6Smftz+gRRg=
+X-Google-Smtp-Source: AAOMgpcFB9Lsbq4YmFAeLj8piN/lZjiv/2c1oiFPiz3GNgu6Xn3TmsHX+VtLOi3B1Jw4W7m/dGT9fw==
+X-Received: by 2002:a63:5421:: with SMTP id i33-v6mr10695237pgb.417.1532315863534;
+        Sun, 22 Jul 2018 20:17:43 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:c122:f95a:1d53:1f82])
+        by smtp.gmail.com with ESMTPSA id t186-v6sm11317202pgd.77.2018.07.22.20.17.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 22 Jul 2018 20:17:43 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] bluetooth: bluecard_cs: Replace GFP_ATOMIC with GFP_KERNEL in bluecard_hci_set_baud_rate()
+Date:   Mon, 23 Jul 2018 11:17:35 +0800
+Message-Id: <20180723031735.7518-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Property "snps,incr-burst-type-adjustment = <x>, <y>..." for USB3.0
-DWC3.When only one value means INCRx mode with fix burst type.
-When more than one value, means undefined length burst mode, USB
-controller can use the length less than or equal to the largest
-enabled burst length.
+bluecard_hci_set_baud_rate() is never called in atomic context.
 
-While enabling undefined length INCR burst type and INCR16 burst type,
-get better write performance on NXP Layerscape platforms: around 3%
-improvement (from 364MB/s to 375MB/s).
+bluecard_hci_set_baud_rate() is only by bluecard_hci_open(), which is 
+set to hdev->open, and hdev->open() is never called in atomic context.
 
-Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-Signed-off-by: Pengbo Mu <pengbo.mu@nxp.com>
+bluecard_hci_set_baud_rate() calls bt_skb_alloc() with GFP_ATOMIC, 
+which is not necessary. GFP_ATOMIC can be replaced with GFP_KERNEL.
+
+This is found by a static analysis tool named DCNS written by myself.
+I also manually check the kernel code before reporting it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
-Changes in v6:
- - delete snps,incr-burst-type-adjustment = <1>
-Changes in v5:
- - add support for ls1021a, ls1012a, ls1046a, ls1088a, ls1021a
- - update ls208xa support according to code base change
-Changes in v4:
- - change definition for this property.
-Changes in v3:
- - add new property for INCR burst in usb node.
----
- arch/arm/boot/dts/ls1021a.dtsi                 | 1 +
- arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 1 +
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 3 +++
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 3 +++
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 2 ++
- arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 2 ++
- 6 files changed, 12 insertions(+)
+ drivers/bluetooth/bluecard_cs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index c55d479..7c328f3 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -706,6 +706,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
+diff --git a/drivers/bluetooth/bluecard_cs.c b/drivers/bluetooth/bluecard_cs.c
+index 82437a69f99c..cc6e56223656 100644
+--- a/drivers/bluetooth/bluecard_cs.c
++++ b/drivers/bluetooth/bluecard_cs.c
+@@ -565,7 +565,7 @@ static int bluecard_hci_set_baud_rate(struct hci_dev *hdev, int baud)
+ 	/* Ericsson baud rate command */
+ 	unsigned char cmd[] = { HCI_COMMAND_PKT, 0x09, 0xfc, 0x01, 0x03 };
  
- 		pcie@3400000 {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-index 205f0f4..8e3d66f 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-@@ -482,6 +482,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		sata: sata@3200000 {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index 1109f22..f826d20 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -643,6 +643,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		usb1: usb3@3000000 {
-@@ -652,6 +653,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		usb2: usb3@3100000 {
-@@ -661,6 +663,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		sata: sata@3200000 {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index 136ebfa..9226be8 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -604,6 +604,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		usb1: usb@3000000 {
-@@ -613,6 +614,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		usb2: usb@3100000 {
-@@ -622,6 +624,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		sata: sata@3200000 {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-index 1c6556b..34671ee0 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-@@ -479,6 +479,7 @@
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
- 			status = "disabled";
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		usb1: usb3@3110000 {
-@@ -489,6 +490,7 @@
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
- 			status = "disabled";
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		sata: sata@3200000 {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-index 137ef4d..c0762cc 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-@@ -754,6 +754,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		usb1: usb3@3110000 {
-@@ -764,6 +765,7 @@
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
- 			snps,dis_rxdet_inp3_quirk;
-+			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 		};
- 
- 		ccn@4000000 {
+-	skb = bt_skb_alloc(HCI_MAX_FRAME_SIZE, GFP_ATOMIC);
++	skb = bt_skb_alloc(HCI_MAX_FRAME_SIZE, GFP_KERNEL);
+ 	if (!skb) {
+ 		BT_ERR("Can't allocate mem for new packet");
+ 		return -1;
 -- 
-2.7.4
+2.17.0
 
