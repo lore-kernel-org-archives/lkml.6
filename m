@@ -2,106 +2,169 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B85F3ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED9AECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7273D20858
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37D2920858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:40:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="f3cyC05a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7273D20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TtH9Ut25"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D2920858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387998AbeGWHg5 (ORCPT
+        id S2387989AbeGWHjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 03:36:57 -0400
-Received: from mail-eopbgr80052.outbound.protection.outlook.com ([40.107.8.52]:31914
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387979AbeGWHg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 03:36:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h7BQzk2+XILJXC3eMKWe2a2aa+UVBrea87xjyZY4NKM=;
- b=f3cyC05aGduR7CRh4LC6eFYN8mSJf17JyuzIubS/SnNC9xSN71kA8n0o7cUBAFP3QM2Pqpr3enl3jv9UBtNHZzGzbqSCKZyNRYocf+Jwu3fYdEVWKuw5TQt9YPudmIHMTCEmlhPi+JpAFvutwXdgpoofUVeA6dzJgfgZ7odpi1k=
-Received: from AM0PR0402MB3747.eurprd04.prod.outlook.com (52.133.39.11) by
- AM0PR0402MB3923.eurprd04.prod.outlook.com (52.133.39.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.20; Mon, 23 Jul 2018 06:37:14 +0000
-Received: from AM0PR0402MB3747.eurprd04.prod.outlook.com
- ([fe80::f13e:2610:6ff8:cc13]) by AM0PR0402MB3747.eurprd04.prod.outlook.com
- ([fe80::f13e:2610:6ff8:cc13%5]) with mapi id 15.20.0973.018; Mon, 23 Jul 2018
- 06:37:13 +0000
-From:   Pengbo Mu <pengbo.mu@nxp.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Felipe Balbi <balbi@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Ran Wang <ran.wang_1@nxp.com>
-Subject: RE: [PATCH] usb: dwc3: call set incr burst type func()
-Thread-Topic: [PATCH] usb: dwc3: call set incr burst type func()
-Thread-Index: AQHUIjYNPC9Ugap3IUCwapLPVjRhAqScRBaAgAAUvuA=
-Date:   Mon, 23 Jul 2018 06:37:13 +0000
-Message-ID: <AM0PR0402MB3747A7EA275D6680ACEFD821F4560@AM0PR0402MB3747.eurprd04.prod.outlook.com>
-References: <1532316853-29184-1-git-send-email-pengbo.mu@nxp.com>
- <20180723051605.GA13377@kroah.com>
-In-Reply-To: <20180723051605.GA13377@kroah.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pengbo.mu@nxp.com; 
-x-originating-ip: [92.121.36.198]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR0402MB3923;6:dQxJeUbDIroZTtbSD397vrudqumOhR757Hvp9t2YFC9JZiB7ppLFvnkOlb66oQFmV2QGmCeL5YwRyMNhKyUCRTvA7b26iuIv7RWpZ1DAvX1jhD4gSeckLTISQRwN3S1XIJr1bUFrfEkA7XAAs00kg6NWicoiSS4Stv/K8slKof7jvxRDvmPvIsNQr8CMianF1r7Lk6UK46jhnaW5t1Vrnju0hlH1qpuOTLh/AQERU6/Dp2PZdIyAOR4gGxvINeVMQybd4qBDDi4kDNioGFXC0uQKfEtIxtR3rIq0ikTBZ3aehKMSlsVbi4959rQO438HOuT4Lg7MJKpyPrTTc0vEomsbJmhBpSb3QxShlz5v56zHZ8fkyBsVBsvzI7Ak5MZcbgVoy7FAmuJdHs/NmBm+PYEVJoPcsSZUzJt1Sz6zTZpNMOEVpkeR0ymTf6E2cIQApU3RsVAiOiFAZilrT/9u4g==;5:pWoCpYzzDpf6AWcx+1vF9cbAR9CiaqjviojkzkAYex2Db3AnUWTi3A+Y10G7bmBllczBga/Rl2Wuie3nvYY4f0gDlHNplLu1v5a1BoM1S9sgZ9GYQer85XyN2dgUrMJWcNWIphICEjcESZ/jZQBpFfAD8zXP1raCyK835Co4ULE=;7:0h+kGOmng9faVePZ2O8azPoQjLim4nYA0A39a8VOruS5Z1GB4roInc4yrRxTU2s3Pf/uYZwKvf24tQP+NhFkpxYF7aSw1JWCf7Yq+tyTvLl/03b/mnSGqOAWC4DlpZFc2HogSaIQE6EeN1zv9MtHlV3JV3HqsstF63ZVUMteNyZrigpVHW7r5eQ+jkbxxKbodn9sozAIKS4w2Vnz3Vw1ZTmYHSkquW1go1eLVREzTbNTUO8cG37mqotK9cjJj8D4
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: ad945fba-011e-4c40-de3c-08d5f066b9f4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600073)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR0402MB3923;
-x-ms-traffictypediagnostic: AM0PR0402MB3923:
-x-microsoft-antispam-prvs: <AM0PR0402MB3923DABC2CD0DE57404A5FE7F4560@AM0PR0402MB3923.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AM0PR0402MB3923;BCL:0;PCL:0;RULEID:;SRVR:AM0PR0402MB3923;
-x-forefront-prvs: 0742443479
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(39860400002)(346002)(396003)(199004)(189003)(13464003)(478600001)(5250100002)(9686003)(3846002)(6116002)(2900100001)(76176011)(2906002)(99286004)(33656002)(53936002)(66066001)(74316002)(86362001)(81166006)(305945005)(7736002)(8676002)(81156014)(97736004)(8936002)(256004)(476003)(44832011)(446003)(486006)(68736007)(6506007)(53546011)(102836004)(106356001)(26005)(105586002)(11346002)(4326008)(14454004)(54906003)(316002)(186003)(6306002)(966005)(25786009)(229853002)(7696005)(6916009)(6246003)(5660300001)(55016002)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0402MB3923;H:AM0PR0402MB3747.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: P9bO60KR61YKt4CrC+C9Xw3AssBpqkGBI9yia3TCjUby3Is+/jE56ol34k/Ye0WkIrPNZawJ3mCmQYKXM5sdr3H+w8TLq6dIbL7hEe1TVjMnLuZltUu/OhPePGisr6l8bi6t6vylO1P9/HRzSx9B6XB83sthplVAjDEVDLZuSw9VoSrZKdOTFZWSn4L3czhL8uFCsFq6M0gUlG6wCe1+ylsa/AqnYhmdny7CGWTk4L6p+qoaosxodMT/Mv9Hjnbq+/2jvYMnl2SaqMuG5KS4/XLagyAiMTi7nN5Ze18KYxlEugxWrikzlOL1LYAwFVx3xQelIKSntg4POcLC5qBmRqFuh86OsDLXT6IbRa7n9HI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Mon, 23 Jul 2018 03:39:41 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38151 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387838AbeGWHjl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 03:39:41 -0400
+Received: by mail-pl0-f67.google.com with SMTP id b1-v6so7832049pls.5;
+        Sun, 22 Jul 2018 23:40:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2Xdq+AVRyyZjGcUSZmKd58RZht+1qMiLLEbORSfvOXo=;
+        b=TtH9Ut25PxBRCS/MjoJ5F/ZwmoN4etxKArBqupH0CgDUP8jod9lMe+/QeqiwIyd8Ta
+         KMwaHU+YAOXWCzeX0B5Qruj/DL/tUoTdZviQBozxTauLKFEz/vhC9HRK5cshh54zTq1Y
+         iad/4fXOC/oNYUPMgdunmZlYNVfOC88khExcfDGDuYOYqtx7/FVF2BSHQSgt+Td7lmjS
+         QJ2Y7Kj15TwPAxegF96wXiEnvqlzZ+yXcsm2qlcGviKBZLMW94SiVhacyE140zy8mHPK
+         Ho0PtIaY3x4P6epkLD/x1qSNEcXfn/kYUYq0uXxjIwlFH219LunwcTepjkJ5+WLfumxm
+         bZHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2Xdq+AVRyyZjGcUSZmKd58RZht+1qMiLLEbORSfvOXo=;
+        b=l8crHnPp3vpnHZityXOdtaymzjKiHJIM8vCnT2jZDMEw9NGhexP3QBS0jn7LLPJBi3
+         0vYHZWaEOrjJjCovAA/QfQbF9S863yd5rzjpcMVcJiLmUPeAAadHIyrmMXGv3hNWJXEq
+         7NBfl1wB4UoVPAOqRRzDrdh6Mu6LudIULFtmFhDo/lbXV7++2PYPp8TtsbWJjveSyXB5
+         8Pqmk/JWPem2MZorOdcbWDip+d3SiOmvaDonT/divXNDdYqmh0hx1q03H+OsWmPtiVN7
+         n1z23B561o2bnpgEnnfCs2P5Ga2jRezDPgd5xAIiVHvUZlAfVmSAOAkTLVVO1sGYCN67
+         DS0w==
+X-Gm-Message-State: AOUpUlHr0fkwG0F5RpAVZu7JV0/S60CHeL7cF86aHVUlIs8D9TeIMv+F
+        BpEsOpKLvwBe/Oiz28ttqtHcQqy4
+X-Google-Smtp-Source: AAOMgpfzTAhHzLSbjKEhCzxUooAMO94VUXzWBltqrDbYBTKYfNXeiHJA5F5OlKMU+JNuq7cYTDkn3w==
+X-Received: by 2002:a17:902:8c84:: with SMTP id t4-v6mr11907791plo.100.1532328001440;
+        Sun, 22 Jul 2018 23:40:01 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id p17-v6sm8165598pgv.26.2018.07.22.23.39.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 22 Jul 2018 23:40:00 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH v5 0/6] KVM: X86: Implement Exit-less IPIs support
+Date:   Mon, 23 Jul 2018 14:39:50 +0800
+Message-Id: <1532327996-17619-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad945fba-011e-4c40-de3c-08d5f066b9f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2018 06:37:13.9145
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0402MB3923
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR3JlZywNCg0KVGhpcyBwYXRjaCBzaG91bGQgYmUgdGllZCB3aXRoIGh0dHBzOi8vcGF0Y2h3
-b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA1Mzk1MzUvLg0KQWZ0ZXIgc2VudCBmb3VyIHBhdGNoZXMs
-IEkgZm91bmQgSSB3YXMgbWlzc2luZyB0aGlzIGNhbGwuDQpUaGFua3MgZm9yIHlvdXIgYWR2aWNl
-LiBJIHdpbGwgZml4IGl0IGltbWVkaWF0ZWx5IQ0KDQpQZW5nYm8gTXUNCi0tLS0tT3JpZ2luYWwg
-TWVzc2FnZS0tLS0tDQpGcm9tOiBHcmVnIEtyb2FoLUhhcnRtYW4gW21haWx0bzpncmVna2hAbGlu
-dXhmb3VuZGF0aW9uLm9yZ10gDQpTZW50OiAyMDE4xOo31MIyM8jVIDEzOjE2DQpUbzogUGVuZ2Jv
-IE11IDxwZW5nYm8ubXVAbnhwLmNvbT4NCkNjOiBGZWxpcGUgQmFsYmkgPGJhbGJpQGtlcm5lbC5v
-cmc+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC11c2JAdmdlci5rZXJuZWwu
-b3JnOyBSYW4gV2FuZyA8cmFuLndhbmdfMUBueHAuY29tPg0KU3ViamVjdDogUmU6IFtQQVRDSF0g
-dXNiOiBkd2MzOiBjYWxsIHNldCBpbmNyIGJ1cnN0IHR5cGUgZnVuYygpDQoNCk9uIE1vbiwgSnVs
-IDIzLCAyMDE4IGF0IDExOjM0OjEzQU0gKzA4MDAsIFBlbmdibyBNdSB3cm90ZToNCj4gQ2FsbCBk
-d2MzX3NldF9pbmNyX2J1cnN0X3R5cGUoKSBpbiBkd2MzX2NvcmVfaW5pdCgpLg0KPiANCg0KVGhh
-dCBzYXlzIHdoYXQgeW91IGRpZCwgbm90IHdoeSB5b3UgYXJlIGRvaW5nIHRoaXMuDQoNClBsZWFz
-ZSBmaXggdXAuDQoNCmdyZWcgay1oDQo=
+Using hypercall to send IPIs by one vmexit instead of one by one for
+xAPIC/x2APIC physical mode and one vmexit per-cluster for x2APIC cluster 
+mode. Intel guest can enter x2apic cluster mode when interrupt remmaping 
+is enabled in qemu, however, latest AMD EPYC still just supports xapic 
+mode which can get great improvement by Exit-less IPIs. This patchset 
+lets a guest send multicast IPIs, with at most 128 destinations per 
+hypercall in 64-bit mode and 64 vCPUs per hypercall in 32-bit mode.
+
+Hardware: Xeon Skylake 2.5GHz, 2 sockets, 40 cores, 80 threads, the VM 
+is 80 vCPUs, IPI microbenchmark(https://lkml.org/lkml/2017/12/19/141):
+
+x2apic cluster mode, vanilla
+
+ Dry-run:                         0,            2392199 ns
+ Self-IPI:                  6907514,           15027589 ns
+ Normal IPI:              223910476,          251301666 ns
+ Broadcast IPI:                   0,         9282161150 ns
+ Broadcast lock:                  0,         8812934104 ns
+
+x2apic cluster mode, pv-ipi 
+
+ Dry-run:                         0,            2449341 ns
+ Self-IPI:                  6720360,           15028732 ns
+ Normal IPI:              228643307,          255708477 ns
+ Broadcast IPI:                   0,         7572293590 ns  => 22% performance boost 
+ Broadcast lock:                  0,         8316124651 ns
+
+x2apic physical mode, vanilla
+
+ Dry-run:                         0,            3135933 ns
+ Self-IPI:                  8572670,           17901757 ns
+ Normal IPI:              226444334,          255421709 ns
+ Broadcast IPI:                   0,        19845070887 ns
+ Broadcast lock:                  0,        19827383656 ns
+
+x2apic physical mode, pv-ipi
+
+ Dry-run:                         0,            2446381 ns
+ Self-IPI:                  6788217,           15021056 ns
+ Normal IPI:              219454441,          249583458 ns
+ Broadcast IPI:                   0,         7806540019 ns  => 154% performance boost 
+ Broadcast lock:                  0,         9143618799 ns
+
+v4 -> v5:
+ * update hypercall layout description
+ * fix PV IPIs send hypercall loops
+
+v3 -> v4:
+ * offset algorithm w/ __uint128_t to scale to higher APIC IDs
+ * remove num_possible_cpus limit
+ * pass op_64_bit to check bitmap size
+ * better describe hypercall layout
+
+v2 -> v3:
+ * rename ipi_mask_done to irq_restore_exit, __send_ipi_mask return int 
+   instead of bool 
+ * fix build errors reported by 0day
+ * split patches, nothing change 
+
+v1 -> v2:
+ * sparse apic id > 128, or any other errors, fallback to original apic hooks
+ * have two bitmask arguments so that one hypercall handles 128 vCPUs 
+ * fix KVM_FEATURE_PV_SEND_IPI doc
+ * document hypercall
+ * fix NMI selftest fails
+ * fix build errors reported by 0day
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+Wanpeng Li (6):
+  KVM: X86: Add kvm hypervisor init time platform setup callback
+  KVM: X86: Implement PV IPIs in linux guest
+  KVM: X86: Fallback to original apic hooks when bad happens
+  KVM: X86: Implement PV IPIs send hypercall
+  KVM: X86: Add NMI support to PV IPIs
+  KVM: X86: Expose PV_SEND_IPI CPUID feature bit to guest
+
+ Documentation/virtual/kvm/cpuid.txt      |   4 ++
+ Documentation/virtual/kvm/hypercalls.txt |  20 ++++++
+ arch/x86/include/uapi/asm/kvm_para.h     |   1 +
+ arch/x86/kernel/kvm.c                    | 111 +++++++++++++++++++++++++++++++
+ arch/x86/kvm/cpuid.c                     |   3 +-
+ arch/x86/kvm/x86.c                       |  43 ++++++++++++
+ include/uapi/linux/kvm_para.h            |   1 +
+ 7 files changed, 182 insertions(+), 1 deletion(-)
+
+-- 
+2.7.4
+
