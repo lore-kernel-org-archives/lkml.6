@@ -2,415 +2,275 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6047ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716E2ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830CE20875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:22:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzmEdVsT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830CE20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 21E7920875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:25:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21E7920875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388200AbeGWOXi (ORCPT
+        id S2388242AbeGWO1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 10:23:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387898AbeGWOXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 10:23:38 -0400
-Received: from [192.168.0.101] (unknown [49.77.226.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3109B20854;
-        Mon, 23 Jul 2018 13:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532352144;
-        bh=L0nxXfLoW8TD9KXn6JIc7oLZcHtaVKqc5ck6yjizbho=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mzmEdVsTW+tYDKGwVE3158APw9yw8KqbZoafKGJBfL/DOyxM9pMTN/CCehA2IuEZr
-         QsUaj/RYFRv67K4xeEdQSmjd7yuwem6jwo5Cd6/LEp9ew8RscZvjD4J+bAFA/Jc0MP
-         JscF2ebYhfaq99La5K/vExpkZxIEXFIGMFkFl1HE=
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: split discard command in prior to
- block layer
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180708141433.24182-1-chao@kernel.org>
- <20180715012700.GA11571@jaegeuk-macbookpro.roam.corp.google.com>
- <4f2fafdd-eb5a-0dcd-272b-65aac5080677@kernel.org>
- <20180715031308.GI11571@jaegeuk-macbookpro.roam.corp.google.com>
- <30b14b7b-4036-d8a7-c477-0f578449e18d@kernel.org>
- <20180723124747.GB19644@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <1baedfdd-f96e-2250-7623-ec4385b3eb62@kernel.org>
-Date:   Mon, 23 Jul 2018 21:22:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Mon, 23 Jul 2018 10:27:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33872 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387968AbeGWO1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 10:27:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF404ED1;
+        Mon, 23 Jul 2018 06:25:45 -0700 (PDT)
+Received: from [10.4.12.120] (e107158-lin.emea.arm.com [10.4.12.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67B843F73C;
+        Mon, 23 Jul 2018 06:25:44 -0700 (PDT)
+Subject: Re: [PATCH 1/4] sched/topology: SD_ASYM_CPUCAPACITY flag detection
+To:     Morten Rasmussen <morten.rasmussen@arm.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, linux-kernel@vger.kernel.org,
+        valentin.schneider@arm.com, linux-arm-kernel@lists.infradead.org
+References: <1532093554-30504-1-git-send-email-morten.rasmussen@arm.com>
+ <1532093554-30504-2-git-send-email-morten.rasmussen@arm.com>
+From:   Qais Yousef <qais.yousef@arm.com>
+Message-ID: <dbd8deec-a79d-5697-0c50-ea1a9ab7e5c9@arm.com>
+Date:   Mon, 23 Jul 2018 14:25:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180723124747.GB19644@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1532093554-30504-2-git-send-email-morten.rasmussen@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/23 20:47, Jaegeuk Kim wrote:
-> On 07/15, Chao Yu wrote:
->> On 2018/7/15 11:13, Jaegeuk Kim wrote:
->>> On 07/15, Chao Yu wrote:
->>>> Hi Jaegeuk,
->>>>
->>>> On 2018/7/15 9:27, Jaegeuk Kim wrote:
->>>>> On 07/08, Chao Yu wrote:
->>>>>> From: Chao Yu <yuchao0@huawei.com>
->>>>>>
->>>>>> Some devices has small max_{hw,}discard_sectors, so that in
->>>>>> __blkdev_issue_discard(), one big size discard bio can be split
->>>>>> into multiple small size discard bios, result in heavy load in IO
->>>>>> scheduler and device, which can hang other sync IO for long time.
->>>>>>
->>>>>> Now, f2fs is trying to control discard commands more elaboratively,
->>>>>> in order to make less conflict in between discard IO and user IO
->>>>>> to enhance application's performance, so in this patch, we will
->>>>>> split discard bio in f2fs in prior to in block layer to reduce
->>>>>> issuing multiple discard bios in a short time.
->>>>>
->>>>> Can we just change __submit_discard_cmd() to submit the large candidate
->>>>> partially and adjust lstart in the original candidate?
->>>>
->>>> Yep, could you check __submit_discard_cmd() implementation below? Does that
->>>> match the thoughts from you?
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>> ---
->>>>>> v2:
->>>>>> - change to split discard command entry before submission.
->>>>>>  fs/f2fs/f2fs.h    |  13 +++---
->>>>>>  fs/f2fs/segment.c | 117 +++++++++++++++++++++++++++++++++++++-----------------
->>>>>>  2 files changed, 86 insertions(+), 44 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>> index c48b655d5d8d..359526d88d3f 100644
->>>>>> --- a/fs/f2fs/f2fs.h
->>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>> @@ -178,7 +178,6 @@ enum {
->>>>>>  
->>>>>>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
->>>>>>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
->>>>>> -#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
->>>>>>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
->>>>>>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
->>>>>>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
->>>>>> @@ -709,22 +708,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
->>>>>>  }
->>>>>>  
->>>>>>  static inline bool __is_discard_mergeable(struct discard_info *back,
->>>>>> -						struct discard_info *front)
->>>>>> +			struct discard_info *front, unsigned int max_len)
->>>>>>  {
->>>>>>  	return (back->lstart + back->len == front->lstart) &&
->>>>>> -		(back->len + front->len < DEF_MAX_DISCARD_LEN);
->>>>>> +		(back->len + front->len <= max_len);
->>>>>>  }
->>>>>>  
->>>>>>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
->>>>>> -						struct discard_info *back)
->>>>>> +			struct discard_info *back, unsigned int max_len)
->>>>>>  {
->>>>>> -	return __is_discard_mergeable(back, cur);
->>>>>> +	return __is_discard_mergeable(back, cur, max_len);
->>>>>>  }
->>>>>>  
->>>>>>  static inline bool __is_discard_front_mergeable(struct discard_info *cur,
->>>>>> -						struct discard_info *front)
->>>>>> +			struct discard_info *front, unsigned int max_len)
->>>>>>  {
->>>>>> -	return __is_discard_mergeable(cur, front);
->>>>>> +	return __is_discard_mergeable(cur, front, max_len);
->>>>>>  }
->>>>>>  
->>>>>>  static inline bool __is_extent_mergeable(struct extent_info *back,
->>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>> index f7f56dd091b4..cbf8f3f9a8e7 100644
->>>>>> --- a/fs/f2fs/segment.c
->>>>>> +++ b/fs/f2fs/segment.c
->>>>>> @@ -966,17 +966,24 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
->>>>>>  	}
->>>>>>  }
->>>>>>  
->>>>>> -
->>>
->>> ===================== BEGIN
->>>
->>>>>> +static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
->>>>>> +				struct block_device *bdev, block_t lstart,
->>>>>> +				block_t start, block_t len);
->>>>>>  /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
->>>>>>  static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>  						struct discard_policy *dpolicy,
->>>>>> -						struct discard_cmd *dc)
->>>>>> +						struct discard_cmd *dc,
->>>>>> +						unsigned int *issued)
->>>>>>  {
->>>>>> +	struct block_device *bdev = dc->bdev;
->>>>>> +	struct request_queue *q = bdev_get_queue(bdev);
->>>>>> +	unsigned int max_discard_blocks =
->>>>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
->>>>>>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
->>>>>>  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
->>>>>>  					&(dcc->fstrim_list) : &(dcc->wait_list);
->>>>>> -	struct bio *bio = NULL;
->>>>>>  	int flag = dpolicy->sync ? REQ_SYNC : 0;
->>>>>> +	block_t lstart, start, len, total_len;
->>>>>>  
->>>>>>  	if (dc->state != D_PREP)
->>>>>>  		return;
->>>>>> @@ -984,30 +991,63 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>  	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
->>>>>>  		return;
->>>>>>  
->>>>>> -	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
->>>>>> -
->>>>>> -	dc->error = __blkdev_issue_discard(dc->bdev,
->>>>>> -				SECTOR_FROM_BLOCK(dc->start),
->>>>>> -				SECTOR_FROM_BLOCK(dc->len),
->>>>>> -				GFP_NOFS, 0, &bio);
->>>>>> -	if (!dc->error) {
->>>>>> -		/* should keep before submission to avoid D_DONE right away */
->>>>>> -		dc->state = D_SUBMIT;
->>>>>> -		atomic_inc(&dcc->issued_discard);
->>>>>> -		atomic_inc(&dcc->issing_discard);
->>>>>> -		if (bio) {
->>>>>> -			bio->bi_private = dc;
->>>>>> -			bio->bi_end_io = f2fs_submit_discard_endio;
->>>>>> -			bio->bi_opf |= flag;
->>>>>> -			submit_bio(bio);
->>>>>> -			list_move_tail(&dc->list, wait_list);
->>>>>> -			__check_sit_bitmap(sbi, dc->start, dc->start + dc->len);
->>>>>> -
->>>>>> -			f2fs_update_iostat(sbi, FS_DISCARD, 1);
->>>>>> +	trace_f2fs_issue_discard(bdev, dc->start, dc->len);
->>>>>> +
->>>>>> +	lstart = dc->lstart;
->>>>>> +	start = dc->start;
->>>>>> +	len = dc->len;
->>>>>> +	total_len = len;
->>>>>> +
->>>>>> +	while (total_len && *issued < dpolicy->max_requests) {
->>>>>> +		struct bio *bio = NULL;
->>>>>> +
->>>>>> +		if (len > max_discard_blocks)
->>>>>> +			len = max_discard_blocks;
->>>>>> +
->>>>>> +		dc->error = __blkdev_issue_discard(bdev,
->>>>>> +					SECTOR_FROM_BLOCK(start),
->>>>>> +					SECTOR_FROM_BLOCK(len),
->>>>>> +					GFP_NOFS, 0, &bio);
->>>>>> +		if (!dc->error) {
->>>>>> +			/*
->>>>>> +			 * should keep before submission to avoid D_DONE
->>>>>> +			 * right away
->>>>>> +			 */
->>>>>> +			dc->state = D_SUBMIT;
->>>>>> +			dc->len = len;
->>>>>> +			atomic_inc(&dcc->issued_discard);
->>>>>> +			atomic_inc(&dcc->issing_discard);
->>>>>> +			if (bio) {
->>>>>> +				bio->bi_private = dc;
->>>>>> +				bio->bi_end_io = f2fs_submit_discard_endio;
->>>>>> +				bio->bi_opf |= flag;
->>>>>> +				submit_bio(bio);
->>>>>> +				list_move_tail(&dc->list, wait_list);
->>>>>> +				__check_sit_bitmap(sbi, dc->start,
->>>>>> +							dc->start + dc->len);
->>>>>> +
->>>>>> +				f2fs_update_iostat(sbi, FS_DISCARD, 1);
->>>>>> +			}
->>>>>> +		} else {
->>>>>> +			__remove_discard_cmd(sbi, dc);
->>>
->>> Keep the original one, since it's partially failed?
->>
->> During __submit_discard_cmd(), we are trying to split original dc into multiple
->> dc, and once we failed to submit some of them, we will remove corresponding dc,
->> the removal logic is the same as before, not being changed...
->>
->> If we want to keep failed dc and do retry, we'd better add another patch for
->> that, right?
-> 
-> I thought removing failed portion of the dc.
-> 
->>
->>>
->>>>>> +			return;
->>>>>> +		}
->>>>>> +		lstart += len;
->>>>>> +		start += len;
->>>>>> +		total_len -= len;
->>>>>> +		len = total_len;
->>>>>> +		(*issued)++;
->>>>>> +
->>>>>> +		if (len) {
->>>>>> +			__update_discard_tree_range(sbi, bdev, lstart,
->>>>>> +								start, len);
->>>
->>> Do we really need this? We already grabbed one candidate which was not merged
->>> well.
->>
->> You mean submitting multiple bios based on one large size dc?
-> 
-> Yes.
-> 
->>
->> Previously, one bio references to one dc as below, in end_io, it will change
->> dc->state which can be detected by its own waiter.
->>
->> 	bio->bi_private = dc;
->> 	bio->bi_end_io = f2fs_submit_discard_endio;
->> 	bio->bi_opf |= flag;
->>
->> If multiple bios reference to one dc, it will be more complicated to handle
->> that. How do you think?
-> 
-> I was concerned about too many entries in the lists. How about adding a refcnt
-> to count how many bios were issued on the dc?
+Hi Morten
 
-Got you, let me try to refactor a bit for that.
+On 20/07/18 14:32, Morten Rasmussen wrote:
+> The SD_ASYM_CPUCAPACITY sched_domain flag is supposed to mark the
+> sched_domain in the hierarchy where all cpu capacities are visible for
+> any cpu's point of view on asymmetric cpu capacity systems. The
+> scheduler can then take to take capacity asymmetry into account when
 
-Thanks,
+Did you mean "s/take to take/try to take/"?
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>>>>> +			dc = (struct discard_cmd *)f2fs_lookup_rb_tree(
->>>>>> +						&dcc->root, NULL, lstart);
->>>>>> +			f2fs_bug_on(sbi, !dc);
->>>>>>  		}
->>>>>> -	} else {
->>>>>> -		__remove_discard_cmd(sbi, dc);
->>>>>>  	}
->>>>>> +
->>>>>> +	return;
->>>>>>  }
->>>
->>> ======================= END
->>>
->>>
->>>>>>  
->>>>>>  static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
->>>>>> @@ -1088,10 +1128,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
->>>>>>  	struct discard_cmd *dc;
->>>>>>  	struct discard_info di = {0};
->>>>>>  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
->>>>>> +	struct request_queue *q = bdev_get_queue(bdev);
->>>>>> +	unsigned int max_discard_blocks =
->>>>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
->>>>>>  	block_t end = lstart + len;
->>>>>>  
->>>>>> -	mutex_lock(&dcc->cmd_lock);
->>>>>> -
->>>>>>  	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
->>>>>>  					NULL, lstart,
->>>>>>  					(struct rb_entry **)&prev_dc,
->>>>>> @@ -1131,7 +1172,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
->>>>>>  
->>>>>>  		if (prev_dc && prev_dc->state == D_PREP &&
->>>>>>  			prev_dc->bdev == bdev &&
->>>>>> -			__is_discard_back_mergeable(&di, &prev_dc->di)) {
->>>>>> +			__is_discard_back_mergeable(&di, &prev_dc->di,
->>>>>> +							max_discard_blocks)) {
->>>>>>  			prev_dc->di.len += di.len;
->>>>>>  			dcc->undiscard_blks += di.len;
->>>>>>  			__relocate_discard_cmd(dcc, prev_dc);
->>>>>> @@ -1142,7 +1184,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
->>>>>>  
->>>>>>  		if (next_dc && next_dc->state == D_PREP &&
->>>>>>  			next_dc->bdev == bdev &&
->>>>>> -			__is_discard_front_mergeable(&di, &next_dc->di)) {
->>>>>> +			__is_discard_front_mergeable(&di, &next_dc->di,
->>>>>> +							max_discard_blocks)) {
->>>>>>  			next_dc->di.lstart = di.lstart;
->>>>>>  			next_dc->di.len += di.len;
->>>>>>  			next_dc->di.start = di.start;
->>>>>> @@ -1165,8 +1208,6 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
->>>>>>  		node = rb_next(&prev_dc->rb_node);
->>>>>>  		next_dc = rb_entry_safe(node, struct discard_cmd, rb_node);
->>>>>>  	}
->>>>>> -
->>>>>> -	mutex_unlock(&dcc->cmd_lock);
->>>>>>  }
->>>>>>  
->>>>>>  static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>> @@ -1181,7 +1222,9 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>  
->>>>>>  		blkstart -= FDEV(devi).start_blk;
->>>>>>  	}
->>>>>> +	mutex_lock(&SM_I(sbi)->dcc_info->cmd_lock);
->>>>>>  	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
->>>>>> +	mutex_unlock(&SM_I(sbi)->dcc_info->cmd_lock);
->>>>>>  	return 0;
->>>>>>  }
->>>>>>  
->>>>>> @@ -1220,9 +1263,9 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
->>>>>>  		}
->>>>>>  
->>>>>>  		dcc->next_pos = dc->lstart + dc->len;
->>>>>> -		__submit_discard_cmd(sbi, dpolicy, dc);
->>>>>> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
->>>>>>  
->>>>>> -		if (++issued >= dpolicy->max_requests)
->>>>>> +		if (issued >= dpolicy->max_requests)
->>>>>>  			break;
->>>>>>  next:
->>>>>>  		node = rb_next(&dc->rb_node);
->>>>>> @@ -1277,9 +1320,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>  				break;
->>>>>>  			}
->>>>>>  
->>>>>> -			__submit_discard_cmd(sbi, dpolicy, dc);
->>>>>> +			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
->>>>>>  
->>>>>> -			if (++issued >= dpolicy->max_requests)
->>>>>> +			if (issued >= dpolicy->max_requests)
->>>>>>  				break;
->>>>>>  		}
->>>>>>  		blk_finish_plug(&plug);
->>>>>> @@ -2475,9 +2518,9 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
->>>>>>  			goto skip;
->>>>>>  		}
->>>>>>  
->>>>>> -		__submit_discard_cmd(sbi, dpolicy, dc);
->>>>>> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
->>>>>>  
->>>>>> -		if (++issued >= dpolicy->max_requests) {
->>>>>> +		if (issued >= dpolicy->max_requests) {
->>>>>>  			start = dc->lstart + dc->len;
->>>>>>  
->>>>>>  			blk_finish_plug(&plug);
->>>>>> -- 
->>>>>> 2.16.2.17.g38e79b1fd
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+> balancing at this level. It also serves as an indicator for how wide
+> task placement heuristics have to search to consider all available cpu
+> capacities as asymmetric systems might often appear symmetric at
+> smallest level(s) of the sched_domain hierarchy.
+>
+> The flag has been around for while but so far only been set by
+> out-of-tree code in Android kernels. One solution is to let each
+> architecture provide the flag through a custom sched_domain topology
+> array and associated mask and flag functions. However,
+> SD_ASYM_CPUCAPACITY is special in the sense that it depends on the
+> capacity and presence of all cpus in the system, i.e. when hotplugging
+> all cpus out except those with one particular cpu capacity the flag
+> should disappear even if the sched_domains don't collapse. Similarly,
+> the flag is affected by cpusets where load-balancing is turned off.
+> Detecting when the flags should be set therefore depends not only on
+> topology information but also the cpuset configuration and hotplug
+> state. The arch code doesn't have easy access to the cpuset
+> configuration.
+>
+> Instead, this patch implements the flag detection in generic code where
+> cpusets and hotplug state is already taken care of. All the arch is
+> responsible for is to implement arch_scale_cpu_capacity() and force a
+> full rebuild of the sched_domain hierarchy if capacities are updated,
+> e.g. later in the boot process when cpufreq has initialized.
+>
+> cc: Ingo Molnar <mingo@redhat.com>
+> cc: Peter Zijlstra <peterz@infradead.org>
+>
+> Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+> ---
+>   include/linux/sched/topology.h |  2 +-
+>   kernel/sched/topology.c        | 81 ++++++++++++++++++++++++++++++++++++++----
+>   2 files changed, 76 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+> index 26347741ba50..4fe2e49ab13b 100644
+> --- a/include/linux/sched/topology.h
+> +++ b/include/linux/sched/topology.h
+> @@ -23,7 +23,7 @@
+>   #define SD_BALANCE_FORK		0x0008	/* Balance on fork, clone */
+>   #define SD_BALANCE_WAKE		0x0010  /* Balance on wakeup */
+>   #define SD_WAKE_AFFINE		0x0020	/* Wake task to waking CPU */
+> -#define SD_ASYM_CPUCAPACITY	0x0040  /* Groups have different max cpu capacities */
+> +#define SD_ASYM_CPUCAPACITY	0x0040  /* Domain members have different cpu capacities */
+>   #define SD_SHARE_CPUCAPACITY	0x0080	/* Domain members share cpu capacity */
+>   #define SD_SHARE_POWERDOMAIN	0x0100	/* Domain members share power domain */
+>   #define SD_SHARE_PKG_RESOURCES	0x0200	/* Domain members share cpu pkg resources */
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 05a831427bc7..b8f41d557612 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -1061,7 +1061,6 @@ static struct cpumask		***sched_domains_numa_masks;
+>    *   SD_SHARE_PKG_RESOURCES - describes shared caches
+>    *   SD_NUMA                - describes NUMA topologies
+>    *   SD_SHARE_POWERDOMAIN   - describes shared power domain
+> - *   SD_ASYM_CPUCAPACITY    - describes mixed capacity topologies
+>    *
+>    * Odd one out, which beside describing the topology has a quirk also
+>    * prescribes the desired behaviour that goes along with it:
+> @@ -1073,13 +1072,12 @@ static struct cpumask		***sched_domains_numa_masks;
+>   	 SD_SHARE_PKG_RESOURCES |	\
+>   	 SD_NUMA		|	\
+>   	 SD_ASYM_PACKING	|	\
+> -	 SD_ASYM_CPUCAPACITY	|	\
+>   	 SD_SHARE_POWERDOMAIN)
+>   
+>   static struct sched_domain *
+>   sd_init(struct sched_domain_topology_level *tl,
+>   	const struct cpumask *cpu_map,
+> -	struct sched_domain *child, int cpu)
+> +	struct sched_domain *child, int dflags, int cpu)
+>   {
+>   	struct sd_data *sdd = &tl->data;
+>   	struct sched_domain *sd = *per_cpu_ptr(sdd->sd, cpu);
+> @@ -1100,6 +1098,9 @@ sd_init(struct sched_domain_topology_level *tl,
+>   			"wrong sd_flags in topology description\n"))
+>   		sd_flags &= ~TOPOLOGY_SD_FLAGS;
+>   
+> +	/* Apply detected topology flags */
+> +	sd_flags |= dflags;
+> +
+>   	*sd = (struct sched_domain){
+>   		.min_interval		= sd_weight,
+>   		.max_interval		= 2*sd_weight,
+> @@ -1607,9 +1608,9 @@ static void __sdt_free(const struct cpumask *cpu_map)
+>   
+>   static struct sched_domain *build_sched_domain(struct sched_domain_topology_level *tl,
+>   		const struct cpumask *cpu_map, struct sched_domain_attr *attr,
+> -		struct sched_domain *child, int cpu)
+> +		struct sched_domain *child, int dflags, int cpu)
+>   {
+> -	struct sched_domain *sd = sd_init(tl, cpu_map, child, cpu);
+> +	struct sched_domain *sd = sd_init(tl, cpu_map, child, dflags, cpu);
+>   
+>   	if (child) {
+>   		sd->level = child->level + 1;
+> @@ -1636,6 +1637,65 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
+>   }
+>   
+>   /*
+> + * Find the sched_domain_topology_level where all cpu capacities are visible
+> + * for all cpus.
+> + */
+> +static struct sched_domain_topology_level
+> +*asym_cpu_capacity_level(const struct cpumask *cpu_map)
+> +{
+> +	int i, j, asym_level = 0;
+> +	bool asym = false;
+> +	struct sched_domain_topology_level *tl, *asym_tl = NULL;
+> +	unsigned long cap;
+> +
+> +	/* Is there any asymmetry? */
+> +	cap = arch_scale_cpu_capacity(NULL, cpumask_first(cpu_map));
+> +
+> +	for_each_cpu(i, cpu_map) {
+> +		if (arch_scale_cpu_capacity(NULL, i) != cap) {
+> +			asym = true;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!asym)
+> +		return NULL;
+> +
+> +	/*
+> +	 * Examine topology from all cpu's point of views to detect the lowest
+> +	 * sched_domain_topology_level where a highest capacity cpu is visible
+> +	 * to everyone.
+> +	 */
+> +	for_each_cpu(i, cpu_map) {
+> +		unsigned long max_capacity = arch_scale_cpu_capacity(NULL, i);
+> +		int tl_id = 0;
+> +
+> +		for_each_sd_topology(tl) {
+> +			if (tl_id < asym_level)
+> +				goto next_level;
+> +
+
+I think if you increment and then continue here you might save the extra 
+branch. I didn't look at any disassembly though to verify the generated 
+code.
+
+I wonder if we can introduce for_each_sd_topology_from(tl, 
+starting_level) so that you can start searching from a provided level - 
+which will make this skipping logic unnecessary? So the code will look like
+
+             for_each_sd_topology_from(tl, asymc_level) {
+                 ...
+             }
+
+> +			for_each_cpu_and(j, tl->mask(i), cpu_map) {
+> +				unsigned long capacity;
+> +
+> +				capacity = arch_scale_cpu_capacity(NULL, j);
+> +
+> +				if (capacity <= max_capacity)
+> +					continue;
+> +
+> +				max_capacity = capacity;
+> +				asym_level = tl_id;
+> +				asym_tl = tl;
+> +			}
+> +next_level:
+> +			tl_id++;
+> +		}
+> +	}
+> +
+> +	return asym_tl;
+> +}
+> +
+> +
+> +/*
+>    * Build sched domains for a given set of CPUs and attach the sched domains
+>    * to the individual CPUs
+>    */
+> @@ -1647,18 +1707,27 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+>   	struct s_data d;
+>   	struct rq *rq = NULL;
+>   	int i, ret = -ENOMEM;
+> +	struct sched_domain_topology_level *tl_asym;
+>   
+>   	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
+>   	if (alloc_state != sa_rootdomain)
+>   		goto error;
+>   
+> +	tl_asym = asym_cpu_capacity_level(cpu_map);
+> +
+
+Or maybe this is not a hot path and we don't care that much about 
+optimizing the search since you call it unconditionally here even for 
+systems that don't care?
+
+>   	/* Set up domains for CPUs specified by the cpu_map: */
+>   	for_each_cpu(i, cpu_map) {
+>   		struct sched_domain_topology_level *tl;
+>   
+>   		sd = NULL;
+>   		for_each_sd_topology(tl) {
+> -			sd = build_sched_domain(tl, cpu_map, attr, sd, i);
+> +			int dflags = 0;
+> +
+> +			if (tl == tl_asym)
+> +				dflags |= SD_ASYM_CPUCAPACITY;
+> +
+> +			sd = build_sched_domain(tl, cpu_map, attr, sd, dflags, i);
+> +
+>   			if (tl == sched_domain_topology)
+>   				*per_cpu_ptr(d.sd, i) = sd;
+>   			if (tl->flags & SDTL_OVERLAP)
+
+
+-- 
+Qais Yousef
+
