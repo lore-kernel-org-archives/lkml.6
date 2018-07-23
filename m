@@ -2,76 +2,103 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A7AECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBB3ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C037C20858
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:34:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C037C20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D4CB20875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:39:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZVbtH1O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4CB20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbeGWEda (ORCPT
+        id S2387727AbeGWEiE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 00:33:30 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:57456 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727944AbeGWEd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 00:33:29 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1EB5F20005B;
-        Mon, 23 Jul 2018 05:34:24 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DC2B3200006;
-        Mon, 23 Jul 2018 05:34:23 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 4BF3240A70;
-        Sun, 22 Jul 2018 20:34:23 -0700 (MST)
-Received: from mega.am.freescale.net ([10.192.208.232])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w6N3YKrm003727;
-        Sun, 22 Jul 2018 20:34:21 -0700
-From:   Pengbo Mu <pengbo.mu@nxp.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        ran.wang_1@nxp.com, pengbo.mu@nxp.com
-Subject: [PATCH] usb: dwc3: call set incr burst type func()
-Date:   Mon, 23 Jul 2018 11:34:13 +0800
-Message-Id: <1532316853-29184-1-git-send-email-pengbo.mu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 23 Jul 2018 00:38:04 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44178 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbeGWEiE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 00:38:04 -0400
+Received: by mail-pl0-f68.google.com with SMTP id m16-v6so7634807pls.11;
+        Sun, 22 Jul 2018 20:38:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=eZiQqkTFFg41WoFSCsN8KawQ8i2v1RPfiGDsWopGuAE=;
+        b=fZVbtH1O55IKbQJVTgn29DYK/BY5fxpfvrh2BThf4o1RzJWZuFDdWCWWMjdvLngr1I
+         jSEDPT4/DjdBYdMLuNesjqQq+7AwvmN7NXLJOgppRXxvbFjj1krW1GYgAJTtu9ebyAmZ
+         fRgGbDX8k41Fbg2BA472IsqTdwpljov/cc5X7N9OiHM/DqXAXzrMOULdfIUtIQ3xr1RK
+         UxwO608+7gTJPMEDlbTe7gwDigvywwVVJ8MdD5aSTVqZQd98WfvsF4NMqQPMxtyKAe1b
+         LeBQQLXdwU/oS4pchOAo1NY36TBd1vkLyXWCWAy0NKxTfs4sEDmJd6fA7VUI+QNvo6LN
+         /OKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eZiQqkTFFg41WoFSCsN8KawQ8i2v1RPfiGDsWopGuAE=;
+        b=Y6mM61xRNoVxvs3s6Bz8F1UXsL0I0C3ASK3ZIMEvDsrs7kN9nGoTWMz7pBRN3gYBbk
+         wffQ5HUHEcE7hORoPguYFxbvMeftiv1DLtdDo8WCgumFv8wdWy9Lv8wkseACAl6+amqF
+         v46GNMTWz/Ly3orBcFZQ8MxHpCo38cumhhIpfTPHGqMPsFDVjaqT90/s2owe1ds5oLcn
+         mczVm2Lak0n4hMh3nCfeehcHwA+gy+jzVERDcyEZazPeXd9kQG8BntlVbUNQHb2RDON+
+         jz7LJUD6llxaLt7SvwhIlbwO50Gc2Umq2JuYCKG59OYTta5AcBwTpHyL1UhiMqeOQdty
+         Oljg==
+X-Gm-Message-State: AOUpUlEG4AwTjU1EaIbuMslpeTrfpZRx+riAY5Vgp3hwWQVYgx0F1CMR
+        6/b4k1ZaeSUE6TsKiECc5gE=
+X-Google-Smtp-Source: AAOMgpd5sR/muSutJ6XR1QrYg2iTYYEKWHIcKrlqoFkjmxxpHuT51pPuIQ0iNHetIzIUm20d9dOy8A==
+X-Received: by 2002:a17:902:a40b:: with SMTP id p11-v6mr11299275plq.228.1532317138661;
+        Sun, 22 Jul 2018 20:38:58 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:c122:f95a:1d53:1f82])
+        by smtp.gmail.com with ESMTPSA id y3-v6sm4986153pfi.24.2018.07.22.20.38.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 22 Jul 2018 20:38:58 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] bluetooth: btusb: Replace GFP_ATOMIC with GFP_KERNEL in inject_cmd_complete()
+Date:   Mon, 23 Jul 2018 11:38:51 +0800
+Message-Id: <20180723033851.8141-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call dwc3_set_incr_burst_type() in dwc3_core_init().
+inject_cmd_complete() is only called by btusb_send_frame_intel(), 
+which is set to hdev->send, and hdev->send() is never 
+called in atomic context.
 
-Signed-off-by: Pengbo Mu <pengbo.mu@nxp.com>
----
-Changes in v1:
- - add the calling of dwc3_set_incr_burst_type.
----
- drivers/usb/dwc3/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+inject_cmd_complete() calls bt_skb_alloc() with GFP_ATOMIC, 
+which is not necessary.
+GFP_ATOMIC can be replaced with GFP_KERNEL.
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 29df9e8..21e4931 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -932,6 +932,8 @@ static int dwc3_core_init(struct dwc3 *dwc)
- 	/* Adjust Frame Length */
- 	dwc3_frame_length_adjustment(dwc);
+This is found by a static analysis tool named DCNS written by myself.
+I also manually check the kernel code before reporting it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/bluetooth/btusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index c8c8b0b8d333..1586c54a01f1 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -1870,7 +1870,7 @@ static int inject_cmd_complete(struct hci_dev *hdev, __u16 opcode)
+ 	struct hci_event_hdr *hdr;
+ 	struct hci_ev_cmd_complete *evt;
  
-+	dwc3_set_incr_burst_type(dwc);
-+
- 	usb_phy_set_suspend(dwc->usb2_phy, 0);
- 	usb_phy_set_suspend(dwc->usb3_phy, 0);
- 	ret = phy_power_on(dwc->usb2_generic_phy);
+-	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_ATOMIC);
++	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
+ 	if (!skb)
+ 		return -ENOMEM;
+ 
 -- 
-2.7.4
+2.17.0
 
