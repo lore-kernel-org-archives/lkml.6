@@ -2,83 +2,108 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA794ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D351AECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0C2520852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:14:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 861DD20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:18:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eAOF2EU4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C2520852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NJzVbMqn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 861DD20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388415AbeGWPQD (ORCPT
+        id S2388297AbeGWPUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 11:16:03 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41704 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388102AbeGWPQC (ORCPT
+        Mon, 23 Jul 2018 11:20:16 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40308 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388157AbeGWPUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 11:16:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1qRw0stbsLX3KZASsJ0S5ra2Ga533lDT7uIbtnuem88=; b=eAOF2EU47Qc+u6Ul21Xs+fo2x
-        ZDNFd/B0E0lKWMvHueUX1V9SfI4MrLE1VpTfkVI56M6guwNJvcLpuRTOiOXrKynHAHxKwFZEjLG9M
-        mpL2sxUwdRAt35kpscr4rFX0zfk7ZeOlMtIO/94OQyrgOHjtLschHvzPN9SK9SeRdHPgWv9FpI7yp
-        GP0YFr/D5pwV6XKH0jILyAEsLTWZ27YBBX61b3yKb939JBgO0+TIc/naUUDo1/DTbf5YSQVR9G8wu
-        820pH3EwaN+cBZzaCaxyFGH36Hyx908KZByvx8q4eZjuPUVaFEvBXa4CZB53xEODDpSBo5qoxibMD
-        B2YJHzJLw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhbbY-0007SZ-Ek; Mon, 23 Jul 2018 14:14:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 26F2320275F47; Mon, 23 Jul 2018 16:14:27 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 16:14:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf/x86/intel: Fix unwind errors from PEBS entries
- (mk-II)
-Message-ID: <20180723141427.GA2458@hirez.programming.kicks-ass.net>
-References: <60466ab6-311b-ad8d-2f79-32702174cb95@lab.ntt.co.jp>
- <20180719153347.buoe6pavpqc75zbb@treble>
- <20180719174311.GK2494@hirez.programming.kicks-ass.net>
- <20180719211954.GZ2512@hirez.programming.kicks-ass.net>
- <20180723133006.7mkzrdeaa4jo56md@treble>
+        Mon, 23 Jul 2018 11:20:16 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6NEIS44069150;
+        Mon, 23 Jul 2018 09:18:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1532355508;
+        bh=mlwsG3k57BYhKbc6nAxn/fWLfCm8JAzPrEcsmb7YOH8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=NJzVbMqndl4lus4nPqZ0W+/OE9NC8v2hPFZ2XgnmN1V4/YxTbTMjgwFCXkp9hGJCd
+         jfdLadVxc4MJFnwFBcyUpC0Ug6CmJxPrmy+CwaMkWC7hgt6apjed4CusOhAibpmEjM
+         ScNEGUZrETCkri7VOWhjDOYRUzLM0cF5mM6it2o0=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6NEIRLN008008;
+        Mon, 23 Jul 2018 09:18:27 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 23
+ Jul 2018 09:18:27 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 23 Jul 2018 09:18:27 -0500
+Received: from [172.22.141.227] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6NEIRjB021588;
+        Mon, 23 Jul 2018 09:18:27 -0500
+Subject: Re: [PATCH] power: supply: bq27xxx: Update comments
+To:     Liu Xiang <liu.xiang6@zte.com.cn>
+CC:     <pali.rohar@gmail.com>, <sre@kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <liuxiang_1999@126.com>
+References: <1532253504-17563-1-git-send-email-liu.xiang6@zte.com.cn>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <22d140c9-6947-9b7a-68dd-7d859620fa99@ti.com>
+Date:   Mon, 23 Jul 2018 09:18:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180723133006.7mkzrdeaa4jo56md@treble>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1532253504-17563-1-git-send-email-liu.xiang6@zte.com.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 08:30:06AM -0500, Josh Poimboeuf wrote:
-> On Thu, Jul 19, 2018 at 11:19:54PM +0200, Peter Zijlstra wrote:
-> > --- a/include/uapi/linux/perf_event.h
-> > +++ b/include/uapi/linux/perf_event.h
-> > @@ -143,6 +143,8 @@ enum perf_event_sample_format {
-> >  	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
-> >  
-> >  	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
-> > +
-> > +	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1UL << 63,
+On 07/22/2018 04:58 AM, Liu Xiang wrote:
+> The URL of bq27441-g1 and bq27426 are missing and bq27520-g4 is duplicated.
 > 
-> Given the kbuild test robot errors for building on 32-bit, looks like
-> the 63 needs to be changed to 31 so it fits in an int?
+> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+> ---
 
-I made it 1ULL << 63. The actual field (perf_event_attr::sample_type is
-u64).
+
+Acked-by: Andrew F. Davis <afd@ti.com>
+
+
+>  drivers/power/supply/bq27xxx_battery.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+> index d44ed8e..f022e1b 100644
+> --- a/drivers/power/supply/bq27xxx_battery.c
+> +++ b/drivers/power/supply/bq27xxx_battery.c
+> @@ -26,7 +26,6 @@
+>   * http://www.ti.com/product/bq27510-g1
+>   * http://www.ti.com/product/bq27510-g2
+>   * http://www.ti.com/product/bq27510-g3
+> - * http://www.ti.com/product/bq27520-g4
+>   * http://www.ti.com/product/bq27520-g1
+>   * http://www.ti.com/product/bq27520-g2
+>   * http://www.ti.com/product/bq27520-g3
+> @@ -40,7 +39,9 @@
+>   * http://www.ti.com/product/bq27545-g1
+>   * http://www.ti.com/product/bq27421-g1
+>   * http://www.ti.com/product/bq27425-g1
+> + * http://www.ti.com/product/bq27426
+>   * http://www.ti.com/product/bq27411-g1
+> + * http://www.ti.com/product/bq27441-g1
+>   * http://www.ti.com/product/bq27621-g1
+>   */
+>  
+> 
