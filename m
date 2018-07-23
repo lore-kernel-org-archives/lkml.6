@@ -3,94 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EA1ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D636FECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54FD920685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:42:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54FD920685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
+	by mail.kernel.org (Postfix) with ESMTP id 96A8420685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:43:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96A8420685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=freebsd.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388189AbeGWLmj (ORCPT
+        id S2388192AbeGWLoD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:42:39 -0400
-Received: from tartarus.angband.pl ([89.206.35.136]:33430 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387906AbeGWLmj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:42:39 -0400
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1fhYHn-0005I8-Pr; Mon, 23 Jul 2018 12:41:51 +0200
-Date:   Mon, 23 Jul 2018 12:41:51 +0200
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
-        linux-console@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/6] vt: no blinking on console, 256/24-bit color
- improvements
-Message-ID: <20180723104151.z3lasjmdd3ubh2sc@angband.pl>
-References: <20180718030152.kdq53mwpdfusvwl5@angband.pl>
- <20180721074319.GA30454@kroah.com>
- <20180721213843.wkculy5cdrrbmuij@angband.pl>
- <CAMuHMdWvZnU_p-c98sag8t1BCaBLSqZmiH88sgD2kACbvax0pA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWvZnU_p-c98sag8t1BCaBLSqZmiH88sgD2kACbvax0pA@mail.gmail.com>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+        Mon, 23 Jul 2018 07:44:03 -0400
+Received: from mx2.freebsd.org ([8.8.178.116]:48636 "EHLO mx2.freebsd.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388021AbeGWLoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:44:03 -0400
+Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx2.freebsd.org (Postfix) with ESMTPS id 7DD5C6ECA9;
+        Mon, 23 Jul 2018 10:43:28 +0000 (UTC)
+        (envelope-from manu@freebsd.org)
+Received: from smtp.freebsd.org (smtp.freebsd.org [96.47.72.83])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "smtp.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx1.freebsd.org (Postfix) with ESMTPS id B568276301;
+        Mon, 23 Jul 2018 10:43:27 +0000 (UTC)
+        (envelope-from manu@freebsd.org)
+Received: from skull.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: manu)
+        by smtp.freebsd.org (Postfix) with ESMTPSA id 8511F9B91;
+        Mon, 23 Jul 2018 10:43:26 +0000 (UTC)
+        (envelope-from manu@freebsd.org)
+From:   Emmanuel Vadot <manu@freebsd.org>
+To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        srinivas.kandagatla@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Emmanuel Vadot <manu@freebsd.org>
+Subject: [PATCH 1/4] arm64: dts: allwinner: a64: Add SID node
+Date:   Mon, 23 Jul 2018 12:42:52 +0200
+Message-Id: <20180723104255.94244-1-manu@freebsd.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 10:53:29AM +0200, Geert Uytterhoeven wrote:
-> On Sat, Jul 21, 2018 at 11:39 PM Adam Borowski <kilobyte@angband.pl> wrote:
-> > Technically, every console can be made to blink by drawing/clearing affected
-> > characters a few times per second, but that'd be quite a waste of coding
-> > time and kernel size.  There's a reason browsers dropped support for <blink>
-> > and text-decoration:blink.
-> 
-> It's very simple and fast to implement in fbcon for FB_TYPE_PLANES or
-> FB_TYPE_INTERLEAVED_PLANES and FB_VISUAL_PSEUDOCOLOR ;-)
+The A64 have a SID controller which consist on EFUSE (starting at 0x200)
+and three registers to read/write the efuses.
 
-Interesting...  I'm still not going to do the effort to implement that
-(which would require learning fbdev internals first), though.  But while I
-dislike this feature, someone else might want it.
+Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-The main problem here is that there are only 8 or 7 bits available for
-attributes, thus it's better to use them for something more useful.  And
-here, fbcon already interprets this bit as bright background, thus this
-patchset makes vt use it instead of non-existant blink.
-
-There'll be more bits available once attributes get migrated into uniscr --
-either 11 or 32 bits depending on chosen implementation.  But I still
-wouldn't go too wild with them: the console is meant for recovery tasks as
-on any properly working system you can have an X terminal configured for
-pixel-to-pixel identical behaviour as anything console can do.  Thus, only
-cheap improvements to attributes make sense.  This patchset is currently at
-+3 net lines, this certainly counts as cheap.
-
-On the other hand, displaying the _glyph_ better would be worth some effort.
-Nicolas' uniscr that's already in Greg's tree did most of the work, what
-remains is a way to load and store a font with more glyphs (needs a sparse
-representation).
-
-
-Meow!
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 1b2ef28c42bd..69c0d9362553 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -227,6 +227,11 @@
+ 			#size-cells = <0>;
+ 		};
+ 
++		sid: eeprom@1c14000 {
++			compatible = "allwinner,sun50i-a64-sid";
++			reg = <0x1c14000 0x400>;
++		};
++
+ 		usb_otg: usb@1c19000 {
+ 			compatible = "allwinner,sun8i-a33-musb";
+ 			reg = <0x01c19000 0x0400>;
 -- 
-// If you believe in so-called "intellectual property", please immediately
-// cease using counterfeit alphabets.  Instead, contact the nearest temple
-// of Amon, whose priests will provide you with scribal services for all
-// your writing needs, for Reasonable And Non-Discriminatory prices.
+2.17.0
+
