@@ -1,82 +1,135 @@
 Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388AAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 526CEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F381520880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:32:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F381520880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 0974A20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:32:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="kqhB592v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0974A20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389700AbeGWNdU (ORCPT
+        id S2389545AbeGWNca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:33:20 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:36287 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388283AbeGWNdT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:33:19 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0T5AXqzf_1532349134;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0T5AXqzf_1532349134)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 23 Jul 2018 20:32:14 +0800
-Subject: Re: [PATCH v2] tg: show the sum wait time of an task group
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-References: <5c4c978d-e8fb-4bcb-b942-3c6d3dcfc13e@linux.alibaba.com>
- <b9e74571-87d0-ef27-3f14-ebd21d72ee15@linux.alibaba.com>
- <ff7dae3b-e5f9-7157-1caa-ff02c6b23dc1@linux.alibaba.com>
- <20180723093121.GA2494@hirez.programming.kicks-ass.net>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <a57d74eb-f7a8-80e6-6798-2f9eec942ce3@linux.alibaba.com>
-Date:   Mon, 23 Jul 2018 20:32:14 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180723093121.GA2494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 23 Jul 2018 09:32:30 -0400
+Received: from mail-sg2apc01on0129.outbound.protection.outlook.com ([104.47.125.129]:33472
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389519AbeGWNc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 09:32:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3XT8Ldm/ZPmuJFNOrIS0TpEZiluhjKoPQ8WhOHN3UoI=;
+ b=kqhB592vqORf0EOzZo3peE9yDjHZH02ojKXtRcHHNlnYSoo0vsUp1tm/mPtSoi8uX4bHGsIJN9tWkfkKRbWXQ7ArOBTagf0XWiSbHFNRLdYsowW5kF+4DVIRCr0+aSum0aKNHBIkSc18xebV29FM2IO9XpfXVld4z5lNh7r0GhU=
+Received: from SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM (10.170.136.145) by
+ SG2P15301MB0032.APCP153.PROD.OUTLOOK.COM (10.170.136.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.2; Mon, 23 Jul 2018 12:31:22 +0000
+Received: from SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM
+ ([fe80::f916:a637:8730:be25]) by SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM
+ ([fe80::f916:a637:8730:be25%4]) with mapi id 15.20.1017.000; Mon, 23 Jul 2018
+ 12:31:22 +0000
+From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
+CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [Resend PATCH] KVM/x86: Move X86_CR4_OSXSAVE check into
+ kvm_valid_sregs()
+Thread-Topic: [Resend PATCH] KVM/x86: Move X86_CR4_OSXSAVE check into
+ kvm_valid_sregs()
+Thread-Index: AQHUIoEQuP+K20xWXUS3BXuD3kRNIw==
+Date:   Mon, 23 Jul 2018 12:31:21 +0000
+Message-ID: <20180723123108.15685-1-Tianyu.Lan@microsoft.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tianyu.Lan@microsoft.com; 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SG2P15301MB0032;6:MPJc3ikOj0LbulUmADASD2krV/RoZ0XvsuoPDcGnvPbvyCCChi1djl5JVKcxNo5/Oj7iXemJF1RbHIOJZa6zVRPbAvaAjGWjJ0dZtEsRP9bR4uVa1+fvUbup24u/1MPlTuBD4vxLt1+Y4danFgpH4Ewq5yG/qYEWmmOKXmQ7E5PLP7vFtb59HLFbI+5K5yC4Z8fin8y3/iX6Uqd3p6XkagaijGXIPE9JY8/SBZR0ozbzoVy/llYGVQM4rb7P+81x/D4UhwxH14R1HnJ6BKEl5L3IGT4S/p5A7HMqy9Oy39KtY/GbAqL+nwqXbsxupQ0q6h4xquu0UllhfgZ6rzqU08z0VDZfYg1R4qPNsuxzbXq69IwzotD9KtZ+aYhwO+UWwoB9lFpa4YrIWTYBpMSl6ZTSIsqKzmPI6jr8eoBumR1yy9dnOd3rKLDd4UaAZ7P71w5QNARlLBeq5R/M086JKg==;5:OYPYHQhpBDsMjAJUBlbTQVHJY7Lv0F2m6L81q6fHCA/q0GDp4Hvn8aEJ5t0dyjkZnsApwX+jAC1wx9kXujMH3U+Y64h4XLxTv1SWfSHiEg7tN4vZFYiYBFbuyY35U1KwhIZUnR+RRJQigsmddO/drdgLshZYFrnhsY9y9MnrbYQ=;7:uwRFoUjCaFDFDSZq9XyuZ82p9b75TrMLatNftGxm/vCv3LguBEr2N+nN4NovCbojSD5upEWggS7yTZKeRW4Fwl5iQY4bBDCZzz3nclhRkdp0WXfhgawQUfMuCDAF2shTjHy2wDfGlSz2z1TQo6sr38q198L6dqnSejoelDNbxms6h85Pcpac7I6Kw3BYeZ29hReQAXYXvfppZPhAmW2py2b18LQ6d1Agpfi4NAZl4E0ErEZtjvgqPBCAMzN+jKwE
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 8402507b-e47b-43f3-29fc-08d5f09832f5
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(2017052603328)(7193020);SRVR:SG2P15301MB0032;
+x-ms-traffictypediagnostic: SG2P15301MB0032:
+x-microsoft-antispam-prvs: <SG2P15301MB0032C2A1BAE893973C9C02AE92560@SG2P15301MB0032.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SG2P15301MB0032;BCL:0;PCL:0;RULEID:;SRVR:SG2P15301MB0032;
+x-forefront-prvs: 0742443479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(396003)(136003)(39860400002)(189003)(199004)(106356001)(3846002)(4326008)(5660300001)(486006)(97736004)(1076002)(1671002)(109986005)(2616005)(476003)(26005)(54906003)(86612001)(6116002)(316002)(256004)(22452003)(59246006)(99286004)(478600001)(53936002)(6506007)(6486002)(102836004)(86362001)(10290500003)(25786009)(72206003)(6436002)(2900100001)(7736002)(2906002)(68736007)(66066001)(10090500001)(8936002)(81166006)(305945005)(81156014)(14454004)(6512007)(36756003)(105586002)(5250100002)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:SG2P15301MB0032;H:SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: HgLkme+4RLLHSj+1LKAR9RD+QEmc/g14uL9RbFYYL/xeE9b4AewLcKYBasJHHwIyh4UX1Si0arO3uzM5h6T39y62Fm5aadHt8KfVKF22jg0Qt7/PiD4TKOd94Mlu4SKl4xbS8Vw1hUIbGIY1FPC3gK0irY6+BVVOZegK2gc7w43trL4Q7/BwRwYL0VbCvef9bZp4SeKNTB7TQMLvI8ac+Oq2P7ia1r0iz/Ph2r81fJAsZlwdRHdbNw3SYGCxff0SGQvEAcVGJFwYOBWVcJqHXRyv5oleGOvCKXHkEke9Id6q52+y6KxGaOrxIw7wlVjTIcMjdDU/4BXcOVyPYEWwPJbLeQTsBCrMCvzhgs1nFxY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8402507b-e47b-43f3-29fc-08d5f09832f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2018 12:31:21.8462
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2P15301MB0032
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+X86_CR4_OSXSAVE check belongs to sregs check and so move into
+kvm_valid_sregs().
 
+Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+---
+ arch/x86/kvm/x86.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On 2018/7/23 下午5:31, Peter Zijlstra wrote:
-> On Wed, Jul 04, 2018 at 11:27:27AM +0800, 王贇 wrote:
-> 
->> @@ -6788,6 +6790,12 @@ static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
->>   	seq_printf(sf, "nr_throttled %d\n", cfs_b->nr_throttled);
->>   	seq_printf(sf, "throttled_time %llu\n", cfs_b->throttled_time);
->>
->> +	if (schedstat_enabled() && tg != &root_task_group) {
-> 
-> I put the variables here.
-
-Will do that in next version :-)
-
-> 
->> +		for_each_possible_cpu(i)
->> +			ws += schedstat_val(tg->se[i]->statistics.wait_sum);
-> 
-> This doesn't quite work on 32bit archs, but I'm not sure I care enough
-> to be bothered about that.
-
-Could easily overflow then... hope they won't really care
-about the group conflicts.
-
-Regards,
-Michael Wang
-
-> 
->> +		seq_printf(sf, "wait_sum %llu\n", ws);
->> +	}
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 153564db7980..5c9acdbb2020 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -8045,6 +8045,10 @@ EXPORT_SYMBOL_GPL(kvm_task_switch);
+=20
+ static int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
+ {
++	if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
++			(sregs->cr4 & X86_CR4_OSXSAVE))
++		return  -EINVAL;
++
+ 	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG)) {
+ 		/*
+ 		 * When EFER.LME and CR0.PG are set, the processor is in
+@@ -8075,10 +8079,6 @@ static int __set_sregs(struct kvm_vcpu *vcpu, struct=
+ kvm_sregs *sregs)
+ 	struct desc_ptr dt;
+ 	int ret =3D -EINVAL;
+=20
+-	if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
+-			(sregs->cr4 & X86_CR4_OSXSAVE))
+-		goto out;
+-
+ 	if (kvm_valid_sregs(vcpu, sregs))
+ 		goto out;
+=20
+--=20
+2.14.3
