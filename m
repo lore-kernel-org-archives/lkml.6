@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BECECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 182FBECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9759120854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:06:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9759120854
+	by mail.kernel.org (Postfix) with ESMTP id D23D520854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:06:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D23D520854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388480AbeGWMGi (ORCPT
+        id S2388490AbeGWMGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:06:38 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:39985 "EHLO extserv.mm-sol.com"
+        Mon, 23 Jul 2018 08:06:46 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:39912 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388002AbeGWMEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388004AbeGWMEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Jul 2018 08:04:48 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id DA2A2CD66;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id A2656CD5F;
         Mon, 23 Jul 2018 14:04:02 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v3 23/35] media: camss: ispif: Add support for 8x96
-Date:   Mon, 23 Jul 2018 14:02:40 +0300
-Message-Id: <1532343772-27382-24-git-send-email-todor.tomov@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v3 16/35] media: dt-bindings: media: qcom,camss: Add 8996 bindings
+Date:   Mon, 23 Jul 2018 14:02:33 +0300
+Message-Id: <1532343772-27382-17-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
 References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
@@ -41,116 +43,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ISPIF hardware modules on 8x16 and 8x96 are similar. However on
-8x96 the ISPIF routes data to two VFE hardware modules. Add
-separate interrupt handler for 8x96 to handle the additional
-interrupts.
+Update binding document for MSM8996.
 
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
+CC: devicetree@vger.kernel.org
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/media/platform/qcom/camss/camss-ispif.c | 76 ++++++++++++++++++++++++-
- 1 file changed, 73 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/media/qcom,camss.txt       | 44 +++++++++++++++++++---
+ 1 file changed, 38 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
-index 8b04f8a..b124cd3 100644
---- a/drivers/media/platform/qcom/camss/camss-ispif.c
-+++ b/drivers/media/platform/qcom/camss/camss-ispif.c
-@@ -116,13 +116,77 @@ static const u32 ispif_formats[] = {
- };
+diff --git a/Documentation/devicetree/bindings/media/qcom,camss.txt b/Documentation/devicetree/bindings/media/qcom,camss.txt
+index e938eb0..09eb6ed 100644
+--- a/Documentation/devicetree/bindings/media/qcom,camss.txt
++++ b/Documentation/devicetree/bindings/media/qcom,camss.txt
+@@ -5,8 +5,9 @@ Qualcomm Camera Subsystem
+ - compatible:
+ 	Usage: required
+ 	Value type: <stringlist>
+-	Definition: Should contain:
++	Definition: Should contain one of:
+ 		- "qcom,msm8916-camss"
++		- "qcom,msm8996-camss"
+ - reg:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+@@ -19,11 +20,16 @@ Qualcomm Camera Subsystem
+ 		- "csiphy0_clk_mux"
+ 		- "csiphy1"
+ 		- "csiphy1_clk_mux"
++		- "csiphy2"		(8996 only)
++		- "csiphy2_clk_mux"	(8996 only)
+ 		- "csid0"
+ 		- "csid1"
++		- "csid2"		(8996 only)
++		- "csid3"		(8996 only)
+ 		- "ispif"
+ 		- "csi_clk_mux"
+ 		- "vfe0"
++		- "vfe1"		(8996 only)
+ - interrupts:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+@@ -34,10 +40,14 @@ Qualcomm Camera Subsystem
+ 	Definition: Should contain the following entries:
+ 		- "csiphy0"
+ 		- "csiphy1"
++		- "csiphy2"		(8996 only)
+ 		- "csid0"
+ 		- "csid1"
++		- "csid2"		(8996 only)
++		- "csid3"		(8996 only)
+ 		- "ispif"
+ 		- "vfe0"
++		- "vfe1"		(8996 only)
+ - power-domains:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+@@ -57,6 +67,7 @@ Qualcomm Camera Subsystem
+ 		- "ispif_ahb"
+ 		- "csiphy0_timer"
+ 		- "csiphy1_timer"
++		- "csiphy2_timer"	(8996 only)
+ 		- "csi0_ahb"
+ 		- "csi0"
+ 		- "csi0_phy"
+@@ -67,9 +78,25 @@ Qualcomm Camera Subsystem
+ 		- "csi1_phy"
+ 		- "csi1_pix"
+ 		- "csi1_rdi"
++		- "csi2_ahb"		(8996 only)
++		- "csi2"		(8996 only)
++		- "csi2_phy"		(8996 only)
++		- "csi2_pix"		(8996 only)
++		- "csi2_rdi"		(8996 only)
++		- "csi3_ahb"		(8996 only)
++		- "csi3"		(8996 only)
++		- "csi3_phy"		(8996 only)
++		- "csi3_pix"		(8996 only)
++		- "csi3_rdi"		(8996 only)
+ 		- "ahb"
+ 		- "vfe0"
+ 		- "csi_vfe0"
++		- "vfe0_ahb",		(8996 only)
++		- "vfe0_stream",	(8996 only)
++		- "vfe1",		(8996 only)
++		- "csi_vfe1",		(8996 only)
++		- "vfe1_ahb",		(8996 only)
++		- "vfe1_stream",	(8996 only)
+ 		- "vfe_ahb"
+ 		- "vfe_axi"
+ - vdda-supply:
+@@ -90,14 +117,18 @@ Qualcomm Camera Subsystem
+ 		- reg:
+ 			Usage: required
+ 			Value type: <u32>
+-			Definition: Selects CSI2 PHY interface - PHY0 or PHY1.
++			Definition: Selects CSI2 PHY interface - PHY0, PHY1
++				    or PHY2 (8996 only)
+ 	Endpoint node properties:
+ 		- clock-lanes:
+ 			Usage: required
+ 			Value type: <u32>
+-			Definition: The physical clock lane index. The value
+-				    must always be <1> as the physical clock
+-				    lane is lane 1.
++			Definition: The physical clock lane index. On 8916
++				    the value must always be <1> as the physical
++				    clock lane is lane 1. On 8996 the value must
++				    always be <7> as the hardware supports D-PHY
++				    and C-PHY, indexes are in a common set and
++				    D-PHY physical clock lane is labeled as 7.
+ 		- data-lanes:
+ 			Usage: required
+ 			Value type: <prop-encoded-array>
+@@ -105,7 +136,8 @@ Qualcomm Camera Subsystem
+ 				    Position of an entry determines the logical
+ 				    lane number, while the value of an entry
+ 				    indicates physical lane index. Lane swapping
+-				    is supported.
++				    is supported. Physical lane indexes for
++				    8916: 0, 2, 3, 4; for 8996: 0, 1, 2, 3.
  
- /*
-- * ispif_isr - ISPIF module interrupt handler
-+ * ispif_isr_8x96 - ISPIF module interrupt handler for 8x96
-  * @irq: Interrupt line
-  * @dev: ISPIF device
-  *
-  * Return IRQ_HANDLED on success
-  */
--static irqreturn_t ispif_isr(int irq, void *dev)
-+static irqreturn_t ispif_isr_8x96(int irq, void *dev)
-+{
-+	struct ispif_device *ispif = dev;
-+	u32 value0, value1, value2, value3, value4, value5;
-+
-+	value0 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_0(0));
-+	value1 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_1(0));
-+	value2 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_2(0));
-+	value3 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_0(1));
-+	value4 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_1(1));
-+	value5 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_2(1));
-+
-+	writel_relaxed(value0, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_0(0));
-+	writel_relaxed(value1, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_1(0));
-+	writel_relaxed(value2, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_2(0));
-+	writel_relaxed(value3, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_0(1));
-+	writel_relaxed(value4, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_1(1));
-+	writel_relaxed(value5, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_2(1));
-+
-+	writel(0x1, ispif->base + ISPIF_IRQ_GLOBAL_CLEAR_CMD);
-+
-+	if ((value0 >> 27) & 0x1)
-+		complete(&ispif->reset_complete);
-+
-+	if (unlikely(value0 & ISPIF_VFE_m_IRQ_STATUS_0_PIX0_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 pix0 overflow\n");
-+
-+	if (unlikely(value0 & ISPIF_VFE_m_IRQ_STATUS_0_RDI0_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 rdi0 overflow\n");
-+
-+	if (unlikely(value1 & ISPIF_VFE_m_IRQ_STATUS_1_PIX1_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 pix1 overflow\n");
-+
-+	if (unlikely(value1 & ISPIF_VFE_m_IRQ_STATUS_1_RDI1_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 rdi1 overflow\n");
-+
-+	if (unlikely(value2 & ISPIF_VFE_m_IRQ_STATUS_2_RDI2_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 rdi2 overflow\n");
-+
-+	if (unlikely(value3 & ISPIF_VFE_m_IRQ_STATUS_0_PIX0_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 pix0 overflow\n");
-+
-+	if (unlikely(value3 & ISPIF_VFE_m_IRQ_STATUS_0_RDI0_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 rdi0 overflow\n");
-+
-+	if (unlikely(value4 & ISPIF_VFE_m_IRQ_STATUS_1_PIX1_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 pix1 overflow\n");
-+
-+	if (unlikely(value4 & ISPIF_VFE_m_IRQ_STATUS_1_RDI1_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 rdi1 overflow\n");
-+
-+	if (unlikely(value5 & ISPIF_VFE_m_IRQ_STATUS_2_RDI2_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 rdi2 overflow\n");
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/*
-+ * ispif_isr_8x16 - ISPIF module interrupt handler for 8x16
-+ * @irq: Interrupt line
-+ * @dev: ISPIF device
-+ *
-+ * Return IRQ_HANDLED on success
-+ */
-+static irqreturn_t ispif_isr_8x16(int irq, void *dev)
- {
- 	struct ispif_device *ispif = dev;
- 	u32 value0, value1, value2;
-@@ -954,8 +1018,14 @@ int msm_ispif_subdev_init(struct ispif_device *ispif,
- 	ispif->irq = r->start;
- 	snprintf(ispif->irq_name, sizeof(ispif->irq_name), "%s_%s",
- 		 dev_name(dev), MSM_ISPIF_NAME);
--	ret = devm_request_irq(dev, ispif->irq, ispif_isr,
-+	if (to_camss(ispif)->version == CAMSS_8x16)
-+		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x16,
- 			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
-+	else if (to_camss(ispif)->version == CAMSS_8x96)
-+		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x96,
-+			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
-+	else
-+		ret = -EINVAL;
- 	if (ret < 0) {
- 		dev_err(dev, "request_irq failed: %d\n", ret);
- 		return ret;
+ * An Example
+ 
 -- 
 2.7.4
 
