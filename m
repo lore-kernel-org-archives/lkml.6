@@ -3,67 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 836CCECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D644ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4147F20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:56:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4147F20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
+	by mail.kernel.org (Postfix) with ESMTP id 590E020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:57:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 590E020854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388406AbeGWS6s (ORCPT
+        id S2388390AbeGWS77 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:58:48 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:57812 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388212AbeGWS6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:58:48 -0400
-Received: from [10.10.2.207] (pluton2.ispras.ru [83.149.199.44])
-        by mail.ispras.ru (Postfix) with ESMTPSA id A0D89540081;
-        Mon, 23 Jul 2018 20:56:24 +0300 (MSK)
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Even Xu <even.xu@intel.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org,
-        Anton Vasilyev <vasilyev@ispras.ru>
-From:   Anton Vasilyev <vasilyev@ispras.ru>
-Subject: HID: intel_ish-hid: tx_buf memory leak on probe/remove
-Message-ID: <a0faf8a7-17ea-0ed3-5bb5-f1e8fb5debf6@ispras.ru>
-Date:   Mon, 23 Jul 2018 20:56:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 23 Jul 2018 14:59:59 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:45874 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388084AbeGWS77 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:59:59 -0400
+Received: from localhost (unknown [172.58.43.169])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 97021108CEDD1;
+        Mon, 23 Jul 2018 10:57:36 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 10:57:33 -0700 (PDT)
+Message-Id: <20180723.105733.2002812639453903002.davem@davemloft.net>
+To:     ubraun@linux.ibm.com
+Cc:     netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        raspl@linux.ibm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/5] net/smc: patches 2018-07-23
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180723115312.54694-1-ubraun@linux.ibm.com>
+References: <20180723115312.54694-1-ubraun@linux.ibm.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 23 Jul 2018 10:57:37 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ish_dev_init() allocates 512*176 bytes memory for tx_buf and stores it at
-&dev->wr_free_list_head.link list on ish_probe().
-But there is no deallocation of this memory in ish_remove() and in 
-ish_probe()
-error path.
-So current intel-ish-ipc provides 88 KB memory leak for each probe/release.
+From: Ursula Braun <ubraun@linux.ibm.com>
+Date: Mon, 23 Jul 2018 13:53:07 +0200
 
-I have two ideas 1) to replace kzalloc allocation by devm_kzalloc,
-or 2) release memory stored at &dev->wr_free_list_head.link list (and 
-may be at
-&dev->wr_processing_list_head.link) in all driver exits.
+> here are some small patches for SMC: Just the first patch contains a
+> functional change. It allows to differ between the modes SMCR and SMCD
+> on s390 when monitoring SMC sockets. The remaining patches are cleanups
+> without functional changes.
 
-But I do not know which way is preferable for this case.
-
-Found by Linux Driver Verification project (linuxtesting.org).
-
---
-Anton Vasilyev
-Linux Verification Center, ISPRAS
-web: http://linuxtesting.org
-e-mail: vasilyev@ispras.ru
+Series applied, thank you.
