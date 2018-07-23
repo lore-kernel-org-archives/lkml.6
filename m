@@ -2,85 +2,139 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B5EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB11ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6164320854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:20:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6164320854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
+	by mail.kernel.org (Postfix) with ESMTP id E850320854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:22:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UF9Og/j9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E850320854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388244AbeGXAYY (ORCPT
+        id S2388189AbeGXAZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 20:24:24 -0400
-Received: from mleia.com ([178.79.152.223]:41478 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388098AbeGXAYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 20:24:24 -0400
-Received: from mail.mleia.com (localhost [127.0.0.1])
-        by mail.mleia.com (Postfix) with ESMTP id B8D3B409152;
-        Tue, 24 Jul 2018 00:20:51 +0100 (BST)
-Subject: Re: [PATCH] dt-bindings: remove 'interrupt-parent' from bindings
-To:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>
-References: <20180723221317.16394-1-robh@kernel.org>
-From:   Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <811b4c0c-7d9c-2bbc-5029-58a458a13f7e@mleia.com>
-Date:   Tue, 24 Jul 2018 02:20:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 23 Jul 2018 20:25:40 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33037 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388085AbeGXAZk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 20:25:40 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r5-v6so1449924pgv.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 16:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=54Ue/XfEnu8lGpzmGDRsShB9nSz4Ha2CkuH2Vg11PhA=;
+        b=UF9Og/j9Y+tPmUMSIE2n6jH/9doiUNHZmaNsK5YTf5EujLtH5DWOygQsEVhXTaP3NG
+         2wwuHOpfeDXgBKAqzxScYiZNVX9C+olwmI+UDjC4S9Q9dc5l3IiZOBIxGpH0zIsbO6Ze
+         b3YTfwu6sdc6QEfe8EQqHVyWBoXzgTAM2BP5O9EXHpRHC+lsF7d865mR+i0p7rIjePQw
+         pO+kb+efp7R/b3jjMJ+AY9+QS8bDl7qlpSrllaeyKttkrgW/ZklJubs/EVKuHGAXlRse
+         6wVHeATh3q6+8J+8ZgK8c9A0Ldbmgyv5fM184yz7WPtlxofJVX+iHPia0SbHmn8FS8pH
+         9Xsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=54Ue/XfEnu8lGpzmGDRsShB9nSz4Ha2CkuH2Vg11PhA=;
+        b=fW+vXBox5butAOygc6SjCc7R1sqje/oZKtPKqgbjob6f7t4jmaUm4sxdSvQ3r/7nku
+         AFT0+0P4AT/fhQStopaIsRz950i43x9ehy+CQK00CNXvOugOwOBIQVurBPQoq8WlB+07
+         BNaXo3TAA+X+1y4WMJ7Hgl+LGL5oa2df2JGhpbH5VD4jW1mu6pjw7xS7lnoZmCyaiNZi
+         k32ADv2BM7fAZW24e8cpiVIfK9cmx2/vlBwrWSzDX0YjPDy6ReluKMyx2XAhqLdAO6Ar
+         rR/sPO6We3CFkTylz+Q+0siNd9v+0TSwlSsr3EuNfadfUllgpNBUSbWfGIL+6v7yPvBN
+         c4JA==
+X-Gm-Message-State: AOUpUlHz8N2yRmMCU05160QUSmRp9CAMe4o6GF6Ej3c8wUNUNz2ot0vX
+        bAmo2VYFaGnfVrDw5/K+ecJrbA==
+X-Google-Smtp-Source: AAOMgpdLOwH8Essa+ClkA9ZaZlrF+NebbnQBtSVSWjqujSprm7shbiPYhEXIdf7dEkKkI04p2P2/YQ==
+X-Received: by 2002:a63:943:: with SMTP id 64-v6mr13762858pgj.368.1532388127409;
+        Mon, 23 Jul 2018 16:22:07 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id e8-v6sm13870011pgi.24.2018.07.23.16.22.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 16:22:06 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 16:22:06 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Roman Gushchin <guro@fb.com>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v3 -mm 3/6] mm, memcg: add hierarchical usage oom
+ policy
+In-Reply-To: <20180723212855.GA25062@castle>
+Message-ID: <alpine.DEB.2.21.1807231614530.196032@chino.kir.corp.google.com>
+References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803151351140.55261@chino.kir.corp.google.com> <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com> <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1807131604560.217600@chino.kir.corp.google.com> <alpine.DEB.2.21.1807131605590.217600@chino.kir.corp.google.com> <20180716181613.GA28327@castle> <alpine.DEB.2.21.1807162101170.157949@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1807231331510.105582@chino.kir.corp.google.com> <20180723212855.GA25062@castle>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180723221317.16394-1-robh@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20180724_002051_774055_48C59B7D 
-X-CRM114-Status: GOOD (  15.22  )
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Mon, 23 Jul 2018, Roman Gushchin wrote:
 
-On 07/24/2018 01:13 AM, Rob Herring wrote:
-> 'interrupt-parent' is often documented as part of define bindings, but
-> it is really outside the scope of a device binding. It's never required
-> in a given node as it is often inherited from a parent node. Or it can
-> be implicit if a parent node is an 'interrupt-controller' node. So
-> remove it from all the binding files.
+> > Roman, I'm trying to make progress so that the cgroup aware oom killer is 
+> > in a state that it can be merged.  Would you prefer a second tunable here 
+> > to specify a cgroup's points includes memory from its subtree?
 > 
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+> Hi, David!
+> 
+> It's hard to tell, because I don't have a clear picture of what you're
+> suggesting now.
 
-[snip]
+Each patch specifies what it does rather elaborately.  If there's 
+confusion on what this patch, or any of the patches in this patchset, is 
+motivated by or addresses, please call it out specifically.
 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
-> index 38211f344dc8..0bfb3ba55f4c 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
-> @@ -14,8 +14,6 @@ Required properties:
->    Reset value is IRQ_TYPE_LEVEL_LOW.
->  
->  Optional properties:
-> -- interrupt-parent: empty for MIC interrupt controller, link to parent
-> -  MIC interrupt controller for SIC1 and SIC2
->  - interrupts: empty for MIC interrupt controller, cascaded MIC
->    hardware interrupts for SIC1 and SIC2
->  
+> My biggest concern about your last version was that it's hard
+> to tell what oom_policy really defines. Each value has it's own application
+> rules, which is a bit messy (some values are meaningful for OOMing cgroup only,
+> other are reading on hierarchy traversal).
+> If you know how to make it clear and non-contradictory,
+> please, describe the proposed interface.
+> 
 
-I would rather ask you to keep the property here, it is optional in sense that
-its presence distinguishes MIC and SIC types of interrupt controllers.
+As my initial response stated, "tree" has cgroup aware properties but it 
+considers the subtree usage as its own.  I do not know of any usecase, 
+today or in the future, that would want subtree usage accounted to its own 
+when being considered as a single indivisible memory consumer yet still 
+want per-process oom kill selection.
 
---
-Best wishes,
-Vladimir
+If you do not prefer that overloading, I can break the two out from one 
+another such that one tunable defines cgroup vs process, and another 
+defines subtree usage being considered or not.  That's a perfectly fine 
+suggestion and I have no problem implementing it.  The only reason I did 
+not was because I do not know of any user that would want process && 
+subtree and that would reduce the number of files for mem cgroup by one.
+
+If you'd like me to separate these out by adding another tunable, please 
+let me know.  We will already have another tunable later, but is not 
+required for this to be merged as the cover letter states, to allow the 
+user to adjust the calculation for a subtree such that it may protect 
+important cgroups that are allowed to use more memory than others.
+
+> > It would be helpful if you would also review the rest of the patchset.
+> 
+> I think, that we should focus on interface semantics right now.
+> If we can't agree on how the things should work, it makes no sense
+> to discuss the implementation.
+> 
+
+Yes, I have urged that we consider the interface in both the 
+memory.oom_group discussion as well as the discussion here, which is why 
+this patchset removes the mount option, does not lock down the entire 
+hierarchy into a single policy, and is extensible to be generally useful 
+outside of very special usecases.
