@@ -2,128 +2,93 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC02ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39686ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56AD820854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:39:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BOksO5N6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56AD820854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id DB88620854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:42:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB88620854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388113AbeGWMkm (ORCPT
+        id S2388070AbeGWMnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:40:42 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42550 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387816AbeGWMkl (ORCPT
+        Mon, 23 Jul 2018 08:43:15 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53590 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387847AbeGWMnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:40:41 -0400
-Received: by mail-pf1-f195.google.com with SMTP id l9-v6so45232pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 04:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=XmCDVmfm1OGirlafY675LCKL+DRQ0miFDvKZzs4AvDA=;
-        b=BOksO5N6k6cbmaEy1b5v9QwO6WgJMXH0A119XWWJbi0LHoSgdDmUH1lfUOyWKG0u+/
-         PAHtwPY8TjPUGxS7UdDViHneLxjIiPzXFjQez7DSsx9k0rkhGdvhzM8yM++wvHVVsZuu
-         uMWZaJVPG4mtEgoRPSHeO2lyNOo9s+AgBu3a/+/r3TQrhuOQ7N3zGT5P57sAIBGSgHWX
-         ehGOW4csDT/2uOgWMdX/L5W6OFls8e4B17uPkRyq78UW4zJaJlB+ZJY5E0LookopMjY2
-         OdnsYvN5pqG8rh6Bv2V+E3eZY2xFBT+yrm2N+ox05UWLjjGmBQYiTdatCP5GgVS+1S+H
-         y2Fw==
+        Mon, 23 Jul 2018 08:43:15 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s9-v6so798773wmh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 04:42:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XmCDVmfm1OGirlafY675LCKL+DRQ0miFDvKZzs4AvDA=;
-        b=M5l87YaOvIe5EXIJBmXvd5/Qmyfes/FBIm6dEGduovQFlQm+QYzr/bybDWVfGVPr5M
-         f4KvlCr3uE1du09OrPTNRZH3flKppKeEEJ410Zyo0F3K2oU+Ir0Y6ZQCwWuRPa/3uwYJ
-         Bk/Tpn03xsEqkfhhvt5RB8Tn9y537/N8QD5qNSbpWmLsekWJ5T1DfTmAtl0MBRqmiqSY
-         eue+Xx+dUXzWL+dl6NToMQsz2cg9MIlF7Ky2fEfyRJJarjOqzc8wA11S8sSa16vIzmqT
-         jasDMTR173xgmcyVAvSNKJahZ+CZTgpLq9Lt9J0O6J77xwuuNhXTgqXSk+d/e/Dfqqy2
-         PSPg==
-X-Gm-Message-State: AOUpUlHetunWdykDGC+D/xhDAUDmcsKhx6SPcxM0jbCx5FxgmgoWS2wH
-        80nUZkeHhzJsex03XJy1iaWvvyAt/naSvB6BpbRYww==
-X-Google-Smtp-Source: AAOMgpfHZcg0BCAG3ADMAdFv5tkbQHfG4NgwAWKLJWIIPoyY3g1bHGqVORBTcS9qQ4DxyISZ8CVPVxCKOOHw4iHJGUk=
-X-Received: by 2002:a62:3f44:: with SMTP id m65-v6mr4910262pfa.98.1532345993470;
- Mon, 23 Jul 2018 04:39:53 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ia8dj8GP0dO3KcoBP71MGqZ7p7UT8Jn2L+gYB5Nml/w=;
+        b=ngVfKCcDMIsxm9Y0MnUsAWrPTOnZQ3McDTO1h6Ouzabp+ZGFeif4r7yA4yGh1VExD/
+         10xjlb0ygnaoUJJ1wyQqntPISuGwxUGETTuNc6K1PqcS4KK38lnZNVoecqkt1Feg/uT9
+         KND829GOSX3u21SjzsJcS9RzO3y4WXyxuob34Af7ZbUTYO6Dk5uugNkc2yeBTSntS9GL
+         K04ChdNAKm7f1yy2Y2hR3R78L/773w0f1hfUWssr5aPiugXAA30UWBdWZQmksSmw+t5e
+         lKlYD1szjzxSf74T2G3ah3Bp0FA5F/U10jQ7U8quXBM3k2EZY1Knlx7wlZp8YCdWs/8F
+         tYLg==
+X-Gm-Message-State: AOUpUlGaeGmntQjz6JMjadZ3ZUK7nrl79pGv8wQuUjNo04KkgTk88wgZ
+        +1r1+LUyXi3f3TosoJ2zdcw=
+X-Google-Smtp-Source: AAOMgpdpy6GxXy52SxSUl20oayFguvqBpfxOLbkhqu835LXb8df+T8xJh3KMN/SCs8iLRHUERF1l8Q==
+X-Received: by 2002:a1c:93d2:: with SMTP id v201-v6mr7049146wmd.77.1532346146001;
+        Mon, 23 Jul 2018 04:42:26 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id j131-v6sm9239040wmb.25.2018.07.23.04.42.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 04:42:25 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id B1B0A124257; Mon, 23 Jul 2018 13:42:24 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 13:42:24 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, pasha.tatashin@oracle.com,
+        vbabka@suse.cz, aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v2 3/5] mm/page_alloc: Optimize free_area_init_core
+Message-ID: <20180723114224.GA7104@techadventures.net>
+References: <20180719132740.32743-1-osalvador@techadventures.net>
+ <20180719132740.32743-4-osalvador@techadventures.net>
+ <20180719134417.GC7193@dhcp22.suse.cz>
+ <20180719140327.GB10988@techadventures.net>
+ <20180719151555.GH7193@dhcp22.suse.cz>
+ <20180719205235.GA14010@techadventures.net>
+ <20180720100327.GA19478@techadventures.net>
+ <20180723083519.GG17905@dhcp22.suse.cz>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 23 Jul 2018 04:39:33
- -0700 (PDT)
-In-Reply-To: <000000000000f0ec4f0571a91339@google.com>
-References: <000000000000f0ec4f0571a91339@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 23 Jul 2018 13:39:33 +0200
-Message-ID: <CACT4Y+bhQGLGPKSy48JJ8pHai3C=CcLC4B0Xa0ODXwyvDsisFw@mail.gmail.com>
-Subject: Re: linux-next build error (3)
-To:     syzbot <syzbot+9118f0a7ae77f4eee4a9@syzkaller.appspotmail.com>,
-        harry.wentland@amd.com, alexander.deucher@amd.com,
-        Matthias Kaehlcke <mka@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723083519.GG17905@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 1:38 PM, syzbot
-<syzbot+9118f0a7ae77f4eee4a9@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    6d93abaf4c5b Add linux-next specific files for 20180723
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10e02f0c400000
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9118f0a7ae77f4eee4a9
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9118f0a7ae77f4eee4a9@syzkaller.appspotmail.com
+On Mon, Jul 23, 2018 at 10:35:19AM +0200, Michal Hocko wrote:
+> No, I do not think this is much better. Why do we need to separate those
+> functions out? I think you are too focused on the current function
+> without a broader context. Think about it. We have two code paths.
+> Early initialization and the hotplug. The two are subtly different in
+> some aspects. Maybe reusing free_area_init_core is the wrong thing and
+> we should have a dedicated subset of this function. This would make the
+> code more clear probably. You wouldn't have to think which part of
+> free_area_init_core is special and what has to be done if this function
+> was to be used in a different context. See my point?
 
-+Matthias,
+Yes, I see your point now.
+I will think about it with a wider approach.
 
-I guess this is caused by one of the following commits, and probably
-affects KASAN and similar tools:
-
-commit cc32ad8f559c36ca2433d282aff690a6842a3a27
-Date:   Thu Feb 8 12:53:16 2018 -0800
-
-    amdgpu/dc/calcs: Support clang option for stack alignment
-
-commit 37172013fa2e527735ec9eda51a11cfea3af0ff1
-Date:   Thu Feb 8 12:53:14 2018 -0800
-
-    amdgpu/dc/calcs: Consolidate redundant CFLAGS
-
-
-
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000f0ec4f0571a91339%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
