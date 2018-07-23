@@ -2,136 +2,280 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B72C7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198CEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 642A32064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:40:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p9BOGgb8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642A32064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9FE742064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:42:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE742064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388107AbeGWJkk (ORCPT
+        id S2388054AbeGWJmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 05:40:40 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36844 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387869AbeGWJkj (ORCPT
+        Mon, 23 Jul 2018 05:42:20 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:50579 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387869AbeGWJmU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 05:40:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Aae0eJ4rAQ/c4ZYMPvwCCAGNoI3zU8R2l0dhohlyaAc=; b=p9BOGgb8pY+GjftD51S/VwqOd
-        798v53T8CMw2gGmrjuo9uyHjXbC3v5FWp+AbJArI6b2r+tznxhxKmBeygTb1Eok8E9SN4o9smN0RV
-        +sU0B9K+MRVbA+awcPYDBkHMqF31xkroHRkog+PlyCpzpDqE2LYm/P7IzidrkrV5CloItgWB4wlDB
-        ViMdbBgee3SLu7MH06bBFZmxxpt4HCcnEzeTJK4hrBJ8+oWkMyGkgOzufi+h1UVvScGwEnz7Zmg3+
-        VHpAMg0I5izwY9g6A0wtlDTLmMK1l5JdUexTNZalRSos9xMrC+lzfmPlHoJsRDNUC4mVPZCBBirXB
-        qLbHxgbRw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhWOO-0004sT-Hh; Mon, 23 Jul 2018 08:40:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 42A3420275F47; Mon, 23 Jul 2018 10:40:31 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 10:40:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Chen Lin <chen.lin130@zte.com.cn>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn,
-        tan.hu@zte.com.cn.cn, Chen Lin <cheng.lin130@zte.com.cn>,
-        Tan Hu <tan.hu@zte.com.cn>
-Subject: Re: [PATCH] sched/numa: do not balance tasks onto isolated cpus
-Message-ID: <20180723084031.GX2494@hirez.programming.kicks-ass.net>
-References: <1532324370-80651-1-git-send-email-chen.lin130@zte.com.cn>
+        Mon, 23 Jul 2018 05:42:20 -0400
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 75DB624000B;
+        Mon, 23 Jul 2018 08:42:09 +0000 (UTC)
+Date:   Mon, 23 Jul 2018 10:42:07 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        linux-sh@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] sh: split arch/sh/mm/consistent.c
+Message-ID: <20180723084207.GI6784@w540>
+References: <20180719130516.1989-1-hch@lst.de>
+ <20180719130516.1989-5-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2xeD/fx0+7k8I/QN"
 Content-Disposition: inline
-In-Reply-To: <1532324370-80651-1-git-send-email-chen.lin130@zte.com.cn>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180719130516.1989-5-hch@lst.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 01:39:30PM +0800, Chen Lin wrote:
-> From: Chen Lin <cheng.lin130@zte.com.cn>
-> 
-> NUMA balancing has not taken *isolcpus(isolated cpus)* into 
-> consideration. It may migrate tasks onto isolated cpus and the 
-> migrated tasks will never escape from the isolated cpus, which will
-> break the isolation provided by *isolcpus* boot parameter and 
-> intrduce various problems.
-> 
-> This patch ensure NUMA balancing not to balance tasks onto iaolated
-> cpus. 
 
-I'm not sure what kernel you're patching, but cpu_isolated_map doesn't
-exist anymore. Also, if it steps on isolated CPUs, this is the wrong fix
-anyway. Load-balancing should be constrained to the current root domain.
+--2xeD/fx0+7k8I/QN
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
-> Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
-> Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Hi Christoph,
 
-This SoB chain is invalid.
+I have a single comment on something I noticed which might be an
+implementation bug. On the overall patch architecture, it's very hard
+for me to provide a valuable opinion as it's all relatively new for me
+here :)
 
+On Thu, Jul 19, 2018 at 06:05:15AM -0700, Christoph Hellwig wrote:
+> Half of the file just contains platform device memory setup code which
+> is required for all builds, and half contains helpers for dma coherent
+> allocation, which is only needed if CONFIG_DMA_NONCOHERENT is enabled.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  kernel/sched/core.c | 9 ++++++---
->  kernel/sched/fair.c | 3 ++-
->  2 files changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index fe365c9..f9ce90c 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1302,10 +1302,12 @@ int migrate_swap(struct task_struct *cur, struct task_struct *p)
->  	if (!cpu_active(arg.src_cpu) || !cpu_active(arg.dst_cpu))
->  		goto out;
-> 
-> -	if (!cpumask_test_cpu(arg.dst_cpu, &arg.src_task->cpus_allowed))
-> +	if ((!cpumask_test_cpu(arg.dst_cpu, &arg.src_task->cpus_allowed))
-> +            || cpumask_test_cpu(arg.dst_cpu, cpu_isolated_map))
->  		goto out;
-> 
-> -	if (!cpumask_test_cpu(arg.src_cpu, &arg.dst_task->cpus_allowed))
-> +	if ((!cpumask_test_cpu(arg.src_cpu, &arg.dst_task->cpus_allowed))
-> +            || cpumask_test_cpu(arg.src_cpu, cpu_isolated_map))
->  		goto out;
-> 
->  	trace_sched_swap_numa(cur, arg.src_cpu, p, arg.dst_cpu);
-> @@ -5508,7 +5510,8 @@ int migrate_task_to(struct task_struct *p, int target_cpu)
->  	if (curr_cpu == target_cpu)
->  		return 0;
-> 
-> -	if (!cpumask_test_cpu(target_cpu, &p->cpus_allowed))
-> +	if ((!cpumask_test_cpu(target_cpu, &p->cpus_allowed))
-> +            || cpumask_test_cpu(target_cpu, cpu_isolated_map))
->  		return -EINVAL;
-> 
->  	/* TODO: This is not properly updating schedstats */
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 2f0a0be..a91f8fe 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1724,7 +1724,8 @@ static void task_numa_find_cpu(struct task_numa_env *env,
-> 
->  	for_each_cpu(cpu, cpumask_of_node(env->dst_nid)) {
->  		/* Skip this CPU if the source task cannot migrate */
-> -		if (!cpumask_test_cpu(cpu, &env->p->cpus_allowed))
-> +		if ((!cpumask_test_cpu(cpu, &env->p->cpus_allowed))
-> +                    || cpumask_test_cpu(cpu, cpu_isolated_map))
->  			continue;
-> 
->  		env->dst_cpu = cpu;
-> --
-> 1.8.3.1
-> 
+>  arch/sh/kernel/Makefile       |  2 +-
+>  arch/sh/kernel/dma-coherent.c | 85 +++++++++++++++++++++++++++++++++++
+>  arch/sh/mm/consistent.c       | 80 ---------------------------------
+>  3 files changed, 86 insertions(+), 81 deletions(-)
+>  create mode 100644 arch/sh/kernel/dma-coherent.c
+>
+> diff --git a/arch/sh/kernel/Makefile b/arch/sh/kernel/Makefile
+> index cb5f1bfb52de..d5ddb64bfffe 100644
+> --- a/arch/sh/kernel/Makefile
+> +++ b/arch/sh/kernel/Makefile
+> @@ -45,7 +45,7 @@ obj-$(CONFIG_DUMP_CODE)		+= disassemble.o
+>  obj-$(CONFIG_HIBERNATION)	+= swsusp.o
+>  obj-$(CONFIG_DWARF_UNWINDER)	+= dwarf.o
+>  obj-$(CONFIG_PERF_EVENTS)	+= perf_event.o perf_callchain.o
+> -obj-$(CONFIG_DMA_NONCOHERENT)	+= dma-nommu.o
+> +obj-$(CONFIG_DMA_NONCOHERENT)	+= dma-nommu.o dma-coherent.o
+>  obj-$(CONFIG_HAVE_HW_BREAKPOINT)		+= hw_breakpoint.o
+>
+>  ccflags-y := -Werror
+> diff --git a/arch/sh/kernel/dma-coherent.c b/arch/sh/kernel/dma-coherent.c
+> new file mode 100644
+> index 000000000000..0e7720b5d495
+> --- /dev/null
+> +++ b/arch/sh/kernel/dma-coherent.c
+> @@ -0,0 +1,85 @@
+> +/*
+> + * Copyright (C) 2004 - 2007  Paul Mundt
+> + *
+> + * This file is subject to the terms and conditions of the GNU General Public
+> + * License.  See the file "COPYING" in the main directory of this archive
+> + * for more details.
+> + */
+> +#include <linux/mm.h>
+> +#include <linux/init.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/module.h>
+> +#include <asm/cacheflush.h>
+> +#include <asm/addrspace.h>
+> +
+> +void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+> +				 dma_addr_t *dma_handle, gfp_t gfp,
+> +				 unsigned long attrs)
+> +{
+> +	void *ret, *ret_nocache;
+> +	int order = get_order(size);
+> +
+> +	gfp |= __GFP_ZERO;
+> +
+> +	ret = (void *)__get_free_pages(gfp, order);
+> +	if (!ret)
+> +		return NULL;
+> +
+> +	/*
+> +	 * Pages from the page allocator may have data present in
+> +	 * cache. So flush the cache before using uncached memory.
+> +	 */
+> +	sh_sync_dma_for_device(ret, size, DMA_BIDIRECTIONAL);
+> +
+> +	ret_nocache = (void __force *)ioremap_nocache(virt_to_phys(ret), size);
+> +	if (!ret_nocache) {
+> +		free_pages((unsigned long)ret, order);
+> +		return NULL;
+> +	}
+> +
+> +	split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
+> +
+> +	*dma_handle = virt_to_phys(ret);
+> +	if (!WARN_ON(!dev))
+> +		*dma_handle - PFN_PHYS(dev->dma_pfn_offset);
+
+I guess this comes from below...
+
+> +
+> +	return ret_nocache;
+> +}
+> +
+> +void dma_generic_free_coherent(struct device *dev, size_t size,
+> +			       void *vaddr, dma_addr_t dma_handle,
+> +			       unsigned long attrs)
+> +{
+> +	int order = get_order(size);
+> +	unsigned long pfn = (dma_handle >> PAGE_SHIFT);
+> +	int k;
+> +
+> +	if (!WARN_ON(!dev))
+> +		pfn + dev->dma_pfn_offset;
+> +
+> +	for (k = 0; k < (1 << order); k++)
+> +		__free_pages(pfn_to_page(pfn + k), 0);
+> +
+> +	iounmap(vaddr);
+> +}
+> +
+> +void sh_sync_dma_for_device(void *vaddr, size_t size,
+> +		    enum dma_data_direction direction)
+> +{
+> +	void *addr = sh_cacheop_vaddr(vaddr);
+> +
+> +	switch (direction) {
+> +	case DMA_FROM_DEVICE:		/* invalidate only */
+> +		__flush_invalidate_region(addr, size);
+> +		break;
+> +	case DMA_TO_DEVICE:		/* writeback only */
+> +		__flush_wback_region(addr, size);
+> +		break;
+> +	case DMA_BIDIRECTIONAL:		/* writeback and invalidate */
+> +		__flush_purge_region(addr, size);
+> +		break;
+> +	default:
+> +		BUG();
+> +	}
+> +}
+> +EXPORT_SYMBOL(sh_sync_dma_for_device);
+> diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
+> index 1622ae6b9dbd..792f36129062 100644
+> --- a/arch/sh/mm/consistent.c
+> +++ b/arch/sh/mm/consistent.c
+> @@ -1,10 +1,6 @@
+>  /*
+> - * arch/sh/mm/consistent.c
+> - *
+>   * Copyright (C) 2004 - 2007  Paul Mundt
+>   *
+> - * Declared coherent memory functions based on arch/x86/kernel/pci-dma_32.c
+> - *
+>   * This file is subject to the terms and conditions of the GNU General Public
+>   * License.  See the file "COPYING" in the main directory of this archive
+>   * for more details.
+> @@ -13,83 +9,7 @@
+>  #include <linux/init.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/dma-mapping.h>
+> -#include <linux/dma-debug.h>
+>  #include <linux/io.h>
+> -#include <linux/module.h>
+> -#include <linux/gfp.h>
+> -#include <asm/cacheflush.h>
+> -#include <asm/addrspace.h>
+> -
+> -void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+> -				 dma_addr_t *dma_handle, gfp_t gfp,
+> -				 unsigned long attrs)
+> -{
+> -	void *ret, *ret_nocache;
+> -	int order = get_order(size);
+> -
+> -	gfp |= __GFP_ZERO;
+> -
+> -	ret = (void *)__get_free_pages(gfp, order);
+> -	if (!ret)
+> -		return NULL;
+> -
+> -	/*
+> -	 * Pages from the page allocator may have data present in
+> -	 * cache. So flush the cache before using uncached memory.
+> -	 */
+> -	sh_sync_dma_for_device(ret, size, DMA_BIDIRECTIONAL);
+> -
+> -	ret_nocache = (void __force *)ioremap_nocache(virt_to_phys(ret), size);
+> -	if (!ret_nocache) {
+> -		free_pages((unsigned long)ret, order);
+> -		return NULL;
+> -	}
+> -
+> -	split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
+> -
+> -	*dma_handle = virt_to_phys(ret);
+> -	if (!WARN_ON(!dev))
+> -		*dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
+
+... here
+
+Is the s/-=/- intended?
+
+Snippets copied here below:
+
+> +	*dma_handle = virt_to_phys(ret);
+> +	if (!WARN_ON(!dev))
+> +		*dma_handle - PFN_PHYS(dev->dma_pfn_offset);
+vs
+> -	*dma_handle = virt_to_phys(ret);
+> -	if (!WARN_ON(!dev))
+> -		*dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
+
+
+
+--2xeD/fx0+7k8I/QN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbVZTfAAoJEHI0Bo8WoVY8ACMP/3SFUmXHB3DC+La4lFnC9/Wn
+wzjjONpPwkZLx4Ly7r2AxUSraloiwUhp00fT7glnOzYF9FgOJz78oFebb1evh4D8
++UQMoTHhjRl0TF1OcQYvvVl0OBNDfNfiLlwC5miPuViFsas37OITFavIlwzp8zID
+jYw1GtLA0QyffdVhgVwIbODZDwFFbEg//EIwU/yLHu9egdRBxOIRgYs854yQXwa3
+pBn/2NugUgByVLFcpg5dMX3eyA4MeVGPTlxhc6OFiq9D8zAMiFxaxwI8zNryvN2m
+D1yoVvodrb7TAi7sTP6Obwbaw5DgpNFsFwXgYfC7hFbtj7EjzQjEkjqf76KGfqjB
+Vx+SSdnUTZBpVe4n0ynPHLYKDFBJXUxERn/+7/5XbUw5w33MeR5ebIvojqQjN7Gc
+psCB6Za2TnHKASdpSm4e2cewfqnfTPUOHS+Yv4DNFXJa7RttRZs5lptGIwp2YwNq
+cd6h0jmJeRhWZITvWqJ/BQ+fk/WgoSUIoEX6RKZYYM1l0DfJmOzeJqNHVBLLb5a1
+xY0zugo+n52pHoAt31m0jxJtDTVWkMLA1bKyLxRyTZAXXWBNIRMrCyte9UdYG2y8
+rq+oxkfN+8Sc7A28hNUWtHLxG4NHA5v/i8b7PotGItdXCmlkIqNKaTrx8NR8pqwK
+tQ6PrQzodz/7fD3RYMgQ
+=p5wX
+-----END PGP SIGNATURE-----
+
+--2xeD/fx0+7k8I/QN--
