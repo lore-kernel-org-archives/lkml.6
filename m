@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 447F2ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A03CECDFBD
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00B9620854
+	by mail.kernel.org (Postfix) with ESMTP id D245F20854
 	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:27:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00B9620854
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D245F20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388200AbeGWK2D (ORCPT
+        id S2388215AbeGWK2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 06:28:03 -0400
-Received: from regular1.263xmail.com ([211.150.99.138]:36560 "EHLO
+        Mon, 23 Jul 2018 06:28:08 -0400
+Received: from regular1.263xmail.com ([211.150.99.137]:54319 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388138AbeGWK2C (ORCPT
+        with ESMTP id S2388138AbeGWK2H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 06:28:02 -0400
+        Mon, 23 Jul 2018 06:28:07 -0400
 Received: from cl?rock-chips.com (unknown [192.168.167.16])
-        by regular1.263xmail.com (Postfix) with ESMTP id 91B637A2D;
-        Mon, 23 Jul 2018 17:27:42 +0800 (CST)
+        by regular1.263xmail.com (Postfix) with ESMTP id 791BFDC0C;
+        Mon, 23 Jul 2018 17:27:47 +0800 (CST)
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
 Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 22C3B3E9;
-        Mon, 23 Jul 2018 17:27:27 +0800 (CST)
+        by smtp.263.net (Postfix) with ESMTPA id C6DE436E;
+        Mon, 23 Jul 2018 17:27:41 +0800 (CST)
 X-RL-SENDER: cl@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: cl@rock-chips.com
-X-UNIQUE-TAG: <e363893bf7bf6c2913cd855ce9dc11e0>
+X-UNIQUE-TAG: <69fd23123fa57914f1d7e3af2b3916ed>
 X-ATTACHMENT-NUM: 0
 X-SENDER: cl@rock-chips.com
 X-DNS-TYPE: 0
 Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 7463MMY478;
-        Mon, 23 Jul 2018 17:27:41 +0800 (CST)
+        by smtp.263.net (Postfix) whith SMTP id 7463HZZD18;
+        Mon, 23 Jul 2018 17:27:47 +0800 (CST)
 From:   <cl@rock-chips.com>
 To:     heiko@sntech.de
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
@@ -64,9 +64,9 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
         sugar.zhang@rock-chips.com, huibin.hong@rock-chips.com,
         william.wu@rock-chips.com, sandy.huang@rock-chips.com,
         Liang Chen <cl@rock-chips.com>
-Subject: [PATCH v2 1/6] dt-bindings: usb: dwc2: add description for px30
-Date:   Mon, 23 Jul 2018 17:25:19 +0800
-Message-Id: <1532337924-4185-2-git-send-email-cl@rock-chips.com>
+Subject: [PATCH v2 2/6] dt-bindings: mmc: rockchip-dw-mshc: add description for px30
+Date:   Mon, 23 Jul 2018 17:25:20 +0800
+Message-Id: <1532337924-4185-3-git-send-email-cl@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1532337924-4185-1-git-send-email-cl@rock-chips.com>
 References: <1532337924-4185-1-git-send-email-cl@rock-chips.com>
@@ -77,26 +77,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Liang Chen <cl@rock-chips.com>
 
-This patch adds the compatible of dwc2 for PX30 SoCs.
+Add "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc" for
+dwmmc on px30 platform.
 
 Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Liang Chen <cl@rock-chips.com>
 ---
- Documentation/devicetree/bindings/usb/dwc2.txt | 1 +
+ Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/dwc2.txt b/Documentation/devicetree/bindings/usb/dwc2.txt
-index 46da5f1..6dc3c4a 100644
---- a/Documentation/devicetree/bindings/usb/dwc2.txt
-+++ b/Documentation/devicetree/bindings/usb/dwc2.txt
-@@ -6,6 +6,7 @@ Required properties:
-   - brcm,bcm2835-usb: The DWC2 USB controller instance in the BCM2835 SoC.
-   - hisilicon,hi6220-usb: The DWC2 USB controller instance in the hi6220 SoC.
-   - rockchip,rk3066-usb: The DWC2 USB controller instance in the rk3066 Soc;
-+  - "rockchip,px30-usb", "rockchip,rk3066-usb", "snps,dwc2": for px30 Soc;
-   - "rockchip,rk3188-usb", "rockchip,rk3066-usb", "snps,dwc2": for rk3188 Soc;
-   - "rockchip,rk3288-usb", "rockchip,rk3066-usb", "snps,dwc2": for rk3288 Soc;
-   - "lantiq,arx100-usb": The DWC2 USB controller instance in Lantiq ARX SoCs;
+diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
+index 8ce49b2..6f629b1 100644
+--- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
+@@ -14,6 +14,7 @@ Required Properties:
+ 							before RK3288
+ 	- "rockchip,rk3288-dw-mshc": for Rockchip RK3288
+ 	- "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RV1108
++	- "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip PX30
+ 	- "rockchip,rk3036-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3036
+ 	- "rockchip,rk3228-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK322x
+ 	- "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3328
 -- 
 1.9.1
 
