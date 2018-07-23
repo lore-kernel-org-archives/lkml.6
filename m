@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EE8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9ADECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FAB020854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FAB020854
+	by mail.kernel.org (Postfix) with ESMTP id 8DD8420880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD8420880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388718AbeGWN2t (ORCPT
+        id S2388730AbeGWN2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:28:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45520 "EHLO
+        Mon, 23 Jul 2018 09:28:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45528 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387940AbeGWN2t (ORCPT
+        with ESMTP id S2387922AbeGWN2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:28:49 -0400
+        Mon, 23 Jul 2018 09:28:52 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D37A6BDB;
-        Mon, 23 Jul 2018 12:27:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93322BDB;
+        Mon, 23 Jul 2018 12:27:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Igor Russkikh <igor.russkikh@aquantia.com>,
+        stable@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 55/63] net: aquantia: vlan unicast address list correct handling
-Date:   Mon, 23 Jul 2018 14:25:01 +0200
-Message-Id: <20180723122448.438674974@linuxfoundation.org>
+Subject: [PATCH 4.17 56/63] net/mlx4_en: Dont reuse RX page when XDP is set
+Date:   Mon, 23 Jul 2018 14:25:02 +0200
+Message-Id: <20180723122448.472348330@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -50,194 +53,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Igor Russkikh <igor.russkikh@aquantia.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-[ Upstream commit 94b3b542303f3055c326df74ef144a8a790d7d7f ]
+[ Upstream commit 432e629e56432064761be63bcd5e263c0920430d ]
 
-Setting up macvlan/macvtap networks over atlantic NIC results
-in no traffic over these networks because ndo_set_rx_mode did
-not listed UC MACs as registered in unicast filter.
+When a new rx packet arrives, the rx path will decide whether to reuse
+the remainder of the page or not according to one of the below conditions:
+1. frag_info->frag_stride == PAGE_SIZE / 2
+2. frags->page_offset + frag_info->frag_size > PAGE_SIZE;
 
-Here we fix that taking into account maximum number of UC
-filters supported by hardware. If more than MAX addresses were
-registered, we just enable promisc  and/or allmulti to pass
-the traffic in.
+The first condition is no met for when XDP is set.
+For XDP, page_offset is always set to priv->rx_headroom which is
+XDP_PACKET_HEADROOM and frag_info->frag_size is around mtu size + some
+padding, still the 2nd release condition will hold since
+XDP_PACKET_HEADROOM + 1536 < PAGE_SIZE, as a result the page will not
+be released and will be _wrongly_ reused for next free rx descriptor.
 
-We also remove MULTICAST_ADDRESS_MAX constant from aq_cfg since
-thats not a configurable parameter at all.
+In XDP there is an assumption to have a page per packet and reuse can
+break such assumption and might cause packet data corruptions.
 
-Fixes: b21f502 ("net:ethernet:aquantia: Fix for multicast filter handling.")
-Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
+Fix this by adding an extra condition (!priv->rx_headroom) to the 2nd
+case to avoid page reuse when XDP is set, since rx_headroom is set to 0
+for non XDP setup and set to XDP_PACKET_HEADROOM for XDP setup.
+
+No additional cache line is required for the new condition.
+
+Fixes: 34db548bfb95 ("mlx4: add page recycling in receive path")
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Suggested-by: Martin KaFai Lau <kafai@fb.com>
+CC: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/aq_cfg.h           |    2 
- drivers/net/ethernet/aquantia/atlantic/aq_hw.h            |    4 -
- drivers/net/ethernet/aquantia/atlantic/aq_main.c          |   11 ---
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c           |   47 ++++++++------
- drivers/net/ethernet/aquantia/atlantic/aq_nic.h           |    2 
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c |    2 
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c |    4 -
- 7 files changed, 36 insertions(+), 36 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_rx.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
-@@ -63,8 +63,6 @@
- 
- #define AQ_CFG_NAPI_WEIGHT     64U
- 
--#define AQ_CFG_MULTICAST_ADDRESS_MAX     32U
--
- /*#define AQ_CFG_MAC_ADDR_PERMANENT {0x30, 0x0E, 0xE3, 0x12, 0x34, 0x56}*/
- 
- #define AQ_NIC_FC_OFF    0U
---- a/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-@@ -98,6 +98,8 @@ struct aq_stats_s {
- #define AQ_HW_MEDIA_TYPE_TP    1U
- #define AQ_HW_MEDIA_TYPE_FIBRE 2U
- 
-+#define AQ_HW_MULTICAST_ADDRESS_MAX     32U
-+
- struct aq_hw_s {
- 	atomic_t flags;
- 	u8 rbl_enabled:1;
-@@ -177,7 +179,7 @@ struct aq_hw_ops {
- 				    unsigned int packet_filter);
- 
- 	int (*hw_multicast_list_set)(struct aq_hw_s *self,
--				     u8 ar_mac[AQ_CFG_MULTICAST_ADDRESS_MAX]
-+				     u8 ar_mac[AQ_HW_MULTICAST_ADDRESS_MAX]
- 				     [ETH_ALEN],
- 				     u32 count);
- 
---- a/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-@@ -135,17 +135,10 @@ err_exit:
- static void aq_ndev_set_multicast_settings(struct net_device *ndev)
+--- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+@@ -474,10 +474,10 @@ static int mlx4_en_complete_rx_desc(stru
  {
- 	struct aq_nic_s *aq_nic = netdev_priv(ndev);
--	int err = 0;
+ 	const struct mlx4_en_frag_info *frag_info = priv->frag_info;
+ 	unsigned int truesize = 0;
++	bool release = true;
+ 	int nr, frag_size;
+ 	struct page *page;
+ 	dma_addr_t dma;
+-	bool release;
  
--	err = aq_nic_set_packet_filter(aq_nic, ndev->flags);
--	if (err < 0)
--		return;
-+	aq_nic_set_packet_filter(aq_nic, ndev->flags);
+ 	/* Collect used fragments while replacing them in the HW descriptors */
+ 	for (nr = 0;; frags++) {
+@@ -500,7 +500,11 @@ static int mlx4_en_complete_rx_desc(stru
+ 			release = page_count(page) != 1 ||
+ 				  page_is_pfmemalloc(page) ||
+ 				  page_to_nid(page) != numa_mem_id();
+-		} else {
++		} else if (!priv->rx_headroom) {
++			/* rx_headroom for non XDP setup is always 0.
++			 * When XDP is set, the above condition will
++			 * guarantee page is always released.
++			 */
+ 			u32 sz_align = ALIGN(frag_size, SMP_CACHE_BYTES);
  
--	if (netdev_mc_count(ndev)) {
--		err = aq_nic_set_multicast_list(aq_nic, ndev);
--		if (err < 0)
--			return;
--	}
-+	aq_nic_set_multicast_list(aq_nic, ndev);
- }
- 
- static const struct net_device_ops aq_ndev_ops = {
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-@@ -563,34 +563,41 @@ err_exit:
- 
- int aq_nic_set_multicast_list(struct aq_nic_s *self, struct net_device *ndev)
- {
-+	unsigned int packet_filter = self->packet_filter;
- 	struct netdev_hw_addr *ha = NULL;
- 	unsigned int i = 0U;
- 
--	self->mc_list.count = 0U;
--
--	netdev_for_each_mc_addr(ha, ndev) {
--		ether_addr_copy(self->mc_list.ar[i++], ha->addr);
--		++self->mc_list.count;
-+	self->mc_list.count = 0;
-+	if (netdev_uc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
-+		packet_filter |= IFF_PROMISC;
-+	} else {
-+		netdev_for_each_uc_addr(ha, ndev) {
-+			ether_addr_copy(self->mc_list.ar[i++], ha->addr);
- 
--		if (i >= AQ_CFG_MULTICAST_ADDRESS_MAX)
--			break;
-+			if (i >= AQ_HW_MULTICAST_ADDRESS_MAX)
-+				break;
-+		}
- 	}
- 
--	if (i >= AQ_CFG_MULTICAST_ADDRESS_MAX) {
--		/* Number of filters is too big: atlantic does not support this.
--		 * Force all multi filter to support this.
--		 * With this we disable all UC filters and setup "all pass"
--		 * multicast mask
--		 */
--		self->packet_filter |= IFF_ALLMULTI;
--		self->aq_nic_cfg.mc_list_count = 0;
--		return self->aq_hw_ops->hw_packet_filter_set(self->aq_hw,
--							     self->packet_filter);
-+	if (i + netdev_mc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
-+		packet_filter |= IFF_ALLMULTI;
- 	} else {
--		return self->aq_hw_ops->hw_multicast_list_set(self->aq_hw,
--						    self->mc_list.ar,
--						    self->mc_list.count);
-+		netdev_for_each_mc_addr(ha, ndev) {
-+			ether_addr_copy(self->mc_list.ar[i++], ha->addr);
-+
-+			if (i >= AQ_HW_MULTICAST_ADDRESS_MAX)
-+				break;
-+		}
-+	}
-+
-+	if (i > 0 && i < AQ_HW_MULTICAST_ADDRESS_MAX) {
-+		packet_filter |= IFF_MULTICAST;
-+		self->mc_list.count = i;
-+		self->aq_hw_ops->hw_multicast_list_set(self->aq_hw,
-+						       self->mc_list.ar,
-+						       self->mc_list.count);
- 	}
-+	return aq_nic_set_packet_filter(self, packet_filter);
- }
- 
- int aq_nic_set_mtu(struct aq_nic_s *self, int new_mtu)
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
-@@ -75,7 +75,7 @@ struct aq_nic_s {
- 	struct aq_hw_link_status_s link_status;
- 	struct {
- 		u32 count;
--		u8 ar[AQ_CFG_MULTICAST_ADDRESS_MAX][ETH_ALEN];
-+		u8 ar[AQ_HW_MULTICAST_ADDRESS_MAX][ETH_ALEN];
- 	} mc_list;
- 
- 	struct pci_dev *pdev;
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
-@@ -765,7 +765,7 @@ static int hw_atl_a0_hw_packet_filter_se
- 
- static int hw_atl_a0_hw_multicast_list_set(struct aq_hw_s *self,
- 					   u8 ar_mac
--					   [AQ_CFG_MULTICAST_ADDRESS_MAX]
-+					   [AQ_HW_MULTICAST_ADDRESS_MAX]
- 					   [ETH_ALEN],
- 					   u32 count)
- {
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -784,7 +784,7 @@ static int hw_atl_b0_hw_packet_filter_se
- 
- static int hw_atl_b0_hw_multicast_list_set(struct aq_hw_s *self,
- 					   u8 ar_mac
--					   [AQ_CFG_MULTICAST_ADDRESS_MAX]
-+					   [AQ_HW_MULTICAST_ADDRESS_MAX]
- 					   [ETH_ALEN],
- 					   u32 count)
- {
-@@ -812,7 +812,7 @@ static int hw_atl_b0_hw_multicast_list_s
- 
- 		hw_atl_rpfl2_uc_flr_en_set(self,
- 					   (self->aq_nic_cfg->is_mc_list_enabled),
--				    HW_ATL_B0_MAC_MIN + i);
-+					   HW_ATL_B0_MAC_MIN + i);
- 	}
- 
- 	err = aq_hw_err_from_flags(self);
+ 			frags->page_offset += sz_align;
 
 
