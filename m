@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08581ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02959ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C00CC20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C00CC20854
+	by mail.kernel.org (Postfix) with ESMTP id ADBE320854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADBE320854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388924AbeGWN3e (ORCPT
+        id S2388934AbeGWN3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:29:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45666 "EHLO
+        Mon, 23 Jul 2018 09:29:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45676 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387998AbeGWN3d (ORCPT
+        with ESMTP id S2387998AbeGWN3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:29:33 -0400
+        Mon, 23 Jul 2018 09:29:37 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A412BDB;
-        Mon, 23 Jul 2018 12:28:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51C97C03;
+        Mon, 23 Jul 2018 12:28:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.17 61/63] drm_mode_create_lease_ioctl(): fix open-coded filp_clone_open()
-Date:   Mon, 23 Jul 2018 14:25:07 +0200
-Message-Id: <20180723122448.660042034@linuxfoundation.org>
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>, stable@kernel.org,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 01/44] scsi: sd_zbc: Fix variable type and bogus comment
+Date:   Mon, 23 Jul 2018 14:24:37 +0200
+Message-Id: <20180723122437.522666618@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
-References: <20180723122446.351334162@linuxfoundation.org>
+In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
+References: <20180723122437.447870153@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,85 +47,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
-commit b4e7a7a88b5d060650094b8d3454bc521d669f6a upstream.
+commit f13cff6c25bd8986627365346d123312ee7baa78 upstream.
 
-Failure of ->open() should *not* be followed by fput().  Fixed by
-using filp_clone_open(), which gets the cleanups right.
+Fix the description of sd_zbc_check_zone_size() to correctly explain that
+the returned value is a number of device blocks, not bytes.  Additionally,
+the 32 bits "ret" variable used in this function may truncate the 64 bits
+zone_blocks variable value upon return. To fix this, change "ret" type to
+s64.
 
-Cc: stable@vger.kernel.org
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: ccce20fc79 ("sd_zbc: Avoid that resetting a zone fails sporadically")
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: stable@kernel.org
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_lease.c |   16 +---------------
- fs/internal.h               |    1 -
- include/linux/fs.h          |    1 +
- 3 files changed, 2 insertions(+), 16 deletions(-)
+ drivers/scsi/sd_zbc.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/drm_lease.c
-+++ b/drivers/gpu/drm/drm_lease.c
-@@ -553,24 +553,13 @@ int drm_mode_create_lease_ioctl(struct d
+--- a/drivers/scsi/sd_zbc.c
++++ b/drivers/scsi/sd_zbc.c
+@@ -430,7 +430,8 @@ static int sd_zbc_check_capacity(struct
+  * Check that all zones of the device are equal. The last zone can however
+  * be smaller. The zone size must also be a power of two number of LBAs.
+  *
+- * Returns the zone size in bytes upon success or an error code upon failure.
++ * Returns the zone size in number of blocks upon success or an error code
++ * upon failure.
+  */
+ static s64 sd_zbc_check_zone_size(struct scsi_disk *sdkp)
+ {
+@@ -440,7 +441,7 @@ static s64 sd_zbc_check_zone_size(struct
+ 	unsigned char *rec;
+ 	unsigned int buf_len;
+ 	unsigned int list_length;
+-	int ret;
++	s64 ret;
+ 	u8 same;
  
- 	/* Clone the lessor file to create a new file for us */
- 	DRM_DEBUG_LEASE("Allocating lease file\n");
--	path_get(&lessor_file->f_path);
--	lessee_file = alloc_file(&lessor_file->f_path,
--				 lessor_file->f_mode,
--				 fops_get(lessor_file->f_inode->i_fop));
--
-+	lessee_file = filp_clone_open(lessor_file);
- 	if (IS_ERR(lessee_file)) {
- 		ret = PTR_ERR(lessee_file);
- 		goto out_lessee;
- 	}
- 
--	/* Initialize the new file for DRM */
--	DRM_DEBUG_LEASE("Initializing the file with %p\n", lessee_file->f_op->open);
--	ret = lessee_file->f_op->open(lessee_file->f_inode, lessee_file);
--	if (ret)
--		goto out_lessee_file;
--
- 	lessee_priv = lessee_file->private_data;
--
- 	/* Change the file to a master one */
- 	drm_master_put(&lessee_priv->master);
- 	lessee_priv->master = lessee;
-@@ -588,9 +577,6 @@ int drm_mode_create_lease_ioctl(struct d
- 	DRM_DEBUG_LEASE("drm_mode_create_lease_ioctl succeeded\n");
- 	return 0;
- 
--out_lessee_file:
--	fput(lessee_file);
--
- out_lessee:
- 	drm_master_put(&lessee);
- 
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -127,7 +127,6 @@ int do_fchownat(int dfd, const char __us
- 
- extern int open_check_o_direct(struct file *f);
- extern int vfs_open(const struct path *, struct file *, const struct cred *);
--extern struct file *filp_clone_open(struct file *);
- 
- /*
-  * inode.c
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2401,6 +2401,7 @@ extern struct file *filp_open(const char
- extern struct file *file_open_root(struct dentry *, struct vfsmount *,
- 				   const char *, int, umode_t);
- extern struct file * dentry_open(const struct path *, int, const struct cred *);
-+extern struct file *filp_clone_open(struct file *);
- extern int filp_close(struct file *, fl_owner_t id);
- 
- extern struct filename *getname_flags(const char __user *, int, int *);
+ 	/* Get a buffer */
 
 
