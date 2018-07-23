@@ -1,96 +1,159 @@
 Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B1CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBC9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B7D20647
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:35:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B7D20647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A2D820647
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 08:36:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqX+Jz0i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2D820647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388097AbeGWJfZ (ORCPT
+        id S2388087AbeGWJgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 05:35:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56872 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387977AbeGWJfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 05:35:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8C7DAAC9C;
-        Mon, 23 Jul 2018 08:35:19 +0000 (UTC)
-Date:   Mon, 23 Jul 2018 10:35:19 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oscar Salvador <osalvador@techadventures.net>
-Cc:     akpm@linux-foundation.org, pasha.tatashin@oracle.com,
-        vbabka@suse.cz, aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v2 3/5] mm/page_alloc: Optimize free_area_init_core
-Message-ID: <20180723083519.GG17905@dhcp22.suse.cz>
-References: <20180719132740.32743-1-osalvador@techadventures.net>
- <20180719132740.32743-4-osalvador@techadventures.net>
- <20180719134417.GC7193@dhcp22.suse.cz>
- <20180719140327.GB10988@techadventures.net>
- <20180719151555.GH7193@dhcp22.suse.cz>
- <20180719205235.GA14010@techadventures.net>
- <20180720100327.GA19478@techadventures.net>
+        Mon, 23 Jul 2018 05:36:14 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42545 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387972AbeGWJgO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 05:36:14 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u202-v6so5791718lff.9;
+        Mon, 23 Jul 2018 01:36:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8TqsfMd8D4U8Mc123LDWj9YYgXy0e/AlforSXrxzjTc=;
+        b=dqX+Jz0iXBJu75QaKDVz/HIu+UfVn5dZzM3O2Bi6kAC4EUBEipaBl7qSmvSd6XxHwT
+         ek/7fLVU837xLR0FY3krgmstZAykXqXlcatqWvX6E1mPcqwzLC62NvVwzowqMiwbAiUn
+         +B5usm6LtvIUzKGc4e1la841a6tP83OV2A0XqyhNji32/F9YjHTCKxkOIaz1kSL0Oueg
+         5hep5WAuPmFMOqXVKDrfcOo5F/kIz2eweWGsKJzyEfmSA1CfjGdFCBTlSl9UUJk/s/Yb
+         tEWZVLvdqCruBGGYB4HSZ0Nff6nzFO+lMhe/k7g39tX8Qdc4mxRcOI3VPbC+Fmk8+dgn
+         y5iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8TqsfMd8D4U8Mc123LDWj9YYgXy0e/AlforSXrxzjTc=;
+        b=O4IaRimnfWHKYpLU6simdStAs0WjSIjr+cAnuEdksFoBtwJws9knWveW07POx+Wf02
+         kCp37VfkzYH4N5h8Zn+adccP4UvQmgcqCAn8wOC05jsFy6Xxhl5O53tvyoVfWvZ2bOpx
+         Tm5hZwixRRtz8iJY4Wc2SEVL6DcdsSV3nlNCT8EWogcDTpN4B8jcnoJEwzVM11rv9B5W
+         D6mT3qlM5ITv2GScJkpJ5ntTsxMe0SrZX6d9L0ijlxmhyLxlh/gKCOELUqt2ZaYYdNsX
+         g+uKxXUsbjMTl3H76Kk8WIutuz9u1ercfOAa1rxTFlkhmFGNldwku2Z55nVXFiMdDawg
+         igmQ==
+X-Gm-Message-State: AOUpUlG/i/4zSYM3e0zWW1Zvzy0e5wFoQ8NfRGL8vikVAvmspuUuTuFt
+        p6jNkHo/gC53V3B8Gl49aQg=
+X-Google-Smtp-Source: AAOMgpcjnEjmM97Q3r1Iq9STLH8Gp28ZQXaYmOK+sgZf/k3oZ2Q6KoUUey1PZ2+TapRFtUUz/Jv+CA==
+X-Received: by 2002:a19:ea5c:: with SMTP id i89-v6mr6612990lfh.19.1532334968033;
+        Mon, 23 Jul 2018 01:36:08 -0700 (PDT)
+Received: from gmail.com (c-2ec2f9f0-74736162.cust.telenor.se. [46.194.249.240])
+        by smtp.gmail.com with ESMTPSA id o203-v6sm1305993lff.28.2018.07.23.01.36.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 01:36:07 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 10:36:13 +0200
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Kent Gustavsson <kent@minoris.se>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: iio: adc: add bindings for mcp3911
+Message-ID: <20180723083613.GA13016@gmail.com>
+References: <20180721195923.7610-1-marcus.folkesson@gmail.com>
+ <20180721195923.7610-2-marcus.folkesson@gmail.com>
+ <20180722091111.6c55602f@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
 Content-Disposition: inline
-In-Reply-To: <20180720100327.GA19478@techadventures.net>
+In-Reply-To: <20180722091111.6c55602f@archlinux>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 20-07-18 12:03:27, Oscar Salvador wrote:
-> On Thu, Jul 19, 2018 at 10:52:35PM +0200, Oscar Salvador wrote:
-> > On Thu, Jul 19, 2018 at 05:15:55PM +0200, Michal Hocko wrote:
-> > > Your changelog doesn't really explain the motivation. Does the change
-> > > help performance? Is this a pure cleanup?
-> > 
-> > Hi Michal,
-> > 
-> > Sorry to not have explained this better from the very beginning.
-> > 
-> > It should help a bit in performance terms as we would be skipping those
-> > condition checks and assignations for zones that do not have any pages.
-> > It is not a huge win, but I think that skipping code we do not really need to run
-> > is worh to have.
-> > 
-> > > The function is certainly not an example of beauty. It is more an
-> > > example of changes done on top of older ones without much thinking. But
-> > > I do not see your change would make it so much better. I would consider
-> > > it a much nicer cleanup if it was split into logical units each doing
-> > > one specific thing.
-> > 
-> > About the cleanup, I thought that moving that block of code to a separate function
-> > would make the code easier to follow.
-> > If you think that this is still not enough, I can try to split it and see the outcome.
-> 
-> I tried to split it innto three logical blocks:
-> 
-> - Substract memmap pages
-> - Substract dma reserves
-> - Account kernel pages (nr_kernel_pages and nr_total_pages)
 
-No, I do not think this is much better. Why do we need to separate those
-functions out? I think you are too focused on the current function
-without a broader context. Think about it. We have two code paths.
-Early initialization and the hotplug. The two are subtly different in
-some aspects. Maybe reusing free_area_init_core is the wrong thing and
-we should have a dedicated subset of this function. This would make the
-code more clear probably. You wouldn't have to think which part of
-free_area_init_core is special and what has to be done if this function
-was to be used in a different context. See my point?
--- 
-Michal Hocko
-SUSE Labs
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jonathan,
+
+On Sun, Jul 22, 2018 at 09:11:11AM +0100, Jonathan Cameron wrote:
+> On Sat, 21 Jul 2018 21:59:22 +0200
+> Marcus Folkesson <marcus.folkesson@gmail.com> wrote:
+>=20
+
+[snip]
+
+> > +Optional properties:
+> > + - device-addr: Device address when multiple MCP3911 chips are present=
+ on the
+> > +	same SPI bus. Valid values are 0-3. Defaults to 0.
+> > + - external-clock: Use external clock instead of crystal oscillator.
+> As mentioned, in the code, can we use the standard fixed clock bindings h=
+ere.
+> We don't actually care what the value is, but it might be nice to be able=
+ to
+> power down the clock if we are suspending or something..
+>=20
+> > + - external-vref: Use external voltage reference
+> > + - vref-supply:	Phandle to the external reference voltage supply. (onl=
+y valid in combination with `external-vref`)
+>=20
+> Just use the optional regulator stuff and get rid of the bool.
+>=20
+> > + - ch0-width: width for channel0. Valid widths are 16 and 24bits.
+> > + - ch1-width: width for channel1. Valid widths are 16 and 24bits.
+>=20
+> As I asked in the code, are these a function of the wiring etc or are
+> they something we should really be leaving up to userspace (with a sensib=
+le
+> default).
+>=20
+
+
+I agree with all of your comments.
+I will remove the channel width properties and fix the regulator/clock
+bindings.
+
+Thanks,
+
+Best regards
+Marcus Folkesson
+
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAltVk3gACgkQiIBOb1ld
+UjKoRg/9EfioKOruahSRmFCbX8GMzfRfNv2zyqdbKgaOCYSvBex1mYdNRbvmWCyA
+pGFmyXsrrXhB0t0UY/tsRdio92vxhfdhUgcYtVbt6dcwLXd9tTESeQ7sjsLTkm+i
+OxnmgKLwXX5VfS31rq4nZPExvY0XI0Qiz6gaVn9tmp0ioJZZ1MM0EO6rlSNhAdGT
+3nVlyhWqfNe8KRjEMSUGsdvFZYIlMMoDxqkRMid8WkqnLi5WkW+h3cZ7645ROARz
+161w8Dx2HJDdfNMFCzkKcYtVt/tPYCkImNsbDQ2DR6USNmnwMDlwtKEw/uRBRnYz
+y7Vl4CYX295uIN3bmSnHRo4DMrSnBstn1w0fCfbx8bZk0mX5GvIHitWSwCRvuuOc
+3gJSJtuk1mDufvceUhf4ZayOvzla3/o+NiCBxr4DhHPWVBfPdEHPUMVHISidw+bG
+hP17n9qy/L1xGIVKNcY958M3EB2H7oy7FGAkZsGOSuEYD8mtP0O2aJrVbIope0lz
+ty/huysyVoTb2LQj3FVXdfQCO46JxyoIqqDeA1v1hc8pGgUuaROIKdsJxkolaNSg
+DxMmIcMyHx8B51Avn8fQhr+WQZmaLkKSInotpvm/dz9fcLH34xYkMSUaTLohb9/P
+PRsLexWLC4noPMrCIJrNm7EFZH6GoDl6sUeJKgN6u+0G+Q9Ms58=
+=Wv8b
+-----END PGP SIGNATURE-----
+
+--LZvS9be/3tNcYl/X--
