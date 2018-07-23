@@ -3,95 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FA8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE0AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE22120846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:18:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE22120846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E0E4F20846
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:19:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E4F20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388017AbeGWMTA (ORCPT
+        id S2388113AbeGWMUf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:19:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60022 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387900AbeGWMTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:19:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53B2C18A;
-        Mon, 23 Jul 2018 04:18:17 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F34503F73C;
-        Mon, 23 Jul 2018 04:18:15 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 12:18:13 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
-Subject: Re: Making KASAN compatible with VMAP_STACK
-Message-ID: <20180723111813.vbnsmx2k45eqzdkc@lakrids.cambridge.arm.com>
-References: <CALCETrW4F33LWWA=cWYZ2N9=veCmVfjhCCLnSv2qh=32fOAf-w@mail.gmail.com>
- <CACT4Y+aP4QSGBiLWt0iNHVJ4nMc_phthK9P+gTMd4d=exaAKwA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+aP4QSGBiLWt0iNHVJ4nMc_phthK9P+gTMd4d=exaAKwA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 23 Jul 2018 08:20:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57208 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387843AbeGWMUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 08:20:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D2A27AEDA;
+        Mon, 23 Jul 2018 11:19:49 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Daniel Colascione <dancol@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-api@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH 2/4] mm: proc/pid/smaps: factor out mem stats gathering
+Date:   Mon, 23 Jul 2018 13:19:31 +0200
+Message-Id: <20180723111933.15443-3-vbabka@suse.cz>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180723111933.15443-1-vbabka@suse.cz>
+References: <20180723111933.15443-1-vbabka@suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 09:40:36AM +0200, Dmitry Vyukov wrote:
-> On Sun, Jul 22, 2018 at 7:52 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> > Hi all-
-> >
-> > It would be really nice to make KASAN compatible with VMAP_STACK.
-> > Both are valuable memory debugging features, and the fact that you
-> > can't use both is disappointing.
-> >
-> > As far as I know, there are only two problems:
-> >
-> > 1. The KASAN shadow population code is a mess, and adding *anything*
-> > to the KASAN shadow requires magical, fragile incantations.  It should
-> > be cleaned up so that ranges can be easily populated without needing
-> > to very carefully align things, call helpers in the right order, etc.
-> > The core KASAN code should figure it out by itself.
-> >
-> > 2. The vmalloc area is potentially extremely large.  It might be
-> > necessary to have a way to *depopulate* shadow space when stacks get
-> > freed or, more generally, when vmap areas are freed.  Ideally KASAN
-> > would integrate with the core vmalloc/vmap code and it would Just Work
-> > (tm).  And, as a bonus, we'd get proper KASAN protection of vmalloced
-> > memory.
-> >
-> > Any volunteers to fix this?
-> 
-> Hi Andy,
-> 
-> I understand that having most configs as orthogonal settings that can
-> be enabled independently is generally good in intself, but I would
-> like to understand what does VMAP_STACK add on top of KASAN in terms
-> of debugging capabilities?
+To prepare for handling /proc/pid/smaps_rollup differently from /proc/pid/smaps
+factor out vma mem stats gathering from show_smap() - it will be used by both.
 
-VMAP_STACK makes it possible to detect stack overflows reliably at the
-point of overflow.
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ fs/proc/task_mmu.c | 55 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 31 insertions(+), 24 deletions(-)
 
-KASAN can't handle this reliably, even if it detects that an access is
-out of the stack bounds, since handling this requires stack space.
-Depending on a number of factors, this may be reported, might result in
-recursive exceptions, etc.
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index a3f98ca50981..d2ca88c92d9d 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -702,14 +702,9 @@ static int smaps_hugetlb_range(pte_t *pte, unsigned long hmask,
+ }
+ #endif /* HUGETLB_PAGE */
+ 
+-#define SEQ_PUT_DEC(str, val) \
+-		seq_put_decimal_ull_width(m, str, (val) >> 10, 8)
+-static int show_smap(struct seq_file *m, void *v)
++static void smap_gather_stats(struct vm_area_struct *vma,
++			     struct mem_size_stats *mss)
+ {
+-	struct proc_maps_private *priv = m->private;
+-	struct vm_area_struct *vma = v;
+-	struct mem_size_stats mss_stack;
+-	struct mem_size_stats *mss;
+ 	struct mm_walk smaps_walk = {
+ 		.pmd_entry = smaps_pte_range,
+ #ifdef CONFIG_HUGETLB_PAGE
+@@ -717,23 +712,6 @@ static int show_smap(struct seq_file *m, void *v)
+ #endif
+ 		.mm = vma->vm_mm,
+ 	};
+-	int ret = 0;
+-	bool rollup_mode;
+-	bool last_vma;
+-
+-	if (priv->rollup) {
+-		rollup_mode = true;
+-		mss = priv->rollup;
+-		if (mss->first) {
+-			mss->first_vma_start = vma->vm_start;
+-			mss->first = false;
+-		}
+-		last_vma = !m_next_vma(priv, vma);
+-	} else {
+-		rollup_mode = false;
+-		memset(&mss_stack, 0, sizeof(mss_stack));
+-		mss = &mss_stack;
+-	}
+ 
+ 	smaps_walk.private = mss;
+ 
+@@ -765,6 +743,35 @@ static int show_smap(struct seq_file *m, void *v)
+ 	walk_page_vma(vma, &smaps_walk);
+ 	if (vma->vm_flags & VM_LOCKED)
+ 		mss->pss_locked += mss->pss;
++}
++
++#define SEQ_PUT_DEC(str, val) \
++		seq_put_decimal_ull_width(m, str, (val) >> 10, 8)
++static int show_smap(struct seq_file *m, void *v)
++{
++	struct proc_maps_private *priv = m->private;
++	struct vm_area_struct *vma = v;
++	struct mem_size_stats mss_stack;
++	struct mem_size_stats *mss;
++	int ret = 0;
++	bool rollup_mode;
++	bool last_vma;
++
++	if (priv->rollup) {
++		rollup_mode = true;
++		mss = priv->rollup;
++		if (mss->first) {
++			mss->first_vma_start = vma->vm_start;
++			mss->first = false;
++		}
++		last_vma = !m_next_vma(priv, vma);
++	} else {
++		rollup_mode = false;
++		memset(&mss_stack, 0, sizeof(mss_stack));
++		mss = &mss_stack;
++	}
++
++	smap_gather_stats(vma, mss);
+ 
+ 	if (!rollup_mode) {
+ 		show_map_vma(m, vma);
+-- 
+2.18.0
 
-I assume we must populate shadow  for vmalloc regions today, but I guess
-that just shares the zero shadow?
-
-Thanks,
-Mark.
