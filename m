@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E639ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ED6ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5273020880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:42:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5273020880
+	by mail.kernel.org (Postfix) with ESMTP id 6882620880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:42:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6882620880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388547AbeGWNnx (ORCPT
+        id S2388610AbeGWNn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:43:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47616 "EHLO
+        Mon, 23 Jul 2018 09:43:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47620 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388251AbeGWNnx (ORCPT
+        with ESMTP id S2388251AbeGWNn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:43:53 -0400
+        Mon, 23 Jul 2018 09:43:56 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2DF4ABCF;
-        Mon, 23 Jul 2018 12:42:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7667440B;
+        Mon, 23 Jul 2018 12:42:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 010/107] lib/rhashtable: consider param->min_size when setting initial table size
-Date:   Mon, 23 Jul 2018 14:41:04 +0200
-Message-Id: <20180723122413.381466292@linuxfoundation.org>
+Subject: [PATCH 4.4 011/107] net/ipv4: Set oif in fib_compute_spec_dst
+Date:   Mon, 23 Jul 2018 14:41:05 +0200
+Message-Id: <20180723122413.418336867@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -51,64 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit 107d01f5ba10f4162c38109496607eb197059064 ]
+[ Upstream commit e7372197e15856ec4ee66b668020a662994db103 ]
 
-rhashtable_init() currently does not take into account the user-passed
-min_size parameter unless param->nelem_hint is set as well. As such,
-the default size (number of buckets) will always be HASH_DEFAULT_SIZE
-even if the smallest allowed size is larger than that. Remediate this
-by unconditionally calling into rounded_hashtable_size() and handling
-things accordingly.
+Xin reported that icmp replies may not use the address on the device the
+echo request is received if the destination address is broadcast. Instead
+a route lookup is done without considering VRF context. Fix by setting
+oif in flow struct to the master device if it is enslaved. That directs
+the lookup to the VRF table. If the device is not enslaved, oif is still
+0 so no affect.
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: cd2fbe1b6b51 ("net: Use VRF device index for lookups on RX")
+Reported-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- lib/rhashtable.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ net/ipv4/fib_frontend.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -670,8 +670,16 @@ EXPORT_SYMBOL_GPL(rhashtable_walk_stop);
- 
- static size_t rounded_hashtable_size(const struct rhashtable_params *params)
- {
--	return max(roundup_pow_of_two(params->nelem_hint * 4 / 3),
--		   (unsigned long)params->min_size);
-+	size_t retsize;
-+
-+	if (params->nelem_hint)
-+		retsize = max(roundup_pow_of_two(params->nelem_hint * 4 / 3),
-+			      (unsigned long)params->min_size);
-+	else
-+		retsize = max(HASH_DEFAULT_SIZE,
-+			      (unsigned long)params->min_size);
-+
-+	return retsize;
- }
- 
- static u32 rhashtable_jhash2(const void *key, u32 length, u32 seed)
-@@ -728,8 +736,6 @@ int rhashtable_init(struct rhashtable *h
- 	struct bucket_table *tbl;
- 	size_t size;
- 
--	size = HASH_DEFAULT_SIZE;
--
- 	if ((!params->key_len && !params->obj_hashfn) ||
- 	    (params->obj_hashfn && !params->obj_cmpfn))
- 		return -EINVAL;
-@@ -756,8 +762,7 @@ int rhashtable_init(struct rhashtable *h
- 
- 	ht->p.min_size = max(ht->p.min_size, HASH_MIN_SIZE);
- 
--	if (params->nelem_hint)
--		size = rounded_hashtable_size(&ht->p);
-+	size = rounded_hashtable_size(&ht->p);
- 
- 	/* The maximum (not average) chain length grows with the
- 	 * size of the hash table, at a rate of (log N)/(log log N).
+--- a/net/ipv4/fib_frontend.c
++++ b/net/ipv4/fib_frontend.c
+@@ -297,6 +297,7 @@ __be32 fib_compute_spec_dst(struct sk_bu
+ 	if (!ipv4_is_zeronet(ip_hdr(skb)->saddr)) {
+ 		struct flowi4 fl4 = {
+ 			.flowi4_iif = LOOPBACK_IFINDEX,
++			.flowi4_oif = l3mdev_master_ifindex_rcu(dev),
+ 			.daddr = ip_hdr(skb)->saddr,
+ 			.flowi4_tos = RT_TOS(ip_hdr(skb)->tos),
+ 			.flowi4_scope = scope,
 
 
