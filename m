@@ -2,141 +2,102 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C16ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9A8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C21DB204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B683E204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:55:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="btLqPI8z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21DB204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ragnatech.se
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="naK+kL/U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B683E204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388186AbeGWV5M (ORCPT
+        id S2388145AbeGWV6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:57:12 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34589 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388062AbeGWV5M (ORCPT
+        Mon, 23 Jul 2018 17:58:42 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:42104 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388068AbeGWV6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:57:12 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f8-v6so1720292ljk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:54:12 -0700 (PDT)
+        Mon, 23 Jul 2018 17:58:42 -0400
+Received: by mail-oi0-f67.google.com with SMTP id n84-v6so3640052oib.9;
+        Mon, 23 Jul 2018 13:55:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Ag13Hxd1fU6WAqw3mb13Z+Lzy1zd2bB7BQ2hFWTn+Y0=;
-        b=btLqPI8zO0XNpLZXWJkCVZm1LJh4+ul5bQZltovC1Au0tcrQLhTEKpOR2bq8G+Gdf4
-         kbj6iiZmdiujrEAYEZhQbO1g4tZKXf0KOlnGCjlbboXtWgEnkTi0iVIe29A5JRVfIETl
-         cNnOE/tDFfDD6AVhhzRskZ9JyBPb/vMNj3ePe+stzb4ufWsrbBEyE17GN+TcRPTV33sX
-         4tldelgrwdjagVlMCBotBx+pERzdamR8r1HeBkNNF4kln2CBs9VAf5oFD1tFhwvl4cor
-         zLhwqm2Cr3ZYAJjk2jxvF9dNeUYVZnFDa4h2sgSc4dL3y1FRAlCNMlMPNSZawbxJ9vPH
-         g/IA==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=DFNR+MXEf8GBimdMlEVfTWZarKaQ0YqvZlUwoqZTybQ=;
+        b=naK+kL/UllcIP3uk3ik7L/D3SEYhxqv4EXmjp9wAqGHnDkeNmQT7jt+dafldpbDRb7
+         hsLo0BbpM6xQYHPfbAfISdjBt92uReoUanHhWVjbtZt3E9SKbF956rbAxrJFI/7gbY1r
+         5vbvG2czcnTX8S2tudQLUsiJ7peEDBnT5f8jdX1Ip0XQgiduzs+e2keVLu+7sFE0043E
+         vvHZ0KcWKIqGASxZzK0gMeERXkFuvHoyxNXRZEseM8qnCqxdabe8C++N8Xv9dfNrUf1l
+         WUJygrTe1K+8OWuM4Op5S6pZsXlb/C5IThU8A9D/jxFi/vlSAQIrKwXP92hHKWXX5l3n
+         BFaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Ag13Hxd1fU6WAqw3mb13Z+Lzy1zd2bB7BQ2hFWTn+Y0=;
-        b=em4QjDMSxe2G+eGGCsajOAV2X8NaRBojZMol4XcacyoP6zbw8nyN0RX6jv81SDPKH7
-         t3+f9auE3j05uacvfHtHKLa4VN7u/uo+uvpbBEqUt9jx1eWlYSgBbjppyzakgn9AOF0R
-         qQ0WnPkolCTakt+hUx58rXsx1wkYP8eQlZSUffAC5QMqOL57tQXhWrHPvXLt1nBrNQna
-         FVXGGZLUA/D6DtZxiMKhACmQBxcdgsCz5kNcqrPWWXbS9VwFlu/PtE2+mVs2fvEJEl6x
-         6gV6BiFT6M2RsyWKvsDRLzCppXYPiynsQmxwfBCJvuWGyzh66EKSdMJ6kw1nE+2mtnFL
-         lqJw==
-X-Gm-Message-State: AOUpUlGD1YD88k/tLUYQSfbUFa5+FQJKwI7CbOt1uScptT9k1fNWU2pO
-        v9ZQ+DR5k4FelZkF8CYSdv9y1w==
-X-Google-Smtp-Source: AAOMgpf9y3tfZn7u19azwdLpL7uy4R1XlCv/jOh81dLlNHWLbo430zqw3xe6ZQtre8OnHOrMZ0/aCg==
-X-Received: by 2002:a2e:259:: with SMTP id 86-v6mr10437678ljc.107.1532379251725;
-        Mon, 23 Jul 2018 13:54:11 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id h9-v6sm1549236lfc.47.2018.07.23.13.54.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 13:54:10 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 22:54:10 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/12] i2c: sh_mobile: use core to detect 'no zero length
- read' quirk
-Message-ID: <20180723205410.GI1432@bigcity.dyn.berto.se>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-13-wsa+renesas@sang-engineering.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=DFNR+MXEf8GBimdMlEVfTWZarKaQ0YqvZlUwoqZTybQ=;
+        b=L0YqCZK3WwLTCJhyeMjowIYMj3p/CBvGV9st0J3MBeaMkDEsejA22Vx/cvJPt2uQUl
+         rumf3SlBeVfUJ1B69Qe1Iha1W6/bHquqarX/KlB5qGxCu8DJHita4qXPFsTz+QYBxsX3
+         9NZg8snk/X2u+LVhSIEzdUlfDWy6q4bJfxxnY18K3wQxDAYZMpjdI+4D3x1mNdh54a+I
+         XCaaL7YH85eZJJchKefep0WEX1bWyrXjLPG1SorUGTO1VpgBXtlVaQ4cTy5dTpZHzIM5
+         VlTPhRw5uDiGaVKQhtMc6Fb9A8rSia4acUmJSofdCPdJv5ug64/EmGyjA/ApE1O8fnSj
+         +c3g==
+X-Gm-Message-State: AOUpUlFUaZzVH0WRnkJLBKMwQ1q0g5BH7GytP8JxNAT25ihjEMDWAHxU
+        oHY4+azh6lxCczv5K7phFUaYdVtcYH43/fwKwTtlUegqnrw=
+X-Google-Smtp-Source: AAOMgpch5tl2LtekKILxDv++3Lp9JrkLPa9Ttup3SjAvLZLM7O+UXujZxwBlRz53CRdBievXpLFgRfvkgPEd+fIM9uU=
+X-Received: by 2002:aca:3bc2:: with SMTP id i185-v6mr469263oia.156.1532379343007;
+ Mon, 23 Jul 2018 13:55:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180723202617.15230-13-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a9d:75da:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 13:55:41
+ -0700 (PDT)
+In-Reply-To: <db8d560e-47d1-c32f-e4a2-407110f2b5b6@oracle.com>
+References: <152788068212.768348.15192457501079586650.stgit@buzz> <db8d560e-47d1-c32f-e4a2-407110f2b5b6@oracle.com>
+From:   Michael Tirado <mtirado418@gmail.com>
+Date:   Mon, 23 Jul 2018 20:55:41 +0000
+Message-ID: <CAMkWEXPTb2NJH5rv8WpKWQaZVOJZp91z5Rr-e19UjrwBxB2pNw@mail.gmail.com>
+Subject: Re: [PATCH v6] pidns: introduce syscall translate_pid
+To:     Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Serge Hallyn <serge.hallyn@ubuntu.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+Hey, I'm not seeing much activity on this so here's my $0.02
 
-Thanks for your work.
+> Unix socket automatically translates pid attached to SCM_CREDENTIALS.
+> This requires CAP_SYS_ADMIN for sending arbitrary pids and entering
+> into pid namespace, this expose process and could be insecure.
 
-On 2018-07-23 22:26:16 +0200, Wolfram Sang wrote:
-> And don't reimplement in the driver.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Perhaps it would be a good idea to add a sysctl switch that prevents
+credential spoofing over AF_UNIX \by default\ if that is the main
+concern, or is there another concern and I have read this wrong?  I'm
+having trouble thinking of a legitimate use of SCM_CREDENTIALS
+spoofing that isn't in a debugging or troubleshooting context and
+would be more comfortable if it were not possible at all... Anyone
+know of a program that relies on this spoofing functionality?
 
-> ---
-> 
->  drivers/i2c/busses/i2c-sh_mobile.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-> index 5fda4188a9e5..9c7f6f8ceb22 100644
-> --- a/drivers/i2c/busses/i2c-sh_mobile.c
-> +++ b/drivers/i2c/busses/i2c-sh_mobile.c
-> @@ -613,11 +613,6 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
->  static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
->  		    bool do_init)
->  {
-> -	if (usr_msg->len == 0 && (usr_msg->flags & I2C_M_RD)) {
-> -		dev_err(pd->dev, "Unsupported zero length i2c read\n");
-> -		return -EOPNOTSUPP;
-> -	}
-> -
->  	if (do_init) {
->  		/* Initialize channel registers */
->  		iic_wr(pd, ICCR, ICCR_SCP);
-> @@ -758,6 +753,10 @@ static const struct i2c_algorithm sh_mobile_i2c_algorithm = {
->  	.master_xfer	= sh_mobile_i2c_xfer,
->  };
->  
-> +static const struct i2c_adapter_quirks sh_mobile_i2c_quirks = {
-> +	.flags = I2C_AQ_NO_ZERO_LEN_READ,
-> +};
-> +
->  /*
->   * r8a7740 chip has lasting errata on I2C I/O pad reset.
->   * this is work-around for it.
-> @@ -925,6 +924,7 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
->  
->  	adap->owner = THIS_MODULE;
->  	adap->algo = &sh_mobile_i2c_algorithm;
-> +	adap->quirks = &sh_mobile_i2c_quirks;
->  	adap->dev.parent = &dev->dev;
->  	adap->retries = 5;
->  	adap->nr = dev->id;
-> -- 
-> 2.11.0
-> 
-
--- 
-Regards,
-Niklas Söderlund
+If you look at socket(7) under SO_PEERCRED there is a way to get
+credentials at time of connect() for an AF_UNIX SOCK_STREAM, or at
+time of socketpair() for a SOCK_DGRAM. I would like to think these
+credentials are reliable, but will probably require some extra daemon
+to proxy a dgram syslog socket.
