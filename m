@@ -2,106 +2,126 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39679ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0953EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 003D820856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:53:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003D820856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A75BA20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:56:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NN+a4vYc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A75BA20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388219AbeGWMyT (ORCPT
+        id S2388002AbeGWM5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:54:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54528 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388194AbeGWMyS (ORCPT
+        Mon, 23 Jul 2018 08:57:02 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40590 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387801AbeGWM5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:54:18 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6NBmvxf146968
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 07:53:27 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kdbqgy09b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 07:53:27 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ubraun@linux.ibm.com>;
-        Mon, 23 Jul 2018 12:53:25 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 23 Jul 2018 12:53:23 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6NBrMIC40370382
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 23 Jul 2018 11:53:22 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 36E1E4C040;
-        Mon, 23 Jul 2018 14:53:38 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D5C8A4C04A;
-        Mon, 23 Jul 2018 14:53:37 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 23 Jul 2018 14:53:37 +0100 (BST)
-From:   Ursula Braun <ubraun@linux.ibm.com>
-To:     davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        raspl@linux.ibm.com, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 4/5] net/smc: use DECLARE_BITMAP for rtokens_used_mask
-Date:   Mon, 23 Jul 2018 13:53:11 +0200
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180723115312.54694-1-ubraun@linux.ibm.com>
-References: <20180723115312.54694-1-ubraun@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18072311-0012-0000-0000-0000028D8C49
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072311-0013-0000-0000-000020BF67B0
-Message-Id: <20180723115312.54694-5-ubraun@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-23_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=817 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807230139
+        Mon, 23 Jul 2018 08:57:01 -0400
+Received: by mail-pl0-f66.google.com with SMTP id s17-v6so128260plp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 04:56:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=u2wbrpMf3BwwUyLR5tju9pXaDLmbGmxF2b//ab05B1o=;
+        b=NN+a4vYcMk1yLl/xJEEmX9LTYn+uEQJl/5LfoWkQPgt8hFhjhKAs6L7IrkmdESIRF6
+         CbutcHhtW7eyD04z8936PWkXwlAQSueSIDegJ8FDGo2Q+aF54//LJOiAC++vvxr1rkL0
+         f1HhEy+IgCNSfhOsUWgUDg6kwmHy7xYZ4Hz/gS2N6oplGxHOThfUR6ePGD1PX4f1zyuC
+         sgBQouTGJIsx3l8q/sP0HchEoCj+kRvxsxULIP88lSP/ae+QgEQcXVIJ8qnhnPyjI8cK
+         JuXs6SNtKDox9x7GxBwURBnCVf4uCCxBczmZ1rJVb0xX0doqOadMlzfBA0R/tlI8UKW6
+         eI5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=u2wbrpMf3BwwUyLR5tju9pXaDLmbGmxF2b//ab05B1o=;
+        b=nakrugBNveEOT9dPpZ7DBZO9ku0gpop6U9c+vBufY3hk3CkR4zA4L4OnP0LZRGdPmK
+         s4kEQy8FEhT/Fi9QaiAFL/IjabaSH87cYqW7WfWiOufDV+XRNdLS8RKKoM/cTCKz16oS
+         1qU3nmvGW21//REeoIA0iPBgaFezm6cjZjJP4eOl+6A7v2mibogVeTADnrxpDpqcwdcE
+         qxeg6rH5v1qYFNlk7x260c4v25hrbNv+2TKj9Dd2cjnPgwLSAc/UsdL9ovrdb+FrQ1Qn
+         JX3b5Ht+0UEntGV3onk2pIaAu0FOsz2cH7OYB0L0D121dwCSNqiTRf1BNR484baYW1lf
+         H1bQ==
+X-Gm-Message-State: AOUpUlECPSyvLSn3iI+cTYXnLFDdss+OvZnno280yyE4kSeJDe8SadGZ
+        A+4jO87SsXiCzkATftXK9gLpa2RjHamsguJM9rWgwA==
+X-Google-Smtp-Source: AAOMgpefroFWWJoGVh4sJMGS18a0xHg6JihMUgnSpyR1Dnfj05lV63Jkj1Re2b+AjuHJP/bQs6N1haFofv5eWrhvKK8=
+X-Received: by 2002:a17:902:d710:: with SMTP id w16-v6mr12666378ply.93.1532346969776;
+ Mon, 23 Jul 2018 04:56:09 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 23 Jul 2018 04:55:49
+ -0700 (PDT)
+In-Reply-To: <20180723111813.vbnsmx2k45eqzdkc@lakrids.cambridge.arm.com>
+References: <CALCETrW4F33LWWA=cWYZ2N9=veCmVfjhCCLnSv2qh=32fOAf-w@mail.gmail.com>
+ <CACT4Y+aP4QSGBiLWt0iNHVJ4nMc_phthK9P+gTMd4d=exaAKwA@mail.gmail.com> <20180723111813.vbnsmx2k45eqzdkc@lakrids.cambridge.arm.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 23 Jul 2018 13:55:49 +0200
+Message-ID: <CACT4Y+YMYogSo+Wq=29A7fKC9hufsc_DwLrneOKtsefZP-9h6g@mail.gmail.com>
+Subject: Re: Making KASAN compatible with VMAP_STACK
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ursula Braun <ursula.braun@de.ibm.com>
+On Mon, Jul 23, 2018 at 1:18 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Mon, Jul 23, 2018 at 09:40:36AM +0200, Dmitry Vyukov wrote:
+>> On Sun, Jul 22, 2018 at 7:52 PM, Andy Lutomirski <luto@kernel.org> wrote:
+>> > Hi all-
+>> >
+>> > It would be really nice to make KASAN compatible with VMAP_STACK.
+>> > Both are valuable memory debugging features, and the fact that you
+>> > can't use both is disappointing.
+>> >
+>> > As far as I know, there are only two problems:
+>> >
+>> > 1. The KASAN shadow population code is a mess, and adding *anything*
+>> > to the KASAN shadow requires magical, fragile incantations.  It should
+>> > be cleaned up so that ranges can be easily populated without needing
+>> > to very carefully align things, call helpers in the right order, etc.
+>> > The core KASAN code should figure it out by itself.
+>> >
+>> > 2. The vmalloc area is potentially extremely large.  It might be
+>> > necessary to have a way to *depopulate* shadow space when stacks get
+>> > freed or, more generally, when vmap areas are freed.  Ideally KASAN
+>> > would integrate with the core vmalloc/vmap code and it would Just Work
+>> > (tm).  And, as a bonus, we'd get proper KASAN protection of vmalloced
+>> > memory.
+>> >
+>> > Any volunteers to fix this?
+>>
+>> Hi Andy,
+>>
+>> I understand that having most configs as orthogonal settings that can
+>> be enabled independently is generally good in intself, but I would
+>> like to understand what does VMAP_STACK add on top of KASAN in terms
+>> of debugging capabilities?
+>
+> VMAP_STACK makes it possible to detect stack overflows reliably at the
+> point of overflow.
+>
+> KASAN can't handle this reliably, even if it detects that an access is
+> out of the stack bounds, since handling this requires stack space.
+> Depending on a number of factors, this may be reported, might result in
+> recursive exceptions, etc.
 
-Link group field tokens_used_mask is a bitmap. Use macro
-DECLARE_BITMAP for its definition.
-
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
----
- net/smc/smc_core.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/net/smc/smc_core.h b/net/smc/smc_core.h
-index 8807865483bb..1e8974c50550 100644
---- a/net/smc/smc_core.h
-+++ b/net/smc/smc_core.h
-@@ -192,8 +192,7 @@ struct smc_link_group {
- 			struct smc_rtoken	rtokens[SMC_RMBS_PER_LGR_MAX]
- 						[SMC_LINKS_PER_LGR_MAX];
- 						/* remote addr/key pairs */
--			unsigned long		rtokens_used_mask[BITS_TO_LONGS
--							(SMC_RMBS_PER_LGR_MAX)];
-+			DECLARE_BITMAP(rtokens_used_mask, SMC_RMBS_PER_LGR_MAX);
- 						/* used rtoken elements */
- 		};
- 		struct { /* SMC-D */
--- 
-2.16.4
-
+Interesting. Does VMAP_STACK detect task_struct smashing today? As far
+as I remember, the first version didn't.
+As an orthogonal measure we could add KASAN redzone between stack and
+task_struct, and make KASAN instrumentation detect when the new frame
+hits this redzone. We bump stack order under KASAN significantly, so
+adding, say 128 byte redzone should not be a problem. Does it make any
+sense?
