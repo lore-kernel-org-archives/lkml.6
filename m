@@ -2,80 +2,95 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8170ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F81BECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8957320671
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:42:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8957320671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B0C6020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:59:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bF1wc9uG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C6020854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388272AbeGXAqP (ORCPT
+        id S2388207AbeGXBCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 20:46:15 -0400
-Received: from mga06.intel.com ([134.134.136.31]:5717 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388149AbeGXAqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 20:46:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 16:42:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
-   d="scan'208";a="58879199"
-Received: from mfwrenn-mobl1.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.252.131.18])
-  by orsmga007.jf.intel.com with ESMTP; 23 Jul 2018 16:42:38 -0700
-Subject: Re: [PATCH] tpm: add support for partial reads
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
- <20180723201956.GB26824@linux.intel.com>
- <fb053916-f6e8-3266-14d7-128e062b6a92@intel.com>
- <1532380412.4112.22.camel@HansenPartnership.com>
- <7441b5ef-18d8-13aa-ef4d-40fe684c9218@intel.com>
- <20180723215620.GH532@ziepe.ca>
- <dabf6cf5-e62c-721f-9f19-18da34d52ec1@intel.com>
- <20180723220822.GJ532@ziepe.ca>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <ee0f0ccf-f757-a7d4-bf55-316f81fb490b@intel.com>
-Date:   Mon, 23 Jul 2018 16:42:38 -0700
+        Mon, 23 Jul 2018 21:02:48 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:43722 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388149AbeGXBCs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 21:02:48 -0400
+Received: by mail-oi0-f68.google.com with SMTP id b15-v6so4352863oib.10;
+        Mon, 23 Jul 2018 16:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6B0W1i/5jbXDWhxoT8qWghN0ElXeTNHHUpJgNkQcT7Y=;
+        b=bF1wc9uGsNsGn7ac+4X96fB/wCwSBlXS2QqiF+yWViKV4n4Uu72mDo22vds34pR5i6
+         Vqd5QPoAsx2VxQD36Q1amTztpHTiPowvOjMrsa0eoYyW/vR61Ls5qfGGlB0+TEWjAlWv
+         5yz2UYOY+RUulfXoyWPkT+ZzfXKgHaitEcf+zzxGS30HvakCih9BY1eo55Lg+nUimxhF
+         bKrfvRrw3dgnd7V4CSYYAYF+IVqXJOYdInu4Mrp7tQqNM2ANczfXUFONbh797tVJwfN/
+         kJuMzwIawDT5gHnLR0vEZaFe8BrYcidD0wYL7M+SaNjOvNg/uuCcPgMTd7p4hnRzmYoI
+         WHJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6B0W1i/5jbXDWhxoT8qWghN0ElXeTNHHUpJgNkQcT7Y=;
+        b=cN1G8cfqoCzMdiZ9aPLSffNfL02FsJ5ldw/jLVyTAlwZ0gB2xNYuHU1JrG8sOzXO5y
+         H/9hJ512XasZhiqd9ejXpmc3qvrpuIfCsY7jvgGTT26H1U1ygViCvUyCfVjCgsaXbvg+
+         rkO2smBWQZA/472Sx2MvwzBlSpbsz5JRSuXtbZPzJFvkSXmPZV++TgoRQ87FUUD7IEad
+         18SUGrxpUNzzzzhfH7cD6ymm8v8uGpF+QnGu+vI4/junuzSyFuD+VbEVBwKz9xhNZLGs
+         qDhzuSj04E2AtdTs5aws7e3Rwm3cd1/bagRvyh3goQvO5cBwJmWVKNvV8bSvUt7EOW3f
+         Ltjg==
+X-Gm-Message-State: AOUpUlFXakVIf1Mfw8N1ch8LCZdS/hS6Xlus6SRv8mRWEqeS72vjEijs
+        Z94ZnVxETT8B8xxvwmpTes13ec34FCk=
+X-Google-Smtp-Source: AAOMgpfUHab/dHGJE27BWkWKDxXZ/V9IVXlM4AjBmOTCsI802sNZmeNzSxPUx1D+hXEo86w0H6CI3Q==
+X-Received: by 2002:aca:2c3:: with SMTP id 186-v6mr889964oic.85.1532390348766;
+        Mon, 23 Jul 2018 16:59:08 -0700 (PDT)
+Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id 1-v6sm6851127oir.19.2018.07.23.16.59.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 16:59:07 -0700 (PDT)
+Subject: Re: [PATCH v5] PCI: Check for PCIe downtraining conditions
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Tal Gilboa <talgi@mellanox.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "keith.busch@intel.com" <keith.busch@intel.com>,
+        "alex_gagniuc@dellteam.com" <alex_gagniuc@dellteam.com>,
+        "austin_bolen@dell.com" <austin_bolen@dell.com>,
+        "shyam_iyer@dell.com" <shyam_iyer@dell.com>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "ariel.elior@cavium.com" <ariel.elior@cavium.com>,
+        "michael.chan@broadcom.com" <michael.chan@broadcom.com>,
+        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "airlied@gmail.com" <airlied@gmail.com>,
+        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+        "mike.marciniszyn@intel.com" <mike.marciniszyn@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180718215359.GG128988@bhelgaas-glaptop.roam.corp.google.com>
+ <20180723200339.23943-1-mr.nuke.me@gmail.com>
+ <20180723140143.1a46902f@cakuba.netronome.com>
+ <b9a6b3b8-56cf-8bb5-2568-071ccd8a4f28@mellanox.com>
+ <20180723151439.50524a2a@cakuba.netronome.com>
+From:   "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <2bb6e96c-a48d-62ea-90a3-ec978536372f@gmail.com>
+Date:   Mon, 23 Jul 2018 18:59:06 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180723220822.GJ532@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180723151439.50524a2a@cakuba.netronome.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,21 +98,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 03:08 PM, Jason Gunthorpe wrote:
-> On Mon, Jul 23, 2018 at 03:00:20PM -0700, Tadeusz Struk wrote:
->> On 07/23/2018 02:56 PM, Jason Gunthorpe wrote:
->>> The proposed patch doesn't clear the data_pending if the entire buffer
->>> is not consumed, so of course it is ABI breaking, that really isn't OK.
->> The data_pending will be cleared by the timeout handler if the user doesn't
->> read the response fully before the timeout expires. The is the same situation
->> if the user would not read the response at all.
-> That causes write() to fail with EBUSY
+
+
+On 07/23/2018 05:14 PM, Jakub Kicinski wrote:
+> On Tue, 24 Jul 2018 00:52:22 +0300, Tal Gilboa wrote:
+>> On 7/24/2018 12:01 AM, Jakub Kicinski wrote:
+>>> On Mon, 23 Jul 2018 15:03:38 -0500, Alexandru Gagniuc wrote:
+>>>> PCIe downtraining happens when both the device and PCIe port are
+>>>> capable of a larger bus width or higher speed than negotiated.
+>>>> Downtraining might be indicative of other problems in the system, and
+>>>> identifying this from userspace is neither intuitive, nor
+>>>> straightforward.
+>>>>
+>>>> The easiest way to detect this is with pcie_print_link_status(),
+>>>> since the bottleneck is usually the link that is downtrained. It's not
+>>>> a perfect solution, but it works extremely well in most cases.
+>>>>
+>>>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+>>>> ---
+>>>>
+>>>> For the sake of review, I've created a __pcie_print_link_status() which
+>>>> takes a 'verbose' argument. If we agree want to go this route, and update
+>>>> the users of pcie_print_link_status(), I can split this up in two patches.
+>>>> I prefer just printing this information in the core functions, and letting
+>>>> drivers not have to worry about this. Though there seems to be strong for
+>>>> not going that route, so here it goes:
+>>>
+>>> FWIW the networking drivers print PCIe BW because sometimes the network
+>>> bandwidth is simply over-provisioned on multi port cards, e.g. 80Gbps
+>>> card on a x8 link.
+>>>
+>>> Sorry to bike shed, but currently the networking cards print the info
+>>> during probe.  Would it make sense to move your message closer to probe
+>>> time?  Rather than when device is added.  If driver structure is
+>>> available, we could also consider adding a boolean to struct pci_driver
+>>> to indicate if driver wants the verbose message?  This way we avoid
+>>> duplicated prints.
+>>>
+>>> I have no objection to current patch, it LGTM.  Just a thought.
+>>
+>> I don't see the reason for having two functions. What's the problem with
+>> adding the verbose argument to the original function?
 > 
-> NAK from me on breaking the ABI like this
+> IMHO it's reasonable to keep the default parameter to what 90% of users
+> want by a means on a wrapper.  The non-verbose output is provided by
+> the core already for all devices.
+> 
+> What do you think of my proposal above Tal?  That would make the extra
+> wrapper unnecessary since the verbose parameter would be part of the
+> driver structure, and it would avoid the duplicated output.
 
-What if we introduce this new behavior only for the non-blocking mode
-as James suggested? Or do you have some other suggestions?
+I see how it might make sense to add another member to the driver 
+struct, but is it worth the extra learning curve? It seems to be 
+something with the potential to confuse new driver developers, and 
+having a very marginal benefit.
+Although, if that's what people want...
 
-Thanks,
--- 
-Tadeusz
+Alex
