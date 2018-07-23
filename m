@@ -2,173 +2,181 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB28ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BCCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C606520856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:49:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C606520856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D32B20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:49:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D32B20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388716AbeGWNu5 (ORCPT
+        id S2388762AbeGWNvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:50:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51470 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389608AbeGWNsF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:05 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A41DDC18;
-        Mon, 23 Jul 2018 12:46:49 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
-        "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
-        Alexey Makhalov <amakhalov@vmware.com>,
-        Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 093/107] x86/bugs: Expose x86_spec_ctrl_base directly
-Date:   Mon, 23 Jul 2018 14:42:27 +0200
-Message-Id: <20180723122418.166772143@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
-References: <20180723122413.003644357@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 23 Jul 2018 09:51:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33326 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388662AbeGWNu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 09:50:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A570580D;
+        Mon, 23 Jul 2018 05:49:54 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DAD973F778;
+        Mon, 23 Jul 2018 05:49:52 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 13:49:46 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Alessio Balsini <alessio.balsini@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [RFC PATCH] sched/deadline: sched_getattr() returns absolute
+ dl-task information
+Message-ID: <20180723124946.GA2683@e110439-lin>
+References: <20180629120947.14579-1-alessio.balsini@gmail.com>
+ <20180723094904.GB2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723094904.GB2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On 23-Jul 11:49, Peter Zijlstra wrote:
 
-------------------
+[...]
 
-From: Thomas Gleixner <tglx@linutronix.de>
+> > -void __getparam_dl(struct task_struct *p, struct sched_attr *attr)
+> > +void __getparam_dl(struct task_struct *p, struct sched_attr *attr,
+> > +		   unsigned int flags)
+> >  {
+> >  	struct sched_dl_entity *dl_se = &p->dl;
+> >  
+> >  	attr->sched_priority = p->rt_priority;
+> > -	attr->sched_runtime = dl_se->dl_runtime;
+> > -	attr->sched_deadline = dl_se->dl_deadline;
+> > +
+> > +	if (flags & SCHED_GETATTR_FLAGS_DL_ABSOLUTE) {
+> > +		/*
+> > +		 * If the task is not running, its runtime is already
+> > +		 * properly accounted. Otherwise, update clocks and the
+> > +		 * statistics for the task.
+> > +		 */
+> > +		if (task_running(task_rq(p), p)) {
+> > +			struct rq_flags rf;
+> > +			struct rq *rq;
+> > +
+> > +			rq = task_rq_lock(p, &rf);
+> > +			sched_clock_tick();
+> 
+> This isn't required here. The reason it is used elsewhere is because
+> those are interrupts, but this is a system call, the clock state should
+> be good.
+> 
+> > +			update_rq_clock(rq);
+> > +			task_tick_dl(rq, p, 0);
+> 
+> Do we really want task_tick_dl() here, or update_curr_dl()?
 
-commit fa8ac4988249c38476f6ad678a4848a736373403 upstream
+I think this was to cover the case of a syscall being called while the
+task is running and we are midway between two ticks...
 
-x86_spec_ctrl_base is the system wide default value for the SPEC_CTRL MSR.
-x86_spec_ctrl_get_default() returns x86_spec_ctrl_base and was intended to
-prevent modification to that variable. Though the variable is read only
-after init and globaly visible already.
+> Also, who says the task still is dl ? :-)
 
-Remove the function and export the variable instead.
+Good point, but what should be the rule in general for these cases?
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
-Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
-Reviewed-by: Alexey Makhalov <amakhalov@vmware.com>
-Reviewed-by: Bo Gan <ganb@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
+We already have:
 
- arch/x86/include/asm/nospec-branch.h |   16 +++++-----------
- arch/x86/include/asm/spec-ctrl.h     |    3 ---
- arch/x86/kernel/cpu/bugs.c           |   11 +----------
- 3 files changed, 6 insertions(+), 24 deletions(-)
+   SYSCALL_DEFINE4(sched_getattr())
+       ....
+       if (task_has_dl_policy(p))
+            __getparam_dl(p, &attr);
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -172,16 +172,7 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_IBRS,
- };
- 
--/*
-- * The Intel specification for the SPEC_CTRL MSR requires that we
-- * preserve any already set reserved bits at boot time (e.g. for
-- * future additions that this kernel is not currently aware of).
-- * We then set any additional mitigation bits that we want
-- * ourselves and always use this as the base for SPEC_CTRL.
-- * We also use this when handling guest entry/exit as below.
-- */
- extern void x86_spec_ctrl_set(u64);
--extern u64 x86_spec_ctrl_get_default(void);
- 
- /* The Speculative Store Bypass disable variants */
- enum ssb_mitigation {
-@@ -232,6 +223,9 @@ static inline void indirect_branch_predi
- 	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB);
- }
- 
-+/* The Intel SPEC CTRL MSR base value cache */
-+extern u64 x86_spec_ctrl_base;
-+
- /*
-  * With retpoline, we must use IBRS to restrict branch prediction
-  * before calling into firmware.
-@@ -240,7 +234,7 @@ static inline void indirect_branch_predi
-  */
- #define firmware_restrict_branch_speculation_start()			\
- do {									\
--	u64 val = x86_spec_ctrl_get_default() | SPEC_CTRL_IBRS;		\
-+	u64 val = x86_spec_ctrl_base | SPEC_CTRL_IBRS;			\
- 									\
- 	preempt_disable();						\
- 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
-@@ -249,7 +243,7 @@ do {									\
- 
- #define firmware_restrict_branch_speculation_end()			\
- do {									\
--	u64 val = x86_spec_ctrl_get_default();				\
-+	u64 val = x86_spec_ctrl_base;					\
- 									\
- 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
- 			      X86_FEATURE_USE_IBRS_FW);			\
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -47,9 +47,6 @@ void x86_spec_ctrl_restore_host(u64 gues
- extern u64 x86_amd_ls_cfg_base;
- extern u64 x86_amd_ls_cfg_ssbd_mask;
- 
--/* The Intel SPEC CTRL MSR base value cache */
--extern u64 x86_spec_ctrl_base;
--
- static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
- {
- 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -35,6 +35,7 @@ static void __init ssb_select_mitigation
-  * writes to SPEC_CTRL contain whatever reserved bits have been set.
-  */
- u64 x86_spec_ctrl_base;
-+EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
- 
- /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -139,16 +140,6 @@ void x86_spec_ctrl_set(u64 val)
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
- 
--u64 x86_spec_ctrl_get_default(void)
--{
--	u64 msrval = x86_spec_ctrl_base;
--
--	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
--		msrval |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
--	return msrval;
--}
--EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
--
- void
- x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
- {
+which is also potentially racy, isn't it?
+
+In this syscall we don't even use get_task_struct()... as we do for
+example in sched_setaffinity()...
+
+What should we do if, in the middle of such a  syscall, someone else
+demoted the task to a different class?
+
+Should we fail the syscall with a specific error?
+
+Or just make the syscall return the most updated metrics for all the
+scheduling classes since we cannot grant the user anything about what
+the task will be once we return to userspace?
 
 
+> > +			task_rq_unlock(rq, p, &rf);
+> > +		}
+> > +
+> > +		/*
+> > +		 * If the task is throttled, this value could be negative,
+> > +		 * but sched_runtime is unsigned.
+> > +		 */
+> > +		attr->sched_runtime = dl_se->runtime <= 0 ? 0 : dl_se->runtime;
+> > +		attr->sched_deadline = dl_se->deadline;
+> 
+> This is all very racy..
+> 
+> Even if the task wasn't running when you did the task_running() test, it
+> could be running now. And if it was running, it might not be running
+> anymore by the time you've acquired the rq->lock.
+
+Which means we should use something like:
+
+   if (flags & SCHED_GETATTR_FLAGS_DL_ABSOLUTE) {
+        /* Lock the task and the RQ before any other check and upate */
+        rq = task_rq_lock(p, &rf);
+
+        /* Check the task is still DL ?*/
+
+        /* Update task stats */
+
+        task_rq_unlock(rq, p, &rf);
+   }
+
+right?
+
+If that's better, then we should probably even better move the
+task_rq_lock at the beginning of SYSCALL_DEFINE4(sched_getattr()) ?
+
+> On 32bit reading these numbers without locks is broken to boot. And even
+> on 64bit, I suppose you can a consistent snapshot of runtime and
+> deadline together, which isn't possible without the locks.
+
+Indeed... I think we really need the lock and, likely, to place it at
+the beginning of the syscall...
+
+> And of course, by the time we get back to userspace, the returned values
+> will be out-of-date anyway. But that isn't to be helped I suppose.
+
+Yes, but that's always kind-of implied by syscall returning kernel
+metrics, isn't it?
+
+> > +	} else {
+> > +		attr->sched_runtime = dl_se->dl_runtime;
+> > +		attr->sched_deadline = dl_se->dl_deadline;
+> > +	}
+> > +
+> >  	attr->sched_period = dl_se->dl_period;
+> >  	attr->sched_flags = dl_se->flags;
+> >  }
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
