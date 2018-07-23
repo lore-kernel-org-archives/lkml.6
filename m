@@ -1,100 +1,134 @@
 Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADEFECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7458ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 075E420852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6115320875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:40:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YNfy2h0A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075E420852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Eux7e6ox"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6115320875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388228AbeGWSl1 (ORCPT
+        id S2388242AbeGWSmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:41:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60378 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388086AbeGWSl0 (ORCPT
+        Mon, 23 Jul 2018 14:42:38 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42414 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388084AbeGWSmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:41:26 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6NHYPcW150163;
-        Mon, 23 Jul 2018 17:39:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ptOcfrI9q1XzseTyNaiyIMcfwpmN+9SgliSimjX/8TM=;
- b=YNfy2h0ATyDRlPsfw9R4owjyNLzydBaRM7frLcL1RVno17TIgjYo6rP0BW5Pwsbhsya9
- XcadrT6maK+pTJbNDLLthoKA2xK6ZDc8XKXJQYtIKlM2xxRV4j0cmaYh4Cc/UEXEUuZr
- klUF2ricw0QqgvP0grmeZMB2pRiq/iz2nXxG7mQdoGzsbCgrgEYi79a7wgX4LkXIdpX1
- e17UE1ppKKNdfKt78pv7ohcXp2NXYIRnttTFlWjgAmSD1/J96Y5WFnyV75IkMcC6U2pz
- IPpoDSYP2D5ptRL2J7qj1mlta+bROpjyC3jUWrb1vrAVfTpG+0p4H975LDRHuBL56TNV 7w== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2kbv8swmqe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Jul 2018 17:39:03 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6NHd1h1020346
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Jul 2018 17:39:01 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6NHd1BV020536;
-        Mon, 23 Jul 2018 17:39:01 GMT
-Received: from [10.209.243.127] (/10.209.243.127)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 23 Jul 2018 10:39:00 -0700
-Subject: Re: KASAN: use-after-free Read in rds_cong_queue_updates (2)
-To:     syzbot <syzbot+470ae97a39f16146af45@syzkaller.appspotmail.com>,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, syzkaller-bugs@googlegroups.com
-References: <000000000000cdb5450571adfe40@google.com>
-From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <ed11f25c-6e61-16c2-2ac0-e3196c32ffb6@oracle.com>
-Date:   Mon, 23 Jul 2018 10:38:58 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 23 Jul 2018 14:42:37 -0400
+Received: by mail-pl0-f67.google.com with SMTP id z7-v6so520528plo.9
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 10:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UIKH7mt6f5ImH5PUBNtJLKEl453d44EJRbuAtE7fNck=;
+        b=Eux7e6oxjqiXIxDr2yyvoiNdZz+cUPXMmM50vMZaEc9QSNvmTeEMkXj6Ip1ek8fb+Q
+         PMBhjRYZOEMQLegbX3AhjGI0RAEbHVGpIy/a68H+X3N9L+MYS52JHKNw0CieB3aBsJ3k
+         1XOy+hh+QRPf/IcSSr9YF5XPXYfAY/uaahTbQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UIKH7mt6f5ImH5PUBNtJLKEl453d44EJRbuAtE7fNck=;
+        b=Bb/sLxblC+z3atlykBANd0Q4z8eqOGOytDMSJbTQkSoAtgwBpELsbQErhwCFHBmo0O
+         RJYO8aZA+Tjkyi9oPq0ZmCNRUNSCKvoNTY10n130wT5q6ZM1xZ5o/SxL5DL9dJCgZXFe
+         chvs/SwH0fM6P3zlNRCdNHkTCNNLGHpJIHFPmPUHgGCE7k9YgZpaq5CRqoQiQW70VK5P
+         sYP/uupeFXvnZGCg55Lt2C5lYOjQfx55WSuEhjQTXvO1v08azNdppIfjfVF2B099UF94
+         oMnDQTmuSJOjvsfCUBpOoBiGkUF5n1XQjpjderDsS4i1Iw71KsL9RfTFBeDSIAiXgd1I
+         qTTQ==
+X-Gm-Message-State: AOUpUlGhvcK7rO2UQSnPE5R+G9HRtRiIEk4bjZ55zeKYvwKVVQH19GZ2
+        +ECnWi3gH4lGvHFZOTqWthKOVA==
+X-Google-Smtp-Source: AAOMgpevA2AgWSJbpnPuzQGoYwxWTNK8IFye/DQ+1bpJ0FiCaZicBJSYoX4jYQUqAKtdJYCyWmDEvA==
+X-Received: by 2002:a17:902:a58b:: with SMTP id az11-v6mr5826067plb.36.1532367619709;
+        Mon, 23 Jul 2018 10:40:19 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id f6-v6sm14827526pgf.52.2018.07.23.10.40.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 10:40:19 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 10:40:18 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v10 3/7] Bluetooth: btqca: Redefine qca_uart_setup() to
+ generic function.
+Message-ID: <20180723174018.GK129942@google.com>
+References: <20180720133243.6851-1-bgodavar@codeaurora.org>
+ <20180720133243.6851-4-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <000000000000cdb5450571adfe40@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8963 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=603
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807230197
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180720133243.6851-4-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/23/2018 10:30 AM, syzbot wrote:
-> Hello,
+On Fri, Jul 20, 2018 at 07:02:39PM +0530, Balakrishna Godavarthi wrote:
+> Redefinition of qca_uart_setup will help future Qualcomm Bluetooth
+> SoC, to use the same function instead of duplicating the function.
+> Added new arguments soc_type and soc_ver to the functions.
 > 
-> syzbot found the following crash on:
+> These arguments will help to decide type of firmware files
+> to be loaded into Bluetooth chip.
+> soc_type holds the Bluetooth chip connected to APPS processor.
+> soc_ver holds the Bluetooth chip version.
 > 
-> HEAD commit:    fcf4793e278e tls: check RCV_SHUTDOWN in tls_wait_data
-> git tree:       net
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1738cb2c400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c0bdc4175608181c
-> dashboard link: 
-> https://syzkaller.appspot.com/bug?extid=470ae97a39f16146af45
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  drivers/bluetooth/btqca.c   | 20 +++++++-------------
+>  drivers/bluetooth/btqca.h   | 13 +++++++++++--
+>  drivers/bluetooth/hci_qca.c | 10 +++++++++-
+>  3 files changed, 27 insertions(+), 16 deletions(-)
 > 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+470ae97a39f16146af45@syzkaller.appspotmail.com
-> 
-dup: syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com
+> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> index c5cf9cab438a..b556710ee1bd 100644
+> --- a/drivers/bluetooth/btqca.c
+> +++ b/drivers/bluetooth/btqca.c
+> @@ -85,6 +85,9 @@ int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
+>  out:
+>  	kfree_skb(skb);
+>  
+> +	if (err < 0 || *soc_version == 0)
+> +		bt_dev_err(hdev, "QCA Failed to get version (%d)", err);
+
+You also have to set 'err' if soc_version is 0, so the caller can skip
+the check for soc_version == 0
+
+I'd suggest:
+
+  // directly after setting soc_version
+  if (*soc_version == 0)
+    err = -EILSEQ; // or should it be a different error code?
+
+  ...
+
+  if (err)
+    bt_dev_err(hdev, "QCA Failed to get version (%d)", err);
+
+You could also limit the error log to the 'if (*soc_version == 0)'
+branch, for all other errors there will already be a more specific log
+entry.
+
+> +
+>  	return err;
+>  }
+
+Cheers
+
+Matthias
