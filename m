@@ -2,124 +2,178 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86892ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B71ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F7C62064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A3822064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 22:21:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fikSmEQa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F7C62064D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8GJ596u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A3822064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388253AbeGWXUc (ORCPT
+        id S2388189AbeGWXZI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 19:20:32 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40316 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388077AbeGWXUc (ORCPT
+        Mon, 23 Jul 2018 19:25:08 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54537 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388052AbeGWXZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 19:20:32 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z13-v6so577152wma.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 15:17:12 -0700 (PDT)
+        Mon, 23 Jul 2018 19:25:08 -0400
+Received: by mail-wm0-f67.google.com with SMTP id c14-v6so581858wmb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 15:21:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=4lzxdUzQjGT+2u99IpVWmcY6frX1xjf8jlPpXaH4TCk=;
-        b=fikSmEQax0Oga927EzBB48WsjqQX5OGQefd/aj3SJumvJ3zmcSy6WoddxCIgIFuAjb
-         Hw85848JskInQihPy9oJbWYiHmEIU78XH7eKAIwAtKw/1NI8dnkAH3MNKXFMQBLuiETF
-         PH8KXBtJ7Fh4iSRytlRs4whl9sQeaC1BoEGXtcS+RNDBfymeQwWS+6s9kJT6wZlC1X7z
-         HV682/rOZ3gzLTx56tDsEmlZ7vR6YnJPaEcte9rUx56qMHfdIS2oIuNt9gBYsyL450hp
-         Q7TRii5TXaKTESwj2xQ2mBeyUE0KI70ihR1zSdcAz3erYOYFsbGwAs/zSJVE67l7K9Lt
-         D6vA==
+        h=from:to:cc:subject:date:message-id;
+        bh=7solSrVdPRwjnV/M/sUvZyZgjJdnb6BWxwHcSoLmjtI=;
+        b=I8GJ596uxBJK2EAdsBb74r1/mAO/xQ3s19LVL9Jn7CvwTZkoS+KL3DRRYpY7Bw/ya8
+         hk+AG0R8aJziYUWYTnRr5B5D023Z7fank6nGdu4Nc6P85mtKTo0tkIlkhjiIsF4Ukrif
+         q5tPTQaZ60uq92YRZGkUjHtGmd1HpZlXLXGfvymnH0zKLKcYP9Tcugf3xGuvRBAf0/pC
+         2TSZ4GIJUyvC+ujAGUgM7Y5uLF12KvXjXSgRJEXv9q9fV5iLpLdpsaJ+r9X9wa4WeQcU
+         nCU+surF9Piltu2Iu1SBDoGYR/0HK6007O/+Pf7v7u++VLP9yN5LyMjsUWyM/L8Ci2ZQ
+         hnBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=4lzxdUzQjGT+2u99IpVWmcY6frX1xjf8jlPpXaH4TCk=;
-        b=TzZW3/sgA6t8BKamMA5bjCI1olrCvvFbbGfvV+FGHFLEdtxzfXeCDWXNqsio9Tfx0P
-         gQrd4vobYxPSe3t6VfoLwWuI3/OJ7vE2pf+EqkqW45iODQtcQhOkrMebSiTETw+jU7ZK
-         RN7UWWvtWYzh9bx+m0w9foFHmyYpSplBUSYJ7yaK8e5pAfMFeg19q0vLUqPW5K+KesB3
-         9TbX77+Hgje864Fc7cAXnrnHyTPOd6rUSFy4Hgsa/GhqbNRIPsQNqcik81UY2uvTm18z
-         g43NsqgQeAtr9EKryA4rwsWIVE7HG54gPFltMrgCd6QPH4ctYAw5ki1YH5YyhGTkCTRQ
-         J//Q==
-X-Gm-Message-State: AOUpUlFKt6dp7TiASF7zEi6DmAV6jPfojILGXK5SIK7vi9vEG17Y+vg0
-        gnbXSGzOfvgOkI8jyYtUoty0gcYTpMUzlUolfso=
-X-Google-Smtp-Source: AAOMgpe4HclUbY7tVZJBeMDodSL5tjHy0RW3FjOaUbNZJXsUTeRenl/7K1+lkX8gW5uUId5flxVm6eshBsVoBaUTzVM=
-X-Received: by 2002:a1c:e041:: with SMTP id x62-v6mr369454wmg.155.1532384232226;
- Mon, 23 Jul 2018 15:17:12 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:7507:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 15:17:11
- -0700 (PDT)
-In-Reply-To: <87tvoppqwa.fsf@notabene.neil.brown.name>
-References: <874lkmw54j.fsf@notabene.neil.brown.name> <61e255fa-ece4-5566-d63a-730aaa25f18c@gmail.com>
- <87sh85uzu3.fsf@notabene.neil.brown.name> <a3bb28f9-1185-3dbb-1a1f-1bfe03a8798c@gmail.com>
- <87efjnvpjl.fsf@notabene.neil.brown.name> <CAN8TOE9Pr2i4tXu8mGuY7xSY5bU_r7UhQ9SxfqYg_M4YDUt0ew@mail.gmail.com>
- <87tvoppqwa.fsf@notabene.neil.brown.name>
-From:   Brian Norris <computersforpeace@gmail.com>
-Date:   Mon, 23 Jul 2018 15:17:11 -0700
-Message-ID: <CAN8TOE-+XpeQ0eLEW3YdAGGtuw5reeuJRZvnMb+QquJycJWLQA@mail.gmail.com>
-Subject: Re: [PATCH] mtd: spi-nor: clear Extended Address Reg on switch to
- 3-byte addressing.
-To:     NeilBrown <neil@brown.name>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7solSrVdPRwjnV/M/sUvZyZgjJdnb6BWxwHcSoLmjtI=;
+        b=plQa0YdPB3OH+kGzPNEuaMFB61SoA+ElnqXclwlWI4KPZlUPGSYIEy3H/wQrIcHJHx
+         vhIKDgr6rjwEQLmKVLZl29RhLt4d0mAJ5A5d/Ea4Ak5egiiCGwxKaENVVi6+nRaifhx+
+         vlimc3AZ+gJfcXk2b4wAcNGaOG9vAm2SwM2hJ2AcsU0jaYmPiM8Jea1O8+zJLEtkwpJc
+         U95b69ugOyulMM4uCfwSUelJrnelcj0Gvw/bJoQx92yacX1mN9UYNly18XRebQWoijSt
+         /ssC9NHBvdPEtGpLl7zCx52wsBSDuXzn4vnNF9gfsF3+VzPkPz0yInYhTKkvYZExRgN0
+         QD6A==
+X-Gm-Message-State: AOUpUlHnBS++gLIxET2Dc5HY/kj7v1WrftunfU7NJhad7REcFMYr5eZR
+        Uu1pCxcbP/udOWm0zsZOYvo=
+X-Google-Smtp-Source: AAOMgpf2LYXBJDZGdqU2V4S3zcwM7REPI/Cg8VGqg4qSCKaRlYlk/ko+rRzCPD4SSyM/DWyFe40VaQ==
+X-Received: by 2002:a1c:6f88:: with SMTP id c8-v6mr403187wmi.49.1532384506814;
+        Mon, 23 Jul 2018 15:21:46 -0700 (PDT)
+Received: from we.local (athedsl-4407117.home.otenet.gr. [79.130.175.61])
+        by smtp.gmail.com with ESMTPSA id j3-v6sm11869387wrt.70.2018.07.23.15.21.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 15:21:45 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by we.local (Postfix) with ESMTP id 5AA99640805;
+        Tue, 24 Jul 2018 01:21:44 +0300 (EEST)
+X-Virus-Scanned: amavisd-new at local
+Received: from we.local ([127.0.0.1])
+        by localhost (we.local [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id g3oZ6ceysNUF; Tue, 24 Jul 2018 01:21:42 +0300 (EEST)
+Received: by we.local (Postfix, from userid 1000)
+        id CC3A96408BB; Tue, 24 Jul 2018 01:21:42 +0300 (EEST)
+From:   Georgios Tsotsos <tsotsos@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     aaro.koskinen@iki.fi, jhogan@kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Georgios Tsotsos <tsotsos@gmail.com>
+Subject: [PATCH] Staging: octeon: Apply Licence and resolves warnings according to TODO list. There are also a few "checks" that probably should revised but i think most of them could be resolved by breaking down cvmx_usb_poll_channel()
+Date:   Tue, 24 Jul 2018 01:21:17 +0300
+Message-Id: <20180723222117.542-1-tsotsos@gmail.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
+---
+ drivers/staging/octeon-usb/octeon-hcd.c | 55 ++++++++++++++++++---------------
+ drivers/staging/octeon-usb/octeon-hcd.h |  1 +
+ 2 files changed, 31 insertions(+), 25 deletions(-)
 
-On Mon, Jul 23, 2018 at 2:45 PM, NeilBrown <neil@brown.name> wrote:
-> On Mon, Jul 23 2018, Brian Norris wrote:
->> On Mon, Apr 9, 2018 at 6:05 PM, NeilBrown <neil@brown.name> wrote:
->>> On Mon, Apr 09 2018, Marek Vasut wrote:
->>>> On 04/08/2018 11:56 PM, NeilBrown wrote:
->>>>> were added to Linux.  They appear to be designed to address a very
->>>>> similar situation to mine.  Unfortunately they aren't complete as the
->>>>> code to disable 4-byte addressing doesn't follow documented requirements
->>>>> (at least for winbond) and doesn't work as intended (at least in one
->>>>> case - mine). This code should either be fixed (e.g. with my patch), or removed.
->>
->> I would (and already did) vote for removal. The shutdown() hook just
->> papers over bugs and leads people to think that it is a good solution.
->> There's a reason we rejected such patches repeatedly in the past. This
->> one slipped through.
->
-> Hi Brian,
->  thanks for your thoughts.
->  Could you just clarify what you see as the end-game.
->  Do you have an alternate approach which can provide reliability for the
->  various hardware which currently seems to need these patches?
->  Or do you propose that people with this hardware should suffer
->  a measurably lower level of reliability than they currently enjoy?
+diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
+index cded30f145aa..472ad5917ad2 100644
+--- a/drivers/staging/octeon-usb/octeon-hcd.c
++++ b/drivers/staging/octeon-usb/octeon-hcd.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file is subject to the terms and conditions of the GNU General Public
+  * License.  See the file "COPYING" in the main directory of this archive
+@@ -377,27 +378,29 @@ struct octeon_hcd {
+ };
+ 
+ /* This macro spins on a register waiting for it to reach a condition. */
+-#define CVMX_WAIT_FOR_FIELD32(address, _union, cond, timeout_usec)	    \
+-	({int result;							    \
+-	do {								    \
+-		u64 done = cvmx_get_cycle() + (u64)timeout_usec *	    \
+-			   octeon_get_clock_rate() / 1000000;		    \
+-		union _union c;						    \
+-									    \
+-		while (1) {						    \
+-			c.u32 = cvmx_usb_read_csr32(usb, address);	    \
+-									    \
+-			if (cond) {					    \
+-				result = 0;				    \
+-				break;					    \
+-			} else if (cvmx_get_cycle() > done) {		    \
+-				result = -1;				    \
+-				break;					    \
+-			} else						    \
+-				__delay(100);				    \
+-		}							    \
+-	} while (0);							    \
+-	result; })
++#define CVMX_WAIT_FOR_FIELD32(address, _union, cond, timeout_usec)	\
++({									\
++	int result;							\
++	do {								\
++		u64 done = cvmx_get_cycle() + (u64)(timeout_usec) *	\
++			   octeon_get_clock_rate() / 1000000;		\
++		union _union c;						\
++									\
++		while (1) {						\
++			c.u32 = cvmx_usb_read_csr32(usb, address);	\
++									\
++			if (cond) {					\
++				result = 0;				\
++				break;					\
++			} else if (cvmx_get_cycle() > done) {		\
++				result = -1;				\
++				break;					\
++			} else						\
++				__delay(100);				\
++		}							\
++	} while (0);							\
++	result;								\
++})
+ 
+ /*
+  * This macro logically sets a single field in a CSR. It does the sequence
+@@ -2636,12 +2639,14 @@ static int cvmx_usb_poll_channel(struct octeon_hcd *usb, int channel)
+ 				hcintmsk.u32 = 0;
+ 				hcintmsk.s.chhltdmsk = 1;
+ 				cvmx_usb_write_csr32(usb,
+-						     CVMX_USBCX_HCINTMSKX(channel, usb->index),
+-						     hcintmsk.u32);
++						CVMX_USBCX_HCINTMSKX(channel,
++						usb->index),
++						hcintmsk.u32);
+ 				usbc_hcchar.s.chdis = 1;
+ 				cvmx_usb_write_csr32(usb,
+-						     CVMX_USBCX_HCCHARX(channel, usb->index),
+-						     usbc_hcchar.u32);
++						CVMX_USBCX_HCCHARX(channel,
++						usb->index),
++						usbc_hcchar.u32);
+ 				return 0;
+ 			} else if (usbc_hcint.s.xfercompl) {
+ 				/*
+diff --git a/drivers/staging/octeon-usb/octeon-hcd.h b/drivers/staging/octeon-usb/octeon-hcd.h
+index 3353aefe662e..769c36cf6614 100644
+--- a/drivers/staging/octeon-usb/octeon-hcd.h
++++ b/drivers/staging/octeon-usb/octeon-hcd.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Octeon HCD hardware register definitions.
+  *
+-- 
+2.16.4
 
-I'd suggest following the original thread, which I resurrected:
-
-[PATCHv3 2/2] mtd: m25p80: restore the status of SPI flash when exiting
-https://lkml.org/lkml/2018/7/23/1207
-https://patchwork.ozlabs.org/patch/845022/
-
-I suppose I could CC you on future replies...
-
-My current summary: I'd prefer the hack be much more narrowly applied,
-with a big warning, if we apply it at all. But if we don't merge
-something to narrow the use of the hack, then yes, I'd prefer a
-degraded experience for crappy products over today's status quo.
-
-Brian
