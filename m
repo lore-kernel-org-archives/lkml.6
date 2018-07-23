@@ -2,127 +2,95 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 435EBECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A665ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 066EA20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:27:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 066EA20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 13D3020856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:29:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IYHGOuy5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13D3020856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388624AbeGWQ32 (ORCPT
+        id S2388570AbeGWQau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:29:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35696 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388161AbeGWQ32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 12:29:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5DDA918A;
-        Mon, 23 Jul 2018 08:27:43 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9A443F237;
-        Mon, 23 Jul 2018 08:27:41 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 16:27:34 +0100
-From:   Morten Rasmussen <morten.rasmussen@arm.com>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     vincent.guittot@linaro.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
-        mingo@redhat.com, valentin.schneider@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/4] sched/topology: SD_ASYM_CPUCAPACITY flag detection
-Message-ID: <20180723152551.GA29978@e105550-lin.cambridge.arm.com>
-References: <1532093554-30504-1-git-send-email-morten.rasmussen@arm.com>
- <1532093554-30504-2-git-send-email-morten.rasmussen@arm.com>
- <dbd8deec-a79d-5697-0c50-ea1a9ab7e5c9@arm.com>
+        Mon, 23 Jul 2018 12:30:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387922AbeGWQau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 12:30:50 -0400
+Received: from mail-qt0-f170.google.com (mail-qt0-f170.google.com [209.85.216.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3310120875;
+        Mon, 23 Jul 2018 15:29:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532359745;
+        bh=hZ3uG7Zt7daSG+I8nTODIX5CMJqrhjeanp/2Q+iKpvU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IYHGOuy5HgnxlpfWu8cg+xfNabEU0Lqm4DfavnXlqUn/L5N4f1dDgDmPMsV+Z6bjR
+         4UNUjreAcdgQYoU7j5sLQmZS4tywdewlyIIv/vfjYbSWfIcfThhtNUbfDJ5nsbdeMz
+         nSWAh7q1dqWDQWMjCqlxLuWedrDFvzQgvu3MfzTk=
+Received: by mail-qt0-f170.google.com with SMTP id f18-v6so1005964qtp.10;
+        Mon, 23 Jul 2018 08:29:05 -0700 (PDT)
+X-Gm-Message-State: AOUpUlF8dxR7Fb0etOyQB3oIb9vQ8MKfQmhcgj6lwaa5pQO8B9zzhBkO
+        VfhCABsezSGtVZLs4fmcY2TFCxeJjfAOqTGi0w==
+X-Google-Smtp-Source: AAOMgpfA5FfY/MopNaSKfgXVTg4cWG7qmRbSnPnEJX2sZr5fcXn64sDelMHM7rQBI3LmadSFCFjLRYIEHoyn2V8Npps=
+X-Received: by 2002:ac8:71c9:: with SMTP id i9-v6mr12327953qtp.22.1532359744417;
+ Mon, 23 Jul 2018 08:29:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dbd8deec-a79d-5697-0c50-ea1a9ab7e5c9@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1532187494-2704-1-git-send-email-liu.xiang6@zte.com.cn>
+In-Reply-To: <1532187494-2704-1-git-send-email-liu.xiang6@zte.com.cn>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 23 Jul 2018 09:28:52 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLozSJ-0YeajN=qHuR69KCjeR_xO21MyZxr-n6tR5G0cw@mail.gmail.com>
+Message-ID: <CAL_JsqLozSJ-0YeajN=qHuR69KCjeR_xO21MyZxr-n6tR5G0cw@mail.gmail.com>
+Subject: Re: [PATCH] of: irq: Add a helper function for irq_of_parse_and_map
+To:     liu.xiang6@zte.com.cn
+Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        liuxiang_1999@126.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 02:25:34PM +0100, Qais Yousef wrote:
-> Hi Morten
-> 
-> On 20/07/18 14:32, Morten Rasmussen wrote:
-> >The SD_ASYM_CPUCAPACITY sched_domain flag is supposed to mark the
-> >sched_domain in the hierarchy where all cpu capacities are visible for
-> >any cpu's point of view on asymmetric cpu capacity systems. The
-> >scheduler can then take to take capacity asymmetry into account when
-> 
-> Did you mean "s/take to take/try to take/"?
+On Sat, Jul 21, 2018 at 9:38 AM Liu Xiang <liu.xiang6@zte.com.cn> wrote:
+>
+> Implement a resource managed irq_of_parse_and_map function.
 
-Yes.
+That is obvious from the diff. Why do you need this?
 
+Anything that is a platform device should use platform_get_irq. The
+mapping is created by the core Also, of_irq_get() is preferred over
+irq_of_parse_and_map() for new users as it has better error return
+handling.
 
-[...]
+>
+> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+> ---
+>  drivers/of/irq.c       | 38 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/of_irq.h |  7 +++++++
+>  2 files changed, 45 insertions(+)
+>
+> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> index 02ad93a..947fe41 100644
+> --- a/drivers/of/irq.c
+> +++ b/drivers/of/irq.c
+> @@ -45,6 +45,44 @@ unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
+>  }
+>  EXPORT_SYMBOL_GPL(irq_of_parse_and_map);
+>
+> +static void devm_irq_dispose_mapping(struct device *dev, void *res)
+> +{
+> +       irq_dispose_mapping(*(unsigned int *)res);
 
-> >+	/*
-> >+	 * Examine topology from all cpu's point of views to detect the lowest
-> >+	 * sched_domain_topology_level where a highest capacity cpu is visible
-> >+	 * to everyone.
-> >+	 */
-> >+	for_each_cpu(i, cpu_map) {
-> >+		unsigned long max_capacity = arch_scale_cpu_capacity(NULL, i);
-> >+		int tl_id = 0;
-> >+
-> >+		for_each_sd_topology(tl) {
-> >+			if (tl_id < asym_level)
-> >+				goto next_level;
-> >+
-> 
-> I think if you increment and then continue here you might save the extra
-> branch. I didn't look at any disassembly though to verify the generated
-> code.
-> 
-> I wonder if we can introduce for_each_sd_topology_from(tl, starting_level)
-> so that you can start searching from a provided level - which will make this
-> skipping logic unnecessary? So the code will look like
-> 
->             for_each_sd_topology_from(tl, asymc_level) {
->                 ...
->             }
+We don't ref count creating mappings, so this would break for any shared irq.
 
-Both options would work. Increment+contrinue instead of goto would be
-slightly less readable I think since we would still have the increment
-at the end of the loop, but easy to do. Introducing
-for_each_sd_topology_from() improve things too, but I wonder if it is
-worth it.
-
-> >@@ -1647,18 +1707,27 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
-> >  	struct s_data d;
-> >  	struct rq *rq = NULL;
-> >  	int i, ret = -ENOMEM;
-> >+	struct sched_domain_topology_level *tl_asym;
-> >  	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
-> >  	if (alloc_state != sa_rootdomain)
-> >  		goto error;
-> >+	tl_asym = asym_cpu_capacity_level(cpu_map);
-> >+
-> 
-> Or maybe this is not a hot path and we don't care that much about optimizing
-> the search since you call it unconditionally here even for systems that
-> don't care?
-
-It does increase the cost of things like hotplug slightly and
-repartitioning of root_domains a slightly but I don't see how we can
-avoid it if we want generic code to set this flag. If the costs are not
-acceptable I think the only option is to make the detection architecture
-specific.
-
-In any case, AFAIK rebuilding the sched_domain hierarchy shouldn't be a
-normal and common thing to do. If checking for the flag is not
-acceptable on SMP-only architectures, I can move it under arch/arm[,64]
-although it is not as clean.
-
-Morten
+Rob
