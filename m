@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313A0ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2623ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E824920685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E824920685
+	by mail.kernel.org (Postfix) with ESMTP id 86ABB20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86ABB20685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389867AbeGWNss (ORCPT
+        id S2389880AbeGWNst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:48:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52040 "EHLO
+        Mon, 23 Jul 2018 09:48:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52046 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388284AbeGWNsq (ORCPT
+        with ESMTP id S2389861AbeGWNss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:46 -0400
+        Mon, 23 Jul 2018 09:48:48 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BCC88BB3;
-        Mon, 23 Jul 2018 12:47:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7DE5DBB3;
+        Mon, 23 Jul 2018 12:47:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.4 105/107] ubi: Fix races around ubi_refill_pools()
-Date:   Mon, 23 Jul 2018 14:42:39 +0200
-Message-Id: <20180723122418.765788993@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 4.4 106/107] ubi: Fix Fastmaps update_vol()
+Date:   Mon, 23 Jul 2018 14:42:40 +0200
+Message-Id: <20180723122418.822484638@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -51,230 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Richard Weinberger <richard@nod.at>
 
-commit 2e8f08deabbc7eefe4c5838aaa6aa9a23a8acf2e upstream.
+commit f7d11b33d4e8cedf19367c09b891bbc705163976 upstream.
 
-When writing a new Fastmap the first thing that happens
-is refilling the pools in memory.
-At this stage it is possible that new PEBs from the new pools
-get already claimed and written with data.
-If this happens before the new Fastmap data structure hits the
-flash and we face power cut the freshly written PEB will not
-scanned and unnoticed.
-
-Solve the issue by locking the pools until Fastmap is written.
+Usually Fastmap is free to consider every PEB in one of the pools
+as newer than the existing PEB. Since PEBs in a pool are by definition
+newer than everything else.
+But update_vol() missed the case that a pool can contain more than
+one candidate.
 
 Cc: <stable@vger.kernel.org>
 Fixes: dbb7d2a88d ("UBI: Add fastmap core")
 Signed-off-by: Richard Weinberger <richard@nod.at>
+Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/eba.c        |    4 ++--
- drivers/mtd/ubi/fastmap-wl.c |    6 ++++--
- drivers/mtd/ubi/fastmap.c    |   14 ++++++++++----
- drivers/mtd/ubi/wl.c         |   20 ++++++++++++++------
- 4 files changed, 30 insertions(+), 14 deletions(-)
+ drivers/mtd/ubi/fastmap.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mtd/ubi/eba.c
-+++ b/drivers/mtd/ubi/eba.c
-@@ -1178,6 +1178,8 @@ int ubi_eba_copy_leb(struct ubi_device *
- 	struct ubi_volume *vol;
- 	uint32_t crc;
- 
-+	ubi_assert(rwsem_is_locked(&ubi->fm_eba_sem));
-+
- 	vol_id = be32_to_cpu(vid_hdr->vol_id);
- 	lnum = be32_to_cpu(vid_hdr->lnum);
- 
-@@ -1346,9 +1348,7 @@ int ubi_eba_copy_leb(struct ubi_device *
- 	}
- 
- 	ubi_assert(vol->eba_tbl[lnum] == from);
--	down_read(&ubi->fm_eba_sem);
- 	vol->eba_tbl[lnum] = to;
--	up_read(&ubi->fm_eba_sem);
- 
- out_unlock_buf:
- 	mutex_unlock(&ubi->buf_mutex);
---- a/drivers/mtd/ubi/fastmap-wl.c
-+++ b/drivers/mtd/ubi/fastmap-wl.c
-@@ -262,6 +262,8 @@ static struct ubi_wl_entry *get_peb_for_
- 	struct ubi_fm_pool *pool = &ubi->fm_wl_pool;
- 	int pnum;
- 
-+	ubi_assert(rwsem_is_locked(&ubi->fm_eba_sem));
-+
- 	if (pool->used == pool->size) {
- 		/* We cannot update the fastmap here because this
- 		 * function is called in atomic context.
-@@ -303,7 +305,7 @@ int ubi_ensure_anchor_pebs(struct ubi_de
- 
- 	wrk->anchor = 1;
- 	wrk->func = &wear_leveling_worker;
--	schedule_ubi_work(ubi, wrk);
-+	__schedule_ubi_work(ubi, wrk);
- 	return 0;
- }
- 
-@@ -344,7 +346,7 @@ int ubi_wl_put_fm_peb(struct ubi_device
- 	spin_unlock(&ubi->wl_lock);
- 
- 	vol_id = lnum ? UBI_FM_DATA_VOLUME_ID : UBI_FM_SB_VOLUME_ID;
--	return schedule_erase(ubi, e, vol_id, lnum, torture);
-+	return schedule_erase(ubi, e, vol_id, lnum, torture, true);
- }
- 
- /**
 --- a/drivers/mtd/ubi/fastmap.c
 +++ b/drivers/mtd/ubi/fastmap.c
-@@ -1514,22 +1514,30 @@ int ubi_update_fastmap(struct ubi_device
- 	struct ubi_wl_entry *tmp_e;
+@@ -326,6 +326,7 @@ static int update_vol(struct ubi_device
+ 			aeb->pnum = new_aeb->pnum;
+ 			aeb->copy_flag = new_vh->copy_flag;
+ 			aeb->scrub = new_aeb->scrub;
++			aeb->sqnum = new_aeb->sqnum;
+ 			kmem_cache_free(ai->aeb_slab_cache, new_aeb);
  
- 	down_write(&ubi->fm_protect);
-+	down_write(&ubi->work_sem);
-+	down_write(&ubi->fm_eba_sem);
- 
- 	ubi_refill_pools(ubi);
- 
- 	if (ubi->ro_mode || ubi->fm_disabled) {
-+		up_write(&ubi->fm_eba_sem);
-+		up_write(&ubi->work_sem);
- 		up_write(&ubi->fm_protect);
- 		return 0;
- 	}
- 
- 	ret = ubi_ensure_anchor_pebs(ubi);
- 	if (ret) {
-+		up_write(&ubi->fm_eba_sem);
-+		up_write(&ubi->work_sem);
- 		up_write(&ubi->fm_protect);
- 		return ret;
- 	}
- 
- 	new_fm = kzalloc(sizeof(*new_fm), GFP_KERNEL);
- 	if (!new_fm) {
-+		up_write(&ubi->fm_eba_sem);
-+		up_write(&ubi->work_sem);
- 		up_write(&ubi->fm_protect);
- 		return -ENOMEM;
- 	}
-@@ -1638,16 +1646,14 @@ int ubi_update_fastmap(struct ubi_device
- 		new_fm->e[0] = tmp_e;
- 	}
- 
--	down_write(&ubi->work_sem);
--	down_write(&ubi->fm_eba_sem);
- 	ret = ubi_write_fastmap(ubi, new_fm);
--	up_write(&ubi->fm_eba_sem);
--	up_write(&ubi->work_sem);
- 
- 	if (ret)
- 		goto err;
- 
- out_unlock:
-+	up_write(&ubi->fm_eba_sem);
-+	up_write(&ubi->work_sem);
- 	up_write(&ubi->fm_protect);
- 	kfree(old_fm);
- 	return ret;
---- a/drivers/mtd/ubi/wl.c
-+++ b/drivers/mtd/ubi/wl.c
-@@ -580,7 +580,7 @@ static int erase_worker(struct ubi_devic
-  * failure.
-  */
- static int schedule_erase(struct ubi_device *ubi, struct ubi_wl_entry *e,
--			  int vol_id, int lnum, int torture)
-+			  int vol_id, int lnum, int torture, bool nested)
- {
- 	struct ubi_work *wl_wrk;
- 
-@@ -599,7 +599,10 @@ static int schedule_erase(struct ubi_dev
- 	wl_wrk->lnum = lnum;
- 	wl_wrk->torture = torture;
- 
--	schedule_ubi_work(ubi, wl_wrk);
-+	if (nested)
-+		__schedule_ubi_work(ubi, wl_wrk);
-+	else
-+		schedule_ubi_work(ubi, wl_wrk);
- 	return 0;
- }
- 
-@@ -658,6 +661,7 @@ static int wear_leveling_worker(struct u
- 	if (!vid_hdr)
- 		return -ENOMEM;
- 
-+	down_read(&ubi->fm_eba_sem);
- 	mutex_lock(&ubi->move_mutex);
- 	spin_lock(&ubi->wl_lock);
- 	ubi_assert(!ubi->move_from && !ubi->move_to);
-@@ -884,6 +888,7 @@ static int wear_leveling_worker(struct u
- 
- 	dbg_wl("done");
- 	mutex_unlock(&ubi->move_mutex);
-+	up_read(&ubi->fm_eba_sem);
- 	return 0;
- 
- 	/*
-@@ -925,6 +930,7 @@ out_not_moved:
- 	}
- 
- 	mutex_unlock(&ubi->move_mutex);
-+	up_read(&ubi->fm_eba_sem);
- 	return 0;
- 
- out_error:
-@@ -946,6 +952,7 @@ out_error:
- out_ro:
- 	ubi_ro_mode(ubi);
- 	mutex_unlock(&ubi->move_mutex);
-+	up_read(&ubi->fm_eba_sem);
- 	ubi_assert(err != 0);
- 	return err < 0 ? err : -EIO;
- 
-@@ -953,6 +960,7 @@ out_cancel:
- 	ubi->wl_scheduled = 0;
- 	spin_unlock(&ubi->wl_lock);
- 	mutex_unlock(&ubi->move_mutex);
-+	up_read(&ubi->fm_eba_sem);
- 	ubi_free_vid_hdr(ubi, vid_hdr);
- 	return 0;
- }
-@@ -1075,7 +1083,7 @@ static int __erase_worker(struct ubi_dev
- 		int err1;
- 
- 		/* Re-schedule the LEB for erasure */
--		err1 = schedule_erase(ubi, e, vol_id, lnum, 0);
-+		err1 = schedule_erase(ubi, e, vol_id, lnum, 0, false);
- 		if (err1) {
- 			wl_entry_destroy(ubi, e);
- 			err = err1;
-@@ -1256,7 +1264,7 @@ retry:
- 	}
- 	spin_unlock(&ubi->wl_lock);
- 
--	err = schedule_erase(ubi, e, vol_id, lnum, torture);
-+	err = schedule_erase(ubi, e, vol_id, lnum, torture, false);
- 	if (err) {
- 		spin_lock(&ubi->wl_lock);
- 		wl_tree_add(e, &ubi->used);
-@@ -1544,7 +1552,7 @@ int ubi_wl_init(struct ubi_device *ubi,
- 		e->pnum = aeb->pnum;
- 		e->ec = aeb->ec;
- 		ubi->lookuptbl[e->pnum] = e;
--		if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0)) {
-+		if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false)) {
- 			wl_entry_destroy(ubi, e);
- 			goto out_free;
- 		}
-@@ -1624,7 +1632,7 @@ int ubi_wl_init(struct ubi_device *ubi,
- 			e->ec = aeb->ec;
- 			ubi_assert(!ubi->lookuptbl[e->pnum]);
- 			ubi->lookuptbl[e->pnum] = e;
--			if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0)) {
-+			if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false)) {
- 				wl_entry_destroy(ubi, e);
- 				goto out_free;
- 			}
+ 		/* new_aeb is older */
 
 
