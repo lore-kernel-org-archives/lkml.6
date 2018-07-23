@@ -2,172 +2,121 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6753FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5A2ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2740520874
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:22:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2740520874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D8F1F20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:23:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtsFKhIZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F1F20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388277AbeGWSYd (ORCPT
+        id S2388313AbeGWSZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:24:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:37288 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388002AbeGWSYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:24:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A48C218A;
-        Mon, 23 Jul 2018 10:22:20 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 051DA3F6A8;
-        Mon, 23 Jul 2018 10:22:17 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 18:22:15 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v2 08/12] sched/core: uclamp: extend cpu's cgroup
- controller
-Message-ID: <20180723172215.GG2683@e110439-lin>
-References: <20180716082906.6061-1-patrick.bellasi@arm.com>
- <20180716082906.6061-9-patrick.bellasi@arm.com>
- <20180723153040.GG1934745@devbig577.frc2.facebook.com>
+        Mon, 23 Jul 2018 14:25:23 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39255 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388002AbeGWSZW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:25:22 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g2-v6so847622pgs.6
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 10:23:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Z6U6NzqQTICtvDwK/fn8bUHW2tW43DN5qIhaDGwWUpo=;
+        b=YtsFKhIZ9abPLrvRx0xjrYzy7IIehHxeK83H2L0u+PZgximzcH/vNktqRienjf4Utr
+         qDeJo1AldbzopBz1Y/SgaofXc7M6xtsb9I+QdObpggBzhKqeJxDe2pWMbtrVYsx7Nr2J
+         gRITBWwt3x4mTlKKde+v0LPKBgGZUXNpzljtV9nCIUdN+ilVbVkMZh3sU9UoKGXNwn/u
+         sappBjdhRQK/mRst0bh6qBzdXUrCuOJ4jgNZ/GDihyOA+Goi12f+436r8hSG55SjFuLe
+         wigZ4oBhoNLIKcdvlJVzo1eOal7LeM0/QaAsnW5Aljdq2lYAjyYxXc0rex7tOyOLdrGR
+         y65w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z6U6NzqQTICtvDwK/fn8bUHW2tW43DN5qIhaDGwWUpo=;
+        b=tMg/X54XZ8aa4qvcGRwA3zXvQyWPUO5MZZ3OfTDkBCbBSJ+Q/UN8NEx91d2D41LEqU
+         /jEvR5/GePDHx6Bbs4KR7DTKFhGZKE+3tVXv4YaZVAAzOz15npKUq4m4DZZv40iIhHE0
+         hV8a9Yohk0pZPJhA4AnwjdyjdL+PX/n1Ek1GJfY+nz9Tpn54Vb/Arwwy8HADBNSzwPaq
+         Okp2AuBmktykfalZAur7Jikt6FHfm0YhWgIhUkdF2MY5L4SMtOJ5n/ir4o5eNIASBOSr
+         nc8QFAI9zHLEHqRz26SE2vC9w6OCtlBcwJWBg+BXcWyNPpWXdUW40VJzjZNtvVmpLtLS
+         3oHQ==
+X-Gm-Message-State: AOUpUlG634Zp1PmJ/TSEYuyoexhiit+dZcuABNkxUsMg089elvOLuni+
+        /rMITDqvRByggajoPpmhDOA=
+X-Google-Smtp-Source: AAOMgpfEeEIenJNdjbbi4SGEWDLBzcmLcOMHN9NrKjW95W5+pSDUSDrVLr4Z2GAldkmJuvtF3LSNwg==
+X-Received: by 2002:a63:d011:: with SMTP id z17-v6mr12779464pgf.272.1532366588641;
+        Mon, 23 Jul 2018 10:23:08 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id z2-v6sm10684864pgv.12.2018.07.23.10.23.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 10:23:07 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 10:23:05 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Anton Vasilyev <vasilyev@ispras.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Pan Bian <bianpan2016@163.com>, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: Re: [PATCH] firmware: vpd: Fix section enabled flag on
+ vpd_section_destroy
+Message-ID: <20180723172305.GD100814@dtor-ws>
+References: <20180723164857.24460-1-vasilyev@ispras.ru>
+ <20180723171336.GA15900@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180723153040.GG1934745@devbig577.frc2.facebook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180723171336.GA15900@roeck-us.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-Jul 08:30, Tejun Heo wrote:
-> Hello,
-
-Hi Tejun!
- 
-> On Mon, Jul 16, 2018 at 09:29:02AM +0100, Patrick Bellasi wrote:
-> > The cgroup's CPU controller allows to assign a specified (maximum)
-> > bandwidth to the tasks of a group. However this bandwidth is defined and
-> > enforced only on a temporal base, without considering the actual
-> > frequency a CPU is running on. Thus, the amount of computation completed
-> > by a task within an allocated bandwidth can be very different depending
-> > on the actual frequency the CPU is running that task.
-> > The amount of computation can be affected also by the specific CPU a
-> > task is running on, especially when running on asymmetric capacity
-> > systems like Arm's big.LITTLE.
-> 
-> One basic problem I have with this patchset is that what's being
-> described is way more generic than what actually got implemented.
-> What's described is computation bandwidth control but what's
-> implemented is just frequency clamping.
-
-What I meant to describe is that we already have a computation
-bandwidth control mechanism which is working quite fine for the
-scheduling classes it applies to, i.e. CFS and RT.
-
-For these classes we are usually happy with just a _best effort_
-allocation of the bandwidth: nothing enforced in strict terms. Indeed,
-there is not (at least not in kernel space) a tracking of the actual
-available and allocated bandwidth. If we need strict enforcement, we
-already have DL with its CBS servers.
-
-However, the "best effort" bandwidth control we have for CFS and RT
-can be further improved if, instead of just looking at time spent on
-CPUs, we provide some more hints to the scheduler to know at which
-min/max "MIPS" we want to consume the (best effort) time we have been
-allocated on a CPU.
-
-Such a simple extension is still quite useful to satisfy many use-case
-we have, mainly on mobile systems, like the ones I've described in the
-   "Newcomer's Short Abstract (Updated)"
-section of the cover letter:
-   https://lore.kernel.org/lkml/20180716082906.6061-1-patrick.bellasi@arm.com/T/#u
-
-> So, there are fundamental discrepancies between
-> description+interface vs. what it actually does.
-
-Perhaps then I should just change the description to make it less
-generic...
-
-> I really don't think that's something we can fix up later.
-
-... since, really, I don't think we can get to the point to extend
-later this interface to provide the strict bandwidth enforcement you
-are thinking about.
-
-This would not be a fixup, but something really close to
-re-implementing what we already have with the DL class.
-
-> > These attributes:
+On Mon, Jul 23, 2018 at 10:13:36AM -0700, Guenter Roeck wrote:
+> On Mon, Jul 23, 2018 at 07:48:57PM +0300, Anton Vasilyev wrote:
+> > static struct ro_vpd and rw_vpd are initialized by vpd_sections_init()
+> > in vpd_probe() based on header's ro and rw sizes.
+> > In vpd_remove() vpd_section_destroy() performs deinitialization based
+> > on enabled flag, which is set to true by vpd_sections_init().
+> > This leads to call of vpd_section_destroy() on already destroyed section
+> > for probe-release-probe-release sequence if first probe performs
+> > ro_vpd initialization and second probe does not initialize it.
 > > 
-> > a) are available only for non-root nodes, both on default and legacy
-> >    hierarchies
-> > b) do not enforce any constraints and/or dependency between the parent
-> >    and its child nodes, thus relying on the delegation model and
-> >    permission settings defined by the system management software
 > 
-> cgroup does host attributes which only concern the cgroup itself and
-> thus don't need any hierarchical behaviors on their own, but what's
-> being implemented does control resource allocation,
+> I am not sure if the situation described can be seen in the first place.
+> The second probe would only not perform ro_vpd initialization if it fails
+> prior to that, ie if it fails to allocate memory or if there is a
+> consistency problem. In that case the remove function would not be called.
+> 
+> However, there is a problem in the code: A partially failed probe will
+> leave the system in inconsistent state. Example: ro section initializes,
+> rw section fails to initialize. The probe will fail, but the ro section
+> will not be destroyed, its sysfs attributes still exist, and its memory
+> is still mapped. It would make more sense to fix _that_ problem.
+> Essentially, vpd_sections_init() should clean up after itself after it
+> fails to initialize a section.
+> 
+> Note that I am not convinced that the "enabled" flag is needed in the first
+> place. It is only relevant if vpd_section_destroy() is called, which only
+> happens from the remove function. The remove function is only called if the
+> probe function succeeded. In that case it is always set for both sections.
 
-I'm not completely sure to get your point here.
+The problem will happen if coreboot memory changes between 2 probes so
+that header.ro_size is not 0 on the first pass and is 0 on the second
+pass. Not quite likely to ever happen in real life, but resetting a flag
+is pretty cheap to not do it.
 
-Maybe it all depends on what we mean by "control resource allocation".
-
-AFAIU, currently both the CFS and RT bandwidth controllers allow you
-to define how much CPU time a group of tasks can use. It does that by
-looking just within the group: there is no enforced/required relation
-between the bandwidth assigned to a group and the bandwidth assigned
-to its parent, siblings and/or children.
-
-The resource control allocation is eventually enforced "indirectly" by
-means of the fact that, based on tasks priorities and cgroup shares,
-the scheduler will prefer to pick and run "more frequently" and
-"longer" certain tasks instead of others.
-
-Thus I would say that the resource allocation control is already
-performed by the combined action of:
-A) priorities / shares to favor certain tasks over others
-B) period & bandwidth to further bias the scheduler in _not_ selecting
-  tasks which already executed for the configured amount of time.
-
-> and what you're describing inherently breaks the delegation model.
-
-What I describe here is just an additional hint to the scheduler which
-enrich the above described model. Provided A and B are already
-satisfied, when a task gets a chance to run it will be executed at a
-min/max configured frequency. That's really all... there is not
-additional impact on "resources allocation".
-
-I don't see why you say that this breaks the delegation model?
-
-Maybe an example can help to better explain what you mean?
-
-Best,
-Patrick
+Thanks.
 
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Dmitry
