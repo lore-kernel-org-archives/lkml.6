@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BDEECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BB3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1856820685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1856820685
+	by mail.kernel.org (Postfix) with ESMTP id CFEC620685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFEC620685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389776AbeGWNsa (ORCPT
+        id S2389821AbeGWNsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:48:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51948 "EHLO
+        Mon, 23 Jul 2018 09:48:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51958 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388281AbeGWNs3 (ORCPT
+        with ESMTP id S2387877AbeGWNsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:29 -0400
+        Mon, 23 Jul 2018 09:48:32 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05D2CBB3;
-        Mon, 23 Jul 2018 12:47:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B8879BDB;
+        Mon, 23 Jul 2018 12:47:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 067/107] x86/speculation: Add prctl for Speculative Store Bypass mitigation
-Date:   Mon, 23 Jul 2018 14:42:01 +0200
-Message-Id: <20180723122416.639109622@linuxfoundation.org>
+Subject: [PATCH 4.4 068/107] nospec: Allow getting/setting on non-current task
+Date:   Mon, 23 Jul 2018 14:42:02 +0200
+Message-Id: <20180723122416.771611644@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -55,49 +55,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Kees Cook <keescook@chromium.org>
 
-commit a73ec77ee17ec556fe7f165d00314cb7c047b1ac upstream
+commit 7bbf1373e228840bb0295a2ca26d548ef37f448e upstream
 
-Add prctl based control for Speculative Store Bypass mitigation and make it
-the default mitigation for Intel and AMD.
+Adjust arch_prctl_get/set_spec_ctrl() to operate on tasks other than
+current.
 
-Andi Kleen provided the following rationale (slightly redacted):
+This is needed both for /proc/$pid/status queries and for seccomp (since
+thread-syncing can trigger seccomp in non-current threads).
 
- There are multiple levels of impact of Speculative Store Bypass:
-
- 1) JITed sandbox.
-    It cannot invoke system calls, but can do PRIME+PROBE and may have call
-    interfaces to other code
-
- 2) Native code process.
-    No protection inside the process at this level.
-
- 3) Kernel.
-
- 4) Between processes.
-
- The prctl tries to protect against case (1) doing attacks.
-
- If the untrusted code can do random system calls then control is already
- lost in a much worse way. So there needs to be system call protection in
- some way (using a JIT not allowing them or seccomp). Or rather if the
- process can subvert its environment somehow to do the prctl it can already
- execute arbitrary code, which is much worse than SSB.
-
- To put it differently, the point of the prctl is to not allow JITed code
- to read data it shouldn't read from its JITed sandbox. If it already has
- escaped its sandbox then it can already read everything it wants in its
- address space, and do much worse.
-
- The ability to control Speculative Store Bypass allows to enable the
- protection selectively without affecting overall system performance.
-
-Based on an initial patch from Tim Chen. Completely rewritten.
-
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -107,168 +76,140 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- Documentation/kernel-parameters.txt  |    6 ++
- arch/x86/include/asm/nospec-branch.h |    1 
- arch/x86/kernel/cpu/bugs.c           |   83 ++++++++++++++++++++++++++++++-----
- 3 files changed, 79 insertions(+), 11 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   27 ++++++++++++++++-----------
+ include/linux/nospec.h     |    7 +++++--
+ kernel/sys.c               |    9 +++++----
+ 3 files changed, 26 insertions(+), 17 deletions(-)
 
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -3651,7 +3651,11 @@ bytes respectively. Such letter suffixes
- 			off    - Unconditionally enable Speculative Store Bypass
- 			auto   - Kernel detects whether the CPU model contains an
- 				 implementation of Speculative Store Bypass and
--				 picks the most appropriate mitigation
-+				 picks the most appropriate mitigation.
-+			prctl  - Control Speculative Store Bypass per thread
-+				 via prctl. Speculative Store Bypass is enabled
-+				 for a process by default. The state of the control
-+				 is inherited on fork.
- 
- 			Not specifying this option is equivalent to
- 			spec_store_bypass_disable=auto.
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -187,6 +187,7 @@ extern u64 x86_spec_ctrl_get_default(voi
- enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_NONE,
- 	SPEC_STORE_BYPASS_DISABLE,
-+	SPEC_STORE_BYPASS_PRCTL,
- };
- 
- extern char __indirect_thunk_start[];
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -11,6 +11,8 @@
- #include <linux/utsname.h>
- #include <linux/cpu.h>
- #include <linux/module.h>
-+#include <linux/nospec.h>
-+#include <linux/prctl.h>
- 
- #include <asm/spec-ctrl.h>
- #include <asm/cmdline.h>
-@@ -411,20 +413,23 @@ enum ssb_mitigation_cmd {
- 	SPEC_STORE_BYPASS_CMD_NONE,
- 	SPEC_STORE_BYPASS_CMD_AUTO,
- 	SPEC_STORE_BYPASS_CMD_ON,
-+	SPEC_STORE_BYPASS_CMD_PRCTL,
- };
- 
- static const char *ssb_strings[] = {
- 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
--	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled"
-+	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled",
-+	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl"
- };
- 
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
- } ssb_mitigation_options[] = {
--	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO }, /* Platform decides */
--	{ "on",		SPEC_STORE_BYPASS_CMD_ON },   /* Disable Speculative Store Bypass */
--	{ "off",	SPEC_STORE_BYPASS_CMD_NONE }, /* Don't touch Speculative Store Bypass */
-+	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },  /* Platform decides */
-+	{ "on",		SPEC_STORE_BYPASS_CMD_ON },    /* Disable Speculative Store Bypass */
-+	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },  /* Don't touch Speculative Store Bypass */
-+	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL }, /* Disable Speculative Store Bypass via prctl */
- };
- 
- static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
-@@ -474,14 +479,15 @@ static enum ssb_mitigation_cmd __init __
- 
- 	switch (cmd) {
- 	case SPEC_STORE_BYPASS_CMD_AUTO:
--		/*
--		 * AMD platforms by default don't need SSB mitigation.
--		 */
--		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
--			break;
-+		/* Choose prctl as the default mode */
-+		mode = SPEC_STORE_BYPASS_PRCTL;
-+		break;
- 	case SPEC_STORE_BYPASS_CMD_ON:
- 		mode = SPEC_STORE_BYPASS_DISABLE;
- 		break;
-+	case SPEC_STORE_BYPASS_CMD_PRCTL:
-+		mode = SPEC_STORE_BYPASS_PRCTL;
-+		break;
- 	case SPEC_STORE_BYPASS_CMD_NONE:
- 		break;
- 	}
-@@ -492,7 +498,7 @@ static enum ssb_mitigation_cmd __init __
- 	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
- 	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
- 	 */
--	if (mode != SPEC_STORE_BYPASS_NONE) {
-+	if (mode == SPEC_STORE_BYPASS_DISABLE) {
- 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
- 		/*
- 		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
-@@ -523,6 +529,63 @@ static void ssb_select_mitigation()
+@@ -529,31 +529,35 @@ static void ssb_select_mitigation()
  
  #undef pr_fmt
  
-+static int ssb_prctl_set(unsigned long ctrl)
-+{
-+	bool rds = !!test_tsk_thread_flag(current, TIF_RDS);
-+
-+	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
-+		return -ENXIO;
-+
-+	if (ctrl == PR_SPEC_ENABLE)
-+		clear_tsk_thread_flag(current, TIF_RDS);
-+	else
-+		set_tsk_thread_flag(current, TIF_RDS);
-+
-+	if (rds != !!test_tsk_thread_flag(current, TIF_RDS))
-+		speculative_store_bypass_update();
-+
-+	return 0;
-+}
-+
-+static int ssb_prctl_get(void)
-+{
-+	switch (ssb_mode) {
-+	case SPEC_STORE_BYPASS_DISABLE:
-+		return PR_SPEC_DISABLE;
-+	case SPEC_STORE_BYPASS_PRCTL:
-+		if (test_tsk_thread_flag(current, TIF_RDS))
-+			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
-+		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
-+	default:
-+		if (boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
-+			return PR_SPEC_ENABLE;
-+		return PR_SPEC_NOT_AFFECTED;
-+	}
-+}
-+
-+int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
-+{
-+	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
-+		return -ERANGE;
-+
-+	switch (which) {
-+	case PR_SPEC_STORE_BYPASS:
-+		return ssb_prctl_set(ctrl);
-+	default:
-+		return -ENODEV;
-+	}
-+}
-+
-+int arch_prctl_spec_ctrl_get(unsigned long which)
-+{
-+	switch (which) {
-+	case PR_SPEC_STORE_BYPASS:
-+		return ssb_prctl_get();
-+	default:
-+		return -ENODEV;
-+	}
-+}
-+
- void x86_spec_ctrl_setup_ap(void)
+-static int ssb_prctl_set(unsigned long ctrl)
++static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
  {
- 	if (boot_cpu_has(X86_FEATURE_IBRS))
+-	bool rds = !!test_tsk_thread_flag(current, TIF_RDS);
++	bool rds = !!test_tsk_thread_flag(task, TIF_RDS);
+ 
+ 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
+ 		return -ENXIO;
+ 
+ 	if (ctrl == PR_SPEC_ENABLE)
+-		clear_tsk_thread_flag(current, TIF_RDS);
++		clear_tsk_thread_flag(task, TIF_RDS);
+ 	else
+-		set_tsk_thread_flag(current, TIF_RDS);
++		set_tsk_thread_flag(task, TIF_RDS);
+ 
+-	if (rds != !!test_tsk_thread_flag(current, TIF_RDS))
++	/*
++	 * If being set on non-current task, delay setting the CPU
++	 * mitigation until it is next scheduled.
++	 */
++	if (task == current && rds != !!test_tsk_thread_flag(task, TIF_RDS))
+ 		speculative_store_bypass_update();
+ 
+ 	return 0;
+ }
+ 
+-static int ssb_prctl_get(void)
++static int ssb_prctl_get(struct task_struct *task)
+ {
+ 	switch (ssb_mode) {
+ 	case SPEC_STORE_BYPASS_DISABLE:
+ 		return PR_SPEC_DISABLE;
+ 	case SPEC_STORE_BYPASS_PRCTL:
+-		if (test_tsk_thread_flag(current, TIF_RDS))
++		if (test_tsk_thread_flag(task, TIF_RDS))
+ 			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
+ 		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
+ 	default:
+@@ -563,24 +567,25 @@ static int ssb_prctl_get(void)
+ 	}
+ }
+ 
+-int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl)
+ {
+ 	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
+ 		return -ERANGE;
+ 
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+-		return ssb_prctl_set(ctrl);
++		return ssb_prctl_set(task, ctrl);
+ 	default:
+ 		return -ENODEV;
+ 	}
+ }
+ 
+-int arch_prctl_spec_ctrl_get(unsigned long which)
++int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
+ {
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+-		return ssb_prctl_get();
++		return ssb_prctl_get(task);
+ 	default:
+ 		return -ENODEV;
+ 	}
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -7,6 +7,8 @@
+ #define _LINUX_NOSPEC_H
+ #include <asm/barrier.h>
+ 
++struct task_struct;
++
+ /**
+  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
+  * @index: array element index
+@@ -57,7 +59,8 @@ static inline unsigned long array_index_
+ })
+ 
+ /* Speculation control prctl */
+-int arch_prctl_spec_ctrl_get(unsigned long which);
+-int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl);
++int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which);
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl);
+ 
+ #endif /* _LINUX_NOSPEC_H */
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2075,12 +2075,13 @@ static int prctl_get_tid_address(struct
+ }
+ #endif
+ 
+-int __weak arch_prctl_spec_ctrl_get(unsigned long which)
++int __weak arch_prctl_spec_ctrl_get(struct task_struct *t, unsigned long which)
+ {
+ 	return -EINVAL;
+ }
+ 
+-int __weak arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
++int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
++				    unsigned long ctrl)
+ {
+ 	return -EINVAL;
+ }
+@@ -2282,12 +2283,12 @@ SYSCALL_DEFINE5(prctl, int, option, unsi
+ 	case PR_GET_SPECULATION_CTRL:
+ 		if (arg3 || arg4 || arg5)
+ 			return -EINVAL;
+-		error = arch_prctl_spec_ctrl_get(arg2);
++		error = arch_prctl_spec_ctrl_get(me, arg2);
+ 		break;
+ 	case PR_SET_SPECULATION_CTRL:
+ 		if (arg4 || arg5)
+ 			return -EINVAL;
+-		error = arch_prctl_spec_ctrl_set(arg2, arg3);
++		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+ 		break;
+ 	default:
+ 		error = -EINVAL;
 
 
