@@ -3,95 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4D1ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D897ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA3F20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:37:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA3F20854
+	by mail.kernel.org (Postfix) with ESMTP id 4043920880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:37:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4043920880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388600AbeGWNiM (ORCPT
+        id S2388781AbeGWNiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:38:12 -0400
-Received: from mout.perfora.net ([74.208.4.194]:33213 "EHLO mout.perfora.net"
+        Mon, 23 Jul 2018 09:38:14 -0400
+Received: from mout.perfora.net ([74.208.4.194]:35617 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388263AbeGWNiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:38:11 -0400
+        id S2388263AbeGWNiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 09:38:13 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0Lop25-1gEimL3bo3-00gmAQ; Mon, 23 Jul 2018 14:37:03 +0200
+ 0M8jzW-1frVhl0Mqy-00C9th; Mon, 23 Jul 2018 14:37:05 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel@ziswiler.com>,
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 00/26] ARM: dts: tegra: colibri_t30: major revamp
-Date:   Mon, 23 Jul 2018 14:36:31 +0200
-Message-Id: <20180723123658.980-1-marcel@ziswiler.com>
+Subject: [PATCH 01/26] ARM: tegra: colibri_t30: enable broken-hpi on emmc
+Date:   Mon, 23 Jul 2018 14:36:32 +0200
+Message-Id: <20180723123658.980-2-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
-X-Provags-ID: V03:K1:N14EbHF35GrrM7vor+1Wt30Ey8yzU0E2NS6zkLAA9AOap/7GuP9
- R/t0iqgqCA7jDInEQkkHbYKlRGj3x02Xyb4Dx13DiKRSOoISAR2ArLUizfFlcQtaKDCil6g
- 4BWAlwDXpaAgEF1RsWByqwH9urVj/4R5Ru6A5YVKsPPKfkE3Sdy2pzdySu5E5fb6mfZMPBQ
- cU0MGk4NDCJLhZ2Q2OANw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:9Wx00TWJJ+4=:+DUzAV4SdRuBVuhtCr9p+I
- MGWVVQYsiAtgWv+EiicP+xnCBiVZ2e34Qlwm/jq6ptQ4LffnWay4Os7aMUkRO//OyzwaOFy1W
- cRTz0oewvJYQ53V2tpd7qZgF1Sfp82UNF/gBC5ieLLjCByfrYEqNipB/Oq7Mz1S/fZblSEGNO
- H9xnbHKAjbj4ftD5Lcz/99IEMW5C2MufDLsXAa29rGl8lUeucwAPTeKHgPDO3DUGTNteASQdO
- CgBzhncspoBYM5MI5qRgNWm5+j8xJ7XYhWv4saH2AHIj17XwQT0mf5eeqI2LsLiGlhSVZPFWN
- SA8rDM4POEVnQ9IvFdPEEpcGN4/KZQmXJ3bmC11KT9YpstvoOvOjTfUHFp6U7B0nl21DvJcyv
- +/Z/rdTINEVRh7Z4hRzmDS3oDQ4TNkgKPqKgANUA59WzLs5AogYVipW1xYAamInBWqtiXDRv1
- /drnA87MgGo0YycX1WmUYdZldghSmqQm3o8VshVvkf6fel2xA5Mfesl7SdXqPKYWfKw4Xh84n
- S2IGSaNEHuaEGtiFysPqzGAxSDyvLO+B3weL7azWf+cpEKP5DozEcoyy8Vv42SG38RZfsoa5r
- p7pDPnMRVcBaKwjGxOsWb/x76vFIuFfiJp7d0cTXEH6LlS7KcXRoAQlJ+LM+NQrq7U2jR7086
- yRZLWVLVSDpJ6D3kXJueVHt+CmKJyybYkj8J5Xr7pA2W1KIgsLvOhYllGVlSYcrRaOtw=
+In-Reply-To: <20180723123658.980-1-marcel@ziswiler.com>
+References: <20180723123658.980-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:a9gcGD81sUDW2Q/6UDgqLt79eCo86iyWodd2Pw58PiR/fNDbD+m
+ 8JMgEp916rSlASv8Ihvhuxb+9pj8TmsEbaPsEfwBuYygQ9Kdm+A3MKWaw/colc/BrYzo98H
+ BoB0zn9mhzVgLchSl98FZdxbJ9MEvfqV2bYbBy+FCxLpvoH16xXG5aWsmuwWill/O7Xd4dy
+ q+MWcGVVL0UDpwaqeE1Qg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:aCjMwxkFgcY=:G717dV3fFy+miNJSmcX3aw
+ 98wrc4bXD4GyMKJ2C8N4BVNDBQS2B00/Qe2uw9nVPu6AamyJuXA+nE5WYOKsCBjJYyO83alSB
+ RCBVeicqvS0Mckf8YI7G/VH7gFeqGpaUUxR88xgoWCHFAfH4CEX/NZ5ZauMfRUpw8Y/gw/GeV
+ OWcfa2LhALe3mB4/+M2BRqk2YHZlz4zdyFg9U72jQot2F3K9A3v4pXPb/GX4FAtGqJAWiAqMK
+ G4EDdAB9tTaCscKFcC0TNT+fbzzw3iGg7KDgMFS/8riA9ojDRKkJXULxwS4laiBGRnua6aeC/
+ fpk2SyerEYG2mEjVxw2wjRIcxPDJzchnQM1Tfn8EQZqDwHJ2rQ5atdLxDwoW/zBIvsewGmY9i
+ krMgWbbwr07pGgWBiKTQSRS04D5ZO5LafpO7+gC0x5YN+ZvJPUF4c3QnG5q8XU8T/Ls9WYver
+ uaN11Ldiyl/blBX50ch+/YpaOa/+zsc6LHCM8nr7vE007BHLjSOsP4/fqM4KSo6e/hiQeQfi7
+ doCoit8Rz9P6gSMGndZ9erhweY7ubesl7h47sbA3aLY4hW7wg7+MXmKJ33Y2dhv7c4mGeidRE
+ 7YbvUX5GDNw8x5O52TtUhv74+0JO+iVuCo4FWoUtfS/rapR/5wuWF54N1m03iqiaIW2TaYwB7
+ F97yDlTO3GaXGj/A+vhPVk8S5BBB9MrUnNtqd1D96rrKYL7w2fJe2SrR/z9qHTaqHcWQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is a major overhaul for the Toradex Colibri T30 system on
-module.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Marcel Ziswiler (26):
-  ARM: tegra: colibri_t30: enable broken-hpi on emmc
-  ARM: tegra: colibri_t30: add local-mac-address property
-  ARM: tegra: colibri_t30: reorder host1x/hdmi properties
-  ARM: tegra: colibri_t30: regulator clean-up
-  ARM: tegra: colibri_t30: add missing regulators
-  ARM: tegra: colibri_t30: annotate uarts
-  ARM: tegra: colibri_t30: white-space clean-up
-  ARM: tegra: colibri_t30: move dr_mode property from phy to controller
-  ARM: tegra: colibri_t30: reorder backlight properties
-  ARM: tegra: colibri_t30: drop pwmleds
-  ARM: tegra: colibri_t30: pinmux clean-up
-  ARM: tegra: colibri_t30: add missing pinmux
-  ARM: tegra: colibri_t30: use proper irq-gpio for stmpe811
-  ARM: tegra: colibri_t30: further lm95245 temperature sensor annotation
-  ARM: tegra: colibri_t30: add i2c-thermtrip
-  ARM: tegra: colibri_t30: add proper emmc vmmc and vqmmc supplies
-  ARM: tegra: colibri_t30: enable emmc ddr52 mode
-  ARM: tegra: colibri_t30: rename clk to clock
-  ARM: tegra: colibri_t30: line break long compatible property line
-  ARM: tegra: colibri_t30: move input include to carrier board
-  ARM: tegra: colibri_t30: remove unused nvidia,is-wired property
-  ARM: tegra: colibri_t30: add gpio hog to unreset usb ethernet chip
-  ARM: tegra: colibri_t30: enable hda over hdmi
-  ARM: tegra: colibri_t30: annotate sd card detect
-  ARM: tegra: colibri_t30: annotate ehci instance 1
-  ARM: tegra: colibri_t30: update compatibility comment
+Avoid eMMC issues by specifying broken-hpi.
 
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |  99 ++--
- arch/arm/boot/dts/tegra30-colibri.dtsi        | 716 ++++++++++++++++++++++----
- 2 files changed, 666 insertions(+), 149 deletions(-)
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
+---
+
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 526ed71cf7a3..6293422c977a 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -430,8 +430,16 @@
+ 	/* eMMC */
+ 	sdhci@78000600 {
+ 		status = "okay";
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 		bus-width = <8>;
+ 		non-removable;
++
++		emmc: emmc@0 {
++			reg = <0>;
++			compatible = "mmc-card";
++			broken-hpi;
++		};
+ 	};
+ 
+ 	/* EHCI instance 1: USB2_DP/N -> AX88772B */
 -- 
 2.14.4
 
