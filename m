@@ -2,133 +2,148 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7458ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF13ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6115320875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:40:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Eux7e6ox"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6115320875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 9D74520875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:41:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D74520875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388242AbeGWSmi (ORCPT
+        id S2388258AbeGWSn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:42:38 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42414 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388084AbeGWSmh (ORCPT
+        Mon, 23 Jul 2018 14:43:57 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:40353 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388037AbeGWSn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:42:37 -0400
-Received: by mail-pl0-f67.google.com with SMTP id z7-v6so520528plo.9
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 10:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UIKH7mt6f5ImH5PUBNtJLKEl453d44EJRbuAtE7fNck=;
-        b=Eux7e6oxjqiXIxDr2yyvoiNdZz+cUPXMmM50vMZaEc9QSNvmTeEMkXj6Ip1ek8fb+Q
-         PMBhjRYZOEMQLegbX3AhjGI0RAEbHVGpIy/a68H+X3N9L+MYS52JHKNw0CieB3aBsJ3k
-         1XOy+hh+QRPf/IcSSr9YF5XPXYfAY/uaahTbQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UIKH7mt6f5ImH5PUBNtJLKEl453d44EJRbuAtE7fNck=;
-        b=Bb/sLxblC+z3atlykBANd0Q4z8eqOGOytDMSJbTQkSoAtgwBpELsbQErhwCFHBmo0O
-         RJYO8aZA+Tjkyi9oPq0ZmCNRUNSCKvoNTY10n130wT5q6ZM1xZ5o/SxL5DL9dJCgZXFe
-         chvs/SwH0fM6P3zlNRCdNHkTCNNLGHpJIHFPmPUHgGCE7k9YgZpaq5CRqoQiQW70VK5P
-         sYP/uupeFXvnZGCg55Lt2C5lYOjQfx55WSuEhjQTXvO1v08azNdppIfjfVF2B099UF94
-         oMnDQTmuSJOjvsfCUBpOoBiGkUF5n1XQjpjderDsS4i1Iw71KsL9RfTFBeDSIAiXgd1I
-         qTTQ==
-X-Gm-Message-State: AOUpUlGhvcK7rO2UQSnPE5R+G9HRtRiIEk4bjZ55zeKYvwKVVQH19GZ2
-        +ECnWi3gH4lGvHFZOTqWthKOVA==
-X-Google-Smtp-Source: AAOMgpevA2AgWSJbpnPuzQGoYwxWTNK8IFye/DQ+1bpJ0FiCaZicBJSYoX4jYQUqAKtdJYCyWmDEvA==
-X-Received: by 2002:a17:902:a58b:: with SMTP id az11-v6mr5826067plb.36.1532367619709;
-        Mon, 23 Jul 2018 10:40:19 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm14827526pgf.52.2018.07.23.10.40.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 10:40:19 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 10:40:18 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v10 3/7] Bluetooth: btqca: Redefine qca_uart_setup() to
- generic function.
-Message-ID: <20180723174018.GK129942@google.com>
-References: <20180720133243.6851-1-bgodavar@codeaurora.org>
- <20180720133243.6851-4-bgodavar@codeaurora.org>
+        Mon, 23 Jul 2018 14:43:56 -0400
+X-Originating-IP: 79.86.19.127
+Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id B3582FF809;
+        Mon, 23 Jul 2018 17:41:26 +0000 (UTC)
+From:   Alex Ghiti <alex@ghiti.fr>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
+        paulus@samba.org, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture
+ primitives
+References: <20180705110716.3919-1-alex@ghiti.fr>
+ <20180709141621.GD22297@dhcp22.suse.cz>
+ <2173685f-7f85-7acb-4685-2383210c5fa2@ghiti.fr>
+ <87d0vehx16.fsf@concordia.ellerman.id.au>
+Message-ID: <2d4c19e1-f622-7747-3ba1-ff3243337b93@ghiti.fr>
+Date:   Mon, 23 Jul 2018 17:41:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180720133243.6851-4-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <87d0vehx16.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 07:02:39PM +0530, Balakrishna Godavarthi wrote:
-> Redefinition of qca_uart_setup will help future Qualcomm Bluetooth
-> SoC, to use the same function instead of duplicating the function.
-> Added new arguments soc_type and soc_ver to the functions.
-> 
-> These arguments will help to decide type of firmware files
-> to be loaded into Bluetooth chip.
-> soc_type holds the Bluetooth chip connected to APPS processor.
-> soc_ver holds the Bluetooth chip version.
-> 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  drivers/bluetooth/btqca.c   | 20 +++++++-------------
->  drivers/bluetooth/btqca.h   | 13 +++++++++++--
->  drivers/bluetooth/hci_qca.c | 10 +++++++++-
->  3 files changed, 27 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-> index c5cf9cab438a..b556710ee1bd 100644
-> --- a/drivers/bluetooth/btqca.c
-> +++ b/drivers/bluetooth/btqca.c
-> @@ -85,6 +85,9 @@ int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
->  out:
->  	kfree_skb(skb);
->  
-> +	if (err < 0 || *soc_version == 0)
-> +		bt_dev_err(hdev, "QCA Failed to get version (%d)", err);
+Ok will do and report when done.
 
-You also have to set 'err' if soc_version is 0, so the caller can skip
-the check for soc_version == 0
+Thanks for your feedback,
 
-I'd suggest:
+Alex
 
-  // directly after setting soc_version
-  if (*soc_version == 0)
-    err = -EILSEQ; // or should it be a different error code?
+On 07/23/2018 02:00 PM, Michael Ellerman wrote:
+> Alex Ghiti <alex@ghiti.fr> writes:
+>
+>> Does anyone have any suggestion about those patches ?
+> Cross compiling it for some non-x86 arches would be a good start :)
+>
+> There are cross compilers available here:
+>
+>    https://mirrors.edge.kernel.org/pub/tools/crosstool/
+>
+>
+> cheers
+>
+>> On 07/09/2018 02:16 PM, Michal Hocko wrote:
+>>> [CC hugetlb guys - http://lkml.kernel.org/r/20180705110716.3919-1-alex@ghiti.fr]
+>>>
+>>> On Thu 05-07-18 11:07:05, Alexandre Ghiti wrote:
+>>>> In order to reduce copy/paste of functions across architectures and then
+>>>> make riscv hugetlb port (and future ports) simpler and smaller, this
+>>>> patchset intends to factorize the numerous hugetlb primitives that are
+>>>> defined across all the architectures.
+>>>>
+>>>> Except for prepare_hugepage_range, this patchset moves the versions that
+>>>> are just pass-through to standard pte primitives into
+>>>> asm-generic/hugetlb.h by using the same #ifdef semantic that can be
+>>>> found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
+>>>>
+>>>> s390 architecture has not been tackled in this serie since it does not
+>>>> use asm-generic/hugetlb.h at all.
+>>>> powerpc could be factorized a bit more (cf huge_ptep_set_wrprotect).
+>>>>
+>>>> This patchset has been compiled on x86 only.
+>>>>
+>>>> Changelog:
+>>>>
+>>>> v4:
+>>>>     Fix powerpc build error due to misplacing of #include
+>>>>     <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as
+>>>>     pointed by Christophe Leroy.
+>>>>
+>>>> v1, v2, v3:
+>>>>     Same version, just problems with email provider and misuse of
+>>>>     --batch-size option of git send-email
+>>>>
+>>>> Alexandre Ghiti (11):
+>>>>     hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
+>>>>     hugetlb: Introduce generic version of hugetlb_free_pgd_range
+>>>>     hugetlb: Introduce generic version of set_huge_pte_at
+>>>>     hugetlb: Introduce generic version of huge_ptep_get_and_clear
+>>>>     hugetlb: Introduce generic version of huge_ptep_clear_flush
+>>>>     hugetlb: Introduce generic version of huge_pte_none
+>>>>     hugetlb: Introduce generic version of huge_pte_wrprotect
+>>>>     hugetlb: Introduce generic version of prepare_hugepage_range
+>>>>     hugetlb: Introduce generic version of huge_ptep_set_wrprotect
+>>>>     hugetlb: Introduce generic version of huge_ptep_set_access_flags
+>>>>     hugetlb: Introduce generic version of huge_ptep_get
+>>>>
+>>>>    arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
+>>>>    arch/arm/include/asm/hugetlb.h               | 33 +----------
+>>>>    arch/arm64/include/asm/hugetlb.h             | 39 +++---------
+>>>>    arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
+>>>>    arch/mips/include/asm/hugetlb.h              | 40 +++----------
+>>>>    arch/parisc/include/asm/hugetlb.h            | 33 +++--------
+>>>>    arch/powerpc/include/asm/book3s/32/pgtable.h |  2 +
+>>>>    arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
+>>>>    arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
+>>>>    arch/powerpc/include/asm/nohash/32/pgtable.h |  2 +
+>>>>    arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
+>>>>    arch/sh/include/asm/hugetlb.h                | 54 ++---------------
+>>>>    arch/sparc/include/asm/hugetlb.h             | 40 +++----------
+>>>>    arch/x86/include/asm/hugetlb.h               | 72 +----------------------
+>>>>    include/asm-generic/hugetlb.h                | 88 +++++++++++++++++++++++++++-
+>>>>    15 files changed, 143 insertions(+), 384 deletions(-)
+>>>>
+>>>> -- 
+>>>> 2.16.2
 
-  ...
-
-  if (err)
-    bt_dev_err(hdev, "QCA Failed to get version (%d)", err);
-
-You could also limit the error log to the 'if (*soc_version == 0)'
-branch, for all other errors there will already be a more specific log
-entry.
-
-> +
->  	return err;
->  }
-
-Cheers
-
-Matthias
