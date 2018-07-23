@@ -2,112 +2,79 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F74ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83672ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86C6A20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B7EE20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:16:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rCdI97aE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86C6A20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eQV0BS4o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B7EE20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388608AbeGWQRC (ORCPT
+        id S2388612AbeGWQRt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 12:17:02 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43951 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388115AbeGWQRC (ORCPT
+        Mon, 23 Jul 2018 12:17:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56460 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388115AbeGWQRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 12:17:02 -0400
-Received: by mail-pl0-f67.google.com with SMTP id o7-v6so352615plk.10;
-        Mon, 23 Jul 2018 08:15:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JsiGHBYuR0+zpkz1YVrSp6YypJNxVI6YvYA0TVkczs4=;
-        b=rCdI97aERt4gFOUOKEf2y0uBQ/AVG/FHGLzahTR82O8JS4BoIiZW7tf3qiuLyXRXdI
-         V/qg0eVH9uK4Q6ZjhOYO7eFLtuP7udsiz8Qsk3LF4DG+jA5DLL3ULyqQvGgfnKk9QjCT
-         1NewX5s58pFoDkKQ3rnKPBdlFvko42KDIF8W3aQbhCCGBLtKqSG77wZZBTstjyuyX0yd
-         KLABjdSA0/bjQGGqAjfmZ9Cc6FHBMeXid0UPuB+fPwySsUtI7QJK9P7tTVUuI86vqXYX
-         MQib1p6wH+SoCM/Oy9vGc9r9Dk6OOXwqpOMZoFY0dsk4qL98ZbBGzpPEZGwWLYydkq4f
-         FvqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JsiGHBYuR0+zpkz1YVrSp6YypJNxVI6YvYA0TVkczs4=;
-        b=rrubHy03aVzmivV3uxtuQ61uEtSAWsvaBRY06m+Ym50AiWydHxVkKWbf4QK2ogYyyk
-         2C6uiQMA7sQZAvOfpNrEplm9tky7+7Vo25DCu6cVB/f9RhBrutiekVQhwXArC2ZwbuPk
-         +QbzFRcGSMsTrrPxWyTHY7ld9BiYC3SiWE4FNXV+6/RvYyt5b/p076iQZ8GTEqTZ+E0N
-         9v1foL6eerSZYnSMgKP6bBFZSRM5hfHw3lPkqVsMMKA7np+2Mi8jxH7jjnHvDlBKNSXX
-         yLBtwWT93+LN8W23kxPdGB/OwCbR2vIjm1bnI6t5gbQAEZ7T6jnB99DkvHNnISfiJAok
-         YalQ==
-X-Gm-Message-State: AOUpUlEuIGUTDIJQb3IxrMrGfd04iLLdfaiH/p8IEECCzlvJ3jeTsYH5
-        wtTSU4PgNb8m2+rR8HMtHGyFCoe8
-X-Google-Smtp-Source: AAOMgpeL1NrqkMd5zbwxXpAqguXnZQpxYybrbLMNb7LJlkJOepwh1qMmED4ko3ofurogQgKpsklnCQ==
-X-Received: by 2002:a17:902:2f84:: with SMTP id t4-v6mr13204745plb.87.1532358920691;
-        Mon, 23 Jul 2018 08:15:20 -0700 (PDT)
-Received: from [192.168.1.5] ([110.78.147.217])
-        by smtp.googlemail.com with ESMTPSA id l85-v6sm17040739pfk.34.2018.07.23.08.15.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 08:15:20 -0700 (PDT)
-Subject: Re: [PATCH] option: Do not try to bind to ADB interfaces
-To:     Romain Izard <romain.izard.pro@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable <stable@vger.kernel.org>
-References: <20180723140220.7166-1-romain.izard.pro@gmail.com>
-From:   Lars Melin <larsm17@gmail.com>
-Message-ID: <73f2233a-cafd-a477-0c0a-260be832777d@gmail.com>
-Date:   Mon, 23 Jul 2018 22:15:03 +0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 23 Jul 2018 12:17:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5UZcmUt5oaXoO6Kj0ow48JNGaBwuVVKG2U8tE/wpClQ=; b=eQV0BS4ovURWx1EXQmzxJ8I2h
+        Mdu/ybY1S6//yzNYZ3NSFqXiOkPQRsCE2gMHtJoLp7OjYEq7dBEGBfrSMGjyHDDIqZ+Mjpwkg5mes
+        HClf7E34LFj2pN1QUDcUpuL+tDnaxTfANk+Ozlxb3wOtfViCvjh0BSHZ7w8bn/aRE4pmsUMFWmuiE
+        UwsjnQNeGhF7CHNcgPjnwtqPhU6tXDc2sTvyvdJGJ3fonunpGZQAULuh/QotBNLP6TQgtmwfeTuru
+        3CWJHGJrfU0G6IO3DYrVODQ06r4e6r0nNRKBDB2d20hRtpGGp3Nr34zmHtcjU88uqVA1VvFvGCBkf
+        NCtSNx69g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhcZB-0005t2-0X; Mon, 23 Jul 2018 15:16:05 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 785D320272168; Mon, 23 Jul 2018 17:16:03 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 17:16:03 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     tglx@linutronix.de, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        vincent.weaver@maine.edu, jolsa@redhat.com, ak@linux.intel.com
+Subject: Re: [PATCH 1/4] x86/perf/intel: Introduce PMU flag for Extended PEBS
+Message-ID: <20180723151603.GC2458@hirez.programming.kicks-ass.net>
+References: <20180309021542.11374-1-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180723140220.7166-1-romain.izard.pro@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180309021542.11374-1-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/23/2018 21:02, Romain Izard wrote:
-> Some modems now use the Android Debug Bridge to provide a debugging
-> interface, and some phones can also export serial ports managed by the
-> "option" driver.
+On Thu, Mar 08, 2018 at 06:15:39PM -0800, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
 > 
-> The ADB daemon running in userspace tries to use USB interfaces with
-> bDeviceClass=0xFF, bDeviceSubClass=0x42, bDeviceProtocol=1
+> The Extended PEBS feature, introduced in Goldmont Plus
+> microarchitecture, supports all events as "Extended PEBS".
 > 
-> Prevent the option driver from binding to those interfaces, as they
-> will not be serial ports.
-
-You are assuming that an interface with these attributes are always a
-ADB interface - that is wrong. Vendor specific class (0xff) is not
-standardized to be something specific.
-
-
-> This can fix issues like:
-> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=781256
+> Introduce flag PMU_FL_PEBS_ALL to indicate the platforms which support
+> extended PEBS.
+> To support all events, it needs to support all constraints for PEBS. To
+> avoid duplicating all the constraints in the PEBS table, making the PEBS
+> code search the normal constraints too.
 > 
 
-You are trying to solve a 4++ years old bug report where it was assumed 
-that the option driver was the culprit. The device in question, a 
-Qualcomm modem with vid/pid 05c6:9025 has never been included in option.
+So I like PEBS_ALL.. what I don't like is that it seems to be mutually
+exclusive with PEBS Load Latency.
 
-
-rgds
-Lars
-
-
+Took the patches.
