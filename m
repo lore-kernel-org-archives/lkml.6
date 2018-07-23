@@ -2,116 +2,129 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9360BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF1BECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5346820891
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:29:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5346820891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id DBAF020883
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:29:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zbiW9Mof"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBAF020883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388465AbeGWO3f (ORCPT
+        id S2388631AbeGWOaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 10:29:35 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:52036 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388190AbeGWO3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 10:29:34 -0400
-Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-01 (Coremail) with SMTP id qwCowAD3_5sl1lVbkm7cEA--.63S10;
-        Mon, 23 Jul 2018 21:21:23 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-To:     tglx@linutronix.de, bp@alien8.de, thomas.lendacky@amd.com,
-        mingo@redhat.com, hpa@zytor.com, peterz@infradead.org,
-        tony.luck@intel.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com, rjw@rjwysocki.net,
-        lenb@kernel.org, viresh.kumar@linaro.org, mchehab@kernel.org,
-        trenn@suse.com, shuah@kernel.org, JBeulich@suse.com, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        kvm@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: [PATCH v2 08/17] x86/apic: add modern APIC support for Hygon
-Date:   Mon, 23 Jul 2018 21:20:28 +0800
-Message-Id: <1532352037-7151-9-git-send-email-puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532352037-7151-1-git-send-email-puwen@hygon.cn>
-References: <1532352037-7151-1-git-send-email-puwen@hygon.cn>
-X-CM-TRANSID: qwCowAD3_5sl1lVbkm7cEA--.63S10
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr45JrWDWFyxKF4fGFyrCrg_yoW8Xr4xpF
-        W7JF48JFsYqas3Wasakrs7XFyUZFn7Ga17G3y3Cw1fJF4YvF1UXrsayw1Skayj9rZ5Grn5
-        ta1kXa1YvaykCaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUP2b7Iv0xC_tr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-        8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28C
-        jxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI
-        8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E
-        87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2
-        IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4UJVWx
-        Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2
-        IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-        wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc4
-        0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AK
-        xVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JV
-        WxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU8c1
-        8PUUUUU==
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        Mon, 23 Jul 2018 10:30:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52118 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387956AbeGWOaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 10:30:17 -0400
+Received: from mail-qt0-f179.google.com (mail-qt0-f179.google.com [209.85.216.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A1322089B;
+        Mon, 23 Jul 2018 13:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532352541;
+        bh=o6EdJoUXBklVzQPwKxazyPPenivnRs5UIkSwkvMGhC8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zbiW9MofzJpubNmDvcI3EhUQG84ddKtkZYgREfHuuHzZ1pGjjORVEq4HKa7XVbsd5
+         W/zbzQfq67IPVqPBx5dqyStYXliuIf8j8iRuEzYZS6Q7XbhT4HYa+8aL40FWGRNDk2
+         Zq/bKrK0+UVZA9mwqDr+OVxSwCp8F2MCxxqjnFaU=
+Received: by mail-qt0-f179.google.com with SMTP id d4-v6so557904qtn.13;
+        Mon, 23 Jul 2018 06:29:01 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEhtkEid6vVocg98ko1X+vRdK25sv6tDXa9l1Ywy1U/9RgWWxtA
+        6F//hX52RokwkjcJhKp7BYg5j/eishEZXLJS9g==
+X-Google-Smtp-Source: AAOMgpcSALdBnAJ1ktjfVnXTksJ15oP2Qm7r/ohlXqh50XuJbpp4t5gihu2wbzZksUtjzEY2ft4PsLhKZxYg/hJYwL4=
+X-Received: by 2002:ac8:705a:: with SMTP id y26-v6mr12506920qtm.118.1532352540311;
+ Mon, 23 Jul 2018 06:29:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180717084158.23532-1-masneyb@onstation.org> <20180717084158.23532-4-masneyb@onstation.org>
+ <20180720173635.GA21241@rob-hp-laptop> <20180721183716.524632f1@archlinux>
+ <20180722123720.GB20029@onstation.org> <20180722181748.24bc47d8@archlinux>
+In-Reply-To: <20180722181748.24bc47d8@archlinux>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 23 Jul 2018 07:28:49 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLCQG_CNppd9f7xtwYkruvU4=3PziPOPCTt1P4phg5iLg@mail.gmail.com>
+Message-ID: <CAL_JsqLCQG_CNppd9f7xtwYkruvU4=3PziPOPCTt1P4phg5iLg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] iio: tsl2772: add support for reading power
+ settings from device tree
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Brian Masney <masneyb@onstation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Martin Kelly <mkelly@xevo.com>, fischerdouglasc@gmail.com,
+        bshah@kde.org, Craig Tatlor <ctatlor97@gmail.com>,
+        drew.paterson@ams.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hygon processors use modern APIC, so just return in modern_apic() and
-sync_Arb_IDs(). And should break in switch case in detect_init_API().
+On Sun, Jul 22, 2018 at 11:17 AM Jonathan Cameron <jic23@kernel.org> wrote:
+>
+> On Sun, 22 Jul 2018 12:37:20 +0000
+> Brian Masney <masneyb@onstation.org> wrote:
+>
+> > On Sat, Jul 21, 2018 at 06:37:16PM +0100, Jonathan Cameron wrote:
+> > > On Fri, 20 Jul 2018 11:36:35 -0600
+> > > Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > > On Tue, Jul 17, 2018 at 04:41:54AM -0400, Brian Masney wrote:
+> > > > > This patch adds support for optionally reading the prox_diode and
+> > > > > prox_power settings from device tree. This was tested using a LG
+> > > > > Nexus 5 (hammerhead) which requires a different diode than the driver
+> > > > > default for the IR LED.
+> > > > >
+> > > > > Signed-off-by: Brian Masney <masneyb@onstation.org>
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
----
- arch/x86/kernel/apic/apic.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+> > > > > +  - amstaos,prox_diode - must be TSL2772_DIODE0, TSL2772_DIODE1, or
+> > > > > +                         TSL2772_DIODE_BOTH.
+> > > >
+> > > > s/_/-/
+> > > >
+> > > > > +  - amstaos,prox_power - must be TSL2772_100_mA, TSL2772_50_mA, TSL2772_25_mA,
+> > > > > +                         or TSL2772_13_mA.
+> > > >
+> > > > I wonder if this should be common. Perhaps we should use the existing
+> > > > 'led-max-microamp' as this is setting the current for an IR LED.
+> > >
+> > > Seems reasonable, then perhaps have two controls to turn on the diodes
+> > > above.
+> > >
+> > > >
+> > > > And while called 'power' this setting is current.
+> > >
+> > > Also can we have real values?  I really don't like defines if they
+> > > aren't absolutely necessary - particularly when there is a nice real
+> > > unit to be used.
+> >
+> > How about these options then?
+> >
+> > amstaos,proximity-diode-0-enabled;
+> > amstaos,proximity-diode-1-enabled;
+> > led-max-microamp = <100000>;
+>
+> Works for me.  Rob?
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 2aabd4c..d8b7ac1 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -223,6 +223,11 @@ static int modern_apic(void)
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
- 	    boot_cpu_data.x86 >= 0xf)
- 		return 1;
-+
-+	/* Hygon systems use modern APIC */
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-+		return 1;
-+
- 	return lapic_get_version() >= 0x14;
- }
- 
-@@ -1207,9 +1212,11 @@ void __init sync_Arb_IDs(void)
- {
- 	/*
- 	 * Unsupported on P4 - see Intel Dev. Manual Vol. 3, Ch. 8.6.1 And not
--	 * needed on AMD.
-+	 * needed on AMD or Hygon.
- 	 */
--	if (modern_apic() || boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+	if (modern_apic() ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
- 		return;
- 
- 	/*
-@@ -1908,6 +1915,8 @@ static int __init detect_init_APIC(void)
- 		    (boot_cpu_data.x86 >= 15))
- 			break;
- 		goto no_apic;
-+	case X86_VENDOR_HYGON:
-+		break;
- 	case X86_VENDOR_INTEL:
- 		if (boot_cpu_data.x86 == 6 || boot_cpu_data.x86 == 15 ||
- 		    (boot_cpu_data.x86 == 5 && boot_cpu_has(X86_FEATURE_APIC)))
--- 
-2.7.4
+I think we're bikeshedding, but I'd prefer a single property though
+perhaps as a list (0, 1, or <0 1>) or mask. A list would be similar to
+the "led-sources" property format.
 
+Rob
