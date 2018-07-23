@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E50ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A62E0ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B93F20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B93F20880
+	by mail.kernel.org (Postfix) with ESMTP id 5A7F620685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7F620685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389832AbeGWNsi (ORCPT
+        id S2389844AbeGWNsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:48:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51994 "EHLO
+        Mon, 23 Jul 2018 09:48:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52012 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389813AbeGWNsh (ORCPT
+        with ESMTP id S2389813AbeGWNsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:37 -0400
+        Mon, 23 Jul 2018 09:48:40 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42D5BBB3;
-        Mon, 23 Jul 2018 12:47:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11474BDB;
+        Mon, 23 Jul 2018 12:47:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 070/107] seccomp: Enable speculation flaw mitigations
-Date:   Mon, 23 Jul 2018 14:42:04 +0200
-Message-Id: <20180723122416.895662079@linuxfoundation.org>
+Subject: [PATCH 4.4 071/107] prctl: Add force disable speculation
+Date:   Mon, 23 Jul 2018 14:42:05 +0200
+Message-Id: <20180723122416.943281478@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -55,15 +54,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 5c3070890d06ff82eecb808d02d2ca39169533ef upstream
+commit 356e4bfff2c5489e016fdb925adbf12a1e3950ee upstream
 
-When speculation flaw mitigations are opt-in (via prctl), using seccomp
-will automatically opt-in to these protections, since using seccomp
-indicates at least some level of sandboxing is desired.
+For certain use cases it is desired to enforce mitigations so they cannot
+be undone afterwards. That's important for loader stubs which want to
+prevent a child from disabling the mitigation again. Will also be used for
+seccomp(). The extra state preserving of the prctl state for SSB is a
+preparatory step for EBPF dymanic speculation control.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -74,48 +74,193 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- kernel/seccomp.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ Documentation/spec_ctrl.txt |   34 +++++++++++++++++++++-------------
+ arch/x86/kernel/cpu/bugs.c  |   35 +++++++++++++++++++++++++----------
+ fs/proc/array.c             |    3 +++
+ include/linux/sched.h       |    9 +++++++++
+ include/uapi/linux/prctl.h  |    1 +
+ 5 files changed, 59 insertions(+), 23 deletions(-)
 
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -16,6 +16,8 @@
- #include <linux/atomic.h>
- #include <linux/audit.h>
- #include <linux/compat.h>
-+#include <linux/nospec.h>
-+#include <linux/prctl.h>
- #include <linux/sched.h>
- #include <linux/seccomp.h>
- #include <linux/slab.h>
-@@ -214,6 +216,19 @@ static inline bool seccomp_may_assign_mo
- 	return true;
- }
+--- a/Documentation/spec_ctrl.txt
++++ b/Documentation/spec_ctrl.txt
+@@ -25,19 +25,21 @@ PR_GET_SPECULATION_CTRL
+ -----------------------
  
-+/*
-+ * If a given speculation mitigation is opt-in (prctl()-controlled),
-+ * select it, by disabling speculation (enabling mitigation).
-+ */
-+static inline void spec_mitigate(struct task_struct *task,
-+				 unsigned long which)
-+{
-+	int state = arch_prctl_spec_ctrl_get(task, which);
+ PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
+-which is selected with arg2 of prctl(2). The return value uses bits 0-2 with
++which is selected with arg2 of prctl(2). The return value uses bits 0-3 with
+ the following meaning:
+ 
+-==== ================ ===================================================
+-Bit  Define           Description
+-==== ================ ===================================================
+-0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
+-                      PR_SET_SPECULATION_CTRL
+-1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
+-                      disabled
+-2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
+-                      enabled
+-==== ================ ===================================================
++==== ===================== ===================================================
++Bit  Define                Description
++==== ===================== ===================================================
++0    PR_SPEC_PRCTL         Mitigation can be controlled per task by
++                           PR_SET_SPECULATION_CTRL
++1    PR_SPEC_ENABLE        The speculation feature is enabled, mitigation is
++                           disabled
++2    PR_SPEC_DISABLE       The speculation feature is disabled, mitigation is
++                           enabled
++3    PR_SPEC_FORCE_DISABLE Same as PR_SPEC_DISABLE, but cannot be undone. A
++                           subsequent prctl(..., PR_SPEC_ENABLE) will fail.
++==== ===================== ===================================================
+ 
+ If all bits are 0 the CPU is not affected by the speculation misfeature.
+ 
+@@ -47,9 +49,11 @@ misfeature will fail.
+ 
+ PR_SET_SPECULATION_CTRL
+ -----------------------
 +
-+	if (state > 0 && (state & PR_SPEC_PRCTL))
-+		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_DISABLE);
-+}
+ PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
+ is selected by arg2 of :manpage:`prctl(2)` per task. arg3 is used to hand
+-in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
++in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE or
++PR_SPEC_FORCE_DISABLE.
+ 
+ Common error codes
+ ------------------
+@@ -70,10 +74,13 @@ Value   Meaning
+ 0       Success
+ 
+ ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
+-        PR_SPEC_DISABLE
++        PR_SPEC_DISABLE nor PR_SPEC_FORCE_DISABLE
+ 
+ ENXIO   Control of the selected speculation misfeature is not possible.
+         See PR_GET_SPECULATION_CTRL.
 +
- static inline void seccomp_assign_mode(struct task_struct *task,
- 				       unsigned long seccomp_mode)
++EPERM   Speculation was disabled with PR_SPEC_FORCE_DISABLE and caller
++        tried to enable it again.
+ ======= =================================================================
+ 
+ Speculation misfeature controls
+@@ -84,3 +91,4 @@ Speculation misfeature controls
+    * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, 0, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_FORCE_DISABLE, 0, 0);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -531,21 +531,37 @@ static void ssb_select_mitigation()
+ 
+ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
  {
-@@ -225,6 +240,8 @@ static inline void seccomp_assign_mode(s
- 	 * filter) is set.
- 	 */
- 	smp_mb__before_atomic();
-+	/* Assume seccomp processes want speculation flaw mitigation. */
-+	spec_mitigate(task, PR_SPEC_STORE_BYPASS);
- 	set_tsk_thread_flag(task, TIF_SECCOMP);
- }
+-	bool rds = !!test_tsk_thread_flag(task, TIF_RDS);
++	bool update;
  
+ 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
+ 		return -ENXIO;
+ 
+-	if (ctrl == PR_SPEC_ENABLE)
+-		clear_tsk_thread_flag(task, TIF_RDS);
+-	else
+-		set_tsk_thread_flag(task, TIF_RDS);
++	switch (ctrl) {
++	case PR_SPEC_ENABLE:
++		/* If speculation is force disabled, enable is not allowed */
++		if (task_spec_ssb_force_disable(task))
++			return -EPERM;
++		task_clear_spec_ssb_disable(task);
++		update = test_and_clear_tsk_thread_flag(task, TIF_RDS);
++		break;
++	case PR_SPEC_DISABLE:
++		task_set_spec_ssb_disable(task);
++		update = !test_and_set_tsk_thread_flag(task, TIF_RDS);
++		break;
++	case PR_SPEC_FORCE_DISABLE:
++		task_set_spec_ssb_disable(task);
++		task_set_spec_ssb_force_disable(task);
++		update = !test_and_set_tsk_thread_flag(task, TIF_RDS);
++		break;
++	default:
++		return -ERANGE;
++	}
+ 
+ 	/*
+ 	 * If being set on non-current task, delay setting the CPU
+ 	 * mitigation until it is next scheduled.
+ 	 */
+-	if (task == current && rds != !!test_tsk_thread_flag(task, TIF_RDS))
++	if (task == current && update)
+ 		speculative_store_bypass_update();
+ 
+ 	return 0;
+@@ -557,7 +573,9 @@ static int ssb_prctl_get(struct task_str
+ 	case SPEC_STORE_BYPASS_DISABLE:
+ 		return PR_SPEC_DISABLE;
+ 	case SPEC_STORE_BYPASS_PRCTL:
+-		if (test_tsk_thread_flag(task, TIF_RDS))
++		if (task_spec_ssb_force_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
++		if (task_spec_ssb_disable(task))
+ 			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
+ 		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
+ 	default:
+@@ -570,9 +588,6 @@ static int ssb_prctl_get(struct task_str
+ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+ 			     unsigned long ctrl)
+ {
+-	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
+-		return -ERANGE;
+-
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+ 		return ssb_prctl_set(task, ctrl);
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -341,6 +341,9 @@ static inline void task_seccomp(struct s
+ 	case PR_SPEC_NOT_AFFECTED:
+ 		seq_printf(m, "not vulnerable");
+ 		break;
++	case PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE:
++		seq_printf(m, "thread force mitigated");
++		break;
+ 	case PR_SPEC_PRCTL | PR_SPEC_DISABLE:
+ 		seq_printf(m, "thread mitigated");
+ 		break;
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2167,6 +2167,8 @@ static inline void memalloc_noio_restore
+ #define PFA_NO_NEW_PRIVS 0	/* May not gain new privileges. */
+ #define PFA_SPREAD_PAGE  1      /* Spread page cache over cpuset */
+ #define PFA_SPREAD_SLAB  2      /* Spread some slab caches over cpuset */
++#define PFA_SPEC_SSB_DISABLE		4	/* Speculative Store Bypass disabled */
++#define PFA_SPEC_SSB_FORCE_DISABLE	5	/* Speculative Store Bypass force disabled*/
+ 
+ 
+ #define TASK_PFA_TEST(name, func)					\
+@@ -2190,6 +2192,13 @@ TASK_PFA_TEST(SPREAD_SLAB, spread_slab)
+ TASK_PFA_SET(SPREAD_SLAB, spread_slab)
+ TASK_PFA_CLEAR(SPREAD_SLAB, spread_slab)
+ 
++TASK_PFA_TEST(SPEC_SSB_DISABLE, spec_ssb_disable)
++TASK_PFA_SET(SPEC_SSB_DISABLE, spec_ssb_disable)
++TASK_PFA_CLEAR(SPEC_SSB_DISABLE, spec_ssb_disable)
++
++TASK_PFA_TEST(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
++TASK_PFA_SET(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
++
+ /*
+  * task->jobctl flags
+  */
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -207,5 +207,6 @@ struct prctl_mm_map {
+ # define PR_SPEC_PRCTL			(1UL << 0)
+ # define PR_SPEC_ENABLE			(1UL << 1)
+ # define PR_SPEC_DISABLE		(1UL << 2)
++# define PR_SPEC_FORCE_DISABLE		(1UL << 3)
+ 
+ #endif /* _LINUX_PRCTL_H */
 
 
