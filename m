@@ -2,214 +2,104 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0000ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB8FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:39:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF5420854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:39:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF5420854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id F2C5020856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 18:39:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s0y32/3n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2C5020856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388139AbeGWTlt (ORCPT
+        id S2388159AbeGWTlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 15:41:49 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56428 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387982AbeGWTls (ORCPT
+        Mon, 23 Jul 2018 15:41:53 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:38259 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387982AbeGWTlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 15:41:48 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: padovan)
-        with ESMTPSA id 6926B27C8A2
-Subject: Re: [RFC RESEND PATCH] drm/rockchip: update cursors asynchronously
- through atomic.
-To:     Sean Paul <seanpaul@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>
-References: <20180627211447.20927-1-enric.balletbo@collabora.com>
- <20180723143634.GJ20359@art_vandelay>
-From:   Gustavo Padovan <gustavo.padovan@collabora.com>
-Organization: Collabora Ltd
-Message-ID: <621351c6-068e-1317-2571-5c8d1477c2e3@collabora.com>
-Date:   Mon, 23 Jul 2018 15:39:06 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 23 Jul 2018 15:41:52 -0400
+Received: by mail-qt0-f195.google.com with SMTP id y19-v6so1657316qto.5;
+        Mon, 23 Jul 2018 11:39:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=VggJN/uL5OgWToI3ef4x+05Yp/8H9hRSHoz1eHf1OWk=;
+        b=s0y32/3nE6gm0XLqNeHwJxa1nb0JayWi2gviC+fMHZ8a/ESWdZA1PuJuwQJb2B90Gq
+         CEamrKVaz3R5hPKItyNPi9zqri0GmYHSgmJ0132N1ls39XrzPBmCmwgXXJomcxekCJb1
+         t373IrgJgfqQ7VJ7OyHMQcT739Uty3mthmUlVoaBFYzXJqDcLAaI2SaWbvvCwNRev9HH
+         CJ/Xx3H4B08Clmif1Lv51Vbk5VTXNjw2rUEYDtoYE8OgO0XnJuIXteHBm5xyVBK0C9b3
+         Y00IOTBxeWLiU2wbjVYMqhp7h9WCjdahVxRnEggylzU1HY2Blu3YRVYk4CAkaAd8A6eF
+         ygHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=VggJN/uL5OgWToI3ef4x+05Yp/8H9hRSHoz1eHf1OWk=;
+        b=meVbI4uFZq/CXK6erIVrMVGjbju/i0SdGczGlFP56a2U+KO2j4v/RmEp5tzIDrRzTI
+         aKzYRw1R+pF0gjuptPQQX0RmYM4R/iLfyajLYgxa9Dy38lQt4+vv0p2pDGjXP5xzEyCN
+         1i5zPKPG1t1YkMHQ0HZq2tS4tWna9CB5FlN3QxYQZKpM6iIBY6SpzhZen/K6qdIoXzig
+         0zElLy1xaC/UHCEVIt1hbGFuAGF46J09ps9u23uXDhNPlR1d4u9TYEni/UF5vtYTavVF
+         ncjbDPvzjy49h8DZOpATOKNwbwsaEmMn+bKefS82MlOFd88KU2+/FZZ4066MRgRWgpSV
+         f2VQ==
+X-Gm-Message-State: AOUpUlG91BsO6XhkJA9fPS6ZEq8SCb129OiXLD7LrZZbTXJhk6FcpS4y
+        7SUL48BsBEnnLBC7BhOUyVvX0Zb1jI1EbQ+z9/ozhQ==
+X-Google-Smtp-Source: AAOMgpfq5E4CgVEIbxsFPXC4Y0NlMDTEliEsyeDbvWnoHsU5IrrCC99iwv9ZEUqJbzpNST/zevxpdHT2EVtLKLOehno=
+X-Received: by 2002:aed:3b5d:: with SMTP id q29-v6mr12828305qte.389.1532371161234;
+ Mon, 23 Jul 2018 11:39:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180723143634.GJ20359@art_vandelay>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 11:39:20
+ -0700 (PDT)
+In-Reply-To: <20180723181424.3c07f5b8@bbrezillon>
+References: <20180721200049.7553-1-anders.roxell@linaro.org>
+ <a83ff193-be57-f566-cafb-132075025b56@infradead.org> <20180722082939.2de739f1@bbrezillon>
+ <CAK8P3a1_8OSqyKsbw+m3ZzLWfPqDK4ynG3WoPTk+K2uJJsiq5A@mail.gmail.com>
+ <20180723114107.664164d2@bbrezillon> <CAK8P3a10SsWuPXzOyRcNKa+ukvj_Gq13JyDTngoU8DJu6_MR0Q@mail.gmail.com>
+ <CAK8P3a0p_8HWz0kLLrkwmpcbt4BsMiDG=hFK4SxeJygucZ1yMg@mail.gmail.com> <20180723181424.3c07f5b8@bbrezillon>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 23 Jul 2018 20:39:20 +0200
+X-Google-Sender-Auth: gpI3OlnPd1jwPWSj6Xa0XacWIng
+Message-ID: <CAK8P3a1D=zY9EBSvH6mXQbB01tSRsiKBiJ9_dqJJHCH05t0z=A@mail.gmail.com>
+Subject: Re: [PATCH] drivers/memory/Kconfig: Add CONFIG_OF dependency
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+On Mon, Jul 23, 2018 at 6:14 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Mon, 23 Jul 2018 18:04:52 +0200
+> Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>> On Mon, Jul 23, 2018 at 5:40 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> > On Mon, Jul 23, 2018 at 11:41 AM, Boris Brezillon
+>> > <boris.brezillon@bootlin.com> wrote:
+>> >> On Mon, 23 Jul 2018 11:34:43 +0200
+>> >> Arnd Bergmann <arnd@arndb.de> wrote:
+>> >>
+>> >>> On Sun, Jul 22, 2018 at 8:29 AM, Boris Brezillon
+>> >>> <boris.brezillon@bootlin.com> wrote:
+>> >>> > +Arnd, Rob and the DT ML.
 
-On 07/23/2018 11:36 AM, Sean Paul wrote:
-> On Wed, Jun 27, 2018 at 11:14:47PM +0200, Enric Balletbo i Serra wrote:
->> Add support to async updates of cursors by using the new atomic
->> interface for that.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> 
-> LGTM. Given rockchip hasn't weighed in on the patch, and that you've tested it
-> on real hardware, let's land it.
-> 
-> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+> Yep, somehow io.h was indirectly included by gpio.h. I fixed that in my
+> patch when replacing gpio.h by gpio/consumer.h by including linux/io.h.
 
-Your patch don't apply cleanly anymore. Can you rebase it and add the 
-r-b to the patch while at it? Thanks!
+Ok, looks good. With the patch from you plus the one from Anders,
+I don't see any more randconfig failures in this driver.
 
-Gustavo
-
-> 
-> 
->> ---
->> I am sending this as RFC because I still don't have a deep knowledge of
->> the hw and I am not sure if the vop_plane_update function can be reused
->> in both cases, atomic_updates and atomic_async_updates. I think that
->> someone with more knowledge should take a look. The patch was tested on
->> a Samsung Chromebook Plus in two ways.
->>
->> 1. Running all igt kms_cursor_legacy and kms_atomic@plane_cursor_legacy
->> tests and see that there is no regression after the patch.
->>
->> 2. Running weston using the atomic API.
->>
->> Best regards,
->>    Enric
->>
->>   drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 80 ++++++++++++++++-----
->>   1 file changed, 64 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> index 53d4afe15278..1eb6bda924af 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> @@ -688,8 +688,7 @@ static void vop_plane_atomic_disable(struct drm_plane *plane,
->>   	spin_unlock(&vop->reg_lock);
->>   }
->>   
->> -static void vop_plane_atomic_update(struct drm_plane *plane,
->> -		struct drm_plane_state *old_state)
->> +static void vop_plane_update(struct drm_plane *plane)
->>   {
->>   	struct drm_plane_state *state = plane->state;
->>   	struct drm_crtc *crtc = state->crtc;
->> @@ -710,20 +709,6 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
->>   	bool rb_swap;
->>   	int format;
->>   
->> -	/*
->> -	 * can't update plane when vop is disabled.
->> -	 */
->> -	if (WARN_ON(!crtc))
->> -		return;
->> -
->> -	if (WARN_ON(!vop->is_enabled))
->> -		return;
->> -
->> -	if (!state->visible) {
->> -		vop_plane_atomic_disable(plane, old_state);
->> -		return;
->> -	}
->> -
->>   	obj = rockchip_fb_get_gem_obj(fb, 0);
->>   	rk_obj = to_rockchip_obj(obj);
->>   
->> @@ -794,10 +779,73 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
->>   	spin_unlock(&vop->reg_lock);
->>   }
->>   
->> +static void vop_plane_atomic_update(struct drm_plane *plane,
->> +				    struct drm_plane_state *old_state)
->> +{
->> +	struct drm_plane_state *state = plane->state;
->> +	struct vop *vop = to_vop(state->crtc);
->> +
->> +	/*
->> +	 * can't update plane when vop is disabled.
->> +	 */
->> +	if (WARN_ON(!state->crtc))
->> +		return;
->> +
->> +	if (WARN_ON(!vop->is_enabled))
->> +		return;
->> +
->> +	if (!state->visible) {
->> +		vop_plane_atomic_disable(plane, old_state);
->> +		return;
->> +	}
->> +
->> +	vop_plane_update(plane);
->> +}
->> +
->> +static int vop_plane_atomic_async_check(struct drm_plane *plane,
->> +					struct drm_plane_state *state)
->> +{
->> +	struct drm_crtc_state *crtc_state;
->> +
->> +	crtc_state = drm_atomic_get_existing_crtc_state(state->state,
->> +							state->crtc);
->> +	if (WARN_ON(!crtc_state))
->> +		return -EINVAL;
->> +
->> +	if (!crtc_state->active)
->> +		return -EINVAL;
->> +
->> +	if (plane->state->crtc != state->crtc ||
->> +	    plane->state->src_w != state->src_w ||
->> +	    plane->state->src_h != state->src_h ||
->> +	    plane->state->crtc_w != state->crtc_w ||
->> +	    plane->state->crtc_h != state->crtc_h ||
->> +	    !plane->state->fb ||
->> +	    plane->state->fb != state->fb)
->> +		return -EINVAL;
->> +
->> +	return 0;
->> +}
->> +
->> +static void vop_plane_atomic_async_update(struct drm_plane *plane,
->> +					  struct drm_plane_state *new_state)
->> +{
->> +	plane->state->src_x = new_state->src_x;
->> +	plane->state->src_y = new_state->src_y;
->> +	plane->state->crtc_x = new_state->crtc_x;
->> +	plane->state->crtc_y = new_state->crtc_y;
->> +	plane->state->fb = new_state->fb;
->> +	*plane->state = *new_state;
->> +
->> +	vop_plane_update(plane);
->> +}
->> +
->>   static const struct drm_plane_helper_funcs plane_helper_funcs = {
->>   	.atomic_check = vop_plane_atomic_check,
->>   	.atomic_update = vop_plane_atomic_update,
->>   	.atomic_disable = vop_plane_atomic_disable,
->> +	.atomic_async_check = vop_plane_atomic_async_check,
->> +	.atomic_async_update = vop_plane_atomic_async_update,
->>   };
->>   
->>   static const struct drm_plane_funcs vop_plane_funcs = {
->> -- 
->> 2.18.0
->>
-> 
-
--- 
-Gustavo Padovan
-Collabora Ltd
+    Arnd
