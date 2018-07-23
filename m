@@ -2,197 +2,151 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD280ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5169EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA5920852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01E1720852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:37:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jZofVk37"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA5920852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mobile-devices.fr header.i=@mobile-devices.fr header.b="p69MH4vy";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="naG0a90T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E1720852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388735AbeGWRjA (ORCPT
+        id S2388793AbeGWRjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:39:00 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:48575 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388328AbeGWRjA (ORCPT
+        Mon, 23 Jul 2018 13:39:54 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:43993 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388368AbeGWRjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:39:00 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 7786E10C0443;
-        Mon, 23 Jul 2018 09:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1532363818; bh=DdwxYamuIUQ8T+lPNOZFITrRzzFqHFdmHyyHOncyJXo=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=jZofVk37TZqOh+lbNf0e3GqrDHY6CCMKehZkBvDTEmjcpMsgi3kh/4uTkRCmD0zDx
-         wF5xllD6ygWfuLCaHtodnrffjca6LIZBsjVGBFA0ZP7mvBLgscPV24TKXv0cyUZnsd
-         nluMr4KmT6FmaT/qqVIL/X4vFjuYj9Ybz+l8nYYtucNz+9+nZAFnawcyqeC44LqMES
-         BjTV6ZAVGBENIjxVHwXKAPSvB0fWVfIw8vg3/udyjHtV7CkbIhsAe2tJnuD431W34N
-         KaKq0O5jeyaHi+zWBwzZsp0XdOcWIvkjzHgrAZMEMgmjLqne5qiTLlgjQG+ULtq/Zk
-         WNTtcCVdonZHg==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 4197C5CE1;
-        Mon, 23 Jul 2018 09:36:58 -0700 (PDT)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
- US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
- 23 Jul 2018 09:36:57 -0700
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     "Ofer Levi(SW)" <oferle@mellanox.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     Leon Romanovsky <leonro@mellanox.com>,
-        Meir Lichtinger <meirl@mellanox.com>
-Subject: Re: arch/arc/ allmodconfig
-Thread-Topic: arch/arc/ allmodconfig
-Thread-Index: AQHUHyKW1M3GsAcZr0iuL832AquqnA==
-Date:   Mon, 23 Jul 2018 16:36:57 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B07F319@us01wembx1.internal.synopsys.com>
-References: <e074d0ae-6d79-d21a-2278-15d516bb943e@infradead.org>
- <C2D7FE5348E1B147BCA15975FBA23075012B0724EB@US01WEMBX2.internal.synopsys.com>
- <AM0PR05MB42600653CF591791731CCCD8DA510@AM0PR05MB4260.eurprd05.prod.outlook.com>
- <DB6PR05MB4597A63819F227B17652B5B2B2560@DB6PR05MB4597.eurprd05.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.104]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 23 Jul 2018 13:39:54 -0400
+Received: by mail-qk0-f194.google.com with SMTP id z74-v6so800063qkb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 09:37:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mobile-devices.fr; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=S8QKSN5LK06Nvb3KuzPK9Cj34nJfXTG0UXS1FDRmP/Q=;
+        b=p69MH4vyP6iFjwd6exR/5JWynmjJWB7mP8vxPjpFhkSopfUBOvgNgo4OYELyBUWQnU
+         2o3BUqPXBLP4JFi++Jeyi3ruNWIsajEdO95hnJ9ME/fy+w/RnyAnsF4TV7rCFTx8KSyC
+         pdoO+ZN1yKb/9/3p+5h5u2ZxjHC4Xy2oU1nLU=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=S8QKSN5LK06Nvb3KuzPK9Cj34nJfXTG0UXS1FDRmP/Q=;
+        b=naG0a90TFZ0WYk5n12nRzV2jLc+avip/Ju3qwbcZgCQKyw6N5XMueTOU2R1m3esuc4
+         RHagtxavG/ZyqZw+jVke2z0Dgs2gdZ1XeNRvL4gylfcGzVfEz8wt5bClr2uPobvcC0j0
+         8tfBfHhTalPnhmIq94xQQHwK7v7suFxwMlKKZr/YQRpwzxcjnpqOBp6snZApfyJnmEYC
+         zMdjBFkSPGgAcB+jrAUDfgDQ2TeI17wO8ewpc1hiviknwjkGnbo6OMjpG3gW2cmBtsF0
+         o2YAr4hqySPGPaaxY9gpEzWW9ZeM+KrxjNen/OtbmV23luNois/obBCpH4CBYoK3H05/
+         Nb8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=S8QKSN5LK06Nvb3KuzPK9Cj34nJfXTG0UXS1FDRmP/Q=;
+        b=tlcSJuAhPxJ74hK/JmX0RtAr10oE+zQOO+RJOV6gmWyx48xToKCzvbFdxZrk41X6G8
+         DDBzD1QmUDjyZ2QzHXYUVFH3ElozG9vH1KEdJoV+DT/I7KnP146i3/VRnCOD16RNXQcv
+         dCSARCsW6lLXkVu9iHttLMVLOxmOCQmRZ9d29iNNYA4oiWvCqupiC2QNgkQcXp0T1e43
+         YSNIr6juMNDb2vxu17AzWPbht+iP1JYe6FCaQg845BjFc3WXwN8ez5eHu8dPeaGomHfr
+         LuVk2lQkgja1sFYcnapc+cAwzaEOm+LMb2HUsz1j0SXSsFVSo65fzKtlxgJdqXRfesSo
+         VZ7w==
+X-Gm-Message-State: AOUpUlFOlFunx1oEBeY7eAkb3i04o6VfyH9hq/ero+jJU8Nk45UYehlL
+        N4LUUfAFzqttr71aiExHkOK9Q5hOsFiWjp8pqgfahQ==
+X-Google-Smtp-Source: AAOMgpfVA4nTUAgd3x/wV3k/2o3Gqcae+mvluYZovIeXqhut2A10Ke3ry77ldHjizqBYjZ/OBaVXZUP/SHvoZQvjsyI=
+X-Received: by 2002:a37:b5c7:: with SMTP id e190-v6mr11858427qkf.384.1532363871979;
+ Mon, 23 Jul 2018 09:37:51 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:ac8:2edb:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 09:37:31
+ -0700 (PDT)
+In-Reply-To: <73f2233a-cafd-a477-0c0a-260be832777d@gmail.com>
+References: <20180723140220.7166-1-romain.izard.pro@gmail.com> <73f2233a-cafd-a477-0c0a-260be832777d@gmail.com>
+From:   Romain Izard <romain.izard.pro@gmail.com>
+Date:   Mon, 23 Jul 2018 18:37:31 +0200
+X-Google-Sender-Auth: rygLMrJCTMsRJ__BuqN2BPLlKsI
+Message-ID: <CAGkQfmOfGZSr3fsHcveX2gjkaevnWnP7bGrY+pn+di-KaOducg@mail.gmail.com>
+Subject: Re: [PATCH] option: Do not try to bind to ADB interfaces
+To:     Lars Melin <larsm17@gmail.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ofer,=0A=
-=0A=
-On 07/23/2018 01:34 AM, Ofer Levi(SW) wrote:=0A=
-> Hi Vineet, randy=0A=
->=0A=
-> Indeed this structure is missing, following is a patch based on linux-4.1=
-7.9.=0A=
-> Sorry about that.=0A=
->=0A=
-> Thanks=0A=
->=0A=
->=0A=
-> diff -uprN linux-4.17.9.org/arch/arc/plat-eznps/include/plat/ctop.h linux=
--4.17.9/arch/arc/plat-eznps/include/plat/ctop.h=0A=
-> --- linux-4.17.9.org/arch/arc/plat-eznps/include/plat/ctop.h    2018-07-2=
-2 16:16:09.000000000 +0300=0A=
-> +++ linux-4.17.9/arch/arc/plat-eznps/include/plat/ctop.h        2018-07-2=
-3 11:18:12.179402620 +0300=0A=
-> @@ -143,6 +143,15 @@ struct nps_host_reg_gim_p_int_dst {=0A=
->  };=0A=
->  =0A=
->  /* AUX registers definition */=0A=
-> +struct nps_host_reg_aux_dpc {=0A=
-> +       union {=0A=
-> +               struct {=0A=
-> +                       u32 ien:1, men:1, hen:1, reserved:29;=0A=
-> +               };=0A=
-> +               u32 value;=0A=
-> +       };=0A=
-> +};=0A=
-> +=0A=
->  struct nps_host_reg_aux_udmc {=0A=
->         union {=0A=
->                 struct {=0A=
-=0A=
-Thx for this change. Can you please send a proper patch with changelog, cit=
-ing the=0A=
-issue as Reported-by etc.=0A=
-Also if Mellanox is interested in maintaining the NPS port going fwd, someo=
-ne (you=0A=
-?) should add their name to MAINTAINERS file under arch/arc/plat-eznps and =
-send=0A=
-that patch as well.=0A=
-=0A=
-Thx,=0A=
--Vineet=0A=
-=0A=
-=0A=
->=0A=
->=0A=
->=0A=
->=0A=
->> -----Original Message-----=0A=
->> From: Meir Lichtinger=0A=
->> Sent: Friday, July 20, 2018 10:19=0A=
->> To: Vineet Gupta <Vineet.Gupta1@synopsys.com>; Randy Dunlap=0A=
->> <rdunlap@infradead.org>; LKML <linux-kernel@vger.kernel.org>; linux-=0A=
->> snps-arc@lists.infradead.org; Ofer Levi(SW) <oferle@mellanox.com>=0A=
->> Cc: Leon Romanovsky <leonro@mellanox.com>=0A=
->> Subject: RE: arch/arc/ allmodconfig=0A=
->>=0A=
->> Hi Vineet,=0A=
->> Ofer Levi is now the maintainer of arch/arc/plat-eznps=0A=
->>=0A=
->> Ofer,=0A=
->> Please take care of the issue below=0A=
->>=0A=
->> Thanks=0A=
->>=0A=
->>=0A=
->> -----Original Message-----=0A=
->> From: Vineet Gupta [mailto:Vineet.Gupta1@synopsys.com]=0A=
->> Sent: Thursday, July 19, 2018 19:22=0A=
->> To: Randy Dunlap <rdunlap@infradead.org>; LKML <linux-=0A=
->> kernel@vger.kernel.org>; Vineet Gupta <Vineet.Gupta1@synopsys.com>;=0A=
->> linux-snps-arc@lists.infradead.org=0A=
->> Cc: Elad Kanfi <eladkan@mellanox.com>; Leon Romanovsky=0A=
->> <leonro@mellanox.com>=0A=
->> Subject: Re: arch/arc/ allmodconfig=0A=
->>=0A=
->> +CC some folks from Mellanox=0A=
->>=0A=
->> On 07/18/2018 10:37 PM, Randy Dunlap wrote:=0A=
->>> Hi,=0A=
->>>=0A=
->>> When I try to (cross-)build arch/arc/ allmodconfig, I get a syntax erro=
-r here:=0A=
->>>=0A=
->>> ./arch/arc/plat-eznps/mtm.c: In function 'mtm_enable_core':=0A=
->>> ../arch/arc/plat-eznps/mtm.c:113:30: error: storage size of 'dpc' isn't=
- known=0A=
->>>   struct nps_host_reg_aux_dpc dpc;=0A=
->>>                               ^~~=0A=
->>>=0A=
->>> There is no struct nps_host_reg_aux_dpc in the kernel tree.=0A=
->>>=0A=
->>> Can you do something about this, please?=0A=
->> Thx for the report Randy. I'm calling out Mellanox folks to see if they =
-can=0A=
->> provide a fixup, else we will revert the corresponding change.=0A=
->>=0A=
->> @Elad, upstream commit 3f9cd874dcc8705 "ARC: [plat-eznps] avoid toggling=
-=0A=
->> of DPC register" added reference to struct nps_host_reg_aux_dpc but the=
-=0A=
->> definition is missing. Can you please provide a fixup as I have no idea =
-of that=0A=
->> platform specific struct.=0A=
->>=0A=
->> @ Leon, reaching our to you, since it seems you removed Elad from=0A=
->> MAINTAINERS file, so I'm not sure if he is still at Mellanox.=0A=
->> The two folks I worked with on EZCHiip Linux port Noam Camus and Gilad=
-=0A=
->> have left Mellanox.=0A=
->> If you or someone from Mellanox are interested in maintaining this platf=
-orm,=0A=
->> please update the arch/arc/plat-eznps section of MAINTAINERS file.=0A=
->>=0A=
->>=0A=
->> Thx,=0A=
->> -Vineet=0A=
-=0A=
+2018-07-23 17:15 GMT+02:00 Lars Melin <larsm17@gmail.com>:
+> On 7/23/2018 21:02, Romain Izard wrote:
+>>
+>> Some modems now use the Android Debug Bridge to provide a debugging
+>> interface, and some phones can also export serial ports managed by the
+>> "option" driver.
+>>
+>> The ADB daemon running in userspace tries to use USB interfaces with
+>> bDeviceClass=0xFF, bDeviceSubClass=0x42, bDeviceProtocol=1
+>>
+>> Prevent the option driver from binding to those interfaces, as they
+>> will not be serial ports.
+>
+>
+> You are assuming that an interface with these attributes are always a
+> ADB interface - that is wrong. Vendor specific class (0xff) is not
+> standardized to be something specific.
+
+Yes. And the option driver binds to all the vendor-specific interfaces for many
+devices, assuming all the vendor-specific interfaces are serial ports, unless
+they are blacklisted.
+
+>
+>> This can fix issues like:
+>> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=781256
+>>
+>
+> You are trying to solve a 4++ years old bug report where it was assumed that
+> the option driver was the culprit. The device in question, a Qualcomm modem
+> with vid/pid 05c6:9025 has never been included in option.
+
+While I'm not going to investigate why the 3.16 kernel did it, in the bug
+report the logs indicated that 05c6:9025 was bound to the option driver. But I
+did not try to solve this issue directly, I reported it as it led me to the
+solution for a similar problem that I encountered last week.
+
+A vendor for an SDK based on a modem was using an old Ubuntu 16.04, and
+everything was working correctly. But on my 18.04, and on an up-to-date 16.04
+LTS, it was impossible to use ADB with the vendor's SDK.
+
+As ADB has many other failure modes, it took a lot of time to see the source of
+the problem. The option driver in the old Ubuntu did not know about the modem's
+vid/pid, so the driver was not bound by default and the ADB interface was free.
+But the modem was added in the stable branch of the kernel, so the driver was
+greedily binding to all interfaces that were not blacklisted. As a result, it
+was not possible to use ADB as long as the interface was bound to the option
+driver.
+
+One of the reasons for the problem, of course, was the reuse by the modem
+manufacturer of the same vid/pid for the standard version of the modem and for
+the SDK version.
+
+I see my change as a useful heuristic. ADB is a quite common protocol, using
+one of the 65536 vendor subclass/protocol combinations. As you can see in
+https://github.com/apkudo/adbusbini more than 3000 vendors have been spotted
+using it in the wild, including more than half of those mentioned in the option
+driver.
+
+And on the other hand, I don't expect any existing modem to use 0xff,0x42,0x01
+for its serial port interface, and a USB facedancer would not gain anything by
+doing so.
+
+Best regards,
+-- 
+Romain Izard
