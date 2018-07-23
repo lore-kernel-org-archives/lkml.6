@@ -2,146 +2,193 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524B0ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E57ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1319020854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:04:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1319020854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9479720854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:04:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUfua1iq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9479720854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388918AbeGWSGN (ORCPT
+        id S2388869AbeGWSHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:06:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36934 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388357AbeGWSGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:06:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90A0B18A;
-        Mon, 23 Jul 2018 10:04:04 -0700 (PDT)
-Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30D263F5D0;
-        Mon, 23 Jul 2018 10:04:02 -0700 (PDT)
-Subject: Re: [PATCH v11 11/15] arm64: kexec_file: add crash dump support
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
-References: <20180711074203.3019-1-takahiro.akashi@linaro.org>
- <20180711074203.3019-12-takahiro.akashi@linaro.org>
- <9efd0567-35dc-7435-74d6-1b540f3e5b9f@arm.com>
- <20180723053923.GN11258@linaro.org>
-From:   James Morse <james.morse@arm.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
-        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <8600c940-158a-f64f-8271-32f8fb40f198@arm.com>
-Date:   Mon, 23 Jul 2018 18:04:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 23 Jul 2018 14:07:05 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:40468 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388200AbeGWSHF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:07:05 -0400
+Received: by mail-oi0-f65.google.com with SMTP id w126-v6so2416588oie.7;
+        Mon, 23 Jul 2018 10:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=1FxgqwTP7tsl/P3Fa2qlPq0QWhmqQ9kUvdHI2KGRw2E=;
+        b=hUfua1iqm3fZvBPW6NE9kDGDs59nkOatre6K5do2iaTOLYWhaX/wImrGUEpzmJRcGq
+         1T7oTQctaHxSDm8TXuEFdN0lUS6jlvszpD3AyPWlOt6WGbSAVFPN/2pG+JVXstK8VeG4
+         ZWTPCDSuY2PE3exSm/8lHzSpHl3Tz/kdB0FJO9JJnzXLoF4l2Wns3hJAQ8qc6730IAe1
+         oewOPT2g+o9d+J+LhMyIUDZ6P9Fbum4HlwXHbFNWv9aCfg2IrpnCtEYyMp0TDg5jXsOC
+         gqyEG/M8hrO7sgDlihwlqK44INUIAaOdOvzYh6Pf+6ZCBL2yTyGwBuE/CmlxFkRectRQ
+         1UOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=1FxgqwTP7tsl/P3Fa2qlPq0QWhmqQ9kUvdHI2KGRw2E=;
+        b=mFSHLiNEW4IOu+UPv+oDgJCxfKhzl6+5xbPscQ5jVO6ijF19apcVWEu0gkZY1WYsNH
+         mSvavvAqRIv+kHO8jzp6Gf0EZV001zC58ddQxI+1OPGAKY5G5L9jP8glhXeAx9XtWZ82
+         5wPrXTQztO81C1d9MJDdRg3ZA/PwkI2cDbTljBjoiEvaUnM77KMAlyAf8bMx54x2fHNC
+         cywUJW+l9dWYEguomwRc9y5q1V+QPcrDD5grYF7AeWb1UBrBarY7NmM2jHm6gIPINMbD
+         MHlaD6kLCGYEQsiJOrBm5BZrUyL1d6wDLuF/hCH8tQcxgMylwhCmD/8pW4wIulIxDRsb
+         r4Zg==
+X-Gm-Message-State: AOUpUlEyxaiVIL9/k/22mJnkqLTjFqyICoWXQc5bxJOU3Z6JKdufR+h8
+        q9qhkiTkgRO/piXoAriPBE0uI6wKCknZY7Y+igklDsFw
+X-Google-Smtp-Source: AAOMgpc8Zz35a2HK583GFhjXznh97X+AV0gbe9xrojOOpnpjY6ljMCVjiGuSiRSVHxJyPeprV+UhheTOfH454+s9vUk=
+X-Received: by 2002:aca:c514:: with SMTP id v20-v6mr9866596oif.153.1532365495848;
+ Mon, 23 Jul 2018 10:04:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180723053923.GN11258@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 10:04:35 -0700 (PDT)
+In-Reply-To: <CAJs94EaXpiHaJS0M7SxUtmjNAL869sPe9XpC1rorHgJOum-Oog@mail.gmail.com>
+References: <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com>
+ <Pine.LNX.4.44L0.1807171643120.1344-100000@iolanthe.rowland.org>
+ <CAAFQd5D4YHOkMhyTmpPzpp9aPNoZtJMHgU1xmvb4PoPRaOFrbg@mail.gmail.com>
+ <CAJs94EY4x7GWuT1tF4cPquLRDFR060CuZAxS75nhOf0deYbG2w@mail.gmail.com>
+ <CAAFQd5Bwokm4GH5qXTDFCyH=cN2T-r5bR4F036-TGA+CK77MCA@mail.gmail.com> <CAJs94EaXpiHaJS0M7SxUtmjNAL869sPe9XpC1rorHgJOum-Oog@mail.gmail.com>
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Date:   Mon, 23 Jul 2018 20:04:35 +0300
+X-Google-Sender-Auth: e6uJXE1tJEvWvZU_RnMsXcAFyHA
+Message-ID: <CAJs94EZEqWEscECp7bsJ3DvqoU83_Y2WQ55jPaG4MyoG-hvLFQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
+ ISO transfer
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Akashi,
-
-On 23/07/18 06:39, AKASHI Takahiro wrote:
-> On Wed, Jul 18, 2018 at 05:50:22PM +0100, James Morse wrote:
->> On 11/07/18 08:41, AKASHI Takahiro wrote:
->>> Enabling crash dump (kdump) includes
->>> * prepare contents of ELF header of a core dump file, /proc/vmcore,
->>>   using crash_prepare_elf64_headers(), and
->>> * add two device tree properties, "linux,usable-memory-range" and
->>>   "linux,elfcorehdr", which represent respectively a memory range
->>>   to be used by crash dump kernel and the header's location
+2018-07-20 14:57 GMT+03:00 Matwey V. Kornilov <matwey@sai.msu.ru>:
+> 2018-07-20 14:33 GMT+03:00 Tomasz Figa <tfiga@chromium.org>:
+>> On Fri, Jul 20, 2018 at 8:23 PM Matwey V. Kornilov <matwey@sai.msu.ru> wrote:
+>>>
+>>> 2018-07-20 13:55 GMT+03:00 Tomasz Figa <tfiga@chromium.org>:
+>>> > On Wed, Jul 18, 2018 at 5:51 AM Alan Stern <stern@rowland.harvard.edu> wrote:
+>>> >>
+>>> >> On Tue, 17 Jul 2018, Ezequiel Garcia wrote:
+>>> >>
+>>> >> > Hi Matwey,
+>>> >> >
+>>> >> > First of all, sorry for the delay.
+>>> >> >
+>>> >> > Adding Alan and Hans. Guys, do you have any feedback here?
+>>> >>
+>>> >> ...
+>>> >>
+>>> >> > > > So, what is the benefit of using consistent
+>>> >> > > > for these URBs, as opposed to streaming?
+>>> >> > >
+>>> >> > > I don't know, I think there is no real benefit and all we see is a
+>>> >> > > consequence of copy-pasta when some webcam drivers were inspired by
+>>> >> > > others and development priparily was going at x86 platforms.
+>>> >> >
+>>> >> > You are probably right about the copy-pasta.
+>>> >> >
+>>> >> > >  It would
+>>> >> > > be great if somebody corrected me here. DMA Coherence is quite strong
+>>> >> > > property and I cannot figure out how can it help when streaming video.
+>>> >> > > The CPU host always reads from the buffer and never writes to.
+>>> >> > > Hardware perepherial always writes to and never reads from. Moreover,
+>>> >> > > buffer access is mutually exclusive and separated in time by Interrupt
+>>> >> > > fireing and URB starting (when we reuse existing URB for new request).
+>>> >> > > Only single one memory barrier is really required here.
+>>> >> > >
+>>> >> >
+>>> >> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
+>>> >> > create DMA mappings and use the streaming API. Which makes more
+>>> >> > sense in hardware without hardware coherency.
+>>> >>
+>>> >> As far as I know, the _only_ advantage to using coherent DMA in this
+>>> >> situation is that you then do not have to pay the overhead of
+>>> >> constantly setting up and tearing down the streaming mappings.  So it
+>>> >> depends very much on the platform: If coherent buffers are cached then
+>>> >> it's a slight win and otherwise it's a big lose.
+>>> >
+>>> > Isn't it about usb_alloc_coherent() being backed by DMA coherent API
+>>> > (dma_alloc_coherent/attrs()) and ending up allocating uncached (or
+>>> > write-combine) memory for devices with non-coherent DMAs? I'm not sure
+>>>
+>>> Yes, this is what exactly happens at armv7l platforms.
 >>
->>> diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
->>> index 69333694e3e2..eeb5766928b0 100644
->>> --- a/arch/arm64/include/asm/kexec.h
->>> +++ b/arch/arm64/include/asm/kexec.h
->>> @@ -99,6 +99,10 @@ static inline void crash_post_resume(void) {}
->>>  struct kimage_arch {
->>>  	phys_addr_t dtb_mem;
->>>  	void *dtb_buf;
->>> +	/* Core ELF header buffer */
+>> Okay, thanks. So this seems to be exactly the same thing that is
+>> happening in the UVC driver. There is quite a bit of random accesses
+>> to extract some header fields and then a big memcpy into VB2 buffer to
+>> assemble final frame.
 >>
->>> +	void *elf_headers;
+>> If we don't want to pay the cost of creating and destroying the
+>> streaming mapping, we could map (dma_map_single()) once, set
+>> transfer_dma of URB and URB_NO_TRANSFER_DMA_MAP and then just
+>> synchronize the caches (dma_sync_single()) before submitting/after
+>> completing the URB.
+>
+> Thank you. Now it is becoming clearer to me. Please allow me some time
+> to try to sketch the implementation.
+
+I've tried to strategies:
+
+1) Use dma_unmap and dma_map inside the handler (I suppose this is
+similar to how USB core does when there is no URB_NO_TRANSFER_DMA_MAP)
+
+2) Use sync_cpu and sync_device inside the handler (and dma_map only
+once at memory allocation)
+
+It is interesting that dma_unmap/dma_map pair leads to the lower
+overhead (+1us) than sync_cpu/sync_device (+2us) at x86_64 platform.
+At armv7l platform using dma_unmap/dma_map  leads to ~50 usec in the
+handler, and sync_cpu/sync_device - ~65 usec.
+
+However, I am not sure is it mandatory to call
+dma_sync_single_for_device for FROM_DEVICE direction?
+
+>
 >>
->> Shouldn't this be a phys_addr_t if it comes from kbuf.mem?
-> 
-> Do you mean elf_load_addr? You're right.
-> But kexec_buf defined mem as unsigned long and so I'd rather change
-> dtb_mem to unsigned long instead of elf_load_addr, which will also be
-> renamed to elf_headers_mem for clarification.
-
->> (dtb_mem is, and they type tells us which way round the runtime/kexec-time
->> pointers are)
-
-My preference would be for physical addresses to always be phys_addr_t, but as
-long as we can easily spot the difference kexec-time versus runtime addresses,
-it will save bugs where we use the wrong one.
+>> Best regards,
+>> Tomasz
+>>
+>
+>
+>
+> --
+> With best regards,
+> Matwey V. Kornilov.
+> Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+> 119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
 
 
->>> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
->>> index a0b44fe18b95..261564df7210 100644
->>> --- a/arch/arm64/kernel/machine_kexec_file.c
->>> +++ b/arch/arm64/kernel/machine_kexec_file.c
->>> @@ -132,6 +173,45 @@ static int setup_dtb(struct kimage *image,
 
->>> +		kbuf.buf_min = crashk_res.start;
->>> +		kbuf.buf_max = crashk_res.end + 1;
->>> +		kbuf.top_down = true;
->>> +
->>> +		ret = kexec_add_buffer(&kbuf);
->>> +		if (ret) {
->>> +			vfree(hdrs_addr);
->>> +			goto out_err;
->>> +		}
->>> +		image->arch.elf_headers = hdrs_addr;
->>> +		image->arch.elf_headers_sz = hdrs_sz;
->>> +		image->arch.elf_load_addr = kbuf.mem;
->>> +
->>> +		pr_debug("Loaded elf core header at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
->>> +				 image->arch.elf_load_addr, hdrs_sz, hdrs_sz);
->>> +	}
->>> +
->>>  	kbuf.image = image;
->>>  	/* not allocate anything below the kernel */
->>>  	kbuf.buf_min = kernel_load_addr + kernel_size;
-
->> I think the initramfs can escape the crash kernel range because you add to the
->> buf_max region:
->> |	/* within 1GB-aligned window of up to 32GB in size */
->> |	kbuf.buf_max = round_down(kernel_load_addr, SZ_1G)
->> |				 + (unsigned long)SZ_1G * 32;
-> 
-> No worries.
-> kexec_add_buffer() will limit the search only within crashk_res anyway.
-
-via arch_kexec_walk_mem()? Got it.
-
-But strangely the buf_min and buf_max still matter because
-locate_mem_hole_callback() uses them.
-
-
-> Are you reviewing other patches in my v11?
-> If not, I will post v12 tomorrow.
-
-No, (I try to batch replies to avoid that happening).
-I'm reading up on Secure-boot and trying to test the pe_verification stuff...
-
-
-Thanks,
-
-James
+-- 
+With best regards,
+Matwey V. Kornilov.
+Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
