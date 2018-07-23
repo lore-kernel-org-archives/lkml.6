@@ -2,135 +2,125 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 525BBECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C48B5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF83320875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B3BA20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:09:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="N8nP+6Tv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF83320875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQFwawk+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B3BA20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388883AbeGWSKt (ORCPT
+        id S2388842AbeGWSL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:10:49 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44184 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388452AbeGWSKt (ORCPT
+        Mon, 23 Jul 2018 14:11:26 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36608 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388628AbeGWSL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:10:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=kaRebApwsm0Oph4L+tR949m78bTZqIlnBOrRTqDBKz4=; b=N8nP+6TvX6Mm
-        Qmm10VYPValNfd+8R8vkwacGkr35pRj/ufCyWYpKJX1G9F6I57RsA9v6AwaU+OWw4gwB8b/12+ouC
-        crpXkSsOWrD0pnBeaUozi/9mETq8Am5U0RXiycJWYia8fjcXpoYkDyVIPzttST/EuK3VWa2I8kdBf
-        6YM8k=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fheK4-0004Nn-NX; Mon, 23 Jul 2018 17:08:36 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 76DBA112387B; Mon, 23 Jul 2018 18:08:36 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: sccb: fix typo and sort headers alphabetically" to the regmap tree
-In-Reply-To: 
-Message-Id: <20180723170836.76DBA112387B@debutante.sirena.org.uk>
-Date:   Mon, 23 Jul 2018 18:08:36 +0100 (BST)
+        Mon, 23 Jul 2018 14:11:26 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s7-v6so828948pgv.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 10:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=buXFvWz+Fi1QxQd+KPIni3OW4250LC2k6tiaUSOWRJo=;
+        b=OQFwawk+8wdmEtAv6X1WXM63vbzTytrrGrCqvHbArae4HZ8GqOhF73K9U+NbufjgMq
+         o36PNGI59UXiQ2Ta2RFCgnpCIfh6AW8c2feUqtlRdiWM3T40PJcMA3ze7i48KF8xVVg4
+         oOkaVkjSxcYMFtiM/dUNP/1JXSUsJADooVj5tPLRHklu6TnWNL+3P/KQQfZ2Jxv51ujl
+         zDAt817gf5VybXAktAw65+7P3M6dAxVUUr19IMwhTV/YGkQrYg5exWgfFBj8HeBx1Mza
+         SzCVTHYdLpg4DJiFQT10nniZ/Vbc+DABGDRsbWQ8hwgp430Ni5wsnbp0DTUuxjN5+o7s
+         P8Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=buXFvWz+Fi1QxQd+KPIni3OW4250LC2k6tiaUSOWRJo=;
+        b=O1EI0LFv68589zNu1ujqMub5WpRPkXlxpAia2/vHWXHi/y1Vr2TN0psL0aMcwdRduE
+         F2uNi0gv6+znpQ3B2Snikg6mIyvyOH2OrsykGh/sah/rk1EL+WSfMvcESQRd+5ycS8Dv
+         e0l1Cb4zT5YL9IhRbCEqwe4ieDGyUPB0jijpPBgfeHOqyGCFZJoabro4jiO5eCuQ9IOg
+         ygxfwlu35fkdGRNdexnYzaqSrcXtttdchcMY01y1J6d9seVO2em/OZXO2PcuZ/QhHidl
+         OxNLZEETJyLr4oCGl2PIRUVWWsqwjxOQOrXIV2x/fRP1Hcx0SDoHjHME+ZGL6sbH0dpB
+         XnQA==
+X-Gm-Message-State: AOUpUlGNcOJ76kWlbK/OgRoolDRKtUC7BogUi9T/4onSnSmDXbqi3l/X
+        UZDeVuOytpHfDZFjdgjNzE8A5jlQ
+X-Google-Smtp-Source: AAOMgpde60BRw9Ehg0ivPa5quKq2KgWynRfg6t1eeR8oTM3vSGXeuGoC1xSCg1FvqHVgrEjqHKIu+Q==
+X-Received: by 2002:a63:1d22:: with SMTP id d34-v6mr13030198pgd.133.1532365756214;
+        Mon, 23 Jul 2018 10:09:16 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id j191-v6sm15804253pfc.136.2018.07.23.10.09.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 10:09:15 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 10:09:13 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Anton Vasilyev <vasilyev@ispras.ru>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Samuel Holland <samuel@sholland.org>,
+        Pan Bian <bianpan2016@163.com>, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: Re: [PATCH] firmware: vpd: Fix section enabled flag on
+ vpd_section_destroy
+Message-ID: <20180723170913.GA100814@dtor-ws>
+References: <20180723164857.24460-1-vasilyev@ispras.ru>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723164857.24460-1-vasilyev@ispras.ru>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, Jul 23, 2018 at 07:48:57PM +0300, Anton Vasilyev wrote:
+> static struct ro_vpd and rw_vpd are initialized by vpd_sections_init()
+> in vpd_probe() based on header's ro and rw sizes.
+> In vpd_remove() vpd_section_destroy() performs deinitialization based
+> on enabled flag, which is set to true by vpd_sections_init().
+> This leads to call of vpd_section_destroy() on already destroyed section
+> for probe-release-probe-release sequence if first probe performs
+> ro_vpd initialization and second probe does not initialize it.
+> 
+> The patch adds changing enabled flag on vpd_section_destroy.
+> 
+> Found by Linux Driver Verification project (linuxtesting.org).
+> 
+> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 
-   regmap: sccb: fix typo and sort headers alphabetically
+Good find.
 
-has been applied to the regmap tree at
+Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+> ---
+>  drivers/firmware/google/vpd.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/firmware/google/vpd.c b/drivers/firmware/google/vpd.c
+> index e9db895916c3..5347c17c7108 100644
+> --- a/drivers/firmware/google/vpd.c
+> +++ b/drivers/firmware/google/vpd.c
+> @@ -246,6 +246,7 @@ static int vpd_section_destroy(struct vpd_section *sec)
+>  		sysfs_remove_bin_file(vpd_kobj, &sec->bin_attr);
+>  		kfree(sec->raw_name);
+>  		memunmap(sec->baseaddr);
+> +		sec->enabled = false;
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.18.0
+> 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Thanks.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 75eb3a67a29e9f87c07c8bd184a7ed4274a58ef0 Mon Sep 17 00:00:00 2001
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Mon, 23 Jul 2018 00:45:46 +0900
-Subject: [PATCH] regmap: sccb: fix typo and sort headers alphabetically
-
-Fix typos 's/wit/with/' in the comments and sort headers alphabetically
-in order to avoid duplicate includes in future.
-
-Fixes: bcf7eac3d97f ("regmap: add SCCB support")
-Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/base/regmap/regmap-sccb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/base/regmap/regmap-sccb.c b/drivers/base/regmap/regmap-sccb.c
-index b6eb876ea819..597042e2d009 100644
---- a/drivers/base/regmap/regmap-sccb.c
-+++ b/drivers/base/regmap/regmap-sccb.c
-@@ -1,9 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- // Register map access API - SCCB support
- 
--#include <linux/regmap.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
-+#include <linux/regmap.h>
- 
- #include "internal.h"
- 
-@@ -29,7 +29,7 @@ static bool sccb_is_available(struct i2c_adapter *adap)
- 
- /**
-  * regmap_sccb_read - Read data from SCCB slave device
-- * @context: Device that will be interacted wit
-+ * @context: Device that will be interacted with
-  * @reg: Register to be read from
-  * @val: Pointer to store read value
-  *
-@@ -65,7 +65,7 @@ static int regmap_sccb_read(void *context, unsigned int reg, unsigned int *val)
- 
- /**
-  * regmap_sccb_write - Write data to SCCB slave device
-- * @context: Device that will be interacted wit
-+ * @context: Device that will be interacted with
-  * @reg: Register to write to
-  * @val: Value to be written
-  *
 -- 
-2.18.0
-
+Dmitry
