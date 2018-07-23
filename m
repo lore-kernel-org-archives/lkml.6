@@ -2,187 +2,180 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FA2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E368ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71A2520854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:54:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8F7820854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:55:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oJANRBgw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71A2520854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mk3xsQ9D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F7820854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388254AbeGWW5t (ORCPT
+        id S2388260AbeGWW60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:57:49 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41684 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388228AbeGWW5r (ORCPT
+        Mon, 23 Jul 2018 18:58:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54296 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388134AbeGWW60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:57:47 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y10-v6so352031pfn.8
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:54:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OcJAee3cdd0GwYh1ij0y6A/aT86+kBdXYoDfzCL9WVo=;
-        b=oJANRBgw9vJSxuKGlspyJp+Ana1l3doAmQSBe17A7y8egWZrBy04BHG8hc4kmzjujb
-         BFDt7NMiNggrmdPQpargJccT5xgNoI4QhQeJ3ufDcqYR0+LMQwC6vPw9AGSa+LvE/yo+
-         X0/4r4pSl8fGjUyDjcryT/JTpBsv8+eLhjFSI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=OcJAee3cdd0GwYh1ij0y6A/aT86+kBdXYoDfzCL9WVo=;
-        b=i0EOaHZvKAjhv/e3NdrAiXm1bICX7BMLKTVgDyO8/Qhj6WR4LKF/cLULOKSeVPsW2Y
-         NF3nUT+8FxI9Rw+in18T4KSP/F8HKNxemBHMmJgijZX+nYiWGsWz5hVsKnfw/nCD2MIl
-         VIh5f3gbwt9TvsbLhfSHPsArzcWCml6yw2ZJhq7Q5KfGnGB3vxFFgD8pOyeTZ2UtqkBe
-         aCxLGPt9kYSXZFY13O9J81z/jVuhiGoTk6rMN03WFim/Fs+irfFy6up0DPk6k8lkbDaa
-         G0+seusQPswZ8hestYzINb00OSunJABtA9VD4qtQXxO0nVfmAsHC3bnnjJIsrFuGDOMQ
-         enjQ==
-X-Gm-Message-State: AOUpUlHVK9t1NPemVslcMOzNfOG8VMpx1AJviH4Rm4nsnH2SyJ/B2X0R
-        dGc+z7WWb7C+SGY0QIqY9cBE1Q2jW2s=
-X-Google-Smtp-Source: AAOMgpd61OtegwI3b8TJ83kjKn86OmKlrEtLn39BYbywv/DzcywfWBww2aW30Y7x8+vt7DJPyi01Sw==
-X-Received: by 2002:a63:b705:: with SMTP id t5-v6mr13916488pgf.45.1532382874415;
-        Mon, 23 Jul 2018 14:54:34 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:0:1000:1501:38e4:86fe:ec0c:4007])
-        by smtp.gmail.com with ESMTPSA id n26-v6sm5927629pgv.78.2018.07.23.14.54.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 14:54:33 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     sboyd@kernel.org, andy.gross@linaro.org
-Cc:     tdas@codeaurora.org, grahamr@codeaurora.org,
-        girishm@codeaurora.org, anischal@codeaurora.org,
-        bjorn.andersson@linaro.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Brown <david.brown@linaro.org>,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
-Date:   Mon, 23 Jul 2018 14:54:04 -0700
-Message-Id: <20180723215404.74296-3-dianders@chromium.org>
-X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
-In-Reply-To: <20180723215404.74296-1-dianders@chromium.org>
-References: <20180723215404.74296-1-dianders@chromium.org>
+        Mon, 23 Jul 2018 18:58:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2BhYGxodtoo6yOcgOLfmqUe9vFZ+7aARdjNNzbdEtt4=; b=Mk3xsQ9DhSNUq+Fziv4+G2ayO
+        U246R1rSgZrlX0JSKpHPbK/8NqTA5ci6gO/+fQ1C17e7H4FZuA6jaDvD7xd8gv7yi1a/GRGr4ramA
+        becQf38exY+Hd8ppKs3Sg/xf/ms95EugppVbnRYhwMi4K2YQeEWu3OyBxSm2Jv83htg3u/Kl3fS/j
+        dgIfOrvt5TBiYifcvs2RirPRCcx768YH5fIPFwkgNzrV+ECnsgOUj+cEVffxdv7idFqW7Nju+P6o/
+        2Pr0I4sdzRXZijOY8Ks/82A6ziyNIJC4/y8wnTJiA0WC5xgGDb4LgE69hsDQZtJHuiYSy3ITw4JaG
+        WkGA68s0g==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhinR-0008LV-74; Mon, 23 Jul 2018 21:55:13 +0000
+Subject: Re: [PATCH] Drivers: Xen: xlate_mmu.c: Fixed comment layout
+To:     Mark Railton <mark@markrailton.com>
+Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180723213404.20720-1-mark@markrailton.com>
+ <e0b30ab8-d418-cbe0-d03c-a0aee1d48367@infradead.org>
+ <20180723214011.GA21167@ZeroCool>
+ <01b221f3-d923-1abb-0168-bfeba80b9a9a@infradead.org>
+ <20180723214804.GA21761@ZeroCool>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e8cab255-eb21-fd08-e62b-3afbbe853b84@infradead.org>
+Date:   Mon, 23 Jul 2018 14:55:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180723214804.GA21761@ZeroCool>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add both the interface and core clock.
+On 07/23/2018 02:48 PM, Mark Railton wrote:
+> On Mon, Jul 23, 2018 at 02:44:28PM -0700, Randy Dunlap wrote:
+>> On 07/23/2018 02:40 PM, Mark Railton wrote:
+>>> On Mon, Jul 23, 2018 at 02:38:20PM -0700, Randy Dunlap wrote:
+>>>> On 07/23/2018 02:34 PM, Mark Railton wrote:
+>>>>> Fixed issue with multi line comment
+>>>>
+>>>> Fix [not Fixed]
+>>>>
+>>>>>
+>>>>> Signed-off-by: Mark Railton <mark@markrailton.com>
+>>>>> ---
+>>>>>  drivers/xen/xlate_mmu.c | 5 +++--
+>>>>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+>>>>> index 23f1387b3ef7..3b03bc1641ed 100644
+>>>>> --- a/drivers/xen/xlate_mmu.c
+>>>>> +++ b/drivers/xen/xlate_mmu.c
+>>>>> @@ -151,8 +151,9 @@ int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
+>>>>>  	struct remap_data data;
+>>>>>  	unsigned long range = DIV_ROUND_UP(nr, XEN_PFN_PER_PAGE) << PAGE_SHIFT;
+>>>>>  
+>>>>> -	/* Kept here for the purpose of making sure code doesn't break
+>>>>> -	   x86 PVOPS */
+>>>>> +	/* Kept here for the purpose of making sure code doesn't
+>>>>> +	 * break x86 PVOPS
+>>>>> +	 */
+>>>>
+>>>> That is still not the preferred kernel multi-line comment style.
+>>>> Documentation/process/coding-style.rst says:
+>>>>
+>>>> 	/*
+>>>> 	 * This is the preferred style for multi-line
+>>>> 	 * comments in the Linux kernel source code.
+>>>> 	 * Please use it consistently.
+>>>> 	 *
+>>>> 	 * Description:  A column of asterisks on the left side,
+>>>> 	 * with beginning and ending almost-blank lines.
+>>>> 	 */
+>>>>
+>>>> although Networking code has a slightly different preferred style (as in
+>>>> your patch).
+>>>>
+>>>>>  	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
+>>>>>  
+>>>>>  	data.fgfn = gfn;
+>>>>>
+>>>>
+>>>>
+>>>> -- 
+>>>> ~Randy
+>>>
+>>> Thank's for the feedback, I'll get that updated now.
+>>>
+>>> I'm still kinda new to this, I assume I need to send the new patch via
+>>> git send-email?
+>>
+>> That is one option.  Use whatever works for you.
+>>
+>> There are several email clients that also work well.
+>> See Documentation/process/email-clients.rst.
+>>
+>>
+>> -- 
+>> ~Randy
+> 
+> From 57c8104d2a30020005be16df2ca69ed66f6c4ae9 Mon Sep 17 00:00:00 2001
+> From: Mark Railton <mark@markrailton.com>
+> Date: Mon, 23 Jul 2018 22:28:53 +0100
+> Subject: [PATCH] Drivers: Xen: xlate_mmu.c: Fixed comment layout
+> 
+> Fixed issue with multi line comment
+> 
+> Signed-off-by: Mark Railton <mark@markrailton.com>
+> ---
+>  drivers/xen/xlate_mmu.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+> index 23f1387b3ef7..2b77c79f8ce7 100644
+> --- a/drivers/xen/xlate_mmu.c
+> +++ b/drivers/xen/xlate_mmu.c
+> @@ -151,8 +151,10 @@ int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
+>  	struct remap_data data;
+>  	unsigned long range = DIV_ROUND_UP(nr, XEN_PFN_PER_PAGE) << PAGE_SHIFT;
+> 
+> -	/* Kept here for the purpose of making sure code doesn't break
+> -	   x86 PVOPS */
+> +	/*
+> +	 * Kept here for the purpose of making sure code doesn't
+> +	 * break x86 PVOPS
+> +	 */
+>  	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
+> 
+>  	data.fgfn = gfn;
+> --
+> 2.17.1
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
 
-Changes in v2:
-- Only 19.2, 100, 150, and 300 MHz now.
-- All clocks come from MAIN rather than EVEN.
-- Use parent map 0 instead of new parent map 9.
+Hi,
 
- drivers/clk/qcom/gcc-sdm845.c | 63 +++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+a.  The subject and the patch description should be in present tense, i.e.,
+Fix instead of Fixed.
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 0f694ed4238a..5bca634e277a 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -162,6 +162,13 @@ static const char * const gcc_parent_names_10[] = {
- 	"core_bi_pll_test_se",
- };
- 
-+static const char * const gcc_parent_names_9[] = {
-+	"bi_tcxo",
-+	"gpll0",
-+	"gpll0_out_even",
-+	"core_pi_sleep_clk",
-+};
-+
- static struct clk_alpha_pll gpll0 = {
- 	.offset = 0x0,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-@@ -358,6 +365,28 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
- 	},
- };
- 
-+static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
-+	F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
-+	F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 gcc_qspi_core_clk_src = {
-+	.cmd_rcgr = 0x4b008,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = gcc_parent_map_0,
-+	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "gcc_qspi_core_clk_src",
-+		.parent_names = gcc_parent_names_9,
-+		.num_parents = 4,
-+		.ops = &clk_rcg2_floor_ops,
-+	},
-+};
-+
- static const struct freq_tbl ftbl_gcc_pdm2_clk_src[] = {
- 	F(9600000, P_BI_TCXO, 2, 0, 0),
- 	F(19200000, P_BI_TCXO, 1, 0, 0),
-@@ -1935,6 +1964,37 @@ static struct clk_branch gcc_qmip_video_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_qspi_cnoc_periph_ahb_clk = {
-+	.halt_reg = 0x4b000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x4b000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_qspi_cnoc_periph_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_qspi_core_clk = {
-+	.halt_reg = 0x4b004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x4b004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_qspi_core_clk",
-+			.parent_names = (const char *[]){
-+				"gcc_qspi_core_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_qupv3_wrap0_s0_clk = {
- 	.halt_reg = 0x17030,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -3383,6 +3443,9 @@ static struct clk_regmap *gcc_sdm845_clocks[] = {
- 	[GPLL4] = &gpll4.clkr,
- 	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
- 	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
-+	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
-+	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
-+	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
- };
- 
- static const struct qcom_reset_map gcc_sdm845_resets[] = {
+b.  Ideally you start a new email thread for new versions of a patch (but Cc:
+the interested parties).
+
+For the patch itself:
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
 -- 
-2.18.0.233.g985f88cf7e-goog
-
+~Randy
