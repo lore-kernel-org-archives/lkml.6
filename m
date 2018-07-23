@@ -6,48 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 916F0ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9735ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A3A20685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56A3A20685
+	by mail.kernel.org (Postfix) with ESMTP id 7F8C520685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F8C520685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389713AbeGWNsM (ORCPT
+        id S2389724AbeGWNsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:48:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51884 "EHLO
+        Mon, 23 Jul 2018 09:48:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51892 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388499AbeGWNsL (ORCPT
+        with ESMTP id S2388499AbeGWNsP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:11 -0400
+        Mon, 23 Jul 2018 09:48:15 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84616BE6;
-        Mon, 23 Jul 2018 12:47:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9ED71BDB;
+        Mon, 23 Jul 2018 12:47:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>, Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Whitehead <tedheadster@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Subject: [PATCH 4.4 099/107] x86/cpu: Re-apply forced caps every time CPU caps are re-read
-Date:   Mon, 23 Jul 2018 14:42:33 +0200
-Message-Id: <20180723122418.464404710@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.4 100/107] block: do not use interruptible wait anywhere
+Date:   Mon, 23 Jul 2018 14:42:34 +0200
+Message-Id: <20180723122418.519361003@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -64,58 +52,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Alan Jenkins <alan.christopher.jenkins@gmail.com>
 
-commit 60d3450167433f2d099ce2869dc52dd9e7dc9b29 upstream.
+commit 1dc3039bc87ae7d19a990c3ee71cfd8a9068f428 upstream.
 
-Calling get_cpu_cap() will reset a bunch of CPU features.  This will
-cause the system to lose track of force-set and force-cleared
-features in the words that are reset until the end of CPU
-initialization.  This can cause X86_FEATURE_FPU, for example, to
-change back and forth during boot and potentially confuse CPU setup.
+When blk_queue_enter() waits for a queue to unfreeze, or unset the
+PREEMPT_ONLY flag, do not allow it to be interrupted by a signal.
 
-To minimize the chance of confusion, re-apply forced caps every time
-get_cpu_cap() is called.
+The PREEMPT_ONLY flag was introduced later in commit 3a0a529971ec
+("block, scsi: Make SCSI quiesce and resume work reliably").  Note the SCSI
+device is resumed asynchronously, i.e. after un-freezing userspace tasks.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Whitehead <tedheadster@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Link: http://lkml.kernel.org/r/c817eb373d2c67c2c81413a70fc9b845fa34a37e.1484705016.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
+So that commit exposed the bug as a regression in v4.15.  A mysterious
+SIGBUS (or -EIO) sometimes happened during the time the device was being
+resumed.  Most frequently, there was no kernel log message, and we saw Xorg
+or Xwayland killed by SIGBUS.[1]
+
+[1] E.g. https://bugzilla.redhat.com/show_bug.cgi?id=1553979
+
+Without this fix, I get an IO error in this test:
+
+# dd if=/dev/sda of=/dev/null iflag=direct & \
+  while killall -SIGUSR1 dd; do sleep 0.1; done & \
+  echo mem > /sys/power/state ; \
+  sleep 5; killall dd  # stop after 5 seconds
+
+The interruptible wait was added to blk_queue_enter in
+commit 3ef28e83ab15 ("block: generic request_queue reference counting").
+Before then, the interruptible wait was only in blk-mq, but I don't think
+it could ever have been correct.
+
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/common.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ block/blk-core.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -803,6 +803,13 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -651,21 +651,17 @@ EXPORT_SYMBOL(blk_alloc_queue);
+ int blk_queue_enter(struct request_queue *q, gfp_t gfp)
+ {
+ 	while (true) {
+-		int ret;
+-
+ 		if (percpu_ref_tryget_live(&q->q_usage_counter))
+ 			return 0;
  
- 	init_scattered_cpuid_features(c);
- 	init_speculation_control(c);
-+
-+	/*
-+	 * Clear/Set all flags overridden by options, after probe.
-+	 * This needs to happen each time we re-probe, which may happen
-+	 * several times during CPU initialization.
-+	 */
-+	apply_forced_caps(c);
+ 		if (!gfpflags_allow_blocking(gfp))
+ 			return -EBUSY;
+ 
+-		ret = wait_event_interruptible(q->mq_freeze_wq,
+-				!atomic_read(&q->mq_freeze_depth) ||
+-				blk_queue_dying(q));
++		wait_event(q->mq_freeze_wq,
++			   !atomic_read(&q->mq_freeze_depth) ||
++			   blk_queue_dying(q));
+ 		if (blk_queue_dying(q))
+ 			return -ENODEV;
+-		if (ret)
+-			return ret;
+ 	}
  }
  
- static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
 
 
