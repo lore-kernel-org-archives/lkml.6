@@ -2,78 +2,105 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59995ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFCAECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0002420846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:20:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0002420846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id C7B1920856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:20:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7B1920856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388076AbeGWMUe (ORCPT
+        id S2388092AbeGWMV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:20:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57226 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387882AbeGWMUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:20:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C10B4AEB1;
-        Mon, 23 Jul 2018 11:19:49 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Daniel Colascione <dancol@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-api@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 0/4] cleanups and refactor of /proc/pid/smaps*
-Date:   Mon, 23 Jul 2018 13:19:29 +0200
-Message-Id: <20180723111933.15443-1-vbabka@suse.cz>
-X-Mailer: git-send-email 2.18.0
+        Mon, 23 Jul 2018 08:21:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42670 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387864AbeGWMV0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 08:21:26 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6NBJBeM120014
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 07:20:42 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kddpns1vd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 07:20:42 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Mon, 23 Jul 2018 12:20:39 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 23 Jul 2018 12:20:35 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6NBKYxH42270806
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Jul 2018 11:20:34 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8934042047;
+        Mon, 23 Jul 2018 14:20:50 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D99D42045;
+        Mon, 23 Jul 2018 14:20:49 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Mon, 23 Jul 2018 14:20:49 +0100 (BST)
+Date:   Mon, 23 Jul 2018 04:20:32 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 13/19] mm/migrate: Use xchg instead of spinlock
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1529514181-9842-14-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180723105438.GD2494@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20180723105438.GD2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18072311-0028-0000-0000-000002DEF5A3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072311-0029-0000-0000-00002396D5A1
+Message-Id: <20180723112032.GH30345@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-23_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=1 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=1
+ clxscore=1015 lowpriorityscore=0 mlxscore=1 impostorscore=0
+ mlxlogscore=212 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807230133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The recent regression in /proc/pid/smaps made me look more into the code.
-Especially the issues with smaps_rollup reported in [1] as explained in
-Patch 4, which fixes them by refactoring the code. Patches 2 and 3 are
-preparations for that. Patch 1 is me realizing that there's a lot of
-boilerplate left from times where we tried (unsuccessfuly) to mark thread
-stacks in the output.
+> If you maybe write that like:
+> 
+> 	if (time_after(jiffies, next_window) &&
+> 	    xchg(&pgdat->numabalancing_migrate_nr_pages, 0UL)) {
+> 
+> 		do {
+> 			next_window += interval;
+> 		} while (unlikely(time_after(jiffies, next_window)));
+> 
+> 		WRITE_ONCE(pgdat->numabalancing_migrate_next_window, next_window);
+> 	}
+> 
+> Then you avoid an indent level and line-wrap, resulting imo easier to
+> read code.
+> 
 
-Originally I had also plans to rework the translation from /proc/pid/*maps*
-file offsets to the internal structures. Now the offset means "vma number",
-which is not really stable (vma's can come and go between read() calls) and
-there's an extra caching of last vma's address. My idea was that offsets would
-be interpreted directly as addresses, which would also allow meaningful seeks
-(see the ugly seek_to_smaps_entry() in tools/testing/selftests/vm/mlock2.h).
-However loff_t is (signed) long long so that might be insufficient somewhere
-for the unsigned long addresses.
-
-So the result is fixed issues with skewed /proc/pid/smaps_rollup results,
-simpler smaps code, and a lot of unused code removed.
-
-[1] https://marc.info/?l=linux-mm&m=151927723128134&w=2
-
-Vlastimil Babka (4):
-  mm: /proc/pid/*maps remove is_pid and related wrappers
-  mm: proc/pid/smaps: factor out mem stats gathering
-  mm: proc/pid/smaps: factor out common stats printing
-  mm: proc/pid/smaps_rollup: convert to single value seq_file
-
- fs/proc/base.c       |   6 +-
- fs/proc/internal.h   |   3 -
- fs/proc/task_mmu.c   | 294 +++++++++++++++++++------------------------
- fs/proc/task_nommu.c |  39 +-----
- 4 files changed, 133 insertions(+), 209 deletions(-)
-
--- 
-2.18.0
+Okay will do.
 
