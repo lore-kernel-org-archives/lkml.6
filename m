@@ -2,150 +2,84 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC25ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE01ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2276420779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2276420779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A6F7420779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:34:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6F7420779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388468AbeGWPcs (ORCPT
+        id S2388402AbeGWPgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 11:32:48 -0400
-Received: from foss.arm.com ([217.140.101.70]:34898 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388104AbeGWPcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 11:32:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79CE680D;
-        Mon, 23 Jul 2018 07:31:16 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7D6A3F5D0;
-        Mon, 23 Jul 2018 07:31:14 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 15:31:12 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alessio Balsini <alessio.balsini@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [RFC PATCH] sched/deadline: sched_getattr() returns absolute
- dl-task information
-Message-ID: <20180723143112.GC2683@e110439-lin>
-References: <20180629120947.14579-1-alessio.balsini@gmail.com>
- <20180723094904.GB2494@hirez.programming.kicks-ass.net>
- <20180723124946.GA2683@e110439-lin>
- <20180723141322.GZ2458@hirez.programming.kicks-ass.net>
+        Mon, 23 Jul 2018 11:36:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39390 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388183AbeGWPgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 11:36:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 73659AD39;
+        Mon, 23 Jul 2018 14:34:46 +0000 (UTC)
+Date:   Mon, 23 Jul 2018 16:34:43 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        dan.j.williams@intel.com, nicolas.pitre@linaro.org,
+        josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de,
+        andy.shevchenko@gmail.com, patrik.r.jakobsson@gmail.com,
+        airlied@linux.ie, kys@microsoft.com, haiyangz@microsoft.com,
+        sthemmin@microsoft.com, dmitry.torokhov@gmail.com,
+        frowand.list@gmail.com, keith.busch@intel.com,
+        jonathan.derrick@intel.com, lorenzo.pieralisi@arm.com,
+        bhelgaas@google.com, tglx@linutronix.de, brijesh.singh@amd.com,
+        jglisse@redhat.com, thomas.lendacky@amd.com,
+        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
+        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
+        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
+        yinghai@kernel.org, monstr@monstr.eu, davem@davemloft.net,
+        chris@zankel.net, jcmvbkbc@gmail.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kexec@lists.infradead.org
+Subject: Re: [PATCH v7 4/4] kexec_file: Load kernel at top of system RAM if
+ required
+Message-ID: <20180723143443.GD18181@dhcp22.suse.cz>
+References: <20180718024944.577-1-bhe@redhat.com>
+ <20180718024944.577-5-bhe@redhat.com>
+ <20180718153326.b795e9ea7835432a56cd7011@linux-foundation.org>
+ <20180719151753.GB7147@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180723141322.GZ2458@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180719151753.GB7147@localhost.localdomain>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-Jul 16:13, Peter Zijlstra wrote:
-> On Mon, Jul 23, 2018 at 01:49:46PM +0100, Patrick Bellasi wrote:
-> > On 23-Jul 11:49, Peter Zijlstra wrote:
-> > 
-> > [...]
-> > 
-> > > > -void __getparam_dl(struct task_struct *p, struct sched_attr *attr)
-> > > > +void __getparam_dl(struct task_struct *p, struct sched_attr *attr,
-> > > > +		   unsigned int flags)
-> > > >  {
-> > > >  	struct sched_dl_entity *dl_se = &p->dl;
-> > > >  
-> > > >  	attr->sched_priority = p->rt_priority;
-> > > > -	attr->sched_runtime = dl_se->dl_runtime;
-> > > > -	attr->sched_deadline = dl_se->dl_deadline;
-> > > > +
-> > > > +	if (flags & SCHED_GETATTR_FLAGS_DL_ABSOLUTE) {
-> > > > +		/*
-> > > > +		 * If the task is not running, its runtime is already
-> > > > +		 * properly accounted. Otherwise, update clocks and the
-> > > > +		 * statistics for the task.
-> > > > +		 */
-> > > > +		if (task_running(task_rq(p), p)) {
-> > > > +			struct rq_flags rf;
-> > > > +			struct rq *rq;
-> > > > +
-> > > > +			rq = task_rq_lock(p, &rf);
-> > > > +			sched_clock_tick();
-> > > > +			update_rq_clock(rq);
-> > > > +			task_tick_dl(rq, p, 0);
-> > > 
-> > > Do we really want task_tick_dl() here, or update_curr_dl()?
-> > 
-> > I think this was to cover the case of a syscall being called while the
-> > task is running and we are midway between two ticks...
-> 
-> Sure, I know what it's there for, just saying that update_curr_dl()
-> would've updated the accounting as well. Calling tick stuff from !tick
-> context is a wee bit dodgy.
+On Thu 19-07-18 23:17:53, Baoquan He wrote:
+> Kexec has been a formal feature in our distro, and customers owning
+> those kind of very large machine can make use of this feature to speed
+> up the reboot process. On uefi machine, the kexec_file loading will
+> search place to put kernel under 4G from top to down. As we know, the
+> 1st 4G space is DMA32 ZONE, dma, pci mmcfg, bios etc all try to consume
+> it. It may have possibility to not be able to find a usable space for
+> kernel/initrd. From the top down of the whole memory space, we don't
+> have this worry. 
 
-Right, I think it depends on how much we want to be "precise" in closing
-a control loop with user-space.
-
-On Android we have ticks every 3-4ms, I'm wondering if this maximum
-"latency" on measuring the remaining run-time can introduce a too big
-error for certain applications...
-
-Alessio: you have an interesting low-latency audio use-case on hand,
-do you think we can tolerate a 4ms error in remaining run-time
-readings?
-
-[...]
-
-> > Which means we should use something like:
-> > 
-> >    if (flags & SCHED_GETATTR_FLAGS_DL_ABSOLUTE) {
-> >         /* Lock the task and the RQ before any other check and upate */
-> >         rq = task_rq_lock(p, &rf);
-> > 
-> >         /* Check the task is still DL ?*/
-> > 
-> >         /* Update task stats */
-> > 
-> >         task_rq_unlock(rq, p, &rf);
-> >    }
-> > 
-> > right?
-> 
-> Yeah, something along those lines.
-> 
-> > If that's better, then we should probably even better move the
-> > task_rq_lock at the beginning of SYSCALL_DEFINE4(sched_getattr()) ?
-> 
-> Hurm.. yes, we should probably have the has_dl_policy test under the
-> lock too. Which is really annoying, because this basically turns a
-> lockless syscall into locked one.
-
-Indeed...
-
-> Another method would be to have __getparam_dl() 'fail' and retry if it
-> finds !has_dl_policy() once we have the lock. That would retain the
-> lockless nature for all current use-cases and only incur the locking
-> overhead for this new case.
-
-... right, this is actually the best solution to have a bit more
-guarantees for the new DL control scenarios without affecting existing
-ones!
-
+I do not have the full context here but let me note that you should be
+careful when doing top-down reservation because you can easily get into
+hotplugable memory and break the hotremove usecase. We even warn when
+this is done. See memblock_find_in_range_node
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Michal Hocko
+SUSE Labs
