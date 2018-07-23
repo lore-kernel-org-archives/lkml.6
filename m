@@ -6,44 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36C5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7645ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87A1320685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87A1320685
+	by mail.kernel.org (Postfix) with ESMTP id 87BD320880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87BD320880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389080AbeGWNra (ORCPT
+        id S2389104AbeGWNrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50944 "EHLO
+        Mon, 23 Jul 2018 09:47:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50966 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388445AbeGWNra (ORCPT
+        with ESMTP id S2388007AbeGWNrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:30 -0400
+        Mon, 23 Jul 2018 09:47:31 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E423CBD4;
-        Mon, 23 Jul 2018 12:44:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CECEDC7A;
+        Mon, 23 Jul 2018 12:44:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        gnomes@lxorguk.ukuu.org.uk, ak@linux.intel.com,
-        ashok.raj@intel.com, karahmed@amazon.de, arjan@linux.intel.com,
-        torvalds@linux-foundation.org, peterz@infradead.org, bp@alien8.de,
-        pbonzini@redhat.com, tim.c.chen@linux.intel.com,
+        Ingo Molnar <mingo@kernel.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
-        Bo Gan <ganb@vmware.com>, gregkh@linux-foundation.org
-Subject: [PATCH 4.4 023/107] x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown
-Date:   Mon, 23 Jul 2018 14:41:17 +0200
-Message-Id: <20180723122414.022165652@linuxfoundation.org>
+        Bo Gan <ganb@vmware.com>
+Subject: [PATCH 4.4 050/107] x86/bugs: Concentrate bug reporting into a separate function
+Date:   Mon, 23 Jul 2018 14:41:44 +0200
+Message-Id: <20180723122415.469938978@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -60,36 +57,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-(cherry picked from commit fec9434a12f38d3aeafeb75711b71d8a1fdef621)
+commit d1059518b4789cabe34bb4b714d07e6089c82ca1 upstream
 
-Also, for CPUs which don't speculate at all, don't report that they're
-vulnerable to the Spectre variants either.
+Those SysFS functions have a similar preamble, as such make common
+code to handle them.
 
-Leave the cpu_no_meltdown[] match table with just X86_VENDOR_AMD in it
-for now, even though that could be done with a simple comparison, on the
-assumption that we'll have more to add.
-
-Based on suggestions from Dave Hansen and Alan Cox.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Suggested-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Borislav Petkov <bp@suse.de>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: ak@linux.intel.com
-Cc: ashok.raj@intel.com
-Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1516896855-7642-6-git-send-email-dwmw@amazon.co.uk
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -99,79 +78,73 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/kernel/cpu/common.c |   48 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   46 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 14 deletions(-)
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -43,6 +43,8 @@
- #include <asm/pat.h>
- #include <asm/microcode.h>
- #include <asm/microcode_intel.h>
-+#include <asm/intel-family.h>
-+#include <asm/cpu_device_id.h>
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -314,30 +314,48 @@ retpoline_auto:
+ #undef pr_fmt
  
- #ifdef CONFIG_X86_LOCAL_APIC
- #include <asm/uv/uv.h>
-@@ -794,6 +796,41 @@ static void identify_cpu_without_cpuid(s
- #endif
+ #ifdef CONFIG_SYSFS
+-ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
++
++ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
++			char *buf, unsigned int bug)
+ {
+-	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
++	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
+-	if (boot_cpu_has(X86_FEATURE_KAISER))
+-		return sprintf(buf, "Mitigation: PTI\n");
++
++	switch (bug) {
++	case X86_BUG_CPU_MELTDOWN:
++		if (boot_cpu_has(X86_FEATURE_KAISER))
++			return sprintf(buf, "Mitigation: PTI\n");
++
++		break;
++
++	case X86_BUG_SPECTRE_V1:
++		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++
++	case X86_BUG_SPECTRE_V2:
++		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
++			       spectre_v2_module_string());
++
++	default:
++		break;
++	}
++
+ 	return sprintf(buf, "Vulnerable\n");
  }
  
-+static const __initdata struct x86_cpu_id cpu_no_speculation[] = {
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CEDARVIEW,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CLOVERVIEW,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_LINCROFT,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_PENWELL,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_PINEVIEW,	X86_FEATURE_ANY },
-+	{ X86_VENDOR_CENTAUR,	5 },
-+	{ X86_VENDOR_INTEL,	5 },
-+	{ X86_VENDOR_NSC,	5 },
-+	{ X86_VENDOR_ANY,	4 },
-+	{}
-+};
-+
-+static const __initdata struct x86_cpu_id cpu_no_meltdown[] = {
-+	{ X86_VENDOR_AMD },
-+	{}
-+};
-+
-+static bool __init cpu_vulnerable_to_meltdown(struct cpuinfo_x86 *c)
++ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
 +{
-+	u64 ia32_cap = 0;
-+
-+	if (x86_match_cpu(cpu_no_meltdown))
-+		return false;
-+
-+	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
-+		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
-+
-+	/* Rogue Data Cache Load? No! */
-+	if (ia32_cap & ARCH_CAP_RDCL_NO)
-+		return false;
-+
-+	return true;
++	return cpu_show_common(dev, attr, buf, X86_BUG_CPU_MELTDOWN);
 +}
 +
- /*
-  * Do minimum CPU detection early.
-  * Fields really needed: vendor, cpuid_level, family, model, mask,
-@@ -840,11 +877,12 @@ static void __init early_identify_cpu(st
+ ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+-	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
+-		return sprintf(buf, "Not affected\n");
+-	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V1);
+ }
  
- 	setup_force_cpu_cap(X86_FEATURE_ALWAYS);
- 
--	if (c->x86_vendor != X86_VENDOR_AMD)
--		setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
+ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+-	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+-		return sprintf(buf, "Not affected\n");
 -
--	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
--	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-+	if (!x86_match_cpu(cpu_no_speculation)) {
-+		if (cpu_vulnerable_to_meltdown(c))
-+			setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
-+		setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
-+		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-+	}
- 
- 	fpu__init_system(c);
- 
+-	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+-		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-		       spectre_v2_module_string());
++	return cpu_show_common(dev, attr, buf, X86_BUG_SPECTRE_V2);
+ }
+ #endif
 
 
