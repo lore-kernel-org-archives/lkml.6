@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 188D3ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D684ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D431620854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D431620854
+	by mail.kernel.org (Postfix) with ESMTP id C75A020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75A020854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388322AbeGWN1N (ORCPT
+        id S2388335AbeGWN1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:27:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45194 "EHLO
+        Mon, 23 Jul 2018 09:27:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45204 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387882AbeGWN1M (ORCPT
+        with ESMTP id S2387882AbeGWN1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:27:12 -0400
+        Mon, 23 Jul 2018 09:27:15 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 859A0BD4;
-        Mon, 23 Jul 2018 12:26:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 56C09BD4;
+        Mon, 23 Jul 2018 12:26:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Krish Sadhukhan <krish.sadhukhan@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>,
+        stable@vger.kernel.org, "Dmitry V. Levin" <ldv@altlinux.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.17 07/63] KVM: VMX: Mark VMXArea with revision_id of physical CPU even when eVMCS enabled
-Date:   Mon, 23 Jul 2018 14:24:13 +0200
-Message-Id: <20180723122446.654794759@linuxfoundation.org>
+Subject: [PATCH 4.17 08/63] x86/kvm/vmx: dont read current->thread.{fs,gs}base of legacy tasks
+Date:   Mon, 23 Jul 2018 14:24:14 +0200
+Message-Id: <20180723122446.692821560@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -52,95 +51,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liran Alon <liran.alon@oracle.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit 2307af1c4b2e0ad886f30e31739845322cbd328b upstream.
+commit b062b794c7831a70bda4dfac202c1a9418e06ac0 upstream.
 
-When eVMCS is enabled, all VMCS allocated to be used by KVM are marked
-with revision_id of KVM_EVMCS_VERSION instead of revision_id reported
-by MSR_IA32_VMX_BASIC.
+When we switched from doing rdmsr() to reading FS/GS base values from
+current->thread we completely forgot about legacy 32-bit userspaces which
+we still support in KVM (why?). task->thread.{fsbase,gsbase} are only
+synced for 64-bit processes, calling save_fsgs_for_kvm() and using
+its result from current is illegal for legacy processes.
 
-However, even though not explictly documented by TLFS, VMXArea passed
-as VMXON argument should still be marked with revision_id reported by
-physical CPU.
+There's no ARCH_SET_FS/GS prctls for legacy applications. Base MSRs are,
+however, not always equal to zero. Intel's manual says (3.4.4 Segment
+Loading Instructions in IA-32e Mode):
 
-This issue was found by the following setup:
-* L0 = KVM which expose eVMCS to it's L1 guest.
-* L1 = KVM which consume eVMCS reported by L0.
-This setup caused the following to occur:
-1) L1 execute hardware_enable().
-2) hardware_enable() calls kvm_cpu_vmxon() to execute VMXON.
-3) L0 intercept L1 VMXON and execute handle_vmon() which notes
-vmxarea->revision_id != VMCS12_REVISION and therefore fails with
-nested_vmx_failInvalid() which sets RFLAGS.CF.
-4) L1 kvm_cpu_vmxon() don't check RFLAGS.CF for failure and therefore
-hardware_enable() continues as usual.
-5) L1 hardware_enable() then calls ept_sync_global() which executes
-INVEPT.
-6) L0 intercept INVEPT and execute handle_invept() which notes
-!vmx->nested.vmxon and thus raise a #UD to L1.
-7) Raised #UD caused L1 to panic.
+"In order to set up compatibility mode for an application, segment-load
+instructions (MOV to Sreg, POP Sreg) work normally in 64-bit mode. An
+entry is read from the system descriptor table (GDT or LDT) and is loaded
+in the hidden portion of the segment register.
+...
+The hidden descriptor register fields for FS.base and GS.base are
+physically mapped to MSRs in order to load all address bits supported by
+a 64-bit implementation.
+"
 
-Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+The issue was found by strace test suite where 32-bit ioctl_kvm_run test
+started segfaulting.
+
+Reported-by: Dmitry V. Levin <ldv@altlinux.org>
+Bisected-by: Masatake YAMATO <yamato@redhat.com>
+Fixes: 42b933b59721 ("x86/kvm/vmx: read MSR_{FS,KERNEL_GS}_BASE from current->thread")
 Cc: stable@vger.kernel.org
-Fixes: 773e8a0425c923bc02668a2d6534a5ef5a43cc69
-Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |   27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ arch/x86/kvm/vmx.c |   25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -4110,11 +4110,7 @@ static __init int setup_vmcs_config(stru
- 	vmcs_conf->order = get_order(vmcs_conf->size);
- 	vmcs_conf->basic_cap = vmx_msr_high & ~0x1fff;
+@@ -2376,6 +2376,7 @@ static void vmx_save_host_state(struct k
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ #ifdef CONFIG_X86_64
+ 	int cpu = raw_smp_processor_id();
++	unsigned long fs_base, kernel_gs_base;
+ #endif
+ 	int i;
  
--	/* KVM supports Enlightened VMCS v1 only */
--	if (static_branch_unlikely(&enable_evmcs))
--		vmcs_conf->revision_id = KVM_EVMCS_VERSION;
--	else
--		vmcs_conf->revision_id = vmx_msr_low;
-+	vmcs_conf->revision_id = vmx_msr_low;
+@@ -2391,12 +2392,20 @@ static void vmx_save_host_state(struct k
+ 	vmx->host_state.gs_ldt_reload_needed = vmx->host_state.ldt_sel;
  
- 	vmcs_conf->pin_based_exec_ctrl = _pin_based_exec_control;
- 	vmcs_conf->cpu_based_exec_ctrl = _cpu_based_exec_control;
-@@ -4184,7 +4180,13 @@ static struct vmcs *alloc_vmcs_cpu(int c
- 		return NULL;
- 	vmcs = page_address(pages);
- 	memset(vmcs, 0, vmcs_config.size);
--	vmcs->revision_id = vmcs_config.revision_id; /* vmcs revision id */
-+
-+	/* KVM supports Enlightened VMCS v1 only */
-+	if (static_branch_unlikely(&enable_evmcs))
-+		vmcs->revision_id = KVM_EVMCS_VERSION;
-+	else
-+		vmcs->revision_id = vmcs_config.revision_id;
-+
- 	return vmcs;
- }
+ #ifdef CONFIG_X86_64
+-	save_fsgs_for_kvm();
+-	vmx->host_state.fs_sel = current->thread.fsindex;
+-	vmx->host_state.gs_sel = current->thread.gsindex;
+-#else
+-	savesegment(fs, vmx->host_state.fs_sel);
+-	savesegment(gs, vmx->host_state.gs_sel);
++	if (likely(is_64bit_mm(current->mm))) {
++		save_fsgs_for_kvm();
++		vmx->host_state.fs_sel = current->thread.fsindex;
++		vmx->host_state.gs_sel = current->thread.gsindex;
++		fs_base = current->thread.fsbase;
++		kernel_gs_base = current->thread.gsbase;
++	} else {
++#endif
++		savesegment(fs, vmx->host_state.fs_sel);
++		savesegment(gs, vmx->host_state.gs_sel);
++#ifdef CONFIG_X86_64
++		fs_base = read_msr(MSR_FS_BASE);
++		kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
++	}
+ #endif
+ 	if (!(vmx->host_state.fs_sel & 7)) {
+ 		vmcs_write16(HOST_FS_SELECTOR, vmx->host_state.fs_sel);
+@@ -2416,10 +2425,10 @@ static void vmx_save_host_state(struct k
+ 	savesegment(ds, vmx->host_state.ds_sel);
+ 	savesegment(es, vmx->host_state.es_sel);
  
-@@ -4343,6 +4345,19 @@ static __init int alloc_kvm_area(void)
- 			return -ENOMEM;
- 		}
+-	vmcs_writel(HOST_FS_BASE, current->thread.fsbase);
++	vmcs_writel(HOST_FS_BASE, fs_base);
+ 	vmcs_writel(HOST_GS_BASE, cpu_kernelmode_gs_base(cpu));
  
-+		/*
-+		 * When eVMCS is enabled, alloc_vmcs_cpu() sets
-+		 * vmcs->revision_id to KVM_EVMCS_VERSION instead of
-+		 * revision_id reported by MSR_IA32_VMX_BASIC.
-+		 *
-+		 * However, even though not explictly documented by
-+		 * TLFS, VMXArea passed as VMXON argument should
-+		 * still be marked with revision_id reported by
-+		 * physical CPU.
-+		 */
-+		if (static_branch_unlikely(&enable_evmcs))
-+			vmcs->revision_id = vmcs_config.revision_id;
-+
- 		per_cpu(vmxarea, cpu) = vmcs;
- 	}
- 	return 0;
+-	vmx->msr_host_kernel_gs_base = current->thread.gsbase;
++	vmx->msr_host_kernel_gs_base = kernel_gs_base;
+ 	if (is_long_mode(&vmx->vcpu))
+ 		wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+ #else
 
 
