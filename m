@@ -2,415 +2,369 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB43FECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3010DECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2234020858
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:59:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF69420858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:00:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KCTo5YkB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2234020858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jbTUxBET"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF69420858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387842AbeGWG7H (ORCPT
+        id S2387861AbeGWG7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 02:59:07 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34413 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728230AbeGWG7G (ORCPT
+        Mon, 23 Jul 2018 02:59:36 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43772 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728188AbeGWG7f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 02:59:06 -0400
-Received: by mail-pl0-f66.google.com with SMTP id f6-v6so7790759plo.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 22:59:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=apOMCTZXpt8k8qp/eu7+lazL3WrqAy27aO9Kza+Pq/g=;
-        b=KCTo5YkBhGfJRpboYDCOlZOr9NxwrhxYfoEaOm5a1h6Wyu4/vOxecdi+4LXqmffGz7
-         paOl/YS96KtcMcHGP4kPr1zykmCW2TykAXdDB9QMpjPxENuulnzW2rXTPYF5b0nC+iQh
-         mBdoh/YIgc4dpS/4xTleRbimiXgbvP8gHo1hghp30bGiLJVyw32aqYtl0v2TyNkyasdb
-         6hek3zFb1+1I4Na7yOj6fLjVAEoiEWTqsrAL6UTxV1YSZpJoTqKub1wg7+G4v1ndEdW9
-         XBgcmKyD9h766Ij2vv5rJFTr+PdNzszKWKWS6Ka2YdHOmnISvdNjiP2WjPv7CGfOZd+g
-         TQBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=apOMCTZXpt8k8qp/eu7+lazL3WrqAy27aO9Kza+Pq/g=;
-        b=cGX+2+4QRmpo0BW9s95QKPxPac9AOWaXON+asIByo8WmcGAGVxJiQGSBkcZqd6HsaK
-         O0KjDTIb0jL1Pryl+87ZgnQKgTTUPV/PUT0oC+nwlNiIu5aqiOsbM+smGNrWkXT+GPkx
-         vo7iQIVo1b+ZWHong2p6G9b8SBT/Cq9lRAw8X1Qpp+7YMi5zCa2uUmYAZTge7wAMwJdd
-         KLOhSGjtTfYj0W2xCExgr/4vkDRDDpNl0y1hlAfIZSi7uEpZqynFldN2Yk2XtdKa6Mgr
-         HjLpbK+LZaYorZSWPi+BHIGyXuxWXeKts7wmZSbpngZgB4dy62SZRo8tEh+mrw2TjGzn
-         l0rg==
-X-Gm-Message-State: AOUpUlFyY71X8lIfdhTq7eOX+pQ2rYIdxERG67heevtFxvX9F20vatBA
-        xvf1RduIG2LoXBElRMvhLbMC4ljz4P3DD2qcpoEntw==
-X-Google-Smtp-Source: AAOMgpcUn0wr4e3URJk7z9t97h3bwx7T1QR6F8k+biGevRc+Qr8eUE1U+FOsV5yoVdhnpahNHindDK/eAAkq6EIyb60=
-X-Received: by 2002:a17:902:d710:: with SMTP id w16-v6mr11630639ply.93.1532325575045;
- Sun, 22 Jul 2018 22:59:35 -0700 (PDT)
+        Mon, 23 Jul 2018 02:59:35 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180723060002euoutp011caac08cb03c30c689becbc56b9b050d~D6gRKJ2g60858508585euoutp01A
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 06:00:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180723060002euoutp011caac08cb03c30c689becbc56b9b050d~D6gRKJ2g60858508585euoutp01A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1532325602;
+        bh=xx7bao1cLC2MiUgLcKSRsGErJSR52rxRfwPH+lphfFw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=jbTUxBET8UXXGYRx3wpTRlUdrP87uiSn2MWfqr5DYzioAuqS9ibj3T42TdIl4POS5
+         SoID8M4XWU+n9ndhzJRYAhEDHMIo/zavZJKdJFZ+FD2nQzwvUDFqQP0v8jTZdqFXOr
+         qyWfq2Ukc3+vm8zVlIMYagTAiSGMkWCK6gCBGQ4U=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180723060000eucas1p2d15aa85f9b6ae6c95315a306873fa501~D6gPz_DjV2290822908eucas1p2I;
+        Mon, 23 Jul 2018 06:00:00 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1A.6C.61560.0EE655B5; Mon, 23
+        Jul 2018 07:00:00 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180723055959eucas1p15a381f2a1287a28e4f78f1fb5fc8e37d~D6gOgxXLK0412704127eucas1p1R;
+        Mon, 23 Jul 2018 05:59:59 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180723055959eusmtrp1bd499c61c46efbe9c12c2bdaa8d4232b~D6gORZLa71384313843eusmtrp1l;
+        Mon, 23 Jul 2018 05:59:59 +0000 (GMT)
+X-AuditID: cbfec7f5-1edff7000002f078-93-5b556ee07b65
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1B.79.04178.FDE655B5; Mon, 23
+        Jul 2018 06:59:59 +0100 (BST)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180723055958eusmtip2259bccf4b1f7e2f79a8d989215ae526c~D6gNXQ4qO1457814578eusmtip2g;
+        Mon, 23 Jul 2018 05:59:58 +0000 (GMT)
+Subject: Re: [PATCH v12 1/4] iommu/arm-smmu: Add pm_runtime/sleep ops
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Mon, 23 Jul 2018 07:59:57 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Sun, 22 Jul 2018 22:59:14
- -0700 (PDT)
-In-Reply-To: <00000000000037578b057186966f@google.com>
-References: <00000000000037578b057186966f@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 23 Jul 2018 07:59:14 +0200
-Message-ID: <CACT4Y+bsYhE+0W0EsPpvWmAwu5vzkVmrnsnwym_ofwePaAO7fQ@mail.gmail.com>
-Subject: Re: KASAN: stack-out-of-bounds Read in locks_remove_posix
-To:     syzbot <syzbot+5855b4355079756bf451@syzkaller.appspotmail.com>
-Cc:     Bruce Fields <bfields@fieldses.org>, jlayton@kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJZ5v0g0NwkLmd=tJ0sT4pc8FJSRE8sEu5GRQ7KUUd+YedzjMg@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxNcRj2O+fcc0/ltl+X9C4Nu8N8RFFrvy0ZG3P4I8xtKJNLR6zuxb0V
+        9Udr+UrlI6ZyS8VKlnwUkqZSLpdV1K1oSJnLrXSllWgoHcdH/z3v8zzv3ufZXo5WprDu3G5d
+        lKDXaSJVrCNT9mj42YJOXVCId07vTDI0msqSxCS7jOSanspItq0Bkbxqf1KSF0GOZd2Qk7Tq
+        BjlprshmycBxEyIFL5oocn7wLE3q6ywyYrvwjSaHK01yUvPZKiMjz0sYMpiWxJCBwyMseTxc
+        TpPu/sfMMlfeWpND8cU5xYjPSmhi+OYTxyn+rrFdzpcWHWP5jhQzxZ9pK0R8X1Ury99qPcrw
+        A6XT1jkFOy4JEyJ3xwh6r6XbHHdVN1xm9xYGHrAU9bAJqCsgGTlwgH3hgekVm4wcOSW+jCDl
+        2ltKFJR4EEH3RxdJGEBgyrxL/91oybBRklCI4OTVDzJp6ENwpa1bLrom4ZVgyxlFIp6M50P+
+        xVZaNNG4g4WnL1MYUWDxIki2J48d5zgGz4KbbWEidMVb4HuFv+hQYBd4cs762+2A10P9w8zf
+        mMbT4Y49m5awG7y05lJSuPsc/HzvI+3GQGNaOyPxK6C9tksu4UnQY771B3tA3ZlURowG+CCC
+        o5lGuTSkIridXc5KLn94YG6SieFoPBeuV3hJ9HIo+fCZEmnAztBmd5HyOMPpsgxaohWQdEQp
+        uWeD0Xzt39maRgt9CqmM41oaxzUzjmtm/H83DzFFyE2INmjDBYOPTti/0KDRGqJ14Qt37NGW
+        orEXrRsxfylHVT+21yLMIdVExTe7OkQp08QYYrW1CDhaNVlhYYNClIowTWycoN8Tqo+OFAy1
+        aCrHqNwUW+fEBytxuCZKiBCEvYL+r0pxDu4JqCBUcUjr+Wl+C9tQ2b8hZMgpK8PTO8nBY/8X
+        btMEsurd+iFbb8kl99DR3vSW04lV6WF+r8vVam+/WebZRzbXX8qNc07PClYXpM/omxIfuLa9
+        +Pqhe1s91Uymb2vZm9VfA+Ks1L6l4U7yidPyvTYGTt2ZELlyzc/4NaFqvrOyd7GvZbGKMezS
+        LJpH6w2aX+WlycueAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRiA+XYuOzMHx6n0IZUy6I/R9Hjbp+nIyDpBV7J+aGXDndR0m+5s
+        lv2y6DatSMKsadMiqcwoL6SFNlzeQi28TK0sEVZT6eQVyQht0wL/Pbzf87zwwUthsnIigMrQ
+        GTmDTp0lJ73wrqWOr1tHdUeSQ13nvdHC8jUSXbgqEKi89T2Bylw9AFXYtqGaikxkLn0hRkW2
+        HjHqf11GornrrQBVDvWK0L35Ygx1d/URyHX/F4YuNbeKUcu0k0BLgzU4mi+6iqO5S0sk6lxs
+        xNDETCe+3Z91tlhFbLW1GrCl+b0423/juoh9ZfkiZmurzCQ7WtghYm8NPwLs1BsHydY7ruDs
+        XO2mg+uSFLEGvcnIBaXreWOcPJlBYQomGinCIqIVTLjyeExYpDxEFavhsjJyOUOI6qQi3dbz
+        mMx+tP9sX9UkmQ/G4wqAhIJ0BBwocYk8LKMrAfzTvm91vgG+u51PrLIv/DNYQBYAL7cjAPh0
+        3rry4EsnQJd1GXjYj94CHz5wYB4Jo7+RcKDZTqwWizgsavq9YpE0AwsEzyoJJaVVcG5gzC1R
+        FE5vhnXDGs/Ynz4G225d/Kf4wHd3nbiHJfQh2N12Z4UxOgpa68awVQ6EDULZP14PPznLRTeB
+        zLImt6xJLGsSy5qkAuBVwI8z8do0Lc8oeLWWN+nSFKl6bS1wH8fL9sW6RtBXc9gOaArIvaW/
+        hMRkGaHO5fO0dgApTO4n7SOPJMukGnXeOc6gTzGYsjjeDiLdfyvCAvxT9e5T0xlTmEhGiaIZ
+        ZbgyPArJ10s/hOYlyeg0tZHL5LhszvC/E1GSgHwQ8FxfHX+adAg5y0EdcTt8/D93KqciYxKM
+        V+qJQMnk7AEhO9i8e0GcWDa2sNXy0znEjljaMifSzUddCZdPqeQj49OOplKb8Ufd0erZ3Ik9
+        M/FImvM9+yNRvGDeuPOEQzM1ufeQqe1Mk2ro97NFp/D2SV6gUBLSMGDHnhKGXYVynE9XM8GY
+        gVf/BVyoMwMyAwAA
+Message-Id: <20180723055959eucas1p15a381f2a1287a28e4f78f1fb5fc8e37d~D6gOgxXLK0412704127eucas1p1R@eucas1p1.samsung.com>
+X-CMS-MailID: 20180723055959eucas1p15a381f2a1287a28e4f78f1fb5fc8e37d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180711125157epcas1p3712f4a02f4442287c18e470d0a8d516f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180711125157epcas1p3712f4a02f4442287c18e470d0a8d516f
+References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
+        <20180708173413.1965-2-vivek.gautam@codeaurora.org>
+        <17407514.unFVTGoGrn@aspire.rjw.lan>
+        <CAFp+6iHxJucfzJJeEvSToG4p2zADjDb9F0L8h053x-JKAy55mg@mail.gmail.com>
+        <CAJZ5v0gbkdkx_+oHYiPz=SFdFCLm38hsi1TmJ2Jdc7j73TNtzg@mail.gmail.com>
+        <CGME20180711125157epcas1p3712f4a02f4442287c18e470d0a8d516f@epcas1p3.samsung.com>
+        <CAAFQd5Cqd=J+_nqRc_sx=sq2ayxwSRMgygvffuHH9nC5R_LjdA@mail.gmail.com>
+        <20180711134054eucas1p208566383b25dd74787034929b3081901~AVDO-rPhL2314323143eucas1p2n@eucas1p2.samsung.com>
+        <CAJZ5v0g0NwkLmd=tJ0sT4pc8FJSRE8sEu5GRQ7KUUd+YedzjMg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 21, 2018 at 8:29 PM, syzbot
-<syzbot+5855b4355079756bf451@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    8ae71e76cf1f Merge branch 'bpf-offload-sharing'
-> git tree:       bpf-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17724d1c400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=89129667b46496c3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5855b4355079756bf451
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1193eee0400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c5c9dc400000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+5855b4355079756bf451@syzkaller.appspotmail.com
+Hi Rafael,
 
-Looks like the same bpf map bug:
+On 2018-07-11 22:36, Rafael J. Wysocki wrote:
+> On Wed, Jul 11, 2018 at 3:40 PM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> Hi Tomasz,
+>>
+>> On 2018-07-11 14:51, Tomasz Figa wrote:
+>>> On Wed, Jul 11, 2018 at 8:11 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>>>> On Wed, Jul 11, 2018 at 12:55 PM, Vivek Gautam
+>>>> <vivek.gautam@codeaurora.org> wrote:
+>>>>> On Wed, Jul 11, 2018 at 3:20 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>>>>>> On Sunday, July 8, 2018 7:34:10 PM CEST Vivek Gautam wrote:
+>>>>>>> From: Sricharan R <sricharan@codeaurora.org>
+>>>>>>>
+>>>>>>> The smmu needs to be functional only when the respective
+>>>>>>> master's using it are active. The device_link feature
+>>>>>>> helps to track such functional dependencies, so that the
+>>>>>>> iommu gets powered when the master device enables itself
+>>>>>>> using pm_runtime. So by adapting the smmu driver for
+>>>>>>> runtime pm, above said dependency can be addressed.
+>>>>>>>
+>>>>>>> This patch adds the pm runtime/sleep callbacks to the
+>>>>>>> driver and also the functions to parse the smmu clocks
+>>>>>>> from DT and enable them in resume/suspend.
+>>>>>>>
+>>>>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>>>>>> Signed-off-by: Archit Taneja <architt@codeaurora.org>
+>>>>>>> [vivek: Clock rework to request bulk of clocks]
+>>>>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>>>>>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+>>>>>>> ---
+>>>>>>>
+>>>>>>>    - No change since v11.
+>>>>>>>
+>>>>>>>    drivers/iommu/arm-smmu.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++--
+>>>>>>>    1 file changed, 58 insertions(+), 2 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>>>>>>> index f7a96bcf94a6..a01d0dde21dd 100644
+>>>>>>> --- a/drivers/iommu/arm-smmu.c
+>>>>>>> +++ b/drivers/iommu/arm-smmu.c
+>>>>>>> @@ -48,6 +48,7 @@
+>>>>>>>    #include <linux/of_iommu.h>
+>>>>>>>    #include <linux/pci.h>
+>>>>>>>    #include <linux/platform_device.h>
+>>>>>>> +#include <linux/pm_runtime.h>
+>>>>>>>    #include <linux/slab.h>
+>>>>>>>    #include <linux/spinlock.h>
+>>>>>>>
+>>>>>>> @@ -205,6 +206,8 @@ struct arm_smmu_device {
+>>>>>>>         u32                             num_global_irqs;
+>>>>>>>         u32                             num_context_irqs;
+>>>>>>>         unsigned int                    *irqs;
+>>>>>>> +     struct clk_bulk_data            *clks;
+>>>>>>> +     int                             num_clks;
+>>>>>>>
+>>>>>>>         u32                             cavium_id_base; /* Specific to Cavium */
+>>>>>>>
+>>>>>>> @@ -1897,10 +1900,12 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
+>>>>>>>    struct arm_smmu_match_data {
+>>>>>>>         enum arm_smmu_arch_version version;
+>>>>>>>         enum arm_smmu_implementation model;
+>>>>>>> +     const char * const *clks;
+>>>>>>> +     int num_clks;
+>>>>>>>    };
+>>>>>>>
+>>>>>>>    #define ARM_SMMU_MATCH_DATA(name, ver, imp)  \
+>>>>>>> -static struct arm_smmu_match_data name = { .version = ver, .model = imp }
+>>>>>>> +static const struct arm_smmu_match_data name = { .version = ver, .model = imp }
+>>>>>>>
+>>>>>>>    ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
+>>>>>>>    ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
+>>>>>>> @@ -1919,6 +1924,23 @@ static const struct of_device_id arm_smmu_of_match[] = {
+>>>>>>>    };
+>>>>>>>    MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+>>>>>>>
+>>>>>>> +static void arm_smmu_fill_clk_data(struct arm_smmu_device *smmu,
+>>>>>>> +                                const char * const *clks)
+>>>>>>> +{
+>>>>>>> +     int i;
+>>>>>>> +
+>>>>>>> +     if (smmu->num_clks < 1)
+>>>>>>> +             return;
+>>>>>>> +
+>>>>>>> +     smmu->clks = devm_kcalloc(smmu->dev, smmu->num_clks,
+>>>>>>> +                               sizeof(*smmu->clks), GFP_KERNEL);
+>>>>>>> +     if (!smmu->clks)
+>>>>>>> +             return;
+>>>>>>> +
+>>>>>>> +     for (i = 0; i < smmu->num_clks; i++)
+>>>>>>> +             smmu->clks[i].id = clks[i];
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>    #ifdef CONFIG_ACPI
+>>>>>>>    static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
+>>>>>>>    {
+>>>>>>> @@ -2001,6 +2023,9 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
+>>>>>>>         data = of_device_get_match_data(dev);
+>>>>>>>         smmu->version = data->version;
+>>>>>>>         smmu->model = data->model;
+>>>>>>> +     smmu->num_clks = data->num_clks;
+>>>>>>> +
+>>>>>>> +     arm_smmu_fill_clk_data(smmu, data->clks);
+>>>>>>>
+>>>>>>>         parse_driver_options(smmu);
+>>>>>>>
+>>>>>>> @@ -2099,6 +2124,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+>>>>>>>                 smmu->irqs[i] = irq;
+>>>>>>>         }
+>>>>>>>
+>>>>>>> +     err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
+>>>>>>> +     if (err)
+>>>>>>> +             return err;
+>>>>>>> +
+>>>>>>> +     err = clk_bulk_prepare(smmu->num_clks, smmu->clks);
+>>>>>>> +     if (err)
+>>>>>>> +             return err;
+>>>>>>> +
+>>>>>>>         err = arm_smmu_device_cfg_probe(smmu);
+>>>>>>>         if (err)
+>>>>>>>                 return err;
+>>>>>>> @@ -2181,6 +2214,9 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
+>>>>>>>
+>>>>>>>         /* Turn the thing off */
+>>>>>>>         writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+>>>>>>> +
+>>>>>>> +     clk_bulk_unprepare(smmu->num_clks, smmu->clks);
+>>>>>>> +
+>>>>>>>         return 0;
+>>>>>>>    }
+>>>>>>>
+>>>>>>> @@ -2197,7 +2233,27 @@ static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
+>>>>>>>         return 0;
+>>>>>>>    }
+>>>>>>>
+>>>>>>> -static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
+>>>>>>> +static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
+>>>>>>> +{
+>>>>>>> +     struct arm_smmu_device *smmu = dev_get_drvdata(dev);
+>>>>>>> +
+>>>>>>> +     return clk_bulk_enable(smmu->num_clks, smmu->clks);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
+>>>>>>> +{
+>>>>>>> +     struct arm_smmu_device *smmu = dev_get_drvdata(dev);
+>>>>>>> +
+>>>>>>> +     clk_bulk_disable(smmu->num_clks, smmu->clks);
+>>>>>>> +
+>>>>>>> +     return 0;
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static const struct dev_pm_ops arm_smmu_pm_ops = {
+>>>>>>> +     SET_SYSTEM_SLEEP_PM_OPS(NULL, arm_smmu_pm_resume)
+>>>>>> This is suspicious.
+>>>>>>
+>>>>>> If you need a runtime suspend method, why do you think that it is not necessary
+>>>>>> to suspend the device during system-wide transitions?
+>>>>> Okay, so you suggest to put clock disabling in say arm_smmu_pm_suspend()?
+>>>>> In that case the clocks have to be enabled in the resume path too.
+>>>>>
+>>>>> I remember Tomasz pointed to that we shouldn't need clock enable in resume
+>>>>> path [1].
+>>>>>
+>>>>> [1] https://lkml.org/lkml/2018/3/15/60
+>>> That was an answer for a different question. I don't remember
+>>> suggesting having no suspend function. Although, given the PM
+>>> subsystem internals, the suspend function wouldn't be called on SMMU
+>>> implementation needed power control (since they would have runtime PM
+>>> enabled) and on others, it would be called but do nothing (since no
+>>> clocks).
+>>>
+>>>> Honestly, I just don't know. :-)
+>>>>
+>>>> It just looks odd the way it is done.  I think the clock should be
+>>>> gated during system-wide suspend too, because the system can spend
+>>>> much more time in a sleep state than in the working state, on average.
+>>>>
+>>>> And note that you cannot rely on runtime PM to always do it for you,
+>>>> because it may be disabled at a client device or even blocked by user
+>>>> space via power/control in sysfs and that shouldn't matter for
+>>>> system-wide PM.
+>>> User space blocking runtime PM through sysfs is a good point. I'm not
+>>> 100% sure how the PM subsystem deals with that in case of system-wide
+>>> suspend. I guess for consistency and safety, we should have the
+>>> suspend callback.
+>> Frankly, if there are no other reasons I suggest to wire system
+>> suspend/resume to pm_runtime_force_* helpers:
+>> SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+>>                           pm_runtime_force_resume).
+> Not a good idea at all IMO.
+>
+> Use PM driver flags rather I'd say.
 
-#syz fix: bpf: sockhash, disallow bpf_tcp_close and update in parallel
+Frankly, till now I wasn't aware of the DPM_FLAG_* in struct dev_pm_info
+'driver_flags'. I've briefly checked them but I don't see the equivalent
+of using SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+pm_runtime_force_resume): keep device suspend if it was runtime suspended
+AND really call pm_runtime_suspend if it was not runtime suspended on
+system suspend.
 
-> ==================================================================
-> kasan: CONFIG_KASAN_INLINE enabled
-> BUG: KASAN: stack-out-of-bounds in locks_inode include/linux/fs.h:1061
-> [inline]
-> BUG: KASAN: stack-out-of-bounds in locks_remove_posix+0x787/0x890
-> fs/locks.c:2468
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> Read of size 8 at addr ffff8801b7644e18 by task syz-executor473/4469
->
-> general protection fault: 0000 [#1] SMP KASAN
-> CPU: 1 PID: 4469 Comm: syz-executor473 Not tainted 4.18.0-rc3+ #58
-> CPU: 0 PID: 17562 Comm: syz-executor473 Not tainted 4.18.0-rc3+ #58
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:__read_seqcount_begin include/linux/seqlock.h:113 [inline]
-> RIP: 0010:raw_read_seqcount_begin include/linux/seqlock.h:148 [inline]
-> RIP: 0010:hrtimer_active+0x1fb/0x440 kernel/time/hrtimer.c:1327
-> Call Trace:
-> Code:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-> ff
-> 80
-> 38
-> 00
-> 0f
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-> 85
-> f3
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-> 01
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-> 00
->  locks_inode include/linux/fs.h:1061 [inline]
->  locks_remove_posix+0x787/0x890 fs/locks.c:2468
-> 00 48
-> 8b
-> 85
-> f0 fe
-> ff
-> ff 4c
-> 8d
-> 6b
-> 10
-> 48
-> 89
-> 9d
-> 58
-> ff
-> ff
-> ff
-> c6
->  filp_close+0x1bb/0x250 fs/open.c:1182
-> 00
-> f8
-> 4c
-> 89
->  close_files fs/file.c:388 [inline]
->  put_files_struct+0x26f/0x3a0 fs/file.c:416
-> e8
-> 48
-> c1
-> e8
->  exit_files+0x83/0xb0 fs/file.c:445
-> 03
->  do_exit+0xf61/0x2750 kernel/exit.c:860
-> 41
-> c6
-> 06
-> 04
-> <42>
-> 0f
-> b6
-> 14
-> 38
-> 4c
-> 89
-> e8
-> 83
-> e0
-> 07
-> 83
-> c0
-> 03
-> 38
-> d0
-> 7c
-> 08
-> 84
-> d2
-> 0f
-> 85
-> RSP: 0018:ffff8801dae07850 EFLAGS: 00010002
-> RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff8158c5a9
-> RDX: 0000000000010000 RSI: ffffffff816a4140 RDI: ffff8801b688e3d0
-> RBP: ffff8801dae07990 R08: ffff8801dae07968 R09: fffffbfff02be35c
-> R10: fffffbfff02be35d R11: ffffffff815f1aeb R12: ffff8801b688d730
-> R13: 0000000000000010 R14: ffffed003b5c0f15 R15: dffffc0000000000
-> FS:  00000000024e2880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f8e1116ce78 CR3: 00000001c4e12000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <IRQ>
->  do_group_exit+0x177/0x440 kernel/exit.c:968
->  entity_tick kernel/sched/fair.c:4520 [inline]
->  task_tick_fair+0x60/0x320 kernel/sched/fair.c:9934
->  get_signal+0x88e/0x1970 kernel/signal.c:2468
->  scheduler_tick+0x18b/0x430 kernel/sched/core.c:3087
->  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
->  update_process_times+0x51/0x70 kernel/time/timer.c:1641
->  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
->  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
->  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
->  __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
->  exit_to_usermode_loop+0x2e0/0x370 arch/x86/entry/common.c:162
->  prepare_exit_to_usermode+0x342/0x3b0 arch/x86/entry/common.c:197
->  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
->  retint_user+0x8/0x18
-> RIP: 0033:lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
-> Code:
-> 10
-> 49
-> c1
-> e9
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-> 09
->  </IRQ>
-> 41
-> Modules linked in:
-> 57
-> 49 83 f1
-> Dumping ftrace buffer:
-> 01
->    (ftrace buffer empty)
-> 48
-> ---[ end trace e84c0149ab776256 ]---
-> 8b
-> RIP: 0010:__read_seqcount_begin include/linux/seqlock.h:113 [inline]
-> RIP: 0010:raw_read_seqcount_begin include/linux/seqlock.h:148 [inline]
-> RIP: 0010:hrtimer_active+0x1fb/0x440 kernel/time/hrtimer.c:1327
-> bd
-> Code:
-> 30 ff
-> ff
-> ff
-> 80
-> ff
-> 38
-> 8b
-> 00
-> b5
-> 0f
-> 2c
-> 85
-> ff
-> f3
-> ff
-> 01
-> ff
-> 00
-> 41
-> 00
-> 83
-> 48
-> e1
-> 8b
-> 01
-> 85
-> 65
-> f0 fe
-> 4c
-> ff
-> 8b
-> ff
-> 24
-> 4c
-> 25
-> 8d
-> 40
-> 6b
-> ee
-> 10
-> 01
-> 48
-> 00
-> 89
-> e8
-> 9d
-> dc
-> 58
-> 8e
-> ff
-> ff
-> ff
-> ff
-> ff
-> <49>
-> c6
-> 8d
-> 00
-> bc
-> f8
-> 24
-> 4c
-> 34
-> 89
-> 08
-> e8
-> 00
-> 48
-> 00
-> c1 e8
-> 48
-> 03
-> b8
-> 41
-> 00
-> c6
-> 00
-> 06
-> 00 00
-> 04
-> 00
-> <42>
-> fc
-> 0f
-> ff
-> b6
-> df 48
-> 14
-> 89
-> 38
-> fa
-> 4c 89
-> 48
-> e8
-> 83
-> RSP: 002b:00007ffe727cd790 EFLAGS: 00010217
-> e0
-> 07
-> RAX: 0000000000000000 RBX: 00007ffe727cd8c0 RCX: 0000000000473990
-> 83
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007ffe727cd790
-> c0
-> RBP: 0000000000001eb0 R08: 0000000000000001 R09: 00000000024e2880
-> 03
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000001eb0
-> 38 d0
-> R13: 00000000000233be R14: 00007ffe727cd8e8 R15: 0000000000000003
-> 7c
->
-> 08
-> Allocated by task 4466:
-> 84
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-> d2
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-> 0f
->  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-> 85
->  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
->  __d_alloc+0xc8/0xd50 fs/dcache.c:1616
-> RSP: 0018:ffff8801dae07850 EFLAGS: 00010002
->  d_alloc_pseudo+0x1d/0x30 fs/dcache.c:1744
->  create_pipe_files+0x42c/0x950 fs/pipe.c:753
-> RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff8158c5a9
->  __do_pipe_flags+0x45/0x250 fs/pipe.c:802
-> RDX: 0000000000010000 RSI: ffffffff816a4140 RDI: ffff8801b688e3d0
->  do_pipe2+0x9d/0x310 fs/pipe.c:850
-> RBP: ffff8801dae07990 R08: ffff8801dae07968 R09: fffffbfff02be35c
->  __do_sys_pipe fs/pipe.c:873 [inline]
->  __se_sys_pipe fs/pipe.c:871 [inline]
->  __x64_sys_pipe+0x33/0x40 fs/pipe.c:871
-> R10: fffffbfff02be35d R11: ffffffff815f1aeb R12: ffff8801b688d730
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> R13: 0000000000000010 R14: ffffed003b5c0f15 R15: dffffc0000000000
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> FS:  00000000024e2880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
->
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f8e1116ce78 CR3: 00000001c4e12000 CR4: 00000000001406f0
-> Freed by task 0:
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> (stack is not available)
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/00000000000037578b057186966f%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+>> This way you will have everything related to suspending and resuming in
+>> one place and you would not need to bother about all possible cases (like
+>> suspending from runtime pm active and suspending from runtime pm suspended
+>> cases as well as restoring proper device state on resume). This is
+>> especially important in recent kernel releases, where devices are
+>> system-suspended regardless their runtime pm states (in older kernels
+>> devices were first runtime resumed for system suspend, what made code
+>> simpler, but wasn't best from power consumption perspective).
+>>
+>> If you go this way, You only need to ensure that runtime resume will also
+>> restore proper device state besides enabling all the clocks. This will
+>> also prepare your driver to properly operate inside power domain, where it
+>> is possible for device to loose its internal state after runtime suspend
+>> when respective power domain has been turned off.
+> I'm not sure if you are aware of the pm_runtime_force_* limitations, though.
+
+What are those limitations?
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
