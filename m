@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB2CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CA4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76D1A20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D1A20854
+	by mail.kernel.org (Postfix) with ESMTP id 7668220880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7668220880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389181AbeGWNbC (ORCPT
+        id S2389192AbeGWNbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:31:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46142 "EHLO
+        Mon, 23 Jul 2018 09:31:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46158 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387849AbeGWNbC (ORCPT
+        with ESMTP id S2387849AbeGWNbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:31:02 -0400
+        Mon, 23 Jul 2018 09:31:04 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3F01C37;
-        Mon, 23 Jul 2018 12:30:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1A89C03;
+        Mon, 23 Jul 2018 12:30:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
+        stable@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 36/44] hv_netvsc: Fix napi reschedule while receive completion is busy
-Date:   Mon, 23 Jul 2018 14:25:12 +0200
-Message-Id: <20180723122439.183069143@linuxfoundation.org>
+Subject: [PATCH 4.14 37/44] net/mlx4_en: Dont reuse RX page when XDP is set
+Date:   Mon, 23 Jul 2018 14:25:13 +0200
+Message-Id: <20180723122439.223616587@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
 References: <20180723122437.447870153@linuxfoundation.org>
@@ -52,59 +53,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-[ Upstream commit 6b81b193b83e87da1ea13217d684b54fccf8ee8a ]
+[ Upstream commit 432e629e56432064761be63bcd5e263c0920430d ]
 
-If out ring is full temporarily and receive completion cannot go out,
-we may still need to reschedule napi if certain conditions are met.
-Otherwise the napi poll might be stopped forever, and cause network
-disconnect.
+When a new rx packet arrives, the rx path will decide whether to reuse
+the remainder of the page or not according to one of the below conditions:
+1. frag_info->frag_stride == PAGE_SIZE / 2
+2. frags->page_offset + frag_info->frag_size > PAGE_SIZE;
 
-Fixes: 7426b1a51803 ("netvsc: optimize receive completions")
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+The first condition is no met for when XDP is set.
+For XDP, page_offset is always set to priv->rx_headroom which is
+XDP_PACKET_HEADROOM and frag_info->frag_size is around mtu size + some
+padding, still the 2nd release condition will hold since
+XDP_PACKET_HEADROOM + 1536 < PAGE_SIZE, as a result the page will not
+be released and will be _wrongly_ reused for next free rx descriptor.
+
+In XDP there is an assumption to have a page per packet and reuse can
+break such assumption and might cause packet data corruptions.
+
+Fix this by adding an extra condition (!priv->rx_headroom) to the 2nd
+case to avoid page reuse when XDP is set, since rx_headroom is set to 0
+for non XDP setup and set to XDP_PACKET_HEADROOM for XDP setup.
+
+No additional cache line is required for the new condition.
+
+Fixes: 34db548bfb95 ("mlx4: add page recycling in receive path")
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Suggested-by: Martin KaFai Lau <kafai@fb.com>
+CC: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_rx.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -1250,6 +1250,7 @@ int netvsc_poll(struct napi_struct *napi
- 	struct hv_device *device = netvsc_channel_to_device(channel);
- 	struct net_device *ndev = hv_get_drvdata(device);
- 	int work_done = 0;
-+	int ret;
+--- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+@@ -472,10 +472,10 @@ static int mlx4_en_complete_rx_desc(stru
+ {
+ 	const struct mlx4_en_frag_info *frag_info = priv->frag_info;
+ 	unsigned int truesize = 0;
++	bool release = true;
+ 	int nr, frag_size;
+ 	struct page *page;
+ 	dma_addr_t dma;
+-	bool release;
  
- 	/* If starting a new interval */
- 	if (!nvchan->desc)
-@@ -1261,16 +1262,18 @@ int netvsc_poll(struct napi_struct *napi
- 		nvchan->desc = hv_pkt_iter_next(channel, nvchan->desc);
- 	}
+ 	/* Collect used fragments while replacing them in the HW descriptors */
+ 	for (nr = 0;; frags++) {
+@@ -498,7 +498,11 @@ static int mlx4_en_complete_rx_desc(stru
+ 			release = page_count(page) != 1 ||
+ 				  page_is_pfmemalloc(page) ||
+ 				  page_to_nid(page) != numa_mem_id();
+-		} else {
++		} else if (!priv->rx_headroom) {
++			/* rx_headroom for non XDP setup is always 0.
++			 * When XDP is set, the above condition will
++			 * guarantee page is always released.
++			 */
+ 			u32 sz_align = ALIGN(frag_size, SMP_CACHE_BYTES);
  
--	/* If send of pending receive completions suceeded
--	 *   and did not exhaust NAPI budget this time
--	 *   and not doing busy poll
-+	/* Send any pending receive completions */
-+	ret = send_recv_completions(ndev, net_device, nvchan);
-+
-+	/* If it did not exhaust NAPI budget this time
-+	 *  and not doing busy poll
- 	 * then re-enable host interrupts
--	 *     and reschedule if ring is not empty.
-+	 *  and reschedule if ring is not empty
-+	 *   or sending receive completion failed.
- 	 */
--	if (send_recv_completions(ndev, net_device, nvchan) == 0 &&
--	    work_done < budget &&
-+	if (work_done < budget &&
- 	    napi_complete_done(napi, work_done) &&
--	    hv_end_read(&channel->inbound) &&
-+	    (ret || hv_end_read(&channel->inbound)) &&
- 	    napi_schedule_prep(napi)) {
- 		hv_begin_read(&channel->inbound);
- 		__napi_schedule(napi);
+ 			frags->page_offset += sz_align;
 
 
