@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 503CDECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C18AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 090F120880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 588DA20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcQ6N8Zn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 090F120880
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfvTgENW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 588DA20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388339AbeGWVyD (ORCPT
+        id S2388356AbeGWVyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:54:03 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39797 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387981AbeGWVyD (ORCPT
+        Mon, 23 Jul 2018 17:54:05 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42899 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388343AbeGWVyF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:54:03 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h10-v6so1993888wre.6
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:51:04 -0700 (PDT)
+        Mon, 23 Jul 2018 17:54:05 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e7-v6so1987218wrs.9
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:51:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MXUGY1kuyA7t1nbZc0vd3rPlQK+LiFy3Urh3wSsjqJc=;
-        b=GcQ6N8ZnB+DcwoPT23tLKE52BgMCv3Y/QEsTOrkKYj1PaDlw6bOAzYdHVZBmXE2lLv
-         YmvcqornX4cj7kZjVupwOJcGOtUwdy95XjcESDfbcdtCT/6PJ8S52HWuEGfqvfG0gCoq
-         ae+uhV5s50EReqliRL71xBOBfopF0agjPHfS7cOE9UEYju2tMpnxMMHb4dXqrVh3aCOc
-         lE5jK0w4JrkuAHSSWNZy+dDmfojh4uck2riIJ4qk7j/bshL2JROLD6ZCXQEvmRucNSTM
-         uErOjLKGP6pdPQwVUlNw2bR8FPW5afx/1Hk/Wjh3AleZEXK9KO4PzgcFDDK9n392C7O9
-         5vOQ==
+        bh=qFKr/GO0XlTPcsnRZEXpB3YCLADYWLrwskBRPakEWrk=;
+        b=DfvTgENWfdhxRZdlmGm3NQCszIbH9rHuUKVDjovx/iVN3J5AhHf8AHgk8qmsh3Pgwr
+         aDfV/bNNm9vnmJAMEF+c6jVDni+SjvZgmyzKbmZXJdS0Mj2BUGkvIfRyLle+/s2cQyp3
+         G5V/OpP6vz4wffIzUrU+P2pPjByOQMGUPn3dvRYQcVrm4Xj4tcpNYSxRGJyYPP2ddzUB
+         YqxxmZ6I2ICg4GTA4C9xroBfJ1KwOFduz0RKLj1B35/ZtVVsmUgI4wRFd0mr2SEw3P8V
+         biR6sy1HvFf56XjSTyji6FE31Rmam2cy73FjJDNYy88zMOmkdKvV6u+3SgOpYuUl5sj9
+         rEEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MXUGY1kuyA7t1nbZc0vd3rPlQK+LiFy3Urh3wSsjqJc=;
-        b=BN6q8tLKHAjNX2PMD59GCDlhz9HSAv0ZpT36hIgT1X60IHn0o0XOcaqHI4H7xgQNZv
-         ayUz7l7kd8fAxsRMZo4ZJOqVKQngUPMt7ZMY0nkKTSXDJJ03B9gbMfUyIzRx0p6iNaaB
-         tfeNeDcXRIuzrPoM1MN5jmSgkajjBUTJNTKU7E95qB2qeFBGwVnkEsEyvNX3NyhY6Z5i
-         ddvpp4SgUFp+3M76JQEUyrBYUsWGGugbehPI+x6TQEBFvlBgR8mq1etJ2jfAlxKbSAfR
-         C0FUmmTzjr5+ZcAIMlwRHdg3SNurTZIIGgv0oUHTKeq6p8M4fCj9em3u6BYoWFTvWGM6
-         3MJA==
-X-Gm-Message-State: AOUpUlGy+Rs1Qq6ALwx6qqfWR4irle8i1In3YRFavbsaI4zgTEHMmrXy
-        bNIkVE+h3UxscPycE7odq8Ei4ok/
-X-Google-Smtp-Source: AAOMgpcBAPyVp2QHs4ukZXd19hd8buNCRtbF1QfsjOK4TO4vgRX9AblRH5/AnfFfm5hKzZC0pG1AVQ==
-X-Received: by 2002:adf:afd3:: with SMTP id y19-v6mr10477360wrd.176.1532379063986;
-        Mon, 23 Jul 2018 13:51:03 -0700 (PDT)
+        bh=qFKr/GO0XlTPcsnRZEXpB3YCLADYWLrwskBRPakEWrk=;
+        b=J355ToGNqnIvqpjydFl9Iy2vHBvvquptit/UJS97At8DfOShODlzDH1Q8c9sY07QhS
+         XbYxCYKZvynBrzaNYzfjfIeeaxx32Pnx7vAFaL1xC+DDHNRFxwALx0Hxz6n4hIEjQklN
+         4ophlUdp9PgpQdzF3Vo92BGqJ3W/7XwUeUXGco0z1wgq+TdzqOuAInU5AdwxVxD6bWIk
+         /LkLgvD/t+BaD7ct16phFJAbkXWilc2JDGlPLCDML1Fk+0iUfOIE7BBf/wIousQsWlnl
+         dGBiWxRrGuBsReBq+/6uba07IbX90Tp1E4uVPX4UsXkoyRqy+qNte8Hq03/axbOG5o4H
+         iLTw==
+X-Gm-Message-State: AOUpUlGBmlBiHfldT9wD+XLz4A861+MTLoguKfGHDlYMOHzPm7Fbo6fX
+        DOv17ai4pKk6+tbeNp/Kt3OcPWv2
+X-Google-Smtp-Source: AAOMgpc+CM6ySn3B46Fk1lWUi+esdClHnU4cvMdx8vaMZZ9G37jJTqkwkmp86tJx24bgLd5Ofldejg==
+X-Received: by 2002:adf:a64d:: with SMTP id k71-v6mr9470138wrc.78.1532379065492;
+        Mon, 23 Jul 2018 13:51:05 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id b123-v6sm14921874wma.24.2018.07.23.13.51.02
+        by smtp.gmail.com with ESMTPSA id b123-v6sm14921874wma.24.2018.07.23.13.51.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 13:51:03 -0700 (PDT)
+        Mon, 23 Jul 2018 13:51:04 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 13/15] staging:rtl8192u: Remove unused structure ACM - Style
-Date:   Mon, 23 Jul 2018 21:50:29 +0100
-Message-Id: <20180723205031.19816-14-johnfwhitmore@gmail.com>
+Subject: [PATCH 14/15] staging:rtl8192u: Remove unused AC_UAPSD definitions - Style
+Date:   Mon, 23 Jul 2018 21:50:30 +0100
+Message-Id: <20180723205031.19816-15-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723205031.19816-1-johnfwhitmore@gmail.com>
 References: <20180723205031.19816-1-johnfwhitmore@gmail.com>
@@ -74,32 +74,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the structure ACM as it is unused in code. This change is a coding
-style change and should have no impact on runtime code execution.
+Remove the definitions associated with AC_UAPSD. These definitions are
+not used in code so have simply been removed. This is a coding style
+change and should have no impact on runtime execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-index 49d9184f22ec..878c467e7b89 100644
+index 878c467e7b89..471874dd8cb5 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-@@ -112,13 +112,6 @@ typedef union _TSPEC_BODY {
+@@ -112,21 +112,6 @@ typedef union _TSPEC_BODY {
  	} f;	// Field
  } TSPEC_BODY, *PTSPEC_BODY;
  
--typedef struct _ACM {
--//	u8		RegEnableACM;
--	u64		UsedTime;
--	u64		MediumTime;
--	u8		HwAcmCtl;	// TRUE: UsedTime exceed => Do NOT USE this AC. It wll be written to ACM_CONTROL(0xBF BIT 0/1/2 in 8185B).
--} ACM, *PACM;
+-typedef	u8		AC_UAPSD, *PAC_UAPSD;
 -
- typedef	u8		AC_UAPSD, *PAC_UAPSD;
- 
- #define	GET_VO_UAPSD(_apsd) ((_apsd) & BIT(0))
+-#define	GET_VO_UAPSD(_apsd) ((_apsd) & BIT(0))
+-#define	SET_VO_UAPSD(_apsd) ((_apsd) |= BIT(0))
+-
+-#define	GET_VI_UAPSD(_apsd) ((_apsd) & BIT(1))
+-#define	SET_VI_UAPSD(_apsd) ((_apsd) |= BIT(1))
+-
+-#define	GET_BK_UAPSD(_apsd) ((_apsd) & BIT(2))
+-#define	SET_BK_UAPSD(_apsd) ((_apsd) |= BIT(2))
+-
+-#define	GET_BE_UAPSD(_apsd) ((_apsd) & BIT(3))
+-#define	SET_BE_UAPSD(_apsd) ((_apsd) |= BIT(3))
+-
+-
+ //typedef struct _TCLASS{
+ // TODO
+ //} TCLASS, *PTCLASS;
 -- 
 2.18.0
 
