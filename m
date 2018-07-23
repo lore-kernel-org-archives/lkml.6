@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E22ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2F7ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121D320875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 779E020875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:51:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ocq70fPE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121D320875
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LLKMqQb1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 779E020875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388206AbeGWVya (ORCPT
+        id S2388301AbeGWVxz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:54:30 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33257 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728303AbeGWVx6 (ORCPT
+        Mon, 23 Jul 2018 17:53:55 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54636 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388161AbeGWVxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:53:58 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g6-v6so2017352wrp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:51:00 -0700 (PDT)
+        Mon, 23 Jul 2018 17:53:54 -0400
+Received: by mail-wm0-f67.google.com with SMTP id c14-v6so413196wmb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=V9mCIKX0VYzvVeuZOUIZ9yRaJXtaF5GpmPegfuAEMB8=;
-        b=Ocq70fPEId1raX58kbyWVpRhZZwgVB640nbYjrFUf5MkMGFDH/fcMm3PrgLLhEmV61
-         oM3wkO8XXRy0+Nlk7dCVTrYkvOL+o0+HFEuXQjljxY5Q9HzAoz9A7L2ZhB9Uawlm4xF7
-         5FzUZNaMSKJR4pVgroqWWgGTT6lqjP7xI4+Bzgk1EPSK8k3qPW1tzgyA2gcuEd6abSJ+
-         K8T4tm7Igc0RsniSh/y0DxtzNygKiKlp9u+FBH38Q1dhuesxMlajxHr5lMbSW/qY/h/9
-         gxufjJqLtrJBmV0yRfeZ2Fdb557xtd+SbZmT+zl/H+DCKszTnFYStre6CfpYyIUdS21q
-         Z53Q==
+        bh=Av0CJmxQz3UTLL1rs3jzjBY1wWc1pDHVb6ZSaIA95I0=;
+        b=LLKMqQb19TrMFy62KFsQYkmLE/RjrJeGoeCUHggtxN+/50sZ+iEwRez5KEr6eCE/CJ
+         a3ZHGErDO7jlsgfHhHbeBj7snARuG5UCXdwiNtWDNmOP1V2gZtXKikRd3wysVkbUCs8t
+         P8m4nVvumCFBzXZI/Ofpe09Y1vBQQlaPc3PhcjNUnWcglAFa8v1ScsG+a9GilO3jHtlt
+         TH3Y/KUL/vKsB8+QBfVwxkPKY5aZ7297vcqEJeKtFyZvB4mI1fjcDF45tC9Nvyxn7c39
+         LMixRiGwxWlcmzzNbaqDuD+cIw5Z8OrnrU7Ud+iXJCetV7uKM6TzhbgcOD4m7/6vGaw7
+         4+aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=V9mCIKX0VYzvVeuZOUIZ9yRaJXtaF5GpmPegfuAEMB8=;
-        b=uL5lC4BMX2DxfARJCLsrNhX69zSKRE6tuZxHJqBRdoG7eg+zAUS8ACT3v/qp5O3NoT
-         K377Q8AHH0HRJWzMu1+1y/hDnewZ9hpeRX0lfkKOemC9C3OHdbC4Vx3aRek4VdFNEWj2
-         yIQfwSQZoJ2v/E5P3j8y9kPcpa+L4lOqGUdkuD7/esryIDdeHZvd1CvbuQ+CyisxcIEu
-         kWtQQvMh74Empgbeydo9QA+SYpD7T3SoAUPKYb7I7opvFlbsi/W+/yyLQpIp30VgzQLZ
-         u01Iz+YN8i4R0+cqCvA/CFMKfFG1ngQPCCBvMQo1Qhb0CPDBTmH7xfem4Z5wloKQ6kpk
-         KVTg==
-X-Gm-Message-State: AOUpUlFxZcGxU5s/ISvSWa8I/M2UAhgYAKuavhBu4txRZwK5VmKyOVqW
-        G7xqn0V1n9ZyDMxp+ncv9x8C8d/0
-X-Google-Smtp-Source: AAOMgpfo1w0s9qGlbe0TWwK8QOuJf808argIjS26KocR2z4DkJ2ujs2XqTrMo1IGAJ8ciOej/A23ng==
-X-Received: by 2002:a5d:540d:: with SMTP id g13-v6mr10192079wrv.4.1532379059161;
-        Mon, 23 Jul 2018 13:50:59 -0700 (PDT)
+        bh=Av0CJmxQz3UTLL1rs3jzjBY1wWc1pDHVb6ZSaIA95I0=;
+        b=N39hdjv3hNeIAl7oebYyiTFOhkrI9Fm0cH7hDx9yeHfF+PffS4BjpnMqBuI+iYrtY/
+         TH9vlcPAu/f5FOMUUCnjNgZU0JfYCFhZx51yI4xgLjV+Da1O1IurMpKmNOLxAuMUlpeB
+         Z2vndndYmBvXhGvg1+b54FZNrmrc19LFPZmpQ/LiMDCH8FHHprJ7GHnDHDQVzmIda0M+
+         4floRa0auTqVPqesgQpFyma0FY7qGLIMCmsSkVlVPOEkehQk+Qcg/3p/yy2m+IhlGzuj
+         vOnWSZtaYJAfjLvHrQsyPNRe7eyWX29YLMlqXCDXHCznxLDy6hE1mZh1DB5AN/lbayLn
+         3JLQ==
+X-Gm-Message-State: AOUpUlF5sZt23R3kX+xq5CVUPQ3pHSrWO8Go5FCR24CQf2201WQ8cS7A
+        3qj0EXbEzzVewjNifC/QteFkToM+
+X-Google-Smtp-Source: AAOMgpdROLVv/wFjUJHJpIfOONf/nxh10Tjuvg7U9IjAEWYXLAyDyCgjP9v2pXYPnJUrwkZOaaprFQ==
+X-Received: by 2002:a1c:8313:: with SMTP id f19-v6mr273693wmd.144.1532379054654;
+        Mon, 23 Jul 2018 13:50:54 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id b123-v6sm14921874wma.24.2018.07.23.13.50.57
+        by smtp.gmail.com with ESMTPSA id b123-v6sm14921874wma.24.2018.07.23.13.50.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 13:50:58 -0700 (PDT)
+        Mon, 23 Jul 2018 13:50:53 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 10/15] staging:rtl8192u: Remove unused structure QOS_TSTREAM - Style
-Date:   Mon, 23 Jul 2018 21:50:26 +0100
-Message-Id: <20180723205031.19816-11-johnfwhitmore@gmail.com>
+Subject: [PATCH 07/15] staging:rtl8192u: Remove unused union QOS_INFO_FIELD - Style
+Date:   Mon, 23 Jul 2018 21:50:23 +0100
+Message-Id: <20180723205031.19816-8-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723205031.19816-1-johnfwhitmore@gmail.com>
 References: <20180723205031.19816-1-johnfwhitmore@gmail.com>
@@ -74,37 +74,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The structure QOS_TSTREAM is unused in code so has simply been removed.
-This change is a coding style change and should have no impact on runtime
+The union QOS_INFO_FIELD is unused in code so has been removed from source.
+This change is a coding style change so should have no impact on runtime
 code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h | 11 -----------
- 1 file changed, 11 deletions(-)
+ .../staging/rtl8192u/ieee80211/rtl819x_Qos.h  | 86 -------------------
+ 1 file changed, 86 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-index 6cfae00919c1..7028c9ae888a 100644
+index 90f5939c9ecc..e0c51c5c6816 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-@@ -214,17 +214,6 @@ typedef union _QOS_TCLAS {
- 	} TYPE2_8021Q;
- } QOS_TCLAS, *PQOS_TCLAS;
+@@ -9,92 +9,6 @@
  
--//typedef struct _WMM_TSTREAM{
+ #define WMM_PARAM_ELEMENT_SIZE	(8+(4*AC_PARAM_SIZE))
+ 
 -//
--//- TSPEC
--//- AC (which to mapping)
--//} WMM_TSTREAM, *PWMM_TSTREAM;
--typedef struct _QOS_TSTREAM {
--	u8			AC;
--	WMM_TSPEC		TSpec;
--	QOS_TCLAS		TClass;
--} QOS_TSTREAM, *PQOS_TSTREAM;
+-// QoS Info Field
+-// Ref:
+-//	1. WMM spec 2.2.1: WME Information Element, p.11.
+-//	2. 8185 QoS code: QOS_INFO [def. in QoS_mp.h]
+-//
+-typedef	union _QOS_INFO_FIELD {
+-	u8	charData;
 -
- //typedef struct _U_APSD{
- //- TriggerEnable [4]
- //- MaxSPLength
+-	struct {
+-		u8		ucParameterSetCount:4;
+-		u8		ucReserved:4;
+-	} WMM;
+-
+-	struct {
+-		//Ref WMM_Specification_1-1.pdf, 2006-06-13 Isaiah
+-		u8		ucAC_VO_UAPSD:1;
+-		u8		ucAC_VI_UAPSD:1;
+-		u8		ucAC_BE_UAPSD:1;
+-		u8		ucAC_BK_UAPSD:1;
+-		u8		ucReserved1:1;
+-		u8		ucMaxSPLen:2;
+-		u8		ucReserved2:1;
+-
+-	} ByWmmPsSta;
+-
+-	struct {
+-		//Ref WMM_Specification_1-1.pdf, 2006-06-13 Isaiah
+-		u8		ucParameterSetCount:4;
+-		u8		ucReserved:3;
+-		u8		ucApUapsd:1;
+-	} ByWmmPsAp;
+-
+-	struct {
+-		u8		ucAC3_UAPSD:1;
+-		u8		ucAC2_UAPSD:1;
+-		u8		ucAC1_UAPSD:1;
+-		u8		ucAC0_UAPSD:1;
+-		u8		ucQAck:1;
+-		u8		ucMaxSPLen:2;
+-		u8		ucMoreDataAck:1;
+-	} By11eSta;
+-
+-	struct {
+-		u8		ucParameterSetCount:4;
+-		u8		ucQAck:1;
+-		u8		ucQueueReq:1;
+-		u8		ucTXOPReq:1;
+-		u8		ucReserved:1;
+-	} By11eAp;
+-
+-	struct {
+-		u8		ucReserved1:4;
+-		u8		ucQAck:1;
+-		u8		ucReserved2:2;
+-		u8		ucMoreDataAck:1;
+-	} ByWmmsaSta;
+-
+-	struct {
+-		u8		ucReserved1:4;
+-		u8		ucQAck:1;
+-		u8		ucQueueReq:1;
+-		u8		ucTXOPReq:1;
+-		u8		ucReserved2:1;
+-	} ByWmmsaAp;
+-
+-	struct {
+-		u8		ucAC3_UAPSD:1;
+-		u8		ucAC2_UAPSD:1;
+-		u8		ucAC1_UAPSD:1;
+-		u8		ucAC0_UAPSD:1;
+-		u8		ucQAck:1;
+-		u8		ucMaxSPLen:2;
+-		u8		ucMoreDataAck:1;
+-	} ByAllSta;
+-
+-	struct {
+-		u8		ucParameterSetCount:4;
+-		u8		ucQAck:1;
+-		u8		ucQueueReq:1;
+-		u8		ucTXOPReq:1;
+-		u8		ucApUapsd:1;
+-	} ByAllAp;
+-
+-} QOS_INFO_FIELD, *PQOS_INFO_FIELD;
+-
+ //
+ // ACI to AC coding.
+ // Ref: WMM spec 2.2.2: WME Parameter Element, p.13.
 -- 
 2.18.0
 
