@@ -6,41 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57ED6ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211DFECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13CC520685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:44:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13CC520685
+	by mail.kernel.org (Postfix) with ESMTP id CE06F20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:44:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE06F20685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388629AbeGWNpi (ORCPT
+        id S2388442AbeGWNpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:45:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49500 "EHLO
+        Mon, 23 Jul 2018 09:45:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49768 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388102AbeGWNph (ORCPT
+        with ESMTP id S2388102AbeGWNpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:45:37 -0400
+        Mon, 23 Jul 2018 09:45:54 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95E26C77;
-        Mon, 23 Jul 2018 12:44:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9F07CAB;
+        Mon, 23 Jul 2018 12:44:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Sergeyev <sergeev917@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Kyle Huey <me@kylehuey.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 043/107] x86/speculation: Remove Skylake C2 from Speculation Control microcode blacklist
-Date:   Mon, 23 Jul 2018 14:41:37 +0200
-Message-Id: <20180723122415.035644016@linuxfoundation.org>
+Subject: [PATCH 4.4 046/107] xen: set cpu capabilities from xen_start_kernel()
+Date:   Mon, 23 Jul 2018 14:41:40 +0200
+Message-Id: <20180723122415.189796152@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -57,21 +54,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Sergeyev <sergeev917@gmail.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit e3b3121fa8da94cb20f9e0c64ab7981ae47fd085 upstream.
+Upstream commit: 0808e80cb760de2733c0527d2090ed2205a1eef8 ("xen: set
+cpu capabilities from xen_start_kernel()")
 
-In accordance with Intel's microcode revision guidance from March 6 MCU
-rev 0xc2 is cleared on both Skylake H/S and Skylake Xeon E3 processors
-that share CPUID 506E3.
+There is no need to set the same capabilities for each cpu
+individually. This can easily be done for all cpus when starting the
+kernel.
 
-Signed-off-by: Alexander Sergeyev <sergeev917@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kyle Huey <me@kylehuey.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180313193856.GA8580@localhost.localdomain
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
@@ -80,27 +73,56 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/kernel/cpu/intel.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/xen/enlighten.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -29,7 +29,7 @@
- /*
-  * Early microcode releases for the Spectre v2 mitigation were broken.
-  * Information taken from;
-- * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/01/microcode-update-guidance.pdf
-+ * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/03/microcode-update-guidance.pdf
-  * - https://kb.vmware.com/s/article/52345
-  * - Microcode revisions observed in the wild
-  * - Release note from 20180108 microcode release
-@@ -47,7 +47,6 @@ static const struct sku_microcode spectr
- 	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x80 },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
--	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
- 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
- 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
- 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -460,6 +460,14 @@ static void __init xen_init_cpuid_mask(v
+ 		cpuid_leaf1_ecx_set_mask = (1 << (X86_FEATURE_MWAIT % 32));
+ }
+ 
++static void __init xen_init_capabilities(void)
++{
++	if (xen_pv_domain()) {
++		setup_clear_cpu_cap(X86_BUG_SYSRET_SS_ATTRS);
++		setup_force_cpu_cap(X86_FEATURE_XENPV);
++	}
++}
++
+ static void xen_set_debugreg(int reg, unsigned long val)
+ {
+ 	HYPERVISOR_set_debugreg(reg, val);
+@@ -1587,6 +1595,7 @@ asmlinkage __visible void __init xen_sta
+ 
+ 	xen_init_irq_ops();
+ 	xen_init_cpuid_mask();
++	xen_init_capabilities();
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 	/*
+@@ -1883,14 +1892,6 @@ bool xen_hvm_need_lapic(void)
+ }
+ EXPORT_SYMBOL_GPL(xen_hvm_need_lapic);
+ 
+-static void xen_set_cpu_features(struct cpuinfo_x86 *c)
+-{
+-	if (xen_pv_domain()) {
+-		clear_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
+-		set_cpu_cap(c, X86_FEATURE_XENPV);
+-	}
+-}
+-
+ const struct hypervisor_x86 x86_hyper_xen = {
+ 	.name			= "Xen",
+ 	.detect			= xen_platform,
+@@ -1898,7 +1899,6 @@ const struct hypervisor_x86 x86_hyper_xe
+ 	.init_platform		= xen_hvm_guest_init,
+ #endif
+ 	.x2apic_available	= xen_x2apic_para_available,
+-	.set_cpu_features       = xen_set_cpu_features,
+ };
+ EXPORT_SYMBOL(x86_hyper_xen);
+ 
 
 
