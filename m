@@ -4,135 +4,289 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C629EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 312C9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 744D720779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:37:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D69D420779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:38:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E+NskZxk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 744D720779
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N+g/tauO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D69D420779
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387801AbeGWGgl (ORCPT
+        id S2387823AbeGWGh0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 02:36:41 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38188 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728206AbeGWGgj (ORCPT
+        Mon, 23 Jul 2018 02:37:26 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35120 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387804AbeGWGh0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 02:36:39 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v14-v6so16550402wro.5
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 22:37:12 -0700 (PDT)
+        Mon, 23 Jul 2018 02:37:26 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w3-v6so7762454plq.2
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 22:37:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=i7kPww1zXm0Dz70Xi9r0KKXyCnMshXgW3Zzef+NATMo=;
-        b=E+NskZxkF08C6FWH2LzrB8kzny2vPkoxRthgNJ3sT8+10vJ2eL9FBD4tjmASFW0p9+
-         Nktp6/oprhwLP6/ZiWEO38wNTyhz3V47PyPB+TrMy8xEMao//HG12218gjylM9QtAC+I
-         cTrUcYd/oMEH3NQnDVrcSShm7KgrTk9dvLiL8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=i7kPww1zXm0Dz70Xi9r0KKXyCnMshXgW3Zzef+NATMo=;
-        b=EsGVBcxIF4TMVndIUmqJX1BX0gPnUUcfHhGANigMUll9wBnsdUKmOcAtF8Oea3XAMQ
-         iFRq8gSjA86vweAg5bgJCNinzp47VZP5obMV0/8GxNtBJ+aG3sEwSJz6qp2FqaMnkCGk
-         bc5CpxAXAkVQVqzLw0JXsFf4W06ozXUexYUQ9+E4cEz/VF9wMGzfoVS2Wr/+2N1DT/Ld
-         a4hQUEGxpOcgRhOlBJqIvKiZuF3lIiediBaODIrPuIdTT0qzNg0BYnTqLZ/ANOPhF909
-         mBrzuEwDaTwUxQjq6zQU0KoBzOYyxuniGhqPphUNRx46GEeYHrdqUdzrP4kkhzcsO688
-         WQwg==
-X-Gm-Message-State: AOUpUlHUGP6gU7EIRJJPuAzIdfx+jLBVk1wekiP9pB2sbQNUgbOfsw8i
-        MzydsfMz8dKLtkN6kjEdQBFlrw==
-X-Google-Smtp-Source: AAOMgpcoIPzSeO+QjF3juc0T1aZYjRHjSoKUBNvtEty3a8VcbPEnt9eWKgTvwb/8wRa4yxjMZsFrBg==
-X-Received: by 2002:adf:b456:: with SMTP id v22-v6mr7608803wrd.187.1532324231703;
-        Sun, 22 Jul 2018 22:37:11 -0700 (PDT)
-Received: from dell ([2a02:c7d:1faf:e900:9403:d00:d6f3:4419])
-        by smtp.gmail.com with ESMTPSA id u14-v6sm14226080wrs.57.2018.07.22.22.37.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 22 Jul 2018 22:37:10 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 06:37:08 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Vignesh R <vigneshr@ti.com>, Jonathan Cameron <jic23@kernel.org>,
-        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH 0/5] ti_am335x_tsc: Enable wakeup capability
-Message-ID: <20180723053708.GA4213@dell>
-References: <20180630103318.25355-1-vigneshr@ti.com>
- <dcb4a63b-9ecb-a72e-bfb8-ebb62017b4f7@ti.com>
- <20180718074736.GA4641@dell>
- <20180718170902.vk7rahyoaevucxbi@penguin>
+        bh=8A96XWpjEw2z0s2J/z8/1GrTO8sQq2VyJPu1GiRipeU=;
+        b=N+g/tauOo/yz9q2Zj5Z6giwxiFOyNjKq1QUzLxe9u1thv3FlEmLVCPuD6Y8fLhqKBW
+         9AcbHvG5R5pwdkzp5xt/6Qi7e2OzDL4j9M4l8Ecsmv4Wfnxs/e5/zw7IdMyLupG7Nksg
+         BSLkxE+1KU2LBH7pijKugbm11WbYnuHP93khM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=8A96XWpjEw2z0s2J/z8/1GrTO8sQq2VyJPu1GiRipeU=;
+        b=CzI3m+lTBEfnGACceehRW3ISnFPp4uudUO50acGv0yDy1l9vARJviIePPgclL1xzru
+         uBefjVGzXom62OSeHPPFACNpMGV6WPset9ieAQcn00MZsHnB9hFN0BXmiaUfk41zBWXf
+         veiOxBRtFFRhsMon/YqRn1RsTycyvrZ3OCkEnG9tnW+ncF9Uv86ll4yVIoGGJMoVvb8S
+         ThobRoJGExnc0rXXbT2Iig/5YN8CnQ96jODNi0T9CPXyxmEuW633MR8pf2jLQ4bfLMFS
+         1FFYoI3hE7o1g4Mi7Ukh6UHlgWjhbgbQUxaVlEME9rbllZdvPCim+U8DYP9hJm55ewEj
+         ylYw==
+X-Gm-Message-State: AOUpUlHi3OXoLEt/PBnLar/Ksh2/3ydg3Vkk8ljYKJl4TiojCQsGalOX
+        peq3VbhOu+dHEdBv7NReAY4Jaw==
+X-Google-Smtp-Source: AAOMgpc5XtUT/npGS+oPHAjIAniC+rlnQgssR37QbTB0VR9adTVK/Mls7rve+WtaBEjYIp+0kG8NHg==
+X-Received: by 2002:a17:902:6f02:: with SMTP id w2-v6mr11257743plk.216.1532324279231;
+        Sun, 22 Jul 2018 22:37:59 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id j5-v6sm1139379pff.139.2018.07.22.22.37.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 22 Jul 2018 22:37:58 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 14:39:25 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 11/15] arm64: kexec_file: add crash dump support
+Message-ID: <20180723053923.GN11258@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180711074203.3019-1-takahiro.akashi@linaro.org>
+ <20180711074203.3019-12-takahiro.akashi@linaro.org>
+ <9efd0567-35dc-7435-74d6-1b540f3e5b9f@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180718170902.vk7rahyoaevucxbi@penguin>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <9efd0567-35dc-7435-74d6-1b540f3e5b9f@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jul 2018, Dmitry Torokhov wrote:
+Hi James,
 
-> On Wed, Jul 18, 2018 at 08:47:36AM +0100, Lee Jones wrote:
-> > On Tue, 17 Jul 2018, Vignesh R wrote:
-> > 
-> > > Hi Dmitry,
-> > > 
-> > > On Saturday 30 June 2018 04:03 PM, Vignesh R wrote:
-> > > > On AM335x, resistive TSC can wakeup the system from low power state.
-> > > > Currently, parent MFD device is marked as wakeup source, which is
-> > > > inaccurate as its the touch event generated by TSC thats the wakeup
-> > > > source. This series moves all wakeup related calls to operate on TSC
-> > > > device instead of MFD. It also marks TSC IRQ as wakeup capable, so that
-> > > > its not disabled during system suspend.
-> > > > 
-> > > > This series is based on Dmitry's comments here:
-> > > > https://lkml.org/lkml/2018/4/24/65
-> > > > 
-> > > > There are many new patches in this series, hence did not mark this as v4.
-> > > > 
-> > > > Vignesh R (5):
-> > > >   mfd: ti_am335x_tscadc: Don't mark TSCADC MFD as wakeup capable
-> > > >   Input: ti_am335x_tsc: Mark TSC device as wakeup source
-> > > >   mfd: ti_am335x_tscadc: Keep ADC interface on if child is wakeup
-> > > >     capable
-> > > >   iio: adc: ti_am335x_adc: Disable ADC during suspend unconditionally
-> > > >   Input: ti_am335x_tsc: Mark IRQ as wakeup capable
-> > > > 
-> > > >  drivers/iio/adc/ti_am335x_adc.c           | 12 ++++--------
-> > > >  drivers/input/touchscreen/ti_am335x_tsc.c | 22 +++++++++++++++++-----
-> > > >  drivers/mfd/ti_am335x_tscadc.c            | 14 +++++++++++++-
-> > > >  3 files changed, 34 insertions(+), 14 deletions(-)
-> > > > 
-> > > 
-> > > Gentle ping... Could you review/pick this series? MFD amd IIO bits are
-> > > already ACKed
-> > 
-> > MFD patches are reviewed "for my own reference" meaning that we
-> > haven't yet agreed on a merge plan yet.
+On Wed, Jul 18, 2018 at 05:50:22PM +0100, James Morse wrote:
+> Hi Akashi,
 > 
-> I think this series makes sense to be pushed through a single tree as
-> opposed to being spread between 3, even if it could technically be
-> possible. It looks like Jonathan is fine with going it through either
-> his or some other tree, I am fine with it going through MFD.
+> On 11/07/18 08:41, AKASHI Takahiro wrote:
+> > Enabling crash dump (kdump) includes
+> > * prepare contents of ELF header of a core dump file, /proc/vmcore,
+> >   using crash_prepare_elf64_headers(), and
+> > * add two device tree properties, "linux,usable-memory-range" and
+> >   "linux,elfcorehdr", which represent respectively a memory range
+> >   to be used by crash dump kernel and the header's location
+> 
+> > diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+> > index 69333694e3e2..eeb5766928b0 100644
+> > --- a/arch/arm64/include/asm/kexec.h
+> > +++ b/arch/arm64/include/asm/kexec.h
+> > @@ -99,6 +99,10 @@ static inline void crash_post_resume(void) {}
+> >  struct kimage_arch {
+> >  	phys_addr_t dtb_mem;
+> >  	void *dtb_buf;
+> > +	/* Core ELF header buffer */
+> 
+> > +	void *elf_headers;
+> 
+> Shouldn't this be a phys_addr_t if it comes from kbuf.mem?
 
-I'm happy either way.
+Do you mean elf_load_addr? You're right.
+But kexec_buf defined mem as unsigned long and so I'd rather change
+dtb_mem to unsigned long instead of elf_load_addr, which will also be
+renamed to elf_headers_mem for clarification.
 
-> I just Acked the 2 input-related patches.
+> (dtb_mem is, and they type tells us which way round the runtime/kexec-time
+> pointers are)
+> 
+> 
+> > +	unsigned long elf_headers_sz;
+> > +	unsigned long elf_load_addr;
+> >  };
+> >  
+> >  /**
+> 
+> 
+> > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> > index a0b44fe18b95..261564df7210 100644
+> > --- a/arch/arm64/kernel/machine_kexec_file.c
+> > +++ b/arch/arm64/kernel/machine_kexec_file.c
+> > @@ -132,6 +173,45 @@ static int setup_dtb(struct kimage *image,
+> >  	return ret;
+> >  }
+> >  
+> > +static int prepare_elf_headers(void **addr, unsigned long *sz)
+> > +{
+> > +	struct crash_mem *cmem;
+> > +	unsigned int nr_ranges;
+> > +	int ret;
+> > +	u64 i;
+> > +	phys_addr_t start, end;
+> 
+> > +	nr_ranges = 1; /* for exclusion of crashkernel region */
+> > +	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE, 0,
+> > +							&start, &end, NULL)
+> 
+> Nit: flags = MEMBLOCK_NONE? Just to make it obvious this is how MEMBLOCK_NOMAP
+> regions are weeded out.
 
-Thanks Dmitry.
+OK.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> This is going to get interesting if we ever support hotpluggable memory... but
+> it works for now and implicitly removes the nomap regions.
+> 
+> 
+> > +		nr_ranges++;
+> 
+> > +
+> > +	cmem = kmalloc(sizeof(struct crash_mem) +
+> > +			sizeof(struct crash_mem_range) * nr_ranges, GFP_KERNEL);
+> > +	if (!cmem)
+> > +		return -ENOMEM;
+> > +
+> > +	cmem->max_nr_ranges = nr_ranges;
+> > +	cmem->nr_ranges = 0;
+> > +	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE, 0,
+> > +							&start, &end, NULL) {
+> > +		cmem->ranges[cmem->nr_ranges].start = start;
+> > +		cmem->ranges[cmem->nr_ranges].end = end - 1;
+> > +		cmem->nr_ranges++;
+> > +	}
+> > +
+> > +	/* Exclude crashkernel region */
+> > +	ret = crash_exclude_mem_range(cmem, crashk_res.start, crashk_res.end);
+> 
+> 
+> > +	if (ret)
+> > +		goto out;
+> > +
+> > +	ret =  crash_prepare_elf64_headers(cmem, true, addr, sz);
+> > +
+> > +out:
+> 
+> Nit: You could save the goto if you wrote this as:
+> |	if (!ret)
+> |		ret = crash_prepare_elf64_headers(cmem, true, addr, sz);
+
+OK.
+
+> > +	kfree(cmem);
+> > +	return ret;
+> > +}
+> > +
+> >  int load_other_segments(struct kimage *image,
+> >  			unsigned long kernel_load_addr,
+> >  			unsigned long kernel_size,
+> > @@ -139,11 +219,43 @@ int load_other_segments(struct kimage *image,
+> >  			char *cmdline, unsigned long cmdline_len)
+> >  {
+> >  	struct kexec_buf kbuf;
+> > +	void *hdrs_addr;
+> > +	unsigned long hdrs_sz;
+> >  	unsigned long initrd_load_addr = 0;
+> >  	char *dtb = NULL;
+> >  	unsigned long dtb_len = 0;
+> >  	int ret = 0;
+> >  
+> > +	/* load elf core header */
+> > +	if (image->type == KEXEC_TYPE_CRASH) {
+> > +		ret = prepare_elf_headers(&hdrs_addr, &hdrs_sz);
+> > +		if (ret) {
+> > +			pr_err("Preparing elf core header failed\n");
+> > +			goto out_err;
+> > +		}
+> > +
+> > +		kbuf.image = image;
+> > +		kbuf.buffer = hdrs_addr;
+> > +		kbuf.bufsz = hdrs_sz;
+> > +		kbuf.memsz = hdrs_sz;
+> 
+> > +		kbuf.buf_align = PAGE_SIZE;
+> 
+> Whose PAGE_SIZE?
+> 
+> Won't this break if the kdump kernel is 64K pages, but the first kernel uses 4K?
+> Should we change this to the largest supported PAGE_SIZE: SZ_64K?
+
+Ah, yes.
+
+> > +		kbuf.buf_min = crashk_res.start;
+> > +		kbuf.buf_max = crashk_res.end + 1;
+> > +		kbuf.top_down = true;
+> > +
+> > +		ret = kexec_add_buffer(&kbuf);
+> > +		if (ret) {
+> > +			vfree(hdrs_addr);
+> > +			goto out_err;
+> > +		}
+> > +		image->arch.elf_headers = hdrs_addr;
+> > +		image->arch.elf_headers_sz = hdrs_sz;
+> > +		image->arch.elf_load_addr = kbuf.mem;
+> > +
+> > +		pr_debug("Loaded elf core header at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+> > +				 image->arch.elf_load_addr, hdrs_sz, hdrs_sz);
+> > +	}
+> > +
+> >  	kbuf.image = image;
+> >  	/* not allocate anything below the kernel */
+> >  	kbuf.buf_min = kernel_load_addr + kernel_size;
+> 
+> 
+> I think the initramfs can escape the crash kernel range because you add to the
+> buf_max region:
+> |	/* within 1GB-aligned window of up to 32GB in size */
+> |	kbuf.buf_max = round_down(kernel_load_addr, SZ_1G)
+> |				 + (unsigned long)SZ_1G * 32;
+
+No worries.
+kexec_add_buffer() will limit the search only within crashk_res anyway.
+
+On the other hand, the code:
+> > +	if (image->type == KEXEC_TYPE_CRASH) {
+                (snip)
+> > +		kbuf.buf_min = crashk_res.start;
+> > +		kbuf.buf_max = crashk_res.end + 1;
+can be misleading. I will fix it as follows:
+|		kbuf.buf_min = kernel_load_addr + kernel_size;
+|		kbuf.buf_max = ULONG_MAX;
+(and likewise, will fix image_load().)
+
+Thank you again for your valuable comments.
+Are you reviewing other patches in my v11?
+If not, I will post v12 tomorrow.
+
+-Takahiro AKASHI
+
+> 
+> I think we need a helper to clamp these min/max ranges to within the crash
+> kernel range, as its needs doing in a few places.
+> 
+> 
+> Thanks,
+> 
+> James
