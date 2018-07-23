@@ -6,41 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E672ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 749FFECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5575F20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:51:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5575F20856
+	by mail.kernel.org (Postfix) with ESMTP id 39B3320856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:51:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39B3320856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389450AbeGWNrx (ORCPT
+        id S2388840AbeGWNwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51386 "EHLO
+        Mon, 23 Jul 2018 09:52:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388197AbeGWNrv (ORCPT
+        with ESMTP id S2389417AbeGWNrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:51 -0400
+        Mon, 23 Jul 2018 09:47:53 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F10CCB5;
-        Mon, 23 Jul 2018 12:45:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C06ECBA;
+        Mon, 23 Jul 2018 12:45:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kyle Huey <khuey@kylehuey.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 063/107] x86/process: Optimize TIF checks in __switch_to_xtra()
-Date:   Mon, 23 Jul 2018 14:41:57 +0200
-Message-Id: <20180723122416.251142387@linuxfoundation.org>
+Subject: [PATCH 4.4 074/107] seccomp: Move speculation migitation control to arch code
+Date:   Mon, 23 Jul 2018 14:42:08 +0200
+Message-Id: <20180723122417.102669473@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -57,35 +54,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kyle Huey <me@kylehuey.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit af8b3cd3934ec60f4c2a420d19a9d416554f140b upstream
+commit 8bf37d8c067bb7eb8e7c381bdadf9bd89182b6bc upstream
 
-Help the compiler to avoid reevaluating the thread flags for each checked
-bit by reordering the bit checks and providing an explicit xor for
-evaluation.
+The migitation control is simpler to implement in architecture code as it
+avoids the extra function call to check the mode. Aside of that having an
+explicit seccomp enabled mode in the architecture mitigations would require
+even more workarounds.
 
-With default defconfigs for each arch,
+Move it into architecture code and provide a weak function in the seccomp
+code. Remove the 'which' argument as this allows the architecture to decide
+which mitigations are relevant for seccomp.
 
-x86_64: arch/x86/kernel/process.o
-text       data     bss     dec     hex
-3056       8577      16   11649    2d81	Before
-3024	   8577      16	  11617	   2d61	After
-
-i386: arch/x86/kernel/process.o
-text       data     bss     dec     hex
-2957	   8673	      8	  11638	   2d76	Before
-2925	   8673       8	  11606	   2d56	After
-
-Originally-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Kyle Huey <khuey@kylehuey.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: http://lkml.kernel.org/r/20170214081104.9244-2-khuey@kylehuey.com
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
-[dwmw2: backported to make TIF_RDS handling simpler.
-        No deferred TR reload.]
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -95,90 +77,96 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/kernel/process.c |   54 ++++++++++++++++++++++++++--------------------
- 1 file changed, 31 insertions(+), 23 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   29 ++++++++++++++++++-----------
+ include/linux/nospec.h     |    2 ++
+ kernel/seccomp.c           |   15 ++-------------
+ 3 files changed, 22 insertions(+), 24 deletions(-)
 
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -188,48 +188,56 @@ int set_tsc_mode(unsigned int val)
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -567,6 +567,24 @@ static int ssb_prctl_set(struct task_str
  	return 0;
  }
  
-+static inline void switch_to_bitmap(struct tss_struct *tss,
-+				    struct thread_struct *prev,
-+				    struct thread_struct *next,
-+				    unsigned long tifp, unsigned long tifn)
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl)
 +{
-+	if (tifn & _TIF_IO_BITMAP) {
-+		/*
-+		 * Copy the relevant range of the IO bitmap.
-+		 * Normally this is 128 bytes or less:
-+		 */
-+		memcpy(tss->io_bitmap, next->io_bitmap_ptr,
-+		       max(prev->io_bitmap_max, next->io_bitmap_max));
-+	} else if (tifp & _TIF_IO_BITMAP) {
-+		/*
-+		 * Clear any possible leftover bits:
-+		 */
-+		memset(tss->io_bitmap, 0xff, prev->io_bitmap_max);
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssb_prctl_set(task, ctrl);
++	default:
++		return -ENODEV;
 +	}
 +}
 +
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
- 		      struct tss_struct *tss)
++#ifdef CONFIG_SECCOMP
++void arch_seccomp_spec_mitigate(struct task_struct *task)
++{
++	ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
++}
++#endif
++
+ static int ssb_prctl_get(struct task_struct *task)
  {
- 	struct thread_struct *prev, *next;
-+	unsigned long tifp, tifn;
- 
- 	prev = &prev_p->thread;
- 	next = &next_p->thread;
- 
--	if (test_tsk_thread_flag(prev_p, TIF_BLOCKSTEP) ^
--	    test_tsk_thread_flag(next_p, TIF_BLOCKSTEP)) {
-+	tifn = READ_ONCE(task_thread_info(next_p)->flags);
-+	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
-+	switch_to_bitmap(tss, prev, next, tifp, tifn);
-+
-+	propagate_user_return_notify(prev_p, next_p);
-+
-+	if ((tifp ^ tifn) & _TIF_BLOCKSTEP) {
- 		unsigned long debugctl = get_debugctlmsr();
- 
- 		debugctl &= ~DEBUGCTLMSR_BTF;
--		if (test_tsk_thread_flag(next_p, TIF_BLOCKSTEP))
-+		if (tifn & _TIF_BLOCKSTEP)
- 			debugctl |= DEBUGCTLMSR_BTF;
--
- 		update_debugctlmsr(debugctl);
+ 	switch (ssb_mode) {
+@@ -585,17 +603,6 @@ static int ssb_prctl_get(struct task_str
  	}
- 
--	if (test_tsk_thread_flag(prev_p, TIF_NOTSC) ^
--	    test_tsk_thread_flag(next_p, TIF_NOTSC)) {
--		/* prev and next are different */
--		if (test_tsk_thread_flag(next_p, TIF_NOTSC))
-+	if ((tifp ^ tifn) & _TIF_NOTSC) {
-+		if (tifn & _TIF_NOTSC)
- 			hard_disable_TSC();
- 		else
- 			hard_enable_TSC();
- 	}
--
--	if (test_tsk_thread_flag(next_p, TIF_IO_BITMAP)) {
--		/*
--		 * Copy the relevant range of the IO bitmap.
--		 * Normally this is 128 bytes or less:
--		 */
--		memcpy(tss->io_bitmap, next->io_bitmap_ptr,
--		       max(prev->io_bitmap_max, next->io_bitmap_max));
--	} else if (test_tsk_thread_flag(prev_p, TIF_IO_BITMAP)) {
--		/*
--		 * Clear any possible leftover bits:
--		 */
--		memset(tss->io_bitmap, 0xff, prev->io_bitmap_max);
--	}
--	propagate_user_return_notify(prev_p, next_p);
  }
  
- /*
+-int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+-			     unsigned long ctrl)
+-{
+-	switch (which) {
+-	case PR_SPEC_STORE_BYPASS:
+-		return ssb_prctl_set(task, ctrl);
+-	default:
+-		return -ENODEV;
+-	}
+-}
+-
+ int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
+ {
+ 	switch (which) {
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -62,5 +62,7 @@ static inline unsigned long array_index_
+ int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which);
+ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+ 			     unsigned long ctrl);
++/* Speculation control for seccomp enforced mitigation */
++void arch_seccomp_spec_mitigate(struct task_struct *task);
+ 
+ #endif /* _LINUX_NOSPEC_H */
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -216,18 +216,7 @@ static inline bool seccomp_may_assign_mo
+ 	return true;
+ }
+ 
+-/*
+- * If a given speculation mitigation is opt-in (prctl()-controlled),
+- * select it, by disabling speculation (enabling mitigation).
+- */
+-static inline void spec_mitigate(struct task_struct *task,
+-				 unsigned long which)
+-{
+-	int state = arch_prctl_spec_ctrl_get(task, which);
+-
+-	if (state > 0 && (state & PR_SPEC_PRCTL))
+-		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_FORCE_DISABLE);
+-}
++void __weak arch_seccomp_spec_mitigate(struct task_struct *task) { }
+ 
+ static inline void seccomp_assign_mode(struct task_struct *task,
+ 				       unsigned long seccomp_mode,
+@@ -243,7 +232,7 @@ static inline void seccomp_assign_mode(s
+ 	smp_mb__before_atomic();
+ 	/* Assume default seccomp processes want spec flaw mitigation. */
+ 	if ((flags & SECCOMP_FILTER_FLAG_SPEC_ALLOW) == 0)
+-		spec_mitigate(task, PR_SPEC_STORE_BYPASS);
++		arch_seccomp_spec_mitigate(task);
+ 	set_tsk_thread_flag(task, TIF_SECCOMP);
+ }
+ 
 
 
