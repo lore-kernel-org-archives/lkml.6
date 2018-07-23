@@ -6,40 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E18CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C9FECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1F4A20846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:47:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1F4A20846
+	by mail.kernel.org (Postfix) with ESMTP id DD99120875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 09:47:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD99120875
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388290AbeGWKrj (ORCPT
+        id S2388373AbeGWKrm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 06:47:39 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40453 "EHLO
+        Mon, 23 Jul 2018 06:47:42 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57843 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388176AbeGWKri (ORCPT
+        with ESMTP id S2388210AbeGWKrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 06:47:38 -0400
+        Mon, 23 Jul 2018 06:47:40 -0400
 Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <mkl@pengutronix.de>)
-        id 1fhXQu-0003ht-G6; Mon, 23 Jul 2018 11:47:12 +0200
+        id 1fhXQu-0003hw-15; Mon, 23 Jul 2018 11:47:12 +0200
 Received: from [IPv6:2001:470:7eea:1122:6c91:b8f:4e84:18d1] (unknown [IPv6:2001:470:7eea:1122:6c91:b8f:4e84:18d1])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
         (Authenticated sender: mkl@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id 511B33427FF;
-        Mon, 23 Jul 2018 08:05:49 +0000 (UTC)
-Subject: Re: [PATCH v2] can: m_can: Fix runtime resume call
-To:     Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Cc:     wg@grandegger.com, davem@davemloft.net
-References: <20180703111102.26502-1-faiz_abbas@ti.com>
+        by smtp.blackshift.org (Postfix) with ESMTPSA id EB0CC342816;
+        Mon, 23 Jul 2018 08:14:52 +0000 (UTC)
+Subject: Re: [PATCH] can: peak_usb: mark expected switch fall-throughs
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180628174142.GA17081@embeddedor.com>
 From:   Marc Kleine-Budde <mkl@pengutronix.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
@@ -216,15 +217,15 @@ Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
  0JY+SHZeV750EBfGeGQm+K9YnErBDk05HXv1uDUJCkU2TUAPR8iigYXH6ySA1wP+o4AbJBGY
  wtoZX7pifOlY2HZZhv7jnTeX0NL7EUVxLIyp8F+Z6fAxUHw94yioGVcur6gJdkBQ85W07HjD
  g2ejS9SYusxFnJozyQ==
-Message-ID: <a4e20283-7581-9d29-5b51-66fef7433cb7@pengutronix.de>
-Date:   Mon, 23 Jul 2018 10:05:42 +0200
+Message-ID: <f6f0bf83-84b1-0cf0-3c78-828b56694b92@pengutronix.de>
+Date:   Mon, 23 Jul 2018 10:14:50 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180703111102.26502-1-faiz_abbas@ti.com>
+In-Reply-To: <20180628174142.GA17081@embeddedor.com>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="rmBPG1Cwvpk7gHex6hdbx0OFwCnLWt1bb"
+ boundary="GtZDdLRzLjn81QO2ovso2LYLDRpa9X8R0"
 X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
 X-SA-Exim-Mail-From: mkl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
@@ -235,37 +236,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---rmBPG1Cwvpk7gHex6hdbx0OFwCnLWt1bb
-Content-Type: multipart/mixed; boundary="pU0Z7r7fAwCLRjctdul6c10dS0bUkou14";
+--GtZDdLRzLjn81QO2ovso2LYLDRpa9X8R0
+Content-Type: multipart/mixed; boundary="xT716j30djcJ5nwgAp2Vk31O1hyjm5C7G";
  protected-headers="v1"
 From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-can@vger.kernel.org, linux-omap@vger.kernel.org
-Cc: wg@grandegger.com, davem@davemloft.net
-Message-ID: <a4e20283-7581-9d29-5b51-66fef7433cb7@pengutronix.de>
-Subject: Re: [PATCH v2] can: m_can: Fix runtime resume call
-References: <20180703111102.26502-1-faiz_abbas@ti.com>
-In-Reply-To: <20180703111102.26502-1-faiz_abbas@ti.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ Wolfgang Grandegger <wg@grandegger.com>,
+ "David S. Miller" <davem@davemloft.net>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <f6f0bf83-84b1-0cf0-3c78-828b56694b92@pengutronix.de>
+Subject: Re: [PATCH] can: peak_usb: mark expected switch fall-throughs
+References: <20180628174142.GA17081@embeddedor.com>
+In-Reply-To: <20180628174142.GA17081@embeddedor.com>
 
---pU0Z7r7fAwCLRjctdul6c10dS0bUkou14
+--xT716j30djcJ5nwgAp2Vk31O1hyjm5C7G
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
 Content-Transfer-Encoding: quoted-printable
 
-On 07/03/2018 01:11 PM, Faiz Abbas wrote:
-> pm_runtime_get_sync() returns a 1 if the state of the device is already=
+On 06/28/2018 07:41 PM, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-> 'active'. This is not a failure case and should return a success.
->=20
-> Therefore fix error handling for pm_runtime_get_sync() call such that
-> it returns success when the value is 1.
->=20
-> Also cleanup the TODO for using runtime PM for sleep mode as that is
-> implemented.
->=20
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-
-Applied to linux-can.
+applied to linux-can-next.
 
 Tnx,
 Marc
@@ -277,23 +273,23 @@ Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
 Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
 
---pU0Z7r7fAwCLRjctdul6c10dS0bUkou14--
+--xT716j30djcJ5nwgAp2Vk31O1hyjm5C7G--
 
---rmBPG1Cwvpk7gHex6hdbx0OFwCnLWt1bb
+--GtZDdLRzLjn81QO2ovso2LYLDRpa9X8R0
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAltVjFkACgkQk9IU1zQo
-ZfHmtgf/Zyl2db60KctC3jXzxQ+vMOXNgxhugQML8FK7+FIU9RMj1KDOeIxP8j78
-3GeUrJaEtlS0iCR4VVbW2Gn8vuv/E4TYSq/ZbFSOr19noih0HHYNzF2sdEZHgV4J
-ruNuMKLB2TrjIgOrd3yVTP5dBvZxYnzphWETq+CQA60Wvda0rD84CGpaXw0vKiwU
-6EN4LqRZfysanUplFFAmUGRBk0ghLF7/MczBqn6gGHNkMSBEdlVBq5YU2C/BB7TW
-HOsjB2FzxTPAnUSq15BdckWnWK8aLl6T8IFjADjU5WP7yl96zeIXMVxZLOFA8Tg3
-hl5YcevAYS5utba8VC+AKQ4kFXddFw==
-=EFT5
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAltVjnoACgkQk9IU1zQo
+ZfGelAf5AfQeNzehZW/bovXlJpiWRLU8epG4YOmZG+2xHcsMtidTq7jpJQNhfp3M
+qYJ/7alelstX5GAWT6RYlONZo8IqJ4ps3efKvKidd+D8fQfTAjVDeC7jkRzqt9na
+9+FUF9BSwI7Z0G8bdAcErsre2CJFR5DDABEbrqe3Sn1APeKnDm4S5soMR1EHw3TG
+Z4Cb/N4Lo5nApLTmOcDFSWCAGxHvD8DiPF4QPSsG5MHcjcs8Mv9rfmsxSPqYIlaO
+xtB+iUpqqfuySeBXFusLFDBki+6K+RHqK3bo3Kp+eb3ZAG6xuep2I0PLbN3I5aXo
+8gThfUTp11Te4xKxc7PFh2O3qu+xgQ==
+=R8kB
 -----END PGP SIGNATURE-----
 
---rmBPG1Cwvpk7gHex6hdbx0OFwCnLWt1bb--
+--GtZDdLRzLjn81QO2ovso2LYLDRpa9X8R0--
