@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA85ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF037ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60D3920880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60D3920880
+	by mail.kernel.org (Postfix) with ESMTP id 9E70A20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E70A20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389460AbeGWNcH (ORCPT
+        id S2389471AbeGWNcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:32:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46382 "EHLO
+        Mon, 23 Jul 2018 09:32:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46394 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388697AbeGWNcH (ORCPT
+        with ESMTP id S2388697AbeGWNcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:32:07 -0400
+        Mon, 23 Jul 2018 09:32:10 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA2A2BDB;
-        Mon, 23 Jul 2018 12:31:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DF82BDB;
+        Mon, 23 Jul 2018 12:31:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.9 08/28] ARC: configs: Remove CONFIG_INITRAMFS_SOURCE from defconfigs
-Date:   Mon, 23 Jul 2018 14:25:08 +0200
-Message-Id: <20180723122425.790367194@linuxfoundation.org>
+        stable@vger.kernel.org, Jing Xia <jing.xia.mail@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        chunyan.zhang@unisoc.com, Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 09/28] mm: memcg: fix use after free in mem_cgroup_iter()
+Date:   Mon, 23 Jul 2018 14:25:09 +0200
+Message-Id: <20180723122425.846337486@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122425.241418073@linuxfoundation.org>
 References: <20180723122425.241418073@linuxfoundation.org>
@@ -51,133 +55,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+From: Jing Xia <jing.xia.mail@gmail.com>
 
-commit 64234961c145606b36eaa82c47b11be842b21049 upstream.
+commit 9f15bde671355c351cf20d9f879004b234353100 upstream.
 
-We used to have pre-set CONFIG_INITRAMFS_SOURCE with local path
-to intramfs in ARC defconfigs. This was quite convenient for
-in-house development but not that convenient for newcomers
-who obviusly don't have folders like "arc_initramfs" next to
-the Linux source tree. Which leads to quite surprising failure
-of defconfig building:
-------------------------------->8-----------------------------
-  ../scripts/gen_initramfs_list.sh: Cannot open '../../arc_initramfs_hs/'
-../usr/Makefile:57: recipe for target 'usr/initramfs_data.cpio.gz' failed
-make[2]: *** [usr/initramfs_data.cpio.gz] Error 1
-------------------------------->8-----------------------------
+It was reported that a kernel crash happened in mem_cgroup_iter(), which
+can be triggered if the legacy cgroup-v1 non-hierarchical mode is used.
 
-So now when more and more people start to deal with our defconfigs
-let's make their life easier with removal of CONFIG_INITRAMFS_SOURCE.
+Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b8f
+......
+Call trace:
+  mem_cgroup_iter+0x2e0/0x6d4
+  shrink_zone+0x8c/0x324
+  balance_pgdat+0x450/0x640
+  kswapd+0x130/0x4b8
+  kthread+0xe8/0xfc
+  ret_from_fork+0x10/0x20
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+  mem_cgroup_iter():
+      ......
+      if (css_tryget(css))    <-- crash here
+	    break;
+      ......
+
+The crashing reason is that mem_cgroup_iter() uses the memcg object whose
+pointer is stored in iter->position, which has been freed before and
+filled with POISON_FREE(0x6b).
+
+And the root cause of the use-after-free issue is that
+invalidate_reclaim_iterators() fails to reset the value of iter->position
+to NULL when the css of the memcg is released in non- hierarchical mode.
+
+Link: http://lkml.kernel.org/r/1531994807-25639-1-git-send-email-jing.xia@unisoc.com
+Fixes: 6df38689e0e9 ("mm: memcontrol: fix possible memcg leak due to interrupted reclaim")
+Signed-off-by: Jing Xia <jing.xia.mail@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: <chunyan.zhang@unisoc.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/configs/axs101_defconfig          |    1 -
- arch/arc/configs/axs103_defconfig          |    1 -
- arch/arc/configs/axs103_smp_defconfig      |    1 -
- arch/arc/configs/nsim_700_defconfig        |    1 -
- arch/arc/configs/nsim_hs_defconfig         |    1 -
- arch/arc/configs/nsim_hs_smp_defconfig     |    1 -
- arch/arc/configs/nsimosci_defconfig        |    1 -
- arch/arc/configs/nsimosci_hs_defconfig     |    1 -
- arch/arc/configs/nsimosci_hs_smp_defconfig |    1 -
- 9 files changed, 9 deletions(-)
+ mm/memcontrol.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/configs/axs101_defconfig
-+++ b/arch/arc/configs/axs101_defconfig
-@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_VM_EVENT_COUNTERS is not set
---- a/arch/arc/configs/axs103_defconfig
-+++ b/arch/arc/configs/axs103_defconfig
-@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_VM_EVENT_COUNTERS is not set
---- a/arch/arc/configs/axs103_smp_defconfig
-+++ b/arch/arc/configs/axs103_smp_defconfig
-@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_VM_EVENT_COUNTERS is not set
---- a/arch/arc/configs/nsim_700_defconfig
-+++ b/arch/arc/configs/nsim_700_defconfig
-@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"
- CONFIG_KALLSYMS_ALL=y
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
---- a/arch/arc/configs/nsim_hs_defconfig
-+++ b/arch/arc/configs/nsim_hs_defconfig
-@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
- CONFIG_KALLSYMS_ALL=y
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
---- a/arch/arc/configs/nsim_hs_smp_defconfig
-+++ b/arch/arc/configs/nsim_hs_smp_defconfig
-@@ -9,7 +9,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../arc_initramfs_hs/"
- CONFIG_KALLSYMS_ALL=y
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
---- a/arch/arc/configs/nsimosci_defconfig
-+++ b/arch/arc/configs/nsimosci_defconfig
-@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"
- CONFIG_KALLSYMS_ALL=y
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
---- a/arch/arc/configs/nsimosci_hs_defconfig
-+++ b/arch/arc/configs/nsimosci_hs_defconfig
-@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../arc_initramfs_hs/"
- CONFIG_KALLSYMS_ALL=y
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
---- a/arch/arc/configs/nsimosci_hs_smp_defconfig
-+++ b/arch/arc/configs/nsimosci_hs_smp_defconfig
-@@ -9,7 +9,6 @@ CONFIG_IKCONFIG_PROC=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../arc_initramfs_hs/"
- CONFIG_PERF_EVENTS=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_KPROBES=y
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -895,7 +895,7 @@ static void invalidate_reclaim_iterators
+ 	int nid;
+ 	int i;
+ 
+-	while ((memcg = parent_mem_cgroup(memcg))) {
++	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
+ 		for_each_node(nid) {
+ 			mz = mem_cgroup_nodeinfo(memcg, nid);
+ 			for (i = 0; i <= DEF_PRIORITY; i++) {
 
 
