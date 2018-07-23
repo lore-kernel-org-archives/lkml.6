@@ -2,112 +2,71 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CADECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0ADAECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BD5220685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:38:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vEBMUY97"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD5220685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A85F20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:41:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A85F20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388151AbeGWLjT (ORCPT
+        id S2388157AbeGWLlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:39:19 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38466 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387957AbeGWLjS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:39:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ujc/APWGliFgyTXQNulhhgoaoYqm+xJkVK6UFBbWfdA=; b=vEBMUY97qThsrrruYiBjcaecq
-        sJdVi+GUiQYwi7tKsq2BftPh6MJFQm8/Dtt7DCR4zRf1pPVajBE6ZK8ax55WHFOWeMrsDnRUs9+0r
-        wwq473E5Pm7wb4ESV0xOB+EHppLhp4aJw7aVf+n0fGK131zGyk0Kq+mLbvFXMN5VuInIrO7WwvV69
-        2byss64BLVEdXTOg2UXZl1+t6DkRLvs9Yej2ctg8X5K2ogamtxwWgpDgOkvqWCgComa76pwyv0541
-        2LuDcnoGY4TZyAYpJH11iv/UhSUsgkeopBB2LWy+Meio1+WBnJR6goc6y8mLijxFqVWo6YBncxrCp
-        qFzB3579Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhYEb-0005gP-84; Mon, 23 Jul 2018 10:38:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DBB4820275F53; Mon, 23 Jul 2018 12:38:30 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 12:38:30 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 11/19] sched/numa: Restrict migrating in parallel to
- the same node.
-Message-ID: <20180723103830.GC2494@hirez.programming.kicks-ass.net>
-References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1529514181-9842-12-git-send-email-srikar@linux.vnet.ibm.com>
+        Mon, 23 Jul 2018 07:41:36 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:51630 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387906AbeGWLlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:41:36 -0400
+Received: from 095-097-149-005.static.chello.nl ([95.97.149.5] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1fhYGv-00083O-U9; Mon, 23 Jul 2018 12:40:57 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: [PATCH 1/5] arm64: defconfig: Enable sound support for Samsung Chromebook Plus.
+Date:   Mon, 23 Jul 2018 12:40:56 +0200
+Message-ID: <1845030.GmhzmUT5kH@phil>
+In-Reply-To: <20180717160610.26501-1-enric.balletbo@collabora.com>
+References: <20180717160610.26501-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529514181-9842-12-git-send-email-srikar@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 10:32:52PM +0530, Srikar Dronamraju wrote:
-> Since task migration under numa balancing can happen in parallel, more
-> than one task might choose to move to the same node at the same time.
-> This can cause load imbalances at the node level.
+Am Dienstag, 17. Juli 2018, 18:06:06 CEST schrieb Enric Balletbo i Serra:
+> Enable the Rockchip sound driver with MAX98357A/RT5514/DA7219 codecs
+> needed for the Samsung Chromebook Plus.
 > 
-> The problem is more likely if there are more cores per node or more
-> nodes in system.
-> 
-> Use a per-node variable to indicate if task migration
-> to the node under numa balance is currently active.
-> This per-node variable will not track swapping of tasks.
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+
+applied all 5 for 4.19.
+
+As Olof requested less granularity for defconfig changes, I squashed
+all of them into one patch enabling Chromebook Plus peripherals.
 
 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 50c7727..87fb20e 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1478,11 +1478,22 @@ struct task_numa_env {
->  static void task_numa_assign(struct task_numa_env *env,
->  			     struct task_struct *p, long imp)
->  {
-> +	pg_data_t *pgdat = NODE_DATA(cpu_to_node(env->dst_cpu));
->  	struct rq *rq = cpu_rq(env->dst_cpu);
->  
->  	if (xchg(&rq->numa_migrate_on, 1))
->  		return;
->  
-> +	if (!env->best_task && env->best_cpu != -1)
-> +		WRITE_ONCE(pgdat->active_node_migrate, 0);
-> +
-> +	if (!p) {
-> +		if (xchg(&pgdat->active_node_migrate, 1)) {
-> +			WRITE_ONCE(rq->numa_migrate_on, 0);
-> +			return;
-> +		}
-> +	}
-> +
->  	if (env->best_cpu != -1) {
->  		rq = cpu_rq(env->best_cpu);
->  		WRITE_ONCE(rq->numa_migrate_on, 0);
+Thanks
+Heiko
 
 
-Urgh, that's prertty magical code. And it doesn't even have a comment.
-
-For isntance, I cannot tell why we clear that active_node_migrate thing
-right there.
