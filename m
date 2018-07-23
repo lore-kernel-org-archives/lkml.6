@@ -2,109 +2,139 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1B8ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE2CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2598F20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:21:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3446120852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 14:22:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tVivLXqV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2598F20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8gBMcH+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3446120852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388386AbeGWPWn (ORCPT
+        id S2388343AbeGWPXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 11:22:43 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36523 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388104AbeGWPWn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 11:22:43 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d14-v6so126452pfo.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 07:21:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=L8+fiPMBjv+xt4hVwLR2LcDNB5+3+svfD6YIFWrEQiU=;
-        b=tVivLXqV+Oya6zIru8r7jicqZqLWaBcx8mdzaEJd2f5g5bY9Ysv8bFPofCgFus9XUo
-         z+hFm9hFIdqlXQ8FBK1oYoE/46jDZ2N5RN9z9gGTIE2Ka14djCnN9STAFXz2tM9Sh7sm
-         BnBdtzHMDXk08yJELESs3KBCNDRr+KXx1l9rLaWhY/iKgL5GQn+Riyk+5IJ/B78d/Vte
-         GlqED9xa/goTWQp8VHBjpVWh40X3I3yWf3CJvjZJkSUcGINyIT3W79W0b2mccBll8dcM
-         K0VEH/wPNSGzWSZ6onsh9mLU/BoCPT9Qcb7PRA9OVljOBp5HjE9ntzfRoo3H/V+3Eiz6
-         p8XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=L8+fiPMBjv+xt4hVwLR2LcDNB5+3+svfD6YIFWrEQiU=;
-        b=t3rrpzRuHQTGEK/vUHJxr0ljPH+t/b1Q6cwwXUF+FkiEww2VdujocNRxoSoS10Y4qi
-         9c+y199Kiyc4X6duWqx801v43740i3HIBnfASNr0mgi/Z4kHDvbggPziwKXTv22QMIfq
-         EVlGVn9+hV7iZYUwfNwM0lCEoEG4KOEewW2NsuDZkG+4R1GdRexfdl7hGZ2eMr58WdGm
-         K1un1VsZ3EIkn4vcaDqCCvhOelNN9T1AB9LJp5iMUsUUBNei/kjowNZH8suGQoj1Gwms
-         WTuY4G3oL1NfRfO0NGAIj59PjXQiN9PbXzQZ38GqcrWyCCGPkeNHktM67Z3Ps1tWAZxt
-         WdAg==
-X-Gm-Message-State: AOUpUlFKM89jwBa9HcSZqu9+fXV1zsjI2Iu8Nqg71n5DRsDITydeWF05
-        7T5mO1osTw6apWVUF/rH6fU=
-X-Google-Smtp-Source: AAOMgpdzk0aSKd3Ou/qmWoelpFeltcAi2O6qofRv1yXnjZLHkNKV0OCISbqznDgquvKziVrFSXr48A==
-X-Received: by 2002:a65:6551:: with SMTP id a17-v6mr12471141pgw.132.1532355674517;
-        Mon, 23 Jul 2018 07:21:14 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:e422:450a:e730:728b])
-        by smtp.gmail.com with ESMTPSA id g184-v6sm11560306pgc.22.2018.07.23.07.21.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 07:21:14 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     stefanr@s5r6.in-berlin.de
-Cc:     linux1394-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] firewire: init_ohci1394_dma: Replace mdelay with msleep
-Date:   Mon, 23 Jul 2018 22:21:04 +0800
-Message-Id: <20180723142104.3477-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 23 Jul 2018 11:23:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388104AbeGWPXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 11:23:50 -0400
+Received: from mail-qk0-f180.google.com (mail-qk0-f180.google.com [209.85.220.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6504620852;
+        Mon, 23 Jul 2018 14:22:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532355740;
+        bh=bwfOakcAkjklthkyep/ukrW8+k6aJhLkQ7oBqeCZiuU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=h8gBMcH+WonsFfS6TFvYt7DAz+d1PUPeXdxj6SeKNWJbZpallM5k9smDcHRz2Lsk2
+         vE5sikNJqq2jot2trNEdOqElR/8mxvXoT6iLJCd63vR0s57NO+nLb/zmx3IK4SNSHE
+         Hadurkr8PSXssu6VWg+WMy8vaoSnu60610U56RiM=
+Received: by mail-qk0-f180.google.com with SMTP id t79-v6so500519qke.4;
+        Mon, 23 Jul 2018 07:22:20 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFf2aGd2DCD8wFIf+BH9lok2mWchvMqAVVe5a7CAubzjM/RNhIV
+        PuHcxHI0snKoOxfYANomaRjcOvQgMkaEoO5IOw==
+X-Google-Smtp-Source: AAOMgpfRhhAdUjrQmCm2Fk9En+RIEbRRwvEVcBHsNN04TBNkC/5sCzr4yEWQcKcgm1NCmxjozTWz+8ji1ogqUtM2nb4=
+X-Received: by 2002:ae9:c112:: with SMTP id z18-v6mr8777686qki.96.1532355739593;
+ Mon, 23 Jul 2018 07:22:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180713143840.9721-1-paul@crapouillou.net> <20180720153027.GA11978@rob-hp-laptop>
+ <1532113088.2309.0@smtp.crapouillou.net>
+In-Reply-To: <1532113088.2309.0@smtp.crapouillou.net>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 23 Jul 2018 08:22:08 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+=sSHSeCBQPjiEe5UH2RYyNnck-Q+rDq--iphhnYS=Mg@mail.gmail.com>
+Message-ID: <CAL_Jsq+=sSHSeCBQPjiEe5UH2RYyNnck-Q+rDq--iphhnYS=Mg@mail.gmail.com>
+Subject: Re: [PATCH] serial: 8250_ingenic: Add support for the JZ4725B SoC
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-init_ohci1394_wait_for_busresets() and
-init_ohci1394_reset_and_init_dma() are never called in atomic context.
+On Fri, Jul 20, 2018 at 12:58 PM Paul Cercueil <paul@crapouillou.net> wrote=
+:
+>
+> Hi Rob,
+>
+> Le ven. 20 juil. 2018 =C3=A0 17:30, Rob Herring <robh@kernel.org> a =C3=
+=A9crit :
+> > On Fri, Jul 13, 2018 at 04:38:40PM +0200, Paul Cercueil wrote:
+> >>  The UART in the jz4725b works just like in the other JZ SoCs, so
+> >> this
+> >>  commit simply adds a new compatible string.
+> >>
+> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> >>  ---
+> >>   Documentation/devicetree/bindings/serial/ingenic,uart.txt | 1 +
+> >>   drivers/tty/serial/8250/8250_ingenic.c                    | 5 +++++
+> >>   2 files changed, 6 insertions(+)
+> >>
+> >>  diff --git
+> >> a/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+> >> b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+> >>  index c3c6406d5cfe..a0b34fd3b602 100644
+> >>  --- a/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+> >>  +++ b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+> >>  @@ -3,6 +3,7 @@
+> >>   Required properties:
+> >>   - compatible : One of:
+> >>     - "ingenic,jz4740-uart",
+> >>  +  - "ingenic,jz4725b-uart",
+> >>     - "ingenic,jz4760-uart",
+> >>     - "ingenic,jz4770-uart",
+> >>     - "ingenic,jz4775-uart",
+> >>  diff --git a/drivers/tty/serial/8250/8250_ingenic.c
+> >> b/drivers/tty/serial/8250/8250_ingenic.c
+> >>  index 15a8c8dfa92b..760266559a5a 100644
+> >>  --- a/drivers/tty/serial/8250/8250_ingenic.c
+> >>  +++ b/drivers/tty/serial/8250/8250_ingenic.c
+> >>  @@ -133,6 +133,10 @@ EARLYCON_DECLARE(jz4740_uart,
+> >> ingenic_early_console_setup);
+> >>   OF_EARLYCON_DECLARE(jz4740_uart, "ingenic,jz4740-uart",
+> >>                  ingenic_early_console_setup);
+> >>
+> >>  +EARLYCON_DECLARE(jz4725b_uart, ingenic_early_console_setup);
+> >>  +OF_EARLYCON_DECLARE(jz4725b_uart, "ingenic,jz4725b-uart",
+> >>  +               ingenic_early_console_setup);
+> >>  +
+> >
+> > This shouldn't be necessary. Looks like it should be compatible with
+> > ingenic,jz4740-uart.
+> >
+> >>   EARLYCON_DECLARE(jz4770_uart, ingenic_early_console_setup);
+> >>   OF_EARLYCON_DECLARE(jz4770_uart, "ingenic,jz4770-uart",
+> >>                  ingenic_early_console_setup);
+> >>  @@ -330,6 +334,7 @@ static const struct ingenic_uart_config
+> >> jz4780_uart_config =3D {
+> >>
+> >>   static const struct of_device_id of_match[] =3D {
+> >>      { .compatible =3D "ingenic,jz4740-uart", .data =3D
+> >> &jz4740_uart_config },
+> >>  +   { .compatible =3D "ingenic,jz4725b-uart", .data =3D
+> >> &jz4740_uart_config },
+> >
+> > And this too.
+>
+> Well, I'm confused, the driver already uses multiple compatible strings
+> for SoCs that
+> work the exact same, so that was wrong?
 
-They call mdelay() to busily wait, which is not necessary.
-mdelay() can be replaced with msleep().
+Not wrong, but not necessary. Given that the data was the same was the
+clue telling me that they should be compatible.
 
-This is found by a static analysis tool named DCNS written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/firewire/init_ohci1394_dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/firewire/init_ohci1394_dma.c b/drivers/firewire/init_ohci1394_dma.c
-index 2cc89ce745c9..6b5a3c12f715 100644
---- a/drivers/firewire/init_ohci1394_dma.c
-+++ b/drivers/firewire/init_ohci1394_dma.c
-@@ -192,7 +192,7 @@ static inline void __init init_ohci1394_wait_for_busresets(struct ohci *ohci)
- 	int i, events;
- 
- 	for (i = 0; i < 9; i++) {
--		mdelay(200);
-+		msleep(200);
- 		events = reg_read(ohci, OHCI1394_IntEventSet);
- 		if (events & OHCI1394_busReset)
- 			reg_write(ohci, OHCI1394_IntEventClear,
-@@ -228,7 +228,7 @@ static inline void __init init_ohci1394_reset_and_init_dma(struct ohci *ohci)
- 	reg_write(ohci, OHCI1394_IntEventClear, 0xffffffff);
- 	reg_write(ohci, OHCI1394_IntMaskClear, 0xffffffff);
- 
--	mdelay(50); /* Wait 50msec to make sure we have full link enabled */
-+	msleep(50); /* Wait 50msec to make sure we have full link enabled */
- 
- 	init_ohci1394_initialize(ohci);
- 	/*
--- 
-2.17.0
-
+Rob
