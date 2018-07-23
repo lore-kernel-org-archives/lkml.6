@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6708ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED1FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D31220854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:25:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D31220854
+	by mail.kernel.org (Postfix) with ESMTP id 991E020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:25:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991E020854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388202AbeGWN0s (ORCPT
+        id S2388219AbeGWN0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:26:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45112 "EHLO
+        Mon, 23 Jul 2018 09:26:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388151AbeGWN0q (ORCPT
+        with ESMTP id S2388151AbeGWN0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:26:46 -0400
+        Mon, 23 Jul 2018 09:26:49 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45A64BDB;
-        Mon, 23 Jul 2018 12:25:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 136E7BDB;
+        Mon, 23 Jul 2018 12:25:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YOKOTA Hiroshi <yokota.hgml@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 15/63] ALSA: hda/realtek - Add Panasonic CF-SZ6 headset jack quirk
-Date:   Mon, 23 Jul 2018 14:24:21 +0200
-Message-Id: <20180723122446.958990811@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.17 16/63] ALSA: hda/realtek - Yet another Clevo P950 quirk entry
+Date:   Mon, 23 Jul 2018 14:24:22 +0200
+Message-Id: <20180723122446.992120133@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -50,14 +49,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YOKOTA Hiroshi <yokota.hgml@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 0fca97a29b83e3f315c14ed2372cfd0f9ee0a006 upstream.
+commit f3d737b6340b0c7bacd8bc751605f0ed6203f146 upstream.
 
-This adds some required quirk when uses headset or headphone on
-Panasonic CF-SZ6.
+The PCI SSID 1558:95e1 needs the same quirk for other Clevo P950
+models, too.  Otherwise no sound comes out of speakers.
 
-Signed-off-by: YOKOTA Hiroshi <yokota.hgml@gmail.com>
+Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=1101143
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -68,13 +67,13 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -6543,6 +6543,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x10cf, 0x1629, "Lifebook U7x7", ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x10cf, 0x1845, "Lifebook U904", ALC269_FIXUP_LIFEBOOK_EXTMIC),
- 	SND_PCI_QUIRK(0x10ec, 0x10f2, "Intel Reference board", ALC700_FIXUP_INTEL_REFERENCE),
-+	SND_PCI_QUIRK(0x10f7, 0x8338, "Panasonic CF-SZ6", ALC269_FIXUP_HEADSET_MODE),
- 	SND_PCI_QUIRK(0x144d, 0xc109, "Samsung Ativ book 9 (NP900X3G)", ALC269_FIXUP_INV_DMIC),
- 	SND_PCI_QUIRK(0x144d, 0xc740, "Samsung Ativ book 8 (NP870Z5G)", ALC269_FIXUP_ATIV_BOOK_8),
- 	SND_PCI_QUIRK(0x1458, 0xfa53, "Gigabyte BXBT-2807", ALC283_FIXUP_HEADSET_MIC),
+@@ -2363,6 +2363,7 @@ static const struct snd_pci_quirk alc882
+ 	SND_PCI_QUIRK_VENDOR(0x1462, "MSI", ALC882_FIXUP_GPIO3),
+ 	SND_PCI_QUIRK(0x147b, 0x107a, "Abit AW9D-MAX", ALC882_FIXUP_ABIT_AW9D_MAX),
+ 	SND_PCI_QUIRK(0x1558, 0x9501, "Clevo P950HR", ALC1220_FIXUP_CLEVO_P950),
++	SND_PCI_QUIRK(0x1558, 0x95e1, "Clevo P95xER", ALC1220_FIXUP_CLEVO_P950),
+ 	SND_PCI_QUIRK(0x1558, 0x95e2, "Clevo P950ER", ALC1220_FIXUP_CLEVO_P950),
+ 	SND_PCI_QUIRK_VENDOR(0x1558, "Clevo laptop", ALC882_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x161f, 0x2054, "Medion laptop", ALC883_FIXUP_EAPD),
 
 
