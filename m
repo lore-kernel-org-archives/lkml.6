@@ -2,126 +2,99 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0953EECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC488ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A75BA20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:56:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NN+a4vYc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A75BA20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 84A8020880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:59:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A8020880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hofr.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388002AbeGWM5C (ORCPT
+        id S2387954AbeGWNAE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:57:02 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40590 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387801AbeGWM5B (ORCPT
+        Mon, 23 Jul 2018 09:00:04 -0400
+Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:50246 "EHLO
+        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S2387847AbeGWNAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:57:01 -0400
-Received: by mail-pl0-f66.google.com with SMTP id s17-v6so128260plp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 04:56:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=u2wbrpMf3BwwUyLR5tju9pXaDLmbGmxF2b//ab05B1o=;
-        b=NN+a4vYcMk1yLl/xJEEmX9LTYn+uEQJl/5LfoWkQPgt8hFhjhKAs6L7IrkmdESIRF6
-         CbutcHhtW7eyD04z8936PWkXwlAQSueSIDegJ8FDGo2Q+aF54//LJOiAC++vvxr1rkL0
-         f1HhEy+IgCNSfhOsUWgUDg6kwmHy7xYZ4Hz/gS2N6oplGxHOThfUR6ePGD1PX4f1zyuC
-         sgBQouTGJIsx3l8q/sP0HchEoCj+kRvxsxULIP88lSP/ae+QgEQcXVIJ8qnhnPyjI8cK
-         JuXs6SNtKDox9x7GxBwURBnCVf4uCCxBczmZ1rJVb0xX0doqOadMlzfBA0R/tlI8UKW6
-         eI5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=u2wbrpMf3BwwUyLR5tju9pXaDLmbGmxF2b//ab05B1o=;
-        b=nakrugBNveEOT9dPpZ7DBZO9ku0gpop6U9c+vBufY3hk3CkR4zA4L4OnP0LZRGdPmK
-         s4kEQy8FEhT/Fi9QaiAFL/IjabaSH87cYqW7WfWiOufDV+XRNdLS8RKKoM/cTCKz16oS
-         1qU3nmvGW21//REeoIA0iPBgaFezm6cjZjJP4eOl+6A7v2mibogVeTADnrxpDpqcwdcE
-         qxeg6rH5v1qYFNlk7x260c4v25hrbNv+2TKj9Dd2cjnPgwLSAc/UsdL9ovrdb+FrQ1Qn
-         JX3b5Ht+0UEntGV3onk2pIaAu0FOsz2cH7OYB0L0D121dwCSNqiTRf1BNR484baYW1lf
-         H1bQ==
-X-Gm-Message-State: AOUpUlECPSyvLSn3iI+cTYXnLFDdss+OvZnno280yyE4kSeJDe8SadGZ
-        A+4jO87SsXiCzkATftXK9gLpa2RjHamsguJM9rWgwA==
-X-Google-Smtp-Source: AAOMgpefroFWWJoGVh4sJMGS18a0xHg6JihMUgnSpyR1Dnfj05lV63Jkj1Re2b+AjuHJP/bQs6N1haFofv5eWrhvKK8=
-X-Received: by 2002:a17:902:d710:: with SMTP id w16-v6mr12666378ply.93.1532346969776;
- Mon, 23 Jul 2018 04:56:09 -0700 (PDT)
+        Mon, 23 Jul 2018 09:00:03 -0400
+Received: by mail.osadl.at (Postfix, from userid 1001)
+        id 2569D5C097D; Mon, 23 Jul 2018 11:57:33 +0000 (UTC)
+Date:   Mon, 23 Jul 2018 11:57:33 +0000
+From:   Nicholas Mc Guire <der.herr@hofr.at>
+To:     Marc Kleine-Budde <mkl@pengutronix.de>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Nicholas Mc Guire <hofrat@osadl.org>,
+        Wolfram Sang <w.sang@pengutronix.de>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] can: mpc5xxx_can: check of_iomap return before use
+Message-ID: <20180723115733.GA6529@osadl.at>
+References: <1531163800-12111-1-git-send-email-hofrat@osadl.org>
+ <CAOMZO5CPVx_3kj5xKaoNbYP14cgPk9aSniyu44oWF-0jbSx91g@mail.gmail.com>
+ <4f81e688-3d5c-6174-5a76-f416ced63cf3@pengutronix.de>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 23 Jul 2018 04:55:49
- -0700 (PDT)
-In-Reply-To: <20180723111813.vbnsmx2k45eqzdkc@lakrids.cambridge.arm.com>
-References: <CALCETrW4F33LWWA=cWYZ2N9=veCmVfjhCCLnSv2qh=32fOAf-w@mail.gmail.com>
- <CACT4Y+aP4QSGBiLWt0iNHVJ4nMc_phthK9P+gTMd4d=exaAKwA@mail.gmail.com> <20180723111813.vbnsmx2k45eqzdkc@lakrids.cambridge.arm.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 23 Jul 2018 13:55:49 +0200
-Message-ID: <CACT4Y+YMYogSo+Wq=29A7fKC9hufsc_DwLrneOKtsefZP-9h6g@mail.gmail.com>
-Subject: Re: Making KASAN compatible with VMAP_STACK
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f81e688-3d5c-6174-5a76-f416ced63cf3@pengutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 1:18 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Mon, Jul 23, 2018 at 09:40:36AM +0200, Dmitry Vyukov wrote:
->> On Sun, Jul 22, 2018 at 7:52 PM, Andy Lutomirski <luto@kernel.org> wrote:
->> > Hi all-
->> >
->> > It would be really nice to make KASAN compatible with VMAP_STACK.
->> > Both are valuable memory debugging features, and the fact that you
->> > can't use both is disappointing.
->> >
->> > As far as I know, there are only two problems:
->> >
->> > 1. The KASAN shadow population code is a mess, and adding *anything*
->> > to the KASAN shadow requires magical, fragile incantations.  It should
->> > be cleaned up so that ranges can be easily populated without needing
->> > to very carefully align things, call helpers in the right order, etc.
->> > The core KASAN code should figure it out by itself.
->> >
->> > 2. The vmalloc area is potentially extremely large.  It might be
->> > necessary to have a way to *depopulate* shadow space when stacks get
->> > freed or, more generally, when vmap areas are freed.  Ideally KASAN
->> > would integrate with the core vmalloc/vmap code and it would Just Work
->> > (tm).  And, as a bonus, we'd get proper KASAN protection of vmalloced
->> > memory.
->> >
->> > Any volunteers to fix this?
->>
->> Hi Andy,
->>
->> I understand that having most configs as orthogonal settings that can
->> be enabled independently is generally good in intself, but I would
->> like to understand what does VMAP_STACK add on top of KASAN in terms
->> of debugging capabilities?
+On Mon, Jul 23, 2018 at 01:37:05PM +0200, Marc Kleine-Budde wrote:
+> On 07/09/2018 09:28 PM, Fabio Estevam wrote:
+> > On Mon, Jul 9, 2018 at 4:16 PM, Nicholas Mc Guire <hofrat@osadl.org> wrote:
+> >>  of_iompa() can return NULL so that return needs to be checked and NULL
+> > 
+> > s/of_iompa/of_iomap/
+> > 
+> >> treated as failure. While at it also take care of the missing
+> >> of_node_put() in the error path.
+> >>
+> >> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> >> Fixes: commit afa17a500a36 ("net/can: add driver for mscan family & mpc52xx_mscan")
+> >> ---
+> >>
+> >> Problem was found by an experimental coccinelle script
+> >>
+> >> Patch was compiletested with: mpc5200_defconfig + CONFIG_CAN=y,
+> >> CONFIG_CAN_MSCAN=y, CONFIG_CAN_MPC5XXX=y
+> >> (with a number of sparse warnings not related to the proposed change)
+> >>
+> >> Patch is against 4.18-rc3 (localversion-next is next-20180706)
+> >>
+> >>  drivers/net/can/mscan/mpc5xxx_can.c | 5 +++++
+> >>  1 file changed, 5 insertions(+)
+> >>
+> >> diff --git a/drivers/net/can/mscan/mpc5xxx_can.c b/drivers/net/can/mscan/mpc5xxx_can.c
+> >> index c7427bd..2949a38 100644
+> >> --- a/drivers/net/can/mscan/mpc5xxx_can.c
+> >> +++ b/drivers/net/can/mscan/mpc5xxx_can.c
+> >> @@ -86,6 +86,11 @@ static u32 mpc52xx_can_get_clock(struct platform_device *ofdev,
+> >>                 return 0;
+> >>         }
+> >>         cdm = of_iomap(np_cdm, 0);
+> >> +       if (!cdm) {
+> >> +               of_node_put(np_cdm);
+> >> +               dev_err(&ofdev->dev, "can't map clock node!\n");
+> >> +               return 0;
+> > 
+> > I think you should return an error code here. -ENOMEM maybe?
+> 
+> Can you send an updated version?
 >
-> VMAP_STACK makes it possible to detect stack overflows reliably at the
-> point of overflow.
->
-> KASAN can't handle this reliably, even if it detects that an access is
-> out of the stack bounds, since handling this requires stack space.
-> Depending on a number of factors, this may be reported, might result in
-> recursive exceptions, etc.
+The way I understand the code the return value will be used
+as a frequency - the only valid error valeu thus is 0 here,
+so I think the return 0 is correct.
 
-Interesting. Does VMAP_STACK detect task_struct smashing today? As far
-as I remember, the first version didn't.
-As an orthogonal measure we could add KASAN redzone between stack and
-task_struct, and make KASAN instrumentation detect when the new frame
-hits this redzone. We bump stack order under KASAN significantly, so
-adding, say 128 byte redzone should not be a problem. Does it make any
-sense?
+thx!
+hofrat
