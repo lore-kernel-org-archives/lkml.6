@@ -2,123 +2,151 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EABDC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20BE1C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE47320779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:28:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C731320779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:29:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I4q9lpIu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE47320779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pnZXDgvG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C731320779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731281AbeGWD1F (ORCPT
+        id S1731325AbeGWD2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 23:27:05 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:40743 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731168AbeGWD1E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 23:27:04 -0400
-Received: by mail-yb0-f193.google.com with SMTP id y11-v6so6717402ybm.7
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 19:28:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=EgOePrnes0wjZT2VaatlFaotLIhX1CKbMrncMhKZJcs=;
-        b=I4q9lpIuC1TAWCm9iDIRj1AJ2/sF3H1Y6pnBFG/BgvYos3A/VLsKOAyv8LWWAfGRX4
-         N+M47h+VOEFbfpzlGFeHh5BKn0FvvloCwiniLj7sfNnKo+00V9Ny63v67nZtWYOzmpmx
-         04PeUp3bKkfKxwXrIb5C6d9ZX9A82Suq7aGGFm4IipCsk+J82PxwVzpWYAEVkuGIfw0f
-         wX8cBTaTgL2HISpeeY+a4AyMliXhq80QM1TF8qVnjZ+AiG7HOIgKS0oji9SFIccDDZZD
-         rjrLfTniWBBMAoywN8JVGXlAwXXP3nsx0iX30rhmFmwR/zzlUK7KcqIkntw9kwZBz0G5
-         RhWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=EgOePrnes0wjZT2VaatlFaotLIhX1CKbMrncMhKZJcs=;
-        b=mbW8k7O0Xlo+DH/sdYXRI+yIcY9a19DdF/E7NNCR8hZP2SO819fEw9AlHSB5+3hTDC
-         tVIG+5UMxbqv6cj9I7+uNOFZkXHE0wtnEbNtv4IFa2RN8+H4L/YknOk+/PXas3zIn8tl
-         qsTR/P2QEgm1HviSrumq76OzfojMSiGqrvn8uhfvfA+V/4JiQM4IXp6VzgoDS+z/skKD
-         YOkytd71hFJQ1rLtRsbsf7jf0n2TWBwqJpMKuJuak5pS1FrVePefWSeNg7mXLIGMaZcc
-         7FUb3EFPtGHoi+AnHOb2lnUU57C+zs+Hy5hKnAaM6+BNlMe+9A7d3wEaW1oFSvMzAnMb
-         +uwQ==
-X-Gm-Message-State: AOUpUlEBCmnzSPGe52RK75mAA+Y6dcMyRNdR+EtBMQNBetWtsJsUYtoV
-        nldj0QvB7WmJHJsVnRytzRUpjw==
-X-Google-Smtp-Source: AAOMgpdlN2kDREEv+Con0v20b4HFzNSv+LctX+uxf4jTZ7v1DA6JzgteGHd64Fx9JTrG4UGl03S54A==
-X-Received: by 2002:a25:b489:: with SMTP id o9-v6mr6011681ybj.128.1532312891826;
-        Sun, 22 Jul 2018 19:28:11 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id h188-v6sm3941770ywb.2.2018.07.22.19.28.09
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 22 Jul 2018 19:28:10 -0700 (PDT)
-Date:   Sun, 22 Jul 2018 19:28:01 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     syzbot <syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com>,
-        Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG at mm/shmem.c:LINE!
-In-Reply-To: <20180709143610.GD2662@bombadil.infradead.org>
-Message-ID: <alpine.LSU.2.11.1807221856350.5536@eggly.anvils>
-References: <000000000000d624c605705e9010@google.com> <20180709143610.GD2662@bombadil.infradead.org>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Sun, 22 Jul 2018 23:28:20 -0400
+Received: from ozlabs.org ([203.11.71.1]:33157 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731269AbeGWD2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 23:28:20 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Ylmx1XnPz9s2g;
+        Mon, 23 Jul 2018 12:29:20 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1532312965;
+        bh=HoLsReSp1+U2lLCwEwJl7XCaHXnvmoByLOR+QMunsHM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pnZXDgvGJ98VML3YbRbh7C4hKzAMNb3jRrTpwHjIqEXFfAUU3S0YtTwjtcUCQs58b
+         BtPaK+AqUNkP9icMQHNlahPW25OZCitPMPFq1BK4Sz6NohLH6omQADADNcuMUhDXaA
+         qwz9Peyx5IhXViCRArJbCsPsK2yAB0ifGAgHLKuM7RXJTT9y1UrIQ4k3uCt//srL/5
+         30BSUjaKZQs9sim/Ei32t90aFPOIcoWmegqEt6knsrX0fmAL8/QaWnmTSt2KXVHr27
+         XvQZEzFztQLPj/UlrucO24/SSms92dvl75Kk7v5EgaIUoXxBlVOD2VMl+bjTWYFOek
+         7HspPFpL8XIGQ==
+Date:   Mon, 23 Jul 2018 12:29:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dave Airlie <airlied@linux.ie>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Changbin Du <changbin.du@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the drm-intel tree
+Message-ID: <20180723122900.60562ff8@canb.auug.org.au>
+In-Reply-To: <20180713115419.1270c385@canb.auug.org.au>
+References: <20180713115419.1270c385@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=6kqBa49ysBhdfu.ptLUJYi"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018, Matthew Wilcox wrote:
-> On Fri, Jul 06, 2018 at 06:19:02PM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    526674536360 Add linux-next specific files for 20180706
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=116d16fc400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c8d1cfc0cb798e48
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=b8e0dfee3fd8c9012771
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=170e462c400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15f1ba2c400000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com
-> 
-> #syz fix: shmem: Convert shmem_add_to_page_cache to XArray
+--Sig_/=6kqBa49ysBhdfu.ptLUJYi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't see the patch, but I do see a diff in shmem_add_to_page_cache()
-between mmotm 4.18.0-rc3-mm1 and current mmotm 4.18.0-rc5-mm1,
-relating to use of xas_create_range().
+Hi all,
 
-Whether or not that fixed syzbot's kernel BUG at mm/shmem.c:815!
-I don't know, but I'm afraid it has not fixed linux-next breakage of
-huge tmpfs: I get a similar page_to_pgoff BUG at mm/filemap.c:1466!
+On Fri, 13 Jul 2018 11:54:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> [Dave cc'd because this will probably turn up in the drm tree soon.]
 
-Please try something like
-mount -o remount,huge=always /dev/shm
-cp /dev/zero /dev/shm
+And now it has ...
 
-Writing soon crashes in find_lock_entry(), looking up offset 0x201
-but getting the page for offset 0x3c1 instead.
+> After merging the drm-intel tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/gpu/drm/i915/gvt/kvmgt.c: In function 'gvt_dma_map_page':
+> drivers/gpu/drm/i915/gvt/kvmgt.c:188:17: error: 'pfn' undeclared (first u=
+se in this function); did you mean 'gfn'?
+>   if (!pfn_valid(pfn)) {
+>                  ^~~
+>=20
+> Caused by commit
+>=20
+>   79e542f5af79 ("drm/i915/kvmgt: Support setting dma map for huge pages")
+>=20
+> interacting with commit
+>=20
+>   39b4cbadb9a9 ("drm/i915/kvmgt: Check the pfn got from vfio_pin_pages")
+>=20
+> from Linus' tree (v4.18-rc1).
+>=20
+> I added the following merge fix patch:
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 13 Jul 2018 11:48:41 +1000
+> Subject: [PATCH] drm/i915/kvmgt: merge fixup for "Check the pfn got from
+>  vfio_pin_pages"
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/gpu/drm/i915/gvt/kvmgt.c | 6 ------
+>  1 file changed, 6 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/=
+kvmgt.c
+> index 718ab307a500..4d2f53ae9f0f 100644
+> --- a/drivers/gpu/drm/i915/gvt/kvmgt.c
+> +++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+> @@ -185,12 +185,6 @@ static int gvt_dma_map_page(struct intel_vgpu *vgpu,=
+ unsigned long gfn,
+>  	if (ret)
+>  		return ret;
+> =20
+> -	if (!pfn_valid(pfn)) {
+> -		gvt_vgpu_err("pfn 0x%lx is not mem backed\n", pfn);
+> -		vfio_unpin_pages(mdev_dev(vgpu->vdev.mdev), &gfn, 1);
+> -		return -EINVAL;
+> -	}
+> -
+>  	/* Setup DMA mapping. */
+>  	*dma_addr =3D dma_map_page(dev, page, 0, size, PCI_DMA_BIDIRECTIONAL);
+>  	ret =3D dma_mapping_error(dev, *dma_addr);
 
-I've spent a while on it, but better turn over to you, Matthew:
-my guess is that xas_create_range() does not create the layout
-you expect from it.
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
-Hugh
+--Sig_/=6kqBa49ysBhdfu.ptLUJYi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltVPWwACgkQAVBC80lX
+0Gx0+Qf/SiJ4LzDBTJ40ZAuwkVKuqpD0Eb3x3aLRpk2OiHfvQLfa4+H0YqFlXVzl
+z+hEoCk2HEivWnYkePsknJcBqe3eroCdESZ3DebGGxTBL3I1+Qcll4bokNEnL6jJ
+Khj5Ia4KVLfLFHyzyjFxnFjjjvb1pfB8wJh8gqDS2fVBDNH+WpPB5lHBwIAA9aIG
+Fgzp5V5sTDzEsyix/EyXk/zY+pkIozTosQIZpJ0+22N1RwLCcJNY5befJXymUEtT
+Ezu0frtWdOvlYUCc9dPJuCRF+x5wC36DnyatTgIM6b5z7tQqbgyH40GMTmlKrDQt
+P6kJNVbGtB05kXkOh0Lqq7e6kdB9Zg==
+=e9YC
+-----END PGP SIGNATURE-----
+
+--Sig_/=6kqBa49ysBhdfu.ptLUJYi--
