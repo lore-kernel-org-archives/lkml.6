@@ -2,99 +2,80 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F19AAECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D36E2ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A545D20671
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:05:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TkhutJX8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A545D20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 8539120671
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 23:08:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8539120671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388231AbeGXAJR (ORCPT
+        id S1728367AbeGXALm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 20:09:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:59117 "EHLO ozlabs.org"
+        Mon, 23 Jul 2018 20:11:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37190 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388110AbeGXAJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 20:09:16 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725198AbeGXALm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 20:11:42 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41ZHCZ03Qkz9s4V;
-        Tue, 24 Jul 2018 09:05:45 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532387146;
-        bh=1hw8m8oxMD4fUgb0fidGCpfygl5fKrT6TQQd0zVOJ3o=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TkhutJX8qumV73TWQrXR7oouCrEdz9jBDzUrXWnzJ0iBMLLRlVtLBQGD5Xupwm9dt
-         rAqQsK4kbf2Mtau3Nb7m7cEv9jM9QhgDqNUCcjjaZkV5TVd4KHHXaMk12YM6Gf0e8j
-         g6PTf7wWjfytfgQRoM0XSS36LbqSiler5UTxLbxqjBnkswoyGO5whXls3TGB2X62/3
-         8ROGOEJ3/eJ2In5BrrJEcHOi78iZMd04nSGNc+kZ2lpIFFJIPlWusgvyO1rJtIhEBi
-         TysT0XhnD/TCriPcyXPC9A2dXHM+kkpOPh2NerUIQV5H0ZwyIjiRrOPLwr9kkyXG++
-         FfIl13wt0GS+g==
-Date:   Tue, 24 Jul 2018 09:05:45 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: linux-next: build warning after merge of the arm64 tree
-Message-ID: <20180724090545.2270d975@canb.auug.org.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 54B22550CF;
+        Mon, 23 Jul 2018 23:08:13 +0000 (UTC)
+Received: from t450s.home (ovpn-116-105.phx2.redhat.com [10.3.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1291C309128B;
+        Mon, 23 Jul 2018 23:08:13 +0000 (UTC)
+Date:   Mon, 23 Jul 2018 17:08:12 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 2/2] PCI: NVMe device specific reset quirk
+Message-ID: <20180723170812.177a7161@t450s.home>
+In-Reply-To: <20180723224507.GA11656@localhost.localdomain>
+References: <20180723221533.4371.90064.stgit@gimli.home>
+        <20180723222431.4371.25962.stgit@gimli.home>
+        <20180723224507.GA11656@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jN7heVklmlR9WX36Z.SMHz5"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 23 Jul 2018 23:08:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/jN7heVklmlR9WX36Z.SMHz5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 23 Jul 2018 16:45:08 -0600
+Keith Busch <keith.busch@intel.com> wrote:
 
-Hi all,
+> On Mon, Jul 23, 2018 at 04:24:31PM -0600, Alex Williamson wrote:
+> > Take advantage of NVMe devices using a standard interface to quiesce
+> > the controller prior to reset, including device specific delays before
+> > and after that reset.  This resolves several NVMe device assignment
+> > scenarios with two different vendors.  The Intel DC P3700 controller
+> > has been shown to only work as a VM boot device on the initial VM
+> > startup, failing after reset or reboot, and also fails to initialize
+> > after hot-plug into a VM.  Adding a delay after FLR resolves these
+> > cases.  The Samsung SM961/PM961 (960 EVO) sometimes fails to return
+> > from FLR with the PCI config space reading back as -1.  A reproducible
+> > instance of this behavior is resolved by clearing the enable bit in
+> > the configuration register and waiting for the ready status to clear
+> > (disabling the NVMe controller) prior to FLR.
+> > 
+> > As all NVMe devices make use of this standard interface and the NVMe
+> > specification also requires PCIe FLR support, we can apply this quirk
+> > to all devices with matching class code.  
+> 
+> Shouldn't this go in the nvme driver's reset_prepare/reset_done callbacks?
 
-After merging the arm64 tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+The scenario I'm trying to fix is device assignment, the nvme driver
+isn't in play there.  The device is bound to the vfio-pci driver at the
+time of these resets.  Thanks,
 
-drivers/acpi/Kconfig:6:error: recursive dependency detected!
-drivers/acpi/Kconfig:6:	symbol ACPI depends on EFI
-arch/x86/Kconfig:1920:	symbol EFI depends on ACPI
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-
-Introduced by commit
-
-  5bcd44083a08 ("drivers: acpi: add dependency of EFI for arm64")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/jN7heVklmlR9WX36Z.SMHz5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltWX0kACgkQAVBC80lX
-0GzRbQgAlEZ8ZMHeOq65ZF6UPW1pUTvOAfGcxsKpe9ibZERHJtWjjSlvD02v4BLc
-Y74KCIhysKHbQFjI4emZUce1573E70gvDMqoe8JIYqAY2x3DdkUOh2sqge5yPQMB
-XCInvqs7LlkiObH8VFjRMr81CeH7OqvYUsDu9lEBrvc9HCIzFtM8e+f2WWsiLGW6
-e9gTEHrsoMMOb7qi2vSPtXl5gdl5HHUbw/Cmhy7ZKyjOdUML1m/qmnwm0meeDq3a
-RNj/joNkt2H+fRA1Ym4J7qfX7k1+V7A7VTsGJRGIcj2LIGVsuoo16K3B9zUofYcg
-QPhrfTv7FryyVR2sbt9JzJGOzCfQQg==
-=UW3N
------END PGP SIGNATURE-----
-
---Sig_/jN7heVklmlR9WX36Z.SMHz5--
+Alex
