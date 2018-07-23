@@ -2,116 +2,130 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730A2C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 01:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A895C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 01:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27EA92075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 01:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 117B020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 01:50:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hJi7MzSp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27EA92075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="w6Z2xi4U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 117B020854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387751AbeGWCd7 (ORCPT
+        id S2387727AbeGWCtL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 22:33:59 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40068 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731034AbeGWCd7 (ORCPT
+        Sun, 22 Jul 2018 22:49:11 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:46974 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731151AbeGWCtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 22:33:59 -0400
-Received: by mail-wr1-f65.google.com with SMTP id t6-v6so16235134wrn.7
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jul 2018 18:35:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gayCgd6wX2rNZR9vVqGhxPy7GP/Yo6ZBqdeaCCgkTGo=;
-        b=hJi7MzSps7A9Q3smUdX9GKSCT5kCYABDSNFlPrdhMJ8LSp6Il9K4U6hm4gKHfa4aag
-         an4WUntvLXtQgOp8RL44ZU0ZXl9NTYdTwwZHs1XFhmupkWhUoQ8Bi9hztpPojzRM9ZAi
-         dTbDWNRMa+Lw4SFrPEvinPNHpTy4MO4yZS5gk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gayCgd6wX2rNZR9vVqGhxPy7GP/Yo6ZBqdeaCCgkTGo=;
-        b=A0XbCetZf7MJ2+SDqsEpfzUg3No6BmyIWPTwCmqUwBGwHHeFr+mYM5YO9oBRU6KB4Q
-         DPNot2VAsBpo3wpH+2VjG70Jm5ZhtlM8gUuEkOLCXH0Ta4aaxldCLVq/kNLXPyfTbWUp
-         K3n9PJ/beo61bo9sNsjJbbgIx7B4rUQkaFeJ/eW/I9syvHUOgQTdkxa97EDiGekvNZBG
-         gJ1odxKteKVbbMm9i6LZJYvLP5p2lAouypCa4y3LPLr5+b+F532kB0ButJ20DnDN7ODQ
-         dudQtlZOQ6tKaz+qc/NUDGJhy8CVShNbhRk2TOQT3iMjEKtjz5ntVHjHIKmJ+GHq7rw8
-         fR4g==
-X-Gm-Message-State: AOUpUlHmRxXaj70gLKN0xd3X4yIvHXn9r/kbIsAtliGERFMH70L9RBAV
-        frZIPFkkLAVR59DkEzcC5BhZCg==
-X-Google-Smtp-Source: AAOMgpf6+NyG5E/NoRSmeL60FYYhhMmHWzAYoHWm23/6xRWNnFTJzO1BExdSwrnCVQz+V86JHZs+9A==
-X-Received: by 2002:adf:bbd4:: with SMTP id z20-v6mr7260629wrg.183.1532309715447;
-        Sun, 22 Jul 2018 18:35:15 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s ([45.76.138.171])
-        by smtp.gmail.com with ESMTPSA id w4-v6sm6151377wrt.40.2018.07.22.18.35.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 18:35:14 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 09:35:07 +0800
-From:   leo.yan@linaro.org
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Kim Phillips <kim.phillips@arm.com>
-Subject: Re: [PATCH v2 0/6] perf cs-etm: Fix tracing packet handling and
- minor refactoring
-Message-ID: <20180723013507.GA27713@leoy-ThinkPad-X240s>
-References: <1531295145-596-1-git-send-email-leo.yan@linaro.org>
+        Sun, 22 Jul 2018 22:49:11 -0400
+Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com [209.85.213.52]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w6N1oM0t007936;
+        Mon, 23 Jul 2018 10:50:22 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w6N1oM0t007936
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1532310623;
+        bh=yT+nFniF9SnJGzUJ4pO96a61OLr01ReysJuuGJ4IFjw=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=w6Z2xi4Uq+8kjQ7z/V2sGem5Z1vcDeycpd5X+BRh0QWqT3steIWf6D8Ys8TFM1tox
+         9rqS78UjFaQTVbYWoePAXGCFHWHGM9O3vYLQfus8D5eDvSAsXM4e2EbQZnFi37XH6I
+         TlCXua1dnsfENTsdP0VGY/rLycbsEy8Lm18rjjb91CPdE6KQmi5kzXH2fJMCH+yoqD
+         7o/Kz0yUHxQp6PXsGZo8mas+4xSvTISzPOc5hxm9X+1s1+1cG9sysB1ea60slgYj8f
+         /XVdRp/dJLPwIpFqMhVE3OpJy7XrTgmp6ndMtfWsXI1fi0ltqRPwfub7wce2ChI1F+
+         dBMJ6Eck5ssIQ==
+X-Nifty-SrcIP: [209.85.213.52]
+Received: by mail-vk0-f52.google.com with SMTP id s17-v6so8500581vke.10;
+        Sun, 22 Jul 2018 18:50:22 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHm5KgggwKpdv0/HuuQ0fLQgS5kkePcV5bo+eibnx6eCGwayJCg
+        t023leBahJsXpq/6eM4Wu5mas+kdZeKVhEvBKMo=
+X-Google-Smtp-Source: AAOMgpeG6q3p8dMzoG+jCHKNTJkRdZAOQ9CkmKc56Mk7zFs5YjCWMAYTYyiTxH3OJTetSDzx9AGK8Ca5DvTqUvP3C3M=
+X-Received: by 2002:a1f:420d:: with SMTP id p13-v6mr6548017vka.10.1532310621735;
+ Sun, 22 Jul 2018 18:50:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531295145-596-1-git-send-email-leo.yan@linaro.org>
-User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
+Received: by 2002:ab0:7289:0:0:0:0:0 with HTTP; Sun, 22 Jul 2018 18:49:41
+ -0700 (PDT)
+In-Reply-To: <20180718091336.4540-1-dirk@gouders.net>
+References: <20180718091336.4540-1-dirk@gouders.net>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 23 Jul 2018 10:49:41 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATV+HW6=gX+Ax2RjS+8mOZ=tsM10ENXCd7qJK383tOg5g@mail.gmail.com>
+Message-ID: <CAK7LNATV+HW6=gX+Ax2RjS+8mOZ=tsM10ENXCd7qJK383tOg5g@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: if_changed: document single use per target limitation
+To:     Dirk Gouders <dirk@gouders.net>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+2018-07-18 18:13 GMT+09:00 Dirk Gouders <dirk@gouders.net>:
+> Users of if_changed could easily feel invited to use it to divide a
+> recipe into parts like:
+>
+> a: prereq FORCE
+>         $(call if_changed,do_a)
+>         $(call if_changed,do_b)
+>
+> But this is problematic, because if_changed should not be used more
+> than once per target: in the above example, if_changed stores the
+> command-line of the given command in .a.cmd and when a is up-to-date
+> with respect to prereq, the file .a.cmd contains the command-line for
+> the last command executed, i.e. do_b.
+>
+> When the recipe is then executed again, without any change of
+> prerequisites, the command-line check for do_a will fail, do_a will be
+> executed and stored in .a.cmd.  The next check, however, will still see
+> the old content (the file isn't re-read) and if_changed will skip
+> do_b, because the command-line test will not recognize a change.  On
+> the next execution of the recipe the roles will flip: do_a is OK but
+> do_b not and it will be executed.  And so on...
+>
+> Signed-off-by: Dirk Gouders <dirk@gouders.net>
+> ---
 
-On Wed, Jul 11, 2018 at 03:45:39PM +0800, Leo Yan wrote:
+Applied.  Thanks!
 
-Just want to confirm, I saw the first two patches in this serise have
-been merged into perf/core branch [1], but the last 4 patches are
-missed.
 
-Could I know if you have trouble when you apply them?  Or anything
-need me to follow up?  Otherwise you might miss them :)
+>  Documentation/kbuild/makefiles.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
+> index 048fc39a6b91..01fae5a01ce7 100644
+> --- a/Documentation/kbuild/makefiles.txt
+> +++ b/Documentation/kbuild/makefiles.txt
+> @@ -1105,6 +1105,12 @@ When kbuild executes, the following steps are followed (roughly):
+>                 target: source(s) FORCE
+>         #WRONG!#        $(call if_changed, ld/objcopy/gzip/...)
+>
+> +        Note: if_changed should not be used more than once per target.
+> +              It stores the executed command in a corresponding .cmd
+> +        file and multiple calls would result in overwrites and
+> +        unwanted results when the target is up to date and only the
+> +        tests on changed commands trigger execution of commands.
+> +
+>      ld
+>         Link target. Often, LDFLAGS_$@ is used to set specific options to ld.
+>
+> --
+> 2.16.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Thanks,
-Leo Yan
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/log/?h=perf/core
 
-> Leo Yan (6):
->   perf cs-etm: Introduce invalid address macro
->   perf cs-etm: Bail out immediately for instruction sample failure
->   perf cs-etm: Fix start tracing packet handling
->   perf cs-etm: Support dummy address value for CS_ETM_TRACE_ON packet
->   perf cs-etm: Generate branch sample when receiving a CS_ETM_TRACE_ON
->     packet
->   perf cs-etm: Generate branch sample for CS_ETM_TRACE_ON packet
-> 
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++--
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  1 +
->  tools/perf/util/cs-etm.c                        | 71 +++++++++++++++++++++----
->  3 files changed, 68 insertions(+), 14 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+-- 
+Best Regards
+Masahiro Yamada
