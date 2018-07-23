@@ -2,164 +2,105 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF78ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408D4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0199D20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:50:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="BhoGOYFo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0199D20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id E967D20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:52:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E967D20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388252AbeGWWyG (ORCPT
+        id S2388220AbeGWWzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:54:06 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35634 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388104AbeGWWyF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:54:05 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e6-v6so1309188pgv.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:50:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vtZPnlxWvNmHMtTbeH3BWD3K4ieJxxr85OI9hXi37J4=;
-        b=BhoGOYFo5Gaj+wobtL7P8xO/l2H2kLuD9jNILxXDb96LWBRZaAuVDDve3BOdZ6fgH+
-         0ZreZyv4OEBQ/TgoqTF5gCTpJ2xAePSoHsyJRAsIIt5ss0JTEyTdCTyc4RAyoMXjSpW/
-         nc+DC6hAmlGQ39fXajbkGeapBZ4wlkmEx6tK85HfHGXQfPcT8BO0LUgwUDQyFNxRXFLQ
-         e2t7NTYIyaUD3s5Vy6MN7yff/NWmdhmVaiU8R8KgjBqIp6YrfT1b8eOyaeixaOLC+ru1
-         Cjk1Y8bWjzsXaJtmzpqExNnVfBFs33xoLT9XpWf+1ybWMVzKOMi/x8UhWC9Jyb293Jzy
-         oJdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vtZPnlxWvNmHMtTbeH3BWD3K4ieJxxr85OI9hXi37J4=;
-        b=V81sQ5ejrdThtctA3Jncd8bpi5YFkzAHtNxF8432ChG/kGGAhOxQXTNkzUZ1btvNyM
-         vU63cg77ykcCAFSLFVXjwd1S3AqXgUJZOh1VSY8LdYOlufbqOJv/DqEkv/WgosUuo/sE
-         nxKX/tfKFip64kwVCmUDrK4ZX0TcTgCdflPt55lA0Owiu4HwGr5SmY0WMX1WhZrt79zM
-         MjXb1Du8GTEh4zDdF4+/EL1u3L6WhE4seTXQz+r5ai5/GfPFHCzfspPpGtRF+1Cz7WUn
-         aj7IUf+4nDm0xM4/Jk9fIo61BGMtSTZQsI7PN8LJVgF2lmV4VSl0kYmvmjgNg56aLKQC
-         5gAQ==
-X-Gm-Message-State: AOUpUlFEl5W8DELrO5bQNGwr6dq0E7h7W2g7DZ/2eEzlS9mEilyAdRYd
-        pYxI5SqBkmWl5OohMf+aeLyiRA==
-X-Google-Smtp-Source: AAOMgpf3ZWJBG10vKrt6X+D3MuXxk9/j4l1dKIvkzWVtpuEBUrgygvvcOnAUF9lMca5FUGcimiQnWQ==
-X-Received: by 2002:a63:a619:: with SMTP id t25-v6mr13463560pge.288.1532382653452;
-        Mon, 23 Jul 2018 14:50:53 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b052:c03e:2ca6:ca95:c68d:5143? ([2600:1010:b052:c03e:2ca6:ca95:c68d:5143])
-        by smtp.gmail.com with ESMTPSA id v20-v6sm23054589pfk.12.2018.07.23.14.50.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 14:50:52 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <20180723213830.GA4632@amd>
-Date:   Mon, 23 Jul 2018 14:50:50 -0700
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        =?utf-8?Q?J=C3=BCrgen_Gro=C3=9F?= <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <39A1C149-DA03-46D1-801F-0205DCD69A36@amacapital.net>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org> <20180723140925.GA4285@amd> <CA+55aFynT9Sp7CbnB=GqLbns7GFZbv3pDSQm_h0jFvJpz3ES+g@mail.gmail.com> <20180723213830.GA4632@amd>
-To:     Pavel Machek <pavel@ucw.cz>
+        Mon, 23 Jul 2018 18:55:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53212 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388088AbeGWWzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 18:55:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9003CB034;
+        Mon, 23 Jul 2018 21:52:11 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     paulmck@linux.vnet.ibm.com
+Date:   Tue, 24 Jul 2018 07:52:03 +1000
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] rhashtable: don't hold lock on first table throughout insertion.
+In-Reply-To: <20180723205625.GZ12945@linux.vnet.ibm.com>
+References: <153086169828.24852.10332573315056854948.stgit@noble> <153086175009.24852.7782466383056542839.stgit@noble> <20180720075409.kfckhodsnvktift7@gondor.apana.org.au> <20180720144152.GW12945@linux.vnet.ibm.com> <87muulqq8q.fsf@notabene.neil.brown.name> <20180722215446.GH12945@linux.vnet.ibm.com> <87h8kqrhi0.fsf@notabene.neil.brown.name> <20180723205625.GZ12945@linux.vnet.ibm.com>
+Message-ID: <87r2jtpqm4.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 23 2018, Paul E. McKenney wrote:
 
-> On Jul 23, 2018, at 2:38 PM, Pavel Machek <pavel@ucw.cz> wrote:
->=20
->> On Mon 2018-07-23 12:00:08, Linus Torvalds wrote:
->>> On Mon, Jul 23, 2018 at 7:09 AM Pavel Machek <pavel@ucw.cz> wrote:
->>>=20
->>> Meanwhile... it looks like gcc is not slowed down significantly, but
->>> other stuff sees 30% .. 40% slowdowns... which is rather
->>> significant.
+> On Mon, Jul 23, 2018 at 09:13:43AM +1000, NeilBrown wrote:
+>> On Sun, Jul 22 2018, Paul E. McKenney wrote:
+>> >
+>> > One issue is that the ->func pointer can legitimately be NULL while on
+>> > RCU's callback lists.  This happens when someone invokes kfree_rcu()
+>> > with the rcu_head structure at the beginning of the enclosing structur=
+e.
+>> > I could add an offset to avoid this, or perhaps the kmalloc() folks
+>> > could be persuaded Rao Shoaib's patch moving kfree_rcu() handling to
+>> > the slab allocators, so that RCU only ever sees function pointers in
+>> > the ->func field.
+>> >
+>> > Either way, this should be hidden behind an API to allow adjustments
+>> > to be made if needed.  Maybe something like is_after_call_rcu()?
+>> > This would (for example) allow debug-object checks to be used to catch
+>> > check-after-free bugs.
+>> >
+>> > Would something of that sort work for you?
 >>=20
->> That is more or less expected.
->>=20
->> Gcc spends about 90+% of its time in user space, and the system calls
->> it *does* do tend to be "real work" (open/read/etc). And modern gcc's
->> no longer have the pipe between cpp and cc1, so they don't have that
->> issue either (which would have sjhown the PTI slowdown a lot more)
->>=20
->> Some other loads will do a lot more time traversing the user/kernel
->> boundary, and in 32-bit mode you won't be able to take advantage of
->> the address space ID's, so you really get the full effect.
->=20
-> Understood. Just -- bzip2 should include quite a lot of time in
-> userspace, too.=20
->=20
->>> Would it be possible to have per-process control of kpti? I have
->>> some processes where trading of speed for security would make sense.
->>=20
->> That was pretty extensively discussed, and no sane model for it was
->> ever agreed upon.  Some people wanted it per-thread, others per-mm,
->> and it wasn't clear how to set it either and how it should inherit
->> across fork/exec, and what the namespace rules etc should be.
->>=20
->> You absolutely need to inherit it (so that you can say "I trust this
->> session" or whatever), but at the same time you *don't* want to
->> inherit if you have a server you trust that then spawns user processes
->> (think "I want systemd to not have the overhead, but the user
->> processes it spawns obviously do need protection").
->>=20
->> It was just a morass. Nothing came out of it.  I guess people can
->> discuss it again, but it's not simple.
->=20
-> I agree it is not easy. OTOH -- 30% of user-visible performance is a
-> _lot_. That is worth spending man-years on...  Ok, problem is not as
-> severe on modern CPUs with address space ID's, but...
->=20
-> What I want is "if A can ptrace B, and B has pti disabled, A can have
-> pti disabled as well". Now.. I see someone may want to have it
-> per-thread, because for stuff like javascript JIT, thread may have
-> rights to call ptrace, but is unable to call ptrace because JIT
-> removed that ability... hmm...
+>> Yes, if you could provide an is_after_call_rcu() API, that would
+>> perfectly suit my use-case.
+>
+> After beating my head against the object-debug code a bit, I have to ask
+> if it would be OK for you if the is_after_call_rcu() API also takes the
+> function that was passed to RCU.
 
-No, you don=E2=80=99t want that. The problem is that Meltdown isn=E2=80=99t a=
- problem that exists in isolation. It=E2=80=99s very plausible that JavaScri=
-pt code could trigger a speculation attack that, with PTI off, could read ke=
-rnel memory.
+Sure.  It feels a bit clumsy, but I can see it could be easier to make
+robust.
+So yes: I'm fine with pass the same function and rcu_head to both
+call_rcu() and is_after_call_rcu().  Actually, when I say it like that,
+it seems less clumsy :-)
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltWTgMACgkQOeye3VZi
+gbnG8Q//YF0igHPOWpE6aZhAOH4FlDOE+tN1Ca9tmmUYm4Dnze3suqB7QWSi9R8j
+Y3MHUXHQu1eWtMDpU5oIUX3LYRu3TNkFoUf3BwssXxCUcosMYut6/E/RnJepdCl0
+raLvjBc1XoHC7XUmLXnBSDXJSJOPIGVSZvkQx8PDCMwjRhYQC52rrl2ZzAcUjyDA
+inmYj3RcleZ35sRXTdc6HffYuAeSlH/d7qtimtCtkwZRC+EMcrUCAv4lsUEH9PVG
+zy4lhb1lkEUbktQXMVkOE5BSeemC9nVltkNbPw4kVdRv3FbRjqhZZR6UMTOJPaRL
+okkHBrNe6g+/GXsLK4HljAHRyBMnHZ6li+Yql/waJfLP3JlA6Nm2TvTyLdPVu2rS
+2xIqmGP6b+HO2qMJlvCSljPdN8SgcYXhJDWu945Layd5QHR783JXNqk37iwLXxy9
+0pgzGYpjGdbPaEtNu8YGC05FHoHEDgV9jho7gS1CARM9LxVGSPNrMUm5VsId2eAO
+NImoMnftvLKtX05DE59G2CJiYnkhEAO4y+CQXzgR59qJ44YHymdCbVEUv/7GF/Xa
+PRkZGydsjMlilmvnaKiPXRV12yZ9Nr2U0B1kCFJKZkUWIcVh9fvEXABOgzGMfTyD
+yIde3uHgOe/iEWTaBhdXYoxa+6oZ+rmNxVCdPlo1OwdaoeWz974=
+=qUTC
+-----END PGP SIGNATURE-----
+--=-=-=--
