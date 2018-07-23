@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F39ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BECECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D327020854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:05:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D327020854
+	by mail.kernel.org (Postfix) with ESMTP id 9759120854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:06:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9759120854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388476AbeGWMGb (ORCPT
+        id S2388480AbeGWMGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:06:31 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:40017 "EHLO extserv.mm-sol.com"
+        Mon, 23 Jul 2018 08:06:38 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:39985 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388115AbeGWMEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388002AbeGWMEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Jul 2018 08:04:48 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 293E2CD6D;
-        Mon, 23 Jul 2018 14:04:03 +0300 (EEST)
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id DA2A2CD66;
+        Mon, 23 Jul 2018 14:04:02 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v3 30/35] media: camss: csid: MIPI10 to Plain16 format conversion
-Date:   Mon, 23 Jul 2018 14:02:47 +0300
-Message-Id: <1532343772-27382-31-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH v3 23/35] media: camss: ispif: Add support for 8x96
+Date:   Mon, 23 Jul 2018 14:02:40 +0300
+Message-Id: <1532343772-27382-24-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
 References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
@@ -41,203 +41,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the PRDI mode on 8x96 to allow to configure RAW MIPI10
-to Plain16 format conversion.
+ISPIF hardware modules on 8x16 and 8x96 are similar. However on
+8x96 the ISPIF routes data to two VFE hardware modules. Add
+separate interrupt handler for 8x96 to handle the additional
+interrupts.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- drivers/media/platform/qcom/camss/camss-csid.c  | 33 ++++++++++++-
- drivers/media/platform/qcom/camss/camss-ispif.c | 64 +++++++++++++++++++++++++
- drivers/media/platform/qcom/camss/camss-vfe.c   |  1 +
- drivers/media/platform/qcom/camss/camss-video.c |  2 +
- 4 files changed, 99 insertions(+), 1 deletion(-)
+ drivers/media/platform/qcom/camss/camss-ispif.c | 76 ++++++++++++++++++++++++-
+ 1 file changed, 73 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-index 8fd7909..8e9d724 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid.c
-@@ -32,6 +32,15 @@
- 			(((v) == CAMSS_8x16 ? 0x010 : 0x014) + 0x4 * (n))
- #define CAMSS_CSID_CID_n_CFG(v, n)	\
- 			(((v) == CAMSS_8x16 ? 0x020 : 0x024) + 0x4 * (n))
-+#define CAMSS_CSID_CID_n_CFG_ISPIF_EN	BIT(0)
-+#define CAMSS_CSID_CID_n_CFG_RDI_EN	BIT(1)
-+#define CAMSS_CSID_CID_n_CFG_DECODE_FORMAT_SHIFT	4
-+#define CAMSS_CSID_CID_n_CFG_PLAIN_FORMAT_8		(0 << 8)
-+#define CAMSS_CSID_CID_n_CFG_PLAIN_FORMAT_16		(1 << 8)
-+#define CAMSS_CSID_CID_n_CFG_PLAIN_ALIGNMENT_LSB	(0 << 9)
-+#define CAMSS_CSID_CID_n_CFG_PLAIN_ALIGNMENT_MSB	(1 << 9)
-+#define CAMSS_CSID_CID_n_CFG_RDI_MODE_RAW_DUMP		(0 << 10)
-+#define CAMSS_CSID_CID_n_CFG_RDI_MODE_PLAIN_PACKING	(1 << 10)
- #define CAMSS_CSID_IRQ_CLEAR_CMD(v)	((v) == CAMSS_8x16 ? 0x060 : 0x064)
- #define CAMSS_CSID_IRQ_MASK(v)		((v) == CAMSS_8x16 ? 0x064 : 0x068)
- #define CAMSS_CSID_IRQ_STATUS(v)	((v) == CAMSS_8x16 ? 0x068 : 0x06c)
-@@ -330,6 +339,16 @@ static u32 csid_src_pad_code(struct csid_device *csid, u32 sink_code,
- 		return sink_code;
- 	} else if (csid->camss->version == CAMSS_8x96) {
- 		switch (sink_code) {
-+		case MEDIA_BUS_FMT_SBGGR10_1X10:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_SBGGR10_1X10,
-+				MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE,
-+			};
-+
-+			return csid_find_code(src_code, ARRAY_SIZE(src_code),
-+					      index, src_req_code);
-+		}
- 		default:
- 			if (index > 0)
- 				return 0;
-@@ -629,7 +648,19 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
- 		writel_relaxed(val, csid->base +
- 			       CAMSS_CSID_CID_LUT_VC_n(ver, vc));
- 
--		val = (df << 4) | 0x3;
-+		val = CAMSS_CSID_CID_n_CFG_ISPIF_EN;
-+		val |= CAMSS_CSID_CID_n_CFG_RDI_EN;
-+		val |= df << CAMSS_CSID_CID_n_CFG_DECODE_FORMAT_SHIFT;
-+		val |= CAMSS_CSID_CID_n_CFG_RDI_MODE_RAW_DUMP;
-+		if (csid->camss->version == CAMSS_8x96 &&
-+			csid->fmt[MSM_CSID_PAD_SINK].code ==
-+					MEDIA_BUS_FMT_SBGGR10_1X10 &&
-+			csid->fmt[MSM_CSID_PAD_SRC].code ==
-+					MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE) {
-+			val |= CAMSS_CSID_CID_n_CFG_RDI_MODE_PLAIN_PACKING;
-+			val |= CAMSS_CSID_CID_n_CFG_PLAIN_FORMAT_16;
-+			val |= CAMSS_CSID_CID_n_CFG_PLAIN_ALIGNMENT_LSB;
-+		}
- 		writel_relaxed(val, csid->base +
- 			       CAMSS_CSID_CID_n_CFG(ver, cid));
- 
 diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
-index ed1cca0..707bca6 100644
+index 8b04f8a..b124cd3 100644
 --- a/drivers/media/platform/qcom/camss/camss-ispif.c
 +++ b/drivers/media/platform/qcom/camss/camss-ispif.c
-@@ -76,6 +76,13 @@
- 					(0x254 + 0x200 * (m) + 0x4 * (n))
- #define ISPIF_VFE_m_RDI_INTF_n_CID_MASK(m, n)	\
- 					(0x264 + 0x200 * (m) + 0x4 * (n))
-+/* PACK_CFG registers are 8x96 only */
-+#define ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0(m, n)	\
-+					(0x270 + 0x200 * (m) + 0x4 * (n))
-+#define ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_1(m, n)	\
-+					(0x27c + 0x200 * (m) + 0x4 * (n))
-+#define ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0_CID_c_PLAIN(c)	\
-+					(1 << ((cid % 8) * 4))
- #define ISPIF_VFE_m_PIX_INTF_n_STATUS(m, n)	\
- 					(0x2c0 + 0x200 * (m) + 0x4 * (n))
- #define ISPIF_VFE_m_RDI_INTF_n_STATUS(m, n)	\
-@@ -128,6 +135,7 @@ static const u32 ispif_formats_8x96[] = {
- 	MEDIA_BUS_FMT_SGBRG10_1X10,
- 	MEDIA_BUS_FMT_SGRBG10_1X10,
- 	MEDIA_BUS_FMT_SRGGB10_1X10,
-+	MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE,
- 	MEDIA_BUS_FMT_SBGGR12_1X12,
- 	MEDIA_BUS_FMT_SGBRG12_1X12,
- 	MEDIA_BUS_FMT_SGRBG12_1X12,
-@@ -662,6 +670,54 @@ static void ispif_config_irq(struct ispif_device *ispif, enum ispif_intf intf,
- }
+@@ -116,13 +116,77 @@ static const u32 ispif_formats[] = {
+ };
  
  /*
-+ * ispif_config_pack - Config packing for PRDI mode
-+ * @ispif: ISPIF device
-+ * @code: media bus format code
-+ * @intf: VFE interface
-+ * @cid: desired CID to handle
-+ * @vfe: VFE HW module id
-+ * @enable: enable or disable
-+ */
-+static void ispif_config_pack(struct ispif_device *ispif, u32 code,
-+			      enum ispif_intf intf, u8 cid, u8 vfe, u8 enable)
+- * ispif_isr - ISPIF module interrupt handler
++ * ispif_isr_8x96 - ISPIF module interrupt handler for 8x96
+  * @irq: Interrupt line
+  * @dev: ISPIF device
+  *
+  * Return IRQ_HANDLED on success
+  */
+-static irqreturn_t ispif_isr(int irq, void *dev)
++static irqreturn_t ispif_isr_8x96(int irq, void *dev)
 +{
-+	u32 addr, val;
++	struct ispif_device *ispif = dev;
++	u32 value0, value1, value2, value3, value4, value5;
 +
-+	if (code != MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE)
-+		return;
++	value0 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_0(0));
++	value1 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_1(0));
++	value2 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_2(0));
++	value3 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_0(1));
++	value4 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_1(1));
++	value5 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_2(1));
 +
-+	switch (intf) {
-+	case RDI0:
-+		if (cid < 8)
-+			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0(vfe, 0);
-+		else
-+			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_1(vfe, 0);
-+		break;
-+	case RDI1:
-+		if (cid < 8)
-+			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0(vfe, 1);
-+		else
-+			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_1(vfe, 1);
-+		break;
-+	case RDI2:
-+		if (cid < 8)
-+			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0(vfe, 2);
-+		else
-+			addr = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_1(vfe, 2);
-+		break;
-+	default:
-+		return;
-+	}
++	writel_relaxed(value0, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_0(0));
++	writel_relaxed(value1, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_1(0));
++	writel_relaxed(value2, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_2(0));
++	writel_relaxed(value3, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_0(1));
++	writel_relaxed(value4, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_1(1));
++	writel_relaxed(value5, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_2(1));
 +
-+	if (enable)
-+		val = ISPIF_VFE_m_RDI_INTF_n_PACK_CFG_0_CID_c_PLAIN(cid);
-+	else
-+		val = 0;
++	writel(0x1, ispif->base + ISPIF_IRQ_GLOBAL_CLEAR_CMD);
 +
-+	writel_relaxed(val, ispif->base + addr);
++	if ((value0 >> 27) & 0x1)
++		complete(&ispif->reset_complete);
++
++	if (unlikely(value0 & ISPIF_VFE_m_IRQ_STATUS_0_PIX0_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 pix0 overflow\n");
++
++	if (unlikely(value0 & ISPIF_VFE_m_IRQ_STATUS_0_RDI0_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 rdi0 overflow\n");
++
++	if (unlikely(value1 & ISPIF_VFE_m_IRQ_STATUS_1_PIX1_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 pix1 overflow\n");
++
++	if (unlikely(value1 & ISPIF_VFE_m_IRQ_STATUS_1_RDI1_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 rdi1 overflow\n");
++
++	if (unlikely(value2 & ISPIF_VFE_m_IRQ_STATUS_2_RDI2_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 rdi2 overflow\n");
++
++	if (unlikely(value3 & ISPIF_VFE_m_IRQ_STATUS_0_PIX0_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 pix0 overflow\n");
++
++	if (unlikely(value3 & ISPIF_VFE_m_IRQ_STATUS_0_RDI0_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 rdi0 overflow\n");
++
++	if (unlikely(value4 & ISPIF_VFE_m_IRQ_STATUS_1_PIX1_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 pix1 overflow\n");
++
++	if (unlikely(value4 & ISPIF_VFE_m_IRQ_STATUS_1_RDI1_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 rdi1 overflow\n");
++
++	if (unlikely(value5 & ISPIF_VFE_m_IRQ_STATUS_2_RDI2_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 rdi2 overflow\n");
++
++	return IRQ_HANDLED;
 +}
 +
 +/*
-  * ispif_set_intf_cmd - Set command to enable/disable interface
-  * @ispif: ISPIF device
-  * @cmd: interface command
-@@ -729,6 +785,10 @@ static int ispif_set_stream(struct v4l2_subdev *sd, int enable)
- 		ispif_select_csid(ispif, intf, csid, vfe, 1);
- 		ispif_select_cid(ispif, intf, cid, vfe, 1);
- 		ispif_config_irq(ispif, intf, vfe, 1);
-+		if (to_camss(ispif)->version == CAMSS_8x96)
-+			ispif_config_pack(ispif,
-+					  line->fmt[MSM_ISPIF_PAD_SINK].code,
-+					  intf, cid, vfe, 1);
- 		ispif_set_intf_cmd(ispif, CMD_ENABLE_FRAME_BOUNDARY,
- 				   intf, vfe, vc);
- 	} else {
-@@ -742,6 +802,10 @@ static int ispif_set_stream(struct v4l2_subdev *sd, int enable)
- 			return ret;
- 
- 		mutex_lock(&ispif->config_lock);
-+		if (to_camss(ispif)->version == CAMSS_8x96)
-+			ispif_config_pack(ispif,
-+					  line->fmt[MSM_ISPIF_PAD_SINK].code,
-+					  intf, cid, vfe, 0);
- 		ispif_config_irq(ispif, intf, vfe, 0);
- 		ispif_select_cid(ispif, intf, cid, vfe, 0);
- 		ispif_select_csid(ispif, intf, csid, vfe, 0);
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 314eed9..69735da 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -92,6 +92,7 @@ static const struct vfe_format formats_rdi_8x96[] = {
- 	{ MEDIA_BUS_FMT_SGBRG10_1X10, 10 },
- 	{ MEDIA_BUS_FMT_SGRBG10_1X10, 10 },
- 	{ MEDIA_BUS_FMT_SRGGB10_1X10, 10 },
-+	{ MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE, 16 },
- 	{ MEDIA_BUS_FMT_SBGGR12_1X12, 12 },
- 	{ MEDIA_BUS_FMT_SGBRG12_1X12, 12 },
- 	{ MEDIA_BUS_FMT_SGRBG12_1X12, 12 },
-diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
-index e6e114a..28d53bf 100644
---- a/drivers/media/platform/qcom/camss/camss-video.c
-+++ b/drivers/media/platform/qcom/camss/camss-video.c
-@@ -101,6 +101,8 @@ static const struct camss_format_info formats_rdi_8x96[] = {
- 	  { { 1, 1 } }, { { 1, 1 } }, { 10 } },
- 	{ MEDIA_BUS_FMT_SRGGB10_1X10, V4L2_PIX_FMT_SRGGB10P, 1,
- 	  { { 1, 1 } }, { { 1, 1 } }, { 10 } },
-+	{ MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE, V4L2_PIX_FMT_SBGGR10, 1,
-+	  { { 1, 1 } }, { { 1, 1 } }, { 16 } },
- 	{ MEDIA_BUS_FMT_SBGGR12_1X12, V4L2_PIX_FMT_SBGGR12P, 1,
- 	  { { 1, 1 } }, { { 1, 1 } }, { 12 } },
- 	{ MEDIA_BUS_FMT_SGBRG12_1X12, V4L2_PIX_FMT_SGBRG12P, 1,
++ * ispif_isr_8x16 - ISPIF module interrupt handler for 8x16
++ * @irq: Interrupt line
++ * @dev: ISPIF device
++ *
++ * Return IRQ_HANDLED on success
++ */
++static irqreturn_t ispif_isr_8x16(int irq, void *dev)
+ {
+ 	struct ispif_device *ispif = dev;
+ 	u32 value0, value1, value2;
+@@ -954,8 +1018,14 @@ int msm_ispif_subdev_init(struct ispif_device *ispif,
+ 	ispif->irq = r->start;
+ 	snprintf(ispif->irq_name, sizeof(ispif->irq_name), "%s_%s",
+ 		 dev_name(dev), MSM_ISPIF_NAME);
+-	ret = devm_request_irq(dev, ispif->irq, ispif_isr,
++	if (to_camss(ispif)->version == CAMSS_8x16)
++		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x16,
+ 			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
++	else if (to_camss(ispif)->version == CAMSS_8x96)
++		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x96,
++			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
++	else
++		ret = -EINVAL;
+ 	if (ret < 0) {
+ 		dev_err(dev, "request_irq failed: %d\n", ret);
+ 		return ret;
 -- 
 2.7.4
 
