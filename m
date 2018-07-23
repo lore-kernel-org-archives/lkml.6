@@ -6,41 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5BAECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AE8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7714B20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7714B20856
+	by mail.kernel.org (Postfix) with ESMTP id CE4E520856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4E520856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389344AbeGWNrs (ORCPT
+        id S2388626AbeGWNxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:48 -0400
+        Mon, 23 Jul 2018 09:53:23 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:51134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388246AbeGWNrr (ORCPT
+        with ESMTP id S2388533AbeGWNrs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:47 -0400
+        Mon, 23 Jul 2018 09:47:48 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3ABBFCB1;
-        Mon, 23 Jul 2018 12:45:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0ED1C74;
+        Mon, 23 Jul 2018 12:45:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
-        Thomas Gleixner <tglx@linutronix.de>, ak@linux.intel.com,
-        dave.hansen@intel.com, karahmed@amazon.de, arjan@linux.intel.com,
-        torvalds@linux-foundation.org, peterz@infradead.org, bp@alien8.de,
-        pbonzini@redhat.com, tim.c.chen@linux.intel.com,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Garnier <thgarnie@google.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
-        Bo Gan <ganb@vmware.com>, gregkh@linux-foundation.org
-Subject: [PATCH 4.4 026/107] x86/cpufeatures: Clean up Spectre v2 related CPUID flags
-Date:   Mon, 23 Jul 2018 14:41:20 +0200
-Message-Id: <20180723122414.143584384@linuxfoundation.org>
+        Bo Gan <ganb@vmware.com>
+Subject: [PATCH 4.4 028/107] x86/pti: Mark constant arrays as __initconst
+Date:   Mon, 23 Jul 2018 14:41:22 +0200
+Message-Id: <20180723122414.231803248@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -57,42 +59,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Arnd Bergmann <arnd@arndb.de>
 
-(cherry picked from commit 2961298efe1ea1b6fc0d7ee8b76018fa6c0bcef2)
+(cherry picked from commit 4bf5d56d429cbc96c23d809a08f63cd29e1a702e)
 
-We want to expose the hardware features simply in /proc/cpuinfo as "ibrs",
-"ibpb" and "stibp". Since AMD has separate CPUID bits for those, use them
-as the user-visible bits.
+I'm seeing build failures from the two newly introduced arrays that
+are marked 'const' and '__initdata', which are mutually exclusive:
 
-When the Intel SPEC_CTRL bit is set which indicates both IBRS and IBPB
-capability, set those (AMD) bits accordingly. Likewise if the Intel STIBP
-bit is set, set the AMD STIBP that's used for the generic hardware
-capability.
+arch/x86/kernel/cpu/common.c:882:43: error: 'cpu_no_speculation' causes a section type conflict with 'e820_table_firmware_init'
+arch/x86/kernel/cpu/common.c:895:43: error: 'cpu_no_meltdown' causes a section type conflict with 'e820_table_firmware_init'
 
-Hide the rest from /proc/cpuinfo by putting "" in the comments. Including
-RETPOLINE and RETPOLINE_AMD which shouldn't be visible there. There are
-patches to make the sysfs vulnerabilities information non-readable by
-non-root, and the same should apply to all information about which
-mitigations are actually in use. Those *shouldn't* appear in /proc/cpuinfo.
+The correct annotation is __initconst.
 
-The feature bit for whether IBPB is actually used, which is needed for
-ALTERNATIVEs, is renamed to X86_FEATURE_USE_IBPB.
-
-Originally-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Fixes: fec9434a12f3 ("x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: ak@linux.intel.com
-Cc: dave.hansen@intel.com
-Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1517070274-12128-2-git-send-email-dwmw@amazon.co.uk
+Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Thomas Garnier <thgarnie@google.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180202213959.611210-1-arnd@arndb.de
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -102,131 +89,28 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/cpufeatures.h   |   18 +++++++++---------
- arch/x86/include/asm/nospec-branch.h |    2 +-
- arch/x86/kernel/cpu/bugs.c           |    7 +++----
- arch/x86/kernel/cpu/intel.c          |   31 +++++++++++++++++++++----------
- 4 files changed, 34 insertions(+), 24 deletions(-)
+ arch/x86/kernel/cpu/common.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -194,14 +194,14 @@
- #define X86_FEATURE_PROC_FEEDBACK ( 7*32+ 9) /* AMD ProcFeedbackInterface */
- 
- #define X86_FEATURE_INTEL_PT	( 7*32+15) /* Intel Processor Trace */
--#define X86_FEATURE_RSB_CTXSW	( 7*32+19) /* Fill RSB on context switches */
-+#define X86_FEATURE_RSB_CTXSW	( 7*32+19) /* "" Fill RSB on context switches */
- 
--#define X86_FEATURE_RETPOLINE	( 7*32+29) /* Generic Retpoline mitigation for Spectre variant 2 */
--#define X86_FEATURE_RETPOLINE_AMD ( 7*32+30) /* AMD Retpoline mitigation for Spectre variant 2 */
-+#define X86_FEATURE_RETPOLINE	( 7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
-+#define X86_FEATURE_RETPOLINE_AMD ( 7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
- /* Because the ALTERNATIVE scheme is for members of the X86_FEATURE club... */
- #define X86_FEATURE_KAISER	( 7*32+31) /* CONFIG_PAGE_TABLE_ISOLATION w/o nokaiser */
- 
--#define X86_FEATURE_IBPB		( 7*32+21) /* Indirect Branch Prediction Barrier enabled*/
-+#define X86_FEATURE_USE_IBPB	( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled*/
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
-@@ -253,9 +253,9 @@
- 
- /* AMD-defined CPU features, CPUID level 0x80000008 (ebx), word 13 */
- #define X86_FEATURE_CLZERO	(13*32+0) /* CLZERO instruction */
--#define X86_FEATURE_AMD_PRED_CMD (13*32+12) /* Prediction Command MSR (AMD) */
--#define X86_FEATURE_AMD_SPEC_CTRL (13*32+14) /* Speculation Control MSR only (AMD) */
--#define X86_FEATURE_AMD_STIBP	(13*32+15) /* Single Thread Indirect Branch Predictors (AMD) */
-+#define X86_FEATURE_IBPB	(13*32+12) /* Indirect Branch Prediction Barrier */
-+#define X86_FEATURE_IBRS	(13*32+14) /* Indirect Branch Restricted Speculation */
-+#define X86_FEATURE_STIBP	(13*32+15) /* Single Thread Indirect Branch Predictors */
- 
- /* Thermal and Power Management Leaf, CPUID level 0x00000006 (eax), word 14 */
- #define X86_FEATURE_DTHERM	(14*32+ 0) /* Digital Thermal Sensor */
-@@ -293,8 +293,8 @@
- /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
- #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
- #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
--#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* Speculation Control (IBRS + IBPB) */
--#define X86_FEATURE_STIBP		(18*32+27) /* Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
-+#define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
- 
- /*
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -201,7 +201,7 @@ static inline void indirect_branch_predi
- 				 "movl %[val], %%eax\n\t"
- 				 "movl $0, %%edx\n\t"
- 				 "wrmsr",
--				 X86_FEATURE_IBPB)
-+				 X86_FEATURE_USE_IBPB)
- 		     : : [msr] "i" (MSR_IA32_PRED_CMD),
- 			 [val] "i" (PRED_CMD_IBPB)
- 		     : "eax", "ecx", "edx", "memory");
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -298,9 +298,8 @@ retpoline_auto:
- 	}
- 
- 	/* Initialize Indirect Branch Prediction Barrier if supported */
--	if (boot_cpu_has(X86_FEATURE_SPEC_CTRL) ||
--	    boot_cpu_has(X86_FEATURE_AMD_PRED_CMD)) {
--		setup_force_cpu_cap(X86_FEATURE_IBPB);
-+	if (boot_cpu_has(X86_FEATURE_IBPB)) {
-+		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 		pr_info("Enabling Indirect Branch Prediction Barrier\n");
- 	}
- }
-@@ -333,7 +332,7 @@ ssize_t cpu_show_spectre_v2(struct devic
- 		return sprintf(buf, "Not affected\n");
- 
- 	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IBPB" : "",
-+		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 		       spectre_v2_module_string());
- }
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -817,7 +817,7 @@ static void identify_cpu_without_cpuid(s
  #endif
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -105,17 +105,28 @@ static void early_init_intel(struct cpui
- 		rdmsr(MSR_IA32_UCODE_REV, lower_word, c->microcode);
- 	}
+ }
  
--	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
--	     cpu_has(c, X86_FEATURE_STIBP) ||
--	     cpu_has(c, X86_FEATURE_AMD_SPEC_CTRL) ||
--	     cpu_has(c, X86_FEATURE_AMD_PRED_CMD) ||
--	     cpu_has(c, X86_FEATURE_AMD_STIBP)) && bad_spectre_microcode(c)) {
--		pr_warn("Intel Spectre v2 broken microcode detected; disabling SPEC_CTRL\n");
--		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
-+	/*
-+	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
-+	 * and they also have a different bit for STIBP support. Also,
-+	 * a hypervisor might have set the individual AMD bits even on
-+	 * Intel CPUs, for finer-grained selection of what's available.
-+	 */
-+	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
-+		set_cpu_cap(c, X86_FEATURE_IBRS);
-+		set_cpu_cap(c, X86_FEATURE_IBPB);
-+	}
-+	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
-+		set_cpu_cap(c, X86_FEATURE_STIBP);
-+
-+	/* Now if any of them are set, check the blacklist and clear the lot */
-+	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
-+	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
-+		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
-+		clear_cpu_cap(c, X86_FEATURE_IBRS);
-+		clear_cpu_cap(c, X86_FEATURE_IBPB);
- 		clear_cpu_cap(c, X86_FEATURE_STIBP);
--		clear_cpu_cap(c, X86_FEATURE_AMD_SPEC_CTRL);
--		clear_cpu_cap(c, X86_FEATURE_AMD_PRED_CMD);
--		clear_cpu_cap(c, X86_FEATURE_AMD_STIBP);
-+		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
-+		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
- 	}
+-static const __initdata struct x86_cpu_id cpu_no_speculation[] = {
++static const __initconst struct x86_cpu_id cpu_no_speculation[] = {
+ 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CEDARVIEW,	X86_FEATURE_ANY },
+ 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CLOVERVIEW,	X86_FEATURE_ANY },
+ 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_LINCROFT,	X86_FEATURE_ANY },
+@@ -830,7 +830,7 @@ static const __initdata struct x86_cpu_i
+ 	{}
+ };
  
- 	/*
+-static const __initdata struct x86_cpu_id cpu_no_meltdown[] = {
++static const __initconst struct x86_cpu_id cpu_no_meltdown[] = {
+ 	{ X86_VENDOR_AMD },
+ 	{}
+ };
 
 
