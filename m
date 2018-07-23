@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADC7ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10596ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB6E20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:29:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB6E20880
+	by mail.kernel.org (Postfix) with ESMTP id C7BD220854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:29:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7BD220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389060AbeGWNa0 (ORCPT
+        id S2389072AbeGWNa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:30:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45998 "EHLO
+        Mon, 23 Jul 2018 09:30:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46036 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387883AbeGWNaZ (ORCPT
+        with ESMTP id S2387883AbeGWNa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:30:25 -0400
+        Mon, 23 Jul 2018 09:30:28 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E5CBBB3;
-        Mon, 23 Jul 2018 12:29:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF100BB3;
+        Mon, 23 Jul 2018 12:29:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Tom Herbert <tom@herbertland.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 25/44] ipv6: fix useless rol32 call on hash
-Date:   Mon, 23 Jul 2018 14:25:01 +0200
-Message-Id: <20180723122438.696008544@linuxfoundation.org>
+Subject: [PATCH 4.14 26/44] ipv6: ila: select CONFIG_DST_CACHE
+Date:   Mon, 23 Jul 2018 14:25:02 +0200
+Message-Id: <20180723122438.742848884@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
 References: <20180723122437.447870153@linuxfoundation.org>
@@ -50,33 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 169dc027fb02492ea37a0575db6a658cf922b854 ]
+[ Upstream commit 83ed7d1fe2d2d4a11b30660dec20168bb473d9c1 ]
 
-The rol32 call is currently rotating hash but the rol'd value is
-being discarded. I believe the current code is incorrect and hash
-should be assigned the rotated value returned from rol32.
+My randconfig builds came across an old missing dependency for ILA:
 
-Thanks to David Lebrun for spotting this.
+ERROR: "dst_cache_set_ip6" [net/ipv6/ila/ila.ko] undefined!
+ERROR: "dst_cache_get" [net/ipv6/ila/ila.ko] undefined!
+ERROR: "dst_cache_init" [net/ipv6/ila/ila.ko] undefined!
+ERROR: "dst_cache_destroy" [net/ipv6/ila/ila.ko] undefined!
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We almost never run into this by accident because randconfig builds
+end up selecting DST_CACHE from some other tunnel protocol, and this
+one appears to be the only one missing the explicit 'select'.
+
+>From all I can tell, this problem first appeared in linux-4.9
+when dst_cache support got added to ILA.
+
+Fixes: 79ff2fc31e0f ("ila: Cache a route to translated address")
+Cc: Tom Herbert <tom@herbertland.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/ipv6.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -795,7 +795,7 @@ static inline __be32 ip6_make_flowlabel(
- 	 * to minimize possbility that any useful information to an
- 	 * attacker is leaked. Only lower 20 bits are relevant.
- 	 */
--	rol32(hash, 16);
-+	hash = rol32(hash, 16);
- 
- 	flowlabel = (__force __be32)hash & IPV6_FLOWLABEL_MASK;
- 
+--- a/net/ipv6/Kconfig
++++ b/net/ipv6/Kconfig
+@@ -109,6 +109,7 @@ config IPV6_MIP6
+ config IPV6_ILA
+ 	tristate "IPv6: Identifier Locator Addressing (ILA)"
+ 	depends on NETFILTER
++	select DST_CACHE
+ 	select LWTUNNEL
+ 	---help---
+ 	  Support for IPv6 Identifier Locator Addressing (ILA).
 
 
