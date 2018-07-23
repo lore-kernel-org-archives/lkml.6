@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF999ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD661ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 963712089C
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:04:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963712089C
+	by mail.kernel.org (Postfix) with ESMTP id 7558520883
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:04:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7558520883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388054AbeGWMEn (ORCPT
+        id S2388109AbeGWMEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:04:43 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:39842 "EHLO extserv.mm-sol.com"
+        Mon, 23 Jul 2018 08:04:45 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:39899 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387849AbeGWMEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:04:42 -0400
+        id S2388004AbeGWMEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 08:04:44 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 45EDBCD51;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 57B7CCD55;
         Mon, 23 Jul 2018 14:04:02 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v3 03/35] media: v4l: Add new 10-bit packed grayscale format
-Date:   Mon, 23 Jul 2018 14:02:20 +0300
-Message-Id: <1532343772-27382-4-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH v3 06/35] media: camss: Fix OF node usage
+Date:   Mon, 23 Jul 2018 14:02:23 +0300
+Message-Id: <1532343772-27382-7-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
 References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
@@ -41,94 +41,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new format will be called V4L2_PIX_FMT_Y10P.
-It is similar to the V4L2_PIX_FMT_SBGGR10P family formats
-but V4L2_PIX_FMT_Y10P is a grayscale format.
+of_graph_get_next_endpoint increases the refcount of the returned
+node and decreases the refcount of the passed node. Take this into
+account and use of_node_put properly.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- Documentation/media/uapi/v4l/pixfmt-y10p.rst | 33 ++++++++++++++++++++++++++++
- Documentation/media/uapi/v4l/yuv-formats.rst |  1 +
- drivers/media/v4l2-core/v4l2-ioctl.c         |  1 +
- include/uapi/linux/videodev2.h               |  1 +
- 4 files changed, 36 insertions(+)
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
+ drivers/media/platform/qcom/camss/camss.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/media/uapi/v4l/pixfmt-y10p.rst b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
-new file mode 100644
-index 0000000..13b5713
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
-@@ -0,0 +1,33 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _V4L2-PIX-FMT-Y10P:
-+
-+******************************
-+V4L2_PIX_FMT_Y10P ('Y10P')
-+******************************
-+
-+Grey-scale image as a MIPI RAW10 packed array
-+
-+
-+Description
-+===========
-+
-+This is a packed grey-scale image format with a depth of 10 bits per
-+pixel. Every four consecutive pixels are packed into 5 bytes. Each of
-+the first 4 bytes contain the 8 high order bits of the pixels, and
-+the 5th byte contains the 2 least significants bits of each pixel,
-+in the same order.
-+
-+**Bit-packed representation.**
-+
-+.. flat-table::
-+    :header-rows:  0
-+    :stub-columns: 0
-+    :widths: 8 8 8 8 64
-+
-+    * - Y'\ :sub:`00[9:2]`
-+      - Y'\ :sub:`01[9:2]`
-+      - Y'\ :sub:`02[9:2]`
-+      - Y'\ :sub:`03[9:2]`
-+      - Y'\ :sub:`03[1:0]`\ (bits 7--6) Y'\ :sub:`02[1:0]`\ (bits 5--4)
-+	Y'\ :sub:`01[1:0]`\ (bits 3--2) Y'\ :sub:`00[1:0]`\ (bits 1--0)
-diff --git a/Documentation/media/uapi/v4l/yuv-formats.rst b/Documentation/media/uapi/v4l/yuv-formats.rst
-index 3334ea4..9ab0592 100644
---- a/Documentation/media/uapi/v4l/yuv-formats.rst
-+++ b/Documentation/media/uapi/v4l/yuv-formats.rst
-@@ -29,6 +29,7 @@ to brightness information.
-     pixfmt-y10
-     pixfmt-y12
-     pixfmt-y10b
-+    pixfmt-y10p
-     pixfmt-y16
-     pixfmt-y16-be
-     pixfmt-y8i
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 0167056..2e3b1f0 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1184,6 +1184,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 	case V4L2_PIX_FMT_Y16:		descr = "16-bit Greyscale"; break;
- 	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
- 	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
-+	case V4L2_PIX_FMT_Y10P:		descr = "10-bit Greyscale (MIPI Packed)"; break;
- 	case V4L2_PIX_FMT_Y8I:		descr = "Interleaved 8-bit Greyscale"; break;
- 	case V4L2_PIX_FMT_Y12I:		descr = "Interleaved 12-bit Greyscale"; break;
- 	case V4L2_PIX_FMT_Z16:		descr = "16-bit Depth"; break;
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index a15e03b..fc177d8 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -522,6 +522,7 @@ struct v4l2_pix_format {
+diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+index 45285eb..abf6184 100644
+--- a/drivers/media/platform/qcom/camss/camss.c
++++ b/drivers/media/platform/qcom/camss/camss.c
+@@ -296,6 +296,7 @@ static int camss_of_parse_ports(struct device *dev,
+ 		if (of_device_is_available(node))
+ 			notifier->num_subdevs++;
  
- /* Grey bit-packed formats */
- #define V4L2_PIX_FMT_Y10BPACK    v4l2_fourcc('Y', '1', '0', 'B') /* 10  Greyscale bit-packed */
-+#define V4L2_PIX_FMT_Y10P    v4l2_fourcc('Y', '1', '0', 'P') /* 10  Greyscale, MIPI RAW10 packed */
++	of_node_put(node);
+ 	size = sizeof(*notifier->subdevs) * notifier->num_subdevs;
+ 	notifier->subdevs = devm_kzalloc(dev, size, GFP_KERNEL);
+ 	if (!notifier->subdevs) {
+@@ -326,16 +327,16 @@ static int camss_of_parse_ports(struct device *dev,
+ 		}
  
- /* Palette formats */
- #define V4L2_PIX_FMT_PAL8    v4l2_fourcc('P', 'A', 'L', '8') /*  8  8-bit palette */
+ 		remote = of_graph_get_remote_port_parent(node);
+-		of_node_put(node);
+-
+ 		if (!remote) {
+ 			dev_err(dev, "Cannot get remote parent\n");
++			of_node_put(node);
+ 			return -EINVAL;
+ 		}
+ 
+ 		csd->asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
+ 		csd->asd.match.fwnode = of_fwnode_handle(remote);
+ 	}
++	of_node_put(node);
+ 
+ 	return notifier->num_subdevs;
+ }
 -- 
 2.7.4
 
