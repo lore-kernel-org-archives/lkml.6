@@ -2,224 +2,280 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E41ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9BAECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF92520779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:59:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BFDF20779
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:59:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B5mF7Fya"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF92520779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oMDCI/+U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BFDF20779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388704AbeGWRAL (ORCPT
+        id S2388261AbeGWRBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:00:11 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38362 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387998AbeGWRAK (ORCPT
+        Mon, 23 Jul 2018 13:01:38 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45370 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388017AbeGWRBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:00:10 -0400
-Received: by mail-wm0-f68.google.com with SMTP id t25-v6so1726912wmi.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 08:58:17 -0700 (PDT)
+        Mon, 23 Jul 2018 13:01:37 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f1-v6so681134pgq.12;
+        Mon, 23 Jul 2018 08:59:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=usbvpM84D03PVtnGQhVCdxXJhk8fO01uK4ITF8UQWmY=;
-        b=B5mF7Fyarhrc3QWrxoy2h4hQg7HRWWaOrV/VnRwXr7pEp9uUP6POsDTV2MU73Q9sLG
-         Rl+gIMVkiH+EjPlhB7nhO5pTpcx0B0Swn1fhgwdxEo58GILaGooLBldbvCUU/M97HyYH
-         zFZDxRV0HGkUcok5fc7YlIgdkZELDQn33/sHs=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=30GxbWUllIU0JM/UZQ7rKgHxSRirKSfFWBqXwsXpd2s=;
+        b=oMDCI/+URXfgRmUqZ1p8qNt3/MmGDirDedygikld7GlkFkueWCjYO92MZ9n+Blnc7Y
+         pXD1TjW4omNrOkuvyJeecZYk2uAxSVFlcrWhthBogw9p23xVIXo7ED4FCjYj6yWPeYB2
+         77GmtsAl6jfk3qpyvIKuk8sDWF/6BNuUgeGEfLoxxCsXD7WXcpR3M6+jWyfNZ96+mP1a
+         /PKZzvOHcwNshwOgBU+0n4M1dofQAzcbEreY8L9hguqdJuRVbGVtQwmseM7C0mIDn44N
+         79lB+tARDeu6iF5mZ/Fsmog+hCl9DEGojrosL9sWMcqmTDsdHdmXks8KFzSPFP24q7dp
+         ggCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=usbvpM84D03PVtnGQhVCdxXJhk8fO01uK4ITF8UQWmY=;
-        b=DKRY5P7NpezB4eZmYb3pcdbGYT9WLN0M+97U1k6Tiy+6o9ae9LqgQVid+E4Rajx0vn
-         e37DxiMRU8Vd+3Fiv9+lb+KAR+XPbV0+mBgDrKsUgk792YCVCffob8JHdzRkh+obyU/U
-         1jCc2L8JYn1SDqo3e+s0q1+j+KalI8x0RLEwXb4j93aJUYJhpLI6i4xp51CVxfRtWfNw
-         AJoMiiKD7ux/kfEHbOJd07MJ6IZUo4GcNcB2jgfR1oNPQJjsxgG9wCdPZ94pbUjpFNxt
-         WK+ilRiHbxRqeDSDDlhuUo901yTo8mHS/67aXKAYusD8M2dDDy7rz/86+7MLuw4Oiw0l
-         UInQ==
-X-Gm-Message-State: AOUpUlHYtzfzGTIjKrprQnJzavjalnb0cIYu88b2D6hoGKXpI//yGpdY
-        qodMi3HzoumyDr38UBQT/5EeXaUc8vA=
-X-Google-Smtp-Source: AAOMgpfYZX79xog3eIdjZ67JmfH8gktXkLHw5HWqYZUQSvyJwrFMJ7Mjmdidwx9UAzM4dILYC/1IaQ==
-X-Received: by 2002:a1c:5e08:: with SMTP id s8-v6mr8293652wmb.88.1532361496869;
-        Mon, 23 Jul 2018 08:58:16 -0700 (PDT)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm206385wmt.1.2018.07.23.08.58.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 23 Jul 2018 08:58:16 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     lee.jones@linaro.org, robh+dt@kernel.org, broonie@kernel.org
-Cc:     mark.rutland@arm.com, lgirdwood@gmail.com, tiwai@suse.com,
-        bgoswami@codeaurora.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, vkoul@kernel.org,
-        alsa-devel@alsa-project.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 01/12] mfd: dt-bindings: Add wcd9335 mfd bindings
-Date:   Mon, 23 Jul 2018 16:53:59 +0100
-Message-Id: <20180723155410.9494-2-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180723155410.9494-1-srinivas.kandagatla@linaro.org>
-References: <20180723155410.9494-1-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=30GxbWUllIU0JM/UZQ7rKgHxSRirKSfFWBqXwsXpd2s=;
+        b=hVPi9uUUX9rFbIsVxbDLaZ8wU3/zQ1OXjn5BoHxWe1rrGfIfH4/ChTlrIZpp6bTsUk
+         3MTQvgAW6G2KL9NfvZJGACUK/09uQfBl9dq6W0mFhP2NERBHJUHy8rrciBMM9YPwZpy0
+         TDVuPvCIc6rjjaay9imNt4ZWftyw3+bgGXb1FEttLzy1K7KI50uyl7q+ApCWEpM/yuhM
+         tXFT0TxrU/V4rQdpBV/dytJ2lskTChgtvHSxsoqLY3dYU9/yDY1goBi6t8/+hQJFp0MM
+         iTmke0tngcAt2i94TIf/1XM1A8+Xs3J2tGWX3ezkHqn1ElWg1lw93zAs7ErznNU9M4+a
+         sBuQ==
+X-Gm-Message-State: AOUpUlHwy3P8250AAyhau5Cv0fMhtcVi9QJd1WxMVU4p8kIljRqVh6PO
+        i+i+z2eq6FXPJcWeDCna0c4=
+X-Google-Smtp-Source: AAOMgpfuuUKaA2FEjeyLdKr/qKwLl59UWmiZkbMYd1dXmE2yNMY4ScXc/qro6YWsfGCE7pklWF/lCQ==
+X-Received: by 2002:aa7:88d3:: with SMTP id p19-v6mr13819506pfo.160.1532361584566;
+        Mon, 23 Jul 2018 08:59:44 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.219.226])
+        by smtp.gmail.com with ESMTPSA id s3-v6sm15355129pfg.2.2018.07.23.08.59.42
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 23 Jul 2018 08:59:43 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 21:32:24 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     willy@infradead.org, zyan@redhat.com, sage@redhat.com,
+        idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ajitn.linux@gmail.com, brajeswar.linux@gmail.com,
+        sabyasachi.linux@gmail.com
+Subject: [PATCH v2] fs: ceph: Adding new return type vm_fault_t
+Message-ID: <20180723160224.GA6942@jordon-HP-15-Notebook-PC>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Qualcomm WCD9335 Codec is a standalone Hi-Fi audio codec IC, supports
-Qualcomm Technologies, Inc. (QTI) multimedia solutions, including
-the MSM8996, MSM8976, and MSM8956 chipsets. It has in-build
-Soundwire controller, interrupt mux. It supports both I2S/I2C and
-SLIMbus audio interfaces.
+Use new return type vm_fault_t for page_mkwrite
+and fault handler.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- .../devicetree/bindings/mfd/qcom,wcd9335.txt       | 130 +++++++++++++++++++++
- 1 file changed, 130 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/qcom,wcd9335.txt
+v2: Fixed kbuild warning
 
-diff --git a/Documentation/devicetree/bindings/mfd/qcom,wcd9335.txt b/Documentation/devicetree/bindings/mfd/qcom,wcd9335.txt
-new file mode 100644
-index 000000000000..1f8c9e8d4e3d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/qcom,wcd9335.txt
-@@ -0,0 +1,130 @@
-+QCOM WCD9335 Codec
-+
-+Qualcomm WCD9335 Codec is a standalone Hi-Fi audio codec IC, supports
-+Qualcomm Technologies, Inc. (QTI) multimedia solutions, including
-+the MSM8996, MSM8976, and MSM8956 chipsets. It has in-build
-+Soundwire controller, interrupt mux. It supports both I2S/I2C and
-+SLIMbus audio interfaces.
-+
-+Required properties with SLIMbus Interface:
-+
-+- compatible:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: For SLIMbus interface it should be "slimMID,PID",
-+		    textual representation of Manufacturer ID, Product Code,
-+		    shall be in lower case hexadecimal with leading zeroes
-+		    suppressed.  Refer to slimbus/bus.txt for details.
-+		    Should be:
-+		    "slim217,1a0" for MSM8996 and APQ8096 SoCs with SLIMbus.
-+
-+- reg
-+	Usage: required
-+	Value type: <u32 u32>
-+	Definition: Should be ('Device index', 'Instance ID')
-+
-+- interrupts
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: Interrupts via WCD INTR1 and INTR2 pins
-+
-+- interrupt-names:
-+	Usage: required
-+	Value type: <String array>
-+	Definition: Interrupt names of WCD INTR1 and INTR2
-+	Should be: "intr1", "intr2"
-+
-+- reset-gpio:
-+	Usage: required
-+	Value type: <String Array>
-+	Definition: Reset gpio line
-+
-+- qcom,ifd:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: SLIM interface device
-+
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: See clock-bindings.txt section "consumers". List of
-+                three clock specifiers for mclk, mclk2 and slimbus clock.
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Must contain "mclk", "mclk2" and "slimbus" strings.
-+
-+- vdd-buck-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: Should contain a reference to the 1.8V buck supply
-+
-+- vdd-buck-sido-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: Should contain a reference to the 1.8V SIDO buck supply
-+
-+- vdd-rx-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: Should contain a reference to the 1.8V rx supply
-+
-+- vdd-tx-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: Should contain a reference to the 1.8V tx supply
-+
-+- vdd-vbat-supply:
-+	Usage: Optional
-+	Value type: <phandle>
-+	Definition: Should contain a reference to the vbat supply
-+
-+- vdd-micbias-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: Should contain a reference to the micbias supply
-+
-+- vdd-io-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: Should contain a reference to the 1.8V io supply
-+
-+- interrupt-controller:
-+	Usage: required
-+	Definition: Indicating that this is a interrupt controller
-+
-+- #interrupt-cells:
-+	Usage: required
-+	Value type: <int>
-+	Definition: should be 1
-+
-+= WCD9335 Child devices
-+Each subnode of WCD9335 represents a functional blocks like
-+"audio codec", "soundwire Controller" of WCD. The name of the
-+nodes are not important. The properties of these nodes are
-+defined by the individual bindings for the specific device.
-+
-+Example:
-+
-+wcd9335@1 {
-+	compatible = "slim217,1a0";
-+	reg  = <1 0>;
-+	interrupts = <&msmgpio 54 IRQ_TYPE_LEVEL_HIGH>;
-+	interrupt-names = "intr2"
-+	reset-gpio = <&msmgpio 64 0>;
-+	qcom,ifd  = <&wc9335_ifd>;
-+	clock-names = "mclk", "native";
-+	clocks = <&rpmcc RPM_SMD_DIV_CLK1>,
-+		 <&rpmcc RPM_SMD_BB_CLK1>;
-+	vdd-buck-supply = <&pm8994_s4>;
-+	vdd-rx-supply = <&pm8994_s4>;
-+	vdd-buck-sido-supply = <&pm8994_s4>;
-+	vdd-tx-supply = <&pm8994_s4>;
-+	vdd-io-supply = <&pm8994_s4>;
-+
-+	codec {
-+		compatible = "qcom,wcd9335-codec";
-+		#sound-dai-cells = <1>;
-+	};
-+}
+ fs/ceph/addr.c | 62 ++++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 32 insertions(+), 30 deletions(-)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 292b3d7..26beebe 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1431,7 +1431,7 @@ static void ceph_restore_sigs(sigset_t *oldset)
+ /*
+  * vm ops
+  */
+-static int ceph_filemap_fault(struct vm_fault *vmf)
++static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct inode *inode = file_inode(vma->vm_file);
+@@ -1439,8 +1439,9 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+ 	struct ceph_file_info *fi = vma->vm_file->private_data;
+ 	struct page *pinned_page = NULL;
+ 	loff_t off = vmf->pgoff << PAGE_SHIFT;
+-	int want, got, ret;
++	int want, got, err;
+ 	sigset_t oldset;
++	vm_fault_t ret = VM_FAULT_SIGBUS;
+ 
+ 	ceph_block_sigs(&oldset);
+ 
+@@ -1452,8 +1453,8 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+ 		want = CEPH_CAP_FILE_CACHE;
+ 
+ 	got = 0;
+-	ret = ceph_get_caps(ci, CEPH_CAP_FILE_RD, want, -1, &got, &pinned_page);
+-	if (ret < 0)
++	err = ceph_get_caps(ci, CEPH_CAP_FILE_RD, want, -1, &got, &pinned_page);
++	if (err < 0)
+ 		goto out_restore;
+ 
+ 	dout("filemap_fault %p %llu~%zd got cap refs on %s\n",
+@@ -1465,16 +1466,17 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+ 		ceph_add_rw_context(fi, &rw_ctx);
+ 		ret = filemap_fault(vmf);
+ 		ceph_del_rw_context(fi, &rw_ctx);
++		dout("filemap_fault %p %llu~%zd drop cap refs %s ret %x\n",
++			inode, off, (size_t)PAGE_SIZE,
++				ceph_cap_string(got), ret);
+ 	} else
+-		ret = -EAGAIN;
++		err = -EAGAIN;
+ 
+-	dout("filemap_fault %p %llu~%zd dropping cap refs on %s ret %d\n",
+-	     inode, off, (size_t)PAGE_SIZE, ceph_cap_string(got), ret);
+ 	if (pinned_page)
+ 		put_page(pinned_page);
+ 	ceph_put_cap_refs(ci, got);
+ 
+-	if (ret != -EAGAIN)
++	if (err != -EAGAIN)
+ 		goto out_restore;
+ 
+ 	/* read inline data */
+@@ -1482,7 +1484,6 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+ 		/* does not support inline data > PAGE_SIZE */
+ 		ret = VM_FAULT_SIGBUS;
+ 	} else {
+-		int ret1;
+ 		struct address_space *mapping = inode->i_mapping;
+ 		struct page *page = find_or_create_page(mapping, 0,
+ 						mapping_gfp_constraint(mapping,
+@@ -1491,32 +1492,32 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+ 			ret = VM_FAULT_OOM;
+ 			goto out_inline;
+ 		}
+-		ret1 = __ceph_do_getattr(inode, page,
++		err = __ceph_do_getattr(inode, page,
+ 					 CEPH_STAT_CAP_INLINE_DATA, true);
+-		if (ret1 < 0 || off >= i_size_read(inode)) {
++		if (err < 0 || off >= i_size_read(inode)) {
+ 			unlock_page(page);
+ 			put_page(page);
+-			if (ret1 < 0)
+-				ret = ret1;
++			if (err == -ENOMEM)
++				ret = VM_FAULT_OOM;
+ 			else
+ 				ret = VM_FAULT_SIGBUS;
+ 			goto out_inline;
+ 		}
+-		if (ret1 < PAGE_SIZE)
+-			zero_user_segment(page, ret1, PAGE_SIZE);
++		if (err < PAGE_SIZE)
++			zero_user_segment(page, err, PAGE_SIZE);
+ 		else
+ 			flush_dcache_page(page);
+ 		SetPageUptodate(page);
+ 		vmf->page = page;
+ 		ret = VM_FAULT_MAJOR | VM_FAULT_LOCKED;
+ out_inline:
+-		dout("filemap_fault %p %llu~%zd read inline data ret %d\n",
++		dout("filemap_fault %p %llu~%zd read inline data ret %x\n",
+ 		     inode, off, (size_t)PAGE_SIZE, ret);
+ 	}
+ out_restore:
+ 	ceph_restore_sigs(&oldset);
+-	if (ret < 0)
+-		ret = (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
++	if (err < 0)
++		ret = vmf_error(err);
+ 
+ 	return ret;
+ }
+@@ -1524,7 +1525,7 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+ /*
+  * Reuse write_begin here for simplicity.
+  */
+-static int ceph_page_mkwrite(struct vm_fault *vmf)
++static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct inode *inode = file_inode(vma->vm_file);
+@@ -1535,8 +1536,9 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+ 	loff_t off = page_offset(page);
+ 	loff_t size = i_size_read(inode);
+ 	size_t len;
+-	int want, got, ret;
++	int want, got, err;
+ 	sigset_t oldset;
++	vm_fault_t ret = VM_FAULT_SIGBUS;
+ 
+ 	prealloc_cf = ceph_alloc_cap_flush();
+ 	if (!prealloc_cf)
+@@ -1550,10 +1552,10 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+ 			lock_page(page);
+ 			locked_page = page;
+ 		}
+-		ret = ceph_uninline_data(vma->vm_file, locked_page);
++		err = ceph_uninline_data(vma->vm_file, locked_page);
+ 		if (locked_page)
+ 			unlock_page(locked_page);
+-		if (ret < 0)
++		if (err < 0)
+ 			goto out_free;
+ 	}
+ 
+@@ -1570,9 +1572,9 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+ 		want = CEPH_CAP_FILE_BUFFER;
+ 
+ 	got = 0;
+-	ret = ceph_get_caps(ci, CEPH_CAP_FILE_WR, want, off + len,
++	err = ceph_get_caps(ci, CEPH_CAP_FILE_WR, want, off + len,
+ 			    &got, NULL);
+-	if (ret < 0)
++	if (err < 0)
+ 		goto out_free;
+ 
+ 	dout("page_mkwrite %p %llu~%zd got cap refs on %s\n",
+@@ -1590,13 +1592,13 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+ 			break;
+ 		}
+ 
+-		ret = ceph_update_writeable_page(vma->vm_file, off, len, page);
+-		if (ret >= 0) {
++		err = ceph_update_writeable_page(vma->vm_file, off, len, page);
++		if (err >= 0) {
+ 			/* success.  we'll keep the page locked. */
+ 			set_page_dirty(page);
+ 			ret = VM_FAULT_LOCKED;
+ 		}
+-	} while (ret == -EAGAIN);
++	} while (err == -EAGAIN);
+ 
+ 	if (ret == VM_FAULT_LOCKED ||
+ 	    ci->i_inline_version != CEPH_INLINE_NONE) {
+@@ -1610,14 +1612,14 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+ 			__mark_inode_dirty(inode, dirty);
+ 	}
+ 
+-	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %d\n",
++	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
+ 	     inode, off, len, ceph_cap_string(got), ret);
+ 	ceph_put_cap_refs(ci, got);
+ out_free:
+ 	ceph_restore_sigs(&oldset);
+ 	ceph_free_cap_flush(prealloc_cf);
+-	if (ret < 0)
+-		ret = (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
++	if (err < 0)
++		ret = vmf_error(err);
+ 	return ret;
+ }
+ 
 -- 
-2.16.2
+1.9.1
 
