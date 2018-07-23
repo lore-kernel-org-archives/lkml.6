@@ -2,103 +2,627 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBB3ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59ABBECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D4CB20875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:39:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZVbtH1O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4CB20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 62C0520858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 03:39:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62C0520858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387727AbeGWEiE (ORCPT
+        id S2387772AbeGWEih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 00:38:04 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44178 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbeGWEiE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 00:38:04 -0400
-Received: by mail-pl0-f68.google.com with SMTP id m16-v6so7634807pls.11;
-        Sun, 22 Jul 2018 20:38:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=eZiQqkTFFg41WoFSCsN8KawQ8i2v1RPfiGDsWopGuAE=;
-        b=fZVbtH1O55IKbQJVTgn29DYK/BY5fxpfvrh2BThf4o1RzJWZuFDdWCWWMjdvLngr1I
-         jSEDPT4/DjdBYdMLuNesjqQq+7AwvmN7NXLJOgppRXxvbFjj1krW1GYgAJTtu9ebyAmZ
-         fRgGbDX8k41Fbg2BA472IsqTdwpljov/cc5X7N9OiHM/DqXAXzrMOULdfIUtIQ3xr1RK
-         UxwO608+7gTJPMEDlbTe7gwDigvywwVVJ8MdD5aSTVqZQd98WfvsF4NMqQPMxtyKAe1b
-         LeBQQLXdwU/oS4pchOAo1NY36TBd1vkLyXWCWAy0NKxTfs4sEDmJd6fA7VUI+QNvo6LN
-         /OKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eZiQqkTFFg41WoFSCsN8KawQ8i2v1RPfiGDsWopGuAE=;
-        b=Y6mM61xRNoVxvs3s6Bz8F1UXsL0I0C3ASK3ZIMEvDsrs7kN9nGoTWMz7pBRN3gYBbk
-         wffQ5HUHEcE7hORoPguYFxbvMeftiv1DLtdDo8WCgumFv8wdWy9Lv8wkseACAl6+amqF
-         v46GNMTWz/Ly3orBcFZQ8MxHpCo38cumhhIpfTPHGqMPsFDVjaqT90/s2owe1ds5oLcn
-         mczVm2Lak0n4hMh3nCfeehcHwA+gy+jzVERDcyEZazPeXd9kQG8BntlVbUNQHb2RDON+
-         jz7LJUD6llxaLt7SvwhIlbwO50Gc2Umq2JuYCKG59OYTta5AcBwTpHyL1UhiMqeOQdty
-         Oljg==
-X-Gm-Message-State: AOUpUlEG4AwTjU1EaIbuMslpeTrfpZRx+riAY5Vgp3hwWQVYgx0F1CMR
-        6/b4k1ZaeSUE6TsKiECc5gE=
-X-Google-Smtp-Source: AAOMgpd5sR/muSutJ6XR1QrYg2iTYYEKWHIcKrlqoFkjmxxpHuT51pPuIQ0iNHetIzIUm20d9dOy8A==
-X-Received: by 2002:a17:902:a40b:: with SMTP id p11-v6mr11299275plq.228.1532317138661;
-        Sun, 22 Jul 2018 20:38:58 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:c122:f95a:1d53:1f82])
-        by smtp.gmail.com with ESMTPSA id y3-v6sm4986153pfi.24.2018.07.22.20.38.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Jul 2018 20:38:58 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] bluetooth: btusb: Replace GFP_ATOMIC with GFP_KERNEL in inject_cmd_complete()
-Date:   Mon, 23 Jul 2018 11:38:51 +0800
-Message-Id: <20180723033851.8141-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 23 Jul 2018 00:38:37 -0400
+Received: from mga06.intel.com ([134.134.136.31]:13557 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726781AbeGWEih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 00:38:37 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jul 2018 20:39:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,392,1526367600"; 
+   d="c'?scan'208,104";a="247457814"
+Received: from kmsmsx153.gar.corp.intel.com ([172.21.73.88])
+  by fmsmga005.fm.intel.com with ESMTP; 22 Jul 2018 20:39:23 -0700
+Received: from pgsmsx109.gar.corp.intel.com ([169.254.14.206]) by
+ KMSMSX153.gar.corp.intel.com ([169.254.5.73]) with mapi id 14.03.0319.002;
+ Mon, 23 Jul 2018 11:39:22 +0800
+From:   "Ooi, Tzy Way" <tzy.way.ooi@intel.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "See, Chin Liang" <chin.liang.see@intel.com>,
+        "Tan, Ley Foon" <ley.foon.tan@intel.com>,
+        "Nguyen, Dinh" <dinh.nguyen@intel.com>,
+        "Aw, Khai Liang" <khai.liang.aw@intel.com>
+Subject: RE: Enquiry on unbalanced memory throughput for dual-Cortex A9 core.
+Thread-Topic: Enquiry on unbalanced memory throughput for dual-Cortex A9
+ core.
+Thread-Index: AdQgBgDwE8ZxdM9cQg6mUrKZHryEF///mOiA//tDkYA=
+Date:   Mon, 23 Jul 2018 03:39:21 +0000
+Message-ID: <5F1105621EDF844291AF8B109E27C06D34C4C09A@PGSMSX109.gar.corp.intel.com>
+References: <5F1105621EDF844291AF8B109E27C06D34C4BEBD@PGSMSX109.gar.corp.intel.com>
+ <20180720103627.GA29084@n2100.armlinux.org.uk>
+In-Reply-To: <20180720103627.GA29084@n2100.armlinux.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.205]
+Content-Type: multipart/mixed;
+        boundary="_003_5F1105621EDF844291AF8B109E27C06D34C4C09APGSMSX109garcor_"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-inject_cmd_complete() is only called by btusb_send_frame_intel(), 
-which is set to hdev->send, and hdev->send() is never 
-called in atomic context.
+--_003_5F1105621EDF844291AF8B109E27C06D34C4C09APGSMSX109garcor_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-inject_cmd_complete() calls bt_skb_alloc() with GFP_ATOMIC, 
-which is not necessary.
-GFP_ATOMIC can be replaced with GFP_KERNEL.
+Hi Russell,
 
-This is found by a static analysis tool named DCNS written by myself.
-I also manually check the kernel code before reporting it.
+Thanks for the details explanation.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/bluetooth/btusb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I am running the bw_mem test provided in LM Benchmark to measures the throu=
+ghput to write data to memory as it seems to be a general benchmark program=
+.=20
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index c8c8b0b8d333..1586c54a01f1 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -1870,7 +1870,7 @@ static int inject_cmd_complete(struct hci_dev *hdev, __u16 opcode)
- 	struct hci_event_hdr *hdr;
- 	struct hci_ev_cmd_complete *evt;
- 
--	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_ATOMIC);
-+	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
- 	if (!skb)
- 		return -ENOMEM;
- 
--- 
-2.17.0
+Initially, I tested to run my own's created memory test program and encount=
+ered the same unbalanced memory throughput whenever two threads are running=
+ on different cores. I tested to run the memory test program on either one =
+core or two cores. The unbalanced memory throughput is seen when running on=
+ two cores. Hence, I tried out the bw_mem test and it appears to be alike t=
+o my own test case.
 
+Attached is the memory test program memtest.c file and the Linux executable=
+ file. The memtest -a1 will forces the two threads running on different cor=
+es while memtest -a2 will forces the two threads running on one core.=20
+
+May I know if is it possible if you could try out my test program on your i=
+MX6D SoC (also dual core Cortex A9) board?
+
+Comparison on the test result one core vs two cores on my board with Linux =
+4.9 and 4.18-rc2
+One core:
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D Multi Thread =3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Thread 3067511920 - data size 1 MB, runs =3D 1000
+Thread 3059123312 - data size 1 MB, runs =3D 1000
+Thread :3059123312: Datarate: 974.887201 MB/s
+Thread :3067511920: Datarate: 960.289834 MB/s
+Thread :3067511920: Datarate: 1083.249741 MB/s
+Thread :3059123312: Datarate: 1055.545769 MB/s
+Thread :3067511920: Datarate: 1085.555446 MB/s
+Thread :3059123312: Datarate: 1084.503430 MB/s
+Thread :3067511920: Datarate: 1063.379303 MB/s
+Thread :3059123312: Datarate: 1070.705338 MB/s
+Thread :3067511920: Datarate: 1050.933243 MB/s
+Thread :3059123312: Datarate: 1050.153330 MB/s
+Thread :3067511920: Datarate: 1085.489144 MB/s
+Thread :3059123312: Datarate: 1071.774560 MB/s
+Thread :3067511920: Datarate: 1084.506795 MB/s
+Thread :3059123312: Datarate: 1060.260066 MB/s
+Thread :3067511920: Datarate: 1074.058027 MB/s
+Thread :3059123312: Datarate: 1069.279388 MB/s
+Thread :3067511920: Datarate: 1073.924924 MB/s
+Thread :3059123312: Datarate: 1080.818992 MB/s
+Thread :3067511920: Datarate: 1081.871683 MB/s
+Thread :3067511920: Average Datarate: 1064.325814 MB/s
+Thread :3059123312: Datarate: 1097.549768 MB/s
+Thread :3059123312: Average Datarate: 1061.547784 MB/s
+Finished!
+
+Two Cores:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D Multi Thread =3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Thread 3067954288 - data size 1 MB, runs =3D 1000
+Thread 3059565680 - data size 1 MB, runs =3D 1000
+Thread :3067954288: Datarate: 741.930805 MB/s
+Thread :3059565680: Datarate: 377.979641 MB/s
+Thread :3067954288: Datarate: 741.976479 MB/s
+Thread :3067954288: Datarate: 740.548015 MB/s
+Thread :3059565680: Datarate: 376.706463 MB/s
+Thread :3067954288: Datarate: 740.313260 MB/s
+Thread :3067954288: Datarate: 740.363440 MB/s
+Thread :3059565680: Datarate: 376.129877 MB/s
+Thread :3067954288: Datarate: 740.056194 MB/s
+Thread :3067954288: Datarate: 740.219191 MB/s
+Thread :3059565680: Datarate: 376.114092 MB/s
+Thread :3067954288: Datarate: 740.152311 MB/s
+Thread :3067954288: Datarate: 724.094688 MB/s
+Thread :3059565680: Datarate: 388.118117 MB/s
+Thread :3067954288: Datarate: 740.556383 MB/s
+Thread :3067954288: Average Datarate: 739.021077 MB/s
+Thread :3059565680: Datarate: 1323.735631 MB/s
+Thread :3059565680: Datarate: 2072.948256 MB/s
+Thread :3059565680: Datarate: 2069.817984 MB/s
+Thread :3059565680: Datarate: 2069.295149 MB/s
+Thread :3059565680: Datarate: 2040.932474 MB/s
+Thread :3059565680: Average Datarate: 1147.177768 MB/s
+Finished!
+
+Thank you for your comment and help
+
+Best regards,
+Tzy Way
+
+-----Original Message-----
+From: Russell King - ARM Linux <linux@armlinux.org.uk>=20
+Sent: Friday, July 20, 2018 6:36 PM
+To: Ooi, Tzy Way <tzy.way.ooi@intel.com>
+Cc: linux-kernel@vger.kernel.org; See, Chin Liang <chin.liang.see@intel.com=
+>; Tan, Ley Foon <ley.foon.tan@intel.com>; Nguyen, Dinh <dinh.nguyen@intel.=
+com>; Aw, Khai Liang <khai.liang.aw@intel.com>
+Subject: Re: Enquiry on unbalanced memory throughput for dual-Cortex A9 cor=
+e.
+
+On Fri, Jul 20, 2018 at 08:49:47AM +0000, Ooi, Tzy Way wrote:
+> Hi Russell,
+>=20
+> I am trying the memory write operation with the LM benchmark test. I=20
+> tried to execute the memory write operation here=20
+> <http://lmbench.sourceforge.net/cgi-bin/man?section=3D8&keyword=3Dbw_mem>
+> twice to get both Cortex A9 core processor to work on each processes.
+> Both processors is going to perform write operation at almost the same=20
+> time to the memory.
+>=20
+> As shown in the pictures below, the memory throughput from one of the=20
+> cores is about double the throughput of another core. i.e. 377MB/s VS=20
+> 728MB/s
+>=20
+> [cid:image001.png@01D42049.5A7D0070]
+>=20
+> I have tested this operation across few dual cores Cortex A9 boards=20
+> and all the board is having the same result. The test is tested on=20
+> kernel version 4.9 and newest Linux kernel version 4.18.0-rc2
+
+Here's how 4.14 behaves on an iMX6D SoC (also dual core Cortex A9):
+
+$ taskset -c 0 ./bw_mem -N 1000 1M fwr & taskset -c 1 ./bw_mem -N 1000 1M f=
+wr [1] 21799
+1.00 521.10
+1.00 497.27
+[1]+  Done                    taskset -c 0 ./bw_mem -N 1000 1M fwr
+$ taskset -c 0 ./bw_mem -N 1000 1M fwr & taskset -c 1 ./bw_mem -N 1000 1M f=
+wr [1] 21803
+1.00 520.83
+1.00 496.44
+
+which shows some asymmetry but nowhere near yours.
+
+I'm using taskset to force each to be locked to a particular CPU - you'll s=
+ee why further down.  Even without it, I get similar results to those I men=
+tion above.
+
+Now, playing around with this, so we can identify which bw_mem output is
+which:
+
+$ taskset -c 0 ./bw_mem -N 1000 1M fwr & c1=3D$(taskset -c 1 ./bw_mem -N 10=
+00 1M fwr 2>&1); echo "c1: $c1"
+[1] 21876
+1.00 521.92
+c1: 1.00 496.69
+$ taskset -c 1 ./bw_mem -N 1000 1M fwr & c1=3D$(taskset -c 0 ./bw_mem -N 10=
+00 1M fwr 2>&1); echo "c0: $c1"
+[1] 21881
+c0: 1.00 521.83
+1.00 496.20
+
+CPU0 is always the slightly faster of the two.  If we use /usr/bin/time to =
+time these:
+
+CPU0:
+6.10user 0.25system 0:06.56elapsed 96%CPU (0avgtext+0avgdata 1664maxresiden=
+t)k
+0inputs+0outputs (0major+407minor)pagefaults 0swaps
+
+CPU1:
+6.36user 0.24system 0:06.77elapsed 97%CPU (0avgtext+0avgdata 1600maxresiden=
+t)k
+0inputs+0outputs (0major+399minor)pagefaults 0swaps
+
+So, CPU1 takes slightly longer in userspace, has less resident pages and le=
+ss minor faults which is rather odd.  Repeatedly running just one instance =
+gives different results each time... disabling virtual address space random=
+isation solves that:
+
+  echo 0 >/proc/sys/kernel/randomize_va_space
+
+which then gives me:
+
+CPU0: 1.00 520.20
+6.18user 0.20system 0:06.59elapsed 96%CPU (0avgtext+0avgdata 1700maxresiden=
+t)k
+0inputs+0outputs (0major+403minor)pagefaults 0swaps
+CPU1: 1.00 496.61
+6.46user 0.14system 0:06.77elapsed 97%CPU (0avgtext+0avgdata 1700maxresiden=
+t)k
+0inputs+0outputs (0major+403minor)pagefaults 0swaps
+
+CPU0: 1.00 521.10
+6.13user 0.21system 0:06.57elapsed 96%CPU (0avgtext+0avgdata 1700maxresiden=
+t)k
+0inputs+0outputs (0major+403minor)pagefaults 0swaps
+CPU1: 1.00 498.01
+6.40user 0.18system 0:06.75elapsed 97%CPU (0avgtext+0avgdata 1700maxresiden=
+t)k
+0inputs+0outputs (0major+403minor)pagefaults 0swaps
+
+which is rather more stable as far as resource usage goes between the two C=
+PUs, but still an asymmetry in the reported bandwidths and times.
+So, this has ruled out differences in VA layout.
+
+Now for the interesting bit... it's important to understand what and how st=
+uff is being measured.  Looking at the bw_mem.c and associated source code,=
+ it measures the performance against the wall clock, which includes everyth=
+ing that the system is doing on each particular CPU.
+So, if a CPU is interrupted by another thread wanting to run, it'll affect =
+the results.  Hence, it's best to run on an otherwise quiet system, eg, wit=
+hout an init daemon (eg, booted with init=3D/bin/sh on the kernel command l=
+ine - but note there won't be any job control, so ^C won't work!)
+
+However, continuing on...
+
+If I run bw_mem on just one CPU:
+
+CPU1: 1.00 2617.31
+5.74user 0.18system 0:06.03elapsed 98%CPU (0avgtext+0avgdata 1700maxresiden=
+t)k
+0inputs+0outputs (0major+403minor)pagefaults 0swaps
+
+Same number of iterations, same memory size, but notice that it appears to =
+be a lot faster reported by bw_mem, but the time taken is about the same.  =
+cpufreq comes to mind, but that's disabled on this system.
+
+So, it brings up a rather obvious question: what exactly is bw_mem measurin=
+g, and is it measuring it correctly?
+
+$ /usr/bin/time taskset -c 1 ./bw_mem -P 1 -N 1000 1M fwr
+1.00 2601.26
+5.80user 0.16system 0:06.06elapsed 98%CPU (0avgtext+0avgdata 1700maxresiden=
+t)k
+0inputs+0outputs (0major+403minor)pagefaults 0swaps
+$ /usr/bin/time ./bw_mem -P 2 -N 1000 1M fwr ^CCommand terminated by signal=
+ 2 5.54user 0.13system 1:12.20elapsed 7%CPU (0avgtext+0avgdata 1696maxresid=
+ent)k
+0inputs+0outputs (0major+365minor)pagefaults 0swaps
+
+so requesting a parallelism of 2 results in the program never seemingly end=
+ing in a reasonable period of time, which suggests a bug somewhere.
+Are we sure that bw_mem is actually working as intended?
+
+Maybe if Larry is reading this, he could share some thoughts.
+
+--
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps =
+up According to speedtest.net: 13Mbps down 490kbps up
+
+--_003_5F1105621EDF844291AF8B109E27C06D34C4C09APGSMSX109garcor_
+Content-Type: text/plain; name="memtest.c"
+Content-Description: memtest.c
+Content-Disposition: attachment; filename="memtest.c"; size=6496;
+	creation-date="Mon, 23 Jul 2018 03:37:34 GMT";
+	modification-date="Wed, 07 Mar 2018 21:50:52 GMT"
+Content-Transfer-Encoding: base64
+
+I2RlZmluZSBfR05VX1NPVVJDRQ0KI2luY2x1ZGUgPHN0ZGlvLmg+DQojaW5jbHVkZSA8c3RkbGli
+Lmg+DQojaW5jbHVkZSA8ZXJybm8uaD4NCiNpbmNsdWRlIDxtYWxsb2MuaD4NCiNpbmNsdWRlIDxw
+dGhyZWFkLmg+DQojaW5jbHVkZSA8c2VtYXBob3JlLmg+DQojaW5jbHVkZSA8c3RyaW5nLmg+DQoj
+aW5jbHVkZSA8c3lzL3RpbWUuaD4NCiNpbmNsdWRlIDxzY2hlZC5oPg0KI2luY2x1ZGUgPHN5cy9y
+ZXNvdXJjZS5oPg0KI2luY2x1ZGUgPHN5cy9tbWFuLmg+DQoNCiNkZWZpbmUgTUIJKDEwMjQqMTAy
+NCkNCiNkZWZpbmUgUVVBRF9DT1JFCTANCg0KIyBkZWZpbmUgaGFuZGxlX2Vycm9yX2VuKGVuLCBt
+c2cpIFwNCglkbyB7IGVycm5vID0gZW47IHBlcnJvcihtc2cpOyBleGl0KEVYSVRfRkFJTFVSRSk7
+IH0gd2hpbGUgKDApOw0KDQp1bnNpZ25lZCBsb25nIGxfbWVnYWJ5dGVzID0gMTsNCnVuc2lnbmVk
+IGxvbmcgbF9yZXBlYXQgPSAxMDAwOw0KDQp2b2lkIFNpbmdsZUZjdCh2b2lkKQ0Kew0KCXVuc2ln
+bmVkIGxvbmcgbF9zaXplID0gbF9tZWdhYnl0ZXMqTUI7DQoJdW5zaWduZWQgY2hhciAqIGxfbWVt
+QnVmZmVyID0gbWVtYWxpZ24oMzIsIGxfc2l6ZSk7DQoJaW50IGksajsNCgl1bnNpZ25lZCBsb25n
+IGxfdGltZTsNCglkb3VibGUgbF9kYXRhcmF0ZTsNCglkb3VibGUgdF9kYXRhcmF0ZSA9IDAuMDsN
+CglzdHJ1Y3QgdGltZXZhbCAgc3RhcnQsIGVuZDsNCg0KCXByaW50ZigiU2luZ2xlIFRocmVhZCAt
+IGRhdGEgc2l6ZSAlbGQgTUIsIHJ1bnMgPSAlbGRcbiIsIGxfbWVnYWJ5dGVzLCBsX3JlcGVhdCk7
+DQoJZm9yKGo9MDsgajwxMDsgaisrKQ0KCXsNCiAgICAgICAgICAgICAgICBnZXR0aW1lb2ZkYXko
+JnN0YXJ0LCBOVUxMKTsNCgkJZm9yKGk9MDsgaTxsX3JlcGVhdDsgaSsrKQ0KCQl7DQoJCQltZW1z
+ZXQobF9tZW1CdWZmZXIsIDB4NWEsIGxfc2l6ZSk7DQoJCX0NCiAgICAgICAgICAgICAgICBnZXR0
+aW1lb2ZkYXkoJmVuZCwgTlVMTCk7DQoNCgkJbF90aW1lID0gKGVuZC50dl9zZWMqMTAwMDAwMCAr
+IGVuZC50dl91c2VjKSAtIChzdGFydC50dl9zZWMqMTAwMDAwMCArIHN0YXJ0LnR2X3VzZWMpOw0K
+CQkvLyBwcmludGYoImVuZCB0aW1lID0gJXUuJTA2dSwgc3RhcnQgdGltZSA9ICV1LiUwNnVcbiIs
+IGVuZC50dl9zZWMsIGVuZC50dl91c2VjLCBzdGFydC50dl9zZWMsIHN0YXJ0LnR2X3VzZWMpOw0K
+CQkvLyBwcmludGYoImxfdGltZSA9ICV1XG4iLCBsX3RpbWUpOw0KCQlsX2RhdGFyYXRlID0gKGRv
+dWJsZSlsX3NpemUqKGRvdWJsZSlsX3JlcGVhdC8oZG91YmxlKWxfdGltZTsNCgkJcHJpbnRmKCJT
+aW5nbGUgVGhyZWFkIERhdGFyYXRlOiAlZiBNQi9zXG4iLCBsX2RhdGFyYXRlKTsNCgkJdF9kYXRh
+cmF0ZSArPSBsX2RhdGFyYXRlOw0KCX0NCglwcmludGYoIlNpbmdsZSBUaHJlYWQgQXZlcmFnZSBE
+YXRhcmF0ZTogJWYgTUIvc1xuIiwgdF9kYXRhcmF0ZS8xMC4wZik7DQoJZnJlZShsX21lbUJ1ZmZl
+cik7DQp9DQoNCnZvaWQgRmN0KHZvaWQpDQp7DQoJdW5zaWduZWQgbG9uZyBsX3NpemUgPSBsX21l
+Z2FieXRlcypNQjsNCgl1bnNpZ25lZCBjaGFyICogbF9tZW1CdWZmZXIgPSBtZW1hbGlnbigzMiwg
+bF9zaXplKTsNCgl1bnNpZ25lZCBsb25nIGxfdGltZTsNCglkb3VibGUgbF9kYXRhcmF0ZTsNCglk
+b3VibGUgdF9kYXRhcmF0ZSA9IDAuMDsNCglpbnQgaSxqOw0KCXN0cnVjdCB0aW1ldmFsICBzdGFy
+dCwgZW5kOw0KDQoJcHJpbnRmKCJUaHJlYWQgJXUgLSBkYXRhIHNpemUgJWxkIE1CLCBydW5zID0g
+JWxkXG4iLCAodW5zaWduZWQgaW50KXB0aHJlYWRfc2VsZigpLCBsX21lZ2FieXRlcywgbF9yZXBl
+YXQpOw0KCWZvcihqPTA7IGo8MTA7IGorKykNCgl7DQogICAgICAgICAgICAgICAgZ2V0dGltZW9m
+ZGF5KCZzdGFydCwgTlVMTCk7DQoJCWZvcihpPTA7IGk8bF9yZXBlYXQ7IGkrKykNCgkJew0KCQkJ
+bWVtc2V0KGxfbWVtQnVmZmVyLCAweDVhLCBsX3NpemUpOw0KCQl9DQogICAgICAgICAgICAgICAg
+Z2V0dGltZW9mZGF5KCZlbmQsIE5VTEwpOw0KCQlsX3RpbWUgPSAoZW5kLnR2X3NlYyoxMDAwMDAw
+ICsgZW5kLnR2X3VzZWMpIC0gKHN0YXJ0LnR2X3NlYyoxMDAwMDAwICsgc3RhcnQudHZfdXNlYyk7
+DQoJCWxfZGF0YXJhdGUgPSAoZG91YmxlKWxfc2l6ZSooZG91YmxlKWxfcmVwZWF0Lyhkb3VibGUp
+bF90aW1lOw0KCQlwcmludGYoIlRocmVhZCA6JXU6IERhdGFyYXRlOiAlbGYgTUIvc1xuIiwgKHVu
+c2lnbmVkIGludClwdGhyZWFkX3NlbGYoKSwgbF9kYXRhcmF0ZSk7DQoJCXRfZGF0YXJhdGUgKz0g
+bF9kYXRhcmF0ZTsNCg0KCX0NCg0KCXByaW50ZigiVGhyZWFkIDoldTogQXZlcmFnZSBEYXRhcmF0
+ZTogJWxmIE1CL3NcbiIsICh1bnNpZ25lZCBpbnQpcHRocmVhZF9zZWxmKCksIHRfZGF0YXJhdGUv
+MTAuMGYpOw0KCWZyZWUobF9tZW1CdWZmZXIpOw0KDQoJcHRocmVhZF9leGl0KCh2b2lkICopIDAp
+Ow0KfQ0KDQppbnQgbWFpbihpbnQgYXJnYywgY2hhcioqIGFyZ3YpIHsNCg0KCXB0aHJlYWRfdCB0
+MSwgdDIsIHQzLCB0NDsNCg0KCXB0aHJlYWRfYXR0cl90IHQxX2F0dHIsIHQyX2F0dHIsIHQzX2F0
+dHIsIHQ0X2F0dHI7DQoJY3B1X3NldF90IHQxX2NwdXNldCwgdDJfY3B1c2V0LCB0M19jcHVzZXQs
+IHQ0X2NwdXNldDsNCg0KCWludCBydjsNCglpbnQgYWZmaW5pdHkgPSAwOw0KCWludCBpYXJnID0g
+MTsNCg0KCXdoaWxlIChpYXJnIDwgYXJnYykgew0KCSAgICBpZiAoIXN0cmNtcChhcmd2W2lhcmdd
+LCItYTEiKSkgew0KICAgICAgICAgICAgICAgIGFmZmluaXR5ID0gMTsNCiAgICAgICAgICAgIH0N
+CiAgICAgICAgICAgIGVsc2UgaWYgKCFzdHJjbXAoYXJndltpYXJnXSwiLWEyIikpIHsNCiAgICAg
+ICAgICAgICAgICBhZmZpbml0eSA9IDI7DQogICAgICAgICAgICB9IA0KICAgICAgICAgICAgZWxz
+ZSBpZiAoIXN0cmNtcChhcmd2W2lhcmddLCItczEiKSkgew0KICAgICAgICAgICAgICAgIGxfbWVn
+YWJ5dGVzID0gMTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIGVsc2UgaWYgKCFzdHJjbXAo
+YXJndltpYXJnXSwiLXMyIikpIHsNCiAgICAgICAgICAgICAgICBsX21lZ2FieXRlcyA9IDEwOw0K
+ICAgICAgICAgICAgfQ0KICAgICAgICAgICAgZWxzZSBpZiAoIXN0cmNtcChhcmd2W2lhcmddLCIt
+czMiKSkgew0KICAgICAgICAgICAgICAgIGxfbWVnYWJ5dGVzID0gMTAwOw0KICAgICAgICAgICAg
+fQ0KICAgICAgICAgICAgZWxzZSB7DQogICAgICAgICAgICAgICAgcHJpbnRmKCJVc2FnZTogJXMg
+Wy1hMXwtYTIgXSBbLXMxfC1zMnwtczNdXG4iLGFyZ3ZbMF0pOw0KICAgICAgICAgICAgICAgIGV4
+aXQoMCk7DQogICAgICAgICAgICB9DQogICAgICAgICAgICBpYXJnKys7DQoJfQ0KCXByaW50Zigi
+PT09PT09PT09IFNpbmdsZSBUaHJlYWQgPT09PT09PT09XG5cbiIpOw0KDQoJU2luZ2xlRmN0KCk7
+DQoNCglwcmludGYoIlxuXG49PT09PT09PT0gTXVsdGkgVGhyZWFkID09PT09PT09PVxuXG4iKTsN
+Cg0KCXJ2ID0gcHRocmVhZF9hdHRyX2luaXQoJnQxX2F0dHIpOw0KCWlmIChydiAhPSAwKSBoYW5k
+bGVfZXJyb3JfZW4ocnYsInB0aHJlYWRfYXR0cl9pbml0IHRocmVhZCAjMSIpOw0KDQoJcnYgPSBw
+dGhyZWFkX2F0dHJfaW5pdCgmdDJfYXR0cik7DQoJaWYgKHJ2ICE9IDApIGhhbmRsZV9lcnJvcl9l
+bihydiwicHRocmVhZF9hdHRyX2luaXQgdGhyZWFkICMyIik7DQoNCglpZiAoYWZmaW5pdHkgPT0g
+MSkgDQoJew0KCSAgICBDUFVfWkVSTygmdDFfY3B1c2V0KTsNCgkgICAgQ1BVX1NFVCgwLCZ0MV9j
+cHVzZXQpOw0KCSAgICBydiA9IHB0aHJlYWRfYXR0cl9zZXRhZmZpbml0eV9ucCgmdDFfYXR0cixz
+aXplb2YodDFfY3B1c2V0KSwmdDFfY3B1c2V0KTsNCgkgICAgaWYgKHJ2ICE9IDApIGhhbmRsZV9l
+cnJvcl9lbihydiwicHRocmVhZF9hdHRyX3NldGFmZmluaXR5X25wIHRocmVhZCAjMSIpOw0KDQoJ
+ICAgIENQVV9aRVJPKCZ0Ml9jcHVzZXQpOw0KCSAgICBDUFVfU0VUKDEsJnQyX2NwdXNldCk7DQoJ
+ICAgIHJ2ID0gcHRocmVhZF9hdHRyX3NldGFmZmluaXR5X25wKCZ0Ml9hdHRyLHNpemVvZih0Ml9j
+cHVzZXQpLCZ0Ml9jcHVzZXQpOw0KCSAgICBpZiAocnYgIT0gMCkgaGFuZGxlX2Vycm9yX2VuKHJ2
+LCJwdGhyZWFkX2F0dHJfc2V0YWZmaW5pdHlfbnAgdGhyZWFkICMyIik7DQoJfQ0KCWVsc2UgaWYg
+KGFmZmluaXR5ID09IDIpIA0KCXsNCgkgICAgQ1BVX1pFUk8oJnQxX2NwdXNldCk7DQoJICAgIENQ
+VV9TRVQoMCwmdDFfY3B1c2V0KTsNCgkgICAgcnYgPSBwdGhyZWFkX2F0dHJfc2V0YWZmaW5pdHlf
+bnAoJnQxX2F0dHIsc2l6ZW9mKHQxX2NwdXNldCksJnQxX2NwdXNldCk7DQoJICAgIGlmIChydiAh
+PSAwKSBoYW5kbGVfZXJyb3JfZW4ocnYsInB0aHJlYWRfYXR0cl9zZXRhZmZpbml0eV9ucCB0aHJl
+YWQgIzEiKTsNCg0KCSAgICBDUFVfWkVSTygmdDJfY3B1c2V0KTsNCgkgICAgQ1BVX1NFVCgwLCZ0
+Ml9jcHVzZXQpOw0KCSAgICBydiA9IHB0aHJlYWRfYXR0cl9zZXRhZmZpbml0eV9ucCgmdDJfYXR0
+cixzaXplb2YodDJfY3B1c2V0KSwmdDJfY3B1c2V0KTsNCgkgICAgaWYgKHJ2ICE9IDApIGhhbmRs
+ZV9lcnJvcl9lbihydiwicHRocmVhZF9hdHRyX3NldGFmZmluaXR5X25wIHRocmVhZCAjMiIpOw0K
+CX0NCg0KCXJ2ID0gcHRocmVhZF9jcmVhdGUoJnQxLCAmdDFfYXR0ciwgKHZvaWQgKikmRmN0LCAo
+dm9pZCAqKU5VTEwpOw0KCWlmIChydiAhPSAwKSBoYW5kbGVfZXJyb3JfZW4ocnYsInB0aHJlYWRf
+Y3JlYXRlIHRocmVhZCAjMSIpOw0KDQoJcnYgPSBwdGhyZWFkX2NyZWF0ZSgmdDIsICZ0Ml9hdHRy
+LCAodm9pZCAqKSZGY3QsICh2b2lkICopTlVMTCk7DQoJaWYgKHJ2ICE9IDApIGhhbmRsZV9lcnJv
+cl9lbihydiwicHRocmVhZF9jcmVhdGUgdGhyZWFkICMyIik7DQoNCiNpZiBRVUFEX0NPUkUNCgly
+diA9IHB0aHJlYWRfYXR0cl9pbml0KCZ0M19hdHRyKTsNCglpZiAocnYgIT0gMCkgaGFuZGxlX2Vy
+cm9yX2VuKHJ2LCJwdGhyZWFkX2F0dHJfaW5pdCB0aHJlYWQgIzMiKTsNCg0KCXJ2ID0gcHRocmVh
+ZF9hdHRyX2luaXQoJnQ0X2F0dHIpOw0KCWlmIChydiAhPSAwKSBoYW5kbGVfZXJyb3JfZW4ocnYs
+InB0aHJlYWRfYXR0cl9pbml0IHRocmVhZCAjNCIpOw0KDQoJaWYgKGFmZmluaXR5ID09IDEpIA0K
+CXsNCgkgICAgQ1BVX1pFUk8oJnQzX2NwdXNldCk7DQoJICAgIENQVV9TRVQoMiwmdDNfY3B1c2V0
+KTsNCgkgICAgcnYgPSBwdGhyZWFkX2F0dHJfc2V0YWZmaW5pdHlfbnAoJnQzX2F0dHIsc2l6ZW9m
+KHQzX2NwdXNldCksJnQzX2NwdXNldCk7DQoJICAgIGlmIChydiAhPSAwKSBoYW5kbGVfZXJyb3Jf
+ZW4ocnYsInB0aHJlYWRfYXR0cl9zZXRhZmZpbml0eV9ucCB0aHJlYWQgIzMiKTsNCg0KCSAgICBD
+UFVfWkVSTygmdDRfY3B1c2V0KTsNCgkgICAgQ1BVX1NFVCgzLCZ0NF9jcHVzZXQpOw0KCSAgICBy
+diA9IHB0aHJlYWRfYXR0cl9zZXRhZmZpbml0eV9ucCgmdDRfYXR0cixzaXplb2YodDRfY3B1c2V0
+KSwmdDRfY3B1c2V0KTsNCgkgICAgaWYgKHJ2ICE9IDApIGhhbmRsZV9lcnJvcl9lbihydiwicHRo
+cmVhZF9hdHRyX3NldGFmZmluaXR5X25wIHRocmVhZCAjNCIpOw0KCX0NCgllbHNlIGlmIChhZmZp
+bml0eSA9PSAyKSANCgl7DQoJICAgIENQVV9aRVJPKCZ0M19jcHVzZXQpOw0KCSAgICBDUFVfU0VU
+KDAsJnQzX2NwdXNldCk7DQoJICAgIHJ2ID0gcHRocmVhZF9hdHRyX3NldGFmZmluaXR5X25wKCZ0
+M19hdHRyLHNpemVvZih0M19jcHVzZXQpLCZ0M19jcHVzZXQpOw0KCSAgICBpZiAocnYgIT0gMCkg
+aGFuZGxlX2Vycm9yX2VuKHJ2LCJwdGhyZWFkX2F0dHJfc2V0YWZmaW5pdHlfbnAgdGhyZWFkICMz
+Iik7DQoNCgkgICAgQ1BVX1pFUk8oJnQ0X2NwdXNldCk7DQoJICAgIENQVV9TRVQoMCwmdDRfY3B1
+c2V0KTsNCgkgICAgcnYgPSBwdGhyZWFkX2F0dHJfc2V0YWZmaW5pdHlfbnAoJnQ0X2F0dHIsc2l6
+ZW9mKHQ0X2NwdXNldCksJnQ0X2NwdXNldCk7DQoJICAgIGlmIChydiAhPSAwKSBoYW5kbGVfZXJy
+b3JfZW4ocnYsInB0aHJlYWRfYXR0cl9zZXRhZmZpbml0eV9ucCB0aHJlYWQgIzQiKTsNCgl9DQoN
+CglydiA9IHB0aHJlYWRfY3JlYXRlKCZ0MywgJnQzX2F0dHIsICh2b2lkICopJkZjdCwgKHZvaWQg
+KilOVUxMKTsNCglpZiAocnYgIT0gMCkgaGFuZGxlX2Vycm9yX2VuKHJ2LCJwdGhyZWFkX2NyZWF0
+ZSB0aHJlYWQgIzMiKTsNCg0KCXJ2ID0gcHRocmVhZF9jcmVhdGUoJnQ0LCAmdDRfYXR0ciwgKHZv
+aWQgKikmRmN0LCAodm9pZCAqKU5VTEwpOw0KCWlmIChydiAhPSAwKSBoYW5kbGVfZXJyb3JfZW4o
+cnYsInB0aHJlYWRfY3JlYXRlIHRocmVhZCAjNCIpOw0KDQojZW5kaWYNCg0KICAgIHB0aHJlYWRf
+am9pbih0MSwgTlVMTCk7DQogICAgcHRocmVhZF9qb2luKHQyLCBOVUxMKTsNCiNpZiBRVUFEX0NP
+UkUNCiAgICBwdGhyZWFkX2pvaW4odDMsIE5VTEwpOw0KICAgIHB0aHJlYWRfam9pbih0NCwgTlVM
+TCk7DQojZW5kaWYNCg0KCXByaW50ZigiRmluaXNoZWQhXG4iKTsNCglyZXR1cm4gMDsNCn0NCg==
+
+--_003_5F1105621EDF844291AF8B109E27C06D34C4C09APGSMSX109garcor_
+Content-Type: application/octet-stream; name="memtest_2"
+Content-Description: memtest_2
+Content-Disposition: attachment; filename="memtest_2"; size=10384;
+	creation-date="Mon, 23 Jul 2018 03:37:54 GMT";
+	modification-date="Mon, 23 Jul 2018 02:28:03 GMT"
+Content-Transfer-Encoding: base64
+
+f0VMRgEBAQAAAAAAAAAAAAIAKAABAAAACYcAADQAAAAEFQAAAgQABTQAIAAIACgAHwAcAAEAAHCg
+EQAAoJEAAKCRAAAIAAAACAAAAAQAAAAEAAAABgAAADQAAAA0gAAANIAAAAABAAAAAQAABQAAAAQA
+AAADAAAANAEAADSBAAA0gQAAGQAAABkAAAAEAAAAAQAAAAEAAAAAAAAAAIAAAACAAACsEQAArBEA
+AAUAAAAAgAAAAQAAAKwRAACsEQEArBEBAGgBAABsAQAABgAAAACAAAACAAAAuBEAALgRAQC4EQEA
+8AAAAPAAAAAGAAAABAAAAAQAAABQAQAAUIEAAFCBAABEAAAARAAAAAQAAAAEAAAAUeV0ZAAAAAAA
+AAAAAAAAAAAAAAAAAAAABgAAABAAAAAvbGliL2xkLWxpbnV4LWFybWhmLnNvLjMAAAAABAAAABAA
+AAABAAAAR05VAAAAAAADAAAAAQAAAAEAAAAEAAAAFAAAAAMAAABHTlUAK+l/qmisiiLgquFOnWu5
+Q8/5JcQRAAAAFwAAAA8AAAAJAAAACAAAABUAAAAKAAAAAAAAAA4AAAALAAAAEwAAAAcAAAAWAAAA
+AAAAAAUAAAARAAAAEgAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAACAAAAAAAAAAYAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAA0AAAAQAAAAAAAAAAAAAAAAAAAAFAAAAAQA
+AAAAAAAAAAAAAAAAAAAAAAAAEAEAACSGAAAAAAAAEgAAABEAAAAAAAAAAAAAACAAAADmAAAAMIYA
+AAAAAAASAAAA9QAAADyGAAAAAAAAEgAAACkBAABIhgAAAAAAABIAAAC2AAAAVIYAAAAAAAASAAAA
+2gAAAGCGAAAAAAAAEgAAAAMBAABshgAAAAAAABIAAACWAAAAeIYAAAAAAAASAAAA4QAAAISGAAAA
+AAAAEgAAABcBAACQhgAAAAAAABIAAAAuAQAAAAAAAAAAAAAgAAAAywAAAKiGAAAAAAAAEgAAAFsA
+AAC0hgAAAAAAABIAAAClAAAAwIYAAAAAAAASAAAAegAAAMyGAAAAAAAAEgAAAPwAAADYhgAAAAAA
+ABIAAADDAAAA5IYAAAAAAAASAAAAbQAAAPCGAAAAAAAAEgAAAC0AAAAAAAAAAAAAACAAAABBAAAA
+AAAAAAAAAAAgAAAA7wAAAPyGAAAAAAAAEgAAAABsaWJwdGhyZWFkLnNvLjAAX0lUTV9kZXJlZ2lz
+dGVyVE1DbG9uZVRhYmxlAF9Kdl9SZWdpc3RlckNsYXNzZXMAX0lUTV9yZWdpc3RlclRNQ2xvbmVU
+YWJsZQBwdGhyZWFkX2F0dHJfaW5pdABwdGhyZWFkX2pvaW4AcHRocmVhZF9hdHRyX3NldGFmZmlu
+aXR5X25wAHB0aHJlYWRfY3JlYXRlAF9fZXJybm9fbG9jYXRpb24AcHRocmVhZF9zZWxmAHB0aHJl
+YWRfZXhpdABsaWJjLnNvLjYAcGVycm9yAHB1dHMAbWVtYWxpZ24AYWJvcnQAcHJpbnRmAG1lbXNl
+dABnZXR0aW1lb2ZkYXkAc3RyY21wAF9fbGliY19zdGFydF9tYWluAGZyZWUAX19nbW9uX3N0YXJ0
+X18AR0xJQkNfMi40AAAAAAIAAAACAAIAAgADAAIAAgADAAIAAgAAAAIAAwADAAMAAgADAAMAAAAA
+AAIAAAABAAEAAQAAABAAAAAgAAAAFGlpDQAAAwA9AQAAAAAAAAEAAQDQAAAAEAAAAAAAAAAUaWkN
+AAACAD0BAAAAAAAAABMBABUMAAC0EgEAFgEAALgSAQAWAwAAvBIBABYEAADAEgEAFgUAAMQSAQAW
+BgAAyBIBABYHAADMEgEAFggAANASAQAWCQAA1BIBABYKAADYEgEAFgsAANwSAQAWDAAA4BIBABYN
+AADkEgEAFg4AAOgSAQAWDwAA7BIBABYQAADwEgEAFhEAAPQSAQAWEgAA+BIBABYTAAD8EgEAFhYA
+AAhALelKAADrCIC96ATgLeUE4J/lDuCP4AjwvuWIjAAAAMaP4gjKjOKI/LzlAMaP4gjKjOKA/Lzl
+AMaP4gjKjOJ4/LzlAMaP4gjKjOJw/LzlAMaP4gjKjOJo/LzlAMaP4gjKjOJg/LzlAMaP4gjKjOJY
+/LzlAMaP4gjKjOJQ/LzlAMaP4gjKjOJI/LzlAMaP4gjKjOJA/LzlAMaP4gjKjOI4/LzlAMaP4gjK
+jOIw/LzlAMaP4gjKjOIo/LzlAMaP4gjKjOIg/LzlAMaP4gjKjOIY/LzlAMaP4gjKjOIQ/LzlAMaP
+4gjKjOII/LzlAMaP4gjKjOIA/LzlAMaP4gjKjOL4+7zlT/AAC0/wAA4CvGpGBLQBtN/4EMBN+ATN
+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
+tCIaYEnyNBDA8gAA//cI7AEg//cq7Af1KHIH9R5zEEYZRkj2JRLA8gACACP/9wTsx/i0Atf4tDIA
+Kw7Q//cg7ANG1/i0IhpgSfJcEMDyAAD/9+brASD/9wjsB/Uncgf1FXMQRhlGSPYlEsDyAAIAI//3
+4uvH+LQC1/i0MgArDtD/9/7rA0bX+LQiGmBJ8ngQwPIAAP/3xOsBIP/35uvX+KAyGEYAIf/3BOzX
++JwyGEYAIf/3/utJ8pQQwPIAAP/3wusAIxhGB/Uwd71GgL0Avy3p+EMHRgxOiEaRRgtNfkT/93Dr
+fUR2G7YQCtAEPQAkATRV+AQ/OEZBRkpGmEe0QvbRvej4gwC/joIAAISCAABwRwC/CEAt6QiAvegB
+AAIAU2luZ2xlIFRocmVhZCAtIGRhdGEgc2l6ZSAlbGQgTUIsIHJ1bnMgPSAlbGQKAAAAU2luZ2xl
+IFRocmVhZCBEYXRhcmF0ZTogJWYgTUIvcwoAAAAAU2luZ2xlIFRocmVhZCBBdmVyYWdlIERhdGFy
+YXRlOiAlZiBNQi9zCgAAAABUaHJlYWQgJXUgLSBkYXRhIHNpemUgJWxkIE1CLCBydW5zID0gJWxk
+CgAAAFRocmVhZCA6JXU6IERhdGFyYXRlOiAlbGYgTUIvcwoAVGhyZWFkIDoldTogQXZlcmFnZSBE
+YXRhcmF0ZTogJWxmIE1CL3MKAC1hMQAtYTIALXMxAC1zMgAtczMAVXNhZ2U6ICVzIFstYTF8LWEy
+IF0gWy1zMXwtczJ8LXMzXQoAPT09PT09PT09IFNpbmdsZSBUaHJlYWQgPT09PT09PT09CgAACgo9
+PT09PT09PT0gTXVsdGkgVGhyZWFkID09PT09PT09PQoAcHRocmVhZF9hdHRyX2luaXQgdGhyZWFk
+ICMxAHB0aHJlYWRfYXR0cl9pbml0IHRocmVhZCAjMgBwdGhyZWFkX2F0dHJfc2V0YWZmaW5pdHlf
+bnAgdGhyZWFkICMxAAAAcHRocmVhZF9hdHRyX3NldGFmZmluaXR5X25wIHRocmVhZCAjMgAAAHB0
+aHJlYWRfY3JlYXRlIHRocmVhZCAjMQAAAABwdGhyZWFkX2NyZWF0ZSB0aHJlYWQgIzIAAAAARmlu
+aXNoZWQhAAAAaPX/fwEAAAAAAAAAxYcAAK2HAAAAAAAAAQAAAAEAAAABAAAA0AAAAAwAAAAEhgAA
+DQAAAFSPAAAZAAAArBEBABsAAAAEAAAAGgAAALARAQAcAAAABAAAAAQAAACUgQAABQAAAKyDAAAG
+AAAAPIIAAAoAAABHAQAACwAAABAAAAAVAAAAAAAAAAMAAACoEgEAAgAAAJgAAAAUAAAAEQAAABcA
+AABshQAAEQAAAGSFAAASAAAACAAAABMAAAAIAAAA/v//bySFAAD///9vAgAAAPD//2/0hAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAuBEBAAAAAAAAAAAA
+EIYAABCGAAAQhgAAEIYAABCGAAAQhgAAEIYAABCGAAAQhgAAEIYAABCGAAAQhgAAEIYAABCGAAAQ
+hgAAEIYAABCGAAAQhgAAEIYAAAAAAAAAAAAAAAAAAAEAAADoAwAAR0NDOiAoY3Jvc3N0b29sLU5H
+IGxpbmFyby0xLjEzLjEtNC44LTIwMTQuMDQgLSBMaW5hcm8gR0NDIDQuOC0yMDE0LjA0KSA0Ljgu
+MyAyMDE0MDQwMSAocHJlcmVsZWFzZSkAQTQAAABhZWFiaQABKgAAAAU3LUEABgoHQQgBCQIKBBIE
+EwEUARUBFwMYARkBGgIbAxwBIgEMAAAA/////wEAAnwODA0AIAAAAAAAAAAQjwAAQAAAAEIOIIMI
+hAeFBoYFhwSIA4kCjgEADAAAAAAAAABQjwAAAgAAAAAuc3ltdGFiAC5zdHJ0YWIALnNoc3RydGFi
+AC5pbnRlcnAALm5vdGUuQUJJLXRhZwAubm90ZS5nbnUuYnVpbGQtaWQALmhhc2gALmR5bnN5bQAu
+ZHluc3RyAC5nbnUudmVyc2lvbgAuZ251LnZlcnNpb25fcgAucmVsLmR5bgAucmVsLnBsdAAuaW5p
+dAAudGV4dAAuZmluaQAucm9kYXRhAC5BUk0uZXhpZHgALmVoX2ZyYW1lAC5pbml0X2FycmF5AC5m
+aW5pX2FycmF5AC5qY3IALmR5bmFtaWMALmdvdAAuZGF0YQAuYnNzAC5jb21tZW50AC5BUk0uYXR0
+cmlidXRlcwAuZGVidWdfZnJhbWUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAbAAAAAQAAAAIAAAA0gQAANAEAABkAAAAAAAAAAAAAAAEAAAAAAAAAIwAAAAcAAAACAAAA
+UIEAAFABAAAgAAAAAAAAAAAAAAAEAAAAAAAAADEAAAAHAAAAAgAAAHCBAABwAQAAJAAAAAAAAAAA
+AAAABAAAAAAAAABEAAAABQAAAAIAAACUgQAAlAEAAKgAAAAFAAAAAAAAAAQAAAAEAAAASgAAAAsA
+AAACAAAAPIIAADwCAABwAQAABgAAAAEAAAAEAAAAEAAAAFIAAAADAAAAAgAAAKyDAACsAwAARwEA
+AAAAAAAAAAAAAQAAAAAAAABaAAAA////bwIAAAD0hAAA9AQAAC4AAAAFAAAAAAAAAAIAAAACAAAA
+ZwAAAP7//28CAAAAJIUAACQFAABAAAAABgAAAAIAAAAEAAAAAAAAAHYAAAAJAAAAAgAAAGSFAABk
+BQAACAAAAAUAAAAAAAAABAAAAAgAAAB/AAAACQAAAAIAAABshQAAbAUAAJgAAAAFAAAADAAAAAQA
+AAAIAAAAiAAAAAEAAAAGAAAABIYAAAQGAAAMAAAAAAAAAAAAAAAEAAAAAAAAAIMAAAABAAAABgAA
+ABCGAAAQBgAA+AAAAAAAAAAAAAAABAAAAAQAAACOAAAAAQAAAAYAAAAIhwAACAcAAEwIAAAAAAAA
+AAAAAAQAAAAAAAAAlAAAAAEAAAAGAAAAVI8AAFQPAAAIAAAAAAAAAAAAAAAEAAAAAAAAAJoAAAAB
+AAAAAgAAAFyPAABcDwAARAIAAAAAAAAAAAAABAAAAAAAAACiAAAAAQAAcIIAAACgkQAAoBEAAAgA
+AAANAAAAAAAAAAQAAAAAAAAArQAAAAEAAAACAAAAqJEAAKgRAAAEAAAAAAAAAAAAAAAEAAAAAAAA
+ALcAAAAOAAAAAwAAAKwRAQCsEQAABAAAAAAAAAAAAAAABAAAAAAAAADDAAAADwAAAAMAAACwEQEA
+sBEAAAQAAAAAAAAAAAAAAAQAAAAAAAAAzwAAAAEAAAADAAAAtBEBALQRAAAEAAAAAAAAAAAAAAAE
+AAAAAAAAANQAAAAGAAAAAwAAALgRAQC4EQAA8AAAAAYAAAAAAAAABAAAAAgAAADdAAAAAQAAAAMA
+AACoEgEAqBIAAFwAAAAAAAAAAAAAAAQAAAAEAAAA4gAAAAEAAAADAAAABBMBAAQTAAAQAAAAAAAA
+AAAAAAAEAAAAAAAAAOgAAAAIAAAAAwAAABQTAQAUEwAABAAAAAAAAAAAAAAAAQAAAAAAAADtAAAA
+AQAAADAAAAAAAAAAFBMAAGMAAAAAAAAAAAAAAAEAAAABAAAA9gAAAAMAAHAAAAAAAAAAAHcTAAA1
+AAAAAAAAAAAAAAABAAAAAAAAAAYBAAABAAAAAAAAAAAAAACsEwAARAAAAAAAAAAAAAAABAAAAAAA
+AAARAAAAAwAAAAAAAAAAAAAA8BMAABMBAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAIAAAAAAAAAAAAA
+ANwZAAAQCAAAHgAAAFUAAAAEAAAAEAAAAAkAAAADAAAAAAAAAAAAAADsIQAApAYAAAAAAAAAAAAA
+AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADSBAAAAAAAAAwABAAAAAABQgQAAAAAAAAMAAgAA
+AAAAcIEAAAAAAAADAAMAAAAAAJSBAAAAAAAAAwAEAAAAAAA8ggAAAAAAAAMABQAAAAAArIMAAAAA
+AAADAAYAAAAAAPSEAAAAAAAAAwAHAAAAAAAkhQAAAAAAAAMACAAAAAAAZIUAAAAAAAADAAkAAAAA
+AGyFAAAAAAAAAwAKAAAAAAAEhgAAAAAAAAMACwAAAAAAEIYAAAAAAAADAAwAAAAAAAiHAAAAAAAA
+AwANAAAAAABUjwAAAAAAAAMADgAAAAAAXI8AAAAAAAADAA8AAAAAAKCRAAAAAAAAAwAQAAAAAACo
+kQAAAAAAAAMAEQAAAAAArBEBAAAAAAADABIAAAAAALARAQAAAAAAAwATAAAAAAC0EQEAAAAAAAMA
+FAAAAAAAuBEBAAAAAAADABUAAAAAAKgSAQAAAAAAAwAWAAAAAAAEEwEAAAAAAAMAFwAAAAAAFBMB
+AAAAAAADABgAAAAAAAAAAAAAAAAAAwAZAAAAAAAAAAAAAAAAAAMAGgAAAAAAAAAAAAAAAAADABsA
+AQAAAAAAAAAAAAAABADx/6kAAABQgQAAAAAAAAAAAgCsAAAAAAAAAAAAAAAEAPH/UQEAAAiHAAAA
+AAAAAAANAKkAAACgkQAAAAAAAAAAEACpAAAALIcAAAAAAAAAAA0AVAEAAAAAAAAAAAAABADx/6kA
+AABcjwAAAAAAAAAADwAAAAAAAAAAAAAAAAAEAPH/qQAAAAQTAQAAAAAAAAAXAFsBAAAAAAAAAAAA
+AAQA8f/2AQAAOIcAAAAAAAAAAA0A+QEAADiHAAAAAAAAAgANAKkAAABUhwAAAAAAAAAADQD2AQAA
+BIYAAAAAAAAAAAsA9gEAAFSPAAAAAAAAAAAOAAYCAAAAAAAAAAAAAAQA8f/2AQAADIYAAAAAAAAA
+AAsA9gEAAFiPAAAAAAAAAAAOAKECAAAAAAAAAAAAAAQA8f+sAgAAtBEBAAAAAAABABQAUQEAAFyH
+AAAAAAAAAAANALkCAABdhwAAAAAAAAIADQCpAAAAfIcAAAAAAAAAAA0AUQEAAICHAAAAAAAAAAAN
+AM4CAACBhwAAAAAAAAIADQCpAAAACBMBAAAAAAAAABcA4QIAAK2HAAAAAAAAAgANAPcCAAAUEwEA
+AQAAAAEAGACpAAAAsBEBAAAAAAAAABMABgMAALARAQAAAAAAAQATAC0DAADFhwAAAAAAAAIADQCp
+AAAArBEBAAAAAAAAABIAOQMAAKwRAQAAAAAAAQASAKkAAAAUEwEAAAAAAAAAGABYAwAAAAAAAAAA
+AAAEAPH/qQAAAAwTAQAAAAAAAAAXAKkAAABgjwAAAAAAAAAADwBRAQAA5IcAAAAAAAAAAA0AbwMA
+AAAAAAAAAAAABADx/1EBAAAQjwAAAAAAAAAADQCpAAAASI8AAAAAAAAAAA0AUQEAAFCPAAAAAAAA
+AAANAKkAAAAQAAAAAAAAAAAAGwChAgAAAAAAAAAAAAAEAPH/qQAAAKiRAAAAAAAAAAARAHoDAACo
+kQAAAAAAAAEAEQCpAAAAtBEBAAAAAAAAABQAiAMAALQRAQAAAAAAAQAUAAAAAAAAAAAAAAAAAAQA
+8f+UAwAAsBEBAAAAAAAAABIApQMAALgRAQAAAAAAAQAVAK4DAACsEQEAAAAAAAAAEgDBAwAAqBIB
+AAAAAAABABYA9gEAABCGAAAAAAAAAAAMAKkAAAAghgAAAAAAAAAADAD2AQAAJIYAAAAAAAAAAAwA
+1wMAAFGPAAACAAAAEgANAOcDAAAkhgAAAAAAABIAAAD5AwAAAAAAAAAAAAAgAAAAFQQAADCGAAAA
+AAAAEgAAACkEAAAEEwEAAAAAACAAFwA0BAAAPIYAAAAAAAASAAAARgQAABQTAQAAAAAAEAAYAFQE
+AABIhgAAAAAAABIAAABkBAAAVIYAAAAAAAASAAAAfAQAABgTAQAAAAAAEAAYAIcEAAAUEwEAAAAA
+ABAAFwCOBAAAVI8AAAAAAAASAA4AlAQAABgTAQAAAAAAEAAYAKAEAABghgAAAAAAABIAAACyBAAA
+bIYAAAAAAAASAAAAygQAAHiGAAAAAAAAEgAAAOQEAAAEEwEAAAAAABAAFwDxBAAAhIYAAAAAAAAS
+AAAAAQUAAJCGAAAAAAAAEgAAAB4FAAAMEwEABAAAABEAFwAqBQAAAAAAAAAAAAAgAAAAOQUAAAgT
+AQAAAAAAEQIXAEYFAACohgAAAAAAABIAAABWBQAAJYkAAFIBAAASAA0AWgUAAFyPAAAEAAAAEQAP
+AGkFAAARjwAAQAAAABIADQB5BQAAtIYAAAAAAAASAAAAlgUAAMCGAAAAAAAAEgAAALIFAADMhgAA
+AAAAABIAAADZBQAA2IYAAAAAAAASAAAA6wUAABgTAQAAAAAAEAAYAPAFAAAQEwEABAAAABEAFwD5
+BQAACYcAAAAAAAASAA0AAAYAABgTAQAAAAAAEAAYAAgGAADlhwAAQAEAABIADQASBgAAFBMBAAAA
+AAAQABgAHgYAAOSGAAAAAAAAEgAAADYGAAB5igAAlgQAABIADQA7BgAA8IYAAAAAAAASAAAAUwYA
+AAAAAAAAAAAAIAAAAGcGAAAUEwEAAAAAABECFwBzBgAAAAAAAAAAAAAgAAAAjQYAAPyGAAAAAAAA
+EgAAAJ4GAAAEhgAAAAAAABIACwAAL2hvbWUvYnVpbGQvemhlbnFpYW5nL2NyZWF0ZS1zeXNyb290
+L2Nyb3NzdG9vbC1uZy1saW5hcm8tMS4xMy4xLTQuOC0yMDE0LjAzL2J1aWxkcy9hcm0tbGludXgt
+Z251ZWFiaWhmLWxpbnV4Ly5idWlsZC9hcm0tbGludXgtZ251ZWFiaWhmL2J1aWxkL2J1aWxkLWxp
+YmMvY3N1L2FiaS1ub3RlLm8AJGQAL2hvbWUvYnVpbGQvemhlbnFpYW5nL2NyZWF0ZS1zeXNyb290
+L2Nyb3NzdG9vbC1uZy1saW5hcm8tMS4xMy4xLTQuOC0yMDE0LjAzL2J1aWxkcy9hcm0tbGludXgt
+Z251ZWFiaWhmLWxpbnV4Ly5idWlsZC9hcm0tbGludXgtZ251ZWFiaWhmL2J1aWxkL2J1aWxkLWxp
+YmMvY3N1L3N0YXJ0Lm8AJHQAaW5pdC5jAC9ob21lL29zYm94ZXMvRGVza3RvcC9saW5hcm9fdG9v
+bGNoYWluL2djYy1saW5hcm8tYXJtLWxpbnV4LWdudWVhYmloZi00LjgtMjAxNC4wNF9saW51eC9i
+aW4vLi4vYXJtLWxpbnV4LWdudWVhYmloZi9saWJjL3Vzci9saWIvYXJtLWxpbnV4LWdudWVhYmlo
+Zi9jcnRpLm8AJGEAY2FsbF93ZWFrX2ZuAC9ob21lL29zYm94ZXMvRGVza3RvcC9saW5hcm9fdG9v
+bGNoYWluL2djYy1saW5hcm8tYXJtLWxpbnV4LWdudWVhYmloZi00LjgtMjAxNC4wNF9saW51eC9i
+aW4vLi4vYXJtLWxpbnV4LWdudWVhYmloZi9saWJjL3Vzci9saWIvYXJtLWxpbnV4LWdudWVhYmlo
+Zi9jcnRuLm8AY3J0c3R1ZmYuYwBfX0pDUl9MSVNUX18AZGVyZWdpc3Rlcl90bV9jbG9uZXMAcmVn
+aXN0ZXJfdG1fY2xvbmVzAF9fZG9fZ2xvYmFsX2R0b3JzX2F1eABjb21wbGV0ZWQuODg4MQBfX2Rv
+X2dsb2JhbF9kdG9yc19hdXhfZmluaV9hcnJheV9lbnRyeQBmcmFtZV9kdW1teQBfX2ZyYW1lX2R1
+bW15X2luaXRfYXJyYXlfZW50cnkAbWVtdGVzdF9nZXR0aW1lb2ZkYXkuYwBlbGYtaW5pdC5jAF9f
+RlJBTUVfRU5EX18AX19KQ1JfRU5EX18AX19pbml0X2FycmF5X2VuZABfRFlOQU1JQwBfX2luaXRf
+YXJyYXlfc3RhcnQAX0dMT0JBTF9PRkZTRVRfVEFCTEVfAF9fbGliY19jc3VfZmluaQBzdHJjbXBA
+QEdMSUJDXzIuNABfSVRNX2RlcmVnaXN0ZXJUTUNsb25lVGFibGUAbWVtYWxpZ25AQEdMSUJDXzIu
+NABkYXRhX3N0YXJ0AHByaW50ZkBAR0xJQkNfMi40AF9fYnNzX3N0YXJ0X18AZnJlZUBAR0xJQkNf
+Mi40AHB0aHJlYWRfc2VsZkBAR0xJQkNfMi40AF9ic3NfZW5kX18AX2VkYXRhAF9maW5pAF9fYnNz
+X2VuZF9fAHBlcnJvckBAR0xJQkNfMi40AGdldHRpbWVvZmRheUBAR0xJQkNfMi40AHB0aHJlYWRf
+Y3JlYXRlQEBHTElCQ18yLjQAX19kYXRhX3N0YXJ0AHB1dHNAQEdMSUJDXzIuNABfX2xpYmNfc3Rh
+cnRfbWFpbkBAR0xJQkNfMi40AGxfbWVnYWJ5dGVzAF9fZ21vbl9zdGFydF9fAF9fZHNvX2hhbmRs
+ZQBleGl0QEBHTElCQ18yLjQARmN0AF9JT19zdGRpbl91c2VkAF9fbGliY19jc3VfaW5pdABwdGhy
+ZWFkX2F0dHJfaW5pdEBAR0xJQkNfMi40AF9fZXJybm9fbG9jYXRpb25AQEdMSUJDXzIuNABwdGhy
+ZWFkX2F0dHJfc2V0YWZmaW5pdHlfbnBAQEdMSUJDXzIuNABtZW1zZXRAQEdMSUJDXzIuNABfZW5k
+AGxfcmVwZWF0AF9zdGFydABfX2VuZF9fAFNpbmdsZUZjdABfX2Jzc19zdGFydABwdGhyZWFkX2V4
+aXRAQEdMSUJDXzIuNABtYWluAHB0aHJlYWRfam9pbkBAR0xJQkNfMi40AF9Kdl9SZWdpc3RlckNs
+YXNzZXMAX19UTUNfRU5EX18AX0lUTV9yZWdpc3RlclRNQ2xvbmVUYWJsZQBhYm9ydEBAR0xJQkNf
+Mi40AF9pbml0AA==
+
+--_003_5F1105621EDF844291AF8B109E27C06D34C4C09APGSMSX109garcor_--
