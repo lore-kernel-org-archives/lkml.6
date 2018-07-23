@@ -2,169 +2,85 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850E5ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11A2ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381E820880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381E820880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C53320685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:48:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C53320685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389911AbeGWNs4 (ORCPT
+        id S2389807AbeGWNsg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:48:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52062 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389885AbeGWNsz (ORCPT
+        Mon, 23 Jul 2018 09:48:36 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51215 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389782AbeGWNse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:55 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F0FCBDB;
-        Mon, 23 Jul 2018 12:47:49 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.4 104/107] ubi: Be more paranoid while seaching for the most recent Fastmap
-Date:   Mon, 23 Jul 2018 14:42:38 +0200
-Message-Id: <20180723122418.722288656@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
-References: <20180723122413.003644357@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Mon, 23 Jul 2018 09:48:34 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fhaFM-0006uC-4L; Mon, 23 Jul 2018 14:47:28 +0200
+Message-ID: <1532350048.3163.101.camel@pengutronix.de>
+Subject: Re: [PATCH/RFT 2/6] i2c: imx: use open drain for recovery GPIO
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+Date:   Mon, 23 Jul 2018 14:47:28 +0200
+In-Reply-To: <20180713210920.3648-3-wsa+renesas@sang-engineering.com>
+References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
+         <20180713210920.3648-3-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Am Freitag, den 13.07.2018, 23:09 +0200 schrieb Wolfram Sang:
+> I2C is open drain, so set up the GPIO accordingly.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-------------------
+I don't think this matters on any of the i.MX platforms, as the GPIO
+pin configuration (including open-drain) is only taken from the DT
+pinctrl, with the GPIO driver not being able to change any of those. On
+ the flipside this results in a near zero probability of regressions.
+;)
 
-From: Richard Weinberger <richard@nod.at>
+As this is obviously right even if it doesn't have any effect on
+current software:
 
-commit 74f2c6e9a47cf4e508198c8594626cc82906a13d upstream.
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-Since PEB erasure is asynchornous it can happen that there is
-more than one Fastmap on the MTD. This is fine because the attach logic
-will pick the Fastmap data structure with the highest sequence number.
-
-On a not so well configured MTD stack spurious ECC errors are common.
-Causes can be different, bad hardware, wrong operating modes, etc...
-If the most current Fastmap renders bad due to ECC errors UBI might
-pick an older Fastmap to attach from.
-While this can only happen on an anyway broken setup it will show
-completely different sympthoms and makes finding the root cause much
-more difficult.
-So, be debug friendly and fall back to scanning mode of we're facing
-an ECC error while scanning for Fastmap.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/mtd/ubi/attach.c |   28 ++++++++++++++++++++++++----
- drivers/mtd/ubi/ubi.h    |    3 +++
- 2 files changed, 27 insertions(+), 4 deletions(-)
-
---- a/drivers/mtd/ubi/attach.c
-+++ b/drivers/mtd/ubi/attach.c
-@@ -856,13 +856,15 @@ static bool vol_ignored(int vol_id)
-  * @ubi: UBI device description object
-  * @ai: attaching information
-  * @pnum: the physical eraseblock number
-+ * @fast: true if we're scanning for a Fastmap
-  *
-  * This function reads UBI headers of PEB @pnum, checks them, and adds
-  * information about this PEB to the corresponding list or RB-tree in the
-  * "attaching info" structure. Returns zero if the physical eraseblock was
-  * successfully handled and a negative error code in case of failure.
-  */
--static int scan_peb(struct ubi_device *ubi, struct ubi_attach_info *ai, int pnum)
-+static int scan_peb(struct ubi_device *ubi, struct ubi_attach_info *ai,
-+		    int pnum, bool fast)
- {
- 	long long ec;
- 	int err, bitflips = 0, vol_id = -1, ec_err = 0;
-@@ -980,6 +982,20 @@ static int scan_peb(struct ubi_device *u
- 			 */
- 			ai->maybe_bad_peb_count += 1;
- 	case UBI_IO_BAD_HDR:
-+			/*
-+			 * If we're facing a bad VID header we have to drop *all*
-+			 * Fastmap data structures we find. The most recent Fastmap
-+			 * could be bad and therefore there is a chance that we attach
-+			 * from an old one. On a fine MTD stack a PEB must not render
-+			 * bad all of a sudden, but the reality is different.
-+			 * So, let's be paranoid and help finding the root cause by
-+			 * falling back to scanning mode instead of attaching with a
-+			 * bad EBA table and cause data corruption which is hard to
-+			 * analyze.
-+			 */
-+			if (fast)
-+				ai->force_full_scan = 1;
-+
- 		if (ec_err)
- 			/*
- 			 * Both headers are corrupted. There is a possibility
-@@ -1293,7 +1309,7 @@ static int scan_all(struct ubi_device *u
- 		cond_resched();
- 
- 		dbg_gen("process PEB %d", pnum);
--		err = scan_peb(ubi, ai, pnum);
-+		err = scan_peb(ubi, ai, pnum, false);
- 		if (err < 0)
- 			goto out_vidh;
- 	}
-@@ -1407,7 +1423,7 @@ static int scan_fast(struct ubi_device *
- 		cond_resched();
- 
- 		dbg_gen("process PEB %d", pnum);
--		err = scan_peb(ubi, scan_ai, pnum);
-+		err = scan_peb(ubi, scan_ai, pnum, true);
- 		if (err < 0)
- 			goto out_vidh;
- 	}
-@@ -1415,7 +1431,11 @@ static int scan_fast(struct ubi_device *
- 	ubi_free_vid_hdr(ubi, vidh);
- 	kfree(ech);
- 
--	err = ubi_scan_fastmap(ubi, *ai, scan_ai);
-+	if (scan_ai->force_full_scan)
-+		err = UBI_NO_FASTMAP;
-+	else
-+		err = ubi_scan_fastmap(ubi, *ai, scan_ai);
-+
- 	if (err) {
- 		/*
- 		 * Didn't attach via fastmap, do a full scan but reuse what
---- a/drivers/mtd/ubi/ubi.h
-+++ b/drivers/mtd/ubi/ubi.h
-@@ -711,6 +711,8 @@ struct ubi_ainf_volume {
-  * @vols_found: number of volumes found
-  * @highest_vol_id: highest volume ID
-  * @is_empty: flag indicating whether the MTD device is empty or not
-+ * @force_full_scan: flag indicating whether we need to do a full scan and drop
-+		     all existing Fastmap data structures
-  * @min_ec: lowest erase counter value
-  * @max_ec: highest erase counter value
-  * @max_sqnum: highest sequence number value
-@@ -738,6 +740,7 @@ struct ubi_attach_info {
- 	int vols_found;
- 	int highest_vol_id;
- 	int is_empty;
-+	int force_full_scan;
- 	int min_ec;
- 	int max_ec;
- 	unsigned long long max_sqnum;
-
-
+> ---
+>  drivers/i2c/busses/i2c-imx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> index 0207e194f84b..3e23ee26c55c 100644
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -1010,7 +1010,7 @@ static int i2c_imx_init_recovery_info(struct imx_i2c_struct *i2c_imx,
+> >  	i2c_imx->pinctrl_pins_gpio = pinctrl_lookup_state(i2c_imx->pinctrl,
+> >  			"gpio");
+> >  	rinfo->sda_gpiod = devm_gpiod_get(&pdev->dev, "sda", GPIOD_IN);
+> > -	rinfo->scl_gpiod = devm_gpiod_get(&pdev->dev, "scl", GPIOD_OUT_HIGH);
+> > +	rinfo->scl_gpiod = devm_gpiod_get(&pdev->dev, "scl", GPIOD_OUT_HIGH_OPEN_DRAIN);
+>  
+> >  	if (PTR_ERR(rinfo->sda_gpiod) == -EPROBE_DEFER ||
+> >  	    PTR_ERR(rinfo->scl_gpiod) == -EPROBE_DEFER) {
