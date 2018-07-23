@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02959ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6C5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADBE320854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADBE320854
+	by mail.kernel.org (Postfix) with ESMTP id 718DF20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718DF20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388934AbeGWN3h (ORCPT
+        id S2388946AbeGWN3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:29:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45676 "EHLO
+        Mon, 23 Jul 2018 09:29:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45692 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387998AbeGWN3h (ORCPT
+        with ESMTP id S2388086AbeGWN3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:29:37 -0400
+        Mon, 23 Jul 2018 09:29:39 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51C97C03;
-        Mon, 23 Jul 2018 12:28:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A922C03;
+        Mon, 23 Jul 2018 12:28:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>, stable@kernel.org,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 01/44] scsi: sd_zbc: Fix variable type and bogus comment
-Date:   Mon, 23 Jul 2018 14:24:37 +0200
-Message-Id: <20180723122437.522666618@linuxfoundation.org>
+        stable@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.14 10/44] ARCv2: [plat-hsdk]: Save accl reg pair by default
+Date:   Mon, 23 Jul 2018 14:24:46 +0200
+Message-Id: <20180723122437.939085285@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
 References: <20180723122437.447870153@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,49 +49,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Vineet Gupta <vgupta@synopsys.com>
 
-commit f13cff6c25bd8986627365346d123312ee7baa78 upstream.
+commit af1fc5baa724c63ce1733dfcf855bad5ef6078e3 upstream.
 
-Fix the description of sd_zbc_check_zone_size() to correctly explain that
-the returned value is a number of device blocks, not bytes.  Additionally,
-the 32 bits "ret" variable used in this function may truncate the 64 bits
-zone_blocks variable value upon return. To fix this, change "ret" type to
-s64.
+This manifsted as strace segfaulting on HSDK because gcc was targetting
+the accumulator registers as GPRs, which kernek was not saving/restoring
+by default.
 
-Fixes: ccce20fc79 ("sd_zbc: Avoid that resetting a zone fails sporadically")
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: stable@kernel.org
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: stable@vger.kernel.org   #4.14+
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd_zbc.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arc/Kconfig           |    2 +-
+ arch/arc/plat-hsdk/Kconfig |    2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/sd_zbc.c
-+++ b/drivers/scsi/sd_zbc.c
-@@ -430,7 +430,8 @@ static int sd_zbc_check_capacity(struct
-  * Check that all zones of the device are equal. The last zone can however
-  * be smaller. The zone size must also be a power of two number of LBAs.
-  *
-- * Returns the zone size in bytes upon success or an error code upon failure.
-+ * Returns the zone size in number of blocks upon success or an error code
-+ * upon failure.
-  */
- static s64 sd_zbc_check_zone_size(struct scsi_disk *sdkp)
- {
-@@ -440,7 +441,7 @@ static s64 sd_zbc_check_zone_size(struct
- 	unsigned char *rec;
- 	unsigned int buf_len;
- 	unsigned int list_length;
--	int ret;
-+	s64 ret;
- 	u8 same;
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -408,7 +408,7 @@ config ARC_HAS_DIV_REM
  
- 	/* Get a buffer */
+ config ARC_HAS_ACCL_REGS
+ 	bool "Reg Pair ACCL:ACCH (FPU and/or MPY > 6)"
+-	default n
++	default y
+ 	help
+ 	  Depending on the configuration, CPU can contain accumulator reg-pair
+ 	  (also referred to as r58:r59). These can also be used by gcc as GPR so
+--- a/arch/arc/plat-hsdk/Kconfig
++++ b/arch/arc/plat-hsdk/Kconfig
+@@ -7,5 +7,7 @@
+ 
+ menuconfig ARC_SOC_HSDK
+ 	bool "ARC HS Development Kit SOC"
++	depends on ISA_ARCV2
++	select ARC_HAS_ACCL_REGS
+ 	select CLK_HSDK
+ 	select RESET_HSDK
 
 
