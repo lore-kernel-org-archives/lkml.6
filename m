@@ -6,55 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA93ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B9AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41902204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C35A7204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:26:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GBNeYlVE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41902204EC
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IVwy7TG7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C35A7204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388205AbeGWW3z (ORCPT
+        id S2388259AbeGWW37 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:29:55 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36939 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388105AbeGWW3z (ORCPT
+        Mon, 23 Jul 2018 18:29:59 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35467 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388216AbeGWW36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:29:55 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j8-v6so1510362lfb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:26:48 -0700 (PDT)
+        Mon, 23 Jul 2018 18:29:58 -0400
+Received: by mail-lf1-f65.google.com with SMTP id f18-v6so1507577lfc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:26:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l4LZ2U7rCEEjVXipIBEDgn965M2WR4pXhOWhJdcMIeo=;
-        b=GBNeYlVENYZiHWnt4aY8IzsOzLR9HSRvoBzEiwGOHgpolGg/NnrzK7A5dI/wtj37ap
-         +yjgzdWg6qH56SXMG2ypTRmMf3JPYGdnzQo+akCZ4kmKlmoxnGWhq1yIVrdZ+9AGUQ8G
-         R2/Xp4K6X6cOdrfJSLvI847laDmYLVqhyzyHU=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=yBVsh6ID+PsAyzotZUt/Xk6nH1yT1g8qCa+S1iZw298=;
+        b=IVwy7TG7ftfrIEfjwsj/F+Zs7DcjFkdRg1aF2AsiZa4KZsvpJDZSPdOcTxk03eWroy
+         pb/wrVUTfAhSh4txJ2bPUixtqVFctE+Zpi3bW8eUsKd871JtGej67yrPqafOVaczI1cu
+         PuGW6rDhsb7B6byBwmfOaBXQXR4hRoCJq+3Kw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l4LZ2U7rCEEjVXipIBEDgn965M2WR4pXhOWhJdcMIeo=;
-        b=pDlQ8mW2alxzbh9xjGQLZPvzFl+e/VCAZDcVCTor7SicYiCPIxed/ry2eDLuiVSMB2
-         YiqF7NwtWuMrgPMW1sUGLH+7Cq77IbI9bDiq9nLhgyHshlXu4STaGQqMFZ3ZhmdcFwAH
-         1lAM6MEHrc9Jp15l1qN4MDvg4uS+ASnS7QQRNyMd6eIAsvzLV+cl6Tz5sqX3TsX5/iYm
-         SVz9GrS5FDGyWQCz0A72m8aAI0OTvv9vTHbqx+zR5rXz7IiFwWcE8I/Cd/bqcxWlPUlP
-         kVl+7NNYrYbqANajjSrM29AtL9+sxjkm8Sg3M9NTQSo8rbXrU9OrT6yj5uYkachPvg5t
-         30Fw==
-X-Gm-Message-State: AOUpUlFJMulYOSlPBShGEX05PMJmJvQVx+6K37OVJZqyuIyOpWFF7FNy
-        A1K8jKudp0Cqi5Pe5JLWGLZgfg==
-X-Google-Smtp-Source: AAOMgpcMcr/S2BxJ2v50cqVehWahEK0h2w+dQvZ97A28hF+kEl5wDH+bqPnRwdf0RBRly+pqxpO6+w==
-X-Received: by 2002:a19:ebd7:: with SMTP id f84-v6mr8071049lfk.18.1532381207840;
-        Mon, 23 Jul 2018 14:26:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=yBVsh6ID+PsAyzotZUt/Xk6nH1yT1g8qCa+S1iZw298=;
+        b=fxTPdjTE2Xq9NU9mR7cnx6EQ4bareZG6nAV3DiOPYb/6BSbvSIZPMEDvdibSk5rC9l
+         /zv6Dw+WhSNiaDvrS5Bm/oHZSqjbeQywi5agVdgEYXEj5nKWJbK4i/m01Q8DINZTAzTl
+         3M46HtAsVQ1dDZlu+1tb8c9CEStNdAQW2doismcoc+US4q0HMmRoPZ2gRDxAJlTtVGDG
+         GJhXqW+Bj8+OH9j88cvt/9/RPDTjfu74Ya20FaNG7grc5eMPAoCmTCBUDMJ5/WY83TG/
+         BMAahLE30CJP48TRkMrxg+I7Gaeua2gpm8INRKPGXVYYtvUykJI07iDTSvuIZWQAzzah
+         O5dQ==
+X-Gm-Message-State: AOUpUlFsCxNKHpkHi2/5sk23EEEKwtdMyvGf4h0/RJN1B1QdmolOyNO6
+        DW6MS+z7kM/lCazen6OFNi9lDQ==
+X-Google-Smtp-Source: AAOMgpfalo0LzRLn7LvteCFTVY+3qn6I3fqTjT1wD/o5S+kNzlxo0TTz0hKOggo4XkMjgDgS0wBwow==
+X-Received: by 2002:a19:9fc8:: with SMTP id i191-v6mr7992213lfe.79.1532381210944;
+        Mon, 23 Jul 2018 14:26:50 -0700 (PDT)
 Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id q4-v6sm1990435ljh.36.2018.07.23.14.26.46
+        by smtp.gmail.com with ESMTPSA id q4-v6sm1990435ljh.36.2018.07.23.14.26.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 14:26:46 -0700 (PDT)
+        Mon, 23 Jul 2018 14:26:50 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     davem@davemloft.net, grygorii.strashko@ti.com
 Cc:     corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
@@ -64,57 +63,84 @@ Cc:     corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
         ilias.apalodimas@linaro.org, p-varis@ti.com, spatton@ti.com,
         francois.ozog@linaro.org, yogeshs@ti.com, nsekhar@ti.com,
         andrew@lunn.ch, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v5 net-next 0/6] net: ethernet: ti: cpsw: add MQPRIO and CBS Qdisc offload
-Date:   Tue, 24 Jul 2018 00:26:28 +0300
-Message-Id: <20180723212634.3219-1-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v5 net-next 2/6] net: ethernet: ti: cpdma: fit rated channels in backward order
+Date:   Tue, 24 Jul 2018 00:26:30 +0300
+Message-Id: <20180723212634.3219-3-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180723212634.3219-1-ivan.khoronzhuk@linaro.org>
+References: <20180723212634.3219-1-ivan.khoronzhuk@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds MQPRIO and CBS Qdisc offload for TI cpsw driver.
-It potentially can be used in audio video bridging (AVB) and time
-sensitive networking (TSN).
+According to TRM tx rated channels should be in 7..0 order,
+so correct it.
 
-Patchset was tested on AM572x EVM and BBB boards. Last patch from this
-series adds detailed description of configuration with examples. For
-consistency reasons, in role of talker and listener, tools from
-patchset "TSN: Add qdisc based config interface for CBS" were used and
-can be seen here: https://www.spinics.net/lists/netdev/msg460869.html
+Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
+ drivers/net/ethernet/ti/davinci_cpdma.c | 31 ++++++++++++-------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-Based on net-next/master
-
-v5..v4:
-- corrected typo of "am57xx" board name, no functional changes
-
-v4..v3:
- - nothing, just rebase
-
-v3..v2:
- - corrected typo of "shaper" word, no functional changes
-
-v2..v1:
- - changed name cpsw.txt on ti-cpsw.txt
- - changed name cpsw_set_tc() on cpsw_set_mqprio()
-
-Ivan Khoronzhuk (6):
-  net: ethernet: ti: cpsw: use cpdma channels in backward order for txq
-  net: ethernet: ti: cpdma: fit rated channels in backward order
-  net: ethernet: ti: cpsw: add MQPRIO Qdisc offload
-  net: ethernet: ti: cpsw: add CBS Qdisc offload
-  net: ethernet: ti: cpsw: restore shaper configuration while down/up
-  Documentation: networking: cpsw: add MQPRIO & CBS offload examples
-
- Documentation/networking/ti-cpsw.txt    | 540 ++++++++++++++++++++++++
- drivers/net/ethernet/ti/cpsw.c          | 364 +++++++++++++++-
- drivers/net/ethernet/ti/davinci_cpdma.c |  31 +-
- 3 files changed, 913 insertions(+), 22 deletions(-)
- create mode 100644 Documentation/networking/ti-cpsw.txt
-
+diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
+index 4f1267477aa4..4236dcdd5634 100644
+--- a/drivers/net/ethernet/ti/davinci_cpdma.c
++++ b/drivers/net/ethernet/ti/davinci_cpdma.c
+@@ -406,37 +406,36 @@ static int cpdma_chan_fit_rate(struct cpdma_chan *ch, u32 rate,
+ 	struct cpdma_chan *chan;
+ 	u32 old_rate = ch->rate;
+ 	u32 new_rmask = 0;
+-	int rlim = 1;
++	int rlim = 0;
+ 	int i;
+ 
+-	*prio_mode = 0;
+ 	for (i = tx_chan_num(0); i < tx_chan_num(CPDMA_MAX_CHANNELS); i++) {
+ 		chan = ctlr->channels[i];
+-		if (!chan) {
+-			rlim = 0;
++		if (!chan)
+ 			continue;
+-		}
+ 
+ 		if (chan == ch)
+ 			chan->rate = rate;
+ 
+ 		if (chan->rate) {
+-			if (rlim) {
+-				new_rmask |= chan->mask;
+-			} else {
+-				ch->rate = old_rate;
+-				dev_err(ctlr->dev, "Prev channel of %dch is not rate limited\n",
+-					chan->chan_num);
+-				return -EINVAL;
+-			}
+-		} else {
+-			*prio_mode = 1;
+-			rlim = 0;
++			rlim = 1;
++			new_rmask |= chan->mask;
++			continue;
+ 		}
++
++		if (rlim)
++			goto err;
+ 	}
+ 
+ 	*rmask = new_rmask;
++	*prio_mode = rlim;
+ 	return 0;
++
++err:
++	ch->rate = old_rate;
++	dev_err(ctlr->dev, "Upper cpdma ch%d is not rate limited\n",
++		chan->chan_num);
++	return -EINVAL;
+ }
+ 
+ static u32 cpdma_chan_set_factors(struct cpdma_ctlr *ctlr,
 -- 
 2.17.1
 
