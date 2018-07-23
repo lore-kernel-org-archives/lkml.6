@@ -2,84 +2,83 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE61CC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A516AC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610242086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:31:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610242086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F5FA2075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 02:39:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F5FA2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387710AbeGWDal (ORCPT
+        id S2387725AbeGWDiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 22 Jul 2018 23:30:41 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9665 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731243AbeGWDal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Jul 2018 23:30:41 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 770C19CCD6888;
-        Mon, 23 Jul 2018 10:31:45 +0800 (CST)
-Received: from linux-work.huawei.com (10.67.189.174) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.382.0; Mon, 23 Jul 2018 10:31:39 +0800
-From:   nixiaoming <nixiaoming@huawei.com>
-To:     <bfields@fieldses.org>, <jlayton@kernel.org>,
-        <chuck.lever@oracle.com>, <trondmy@hammerspace.com>,
-        <andros@netapp.com>
-CC:     <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <nixiaoming@huawei.com>
-Subject: [PATCH v2] fs/nfsd: Delete invalid assignment statements in nfsd4_decode_exchange_id
-Date:   Mon, 23 Jul 2018 09:57:11 +0800
-Message-ID: <20180723015711.27961-1-nixiaoming@huawei.com>
-X-Mailer: git-send-email 2.10.1
+        Sun, 22 Jul 2018 23:38:17 -0400
+Received: from nautica.notk.org ([91.121.71.147]:52276 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731059AbeGWDiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Jul 2018 23:38:17 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 180E1C009; Mon, 23 Jul 2018 04:39:22 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 04:39:07 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Tomas Bortoli <tomasbortoli@gmail.com>
+Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
+        jiangyiwen@huawei.com, davem@davemloft.net,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+Subject: Re: [PATCH] [V9fs-developer] [PATCH] /net/9p/trans_fd.c: fix
+ race-condition by flushing workqueue before the kfree()
+Message-ID: <20180723023907.GA24608@nautica>
+References: <20180720092730.27104-1-tomasbortoli@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.174]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180720092730.27104-1-tomasbortoli@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-READ_BUF(8);
-dummy = be32_to_cpup(p++);
-dummy = be32_to_cpup(p++);
-...
-READ_BUF(4);
-dummy = be32_to_cpup(p++);
+Tomas Bortoli wrote on Fri, Jul 20, 2018:
+> The patch adds the flush in p9_mux_poll_stop() as it the function used by
+> p9_conn_destroy(), in turn called by p9_fd_close() to stop the async
+> polling associated with the data regarding the connection.
+> 
+> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+> Reported-by: syzbot+39749ed7d9ef6dfb23f6@syzkaller.appspotmail.com
 
-Assigning value to "dummy" here, but that stored value
-is overwritten before it can be used.
-At the same time READ_BUF() will re-update the pointer p.
+Looks good to me, I'm taking this patch.
 
-delete invalid assignment statements
+If I had to say something, try to aim for slightly shorter subject lines
+if possible :)
 
-Signed-off-by: nixiaoming <nixiaoming@huawei.com>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Trond Myklebust <trondmy@hammerspace.com>
----
- fs/nfsd/nfs4xdr.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index a96843c..375ad4b 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -1392,8 +1392,6 @@ nfsd4_decode_exchange_id(struct nfsd4_compoundargs *argp,
- 
- 		/* ssp_window and ssp_num_gss_handles */
- 		READ_BUF(8);
--		dummy = be32_to_cpup(p++);
--		dummy = be32_to_cpup(p++);
- 		break;
- 	default:
- 		goto xdr_error;
+> ---
+> As shown by Syzbot, it is possible to provoke a race between p9_fd_close() 
+> and p9_poll_workfn() that is called to take care of the async read/write work
+> to do. To make sure p9_fd_close() frees "trans" when it is not used anymore, 
+> it has to explicitly flush p9_poll_work before the kfree().
+> 
+>  net/9p/trans_fd.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+> index bf459ee0feab..a64b01c56e30 100644
+> --- a/net/9p/trans_fd.c
+> +++ b/net/9p/trans_fd.c
+> @@ -185,6 +185,8 @@ static void p9_mux_poll_stop(struct p9_conn *m)
+>  	spin_lock_irqsave(&p9_poll_lock, flags);
+>  	list_del_init(&m->poll_pending_link);
+>  	spin_unlock_irqrestore(&p9_poll_lock, flags);
+> +
+> +	flush_work(&p9_poll_work);
+>  }
+>  
+>  /**
 -- 
-2.10.1
-
+Dominique Martinet
