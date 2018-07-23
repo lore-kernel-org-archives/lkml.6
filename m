@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13977ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EE8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD4220854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD4220854
+	by mail.kernel.org (Postfix) with ESMTP id 0FAB020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:27:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FAB020854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388705AbeGWN2q (ORCPT
+        id S2388718AbeGWN2t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:28:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45508 "EHLO
+        Mon, 23 Jul 2018 09:28:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45520 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387940AbeGWN2p (ORCPT
+        with ESMTP id S2387940AbeGWN2t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:28:45 -0400
+        Mon, 23 Jul 2018 09:28:49 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82EE5BDB;
-        Mon, 23 Jul 2018 12:27:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D37A6BDB;
+        Mon, 23 Jul 2018 12:27:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
+        stable@vger.kernel.org, Igor Russkikh <igor.russkikh@aquantia.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 54/63] hv_netvsc: Fix napi reschedule while receive completion is busy
-Date:   Mon, 23 Jul 2018 14:25:00 +0200
-Message-Id: <20180723122448.399067759@linuxfoundation.org>
+Subject: [PATCH 4.17 55/63] net: aquantia: vlan unicast address list correct handling
+Date:   Mon, 23 Jul 2018 14:25:01 +0200
+Message-Id: <20180723122448.438674974@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -52,59 +50,194 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+From: Igor Russkikh <igor.russkikh@aquantia.com>
 
-[ Upstream commit 6b81b193b83e87da1ea13217d684b54fccf8ee8a ]
+[ Upstream commit 94b3b542303f3055c326df74ef144a8a790d7d7f ]
 
-If out ring is full temporarily and receive completion cannot go out,
-we may still need to reschedule napi if certain conditions are met.
-Otherwise the napi poll might be stopped forever, and cause network
-disconnect.
+Setting up macvlan/macvtap networks over atlantic NIC results
+in no traffic over these networks because ndo_set_rx_mode did
+not listed UC MACs as registered in unicast filter.
 
-Fixes: 7426b1a51803 ("netvsc: optimize receive completions")
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Here we fix that taking into account maximum number of UC
+filters supported by hardware. If more than MAX addresses were
+registered, we just enable promisc  and/or allmulti to pass
+the traffic in.
+
+We also remove MULTICAST_ADDRESS_MAX constant from aq_cfg since
+thats not a configurable parameter at all.
+
+Fixes: b21f502 ("net:ethernet:aquantia: Fix for multicast filter handling.")
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_cfg.h           |    2 
+ drivers/net/ethernet/aquantia/atlantic/aq_hw.h            |    4 -
+ drivers/net/ethernet/aquantia/atlantic/aq_main.c          |   11 ---
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.c           |   47 ++++++++------
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.h           |    2 
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c |    2 
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c |    4 -
+ 7 files changed, 36 insertions(+), 36 deletions(-)
 
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -1291,6 +1291,7 @@ int netvsc_poll(struct napi_struct *napi
- 	struct hv_device *device = netvsc_channel_to_device(channel);
- 	struct net_device *ndev = hv_get_drvdata(device);
- 	int work_done = 0;
-+	int ret;
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_cfg.h
+@@ -63,8 +63,6 @@
  
- 	/* If starting a new interval */
- 	if (!nvchan->desc)
-@@ -1302,16 +1303,18 @@ int netvsc_poll(struct napi_struct *napi
- 		nvchan->desc = hv_pkt_iter_next(channel, nvchan->desc);
+ #define AQ_CFG_NAPI_WEIGHT     64U
+ 
+-#define AQ_CFG_MULTICAST_ADDRESS_MAX     32U
+-
+ /*#define AQ_CFG_MAC_ADDR_PERMANENT {0x30, 0x0E, 0xE3, 0x12, 0x34, 0x56}*/
+ 
+ #define AQ_NIC_FC_OFF    0U
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
+@@ -98,6 +98,8 @@ struct aq_stats_s {
+ #define AQ_HW_MEDIA_TYPE_TP    1U
+ #define AQ_HW_MEDIA_TYPE_FIBRE 2U
+ 
++#define AQ_HW_MULTICAST_ADDRESS_MAX     32U
++
+ struct aq_hw_s {
+ 	atomic_t flags;
+ 	u8 rbl_enabled:1;
+@@ -177,7 +179,7 @@ struct aq_hw_ops {
+ 				    unsigned int packet_filter);
+ 
+ 	int (*hw_multicast_list_set)(struct aq_hw_s *self,
+-				     u8 ar_mac[AQ_CFG_MULTICAST_ADDRESS_MAX]
++				     u8 ar_mac[AQ_HW_MULTICAST_ADDRESS_MAX]
+ 				     [ETH_ALEN],
+ 				     u32 count);
+ 
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_main.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
+@@ -135,17 +135,10 @@ err_exit:
+ static void aq_ndev_set_multicast_settings(struct net_device *ndev)
+ {
+ 	struct aq_nic_s *aq_nic = netdev_priv(ndev);
+-	int err = 0;
+ 
+-	err = aq_nic_set_packet_filter(aq_nic, ndev->flags);
+-	if (err < 0)
+-		return;
++	aq_nic_set_packet_filter(aq_nic, ndev->flags);
+ 
+-	if (netdev_mc_count(ndev)) {
+-		err = aq_nic_set_multicast_list(aq_nic, ndev);
+-		if (err < 0)
+-			return;
+-	}
++	aq_nic_set_multicast_list(aq_nic, ndev);
+ }
+ 
+ static const struct net_device_ops aq_ndev_ops = {
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+@@ -563,34 +563,41 @@ err_exit:
+ 
+ int aq_nic_set_multicast_list(struct aq_nic_s *self, struct net_device *ndev)
+ {
++	unsigned int packet_filter = self->packet_filter;
+ 	struct netdev_hw_addr *ha = NULL;
+ 	unsigned int i = 0U;
+ 
+-	self->mc_list.count = 0U;
+-
+-	netdev_for_each_mc_addr(ha, ndev) {
+-		ether_addr_copy(self->mc_list.ar[i++], ha->addr);
+-		++self->mc_list.count;
++	self->mc_list.count = 0;
++	if (netdev_uc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
++		packet_filter |= IFF_PROMISC;
++	} else {
++		netdev_for_each_uc_addr(ha, ndev) {
++			ether_addr_copy(self->mc_list.ar[i++], ha->addr);
+ 
+-		if (i >= AQ_CFG_MULTICAST_ADDRESS_MAX)
+-			break;
++			if (i >= AQ_HW_MULTICAST_ADDRESS_MAX)
++				break;
++		}
  	}
  
--	/* If send of pending receive completions suceeded
--	 *   and did not exhaust NAPI budget this time
--	 *   and not doing busy poll
-+	/* Send any pending receive completions */
-+	ret = send_recv_completions(ndev, net_device, nvchan);
+-	if (i >= AQ_CFG_MULTICAST_ADDRESS_MAX) {
+-		/* Number of filters is too big: atlantic does not support this.
+-		 * Force all multi filter to support this.
+-		 * With this we disable all UC filters and setup "all pass"
+-		 * multicast mask
+-		 */
+-		self->packet_filter |= IFF_ALLMULTI;
+-		self->aq_nic_cfg.mc_list_count = 0;
+-		return self->aq_hw_ops->hw_packet_filter_set(self->aq_hw,
+-							     self->packet_filter);
++	if (i + netdev_mc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
++		packet_filter |= IFF_ALLMULTI;
+ 	} else {
+-		return self->aq_hw_ops->hw_multicast_list_set(self->aq_hw,
+-						    self->mc_list.ar,
+-						    self->mc_list.count);
++		netdev_for_each_mc_addr(ha, ndev) {
++			ether_addr_copy(self->mc_list.ar[i++], ha->addr);
 +
-+	/* If it did not exhaust NAPI budget this time
-+	 *  and not doing busy poll
- 	 * then re-enable host interrupts
--	 *     and reschedule if ring is not empty.
-+	 *  and reschedule if ring is not empty
-+	 *   or sending receive completion failed.
- 	 */
--	if (send_recv_completions(ndev, net_device, nvchan) == 0 &&
--	    work_done < budget &&
-+	if (work_done < budget &&
- 	    napi_complete_done(napi, work_done) &&
--	    hv_end_read(&channel->inbound) &&
-+	    (ret || hv_end_read(&channel->inbound)) &&
- 	    napi_schedule_prep(napi)) {
- 		hv_begin_read(&channel->inbound);
- 		__napi_schedule(napi);
++			if (i >= AQ_HW_MULTICAST_ADDRESS_MAX)
++				break;
++		}
++	}
++
++	if (i > 0 && i < AQ_HW_MULTICAST_ADDRESS_MAX) {
++		packet_filter |= IFF_MULTICAST;
++		self->mc_list.count = i;
++		self->aq_hw_ops->hw_multicast_list_set(self->aq_hw,
++						       self->mc_list.ar,
++						       self->mc_list.count);
+ 	}
++	return aq_nic_set_packet_filter(self, packet_filter);
+ }
+ 
+ int aq_nic_set_mtu(struct aq_nic_s *self, int new_mtu)
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
+@@ -75,7 +75,7 @@ struct aq_nic_s {
+ 	struct aq_hw_link_status_s link_status;
+ 	struct {
+ 		u32 count;
+-		u8 ar[AQ_CFG_MULTICAST_ADDRESS_MAX][ETH_ALEN];
++		u8 ar[AQ_HW_MULTICAST_ADDRESS_MAX][ETH_ALEN];
+ 	} mc_list;
+ 
+ 	struct pci_dev *pdev;
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
+@@ -765,7 +765,7 @@ static int hw_atl_a0_hw_packet_filter_se
+ 
+ static int hw_atl_a0_hw_multicast_list_set(struct aq_hw_s *self,
+ 					   u8 ar_mac
+-					   [AQ_CFG_MULTICAST_ADDRESS_MAX]
++					   [AQ_HW_MULTICAST_ADDRESS_MAX]
+ 					   [ETH_ALEN],
+ 					   u32 count)
+ {
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+@@ -784,7 +784,7 @@ static int hw_atl_b0_hw_packet_filter_se
+ 
+ static int hw_atl_b0_hw_multicast_list_set(struct aq_hw_s *self,
+ 					   u8 ar_mac
+-					   [AQ_CFG_MULTICAST_ADDRESS_MAX]
++					   [AQ_HW_MULTICAST_ADDRESS_MAX]
+ 					   [ETH_ALEN],
+ 					   u32 count)
+ {
+@@ -812,7 +812,7 @@ static int hw_atl_b0_hw_multicast_list_s
+ 
+ 		hw_atl_rpfl2_uc_flr_en_set(self,
+ 					   (self->aq_nic_cfg->is_mc_list_enabled),
+-				    HW_ATL_B0_MAC_MIN + i);
++					   HW_ATL_B0_MAC_MIN + i);
+ 	}
+ 
+ 	err = aq_hw_err_from_flags(self);
 
 
