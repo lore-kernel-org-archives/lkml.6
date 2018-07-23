@@ -2,162 +2,98 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C2AECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF482ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B4D720685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:40:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B4D720685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 9496E20685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 13:41:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9496E20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388351AbeGWOl4 (ORCPT
+        id S2388383AbeGWOmS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 10:41:56 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:45710 "EHLO cstnet.cn"
+        Mon, 23 Jul 2018 10:42:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47564 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388097AbeGWOlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 10:41:39 -0400
-Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-01 (Coremail) with SMTP id qwCowAD3_5sl1lVbkm7cEA--.63S2;
-        Mon, 23 Jul 2018 21:21:10 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-To:     tglx@linutronix.de, bp@alien8.de, thomas.lendacky@amd.com,
-        mingo@redhat.com, hpa@zytor.com, peterz@infradead.org,
-        tony.luck@intel.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com, rjw@rjwysocki.net,
-        lenb@kernel.org, viresh.kumar@linaro.org, mchehab@kernel.org,
-        trenn@suse.com, shuah@kernel.org, JBeulich@suse.com, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        kvm@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: [PATCH v2 00/17] Add support for Hygon Dhyana Family 18h processor
-Date:   Mon, 23 Jul 2018 21:20:20 +0800
-Message-Id: <1532352037-7151-1-git-send-email-puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: qwCowAD3_5sl1lVbkm7cEA--.63S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAryUAr4rCFy3Ar1fuFykZrb_yoWrWFW5pF
-        Z2yrZ5JF4ru3sxA3ZrCr1kZFyfA3WUuFW7Kw1UW3sxX3WYq347Xrn7J3WxXw1DZrn5GF1S
-        yFyS9F48WFykJFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkKb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4
-        A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8Jr0_Cr
-        1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kI
-        c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-        v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkG
-        c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-        0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Gr0_
-        Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU5hmRU
-        UUUUU==
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        id S2387956AbeGWOmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 10:42:18 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D4A6A40241D7;
+        Mon, 23 Jul 2018 13:40:58 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DDE72166BA0;
+        Mon, 23 Jul 2018 13:40:58 +0000 (UTC)
+Subject: Re: [PATCH v2] locking/rwsem: Take read lock immediate if queue empty
+ with no writer
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Mark Ray <mark.ray@hpe.com>,
+        Joe Mario <jmario@redhat.com>,
+        Scott Norton <scott.norton@hpe.com>
+References: <1531506653-5244-1-git-send-email-longman@redhat.com>
+ <20180718161639.GT2494@hirez.programming.kicks-ass.net>
+ <d9a125b2-3421-9c11-ff30-78812e42edc5@redhat.com>
+ <20180723040423.hntq6dzzzf3sagfb@linux-r8p5>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <9722ffd0-9adb-9ad1-a05b-25869c0b2e60@redhat.com>
+Date:   Mon, 23 Jul 2018 09:40:58 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180723040423.hntq6dzzzf3sagfb@linux-r8p5>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 23 Jul 2018 13:40:58 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 23 Jul 2018 13:40:58 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a new x86 CPU Vendor, Chengdu Haiguang IC Design Co., Ltd (Hygon)
-is a Joint Venture between AMD and Haiguang Information Technology Co.,
-Ltd., and aims at providing high performance x86 processor for China
-server market.
+On 07/23/2018 12:04 AM, Davidlohr Bueso wrote:
+> On Wed, 18 Jul 2018, Waiman Long wrote:
+>
+>> The key here is that we don't want other incoming readers to observe
+>> that there are waiters in the wait queue and hence have to go into the
+>> slowpath until the single waiter in the queue is sure that it probably
+>> will need to go to sleep if there is writer.
+>>
+>> With a constant stream of incoming readers, a major portion of them will
+>> observe the a negative count and be serialized to enter the slowpath.
+>> There are certainly other readers that do not observe the negative count
+>> in the in between period after one reader clear the count in the unlock
+>> path and a waiter set the count to negative again. Those readers can go
+>> ahead and do the read in parallel. But it is the serialized readers that
+>> cause the performance loss and the observation of spinlock contention in
+>> the perf output.
+>
+> This makes sense and seems feasible in that the optimization is done with
+> the wait_lock held.
+>
+>>
+>> It is the constant stream of incoming readers that sustain the spinlock
+>> queue and the repeated clearing and negative setting of the count.
+>
+> This would not affect optimistic spinners that haven't yet arrived at the
+> waitqueue phase because the lock is anonymously owned, so they won't spin
+> in the first place, right?
 
-The first generation Hygon's processor(Dhyana) originates from AMD
-technology and shares most of the architecture with AMD's family 17h,
-but with different CPU Vendor ID("HygonGenuine")/PCIE Device Vendor ID
-(0x1D94)/Family series number (Family 18h).
+The reader fastpath would have incremented the active count before
+entering the slowpath. The spinning writer, seeing a non-zero active
+count, will not attempt to steal the lock until the reader decrement the
+count and set the waiting bias in one atomic op. Nothing will happen
+before that.
 
-To enable the support of Linux kernel to Hygon's CPU, we added a new
-vendor type (X86_VENDOR_HYGON, with value of 9) in arch/x86/include/
-asm/processor.h, and shared most of kernel support codes with AMD
-family 17h.
-
-This patch series have been applied and tested successfully in Hygon's
-Dhyana SoC silicon. Also tested on AMD's EPYC (Family 17h) processor
-works fine and makes no harm to existing codes.
-
-
-v1->v2:
-  - Rebased on 4.18-rc6 and tested against it.
-  - Split the patchset to small series of patches.
-  - Rework patch descriptions.
-  - Create a separated arch/x86/kernel/cpu/hygon.c for Dhyana CPU
-    initialization to reduce long-term maintenance effort.
-
-
-Pu Wen (17):
-  x86/cpu: create Dhyana init file and register new cpu_dev to system
-  x86/cache: get Dhyana cache size/leaves and setup cache cpumap
-  x86/mtrr: get MTRR number and support TOP_MEM2
-  x86/smpboot: smp init nodelay and no flush caches before sleep
-  x86/perfctr: return perf counter and event selection bit offset
-  x86/nops: init ideal_nops for Hygon
-  x86/pci: add Hygon PCI vendor and northbridge support
-  x86/apic: add modern APIC support for Hygon
-  x86/bugs: add lfence mitigation to spectre v2 and no meltdown for
-    Hygon
-  x86/events: enable Hygon support to PMU infrastructure
-  x86/mce: enable Hygon support to MCE infrastructure
-  x86/kvm: enable Hygon support to KVM infrastructure
-  x86/xen: enable Hygon support to Xen
-  driver/acpi: enable Hygon support to ACPI driver
-  driver/cpufreq: enable Hygon support to cpufreq driver
-  driver/edac: enable Hygon support to AMD64 EDAC driver
-  tools/cpupower: enable Hygon support to cpupower tool
-
- MAINTAINERS                                        |   6 +
- arch/x86/Kconfig                                   |   2 +-
- arch/x86/Kconfig.cpu                               |  13 +
- arch/x86/events/amd/core.c                         |   4 +
- arch/x86/events/amd/uncore.c                       |  12 +-
- arch/x86/events/core.c                             |   4 +
- arch/x86/include/asm/cacheinfo.h                   |   1 +
- arch/x86/include/asm/kvm_emulate.h                 |   4 +
- arch/x86/include/asm/mce.h                         |   5 +
- arch/x86/include/asm/nospec-branch.h               |   4 +-
- arch/x86/include/asm/processor.h                   |   3 +-
- arch/x86/include/asm/virtext.h                     |   5 +-
- arch/x86/kernel/alternative.c                      |   4 +
- arch/x86/kernel/amd_nb.c                           |  54 ++-
- arch/x86/kernel/apic/apic.c                        |  13 +-
- arch/x86/kernel/cpu/Makefile                       |   1 +
- arch/x86/kernel/cpu/bugs.c                         |  28 +-
- arch/x86/kernel/cpu/cacheinfo.c                    |  31 +-
- arch/x86/kernel/cpu/common.c                       |   1 +
- arch/x86/kernel/cpu/cpu.h                          |   1 +
- arch/x86/kernel/cpu/hygon.c                        | 404 +++++++++++++++++++++
- arch/x86/kernel/cpu/mcheck/mce-severity.c          |   3 +-
- arch/x86/kernel/cpu/mcheck/mce.c                   |  20 +-
- arch/x86/kernel/cpu/mtrr/cleanup.c                 |   3 +-
- arch/x86/kernel/cpu/mtrr/generic.c                 |   3 +-
- arch/x86/kernel/cpu/mtrr/mtrr.c                    |   2 +-
- arch/x86/kernel/cpu/perfctr-watchdog.c             |   8 +
- arch/x86/kernel/smpboot.c                          |   4 +-
- arch/x86/kvm/emulate.c                             |  11 +-
- arch/x86/pci/amd_bus.c                             |   6 +-
- arch/x86/xen/pmu.c                                 |  12 +-
- drivers/acpi/acpi_pad.c                            |   1 +
- drivers/acpi/processor_idle.c                      |   1 +
- drivers/cpufreq/acpi-cpufreq.c                     |  11 +
- drivers/cpufreq/amd_freq_sensitivity.c             |   9 +-
- drivers/edac/amd64_edac.c                          |  20 +-
- drivers/edac/amd64_edac.h                          |   4 +
- drivers/edac/mce_amd.c                             |   4 +-
- include/linux/pci_ids.h                            |   2 +
- tools/power/cpupower/utils/cpufreq-info.c          |   6 +-
- tools/power/cpupower/utils/helpers/amd.c           |   2 +-
- tools/power/cpupower/utils/helpers/cpuid.c         |   8 +-
- tools/power/cpupower/utils/helpers/helpers.h       |   2 +-
- tools/power/cpupower/utils/helpers/misc.c          |   2 +-
- .../cpupower/utils/idle_monitor/mperf_monitor.c    |   3 +-
- 45 files changed, 682 insertions(+), 65 deletions(-)
- create mode 100644 arch/x86/kernel/cpu/hygon.c
-
--- 
-2.7.4
+-Longman
 
