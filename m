@@ -2,110 +2,129 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97242ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03668ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5492520875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:55:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5492520875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id ACD6820875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:57:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD6820875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388502AbeGWN4H (ORCPT
+        id S2388099AbeGWN6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:56:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45076 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388088AbeGWN0f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:26:35 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01757BD4;
-        Mon, 23 Jul 2018 12:25:38 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@intel.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Stephane Eranian <eranian@google.com>
-Subject: [PATCH 4.17 11/63] x86/events/intel/ds: Fix bts_interrupt_threshold alignment
-Date:   Mon, 23 Jul 2018 14:24:17 +0200
-Message-Id: <20180723122446.802635463@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
-References: <20180723122446.351334162@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 23 Jul 2018 09:58:25 -0400
+Received: from nautica.notk.org ([91.121.71.147]:59933 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387847AbeGWN6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 09:58:25 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 1B6C8C009; Mon, 23 Jul 2018 14:57:16 +0200 (CEST)
+Date:   Mon, 23 Jul 2018 14:57:01 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Tomas Bortoli <tomasbortoli@gmail.com>
+Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
+        jiangyiwen@huawei.com, davem@davemloft.net,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+Subject: Re: [PATCH] net/p9/trans_fd.c: fix double list_del()
+Message-ID: <20180723125701.GA17971@nautica>
+References: <20180723121902.20201-1-tomasbortoli@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180723121902.20201-1-tomasbortoli@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Tomas Bortoli wrote on Mon, Jul 23, 2018:
+> A double list_del(&req->req_list) is possible in p9_fd_cancel() as
+> shown by Syzbot. To prevent it we have to ensure that we have the
+> client->lock when deleting the list. Furthermore, we have to update
+> the status of the request before releasing the lock, to prevent the
+> race.
 
-------------------
+Nice, so no need to change the list_del to list_del_init!
 
-From: Hugh Dickins <hughd@google.com>
+I still have a nitpick on the last moved unlock, but it's mostly
+aesthetic - the change looks much better to me now.
 
-commit 2c991e408df6a407476dbc453d725e1e975479e7 upstream.
+(Since that will require a v2 I'll be evil and go further than Yiwen
+about the commit message: let it breathe a bit! :) I think a line break
+before "furthermore" for example will make it easier to read)
 
-Markus reported that BTS is sporadically missing the tail of the trace
-in the perf_event data buffer: [decode error (1): instruction overflow]
-shown in GDB; and bisected it to the conversion of debug_store to PTI.
+> 
+> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+> Reported-by: syzbot+735d926e9d1317c3310c@syzkaller.appspotmail.com
+> ---
+>  net/9p/trans_fd.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+> index a64b01c56e30..370c6c69a05c 100644
+> --- a/net/9p/trans_fd.c
+> +++ b/net/9p/trans_fd.c
+> @@ -199,15 +199,14 @@ static void p9_mux_poll_stop(struct p9_conn *m)
+>  static void p9_conn_cancel(struct p9_conn *m, int err)
+>  {
+>  	struct p9_req_t *req, *rtmp;
+> -	unsigned long flags;
+>  	LIST_HEAD(cancel_list);
+>  
+>  	p9_debug(P9_DEBUG_ERROR, "mux %p err %d\n", m, err);
+>  
+> -	spin_lock_irqsave(&m->client->lock, flags);
+> +	spin_lock(&m->client->lock);
+>  
+>  	if (m->err) {
+> -		spin_unlock_irqrestore(&m->client->lock, flags);
+> +		spin_unlock(&m->client->lock);
+>  		return;
+>  	}
+>  
+> @@ -219,7 +218,6 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
+>  	list_for_each_entry_safe(req, rtmp, &m->unsent_req_list, req_list) {
+>  		list_move(&req->req_list, &cancel_list);
+>  	}
+> -	spin_unlock_irqrestore(&m->client->lock, flags);
+>  
+>  	list_for_each_entry_safe(req, rtmp, &cancel_list, req_list) {
+>  		p9_debug(P9_DEBUG_ERROR, "call back req %p\n", req);
+> @@ -228,6 +226,7 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
+>  			req->t_err = err;
+>  		p9_client_cb(m->client, req, REQ_STATUS_ERROR);
+>  	}
+> +	spin_unlock(&m->client->lock);
+>  }
+>  
+>  static __poll_t
+> @@ -370,12 +369,12 @@ static void p9_read_work(struct work_struct *work)
+>  		if (m->req->status != REQ_STATUS_ERROR)
+>  			status = REQ_STATUS_RCVD;
+>  		list_del(&m->req->req_list);
+> -		spin_unlock(&m->client->lock);
+>  		p9_client_cb(m->client, m->req, status);
+>  		m->rc.sdata = NULL;
+>  		m->rc.offset = 0;
+>  		m->rc.capacity = 0;
+>  		m->req = NULL;
+> +		spin_unlock(&m->client->lock);
 
-A little "optimization" crept into alloc_bts_buffer(), which mistakenly
-placed bts_interrupt_threshold away from the 24-byte record boundary.
-Intel SDM Vol 3B 17.4.9 says "This address must point to an offset from
-the BTS buffer base that is a multiple of the BTS record size."
+It took me a while to understand why you extended this lock despite
+having just read the commit message, I'd suggest:
+ - moving the spin_unlock to right after p9_client_cb (afterall that's
+what we want, the m->rc and m->req don't need to be protected)
+ - add a comment before p9_client_cb saying something like 'updates
+req->status' or try to explain why it needs to be locked here but other
+transports don't need such a lock (they're not dependant on req->status
+like this)
 
-Revert "max" from a byte count to a record count, to calculate the
-bts_interrupt_threshold correctly: which turns out to fix problem seen.
-
-Fixes: c1961a4631da ("x86/events/intel/ds: Map debug buffers in cpu_entry_area")
-Reported-and-tested-by: Markus T Metzger <markus.t.metzger@intel.com>
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: stable@vger.kernel.org # v4.14+
-Link: https://lkml.kernel.org/r/alpine.LSU.2.11.1807141248290.1614@eggly.anvils
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/events/intel/ds.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -408,9 +408,11 @@ static int alloc_bts_buffer(int cpu)
- 	ds->bts_buffer_base = (unsigned long) cea;
- 	ds_update_cea(cea, buffer, BTS_BUFFER_SIZE, PAGE_KERNEL);
- 	ds->bts_index = ds->bts_buffer_base;
--	max = BTS_RECORD_SIZE * (BTS_BUFFER_SIZE / BTS_RECORD_SIZE);
--	ds->bts_absolute_maximum = ds->bts_buffer_base + max;
--	ds->bts_interrupt_threshold = ds->bts_absolute_maximum - (max / 16);
-+	max = BTS_BUFFER_SIZE / BTS_RECORD_SIZE;
-+	ds->bts_absolute_maximum = ds->bts_buffer_base +
-+					max * BTS_RECORD_SIZE;
-+	ds->bts_interrupt_threshold = ds->bts_absolute_maximum -
-+					(max / 16) * BTS_RECORD_SIZE;
- 	return 0;
- }
- 
-
-
+-- 
+Dominique
