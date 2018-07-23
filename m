@@ -2,80 +2,47 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E850ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C516ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C79520685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:33:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oxLjg5bu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C79520685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 122C320685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 122C320685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.ee
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388158AbeGWVgQ (ORCPT
+        id S2388186AbeGWVhE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:36:16 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38657 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388069AbeGWVgQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:36:16 -0400
-Received: by mail-pl0-f65.google.com with SMTP id b1-v6so709383pls.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 13:33:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=yGbLnZFJA6I0Ic94Ezv3ensUtPYygDmSuOZCeDVO0mw=;
-        b=oxLjg5buWfC5lY0MP4QEexzMyzT7/3auEi6ZXL2vv7Dlk7kWdcE6TMIM9cVmrCVMvw
-         BK31MZtGUg/nISgd64gQ5ZnjTuqzhnQqq7gKdcFwfsz/P5/N1SEgLWO502PThbZFYI5t
-         C95njTz3xBhxzoKMlTC0pqOoO/pLrl8z/GB7tIvVX8tgzxKK8T+eokHPns6PuIaoIZI7
-         cjA3IswRrkH+u0wSYphsn7iaNzsA7Jg7MrB/Gyk6/59Ck15suuL/o6BohMQlmC91IN4B
-         nrQT1nh9JrkfitRcrcoRPmaQjzS57XO0HdwXljyXU6Mwecxlp/oBuUTy1X1j2BRoZ5zE
-         e2fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=yGbLnZFJA6I0Ic94Ezv3ensUtPYygDmSuOZCeDVO0mw=;
-        b=ExZUbUyVbO9bSJB7Exc+wIuMSLWfijLmHp0Fk/5a8+v4t/iMJKOnjBVXqIWyX4sI9i
-         uzEhMnkc+9IvNGIvhTSE+Xn/frsz+ePRSvsjs1Hs36kSa3A1OzuEAjyCwsw2+2iY2LPQ
-         kAhH8QfPvZBXNsTv24IoSuXkpg45iVq9QDMoalUfPLcxShnn74l06U26XELjjetO9WQB
-         UvHaq57w6BJJKEVdlYIIbIkCakx4GhaYbaxKk1BTpBXBNX7harH3qp22+nw0+TVX50Dv
-         EMOukQHA+GS4gtN8OLbMENiIsLhnhCiYb0ipip0TZIL/MoN4xLcTv9jJJ80cpfgR5PS6
-         csIw==
-X-Gm-Message-State: AOUpUlF1pcQw1gRqGZlCZFNK+CK7MRXoKf5tC24T4qZtlibzT8wjuQwJ
-        2AeX1zZbd1SO7WRw+MSUSAHA7A==
-X-Google-Smtp-Source: AAOMgpfTxlu9oTIHR62rYXWS8CUpvfT5CAX1lhr1qRK9fQm8/J1X97bLdfhPPQnZm9Vqm/+oiDcsng==
-X-Received: by 2002:a17:902:7e43:: with SMTP id a3-v6mr14169721pln.151.1532378001671;
-        Mon, 23 Jul 2018 13:33:21 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id v20-v6sm22919829pfk.12.2018.07.23.13.33.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 13:33:20 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 13:33:19 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Roman Gushchin <guro@fb.com>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v3 -mm 3/6] mm, memcg: add hierarchical usage oom
- policy
-In-Reply-To: <alpine.DEB.2.21.1807162101170.157949@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.21.1807231331510.105582@chino.kir.corp.google.com>
-References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803151351140.55261@chino.kir.corp.google.com> <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com> <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1807131604560.217600@chino.kir.corp.google.com> <alpine.DEB.2.21.1807131605590.217600@chino.kir.corp.google.com> <20180716181613.GA28327@castle> <alpine.DEB.2.21.1807162101170.157949@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 23 Jul 2018 17:37:04 -0400
+Received: from smtp1.it.da.ut.ee ([193.40.5.66]:57270 "EHLO smtp1.it.da.ut.ee"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388022AbeGWVhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 17:37:04 -0400
+Received: from math.ut.ee (unknown [IPv6:2001:bb8:2002:2400:5054:ff:fe3b:8db9])
+        by smtp1.it.da.ut.ee (Postfix) with ESMTP id 7478D206E2;
+        Mon, 23 Jul 2018 23:34:07 +0300 (EEST)
+Received: by math.ut.ee (Postfix, from userid 1014)
+        id 61C7E22091E; Mon, 23 Jul 2018 23:34:05 +0300 (EEST)
+Received: from localhost (localhost [127.0.0.1])
+        by math.ut.ee (Postfix) with ESMTP id 68B8F220905;
+        Mon, 23 Jul 2018 23:34:05 +0300 (EEST)
+Date:   Mon, 23 Jul 2018 23:34:05 +0300 (EEST)
+From:   Meelis Roos <mroos@linux.ee>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Subject: Re: bisected: 4.18-rc* regression: x86-32 troubles (with timers?)
+In-Reply-To: <32227088-7754-c160-8046-e860f42ca91c@iogearbox.net>
+Message-ID: <alpine.LRH.2.21.1807232322430.11834@math.ut.ee>
+References: <alpine.LRH.2.21.1807041414080.3671@math.ut.ee> <CAK8P3a1RkNc_kShHBJ6QENrQheQi=C93DmnknC1S_uJDcTDqww@mail.gmail.com> <alpine.LRH.2.21.1807051254050.21817@math.ut.ee> <alpine.LRH.2.21.1807151803010.17406@math.ut.ee>
+ <CAK8P3a2NtB_FmiSjrzZb=HoshEzo+MP2xwafC3QcMg79rffipg@mail.gmail.com> <alpine.LRH.2.21.1807161948380.27791@math.ut.ee> <alpine.LRH.2.21.1807162200180.27791@math.ut.ee> <alpine.LRH.2.21.1807202339490.8506@math.ut.ee> <alpine.LRH.2.21.1807210154100.8506@math.ut.ee>
+ <CAK8P3a19pCbn5Ns0jVqGTiSmGj4AOgjWL0CQtAA-sYRqY4Gvjw@mail.gmail.com> <32227088-7754-c160-8046-e860f42ca91c@iogearbox.net>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,24 +50,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Jul 2018, David Rientjes wrote:
-
-> > And "tree" is different. It actually changes how the selection algorithm works,
-> > and sub-tree settings do matter in this case.
+> >> Now this seems more relevant:
+> >>
+> >> mroos@rx100s2:~/linux$ nice git bisect good
+> >> 24dea04767e6e5175f4750770281b0c17ac6a2fb is the first bad commit
+> >> commit 24dea04767e6e5175f4750770281b0c17ac6a2fb
+> >> Author: Daniel Borkmann <daniel@iogearbox.net>
+> >> Date:   Fri May 4 01:08:23 2018 +0200
+> >>
+> >>     bpf, x32: remove ld_abs/ld_ind
+> >>
+> >>     Since LD_ABS/LD_IND instructions are now removed from the core and
+> >>     reimplemented through a combination of inlined BPF instructions and
+> >>     a slow-path helper, we can get rid of the complexity from x32 JIT.
 > > 
+> > This does seem much more likely than the previous bisection, given
+> > that you ended up in an x86-32 specific commit (the subject says x32,
+> > but that is a mistake). I also checked that systemd indeed does
+> > call into bpf in a number of places, possibly for the journald socket.
+> > 
+> > OTOH, it's still hard to tell how that commit can have ended up
+> > corrupting the clock read function in systemd. To cross-check,
+> > could you try reverting that commit on the latest kernel and see
+> > if it still works?
 > 
-> "Tree" is considering the entity as a single indivisible memory consumer, 
-> it is compared with siblings based on its hierarhical usage.  It has 
-> cgroup oom policy.
-> 
-> It would be possible to separate this out, if you'd prefer, to account 
-> an intermediate cgroup as the largest descendant or the sum of all 
-> descendants.  I hadn't found a usecase for that, however, but it doesn't 
-> mean there isn't one.  If you'd like, I can introduce another tunable.
-> 
+> I would be curious as well about that whether revert would make it
+> work. What's the value of sysctl net.core.bpf_jit_enable ? Does it
+> change anything if you set it to 0 (only interpreter) or 1 (JIT
+> enabled). Seems a bit strange to me that bisect ended at this commit
+> given the issue you have. The JIT itself was also new in this window
+> fwiw. In any case some more debug info would be great to have.
 
-Roman, I'm trying to make progress so that the cgroup aware oom killer is 
-in a state that it can be merged.  Would you prefer a second tunable here 
-to specify a cgroup's points includes memory from its subtree?
+net.core.bpf_jit_enable is 1.
 
-It would be helpful if you would also review the rest of the patchset.
+Since it breaks bootup, I can not easily change the value at runtime (it 
+would be postfactum). Do you mean changing the 
+CONFIG_BPF_JIT_ALWAYS_ON=y option?
+
+Anyway, I started compile of v4.18-rc5 that was the latest I tested, 
+with the commit in question reverted. Will see if I can test tomorrow 
+morning. But I will leave tomorrow for a week and can only test further 
+things if they happen to boot fine (no manual reboot possible for a 
+week).
+
+-- 
+Meelis Roos (mroos@linux.ee)
