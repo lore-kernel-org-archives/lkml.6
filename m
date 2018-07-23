@@ -5,124 +5,129 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF63ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DECECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1E420779
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:07:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B1E420779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B7CBD20875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:08:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7CBD20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388193AbeGWRJr (ORCPT
+        id S2388461AbeGWRJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:09:47 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36150 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388121AbeGWRJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:09:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2362918A;
-        Mon, 23 Jul 2018 09:07:53 -0700 (PDT)
-Received: from [10.4.12.120] (e107158-lin.emea.arm.com [10.4.12.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B45F03F6A8;
-        Mon, 23 Jul 2018 09:07:51 -0700 (PDT)
-Subject: Re: [PATCH 1/4] sched/topology: SD_ASYM_CPUCAPACITY flag detection
-To:     Morten Rasmussen <morten.rasmussen@arm.com>
-Cc:     vincent.guittot@linaro.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
-        mingo@redhat.com, valentin.schneider@arm.com,
-        linux-arm-kernel@lists.infradead.org
-References: <1532093554-30504-1-git-send-email-morten.rasmussen@arm.com>
- <1532093554-30504-2-git-send-email-morten.rasmussen@arm.com>
- <dbd8deec-a79d-5697-0c50-ea1a9ab7e5c9@arm.com>
- <20180723152551.GA29978@e105550-lin.cambridge.arm.com>
-From:   Qais Yousef <qais.yousef@arm.com>
-Message-ID: <b75f665f-7d60-5d83-eaf6-88c534afe254@arm.com>
-Date:   Mon, 23 Jul 2018 17:07:50 +0100
+        Mon, 23 Jul 2018 13:09:54 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:57702 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388121AbeGWRJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 13:09:54 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1fhdNI-0005it-JI; Mon, 23 Jul 2018 10:07:53 -0600
+To:     Allen Hubbe <allenbh@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        Jon Mason <jdmason@kudzu.us>, fancer.lancer@gmail.com,
+        Shyam-sundar.S-k@amd.com, shuah@kernel.org, dmeyer@gigaio.com
+References: <20180720180034.3964-1-logang@deltatee.com>
+ <20180720180034.3964-5-logang@deltatee.com>
+ <CAJ80sat2gx3jaDi3LVDG6GhZ6qKmuKWxyaP_0VoR5k3VfGybqw@mail.gmail.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <b14a3c42-4a23-bff5-3e1b-9a1423611230@deltatee.com>
+Date:   Mon, 23 Jul 2018 10:07:45 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180723152551.GA29978@e105550-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ80sat2gx3jaDi3LVDG6GhZ6qKmuKWxyaP_0VoR5k3VfGybqw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: dmeyer@gigaio.com, shuah@kernel.org, Shyam-sundar.S-k@amd.com, fancer.lancer@gmail.com, jdmason@kudzu.us, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, allenbh@gmail.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 4/8] NTB: ntb_pingpong: Choose doorbells based on port
+ number
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/07/18 16:27, Morten Rasmussen wrote:
 
-[...]
 
->>> +	/*
->>> +	 * Examine topology from all cpu's point of views to detect the lowest
->>> +	 * sched_domain_topology_level where a highest capacity cpu is visible
->>> +	 * to everyone.
->>> +	 */
->>> +	for_each_cpu(i, cpu_map) {
->>> +		unsigned long max_capacity = arch_scale_cpu_capacity(NULL, i);
->>> +		int tl_id = 0;
->>> +
->>> +		for_each_sd_topology(tl) {
->>> +			if (tl_id < asym_level)
->>> +				goto next_level;
->>> +
->> I think if you increment and then continue here you might save the extra
->> branch. I didn't look at any disassembly though to verify the generated
->> code.
->>
->> I wonder if we can introduce for_each_sd_topology_from(tl, starting_level)
->> so that you can start searching from a provided level - which will make this
->> skipping logic unnecessary? So the code will look like
->>
->>              for_each_sd_topology_from(tl, asymc_level) {
->>                  ...
->>              }
-> Both options would work. Increment+contrinue instead of goto would be
-> slightly less readable I think since we would still have the increment
-> at the end of the loop, but easy to do. Introducing
-> for_each_sd_topology_from() improve things too, but I wonder if it is
-> worth it.
+On 23/07/18 08:01 AM, Allen Hubbe wrote:
+> Does this solve the issue where two of the the port numbers are the
+> same, because of symmetry over a crosslink?  I think the two ports
+> with the "same" number should be identified as different peer index,
+> even if the port numbers are the same.
 
-I don't mind the current form to be honest. I agree it's not worth it if 
-it is called infrequent enough.
+I'm not sure if it's that general. It solves it for the case that both
+peers have port numbers equal to zero. It doesn't solve it for the more
+general case where you may have multiple partitions, including one or
+more crosslink partitions. That is _much_ harder to solve and right now
+I'm only focused on fixing the code to work as it did before. If someone
+is interested in making a complex setup like that work, they'll have to
+figure out how and post patches.
 
->>> @@ -1647,18 +1707,27 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
->>>   	struct s_data d;
->>>   	struct rq *rq = NULL;
->>>   	int i, ret = -ENOMEM;
->>> +	struct sched_domain_topology_level *tl_asym;
->>>   	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
->>>   	if (alloc_state != sa_rootdomain)
->>>   		goto error;
->>> +	tl_asym = asym_cpu_capacity_level(cpu_map);
->>> +
->> Or maybe this is not a hot path and we don't care that much about optimizing
->> the search since you call it unconditionally here even for systems that
->> don't care?
-> It does increase the cost of things like hotplug slightly and
-> repartitioning of root_domains a slightly but I don't see how we can
-> avoid it if we want generic code to set this flag. If the costs are not
-> acceptable I think the only option is to make the detection architecture
-> specific.
+I don't think you'll ever have a case where two peers have the same
+index, as the index is really an abstract concept the hardware doesn't
+really know about.
 
-I think hotplug is already expensive and this overhead would be small in 
-comparison. But this could be called when frequency changes if I 
-understood correctly - this is the one I wasn't sure how 'hot' it could 
-be. I wouldn't expect frequency changes at a very high rate because it's 
-relatively expensive too..
+> Maybe the port of any peer connected over the crosslink should be the
+> local switch's crosslink port.  
 
-> In any case, AFAIK rebuilding the sched_domain hierarchy shouldn't be a
-> normal and common thing to do. If checking for the flag is not
-> acceptable on SMP-only architectures, I can move it under arch/arm[,64]
-> although it is not as clean.
->
+Well, the switches could in theory be configured in any way. But the
+whole point and benefit of crosslink is for both switches to be
+configured to be identical. The logical configuration is to configure
+both hosts to be on port 0 for both switches and there's really no
+benefit to doing it differently.
 
-I like the approach and I think it's nice and clean. If it actually 
-appears in some profiles I think we have room to optimize it.
 
--- 
-Qais Yousef
+> The local port number might be needed
+> to configure translation tables in the local switch.  
 
+It's not. The crosslink partition between the switches would typically
+always be "port number" 1. (Though there may be instances where it's a
+different port number, but that shouldn't effect anything and is handled
+by the driver.)
+
+> If a globally
+> unique port number is needed, maybe encode a chip number in some high
+> bits of the port number?  
+
+With crosslink, we can't figure out a chip number for the same reasons
+we can't figure out a port number.
+
+> If a locally unique port number is needed,
+> maybe encode a path, that could be useful for configuring address
+> translations across multiple crosslinks.  Encoding a path, then each
+> port will have a different number, depending on the perspective of the
+> source port, which could be confusing (already, peer index is local
+> perspective, so can cause the same kind of confusion).  
+
+I don't follow this. Any path you might get will be exactly the same for
+both hosts in a symmetric crosslink configuration. The only way to find
+a locally unique port number would be for the two hosts to negotiate
+somehow and that's cumbersome and would introduce some randomness (based
+on which of two identical machines happened to be first) into the
+process which I really don't want seeing that makes debugging much more
+difficult.
+
+
+>IMO port
+> number can be anything useful for specific ntb driver and devices, or
+> maybe just be informative, but peer index should be useful for ntb
+> client drivers.
+
+Yes, the port number is commonly used to decide which resource (MW, DB,
+etc) will be used to point to another peer. This is how Serge has coded
+the existing clients and makes sense. The problem comes with crosslink
+which can not provide these port numbers but worked fine in the previous
+two-host code. These patches fix the clients so that they support
+crosslink (and other two host systems) in a very similar way to how they
+were supported before. In theory, we could now rip out the ugly code for
+the Intel and AMD drivers that assign port numbers based on
+primary/secondary and such. But I have no interest in doing so.
+
+Logan
