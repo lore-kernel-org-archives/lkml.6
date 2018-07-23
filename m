@@ -2,80 +2,103 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B87ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6DEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743D420858
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:41:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743D420858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id D822E20875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 06:44:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D822E20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388116AbeGWHkt (ORCPT
+        id S2387965AbeGWHoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 03:40:49 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:43944 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387884AbeGWHkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 03:40:49 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6AD6D20005B;
-        Mon, 23 Jul 2018 08:41:08 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2FBEC20000A;
-        Mon, 23 Jul 2018 08:41:08 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 9568440C72;
-        Sun, 22 Jul 2018 23:41:07 -0700 (MST)
-Received: from mega.am.freescale.net ([10.192.208.232])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w6N6f42U011580;
-        Sun, 22 Jul 2018 23:41:05 -0700
-From:   Pengbo Mu <pengbo.mu@nxp.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        ran.wang_1@nxp.com, pengbo.mu@nxp.com
-Subject: [PATCH] usb: dwc3: call set incr burst type func()
-Date:   Mon, 23 Jul 2018 14:40:57 +0800
-Message-Id: <1532328057-41777-1-git-send-email-pengbo.mu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 23 Jul 2018 03:44:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36340 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387892AbeGWHoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 03:44:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0AF41AE6B;
+        Mon, 23 Jul 2018 06:44:43 +0000 (UTC)
+Date:   Mon, 23 Jul 2018 08:44:41 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     jing.xia.mail@gmail.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        chunyan.zhang@unisoc.com, Cgroups <cgroups@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: memcg: fix use after free in mem_cgroup_iter()
+Message-ID: <20180723064441.GA17905@dhcp22.suse.cz>
+References: <1531994807-25639-1-git-send-email-jing.xia@unisoc.com>
+ <20180719104345.GV7193@dhcp22.suse.cz>
+ <CALvZod55Ku7U3soLtuYY_HL2_mMp5+OT-hngdZkPRGN9xm1a9Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod55Ku7U3soLtuYY_HL2_mMp5+OT-hngdZkPRGN9xm1a9Q@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calling dwc3_set_incr_burst_type() in dwc3_core_init().
-This function enabled the undefined length INCR burst type and
-set INCRx. Different platform may has the different burst size
-type. In order to get best performance, we need to tune the burst
-size to one special value, instead of the default value.
+On Thu 19-07-18 09:23:10, Shakeel Butt wrote:
+> On Thu, Jul 19, 2018 at 3:43 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > [CC Andrew]
+> >
+> > On Thu 19-07-18 18:06:47, Jing Xia wrote:
+> > > It was reported that a kernel crash happened in mem_cgroup_iter(),
+> > > which can be triggered if the legacy cgroup-v1 non-hierarchical
+> > > mode is used.
+> > >
+> > > Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b8f
+> > > ......
+> > > Call trace:
+> > >   mem_cgroup_iter+0x2e0/0x6d4
+> > >   shrink_zone+0x8c/0x324
+> > >   balance_pgdat+0x450/0x640
+> > >   kswapd+0x130/0x4b8
+> > >   kthread+0xe8/0xfc
+> > >   ret_from_fork+0x10/0x20
+> > >
+> > >   mem_cgroup_iter():
+> > >       ......
+> > >       if (css_tryget(css))    <-- crash here
+> > >           break;
+> > >       ......
+> > >
+> > > The crashing reason is that mem_cgroup_iter() uses the memcg object
+> > > whose pointer is stored in iter->position, which has been freed before
+> > > and filled with POISON_FREE(0x6b).
+> > >
+> > > And the root cause of the use-after-free issue is that
+> > > invalidate_reclaim_iterators() fails to reset the value of
+> > > iter->position to NULL when the css of the memcg is released in non-
+> > > hierarchical mode.
+> >
+> > Well, spotted!
+> >
+> > I suspect
+> > Fixes: 6df38689e0e9 ("mm: memcontrol: fix possible memcg leak due to interrupted reclaim")
+> >
+> > but maybe it goes further into past. I also suggest
+> > Cc: stable
+> >
+> > even though the non-hierarchical mode is strongly discouraged.
+> 
+> Why not set root_mem_cgroup's use_hierarchy to true by default on
+> init? If someone wants non-hierarchical mode, they can explicitly set
+> it to false.
 
-Signed-off-by: Pengbo Mu <pengbo.mu@nxp.com>
----
-Changes in v1:
- - add the calling of dwc3_set_incr_burst_type.
----
- drivers/usb/dwc3/core.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 29df9e8..21e4931 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -932,6 +932,8 @@ static int dwc3_core_init(struct dwc3 *dwc)
- 	/* Adjust Frame Length */
- 	dwc3_frame_length_adjustment(dwc);
- 
-+	dwc3_set_incr_burst_type(dwc);
-+
- 	usb_phy_set_suspend(dwc->usb2_phy, 0);
- 	usb_phy_set_suspend(dwc->usb3_phy, 0);
- 	ret = phy_power_on(dwc->usb2_generic_phy);
+We do not change defaults under users feet usually.
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
