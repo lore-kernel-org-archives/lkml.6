@@ -2,58 +2,59 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F276ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AD7ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 450D920875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED79A20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 15:58:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VkSKfskW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450D920875
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Exd/jRYC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED79A20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388803AbeGWRAO (ORCPT
+        id S2388817AbeGWRAP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:00:14 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39699 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388716AbeGWRAN (ORCPT
+        Mon, 23 Jul 2018 13:00:15 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55145 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388624AbeGWRAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:00:13 -0400
-Received: by mail-wm0-f65.google.com with SMTP id h20-v6so1724140wmb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 08:58:20 -0700 (PDT)
+        Mon, 23 Jul 2018 13:00:14 -0400
+Received: by mail-wm0-f67.google.com with SMTP id c14-v6so1627855wmb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 08:58:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tvUxwhCKq75M5Kj5g6KwaXItwimpitViFd9VBJeELCI=;
-        b=VkSKfskWzoJ63aoca2AoE4+hjgoJzJT/YY2fo0/KnbRZdWCaj2InuuYTC4m8I4Z0I5
-         sPqbe1slveN2aw64H2/ahXEndcaMLZpK32hjatKeTQkgSScZjrktTzqm6o+Jsa3daRL6
-         HMZGR0CJyqBO8/h1yYlPb0pjyP0jD9QI9ocQI=
+        bh=CzBFjPKScoyq8BRqzbqfUtYN9SRCEjh94Gk9yR48PY4=;
+        b=Exd/jRYCdnfSbligYmk3crjO2fB9cN2/GDgfJ4B1iopHDyR02iJBZn4XjbvO+G1ARe
+         6Y/x4boHJ7ODa2Ilws/+HexkfYAMmNj61kr1vlEE4I2Ih9Nc0qRqiWcaw5kKHPHp3rj5
+         WLCKWFhVYOrADM+CkOID6mX6r/I9zpbsKoN2M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tvUxwhCKq75M5Kj5g6KwaXItwimpitViFd9VBJeELCI=;
-        b=a9wLPPNSsxlWRGO8w34OFHcs+cn3UqLwerhmJ40hUDfnLf6uAkBH3QM5eMPTGlWfkN
-         6yJyuL8SYD/jJj6zp3DDgLU3xmQjY9W4hEBT0gKYWMwAd4W3jnBnQOq3ncHiOASSdh/G
-         Dck6bK182AIixax0GTH7d8xOIf8C+puv3MtY9hxYUomYbHCYQNEW8wfOSlSad50Y5KiR
-         ua75W8yyyFXufz3UuBQE/b49sMOBdUEN2HulD4HY3WlkOKV0/OKV7Scv7/cPgVNaCepF
-         trndyTEi+cmXGzKnrCB5OROga2tCsF+BVQf6htAvmPvkcAd6jNf5fBsG1S5CmSyjrFoJ
-         Xr0A==
-X-Gm-Message-State: AOUpUlGdlYCn7i/rfsAnmkbf5Qle2/wOxQQvt3OBDZyXcCCCIHW89WWl
-        /YINpjls1Ld2y0AqtfjPLSpYIw==
-X-Google-Smtp-Source: AAOMgpfPt8Sk0P+zmH3F/RVLa+uupLCPiyx+t0GAGsDI7v/GWtJkFnp4BLfWMqRP8XOZhNPZnV9o2A==
-X-Received: by 2002:a1c:19c2:: with SMTP id 185-v6mr7740747wmz.79.1532361499379;
-        Mon, 23 Jul 2018 08:58:19 -0700 (PDT)
+        bh=CzBFjPKScoyq8BRqzbqfUtYN9SRCEjh94Gk9yR48PY4=;
+        b=rhN9sBViQo51qTiC/KEwRphr7AEW97UepKjClRVaqHV7kJPZLAuqxn4JylOGqQf4X1
+         skpWJ/KFseEtjoJfUz7A/A+CHkYjNWjewM4JRq7yjO72e8IoTJU9AKzymGJpc7bgCfeE
+         jzWllJKq26ccV+4chhpfOqmYoQWuZS2QBsAbyjTtC2LXIaV1QcBkSHy+nAwG+NuCUICy
+         JnOgnt+AU76hzcqZZ2WwxSfIrRZumOwQC63APfjIhompg6zXxOLoguOBBN4Xd+oDOVR0
+         oTfP88TqhytLqiR75LgVW82hEm9+8uR+8zJGrogyLL/QARKU/EFid6Mq245nRvsLC7vX
+         d/dA==
+X-Gm-Message-State: AOUpUlEwKtP2uLxjMRrmJ6nlMqo+8t9x+PiD0c6w3hxtX2LcuJNLKUbI
+        bMWXTZoTsOLGDFRZ2nAN/BPgNQ==
+X-Google-Smtp-Source: AAOMgpdAoFdtunQpKzD4ENl3qlOWLmmLeTFznKqG8/wb/3yfFst00xxEsULR6wuGRmT+cYPBPK/WIA==
+X-Received: by 2002:a1c:93d3:: with SMTP id v202-v6mr8084643wmd.57.1532361501376;
+        Mon, 23 Jul 2018 08:58:21 -0700 (PDT)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm206385wmt.1.2018.07.23.08.58.18
+        by smtp.gmail.com with ESMTPSA id 14-v6sm206385wmt.1.2018.07.23.08.58.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 23 Jul 2018 08:58:18 -0700 (PDT)
+        Mon, 23 Jul 2018 08:58:20 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, broonie@kernel.org
 Cc:     mark.rutland@arm.com, lgirdwood@gmail.com, tiwai@suse.com,
@@ -61,9 +62,9 @@ Cc:     mark.rutland@arm.com, lgirdwood@gmail.com, tiwai@suse.com,
         linux-kernel@vger.kernel.org, vkoul@kernel.org,
         alsa-devel@alsa-project.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 03/12] mfd: wcd9335: add wcd irq support
-Date:   Mon, 23 Jul 2018 16:54:01 +0100
-Message-Id: <20180723155410.9494-4-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 05/12] ASoC: core: add support to snd_soc_dai_get_channel_map()
+Date:   Mon, 23 Jul 2018 16:54:03 +0100
+Message-Id: <20180723155410.9494-6-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180723155410.9494-1-srinivas.kandagatla@linaro.org>
 References: <20180723155410.9494-1-srinivas.kandagatla@linaro.org>
@@ -72,308 +73,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WCD9335 supports two lines of irqs INTR1 and INTR2.
-Mutiple interrupts are muxed via these lines.
-INTR1 consists of all possible interrupt sources like:
-Ear OCP, HPH OCP, MBHC, MAD, VBAT, and SVA
-INTR2 is a subset of first interrupt sources like MAD, VBAT, and SVA
+On Qualcomm platforms, specifically with SLIMbus interfaced codecs,
+the codec slim channel numbers are passed to DSP while configuring
+the slim audio path. Having get_channel_map() would allow dais to
+share such information across multiple dais.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/mfd/Makefile                |   2 +-
- drivers/mfd/wcd9335-core.c          |   9 ++
- drivers/mfd/wcd9335-irq.c           | 172 ++++++++++++++++++++++++++++++++++++
- include/dt-bindings/mfd/wcd9335.h   |  43 +++++++++
- include/linux/mfd/wcd9335/wcd9335.h |   3 +
- 5 files changed, 228 insertions(+), 1 deletion(-)
- create mode 100644 drivers/mfd/wcd9335-irq.c
- create mode 100644 include/dt-bindings/mfd/wcd9335.h
+ include/sound/soc-dai.h |  8 ++++++++
+ sound/soc/soc-core.c    | 22 ++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index a4697370640b..210875afe78a 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -58,7 +58,7 @@ obj-$(CONFIG_MFD_ARIZONA)	+= cs47l24-tables.o
- endif
+diff --git a/include/sound/soc-dai.h b/include/sound/soc-dai.h
+index a14bc0608ae9..f5d70041108f 100644
+--- a/include/sound/soc-dai.h
++++ b/include/sound/soc-dai.h
+@@ -138,6 +138,11 @@ int snd_soc_dai_set_tristate(struct snd_soc_dai *dai, int tristate);
+ int snd_soc_dai_digital_mute(struct snd_soc_dai *dai, int mute,
+ 			     int direction);
  
- obj-$(CONFIG_MFD_WCD9335)	+= wcd9335.o
--wcd9335-objs			:= wcd9335-core.o
-+wcd9335-objs			:= wcd9335-core.o wcd9335-irq.o
++
++int snd_soc_dai_get_channel_map(struct snd_soc_dai *dai,
++		unsigned int *tx_num, unsigned int *tx_slot,
++		unsigned int *rx_num, unsigned int *rx_slot);
++
+ int snd_soc_dai_is_dummy(struct snd_soc_dai *dai);
  
- obj-$(CONFIG_MFD_WM8400)	+= wm8400-core.o
- wm831x-objs			:= wm831x-core.o wm831x-irq.o wm831x-otp.o
-diff --git a/drivers/mfd/wcd9335-core.c b/drivers/mfd/wcd9335-core.c
-index ccdd27c3a351..7d478d87e16f 100644
---- a/drivers/mfd/wcd9335-core.c
-+++ b/drivers/mfd/wcd9335-core.c
-@@ -244,12 +244,20 @@ static int wcd9335_slim_status(struct slim_device *sdev,
- 		return ret;
- 	}
+ struct snd_soc_dai_ops {
+@@ -165,6 +170,9 @@ struct snd_soc_dai_ops {
+ 	int (*set_channel_map)(struct snd_soc_dai *dai,
+ 		unsigned int tx_num, unsigned int *tx_slot,
+ 		unsigned int rx_num, unsigned int *rx_slot);
++	int (*get_channel_map)(struct snd_soc_dai *dai,
++			unsigned int *tx_num, unsigned int *tx_slot,
++			unsigned int *rx_num, unsigned int *rx_slot);
+ 	int (*set_tristate)(struct snd_soc_dai *dai, int tristate);
  
-+	wcd9335_irq_init(wcd);
- 	wcd->slim_ifd = wcd->slim_ifd;
- 
- 	return mfd_add_devices(wcd->dev, 0, wcd9335_devices,
- 			       ARRAY_SIZE(wcd9335_devices), NULL, 0, NULL);
+ 	int (*set_sdw_stream)(struct snd_soc_dai *dai,
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index ad5b0ef16d82..81b27923303d 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -2679,6 +2679,28 @@ int snd_soc_dai_set_channel_map(struct snd_soc_dai *dai,
  }
+ EXPORT_SYMBOL_GPL(snd_soc_dai_set_channel_map);
  
-+static void wcd9335_slim_remove(struct slim_device *sdev)
-+{
-+	struct wcd9335 *wcd = dev_get_drvdata(&sdev->dev);
-+
-+	wcd9335_irq_exit(wcd);
-+}
-+
- static const struct slim_device_id wcd9335_slim_id[] = {
- 	{0x217, 0x1a0, 0x1, 0x0},
- 	{}
-@@ -260,6 +268,7 @@ static struct slim_driver wcd9335_slim_driver = {
- 		.name = "wcd9335-slim",
- 	},
- 	.probe = wcd9335_slim_probe,
-+	.remove = wcd9335_slim_remove,
- 	.device_status = wcd9335_slim_status,
- 	.id_table = wcd9335_slim_id,
- };
-diff --git a/drivers/mfd/wcd9335-irq.c b/drivers/mfd/wcd9335-irq.c
-new file mode 100644
-index 000000000000..84098c89419b
---- /dev/null
-+++ b/drivers/mfd/wcd9335-irq.c
-@@ -0,0 +1,172 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, Linaro Limited
-+//
-+#include <linux/gpio.h>
-+#include <linux/interrupt.h>
-+#include <linux/regmap.h>
-+#include <linux/of_irq.h>
-+#include <dt-bindings/mfd/wcd9335.h>
-+#include <linux/mfd/wcd9335/wcd9335.h>
-+#include <linux/mfd/wcd9335/registers.h>
-+
-+static const struct regmap_irq wcd9335_irqs[] = {
-+	/* INTR_REG 0 */
-+	[WCD9335_IRQ_SLIMBUS] = {
-+		.reg_offset = 0,
-+		.mask = BIT(0),
-+	},
-+	[WCD9335_IRQ_FLL_LOCK_LOSS] = {
-+		.reg_offset = 0,
-+		.mask = BIT(1),
-+	},
-+	[WCD9335_IRQ_HPH_PA_OCPL_FAULT] = {
-+		.reg_offset = 0,
-+		.mask = BIT(2),
-+	},
-+	[WCD9335_IRQ_HPH_PA_OCPR_FAULT] = {
-+		.reg_offset = 0,
-+		.mask = BIT(3),
-+	},
-+	[WCD9335_IRQ_EAR_PA_OCP_FAULT] = {
-+		.reg_offset = 0,
-+		.mask = BIT(4),
-+	},
-+	[WCD9335_IRQ_HPH_PA_CNPL_COMPLETE] = {
-+		.reg_offset = 0,
-+		.mask = BIT(5),
-+	},
-+	[WCD9335_IRQ_HPH_PA_CNPR_COMPLETE] = {
-+		.reg_offset = 0,
-+		.mask = BIT(6),
-+	},
-+	[WCD9335_IRQ_EAR_PA_CNP_COMPLETE] = {
-+		.reg_offset = 0,
-+		.mask = BIT(7),
-+	},
-+	/* INTR_REG 1 */
-+	[WCD9335_IRQ_MBHC_SW_DET] = {
-+		.reg_offset = 1,
-+		.mask = BIT(0),
-+	},
-+	[WCD9335_IRQ_MBHC_ELECT_INS_REM_DET] = {
-+		.reg_offset = 1,
-+		.mask = BIT(1),
-+	},
-+	[WCD9335_IRQ_MBHC_BUTTON_PRESS_DET] = {
-+		.reg_offset = 1,
-+		.mask = BIT(2),
-+	},
-+	[WCD9335_IRQ_MBHC_BUTTON_RELEASE_DET] = {
-+		.reg_offset = 1,
-+		.mask = BIT(3),
-+	},
-+	[WCD9335_IRQ_MBHC_ELECT_INS_REM_LEG_DET] = {
-+		.reg_offset = 1,
-+		.mask = BIT(4),
-+	},
-+	/* INTR_REG 2 */
-+	[WCD9335_IRQ_LINE_PA1_CNP_COMPLETE] = {
-+		.reg_offset = 2,
-+		.mask = BIT(0),
-+	},
-+	[WCD9335_IRQ_LINE_PA2_CNP_COMPLETE] = {
-+		.reg_offset = 2,
-+		.mask = BIT(1),
-+	},
-+	[WCD9335_IRQ_LINE_PA3_CNP_COMPLETE] = {
-+		.reg_offset = 2,
-+		.mask = BIT(2),
-+	},
-+	[WCD9335_IRQ_LINE_PA4_CNP_COMPLETE] = {
-+		.reg_offset = 2,
-+		.mask = BIT(3),
-+	},
-+	[WCD9335_IRQ_SOUNDWIRE] = {
-+		.reg_offset = 2,
-+		.mask = BIT(4),
-+	},
-+	[WCD9335_IRQ_VDD_DIG_RAMP_COMPLETE] = {
-+		.reg_offset = 2,
-+		.mask = BIT(5),
-+	},
-+	[WCD9335_IRQ_RCO_ERROR] = {
-+		.reg_offset = 2,
-+		.mask = BIT(6),
-+	},
-+	[WCD9335_IRQ_SVA_ERROR] = {
-+		.reg_offset = 2,
-+		.mask = BIT(7),
-+	},
-+	/* INTR_REG 3 */
-+	[WCD9335_IRQ_MAD_AUDIO] = {
-+		.reg_offset = 3,
-+		.mask = BIT(0),
-+	},
-+	[WCD9335_IRQ_MAD_BEACON] = {
-+		.reg_offset = 3,
-+		.mask = BIT(1),
-+	},
-+	[WCD9335_IRQ_MAD_ULTRASOUND] = {
-+		.reg_offset = 3,
-+		.mask = BIT(2),
-+	},
-+	[WCD9335_IRQ_VBAT_ATTACK] = {
-+		.reg_offset = 3,
-+		.mask = BIT(3),
-+	},
-+	[WCD9335_IRQ_VBAT_RESTORE] = {
-+		.reg_offset = 3,
-+		.mask = BIT(4),
-+	},
-+	[WCD9335_IRQ_SVA_OUTBOX1] = {
-+		.reg_offset = 3,
-+		.mask = BIT(5),
-+	},
-+	[WCD9335_IRQ_SVA_OUTBOX2] = {
-+		.reg_offset = 3,
-+		.mask = BIT(6),
-+	},
-+};
-+
-+static const struct regmap_irq_chip wcd9335_regmap_irq1_chip = {
-+	.name = "wcd9335_pin1_irq",
-+	.status_base = WCD9335_INTR_PIN1_STATUS0,
-+	.mask_base = WCD9335_INTR_PIN1_MASK0,
-+	.ack_base = WCD9335_INTR_PIN1_CLEAR0,
-+	.type_base = WCD9335_INTR_LEVEL0,
-+	.num_regs = 4,
-+	.irqs = wcd9335_irqs,
-+	.num_irqs = ARRAY_SIZE(wcd9335_irqs),
-+};
-+
-+int wcd9335_irq_init(struct wcd9335 *wcd)
-+{
-+	int ret;
-+	/*
-+	 * INTR1 consists of all possible interrupt sources Ear OCP,
-+	 * HPH OCP, MBHC, MAD, VBAT, and SVA
-+	 * INTR2 is a subset of first interrupt sources MAD, VBAT, and SVA
-+	 */
-+	wcd->intr1 = of_irq_get_byname(wcd->dev->of_node, "intr1");
-+	if (wcd->intr1 < 0 || wcd->intr1 == -EPROBE_DEFER) {
-+		dev_err(wcd->dev, "Unable to configure irq\n");
-+		return wcd->intr1;
-+	}
-+
-+	ret = regmap_add_irq_chip(wcd->regmap, wcd->intr1,
-+				 IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
-+				 0, &wcd9335_regmap_irq1_chip,
-+				 &wcd->irq_data);
-+	if (ret != 0) {
-+		dev_err(wcd->dev, "Failed to register IRQ chip: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+int wcd9335_irq_exit(struct wcd9335 *wcd)
-+{
-+	regmap_del_irq_chip(wcd->intr1, wcd->irq_data);
-+	return 0;
-+}
-diff --git a/include/dt-bindings/mfd/wcd9335.h b/include/dt-bindings/mfd/wcd9335.h
-new file mode 100644
-index 000000000000..17f985be8f52
---- /dev/null
-+++ b/include/dt-bindings/mfd/wcd9335.h
-@@ -0,0 +1,43 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides macros for WCD9335 device bindings.
-+ *
-+ * Copyright (c) 2018, Linaro Limited
++/**
++ * snd_soc_dai_get_channel_map - Get DAI audio channel map
++ * @dai: DAI
++ * @tx_num: how many TX channels
++ * @tx_slot: pointer to an array which imply the TX slot number channel
++ *           0~num-1 uses
++ * @rx_num: how many RX channels
++ * @rx_slot: pointer to an array which imply the RX slot number channel
++ *           0~num-1 uses
 + */
++int snd_soc_dai_get_channel_map(struct snd_soc_dai *dai,
++	unsigned int *tx_num, unsigned int *tx_slot,
++	unsigned int *rx_num, unsigned int *rx_slot)
++{
++	if (dai->driver->ops->get_channel_map)
++		return dai->driver->ops->get_channel_map(dai, tx_num, tx_slot,
++			rx_num, rx_slot);
++	else
++		return -ENOTSUPP;
++}
++EXPORT_SYMBOL_GPL(snd_soc_dai_get_channel_map);
 +
-+#ifndef _DT_BINDINGS_MFD_WCD9335_H
-+#define _DT_BINDINGS_MFD_WCD9335_H
-+
-+#define	WCD9335_IRQ_SLIMBUS			1
-+#define	WCD9335_IRQ_FLL_LOCK_LOSS		2
-+#define	WCD9335_IRQ_HPH_PA_OCPL_FAULT		3
-+#define	WCD9335_IRQ_HPH_PA_OCPR_FAULT		4
-+#define	WCD9335_IRQ_EAR_PA_OCP_FAULT		5
-+#define	WCD9335_IRQ_HPH_PA_CNPL_COMPLETE	6
-+#define	WCD9335_IRQ_HPH_PA_CNPR_COMPLETE	7
-+#define	WCD9335_IRQ_EAR_PA_CNP_COMPLETE		8
-+#define	WCD9335_IRQ_MBHC_SW_DET			9
-+#define	WCD9335_IRQ_MBHC_ELECT_INS_REM_DET	10
-+#define	WCD9335_IRQ_MBHC_BUTTON_PRESS_DET	11
-+#define	WCD9335_IRQ_MBHC_BUTTON_RELEASE_DET	12
-+#define	WCD9335_IRQ_MBHC_ELECT_INS_REM_LEG_DET	13
-+#define	WCD9335_IRQ_RESERVED_0			14
-+#define	WCD9335_IRQ_RESERVED_1			15
-+#define	WCD9335_IRQ_RESERVED_2			16
-+#define	WCD9335_IRQ_LINE_PA1_CNP_COMPLETE	17
-+#define	WCD9335_IRQ_LINE_PA2_CNP_COMPLETE	18
-+#define	WCD9335_IRQ_LINE_PA3_CNP_COMPLETE	19
-+#define	WCD9335_IRQ_LINE_PA4_CNP_COMPLETE	20
-+#define	WCD9335_IRQ_SOUNDWIRE			21
-+#define	WCD9335_IRQ_VDD_DIG_RAMP_COMPLETE	22
-+#define	WCD9335_IRQ_RCO_ERROR			23
-+#define	WCD9335_IRQ_SVA_ERROR			24
-+#define	WCD9335_IRQ_MAD_AUDIO			25
-+#define	WCD9335_IRQ_MAD_BEACON			26
-+#define	WCD9335_IRQ_MAD_ULTRASOUND		27
-+#define	WCD9335_IRQ_VBAT_ATTACK			28
-+#define	WCD9335_IRQ_VBAT_RESTORE		29
-+#define	WCD9335_IRQ_SVA_OUTBOX1			30
-+#define	WCD9335_IRQ_SVA_OUTBOX2			31
-+
-+#endif /* _DT_BINDINGS_MFD_WCD9335_H */
-diff --git a/include/linux/mfd/wcd9335/wcd9335.h b/include/linux/mfd/wcd9335/wcd9335.h
-index 6b7fa6a66d8f..ac0853625c72 100644
---- a/include/linux/mfd/wcd9335/wcd9335.h
-+++ b/include/linux/mfd/wcd9335/wcd9335.h
-@@ -37,4 +37,7 @@ struct wcd9335 {
- 	struct regulator_bulk_data supplies[WCD9335_MAX_SUPPLY];
- };
- 
-+extern int wcd9335_irq_init(struct wcd9335 *wcd);
-+extern int wcd9335_irq_exit(struct wcd9335 *wcd);
-+
- #endif /* __WCD9335_H__ */
+ /**
+  * snd_soc_dai_set_tristate - configure DAI system or master clock.
+  * @dai: DAI
 -- 
 2.16.2
 
