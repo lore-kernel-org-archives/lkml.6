@@ -6,32 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A114ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B12ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFA5920882
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFA5920882
+	by mail.kernel.org (Postfix) with ESMTP id 764A220685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764A220685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389179AbeGWNrh (ORCPT
+        id S2389191AbeGWNri (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:37 -0400
+        Mon, 23 Jul 2018 09:47:38 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:50966 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389016AbeGWNrf (ORCPT
+        with ESMTP id S2388416AbeGWNrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:35 -0400
+        Mon, 23 Jul 2018 09:47:37 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5753DC21;
-        Mon, 23 Jul 2018 12:44:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1939ACAE;
+        Mon, 23 Jul 2018 12:44:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        stable@vger.kernel.org, Piotr Luc <piotr.luc@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -40,9 +45,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 053/107] x86/cpu: Rename Merrifield2 to Moorefield
-Date:   Mon, 23 Jul 2018 14:41:47 +0200
-Message-Id: <20180723122415.619773915@linuxfoundation.org>
+Subject: [PATCH 4.4 054/107] x86/cpu/intel: Add Knights Mill to Intel family
+Date:   Mon, 23 Jul 2018 14:41:48 +0200
+Message-Id: <20180723122415.668295590@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -59,20 +64,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Piotr Luc <piotr.luc@intel.com>
 
-commit f5fbf848303c8704d0e1a1e7cabd08fd0a49552f upstream
+commit 0047f59834e5947d45f34f5f12eb330d158f700b upstream
 
-Merrifield2 is actually Moorefield.
+Add CPUID of Knights Mill (KNM) processor to Intel family list.
 
-Rename it accordingly and drop tail digit from Merrifield1.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Piotr Luc <piotr.luc@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20160906184254.94440-1-andriy.shevchenko@linux.intel.com
+Link: http://lkml.kernel.org/r/20161012180520.30976-1-piotr.luc@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
@@ -81,21 +90,17 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/intel-family.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/intel-family.h |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/arch/x86/include/asm/intel-family.h
 +++ b/arch/x86/include/asm/intel-family.h
-@@ -58,8 +58,8 @@
- #define INTEL_FAM6_ATOM_SILVERMONT1	0x37 /* BayTrail/BYT / Valleyview */
- #define INTEL_FAM6_ATOM_SILVERMONT2	0x4D /* Avaton/Rangely */
- #define INTEL_FAM6_ATOM_AIRMONT		0x4C /* CherryTrail / Braswell */
--#define INTEL_FAM6_ATOM_MERRIFIELD1	0x4A /* Tangier */
--#define INTEL_FAM6_ATOM_MERRIFIELD2	0x5A /* Annidale */
-+#define INTEL_FAM6_ATOM_MERRIFIELD	0x4A /* Tangier */
-+#define INTEL_FAM6_ATOM_MOOREFIELD	0x5A /* Annidale */
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C
- #define INTEL_FAM6_ATOM_DENVERTON	0x5F /* Goldmont Microserver */
- #define INTEL_FAM6_ATOM_GEMINI_LAKE	0x7A
+@@ -67,5 +67,6 @@
+ /* Xeon Phi */
+ 
+ #define INTEL_FAM6_XEON_PHI_KNL		0x57 /* Knights Landing */
++#define INTEL_FAM6_XEON_PHI_KNM		0x85 /* Knights Mill */
+ 
+ #endif /* _ASM_X86_INTEL_FAMILY_H */
 
 
