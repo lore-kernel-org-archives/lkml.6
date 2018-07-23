@@ -2,198 +2,112 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A9AECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AB0ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BE320854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:46:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BE320854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id 1F7CE20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 21:47:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAwtn4Ue"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F7CE20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388182AbeGWWtW (ORCPT
+        id S2388190AbeGWWuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 18:49:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52012 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388104AbeGWWtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 18:49:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1DCDDB030;
-        Mon, 23 Jul 2018 21:46:09 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Brian Norris <computersforpeace@gmail.com>
-Date:   Tue, 24 Jul 2018 07:45:57 +1000
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Subject: Re: [PATCH] mtd: spi-nor: clear Extended Address Reg on switch to 3-byte addressing.
-In-Reply-To: <CAN8TOE9Pr2i4tXu8mGuY7xSY5bU_r7UhQ9SxfqYg_M4YDUt0ew@mail.gmail.com>
-References: <874lkmw54j.fsf@notabene.neil.brown.name> <61e255fa-ece4-5566-d63a-730aaa25f18c@gmail.com> <87sh85uzu3.fsf@notabene.neil.brown.name> <a3bb28f9-1185-3dbb-1a1f-1bfe03a8798c@gmail.com> <87efjnvpjl.fsf@notabene.neil.brown.name> <CAN8TOE9Pr2i4tXu8mGuY7xSY5bU_r7UhQ9SxfqYg_M4YDUt0ew@mail.gmail.com>
-Message-ID: <87tvoppqwa.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        Mon, 23 Jul 2018 18:50:37 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35330 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388109AbeGWWug (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 18:50:36 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e6-v6so1303979pgv.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 14:47:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=sBBg/ZlROUcB8xJRxMUeMIJc2BV5pntlFlG0jWSuGRA=;
+        b=CAwtn4UeeerJlWCys98JVfUY9vn0ho+foi9tHCIQBY/MhQLkORWf1tY+0bfVz1Uhd7
+         qJPpnq17wt7on4yOpPQQYa3ce4Gru8pprDz5S4Dx7/wkdJpi0E7jyh5mS4v/89UZURn4
+         7tWSfoIxzTc//JDmpYzgWILtVAAxwU5xi249GGRtFnW08qQRCkxo/+qfndHxIP5UIi6a
+         viSxEZB2lLFlp20Z3lAERyo/REMQIcI6leRtBmFtz+kY/qA+Z6ID2csX5wUgcFg+flKd
+         YgEple8INQ/8Hsgbz0NTUUC5tgeC0ZHUN9JzYgvxqtCUZSCVf0b7nMrcUVveNRzbIEEs
+         C0Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=sBBg/ZlROUcB8xJRxMUeMIJc2BV5pntlFlG0jWSuGRA=;
+        b=oUTs1Nnwoezx1Vdocu7E4fuyhd7LR9fM+KXYhx3ZG8JmLZClN1pkrJFEQokK6Hovyf
+         bvASPc0kMDFbtG2l7HWUdxKuFhTHhj98f4yqozdZyDOzcRDCjDVGkDHH2eHaiK39y70y
+         VHYEfp9olI6BvnMOc/AsO4XAgC98O5luq7KpngyxDQOcFoPHDlEOtfIc9LqnVg+O1usE
+         8kcSaoPrOOvIjDOTOJ1ckQbVoCwErTS78cn2sKm6ICegW9L+OxreOAKAxKEvOh5j0vxd
+         kYSJI8dC0m2WkKnupMCSo8/fF9rTscW1k1vh9HQy0O9RK8T+zO/ebqVmTG30skPt8pyQ
+         a8hg==
+X-Gm-Message-State: AOUpUlF4fQ6RRmfRwl166qX4mct8TkGQy4WDAqf8bWgYJy+JOvbibfaf
+        Dz2PQds5ykD8XIxENDYRYe3f9wNg
+X-Google-Smtp-Source: AAOMgpfJ3F9omtcqgt8ffkGykVOtjS6KaQ2EoRTM/6BOXfAW6abfMAFZ8Iuf0gBEPkBvc4SQpaRi/g==
+X-Received: by 2002:a65:4541:: with SMTP id x1-v6mr13481767pgr.26.1532382445967;
+        Mon, 23 Jul 2018 14:47:25 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id m26-v6sm18778250pfi.102.2018.07.23.14.47.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 14:47:25 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH] android: binder_alloc: Include asm/cacheflush.h after linux/ include files
+Date:   Mon, 23 Jul 2018 14:47:23 -0700
+Message-Id: <1532382443-14183-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+If asm/cacheflush.h is included first, the following build warnings are
+seen with sparc32 builds.
 
-On Mon, Jul 23 2018, Brian Norris wrote:
+In file included from ./arch/sparc/include/asm/cacheflush.h:11:0,
+	from drivers/android/binder_alloc.c:20:
+./arch/sparc/include/asm/cacheflush_32.h:40:37: warning:
+	'struct page' declared inside parameter list
 
-> Hi,
->
-> I'm a little late to this thread, but I recently noticed (and
-> complained about) commit: 59b356ffd0b0 ("mtd: m25p80: restore the
-> status of SPI flash when exiting").
->
-> On Mon, Apr 9, 2018 at 6:05 PM, NeilBrown <neil@brown.name> wrote:
->> On Mon, Apr 09 2018, Marek Vasut wrote:
->>
->>> On 04/08/2018 11:56 PM, NeilBrown wrote:
->>>> On Sun, Apr 08 2018, Marek Vasut wrote:
->>>>
->>>>> On 04/08/2018 09:04 AM, NeilBrown wrote:
->>>>>>
->>>>>> According to section
->>>>>>    8.2.7 Write Extended Address Register (C5h)
->>>>>>
->>>>>> of the Winbond W25Q256FV data sheet (256M-BIT SPI flash)
->>>>>>
->>>>>>    The Extended Address Register is only effective when the device is
->>>>>>    in the 3-Byte Address Mode.  When the device operates in the 4-Byte
->>>>>>    Address Mode (ADS=1), any command with address input of A31-A24
->>>>>>    will replace the Extended Address Register values. It is
->>>>>>    recommended to check and update the Extended Address Register if
->>>>>>    necessary when the device is switched from 4-Byte to 3-Byte Address
->>>>>>    Mode.
->>>>>>
->>>>>> This patch adds code to implement that recommendation.  Without this,
->>>>>> my GNUBEE-PC1 will not successfully reboot, as the Extended Address
->>>>>> Register is left with a value of '1'. When the SOC attempts to read
->>>>>> (in 3-byte address mode) the boot loader, it reads from the wrong
->>>>>> location.
->>>>>
->>>>> Your board is broken by design and does not implement proper reset logic
->>>>> for the SPI NOR chip, right ? That is, when the CPU resets, the SPI NOR
->>>>> is left in some random undefined state instead of being reset too, yes?
->>>>
->>>> Thanks for the reply.
->>>
->>> Sorry for the delay.
->>>
->>>> "Broken" is an emotive word :-)  Certain the board *doesn't* reset the NOR
->>>> chip on reset.
->>>
->>> It's not emotive, it is descriptive of what it really is. Such boards
->>> which do not correctly reset the SPI NOR can, during ie. reset, get into
->>> a state where the system is unbootable or corrupts the content of the
->>> SPI NOR. This stuff came up over and over on the ML, it seems HW
->>> designers never learn.
->>
->> Ok, the board is broken.
->> Still, Linux has a history of even supporting broken hardware -  Spectre
->> and Meltdown for example.
->
-> Except those can generally be worked around at the expense of
-> performance. This is impossible to workaround completely without
-> hardware changes.
->
->> I wouldn't propose a fix that harms the kernel in any way (hurts
->> maintainability or negatively affect other hardware), but I don't
->> think my proposed patch does.
->
-> No, yours doesn't, but the original patch (Commit: 59b356ffd0b0 ("mtd:
-> m25p80: restore the status of SPI flash when exiting")) started us
-> down the slippery slope. If things work 99% of the time, people often
-> fail to notice that they are broken for the 1%. Thus, that patch can
-> harm future development, where unwitting designers think things are
-> working fine and fail to fix their hardware. That's not to say
-> designers always notice even when things are really really broken, but
-> that patch makes the brokenness much harder to notice.
->
->>>> However the NOR chip doesn't have a dedicated RESET pin. It has a pin
->>>> that defaults to "HOLD" and can be programmed to act as "RESET".  This
->>>> pin is tied to 3V3 on my board. If it were tied to a reset line, it
->>>> would still need code changes to work (or switch from the default).
->>>
->>> I'm afraid this needs HW changes. The solution for SPI NORs without a
->>> dedicated reset line is to just hard cut the power to them for a while
->>> in case the CPU core reset out is asserted.
->>>
->>>> A few month ago:
->>>> Commit: 8dee1d971af9 ("mtd: spi-nor: add an API to restore the status of SPI flash chip")
->>>> Commit: 59b356ffd0b0 ("mtd: m25p80: restore the status of SPI flash when exiting")
->>>
->>> This works when reloading the driver, but not when restarting the system.
->>
->> I don't understand what you are saying.
->> The second patch provides a ->shutdown function for the spi_driver.
->> This is called by spi_drv_shutdown which is called by the driver
->> ->shutdown function, which is called by device_shutdown(), which
->> is only called by
->>   kernel_shutdown_prepare() and
->>   kernel_restart_prepare().
->>
->> So it works exactly when restarting the system, and not when reloading
->> the driver.
->>
->>>
->>>> were added to Linux.  They appear to be designed to address a very
->>>> similar situation to mine.  Unfortunately they aren't complete as the
->>>> code to disable 4-byte addressing doesn't follow documented requirements
->>>> (at least for winbond) and doesn't work as intended (at least in one
->>>> case - mine). This code should either be fixed (e.g. with my patch), or removed.
->
-> I would (and already did) vote for removal. The shutdown() hook just
-> papers over bugs and leads people to think that it is a good solution.
-> There's a reason we rejected such patches repeatedly in the past. This
-> one slipped through.
+Moving the asm/ include after linux/ includes fixes the problem.
 
-Hi Brian,
- thanks for your thoughts.
- Could you just clarify what you see as the end-game.
- Do you have an alternate approach which can provide reliability for the
- various hardware which currently seems to need these patches?
- Or do you propose that people with this hardware should suffer
- a measurably lower level of reliability than they currently enjoy?
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/android/binder_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-NeilBrown
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index 2628806c64a2..2c258dcf9d72 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -17,7 +17,6 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+-#include <asm/cacheflush.h>
+ #include <linux/list.h>
+ #include <linux/sched/mm.h>
+ #include <linux/module.h>
+@@ -28,6 +27,7 @@
+ #include <linux/slab.h>
+ #include <linux/sched.h>
+ #include <linux/list_lru.h>
++#include <asm/cacheflush.h>
+ #include "binder_alloc.h"
+ #include "binder_trace.h"
+ 
+-- 
+2.7.4
 
->
-> Brian
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltWTJYACgkQOeye3VZi
-gbnyFBAArJiQv6S5G/USGOi6WNI4Y78Si/Y1vCBTJTsGjmyYrCFsDqVo52tcf85z
-AV78X3WNq4YJbwMs+VUlyFvgkeRwqhTsXSOdGVcv1dWzkz034RkUUY9HU85NjnGy
-RxWacrP/jEg3iPHrWUDTITgOovckIQAMwdKrIqlEVrrydc5ZBJ42VHXI17t+uaXg
-1JePefPFP9v/pzXtq+z20pZr6JzPIk7gJH8JgbkSyd5E5EfUCZ6N3A+JowS1YSjq
-LBwcQjzgUGsvUdmkTPs8wyWH4UWNwcg1KtagXGMco4Ul+AkmNNDEgnxyZsvc8eHo
-X8m9hA9TEvbUYUyHv6ivyuZ/5XaGdL5ZHc1AVZoq/up18B681ifnfvfsttstYEAh
-SYgZTz0zMKV+aVjSba08ZGvpmRRr19uW7vz1O86GhvPUi7OsFTcCR+nlKfL9m+Fu
-FCGgDi9f4Dh98hdC5cMgNNmyFw8hj4lSTDS/gQKK6aOBi2l7f4bfpYv/Fs0yx1sQ
-6HNOyuQjPhuAO6k8QztPR47zzrzndarTVwAT5eLwl1a8gx+Pgh4sSOUjqwylg9uK
-LGz739D5+PLPrQiguSwkUgcJPFC1XgomXXfUs+C+0/opbS/mFa1DMRBIricIPEWD
-Feq9PQizxrTtqLNGqzdn4MjL0p/pkxacGCVOZzIDrDiZ4RlDTsY=
-=n6yx
------END PGP SIGNATURE-----
---=-=-=--
