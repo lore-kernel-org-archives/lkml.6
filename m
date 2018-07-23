@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BD7ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63688ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD6C120856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2120320856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:53:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9QO8mOt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD6C120856
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3GeC1Kt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2120320856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388304AbeGWSzz (ORCPT
+        id S2388355AbeGWSz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:55:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39066 "EHLO mail.kernel.org"
+        Mon, 23 Jul 2018 14:55:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388181AbeGWSzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:55:54 -0400
+        id S2388181AbeGWSz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:55:58 -0400
 Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6569820882;
-        Mon, 23 Jul 2018 17:53:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13D7820880;
+        Mon, 23 Jul 2018 17:53:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532368413;
-        bh=WvMctvh+JXEyz5h/RvLqqyqy2Ylz6IINDsgU2iXTJoc=;
+        s=default; t=1532368417;
+        bh=kX0mV+jHv86U8yvvpRO55TWW88fI73gaSoTVKDgP8cg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c9QO8mOtLfv7SgSaOcvcVn8YhsViddpcJWechoeQEsvEaYLOC+ZFFGDzJZTNl07l2
-         FNeBxYMkvJCEEm/SZ77ywxm7w783pEznDk6gjRe47YXO5LaySRyBSwxMtul+rHtRRT
-         r2qt9UIdZVsxese7TNPILxxjLg1vqNFPqNSK/fok=
+        b=T3GeC1Kt5v2G6kMhveRSzGtc7FX5yX1GOtMh0Jd8IRvzxqgyiR4l5wO9BL4P9UIfS
+         usBrN1Bgb0smqIAJ+beOHdpXkEycrVHoUEglE7VH4w6MuVxHmAgyPP2BBV7RO5euq+
+         89tcZeafJ2KzfCunZazgL+xg8BuAvHKeha6LJfac=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -54,9 +54,9 @@ Cc:     =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [RFT v2 01/10] pinctrl: samsung: Define suspend and resume callbacks for all banks and SoCs
-Date:   Mon, 23 Jul 2018 19:52:53 +0200
-Message-Id: <20180723175302.22535-2-krzk@kernel.org>
+Subject: [RFT v2 02/10] pinctrl: samsung: Document suspend and resume members
+Date:   Mon, 23 Jul 2018 19:52:54 +0200
+Message-Id: <20180723175302.22535-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180723175302.22535-1-krzk@kernel.org>
 References: <20180723175302.22535-1-krzk@kernel.org>
@@ -65,90 +65,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suspend and resume callbacks in Exynos/S5Pv210 pin controller drivers,
-save and restore state of registers.  This operations should be done for
-all banks which have external interrupts (as denoted by using
-EXYNOS_PIN_BANK_EINTG/EINTW macros).
-
-Add all banks of Exynos5260 and Exynos5420.  This is necessary step for
-supporting suspend to RAM on these SoCs.
+Add missing documentation for suspend and resume members of struct
+samsung_pin_ctrl and samsung_pinctrl_drv_data.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Sylwester Nawrocki <snawrocki@kernel.org>
 Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/pinctrl/samsung/pinctrl-samsung.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-index d82820fc349a..44c6b753f692 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-@@ -616,16 +616,22 @@ static const struct samsung_pin_ctrl exynos5260_pin_ctrl[] __initconst = {
- 		.nr_banks	= ARRAY_SIZE(exynos5260_pin_banks0),
- 		.eint_gpio_init = exynos_eint_gpio_init,
- 		.eint_wkup_init = exynos_eint_wkup_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 	}, {
- 		/* pin-controller instance 1 data */
- 		.pin_banks	= exynos5260_pin_banks1,
- 		.nr_banks	= ARRAY_SIZE(exynos5260_pin_banks1),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 	}, {
- 		/* pin-controller instance 2 data */
- 		.pin_banks	= exynos5260_pin_banks2,
- 		.nr_banks	= ARRAY_SIZE(exynos5260_pin_banks2),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 	},
- };
- 
-@@ -842,30 +848,40 @@ static const struct samsung_pin_ctrl exynos5420_pin_ctrl[] __initconst = {
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks0),
- 		.eint_gpio_init = exynos_eint_gpio_init,
- 		.eint_wkup_init = exynos_eint_wkup_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos5420_retention_data,
- 	}, {
- 		/* pin-controller instance 1 data */
- 		.pin_banks	= exynos5420_pin_banks1,
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks1),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos5420_retention_data,
- 	}, {
- 		/* pin-controller instance 2 data */
- 		.pin_banks	= exynos5420_pin_banks2,
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks2),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos5420_retention_data,
- 	}, {
- 		/* pin-controller instance 3 data */
- 		.pin_banks	= exynos5420_pin_banks3,
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks3),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos5420_retention_data,
- 	}, {
- 		/* pin-controller instance 4 data */
- 		.pin_banks	= exynos5420_pin_banks4,
- 		.nr_banks	= ARRAY_SIZE(exynos5420_pin_banks4),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &exynos4_audio_retention_data,
- 	},
- };
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index f0cda9424dfe..aac16cc8362a 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -223,6 +223,10 @@ struct samsung_retention_data {
+  *	interrupts for the controller.
+  * @eint_wkup_init: platform specific callback to setup the external wakeup
+  *	interrupts for the controller.
++ * @suspend: platform specific suspend callback, executed during pin controller
++ *	device suspend, see samsung_pinctrl_suspend()
++ * @resume: platform specific resume callback, executed during pin controller
++ *	device suspend, see samsung_pinctrl_resume()
+  */
+ struct samsung_pin_ctrl {
+ 	const struct samsung_pin_bank_data *pin_banks;
+@@ -255,6 +259,10 @@ struct samsung_pin_ctrl {
+  * @pin_base: starting system wide pin number.
+  * @nr_pins: number of pins supported by the controller.
+  * @retention_ctrl: retention control runtime data.
++ * @suspend: platform specific suspend callback, executed during pin controller
++ *	device suspend, see samsung_pinctrl_suspend()
++ * @resume: platform specific resume callback, executed during pin controller
++ *	device suspend, see samsung_pinctrl_resume()
+  */
+ struct samsung_pinctrl_drv_data {
+ 	struct list_head		node;
 -- 
 2.14.1
 
