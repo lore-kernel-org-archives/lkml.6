@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE0AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0B8ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E4F20846
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:19:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E4F20846
+	by mail.kernel.org (Postfix) with ESMTP id CB0FB20875
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 11:19:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0FB20875
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388113AbeGWMUf (ORCPT
+        id S2388189AbeGWMUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 08:20:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57208 "EHLO mx1.suse.de"
+        Mon, 23 Jul 2018 08:20:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57256 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387843AbeGWMUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 08:20:34 -0400
+        id S2387933AbeGWMUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 08:20:36 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D2A27AEDA;
-        Mon, 23 Jul 2018 11:19:49 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 0D204AF3B;
+        Mon, 23 Jul 2018 11:19:50 +0000 (UTC)
 From:   Vlastimil Babka <vbabka@suse.cz>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Daniel Colascione <dancol@google.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Alexey Dobriyan <adobriyan@gmail.com>,
         linux-api@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 2/4] mm: proc/pid/smaps: factor out mem stats gathering
-Date:   Mon, 23 Jul 2018 13:19:31 +0200
-Message-Id: <20180723111933.15443-3-vbabka@suse.cz>
+Subject: [PATCH 4/4] mm: proc/pid/smaps_rollup: convert to single value seq_file
+Date:   Mon, 23 Jul 2018 13:19:33 +0200
+Message-Id: <20180723111933.15443-5-vbabka@suse.cz>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723111933.15443-1-vbabka@suse.cz>
 References: <20180723111933.15443-1-vbabka@suse.cz>
@@ -43,39 +43,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To prepare for handling /proc/pid/smaps_rollup differently from /proc/pid/smaps
-factor out vma mem stats gathering from show_smap() - it will be used by both.
+The /proc/pid/smaps_rollup file is currently implemented via the
+m_start/m_next/m_stop seq_file iterators shared with the other maps files,
+that iterate over vma's. However, the rollup file doesn't print anything
+for each vma, only accumulate the stats.
 
+There are some issues with the current code as reported in [1] - the
+accumulated stats can get skewed if seq_file start()/stop() op is called
+multiple times, if show() is called multiple times, and after seeks to
+non-zero position.
+
+Patch [1] fixed those within existing design, but I believe it is
+fundamentally wrong to expose the vma iterators to the seq_file mechanism
+when smaps_rollup shows logically a single set of values for the whole
+address space.
+
+This patch thus refactors the code to provide a single "value" at offset 0,
+with vma iteration to gather the stats done internally. This fixes the
+situations where results are skewed, and simplifies the code, especially
+in show_smap(), at the expense of somewhat less code reuse.
+
+[1] https://marc.info/?l=linux-mm&m=151927723128134&w=2
+
+Reported-by: Daniel Colascione <dancol@google.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- fs/proc/task_mmu.c | 55 ++++++++++++++++++++++++++--------------------
- 1 file changed, 31 insertions(+), 24 deletions(-)
+ fs/proc/task_mmu.c | 136 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 86 insertions(+), 50 deletions(-)
 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index a3f98ca50981..d2ca88c92d9d 100644
+index 1d6d315fd31b..31109e67804c 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -702,14 +702,9 @@ static int smaps_hugetlb_range(pte_t *pte, unsigned long hmask,
- }
- #endif /* HUGETLB_PAGE */
+@@ -404,7 +404,6 @@ const struct file_operations proc_pid_maps_operations = {
  
--#define SEQ_PUT_DEC(str, val) \
--		seq_put_decimal_ull_width(m, str, (val) >> 10, 8)
--static int show_smap(struct seq_file *m, void *v)
-+static void smap_gather_stats(struct vm_area_struct *vma,
-+			     struct mem_size_stats *mss)
+ #ifdef CONFIG_PROC_PAGE_MONITOR
+ struct mem_size_stats {
+-	bool first;
+ 	unsigned long resident;
+ 	unsigned long shared_clean;
+ 	unsigned long shared_dirty;
+@@ -418,11 +417,12 @@ struct mem_size_stats {
+ 	unsigned long swap;
+ 	unsigned long shared_hugetlb;
+ 	unsigned long private_hugetlb;
+-	unsigned long first_vma_start;
++	unsigned long last_vma_end;
+ 	u64 pss;
+ 	u64 pss_locked;
+ 	u64 swap_pss;
+ 	bool check_shmem_swap;
++	bool finished;
+ };
+ 
+ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+@@ -775,58 +775,57 @@ static void __show_smap(struct seq_file *m, struct mem_size_stats *mss)
+ 
+ static int show_smap(struct seq_file *m, void *v)
  {
 -	struct proc_maps_private *priv = m->private;
--	struct vm_area_struct *vma = v;
+ 	struct vm_area_struct *vma = v;
 -	struct mem_size_stats mss_stack;
 -	struct mem_size_stats *mss;
- 	struct mm_walk smaps_walk = {
- 		.pmd_entry = smaps_pte_range,
- #ifdef CONFIG_HUGETLB_PAGE
-@@ -717,23 +712,6 @@ static int show_smap(struct seq_file *m, void *v)
- #endif
- 		.mm = vma->vm_mm,
- 	};
 -	int ret = 0;
 -	bool rollup_mode;
 -	bool last_vma;
@@ -93,45 +122,150 @@ index a3f98ca50981..d2ca88c92d9d 100644
 -		memset(&mss_stack, 0, sizeof(mss_stack));
 -		mss = &mss_stack;
 -	}
++	struct mem_size_stats mss;
  
- 	smaps_walk.private = mss;
+-	smap_gather_stats(vma, mss);
++	memset(&mss, 0, sizeof(mss));
  
-@@ -765,6 +743,35 @@ static int show_smap(struct seq_file *m, void *v)
- 	walk_page_vma(vma, &smaps_walk);
- 	if (vma->vm_flags & VM_LOCKED)
- 		mss->pss_locked += mss->pss;
+-	if (!rollup_mode) {
+-		show_map_vma(m, vma);
+-	} else if (last_vma) {
+-		show_vma_header_prefix(
+-			m, mss->first_vma_start, vma->vm_end, 0, 0, 0, 0);
+-		seq_pad(m, ' ');
+-		seq_puts(m, "[rollup]\n");
+-	} else {
+-		ret = SEQ_SKIP;
+-	}
++	smap_gather_stats(vma, &mss);
+ 
+-	if (!rollup_mode) {
+-		SEQ_PUT_DEC("Size:           ", vma->vm_end - vma->vm_start);
+-		SEQ_PUT_DEC(" kB\nKernelPageSize: ", vma_kernel_pagesize(vma));
+-		SEQ_PUT_DEC(" kB\nMMUPageSize:    ", vma_mmu_pagesize(vma));
+-		seq_puts(m, " kB\n");
+-	}
++	show_map_vma(m, vma);
+ 
+-	if (!rollup_mode || last_vma)
+-		__show_smap(m, mss);
++	SEQ_PUT_DEC("Size:           ", vma->vm_end - vma->vm_start);
++	SEQ_PUT_DEC(" kB\nKernelPageSize: ", vma_kernel_pagesize(vma));
++	SEQ_PUT_DEC(" kB\nMMUPageSize:    ", vma_mmu_pagesize(vma));
++	seq_puts(m, " kB\n");
++
++	__show_smap(m, &mss);
++
++	if (arch_pkeys_enabled())
++		seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
++	show_smap_vma_flags(m, vma);
+ 
+-	if (!rollup_mode) {
+-		if (arch_pkeys_enabled())
+-			seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
+-		show_smap_vma_flags(m, vma);
+-	}
+ 	m_cache_vma(m, vma);
+-	return ret;
++
++	return 0;
 +}
 +
-+#define SEQ_PUT_DEC(str, val) \
-+		seq_put_decimal_ull_width(m, str, (val) >> 10, 8)
-+static int show_smap(struct seq_file *m, void *v)
++static int show_smaps_rollup(struct seq_file *m, void *v)
 +{
 +	struct proc_maps_private *priv = m->private;
-+	struct vm_area_struct *vma = v;
-+	struct mem_size_stats mss_stack;
-+	struct mem_size_stats *mss;
-+	int ret = 0;
-+	bool rollup_mode;
-+	bool last_vma;
++	struct mem_size_stats *mss = priv->rollup;
++	struct vm_area_struct *vma;
 +
-+	if (priv->rollup) {
-+		rollup_mode = true;
-+		mss = priv->rollup;
-+		if (mss->first) {
-+			mss->first_vma_start = vma->vm_start;
-+			mss->first = false;
++	/*
++	 * We might be called multiple times when e.g. the seq buffer
++	 * overflows. Gather the stats only once.
++	 */
++	if (!mss->finished) {
++		for (vma = priv->mm->mmap; vma; vma = vma->vm_next) {
++			smap_gather_stats(vma, mss);
++			mss->last_vma_end = vma->vm_end;
 +		}
-+		last_vma = !m_next_vma(priv, vma);
-+	} else {
-+		rollup_mode = false;
-+		memset(&mss_stack, 0, sizeof(mss_stack));
-+		mss = &mss_stack;
++		mss->finished = true;
 +	}
 +
-+	smap_gather_stats(vma, mss);
++	show_vma_header_prefix(m, priv->mm->mmap->vm_start,
++			       mss->last_vma_end, 0, 0, 0, 0);
++	seq_pad(m, ' ');
++	seq_puts(m, "[rollup]\n");
++
++	__show_smap(m, mss);
++
++	return 0;
+ }
+ #undef SEQ_PUT_DEC
  
- 	if (!rollup_mode) {
- 		show_map_vma(m, vma);
+@@ -837,6 +836,44 @@ static const struct seq_operations proc_pid_smaps_op = {
+ 	.show	= show_smap
+ };
+ 
++static void *smaps_rollup_start(struct seq_file *m, loff_t *ppos)
++{
++	struct proc_maps_private *priv = m->private;
++	struct mm_struct *mm;
++
++	if (*ppos != 0)
++		return NULL;
++
++	priv->task = get_proc_task(priv->inode);
++	if (!priv->task)
++		return ERR_PTR(-ESRCH);
++
++	mm = priv->mm;
++	if (!mm || !mmget_not_zero(mm))
++		return NULL;
++
++	memset(priv->rollup, 0, sizeof(*priv->rollup));
++
++	down_read(&mm->mmap_sem);
++	hold_task_mempolicy(priv);
++
++	return mm;
++}
++
++static void *smaps_rollup_next(struct seq_file *m, void *v, loff_t *pos)
++{
++	(*pos)++;
++	vma_stop(m->private);
++	return NULL;
++}
++
++static const struct seq_operations proc_pid_smaps_rollup_op = {
++	.start	= smaps_rollup_start,
++	.next	= smaps_rollup_next,
++	.stop	= m_stop,
++	.show	= show_smaps_rollup
++};
++
+ static int pid_smaps_open(struct inode *inode, struct file *file)
+ {
+ 	return do_maps_open(inode, file, &proc_pid_smaps_op);
+@@ -846,18 +883,17 @@ static int pid_smaps_rollup_open(struct inode *inode, struct file *file)
+ {
+ 	struct seq_file *seq;
+ 	struct proc_maps_private *priv;
+-	int ret = do_maps_open(inode, file, &proc_pid_smaps_op);
++	int ret = do_maps_open(inode, file, &proc_pid_smaps_rollup_op);
+ 
+ 	if (ret < 0)
+ 		return ret;
+ 	seq = file->private_data;
+ 	priv = seq->private;
+-	priv->rollup = kzalloc(sizeof(*priv->rollup), GFP_KERNEL);
++	priv->rollup = kmalloc(sizeof(*priv->rollup), GFP_KERNEL);
+ 	if (!priv->rollup) {
+ 		proc_map_release(inode, file);
+ 		return -ENOMEM;
+ 	}
+-	priv->rollup->first = true;
+ 	return 0;
+ }
+ 
 -- 
 2.18.0
 
