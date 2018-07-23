@@ -2,131 +2,107 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B000ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91432ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33D8A20878
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:05:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="JIuVOYgS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D8A20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 4943B20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:07:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4943B20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388276AbeGWLF3 (ORCPT
+        id S2388307AbeGWLIA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:05:29 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34593 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387933AbeGWLF3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:05:29 -0400
-Received: by mail-pl0-f68.google.com with SMTP id f6-v6so30810plo.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 03:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Zk9Pme2iV/NriyqwcPPpH9br25cbVvY0c5t6UwQGT9M=;
-        b=JIuVOYgSrYSNTq/tlMyHCavAAsOCtofyXSnvmkGvrwr+lGRD/zWxJqQigOy5uBGl5U
-         XrDEA4M6kqQmJL/hyfFgMvcO3pt8e0t1K4/8klNJqF6zgwnW3aPiGNkm4c+6RpOjK+Z6
-         7zOf/DcLBvbUoY5gu9p0xF5EvzO5XQbuU5ccBxAFC+PWz1Rf64Wd65PXO8wMPJS3nI2n
-         KLvL3ZJ7rNG/fF2F6qdYiBhhkDJF1aSeyW2EyzjwUpyNMuFJGIk6Lvyk/xpCKDOu+r26
-         pFraK58UlY9Zx5g2WIJJPmzcFYXzqcARYVwkY1c3gqbVRHX0QmrmAI8FHHociCPDStAe
-         VgDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zk9Pme2iV/NriyqwcPPpH9br25cbVvY0c5t6UwQGT9M=;
-        b=gaKxRsD2KZHmAOUUZoM5jrq83UlgpoNEtlwxdO1IUQnfvF0jQcDU4NubmPuGy6Y0pk
-         AVWJ1wVm+pcRQkKwJ57yDF5sr5VhlCvE0rX5Objl/slDRyfOKmWVi1K5hbmw86VVPXvP
-         xmm/nKJckCZdyjmY5yg+EfyzYP13TxmsgxoHRQdlDpsii/SvZF7IHZNQwc+5Z5udxcyj
-         6uCfZzs8nvhfSrsoAdlCf0IERoT/QDpOZeeezkjnS3WGezlkPS6cDUOpjht3hLTOz4kD
-         O6njYSct5MXWDPAgbMOUnlSKVdZohNrSySysShv4pEK03CUGKWwkQ6qOx6aHNpGjx7Gf
-         MnNQ==
-X-Gm-Message-State: AOUpUlFS6i1n8N0cHAoNfXOzqtRmfnNjcmqk2id88pbpkSkOABrUv9TL
-        O/GTCGEIfO1esZ1x2z7K/HtcSA==
-X-Google-Smtp-Source: AAOMgpcO+BD6ln6QuDha+IVzOc0HQ2t7KK1C5Bw4g90hJl8M32Ekkzw8GJVQcJeV7Wb/PotSk0JXYg==
-X-Received: by 2002:a17:902:59da:: with SMTP id d26-v6mr12253978plj.42.1532340303107;
-        Mon, 23 Jul 2018 03:05:03 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.40])
-        by smtp.gmail.com with ESMTPSA id z8-v6sm12356273pfe.163.2018.07.23.03.05.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 03:05:02 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id A44A7303A0F; Mon, 23 Jul 2018 13:04:58 +0300 (+03)
-Date:   Mon, 23 Jul 2018 13:04:58 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv5 17/19] x86/mm: Implement sync_direct_mapping()
-Message-ID: <20180723100458.3oifgqyfavb6c45j@kshutemo-mobl1>
-References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
- <20180717112029.42378-18-kirill.shutemov@linux.intel.com>
- <4a99e079-7bd0-a611-571a-d730815b4b2a@intel.com>
+        Mon, 23 Jul 2018 07:08:00 -0400
+Received: from mga04.intel.com ([192.55.52.120]:16315 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388190AbeGWLH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:07:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 03:07:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,393,1526367600"; 
+   d="asc'?scan'208";a="73683831"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
+  by fmsmga004.fm.intel.com with ESMTP; 23 Jul 2018 03:06:56 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Pengbo Mu <pengbo.mu@nxp.com>, kbuild test robot <lkp@intel.com>
+Cc:     "kbuild-all\@01.org" <kbuild-all@01.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Ran Wang <ran.wang_1@nxp.com>
+Subject: RE: [PATCH] usb: dwc3: call set incr burst type func()
+In-Reply-To: <AM0PR0402MB37475F43B0F16F462F8CD623F4560@AM0PR0402MB3747.eurprd04.prod.outlook.com>
+References: <1532316853-29184-1-git-send-email-pengbo.mu@nxp.com> <201807231412.97HYMoRm%fengguang.wu@intel.com> <AM0PR0402MB37475F43B0F16F462F8CD623F4560@AM0PR0402MB3747.eurprd04.prod.outlook.com>
+Date:   Mon, 23 Jul 2018 13:03:43 +0300
+Message-ID: <87muui46bk.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a99e079-7bd0-a611-571a-d730815b4b2a@intel.com>
-User-Agent: NeoMutt/20180622
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 05:01:37PM -0700, Dave Hansen wrote:
-> On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
-> >  arch/x86/include/asm/mktme.h |   8 +
-> >  arch/x86/mm/init_64.c        |  10 +
-> >  arch/x86/mm/mktme.c          | 437 +++++++++++++++++++++++++++++++++++
-> >  3 files changed, 455 insertions(+)
-> 
-> I'm not the maintainer.  But, NAK from me on this on the diffstat alone.
-> 
-> There is simply too much technical debt here.  There is no way this code
-> is not riddled with bugs and I would bet lots of beer on the fact that
-> this has received little to know testing with all the combinations that
-> matter, like memory hotplug.  I'd love to be proven wrong, so I eagerly
-> await to be dazzled with the test results that have so far escaped
-> mention in the changelog.
-> 
-> Please make an effort to refactor this to reuse the code that we already
-> have to manage the direct mapping.  We can't afford 455 new lines of
-> page table manipulation that nobody tests or runs.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I'll look in this once again. But I'm not sure that there's any better
-solution.
 
-The problem boils down to page allocation issue. We are not be able to
-allocate enough page tables in early boot for all direct mappings. At that
-stage we have very limited pool of pages that can be used for page tables.
-The pool is allocated at compile-time and it's not enough to handle MKTME.
+Hi,
 
-Syncing approach appeared to be the simplest to me.
+(no top-posting)
 
-Other possibility I see is to write down a journal of operations on direct
-mappings to be replayed once we have proper page allocator around.
+Pengbo Mu <pengbo.mu@nxp.com> writes:
+> Hi,
+>
+> The following is my compile result:
+>   ...
+>   LD [M]  sound/soc/codecs/snd-soc-ak4613.ko
+>   LD [M]  sound/soc/generic/snd-soc-audio-graph-card.ko
+>   LD [M]  sound/soc/generic/snd-soc-simple-card-utils.ko
+>   LD [M]  sound/soc/generic/snd-soc-simple-card.ko
+>   LD [M]  sound/soc/sh/rcar/snd-soc-rcar.ko
+> ret:0
+> These patches are based on mainline , and my version is linux-4.18-rc5. L=
+ast week , I pulled my upstream branch to the latest.
+> I didn't see error log in this version.
+> By the way , this is my git tree --- git://git.kernel.org/pub/scm/linux/k=
+ernel/git/gregkh/usb.git .
+> Please tell me which tree could suitably develop patch for upstream.
 
-> How _was_ this tested?
+this is a result of you sending this patch outside of the series it
+belongs to. Just resend the full series and things should be okay. Also,
+as Greg already mentioned, please write changelogs that explain WHY the
+change was made.
 
-Besides normal boot with MTKME enabled and access pages via new direct
-mappings, I also test memory hotplug and hotremove with QEMU.
+=2D-=20
+balbi
 
-Ideally we wound need some self-test for this. But I don't see a way to
-simulate hotplug and hotremove. Soft offlining doesn't cut it. We
-actually need to see the ACPI event to trigger the code.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
- Kirill A. Shutemov
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltVp/8ACgkQzL64meEa
+mQZ2VxAAv7V3woXkA7lNKO53IPGRqTjD7IiF5mM/vkfL9W71VSX5GqWBw/qKMYO3
+2nVnzdmRi0XGQ0pswT8y1vmTPNGarTcup13JLPAxkxyqGvcfEgrE+RRfxMlLvpou
+Tdq0FKQCYw42Jx1OM8YS6DgDr3mvebnhIbDOdjUYwE2mHXu1omT3kXJos+X9LGMi
+pgL6DaGxqAWwPvHuCsrxzzsrS4sSY+o08ptBPqgo9NAUPwqpku7t9X+6EfiA2Hry
+2Gbl9fLlxY74Z/Pn8o2GfeVyDxZxjFl5BueY92vSiv1JH8Fz3NmAp6vHMD6xJhfb
+Umr8Yet+VLhhl8I1pqIEDFynGs0GuQ4LBnnOJZuAxjrS47kdZ6WRFbwAO+GLLZcp
+/SXffD88pyKOcVN4fLWP7bzZFqSq5ndhHVL0Nv2zdCNB0T/d7v3RYLArbpRCphkH
+LbuR/ZLzkDLOPgSOwJ9SxR0uD6qboIcRsAjk/SKwScSMCfKdnYW+Cq3FQAGjq1xw
+zAqmNiT0J/1I8WmKJ8YnZ7FSPYqdDOSFjdQmUFRab5pOFQLy7NYmQMBcg2uikW8Z
+mYm7zYe+okI9NoEXTz65OyRYx+aSIydK0Al6jLwK5fYQfKgfi3Nuveskx+AvXE+T
+PXkFfxP1sl8frTzanOa48n+ROlATM8VBJntEqr4WgWNlZrd9pw4=
+=rxoQ
+-----END PGP SIGNATURE-----
+--=-=-=--
