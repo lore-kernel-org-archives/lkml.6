@@ -2,135 +2,202 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E20ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3F8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 254C120852
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:10:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47B8420852
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:11:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="MmHTvy/K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 254C120852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TeYy23pU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47B8420852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388793AbeGWSMq (ORCPT
+        id S2388860AbeGWSNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:12:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47476 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388552AbeGWSMp (ORCPT
+        Mon, 23 Jul 2018 14:13:30 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46716 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388662AbeGWSN3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:12:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=kaRebApwsm0Oph4L+tR949m78bTZqIlnBOrRTqDBKz4=; b=MmHTvy/KvPMs
-        LOO9FhbgtsdcvWr9g3a6JLe0i+8k1hlFJva0Xa94wxaLrijvXRNNyMsDEukmcHIXG1g9dY3lZ8D7A
-        /1thIptim6ex2DTx6J3m5xLPIZ0Fjq/LNLe7A7OfOn2TY4Gce78q5olwd6kGhKcNdZwiX15xQLlUl
-        nVHjA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fheLw-0004O5-PB; Mon, 23 Jul 2018 17:10:32 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 81AC7112387B; Mon, 23 Jul 2018 18:10:32 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: sccb: fix typo and sort headers alphabetically" to the regmap tree
-In-Reply-To: 
-Message-Id: <20180723171032.81AC7112387B@debutante.sirena.org.uk>
-Date:   Mon, 23 Jul 2018 18:10:32 +0100 (BST)
+        Mon, 23 Jul 2018 14:13:29 -0400
+Received: by mail-io0-f193.google.com with SMTP id i18-v6so1142756ioj.13
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 10:11:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=f4MnpIAcAU9BeI6m4cqes0SWnXUCIOpfmKF8rZl9oJE=;
+        b=TeYy23pU+Oq8AMGVAYwsEzZFqIOGPGXqGD3gXYG+eliZV9gkyW1zx7VYxtRQY84DEt
+         cPIk3xTKVD44YJr9UfT9XTmrlCJHlDznJI/i7DMWvZFbNN2XY6QzB4p65Kr/7zl4/o2g
+         /MdVCiAyApar24XQJcAkBwlzGzqtrkDABIN/WuQ1OFAwt3kXdNjBH/zzvLV+j6ColIHX
+         aefhtGPOJ2qo0/oF24ARN7k5AXyOaUQ4o7z8GBhMXfT3KGlWXevB7jnw7k2b0AVbV65S
+         436TnSxMBGwKoY59Sr8jIThhuJJVJoi7I68v9WtMYr94oJ7CZymK9WDBAkkILIs+lyzy
+         4JMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=f4MnpIAcAU9BeI6m4cqes0SWnXUCIOpfmKF8rZl9oJE=;
+        b=a5wYOMG5zH3ZyXwOXHA2PXGLer216TAJ0WE6JFHJhbIhltTTdCkhSKPM4hpomIouhl
+         ujNVh+juxWVLEYth06WUs5MHKM8NFnyzLlAUeLFnnobrQzlcUfrU5HL4O29FTP6dtwDf
+         HamHsmFesIctmO706OHIuprO0wjzC/r8A2Hhh2Eja1SSgTOdw52XNJMnSVs7hhUF6BvN
+         kqdD77/WQYY3uno13UCJb8XGq3EuHyvHXKdj3Q8KqxTX9vhXgMpDjvXdrd7oDqPJb19r
+         mJmZENqwucU+hAAXMbUgfAVN3cQZgf9cjB6YH94dUCE83zp4y+x+fMA/KXTXICPdxlL8
+         WG/A==
+X-Gm-Message-State: AOUpUlGFBuwsbZfmMU+gARg/TX/lyjsrK/N14y2cElxfRcmA4zKSxD1f
+        +s8k+b8o/6nQV5jUYyMiOS6UtKdyYfQSIBlqAJDn1o3Q6rk=
+X-Google-Smtp-Source: AAOMgpfY2PRSJL/wkO8mKFvb43oGxDClSGOO/5r39oMh4O2iwqyjM0TjgWEUxZS8ERAOlcq1MGB8UWfrGPRHP0sYu5M=
+X-Received: by 2002:a6b:87db:: with SMTP id r88-v6mr11437533ioi.243.1532365878537;
+ Mon, 23 Jul 2018 10:11:18 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac0:e445:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 10:11:17
+ -0700 (PDT)
+In-Reply-To: <20180723154025.GF2683@e110439-lin>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com>
+ <20180716082906.6061-11-patrick.bellasi@arm.com> <CAJuCfpFnj2g3+ZpR4fP4yqfxs0zd=c-Zehr2XM7m_C+WdL9jNA@mail.gmail.com>
+ <20180723154025.GF2683@e110439-lin>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Mon, 23 Jul 2018 10:11:17 -0700
+Message-ID: <CAJuCfpHJ=O1QVFZZ2dpaDDQe+dX1aGkzWdcd76c9zZpxw2fNtA@mail.gmail.com>
+Subject: Re: [PATCH v2 10/12] sched/core: uclamp: use TG's clamps to restrict
+ Task's clamps
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, Jul 23, 2018 at 8:40 AM, Patrick Bellasi
+<patrick.bellasi@arm.com> wrote:
+> On 21-Jul 20:05, Suren Baghdasaryan wrote:
+>> On Mon, Jul 16, 2018 at 1:29 AM, Patrick Bellasi
+>> <patrick.bellasi@arm.com> wrote:
+>> > When a task's util_clamp value is configured via sched_setattr(2), this
+>> > value has to be properly accounted in the corresponding clamp group
+>> > every time the task is enqueued and dequeued. When cgroups are also in
+>> > use, per-task clamp values have to be aggregated to those of the CPU's
+>> > controller's Task Group (TG) in which the task is currently living.
+>> >
+>> > Let's update uclamp_cpu_get() to provide aggregation between the task
+>> > and the TG clamp values. Every time a task is enqueued, it will be
+>> > accounted in the clamp_group which defines the smaller clamp between the
+>> > task specific value and its TG value.
+>>
+>> So choosing smallest for both UCLAMP_MIN and UCLAMP_MAX means the
+>> least boosted value and the most clamped value between syscall and TG
+>> will be used.
+>
+> Right
+>
+>> My understanding is that boost means "at least this much" and clamp
+>> means "at most this much".
+>
+> Right
+>
+>> So to satisfy both TG and syscall requirements I think you would
+>> need to choose the largest value for UCLAMP_MIN and the smallest one
+>> for UCLAMP_MAX, meaning the most boosted and most clamped range.
+>> Current implementation choses the least boosted value, so
+>> effectively one of the UCLAMP_MIN requirements (either from TG or
+>> from syscall) are being ignored...  Could you please clarify why
+>> this choice is made?
+>
+> The TG values are always used to specify a _restriction_ on
+> task-specific values.
+>
+> Thus, if you look or example at the CPU mask for a task, you can have
+> a task with affinity to CPUs 0-1, currently running on a cgroup with
+> cpuset.cpus=0... then the task can run only on CPU 0 (althought its
+> affinity includes CPU1 too).
+>
+> Same we do here: if a task has util_min=10, but it's running in a
+> cgroup with cpu.util_min=0, then it will not be boosted.
+>
+> IOW, this allows to implement a "nice" policy at task level, where a
+> task (via syscall) can decide to be less boosted with respect to its
+> group but never more boosted. The same task can also decide to be more
+> clamped, but not less clamped then its current group.
+>
 
-   regmap: sccb: fix typo and sort headers alphabetically
+The fact that boost means "at least this much" to me seems like we can
+safely choose higher CPU bandwidth (as long as it's lower than
+UCLAMP_MAX) but from your description sounds like TG's UCLAMP_MIN
+means "at most this much boost" and it's not safe to use CPU bandwidth
+higher than TG's UCLAMP_MIN. So instead of specifying min CPU
+bandwidth for a task it specifies the max allowed boost. Seems like a
+discrepancy to me but maybe there are compelling usecases when this
+behavior is necessary? In that case would be good to spell them out to
+explain why this choice is made.
 
-has been applied to the regmap tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 75eb3a67a29e9f87c07c8bd184a7ed4274a58ef0 Mon Sep 17 00:00:00 2001
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Mon, 23 Jul 2018 00:45:46 +0900
-Subject: [PATCH] regmap: sccb: fix typo and sort headers alphabetically
-
-Fix typos 's/wit/with/' in the comments and sort headers alphabetically
-in order to avoid duplicate includes in future.
-
-Fixes: bcf7eac3d97f ("regmap: add SCCB support")
-Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/base/regmap/regmap-sccb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/base/regmap/regmap-sccb.c b/drivers/base/regmap/regmap-sccb.c
-index b6eb876ea819..597042e2d009 100644
---- a/drivers/base/regmap/regmap-sccb.c
-+++ b/drivers/base/regmap/regmap-sccb.c
-@@ -1,9 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- // Register map access API - SCCB support
- 
--#include <linux/regmap.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
-+#include <linux/regmap.h>
- 
- #include "internal.h"
- 
-@@ -29,7 +29,7 @@ static bool sccb_is_available(struct i2c_adapter *adap)
- 
- /**
-  * regmap_sccb_read - Read data from SCCB slave device
-- * @context: Device that will be interacted wit
-+ * @context: Device that will be interacted with
-  * @reg: Register to be read from
-  * @val: Pointer to store read value
-  *
-@@ -65,7 +65,7 @@ static int regmap_sccb_read(void *context, unsigned int reg, unsigned int *val)
- 
- /**
-  * regmap_sccb_write - Write data to SCCB slave device
-- * @context: Device that will be interacted wit
-+ * @context: Device that will be interacted with
-  * @reg: Register to write to
-  * @val: Value to be written
-  *
--- 
-2.18.0
-
+> [...]
+>
+>> > @@ -982,18 +989,30 @@ static inline void uclamp_cpu_get_id(struct task_struct *p,
+>> >         int clamp_value;
+>> >         int group_id;
+>> >
+>> > -       /* No task specific clamp values: nothing to do */
+>> >         group_id = p->uclamp[clamp_id].group_id;
+>> > +       clamp_value = p->uclamp[clamp_id].value;
+>> > +#ifdef CONFIG_UCLAMP_TASK_GROUP
+>> > +       /* Use TG's clamp value to limit task specific values */
+>> > +       if (group_id == UCLAMP_NONE ||
+>> > +           clamp_value >= task_group(p)->uclamp[clamp_id].value) {
+>>
+>> Not a big deal but do you need to override if (clamp_value ==
+>> task_group(p)->uclamp[clamp_id].value)? Maybe:
+>> -           clamp_value >= task_group(p)->uclamp[clamp_id].value) {
+>> +          clamp_value > task_group(p)->uclamp[clamp_id].value) {
+>
+> Good point, yes... the override is not really changing anything here.
+> Will fix this!
+>
+>> > +               clamp_value = task_group(p)->uclamp[clamp_id].value;
+>> > +               group_id = task_group(p)->uclamp[clamp_id].group_id;
+>> > +       }
+>> > +#else
+>> > +       /* No task specific clamp values: nothing to do */
+>> >         if (group_id == UCLAMP_NONE)
+>> >                 return;
+>> > +#endif
+>> >
+>> >         /* Reference count the task into its current group_id */
+>> >         uc_grp = &rq->uclamp.group[clamp_id][0];
+>> >         uc_grp[group_id].tasks += 1;
+>> >
+>> > +       /* Track the effective clamp group */
+>> > +       p->uclamp_group_id[clamp_id] = group_id;
+>> > +
+>> >         /* Force clamp update on idle exit */
+>> >         uc_cpu = &rq->uclamp;
+>> > -       clamp_value = p->uclamp[clamp_id].value;
+>> >         if (unlikely(uc_cpu->flags & UCLAMP_FLAG_IDLE)) {
+>> >                 if (clamp_id == UCLAMP_MAX)
+>> >                         uc_cpu->flags &= ~UCLAMP_FLAG_IDLE;
+>
+> [...]
+>
+> --
+> #include <best/regards.h>
+>
+> Patrick Bellasi
