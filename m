@@ -2,102 +2,146 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30683ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 524B0ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D906A20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:03:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="dVpeOyht"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D906A20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1319020854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 17:04:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1319020854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388793AbeGWSFV (ORCPT
+        id S2388918AbeGWSGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 14:05:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35068 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388357AbeGWSFV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 14:05:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sHuArVerEjtBCoU0Mw1TWW0ySCpUBCVRbkmzJtbRS9I=; b=dVpeOyht58gdiUHqC3rKir2G1
-        DlaxArV73hxQELG8/G1mZq3v0NAns+CAqvz2R+c0lIhnUcHMMQD7pXFJyu1g1Zcj79tU89pmDgLjM
-        ih6AEA8Xei0oXnRGxdC8rahmt+FyLWo6LT8KUjU21d8VdLppYQg6JTUzAog0jiBqBiw6Q=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fheEc-0004NI-Nd; Mon, 23 Jul 2018 17:02:58 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 788B4112387B; Mon, 23 Jul 2018 18:02:58 +0100 (BST)
-Date:   Mon, 23 Jul 2018 18:02:58 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>, linux-media@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: Re: [PATCH -next v4 1/3] regmap: add SCCB support
-Message-ID: <20180723170258.GE13981@sirena.org.uk>
-References: <1531756070-8560-1-git-send-email-akinobu.mita@gmail.com>
- <1531756070-8560-2-git-send-email-akinobu.mita@gmail.com>
- <20180718152832.ylu6rlcsaom2q4xm@ninjato>
- <20180718153140.GP5700@sirena.org.uk>
- <20180720215344.6it2k5wckxvwx25p@ninjato>
+        Mon, 23 Jul 2018 14:06:13 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36934 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388357AbeGWSGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 14:06:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90A0B18A;
+        Mon, 23 Jul 2018 10:04:04 -0700 (PDT)
+Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30D263F5D0;
+        Mon, 23 Jul 2018 10:04:02 -0700 (PDT)
+Subject: Re: [PATCH v11 11/15] arm64: kexec_file: add crash dump support
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
+References: <20180711074203.3019-1-takahiro.akashi@linaro.org>
+ <20180711074203.3019-12-takahiro.akashi@linaro.org>
+ <9efd0567-35dc-7435-74d6-1b540f3e5b9f@arm.com>
+ <20180723053923.GN11258@linaro.org>
+From:   James Morse <james.morse@arm.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <8600c940-158a-f64f-8271-32f8fb40f198@arm.com>
+Date:   Mon, 23 Jul 2018 18:04:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="llIrKcgUOe3dCx0c"
-Content-Disposition: inline
-In-Reply-To: <20180720215344.6it2k5wckxvwx25p@ninjato>
-X-Cookie: If in doubt, mumble.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180723053923.GN11258@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Akashi,
 
---llIrKcgUOe3dCx0c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 23/07/18 06:39, AKASHI Takahiro wrote:
+> On Wed, Jul 18, 2018 at 05:50:22PM +0100, James Morse wrote:
+>> On 11/07/18 08:41, AKASHI Takahiro wrote:
+>>> Enabling crash dump (kdump) includes
+>>> * prepare contents of ELF header of a core dump file, /proc/vmcore,
+>>>   using crash_prepare_elf64_headers(), and
+>>> * add two device tree properties, "linux,usable-memory-range" and
+>>>   "linux,elfcorehdr", which represent respectively a memory range
+>>>   to be used by crash dump kernel and the header's location
+>>
+>>> diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+>>> index 69333694e3e2..eeb5766928b0 100644
+>>> --- a/arch/arm64/include/asm/kexec.h
+>>> +++ b/arch/arm64/include/asm/kexec.h
+>>> @@ -99,6 +99,10 @@ static inline void crash_post_resume(void) {}
+>>>  struct kimage_arch {
+>>>  	phys_addr_t dtb_mem;
+>>>  	void *dtb_buf;
+>>> +	/* Core ELF header buffer */
+>>
+>>> +	void *elf_headers;
+>>
+>> Shouldn't this be a phys_addr_t if it comes from kbuf.mem?
+> 
+> Do you mean elf_load_addr? You're right.
+> But kexec_buf defined mem as unsigned long and so I'd rather change
+> dtb_mem to unsigned long instead of elf_load_addr, which will also be
+> renamed to elf_headers_mem for clarification.
 
-On Fri, Jul 20, 2018 at 11:53:44PM +0200, Wolfram Sang wrote:
+>> (dtb_mem is, and they type tells us which way round the runtime/kexec-time
+>> pointers are)
 
-> Here is it:
+My preference would be for physical addresses to always be phys_addr_t, but as
+long as we can easily spot the difference kexec-time versus runtime addresses,
+it will save bugs where we use the wrong one.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/smbus_xfer_unlock-immutable
 
-Thanks, pulled in now.
+>>> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+>>> index a0b44fe18b95..261564df7210 100644
+>>> --- a/arch/arm64/kernel/machine_kexec_file.c
+>>> +++ b/arch/arm64/kernel/machine_kexec_file.c
+>>> @@ -132,6 +173,45 @@ static int setup_dtb(struct kimage *image,
 
---llIrKcgUOe3dCx0c
-Content-Type: application/pgp-signature; name="signature.asc"
+>>> +		kbuf.buf_min = crashk_res.start;
+>>> +		kbuf.buf_max = crashk_res.end + 1;
+>>> +		kbuf.top_down = true;
+>>> +
+>>> +		ret = kexec_add_buffer(&kbuf);
+>>> +		if (ret) {
+>>> +			vfree(hdrs_addr);
+>>> +			goto out_err;
+>>> +		}
+>>> +		image->arch.elf_headers = hdrs_addr;
+>>> +		image->arch.elf_headers_sz = hdrs_sz;
+>>> +		image->arch.elf_load_addr = kbuf.mem;
+>>> +
+>>> +		pr_debug("Loaded elf core header at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+>>> +				 image->arch.elf_load_addr, hdrs_sz, hdrs_sz);
+>>> +	}
+>>> +
+>>>  	kbuf.image = image;
+>>>  	/* not allocate anything below the kernel */
+>>>  	kbuf.buf_min = kernel_load_addr + kernel_size;
 
------BEGIN PGP SIGNATURE-----
+>> I think the initramfs can escape the crash kernel range because you add to the
+>> buf_max region:
+>> |	/* within 1GB-aligned window of up to 32GB in size */
+>> |	kbuf.buf_max = round_down(kernel_load_addr, SZ_1G)
+>> |				 + (unsigned long)SZ_1G * 32;
+> 
+> No worries.
+> kexec_add_buffer() will limit the search only within crashk_res anyway.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltWCkEACgkQJNaLcl1U
-h9CUSwf/ff7c4xQ3H5UVhWpnejDy6b/lHNNiaXrNY25CTtpjuxEX1WndcpmFYvpg
-/T15gDyN+Dny+vgyXQKGsUvMjnVkq2JUFt7IgS9o+fuBjEWHsBI0tQtNeUrom1Zq
-NmpTd4vo2+bl+8B5W/JvRsdQgwYStObWTIYQ0kE0NKoLvsEGnXgNbN2ODw6ULxPP
-/CCRjd6WWgfdqgePs35YzX28Fk3gCiSG72/XcVBqfi9L8OZGCqe80wjwkZWDYKm8
-8NczvX0NjWBaDbze7X6EzDHJtLhuB8UNzRlB2B81uharBAe+xKQidKpg4iq01/9o
-6VESvzgunrriKHiMaX949CE8fGAWEg==
-=NakS
------END PGP SIGNATURE-----
+via arch_kexec_walk_mem()? Got it.
 
---llIrKcgUOe3dCx0c--
+But strangely the buf_min and buf_max still matter because
+locate_mem_hole_callback() uses them.
+
+
+> Are you reviewing other patches in my v11?
+> If not, I will post v12 tomorrow.
+
+No, (I try to batch replies to avoid that happening).
+I'm reading up on Secure-boot and trying to test the pe_verification stuff...
+
+
+Thanks,
+
+James
