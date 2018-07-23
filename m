@@ -6,43 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A6DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 864ACECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F67F20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F67F20880
+	by mail.kernel.org (Postfix) with ESMTP id 41A6A20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:52:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41A6A20856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389285AbeGWNrp (ORCPT
+        id S2389238AbeGWNrm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:47:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51134 "EHLO
+        Mon, 23 Jul 2018 09:47:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50966 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388197AbeGWNro (ORCPT
+        with ESMTP id S2388246AbeGWNrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:47:44 -0400
+        Mon, 23 Jul 2018 09:47:41 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D75F7BCF;
-        Mon, 23 Jul 2018 12:45:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92964C18;
+        Mon, 23 Jul 2018 12:45:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        gnomes@lxorguk.ukuu.org.uk, ak@linux.intel.com,
-        ashok.raj@intel.com, dave.hansen@intel.com, karahmed@amazon.de,
-        arjan@linux.intel.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, bp@alien8.de, pbonzini@redhat.com,
-        tim.c.chen@linux.intel.com,
+        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
-        Bo Gan <ganb@vmware.com>, gregkh@linux-foundation.org
-Subject: [PATCH 4.4 024/107] x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early Spectre v2 microcodes
-Date:   Mon, 23 Jul 2018 14:41:18 +0200
-Message-Id: <20180723122414.061577328@linuxfoundation.org>
+        Bo Gan <ganb@vmware.com>
+Subject: [PATCH 4.4 057/107] x86/bugs: Provide boot parameters for the spec_store_bypass_disable mitigation
+Date:   Mon, 23 Jul 2018 14:41:51 +0200
+Message-Id: <20180723122415.846679884@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -59,38 +57,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-(cherry picked from commit a5b2966364538a0e68c9fa29bc0a3a1651799035)
+commit 24f7fc83b9204d20f878c57cb77d261ae825e033 upstream
 
-This doesn't refuse to load the affected microcodes; it just refuses to
-use the Spectre v2 mitigation features if they're detected, by clearing
-the appropriate feature bits.
+Contemporary high performance processors use a common industry-wide
+optimization known as "Speculative Store Bypass" in which loads from
+addresses to which a recent store has occurred may (speculatively) see an
+older value. Intel refers to this feature as "Memory Disambiguation" which
+is part of their "Smart Memory Access" capability.
 
-The AMD CPUID bits are handled here too, because hypervisors *may* have
-been exposing those bits even on Intel chips, for fine-grained control
-of what's available.
+Memory Disambiguation can expose a cache side-channel attack against such
+speculatively read values. An attacker can create exploit code that allows
+them to read memory outside of a sandbox environment (for example,
+malicious JavaScript in a web page), or to perform more complex attacks
+against code running within the same privilege level, e.g. via the stack.
 
-It is non-trivial to use x86_match_cpu() for this table because that
-doesn't handle steppings. And the approach taken in commit bd9240a18
-almost made me lose my lunch.
+As a first step to mitigate against such attacks, provide two boot command
+line control knobs:
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+ nospec_store_bypass_disable
+ spec_store_bypass_disable=[off,auto,on]
+
+By default affected x86 processors will power on with Speculative
+Store Bypass enabled. Hence the provided kernel parameters are written
+from the point of view of whether to enable a mitigation or not.
+The parameters are as follows:
+
+ - auto - Kernel detects whether your CPU model contains an implementation
+	  of Speculative Store Bypass and picks the most appropriate
+	  mitigation.
+
+ - on   - disable Speculative Store Bypass
+ - off  - enable Speculative Store Bypass
+
+[ tglx: Reordered the checks so that the whole evaluation is not done
+  	when the CPU does not support RDS ]
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: ak@linux.intel.com
-Cc: ashok.raj@intel.com
-Cc: dave.hansen@intel.com
-Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1516896855-7642-7-git-send-email-dwmw@amazon.co.uk
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
@@ -100,136 +107,218 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/intel-family.h |    5 ++
- arch/x86/kernel/cpu/intel.c         |   67 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 71 insertions(+), 1 deletion(-)
+ Documentation/kernel-parameters.txt  |   33 +++++++++++
+ arch/x86/include/asm/cpufeatures.h   |    1 
+ arch/x86/include/asm/nospec-branch.h |    6 ++
+ arch/x86/kernel/cpu/bugs.c           |  103 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 143 insertions(+)
 
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -12,6 +12,7 @@
-  */
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -2460,6 +2460,9 @@ bytes respectively. Such letter suffixes
+ 			allow data leaks with this option, which is equivalent
+ 			to spectre_v2=off.
  
- #define INTEL_FAM6_CORE_YONAH		0x0E
++	nospec_store_bypass_disable
++			[HW] Disable all mitigations for the Speculative Store Bypass vulnerability
 +
- #define INTEL_FAM6_CORE2_MEROM		0x0F
- #define INTEL_FAM6_CORE2_MEROM_L	0x16
- #define INTEL_FAM6_CORE2_PENRYN		0x17
-@@ -20,6 +21,7 @@
- #define INTEL_FAM6_NEHALEM		0x1E
- #define INTEL_FAM6_NEHALEM_EP		0x1A
- #define INTEL_FAM6_NEHALEM_EX		0x2E
+ 	noxsave		[BUGS=X86] Disables x86 extended register state save
+ 			and restore using xsave. The kernel will fallback to
+ 			enabling legacy floating-point and sse state.
+@@ -3623,6 +3626,36 @@ bytes respectively. Such letter suffixes
+ 			Not specifying this option is equivalent to
+ 			spectre_v2=auto.
+ 
++	spec_store_bypass_disable=
++			[HW] Control Speculative Store Bypass (SSB) Disable mitigation
++			(Speculative Store Bypass vulnerability)
 +
- #define INTEL_FAM6_WESTMERE		0x25
- #define INTEL_FAM6_WESTMERE2		0x1F
- #define INTEL_FAM6_WESTMERE_EP		0x2C
-@@ -36,9 +38,9 @@
- #define INTEL_FAM6_HASWELL_GT3E		0x46
++			Certain CPUs are vulnerable to an exploit against a
++			a common industry wide performance optimization known
++			as "Speculative Store Bypass" in which recent stores
++			to the same memory location may not be observed by
++			later loads during speculative execution. The idea
++			is that such stores are unlikely and that they can
++			be detected prior to instruction retirement at the
++			end of a particular speculation execution window.
++
++			In vulnerable processors, the speculatively forwarded
++			store can be used in a cache side channel attack, for
++			example to read memory to which the attacker does not
++			directly have access (e.g. inside sandboxed code).
++
++			This parameter controls whether the Speculative Store
++			Bypass optimization is used.
++
++			on     - Unconditionally disable Speculative Store Bypass
++			off    - Unconditionally enable Speculative Store Bypass
++			auto   - Kernel detects whether the CPU model contains an
++				 implementation of Speculative Store Bypass and
++				 picks the most appropriate mitigation
++
++			Not specifying this option is equivalent to
++			spec_store_bypass_disable=auto.
++
+ 	spia_io_base=	[HW,MTD]
+ 	spia_fio_base=
+ 	spia_pedr=
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -203,6 +203,7 @@
  
- #define INTEL_FAM6_BROADWELL_CORE	0x3D
--#define INTEL_FAM6_BROADWELL_XEON_D	0x56
- #define INTEL_FAM6_BROADWELL_GT3E	0x47
- #define INTEL_FAM6_BROADWELL_X		0x4F
-+#define INTEL_FAM6_BROADWELL_XEON_D	0x56
+ #define X86_FEATURE_USE_IBPB	( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled*/
+ #define X86_FEATURE_USE_IBRS_FW	( 7*32+22) /* "" Use IBRS during runtime firmware calls */
++#define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE	( 7*32+23) /* "" Disable Speculative Store Bypass. */
  
- #define INTEL_FAM6_SKYLAKE_MOBILE	0x4E
- #define INTEL_FAM6_SKYLAKE_DESKTOP	0x5E
-@@ -60,6 +62,7 @@
- #define INTEL_FAM6_ATOM_MERRIFIELD2	0x5A /* Annidale */
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C
- #define INTEL_FAM6_ATOM_DENVERTON	0x5F /* Goldmont Microserver */
-+#define INTEL_FAM6_ATOM_GEMINI_LAKE	0x7A
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -193,6 +193,12 @@ extern u64 x86_spec_ctrl_get_default(voi
+ extern void x86_spec_ctrl_set_guest(u64);
+ extern void x86_spec_ctrl_restore_host(u64);
  
- /* Xeon Phi */
- 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -13,6 +13,7 @@
- #include <asm/msr.h>
- #include <asm/bugs.h>
- #include <asm/cpu.h>
-+#include <asm/intel-family.h>
- 
- #ifdef CONFIG_X86_64
- #include <linux/topology.h>
-@@ -25,6 +26,59 @@
- #include <asm/apic.h>
- #endif
- 
-+/*
-+ * Early microcode releases for the Spectre v2 mitigation were broken.
-+ * Information taken from;
-+ * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/01/microcode-update-guidance.pdf
-+ * - https://kb.vmware.com/s/article/52345
-+ * - Microcode revisions observed in the wild
-+ * - Release note from 20180108 microcode release
-+ */
-+struct sku_microcode {
-+	u8 model;
-+	u8 stepping;
-+	u32 microcode;
-+};
-+static const struct sku_microcode spectre_bad_microcodes[] = {
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
-+	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
-+	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
-+	{ INTEL_FAM6_SKYLAKE_MOBILE,	0x03,	0xc2 },
-+	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
-+	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
-+	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
-+	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
-+	{ INTEL_FAM6_BROADWELL_XEON_D,	0x03,	0x07000011 },
-+	{ INTEL_FAM6_BROADWELL_X,	0x01,	0x0b000025 },
-+	{ INTEL_FAM6_HASWELL_ULT,	0x01,	0x21 },
-+	{ INTEL_FAM6_HASWELL_GT3E,	0x01,	0x18 },
-+	{ INTEL_FAM6_HASWELL_CORE,	0x03,	0x23 },
-+	{ INTEL_FAM6_HASWELL_X,		0x02,	0x3b },
-+	{ INTEL_FAM6_HASWELL_X,		0x04,	0x10 },
-+	{ INTEL_FAM6_IVYBRIDGE_X,	0x04,	0x42a },
-+	/* Updated in the 20180108 release; blacklist until we know otherwise */
-+	{ INTEL_FAM6_ATOM_GEMINI_LAKE,	0x01,	0x22 },
-+	/* Observed in the wild */
-+	{ INTEL_FAM6_SANDYBRIDGE_X,	0x06,	0x61b },
-+	{ INTEL_FAM6_SANDYBRIDGE_X,	0x07,	0x712 },
++/* The Speculative Store Bypass disable variants */
++enum ssb_mitigation {
++	SPEC_STORE_BYPASS_NONE,
++	SPEC_STORE_BYPASS_DISABLE,
 +};
 +
-+static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
+ 
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -26,6 +26,7 @@
+ #include <asm/intel-family.h>
+ 
+ static void __init spectre_v2_select_mitigation(void);
++static void __init ssb_select_mitigation(void);
+ 
+ /*
+  * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
+@@ -52,6 +53,12 @@ void __init check_bugs(void)
+ 	/* Select the proper spectre mitigation before patching alternatives */
+ 	spectre_v2_select_mitigation();
+ 
++	/*
++	 * Select proper mitigation for any exposure to the Speculative Store
++	 * Bypass vulnerability.
++	 */
++	ssb_select_mitigation();
++
+ #ifdef CONFIG_X86_32
+ 	/*
+ 	 * Check whether we are able to run this kernel safely on SMP.
+@@ -357,6 +364,99 @@ retpoline_auto:
+ }
+ 
+ #undef pr_fmt
++#define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
++
++static enum ssb_mitigation ssb_mode = SPEC_STORE_BYPASS_NONE;
++
++/* The kernel command line selection */
++enum ssb_mitigation_cmd {
++	SPEC_STORE_BYPASS_CMD_NONE,
++	SPEC_STORE_BYPASS_CMD_AUTO,
++	SPEC_STORE_BYPASS_CMD_ON,
++};
++
++static const char *ssb_strings[] = {
++	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
++	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled"
++};
++
++static const struct {
++	const char *option;
++	enum ssb_mitigation_cmd cmd;
++} ssb_mitigation_options[] = {
++	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO }, /* Platform decides */
++	{ "on",		SPEC_STORE_BYPASS_CMD_ON },   /* Disable Speculative Store Bypass */
++	{ "off",	SPEC_STORE_BYPASS_CMD_NONE }, /* Don't touch Speculative Store Bypass */
++};
++
++static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
 +{
-+	int i;
++	enum ssb_mitigation_cmd cmd = SPEC_STORE_BYPASS_CMD_AUTO;
++	char arg[20];
++	int ret, i;
 +
-+	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
-+		if (c->x86_model == spectre_bad_microcodes[i].model &&
-+		    c->x86_mask == spectre_bad_microcodes[i].stepping)
-+			return (c->microcode <= spectre_bad_microcodes[i].microcode);
++	if (cmdline_find_option_bool(boot_command_line, "nospec_store_bypass_disable")) {
++		return SPEC_STORE_BYPASS_CMD_NONE;
++	} else {
++		ret = cmdline_find_option(boot_command_line, "spec_store_bypass_disable",
++					  arg, sizeof(arg));
++		if (ret < 0)
++			return SPEC_STORE_BYPASS_CMD_AUTO;
++
++		for (i = 0; i < ARRAY_SIZE(ssb_mitigation_options); i++) {
++			if (!match_option(arg, ret, ssb_mitigation_options[i].option))
++				continue;
++
++			cmd = ssb_mitigation_options[i].cmd;
++			break;
++		}
++
++		if (i >= ARRAY_SIZE(ssb_mitigation_options)) {
++			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
++			return SPEC_STORE_BYPASS_CMD_AUTO;
++		}
 +	}
-+	return false;
++
++	return cmd;
 +}
 +
- static void early_init_intel(struct cpuinfo_x86 *c)
- {
- 	u64 misc_enable;
-@@ -51,6 +105,19 @@ static void early_init_intel(struct cpui
- 		rdmsr(MSR_IA32_UCODE_REV, lower_word, c->microcode);
- 	}
- 
-+	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
-+	     cpu_has(c, X86_FEATURE_STIBP) ||
-+	     cpu_has(c, X86_FEATURE_AMD_SPEC_CTRL) ||
-+	     cpu_has(c, X86_FEATURE_AMD_PRED_CMD) ||
-+	     cpu_has(c, X86_FEATURE_AMD_STIBP)) && bad_spectre_microcode(c)) {
-+		pr_warn("Intel Spectre v2 broken microcode detected; disabling SPEC_CTRL\n");
-+		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
-+		clear_cpu_cap(c, X86_FEATURE_STIBP);
-+		clear_cpu_cap(c, X86_FEATURE_AMD_SPEC_CTRL);
-+		clear_cpu_cap(c, X86_FEATURE_AMD_PRED_CMD);
-+		clear_cpu_cap(c, X86_FEATURE_AMD_STIBP);
++static enum ssb_mitigation_cmd __init __ssb_select_mitigation(void)
++{
++	enum ssb_mitigation mode = SPEC_STORE_BYPASS_NONE;
++	enum ssb_mitigation_cmd cmd;
++
++	if (!boot_cpu_has(X86_FEATURE_RDS))
++		return mode;
++
++	cmd = ssb_parse_cmdline();
++	if (!boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS) &&
++	    (cmd == SPEC_STORE_BYPASS_CMD_NONE ||
++	     cmd == SPEC_STORE_BYPASS_CMD_AUTO))
++		return mode;
++
++	switch (cmd) {
++	case SPEC_STORE_BYPASS_CMD_AUTO:
++	case SPEC_STORE_BYPASS_CMD_ON:
++		mode = SPEC_STORE_BYPASS_DISABLE;
++		break;
++	case SPEC_STORE_BYPASS_CMD_NONE:
++		break;
 +	}
 +
- 	/*
- 	 * Atom erratum AAE44/AAF40/AAG38/AAH41:
- 	 *
++	if (mode != SPEC_STORE_BYPASS_NONE)
++		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
++	return mode;
++}
++
++static void ssb_select_mitigation()
++{
++	ssb_mode = __ssb_select_mitigation();
++
++	if (boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
++		pr_info("%s\n", ssb_strings[ssb_mode]);
++}
++
++#undef pr_fmt
+ 
+ #ifdef CONFIG_SYSFS
+ 
+@@ -382,6 +482,9 @@ ssize_t cpu_show_common(struct device *d
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+ 			       spectre_v2_module_string());
+ 
++	case X86_BUG_SPEC_STORE_BYPASS:
++		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
++
+ 	default:
+ 		break;
+ 	}
 
 
