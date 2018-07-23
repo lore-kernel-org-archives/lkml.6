@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6C5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D59ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 718DF20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718DF20854
+	by mail.kernel.org (Postfix) with ESMTP id C44EB20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:28:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44EB20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388946AbeGWN3k (ORCPT
+        id S2388957AbeGWN3m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:29:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45692 "EHLO
+        Mon, 23 Jul 2018 09:29:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45698 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388086AbeGWN3j (ORCPT
+        with ESMTP id S2387998AbeGWN3m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:29:39 -0400
+        Mon, 23 Jul 2018 09:29:42 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A922C03;
-        Mon, 23 Jul 2018 12:28:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D88ACC03;
+        Mon, 23 Jul 2018 12:28:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.14 10/44] ARCv2: [plat-hsdk]: Save accl reg pair by default
-Date:   Mon, 23 Jul 2018 14:24:46 +0200
-Message-Id: <20180723122437.939085285@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.14 11/44] ARC: Fix CONFIG_SWAP
+Date:   Mon, 23 Jul 2018 14:24:47 +0200
+Message-Id: <20180723122437.982266643@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
 References: <20180723122437.447870153@linuxfoundation.org>
@@ -49,43 +50,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vineet Gupta <vgupta@synopsys.com>
+From: Alexey Brodkin <abrodkin@synopsys.com>
 
-commit af1fc5baa724c63ce1733dfcf855bad5ef6078e3 upstream.
+commit 6e3761145a9ba3ce267c330b6bff51cf6a057b06 upstream.
 
-This manifsted as strace segfaulting on HSDK because gcc was targetting
-the accumulator registers as GPRs, which kernek was not saving/restoring
-by default.
+swap was broken on ARC due to silly copy-paste issue.
 
-Cc: stable@vger.kernel.org   #4.14+
+We encode offset from swapcache page in __swp_entry() as (off << 13) but
+were not decoding back in __swp_offset() as (off >> 13) - it was still
+(off << 13).
+
+This finally fixes swap usage on ARC.
+
+| # mkswap /dev/sda2
+|
+| # swapon -a -e /dev/sda2
+| Adding 500728k swap on /dev/sda2.  Priority:-2 extents:1 across:500728k
+|
+| # free
+|              total       used       free     shared    buffers     cached
+| Mem:        765104      13456     751648       4736          8       4736
+| -/+ buffers/cache:       8712     756392
+| Swap:       500728          0     500728
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/Kconfig           |    2 +-
- arch/arc/plat-hsdk/Kconfig |    2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ arch/arc/include/asm/pgtable.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -408,7 +408,7 @@ config ARC_HAS_DIV_REM
+--- a/arch/arc/include/asm/pgtable.h
++++ b/arch/arc/include/asm/pgtable.h
+@@ -379,7 +379,7 @@ void update_mmu_cache(struct vm_area_str
  
- config ARC_HAS_ACCL_REGS
- 	bool "Reg Pair ACCL:ACCH (FPU and/or MPY > 6)"
--	default n
-+	default y
- 	help
- 	  Depending on the configuration, CPU can contain accumulator reg-pair
- 	  (also referred to as r58:r59). These can also be used by gcc as GPR so
---- a/arch/arc/plat-hsdk/Kconfig
-+++ b/arch/arc/plat-hsdk/Kconfig
-@@ -7,5 +7,7 @@
+ /* Decode a PTE containing swap "identifier "into constituents */
+ #define __swp_type(pte_lookalike)	(((pte_lookalike).val) & 0x1f)
+-#define __swp_offset(pte_lookalike)	((pte_lookalike).val << 13)
++#define __swp_offset(pte_lookalike)	((pte_lookalike).val >> 13)
  
- menuconfig ARC_SOC_HSDK
- 	bool "ARC HS Development Kit SOC"
-+	depends on ISA_ARCV2
-+	select ARC_HAS_ACCL_REGS
- 	select CLK_HSDK
- 	select RESET_HSDK
+ /* NOPs, to keep generic kernel happy */
+ #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
 
 
