@@ -6,40 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D369ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 313A0ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DAA420685
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DAA420685
+	by mail.kernel.org (Postfix) with ESMTP id E824920685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:47:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E824920685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389856AbeGWNso (ORCPT
+        id S2389867AbeGWNss (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:48:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52024 "EHLO
+        Mon, 23 Jul 2018 09:48:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52040 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388631AbeGWNsn (ORCPT
+        with ESMTP id S2388284AbeGWNsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:48:43 -0400
+        Mon, 23 Jul 2018 09:48:46 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B338AC19;
-        Mon, 23 Jul 2018 12:47:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BCC88BB3;
+        Mon, 23 Jul 2018 12:47:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
-        "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
-        Alexey Makhalov <amakhalov@vmware.com>,
-        Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 062/107] prctl: Add speculation control prctls
-Date:   Mon, 23 Jul 2018 14:41:56 +0200
-Message-Id: <20180723122416.196205162@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.4 105/107] ubi: Fix races around ubi_refill_pools()
+Date:   Mon, 23 Jul 2018 14:42:39 +0200
+Message-Id: <20180723122418.765788993@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122413.003644357@linuxfoundation.org>
 References: <20180723122413.003644357@linuxfoundation.org>
@@ -56,226 +49,232 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Richard Weinberger <richard@nod.at>
 
-commit b617cfc858161140d69cc0b5cc211996b557a1c7 upstream
+commit 2e8f08deabbc7eefe4c5838aaa6aa9a23a8acf2e upstream.
 
-Add two new prctls to control aspects of speculation related vulnerabilites
-and their mitigations to provide finer grained control over performance
-impacting mitigations.
+When writing a new Fastmap the first thing that happens
+is refilling the pools in memory.
+At this stage it is possible that new PEBs from the new pools
+get already claimed and written with data.
+If this happens before the new Fastmap data structure hits the
+flash and we face power cut the freshly written PEB will not
+scanned and unnoticed.
 
-PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
-which is selected with arg2 of prctl(2). The return value uses bit 0-2 with
-the following meaning:
+Solve the issue by locking the pools until Fastmap is written.
 
-Bit  Define           Description
-0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
-                      PR_SET_SPECULATION_CTRL
-1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
-                      disabled
-2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
-                      enabled
-
-If all bits are 0 the CPU is not affected by the speculation misfeature.
-
-If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
-available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
-misfeature will fail.
-
-PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
-is selected by arg2 of prctl(2) per task. arg3 is used to hand in the
-control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
-
-The common return values are:
-
-EINVAL  prctl is not implemented by the architecture or the unused prctl()
-        arguments are not 0
-ENODEV  arg2 is selecting a not supported speculation misfeature
-
-PR_SET_SPECULATION_CTRL has these additional return values:
-
-ERANGE  arg3 is incorrect, i.e. it's not either PR_SPEC_ENABLE or PR_SPEC_DISABLE
-ENXIO   prctl control of the selected speculation misfeature is disabled
-
-The first supported controlable speculation misfeature is
-PR_SPEC_STORE_BYPASS. Add the define so this can be shared between
-architectures.
-
-Based on an initial patch from Tim Chen and mostly rewritten.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: <stable@vger.kernel.org>
+Fixes: dbb7d2a88d ("UBI: Add fastmap core")
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
-Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
-Reviewed-by: Alexey Makhalov <amakhalov@vmware.com>
-Reviewed-by: Bo Gan <ganb@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
+ drivers/mtd/ubi/eba.c        |    4 ++--
+ drivers/mtd/ubi/fastmap-wl.c |    6 ++++--
+ drivers/mtd/ubi/fastmap.c    |   14 ++++++++++----
+ drivers/mtd/ubi/wl.c         |   20 ++++++++++++++------
+ 4 files changed, 30 insertions(+), 14 deletions(-)
 
- Documentation/spec_ctrl.txt |   86 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/nospec.h      |    5 ++
- include/uapi/linux/prctl.h  |   11 +++++
- kernel/sys.c                |   20 ++++++++++
- 4 files changed, 122 insertions(+)
- create mode 100644 Documentation/spec_ctrl.txt
-
---- /dev/null
-+++ b/Documentation/spec_ctrl.txt
-@@ -0,0 +1,86 @@
-+===================
-+Speculation Control
-+===================
-+
-+Quite some CPUs have speculation related misfeatures which are in fact
-+vulnerabilites causing data leaks in various forms even accross privilege
-+domains.
-+
-+The kernel provides mitigation for such vulnerabilities in various
-+forms. Some of these mitigations are compile time configurable and some on
-+the kernel command line.
-+
-+There is also a class of mitigations which are very expensive, but they can
-+be restricted to a certain set of processes or tasks in controlled
-+environments. The mechanism to control these mitigations is via
-+:manpage:`prctl(2)`.
-+
-+There are two prctl options which are related to this:
-+
-+ * PR_GET_SPECULATION_CTRL
-+
-+ * PR_SET_SPECULATION_CTRL
-+
-+PR_GET_SPECULATION_CTRL
-+-----------------------
-+
-+PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
-+which is selected with arg2 of prctl(2). The return value uses bits 0-2 with
-+the following meaning:
-+
-+==== ================ ===================================================
-+Bit  Define           Description
-+==== ================ ===================================================
-+0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
-+                      PR_SET_SPECULATION_CTRL
-+1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
-+                      disabled
-+2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
-+                      enabled
-+==== ================ ===================================================
-+
-+If all bits are 0 the CPU is not affected by the speculation misfeature.
-+
-+If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
-+available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
-+misfeature will fail.
-+
-+PR_SET_SPECULATION_CTRL
-+-----------------------
-+PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
-+is selected by arg2 of :manpage:`prctl(2)` per task. arg3 is used to hand
-+in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
-+
-+Common error codes
-+------------------
-+======= =================================================================
-+Value   Meaning
-+======= =================================================================
-+EINVAL  The prctl is not implemented by the architecture or unused
-+        prctl(2) arguments are not 0
-+
-+ENODEV  arg2 is selecting a not supported speculation misfeature
-+======= =================================================================
-+
-+PR_SET_SPECULATION_CTRL error codes
-+-----------------------------------
-+======= =================================================================
-+Value   Meaning
-+======= =================================================================
-+0       Success
-+
-+ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
-+        PR_SPEC_DISABLE
-+
-+ENXIO   Control of the selected speculation misfeature is not possible.
-+        See PR_GET_SPECULATION_CTRL.
-+======= =================================================================
-+
-+Speculation misfeature controls
-+-------------------------------
-+- PR_SPEC_STORE_BYPASS: Speculative Store Bypass
-+
-+  Invocations:
-+   * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, 0, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -55,4 +55,9 @@ static inline unsigned long array_index_
- 									\
- 	(typeof(_i)) (_i & _mask);					\
- })
-+
-+/* Speculation control prctl */
-+int arch_prctl_spec_ctrl_get(unsigned long which);
-+int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl);
-+
- #endif /* _LINUX_NOSPEC_H */
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -197,4 +197,15 @@ struct prctl_mm_map {
- # define PR_CAP_AMBIENT_LOWER		3
- # define PR_CAP_AMBIENT_CLEAR_ALL	4
+--- a/drivers/mtd/ubi/eba.c
++++ b/drivers/mtd/ubi/eba.c
+@@ -1178,6 +1178,8 @@ int ubi_eba_copy_leb(struct ubi_device *
+ 	struct ubi_volume *vol;
+ 	uint32_t crc;
  
-+/* Per task speculation control */
-+#define PR_GET_SPECULATION_CTRL		52
-+#define PR_SET_SPECULATION_CTRL		53
-+/* Speculation control variants */
-+# define PR_SPEC_STORE_BYPASS		0
-+/* Return and control values for PR_SET/GET_SPECULATION_CTRL */
-+# define PR_SPEC_NOT_AFFECTED		0
-+# define PR_SPEC_PRCTL			(1UL << 0)
-+# define PR_SPEC_ENABLE			(1UL << 1)
-+# define PR_SPEC_DISABLE		(1UL << 2)
++	ubi_assert(rwsem_is_locked(&ubi->fm_eba_sem));
 +
- #endif /* _LINUX_PRCTL_H */
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2075,6 +2075,16 @@ static int prctl_get_tid_address(struct
+ 	vol_id = be32_to_cpu(vid_hdr->vol_id);
+ 	lnum = be32_to_cpu(vid_hdr->lnum);
+ 
+@@ -1346,9 +1348,7 @@ int ubi_eba_copy_leb(struct ubi_device *
+ 	}
+ 
+ 	ubi_assert(vol->eba_tbl[lnum] == from);
+-	down_read(&ubi->fm_eba_sem);
+ 	vol->eba_tbl[lnum] = to;
+-	up_read(&ubi->fm_eba_sem);
+ 
+ out_unlock_buf:
+ 	mutex_unlock(&ubi->buf_mutex);
+--- a/drivers/mtd/ubi/fastmap-wl.c
++++ b/drivers/mtd/ubi/fastmap-wl.c
+@@ -262,6 +262,8 @@ static struct ubi_wl_entry *get_peb_for_
+ 	struct ubi_fm_pool *pool = &ubi->fm_wl_pool;
+ 	int pnum;
+ 
++	ubi_assert(rwsem_is_locked(&ubi->fm_eba_sem));
++
+ 	if (pool->used == pool->size) {
+ 		/* We cannot update the fastmap here because this
+ 		 * function is called in atomic context.
+@@ -303,7 +305,7 @@ int ubi_ensure_anchor_pebs(struct ubi_de
+ 
+ 	wrk->anchor = 1;
+ 	wrk->func = &wear_leveling_worker;
+-	schedule_ubi_work(ubi, wrk);
++	__schedule_ubi_work(ubi, wrk);
+ 	return 0;
  }
- #endif
  
-+int __weak arch_prctl_spec_ctrl_get(unsigned long which)
-+{
-+	return -EINVAL;
-+}
-+
-+int __weak arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
-+{
-+	return -EINVAL;
-+}
-+
- SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 		unsigned long, arg4, unsigned long, arg5)
+@@ -344,7 +346,7 @@ int ubi_wl_put_fm_peb(struct ubi_device
+ 	spin_unlock(&ubi->wl_lock);
+ 
+ 	vol_id = lnum ? UBI_FM_DATA_VOLUME_ID : UBI_FM_SB_VOLUME_ID;
+-	return schedule_erase(ubi, e, vol_id, lnum, torture);
++	return schedule_erase(ubi, e, vol_id, lnum, torture, true);
+ }
+ 
+ /**
+--- a/drivers/mtd/ubi/fastmap.c
++++ b/drivers/mtd/ubi/fastmap.c
+@@ -1514,22 +1514,30 @@ int ubi_update_fastmap(struct ubi_device
+ 	struct ubi_wl_entry *tmp_e;
+ 
+ 	down_write(&ubi->fm_protect);
++	down_write(&ubi->work_sem);
++	down_write(&ubi->fm_eba_sem);
+ 
+ 	ubi_refill_pools(ubi);
+ 
+ 	if (ubi->ro_mode || ubi->fm_disabled) {
++		up_write(&ubi->fm_eba_sem);
++		up_write(&ubi->work_sem);
+ 		up_write(&ubi->fm_protect);
+ 		return 0;
+ 	}
+ 
+ 	ret = ubi_ensure_anchor_pebs(ubi);
+ 	if (ret) {
++		up_write(&ubi->fm_eba_sem);
++		up_write(&ubi->work_sem);
+ 		up_write(&ubi->fm_protect);
+ 		return ret;
+ 	}
+ 
+ 	new_fm = kzalloc(sizeof(*new_fm), GFP_KERNEL);
+ 	if (!new_fm) {
++		up_write(&ubi->fm_eba_sem);
++		up_write(&ubi->work_sem);
+ 		up_write(&ubi->fm_protect);
+ 		return -ENOMEM;
+ 	}
+@@ -1638,16 +1646,14 @@ int ubi_update_fastmap(struct ubi_device
+ 		new_fm->e[0] = tmp_e;
+ 	}
+ 
+-	down_write(&ubi->work_sem);
+-	down_write(&ubi->fm_eba_sem);
+ 	ret = ubi_write_fastmap(ubi, new_fm);
+-	up_write(&ubi->fm_eba_sem);
+-	up_write(&ubi->work_sem);
+ 
+ 	if (ret)
+ 		goto err;
+ 
+ out_unlock:
++	up_write(&ubi->fm_eba_sem);
++	up_write(&ubi->work_sem);
+ 	up_write(&ubi->fm_protect);
+ 	kfree(old_fm);
+ 	return ret;
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -580,7 +580,7 @@ static int erase_worker(struct ubi_devic
+  * failure.
+  */
+ static int schedule_erase(struct ubi_device *ubi, struct ubi_wl_entry *e,
+-			  int vol_id, int lnum, int torture)
++			  int vol_id, int lnum, int torture, bool nested)
  {
-@@ -2269,6 +2279,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsi
- 	case PR_GET_FP_MODE:
- 		error = GET_FP_MODE(me);
- 		break;
-+	case PR_GET_SPECULATION_CTRL:
-+		if (arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		error = arch_prctl_spec_ctrl_get(arg2);
-+		break;
-+	case PR_SET_SPECULATION_CTRL:
-+		if (arg4 || arg5)
-+			return -EINVAL;
-+		error = arch_prctl_spec_ctrl_set(arg2, arg3);
-+		break;
- 	default:
- 		error = -EINVAL;
- 		break;
+ 	struct ubi_work *wl_wrk;
+ 
+@@ -599,7 +599,10 @@ static int schedule_erase(struct ubi_dev
+ 	wl_wrk->lnum = lnum;
+ 	wl_wrk->torture = torture;
+ 
+-	schedule_ubi_work(ubi, wl_wrk);
++	if (nested)
++		__schedule_ubi_work(ubi, wl_wrk);
++	else
++		schedule_ubi_work(ubi, wl_wrk);
+ 	return 0;
+ }
+ 
+@@ -658,6 +661,7 @@ static int wear_leveling_worker(struct u
+ 	if (!vid_hdr)
+ 		return -ENOMEM;
+ 
++	down_read(&ubi->fm_eba_sem);
+ 	mutex_lock(&ubi->move_mutex);
+ 	spin_lock(&ubi->wl_lock);
+ 	ubi_assert(!ubi->move_from && !ubi->move_to);
+@@ -884,6 +888,7 @@ static int wear_leveling_worker(struct u
+ 
+ 	dbg_wl("done");
+ 	mutex_unlock(&ubi->move_mutex);
++	up_read(&ubi->fm_eba_sem);
+ 	return 0;
+ 
+ 	/*
+@@ -925,6 +930,7 @@ out_not_moved:
+ 	}
+ 
+ 	mutex_unlock(&ubi->move_mutex);
++	up_read(&ubi->fm_eba_sem);
+ 	return 0;
+ 
+ out_error:
+@@ -946,6 +952,7 @@ out_error:
+ out_ro:
+ 	ubi_ro_mode(ubi);
+ 	mutex_unlock(&ubi->move_mutex);
++	up_read(&ubi->fm_eba_sem);
+ 	ubi_assert(err != 0);
+ 	return err < 0 ? err : -EIO;
+ 
+@@ -953,6 +960,7 @@ out_cancel:
+ 	ubi->wl_scheduled = 0;
+ 	spin_unlock(&ubi->wl_lock);
+ 	mutex_unlock(&ubi->move_mutex);
++	up_read(&ubi->fm_eba_sem);
+ 	ubi_free_vid_hdr(ubi, vid_hdr);
+ 	return 0;
+ }
+@@ -1075,7 +1083,7 @@ static int __erase_worker(struct ubi_dev
+ 		int err1;
+ 
+ 		/* Re-schedule the LEB for erasure */
+-		err1 = schedule_erase(ubi, e, vol_id, lnum, 0);
++		err1 = schedule_erase(ubi, e, vol_id, lnum, 0, false);
+ 		if (err1) {
+ 			wl_entry_destroy(ubi, e);
+ 			err = err1;
+@@ -1256,7 +1264,7 @@ retry:
+ 	}
+ 	spin_unlock(&ubi->wl_lock);
+ 
+-	err = schedule_erase(ubi, e, vol_id, lnum, torture);
++	err = schedule_erase(ubi, e, vol_id, lnum, torture, false);
+ 	if (err) {
+ 		spin_lock(&ubi->wl_lock);
+ 		wl_tree_add(e, &ubi->used);
+@@ -1544,7 +1552,7 @@ int ubi_wl_init(struct ubi_device *ubi,
+ 		e->pnum = aeb->pnum;
+ 		e->ec = aeb->ec;
+ 		ubi->lookuptbl[e->pnum] = e;
+-		if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0)) {
++		if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false)) {
+ 			wl_entry_destroy(ubi, e);
+ 			goto out_free;
+ 		}
+@@ -1624,7 +1632,7 @@ int ubi_wl_init(struct ubi_device *ubi,
+ 			e->ec = aeb->ec;
+ 			ubi_assert(!ubi->lookuptbl[e->pnum]);
+ 			ubi->lookuptbl[e->pnum] = e;
+-			if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0)) {
++			if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false)) {
+ 				wl_entry_destroy(ubi, e);
+ 				goto out_free;
+ 			}
 
 
