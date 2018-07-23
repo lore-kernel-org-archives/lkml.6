@@ -2,102 +2,123 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9A8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF7BECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B683E204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:55:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="naK+kL/U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B683E204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D518920880
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 20:56:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D518920880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388145AbeGWV6m (ORCPT
+        id S2388197AbeGWV70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 17:58:42 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:42104 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388068AbeGWV6m (ORCPT
+        Mon, 23 Jul 2018 17:59:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42248 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388068AbeGWV70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:58:42 -0400
-Received: by mail-oi0-f67.google.com with SMTP id n84-v6so3640052oib.9;
-        Mon, 23 Jul 2018 13:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DFNR+MXEf8GBimdMlEVfTWZarKaQ0YqvZlUwoqZTybQ=;
-        b=naK+kL/UllcIP3uk3ik7L/D3SEYhxqv4EXmjp9wAqGHnDkeNmQT7jt+dafldpbDRb7
-         hsLo0BbpM6xQYHPfbAfISdjBt92uReoUanHhWVjbtZt3E9SKbF956rbAxrJFI/7gbY1r
-         5vbvG2czcnTX8S2tudQLUsiJ7peEDBnT5f8jdX1Ip0XQgiduzs+e2keVLu+7sFE0043E
-         vvHZ0KcWKIqGASxZzK0gMeERXkFuvHoyxNXRZEseM8qnCqxdabe8C++N8Xv9dfNrUf1l
-         WUJygrTe1K+8OWuM4Op5S6pZsXlb/C5IThU8A9D/jxFi/vlSAQIrKwXP92hHKWXX5l3n
-         BFaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=DFNR+MXEf8GBimdMlEVfTWZarKaQ0YqvZlUwoqZTybQ=;
-        b=L0YqCZK3WwLTCJhyeMjowIYMj3p/CBvGV9st0J3MBeaMkDEsejA22Vx/cvJPt2uQUl
-         rumf3SlBeVfUJ1B69Qe1Iha1W6/bHquqarX/KlB5qGxCu8DJHita4qXPFsTz+QYBxsX3
-         9NZg8snk/X2u+LVhSIEzdUlfDWy6q4bJfxxnY18K3wQxDAYZMpjdI+4D3x1mNdh54a+I
-         XCaaL7YH85eZJJchKefep0WEX1bWyrXjLPG1SorUGTO1VpgBXtlVaQ4cTy5dTpZHzIM5
-         VlTPhRw5uDiGaVKQhtMc6Fb9A8rSia4acUmJSofdCPdJv5ug64/EmGyjA/ApE1O8fnSj
-         +c3g==
-X-Gm-Message-State: AOUpUlFUaZzVH0WRnkJLBKMwQ1q0g5BH7GytP8JxNAT25ihjEMDWAHxU
-        oHY4+azh6lxCczv5K7phFUaYdVtcYH43/fwKwTtlUegqnrw=
-X-Google-Smtp-Source: AAOMgpch5tl2LtekKILxDv++3Lp9JrkLPa9Ttup3SjAvLZLM7O+UXujZxwBlRz53CRdBievXpLFgRfvkgPEd+fIM9uU=
-X-Received: by 2002:aca:3bc2:: with SMTP id i185-v6mr469263oia.156.1532379343007;
- Mon, 23 Jul 2018 13:55:43 -0700 (PDT)
+        Mon, 23 Jul 2018 17:59:26 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6NKsLBJ096538
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 16:56:25 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kdjfkujb3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 16:56:25 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 23 Jul 2018 16:56:24 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 23 Jul 2018 16:56:22 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6NKuLhC7078368
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Jul 2018 20:56:21 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C2F8B2064;
+        Mon, 23 Jul 2018 16:56:05 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E4ABB205F;
+        Mon, 23 Jul 2018 16:56:05 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 23 Jul 2018 16:56:05 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 8455616CA2D3; Mon, 23 Jul 2018 13:56:25 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 13:56:25 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] rhashtable: don't hold lock on first table
+ throughout insertion.
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <153086169828.24852.10332573315056854948.stgit@noble>
+ <153086175009.24852.7782466383056542839.stgit@noble>
+ <20180720075409.kfckhodsnvktift7@gondor.apana.org.au>
+ <20180720144152.GW12945@linux.vnet.ibm.com>
+ <87muulqq8q.fsf@notabene.neil.brown.name>
+ <20180722215446.GH12945@linux.vnet.ibm.com>
+ <87h8kqrhi0.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Received: by 2002:a9d:75da:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 13:55:41
- -0700 (PDT)
-In-Reply-To: <db8d560e-47d1-c32f-e4a2-407110f2b5b6@oracle.com>
-References: <152788068212.768348.15192457501079586650.stgit@buzz> <db8d560e-47d1-c32f-e4a2-407110f2b5b6@oracle.com>
-From:   Michael Tirado <mtirado418@gmail.com>
-Date:   Mon, 23 Jul 2018 20:55:41 +0000
-Message-ID: <CAMkWEXPTb2NJH5rv8WpKWQaZVOJZp91z5Rr-e19UjrwBxB2pNw@mail.gmail.com>
-Subject: Re: [PATCH v6] pidns: introduce syscall translate_pid
-To:     Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Serge Hallyn <serge.hallyn@ubuntu.com>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h8kqrhi0.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18072320-0064-0000-0000-0000032E7901
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009419; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01065123; UDB=6.00547110; IPR=6.00842980;
+ MB=3.00022285; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-23 20:56:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072320-0065-0000-0000-00003A0B1785
+Message-Id: <20180723205625.GZ12945@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=619 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807230229
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey, I'm not seeing much activity on this so here's my $0.02
+On Mon, Jul 23, 2018 at 09:13:43AM +1000, NeilBrown wrote:
+> On Sun, Jul 22 2018, Paul E. McKenney wrote:
+> >
+> > One issue is that the ->func pointer can legitimately be NULL while on
+> > RCU's callback lists.  This happens when someone invokes kfree_rcu()
+> > with the rcu_head structure at the beginning of the enclosing structure.
+> > I could add an offset to avoid this, or perhaps the kmalloc() folks
+> > could be persuaded Rao Shoaib's patch moving kfree_rcu() handling to
+> > the slab allocators, so that RCU only ever sees function pointers in
+> > the ->func field.
+> >
+> > Either way, this should be hidden behind an API to allow adjustments
+> > to be made if needed.  Maybe something like is_after_call_rcu()?
+> > This would (for example) allow debug-object checks to be used to catch
+> > check-after-free bugs.
+> >
+> > Would something of that sort work for you?
+> 
+> Yes, if you could provide an is_after_call_rcu() API, that would
+> perfectly suit my use-case.
 
-> Unix socket automatically translates pid attached to SCM_CREDENTIALS.
-> This requires CAP_SYS_ADMIN for sending arbitrary pids and entering
-> into pid namespace, this expose process and could be insecure.
+After beating my head against the object-debug code a bit, I have to ask
+if it would be OK for you if the is_after_call_rcu() API also takes the
+function that was passed to RCU.
 
+							Thanx, Paul
 
-Perhaps it would be a good idea to add a sysctl switch that prevents
-credential spoofing over AF_UNIX \by default\ if that is the main
-concern, or is there another concern and I have read this wrong?  I'm
-having trouble thinking of a legitimate use of SCM_CREDENTIALS
-spoofing that isn't in a debugging or troubleshooting context and
-would be more comfortable if it were not possible at all... Anyone
-know of a program that relies on this spoofing functionality?
-
-If you look at socket(7) under SO_PEERCRED there is a way to get
-credentials at time of connect() for an AF_UNIX SOCK_STREAM, or at
-time of socketpair() for a SOCK_DGRAM. I would like to think these
-credentials are reliable, but will probably require some extra daemon
-to proxy a dgram syslog socket.
