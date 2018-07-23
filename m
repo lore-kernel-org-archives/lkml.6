@@ -2,129 +2,101 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03668ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E25B4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD6820875
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD6820875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 8E43020685
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:59:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="raqxfohp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E43020685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388099AbeGWN6Z (ORCPT
+        id S2388457AbeGWOAY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:58:25 -0400
-Received: from nautica.notk.org ([91.121.71.147]:59933 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387847AbeGWN6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:58:25 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 1B6C8C009; Mon, 23 Jul 2018 14:57:16 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 14:57:01 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Tomas Bortoli <tomasbortoli@gmail.com>
-Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
-        jiangyiwen@huawei.com, davem@davemloft.net,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-Subject: Re: [PATCH] net/p9/trans_fd.c: fix double list_del()
-Message-ID: <20180723125701.GA17971@nautica>
-References: <20180723121902.20201-1-tomasbortoli@gmail.com>
+        Mon, 23 Jul 2018 10:00:24 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39699 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388245AbeGWOAX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 10:00:23 -0400
+Received: by mail-pl0-f65.google.com with SMTP id m1-v6so198624plt.6;
+        Mon, 23 Jul 2018 05:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=E7Msz+qgDSES4Lwo0Oub7SQkLrkl8nKH7KIUjvPJ6Js=;
+        b=raqxfohpJnpCs0RJkm6jiCyhQfLuBYGPYz6Tc1xFXsxGsGpv26o6FZj3VtzmWc2lwC
+         2hc/89JGObAFyy2f93A8kBMYozh9IhQQKll5E+rKTf1dhCOtOYhWq+fBlfhcoHEsIuTi
+         V4+IRiIxgG0pNmPMBnYNVtiZj3eLLR8L1Tc86B5+LiDCYZljTFiDDH19MigmrKK8amhR
+         EpsZXbHR4ivECtzmJfpQnZFN9Fh2gH1v76CnSabywh3zRSbCsJzWzydLqJ9o6JkkBs1R
+         YQBjQuz87J8ABxpeXpwY5vJTKDu8Z5oFuiajfeRAeG12025mqE8bMhoFKpSNxF9ld/Mz
+         iQFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=E7Msz+qgDSES4Lwo0Oub7SQkLrkl8nKH7KIUjvPJ6Js=;
+        b=Ci2dp4JI1mcR071XYevToxV/MrWX6D0SNp0JrGOkHBGzm9hYhqGc8K5jPHqnL/VUpd
+         wd8/5L/SFAIZmSnwwxiAIkKesjZkpyymqtlVJOoqslZUJ7Chl4sidpLjKxWZGUe6nG6x
+         dDCMeP3i88Bn7T1uAklC9FLxthftOq2IkW8eG7DTkn4RHDza/spVah148twOIySdmrxG
+         0YXPJHABYzndqOoPCAHYLjdhMA0pJW+dLoERLn441aiRkLZJltp0qSCKTYgBynUMXKiU
+         c+Zhd4WPZk0WumLXCCmdVcImqba7NUroZoFGNXmWt1hfzvzkU27FPJgAN7EHXLO3biZA
+         Dj4w==
+X-Gm-Message-State: AOUpUlET4xefZABa0oSDYths+j3Nu/5qjV3etohKURP+nyk/nVNrhoKH
+        XQlt11EirdcEp4PH16cqBfqrrmVa
+X-Google-Smtp-Source: AAOMgpfPevsej8RySYKazYTg+7bIAI6d4Uh+As5SBfwXXVPNLCA4mOchnL2znXibFXHJeTsjiV14gA==
+X-Received: by 2002:a17:902:8e81:: with SMTP id bg1-v6mr12790927plb.129.1532350755151;
+        Mon, 23 Jul 2018 05:59:15 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:101.5.211.5? ([2402:f000:1:1501:200:5efe:6505:d305])
+        by smtp.gmail.com with ESMTPSA id g7-v6sm9378363pfi.175.2018.07.23.05.59.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Jul 2018 05:59:14 -0700 (PDT)
+Subject: Re: [PATCH] block: ioprio: Replace GFP_ATOMIC with GFP_KERNEL in
+ set_task_ioprio()
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180723022116.6919-1-baijiaju1990@gmail.com>
+ <20180723071803.GA30817@infradead.org>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <4517e5f9-84db-aa1f-609f-a01f1d4f5d79@gmail.com>
+Date:   Mon, 23 Jul 2018 20:59:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180723121902.20201-1-tomasbortoli@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180723071803.GA30817@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tomas Bortoli wrote on Mon, Jul 23, 2018:
-> A double list_del(&req->req_list) is possible in p9_fd_cancel() as
-> shown by Syzbot. To prevent it we have to ensure that we have the
-> client->lock when deleting the list. Furthermore, we have to update
-> the status of the request before releasing the lock, to prevent the
-> race.
+Thanks for the reply :)
 
-Nice, so no need to change the list_del to list_del_init!
 
-I still have a nitpick on the last moved unlock, but it's mostly
-aesthetic - the change looks much better to me now.
+On 2018/7/23 15:18, Christoph Hellwig wrote:
+> Looks good,
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>
+> But to me it seems that btrfs and maybe ext4 as well would be much
+> better off just setting a per-IO priority in the bio.
+>
+> Any chance yo could look into that?
 
-(Since that will require a v2 I'll be evil and go further than Yiwen
-about the commit message: let it breathe a bit! :) I think a line break
-before "furthermore" for example will make it easier to read)
+In fact, my tool does not report any defects in btrfs and ext4.
 
-> 
-> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-> Reported-by: syzbot+735d926e9d1317c3310c@syzkaller.appspotmail.com
-> ---
->  net/9p/trans_fd.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-> index a64b01c56e30..370c6c69a05c 100644
-> --- a/net/9p/trans_fd.c
-> +++ b/net/9p/trans_fd.c
-> @@ -199,15 +199,14 @@ static void p9_mux_poll_stop(struct p9_conn *m)
->  static void p9_conn_cancel(struct p9_conn *m, int err)
->  {
->  	struct p9_req_t *req, *rtmp;
-> -	unsigned long flags;
->  	LIST_HEAD(cancel_list);
->  
->  	p9_debug(P9_DEBUG_ERROR, "mux %p err %d\n", m, err);
->  
-> -	spin_lock_irqsave(&m->client->lock, flags);
-> +	spin_lock(&m->client->lock);
->  
->  	if (m->err) {
-> -		spin_unlock_irqrestore(&m->client->lock, flags);
-> +		spin_unlock(&m->client->lock);
->  		return;
->  	}
->  
-> @@ -219,7 +218,6 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
->  	list_for_each_entry_safe(req, rtmp, &m->unsent_req_list, req_list) {
->  		list_move(&req->req_list, &cancel_list);
->  	}
-> -	spin_unlock_irqrestore(&m->client->lock, flags);
->  
->  	list_for_each_entry_safe(req, rtmp, &cancel_list, req_list) {
->  		p9_debug(P9_DEBUG_ERROR, "call back req %p\n", req);
-> @@ -228,6 +226,7 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
->  			req->t_err = err;
->  		p9_client_cb(m->client, req, REQ_STATUS_ERROR);
->  	}
-> +	spin_unlock(&m->client->lock);
->  }
->  
->  static __poll_t
-> @@ -370,12 +369,12 @@ static void p9_read_work(struct work_struct *work)
->  		if (m->req->status != REQ_STATUS_ERROR)
->  			status = REQ_STATUS_RCVD;
->  		list_del(&m->req->req_list);
-> -		spin_unlock(&m->client->lock);
->  		p9_client_cb(m->client, m->req, status);
->  		m->rc.sdata = NULL;
->  		m->rc.offset = 0;
->  		m->rc.capacity = 0;
->  		m->req = NULL;
-> +		spin_unlock(&m->client->lock);
 
-It took me a while to understand why you extended this lock despite
-having just read the commit message, I'd suggest:
- - moving the spin_unlock to right after p9_client_cb (afterall that's
-what we want, the m->rc and m->req don't need to be protected)
- - add a comment before p9_client_cb saying something like 'updates
-req->status' or try to explain why it needs to be locked here but other
-transports don't need such a lock (they're not dependant on req->status
-like this)
-
--- 
-Dominique
+Best wishes,
+Jia-Ju Bai
