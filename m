@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 346D3ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AC0ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEED020854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEED020854
+	by mail.kernel.org (Postfix) with ESMTP id E1CF620854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CF620854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389256AbeGWNbT (ORCPT
+        id S2389268AbeGWNbW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:31:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46214 "EHLO
+        Mon, 23 Jul 2018 09:31:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46222 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387849AbeGWNbS (ORCPT
+        with ESMTP id S2387849AbeGWNbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:31:18 -0400
+        Mon, 23 Jul 2018 09:31:21 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79B32C03;
-        Mon, 23 Jul 2018 12:30:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B53E4BDB;
+        Mon, 23 Jul 2018 12:30:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+52f83f0ea8df16932f7f@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, YOKOTA Hiroshi <yokota.hgml@gmail.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 07/44] ALSA: rawmidi: Change resized buffers atomically
-Date:   Mon, 23 Jul 2018 14:24:43 +0200
-Message-Id: <20180723122437.803188127@linuxfoundation.org>
+Subject: [PATCH 4.14 08/44] ALSA: hda/realtek - Add Panasonic CF-SZ6 headset jack quirk
+Date:   Mon, 23 Jul 2018 14:24:44 +0200
+Message-Id: <20180723122437.845023097@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
 References: <20180723122437.447870153@linuxfoundation.org>
@@ -51,84 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: YOKOTA Hiroshi <yokota.hgml@gmail.com>
 
-commit 39675f7a7c7e7702f7d5341f1e0d01db746543a0 upstream.
+commit 0fca97a29b83e3f315c14ed2372cfd0f9ee0a006 upstream.
 
-The SNDRV_RAWMIDI_IOCTL_PARAMS ioctl may resize the buffers and the
-current code is racy.  For example, the sequencer client may write to
-buffer while it being resized.
+This adds some required quirk when uses headset or headphone on
+Panasonic CF-SZ6.
 
-As a simple workaround, let's switch to the resized buffer inside the
-stream runtime lock.
-
-Reported-by: syzbot+52f83f0ea8df16932f7f@syzkaller.appspotmail.com
+Signed-off-by: YOKOTA Hiroshi <yokota.hgml@gmail.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/rawmidi.c |   20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/core/rawmidi.c
-+++ b/sound/core/rawmidi.c
-@@ -635,7 +635,7 @@ static int snd_rawmidi_info_select_user(
- int snd_rawmidi_output_params(struct snd_rawmidi_substream *substream,
- 			      struct snd_rawmidi_params * params)
- {
--	char *newbuf;
-+	char *newbuf, *oldbuf;
- 	struct snd_rawmidi_runtime *runtime = substream->runtime;
- 	
- 	if (substream->append && substream->use_count > 1)
-@@ -648,13 +648,17 @@ int snd_rawmidi_output_params(struct snd
- 		return -EINVAL;
- 	}
- 	if (params->buffer_size != runtime->buffer_size) {
--		newbuf = krealloc(runtime->buffer, params->buffer_size,
--				  GFP_KERNEL);
-+		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
- 		if (!newbuf)
- 			return -ENOMEM;
-+		spin_lock_irq(&runtime->lock);
-+		oldbuf = runtime->buffer;
- 		runtime->buffer = newbuf;
- 		runtime->buffer_size = params->buffer_size;
- 		runtime->avail = runtime->buffer_size;
-+		runtime->appl_ptr = runtime->hw_ptr = 0;
-+		spin_unlock_irq(&runtime->lock);
-+		kfree(oldbuf);
- 	}
- 	runtime->avail_min = params->avail_min;
- 	substream->active_sensing = !params->no_active_sensing;
-@@ -665,7 +669,7 @@ EXPORT_SYMBOL(snd_rawmidi_output_params)
- int snd_rawmidi_input_params(struct snd_rawmidi_substream *substream,
- 			     struct snd_rawmidi_params * params)
- {
--	char *newbuf;
-+	char *newbuf, *oldbuf;
- 	struct snd_rawmidi_runtime *runtime = substream->runtime;
- 
- 	snd_rawmidi_drain_input(substream);
-@@ -676,12 +680,16 @@ int snd_rawmidi_input_params(struct snd_
- 		return -EINVAL;
- 	}
- 	if (params->buffer_size != runtime->buffer_size) {
--		newbuf = krealloc(runtime->buffer, params->buffer_size,
--				  GFP_KERNEL);
-+		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
- 		if (!newbuf)
- 			return -ENOMEM;
-+		spin_lock_irq(&runtime->lock);
-+		oldbuf = runtime->buffer;
- 		runtime->buffer = newbuf;
- 		runtime->buffer_size = params->buffer_size;
-+		runtime->appl_ptr = runtime->hw_ptr = 0;
-+		spin_unlock_irq(&runtime->lock);
-+		kfree(oldbuf);
- 	}
- 	runtime->avail_min = params->avail_min;
- 	return 0;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6402,6 +6402,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x10cf, 0x1629, "Lifebook U7x7", ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x10cf, 0x1845, "Lifebook U904", ALC269_FIXUP_LIFEBOOK_EXTMIC),
+ 	SND_PCI_QUIRK(0x10ec, 0x10f2, "Intel Reference board", ALC700_FIXUP_INTEL_REFERENCE),
++	SND_PCI_QUIRK(0x10f7, 0x8338, "Panasonic CF-SZ6", ALC269_FIXUP_HEADSET_MODE),
+ 	SND_PCI_QUIRK(0x144d, 0xc109, "Samsung Ativ book 9 (NP900X3G)", ALC269_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x144d, 0xc740, "Samsung Ativ book 8 (NP870Z5G)", ALC269_FIXUP_ATIV_BOOK_8),
+ 	SND_PCI_QUIRK(0x1458, 0xfa53, "Gigabyte BXBT-2807", ALC283_FIXUP_HEADSET_MIC),
 
 
