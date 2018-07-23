@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A480DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB97ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F11820854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F11820854
+	by mail.kernel.org (Postfix) with ESMTP id 0B9FD20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:26:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B9FD20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388282AbeGWN1C (ORCPT
+        id S2388296AbeGWN1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:27:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45156 "EHLO
+        Mon, 23 Jul 2018 09:27:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45166 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388151AbeGWN1B (ORCPT
+        with ESMTP id S2388104AbeGWN1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:27:01 -0400
+        Mon, 23 Jul 2018 09:27:04 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9638FBD8;
-        Mon, 23 Jul 2018 12:26:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53785BD4;
+        Mon, 23 Jul 2018 12:26:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Wang <liwang@redhat.com>,
+        stable@vger.kernel.org, Chuck Anderson <chuck.anderson@oracle.com>,
         Himanshu Madhani <himanshu.madhani@cavium.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 03/63] scsi: qla2xxx: Fix kernel crash due to late workqueue allocation
-Date:   Mon, 23 Jul 2018 14:24:09 +0200
-Message-Id: <20180723122446.499696958@linuxfoundation.org>
+Subject: [PATCH 4.17 04/63] scsi: qla2xxx: Fix NULL pointer dereference for fcport search
+Date:   Mon, 23 Jul 2018 14:24:10 +0200
+Message-Id: <20180723122446.537509875@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122446.351334162@linuxfoundation.org>
 References: <20180723122446.351334162@linuxfoundation.org>
@@ -51,93 +51,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
+From: Chuck Anderson <chuck.anderson@oracle.com>
 
-commit d48cc67cd4406d589fdbfa8c7d51c86532f86feb upstream.
+commit 36eb8ff672faee83ccce60c191f0fef07c6adce6 upstream.
 
-This patch fixes crash for FCoE adapter. Once driver initialization is
-complete, firmware will start posting Asynchronous Event, However driver
-has not yet allocated workqueue to process and queue up work.  This delay
-of allocating workqueue results into NULL pointer access.
+Crash dump shows following instructions
 
-The following stack trace is seen:
+crash> bt
+PID: 0      TASK: ffffffffbe412480  CPU: 0   COMMAND: "swapper/0"
+ #0 [ffff891ee0003868] machine_kexec at ffffffffbd063ef1
+ #1 [ffff891ee00038c8] __crash_kexec at ffffffffbd12b6f2
+ #2 [ffff891ee0003998] crash_kexec at ffffffffbd12c84c
+ #3 [ffff891ee00039b8] oops_end at ffffffffbd030f0a
+ #4 [ffff891ee00039e0] no_context at ffffffffbd074643
+ #5 [ffff891ee0003a40] __bad_area_nosemaphore at ffffffffbd07496e
+ #6 [ffff891ee0003a90] bad_area_nosemaphore at ffffffffbd074a64
+ #7 [ffff891ee0003aa0] __do_page_fault at ffffffffbd074b0a
+ #8 [ffff891ee0003b18] do_page_fault at ffffffffbd074fc8
+ #9 [ffff891ee0003b50] page_fault at ffffffffbda01925
+    [exception RIP: qlt_schedule_sess_for_deletion+15]
+    RIP: ffffffffc02e526f  RSP: ffff891ee0003c08  RFLAGS: 00010046
+    RAX: 0000000000000000  RBX: 0000000000000000  RCX: ffffffffc0307847
+    RDX: 00000000000020e6  RSI: ffff891edbc377c8  RDI: 0000000000000000
+    RBP: ffff891ee0003c18   R8: ffffffffc02f0b20   R9: 0000000000000250
+    R10: 0000000000000258  R11: 000000000000b780  R12: ffff891ed9b43000
+    R13: 00000000000000f0  R14: 0000000000000006  R15: ffff891edbc377c8
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+ #10 [ffff891ee0003c20] qla2x00_fcport_event_handler at ffffffffc02853d3 [qla2xxx]
+ #11 [ffff891ee0003cf0] __dta_qla24xx_async_gnl_sp_done_333 at ffffffffc0285a1d [qla2xxx]
+ #12 [ffff891ee0003de8] qla24xx_process_response_queue at ffffffffc02a2eb5 [qla2xxx]
+ #13 [ffff891ee0003e88] qla24xx_msix_rsp_q at ffffffffc02a5403 [qla2xxx]
+ #14 [ffff891ee0003ec0] __handle_irq_event_percpu at ffffffffbd0f4c59
+ #15 [ffff891ee0003f10] handle_irq_event_percpu at ffffffffbd0f4e02
+ #16 [ffff891ee0003f40] handle_irq_event at ffffffffbd0f4e90
+ #17 [ffff891ee0003f68] handle_edge_irq at ffffffffbd0f8984
+ #18 [ffff891ee0003f88] handle_irq at ffffffffbd0305d5
+ #19 [ffff891ee0003fb8] do_IRQ at ffffffffbda02a18
+ --- <IRQ stack> ---
+ #20 [ffffffffbe403d30] ret_from_intr at ffffffffbda0094e
+    [exception RIP: unknown or invalid address]
+    RIP: 000000000000001f  RSP: 0000000000000000  RFLAGS: fff3b8c2091ebb3f
+    RAX: ffffbba5a0000200  RBX: 0000be8cdfa8f9fa  RCX: 0000000000000018
+    RDX: 0000000000000101  RSI: 000000000000015d  RDI: 0000000000000193
+    RBP: 0000000000000083   R8: ffffffffbe403e38   R9: 0000000000000002
+    R10: 0000000000000000  R11: ffffffffbe56b820  R12: ffff891ee001cf00
+    R13: ffffffffbd11c0a4  R14: ffffffffbe403d60  R15: 0000000000000001
+    ORIG_RAX: ffff891ee0022ac0  CS: 0000  SS: ffffffffffffffb9
+ bt: WARNING: possibly bogus exception frame
+ #21 [ffffffffbe403dd8] cpuidle_enter_state at ffffffffbd67c6fd
+ #22 [ffffffffbe403e40] cpuidle_enter at ffffffffbd67c907
+ #23 [ffffffffbe403e50] call_cpuidle at ffffffffbd0d98f3
+ #24 [ffffffffbe403e60] do_idle at ffffffffbd0d9b42
+ #25 [ffffffffbe403e98] cpu_startup_entry at ffffffffbd0d9da3
+ #26 [ffffffffbe403ec0] rest_init at ffffffffbd81d4aa
+ #27 [ffffffffbe403ed0] start_kernel at ffffffffbe67d2ca
+ #28 [ffffffffbe403f28] x86_64_start_reservations at ffffffffbe67c675
+ #29 [ffffffffbe403f38] x86_64_start_kernel at ffffffffbe67c6eb
+ #30 [ffffffffbe403f50] secondary_startup_64 at ffffffffbd0000d5
 
-[   24.577259] BUG: unable to handle kernel NULL pointer dereference at 0000000000000102
-[   24.623133] PGD 0 P4D 0
-[   24.636760] Oops: 0000 [#1] SMP NOPTI
-[   24.656942] Modules linked in: i2c_algo_bit drm_kms_helper sr_mod(+) syscopyarea sysfillrect sysimgblt cdrom fb_sys_fops ata_generic ttm pata_acpi sd_mod ahci pata_atiixp sfc(+) qla2xxx(+) libahci drm qla4xxx(+) nvme_fc hpsa mdio libiscsi qlcnic(+) nvme_fabrics scsi_transport_sas serio_raw mtd crc32c_intel libata nvme_core i2c_core scsi_transport_iscsi tg3 scsi_transport_fc bnx2 iscsi_boot_sysfs dm_multipath dm_mirror dm_region_hash dm_log dm_mod
-[   24.887449] CPU: 0 PID: 177 Comm: kworker/0:3 Not tainted 4.17.0-rc6 #1
-[   24.925119] Hardware name: HP ProLiant DL385 G7, BIOS A18 08/15/2012
-[   24.962106] Workqueue: events work_for_cpu_fn
-[   24.987098] RIP: 0010:__queue_work+0x1f/0x3a0
-[   25.011672] RSP: 0018:ffff992642ceba10 EFLAGS: 00010082
-[   25.042116] RAX: 0000000000000082 RBX: 0000000000000082 RCX: 0000000000000000
-[   25.083293] RDX: ffff8cf9abc6d7d0 RSI: 0000000000000000 RDI: 0000000000002000
-[   25.123094] RBP: 0000000000000000 R08: 0000000000025a40 R09: ffff8cf9aade2880
-[   25.164087] R10: 0000000000000000 R11: ffff992642ceb6f0 R12: ffff8cf9abc6d7d0
-[   25.202280] R13: 0000000000002000 R14: ffff8cf9abc6d7b8 R15: 0000000000002000
-[   25.242050] FS:  0000000000000000(0000) f9b5c00000(0000) knlGS:0000000000000000
-[   25.977565] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   26.010457] CR2: 0000000000000102 CR3: 000000030760a000 CR4: 00000000000406f0
-[   26.051048] Call Trace:
-[   26.063572]  ? __switch_to_asm+0x34/0x70
-[   26.086079]  queue_work_on+0x24/0x40
-[   26.107090]  qla2x00_post_work+0x81/0xb0 [qla2xxx]
-[   26.133356]  qla2x00_async_event+0x1ad/0x1a20 [qla2xxx]
-[   26.164075]  ? lock_timer_base+0x67/0x80
-[   26.186420]  ? try_to_del_timer_sync+0x4d/0x80
-[   26.212284]  ? del_timer_sync+0x35/0x40
-[   26.234080]  ? schedule_timeout+0x165/0x2f0
-[   26.259575]  qla82xx_poll+0x13e/0x180 [qla2xxx]
-[   26.285740]  qla2x00_mailbox_command+0x74b/0xf50 [qla2xxx]
-[   26.319040]  qla82xx_set_driver_version+0x13b/0x1c0 [qla2xxx]
-[   26.352108]  ? qla2x00_init_rings+0x206/0x3f0 [qla2xxx]
-[   26.381733]  qla2x00_initialize_adapter+0x35c/0x7f0 [qla2xxx]
-[   26.413240]  qla2x00_probe_one+0x1479/0x2390 [qla2xxx]
-[   26.442055]  local_pci_probe+0x3f/0xa0
-[   26.463108]  work_for_cpu_fn+0x10/0x20
-[   26.483295]  process_one_work+0x152/0x350
-[   26.505730]  worker_thread+0x1cf/0x3e0
-[   26.527090]  kthread+0xf5/0x130
-[   26.545085]  ? max_active_store+0x80/0x80
-[   26.568085]  ? kthread_bind+0x10/0x10
-[   26.589533]  ret_from_fork+0x22/0x40
-[   26.610192] Code: 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 89 ff 41 56 41 55 41 89 fd 41 54 49 89 d4 55 48 89 f5 53 48 83 ec 0 86 02 01 00 00 01 0f 85 80 02 00 00 49 c7 c6 c0 ec 01 00 41
-[   27.308540] RIP: __queue_work+0x1f/0x3a0 RSP: ffff992642ceba10
-[   27.341591] CR2: 0000000000000102
-[   27.360208] ---[ end trace 01b7b7ae2c005cf3 ]---
-
+Fixes: 040036bb0bc1 ("scsi: qla2xxx: Delay loop id allocation at login")
 Cc: <stable@vger.kernel.org> # v4.17+
-Fixes: 9b3e0f4d4147 ("scsi: qla2xxx: Move work element processing out of DPC thread"
-Reported-by: Li Wang <liwang@redhat.com>
-Tested-by: Li Wang <liwang@redhat.com>
+Signed-off-by: Chuck Anderson <chuck.anderson@oracle.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_os.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -3180,6 +3180,8 @@ qla2x00_probe_one(struct pci_dev *pdev,
- 	    "req->req_q_in=%p req->req_q_out=%p rsp->rsp_q_in=%p rsp->rsp_q_out=%p.\n",
- 	    req->req_q_in, req->req_q_out, rsp->rsp_q_in, rsp->rsp_q_out);
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -591,12 +591,14 @@ static void qla24xx_handle_gnl_done_even
+ 				conflict_fcport =
+ 					qla2x00_find_fcport_by_wwpn(vha,
+ 					    e->port_name, 0);
+-				ql_dbg(ql_dbg_disc, vha, 0x20e6,
+-				    "%s %d %8phC post del sess\n",
+-				    __func__, __LINE__,
+-				    conflict_fcport->port_name);
+-				qlt_schedule_sess_for_deletion
+-					(conflict_fcport);
++				if (conflict_fcport) {
++					qlt_schedule_sess_for_deletion
++						(conflict_fcport);
++					ql_dbg(ql_dbg_disc, vha, 0x20e6,
++					    "%s %d %8phC post del sess\n",
++					    __func__, __LINE__,
++					    conflict_fcport->port_name);
++				}
+ 			}
  
-+	ha->wq = alloc_workqueue("qla2xxx_wq", 0, 0);
-+
- 	if (ha->isp_ops->initialize_adapter(base_vha)) {
- 		ql_log(ql_log_fatal, base_vha, 0x00d6,
- 		    "Failed to initialize adapter - Adapter flags %x.\n",
-@@ -3216,8 +3218,6 @@ qla2x00_probe_one(struct pci_dev *pdev,
- 	    host->can_queue, base_vha->req,
- 	    base_vha->mgmt_svr_loop_id, host->sg_tablesize);
- 
--	ha->wq = alloc_workqueue("qla2xxx_wq", 0, 0);
--
- 	if (ha->mqenable) {
- 		bool mq = false;
- 		bool startit = false;
+ 			/* FW already picked this loop id for another fcport */
 
 
