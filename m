@@ -1,71 +1,268 @@
 Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A75ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851FBECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3D220854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:12:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D3D220854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3357E20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 10:19:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3357E20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388366AbeGWLNA (ORCPT
+        id S2388133AbeGWLTk convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 07:13:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46936 "EHLO mx1.suse.de"
+        Mon, 23 Jul 2018 07:19:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59374 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388071AbeGWLNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 07:13:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8C6D2AFCD;
-        Mon, 23 Jul 2018 10:12:31 +0000 (UTC)
-Date:   Mon, 23 Jul 2018 12:12:30 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Miroslav Benes <mbenes@suse.cz>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: Validate module/old func name length
-In-Reply-To: <1532080002-10724-1-git-send-email-kamalesh@linux.vnet.ibm.com>
-Message-ID: <nycvar.YFH.7.76.1807231212190.997@cbobk.fhfr.pm>
-References: <1532080002-10724-1-git-send-email-kamalesh@linux.vnet.ibm.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S2388062AbeGWLTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 07:19:39 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0885777888;
+        Mon, 23 Jul 2018 10:19:10 +0000 (UTC)
+Received: from ovpn-12-158.pek2.redhat.com (ovpn-12-158.pek2.redhat.com [10.72.12.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8D8BF2026D65;
+        Mon, 23 Jul 2018 10:19:05 +0000 (UTC)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] fs: ceph: Adding new return type vm_fault_t
+From:   "Yan, Zheng" <zyan@redhat.com>
+In-Reply-To: <20180722121636.GA30907@jordon-HP-15-Notebook-PC>
+Date:   Mon, 23 Jul 2018 18:19:00 +0800
+Cc:     willy@infradead.org, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, ajitn.linux@gmail.com,
+        brajeswar.linux@gmail.com, sabyasachi.linux@gmail.com
+Content-Transfer-Encoding: 8BIT
+Message-Id: <AECDD239-E0F9-4887-ABDF-5DDAB21DF6C7@redhat.com>
+References: <20180722121636.GA30907@jordon-HP-15-Notebook-PC>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 23 Jul 2018 10:19:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 23 Jul 2018 10:19:10 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'zyan@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018, Kamalesh Babulal wrote:
 
-> livepatch module author can pass module name/old function name with more
-> than the defined character limit. With obj->name length greater than
-> MODULE_NAME_LEN, the livepatch module gets loaded but waits forever on
-> the module specified by obj->name to be loaded. It also populates a /sys
-> directory with an untruncated object name.
-> 
-> In the case of funcs->old_name length greater then KSYM_NAME_LEN, it
-> would not match against any of the symbol table entries. Instead loop
-> through the symbol table comparing them against a nonexisting function,
-> which can be avoided.
-> 
-> The same issues apply, to misspelled/incorrect names. At least gatekeep
-> the modules with over the limit string length, by checking for their
-> length during livepatch module registration.
-> 
-> Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 
-Applied, thanks.
+> On Jul 22, 2018, at 20:16, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> 
+> Use new return type vm_fault_t for page_mkwrite
+> and fault handler.
+> 
+> vmf_error() is the newly introduce inline function
+> in 4.17
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+> fs/ceph/addr.c | 62 ++++++++++++++++++++++++++++++----------------------------
+> 1 file changed, 32 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index b4336b4..3031d44 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1427,7 +1427,7 @@ static void ceph_restore_sigs(sigset_t *oldset)
+> /*
+>  * vm ops
+>  */
+> -static int ceph_filemap_fault(struct vm_fault *vmf)
+> +static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
+> {
+> 	struct vm_area_struct *vma = vmf->vma;
+> 	struct inode *inode = file_inode(vma->vm_file);
+> @@ -1435,8 +1435,9 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+> 	struct ceph_file_info *fi = vma->vm_file->private_data;
+> 	struct page *pinned_page = NULL;
+> 	loff_t off = vmf->pgoff << PAGE_SHIFT;
+> -	int want, got, ret;
+> +	int want, got, err;
+> 	sigset_t oldset;
+> +	vm_fault_t ret;
+> 
+> 	ceph_block_sigs(&oldset);
+> 
+> @@ -1448,8 +1449,8 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+> 		want = CEPH_CAP_FILE_CACHE;
+> 
+> 	got = 0;
+> -	ret = ceph_get_caps(ci, CEPH_CAP_FILE_RD, want, -1, &got, &pinned_page);
+> -	if (ret < 0)
+> +	err = ceph_get_caps(ci, CEPH_CAP_FILE_RD, want, -1, &got, &pinned_page);
+> +	if (err < 0)
+> 		goto out_restore;
+> 
+> 	dout("filemap_fault %p %llu~%zd got cap refs on %s\n",
+> @@ -1461,16 +1462,17 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+> 		ceph_add_rw_context(fi, &rw_ctx);
+> 		ret = filemap_fault(vmf);
+> 		ceph_del_rw_context(fi, &rw_ctx);
+> +		dout("filemap_fault %p %llu~%zd drop cap refs %s ret %x\n",
+> +			inode, off, (size_t)PAGE_SIZE,
+> +				ceph_cap_string(got), ret);
+> 	} else
+> -		ret = -EAGAIN;
+> +		err = -EAGAIN;
+> 
+> -	dout("filemap_fault %p %llu~%zd dropping cap refs on %s ret %d\n",
+> -	     inode, off, (size_t)PAGE_SIZE, ceph_cap_string(got), ret);
+> 	if (pinned_page)
+> 		put_page(pinned_page);
+> 	ceph_put_cap_refs(ci, got);
+> 
+> -	if (ret != -EAGAIN)
+> +	if (err != -EAGAIN)
+> 		goto out_restore;
+> 
+> 	/* read inline data */
+> @@ -1478,7 +1480,6 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+> 		/* does not support inline data > PAGE_SIZE */
+> 		ret = VM_FAULT_SIGBUS;
+> 	} else {
+> -		int ret1;
+> 		struct address_space *mapping = inode->i_mapping;
+> 		struct page *page = find_or_create_page(mapping, 0,
+> 						mapping_gfp_constraint(mapping,
+> @@ -1487,32 +1488,32 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+> 			ret = VM_FAULT_OOM;
+> 			goto out_inline;
+> 		}
+> -		ret1 = __ceph_do_getattr(inode, page,
+> +		err = __ceph_do_getattr(inode, page,
+> 					 CEPH_STAT_CAP_INLINE_DATA, true);
+> -		if (ret1 < 0 || off >= i_size_read(inode)) {
+> +		if (err < 0 || off >= i_size_read(inode)) {
+> 			unlock_page(page);
+> 			put_page(page);
+> -			if (ret1 < 0)
+> -				ret = ret1;
+> +			if (err == -ENOMEM)
+> +				ret = VM_FAULT_OOM;
+> 			else
+> 				ret = VM_FAULT_SIGBUS;
+> 			goto out_inline;
+> 		}
+> -		if (ret1 < PAGE_SIZE)
+> -			zero_user_segment(page, ret1, PAGE_SIZE);
+> +		if (err < PAGE_SIZE)
+> +			zero_user_segment(page, err, PAGE_SIZE);
+> 		else
+> 			flush_dcache_page(page);
+> 		SetPageUptodate(page);
+> 		vmf->page = page;
+> 		ret = VM_FAULT_MAJOR | VM_FAULT_LOCKED;
+> out_inline:
+> -		dout("filemap_fault %p %llu~%zd read inline data ret %d\n",
+> +		dout("filemap_fault %p %llu~%zd read inline data ret %x\n",
+> 		     inode, off, (size_t)PAGE_SIZE, ret);
+> 	}
+> out_restore:
+> 	ceph_restore_sigs(&oldset);
+> -	if (ret < 0)
+> -		ret = (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
+> +	if (err < 0)
+> +		ret = vmf_error(err);
+> 
+> 	return ret;
+> }
+> @@ -1520,7 +1521,7 @@ static int ceph_filemap_fault(struct vm_fault *vmf)
+> /*
+>  * Reuse write_begin here for simplicity.
+>  */
+> -static int ceph_page_mkwrite(struct vm_fault *vmf)
+> +static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+> {
+> 	struct vm_area_struct *vma = vmf->vma;
+> 	struct inode *inode = file_inode(vma->vm_file);
+> @@ -1531,8 +1532,9 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+> 	loff_t off = page_offset(page);
+> 	loff_t size = i_size_read(inode);
+> 	size_t len;
+> -	int want, got, ret;
+> +	int want, got, err;
+> 	sigset_t oldset;
+> +	vm_fault_t ret;
+> 
+> 	prealloc_cf = ceph_alloc_cap_flush();
+> 	if (!prealloc_cf)
+> @@ -1546,10 +1548,10 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+> 			lock_page(page);
+> 			locked_page = page;
+> 		}
+> -		ret = ceph_uninline_data(vma->vm_file, locked_page);
+> +		err = ceph_uninline_data(vma->vm_file, locked_page);
+> 		if (locked_page)
+> 			unlock_page(locked_page);
+> -		if (ret < 0)
+> +		if (err < 0)
+> 			goto out_free;
+> 	}
+> 
+> @@ -1566,9 +1568,9 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+> 		want = CEPH_CAP_FILE_BUFFER;
+> 
+> 	got = 0;
+> -	ret = ceph_get_caps(ci, CEPH_CAP_FILE_WR, want, off + len,
+> +	err = ceph_get_caps(ci, CEPH_CAP_FILE_WR, want, off + len,
+> 			    &got, NULL);
+> -	if (ret < 0)
+> +	if (err < 0)
+> 		goto out_free;
+> 
+> 	dout("page_mkwrite %p %llu~%zd got cap refs on %s\n",
+> @@ -1586,13 +1588,13 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+> 			break;
+> 		}
+> 
+> -		ret = ceph_update_writeable_page(vma->vm_file, off, len, page);
+> -		if (ret >= 0) {
+> +		err = ceph_update_writeable_page(vma->vm_file, off, len, page);
+> +		if (err >= 0) {
+> 			/* success.  we'll keep the page locked. */
+> 			set_page_dirty(page);
+> 			ret = VM_FAULT_LOCKED;
+> 		}
+> -	} while (ret == -EAGAIN);
+> +	} while (err == -EAGAIN);
+> 
+> 	if (ret == VM_FAULT_LOCKED ||
+> 	    ci->i_inline_version != CEPH_INLINE_NONE) {
+> @@ -1606,14 +1608,14 @@ static int ceph_page_mkwrite(struct vm_fault *vmf)
+> 			__mark_inode_dirty(inode, dirty);
+> 	}
+> 
+> -	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %d\n",
+> +	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
+> 	     inode, off, len, ceph_cap_string(got), ret);
+> 	ceph_put_cap_refs(ci, got);
+> out_free:
+> 	ceph_restore_sigs(&oldset);
+> 	ceph_free_cap_flush(prealloc_cf);
+> -	if (ret < 0)
+> -		ret = (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
+> +	if (err < 0)
+> +		ret = vmf_error(err);
+> 	return ret;
+> }
+> 
 
--- 
-Jiri Kosina
-SUSE Labs
+Applied, thanks
+
+Yan, Zheng
+
+> -- 
+> 1.9.1
+> 
 
