@@ -6,278 +6,86 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 372A0ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B509ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD6BC20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD6BC20880
+	by mail.kernel.org (Postfix) with ESMTP id 0D6F220854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D6F220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389289AbeGWNb2 (ORCPT
+        id S2389301AbeGWNba (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:31:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46242 "EHLO
+        Mon, 23 Jul 2018 09:31:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46254 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387849AbeGWNb1 (ORCPT
+        with ESMTP id S2387849AbeGWNba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:31:27 -0400
+        Mon, 23 Jul 2018 09:31:30 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3D249BB3;
-        Mon, 23 Jul 2018 12:30:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 144F4BDB;
+        Mon, 23 Jul 2018 12:30:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 00/44] 4.14.58-stable review
-Date:   Mon, 23 Jul 2018 14:24:36 +0200
-Message-Id: <20180723122437.447870153@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Couzens <lynxis@fe80.eu>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 40/44] net: usb: asix: replace mii_nway_restart in resume path
+Date:   Mon, 23 Jul 2018 14:25:16 +0200
+Message-Id: <20180723122439.349944840@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
+In-Reply-To: <20180723122437.447870153@linuxfoundation.org>
+References: <20180723122437.447870153@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.58-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.58-rc1
-X-KernelTest-Deadline: 2018-07-25T12:24+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.14.58 release.
-There are 44 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Wed Jul 25 12:24:22 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.58-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
+From: Alexander Couzens <lynxis@fe80.eu>
 
-thanks,
+[ Upstream commit 5c968f48021a9b3faa61ac2543cfab32461c0e05 ]
 
-greg k-h
+mii_nway_restart is not pm aware which results in a rtnl deadlock.
+Implement mii_nway_restart manual by setting BMCR_ANRESTART if
+BMCR_ANENABLE is set.
 
--------------
-Pseudo-Shortlog of commits:
+To reproduce:
+* plug an asix based usb network interface
+* wait until the device enters PM (~5 sec)
+* `ip link set eth1 up` will never return
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.58-rc1
+Fixes: d9fe64e51114 ("net: asix: Add in_pm parameter")
+Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/usb/asix_devices.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: Fix perceived dead host due to runtime suspend race with event handler
-
-Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-    powerpc/powernv: Fix save/restore of SPRG3 on entry/exit from stop (idle)
-
-Al Viro <viro@zeniv.linux.org.uk>
-    cxl_getfile(): fix double-iput() on alloc_file() failures
-
-Al Viro <viro@ZenIV.linux.org.uk>
-    alpha: fix osf_wait4() breakage
-
-Alexander Couzens <lynxis@fe80.eu>
-    net: usb: asix: replace mii_nway_restart in resume path
-
-Sabrina Dubroca <sd@queasysnail.net>
-    ipv6: make DAD fail with enhanced DAD when nonce length differs
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: systemport: Fix CRC forwarding check for SYSTEMPORT Lite
-
-Saeed Mahameed <saeedm@mellanox.com>
-    net/mlx4_en: Don't reuse RX page when XDP is set
-
-Haiyang Zhang <haiyangz@microsoft.com>
-    hv_netvsc: Fix napi reschedule while receive completion is busy
-
-Sanjeev Bansal <sanjeevb.bansal@broadcom.com>
-    tg3: Add higher cpu clock for 5762.
-
-Matevz Vucnik <vucnikm@gmail.com>
-    qmi_wwan: add support for Quectel EG91
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    ptp: fix missing break in switch
-
-Heiner Kallweit <hkallweit1@gmail.com>
-    net: phy: fix flag masking in __set_phy_supported
-
-David Ahern <dsahern@gmail.com>
-    net/ipv4: Set oif in fib_compute_spec_dst
-
-Stefano Brivio <sbrivio@redhat.com>
-    skbuff: Unconditionally copy pfmemalloc in __skb_clone()
-
-Stefano Brivio <sbrivio@redhat.com>
-    net: Don't copy pfmemalloc flag in __copy_skb_header()
-
-Lorenzo Colitti <lorenzo@google.com>
-    net: diag: Don't double-free TCP_NEW_SYN_RECV sockets in tcp_abort
-
-Davidlohr Bueso <dave@stgolabs.net>
-    lib/rhashtable: consider param->min_size when setting initial table size
-
-Arnd Bergmann <arnd@arndb.de>
-    ipv6: ila: select CONFIG_DST_CACHE
-
-Colin Ian King <colin.king@canonical.com>
-    ipv6: fix useless rol32 call on hash
-
-Tyler Hicks <tyhicks@canonical.com>
-    ipv4: Return EINVAL when ping_group_range sysctl doesn't map to user ns
-
-Toke Høiland-Jørgensen <toke@toke.dk>
-    gen_stats: Fix netlink stats dumping in the presence of padding
-
-Lyude Paul <lyude@redhat.com>
-    drm/nouveau: Avoid looping through fake MST connectors
-
-Lyude Paul <lyude@redhat.com>
-    drm/nouveau: Use drm_connector_list_iter_* for iterating connectors
-
-Ville Syrjälä <ville.syrjala@linux.intel.com>
-    drm/i915: Fix hotplug irq ack on i965/g4x
-
-Isaac J. Manjarres <isaacm@codeaurora.org>
-    stop_machine: Disable preemption when waking two stopper threads
-
-Alexey Kardashevskiy <aik@ozlabs.ru>
-    vfio/spapr: Use IOMMU pageshift rather than pagesize
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    vfio/pci: Fix potential Spectre v1
-
-Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-    cpufreq: intel_pstate: Register when ACPI PCCH is present
-
-Hugh Dickins <hughd@google.com>
-    mm/huge_memory.c: fix data loss when splitting a file pmd
-
-Jing Xia <jing.xia.mail@gmail.com>
-    mm: memcg: fix use after free in mem_cgroup_iter()
-
-Vineet Gupta <vgupta@synopsys.com>
-    ARC: mm: allow mprotect to make stack mappings executable
-
-Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-    ARC: configs: Remove CONFIG_INITRAMFS_SOURCE from defconfigs
-
-Alexey Brodkin <abrodkin@synopsys.com>
-    ARC: Fix CONFIG_SWAP
-
-Vineet Gupta <vgupta@synopsys.com>
-    ARCv2: [plat-hsdk]: Save accl reg pair by default
-
-Po-Hsu Lin <po-hsu.lin@canonical.com>
-    ALSA: hda: add mute led support for HP ProBook 455 G5
-
-YOKOTA Hiroshi <yokota.hgml@gmail.com>
-    ALSA: hda/realtek - Add Panasonic CF-SZ6 headset jack quirk
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: rawmidi: Change resized buffers atomically
-
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-    fat: fix memory allocation failure handling of match_strdup()
-
-Dewet Thibaut <thibaut.dewet@nokia.com>
-    x86/MCE: Remove min interval polling limitation
-
-Hugh Dickins <hughd@google.com>
-    x86/events/intel/ds: Fix bts_interrupt_threshold alignment
-
-Ville Syrjälä <ville.syrjala@linux.intel.com>
-    x86/apm: Don't access __preempt_count with zeroed fs
-
-Lan Tianyu <tianyu.lan@intel.com>
-    KVM/Eventfd: Avoid crash when assign and deassign specific eventfd in parallel.
-
-Damien Le Moal <damien.lemoal@wdc.com>
-    scsi: sd_zbc: Fix variable type and bogus comment
-
-
--------------
-
-Diffstat:
-
- Makefile                                    |  4 +--
- arch/alpha/kernel/osf_sys.c                 |  5 +---
- arch/arc/Kconfig                            |  2 +-
- arch/arc/configs/axs101_defconfig           |  1 -
- arch/arc/configs/axs103_defconfig           |  1 -
- arch/arc/configs/axs103_smp_defconfig       |  1 -
- arch/arc/configs/haps_hs_defconfig          |  1 -
- arch/arc/configs/haps_hs_smp_defconfig      |  1 -
- arch/arc/configs/hsdk_defconfig             |  1 -
- arch/arc/configs/nsim_700_defconfig         |  1 -
- arch/arc/configs/nsim_hs_defconfig          |  1 -
- arch/arc/configs/nsim_hs_smp_defconfig      |  1 -
- arch/arc/configs/nsimosci_defconfig         |  1 -
- arch/arc/configs/nsimosci_hs_defconfig      |  1 -
- arch/arc/configs/nsimosci_hs_smp_defconfig  |  1 -
- arch/arc/include/asm/page.h                 |  2 +-
- arch/arc/include/asm/pgtable.h              |  2 +-
- arch/arc/plat-hsdk/Kconfig                  |  2 ++
- arch/powerpc/kernel/idle_book3s.S           |  2 ++
- arch/x86/events/intel/ds.c                  |  8 +++---
- arch/x86/include/asm/apm.h                  |  6 -----
- arch/x86/kernel/apm_32.c                    |  5 ++++
- arch/x86/kernel/cpu/mcheck/mce.c            |  3 ---
- drivers/cpufreq/intel_pstate.c              | 17 +++++++++++-
- drivers/cpufreq/pcc-cpufreq.c               |  4 +++
- drivers/gpu/drm/i915/i915_irq.c             | 32 +++++++++++++++++++++--
- drivers/gpu/drm/nouveau/nouveau_backlight.c |  6 +++--
- drivers/gpu/drm/nouveau/nouveau_connector.c |  9 +++++--
- drivers/gpu/drm/nouveau/nouveau_connector.h | 36 +++++++++++++++++++++++---
- drivers/gpu/drm/nouveau/nouveau_display.c   | 10 ++++++--
- drivers/misc/cxl/api.c                      |  8 +++---
- drivers/net/ethernet/broadcom/bcmsysport.c  |  4 +--
- drivers/net/ethernet/broadcom/bcmsysport.h  |  3 ++-
- drivers/net/ethernet/broadcom/tg3.c         |  9 +++++++
- drivers/net/ethernet/mellanox/mlx4/en_rx.c  |  8 ++++--
- drivers/net/hyperv/netvsc.c                 | 17 +++++++-----
- drivers/net/phy/phy_device.c                |  7 ++---
- drivers/net/usb/asix_devices.c              |  4 ++-
- drivers/net/usb/qmi_wwan.c                  |  1 +
- drivers/ptp/ptp_chardev.c                   |  1 +
- drivers/scsi/sd_zbc.c                       |  5 ++--
- drivers/usb/host/xhci.c                     | 40 ++++++++++++++++++++++++++---
- drivers/usb/host/xhci.h                     |  4 +++
- drivers/vfio/pci/vfio_pci.c                 |  4 +++
- drivers/vfio/vfio_iommu_spapr_tce.c         |  8 +++---
- fs/fat/inode.c                              | 20 ++++++++++-----
- include/linux/sched/task.h                  |  2 +-
- include/linux/skbuff.h                      | 10 ++++----
- include/net/ipv6.h                          |  2 +-
- kernel/stop_machine.c                       |  6 ++++-
- lib/rhashtable.c                            | 17 +++++++-----
- mm/huge_memory.c                            |  2 ++
- mm/memcontrol.c                             |  2 +-
- net/core/gen_stats.c                        | 16 ++++++++++--
- net/core/skbuff.c                           |  1 +
- net/ipv4/fib_frontend.c                     |  1 +
- net/ipv4/sysctl_net_ipv4.c                  |  5 ++--
- net/ipv4/tcp.c                              |  3 +--
- net/ipv6/Kconfig                            |  1 +
- net/ipv6/ndisc.c                            |  2 +-
- sound/core/rawmidi.c                        | 20 ++++++++++-----
- sound/pci/hda/patch_conexant.c              |  1 +
- sound/pci/hda/patch_realtek.c               |  1 +
- virt/kvm/eventfd.c                          |  6 ++++-
- 64 files changed, 295 insertions(+), 113 deletions(-)
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -642,10 +642,12 @@ static void ax88772_restore_phy(struct u
+ 				     priv->presvd_phy_advertise);
+ 
+ 		/* Restore BMCR */
++		if (priv->presvd_phy_bmcr & BMCR_ANENABLE)
++			priv->presvd_phy_bmcr |= BMCR_ANRESTART;
++
+ 		asix_mdio_write_nopm(dev->net, dev->mii.phy_id, MII_BMCR,
+ 				     priv->presvd_phy_bmcr);
+ 
+-		mii_nway_restart(&dev->mii);
+ 		priv->presvd_phy_advertise = 0;
+ 		priv->presvd_phy_bmcr = 0;
+ 	}
 
 
