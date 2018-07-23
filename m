@@ -2,101 +2,123 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61003ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48475ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06AFC20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:47:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Keo8+DRz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06AFC20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 0653320856
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 16:48:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0653320856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388872AbeGWRtt (ORCPT
+        id S2388891AbeGWRup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 13:49:49 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43418 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388283AbeGWRtt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 13:49:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SOWNgE1DoVoWvSar1jHSbG/W7jf664ME7atkVJ0oJVs=; b=Keo8+DRzBrNmMiU9U4DetlASp
-        Wt0VrFNgO38kBrGQWdjIeBT6HGVOxtTxJkK6s3SshunK9Kb+S0L9vyOCfRZtXuFuDVBjzqvyzuwPF
-        cIH2zdeUUAUy0ajO5G4YJxU61XuEmE6G9P9o0uVOvBrgWkN7BK3CEKX0X+dmYSp/lt+V/CWh6iTQS
-        LMEZMBarlcjiJj5gioGuy505kN+/xyM/5DsXKcpjdOSenlM8tF31vwOc5n3+fEyCQbBZSrsXJAjId
-        b9EXK9BQyy0EBvxSV+O8Z03/wrTAqD4ekLb2N5p9G0rAuRZpOkfBIZco1hvSaToJZqhvbf22TsW8Q
-        +XVt0XNMQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhdzl-0008Rb-Po; Mon, 23 Jul 2018 16:47:38 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8B3642026831C; Mon, 23 Jul 2018 18:47:35 +0200 (CEST)
-Date:   Mon, 23 Jul 2018 18:47:35 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 00/19]  Fixes for sched/numa_balancing
-Message-ID: <20180723164735.GI2494@hirez.programming.kicks-ass.net>
-References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
- <20180723135700.GX2458@hirez.programming.kicks-ass.net>
- <20180723150954.GI30345@linux.vnet.ibm.com>
- <20180723152147.GE2494@hirez.programming.kicks-ass.net>
- <20180723162954.GA2699@linux.vnet.ibm.com>
+        Mon, 23 Jul 2018 13:50:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50560 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388587AbeGWRuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 13:50:44 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9C88D7264D;
+        Mon, 23 Jul 2018 16:48:39 +0000 (UTC)
+Received: from x2.localnet (ovpn-122-239.rdu2.redhat.com [10.10.122.239])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E62F2166BA0;
+        Mon, 23 Jul 2018 16:48:38 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>, cgroups@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-audit@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ebiederm@xmission.com, luto@kernel.org, carlos@redhat.com,
+        dhowells@redhat.com, viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
+Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 02/10] audit: log container info of syscalls
+Date:   Mon, 23 Jul 2018 12:48:38 -0400
+Message-ID: <2739536.aL1iVigTi9@x2>
+Organization: Red Hat
+In-Reply-To: <20180723151148.hyu4jqy2etp5afpt@madcap2.tricolour.ca>
+References: <cover.1528304203.git.rgb@redhat.com> <3318670.y8SpQ3RC2W@x2> <20180723151148.hyu4jqy2etp5afpt@madcap2.tricolour.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180723162954.GA2699@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 23 Jul 2018 16:48:39 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 23 Jul 2018 16:48:39 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'sgrubb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 09:29:54AM -0700, Srikar Dronamraju wrote:
-> * Peter Zijlstra <peterz@infradead.org> [2018-07-23 17:21:47]:
-> 
-> > On Mon, Jul 23, 2018 at 08:09:55AM -0700, Srikar Dronamraju wrote:
-> > 
-> > > > >   sched/numa: Stop multiple tasks from moving to the cpu at the same time
+On Monday, July 23, 2018 11:11:48 AM EDT Richard Guy Briggs wrote:
+> On 2018-07-23 09:19, Steve Grubb wrote:
+> > On Sunday, July 22, 2018 4:55:10 PM EDT Richard Guy Briggs wrote:
+> > > On 2018-07-22 09:32, Steve Grubb wrote:
+> > > > On Saturday, July 21, 2018 4:29:30 PM EDT Richard Guy Briggs wrote:
+> > > > > > > + * audit_log_contid - report container info
+> > > > > > > + * @tsk: task to be recorded
+> > > > > > > + * @context: task or local context for record
+> > > > > > > + * @op: contid string description
+> > > > > > > + */
+> > > > > > > +int audit_log_contid(struct task_struct *tsk,
+> > > > > > > +                            struct audit_context *context,
+> > > > > > > char
+> > > > > > > *op)
+> > > > > > > +{
+> > > > > > > +       struct audit_buffer *ab;
+> > > > > > > +
+> > > > > > > +       if (!audit_contid_set(tsk))
+> > > > > > > +               return 0;
+> > > > > > > +       /* Generate AUDIT_CONTAINER record with container ID */
+> > > > > > > +       ab = audit_log_start(context, GFP_KERNEL,
+> > > > > > > AUDIT_CONTAINER);
+> > > > > > > +       if (!ab)
+> > > > > > > +               return -ENOMEM;
+> > > > > > > +       audit_log_format(ab, "op=%s contid=%llu",
+> > > > > > > +                        op, audit_get_contid(tsk));
+> > > > > > 
+> > > > > > Can you explain your reason for including an "op" field in this
+> > > > > > record
+> > > > > > type?  I've been looking at the rest of the patches in this
+> > > > > > patchset
+> > > > > > and it seems to be used more as an indicator of the record's
+> > > > > > generating context rather than any sort of audit container ID
+> > > > > > operation.
+> > > > > 
+> > > > > "action" might work, but that's netfilter and numeric... "kind"?
+> > > > > Nothing else really seems to fit from a field name, type or lack of
+> > > > > searchability perspective.
+> > > > > 
+> > > > > Steve, do you have an opinion?
+> > > > 
+> > > > We only have 1 sample event where we have op=task. What are the other
+> > > > possible values?
 > > > 
-> > > This patch has go-ahead from Mel and Rik and no outstanding comments.
+> > > For the AUDIT_CONTAINER record we have op= "task", "target" (from the
+> > > ptrace and signals patch), "tty".
+> > > 
+> > > For the AUDIT_CONTAINER_ID record we have "op=set".
 > > 
-> > I left it out because it's part of the big xchg() mess.
-> > 
-> > In particular:
-> > 
-> > +       if (xchg(&rq->numa_migrate_on, 1))
-> > +               return;
-> > +
-> > +       if (env->best_cpu != -1) {
-> > +               rq = cpu_rq(env->best_cpu);
-> > +               WRITE_ONCE(rq->numa_migrate_on, 0);
-> > +       }
-> > 
-> > I'm again confused by clearing numa_migrate_on at this point..
+> > Since the purpose of this record is to log the container id, I think that
+> > is all that is needed. We can get the context from the other records in
+> > the event. I'd suggest dropping the "op" field.
 > 
-> First task choose a cpu to swap/migrate, sets the cpu to best_cpu and
-> also numa_migrate_on.  Next it finds a better cpu to swap/move. Now if
-> the task is able to move to the better cpu, then it should clear
-> numa_migrate_on on the previous best_cpu.
-> 
-> If we dont reset numa_migrate_on on finding a better cpu, the
-> numa_migrate_on stays set for the previous cpu, causing previous cpu to
-> never be a target of numa balance.
+> Ok, the information above it for two different audit container
+> identifier records.  Which one should drop the "op=" field?  Both?  Or
+> just the AUDIT_CONTAINER record?  The AUDIT_CONTAINER_ID record (which
+> might be renamed) could use it to distinguish a "set" record from a
+> dropped audit container identifier that is no longer registered by any
+> task or namespace.
 
-Don't tell me, write better patches.
+Neither of them need it. All they need to do is state the container that is 
+being acted upon.
+
+-Steve
+
+
+
