@@ -2,154 +2,102 @@ Return-Path: <SRS0=ZsYk=KH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE563ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BF5ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72C0520858
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:52:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C0520858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AA0A020858
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 05:52:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RcZG8Q+o";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HcA6kZjI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0A020858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387854AbeGWGvg (ORCPT
+        id S2387879AbeGWGvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 02:51:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59400 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387811AbeGWGvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 02:51:36 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 23 Jul 2018 02:51:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45574 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387811AbeGWGvq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 02:51:46 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4F9F9608C8; Mon, 23 Jul 2018 05:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532325137;
+        bh=sdtyi+FEgIxfQd1fPvkzHHhzNwpAOFkml30+JcldwCc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RcZG8Q+o0xnQNxJs9/S3aAoWEnleLO/xpelx1oZg2XJiQQ8jsG8seeSEcPaPGzjZv
+         07IsHR9EeP1NwEJiEGQZtJ46rD1Xdptow1xcZMK9P1VP8wV3BOhq+qI2bVCy99YyVb
+         SsPZkzzq7aAu13aeA+SVJYJdg0sHPf7pqqW10VAQ=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DDCB281A4EA3;
-        Mon, 23 Jul 2018 05:52:05 +0000 (UTC)
-Received: from [10.36.116.129] (ovpn-116-129.ams2.redhat.com [10.36.116.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 23C77111E408;
-        Mon, 23 Jul 2018 05:52:03 +0000 (UTC)
-Subject: Re: [PATCH v4 4/6] KVM: X86: Implement PV IPIs send hypercall
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <1532104133-15777-1-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ea83d8dd-2c9b-c3fb-c88b-f48ad1d06240@redhat.com>
-Date:   Mon, 23 Jul 2018 07:52:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1532104133-15777-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 23 Jul 2018 05:52:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 23 Jul 2018 05:52:05 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 72CBB605FD;
+        Mon, 23 Jul 2018 05:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532325136;
+        bh=sdtyi+FEgIxfQd1fPvkzHHhzNwpAOFkml30+JcldwCc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HcA6kZjIM0PZiLKUvjqqFwHoWkA0N9vqD1Pm1JrbIQwCTvYdef2XNbT1hdAt+Dvcj
+         JEqIgRCXdiIwWGI6+4mlWqsgu+SEnBX5G34iQoX+h3z8xzUZhZfoE3ZIQuKwhl9LBH
+         kmKdXQTgKrp02TK2bt/o9nnfOVNbmes7dJatIURI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72CBB605FD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v4] Add display clock controller driver for SDM845
+Date:   Mon, 23 Jul 2018 11:22:02 +0530
+Message-Id: <1532325123-28067-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/07/2018 18:28, Wanpeng Li wrote:
-> +a0: ipi_bitmap low 64 bits
-> +a1: ipi_bitmap high 64 bits
-> +a2: the lowest APIC ID in bitmap
-> +a3: APIC ICR
-> +
-> +The hypercall lets a guest send multicast IPIs at most can handle
-> +128 vCPUs per hypercall on 64-bit machines and 64 vCPUs per hypercall
-> +on 32-bit machines.
-> +
-> +Returns 0 if successfully delivery the IPIs and 1 if discarded.
+ [v4]
+  * Add comments for the RCGs/CBCRs using the CLK_GET_RATE_NOCACHE flag.
 
-This description does not mention what happens in 32-bit mode.
+ [v3]
+  * Move frequency table macro to common file,
+    add the patch along to maintain dependency.
 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 2b812b3..016c7e2 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -6691,6 +6691,41 @@ static void kvm_pv_kick_cpu_op(struct kvm *kvm, unsigned long flags, int apicid)
->  	kvm_irq_delivery_to_apic(kvm, NULL, &lapic_irq, NULL);
->  }
->  
-> +/*
-> + * Return 0 if successfully added and 1 if discarded.
-> + */
-> +static int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
-> +		unsigned long ipi_bitmap_high, int min, int vector, int op_64_bit)
-> +{
-> +	int i;
-> +	struct kvm_apic_map *map;
-> +	struct kvm_vcpu *vcpu;
-> +	struct kvm_lapic_irq irq = {
-> +		.delivery_mode = APIC_DM_FIXED,
-> +		.vector = vector,
-> +	};
-> +
-> +	rcu_read_lock();
-> +	map = rcu_dereference(kvm->arch.apic_map);
-> +
-> +	for_each_set_bit(i, &ipi_bitmap_low, BITS_PER_LONG) {
-> +		vcpu = map->phys_map[min + i]->vcpu;
-> +		if (!kvm_apic_set_irq(vcpu, &irq, NULL))
-> +			return 1;
-> +	}
-> +
-> +	if (op_64_bit) {
-> +		for_each_set_bit(i, &ipi_bitmap_high, BITS_PER_LONG) {
-> +			vcpu = map->phys_map[min + i + BITS_PER_LONG]->vcpu;
-> +			if (!kvm_apic_set_irq(vcpu, &irq, NULL))
-> +				return 1;
-> +		}
-> +	}
+ [v2]
+  * Removed unused header file includes.
+  * Moved the frequency table macro to a common file [1].
+  * Move to pll config to probe.
+  * Update SoC name in device tree binding and
+    also update the Kconfig.
 
-The second loop processes the second argument, and it should always run,
-even in 32-bit mode.  However, the phys_map index should be min + i + 32
-in 32-bit mode and min + i + 64 in 64-bit mode.  (Using BITS_PER_LONG in
-the for_each_set_bit length is not a bug instead; you could write it
-explicitly as 32 in 32-bit mode, and 64 in 64-bit mode, but I think it's
-a little bit more efficient if it's constant).
+Add support for the display clock controller found on SDM845
+based devices. This would allow display drivers to probe and
+control their clocks.
 
-Paolo
-> +
+Taniya Das (1):
+  clk: qcom: Add display clock controller driver for SDM845
+
+ drivers/clk/qcom/Kconfig         |  10 +
+ drivers/clk/qcom/Makefile        |   1 +
+ drivers/clk/qcom/dispcc-sdm845.c | 686 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 697 insertions(+)
+ create mode 100644 drivers/clk/qcom/dispcc-sdm845.c
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
