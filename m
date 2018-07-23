@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F256DECDE5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACAAECDE5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B550820854
-	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B550820854
+	by mail.kernel.org (Postfix) with ESMTP id B88BD20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 23 Jul 2018 12:31:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B88BD20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389610AbeGWNcm (ORCPT
+        id S2389613AbeGWNcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 09:32:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46510 "EHLO
+        Mon, 23 Jul 2018 09:32:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389104AbeGWNcl (ORCPT
+        with ESMTP id S2388638AbeGWNct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:32:41 -0400
+        Mon, 23 Jul 2018 09:32:49 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B75C6C21;
-        Mon, 23 Jul 2018 12:31:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23812C75;
+        Mon, 23 Jul 2018 12:31:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.9 28/28] block: do not use interruptible wait anywhere
-Date:   Mon, 23 Jul 2018 14:25:28 +0200
-Message-Id: <20180723122427.132810156@linuxfoundation.org>
+        stable@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 14/28] ipv4: Return EINVAL when ping_group_range sysctl doesnt map to user ns
+Date:   Mon, 23 Jul 2018 14:25:14 +0200
+Message-Id: <20180723122426.103679108@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180723122425.241418073@linuxfoundation.org>
 References: <20180723122425.241418073@linuxfoundation.org>
@@ -52,72 +50,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Jenkins <alan.christopher.jenkins@gmail.com>
+From: Tyler Hicks <tyhicks@canonical.com>
 
-commit 1dc3039bc87ae7d19a990c3ee71cfd8a9068f428 upstream.
+[ Upstream commit 70ba5b6db96ff7324b8cfc87e0d0383cf59c9677 ]
 
-When blk_queue_enter() waits for a queue to unfreeze, or unset the
-PREEMPT_ONLY flag, do not allow it to be interrupted by a signal.
+The low and high values of the net.ipv4.ping_group_range sysctl were
+being silently forced to the default disabled state when a write to the
+sysctl contained GIDs that didn't map to the associated user namespace.
+Confusingly, the sysctl's write operation would return success and then
+a subsequent read of the sysctl would indicate that the low and high
+values are the overflowgid.
 
-The PREEMPT_ONLY flag was introduced later in commit 3a0a529971ec
-("block, scsi: Make SCSI quiesce and resume work reliably").  Note the SCSI
-device is resumed asynchronously, i.e. after un-freezing userspace tasks.
+This patch changes the behavior by clearly returning an error when the
+sysctl write operation receives a GID range that doesn't map to the
+associated user namespace. In such a situation, the previous value of
+the sysctl is preserved and that range will be returned in a subsequent
+read of the sysctl.
 
-So that commit exposed the bug as a regression in v4.15.  A mysterious
-SIGBUS (or -EIO) sometimes happened during the time the device was being
-resumed.  Most frequently, there was no kernel log message, and we saw Xorg
-or Xwayland killed by SIGBUS.[1]
-
-[1] E.g. https://bugzilla.redhat.com/show_bug.cgi?id=1553979
-
-Without this fix, I get an IO error in this test:
-
-# dd if=/dev/sda of=/dev/null iflag=direct & \
-  while killall -SIGUSR1 dd; do sleep 0.1; done & \
-  echo mem > /sys/power/state ; \
-  sleep 5; killall dd  # stop after 5 seconds
-
-The interruptible wait was added to blk_queue_enter in
-commit 3ef28e83ab15 ("block: generic request_queue reference counting").
-Before then, the interruptible wait was only in blk-mq, but I don't think
-it could ever have been correct.
-
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-core.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ net/ipv4/sysctl_net_ipv4.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -652,7 +652,6 @@ EXPORT_SYMBOL(blk_alloc_queue);
- int blk_queue_enter(struct request_queue *q, bool nowait)
- {
- 	while (true) {
--		int ret;
- 
- 		if (percpu_ref_tryget_live(&q->q_usage_counter))
- 			return 0;
-@@ -660,13 +659,11 @@ int blk_queue_enter(struct request_queue
- 		if (nowait)
- 			return -EBUSY;
- 
--		ret = wait_event_interruptible(q->mq_freeze_wq,
--				!atomic_read(&q->mq_freeze_depth) ||
--				blk_queue_dying(q));
-+		wait_event(q->mq_freeze_wq,
-+			   !atomic_read(&q->mq_freeze_depth) ||
-+			   blk_queue_dying(q));
- 		if (blk_queue_dying(q))
- 			return -ENODEV;
--		if (ret)
--			return ret;
- 	}
- }
- 
+--- a/net/ipv4/sysctl_net_ipv4.c
++++ b/net/ipv4/sysctl_net_ipv4.c
+@@ -140,8 +140,9 @@ static int ipv4_ping_group_range(struct
+ 	if (write && ret == 0) {
+ 		low = make_kgid(user_ns, urange[0]);
+ 		high = make_kgid(user_ns, urange[1]);
+-		if (!gid_valid(low) || !gid_valid(high) ||
+-		    (urange[1] < urange[0]) || gid_lt(high, low)) {
++		if (!gid_valid(low) || !gid_valid(high))
++			return -EINVAL;
++		if (urange[1] < urange[0] || gid_lt(high, low)) {
+ 			low = make_kgid(&init_user_ns, 1);
+ 			high = make_kgid(&init_user_ns, 0);
+ 		}
 
 
