@@ -1,173 +1,106 @@
 Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA22C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDB7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E14D20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:25:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E14D20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0268320874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:31:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0268320874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388851AbeGXXdt (ORCPT
+        id S2388699AbeGXXkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:33:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:58470 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388659AbeGXXdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:33:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 069CE15A2;
-        Tue, 24 Jul 2018 15:25:13 -0700 (PDT)
-Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C1953F5B3;
-        Tue, 24 Jul 2018 15:25:10 -0700 (PDT)
-Subject: Re: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for non-strict
- mode
-To:     Zhen Lei <thunder.leizhen@huawei.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
- <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <89cc2201-99ab-3f3b-a2d1-1766515d4375@arm.com>
-Date:   Tue, 24 Jul 2018 23:25:14 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
+        Tue, 24 Jul 2018 19:40:21 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:39860 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727353AbeGXXkV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 19:40:21 -0400
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6OMVXdK098348;
+        Wed, 25 Jul 2018 07:31:33 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Wed, 25 Jul 2018 07:31:33 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6OMVT8F098339
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 25 Jul 2018 07:31:33 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [patch v4] mm, oom: fix unnecessary killing of additional
+ processes
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <alpine.DEB.2.21.1806211434420.51095@chino.kir.corp.google.com>
+ <d19d44c3-c8cf-70a1-9b15-c98df233d5f0@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807181317540.49359@chino.kir.corp.google.com>
+ <a78fb992-ad59-0cdb-3c38-8284b2245f21@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807200133310.119737@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1807201314230.231119@chino.kir.corp.google.com>
+ <ca34b123-5c81-569f-85ea-4851bc569962@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807201505550.38399@chino.kir.corp.google.com>
+ <f8d24892-b05e-73a8-36d5-4fe278f84c44@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807241444370.206335@chino.kir.corp.google.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <05dbc69a-1c26-adec-15c6-f7192f8d2ae0@i-love.sakura.ne.jp>
+Date:   Wed, 25 Jul 2018 07:31:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <alpine.DEB.2.21.1807241444370.206335@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-12 7:18 AM, Zhen Lei wrote:
-> To support the non-strict mode, now we only tlbi and sync for the strict
-> mode. But for the non-leaf case, always follow strict mode.
+On 2018/07/25 6:45, David Rientjes wrote:
+> On Sat, 21 Jul 2018, Tetsuo Handa wrote:
 > 
-> Use the lowest bit of the iova parameter to pass the strict mode:
-> 0, IOMMU_STRICT;
-> 1, IOMMU_NON_STRICT;
-> Treat 0 as IOMMU_STRICT, so that the unmap operation can compatible with
-> other IOMMUs which still use strict mode.
+>> You can't apply "[patch v4] mm, oom: fix unnecessary killing of additional processes"
+>> because Michal's patch which removes oom_lock serialization was added to -mm tree.
+>>
 > 
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->   drivers/iommu/io-pgtable-arm.c | 23 ++++++++++++++---------
->   1 file changed, 14 insertions(+), 9 deletions(-)
+> I've rebased the patch to linux-next and posted a v5.
 > 
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index 010a254..9234db3 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -292,7 +292,7 @@ static void __arm_lpae_set_pte(arm_lpae_iopte *ptep, arm_lpae_iopte pte,
->   
->   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   			       unsigned long iova, size_t size, int lvl,
-> -			       arm_lpae_iopte *ptep);
-> +			       arm_lpae_iopte *ptep, int strict);
->   
->   static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
->   				phys_addr_t paddr, arm_lpae_iopte prot,
-> @@ -334,7 +334,7 @@ static int arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
->   		size_t sz = ARM_LPAE_BLOCK_SIZE(lvl, data);
->   
->   		tblp = ptep - ARM_LPAE_LVL_IDX(iova, lvl, data);
-> -		if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp) != sz))
-> +		if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp, IOMMU_STRICT) != sz))
->   			return -EINVAL;
->   	}
->   
-> @@ -531,7 +531,7 @@ static void arm_lpae_free_pgtable(struct io_pgtable *iop)
->   static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
->   				       unsigned long iova, size_t size,
->   				       arm_lpae_iopte blk_pte, int lvl,
-> -				       arm_lpae_iopte *ptep)
-> +				       arm_lpae_iopte *ptep, int strict)
+>> You might worry about situations where __oom_reap_task_mm() is a no-op.
+>> But that is not always true. There is no point with emitting
+>>
+>>   pr_info("oom_reaper: unable to reap pid:%d (%s)\n", ...);
+>>   debug_show_all_locks();
+>>
+>> noise and doing
+>>
+>>   set_bit(MMF_OOM_SKIP, &mm->flags);
+>>
+>> because exit_mmap() will not release oom_lock until __oom_reap_task_mm()
+>> completes. That is, except extra noise, there is no difference with
+>> current behavior which sets set_bit(MMF_OOM_SKIP, &mm->flags) after
+>> returning from __oom_reap_task_mm().
+>>
+> 
+> v5 has restructured how exit_mmap() serializes its unmapping with the oom 
+> reaper.  It sets MMF_OOM_SKIP while holding mm->mmap_sem.
+> 
 
-DMA code should never ever be splitting blocks anyway, and frankly the 
-TLB maintenance here is dodgy enough (since we can't reasonably do 
-break-before make as VMSA says we should) that I *really* don't want to 
-introduce any possibility of making it more asynchronous. I'd much 
-rather just hard-code the expectation of strict == true for this.
+I think that v5 is still wrong. exit_mmap() keeps mmap_sem held for write does
+not prevent oom_reap_task() from emitting the noise and setting MMF_OOM_SKIP
+after timeout. Since your purpose is to wait for release of memory which could
+not be reclaimed by __oom_reap_task_mm(), what if __oom_reap_task_mm() was no-op and
+exit_mmap() was preempted immediately after returning from __oom_reap_task_mm() ?
 
-Robin.
+Also, I believe that userspace visible knob is not needed.
 
->   {
->   	struct io_pgtable_cfg *cfg = &data->iop.cfg;
->   	arm_lpae_iopte pte, *tablep;
-> @@ -576,15 +576,18 @@ static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
->   	}
->   
->   	if (unmap_idx < 0)
-> -		return __arm_lpae_unmap(data, iova, size, lvl, tablep);
-> +		return __arm_lpae_unmap(data, iova, size, lvl, tablep, strict);
->   
->   	io_pgtable_tlb_add_flush(&data->iop, iova, size, size, true);
-> +	if (!strict)
-> +		io_pgtable_tlb_sync(&data->iop);
-> +
->   	return size;
->   }
->   
->   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   			       unsigned long iova, size_t size, int lvl,
-> -			       arm_lpae_iopte *ptep)
-> +			       arm_lpae_iopte *ptep, int strict)
->   {
->   	arm_lpae_iopte pte;
->   	struct io_pgtable *iop = &data->iop;
-> @@ -609,7 +612,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   			io_pgtable_tlb_sync(iop);
->   			ptep = iopte_deref(pte, data);
->   			__arm_lpae_free_pgtable(data, lvl + 1, ptep);
-> -		} else {
-> +		} else if (strict) {
->   			io_pgtable_tlb_add_flush(iop, iova, size, size, true);
->   		}
->   
-> @@ -620,25 +623,27 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   		 * minus the part we want to unmap
->   		 */
->   		return arm_lpae_split_blk_unmap(data, iova, size, pte,
-> -						lvl + 1, ptep);
-> +						lvl + 1, ptep, strict);
->   	}
->   
->   	/* Keep on walkin' */
->   	ptep = iopte_deref(pte, data);
-> -	return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep);
-> +	return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep, strict);
->   }
->   
->   static size_t arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned long iova,
->   			     size_t size)
->   {
-> +	int strict = ((iova & IOMMU_STRICT_MODE_MASK) == IOMMU_STRICT);
->   	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
->   	arm_lpae_iopte *ptep = data->pgd;
->   	int lvl = ARM_LPAE_START_LVL(data);
->   
-> +	iova &= ~IOMMU_STRICT_MODE_MASK;
->   	if (WARN_ON(iova >= (1ULL << data->iop.cfg.ias)))
->   		return 0;
->   
-> -	return __arm_lpae_unmap(data, iova, size, lvl, ptep);
-> +	return __arm_lpae_unmap(data, iova, size, lvl, ptep, strict);
->   }
->   
->   static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
-> 
