@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7DEC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31752ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24DF520852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:25:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24DF520852
+	by mail.kernel.org (Postfix) with ESMTP id E1D0920852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:25:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D0920852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388236AbeGXEaA (ORCPT
+        id S2388278AbeGXEaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 00:30:00 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:51280 "EHLO
+        Tue, 24 Jul 2018 00:30:03 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:51282 "EHLO
         out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388088AbeGXEaA (ORCPT
+        with ESMTP id S2388088AbeGXEaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 00:30:00 -0400
+        Tue, 24 Jul 2018 00:30:01 -0400
 Received: from in01.mta.xmission.com ([166.70.13.51])
         by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1fhnxE-0007VG-5i; Mon, 23 Jul 2018 21:25:40 -0600
+        id 1fhnxG-0007VO-GF; Mon, 23 Jul 2018 21:25:42 -0600
 Received: from [97.119.167.31] (helo=x220.int.ebiederm.org)
         by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1fhnwy-0008AK-Kz; Mon, 23 Jul 2018 21:25:39 -0600
+        id 1fhnxF-0008AK-Mi; Mon, 23 Jul 2018 21:25:42 -0600
 From:   "Eric W. Biederman" <ebiederm@xmission.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>,
@@ -40,16 +40,16 @@ Cc:     Oleg Nesterov <oleg@redhat.com>,
         linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
         majiang <ma.jiang@zte.com.cn>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Mon, 23 Jul 2018 22:24:05 -0500
-Message-Id: <20180724032419.20231-6-ebiederm@xmission.com>
+Date:   Mon, 23 Jul 2018 22:24:06 -0500
+Message-Id: <20180724032419.20231-7-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <87efft5ncd.fsf_-_@xmission.com>
 References: <87efft5ncd.fsf_-_@xmission.com>
-X-XM-SPF: eid=1fhnwy-0008AK-Kz;;;mid=<20180724032419.20231-6-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/NqfuEd6BaDBVpPQkN7E0l4Pi12KaLDPg=
+X-XM-SPF: eid=1fhnxF-0008AK-Mi;;;mid=<20180724032419.20231-7-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19wPxXgc0sXt6HV97mdgDtEtCalTatAYZ8=
 X-SA-Exim-Connect-IP: 97.119.167.31
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 06/20] pid: Implement PIDTYPE_TGID
+Subject: [PATCH 07/20] signal: Use PIDTYPE_TGID to clearly store where file signals will be sent
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,274 +57,212 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Everywhere except in the pid array we distinguish between a tasks pid and
-a tasks tgid (thread group id).  Even in the enumeration we want that
-distinction sometimes so we have added __PIDTYPE_TGID.  With leader_pid
-we almost have an implementation of PIDTYPE_TGID in struct signal_struct.
+When f_setown is called a pid and a pid type are stored.  Replace the use
+of PIDTYPE_PID with PIDTYPE_TGID as PIDTYPE_TGID goes to the entire thread
+group.  Replace the use of PIDTYPE_MAX with PIDTYPE_PID as PIDTYPE_PID now
+is only for a thread.
 
-Add PIDTYPE_TGID as a first class member of the pid_type enumeration and
-into the pids array.  Then remove the __PIDTYPE_TGID special case and the
-leader_pid in signal_struct.
+Update the users of __f_setown to use PIDTYPE_TGID instead of
+PIDTYPE_PID.
 
-The net size increase is just an extra pointer added to struct pid and
-an extra pair of pointers of an hlist_node added to task_struct.
+For now the code continues to capture task_pid (when task_tgid would
+really be appropriate), and iterate on PIDTYPE_PID (even when type ==
+PIDTYPE_TGID) out of an abundance of caution to preserve existing
+behavior.
 
-The effect on code maintenance is the removal of a number of special
-cases today and the potential to remove many more special cases as
-PIDTYPE_TGID gets used to it's fullest.  The long term potential
-is allowing zombie thread group leaders to exit, which will remove
-a lot more special cases in the code.
+Oleg Nesterov suggested using the test to ensure we use PIDTYPE_PID
+for tgid lookup also be used to avoid taking the tasklist lock.
 
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- arch/ia64/kernel/asm-offsets.c  | 2 +-
- arch/ia64/kernel/fsys.S         | 4 ++--
- arch/s390/kernel/perf_cpum_sf.c | 2 +-
- fs/exec.c                       | 1 +
- include/linux/pid.h             | 3 +--
- include/linux/sched.h           | 4 ++--
- include/linux/sched/signal.h    | 5 ++---
- init/init_task.c                | 2 +-
- kernel/events/core.c            | 2 +-
- kernel/exit.c                   | 1 +
- kernel/fork.c                   | 3 ++-
- kernel/pid.c                    | 2 --
- kernel/time/itimer.c            | 5 +++--
- kernel/time/posix-cpu-timers.c  | 2 +-
- 14 files changed, 19 insertions(+), 19 deletions(-)
+ drivers/net/tun.c           |  2 +-
+ drivers/tty/tty_io.c        |  2 +-
+ fs/fcntl.c                  | 54 ++++++++++++++++++++++---------------
+ fs/locks.c                  |  2 +-
+ fs/notify/dnotify/dnotify.c |  3 ++-
+ 5 files changed, 37 insertions(+), 26 deletions(-)
 
-diff --git a/arch/ia64/kernel/asm-offsets.c b/arch/ia64/kernel/asm-offsets.c
-index c1f8a57855af..00e8e2a1eb19 100644
---- a/arch/ia64/kernel/asm-offsets.c
-+++ b/arch/ia64/kernel/asm-offsets.c
-@@ -67,7 +67,7 @@ void foo(void)
- 	DEFINE(IA64_SIGNAL_GROUP_STOP_COUNT_OFFSET,offsetof (struct signal_struct,
- 							     group_stop_count));
- 	DEFINE(IA64_SIGNAL_SHARED_PENDING_OFFSET,offsetof (struct signal_struct, shared_pending));
--	DEFINE(IA64_SIGNAL_LEADER_PID_OFFSET, offsetof (struct signal_struct, leader_pid));
-+	DEFINE(IA64_SIGNAL_PIDS_TGID_OFFSET, offsetof (struct signal_struct, pids[PIDTYPE_TGID]));
- 
- 	BLANK();
- 
-diff --git a/arch/ia64/kernel/fsys.S b/arch/ia64/kernel/fsys.S
-index e85ebdac678b..d80c99a5f55d 100644
---- a/arch/ia64/kernel/fsys.S
-+++ b/arch/ia64/kernel/fsys.S
-@@ -68,10 +68,10 @@ ENTRY(fsys_getpid)
- 	add r9=TI_FLAGS+IA64_TASK_SIZE,r16
- 	;;
- 	ld4 r9=[r9]
--	add r17=IA64_SIGNAL_LEADER_PID_OFFSET,r17
-+	add r17=IA64_SIGNAL_PIDS_TGID_OFFSET,r17
- 	;;
- 	and r9=TIF_ALLWORK_MASK,r9
--	ld8 r17=[r17]				// r17 = current->signal->leader_pid
-+	ld8 r17=[r17]				// r17 = current->signal->pids[PIDTYPE_TGID]
- 	;;
- 	add r8=IA64_PID_LEVEL_OFFSET,r17
- 	;;
-diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-index 0292d68e7dde..ca0b7ae894bb 100644
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -665,7 +665,7 @@ static void cpumsf_output_event_pid(struct perf_event *event,
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index a192a017cc68..9958b70ac1b0 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -3216,7 +3216,7 @@ static int tun_chr_fasync(int fd, struct file *file, int on)
  		goto out;
  
- 	/* Update the process ID (see also kernel/events/core.c) */
--	data->tid_entry.pid = cpumsf_pid_type(event, pid, __PIDTYPE_TGID);
-+	data->tid_entry.pid = cpumsf_pid_type(event, pid, PIDTYPE_TGID);
- 	data->tid_entry.tid = cpumsf_pid_type(event, pid, PIDTYPE_PID);
+ 	if (on) {
+-		__f_setown(file, task_pid(current), PIDTYPE_PID, 0);
++		__f_setown(file, task_pid(current), PIDTYPE_TGID, 0);
+ 		tfile->flags |= TUN_FASYNC;
+ 	} else
+ 		tfile->flags &= ~TUN_FASYNC;
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index aba59521ad48..090fb7e78eea 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2122,7 +2122,7 @@ static int __tty_fasync(int fd, struct file *filp, int on)
+ 			type = PIDTYPE_PGID;
+ 		} else {
+ 			pid = task_pid(current);
+-			type = PIDTYPE_PID;
++			type = PIDTYPE_TGID;
+ 		}
+ 		get_pid(pid);
+ 		spin_unlock_irqrestore(&tty->ctrl_lock, flags);
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 12273b6ea56d..1523588fd759 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -116,7 +116,7 @@ int f_setown(struct file *filp, unsigned long arg, int force)
+ 	struct pid *pid = NULL;
+ 	int who = arg, ret = 0;
  
- 	perf_output_sample(&handle, &header, data, event);
-diff --git a/fs/exec.c b/fs/exec.c
-index 2d4e0075bd24..79a11fbded7a 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1146,6 +1146,7 @@ static int de_thread(struct task_struct *tsk)
- 		 */
- 		tsk->pid = leader->pid;
- 		change_pid(tsk, PIDTYPE_PID, task_pid(leader));
-+		transfer_pid(leader, tsk, PIDTYPE_TGID);
- 		transfer_pid(leader, tsk, PIDTYPE_PGID);
- 		transfer_pid(leader, tsk, PIDTYPE_SID);
+-	type = PIDTYPE_PID;
++	type = PIDTYPE_TGID;
+ 	if (who < 0) {
+ 		/* avoid overflow below */
+ 		if (who == INT_MIN)
+@@ -143,7 +143,7 @@ EXPORT_SYMBOL(f_setown);
  
-diff --git a/include/linux/pid.h b/include/linux/pid.h
-index 3d4c504dcc8c..14a9a39da9c7 100644
---- a/include/linux/pid.h
-+++ b/include/linux/pid.h
-@@ -7,11 +7,10 @@
- enum pid_type
+ void f_delown(struct file *filp)
  {
- 	PIDTYPE_PID,
-+	PIDTYPE_TGID,
- 	PIDTYPE_PGID,
- 	PIDTYPE_SID,
- 	PIDTYPE_MAX,
--	/* only valid to __task_pid_nr_ns() */
--	__PIDTYPE_TGID
- };
- 
- /*
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 445bdf5b1f64..06b4e3bda93a 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1275,12 +1275,12 @@ static inline pid_t task_session_vnr(struct task_struct *tsk)
- 
- static inline pid_t task_tgid_nr_ns(struct task_struct *tsk, struct pid_namespace *ns)
- {
--	return __task_pid_nr_ns(tsk, __PIDTYPE_TGID, ns);
-+	return __task_pid_nr_ns(tsk, PIDTYPE_TGID, ns);
+-	f_modown(filp, NULL, PIDTYPE_PID, 1);
++	f_modown(filp, NULL, PIDTYPE_TGID, 1);
  }
  
- static inline pid_t task_tgid_vnr(struct task_struct *tsk)
- {
--	return __task_pid_nr_ns(tsk, __PIDTYPE_TGID, NULL);
-+	return __task_pid_nr_ns(tsk, PIDTYPE_TGID, NULL);
+ pid_t f_getown(struct file *filp)
+@@ -171,11 +171,11 @@ static int f_setown_ex(struct file *filp, unsigned long arg)
+ 
+ 	switch (owner.type) {
+ 	case F_OWNER_TID:
+-		type = PIDTYPE_MAX;
++		type = PIDTYPE_PID;
+ 		break;
+ 
+ 	case F_OWNER_PID:
+-		type = PIDTYPE_PID;
++		type = PIDTYPE_TGID;
+ 		break;
+ 
+ 	case F_OWNER_PGRP:
+@@ -206,11 +206,11 @@ static int f_getown_ex(struct file *filp, unsigned long arg)
+ 	read_lock(&filp->f_owner.lock);
+ 	owner.pid = pid_vnr(filp->f_owner.pid);
+ 	switch (filp->f_owner.pid_type) {
+-	case PIDTYPE_MAX:
++	case PIDTYPE_PID:
+ 		owner.type = F_OWNER_TID;
+ 		break;
+ 
+-	case PIDTYPE_PID:
++	case PIDTYPE_TGID:
+ 		owner.type = F_OWNER_PID;
+ 		break;
+ 
+@@ -785,20 +785,25 @@ void send_sigio(struct fown_struct *fown, int fd, int band)
+ 	read_lock(&fown->lock);
+ 
+ 	type = fown->pid_type;
+-	if (type == PIDTYPE_MAX) {
++	if (type == PIDTYPE_PID)
+ 		group = 0;
+-		type = PIDTYPE_PID;
+-	}
+ 
+ 	pid = fown->pid;
+ 	if (!pid)
+ 		goto out_unlock_fown;
+-	
+-	read_lock(&tasklist_lock);
+-	do_each_pid_task(pid, type, p) {
++
++	if (type <= PIDTYPE_TGID) {
++		rcu_read_lock();
++		p = pid_task(pid, PIDTYPE_PID);
+ 		send_sigio_to_task(p, fown, fd, band, group);
+-	} while_each_pid_task(pid, type, p);
+-	read_unlock(&tasklist_lock);
++		rcu_read_unlock();
++	} else {
++		read_lock(&tasklist_lock);
++		do_each_pid_task(pid, type, p) {
++			send_sigio_to_task(p, fown, fd, band, group);
++		} while_each_pid_task(pid, type, p);
++		read_unlock(&tasklist_lock);
++	}
+  out_unlock_fown:
+ 	read_unlock(&fown->lock);
+ }
+@@ -821,22 +826,27 @@ int send_sigurg(struct fown_struct *fown)
+ 	read_lock(&fown->lock);
+ 
+ 	type = fown->pid_type;
+-	if (type == PIDTYPE_MAX) {
++	if (type == PIDTYPE_PID)
+ 		group = 0;
+-		type = PIDTYPE_PID;
+-	}
+ 
+ 	pid = fown->pid;
+ 	if (!pid)
+ 		goto out_unlock_fown;
+ 
+ 	ret = 1;
+-	
+-	read_lock(&tasklist_lock);
+-	do_each_pid_task(pid, type, p) {
++
++	if (type <= PIDTYPE_TGID) {
++		rcu_read_lock();
++		p = pid_task(pid, PIDTYPE_PID);
+ 		send_sigurg_to_task(p, fown, group);
+-	} while_each_pid_task(pid, type, p);
+-	read_unlock(&tasklist_lock);
++		rcu_read_unlock();
++	} else {
++		read_lock(&tasklist_lock);
++		do_each_pid_task(pid, type, p) {
++			send_sigurg_to_task(p, fown, group);
++		} while_each_pid_task(pid, type, p);
++		read_unlock(&tasklist_lock);
++	}
+  out_unlock_fown:
+ 	read_unlock(&fown->lock);
+ 	return ret;
+diff --git a/fs/locks.c b/fs/locks.c
+index db7b6917d9c5..cfc059bda8ea 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -546,7 +546,7 @@ lease_setup(struct file_lock *fl, void **priv)
+ 	if (!fasync_insert_entry(fa->fa_fd, filp, &fl->fl_fasync, fa))
+ 		*priv = NULL;
+ 
+-	__f_setown(filp, task_pid(current), PIDTYPE_PID, 0);
++	__f_setown(filp, task_pid(current), PIDTYPE_TGID, 0);
  }
  
- static inline pid_t task_ppid_nr_ns(const struct task_struct *tsk, struct pid_namespace *ns)
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 2dcded16eb1e..ee30a5ba475f 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -147,7 +147,6 @@ struct signal_struct {
- #endif
- 
- 	/* PID/PID hash table linkage. */
--	struct pid *leader_pid;
- 	struct pid *pids[PIDTYPE_MAX];
- 
- #ifdef CONFIG_NO_HZ_FULL
-@@ -571,7 +570,7 @@ struct pid *task_pid_type(struct task_struct *task, enum pid_type type)
- 
- static inline struct pid *task_tgid(struct task_struct *task)
- {
--	return task->signal->leader_pid;
-+	return task->signal->pids[PIDTYPE_TGID];
- }
- 
- /*
-@@ -607,7 +606,7 @@ static inline bool thread_group_leader(struct task_struct *p)
-  */
- static inline bool has_group_leader_pid(struct task_struct *p)
- {
--	return task_pid(p) == p->signal->leader_pid;
-+	return task_pid(p) == task_tgid(p);
- }
- 
- static inline
-diff --git a/init/init_task.c b/init/init_task.c
-index db12a61259f1..4f97846256d7 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -33,9 +33,9 @@ static struct signal_struct init_signals = {
- 	},
- #endif
- 	INIT_CPU_TIMERS(init_signals)
--	.leader_pid = &init_struct_pid,
- 	.pids = {
- 		[PIDTYPE_PID]	= &init_struct_pid,
-+		[PIDTYPE_TGID]	= &init_struct_pid,
- 		[PIDTYPE_PGID]	= &init_struct_pid,
- 		[PIDTYPE_SID]	= &init_struct_pid,
- 	},
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 80cca2b30c4f..9025b1796ca8 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1334,7 +1334,7 @@ static u32 perf_event_pid_type(struct perf_event *event, struct task_struct *p,
- 
- static u32 perf_event_pid(struct perf_event *event, struct task_struct *p)
- {
--	return perf_event_pid_type(event, p, __PIDTYPE_TGID);
-+	return perf_event_pid_type(event, p, PIDTYPE_TGID);
- }
- 
- static u32 perf_event_tid(struct perf_event *event, struct task_struct *p)
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 16432428fc6c..25582b442955 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -73,6 +73,7 @@ static void __unhash_process(struct task_struct *p, bool group_dead)
- 	nr_threads--;
- 	detach_pid(p, PIDTYPE_PID);
- 	if (group_dead) {
-+		detach_pid(p, PIDTYPE_TGID);
- 		detach_pid(p, PIDTYPE_PGID);
- 		detach_pid(p, PIDTYPE_SID);
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index d2952162399b..cc5be0d01ce6 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1946,6 +1946,7 @@ static __latent_entropy struct task_struct *copy_process(
- 
- 		init_task_pid(p, PIDTYPE_PID, pid);
- 		if (thread_group_leader(p)) {
-+			init_task_pid(p, PIDTYPE_TGID, pid);
- 			init_task_pid(p, PIDTYPE_PGID, task_pgrp(current));
- 			init_task_pid(p, PIDTYPE_SID, task_session(current));
- 
-@@ -1954,7 +1955,6 @@ static __latent_entropy struct task_struct *copy_process(
- 				p->signal->flags |= SIGNAL_UNKILLABLE;
- 			}
- 
--			p->signal->leader_pid = pid;
- 			p->signal->tty = tty_kref_get(current->signal->tty);
- 			/*
- 			 * Inherit has_child_subreaper flag under the same
-@@ -1965,6 +1965,7 @@ static __latent_entropy struct task_struct *copy_process(
- 							 p->real_parent->signal->is_child_subreaper;
- 			list_add_tail(&p->sibling, &p->real_parent->children);
- 			list_add_tail_rcu(&p->tasks, &init_task.tasks);
-+			attach_pid(p, PIDTYPE_TGID);
- 			attach_pid(p, PIDTYPE_PGID);
- 			attach_pid(p, PIDTYPE_SID);
- 			__this_cpu_inc(process_counts);
-diff --git a/kernel/pid.c b/kernel/pid.c
-index f8486d2e2346..de1cfc4f75a2 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -269,8 +269,6 @@ static struct pid **task_pid_ptr(struct task_struct *task, enum pid_type type)
- {
- 	return (type == PIDTYPE_PID) ?
- 		&task->thread_pid :
--		(type == __PIDTYPE_TGID) ?
--		&task->signal->leader_pid :
- 		&task->signal->pids[type];
- }
- 
-diff --git a/kernel/time/itimer.c b/kernel/time/itimer.c
-index f26acef5d7b4..9a65713c8309 100644
---- a/kernel/time/itimer.c
-+++ b/kernel/time/itimer.c
-@@ -139,9 +139,10 @@ enum hrtimer_restart it_real_fn(struct hrtimer *timer)
- {
- 	struct signal_struct *sig =
- 		container_of(timer, struct signal_struct, real_timer);
-+	struct pid *leader_pid = sig->pids[PIDTYPE_TGID];
- 
--	trace_itimer_expire(ITIMER_REAL, sig->leader_pid, 0);
--	kill_pid_info(SIGALRM, SEND_SIG_PRIV, sig->leader_pid);
-+	trace_itimer_expire(ITIMER_REAL, leader_pid, 0);
-+	kill_pid_info(SIGALRM, SEND_SIG_PRIV, leader_pid);
- 
- 	return HRTIMER_NORESTART;
- }
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 5a6251ac6f7a..40e6fae46cec 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -895,7 +895,7 @@ static void check_cpu_itimer(struct task_struct *tsk, struct cpu_itimer *it,
- 
- 		trace_itimer_expire(signo == SIGPROF ?
- 				    ITIMER_PROF : ITIMER_VIRTUAL,
--				    tsk->signal->leader_pid, cur_time);
-+				    task_tgid(tsk), cur_time);
- 		__group_send_sig_info(signo, SEND_SIG_PRIV, tsk);
+ static const struct lock_manager_operations lease_manager_ops = {
+diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+index e2bea2ac5dfb..484f2c3a33bb 100644
+--- a/fs/notify/dnotify/dnotify.c
++++ b/fs/notify/dnotify/dnotify.c
+@@ -19,6 +19,7 @@
+ #include <linux/fs.h>
+ #include <linux/module.h>
+ #include <linux/sched.h>
++#include <linux/sched/signal.h>
+ #include <linux/dnotify.h>
+ #include <linux/init.h>
+ #include <linux/spinlock.h>
+@@ -353,7 +354,7 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
+ 		goto out;
  	}
  
+-	__f_setown(filp, task_pid(current), PIDTYPE_PID, 0);
++	__f_setown(filp, task_pid(current), PIDTYPE_TGID, 0);
+ 
+ 	error = attach_dn(dn, dn_mark, id, fd, filp, mask);
+ 	/* !error means that we attached the dn to the dn_mark, so don't free it */
 -- 
 2.17.1
 
