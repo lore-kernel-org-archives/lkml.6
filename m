@@ -2,115 +2,151 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA7FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C4BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4804520852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:51:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h9sy+fUf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4804520852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D17D20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:53:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D17D20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388819AbeGXX76 (ORCPT
+        id S2388827AbeGYACP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:59:58 -0400
-Received: from mail-pf1-f173.google.com ([209.85.210.173]:34212 "EHLO
-        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388506AbeGXX76 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:59:58 -0400
-Received: by mail-pf1-f173.google.com with SMTP id k19-v6so1196127pfi.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 15:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=gKaXTjgXYkSdXlL9MTpX2ecKQBsPD8OxiuvNYjQ85uQ=;
-        b=h9sy+fUf3ohSY3gqM4KX/JIej5N5ICMTdgQKaKXISsmVpseRr5t6kLUQk6ec/XC+5W
-         nvWEpsLYh3CL0wcy5cnq27IKM/JY9PeZ5DO+lhSCFmJ1S/OGYfWYwuneat6S7yfTtRXN
-         3SLviORO1ar1lxosLVFQE65G/CjDEoOFfem5Tq2n3RYWtYFDqTNh2q/vJzbtrudgNA6p
-         mOn4e2E+d4rYeOoTsjhQrFjw6bc3wuE8CDwq9AhEmezQ7AMCtfpEAJ8B7NHPmwB4T3Z0
-         OB/WtJsAiaOQebjx5QA3RCJEFomjccM5tj3k39/27FmV/5M8Q77LuQ1mClqU3kzhtBWT
-         Zs4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=gKaXTjgXYkSdXlL9MTpX2ecKQBsPD8OxiuvNYjQ85uQ=;
-        b=h/C7bHdaWLV3RK5Gd5k4Qxb68mPBEgLZQcK7/ZJCeRRbsUkg/c3qbYmcAJ1X62wTah
-         yWQ4kqtTEVh9ImrY7dUpkVFBYSjZEWmllCu3tZvYGBqUk6K9UnYn99+uKRnQ/2qFvp6/
-         79ebClQbhXF+H3XPMKChqg4dIDVSsyLoAvZ2+8np55opysUlRUYQEE3XrxOuwPck/7tM
-         9vG2QiDhcZ84vo6qfXPJu7z9XIWcCUv6GuUhbQdtxjnMAi968wORoA59PHDbv3TQtfDH
-         TLclFA2j0mvBrydlxm2oLMk4MmwCLYtsnXhBXFiEonyNJwqZNSRtjK+baUoXaSPzoFut
-         aA5Q==
-X-Gm-Message-State: AOUpUlFcwR09DQVwkKVoApCnYlDNJ2/ANykgJa9DOGSjU6Z6t+DZt5rE
-        5KgAdGADpLzFHcuKQLbTKK2nAQ==
-X-Google-Smtp-Source: AAOMgpdyB9tpnZsUvVX8KMtAGO2Rh/VpkE+JOXAqJHZm0SbsP5C6dnCYOLLqpdZq5Ucy/azUTkTATg==
-X-Received: by 2002:a63:4d06:: with SMTP id a6-v6mr17800394pgb.408.1532472675903;
-        Tue, 24 Jul 2018 15:51:15 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id t76-v6sm20828481pfe.109.2018.07.24.15.51.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 15:51:15 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 15:51:14 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch v4] mm, oom: fix unnecessary killing of additional
- processes
-In-Reply-To: <05dbc69a-1c26-adec-15c6-f7192f8d2ae0@i-love.sakura.ne.jp>
-Message-ID: <alpine.DEB.2.21.1807241549420.215249@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1806211434420.51095@chino.kir.corp.google.com> <d19d44c3-c8cf-70a1-9b15-c98df233d5f0@i-love.sakura.ne.jp> <alpine.DEB.2.21.1807181317540.49359@chino.kir.corp.google.com> <a78fb992-ad59-0cdb-3c38-8284b2245f21@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1807200133310.119737@chino.kir.corp.google.com> <alpine.DEB.2.21.1807201314230.231119@chino.kir.corp.google.com> <ca34b123-5c81-569f-85ea-4851bc569962@i-love.sakura.ne.jp> <alpine.DEB.2.21.1807201505550.38399@chino.kir.corp.google.com>
- <f8d24892-b05e-73a8-36d5-4fe278f84c44@i-love.sakura.ne.jp> <alpine.DEB.2.21.1807241444370.206335@chino.kir.corp.google.com> <05dbc69a-1c26-adec-15c6-f7192f8d2ae0@i-love.sakura.ne.jp>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 24 Jul 2018 20:02:15 -0400
+Received: from anholt.net ([50.246.234.109]:38394 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388506AbeGYACP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 20:02:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id E3DD310A1504;
+        Tue, 24 Jul 2018 15:53:32 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id dVFsXJvRF3NE; Tue, 24 Jul 2018 15:53:31 -0700 (PDT)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 75B7A10A053F;
+        Tue, 24 Jul 2018 15:53:31 -0700 (PDT)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id D57562FE4641; Tue, 24 Jul 2018 15:53:30 -0700 (PDT)
+From:   Eric Anholt <eric@anholt.net>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
+Subject: [PATCH] drm/v3d: Add a little debugfs entry for measuring the core clock.
+Date:   Tue, 24 Jul 2018 15:53:30 -0700
+Message-Id: <20180724225330.1288-1-eric@anholt.net>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018, Tetsuo Handa wrote:
+This adds just enough performance counter support to measure the
+clock.  We don't have linux kernel drivers for the clock driving the
+HW, and this was useful for determining that the V3D HW is running on
+a slow clock, not that the driver was slow.
 
-> >> You might worry about situations where __oom_reap_task_mm() is a no-op.
-> >> But that is not always true. There is no point with emitting
-> >>
-> >>   pr_info("oom_reaper: unable to reap pid:%d (%s)\n", ...);
-> >>   debug_show_all_locks();
-> >>
-> >> noise and doing
-> >>
-> >>   set_bit(MMF_OOM_SKIP, &mm->flags);
-> >>
-> >> because exit_mmap() will not release oom_lock until __oom_reap_task_mm()
-> >> completes. That is, except extra noise, there is no difference with
-> >> current behavior which sets set_bit(MMF_OOM_SKIP, &mm->flags) after
-> >> returning from __oom_reap_task_mm().
-> >>
-> > 
-> > v5 has restructured how exit_mmap() serializes its unmapping with the oom 
-> > reaper.  It sets MMF_OOM_SKIP while holding mm->mmap_sem.
-> > 
-> 
-> I think that v5 is still wrong. exit_mmap() keeps mmap_sem held for write does
-> not prevent oom_reap_task() from emitting the noise and setting MMF_OOM_SKIP
-> after timeout. Since your purpose is to wait for release of memory which could
-> not be reclaimed by __oom_reap_task_mm(), what if __oom_reap_task_mm() was no-op and
-> exit_mmap() was preempted immediately after returning from __oom_reap_task_mm() ?
-> 
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/gpu/drm/v3d/v3d_debugfs.c | 35 +++++++++++++++++++++++++++++++
+ drivers/gpu/drm/v3d/v3d_regs.h    | 30 ++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+)
 
-If exit_mmap() gets preempted indefinitely before it can free any memory, 
-we are better off oom killing another process.  The purpose of the timeout 
-is to give an oom victim an amount of time to free its memory and exit 
-before selecting another victim.
+diff --git a/drivers/gpu/drm/v3d/v3d_debugfs.c b/drivers/gpu/drm/v3d/v3d_debugfs.c
+index 4db62c545748..d48008adb085 100644
+--- a/drivers/gpu/drm/v3d/v3d_debugfs.c
++++ b/drivers/gpu/drm/v3d/v3d_debugfs.c
+@@ -176,9 +176,44 @@ static int v3d_debugfs_bo_stats(struct seq_file *m, void *unused)
+ 	return 0;
+ }
+ 
++static int v3d_measure_clock(struct seq_file *m, void *unused)
++{
++	struct drm_info_node *node = (struct drm_info_node *)m->private;
++	struct drm_device *dev = node->minor->dev;
++	struct v3d_dev *v3d = to_v3d_dev(dev);
++	uint32_t cycles;
++	int core = 0;
++	int measure_ms = 1000;
++
++	if (v3d->ver >= 40) {
++		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_SRC_0_3,
++			       V3D_SET_FIELD(V3D_PCTR_CYCLE_COUNT,
++					     V3D_PCTR_S0));
++		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_CLR, 1);
++		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_EN, 1);
++	} else {
++		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_PCTRS0,
++			       V3D_PCTR_CYCLE_COUNT);
++		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_CLR, 1);
++		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_EN,
++			       V3D_V3_PCTR_0_EN_ENABLE |
++			       1);
++	}
++	msleep(measure_ms);
++	cycles = V3D_CORE_READ(core, V3D_PCTR_0_PCTR0);
++
++	seq_printf(m, "cycles: %d (%d.%d Mhz)\n",
++		   cycles,
++		   cycles / (measure_ms * 1000),
++		   (cycles / (measure_ms * 100)) % 10);
++
++	return 0;
++}
++
+ static const struct drm_info_list v3d_debugfs_list[] = {
+ 	{"v3d_ident", v3d_v3d_debugfs_ident, 0},
+ 	{"v3d_regs", v3d_v3d_debugfs_regs, 0},
++	{"measure_clock", v3d_measure_clock, 0},
+ 	{"bo_stats", v3d_debugfs_bo_stats, 0},
+ };
+ 
+diff --git a/drivers/gpu/drm/v3d/v3d_regs.h b/drivers/gpu/drm/v3d/v3d_regs.h
+index 854046565989..c3a5e4e44f73 100644
+--- a/drivers/gpu/drm/v3d/v3d_regs.h
++++ b/drivers/gpu/drm/v3d/v3d_regs.h
+@@ -267,6 +267,36 @@
+ # define V3D_PTB_BXCF_RWORDERDISA                      BIT(1)
+ # define V3D_PTB_BXCF_CLIPDISA                         BIT(0)
+ 
++#define V3D_V3_PCTR_0_EN                               0x00674
++#define V3D_V3_PCTR_0_EN_ENABLE                        BIT(31)
++#define V3D_V4_PCTR_0_EN                               0x00650
++/* When a bit is set, resets the counter to 0. */
++#define V3D_V3_PCTR_0_CLR                              0x00670
++#define V3D_V4_PCTR_0_CLR                              0x00654
++#define V3D_PCTR_0_OVERFLOW                            0x00658
++
++#define V3D_V3_PCTR_0_PCTRS0                           0x00684
++#define V3D_V3_PCTR_0_PCTRS15                          0x00660
++#define V3D_V3_PCTR_0_PCTRSX(x)                        (V3D_V3_PCTR_0_PCTRS0 + \
++							4 * (x))
++/* Each src reg muxes four counters each. */
++#define V3D_V4_PCTR_0_SRC_0_3                          0x00660
++#define V3D_V4_PCTR_0_SRC_28_31                        0x0067c
++# define V3D_PCTR_S0_MASK                              V3D_MASK(6, 0)
++# define V3D_PCTR_S0_SHIFT                             0
++# define V3D_PCTR_S1_MASK                              V3D_MASK(14, 8)
++# define V3D_PCTR_S1_SHIFT                             8
++# define V3D_PCTR_S2_MASK                              V3D_MASK(22, 16)
++# define V3D_PCTR_S2_SHIFT                             16
++# define V3D_PCTR_S3_MASK                              V3D_MASK(30, 24)
++# define V3D_PCTR_S3_SHIFT                             24
++# define V3D_PCTR_CYCLE_COUNT                          32
++
++/* Output values of the counters. */
++#define V3D_PCTR_0_PCTR0                               0x00680
++#define V3D_PCTR_0_PCTR31                              0x006fc
++#define V3D_PCTR_0_PCTRX(x)                            (V3D_PCTR_0_PCTR0 + \
++							4 * (x))
+ #define V3D_GMP_STATUS                                 0x00800
+ # define V3D_GMP_STATUS_GMPRST                         BIT(31)
+ # define V3D_GMP_STATUS_WR_COUNT_MASK                  V3D_MASK(30, 24)
+-- 
+2.18.0
+
