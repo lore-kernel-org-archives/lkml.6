@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33207C67790
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67978C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE61920852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FE5C20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:20:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="l0QEBxoU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE61920852
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="XOGy/C/I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE5C20852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389199AbeGYA3Y (ORCPT
+        id S2389216AbeGYA3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 20:29:24 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:39322 "EHLO
+        Tue, 24 Jul 2018 20:29:25 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:45524 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389123AbeGYA3Y (ORCPT
+        with ESMTP id S2389178AbeGYA3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 20:29:24 -0400
+        Tue, 24 Jul 2018 20:29:25 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -43,56 +43,40 @@ Cc:     Paul Cercueil <paul@crapouillou.net>, linux-pwm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-watchdog@vger.kernel.org, linux-mips@linux-mips.org,
         linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v5 14/21] clk: jz4740: Add TCU clock
-Date:   Wed, 25 Jul 2018 01:19:51 +0200
-Message-Id: <20180724231958.20659-15-paul@crapouillou.net>
+Subject: [PATCH v5 15/21] MIPS: Kconfig: Select TCU timer driver when MACH_INGENIC is set
+Date:   Wed, 25 Jul 2018 01:19:52 +0200
+Message-Id: <20180724231958.20659-16-paul@crapouillou.net>
 In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
 References: <20180724231958.20659-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1532474434; bh=fNnVkqqSivIRkToDRIlol9WnwMrUoa+2zKexHDWmHmg=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=l0QEBxoUszxb+9GBkJUkNIOCHWHFxdAMRMet3P3Bg0NeTdIuiakucPbQraxvZo6XPJgNpHCUuxo3cQGJ0xCRAFp9pxJLAGASKH8Md9P5/jJH9pyT4WoLhlfnpZFXiQzcbfJG9OYNGpV9nr77SNaD3g9UIUuW7r0AQPi49QxrDgA=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1532474436; bh=h967gpfixOFJqq7V79O1oI66BDb/fD2jCcCC6Sfba8o=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=XOGy/C/INdyUPxzHJmGCYPsz/n/7OVo48NXhDqnv9WyuYZiFYIrzRR1IgdrcejkOQ4tsDhzkLcXEElP7fOy3vd9NHKA5ibnzU740wkmiiJ3qePy4URmNEVTDCB8ZhyhPn9mI6GDS8NpLmxYVJFhkba5DKVRbNb3KWIXDMPaltOo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the missing TCU clock to the list of clocks supplied by the CGU for
-the JZ4740 SoC.
+We cannot boot to userspace (not even initramfs) if the timer driver is
+not present; so it makes sense to enable it unconditionally when
+MACH_INGENIC is set.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/ingenic/jz4740-cgu.c       | 6 ++++++
- include/dt-bindings/clock/jz4740-cgu.h | 1 +
- 2 files changed, 7 insertions(+)
+ arch/mips/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
  v5: New patch
 
-diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index 32fcc75f6f77..216ba051e743 100644
---- a/drivers/clk/ingenic/jz4740-cgu.c
-+++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -211,6 +211,12 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
- 		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
- 		.gate = { CGU_REG_CLKGR, 5 },
- 	},
-+
-+	[JZ4740_CLK_TCU] = {
-+		"tcu", CGU_CLK_GATE,
-+		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 1 },
-+	},
- };
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 08c10c518f83..254dbf69a4ad 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -384,6 +384,7 @@ config MACH_INGENIC
+ 	select BUILTIN_DTB
+ 	select USE_OF
+ 	select LIBFDT
++	select INGENIC_TIMER
  
- static void __init jz4740_cgu_init(struct device_node *np)
-diff --git a/include/dt-bindings/clock/jz4740-cgu.h b/include/dt-bindings/clock/jz4740-cgu.h
-index 6ed83f926ae7..e82d77028581 100644
---- a/include/dt-bindings/clock/jz4740-cgu.h
-+++ b/include/dt-bindings/clock/jz4740-cgu.h
-@@ -34,5 +34,6 @@
- #define JZ4740_CLK_ADC		19
- #define JZ4740_CLK_I2C		20
- #define JZ4740_CLK_AIC		21
-+#define JZ4740_CLK_TCU		22
- 
- #endif /* __DT_BINDINGS_CLOCK_JZ4740_CGU_H__ */
+ config LANTIQ
+ 	bool "Lantiq based platforms"
 -- 
 2.11.0
 
