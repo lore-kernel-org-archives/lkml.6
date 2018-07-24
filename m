@@ -2,185 +2,164 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD149C6778F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F061C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AB4A20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:42:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AB4A20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B9D8620852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:43:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Gsv+Zhe4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D8620852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388947AbeGXVuO (ORCPT
+        id S2388833AbeGXVwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 17:50:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34098 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388838AbeGXVuN (ORCPT
+        Tue, 24 Jul 2018 17:52:10 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:42829 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388604AbeGXVwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 17:50:13 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5BD1E4D;
-        Tue, 24 Jul 2018 20:41:59 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 13:41:58 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv3 1/3] mm: Introduce vma_init()
-Message-Id: <20180724134158.676dfa7a4da16adbab3b851c@linux-foundation.org>
-In-Reply-To: <CA+55aFz1Vj3b2w-nOBdV5=WwsCYhSBprjPjGog6=_=q75Z5Z-w@mail.gmail.com>
-References: <20180724121139.62570-1-kirill.shutemov@linux.intel.com>
-        <20180724121139.62570-2-kirill.shutemov@linux.intel.com>
-        <20180724130308.bbd46afc3703af4c5e1d6868@linux-foundation.org>
-        <CA+55aFz1Vj3b2w-nOBdV5=WwsCYhSBprjPjGog6=_=q75Z5Z-w@mail.gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Jul 2018 17:52:10 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id D901B10C0AE2;
+        Tue, 24 Jul 2018 13:43:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1532465036; bh=7KtHUX781IYQZM2CrowAlbGeQrDmnIAgPQRyo3fZmbg=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=Gsv+Zhe4R324X7q7gOetg6j01X3/2VrBK5XsRY/Tt4YnnVC6RpIzbszsgqFOWeKFi
+         htRfSlUKqi91onMn3wpF/INuyee5RR80d24pf1MXuuajTBKkdEB047vXVC9K0rMDiY
+         VT0gZPxsiYMxUJbEpCoav+1PnRPRDsxrMMnZamI1g8w5PT1xuSJdbbHFnVr64RmO2y
+         pFOLHKVkMqK5DqatrrFsUB/4dXo1hV9DIwAnoVEIfuHyl5uzHJ73pXAmHTIY6XQFXY
+         4ljWyJz/Cv2JBX/nB0Y80lRdJYLPNuVrMveskwe0RhixFskrYNJ0Ay4MPHrPEYvMek
+         wJYGIa51dsVVA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id C3A403A67;
+        Tue, 24 Jul 2018 13:43:56 -0700 (PDT)
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 24 Jul 2018 13:43:56 -0700
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 25 Jul 2018 02:13:53 +0530
+Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.10.161.98) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 25 Jul 2018 02:13:52 +0530
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     <linux-kernel@vger.kernel.org>,
+        <linux-snps-arc@lists.infradead.org>
+CC:     <hch@lst.de>, <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: [PATCH] ARC: dma [non IOC]: fix arc_dma_sync_single_for_(device|cpu)
+Date:   Tue, 24 Jul 2018 13:43:45 -0700
+Message-ID: <1532465025-15600-1-git-send-email-vgupta@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B08382A@us01wembx1.internal.synopsys.com>
+References: <C2D7FE5348E1B147BCA15975FBA23075012B08382A@us01wembx1.internal.synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.10.161.98]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 13:16:33 -0700 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-> On Tue, Jul 24, 2018 at 1:03 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> >
-> > I'd sleep better if this became a kmem_cache_alloc() and the memset
-> > was moved into vma_init().
-> 
-> Yeah, with the vma_init(), I guess the advantage of using
-> kmem_cache_zalloc() is pretty dubious.
-> 
-> Make it so.
-> 
+ARC backend for dma_sync_single_for_(device|cpu) was broken as it was
+not honoring the @dir argument and simply forcing it based on the call:
+ - arc_dma_sync_single_for_device(dir) assumed DMA_TO_DEVICE (cache wback)
+ - arc_dma_sync_single_for_cpu(dir) assumed DMA_FROM_DEVICE (cache inv)
 
-Did I get everything?
+This is not true given the DMA API programming model and has been
+discussed here [1] in some detail.
 
+Interestingly while the deficiency has been there forever, it only started
+showing up after 4.17 dma common ops rework, commit a8eb92d02dd7
+("arc: fix arc_dma_{map,unmap}_page") which wired up these calls under the
+more commonly used dma_map_page API triggering the issue.
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: mm: zero out the vma in vma_init()
+[1]: https://lkml.org/lkml/2018/5/18/979
+Fixes: commit a8eb92d02dd7 ("arc: fix arc_dma_{map,unmap}_page")
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: reworked changelog]
 
-Rather than in vm_area_alloc().  To ensure that the various oddball
-stack-based vmas are in a good state.  Some of the callers were zeroing
-them out, others were not.
-
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 ---
+This needs to be added to stable 4.17 but Cc with "4.17+" was causing git-send-email issues.
+---
+ arch/arc/mm/dma.c | 46 ++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
- arch/arm/kernel/process.c |    9 ++++-----
- fs/hugetlbfs/inode.c      |    2 --
- include/linux/mm.h        |    1 +
- kernel/fork.c             |    3 ++-
- mm/mempolicy.c            |    1 -
- mm/shmem.c                |    1 -
- 6 files changed, 7 insertions(+), 10 deletions(-)
-
-diff -puN arch/arm/kernel/process.c~mm-zero-out-the-vma-in-vma_init arch/arm/kernel/process.c
---- a/arch/arm/kernel/process.c~mm-zero-out-the-vma-in-vma_init
-+++ a/arch/arm/kernel/process.c
-@@ -330,16 +330,15 @@ unsigned long arch_randomize_brk(struct
-  * atomic helpers. Insert it into the gate_vma so that it is visible
-  * through ptrace and /proc/<pid>/mem.
-  */
--static struct vm_area_struct gate_vma = {
--	.vm_start	= 0xffff0000,
--	.vm_end		= 0xffff0000 + PAGE_SIZE,
--	.vm_flags	= VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYEXEC,
--};
-+static struct vm_area_struct gate_vma;
- 
- static int __init gate_vma_init(void)
- {
- 	vma_init(&gate_vma, NULL);
- 	gate_vma.vm_page_prot = PAGE_READONLY_EXEC;
-+	gate_vma.vm_start = 0xffff0000;
-+	gate_vma.vm_end	= 0xffff0000 + PAGE_SIZE;
-+	gate_vma.vm_flags = VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYEXEC;
- 	return 0;
+diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
+index 8c1071840979..cefb776a99ff 100644
+--- a/arch/arc/mm/dma.c
++++ b/arch/arc/mm/dma.c
+@@ -129,14 +129,56 @@ int arch_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+ 	return ret;
  }
- arch_initcall(gate_vma_init);
-diff -puN fs/hugetlbfs/inode.c~mm-zero-out-the-vma-in-vma_init fs/hugetlbfs/inode.c
---- a/fs/hugetlbfs/inode.c~mm-zero-out-the-vma-in-vma_init
-+++ a/fs/hugetlbfs/inode.c
-@@ -410,7 +410,6 @@ static void remove_inode_hugepages(struc
- 	int i, freed = 0;
- 	bool truncate_op = (lend == LLONG_MAX);
  
--	memset(&pseudo_vma, 0, sizeof(struct vm_area_struct));
- 	vma_init(&pseudo_vma, current->mm);
- 	pseudo_vma.vm_flags = (VM_HUGETLB | VM_MAYSHARE | VM_SHARED);
- 	pagevec_init(&pvec);
-@@ -595,7 +594,6 @@ static long hugetlbfs_fallocate(struct f
- 	 * allocation routines.  If NUMA is configured, use page index
- 	 * as input to create an allocation policy.
- 	 */
--	memset(&pseudo_vma, 0, sizeof(struct vm_area_struct));
- 	vma_init(&pseudo_vma, mm);
- 	pseudo_vma.vm_flags = (VM_HUGETLB | VM_MAYSHARE | VM_SHARED);
- 	pseudo_vma.vm_file = file;
-diff -puN include/linux/mm.h~mm-zero-out-the-vma-in-vma_init include/linux/mm.h
---- a/include/linux/mm.h~mm-zero-out-the-vma-in-vma_init
-+++ a/include/linux/mm.h
-@@ -456,6 +456,7 @@ static inline void vma_init(struct vm_ar
++/*
++ * Cache operations depending on function and direction argument, inspired by
++ * https://lkml.org/lkml/2018/5/18/979
++ * "dma_sync_*_for_cpu and direction=TO_DEVICE (was Re: [PATCH 02/20]
++ * dma-mapping: provide a generic dma-noncoherent implementation)"
++ *
++ *          |   map          ==  for_device     |   unmap     ==  for_cpu
++ *          |----------------------------------------------------------------
++ * TO_DEV   |   writeback        writeback      |   none          none
++ * FROM_DEV |   invalidate       invalidate     |   invalidate    invalidate
++ * BIDIR    |   writeback+inv    writeback+inv  |   invalidate    invalidate
++ *
++ * NOTE: we don't check the validity of direction argument as it is done in
++ * upper layer functions (in include/linux/dma-mapping.h)
++ */
++
+ void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
+ 		size_t size, enum dma_data_direction dir)
  {
- 	static const struct vm_operations_struct dummy_vm_ops = {};
+-	dma_cache_wback(paddr, size);
++	switch (dir) {
++	case DMA_TO_DEVICE:
++		dma_cache_wback(paddr, size);
++		break;
++
++	case DMA_FROM_DEVICE:
++		dma_cache_inv(paddr, size);
++		break;
++
++	case DMA_BIDIRECTIONAL:
++		dma_cache_wback_inv(paddr, size);
++		break;
++
++	default:
++		break;
++	}
+ }
  
-+	memset(vma, 0, sizeof(*vma));
- 	vma->vm_mm = mm;
- 	vma->vm_ops = &dummy_vm_ops;
- 	INIT_LIST_HEAD(&vma->anon_vma_chain);
-diff -puN kernel/fork.c~mm-zero-out-the-vma-in-vma_init kernel/fork.c
---- a/kernel/fork.c~mm-zero-out-the-vma-in-vma_init
-+++ a/kernel/fork.c
-@@ -310,8 +310,9 @@ static struct kmem_cache *mm_cachep;
- 
- struct vm_area_struct *vm_area_alloc(struct mm_struct *mm)
+ void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
+ 		size_t size, enum dma_data_direction dir)
  {
--	struct vm_area_struct *vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
-+	struct vm_area_struct *vma;
- 
-+	vma = kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);
- 	if (vma)
- 		vma_init(vma, mm);
- 	return vma;
-diff -puN mm/mempolicy.c~mm-zero-out-the-vma-in-vma_init mm/mempolicy.c
---- a/mm/mempolicy.c~mm-zero-out-the-vma-in-vma_init
-+++ a/mm/mempolicy.c
-@@ -2504,7 +2504,6 @@ void mpol_shared_policy_init(struct shar
- 			goto put_new;
- 
- 		/* Create pseudo-vma that contains just the policy */
--		memset(&pvma, 0, sizeof(struct vm_area_struct));
- 		vma_init(&pvma, NULL);
- 		pvma.vm_end = TASK_SIZE;	/* policy covers entire file */
- 		mpol_set_shared_policy(sp, &pvma, new); /* adds ref */
-diff -puN mm/shmem.c~mm-zero-out-the-vma-in-vma_init mm/shmem.c
---- a/mm/shmem.c~mm-zero-out-the-vma-in-vma_init
-+++ a/mm/shmem.c
-@@ -1421,7 +1421,6 @@ static void shmem_pseudo_vma_init(struct
- 		struct shmem_inode_info *info, pgoff_t index)
- {
- 	/* Create a pseudo vma that just contains the policy */
--	memset(vma, 0, sizeof(*vma));
- 	vma_init(vma, NULL);
- 	/* Bias interleave by inode number to distribute better across nodes */
- 	vma->vm_pgoff = index + info->vfs_inode.i_ino;
-_
+-	dma_cache_inv(paddr, size);
++	switch (dir) {
++	case DMA_TO_DEVICE:
++		break;
++
++	case DMA_FROM_DEVICE:
++	case DMA_BIDIRECTIONAL:
++		dma_cache_inv(paddr, size);
++		break;
++
++	default:
++		break;
++	}
+ }
+-- 
+2.7.4
 
