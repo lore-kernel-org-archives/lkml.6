@@ -2,128 +2,124 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC772C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCCCC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8428720880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:24:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8428720880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id CC1B720880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:24:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="FK+WDyjf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC1B720880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbeGXNan (ORCPT
+        id S2388321AbeGXNax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 09:30:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41132 "EHLO mx1.suse.de"
+        Tue, 24 Jul 2018 09:30:53 -0400
+Received: from mail-eopbgr10101.outbound.protection.outlook.com ([40.107.1.101]:18976
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726512AbeGXNan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 09:30:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 05FAAAD75;
-        Tue, 24 Jul 2018 12:24:26 +0000 (UTC)
-Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Petr Tesarik <ptesarik@suse.cz>
-References: <20180720123422.10127-1-david@redhat.com>
- <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
- <20180723123043.GD31229@dhcp22.suse.cz>
- <dca091d3-4c3d-eff5-57f8-a9a45050198d@suse.cz>
- <20180724111913.GH28386@dhcp22.suse.cz>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <d14d7a45-91fd-63ef-ea57-513752af1f9e@suse.cz>
-Date:   Tue, 24 Jul 2018 14:22:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180724111913.GH28386@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
+        id S1726512AbeGXNax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 09:30:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ha0ja3w3a7QiHzQcgjKi+ij+PCWy9u9kzTepaM51urw=;
+ b=FK+WDyjfi+hhBlXkWrm4R1GTUa1GSD/Pen2iPSPGCJPd4oA+u3btFVrEbMBnm6mUueM6hQDjfinCEqExLH5L6OJOKN5zuu+UD0ALdZ/rkHqabmYv4N7Kd2sgzklnajA4tMyhfcg53+3tMPTmTL4lfaybZjramUENmEAM9AuAdkQ=
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
+ VI1PR0501MB2077.eurprd05.prod.outlook.com (10.167.195.155) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.16; Tue, 24 Jul 2018 12:24:34 +0000
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::dc61:4a61:b84:357e]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::dc61:4a61:b84:357e%8]) with mapi id 15.20.0973.022; Tue, 24 Jul 2018
+ 12:24:34 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mperttunen@nvidia.com" <mperttunen@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
+Thread-Topic: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
+Thread-Index: AQHUIzsmvhNTA8KQdkOtPSRemoHbvqSeTBYA
+Date:   Tue, 24 Jul 2018 12:24:34 +0000
+Message-ID: <1532435072.6124.1.camel@toradex.com>
+References: <20180724104309.21741-1-marcel@ziswiler.com>
+In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [46.140.72.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2077;6:L5ThM9iCAurE+cvURBtoBjh7Tf8oNroYavgoMdVoIyWhP/5Hi7sQ8Vl65e/vffX5TcehTeIRgSOtFoDll8Ny2RU85aU2GW6QByFfMyjqKwc755jBzIJXExVknrB0NqpxZmtdHgF24O2yz9kgiENaK4UecdLlyUNAFmy18S1mMzqBMtbnrQMCTPy+SYEA82PBU4+2vuVIz3A0Zce8Zxx5bCddFg6FXY5MDzzpTtWbLVM2drKhOGNl9kCunfR8iqVEhiHpWOugrEJlPcuYr8bO/K6wvVtZ7yaXNFAjY5vrebK36ngxjfQj8BXKFVr+t8KyPN0ykUKlxJezubr7BTWCLXe857JRJHs2s+wouO7j4N67/pxI3hZixyAEVYgwJlEzgHodRGRHjCOcJCFTPzCmRO9tPYyowvm/sSQul2/YL4TxO/8HfkjFyRquFZYCrhwyS0TjxVpMnMt4nfnmoknVqw==;5:5WXUQMIYyj1VlcIsT7uYcDiHHxJE/+oPIaxngOm3v3HKSmdXwaMLPtEZgwwRt7rMWWa1tqnQ8rKYSSXJTCruehK9sN4VjAYXVdP+A5H7BZIEanjH2MB51Vwdh3YyF71maTIciDXwQ+pO6DUCndT2zT8HydFEzQosocET2eDj+dM=;7:mjhE4AxsMPi7vLI+7SE3UGxh2jXVaz3LabmRrC4T45c3Si6R7BS4eJ5pPTnAQtJZr+5bpgL0EPv/gA+hQ9q8Vr5WpduB2h7b4gVE4gtMPwdCqXGJl1XLFkISetO2DPqQfsF+G5csfMtlK3MS4HzaWzqwR2d5blxr6WRxo8IvKkdVgtdvHcxlmkSRH8/4pQl+Gj8MEa61t14Vk+iP14axyP662H9X6VdVEgkMtU+dCnyUtG2Tab07u4wNj0DN8Yj5
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 0170f305-b501-464d-82a2-08d5f1606a27
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2077;
+x-ms-traffictypediagnostic: VI1PR0501MB2077:
+x-microsoft-antispam-prvs: <VI1PR0501MB207750EF91000AAC7E167425FB550@VI1PR0501MB2077.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:VI1PR0501MB2077;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2077;
+x-forefront-prvs: 0743E8D0A6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(366004)(376002)(136003)(39840400004)(199004)(189003)(14454004)(76176011)(102836004)(6506007)(25786009)(186003)(26005)(316002)(6486002)(6436002)(2900100001)(229853002)(110136005)(54906003)(105586002)(106356001)(6512007)(478600001)(97736004)(2201001)(86362001)(99286004)(81166006)(5250100002)(81156014)(2501003)(8936002)(53936002)(103116003)(8676002)(68736007)(256004)(305945005)(3846002)(6116002)(2906002)(2616005)(476003)(11346002)(446003)(36756003)(39060400002)(4326008)(5660300001)(6246003)(486006)(66066001)(44832011)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2077;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: SCrodAOPGOcRX1RQ6a3jnjT+xX/AMe6xcc8Hc/+Rs01d/8GiOEDx3N7jEuFO6yTT4jt5oUejNWuFOVim5HyK9vO/Rv1GoeNTUVmMqTYssT5+l7WtHL97Ir1wEilmgC2vAr0Silr3ZsChkjGhi2Bys75jBrYkYOCUyyLw0/1piUTaxDimOeUGzJL44cnomtoi5gPahNICpW/mj7oiVUq9F25giEjqnpw/BFHpF33RmSX09Ta/IKCY5hMXowhzi0Ifi1GT1hK4fgz/QF40cM0RutWaNxDfkJuYDnQk2Hqc0FdVx26dxh4YevUjTZFxlPc3BUxXiKJQ64DDk7BXOhrypZitKtfxW7GPMCz4yXhNT8w=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BA8A2111B93A6C45BBE0D4D2A9CF0B36@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0170f305-b501-464d-82a2-08d5f1606a27
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2018 12:24:34.0730
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24/2018 01:19 PM, Michal Hocko wrote:
->> When creating a crashdump, I definitely need the pages containing memmap
->> included in the dump, so I can inspect the struct pages. But this is a
->> bit recursive issue, so I'll try making it clearer:
->>
->> 1) there are kernel pages with data (e.g. slab) that I typically need in
->> the dump, and are not PageReserved
->> 2) there are struct pages for pages 1) in the memmap that physically
->> hold the pageflags for 1), and these are PageReserved
->> 3) there are struct pages for pages 2) somewhere else in the memmap,
->> physically hold the pageflags for 2). They are probably also
->> PageReserved themselves ? and self-referencing.
->>
->> Excluding PageReserved from dump means there won't be cases 2) and 3) in
->> the dump, which at least for case 2) is making such dump almost useless
->> in many cases.
-> 
-> Yes, we cannot simply exclude all PageReserved pages. I was merely
-> suggesting to rule out new special PageReserved pages that are denoting 
-> offline pages. The same could be applied to HWPoison pages
-
-So how about marking them with some "page type" that we got after
-Matthew's struct page reorg? I assume the pages we're talking about are
-in a state that they don't need the mapcount/mapping field or whatever
-unions with the page type... but I guess some care would be needed to
-not have false positives when the union field is actually used but
-happens to look like the new type.
+U29ycnksIEkgbWVhbnQgdG8gd3JpdGUgIm1pbm9yIHJldmFtcCIgaW4gdGhlIHN1YmplY3QgbGlu
+ZSBoZXJlIGFzDQpBcGFsaXMgVEsxIHdhcyBhbHJlYWR5IGluIHF1aXRlIGdvb2QgYSBzaGFwZSBi
+dXQgdGhpcyBhcmUgc3RpbGwgc29tZQ0Kd29ydGh5IGltcHJvdmVtZW50cyAoOy1wKS4NCg0KT24g
+VHVlLCAyMDE4LTA3LTI0IGF0IDEyOjQyICswMjAwLCBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6DQo+
+IFRoaXMgc2VyaWVzIGlzIGEgbWlub3Igb3ZlcmhhdWwgZm9yIHRoZSBUb3JhZGV4IEFwYWxpcyBU
+SzEgc3lzdGVtIG9uDQo+IG1vZHVsZS4NCj4gDQo+IE1hcmNlbCBaaXN3aWxlciAoMTUpOg0KPiAg
+IEFSTTogdGVncmE6IGFwYWxpcy10azE6IGFkZCBsb2NhbC1tYWMtYWRkcmVzcyBwcm9wZXJ0eQ0K
+PiAgIEFSTTogdGVncmE6IGFwYWxpcy10azE6IHJlb3JkZXIgcGNpZSBwcm9wZXJ0aWVzDQo+ICAg
+QVJNOiB0ZWdyYTogYXBhbGlzLXRrMTogcmVvcmRlciBob3N0MXgvaGRtaSBwcm9wZXJ0aWVzDQo+
+ICAgQVJNOiB0ZWdyYTogYXBhbGlzLXRrMTogcmVvcmRlciBwYWRjdGwgcHJvcGVydGllcw0KPiAg
+IEFSTTogdGVncmE6IGFwYWxpcy10azE6IHJlZ3VsYXRvciBjbGVhbi11cA0KPiAgIEFSTTogdGVn
+cmE6IGFwYWxpcy10azE6IGFkZCBtaXNzaW5nIHJlZ3VsYXRvcnMNCj4gICBBUk06IHRlZ3JhOiBh
+cGFsaXMtdGsxOiBkcm9wIHVudXNlZCBwaW5tdXggbGFiZWwNCj4gICBBUk06IHRlZ3JhOiBhcGFs
+aXMtdGsxOiB3aGl0ZS1zcGFjZSBjbGVhbi11cA0KPiAgIEFSTTogdGVncmE6IGFwYWxpcy10azE6
+IHJlb3JkZXIgYmFja2xpZ2h0IHByb3BlcnRpZXMNCj4gICBBUk06IHRlZ3JhOiBhcGFsaXMtdGsx
+OiBhZGQgcHJvcGVyIGVtbWMgdm1tYyBhbmQgdnFtbWMgc3VwcGxpZXMNCj4gICBBUk06IHRlZ3Jh
+OiBhcGFsaXMtdGsxOiBlbmFibGUgZW1tYyBkZHI1MiBtb2RlDQo+ICAgQVJNOiB0ZWdyYTogYXBh
+bGlzLXRrMTogYWRkIHRvcmFkZXgsYXBhbGlzLXRrMS12MS4yIGNvbXBhdGlibGUNCj4gICBBUk06
+IHRlZ3JhOiBhcGFsaXMtdGsxOiBmaXggcGNpZSBzd2l0Y2ggdmVuZG9yIGNvbXBhdGlibGUNCj4g
+ICBBUk06IHRlZ3JhOiBhcGFsaXMtdGsxOiByZW9yZGVyIGNwdSBkZmxsIGNsb2NrIHByb3BlcnRp
+ZXMNCj4gICBBUk06IHRlZ3JhOiBhcGFsaXMtdGsxOiByZW9yZGVyIFNEIGNhcmQgcHJvcGVydGll
+cw0KPiANCj4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vdGVncmEudHh0
+IHwgICAyICsNCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy1ldmFsLmR0cyAg
+ICAgIHwgIDI2ICsrKystDQo+ICBhcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1hcGFsaXMtdjEu
+Mi1ldmFsLmR0cyB8ICAyOSArKysrLQ0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBh
+bGlzLXYxLjIuZHRzaSAgICAgfCAxNDMgKysrKysrKysrKysrKy0NCj4gLS0tLS0tLS0tLQ0KPiAg
+YXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLmR0c2kgICAgICAgICAgfCAxNDMgKysr
+KysrKysrKysrKy0NCj4gLS0tLS0tLS0tLQ0KPiAgNSBmaWxlcyBjaGFuZ2VkLCAyMDggaW5zZXJ0
+aW9ucygrKSwgMTM1IGRlbGV0aW9ucygtKQ==
