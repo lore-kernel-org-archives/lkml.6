@@ -2,161 +2,101 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F43C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA42C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33FB2064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:48:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MW1oU3ai"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33FB2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 46A152064D
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A152064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388675AbeGXPzM (ORCPT
+        id S2388638AbeGXP5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:55:12 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38629 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388516AbeGXPzL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:55:11 -0400
-Received: by mail-lf1-f68.google.com with SMTP id a4-v6so3171631lff.5;
-        Tue, 24 Jul 2018 07:48:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=C8zCjwoGHvsgBj+oazPYpkMyFbWwDMvYorGDAXNghWE=;
-        b=MW1oU3aitLaUbUTAHBUQw+idEcHpWytbFCt36VfUOzhZ9ZQ6maiLmOK6QdpywFMJj8
-         TJOUlhuP2F5K+jSGbN7OSknSUw/f6YRNjCZ3LYG2VMNTeLyqD/Tay7rCDbtWCsyriSFp
-         9Qx+rf2j/wy6ckPOIyq2I9dzMS2d+BSpV2lsgpWFy8BHqfvR7QZmGwebY0Gb8DX9FzPp
-         Bb/t/M2xjgFNTYZDXBUoKHWUoSatQ3BfWmg0LduMi9Zk1pYgSHISFCBJ4klKIrQUON2Z
-         L8dQwsu3CxEx/xyj2lI/EWtOcWI+eeV1rBsLlT+z9fEVJMcalhg7PdgWCv0b3o1qPiDn
-         t0nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=C8zCjwoGHvsgBj+oazPYpkMyFbWwDMvYorGDAXNghWE=;
-        b=GvyytfjNS1dZVO0WQZ7xEJJPa6N6RO81u38DDEuFEtLWvBXhlppv3yBnIwvnm2J8+g
-         D517FvIZ0BNvyAk2nsyrlOgViYOfOIhIsWo2ELr45343TQXOW+eTu0r7SqM9BT8ZXR8o
-         iNeREnE9BazLJXREL/FVqEFm0yXjdYrfFm3vO9FNDWJ9zVC+LLek5vgeQwpqttYKUTYl
-         mcOxQYeQRIQElAPS/O7x6OOGRUTRQfF19T2Chg/vO+RfDtH9IfO3gQqpSA4lC1wq3ME/
-         fDdRPpIMequuVu+sjbQhcFLiXpDm2RFbEO46moKradQrItyl2mkkTfhBBKuXeutEx7gt
-         RnZw==
-X-Gm-Message-State: AOUpUlG/Vg5pXQtDLSPzsyQRFRP0jwbzs7uU6s/2IcVpgkX7LOwGP1nD
-        DqR3Oed5t3+1Bzrr8MsLU5Y=
-X-Google-Smtp-Source: AAOMgpf5Vlu+U6LqKlE6RxlBc2TINcqEFdpwIRaLNTtREA81PuRC90nHeiTlvupQ+TkqUUCAmIeKGw==
-X-Received: by 2002:a19:d819:: with SMTP id p25-v6mr9935008lfg.36.1532443699874;
-        Tue, 24 Jul 2018 07:48:19 -0700 (PDT)
-Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id g23-v6sm1838489lfl.42.2018.07.24.07.48.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 07:48:19 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "mperttunen@nvidia.com" <mperttunen@nvidia.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
-Date:   Tue, 24 Jul 2018 17:48:18 +0300
-Message-ID: <4715215.NZcU7pUVUy@dimapc>
-In-Reply-To: <1532443499.6124.31.camel@toradex.com>
-References: <20180724104309.21741-1-marcel@ziswiler.com> <2076484.gx54F3eiOq@dimapc> <1532443499.6124.31.camel@toradex.com>
+        Tue, 24 Jul 2018 11:57:06 -0400
+Received: from mga07.intel.com ([134.134.136.100]:65101 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388564AbeGXP5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:57:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 07:50:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,398,1526367600"; 
+   d="scan'208";a="60261576"
+Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
+  by orsmga006.jf.intel.com with ESMTP; 24 Jul 2018 07:50:13 -0700
+Date:   Tue, 24 Jul 2018 08:50:13 -0600
+From:   Ross Zwisler <ross.zwisler@linux.intel.com>
+To:     Huaisheng Ye <yehs2007@zoho.com>
+Cc:     linux-nvdimm@lists.01.org, dan.j.williams@intel.com,
+        ross.zwisler@linux.intel.com, willy@infradead.org,
+        vishal.l.verma@intel.com, dave.jiang@intel.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        viro@zeniv.linux.org.uk, martin.petersen@oracle.com,
+        axboe@kernel.dk, gregkh@linuxfoundation.org,
+        bart.vanassche@wdc.com, jack@suse.cz, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        chengnt@lenovo.com, Huaisheng Ye <yehs1@lenovo.com>
+Subject: Re: [PATCH 0/5] Do not request a pointer kaddr when not required
+Message-ID: <20180724145013.GA19466@linux.intel.com>
+Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Huaisheng Ye <yehs2007@zoho.com>, linux-nvdimm@lists.01.org,
+        dan.j.williams@intel.com, willy@infradead.org,
+        vishal.l.verma@intel.com, dave.jiang@intel.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        viro@zeniv.linux.org.uk, martin.petersen@oracle.com,
+        axboe@kernel.dk, gregkh@linuxfoundation.org, bart.vanassche@wdc.com,
+        jack@suse.cz, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        chengnt@lenovo.com, Huaisheng Ye <yehs1@lenovo.com>
+References: <20180724084510.6104-1-yehs2007@zoho.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724084510.6104-1-yehs2007@zoho.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, 24 July 2018 17:45:01 MSK Marcel Ziswiler wrote:
-> On Tue, 2018-07-24 at 17:31 +0300, Dmitry Osipenko wrote:
+On Tue, Jul 24, 2018 at 04:45:05PM +0800, Huaisheng Ye wrote:
+> From: Huaisheng Ye <yehs1@lenovo.com>
 > 
-> > On Tuesday, 24 July 2018 17:16:33 MSK Marcel Ziswiler wrote:
-> > 
-> > > On Tue, 2018-07-24 at 15:44 +0300, Dmitry Osipenko wrote:
-> > > 
-> > > 
-> > > > On Tuesday, 24 July 2018 15:24:34 MSK Marcel Ziswiler wrote:
-> > > > 
-> > > > 
-> > > > > Sorry, I meant to write "minor revamp" in the subject line here
-> > > > > as
-> > > > > Apalis TK1 was already in quite good a shape but this are still
-> > > > > some
-> > > > > worthy improvements (;-p).
-> > > > > 
-> > > > > On Tue, 2018-07-24 at 12:42 +0200, Marcel Ziswiler wrote:
-> > > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > Marcel,
-> > > > 
-> > > > All your emails that are sent from "toradex.com" are treated as
-> > > > spam
-> > > > by Gmail 
-> > > > because "This message has a from address in toradex.com but has
-> > > > failed 
-> > > > toradex.com's required tests for authentication.", is there
-> > > > anything
-> > > > you could 
-> > > > do to fix that?
-> > > 
-> > > 
-> > > 
-> > > Hi Dmitry
-> > > 
-> > > Hm, unfortunately, Toradex was an M$ only shop when I joined more
-> > > then
-> > > 7 years ago and so far I was unable to convince our IT to switch to
-> > > some grown up email system. Therefore, I am stuck with Exchange,
-> > > Office
-> > > 365 or whatever M$ nowadays seem to call it. Anyway, I really
-> > > thought
-> > > sending from Android or Evolution via their resp. Exchange
-> > > connectors
-> > > would properly do SPF, DKIM and even DMARC. I just confirmed this
-> > > when
-> > > sending something to my gmail address and doing "Show original".
-> > > 
-> > > Since Linus himself pointed out any of my patches ending up in his
-> > > spam
-> > > folder I do send them via my private email which while not having
-> > > any
-> > > advanced security configured should still be valid. Moving it to a
-> > > fully secure configuration including DNSSEC and stuff is still
-> > > pending
-> > > on my side.
-> > > 
-> > > Can you please tell me which exact email it is that you got this
-> > > reported on so I may further investigate what is going on?
-> > 
-> > 
-> > This email from you looks okay. Unfortunately all of your previous
-> > emails from 
-> > "toradex.com" were getting into the spam folder.
+> Some functions within fs/dax and dax/super don't need to get kaddr from
+> direct_access. Assigning NULL to kaddr to ->direct_access() is more
+> straightforward and simple than offering a useless local pointer.
 > 
+> So all direct_access() need to check the validity of second rank pointer
+> kaddr for NULL assignment. If kaddr equals to NULL, it doesn't need to
+> calculate its value.
 > 
-> You sure they were from "toradex.com"? The patches should have been
-> coming from "ziswiler.com" resp. "perfora.net".
+> * This series are supplement to [PATCH v2 00/14]mm: Asynchronous +
+>   multithreaded memmap init for ZONE_DEVICE. [1]
+> 
+> [1]: https://lkml.org/lkml/2018/7/16/828
 
-The patches from "ziswiler.com" are fine, only your emails specifically from 
-"toradex.com" had an issue. Looks like you've resolved it now.
+This whole series looks good to me.  Just a few comments:
 
+1) Does this series actually depend on the "Asynchronous multithreaded mmap
+init for ZONE_DEVICE" series from Dan?  It seems totally independent to me?
+I reviewed yours by applying to linux/master, which worked fine.  I ask
+because Dan's series has been delayed to after v4.19, and if yours isn't
+actually dependent it could possibly go in sooner.
 
+2) I agree with Christian's comment that the changelogs could be improved
+slightly.  Remember that the goal of the changelog isn't to describe *what*
+the code is doing, but *why*.  We can read that the code now checks if 'kaddr'
+is NULL, and if so we don't calculate it.  It's useful to say that callers may
+have no need for 'kaddr', so this patch is prep for allowing them to pass in
+NULL instead of having to pass in a pointer that they then just throw away.
 
-
+3) I think you should make one more change to kill the unused 'dummy_addr'
+variable in persistent_memory_claim().  That was the one last case of a dummy
+'kaddr' type variable that I could find.
