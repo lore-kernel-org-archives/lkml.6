@@ -2,166 +2,119 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A4BECDE5F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 727A1ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:49:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E9A020779
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C9BB20894
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:49:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TbtQrpn+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E9A020779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTUnzDY6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9BB20894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388419AbeGXDwo (ORCPT
+        id S2388450AbeGXDxR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 23:52:44 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36301 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388365AbeGXDwo (ORCPT
+        Mon, 23 Jul 2018 23:53:17 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44430 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388233AbeGXDxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 23:52:44 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s7-v6so1761269pgv.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 19:48:33 -0700 (PDT)
+        Mon, 23 Jul 2018 23:53:16 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r1-v6so1750963pgp.11;
+        Mon, 23 Jul 2018 19:49:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6DV7W+akCn1JXYX6cY44SjkWu2aP6JR6coSCc77p/6o=;
-        b=TbtQrpn+LgjRf/TuRvt4dBxGop97AHuQroyZdrBFltWxxr6cK/nly01S9TEkc+0+zu
-         XCZi5CC3dTZBNrjIyV3BVEOBWBN7Qj0m4qrWxfzVLNyBqob9S5+0+dXQt36KVZOJW9MJ
-         R4fYmP/hny1RRfe59R8HOhOuaRmBuHKrxLYgA=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2PQiYLdDdeRp/8QszUvPx0PPwB+0WG2v4UDK3qY/Bvk=;
+        b=PTUnzDY6EvBiYjA5RIpo6Eq2MiAOGbslJclfjnj3g4RwQOIZA8DkZUuVu5h236t6lO
+         DzykJllWFrCbdYZ8OliZBu/AwWEZ+QudEQwsigG2AFZ0NaLNaVBeGplTa956XsAXfgg5
+         D4fvO+f1fuu5/5TZbXutvTZ0fUtafrxcgKoUEqhNqaXrWuQEWDvqWgGyXiuvk/rVkiKq
+         QTArawC9QI+St3d3DqoVEVuQsKzDQqmNgS1cwatAMPtMcPJeJ/UR29EZrFPDc1iEUnw+
+         CijXT1tQ/1xRknYrLoUf54AWhr/shrXQWx8gFJ94Fw58n6lGZZRbhFTLBJhPXOkCE/Dx
+         xoBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6DV7W+akCn1JXYX6cY44SjkWu2aP6JR6coSCc77p/6o=;
-        b=DfWGb2D4dwEeviNHjn6NOJpVg4kOFklvWBUD7EtNhB+kqO7HV51Vhe2CR0POS8iX2m
-         UDUXlEBDLLqv/H5RA2ZNl4pwFEPE3/n8F/PVV1zx0eW2ong3HaN8ylWZcQi2/5qBQkQj
-         7R5IgvOloZDMRKWnoa9sk6ocLA33+chPD+Ora2CtzE8UcpZGq7t/MzY22cEVRCuYWQ40
-         Ega+XMmCdvwwLRjLgzfkp7xhg31yQpSfv6+1kGWTM/Ng6JeP9tHBG00qxBoYi8I9Pshm
-         yFTszbkHPUjZ/9S2ilvXzy3JiUbYXaRdATHSVTVen7MxjWFzEzS0/XXITmYCTDk+kYZg
-         kz7w==
-X-Gm-Message-State: AOUpUlFqyyI0s4gpjcAFx8Kn3zydnfyy1t1yUVvsBA/Agei9DbNLnr6N
-        k1gSSS3vBhFmiuxvkzU5lRMNKA==
-X-Google-Smtp-Source: AAOMgpekA8s3ip9Yy9D9QFa/ObrwxZ0pSrLXsPLifMsIx59qu7feJEBqIP6ogfqa6xsWUS8F5KImCQ==
-X-Received: by 2002:aa7:8713:: with SMTP id b19-v6mr15686241pfo.151.1532400512758;
-        Mon, 23 Jul 2018 19:48:32 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id k12-v6sm16540836pfj.30.2018.07.23.19.48.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 23 Jul 2018 19:48:31 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>,
-        Jason Wu <jason.wu@unisoc.com>, zhang.lyra@gmail.com
-Subject: [PATCH V4 2/7] mmc: sdhci: Change SDMA address register for v4 mode
-Date:   Tue, 24 Jul 2018 10:47:59 +0800
-Message-Id: <1532400479-23216-1-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532340508-8749-3-git-send-email-zhang.chunyan@linaro.org>
-References: <1532340508-8749-3-git-send-email-zhang.chunyan@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2PQiYLdDdeRp/8QszUvPx0PPwB+0WG2v4UDK3qY/Bvk=;
+        b=g5mecDz6HgS1vyn9zH2GmtNMTfon57fXnVyEYcQu09sxrBxyoFe3BjpKa7w2kMS1XG
+         eG9ZJUOrI7frp/8ZUWAVzIi1Ln3Q+qYSxTVUDSjK61aObmEvUKBaXUkFxMYB06ppacWd
+         /j11AB5LnY4unKNNVhNdGHqDDBQ8S7UsCamX/G6WPQ5Gjr5OOP1DEQebkAe94NOkqFKy
+         SdTXkgBKQcRLd9d1PEBGi1lfyOW8QH24atpQq8UNtTXnbc+rUtsInofVLX4Sm6YI5NLD
+         rzgGOIiLvmwh8cIq2hxoviqngQx193kMsyepw4gpoo9WR27bLin/uY4jQ8fTnvge9yZJ
+         EBVg==
+X-Gm-Message-State: AOUpUlH4DXwbUD+nnDY9zfLs+xrb4ztiQe1cor9gSB3RUlLWQdSxmljb
+        Obh17gFYUDIAGorEaOiBAbE=
+X-Google-Smtp-Source: AAOMgpflcHDDCzhchoiWu55kXmUxx4UUOr5QN5ysTDyXMfgQpUE4eSWGk/3VhQKodlcrz2nQzplzyQ==
+X-Received: by 2002:a65:448c:: with SMTP id l12-v6mr14052571pgq.277.1532400545229;
+        Mon, 23 Jul 2018 19:49:05 -0700 (PDT)
+Received: from localhost ([39.7.53.222])
+        by smtp.gmail.com with ESMTPSA id w11-v6sm13350901pgm.82.2018.07.23.19.49.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 19:49:04 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 11:52:28 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com, axboe@kernel.dk,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] block: zram: Replace GFP_ATOMIC with GFP_KERNEL
+Message-ID: <20180724025228.GA558@jagdpanzerIV>
+References: <20180723141304.3300-1-baijiaju1990@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723141304.3300-1-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the SD host controller specification version 4.10, when
-Host Version 4 is enabled, SDMA uses ADMA System Address register
-(05Fh-058h) instead of using SDMA System Address register to
-support both 32-bit and 64-bit addressing.
+On (07/23/18 22:13), Jia-Ju Bai wrote:
+> read_from_bdev_async() and write_to_bdev() are never called in atomic
+> context. They call bio_alloc() with GFP_ATOMIC, which is not necessary.
+> GFP_ATOMIC can be replaced with GFP_KERNEL.
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
----
- drivers/mmc/host/sdhci.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+[..]
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index cab5350..b7ad8e5 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -729,7 +729,7 @@ static void sdhci_adma_table_post(struct sdhci_host *host,
- 	}
- }
- 
--static u32 sdhci_sdma_address(struct sdhci_host *host)
-+static dma_addr_t sdhci_sdma_address(struct sdhci_host *host)
- {
- 	if (host->bounce_buffer)
- 		return host->bounce_addr;
-@@ -737,6 +737,18 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
- 		return sg_dma_address(host->data->sg);
- }
- 
-+static void sdhci_set_sdma_addr(struct sdhci_host *host, dma_addr_t addr)
-+{
-+	if (host->v4_mode) {
-+		sdhci_writel(host, addr, SDHCI_ADMA_ADDRESS);
-+		if (host->flags & SDHCI_USE_64_BIT_DMA)
-+			sdhci_writel(host, (u64)addr >> 32, SDHCI_ADMA_ADDRESS_HI);
-+	} else {
-+		sdhci_writel(host, addr, SDHCI_DMA_ADDRESS);
-+	}
-+
-+}
-+
- static unsigned int sdhci_target_timeout(struct sdhci_host *host,
- 					 struct mmc_command *cmd,
- 					 struct mmc_data *data)
-@@ -996,8 +1008,7 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
- 					     SDHCI_ADMA_ADDRESS_HI);
- 		} else {
- 			WARN_ON(sg_cnt != 1);
--			sdhci_writel(host, sdhci_sdma_address(host),
--				     SDHCI_DMA_ADDRESS);
-+			sdhci_set_sdma_addr(host, sdhci_sdma_address(host));
- 		}
- 	}
- 
-@@ -2824,7 +2835,7 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
- 		 * some controllers are faulty, don't trust them.
- 		 */
- 		if (intmask & SDHCI_INT_DMA_END) {
--			u32 dmastart, dmanow;
-+			dma_addr_t dmastart, dmanow;
- 
- 			dmastart = sdhci_sdma_address(host);
- 			dmanow = dmastart + host->data->bytes_xfered;
-@@ -2832,12 +2843,12 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
- 			 * Force update to the next DMA block boundary.
- 			 */
- 			dmanow = (dmanow &
--				~(SDHCI_DEFAULT_BOUNDARY_SIZE - 1)) +
-+				~((dma_addr_t)SDHCI_DEFAULT_BOUNDARY_SIZE - 1)) +
- 				SDHCI_DEFAULT_BOUNDARY_SIZE;
- 			host->data->bytes_xfered = dmanow - dmastart;
--			DBG("DMA base 0x%08x, transferred 0x%06x bytes, next 0x%08x\n",
--			    dmastart, host->data->bytes_xfered, dmanow);
--			sdhci_writel(host, dmanow, SDHCI_DMA_ADDRESS);
-+			DBG("DMA base %pad, transferred 0x%06x bytes, next %pad\n",
-+			    &dmastart, host->data->bytes_xfered, &dmanow);
-+			sdhci_set_sdma_addr(host, dmanow);
- 		}
- 
- 		if (intmask & SDHCI_INT_DATA_END) {
-@@ -3581,8 +3592,8 @@ int sdhci_setup_host(struct sdhci_host *host)
- 		}
- 	}
- 
--	/* SDMA does not support 64-bit DMA */
--	if (host->flags & SDHCI_USE_64_BIT_DMA)
-+	/* SDMA does not support 64-bit DMA if v4 mode not set */
-+	if ((host->flags & SDHCI_USE_64_BIT_DMA) && !host->v4_mode)
- 		host->flags &= ~SDHCI_USE_SDMA;
- 
- 	if (host->flags & SDHCI_USE_ADMA) {
--- 
-2.7.4
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index 0f3fadd71230..b958ed0b8c35 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -450,7 +450,7 @@ static int read_from_bdev_async(struct zram *zram, struct bio_vec *bvec,
+>  {
+>  	struct bio *bio;
+>  
+> -	bio = bio_alloc(GFP_ATOMIC, 1);
+> +	bio = bio_alloc(GFP_KERNEL, 1);
+>  	if (!bio)
+>  		return -ENOMEM;
+>  
+> @@ -538,7 +538,7 @@ static int write_to_bdev(struct zram *zram, struct bio_vec *bvec,
+>  	struct bio *bio;
+>  	unsigned long entry;
+>  
+> -	bio = bio_alloc(GFP_ATOMIC, 1);
+> +	bio = bio_alloc(GFP_KERNEL, 1);
+>  	if (!bio)
+>  		return -ENOMEM;
 
+I think the intent here is different and is not related to atomic
+contexts.
+
+Consider the following
+  OMM -> swapout -> __zram_bvec_write() -> write_to_bdev() -> bio_alloc(GFP_KERNEL) -> [OOM?]
+
+So maybe we can do a bit better than GFP_ATOMIC (NOIO, etc.), but in general,
+I believe, we can't use GFP_KERNEL [at least in write_to_bdev()].
+
+	-ss
