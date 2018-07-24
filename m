@@ -2,132 +2,78 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0DAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0791BC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1828020856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:59:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1828020856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 56D8C20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:02:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56D8C20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388472AbeGXJEq (ORCPT
+        id S2388519AbeGXJHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 05:04:46 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51537 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388346AbeGXJEq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 05:04:46 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fhsE4-00088y-C1; Tue, 24 Jul 2018 09:59:20 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fhsE3-0003bt-Hb; Tue, 24 Jul 2018 09:59:19 +0200
-Date:   Tue, 24 Jul 2018 09:59:19 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Esben Haabendal <esben.haabendal@gmail.com>
-Cc:     linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yuan Yao <yao.yuan@freescale.com>,
-        Esben Haabendal <eha@deif.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Phil Reid <preid@electromag.com.au>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Clemens Gruber <clemens.gruber@pqgruber.com>,
-        Peter Rosin <peda@axentia.se>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] i2c: imx: Simplify stopped state tracking
-Message-ID: <20180724075919.iyysd7dtbddvbavq@pengutronix.de>
-References: <20180709094304.8814-1-esben.haabendal@gmail.com>
- <20180709094304.8814-4-esben.haabendal@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180709094304.8814-4-esben.haabendal@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 24 Jul 2018 05:07:30 -0400
+Received: from mx7.zte.com.cn ([202.103.147.169]:58976 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388405AbeGXJHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 05:07:30 -0400
+Received: from mse02.zte.com.cn (unknown [10.30.3.21])
+        by Forcepoint Email with ESMTPS id 37239C18193CB307C889;
+        Tue, 24 Jul 2018 16:02:13 +0800 (CST)
+Received: from kjyxapp05.zte.com.cn ([10.30.12.204])
+        by mse02.zte.com.cn with SMTP id w6O81gHq036202;
+        Tue, 24 Jul 2018 16:02:05 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from mapi (kjyxapp04[null])
+        by mapi (Zmail) with MAPI id mid14;
+        Tue, 24 Jul 2018 16:02:07 +0800 (CST)
+Date:   Tue, 24 Jul 2018 16:02:07 +0800 (CST)
+X-Zmail-TransId: 2b065b56dcffc209a68b
+X-Mailer: Zmail v1.0
+Message-ID: <201807241602076102996@zte.com.cn>
+Mime-Version: 1.0
+From:   <peng.hao2@zte.com.cn>
+To:     <wanpeng.li@hotmail.com>
+Cc:     <ehabkost@redhat.com>, <rkrcmar@redhat.com>, <dwmw2@infradead.org>,
+        <kernellwp@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <kvm@vger.kernel.org>, <pbonzini@redhat.com>
+Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSCBSRVNFTkRdIEtWTTogQWRkIGNvYWxlc2NlZCBQSU8gc3VwcG9ydA==?=
+Content-Type: multipart/mixed;
+        boundary="=====_001_next====="
+X-MAIL: mse02.zte.com.cn w6O81gHq036202
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 11:43:03AM +0200, Esben Haabendal wrote:
-> From: Esben Haabendal <eha@deif.com>
-> 
-> Always update the stopped state when busy status have been checked.
-> This is identical to what was done before, with the exception of error
-> handling.
-> Without this change, some errors cause the stopped state to be left in
-> incorrect state in i2c_imx_stop(), i2c_imx_dma_read(), i2c_imx_read() and
-> i2c_imx_xfer().
-> 
-> Signed-off-by: Esben Haabendal <eha@deif.com>
-> ---
->  drivers/i2c/busses/i2c-imx.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> index d86f152176a4..1db8e6790afc 100644
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -421,10 +421,14 @@ static int i2c_imx_bus_busy(struct imx_i2c_struct *i2c_imx, int for_busy)
->  			return -EAGAIN;
->  		}
->  
-> -		if (for_busy && (temp & I2SR_IBB))
-> +		if (for_busy && (temp & I2SR_IBB)) {
-> +			i2c_imx->stopped = 0;
->  			break;
-> -		if (!for_busy && !(temp & I2SR_IBB))
-> +		}
-> +		if (!for_busy && !(temp & I2SR_IBB)) {
-> +			i2c_imx->stopped = 1;
->  			break;
-> +		}
 
-Would it make sense to assign to ->stopped independent of for_busy?
 
->  		if (time_after(jiffies, orig_jiffies + msecs_to_jiffies(500))) {
->  			dev_dbg(&i2c_imx->adapter.dev,
->  				"<%s> I2C bus is busy\n", __func__);
-> @@ -538,7 +542,6 @@ static int i2c_imx_start(struct imx_i2c_struct *i2c_imx)
->  	result = i2c_imx_bus_busy(i2c_imx, 1);
->  	if (result)
->  		return result;
-> -	i2c_imx->stopped = 0;
->  
->  	temp |= I2CR_IIEN | I2CR_MTX | I2CR_TXAK;
->  	temp &= ~I2CR_DMAEN;
-> @@ -569,7 +572,6 @@ static void i2c_imx_stop(struct imx_i2c_struct *i2c_imx)
->  
->  	if (!i2c_imx->stopped) {
->  		i2c_imx_bus_busy(i2c_imx, 0);
-> -		i2c_imx->stopped = 1;
->  	}
+--=====_001_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
-The braces can go away here.
->  
->  	/* Disable I2C controller */
 
-Best regards
-Uwe
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Pj5Zb3UndmUganVzdCBzdHJpcHBlZCB0aGUgYXV0aG9yc2hpcCBpbmZvcm1hdGlvbiBhbmQgaGlz
+L2hlcgo+PnNpZ25lZC1vZmYtYnkuLi4uIGV2ZW4gZnJvbSBDYyEKCj5XaWxsIGRvIGluIG5leHQg
+dmVyc2lvbiwgSSBqdXN0IGhlbHAgdG8gbWFrZSBwcm9ncmVzcy4gCkkndmUgdHJpZWQgdG8gcHVz
+aCB0aGUgcGF0Y2ggc2VydmVyYWwgdGltZXMgYmVmb3JlIGJ1dCBkaWRuJ3QgbWFrZSBpdCBhbmQg
+YWxtb3N0IGdhdmUgdXAgLkFuZCBXYW5wZW5nIHRvbGQgbWUgdGhhdCBoZSB3YW50ZWQgdG8gbWFr
+ZSBwcm9ncmVzcyBmb3IgdGhlIHBhdGNoLkkgYWdyZWVkLgpBZnRlciB0aGF0LCBJIHdhcyBidXN5
+IHdpdGggbXkgd29yayB3aXRob3V0IHBheWluZyBhdHRlbnRpb24gdG8gdGhlIHByb2dyZXNzIG9m
+IHRoaXMgbWF0dGVyLiBUaGVyZSBjb3VsZCBiZSBzb21lIG1pc3Rha2UuIEFsc28gdGhhbmtzIGZv
+ciBXYW5wZW5nJ3MgZWZmb3J0IGZvciB0aGUgcGF0Y2guIAo+UmVnYXJkcywKPldhbnBlbmcgTGk=
+
+--=====_003_next=====--
+
+--=====_001_next=====--
+
