@@ -2,127 +2,185 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,UPPERCASE_50_75,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5B8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63852C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85FB220685
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:48:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DB7820685
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:49:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DJyheRvV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85FB220685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RRcyw5g/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB7820685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388753AbeGXW5F (ORCPT
+        id S2388797AbeGXW5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:57:05 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:32838 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388491AbeGXW5E (ORCPT
+        Tue, 24 Jul 2018 18:57:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50834 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388494AbeGXW5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:57:04 -0400
-Received: by mail-yw0-f194.google.com with SMTP id c135-v6so2127158ywa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 14:48:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=OvTV887pi6zaPuLasFfm1L9vmPFsgL+sWquokboB8v8=;
-        b=DJyheRvVbrHScoCYgn0nLyxW5aXyToAvFeka5j7aWUFD5lbbGmMkqaZ+sI+vO0gXqM
-         ci9ADVYOMKdafyxS6vugM2EcRw5Phf16zN5isoa6kdlMFFYCoFqo9nNIkUdRpDxdwNGk
-         NeyvLe8UvFPixopUjudWGg+AMMVbnI8P1P7OU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=OvTV887pi6zaPuLasFfm1L9vmPFsgL+sWquokboB8v8=;
-        b=lezE65JWRblmP+wF7eHTtL1BkveTQ/29m7x1hxX+Lm+LWQur8gq8tBVlyrQR6glmox
-         rrNEBWx84cq/kPMzReCaqkwk9L/IB9138CDbwfEDh777JttHmirx0JYVqsYRcn7Fb3SY
-         WodTvilnBy/gthZzD5GvfHRtuaE3xpX2mH+2xAUAdvwOonX+aeyHK3wXU3ItdvXV4agf
-         Ol9diBoeq/Nmdi1+wkyEcGvpKW/9A98H6n+dMf1cm/lR0Jco8u6nFitDFbU5eLoxfP8P
-         MQoB6fekMn05B2Xuz17SOHGotvB+XRF/RZkalFw8OP+/8GQBOwq+SSR0AD3n6CdTdzYl
-         khUg==
-X-Gm-Message-State: AOUpUlEg6QjHK7J+3XFbG7Pi6ePRt7u5xlsw22czIbVD+eF6o+qvcAKt
-        kWevXSUL16hphnLkX/Y9yXHsgtiRgGY/glFOOWbqHQ==
-X-Google-Smtp-Source: AAOMgpc8hQk26nqO0wthNwNlGQZvTqlbOrgtCe3b8zzTbgcI/eEYKsjq65LTkT53Un3dlsu9iPBI4Fvs10Ab8Hcq9oU=
-X-Received: by 2002:a81:7cc5:: with SMTP id x188-v6mr9994043ywc.358.1532468915528;
- Tue, 24 Jul 2018 14:48:35 -0700 (PDT)
+        Tue, 24 Jul 2018 18:57:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NoI5KxVju+ROeYKV43K4sPdM6J5FvDbtDxwE/nUUmk8=; b=RRcyw5g/FWZqQetdRVlVgcnYl
+        nni/8oTFEeY2mMDf1Oz9Nl+r7fN4vWfAzkgVGRHkiI5vrFvcmjmGpreVYx+Roz6VAgzcK/ZJ0+yXN
+        a+diS++6JKXAPXVyXJGpPybPBXAzX9aCYPwZ5kdfni85AGwfgIbU2JBmtIeb11CAhlSQ4U7f1jXwj
+        ILk/71AEDCP8lhhdNxuTrfS93YizEtVrAJvEPlq7fMje7ZV7PhWpFuVTSaVuDji7lvfiDAKCqSy2W
+        7JY6h1AaDCIJbMp9jcwyYLaEX2QbGzWBHg7SVXzwzdq0fu1qbY9bjfZGE9bhTgEAfRI5quKEySoOq
+        7IPrE5AUQ==;
+Received: from 177.41.135.13.dynamic.adsl.gvt.net.br ([177.41.135.13] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fi5BC-0000WL-7C; Tue, 24 Jul 2018 21:49:14 +0000
+Date:   Tue, 24 Jul 2018 18:49:08 -0300
+From:   Mauro Carvalho Chehab <mchehab+kde@kernel.org>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     hverkuil@xs4all.nl, mchehab@kernel.org, ysato@users.sourceforge.jp,
+        dalias@libc.org, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] sh: defconfig: migor: Update defconfig
+Message-ID: <20180724184908.28b4f27b@coco.lan>
+In-Reply-To: <1530699346-3235-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1530699346-3235-1-git-send-email-jacopo+renesas@jmondi.org>
+        <1530699346-3235-2-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a25:e716:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 14:48:34
- -0700 (PDT)
-In-Reply-To: <CAACQVJrS9_fCNG3g51q7kZnTt5wy1X-SrvXTsFq=zqZEUvVS5Q@mail.gmail.com>
-References: <20180724052454.21524-1-yuehaibing@huawei.com> <CACKFLini64_5N7aVtPAVH3CBYCSsdHAJv35jimR18PJXeV6j5g@mail.gmail.com>
- <CAACQVJrS9_fCNG3g51q7kZnTt5wy1X-SrvXTsFq=zqZEUvVS5Q@mail.gmail.com>
-From:   Michael Chan <michael.chan@broadcom.com>
-Date:   Tue, 24 Jul 2018 14:48:34 -0700
-Message-ID: <CACKFLinjTEnma79YtNG3UVqfc+gzRxXoMttY0tMfSTSPRx8ZyQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] bnxt_en: Fix logic of forward the VF MAC address
- to PF in bnxt_vf_validate_set_mac
-To:     Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        David Miller <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 9:01 AM, Vasundhara Volam
-<vasundhara-v.volam@broadcom.com> wrote:
-> On Tue, Jul 24, 2018 at 1:01 PM, Michael Chan <michael.chan@broadcom.com> wrote:
->>
->> On Mon, Jul 23, 2018 at 10:24 PM, YueHaibing <yuehaibing@huawei.com> wrote:
->> > Based on the comments,req->l2addr must match the VF MAC address
->> > if firmware spec >= 1.2.2, mac_ok can be true.
->> >
->> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> > ---
->> >  drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c | 7 ++-----
->> >  1 file changed, 2 insertions(+), 5 deletions(-)
->> >
->> > diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
->> > index a649108..7925964 100644
->> > --- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
->> > +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
->> > @@ -954,12 +954,9 @@ static int bnxt_vf_validate_set_mac(struct bnxt *bp, struct bnxt_vf_info *vf)
->> >                 if (ether_addr_equal((const u8 *)req->l2_addr, vf->mac_addr))
->> >                         mac_ok = true;
->> >         } else if (is_valid_ether_addr(vf->vf_mac_addr)) {
->> > -               if (ether_addr_equal((const u8 *)req->l2_addr, vf->vf_mac_addr))
->> > +               if (ether_addr_equal((const u8 *)req->l2_addr, vf->vf_mac_addr) &&
->> > +                   bp->hwrm_spec_code >= 0x10202)
->> >                         mac_ok = true;
->>
->> I'm not sure if this is correct.  If firmware spec < 0x10202, the VF
->> MAC address is not forwarded to the PF and so it doesn't have to match
->> and mac_ok should still be true.  I think we are missing that
->> condition with this patch.
->>
->> I need to let my colleague Vasundhara comment on this.  She is more
->> familiar with this logic.
-> Yes Michael, you are right. Also, the plain else condition is to cover
-> a special case to allow VF to modify
-> it's own MAC when PF has not assigned a valid MAC address and HWRM
-> spec code > 0x10202.
+Em Wed,  4 Jul 2018 12:15:38 +0200
+Jacopo Mondi <jacopo+renesas@jmondi.org> escreveu:
 
-We should combine the "else if" and "else" below into a plain else and
-add some comments to explain the conditions.
+> Update defconfig to Linux v4.18-rc2.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
->>
->> > -       } else if (bp->hwrm_spec_code < 0x10202) {
->> > -               mac_ok = true;
->> > -       } else {
->> > -               mac_ok = true;
->> >         }
->> >         if (mac_ok)
->> >                 return bnxt_hwrm_exec_fwd_resp(bp, vf, msg_size);
->> > --
->> > 2.7.0
->> >
->> >
+Why do you want to apply this via the media tree?
+
+IMO, the natural path would be to submit this to the SUPERH
+maintainer. If there is a good reason for merging via media,
+I'd expect an ack from the maintainer to do it so.
+
+Regards,
+Mauro
+
+> 
+> ---
+> The updated config file generated by:
+> 
+> make ARCH=sh migor_defconfig
+> make ARCH=sh menuconfig
+> make ARCH=sh savedefconfig
+> cp defconfig arch/sh/configs/migor_defconfig
+> ---
+> ---
+>  arch/sh/configs/migor_defconfig | 25 ++-----------------------
+>  1 file changed, 2 insertions(+), 23 deletions(-)
+> 
+> diff --git a/arch/sh/configs/migor_defconfig b/arch/sh/configs/migor_defconfig
+> index e04f21b..a85a327 100644
+> --- a/arch/sh/configs/migor_defconfig
+> +++ b/arch/sh/configs/migor_defconfig
+> @@ -3,8 +3,6 @@ CONFIG_IKCONFIG=y
+>  CONFIG_IKCONFIG_PROC=y
+>  CONFIG_LOG_BUF_SHIFT=14
+>  CONFIG_BLK_DEV_INITRD=y
+> -# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+> -# CONFIG_SYSCTL_SYSCALL is not set
+>  CONFIG_SLAB=y
+>  CONFIG_PROFILING=y
+>  CONFIG_OPROFILE=y
+> @@ -13,9 +11,7 @@ CONFIG_MODULES=y
+>  CONFIG_CPU_SUBTYPE_SH7722=y
+>  CONFIG_MEMORY_START=0x0c000000
+>  CONFIG_NUMA=y
+> -# CONFIG_MIGRATION is not set
+>  CONFIG_SH_MIGOR=y
+> -# CONFIG_SH_TIMER_CMT is not set
+>  CONFIG_SECCOMP=y
+>  CONFIG_CMDLINE_OVERWRITE=y
+>  CONFIG_CMDLINE="console=tty0 console=ttySC0,115200 earlyprintk=serial ip=on root=/dev/nfs ip=dhcp"
+> @@ -27,7 +23,6 @@ CONFIG_IP_PNP=y
+>  CONFIG_IP_PNP_DHCP=y
+>  # CONFIG_IPV6 is not set
+>  CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+> -CONFIG_FW_LOADER=m
+>  CONFIG_MTD=y
+>  CONFIG_MTD_CMDLINE_PARTS=y
+>  CONFIG_MTD_BLOCK=y
+> @@ -40,9 +35,7 @@ CONFIG_BLK_DEV_RAM=y
+>  CONFIG_SCSI=y
+>  CONFIG_BLK_DEV_SD=y
+>  CONFIG_NETDEVICES=y
+> -CONFIG_NET_ETHERNET=y
+>  CONFIG_SMC91X=y
+> -# CONFIG_INPUT_MOUSEDEV is not set
+>  CONFIG_INPUT_EVDEV=y
+>  # CONFIG_KEYBOARD_ATKBD is not set
+>  CONFIG_KEYBOARD_SH_KEYSC=y
+> @@ -50,30 +43,16 @@ CONFIG_KEYBOARD_SH_KEYSC=y
+>  CONFIG_INPUT_TOUCHSCREEN=y
+>  CONFIG_TOUCHSCREEN_MIGOR=y
+>  # CONFIG_SERIO is not set
+> -CONFIG_VT_HW_CONSOLE_BINDING=y
+>  CONFIG_SERIAL_SH_SCI=y
+> -CONFIG_SERIAL_SH_SCI_NR_UARTS=3
+> -CONFIG_SERIAL_SH_SCI_CONSOLE=y
+>  CONFIG_HW_RANDOM=y
+>  CONFIG_I2C=y
+>  CONFIG_I2C_SH_MOBILE=y
+>  # CONFIG_HWMON is not set
+>  CONFIG_MEDIA_SUPPORT=y
+> -CONFIG_VIDEO_DEV=y
+> -# CONFIG_VIDEO_ALLOW_V4L1 is not set
+> -# CONFIG_MEDIA_TUNER_CUSTOMISE is not set
+> -CONFIG_VIDEO_HELPER_CHIPS_AUTO=y
+> -CONFIG_SOC_CAMERA=y
+> -CONFIG_SOC_CAMERA_TW9910=y
+> -CONFIG_SOC_CAMERA_OV772X=y
+> -CONFIG_VIDEO_SH_MOBILE_CEU=y
+> -# CONFIG_RADIO_ADAPTERS is not set
+>  CONFIG_FB=y
+>  CONFIG_FB_SH_MOBILE_LCDC=y
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>  CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+> -CONFIG_FONTS=y
+> -CONFIG_FONT_MINI_4x6=y
+>  CONFIG_LOGO=y
+>  # CONFIG_LOGO_LINUX_MONO is not set
+>  # CONFIG_LOGO_LINUX_VGA16 is not set
+> @@ -81,7 +60,6 @@ CONFIG_LOGO=y
+>  # CONFIG_LOGO_SUPERH_MONO is not set
+>  # CONFIG_LOGO_SUPERH_CLUT224 is not set
+>  CONFIG_USB_GADGET=y
+> -CONFIG_USB_GADGET_M66592=y
+>  CONFIG_USB_G_SERIAL=m
+>  CONFIG_RTC_CLASS=y
+>  CONFIG_RTC_DRV_RS5C372=y
+> @@ -95,6 +73,7 @@ CONFIG_NFS_FS=y
+>  CONFIG_ROOT_NFS=y
+>  CONFIG_DEBUG_FS=y
+>  CONFIG_CRYPTO_MANAGER=y
+> -# CONFIG_CRYPTO_ANSI_CPRNG is not set
+>  # CONFIG_CRYPTO_HW is not set
+>  CONFIG_CRC_T10DIF=y
+> +CONFIG_FONTS=y
+> +CONFIG_FONT_MINI_4x6=y
+
+
+
+Thanks,
+Mauro
