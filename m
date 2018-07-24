@@ -2,101 +2,145 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2550BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08412C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C70CD20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:53:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2D0020875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:56:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vp2wjY2f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C70CD20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hshK14Ee"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2D0020875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388643AbeGXUBC (ORCPT
+        id S2388550AbeGXUEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 16:01:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388366AbeGXUBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 16:01:01 -0400
-Received: from mail-yb0-f175.google.com (mail-yb0-f175.google.com [209.85.213.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D181920875;
-        Tue, 24 Jul 2018 18:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532458392;
-        bh=fdNe0Y4qTuN1RrKqOQIcxCbJFsT+f5HX4yk++TMQ2kY=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=vp2wjY2f2CDa53EK6Z1DN6Nc45BZZcQO6aKTqgFA8JGxSUtOXXuFSkJBfgYXuxZJk
-         x2G+G5DXAao7KMwwv9DYscBkTSFDo5qiuycNVWJ9FipMOSTqruKuzi3aifuL7riH+e
-         kgd7A9fJt4xh/M9vszEht43k2chjpaUNpfeuFn3w=
-Received: by mail-yb0-f175.google.com with SMTP id c3-v6so2029810ybi.13;
-        Tue, 24 Jul 2018 11:53:11 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGB2QPdE+CPVQj2z+8P84aJlRhfG1jFSR0fjxs/uXoqIymV4T3w
-        4LomjCpQ/GXYtbGip4gWQ5lGeK+z3xVgF+30zjE=
-X-Google-Smtp-Source: AAOMgpdfhRa85XFtGf4PycrDuFxFq/NYeK90QVReH3SgFEU6D33H0ITU4tiTHIxxe+/lJZos28WPkznNa8wnCELmU3Y=
-X-Received: by 2002:a25:f817:: with SMTP id u23-v6mr9758811ybd.62.1532458391090;
- Tue, 24 Jul 2018 11:53:11 -0700 (PDT)
+        Tue, 24 Jul 2018 16:04:21 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46944 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388402AbeGXUEV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 16:04:21 -0400
+Received: by mail-oi0-f67.google.com with SMTP id y207-v6so9398768oie.13;
+        Tue, 24 Jul 2018 11:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=fxqKepJb2RiPNe+Z61HOZv5+tXaL71PJhWLvpeAgRmY=;
+        b=hshK14EeEUeXcK6G+WIcOf1SoU+P47oyHq31XHu+6ardWoJFPTHJWO2/++NE+YzTKB
+         3bf8Yl2zgbd91G6AH7N5/ZwE2uNjz2km+fEkgEafvtXuzZK6xCadhMgDDJyHCi/reG/G
+         KvIR+rRDCvkGRFBXiaCcnAtLQvWlxrJQE76B0ihOpSoe7GGJF+PvxCUECKSVHQhA5hGB
+         M/U+cQdxRDUfbmRfViNUoU97xynWj0to0+ySvR5TkEH1hZbcuw0Fl/T+0ht9fz19HBN/
+         dXgNRZDCMU0mgql3qM743S8PK05uPQ0kprvenA5ll4kbOstca4dpFAIPVDGY9rlmZ2Jp
+         qh3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=fxqKepJb2RiPNe+Z61HOZv5+tXaL71PJhWLvpeAgRmY=;
+        b=cqa3P3lYQQWEM+NheClY7A1nR2rkHCzNeQsgBUMLm3JWd1afhG6K+lTVyp1hD0pDTa
+         EoqZtEj++bhtpof3kafZc0NaxBEZ3ujCNJieMFtAupFvJyo6fRz0c/r91CABBYgriJ+J
+         KQ/pSprSlXh4blNJxVUrJwkaaHaYHERa+2enA4n7R3vodr0bsMY1uWKw01UblAF4Klhf
+         FU4QuL8svxSGdBd8hzzd2BGEZIRW1Gu7kYZA4biuvJsQzZ2MRJOVZPgURoB6bJjCpCCc
+         FdnlqfjG5KpUV9fcuLkyTpylU4M48tkHFyxxE/x/3Hm3c8ZpHdrNQz57LeYcOCKVsmsL
+         PF2A==
+X-Gm-Message-State: AOUpUlFtL4rMKGm2qbIQzMC14m0ugROTyUy6Ly4psrPPy/hrTDxsnL4K
+        UUICYmRkyXhC4uejbc7TI5whqzLrRqZMxUZApQQ=
+X-Google-Smtp-Source: AAOMgpf68IY8uLA6Kaj8SCzBE+amHDv2WbITV45VI8Gfuw4ScMG4Aa0UQYLnC9BAPJU7RUaJZ37DYbYz2SCf174CAfg=
+X-Received: by 2002:aca:4455:: with SMTP id r82-v6mr86395oia.260.1532458590263;
+ Tue, 24 Jul 2018 11:56:30 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:8182:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 11:52:30
- -0700 (PDT)
-In-Reply-To: <1532441858-13507-2-git-send-email-appana.durga.rao@xilinx.com>
-References: <1532441858-13507-1-git-send-email-appana.durga.rao@xilinx.com> <1532441858-13507-2-git-send-email-appana.durga.rao@xilinx.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Tue, 24 Jul 2018 13:52:30 -0500
-X-Gmail-Original-Message-ID: <CANk1AXQ7RH6gwjNMQSXJZ=wCrwTGZ+T6uVgOsb6N+YJ2Y6zR8g@mail.gmail.com>
-Message-ID: <CANk1AXQ7RH6gwjNMQSXJZ=wCrwTGZ+T6uVgOsb6N+YJ2Y6zR8g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] fpga: zynq-fpga: Add support for readback
-To:     Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-Cc:     Moritz Fischer <mdf@kernel.org>, navam@xilinx.com,
-        michals@xilinx.com, linux-fpga@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 11:56:09 -0700 (PDT)
+In-Reply-To: <Pine.LNX.4.44L0.1807231444150.1328-100000@iolanthe.rowland.org>
+References: <CAJs94EZEqWEscECp7bsJ3DvqoU83_Y2WQ55jPaG4MyoG-hvLFQ@mail.gmail.com>
+ <Pine.LNX.4.44L0.1807231444150.1328-100000@iolanthe.rowland.org>
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Date:   Tue, 24 Jul 2018 21:56:09 +0300
+X-Google-Sender-Auth: __iqG8QUM870rK3_J2OV1syo2OE
+Message-ID: <CAJs94EahjbkJRWKR=2QeD=tOMR=kznwXbQgTbKvSuTg4jBk1ew@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
+ ISO transfer
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 9:17 AM, Appana Durga Kedareswara rao
-<appana.durga.rao@xilinx.com> wrote:
+2018-07-23 21:57 GMT+03:00 Alan Stern <stern@rowland.harvard.edu>:
+> On Mon, 23 Jul 2018, Matwey V. Kornilov wrote:
+>
+>> I've tried to strategies:
+>>
+>> 1) Use dma_unmap and dma_map inside the handler (I suppose this is
+>> similar to how USB core does when there is no URB_NO_TRANSFER_DMA_MAP)
+>
+> Yes.
+>
+>> 2) Use sync_cpu and sync_device inside the handler (and dma_map only
+>> once at memory allocation)
+>>
+>> It is interesting that dma_unmap/dma_map pair leads to the lower
+>> overhead (+1us) than sync_cpu/sync_device (+2us) at x86_64 platform.
+>> At armv7l platform using dma_unmap/dma_map  leads to ~50 usec in the
+>> handler, and sync_cpu/sync_device - ~65 usec.
+>>
+>> However, I am not sure is it mandatory to call
+>> dma_sync_single_for_device for FROM_DEVICE direction?
+>
+> According to Documentation/DMA-API-HOWTO.txt, the CPU should not write
+> to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() is
+> not needed.
 
-Hi Appana,
+Well, I measured the following at armv7l. The handler execution time
+(URB_NO_TRANSFER_DMA_MAP is used for all cases):
 
-Another minor thing.
+1) coherent DMA: ~3000 usec (pwc is not functional)
+2) explicit dma_unmap and dma_map in the handler: ~52 usec
+3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~56 usec
 
-> +
-> +/****************************************************************************/
+So, I suppose that unfortunately Tomasz suggestion doesn't work. There
+is no performance improvement when dma_sync_single is used.
 
-Let's keep the coding style consistent by not having
-'***************************'
+At x86_64 the following happens:
 
-> +/**
-> + *
+1) coherent DMA: ~2 usec
+2) explicit dma_unmap and dma_map in the handler: ~3.5 usec
+3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~4 usec
 
-Also, you don't need /** followed by '*', just take out the
-essentially blank line here, please.
+So, whats to do next? Personally, I think that DMA streaming API
+introduces not so great overhead.
+Does anybody happy with turning to streaming DMA or I'll introduce
+module-level switch as Ezequiel suggested?
 
-> + * Generates a Type 2 packet header that reads back the requested Configuration
-> + * register.
-> + *
-> + * @param        OpCode is the read/write operation code.
-> + * @param        Size is the size of the word to be read.
-> + *
-> + * @return       Type 2 packet header to read the specified register
-> + *
-> + * @note         None.
-> + *
-> + *****************************************************************************/
-> +static int zynq_type2_pkt(u8 OpCode, u32 Size)
-> +{
 
-Thanks,
-Alan
+>
+> Alan Stern
+>
+
+
+
+-- 
+With best regards,
+Matwey V. Kornilov.
+Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
