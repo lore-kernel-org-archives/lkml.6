@@ -2,703 +2,125 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF60ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B2BC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C8F7205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:06:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eRo1IY7W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8F7205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id BEF2D205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:10:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF2D205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388538AbeGXPNZ (ORCPT
+        id S2388465AbeGXPQ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:13:25 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37270 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388430AbeGXPNZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:13:25 -0400
-Received: by mail-pf1-f196.google.com with SMTP id a26-v6so881046pfo.4
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 07:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=a0MtfDmElmUYCKGnuyQ1ISgBavlndfTntmd+0kzxgbk=;
-        b=eRo1IY7Wl24Px4UPUNbkIY9k1GLHHYip9TEt12LbgFfHeOv3tVgsgZfjoUQY8NeRzH
-         WAgV1+yUpONfaDw/uNKIjJ7tkSH3OrtX8LZb/1QaSOK+p4Nss3s8w54B6H+d0nK3GETV
-         xrrbiErYoOyHNTGgycBtTzmRAfIMLBh39cUEs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=a0MtfDmElmUYCKGnuyQ1ISgBavlndfTntmd+0kzxgbk=;
-        b=ZhNtjcinl+TbIKYDX+a0sIodfR1H6nZh8ZRWXBsI7c460TH6veWCrrNbxi9msf9prz
-         6K0eLa27KFyGBzwWYp8dPNMCmeTRILa2dpjoBuBwwrULPhz70D5IyFwyponINT5U52nG
-         3u5b7I+uPZvHTAf1QgsursT5tIEsNY/yWOHTPoT8cfJHCPrly91oFAVcql1tlqw82h0m
-         11M7VepajHZp/B1y+US7glkmNaJ0SjT9lPcaTPTRzcWikCktmFdfJneXgwSiF4I9GKTw
-         zNL+LMudtsm9cGuKfoXa3VjWiVhbjq6LMY60r0G4CnA0pZ3Aw3z2e9mlJjbCy+zox+cp
-         XfRQ==
-X-Gm-Message-State: AOUpUlE9ceCcPwv8DGi0w7n5LwFpYUOnzuxLCeOs6UhIYoR7xMlVMnDi
-        B2ypjuUe6VbLbDSfOtixwqM25A==
-X-Google-Smtp-Source: AAOMgpckPp/6CTZShOFrSU8WqzEjkB7xeZzhvX1ZkX3R3gHA8nV6b5H3D67+vQjaLlapI5asd0PPiw==
-X-Received: by 2002:a62:98d6:: with SMTP id d83-v6mr18026891pfk.186.1532441205656;
-        Tue, 24 Jul 2018 07:06:45 -0700 (PDT)
-Received: from tfiga.tok.corp.google.com ([2401:fa00:4:4:5b21:5966:1198:d1e9])
-        by smtp.gmail.com with ESMTPSA id u11-v6sm23871996pfd.117.2018.07.24.07.06.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 07:06:44 -0700 (PDT)
-From:   Tomasz Figa <tfiga@chromium.org>
-To:     linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?q?Tiffany=20Lin=20=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?q?Andrew-CT=20Chen=20=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        ezequiel@collabora.com, Tomasz Figa <tfiga@chromium.org>
-Subject: [PATCH 2/2] media: docs-rst: Document memory-to-memory video encoder interface
-Date:   Tue, 24 Jul 2018 23:06:21 +0900
-Message-Id: <20180724140621.59624-3-tfiga@chromium.org>
-X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
-In-Reply-To: <20180724140621.59624-1-tfiga@chromium.org>
-References: <20180724140621.59624-1-tfiga@chromium.org>
+        Tue, 24 Jul 2018 11:16:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44226 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388320AbeGXPQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:16:58 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E085A401EF17;
+        Tue, 24 Jul 2018 14:10:17 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A1D952027047;
+        Tue, 24 Jul 2018 14:10:14 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 10:07:21 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
+        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
+Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 05/10] audit: add containerid
+ support for tty_audit
+Message-ID: <20180724140721.yyi5e7y3czxsjwug@madcap2.tricolour.ca>
+References: <cover.1528304203.git.rgb@redhat.com>
+ <28ab8ad3c4e5de6f61b928eeb2af030b04a8820b.1528304204.git.rgb@redhat.com>
+ <CAHC9VhTTJVbFq_Cmu8E7EzQD-JXjkbDz7P1EY8ePVrXpQAqPdw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTTJVbFq_Cmu8E7EzQD-JXjkbDz7P1EY8ePVrXpQAqPdw@mail.gmail.com>
+User-Agent: NeoMutt/20180512
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 24 Jul 2018 14:10:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 24 Jul 2018 14:10:17 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to complexity of the video encoding process, the V4L2 drivers of
-stateful encoder hardware require specific sequences of V4L2 API calls
-to be followed. These include capability enumeration, initialization,
-encoding, encode parameters change, drain and reset.
+On 2018-07-20 18:14, Paul Moore wrote:
+> On Wed, Jun 6, 2018 at 1:04 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Add audit container identifier auxiliary record to tty logging rule
+> > event standalone records.
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  drivers/tty/tty_audit.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
+> > index e30aa6b..66bd850 100644
+> > --- a/drivers/tty/tty_audit.c
+> > +++ b/drivers/tty/tty_audit.c
+> > @@ -66,8 +66,9 @@ static void tty_audit_log(const char *description, dev_t dev,
+> >         uid_t uid = from_kuid(&init_user_ns, task_uid(tsk));
+> >         uid_t loginuid = from_kuid(&init_user_ns, audit_get_loginuid(tsk));
+> >         unsigned int sessionid = audit_get_sessionid(tsk);
+> > +       struct audit_context *context = audit_alloc_local();
+> 
+> We should be using current's audit_context in tty_audit_log().
+> Actually, we should probably just get rid of the tsk variable in
+> tty_audit_log() and use current directly to make things a bit more
+> obvious.
 
-Specifics of the above have been discussed during Media Workshops at
-LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-Conference Europe 2014 in Düsseldorf. The de facto Codec API that
-originated at those events was later implemented by the drivers we already
-have merged in mainline, such as s5p-mfc or coda.
+Ok, agreed.  At this point, it it current passed in anyways so no harm
+other than efficiency.
 
-The only thing missing was the real specification included as a part of
-Linux Media documentation. Fix it now and document the encoder part of
-the Codec API.
+> <time passes>
+> 
+> I did some digging and I have a two year old, half-baked patch that
+> cleans up this tsk/current usage as well as a few others.  I just
+> rebased it against audit/next and surprisingly it seems to pass a
+> basic smoke test (kernel boots and audit-testsuite passes); I'll post
+> it to the list as a RFC once I'm done reviewing these patches.
 
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
----
- Documentation/media/uapi/v4l/dev-encoder.rst | 550 +++++++++++++++++++
- Documentation/media/uapi/v4l/devices.rst     |   1 +
- Documentation/media/uapi/v4l/v4l2.rst        |   2 +
- 3 files changed, 553 insertions(+)
- create mode 100644 Documentation/media/uapi/v4l/dev-encoder.rst
+I'll leave this patch the way it is since there should be no difference
+and trust this other patch will work its way through the system and
+solve that.
 
-diff --git a/Documentation/media/uapi/v4l/dev-encoder.rst b/Documentation/media/uapi/v4l/dev-encoder.rst
-new file mode 100644
-index 000000000000..28be1698e99c
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/dev-encoder.rst
-@@ -0,0 +1,550 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _encoder:
-+
-+****************************************
-+Memory-to-memory Video Encoder Interface
-+****************************************
-+
-+Input data to a video encoder are raw video frames in display order
-+to be encoded into the output bitstream. Output data are complete chunks of
-+valid bitstream, including all metadata, headers, etc. The resulting stream
-+must not need any further post-processing by the client.
-+
-+Performing software stream processing, header generation etc. in the driver
-+in order to support this interface is strongly discouraged. In case such
-+operations are needed, use of Stateless Video Encoder Interface (in
-+development) is strongly advised.
-+
-+Conventions and notation used in this document
-+==============================================
-+
-+1. The general V4L2 API rules apply if not specified in this document
-+   otherwise.
-+
-+2. The meaning of words “must”, “may”, “should”, etc. is as per RFC
-+   2119.
-+
-+3. All steps not marked “optional” are required.
-+
-+4. :c:func:`VIDIOC_G_EXT_CTRLS`, :c:func:`VIDIOC_S_EXT_CTRLS` may be used
-+   interchangeably with :c:func:`VIDIOC_G_CTRL`, :c:func:`VIDIOC_S_CTRL`,
-+   unless specified otherwise.
-+
-+5. Single-plane API (see spec) and applicable structures may be used
-+   interchangeably with Multi-plane API, unless specified otherwise,
-+   depending on driver capabilities and following the general V4L2
-+   guidelines.
-+
-+6. i = [a..b]: sequence of integers from a to b, inclusive, i.e. i =
-+   [0..2]: i = 0, 1, 2.
-+
-+7. For ``OUTPUT`` buffer A, A’ represents a buffer on the ``CAPTURE`` queue
-+   containing data (encoded frame/stream) that resulted from processing
-+   buffer A.
-+
-+Glossary
-+========
-+
-+CAPTURE
-+   the destination buffer queue; the queue of buffers containing encoded
-+   bitstream; ``V4L2_BUF_TYPE_VIDEO_CAPTURE```` or
-+   ``V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE``; data are captured from the
-+   hardware into ``CAPTURE`` buffers
-+
-+client
-+   application client communicating with the driver implementing this API
-+
-+coded format
-+   encoded/compressed video bitstream format (e.g. H.264, VP8, etc.);
-+   see also: raw format
-+
-+coded height
-+   height for given coded resolution
-+
-+coded resolution
-+   stream resolution in pixels aligned to codec and hardware requirements;
-+   typically visible resolution rounded up to full macroblocks; see also:
-+   visible resolution
-+
-+coded width
-+   width for given coded resolution
-+
-+decode order
-+   the order in which frames are decoded; may differ from display order if
-+   coded format includes a feature of frame reordering; ``CAPTURE`` buffers
-+   must be returned by the driver in decode order
-+
-+display order
-+   the order in which frames must be displayed; ``OUTPUT`` buffers must be
-+   queued by the client in display order
-+
-+IDR
-+   a type of a keyframe in H.264-encoded stream, which clears the list of
-+   earlier reference frames (DPBs)
-+
-+keyframe
-+   an encoded frame that does not reference frames decoded earlier, i.e.
-+   can be decoded fully on its own.
-+
-+macroblock
-+   a processing unit in image and video compression formats based on linear
-+   block transforms (e.g. H264, VP8, VP9); codec-specific, but for most of
-+   popular codecs the size is 16x16 samples (pixels)
-+
-+OUTPUT
-+   the source buffer queue; the queue of buffers containing raw frames;
-+   ``V4L2_BUF_TYPE_VIDEO_OUTPUT`` or
-+   ``V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE``; the hardware is fed with data
-+   from ``OUTPUT`` buffers
-+
-+PPS
-+   Picture Parameter Set; a type of metadata entity in H.264 bitstream
-+
-+raw format
-+   uncompressed format containing raw pixel data (e.g. YUV, RGB formats)
-+
-+resume point
-+   a point in the bitstream from which decoding may start/continue, without
-+   any previous state/data present, e.g.: a keyframe (VP8/VP9) or
-+   SPS/PPS/IDR sequence (H.264); a resume point is required to start decode
-+   of a new stream, or to resume decoding after a seek
-+
-+source
-+   data fed to the encoder; ``OUTPUT``
-+
-+source height
-+   height in pixels for given source resolution
-+
-+source resolution
-+   resolution in pixels of source frames being source to the encoder and
-+   subject to further cropping to the bounds of visible resolution
-+
-+source width
-+   width in pixels for given source resolution
-+
-+SPS
-+   Sequence Parameter Set; a type of metadata entity in H.264 bitstream
-+
-+stream metadata
-+   additional (non-visual) information contained inside encoded bitstream;
-+   for example: coded resolution, visible resolution, codec profile
-+
-+visible height
-+   height for given visible resolution; display height
-+
-+visible resolution
-+   stream resolution of the visible picture, in pixels, to be used for
-+   display purposes; must be smaller or equal to coded resolution;
-+   display resolution
-+
-+visible width
-+   width for given visible resolution; display width
-+
-+Querying capabilities
-+=====================
-+
-+1. To enumerate the set of coded formats supported by the driver, the
-+   client may call :c:func:`VIDIOC_ENUM_FMT` on ``CAPTURE``.
-+
-+   * The driver must always return the full set of supported formats,
-+     irrespective of the format set on the ``OUTPUT`` queue.
-+
-+2. To enumerate the set of supported raw formats, the client may call
-+   :c:func:`VIDIOC_ENUM_FMT` on ``OUTPUT``.
-+
-+   * The driver must return only the formats supported for the format
-+     currently active on ``CAPTURE``.
-+
-+   * In order to enumerate raw formats supported by a given coded format,
-+     the client must first set that coded format on ``CAPTURE`` and then
-+     enumerate the ``OUTPUT`` queue.
-+
-+3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
-+   resolutions for a given format, passing desired pixel format in
-+   :c:type:`v4l2_frmsizeenum` ``pixel_format``.
-+
-+   * Values returned by :c:func:`VIDIOC_ENUM_FRAMESIZES` on ``CAPTURE``
-+     must include all possible coded resolutions supported by the encoder
-+     for given coded pixel format.
-+
-+   * Values returned by :c:func:`VIDIOC_ENUM_FRAMESIZES` on ``OUTPUT``
-+     queue must include all possible frame buffer resolutions supported
-+     by the encoder for given raw pixel format and coded format currently
-+     set on ``CAPTURE``.
-+
-+4. Supported profiles and levels for given format, if applicable, may be
-+   queried using their respective controls via :c:func:`VIDIOC_QUERYCTRL`.
-+
-+5. Any additional encoder capabilities may be discovered by querying
-+   their respective controls.
-+
-+Initialization
-+==============
-+
-+1. *[optional]* Enumerate supported formats and resolutions. See
-+   capability enumeration.
-+
-+2. Set a coded format on the ``CAPTURE`` queue via :c:func:`VIDIOC_S_FMT`
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
-+
-+     ``pixelformat``
-+         set to a coded format to be produced
-+
-+   * **Return fields:**
-+
-+     ``width``, ``height``
-+         coded resolution (based on currently active ``OUTPUT`` format)
-+
-+   .. note::
-+
-+      Changing ``CAPTURE`` format may change currently set ``OUTPUT``
-+      format. The driver will derive a new ``OUTPUT`` format from
-+      ``CAPTURE`` format being set, including resolution, colorimetry
-+      parameters, etc. If the client needs a specific ``OUTPUT`` format,
-+      it must adjust it afterwards.
-+
-+3. *[optional]* Enumerate supported ``OUTPUT`` formats (raw formats for
-+   source) for the selected coded format via :c:func:`VIDIOC_ENUM_FMT`.
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-+
-+     ``index``
-+         follows standard semantics
-+
-+   * **Return fields:**
-+
-+     ``pixelformat``
-+         raw format supported for the coded format currently selected on
-+         the ``OUTPUT`` queue.
-+
-+4. The client may set the raw source format on the ``OUTPUT`` queue via
-+   :c:func:`VIDIOC_S_FMT`.
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-+
-+     ``pixelformat``
-+         raw format of the source
-+
-+     ``width``, ``height``
-+         source resolution
-+
-+     ``num_planes`` (for _MPLANE)
-+         set to number of planes for pixelformat
-+
-+     ``sizeimage``, ``bytesperline``
-+         follow standard semantics
-+
-+   * **Return fields:**
-+
-+     ``width``, ``height``
-+         may be adjusted by driver to match alignment requirements, as
-+         required by the currently selected formats
-+
-+     ``sizeimage``, ``bytesperline``
-+         follow standard semantics
-+
-+   * Setting the source resolution will reset visible resolution to the
-+     adjusted source resolution rounded up to the closest visible
-+     resolution supported by the driver. Similarly, coded resolution will
-+     be reset to source resolution rounded up to the closest coded
-+     resolution supported by the driver (typically a multiple of
-+     macroblock size).
-+
-+   .. note::
-+
-+      This step is not strictly required, since ``OUTPUT`` is expected to
-+      have a valid default format. However, the client needs to ensure that
-+      ``OUTPUT`` format matches its expectations via either
-+      :c:func:`VIDIOC_S_FMT` or :c:func:`VIDIOC_G_FMT`, with the former
-+      being the typical scenario, since the default format is unlikely to
-+      be what the client needs.
-+
-+5. *[optional]* Set visible resolution for the stream metadata via
-+   :c:func:`VIDIOC_S_SELECTION` on the ``OUTPUT`` queue.
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-+
-+     ``target``
-+         set to ``V4L2_SEL_TGT_CROP``
-+
-+     ``r.left``, ``r.top``, ``r.width``, ``r.height``
-+         visible rectangle; this must fit within the framebuffer resolution
-+         and might be subject to adjustment to match codec and hardware
-+         constraints
-+
-+   * **Return fields:**
-+
-+     ``r.left``, ``r.top``, ``r.width``, ``r.height``
-+         visible rectangle adjusted by the driver
-+
-+   * The driver must expose following selection targets on ``OUTPUT``:
-+
-+     ``V4L2_SEL_TGT_CROP_BOUNDS``
-+         maximum crop bounds within the source buffer supported by the
-+         encoder
-+
-+     ``V4L2_SEL_TGT_CROP_DEFAULT``
-+         suggested cropping rectangle that covers the whole source picture
-+
-+     ``V4L2_SEL_TGT_CROP``
-+         rectangle within the source buffer to be encoded into the
-+         ``CAPTURE`` stream; defaults to ``V4L2_SEL_TGT_CROP_DEFAULT``
-+
-+     ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
-+         maximum rectangle within the coded resolution, which the cropped
-+         source frame can be output into; always equal to (0, 0)x(width of
-+         ``V4L2_SEL_TGT_CROP``, height of ``V4L2_SEL_TGT_CROP``), if the
-+         hardware does not support compose/scaling
-+
-+     ``V4L2_SEL_TGT_COMPOSE_DEFAULT``
-+         equal to ``V4L2_SEL_TGT_CROP``
-+
-+     ``V4L2_SEL_TGT_COMPOSE``
-+         rectangle within the coded frame, which the cropped source frame
-+         is to be output into; defaults to
-+         ``V4L2_SEL_TGT_COMPOSE_DEFAULT``; read-only on hardware without
-+         additional compose/scaling capabilities; resulting stream will
-+         have this rectangle encoded as the visible rectangle in its
-+         metadata
-+
-+     ``V4L2_SEL_TGT_COMPOSE_PADDED``
-+         always equal to coded resolution of the stream, as selected by the
-+         encoder based on source resolution and crop/compose rectangles
-+
-+   .. note::
-+
-+      The driver may adjust the crop/compose rectangles to the nearest
-+      supported ones to meet codec and hardware requirements.
-+
-+6. Allocate buffers for both ``OUTPUT`` and ``CAPTURE`` via
-+   :c:func:`VIDIOC_REQBUFS`. This may be performed in any order.
-+
-+   * **Required fields:**
-+
-+     ``count``
-+         requested number of buffers to allocate; greater than zero
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT`` or
-+         ``CAPTURE``
-+
-+     ``memory``
-+         follows standard semantics
-+
-+   * **Return fields:**
-+
-+     ``count``
-+         adjusted to allocated number of buffers
-+
-+   * The driver must adjust count to minimum of required number of
-+     buffers for given format and count passed. The client must
-+     check this value after the ioctl returns to get the number of
-+     buffers actually allocated.
-+
-+   .. note::
-+
-+      To allocate more than minimum number of buffers (for pipeline
-+      depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``) or
-+      G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_CAPTURE``), respectively,
-+      to get the minimum number of buffers required by the
-+      driver/format, and pass the obtained value plus the number of
-+      additional buffers needed in count field to :c:func:`VIDIOC_REQBUFS`.
-+
-+7. Begin streaming on both ``OUTPUT`` and ``CAPTURE`` queues via
-+   :c:func:`VIDIOC_STREAMON`. This may be performed in any order. Actual
-+   encoding process starts when both queues start streaming.
-+
-+.. note::
-+
-+   If the client stops ``CAPTURE`` during the encode process and then
-+   restarts it again, the encoder will be expected to generate a stream
-+   independent from the stream generated before the stop. Depending on the
-+   coded format, that may imply that:
-+
-+   * encoded frames produced after the restart must not reference any
-+     frames produced before the stop, e.g. no long term references for
-+     H264,
-+
-+   * any headers that must be included in a standalone stream must be
-+     produced again, e.g. SPS and PPS for H264.
-+
-+Encoding
-+========
-+
-+This state is reached after a successful initialization sequence. In
-+this state, client queues and dequeues buffers to both queues via
-+:c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`, following standard
-+semantics.
-+
-+Both queues operate independently, following standard behavior of V4L2
-+buffer queues and memory-to-memory devices. In addition, the order of
-+encoded frames dequeued from ``CAPTURE`` queue may differ from the order of
-+queuing raw frames to ``OUTPUT`` queue, due to properties of selected coded
-+format, e.g. frame reordering. The client must not assume any direct
-+relationship between ``CAPTURE`` and ``OUTPUT`` buffers, other than
-+reported by :c:type:`v4l2_buffer` ``timestamp``.
-+
-+Encoding parameter changes
-+==========================
-+
-+The client is allowed to use :c:func:`VIDIOC_S_CTRL` to change encoder
-+parameters at any time. The availability of parameters is driver-specific
-+and the client must query the driver to find the set of available controls.
-+
-+The ability to change each parameter during encoding of is driver-specific,
-+as per standard semantics of the V4L2 control interface. The client may
-+attempt setting a control of its interest during encoding and if it the
-+operation fails with the -EBUSY error code, ``CAPTURE`` queue needs to be
-+stopped for the configuration change to be allowed (following the drain
-+sequence will be  needed to avoid losing already queued/encoded frames).
-+
-+The timing of parameter update is driver-specific, as per standard
-+semantics of the V4L2 control interface. If the client needs to apply the
-+parameters exactly at specific frame and the encoder supports it, using
-+Request API should be considered.
-+
-+Drain
-+=====
-+
-+To ensure that all queued ``OUTPUT`` buffers have been processed and
-+related ``CAPTURE`` buffers output to the client, the following drain
-+sequence may be followed. After the drain sequence is complete, the client
-+has received all encoded frames for all ``OUTPUT`` buffers queued before
-+the sequence was started.
-+
-+1. Begin drain by issuing :c:func:`VIDIOC_ENCODER_CMD`.
-+
-+   * **Required fields:**
-+
-+     ``cmd``
-+         set to ``V4L2_ENC_CMD_STOP``
-+
-+     ``flags``
-+         set to 0
-+
-+     ``pts``
-+         set to 0
-+
-+2. The driver must process and encode as normal all ``OUTPUT`` buffers
-+   queued by the client before the :c:func:`VIDIOC_ENCODER_CMD` was issued.
-+
-+3. Once all ``OUTPUT`` buffers queued before ``V4L2_ENC_CMD_STOP`` are
-+   processed:
-+
-+   * Once all decoded frames (if any) are ready to be dequeued on the
-+     ``CAPTURE`` queue the driver must send a ``V4L2_EVENT_EOS``. The
-+     driver must also set ``V4L2_BUF_FLAG_LAST`` in :c:type:`v4l2_buffer`
-+     ``flags`` field on the buffer on the ``CAPTURE`` queue containing the
-+     last frame (if any) produced as a result of processing the ``OUTPUT``
-+     buffers queued before
-+     ``V4L2_ENC_CMD_STOP``.
-+
-+   * If no more frames are left to be returned at the point of handling
-+     ``V4L2_ENC_CMD_STOP``, the driver must return an empty buffer (with
-+     :c:type:`v4l2_buffer` ``bytesused`` = 0) as the last buffer with
-+     ``V4L2_BUF_FLAG_LAST`` set.
-+
-+   * Any attempts to dequeue more buffers beyond the buffer marked with
-+     ``V4L2_BUF_FLAG_LAST`` will result in a -EPIPE error code returned by
-+     :c:func:`VIDIOC_DQBUF`.
-+
-+4. At this point, encoding is paused and the driver will accept, but not
-+   process any newly queued ``OUTPUT`` buffers until the client issues
-+   ``V4L2_ENC_CMD_START`` or restarts streaming on any queue.
-+
-+* Once the drain sequence is initiated, the client needs to drive it to
-+  completion, as described by the above steps, unless it aborts the process
-+  by issuing :c:func:`VIDIOC_STREAMOFF` on ``CAPTURE`` queue.  The client
-+  is not allowed to issue ``V4L2_ENC_CMD_START`` or ``V4L2_ENC_CMD_STOP``
-+  again while the drain sequence is in progress and they will fail with
-+  -EBUSY error code if attempted.
-+
-+* Restarting streaming on ``CAPTURE`` queue will implicitly end the paused
-+  state and make the encoder continue encoding, as long as other encoding
-+  conditions are met. Restarting ``OUTPUT`` queue will not affect an
-+  in-progress drain sequence.
-+
-+* The drivers must also implement :c:func:`VIDIOC_TRY_ENCODER_CMD`, as a
-+  way to let the client query the availability of encoder commands.
-+
-+Reset
-+=====
-+
-+The client may want to request the encoder to reinitialize the encoding,
-+so that the stream produced becomes independent from the stream generated
-+before. Depending on the coded format, that may imply that:
-+
-+* encoded frames produced after the restart must not reference any frames
-+  produced before the stop, e.g. no long term references for H264,
-+
-+* any headers that must be included in a standalone stream must be produced
-+  again, e.g. SPS and PPS for H264.
-+
-+This can be achieved by performing the reset sequence.
-+
-+1. *[optional]* If the client is interested in encoded frames resulting
-+   from already queued source frames, it needs to perform the Drain
-+   sequence. Otherwise, the reset sequence would cause the already
-+   encoded and not dequeued encoded frames to be lost.
-+
-+2. Stop streaming on ``CAPTURE`` queue via :c:func:`VIDIOC_STREAMOFF`. This
-+   will return all currently queued ``CAPTURE`` buffers to the client,
-+   without valid frame data.
-+
-+3. *[optional]* Restart streaming on ``OUTPUT`` queue via
-+   :c:func:`VIDIOC_STREAMOFF` followed by :c:func:`VIDIOC_STREAMON` to
-+   drop any source frames enqueued to the encoder before the reset
-+   sequence. This is useful if the client requires the new stream to begin
-+   at specific source frame. Otherwise, the new stream might include
-+   frames encoded from source frames queued before the reset sequence.
-+
-+4. Restart streaming on ``CAPTURE`` queue via :c:func:`VIDIOC_STREAMON` and
-+   continue with regular encoding sequence. The encoded frames produced
-+   into ``CAPTURE`` buffers from now on will contain a standalone stream
-+   that can be decoded without the need for frames encoded before the reset
-+   sequence.
-+
-+Commit points
-+=============
-+
-+Setting formats and allocating buffers triggers changes in the behavior
-+of the driver.
-+
-+1. Setting format on ``CAPTURE`` queue may change the set of formats
-+   supported/advertised on the ``OUTPUT`` queue. In particular, it also
-+   means that ``OUTPUT`` format may be reset and the client must not
-+   rely on the previously set format being preserved.
-+
-+2. Enumerating formats on ``OUTPUT`` queue must only return formats
-+   supported for the ``CAPTURE`` format currently set.
-+
-+3. Setting/changing format on ``OUTPUT`` queue does not change formats
-+   available on ``CAPTURE`` queue. An attempt to set ``OUTPUT`` format that
-+   is not supported for the currently selected ``CAPTURE`` format must
-+   result in the driver adjusting the requested format to an acceptable
-+   one.
-+
-+4. Enumerating formats on ``CAPTURE`` queue always returns the full set of
-+   supported coded formats, irrespective of the current ``OUTPUT``
-+   format.
-+
-+5. After allocating buffers on the ``CAPTURE`` queue, it is not possible to
-+   change format on it.
-+
-+To summarize, setting formats and allocation must always start with the
-+``CAPTURE`` queue and the ``CAPTURE`` queue is the master that governs the
-+set of supported formats for the ``OUTPUT`` queue.
-diff --git a/Documentation/media/uapi/v4l/devices.rst b/Documentation/media/uapi/v4l/devices.rst
-index 12d43fe711cf..1822c66c2154 100644
---- a/Documentation/media/uapi/v4l/devices.rst
-+++ b/Documentation/media/uapi/v4l/devices.rst
-@@ -16,6 +16,7 @@ Interfaces
-     dev-osd
-     dev-codec
-     dev-decoder
-+    dev-encoder
-     dev-effect
-     dev-raw-vbi
-     dev-sliced-vbi
-diff --git a/Documentation/media/uapi/v4l/v4l2.rst b/Documentation/media/uapi/v4l/v4l2.rst
-index 65dc096199ad..2ef6693b9499 100644
---- a/Documentation/media/uapi/v4l/v4l2.rst
-+++ b/Documentation/media/uapi/v4l/v4l2.rst
-@@ -56,6 +56,7 @@ Authors, in alphabetical order:
- - Figa, Tomasz <tfiga@chromium.org>
- 
-   - Documented the memory-to-memory decoder interface.
-+  - Documented the memory-to-memory encoder interface.
- 
- - H Schimek, Michael <mschimek@gmx.at>
- 
-@@ -68,6 +69,7 @@ Authors, in alphabetical order:
- - Osciak, Pawel <posciak@chromium.org>
- 
-   - Documented the memory-to-memory decoder interface.
-+  - Documented the memory-to-memory encoder interface.
- 
- - Osciak, Pawel <pawel@osciak.com>
- 
--- 
-2.18.0.233.g985f88cf7e-goog
+> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_TTY);
+> > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_TTY);
+> >         if (ab) {
+> >                 char name[sizeof(tsk->comm)];
+> >
+> > @@ -80,6 +81,8 @@ static void tty_audit_log(const char *description, dev_t dev,
+> >                 audit_log_n_hex(ab, data, size);
+> >                 audit_log_end(ab);
+> >         }
+> > +       audit_log_contid(context, "tty", audit_get_contid(tsk));
+> > +       audit_free_context(context);
+> >  }
+> 
+> --
+> paul moore
+> www.paul-moore.com
 
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
