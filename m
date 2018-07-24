@@ -2,88 +2,110 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E00EBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D71C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CFCF20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:46:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHpf3pfK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CFCF20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C6AF20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:46:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C6AF20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388827AbeGXVyo (ORCPT
+        id S2388863AbeGXVyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 17:54:44 -0400
-Received: from mail-pg1-f171.google.com ([209.85.215.171]:34463 "EHLO
-        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388604AbeGXVyo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 17:54:44 -0400
-Received: by mail-pg1-f171.google.com with SMTP id y5-v6so3702610pgv.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 13:46:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=rd00ppayFTAhJT13a14Fk1ThMfDRwB/IV1E03cn8Dz0=;
-        b=QHpf3pfKjQc4DTzxpqIVyocXwGzf06unpj+Yo7jdIx0NIy9UesuG2XaZWluzkP25pG
-         CeAnPsTMIImplE94ghxNfUJ/3Zu1kVO5dOFhNdwINBbeW8prSD+XwoZyRIE5PkNg93S2
-         IlkeT/HQlrJUFz6QJr/Lchiw5r1dfhpfLe7lmBUD8RgdDyhYmCAh246Mji/pjuDrAcAt
-         6rGUOHob4VtYSYLRI5qHmtDfYdJSZ3xHnDP7FkgyHktSGy9C4mRSMh83ZrCtxR0qKjmd
-         yLTu55KvEx+qVYpDCRRLtMzz5fisvMoSpsv7kAg4IEW1dM8EXmt6n69b64oFsYaRoO1Q
-         O5qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rd00ppayFTAhJT13a14Fk1ThMfDRwB/IV1E03cn8Dz0=;
-        b=Ypbg0i67G7kUVSPBKmQ2stcxrQFs9Ua5SWphmjJUDNtRFUI69QLQIYhd5FAsbRL94w
-         ZLnnPtJTcmcMcTfr/1yamFE6/eGzHkjd1CsrZxDkuVzYoKFiYXJxkFCkOvy6VNr3klSO
-         CGoJ2zIxy5CkLSjL2vISYZZAuVx8J1n5IpVf7UfMpktc5rAfI3QRvapzEgm8qOdrcxsx
-         nVyelHur3KhID0ISxJBq273biK0dk+CQB3f37w9RZTxt9y8Q/R+g/FmURwF2JuYkzuTb
-         OG80CHj4QoKNYjWgjw582wIrQGxOED/h3A0hDUwyeOXCFPkLRYUHwwWQasNTuZRk6b1S
-         LpPg==
-X-Gm-Message-State: AOUpUlFyAIQ/UhU2MwcmfJZ78PP5CJBopjLNLkckeBrYIda1FgPSwZi9
-        0HLIVaYkP0OricFV6KNSOa/43tcJ
-X-Google-Smtp-Source: AAOMgpftaAwtU38Z7DSNuBQfqgChbb7mLqkdXjMIbeuEBkj2GrgMOXzO9tq1zvwpGC8ja5RcPRfhTg==
-X-Received: by 2002:a65:5286:: with SMTP id y6-v6mr17766403pgp.65.1532465190016;
-        Tue, 24 Jul 2018 13:46:30 -0700 (PDT)
-Received: from midway.home (static-50-53-52-16.bvtn.or.frontiernet.net. [50.53.52.16])
-        by smtp.gmail.com with ESMTPSA id t21-v6sm21536110pfi.73.2018.07.24.13.46.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 24 Jul 2018 13:46:28 -0700 (PDT)
-From:   Randy Dunlap <rd.dunlab@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Ofer Levi <oferle@mellanox.com>,
-        linux-snps-arc@lists.infradead.org
-Subject: arc: some allmodconfig fixup patches
-Date:   Tue, 24 Jul 2018 13:46:18 -0700
-Message-Id: <20180724204622.2366-1-rd.dunlab@gmail.com>
-X-Mailer: git-send-email 2.13.7
+        Tue, 24 Jul 2018 17:54:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45297 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388604AbeGXVyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 17:54:46 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id AFB5520798; Tue, 24 Jul 2018 22:46:29 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EDDE9206A6;
+        Tue, 24 Jul 2018 22:46:28 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 22:46:26 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Nicholas Mc Guire <hofrat@osadl.org>
+Cc:     Graham Moore <grmoore@opensource.altera.com>,
+        Vignesh R <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH] mtd: spi-nor: cadence-quadspi: make return type fit
+ wait_for_completion_timeout
+Message-ID: <20180724224626.777149ce@bbrezillon>
+In-Reply-To: <1532189293-5975-1-git-send-email-hofrat@osadl.org>
+References: <1532189293-5975-1-git-send-email-hofrat@osadl.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Sat, 21 Jul 2018 18:08:13 +0200
+Nicholas Mc Guire <hofrat@osadl.org> wrote:
 
-Hi,
+> wait_for_completion_timeout returns an unsigned long not int. declare a
+> suitably type timeout and fix up assignment and check.
+> 
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Reported-by: Vignesh R <vigneshr@ti.com>
+> Fixes: 140623410536 ("mtd: spi-nor: Add driver for Cadence Quad SPI Flash Controller")
 
-Here are a few patches that fix build errors or warnings that
-I encountered while doing arc "allmodconfig" builds.
+If you don't mind, I'd like to squash all wait_for_completion_timeout()
+fixes into a single commit.
 
-These patches do not fix all of the build issues.
+Thanks,
 
+Boris
 
- arch/arc/include/asm/delay.h            |    2 ++
- arch/arc/mm/cache.c                     |   11 ++++++-----
- arch/arc/plat-eznps/include/plat/ctop.h |    1 +
- arch/arc/plat-eznps/mtm.c               |    6 ++++--
- 4 files changed, 13 insertions(+), 7 deletions(-)
+> ---
+> 
+> Given that CQSPI_TIMEOUT_MS is < INT_MAX the type conversion is actually safe
+> here but it is cleaner to use proper types.
+> 
+> Patch was compile tested with: socfpga_defconfig (implies
+> CONFIG_SPI_CADENCE_QUADSPI=y)
+> 
+> Patch is against 4.18-rc5 (localversion-next is next-20180720)
+> 
+>  drivers/mtd/spi-nor/cadence-quadspi.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+> index d7e10b3..ce5f840 100644
+> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
+> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+> @@ -622,6 +622,7 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
+>  	unsigned int remaining = n_tx;
+>  	unsigned int write_bytes;
+>  	int ret;
+> +	unsigned long timeout;
+>  
+>  	writel(to_addr, reg_base + CQSPI_REG_INDIRECTWRSTARTADDR);
+>  	writel(remaining, reg_base + CQSPI_REG_INDIRECTWRBYTES);
+> @@ -649,10 +650,10 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
+>  		iowrite32_rep(cqspi->ahb_base, txbuf,
+>  			      DIV_ROUND_UP(write_bytes, 4));
+>  
+> -		ret = wait_for_completion_timeout(&cqspi->transfer_complete,
+> -						  msecs_to_jiffies
+> -						  (CQSPI_TIMEOUT_MS));
+> -		if (!ret) {
+> +		timeout = wait_for_completion_timeout(&cqspi->transfer_complete,
+> +						      msecs_to_jiffies
+> +						      (CQSPI_TIMEOUT_MS));
+> +		if (!timeout) {
+>  			dev_err(nor->dev, "Indirect write timeout\n");
+>  			ret = -ETIMEDOUT;
+>  			goto failwr;
+
