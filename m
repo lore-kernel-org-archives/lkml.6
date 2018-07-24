@@ -2,132 +2,180 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9189ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7684ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7541C20883
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6456620880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:33:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Oo7BWD2w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7541C20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaSNnrlq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6456620880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388631AbeGXSkK (ORCPT
+        id S2388510AbeGXSkc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:40:10 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:34572 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388408AbeGXSkK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:40:10 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6OHWbWR014457;
-        Tue, 24 Jul 2018 12:32:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1532453557;
-        bh=gF8QzFGGNWOc8qkZ0hphWrHwUrV8QNZ151Hjffzh/5c=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Oo7BWD2woIeSjilACbYRl4yBn8MHYFouGUHjx7Qfy4Sv9vwCb+Q5ByldSibTfmAjR
-         rSomtypIitaOUq8Tg18+7lUdFLCAZgJYGka6r//kYMArAsaRXLKpp4MWAP1VhbqSZv
-         Mo/Ei3ZfFXAyzhfAzRKy35C0Evw94z4k1ZjlTjTg=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6OHWam2013073;
-        Tue, 24 Jul 2018 12:32:36 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 24
- Jul 2018 12:32:36 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 24 Jul 2018 12:32:36 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6OHWXUT000858;
-        Tue, 24 Jul 2018 12:32:34 -0500
-Subject: Re: [PATCH 0/5] ti_am335x_tsc: Enable wakeup capability
-To:     Lee Jones <lee.jones@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC:     Jonathan Cameron <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-input@vger.kernel.org>
-References: <20180630103318.25355-1-vigneshr@ti.com>
- <dcb4a63b-9ecb-a72e-bfb8-ebb62017b4f7@ti.com> <20180718074736.GA4641@dell>
- <20180718170902.vk7rahyoaevucxbi@penguin> <20180723053708.GA4213@dell>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <2236aa96-ca56-fa30-157d-2f484c6968cc@ti.com>
-Date:   Tue, 24 Jul 2018 23:03:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180723053708.GA4213@dell>
+        Tue, 24 Jul 2018 14:40:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388382AbeGXSkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 14:40:32 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8551120880;
+        Tue, 24 Jul 2018 17:32:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532453579;
+        bh=yzy0JsBmUT2FmWdtMJdo056rzr0L4oh3ywR/JCXyDNM=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=OaSNnrlqQNUszgdAynRERiyxuBzXWCKyj+hO0X1ROYgf4d/pIyaIRGcRhNIacSsmk
+         aNW6+9zXK0xgRRUjkDs0xiUeVVUdcr9r/r2GngM2i3wULcCdFMyrjwzrjXB0uYA0qj
+         nB5dpOM4c/H2fdJcfbm4/VA2765nS0QMr+zdoSZk=
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     spanda@codeaurora.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <9509c88c112d59874e28459d8f87509f@codeaurora.org>
+Cc:     Abhinav Kumar <abhinavk@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>, ryadav@codeaurora.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+ <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+ <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
+ <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
+ <153112184177.143105.15452587215679149679@swboyd.mtv.corp.google.com>
+ <288770be-a763-b287-f62a-72ab7616efdb@codeaurora.org>
+ <153114876561.143105.465317097490450694@swboyd.mtv.corp.google.com>
+ <e0203471-85ef-456a-d7f3-85c66a82b8c1@codeaurora.org>
+ <153142449680.48062.13809855257701591509@swboyd.mtv.corp.google.com>
+ <9509c88c112d59874e28459d8f87509f@codeaurora.org>
+Message-ID: <153245357881.48062.2111028557651634514@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for SDM845
+Date:   Tue, 24 Jul 2018 10:32:58 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting spanda@codeaurora.org (2018-07-13 01:25:49)
+> On 2018-07-13 01:11, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-07-12 10:21:33)
+> >> ++ Display driver team,
+> >> =
+
+> >> On 7/9/2018 8:36 PM, Stephen Boyd wrote:
+> >> > Quoting Taniya Das (2018-07-09 02:34:07)
+> >> >>
+> >> >>
+> >> >> On 7/9/2018 1:07 PM, Stephen Boyd wrote:
+> >> >>> Quoting Taniya Das (2018-07-09 00:07:21)
+> >> >>>>
+> >> >>>>
+> >> >>>> On 7/9/2018 11:46 AM, Stephen Boyd wrote:
+> >> >>>>>>
+> >> >>>>>>     > Why is the nocache flag needed? Applies to all clks in th=
+is file.
+> >> >>>>>>     >
+> >> >>>>>>
+> >> >>>>>> This flag is required for all RCGs whose PLLs are controlled ou=
+tside the
+> >> >>>>>> clock controller. The display code would require the recalculat=
+ed rate
+> >> >>>>>> always.
+> >> >>>>>
+> >> >>>>> Right. Why is the PLL controlled outside of the clock controller=
+? The
+> >> >>>>> rate should propagate upward to the PLL from here, so who's going
+> >> >>>>> outside of that?
+> >> >>>>>
+> >> >>>> The DSI0/1 PLL are not part of the display clock controller, but =
+in the
+> >> >>>> display subsystem which are managed by the DRM drivers. When DRM =
+drivers
+> >> >>>> query for the rate clock driver should always return the non cach=
+ed rates.
+> >> >>>
+> >> >>> Why? Is the DSI PLL changing rate all the time, randomly, without =
+going
+> >> >>> through the clk APIs to do so?
+> >> >>>
+> >> >>
+> >> >> Hmm, I am afraid I do not have an answer for this, but this was the
+> >> >> requirement to always return the non cached rates from the clock dr=
+iver.
+> >> >>
+> >> >
+> >> > Ok. Who knows about this requirement? Can we add someone from the
+> >> > display driver to understand more?
+> >> >
+> >> As per my discussions offline with the display teams,
+> >> =
+
+> >> There is a use-case where the clock framework is unaware of the PLL =
+
+> >> VCO
+> >> frequency change and thus the drivers would query to get the actual HW
+> >> frequency rather than the cached one.
+> >> =
+
+> >> Do you think keeping these flags would have any impact other than =
+
+> >> always
+> >> getting the non-cached rates?
+> >> =
+
+> > =
+
+> > The flag will make it so clk_get_rate() works in spite of something
+> > changing the frequency behind the framework's back, but I want to
+> > understand what and why it's changing without framework involvement. We
+> > shouldn't need the flag here, because this flag is typically for clks
+> > that are controlled by some other entity that the kernel doesn't have
+> > control over. In this case, it seems like we have full control of the
+> > clk tree for the display PLL down to this clk, so it should be =
+
+> > perfectly
+> > fine to not have this flag. The presence of the flag means that the
+> > display driver is doing something wrong.
+> =
+
+> These clocks are sourced from DSI PLL. In dsi command mode there is an =
+
+> idle use case when there
+> is no activity on display, we switch of the source DSI PLL to save power =
+
+> by calling clk_disable_unprepare().
+> In this scenario if some client queries the clk_get_rate(), then if =
+
+> NO_CACHE flag is used the clk
+> driver will return the cached rate which is some non-zero value set when =
+
+> we last called clk_set_rate(),
+> before enabling the clock, whereas actually in HW this clk is disabled. =
 
 
-On Monday 23 July 2018 11:07 AM, Lee Jones wrote:
-> On Wed, 18 Jul 2018, Dmitry Torokhov wrote:
-> 
->> On Wed, Jul 18, 2018 at 08:47:36AM +0100, Lee Jones wrote:
->>> On Tue, 17 Jul 2018, Vignesh R wrote:
->>>
->>>> Hi Dmitry,
->>>>
->>>> On Saturday 30 June 2018 04:03 PM, Vignesh R wrote:
->>>>> On AM335x, resistive TSC can wakeup the system from low power state.
->>>>> Currently, parent MFD device is marked as wakeup source, which is
->>>>> inaccurate as its the touch event generated by TSC thats the wakeup
->>>>> source. This series moves all wakeup related calls to operate on TSC
->>>>> device instead of MFD. It also marks TSC IRQ as wakeup capable, so that
->>>>> its not disabled during system suspend.
->>>>>
->>>>> This series is based on Dmitry's comments here:
->>>>> https://lkml.org/lkml/2018/4/24/65
->>>>>
->>>>> There are many new patches in this series, hence did not mark this as v4.
->>>>>
->>>>> Vignesh R (5):
->>>>>   mfd: ti_am335x_tscadc: Don't mark TSCADC MFD as wakeup capable
->>>>>   Input: ti_am335x_tsc: Mark TSC device as wakeup source
->>>>>   mfd: ti_am335x_tscadc: Keep ADC interface on if child is wakeup
->>>>>     capable
->>>>>   iio: adc: ti_am335x_adc: Disable ADC during suspend unconditionally
->>>>>   Input: ti_am335x_tsc: Mark IRQ as wakeup capable
->>>>>
->>>>>  drivers/iio/adc/ti_am335x_adc.c           | 12 ++++--------
->>>>>  drivers/input/touchscreen/ti_am335x_tsc.c | 22 +++++++++++++++++-----
->>>>>  drivers/mfd/ti_am335x_tscadc.c            | 14 +++++++++++++-
->>>>>  3 files changed, 34 insertions(+), 14 deletions(-)
->>>>>
->>>>
->>>> Gentle ping... Could you review/pick this series? MFD amd IIO bits are
->>>> already ACKed
->>>
->>> MFD patches are reviewed "for my own reference" meaning that we
->>> haven't yet agreed on a merge plan yet.
->>
->> I think this series makes sense to be pushed through a single tree as
->> opposed to being spread between 3, even if it could technically be
->> possible. It looks like Jonathan is fine with going it through either
->> his or some other tree, I am fine with it going through MFD.
-> 
-> I'm happy either way.
-> 
-Thanks Dmitry, Jonathan and Lee Jones!
+If the clk is disabled in hardware it doesn't mean clk_get_rate() should
+return 0 Hz. The frequency of the clk is set to something, so we should
+return what that frequency is by reading the hardware.
 
-Could this be applied to one of the trees now? MFD perhaps?
+> So we used the NO_CACHE flag
+> for the call to land in clk_recalc_rate and we return zero if the PLL is =
 
--- 
-Regards
-Vignesh
+> disabled.
+
+This is super wrong. If the PLL is disabled it still has some frequency
+configured.
+
