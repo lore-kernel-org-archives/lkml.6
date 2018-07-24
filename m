@@ -1,95 +1,173 @@
 Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22A1C6778F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA22C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70FB520874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:23:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sNJtS9MV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FB520874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E14D20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:25:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E14D20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388961AbeGXXb6 (ORCPT
+        id S2388851AbeGXXdt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:31:58 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39835 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388769AbeGXXb6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:31:58 -0400
-Received: by mail-it0-f66.google.com with SMTP id g141-v6so6004984ita.4;
-        Tue, 24 Jul 2018 15:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=xUDpSBM2EdFxS9dHlUcgbHy5cIdVX2aicOwRIlVd034=;
-        b=sNJtS9MVsrcM/oJLHB1OSBMpo+nANTiVXAlOAbsrip8mJtzvfr4nxLQMKvH/QADX3T
-         J4tJP/gUNvKtjZ6sintjw2LJczHhzLG7C5a0v/pgDTln1HAvybPJ7ZKejN3//rbXzF6+
-         S2g6ONG/iUD7DZrI9W1tOrVvBBqzAydtPedUqh0hGzAwqPvkAwt3UoKxosxfrt9CmID9
-         MSbGaQeFPg/qcJE0pVvrnzLV0/KkduOctaC6wqr9SrhsIVzJgKEuSIfZAV33Rdq6+6zW
-         WwqGzsJRsW90xpRJ1DSKPYEJKYIn+WuvzCRF0lDDcib6Qz5R+1hRA2SeinuOEI6G6CJP
-         HrjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xUDpSBM2EdFxS9dHlUcgbHy5cIdVX2aicOwRIlVd034=;
-        b=MYaUJXiGRmDpGBBJftkeGRbpsOhXA53Hzt6hyRboNB3lqcj+yfwLeFC6LqtNnxLD9/
-         oml9LPXAUb8SRCRDqy+JumVdwYhhI+4Y64zvEO5qXetx3RoGCFqtY7Y9QtBaeUfSQyq/
-         30Bp3V4lzdrWAzp9Blj9yfUXHi6VoRBqxfzJwvTcnySACEboljf9UzUAinMVgqttwvOH
-         aqMwxJ/KxoHc+VjFUeTSp+ZGd6O1EaqhSzuSDc96K8Rj15ZdYf4ceAv/6b7/UwAwcKGm
-         SVmjJMso2t3GV/xqMZ62jRl3T2SfpSziWwmiKY4hwA66YlJBnbzJUSn8J9/IV4I8GS99
-         OHSg==
-X-Gm-Message-State: AOUpUlHCb7LDphzS8cbSAHSQHVFk5kZbAJ/p8TfxtK2L4Y0Zx8xPxsnw
-        f9ABMzVFIQnwIOxwpwCcXWK5uUvoJqzHiBJUjJ0=
-X-Google-Smtp-Source: AAOMgpcSrHvKmTjOlk3HI6CsMPawVaFoeyeF/cqDzxUZgJzgapqWvlWsyfHEHWZFmwAFUVnKh286aZUG4kBCm1cAjvI=
-X-Received: by 2002:a24:130c:: with SMTP id 12-v6mr4475602itz.35.1532471002431;
- Tue, 24 Jul 2018 15:23:22 -0700 (PDT)
+        Tue, 24 Jul 2018 19:33:49 -0400
+Received: from foss.arm.com ([217.140.101.70]:58470 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388659AbeGXXdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 19:33:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 069CE15A2;
+        Tue, 24 Jul 2018 15:25:13 -0700 (PDT)
+Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C1953F5B3;
+        Tue, 24 Jul 2018 15:25:10 -0700 (PDT)
+Subject: Re: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for non-strict
+ mode
+To:     Zhen Lei <thunder.leizhen@huawei.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
+ <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <89cc2201-99ab-3f3b-a2d1-1766515d4375@arm.com>
+Date:   Tue, 24 Jul 2018 23:25:14 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:ac0:a887:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 15:23:22
- -0700 (PDT)
-In-Reply-To: <20180725080130.314f62bb@canb.auug.org.au>
-References: <20180725080130.314f62bb@canb.auug.org.au>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Wed, 25 Jul 2018 00:23:22 +0200
-Message-ID: <CAHpGcM+WkOKkd+GLMiTWsvnLA_daY_5pBfSQp_KYoPVcRQQHGg@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the gfs2 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On 2018-07-12 7:18 AM, Zhen Lei wrote:
+> To support the non-strict mode, now we only tlbi and sync for the strict
+> mode. But for the non-leaf case, always follow strict mode.
+> 
+> Use the lowest bit of the iova parameter to pass the strict mode:
+> 0, IOMMU_STRICT;
+> 1, IOMMU_NON_STRICT;
+> Treat 0 as IOMMU_STRICT, so that the unmap operation can compatible with
+> other IOMMUs which still use strict mode.
+> 
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> ---
+>   drivers/iommu/io-pgtable-arm.c | 23 ++++++++++++++---------
+>   1 file changed, 14 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> index 010a254..9234db3 100644
+> --- a/drivers/iommu/io-pgtable-arm.c
+> +++ b/drivers/iommu/io-pgtable-arm.c
+> @@ -292,7 +292,7 @@ static void __arm_lpae_set_pte(arm_lpae_iopte *ptep, arm_lpae_iopte pte,
+>   
+>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>   			       unsigned long iova, size_t size, int lvl,
+> -			       arm_lpae_iopte *ptep);
+> +			       arm_lpae_iopte *ptep, int strict);
+>   
+>   static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
+>   				phys_addr_t paddr, arm_lpae_iopte prot,
+> @@ -334,7 +334,7 @@ static int arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
+>   		size_t sz = ARM_LPAE_BLOCK_SIZE(lvl, data);
+>   
+>   		tblp = ptep - ARM_LPAE_LVL_IDX(iova, lvl, data);
+> -		if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp) != sz))
+> +		if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp, IOMMU_STRICT) != sz))
+>   			return -EINVAL;
+>   	}
+>   
+> @@ -531,7 +531,7 @@ static void arm_lpae_free_pgtable(struct io_pgtable *iop)
+>   static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
+>   				       unsigned long iova, size_t size,
+>   				       arm_lpae_iopte blk_pte, int lvl,
+> -				       arm_lpae_iopte *ptep)
+> +				       arm_lpae_iopte *ptep, int strict)
 
-2018-07-25 0:01 GMT+02:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi all,
->
-> Commit
->
->   b6fbc2f6a686 ("GFS2: Fix recovery issues for spectators")
->
-> is missing a Signed-off-by from its committer.  It was rebased.
+DMA code should never ever be splitting blocks anyway, and frankly the 
+TLB maintenance here is dodgy enough (since we can't reasonably do 
+break-before make as VMSA says we should) that I *really* don't want to 
+introduce any possibility of making it more asynchronous. I'd much 
+rather just hard-code the expectation of strict == true for this.
 
-thanks, I've fixed it now but this is getting rather annoying -- and
-it must happen to others as well. Do you happen to have git hooks that
-prevent this from happening?
+Robin.
 
-Thanks,
-Andreas
+>   {
+>   	struct io_pgtable_cfg *cfg = &data->iop.cfg;
+>   	arm_lpae_iopte pte, *tablep;
+> @@ -576,15 +576,18 @@ static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
+>   	}
+>   
+>   	if (unmap_idx < 0)
+> -		return __arm_lpae_unmap(data, iova, size, lvl, tablep);
+> +		return __arm_lpae_unmap(data, iova, size, lvl, tablep, strict);
+>   
+>   	io_pgtable_tlb_add_flush(&data->iop, iova, size, size, true);
+> +	if (!strict)
+> +		io_pgtable_tlb_sync(&data->iop);
+> +
+>   	return size;
+>   }
+>   
+>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>   			       unsigned long iova, size_t size, int lvl,
+> -			       arm_lpae_iopte *ptep)
+> +			       arm_lpae_iopte *ptep, int strict)
+>   {
+>   	arm_lpae_iopte pte;
+>   	struct io_pgtable *iop = &data->iop;
+> @@ -609,7 +612,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>   			io_pgtable_tlb_sync(iop);
+>   			ptep = iopte_deref(pte, data);
+>   			__arm_lpae_free_pgtable(data, lvl + 1, ptep);
+> -		} else {
+> +		} else if (strict) {
+>   			io_pgtable_tlb_add_flush(iop, iova, size, size, true);
+>   		}
+>   
+> @@ -620,25 +623,27 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>   		 * minus the part we want to unmap
+>   		 */
+>   		return arm_lpae_split_blk_unmap(data, iova, size, pte,
+> -						lvl + 1, ptep);
+> +						lvl + 1, ptep, strict);
+>   	}
+>   
+>   	/* Keep on walkin' */
+>   	ptep = iopte_deref(pte, data);
+> -	return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep);
+> +	return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep, strict);
+>   }
+>   
+>   static size_t arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned long iova,
+>   			     size_t size)
+>   {
+> +	int strict = ((iova & IOMMU_STRICT_MODE_MASK) == IOMMU_STRICT);
+>   	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
+>   	arm_lpae_iopte *ptep = data->pgd;
+>   	int lvl = ARM_LPAE_START_LVL(data);
+>   
+> +	iova &= ~IOMMU_STRICT_MODE_MASK;
+>   	if (WARN_ON(iova >= (1ULL << data->iop.cfg.ias)))
+>   		return 0;
+>   
+> -	return __arm_lpae_unmap(data, iova, size, lvl, ptep);
+> +	return __arm_lpae_unmap(data, iova, size, lvl, ptep, strict);
+>   }
+>   
+>   static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
+> 
