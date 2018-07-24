@@ -2,134 +2,117 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095DCECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031A0ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFEF420856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:55:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF18E20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:56:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8ekDHcH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFEF420856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cnqo0noi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF18E20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388528AbeGXRCz (ORCPT
+        id S2388546AbeGXRDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:02:55 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38371 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388393AbeGXRCy (ORCPT
+        Tue, 24 Jul 2018 13:03:35 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53290 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388398AbeGXRDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:02:54 -0400
-Received: by mail-pl0-f67.google.com with SMTP id b1-v6so1962336pls.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 08:55:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8FB4pyAG5YKoZ7RCb3DnyeuSnQCtMo2ckTNoC5NpCjo=;
-        b=I8ekDHcH9i15/CfqYX++a10BrJ1NwO02L5qUDCLBKMeSUeOG0X2bjS6hGhKyVk9oFD
-         cKMdRW13kngdgrO0DZT6o/O72ppKxJIgnDJbZCClpzJ8b0m1rn8hx/VNNtqlUGLpedvf
-         aZ6QvJwcDpe+IRLo3KPBUCcDxObWgmci2T4wCUFw/YNFY4LKe4DYF2Lhq0+V1QGvtz7p
-         TXKoFQefIHeFFe3TVSJhwgK2wzzTSB0F8bx0MUiP/42WLjqGL7+mjKfE9Q9xV7DervWW
-         PROfSDvCUlUlyGh8fNpUH4dE4nnf6+Ops2VIRwJNBI5Nt+bl+7VJT+wI9ofjE4OPKygf
-         EpQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8FB4pyAG5YKoZ7RCb3DnyeuSnQCtMo2ckTNoC5NpCjo=;
-        b=To9BwCV5OOpoWt9+t0euYr6ZJP/YxBJiOpE5h8h4QUVFjdQ6GJPtHUmkkGJqYiS5j7
-         xgXdePyxIuGzDlBXxbM6uIZXPDebqKcvadBlREoHwxet6LQ9cemCQtpC7w7eQt+FgBrQ
-         NPZdpX+/dM9r1mePybCV98e6sw5BMRWpf0c/6hSF1cUywfc4f+m6EsPLJEog97VBh7D3
-         VOzyqPu4TAPmdA5sgUdP0HxnTWF7/e/N1pYsqt/bjfxXLi/qGCg0igeUelG2lUJyEiPJ
-         pIFBlkx2TftxDFGKP6iw1MuL8/e3jpeFrFd81AKSnskKa3GxMqIrCYpWKNvdlPiXj7pk
-         sq2g==
-X-Gm-Message-State: AOUpUlFU0NwTiZ4yNf2fEkwbC2wUEjSlv4mTiUCeHYMrgUgzVlKmNHMv
-        Fu3rNNfggZtzaUljORdzKIQ=
-X-Google-Smtp-Source: AAOMgpf7jJevb6/cAmh3NKSovnQt8iUOYE433q3gMTudsMM85k3uKaCEG6snp+njZ1ruFvAs5jCHJg==
-X-Received: by 2002:a17:902:7688:: with SMTP id m8-v6mr17450157pll.338.1532447747736;
-        Tue, 24 Jul 2018 08:55:47 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id l85-v6sm21468802pfk.34.2018.07.24.08.55.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 08:55:47 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 08:55:46 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Anton Vasilyev <vasilyev@ispras.ru>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Pan Bian <bianpan2016@163.com>, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: Re: [PATCH v2] firmware: vpd: Fix section enabled flag on
- vpd_section_destroy
-Message-ID: <20180724155546.GB917@roeck-us.net>
-References: <20180723183927.GH100814@dtor-ws>
- <20180724151038.14838-1-vasilyev@ispras.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724151038.14838-1-vasilyev@ispras.ru>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 24 Jul 2018 13:03:35 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180724155627euoutp02a3768936431c65ae3bf7fa833e6fd254~EWSSyNPqD0350503505euoutp02j;
+        Tue, 24 Jul 2018 15:56:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180724155627euoutp02a3768936431c65ae3bf7fa833e6fd254~EWSSyNPqD0350503505euoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1532447787;
+        bh=QMwN1UQPuD6nu3jbmw0FhT++33h26T2YYVYyVwAmCLU=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=cnqo0noi2nkQJZ+YxRGgjxK8vUh5p/W3nqQ7GvvAEH3ZgcE4SRbQ6OVvv+IUYWIi9
+         fPV33oL7fYhsNAhxncambH/WHnNwqbP7H3+ZOSo25XqHLH6BXb9JdFS1J2L7K/Wkau
+         LaM2NS6KZheu36wZ6R1M8iB88cbGaKmLv8ILb4KE=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180724155627eucas1p190e1d79687e94e767c963704d8892ae6~EWSSeK0_S0997409974eucas1p1R;
+        Tue, 24 Jul 2018 15:56:27 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id EE.A8.61560.A2C475B5; Tue, 24
+        Jul 2018 16:56:26 +0100 (BST)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180724155626eucas1p2732ac0bd322282a068b2ee659d2e248a~EWSR0ai1e0499504995eucas1p2b;
+        Tue, 24 Jul 2018 15:56:26 +0000 (GMT)
+X-AuditID: cbfec7f5-207ff7000002f078-54-5b574c2a2db6
+Received: from eusync3.samsung.com ( [203.254.199.213]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id AF.5A.04178.A2C475B5; Tue, 24
+        Jul 2018 16:56:26 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync3.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PCD00DYBOA2OC80@eusync3.samsung.com>; Tue, 24 Jul
+        2018 16:56:26 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] omapfb: Mark expected switch fall-throughs
+Date:   Tue, 24 Jul 2018 17:56:25 +0200
+Message-id: <5148330.xZP60O7hy1@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180709220436.GA10751@embeddedor.com>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsWy7djPc7paPuHRBs8P6Fpc+fqezWLrHlWL
+        E30fWC0u75rDZjF7ST+LA6vHuoOqHve7jzN5fN4kF8AcxWWTkpqTWZZapG+XwJVx5k9mwT+m
+        ilunHjI3MG5n6mLk5JAQMJF48WcLSxcjF4eQwApGia/XfzBDOJ+BnKNLWWGqVk/ayQJiCwks
+        Y5S48roaoug3o8TsPefARrEJWElMbF/FCGKLCBhJzJ7RDdbMLFAjcfT1LnYQW1jAXqLz0yWw
+        GhYBVYm/SzvB4rwCmhK7Zz1iBrFFBbwktuxrB5vJCbR48rPfbBA1ghI/Jt9jgZgpL7Fv/1So
+        +ToSZ4+tYwQ5SEJgCpvEvUPTmCGudpG4u/o8lC0s8er4FnYIW0ais+MgE0TDdEaJN7+WskA4
+        6xkl1pw5Bg0Za4nDxy9CreCTmLRtOtAkDqA4r0RHmxCE6SHx/EgMJFTaGSVeN+tMYJSZheTW
+        WUhunYXk1gWMzKsYxVNLi3PTU4uN81LL9YoTc4tL89L1kvNzNzECI/z0v+NfdzDu+5N0iFGA
+        g1GJh/eDXXi0EGtiWXFl7iFGCQ5mJRHeRaJAId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxxGnVR
+        QgLpiSWp2ampBalFMFkmDk6pBsaT3xT/3lzcaXj8/EtrLebgY/tWXIvSqOxVDdx9Jn/qgmvJ
+        Dz58cbuUrduzKFv8jei3+du+/N8qe/+B3q3XuzatWDjzVFB/tmBp0JTrP/bJsgqcyP3tl3mW
+        5e1Z8SPT/3LyihouWh6+Sr5lttKu+9Uu0rxve2o2dzXEfDh8xfd0jN91e9dNq5asUWIpzkg0
+        1GIuKk4EAMSie1LsAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsVy+t/xq7paPuHRBp2NghZXvr5ns9i6R9Xi
+        RN8HVovLu+awWcxe0s/iwOqx7qCqx/3u40wenzfJBTBHcdmkpOZklqUW6dslcGWc+ZNZ8I+p
+        4taph8wNjNuZuhg5OSQETCRWT9rJ0sXIxSEksIRR4syxS4wQzl9GiW9XD7GCVLEJWElMbF/F
+        CGKLCBhJzJ7RDRZnFqiRaGq9wg5iCwvYS3R+ugRWwyKgKvF3aSdYnFdAU2L3rEfMILaogJfE
+        ln3tYJs5gTZPfvabDWJZJ6PE87ttbBANghI/Jt9jgVggL7Fv/1SoZVoS63ceZ5rAyD8LSdks
+        JGWzkJQtYGRexSiSWlqcm55bbKhXnJhbXJqXrpecn7uJERig24793LyD8dLG4EOMAhyMSjy8
+        Ho7h0UKsiWXFlbmHGCU4mJVEeBeJAoV4UxIrq1KL8uOLSnNSiw8xSnOwKInznjeojBISSE8s
+        Sc1OTS1ILYLJMnFwSjUwht1OEHl757Zi87S15teWmm3ImLB96u7e1fdL1gQwTz0tvfBPUaWG
+        WnjOj+cLd7r89S67tWvzfWEL+enqYee19x3KORV0bukENcHuwAb9xJY966a5Zn+LUfg7d/X0
+        jP1dMXWyfPc2vHeIvz01Tfbwna01r8wNOhefKrjj+HHig4rdxw+eiz8mmazEUpyRaKjFXFSc
+        CAClNiakTAIAAA==
+X-CMS-MailID: 20180724155626eucas1p2732ac0bd322282a068b2ee659d2e248a
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180709220440epcas1p4327d007d1f871a8bf3767d1f88a7be7f
+References: <CGME20180709220440epcas1p4327d007d1f871a8bf3767d1f88a7be7f@epcas1p4.samsung.com>
+        <20180709220436.GA10751@embeddedor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 06:10:38PM +0300, Anton Vasilyev wrote:
-> static struct ro_vpd and rw_vpd are initialized by vpd_sections_init()
-> in vpd_probe() based on header's ro and rw sizes.
-> In vpd_remove() vpd_section_destroy() performs deinitialization based
-> on enabled flag, which is set to true by vpd_sections_init().
-> This leads to call of vpd_section_destroy() on already destroyed section
-> for probe-release-probe-release sequence if first probe performs
-> ro_vpd initialization and second probe does not initialize it.
+On Monday, July 09, 2018 05:04:36 PM Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 > 
-> The patch adds changing enabled flag on vpd_section_destroy and adds
-> cleanup on the error path of vpd_sections_init.
-> 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Patch queued for 4.19, thanks.
 
-> ---
-> v2: add cleanup on the error path of vpd_sections_init
-> ---
->  drivers/firmware/google/vpd.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/google/vpd.c b/drivers/firmware/google/vpd.c
-> index e9db895916c3..1aa67bb5d8c0 100644
-> --- a/drivers/firmware/google/vpd.c
-> +++ b/drivers/firmware/google/vpd.c
-> @@ -246,6 +246,7 @@ static int vpd_section_destroy(struct vpd_section *sec)
->  		sysfs_remove_bin_file(vpd_kobj, &sec->bin_attr);
->  		kfree(sec->raw_name);
->  		memunmap(sec->baseaddr);
-> +		sec->enabled = false;
->  	}
->  
->  	return 0;
-> @@ -279,8 +280,10 @@ static int vpd_sections_init(phys_addr_t physaddr)
->  		ret = vpd_section_init("rw", &rw_vpd,
->  				       physaddr + sizeof(struct vpd_cbmem) +
->  				       header.ro_size, header.rw_size);
-> -		if (ret)
-> +		if (ret) {
-> +			vpd_section_destroy(&ro_vpd);
->  			return ret;
-> +		}
->  	}
->  
->  	return 0;
-> -- 
-> 2.18.0
-> 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
