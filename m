@@ -2,119 +2,123 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 872C5C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 059D3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E28F20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:12:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fETF1unX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E28F20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B8AB720856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:14:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8AB720856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388410AbeGXIRp (ORCPT
+        id S2388427AbeGXITE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 04:17:45 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44070 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388357AbeGXIRp (ORCPT
+        Tue, 24 Jul 2018 04:19:04 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:38639 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388351AbeGXITE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 04:17:45 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r16-v6so2965551wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 00:12:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oLGamEtSDPMo5QXPl/PAJUvNOCABGEBrWaLjnEXWrOY=;
-        b=fETF1unXgJfLeIjJh5EtZTwbWZFBaouvGP3O/7B/reEEmT2L3me6VjtDwkS3QmjnCx
-         dUxa5PmFySpYVstOOvHV+gVH9aOGe52WIm6rmJsCWq//BYgvJeB9A5UOIGDOPC0fk59G
-         LmLYBQ/9/Nd4RhcDUrB23Jlxqcz6hZ9Sly/Q4=
+        Tue, 24 Jul 2018 04:19:04 -0400
+Received: by mail-it0-f70.google.com with SMTP id i4-v6so1698840ite.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 00:14:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=oLGamEtSDPMo5QXPl/PAJUvNOCABGEBrWaLjnEXWrOY=;
-        b=UbjLPyyeom301ovKR2+ACJdfogGJm/LQaLxbaTWaHePkspD6PfOWlZtKwW6DdqHY/6
-         Jzb3t2vOJokc2MhXuBOI17yhQLArh/kzhxsinpjWYaHOmL1nBEpqylyjvLG3bIVHeIl9
-         B7eZmks572zWWdC4HEuopBHGPwp1nXUvkkLYeBBTCJxwGhcgLeNjY0E04DtNk8/DxKGy
-         TVN0ENvLA9tbwae8vGMxL7dg9ZWIk85Fm/TV36Cz0Bp+hom1TW0BC4wcXFN1XM6l7m53
-         EUc18IHXt+ZlrKVmA9Qwq52mx6h1yXB5PXd4CMKJeeP+DclUiYdwBIOYEuyqBV+pSu11
-         O1Aw==
-X-Gm-Message-State: AOUpUlFLIH9chuqenU5902geoi+YjerQGY0O4aDUPb8F55BJbs/Ea8Km
-        ZyAjb4lVESmnTcuRaWziFyef9w==
-X-Google-Smtp-Source: AAOMgpcwcvQd2azYXOJqMoTQDJ53zjerDbsXx5oTceRpxQ57GvQpgUcvuzwvsMUPoCjgQ1tU1IuLng==
-X-Received: by 2002:adf:e0cc:: with SMTP id e12-v6mr10485334wri.199.1532416362841;
-        Tue, 24 Jul 2018 00:12:42 -0700 (PDT)
-Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id o4-v6sm736960wmo.20.2018.07.24.00.12.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 00:12:41 -0700 (PDT)
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@linaro.org
-Subject: [PATCH v3] backlight: pwm_bl: Fix uninitialized variable
-Date:   Tue, 24 Jul 2018 08:12:23 +0100
-Message-Id: <20180724071223.18901-1-daniel.thompson@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180716210241.9457-1-daniel.thompson@linaro.org>
-References: <20180716210241.9457-1-daniel.thompson@linaro.org>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=WB8HxJW4Yq3okT09QUDWQsO8RMhPaFCh0XSRFQKuoro=;
+        b=O3lSZs2l8dQ4zt6i9dcTPN5226gYK7305O4PxCZyH6UKIQ8S7z2nhpGrYwVXeCKXo5
+         yktCKKphA+/AK7XwFfcV0X3SNQSMjj2YqCpl8JDw7KMI2BxuJ0B2uUbNMWM+nXk04J2p
+         Rt9jFSIh0XfWjnhrGnTF2+nY6/hNBuwmjEqEax/yl0BYXuLuTE8QmkWmgGa6+eqMfVoN
+         B0KkMK5af9v+F78LvKkdBvkE8oRNxqLlRjb6zgeiIpqZZvf0J/zK0kkO7ve9LKD19YNW
+         kBBJDOamhUkHkPoUe/RQ052j8QRLTPy6z5ZXEcvLXdemwWBAkn2Vpl56fh28BqMiZAHL
+         lk/A==
+X-Gm-Message-State: AOUpUlEe1/0SEM7icUiTJPtUS3ZnsSlEAP043VeHPNZXH/4t29bq2ulw
+        Um/6rHXEB9+6eLKxJtbVhUDE7MJ3EN/IYe8AlbmSOiebq4BN
+X-Google-Smtp-Source: AAOMgpfeZ3z8b7cLSoUkT2WPpbMCwptFSiKnEnBCYgdMuSS/EzLmkI46YzKleotx0zm6Mqewybk/PSTqjI4CJswM63MoWmOeyKIi
+MIME-Version: 1.0
+X-Received: by 2002:a6b:3dd:: with SMTP id e90-v6mr6249499ioi.85.1532416441919;
+ Tue, 24 Jul 2018 00:14:01 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 00:14:01 -0700
+In-Reply-To: <0000000000006e1bbe0570bea62e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ab31220571b98177@google.com>
+Subject: Re: general protection fault in inet_accept
+From:   syzbot <syzbot+2e9616288940d15a6476@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, if the DT does not define num-interpolated-steps then
-num_steps is undefined and the interpolation code will deploy randomly.
-Fix with a simple initialize to zero.
+syzbot has found a reproducer for the following crash on:
 
-Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation between
-brightness-levels")
-Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
----
+HEAD commit:    fd800f646402 wan/fsl_ucc_hdlc: use IS_ERR_VALUE() to check..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1579b51c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=acf770f568ef945b
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e9616288940d15a6476
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=179e4d62400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10f7a978400000
 
-Notes:
-    v3:
-     - Switch to the simplest fix and zero the uninitialized variable. git
-       grep indicates that ~25% of calls to of_property_read_u32() use this
-       pattern (pre-initialize optional properties with sane values and
-       ignore the return code).
-    
-    v2:
-     - Simplify SoB chain (with Marcel's permission)
-     - Separate complex if statement and make other similar calls use same
-       return code checking approach
-     - Tidy up comment formatting and fix pre-existing grammar error
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2e9616288940d15a6476@syzkaller.appspotmail.com
 
- drivers/video/backlight/pwm_bl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 9ee4c1b735b2..bdfcc0a71db1 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -250,7 +250,7 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 	struct device_node *node = dev->of_node;
- 	unsigned int num_levels = 0;
- 	unsigned int levels_count;
--	unsigned int num_steps;
-+	unsigned int num_steps = 0;
- 	struct property *prop;
- 	unsigned int *table;
- 	int length;
---
-2.17.1
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 1 PID: 5524 Comm: kworker/1:120 Not tainted 4.18.0-rc5+ #137
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events smc_tcp_listen_work
+RIP: 0010:inet_accept+0xf2/0xa00 net/ipv4/af_inet.c:735
+Code: 84 d2 74 09 80 fa 03 0f 8e 95 07 00 00 48 8d 78 28 41 c7 46 80 ea ff  
+ff ff 48 ba 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
+85 96 07 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffff8801ce71f4b0 EFLAGS: 00010206
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000005
+RDX: dffffc0000000000 RSI: ffffffff8677aa46 RDI: 0000000000000028
+RBP: ffff8801ce71f598 R08: ffff8801ae2e8480 R09: ffffed0037e1236f
+R10: ffffed0037e1236f R11: ffff8801bf091b7b R12: ffff8801bf091ac0
+R13: ffff8801ce71f4f0 R14: ffff8801ce71f570 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200024c0 CR3: 0000000008e6a000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  kernel_accept+0x136/0x310 net/socket.c:3251
+  smc_clcsock_accept net/smc/af_smc.c:832 [inline]
+  smc_tcp_listen_work+0x222/0xef0 net/smc/af_smc.c:1296
+  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+  kthread+0x345/0x410 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace de997303bb6ff5f8 ]---
+RIP: 0010:inet_accept+0xf2/0xa00 net/ipv4/af_inet.c:735
+Code: 84 d2 74 09 80 fa 03 0f 8e 95 07 00 00 48 8d 78 28 41 c7 46 80 ea ff  
+ff ff 48 ba 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
+85 96 07 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffff8801ce71f4b0 EFLAGS: 00010206
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000005
+RDX: dffffc0000000000 RSI: ffffffff8677aa46 RDI: 0000000000000028
+RBP: ffff8801ce71f598 R08: ffff8801ae2e8480 R09: ffffed0037e1236f
+R10: ffffed0037e1236f R11: ffff8801bf091b7b R12: ffff8801bf091ac0
+R13: ffff8801ce71f4f0 R14: ffff8801ce71f570 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200024c0 CR3: 0000000008e6a000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
