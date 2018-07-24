@@ -2,109 +2,115 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C795C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0BEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AEC420874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:30:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AEC420874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 654DD20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:32:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VoAQCPb8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654DD20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388468AbeGXMgt (ORCPT
+        id S2388520AbeGXMiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:36:49 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48864 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388298AbeGXMgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:36:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0EE980D;
-        Tue, 24 Jul 2018 04:30:47 -0700 (PDT)
-Received: from [10.4.12.165] (ostrya.emea.arm.com [10.4.12.165])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D76143F6A8;
-        Tue, 24 Jul 2018 04:30:45 -0700 (PDT)
-Subject: Re: [RFC PATCH 03/10] iommu/vt-d: Allocate groups for mediated
- devices
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-Cc:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>
-References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
- <1532239773-15325-4-git-send-email-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439CA143E@SHSMSX104.ccr.corp.intel.com>
- <5B568D5B.5050606@linux.intel.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <ccf6890a-30c6-770b-4299-8cabfdc32f2b@arm.com>
-Date:   Tue, 24 Jul 2018 12:30:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 24 Jul 2018 08:38:01 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:37650 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388319AbeGXMiB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 08:38:01 -0400
+Received: by mail-yb0-f194.google.com with SMTP id r3-v6so1480391ybo.4
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 04:32:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z78ND5nftUgqY8GaFw6j80HCAgnx0V2v4Z9DuPZlxtc=;
+        b=VoAQCPb8VgPSM4WjW/zgMuVty9spfjv81DJzduvq8cBLejZeU7DxnpFoe8PDCudkDd
+         lHx2MSEnbJqRxVgz2lwAidufxhTyFXr66wwnUC2Zg1IxmZU/mTOcuUyPP1kKKorC+L6S
+         ggbGWPulMOre6rt+8JPSa8awLorwlaar/hMR7JfO7y2Skb1SDRyAKPQh0QNxajbuASCY
+         RhAzA7JiJCcXy3EieURahhcfYIQxuafljlzZceGXx9hlEwxfBIrjSNx7maY3uftXbqwZ
+         IGpq4pOUFSc1iKZI814FKQuRo0ZbXERXSYMjDHI4q6wfQKL+a31qg+/KKzxvnTKy/in2
+         hWJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z78ND5nftUgqY8GaFw6j80HCAgnx0V2v4Z9DuPZlxtc=;
+        b=Z+5Xi5uwd1KqLnePuOUMEpDMs3snkjfGZh5lZNKYP2SAKLrMhtE2siIJe0+IV546co
+         e/4FtcX3UEWYK0KuAvmTf3/nAAYEghd+JC62YgUJD3Nu97enICnTuyLyRkwLDoWQJiUW
+         d4VE126eiYw/iqFhtrNvXqvEeuIqtqnfvIDHmESL4VYwQ3GXep9/jY5/QBPpypPKqo2O
+         65fqfJoTgq9K1f7Zi1qEfmW6NkuRP/7MmLF/YF/dcMo2TGyHotuiHcIbh/8HqaGauDlm
+         MrgM2fMjCgPLOScCfuQwcqp2AJ2YILFhoJBIQuVI6fpHeX3pkI2uyEQisV42cjS4DLfU
+         AdiQ==
+X-Gm-Message-State: AOUpUlGVVvq/kD3VTvDUs31ck9Kw7NshWMKZ5yxCqZlvsF90ES2M/4tD
+        2qa8yCKjrvwSDWA/DMYRIKE+X7ZlvJyhQ7Xyb8mL
+X-Google-Smtp-Source: AAOMgpcKpUeLvTJL/vyTwe2ZPcCFHxZEDgVIqy5YNHmuRXnDPGbJmuqPqrMNak4PCsFv+Z2TAFPPBzttKwFw7HyIq3Q=
+X-Received: by 2002:a25:4645:: with SMTP id t66-v6mr8838585yba.324.1532431919557;
+ Tue, 24 Jul 2018 04:31:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <5B568D5B.5050606@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180724093924.1752416-1-arnd@arndb.de>
+In-Reply-To: <20180724093924.1752416-1-arnd@arndb.de>
+From:   Bjorn Helgaas <bhelgaas@google.com>
+Date:   Tue, 24 Jul 2018 06:31:47 -0500
+Message-ID: <CAErSpo4wWZGgxWwjLjds7qh9UmMpas4G7jR8UK8AdL8gbfz-rA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: fix unused variable warning
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        james.puthukattukaran@oracle.com,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baolu,
+[+cc Anders]
 
-On 24/07/18 03:22, Lu Baolu wrote:
-> Hi,
-> 
-> On 07/23/2018 12:44 PM, Liu, Yi L wrote:
->>> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->>> Sent: Sunday, July 22, 2018 2:09 PM
->>>
->>> With the Intel IOMMU supporting PASID granularity isolation and protection, a
->>> mediated device could be isolated and protected by an IOMMU unit. We need to
->>> allocate a new group instead of a PCI group.
->> Existing vfio mdev framework also allocates an iommu group for mediate device.
->>
->> mdev_probe()
->>   |_ mdev_attach_iommu()
->>        |_ iommu_group_alloc()
-> 
-> When external components ask iommu to allocate a group for a device,
-> it will call pci_device_group in Intel IOMMU driver's @device_group
-> callback. In another word, current Intel IOMMU driver doesn't aware
-> the mediated device and treat all devices as PCI ones. This patch
-> extends the @device_group call back to make it aware of a mediated
-> device.
+On Tue, Jul 24, 2018 at 4:39 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The newly introduced function produces a warning without CONFIG_PCI_QUIRKS:
+>
+> drivers/pci/probe.c: In function 'pci_bus_read_dev_vendor_id':
+> drivers/pci/probe.c:2221:18: error: unused variable 'bridge' [-Werror=unused-variable]
+>
+> Move the variable declaration into that #ifdef to avoid the warning.
+>
+> Fixes: ac5ea104a279 ("PCI: Workaround IDT switch ACS Source Validation erratum")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I agree that allocating two groups for an mdev seems strange, and in my
-opinion we shouldn't export the notion of mdev to IOMMU drivers.
-Otherwise each driver will have to add its own "dev_is_mdev()" special
-cases, which will get messy in the long run. Besides, the macro is
-currently private, and to be exported it should be wrapped in
-symbol_get/put(mdev_bus_type).
+Fixed already with a patch from Anders Roxell
+<anders.roxell@linaro.org>, thanks!
 
-There is another way: as we're planning to add a generic pasid_alloc()
-function to the IOMMU API, the mdev module itself could allocate a
-default PASID for each mdev by calling pasid_alloc() on the mdev's
-parent, and then do map()/unmap() with that PASID. This way we don't
-have to add IOMMU ops to the mdev bus, everything can still be done
-using the ops of the parent. And IOMMU drivers "only" have to implement
-PASID ops, which will be reused by drivers other than mdev.
-
-The allocated PASID also needs to be installed into the parent device.
-If the mdev module knows the PASID, we can do that by adding
-set_pasid(mdev, pasid) and clear_pasid(mdev, pasid) operations to
-mdev_parent_ops.
-
-Thanks,
-Jean
-
+> ---
+>  drivers/pci/probe.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 1c581346c5b9..7a5323798312 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -2218,9 +2218,9 @@ bool pci_bus_generic_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
+>  bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
+>                                 int timeout)
+>  {
+> +#ifdef CONFIG_PCI_QUIRKS
+>         struct pci_dev *bridge = bus->self;
+>
+> -#ifdef CONFIG_PCI_QUIRKS
+>         /*
+>          * Certain IDT switches have an issue where they improperly trigger
+>          * ACS Source Validation errors on completions for config reads.
+> --
+> 2.18.0
+>
