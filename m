@@ -2,179 +2,152 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D268CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 624C9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7757C20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:35:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="s+t3jJVL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7757C20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B94620852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:35:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B94620852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388730AbeGXPl7 (ORCPT
+        id S2388743AbeGXPmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:41:59 -0400
-Received: from mail-db5eur01on0073.outbound.protection.outlook.com ([104.47.2.73]:54784
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        Tue, 24 Jul 2018 11:42:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39120 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388373AbeGXPl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:41:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DQmrkn+xqWRJpUyQ7kOMoOCi/0VTufhJ5eGVcbfZvY8=;
- b=s+t3jJVLVADSqKm7vH05nkJNLg21wjxbfVw0z6CTAUOARH7xRxL8BcL8UEmoAIXi0dJW2Y2pZ2M49BRlsu8zcKXK70r2Fhe+32t6y7E8Vn3IJtLKdldGoJPGpQaOZSB/SNXFxzZwyWaBkojIXj4b622A1bOr1E3W5TRmt+TlHDA=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3901.eurprd04.prod.outlook.com (52.134.17.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.16; Tue, 24 Jul 2018 14:35:09 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::197e:c4f9:bb4d:e560]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::197e:c4f9:bb4d:e560%2]) with mapi id 15.20.0973.018; Tue, 24 Jul 2018
- 14:35:09 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Roy Pledge <roy.pledge@nxp.com>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Leo Li <leoyang.li@nxp.com>
-CC:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        id S2388373AbeGXPmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:42:17 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7DEEC406E81C;
+        Tue, 24 Jul 2018 14:35:30 +0000 (UTC)
+Received: from [10.36.117.134] (ovpn-117-134.ams2.redhat.com [10.36.117.134])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4A0B5178B2;
+        Tue, 24 Jul 2018 14:35:28 +0000 (UTC)
+Subject: Re: [PATCH] KVM/MMU: Combine flushing remote tlb in mmu_set_spte()
+To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
+Cc:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to
- drivers/soc/fsl
-Thread-Topic: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to
- drivers/soc/fsl
-Thread-Index: AQHUI1mrEl9vWR1sTE+GgmvQr4KFqg==
-Date:   Tue, 24 Jul 2018 14:35:09 +0000
-Message-ID: <VI1PR0402MB3485147A99F219D5FA1B668B98550@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <20180724142131.28970-1-roy.pledge@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3901;6:2vA/HLgDWPqzYWKINhYDSKMkDSf69YNI+V6XLr4Wub+L2IjyD8OUBjMdTl/f6iDGWKrMrYvldt/krhN7QJtoYnwuoj+7Tf3DYqfmEWgDyRT7iwGUY6lKMqM7DvRZaBsB1aqVkGhNsGn0uOBRYSRXH6CBDkNC2v13spwiBC3m29K5w4KLZkAXmQhSBJPfEg65nhqNlJMdpTylFYu2QpYYEhfIW5zUO0ciWzOHq52zXufjZ/9MDKaG6XhQjd8Lt2dK3LhRbHUbpBF6w2GP8BlPDe8/BXeX72jITZhDqLOyEkBP5HoA3wvkUUq8L6/43tfd+ohW0Lpc04DjJ0TiGDV1LIYeqtJv3IAgXyGpAr5FO2o6vAqZ15fxmBVYPs9v6IH21BItR+muVlugUxDRcTv8ikp2daW9FrKLeFtziO7keFvvQtf2fPpPf462aVB+YwsU6j3S4+Xu84hNwyXG+2q7ZA==;5:19aaJ9QRI7l1VbKgqZ0rGoVndE4Z47MZHKr8n8sZoiesQkNUA7zuVw3y6oB4Smy39pwSG75KysxXSXeadf5nt3HYEDJdsbDLa9KO6T/+Z5DPKfFq84CIEVtg3tZ18eS/pszonSO2cWRYFyjY7Zxbh9aCKka2uZyMhA5BrqlEoqU=;7:h/zPcb580G6Ltqmn5RVxdg/WTYVSRPUyXr1dRblbw3rJjvsMUzIwsw8mOVegGUAfBMzoQOBfzPr/53RTUDSxeY6SA6p2GY1Xm7ZCeFFAmfjAqUVKmJD78HK3o7xXNRTvgmkvEAhLA8j9zAIj/rERbdexgnORMtKgyzr0IU6yri6OKde+oug7SSdana7lET5/YYJ8ReD+VRfMy7TNlniSJYsMHMYHrxAQUxuUekd6GXbRmSHM7bmnhEidCO9CxAMu
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 6193e5ca-dba2-478c-856c-08d5f172a88e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3901;
-x-ms-traffictypediagnostic: VI1PR0402MB3901:
-x-microsoft-antispam-prvs: <VI1PR0402MB3901424F57983936C01A9CBB98550@VI1PR0402MB3901.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:VI1PR0402MB3901;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3901;
-x-forefront-prvs: 0743E8D0A6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(376002)(396003)(136003)(189003)(199004)(256004)(14444005)(66066001)(478600001)(53546011)(6436002)(6506007)(5250100002)(25786009)(33656002)(26005)(102836004)(99286004)(229853002)(7696005)(2900100001)(316002)(5660300001)(3846002)(74316002)(55016002)(6636002)(2501003)(97736004)(14454004)(54906003)(8676002)(8936002)(81166006)(81156014)(6116002)(110136005)(2201001)(305945005)(106356001)(7736002)(4326008)(6246003)(68736007)(2906002)(446003)(53936002)(76176011)(476003)(9686003)(44832011)(105586002)(486006)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3901;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Rm2GAcYhykwGvEy05Af0nmNS7w2xyxkYNZC2jfOHNJNhjdkTHeJ173ete1p+sZC3x4HxKE3sjh49piB0vYdEbclZFKd6k+j3dH6cbWMRXb0PcEL02Nv6kK1YuMig9PQNrO3kdrst0ZV1D/jTaamywYJe6B/pGghd26qdOOrGPn2n7qp9B+OoE0SFmclPLcz2U2tx2eOjqp5z+wLaCwLYz94+OHd78EA7xqYvZiG9QmPIR9B7qCGsxgW3Jwngz6I12Wulx+Mc1QgDcp+S3vBQKlX1KhERl985lQGLvVaz+sDSMi6CwTgkgRhLXkAxbSbkaBlKCbT3X5v2ySKWn0svc8iqXIceQa06NKkT5cPtpro=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>,
+        Junaid Shahid <junaids@google.com>
+References: <1532420205-29930-1-git-send-email-Tianyu.Lan@microsoft.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1aaaecab-0e18-f504-5465-06db9d852cc5@redhat.com>
+Date:   Tue, 24 Jul 2018 16:35:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6193e5ca-dba2-478c-856c-08d5f172a88e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2018 14:35:09.7770
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3901
+In-Reply-To: <1532420205-29930-1-git-send-email-Tianyu.Lan@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 24 Jul 2018 14:35:30 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 24 Jul 2018 14:35:30 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/24/2018 5:21 PM, Roy Pledge wrote:=0A=
-> Move the NXP DPIO (Datapath I/O driver) from the staging/fsl-mc/bus/dpio=
-=0A=
-> directory to the drivers/soc/fsl directory.=0A=
-> =0A=
-> The DPIO driver enables access to the Queue and Buffer Managemer (QBMAN)=
-=0A=
-> hardware of NXP DPAA2 devices. This is a prerequiste for moving the DPAA2=
-=0A=
-> Ethernet device driver from the staging directory.=0A=
-> =0A=
-For the series:=0A=
-Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
-=0A=
-> Horia Geant=E3 (1):=0A=
->   staging: fsl-dpaa2/eth: move generic FD defines to DPIO=0A=
-> =0A=
-> Roy Pledge (3):=0A=
->   staging:fsl-mc: Move DPIO from staging to drivers/soc/fsl=0A=
->   drivers/staging: Remove fsl-mc driver from staging=0A=
->   drivers/soc/fsl/dpio: Convert DPIO documentation to .rst=0A=
-> =0A=
->  .../networking/dpaa2/dpio-driver.rst               | 29 ++++++++++++++++=
-+++---=0A=
->  Documentation/networking/dpaa2/index.rst           |  1 +=0A=
->  MAINTAINERS                                        |  2 +-=0A=
->  drivers/crypto/caam/sg_sw_qm2.h                    |  2 +-=0A=
->  drivers/crypto/caam/sg_sw_sec4.h                   |  2 +-=0A=
->  drivers/soc/fsl/Kconfig                            | 10 ++++++++=0A=
->  drivers/soc/fsl/Makefile                           |  1 +=0A=
->  .../{staging/fsl-mc/bus =3D> soc/fsl}/dpio/Makefile  |  0=0A=
->  .../fsl-mc/bus =3D> soc/fsl}/dpio/dpio-cmd.h         |  0=0A=
->  .../fsl-mc/bus =3D> soc/fsl}/dpio/dpio-driver.c      |  2 +-=0A=
->  .../fsl-mc/bus =3D> soc/fsl}/dpio/dpio-service.c     |  2 +-=0A=
->  .../{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio.c    |  0=0A=
->  .../{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio.h    |  0=0A=
->  .../fsl-mc/bus =3D> soc/fsl}/dpio/qbman-portal.c     |  2 +-=0A=
->  .../fsl-mc/bus =3D> soc/fsl}/dpio/qbman-portal.h     |  2 +-=0A=
->  drivers/staging/Kconfig                            |  2 --=0A=
->  drivers/staging/Makefile                           |  1 -=0A=
->  drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c     |  4 +--=0A=
->  drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h     | 22 ++++++----------=
-=0A=
->  drivers/staging/fsl-mc/Kconfig                     |  2 --=0A=
->  drivers/staging/fsl-mc/Makefile                    |  3 ---=0A=
->  drivers/staging/fsl-mc/bus/Kconfig                 | 16 ------------=0A=
->  drivers/staging/fsl-mc/bus/Makefile                |  9 -------=0A=
->  .../fsl-mc/include =3D> include/soc/fsl}/dpaa2-fd.h  | 12 +++++++++=0A=
->  .../include =3D> include/soc/fsl}/dpaa2-global.h     |  0=0A=
->  .../fsl-mc/include =3D> include/soc/fsl}/dpaa2-io.h  |  0=0A=
->  26 files changed, 66 insertions(+), 60 deletions(-)=0A=
->  rename drivers/staging/fsl-mc/bus/dpio/dpio-driver.txt =3D> Documentatio=
-n/networking/dpaa2/dpio-driver.rst (95%)=0A=
->  rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/Makefile (100%)=0A=
->  rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-cmd.h (100%)=
-=0A=
->  rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-driver.c (99%=
-)=0A=
->  rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-service.c (99=
-%)=0A=
->  rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio.c (100%)=0A=
->  rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio.h (100%)=0A=
->  rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/qbman-portal.c (99=
-%)=0A=
->  rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/qbman-portal.h (99=
-%)=0A=
->  delete mode 100644 drivers/staging/fsl-mc/Kconfig=0A=
->  delete mode 100644 drivers/staging/fsl-mc/Makefile=0A=
->  delete mode 100644 drivers/staging/fsl-mc/bus/Kconfig=0A=
->  delete mode 100644 drivers/staging/fsl-mc/bus/Makefile=0A=
->  rename {drivers/staging/fsl-mc/include =3D> include/soc/fsl}/dpaa2-fd.h =
-(97%)=0A=
->  rename {drivers/staging/fsl-mc/include =3D> include/soc/fsl}/dpaa2-globa=
-l.h (100%)=0A=
->  rename {drivers/staging/fsl-mc/include =3D> include/soc/fsl}/dpaa2-io.h =
-(100%)=0A=
-> =0A=
+On 24/07/2018 10:17, Tianyu Lan wrote:
+> mmu_set_spte() flushes remote tlbs for drop_parent_pte/drop_spte()
+> and set_spte() separately. This may introduce redundant flush. This
+> patch is to combine these flushes and check flush request after
+> calling set_spte().
+> 
+> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+
+Looks good, but I'd like a second opinion.  Guangrong, Junaid, can you
+review this?
+
+Thanks,
+
+Paolo
+
+> ---
+>  arch/x86/kvm/mmu.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index 22a7984..8f21632 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -2901,6 +2901,7 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, u64 *sptep, unsigned pte_access,
+>  	int rmap_count;
+>  	int set_spte_ret;
+>  	int ret = RET_PF_RETRY;
+> +	bool flush = false;
+>  
+>  	pgprintk("%s: spte %llx write_fault %d gfn %llx\n", __func__,
+>  		 *sptep, write_fault, gfn);
+> @@ -2917,12 +2918,12 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, u64 *sptep, unsigned pte_access,
+>  
+>  			child = page_header(pte & PT64_BASE_ADDR_MASK);
+>  			drop_parent_pte(child, sptep);
+> -			kvm_flush_remote_tlbs(vcpu->kvm);
+> +			flush = true;
+>  		} else if (pfn != spte_to_pfn(*sptep)) {
+>  			pgprintk("hfn old %llx new %llx\n",
+>  				 spte_to_pfn(*sptep), pfn);
+>  			drop_spte(vcpu->kvm, sptep);
+> -			kvm_flush_remote_tlbs(vcpu->kvm);
+> +			flush = true;
+>  		} else
+>  			was_rmapped = 1;
+>  	}
+> @@ -2934,7 +2935,7 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, u64 *sptep, unsigned pte_access,
+>  			ret = RET_PF_EMULATE;
+>  		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
+>  	}
+> -	if (set_spte_ret & SET_SPTE_NEED_REMOTE_TLB_FLUSH)
+> +	if (set_spte_ret & SET_SPTE_NEED_REMOTE_TLB_FLUSH || flush)
+>  		kvm_flush_remote_tlbs(vcpu->kvm);
+>  
+>  	if (unlikely(is_mmio_spte(*sptep)))
+> 
+
