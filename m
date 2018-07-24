@@ -2,147 +2,114 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1927CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A2DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C798C20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:24:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C798C20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 36B5120856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B5120856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388455AbeGXI3Q convert rfc822-to-8bit (ORCPT
+        id S2388456AbeGXIao (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 04:29:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39260 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388264AbeGXI3Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 04:29:16 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6O7EXSk129522
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 03:24:11 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kdvrp7kdq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 03:24:11 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Tue, 24 Jul 2018 08:24:09 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 24 Jul 2018 08:24:06 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6O7O5cn32309408
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Jul 2018 07:24:05 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3F9F1A4051;
-        Tue, 24 Jul 2018 10:24:20 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 050F1A404D;
-        Tue, 24 Jul 2018 10:24:20 +0100 (BST)
-Received: from mschwideX1 (unknown [9.145.77.38])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 24 Jul 2018 10:24:19 +0100 (BST)
-Date:   Tue, 24 Jul 2018 09:24:03 +0200
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.18-rc6
-In-Reply-To: <25151348-ce12-f754-876c-8b39b23d16a1@de.ibm.com>
-References: <CA+55aFzMheDA-2z=MdGgJrz-REcrknb+4OEvRKaJipm+x6xEhw@mail.gmail.com>
-        <20180723204617.GA14487@roeck-us.net>
-        <CA+55aFyuaEGGksOxv3aAp0THYkAapap-JY65A0A81S0qUE0S+g@mail.gmail.com>
-        <20180723212330.GA7441@roeck-us.net>
-        <CA+55aFw3tRe70mUgV70oi6xBwSLx0h_supRGoNUHgrcSGxUgeg@mail.gmail.com>
-        <20180724081845.1cc4c9d8@mschwideX1>
-        <25151348-ce12-f754-876c-8b39b23d16a1@de.ibm.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-X-TM-AS-GCONF: 00
-x-cbid: 18072407-0012-0000-0000-0000028DF2C3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072407-0013-0000-0000-000020BFD26C
-Message-Id: <20180724092403.332125ff@mschwideX1>
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        Tue, 24 Jul 2018 04:30:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54640 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388390AbeGXIao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 04:30:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CCC4AACBF;
+        Tue, 24 Jul 2018 07:25:37 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 09:25:36 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
+        <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
+Message-ID: <20180724072536.GB28386@dhcp22.suse.cz>
+References: <20180720123422.10127-1-david@redhat.com>
+ <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
+ <20180723123043.GD31229@dhcp22.suse.cz>
+ <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=946 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807240077
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 09:15:58 +0200
-Christian Borntraeger <borntraeger@de.ibm.com> wrote:
-
-> On 07/24/2018 08:18 AM, Martin Schwidefsky wrote:
-> > On Mon, 23 Jul 2018 16:17:22 -0700
-> > Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> >   
-> >> On Mon, Jul 23, 2018 at 2:23 PM Guenter Roeck <linux@roeck-us.net> wrote:  
-> >>>    
-> >>>>
-> >>>> Martin - can we just remove the
-> >>>>
-> >>>>          select HAVE_GCC_PLUGINS
-> >>>>
-> >>>> from the s390 Kconfig file (or perhaps add "if BROKEN" or something to
-> >>>> disable it).
-> >>>>
-> >>>> Because if it's not getting fixed, it shouldn't be exposed.
-> >>>>    
-> >>> The problem only affects 4.18 - the code has been rearranged in -next.
-> >>> Only, in my builders, I can't disable a flag for individual releases,
-> >>> so I just disabled it completely for s390.    
+On Mon 23-07-18 19:20:43, David Hildenbrand wrote:
+> On 23.07.2018 14:30, Michal Hocko wrote:
+> > On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
+> >> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
+> >>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
+> >>> So reserved pages might be access by dump tools although nobody except
+> >>> the owner should touch them.
 > >>
-> >> Well, I'm not going to release a 4.18 with a known problem, so in 4.18
-> >> this *will* be disabled if it's not fixed.
-> >>
-> >> The fact that it might be fixed in linux-next is entirely immaterial
-> >> to the release of 4.18.  
+> >> Are you sure about that? Or maybe I understand wrong. Maybe it changed
+> >> recently, but IIRC pages that are backing memmap (struct pages) are also
+> >> PG_reserved. And you definitely do want those in the dump.
 > > 
-> > Ok, if gcc with the plugins and an allmodconfig is considered to be
-> > important enough to warrant a fix, it can be pulled from here:
+> > You are right. reserve_bootmem_region will make all early bootmem
+> > allocations (including those backing memmaps) PageReserved. I have asked
+> > several times but I haven't seen a satisfactory answer yet. Why do we
+> > even care for kdump about those. If they are reserved the nobody should
+> > really look at those specific struct pages and manipulate them. Kdump
+> > tools are using a kernel interface to read the content. If the specific
+> > content is backed by a non-existing memory then they should simply not
+> > return anything.
 > > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
-> > 
-> > Martin Schwidefsky (1):
-> >       s390: disable gcc plugins
-> > 
-> > Once that is in I will create another patch to undo this one and place
-> > it after the early boot rework.  
 > 
-> On the list a different fix was proposed about 2 weeks ago,
+> "new kernel" provides an interface to read memory from "old kernel".
 > 
-> something like
+> The new kernel has no idea about
+> - which memory was added/online in the old kernel
+> - where struct pages of the old kernel are and what their content is
+> - which memory is save to touch and which not
 > 
-> CFLAGS_als.o += $(DISABLE_LATENT_ENTROPY_PLUGIN)
+> Dump tools figure all that out by interpreting the VMCORE. They e.g.
+> identify "struct pages" and see if they should be dumped. The "new
+> kernel" only allows to read that memory. It cannot hinder to crash the
+> system (e.g. if a dump tool would try to read a hwpoison page).
 > 
-> and I prefer that. Because your patch disables all gcc plugins.
+> So how should the "new kernel" know if a page can be touched or not?
 
-This change would cause trouble with patch dependencies as als.c is moved
-to a different directory. I would prefer to disable all gcc plugins for
-4.18.
+I am sorry I am not familiar with kdump much. But from what I remember
+it reads from /proc/vmcore and implementation of this interface should
+simply return EINVAL or alike when you try to dump inaccessible memory
+range.
+ 
+> The *only* way would be to have an interface to the hypervisor where we
+> "sense" if a memory location is safe to touch. I remember that xen or
+> hyper-v does that - they fake a zero page in that case, after querying
+> the hypervisor. But this does not sound like a clean approach to me,
+> especially es we need yet another hypervisor interface to sense for
+> memory provided via "some" device.
+> 
+> If we can find a way to just tag pages as "don't touch", it would be the
+> easiest and cleanest solution in my opinion.
 
+If only we could have much more spare room in struct pages...
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+Michal Hocko
+SUSE Labs
