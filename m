@@ -2,284 +2,148 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E34C1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAC3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B5F320880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:15:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EF1220880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:18:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="J/+P54Q6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5F320880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ae+LtCn6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EF1220880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388672AbeGXRWf (ORCPT
+        id S2388441AbeGXRZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:22:35 -0400
-Received: from mail-eopbgr80070.outbound.protection.outlook.com ([40.107.8.70]:43936
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388321AbeGXRWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:22:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ND4YWGkHWotnvSOJ36ySVVbPGq7f7PkYyTJaPsqrfDU=;
- b=J/+P54Q6YzccAKVWR/gwk7cgGSSr4sc7ZdhyOU21zpcWtFpwwMSKFJ4RpSxX0eVWFyOmgTHDutxjw/BGL403VqtorwwysmW68HMDH3eEmvrhvzwOKpcVsY7CwctBidyJWnrTEtGcuwi6tjvllp7OY4FxAbfBX2XV7LlCqMRsdbU=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-Received: from localhost.localdomain (95.76.156.53) by
- AM0PR04MB4290.eurprd04.prod.outlook.com (2603:10a6:208:67::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.21; Tue, 24 Jul 2018 16:15:13 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Anson Huang <Anson.Huang@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] PCI: imx: Initial imx7d pm support
-Date:   Tue, 24 Jul 2018 19:14:20 +0300
-Message-Id: <acafccc294f15a281cf1d253c15a3eec2d1c8cc5.1532448745.git.leonard.crestez@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1532448745.git.leonard.crestez@nxp.com>
-References: <cover.1532448745.git.leonard.crestez@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [95.76.156.53]
-X-ClientProxiedBy: AM3PR05CA0137.eurprd05.prod.outlook.com
- (2603:10a6:207:3::15) To AM0PR04MB4290.eurprd04.prod.outlook.com
- (2603:10a6:208:67::17)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d6f0d4d7-a093-45ed-6078-08d5f180a391
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600073)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4290;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4290;3:7LmRvPp+IbC+flaOiLySQJAD5xSSC4PsSllTvwK4aFsx3Gp+lYZsHznPn2EgMPFhVrLhMYXxn3QQCptlEm/iZoDVg1DOTZ0DUP99PzneTC3Qz8HITCtLwosgT1O058gCTWUEVDtJTA6wDO6kmoLIgcgYefib3YlMj5gcuhXXHnjtyZ5HPI3EPAj3lFHkq/TOzateK0+DvVy1E1BgaVw73j3KpNdBqsEAz+Ok0fgus4PlThGdRYa9rYqCxCyn3cLr;25:ifVi7l5yVDqMeSb5p0kKDIsuhxiDncO3VjAfYMXfPBalKSQul++2mQNR/D5KL2P+nTfARg/+b6KYnYNj0LZFNBQi5fQH64BBEi6gjZyVVZU/LmQh4Mx6cf+Zak/y38AdgsEAsxYIcVx5vRSSYA7XyBngfglpRuAC5d7N1oDrbGFYyVdbFgvaIYRBxIzb61gMKO9ub8x/5Vdmnzwbyuwr3pujbymTDLZ4HlrLth3D6zEKobqqsQVzzlyodXYSipb9CawQdHuUUSXrlORNap/mYp3KkdYg3b5BwDafCIGPCSmkan2B8LepIheJ/tNjbxXHU1CqCb3qLnBPcylP7E721g==;31:VUlj62MsQVrtnN323XWfDinAvZ102C7whAZffKygme1tL3fPzGHdOyX3kdaCw0Ho8A3QcaQZejo/lKokn9+CwLPq9FRqktfjTGed6m6WbPhZK5OwDpolLIokLmL3CY1yoLMUO7bCfh2t913/Dk7fdLb5oZ1G9HdeB6Wqu4s1Qp/Oza+R8UzgHgz4Duk+uN5qT0zYpAOGxFmp7sMMC2TR45ruM1laUprwmrGcnreZ3cY=
-X-MS-TrafficTypeDiagnostic: AM0PR04MB4290:
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4290;20:dUasxGyVZor3naTUWe2iIsQJMjaCsCNATu/hC85QqKXsAyV6zZragmI9XbS608iBEIRuuSEZuZvshXvLDKfXtORZpsTLpkgT8vWKo454jhBkJhQs+NBTi3ma/Ay6n5wyct248BKv+U9CQ1V5NY+RuPMYhJ3myRWDbjdnRNIi/RHDx0nG9OLQj+gkBMO96xaP2vPtZA/hKSprDNt4R4qociWQFHFhsq1upaI5Q46eR2B+dJXhi4zrak5RBnTHzT3iVD+EA+4v3Od36VQ+vRLQe+mpI/AN4u+G4kZKjA4+RVssdVbEykYCFXzeab7TrAF+ujNoO4ZjYH2DkKZdBy9mo4FCUW0vu+Ed8OkArqoXa+ZECevRJcjSakAbsFXfk+fwYW1XineUIpD7lNAAVcoMEsokiXqeYWrV76yDgIxPEIXhvJw1hubBwJdu5bk7FOe0Xfwu2ueRkBnAyQq02BMvq/yeGCjVZ9X7loecCM07bwkAQaPB/VfQzRwMt8LDRHN6;4:uSyUr0fbB46C3IysdUaMMH5CVMlgMTcOTO3G+Bed1eXwIVEYO9k4qYDn5p4aTfHHQfcMMETSyThVPln7YN3jKXvD5vCjWPM3I9ap5oO+Xoda5VAhyvdbIfWsgHeJOWsKsGFcbSwlHiw60AqIrdSYz1K/m9ksoxZDdjL+3PaTQ9EKGRMV0rU0Be/jl5RbyyvYgODj15y43CGY0tGY8YBDWkvADtkdcw8JroKaGASgaFXTFNfiM6tOMTTQq3c+Z6r1yhva2n/VlDNAqU4wGMe/+CHnIgYrH8UGOovO5DE7G6u70x5tMJebIQkFKRlHSrmo
-X-Microsoft-Antispam-PRVS: <AM0PR04MB429039219CDDDF4B834A0CBFEE550@AM0PR04MB4290.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4290;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4290;
-X-Forefront-PRVS: 0743E8D0A6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(376002)(366004)(39860400002)(346002)(136003)(189003)(199004)(446003)(44832011)(86362001)(11346002)(54906003)(81156014)(50226002)(47776003)(97736004)(81166006)(2906002)(110136005)(8676002)(14444005)(316002)(16586007)(4326008)(16526019)(8936002)(25786009)(305945005)(486006)(66066001)(39060400002)(2616005)(186003)(6506007)(386003)(6116002)(3846002)(7416002)(118296001)(68736007)(53936002)(76176011)(476003)(7736002)(26005)(52116002)(6512007)(51416003)(106356001)(36756003)(5660300001)(6666003)(105586002)(50466002)(956004)(6486002)(478600001)(48376002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4290;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4290;23:FjIlKAYxt3n7dZv4/bChJDc9s6HStkVKa44JLMFZP?=
- =?us-ascii?Q?OC2HnfSq38rWS56yMMswFW51rfQflUuMewwWKPumMRtelb7Pem/T1vbBta/H?=
- =?us-ascii?Q?ASSCNi/5s1aWfLfa2S1oBe+P5qMVBbI2Q5rY70zEZkGfXywNXhZXNk+lGL+Y?=
- =?us-ascii?Q?6emwchiZNK0gcktFCND1Hdo71GBDFvTriu6kX4ZbkM2RbExqcIeoCBQ0XK00?=
- =?us-ascii?Q?IhKaWAIsLoIrhGut8i9li8qIaT2ikz8MVH+g+u0NEubAP2IRxe5Wx6uRnTAZ?=
- =?us-ascii?Q?9seAOmZPnY4aqpZGLdb7ozk0/Ohm0HlGb3WL3PbqFyBa+PW2kfRtODC7Cdlp?=
- =?us-ascii?Q?E0bUNOXNZ0t2Uq5LHF68ALA7eSkpaini9mkajJw8e1xQIEkJGvJZ3DfYkfem?=
- =?us-ascii?Q?hHQV1x5gZL8SoKWeSoOsqAxVuefhP9JVvmssQoClfwRIP2Ew6L7MnJrAR7G3?=
- =?us-ascii?Q?OaENXOz+ePxMlfoAfGkxLJz+olHKikMuxWQJmzOfq32SUY5TQceJxkqZWwLI?=
- =?us-ascii?Q?sALyl2Kwrxp4W2QdnR8tEZecijY19gGMC57n7K26K8FpYAbFRgRK/YxLKYlV?=
- =?us-ascii?Q?aQZk8j6I/bPJptirBmmpciI+hQIKKGRFmkss0krj8RPZcJXBntXDoZXAby9T?=
- =?us-ascii?Q?I31voZbWRdFBhWEF9+D9wYTLbG4b7mcTbKEo0t7WZhmx9pGFx9RPMgRgqihB?=
- =?us-ascii?Q?A4iVCWs0IWCoDgj/CZwsBAtUAgueMujt8U71+KdV8iAXtGQcjU/R63roIaPG?=
- =?us-ascii?Q?rHhBqTXKUtYfF9G+k17tp6TwSzSN7M6GKE7/m6GeHBLSbI9N/u609ecbJO5w?=
- =?us-ascii?Q?W35ZBl4ondG/m+0lpUJ3/cDPsRG+ETEknS4bvrE+bQkjFUKk7XZi/nlp+Gm9?=
- =?us-ascii?Q?qj3Q8Ei46PN/R1RdwC6GfWAyQFnw4PyrABowZvRYKyXwB0vGSfMMjRx4clx5?=
- =?us-ascii?Q?T6AEgx+CYCcZ/XG2rzu0K+YxHuZqGBcFnwReCqeZirLFLYhtWjpx9zQNrdMM?=
- =?us-ascii?Q?VQqTVr49xfhS1CEdI/Nq7546uJwHzFrzCuXc+6h/yMxDucQ7RkAdhB7dTUdV?=
- =?us-ascii?Q?lAT0sRPMPWfoiB5jvuP4EnnDM9ljKhQqMOY/AWgp5jnRwoYPO5SNZ7wGrDzk?=
- =?us-ascii?Q?PHuCKBOAR9T7xJ4EWdcWvHZIHbnJ5cUuqnnVotX2NcAUNfXnSewhuHhRxwuo?=
- =?us-ascii?Q?NSPY0MvBbppkW9BWlCBLI3nLBGqYMot6hTV4q5TRhhPgJpCRpr96q0Uxtpys?=
- =?us-ascii?Q?WcpaOiBbBaUxzw0EqSiMKpX2UPjW6W7algHW78XsC1sFzYJpWx+z+Lf30QuW?=
- =?us-ascii?Q?9xIZUJxnYaDvvjrOCRpjjU=3D?=
-X-Microsoft-Antispam-Message-Info: Z/AYVLXA2P1hidVapOXos9nfDBSRfoFlVayhup8x2vB7yaLjd8fvNl1xoNHEUcMkZzVTKesntNtn7U+RID6tWiHZDzj568xVK+w4oDY5KwSWFpoL25OmDvgw3U3HQA3Y0j5brgVinYc08Hm8qskDtjbMTJQCoP7DF/6L1txTi7BXcZRYZ3ER5x2s0WXZeB4072sNg6UxxXAAQtFV7kHbnPz5NEV4Noi1DbHM+g3xv+e6XJCb8o1J+7bPSMZ0YsVb4x/L4UHVzICf8BnmnegwgiopRYJoUhOg3RQI2SHX4QOA/0MUaTBhAj9NWnwURAR+5LKWYy1cKFEko4aUXtkhUomBDlcN9IbxJRx7ZOTnv6o=
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4290;6:AE5PVSFdfF7BveTvzxsdixKlTcAFn0LDOIe07VSs43e8ZVlzxvJTDNAWnD+wyOP4qmpFqP+8XKijDr/x8dG6U3/u7I40x6leF3bEUDvzovCB0qX9DcA4ivl9EAvGiwSs/j0jYhcGKA+OBeQzYldaIyFp9jPx1+mwhSa7tRIUiXHGFeC8xGEdaK5s2A066ya7IAZSxQypTmTGgXym9WnqdU+xpTh+/0L352XjUQjMrV0osKdA4+ChmGckm/f6uQbBc+bawgjSlOC3JhR9RfhNwCtoxCF/Pl7xjMy9h6UCSF88D6mXeB+G3cGb1CQdVdvd0cqT+Hm48PrH/F23bDKblHNn+79Ju7SROfaBj4yA9MLbDQTzMQXciJBRSUdezPAQQ8uOWWoECshuCx+6/S2DBd9RB7kI4WiF+lX019oXDh8n/LHVPP9xtbv5YGsxAICUKCJJOfVaRSgN+PXKSaCgJg==;5:uIzElYlSfAZlxxeOT+gRPuJF9FoqMkTZQ06E5n2C2rwjr+OOQ5NBwJyLIgX6O7nZUXSgy5Vp48r4QFRWBYCXSkakHnPNfmsTzDRcBuxB8CJLKDzziETfzIFjU98G58X1rE07c6Ig5y+nEDZoj/noQeOKrdSwtndatcO9Q5AsDQE=;7:1xzoGDSaZAKj7qMm6rvs6GEGNipsF6ol0uox6tVu1jwgS9FUkME7NTA4ySTH8EFZnX/Fbs+4tNtfWysNoP2ozDbAceYyRd0c8cbcJ2/sez+fe0FipzzmZ3jw6yV2GtkSbZ8apb9VUcDzw8tannxm5dqYOA4+bTt/9GIYmkuwDG2mhMRM28eXY9PJlsHUiKxbAZF+TG5N+SOygS8vb0tYES0GNotl+yqZ+w7SQkvKa5HDgFb+NBNOvAuynhCiFJ/W
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2018 16:15:13.6208
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6f0d4d7-a093-45ed-6078-08d5f180a391
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4290
+        Tue, 24 Jul 2018 13:25:19 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40233 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388366AbeGXRZS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 13:25:18 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180724161804euoutp01c32a0a0970d4a8fc9e0e83592b06123f~EWlLGulk82849428494euoutp01n;
+        Tue, 24 Jul 2018 16:18:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180724161804euoutp01c32a0a0970d4a8fc9e0e83592b06123f~EWlLGulk82849428494euoutp01n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1532449084;
+        bh=Fp5n6oDLo1PaVkIWRUaQdMOnIiSaeNydBNzb5U6OBhw=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=ae+LtCn6rGV4Ie3Xet7NdatJ1T+FoMbQCtKnaRpn0FFTOsVKkARJH0i9SfwUYMTvu
+         8hW7kCakNYNFNXiqYXenM+gw/FoVRa1nGJIycHHTJ01ycwSbWsaREPyXiBLMJPN3Um
+         P1NQ932sFxP+zyU4QXtxDefKeWKwgJCHNMaEnzdU=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180724161804eucas1p2ce6123b1c2501483892a58c3cc556536~EWlKjrZmc1785117851eucas1p2p;
+        Tue, 24 Jul 2018 16:18:04 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 2E.B1.05751.B31575B5; Tue, 24
+        Jul 2018 17:18:03 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180724161803eucas1p1a3e999a91b24eeb04d70807f1304b08e~EWlJygRPD2716327163eucas1p12;
+        Tue, 24 Jul 2018 16:18:03 +0000 (GMT)
+X-AuditID: cbfec7f4-c47ff70000001677-25-5b57513bad59
+Received: from eusync3.samsung.com ( [203.254.199.213]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 12.69.04183.B31575B5; Tue, 24
+        Jul 2018 17:18:03 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync3.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PCD003LGPA3NN60@eusync3.samsung.com>; Tue, 24 Jul
+        2018 17:18:03 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+Subject: Re: [PATCH v2] console: Replace #if 1 with a bool to ignore
+Date:   Tue, 24 Jul 2018 18:18:02 +0200
+Message-id: <2838511.fdTZ0RgijS@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <1582481.BL9yPUoula@amdc3058>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djPc7rWgeHRBpf2W1jMWb+GzeL/tonM
+        Fle+vmezeHN8OpPFib4PrBaXd80BSjz+ymqxr+MBk8WjCZOYLNZ+fsxuseXNRFYHbo+93xaw
+        eOycdZfdo2XfLXaPEzN+s3jc7z7O5PF+31U2j/VbrrJ4bD5d7fF5k1wAZxSXTUpqTmZZapG+
+        XQJXxqQr8xgLtnNXtLw4ydTAuICzi5GTQ0LAROLl4u0sILaQwApGiQdtlV2MXED2Z0aJD1Om
+        s8MUTTz7jREisYxRYlf/TDaIjt+MEmceZYPYbAJWEhPbVzGC2CICGhItC56DTWUWOMgs0bw2
+        E8QWFnCRmH12JiuIzSKgKnH5zk9mEJtXQFPiw/rDTCC2qICXxJZ97WA2p4CWxMKVV5ggagQl
+        fky+BzVTXmLf/qmsELaOxNlj68COkxD4zCYx9fQNNoirXSSmfOlggbCFJV4d3wL1jYzE5cnd
+        LBAN0xkl3vxaCuWsZ5RYc+YYE0SVtcTh4xehVvBJTNo2HehUDqA4r0RHmxBEiYfEgoZVbJBg
+        WcUosen5DcYJjDKzkFw7C8m1s5Bcu4CReRWjeGppcW56arFRXmq5XnFibnFpXrpecn7uJkZg
+        ejn97/iXHYy7/iQdYhTgYFTi4f1oFx4txJpYVlyZe4hRgoNZSYR3kShQiDclsbIqtSg/vqg0
+        J7X4EKM0B4uSOG+cRl2UkEB6YklqdmpqQWoRTJaJg1OqgbE8T6v4nJnX8nsP3v5nVFi8YAfD
+        9xePn2xyDjc5fO3Fuk0p8UeS+g4tcQ7zLTqzo9Di22FHw7//w29mvP76ounGHJ7XTyKn9hYx
+        hQkeC3fcX2TS7LhC1qCXXfwLj121VW/lr7XTK4I9+ss6xT1bIyR4X5XILFddsnvWEq8Fpz/u
+        mPzwVlzjjnNKLMUZiYZazEXFiQBfGIAdKwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsVy+t/xq7rWgeHRBgdP81vMWb+GzeL/tonM
+        Fle+vmezeHN8OpPFib4PrBaXd80BSjz+ymqxr+MBk8WjCZOYLNZ+fsxuseXNRFYHbo+93xaw
+        eOycdZfdo2XfLXaPEzN+s3jc7z7O5PF+31U2j/VbrrJ4bD5d7fF5k1wAZxSXTUpqTmZZapG+
+        XQJXxqQr8xgLtnNXtLw4ydTAuICzi5GTQ0LARGLi2W+MXYxcHEICSxglXjReZ4Nw/jJKTPi1
+        gg2kik3ASmJi+ypGEFtEQEOiZcFzFpAiZoHDzBL9P7+BJYQFXCRmn53JCmKzCKhKXL7zkxnE
+        5hXQlPiw/jATiC0q4CWxZV87mM0poCWxcOUVJohtaxgl9n25xgjRICjxY/I9FhCbWUBeYt/+
+        qawQtpbE+p3HmSYw8s9CUjYLSdksJGULGJlXMYqklhbnpucWG+kVJ+YWl+al6yXn525iBMbH
+        tmM/t+xg7HoXfIhRgINRiYfXwzE8Wog1say4MvcQowQHs5II7yJRoBBvSmJlVWpRfnxRaU5q
+        8SFGaQ4WJXHe8waVUUIC6YklqdmpqQWpRTBZJg5OqQbGCzK7fd/3//Cvze5e/cvALKTufqbE
+        GruZstUzZgjPbhW+FLYk9UrHdllxG5adNhIsM6ZM69G9YS1szvVG9cB6joVTX9etipSpnuXz
+        6kLjjBARva42Ns6FQbNlBF+d5dT9Z3b2O3dMkbtSziXD3T1bJ0xvVgtilzn/0Nda9fmE3rdH
+        1nzIvC6jxFKckWioxVxUnAgA2EEVx4sCAAA=
+X-CMS-MailID: 20180724161803eucas1p1a3e999a91b24eeb04d70807f1304b08e
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180712132944epcas4p3091e1c7a7aa1bd4da95750908012e616
+References: <CGME20180712132944epcas4p3091e1c7a7aa1bd4da95750908012e616@epcas4p3.samsung.com>
+        <20180712092938.22e33641@gandalf.local.home> <1582481.BL9yPUoula@amdc3058>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On imx7d the pcie-phy power domain is turned off in suspend and this can
-make the system hang after resume when attempting any read from PCI.
+On Tuesday, July 24, 2018 06:13:19 PM Bartlomiej Zolnierkiewicz wrote:
+> On Thursday, July 12, 2018 09:29:38 AM Steven Rostedt wrote:
+> > 
+> > From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > 
+> > There's been discussion on the fb list about the addition of
+> > WARN_CONSOLE_UNLOCKED() inside the fb code. The complaint is that when
+> > the fb module is loaded with lockless_register_fb the console lock is
+> > not taken for debugging reasons. With the addition of
+> > WARN_CONSOLE_UNLOCK() within the fb code, this causes the console to
+> > fill up with warnings when trying to debug the fb driver.
+> > 
+> > There's also a #if 1 that enables the warning which was added before
+> > git history, and we look down on constant #if's in the kernel nowadays
+> > anyway.
+> > 
+> > Remove the #if 1 and add a ignore_console_lock_warning boolean that can
+> > be set by drivers to ignore the warning in order to do debugging.
+> > 
+> > Link: http://lkml.kernel.org/r/717e6337-e7a6-7a92-1c1b-8929a25696b5@suse.de
+> > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> > Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> 
+> Patch queued for 4.19, thanks.
 
-Fix this by adding minimal suspend/resume code from the nxp internal
-tree. This will prepare for powering down on suspend and reset the block
-on resume.
+Dequeued, I've just noticed a newer patch from Thomas for this issue
+(I plan to apply it later this week).
 
-Code is only for imx7d but a very similar sequence can be used for
-other socs.
-
-The original author is mostly Richard Zhu <hongxing.zhu@nxp.com>, this
-patch adjusts the code to the upstream imx7d implemention using reset
-controls and power domains.
-
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
----
- drivers/pci/controller/dwc/pci-imx6.c | 97 +++++++++++++++++++++++++--
- 1 file changed, 92 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 4a9a673b4777..65b6d1015723 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -540,10 +540,28 @@ static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
- 
- 	dev_err(dev, "Speed change timeout\n");
- 	return -EINVAL;
- }
- 
-+static void imx6_pcie_ltssm_enable(struct device *dev)
-+{
-+	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-+
-+	switch (imx6_pcie->variant) {
-+	case IMX6Q:
-+	case IMX6SX:
-+	case IMX6QP:
-+		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-+				   IMX6Q_GPR12_PCIE_CTL_2,
-+				   IMX6Q_GPR12_PCIE_CTL_2);
-+		break;
-+	case IMX7D:
-+		reset_control_deassert(imx6_pcie->apps_reset);
-+		break;
-+	}
-+}
-+
- static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
- 	struct device *dev = pci->dev;
- 	u32 tmp;
-@@ -558,15 +576,11 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- 	tmp &= ~PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK;
- 	tmp |= PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1;
- 	dw_pcie_writel_dbi(pci, PCIE_RC_LCR, tmp);
- 
- 	/* Start LTSSM. */
--	if (imx6_pcie->variant == IMX7D)
--		reset_control_deassert(imx6_pcie->apps_reset);
--	else
--		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
--				   IMX6Q_GPR12_PCIE_CTL_2, 1 << 10);
-+	imx6_pcie_ltssm_enable(dev);
- 
- 	ret = imx6_pcie_wait_for_link(imx6_pcie);
- 	if (ret)
- 		goto err_reset_phy;
- 
-@@ -680,10 +694,82 @@ static int imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
- 
- static const struct dw_pcie_ops dw_pcie_ops = {
- 	.link_up = imx6_pcie_link_up,
- };
- 
-+#ifdef CONFIG_PM_SLEEP
-+static void imx6_pcie_ltssm_disable(struct device *dev)
-+{
-+	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-+
-+	switch (imx6_pcie->variant) {
-+	case IMX6SX:
-+	case IMX6QP:
-+		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-+				   IMX6Q_GPR12_PCIE_CTL_2, 0);
-+		break;
-+	case IMX7D:
-+		reset_control_assert(imx6_pcie->apps_reset);
-+		break;
-+	default:
-+		dev_err(dev, "ltssm_disable not supported\n");
-+	}
-+}
-+
-+static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
-+{
-+	clk_disable_unprepare(imx6_pcie->pcie);
-+	clk_disable_unprepare(imx6_pcie->pcie_phy);
-+	clk_disable_unprepare(imx6_pcie->pcie_bus);
-+
-+	if (imx6_pcie->variant == IMX7D) {
-+		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-+				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
-+				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
-+	}
-+}
-+
-+static int imx6_pcie_suspend_noirq(struct device *dev)
-+{
-+	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-+
-+	if (imx6_pcie->variant != IMX7D)
-+		return 0;
-+
-+	imx6_pcie_clk_disable(imx6_pcie);
-+	imx6_pcie_ltssm_disable(dev);
-+
-+	return 0;
-+}
-+
-+static int imx6_pcie_resume_noirq(struct device *dev)
-+{
-+	int ret;
-+	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-+	struct pcie_port *pp = &imx6_pcie->pci->pp;
-+
-+	if (imx6_pcie->variant != IMX7D)
-+		return 0;
-+
-+	imx6_pcie_assert_core_reset(imx6_pcie);
-+	imx6_pcie_init_phy(imx6_pcie);
-+	imx6_pcie_deassert_core_reset(imx6_pcie);
-+	dw_pcie_setup_rc(pp);
-+
-+	ret = imx6_pcie_establish_link(imx6_pcie);
-+	if (ret < 0)
-+		dev_info(dev, "pcie link is down after resume.\n");
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops imx6_pcie_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx6_pcie_suspend_noirq,
-+				      imx6_pcie_resume_noirq)
-+};
-+
- static int imx6_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct dw_pcie *pci;
- 	struct imx6_pcie *imx6_pcie;
-@@ -846,10 +932,11 @@ static const struct of_device_id imx6_pcie_of_match[] = {
- static struct platform_driver imx6_pcie_driver = {
- 	.driver = {
- 		.name	= "imx6q-pcie",
- 		.of_match_table = imx6_pcie_of_match,
- 		.suppress_bind_attrs = true,
-+		.pm = &imx6_pcie_pm_ops,
- 	},
- 	.probe    = imx6_pcie_probe,
- 	.shutdown = imx6_pcie_shutdown,
- };
- 
--- 
-2.17.1
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
