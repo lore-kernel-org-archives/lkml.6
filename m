@@ -2,82 +2,130 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B7CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 06:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B75C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 06:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E0B20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 06:43:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E0B20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id F017C20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 06:47:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XP4b0VAr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F017C20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388373AbeGXHsV (ORCPT
+        id S2388347AbeGXHw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 03:48:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34882 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388359AbeGXHsV (ORCPT
+        Tue, 24 Jul 2018 03:52:28 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46714 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388264AbeGXHw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 03:48:21 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 311E774;
-        Tue, 24 Jul 2018 06:43:26 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 08:00:59 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        openbmc@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>
-Subject: Re: [GIT PULL] FSI updates round 3 for 4.19
-Message-ID: <20180724060059.GA15769@kroah.com>
-References: <9071d5c82539c93f4a6cc8a76a11b14c3f507f09.camel@kernel.crashing.org>
+        Tue, 24 Jul 2018 03:52:28 -0400
+Received: by mail-pl0-f66.google.com with SMTP id t17-v6so1311636ply.13
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 23:47:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=e0dsIZFjgoIk3bs7/mBB0ZfdrACOGybOD5L582nwhH4=;
+        b=XP4b0VArkyVBRNXKXe5q7brSGa+UNxIZ4Wtobd10QBPu3e0PVErZ740KGhozbtbrJ1
+         8Qxifps/khk69DWI/ecnUG8Rhx/XfmhnjxN6vq2cQQJAfc8nRSFZS2b0+fl5Lmy/zwns
+         SidOaHJT/NOOYFQpjyksAxqvPBwib5+NGBocBKVPhakBDahEju7x51H+LY2WDrlVif0x
+         UBXS1zwp0uzJp+kkaoklPcpLYPewJihF6PXhhTh3k4Z/BDySnjz4ap1HfLjsAmDRkwE2
+         6ff85mDjQLEAR79ZXKXL3e2c1W6o46/EdCqYWGT+XSUOToEyCoUPPNMvLyeZ7dr56J+S
+         24eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e0dsIZFjgoIk3bs7/mBB0ZfdrACOGybOD5L582nwhH4=;
+        b=iWgiqR3fn4VOKW3HfsHf0TYbJrC9besNInMz3ifTFF0Yrmb8aNZSmys/etn8VC94Kq
+         AH707OFsrFFJi/VlAOBD4WXTjJuMtzM14Qlhw6pgoCX2579uGEFbujbzQwR8wE+rJjQZ
+         xt+2SlWx0X+OKOQ5s8UseMTqcJCoifOkBhfevwwcIzUOVNQQOYGcF1+EdI8ilrqZPZ15
+         AcyWHH088+iCEzutdQN7xYcLg5yBzNuZeQ1ZrevylYSq59DADJoJm2x8xN7jOaY0/gF2
+         F1eFE2kQHYsunH3p4hsd62ErHLOG+J0fu39ua3Zu2lvXDasU0nTvdcf/0+M32wlP1Bca
+         6nhg==
+X-Gm-Message-State: AOUpUlH9fmPYs1GcMtLk/gBMZidjdyLWOO8o9hVLKMIPusuZn4rw5ztO
+        KLpUMwU2QlNMIFzCWJZgGd0=
+X-Google-Smtp-Source: AAOMgpdbKaQPzHo7dn7wKhiM9kYLUghqsrZeLPLlOL39t5SzB2w4TvSeghNmkAhFqsLmWPRIU5wRXg==
+X-Received: by 2002:a17:902:780d:: with SMTP id p13-v6mr15456049pll.119.1532414851883;
+        Mon, 23 Jul 2018 23:47:31 -0700 (PDT)
+Received: from rodete-desktop-imager.corp.google.com ([2401:fa00:d:10:affa:813f:5380:6613])
+        by smtp.gmail.com with ESMTPSA id w13-v6sm13595639pgt.84.2018.07.23.23.47.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 23:47:30 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 15:47:26 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        mawilcox@microsoft.com
+Cc:     Tino Lehnig <tino.lehnig@contabo.de>, ngupta@vflare.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Zram writeback feature unstable with heavy swap utilization -
+ BUG: Bad page state in process...
+Message-ID: <20180724064726.GA138512@rodete-desktop-imager.corp.google.com>
+References: <0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de>
+ <20180724010342.GA195675@rodete-desktop-imager.corp.google.com>
+ <20180724025330.GB558@jagdpanzerIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9071d5c82539c93f4a6cc8a76a11b14c3f507f09.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180724025330.GB558@jagdpanzerIV>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 02:13:16PM +1000, Benjamin Herrenschmidt wrote:
-> Hi Greg !
+On Tue, Jul 24, 2018 at 11:53:30AM +0900, Sergey Senozhatsky wrote:
+> On (07/24/18 10:03), Minchan Kim wrote:
+> > On Mon, Jul 23, 2018 at 02:29:32PM +0200, Tino Lehnig wrote:
+> > > Hello,
+> > > 
+> > > after enabling the writeback feature in zram, I encountered the kernel bug
+> > > below with heavy swap utilization. There is one specific workload that
+> > > triggers the bug reliably and that is running Windows in KVM while
+> > > overcommitting memory. The Windows VMs would fill all allocated memory with
+> > > zero pages while booting. A few seconds after the host hits zram swap, the
+> > > console on the host is flooded with the bug message. A few more seconds
+> > > later I also encountered filesystem errors on the host causing the root
+> > > filesystem to be mounted read-only. The filesystem errors do not occur when
+> > > leaving RAM available for the host OS by limiting physical memory of the
+> > > QEMU processes via cgroups.
+> > > 
+> > > I started three KVM instances with the following commands in my tests. Any
+> > > Windows ISO or disk image can be used. Less instances and smaller allocated
+> > > memory will also trigger the bug as long as swapping occurs. The type of
+> > > writeback device does not seem to matter. I have tried a SATA SSD and an
+> > > NVMe Optane drive so far. My test machine has 256 GB of RAM and one CPU. I
+> > > saw the same behavior on another machine with two CPUs and 128 GB of RAM.
+> > > 
+> > > The bug does not occur when using zram as swap without "backing_dev" being
+> > > set, but I had even more severe problems when running the same test on
+> > > Ubuntu Kernels 4.15 and 4.17. Regardless of the writeback feature being used
+> > > or not, the host would eventually lock up entirely when swap is in use on
+> > > zram. The lockups may not be related directly to zram though and were
+> > > apparently fixed in 4.18. I had absolutely no problems on Ubuntu Kernel 4.13
+> > > either, before the writeback feature was introduced.
+> > 
+> > We didn't release v4.18 yet. Could you say what kernel tree/what version
+> > you used?
+> > 
+> > Now I don't have enough time to dig in.
+> > 
+> > Sergey, I really appreciate if you could have availabe time to look into.
+> > Anyway, I could try to see it asap if Sergey is not available.
+> > No worry.
 > 
-> This adds support for offloading the FSI low level bitbanging to the
-> ColdFire coprocessor of the Aspeed SoCs. All the pre-requisites have
-> already been merged, this is the final piece in the puzzle.
+> Interesting case.
 > 
-> This branch also pull gpio/ib-aspeed which is a topic branch already
-> in gpio/for-next (and thus in next) whic contains pre-requisites.
-> 
-> Finally, there's also a bug fix to the sbefifo driver for some
-> inconsistent use of a mutex in the error handling code.
-> 
-> Note: The oddball "origin" commit of that pull request comes from
-> the fact that Linus Walleij gpio/ib-aspeed tree is ahead of mine,
-> so pulling his branch pulled a bunch of already upstream other things
-> in. As such, i had to base this pull request off a local merge. This
-> shouldn't affect you at all, and allows the diffstat below to be
-> correct.
-> 
-> The bindings updates have been acked by Rob and the corresponding
-> device-tree updates will be merged by Joel via the ARM SoC tree.
-> 
-> Thanks !
-> Ben.
-> 
-> The following changes since commit d5e748ff2b996d83489ac76c072e8b99f9ecef13:
-> 
->   Merge remote-tracking branch 'gpio/ib-aspeed' into upstream-ready (2018-07-23 15:21:39 +1000)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/benh/linux-fsi.git tags/fsi-updates-2018-07-24
+> Will take me several days to get to it.
+> Sorry, quite busy at the moment.
 
-Now pulled in and pushed out, thanks.
-
-greg k-h
+I look though v4.18-rcX very quick what are changed for zsmalloc.
+struct page fields were totally reordered. It could be a regression related to
+that. Ccing Matthew
