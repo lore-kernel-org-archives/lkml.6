@@ -2,91 +2,104 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC1BC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9562CC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B15FA20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:23:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B15FA20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 441EF20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:26:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s/pKUtvw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 441EF20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388419AbeGXOaW (ORCPT
+        id S2388318AbeGXOca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:30:22 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:38704 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388297AbeGXOaV (ORCPT
+        Tue, 24 Jul 2018 10:32:30 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:37519 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbeGXOca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:30:21 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id D79B3634C7F;
-        Tue, 24 Jul 2018 16:23:51 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1fhxI7-0008Ow-Kv; Tue, 24 Jul 2018 16:23:51 +0300
-Date:   Tue, 24 Jul 2018 16:23:51 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     jacopo mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] media: i2c: Add driver for Aptina MT9V111
-Message-ID: <20180724132351.dvxgbd6o6ch2nium@valkosipuli.retiisi.org.uk>
-References: <1528730253-25135-1-git-send-email-jacopo+renesas@jmondi.org>
- <1528730253-25135-3-git-send-email-jacopo+renesas@jmondi.org>
- <20180723142835.xl6qrj35lcv2e3vg@valkosipuli.retiisi.org.uk>
- <20180724130845.GM6784@w540>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724130845.GM6784@w540>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 24 Jul 2018 10:32:30 -0400
+Received: by mail-qk0-f194.google.com with SMTP id t79-v6so2567714qke.4;
+        Tue, 24 Jul 2018 06:26:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=34Jt/TfiYeD4uFz4HncW7pJOJQ4mwCQSoSXEddzbE5k=;
+        b=s/pKUtvwEfrqx4pjXFzt5yXjYTPMp5Li5j7Wfiibn6LkoANnnaKSRdPCJsM6xZGn/d
+         ct6amVP+EcxoI/Gobyk0tqTRD86sKLnSTgIadXyMgAvXVg8JGxUjIRQ1UM8xhePVeilI
+         oKsb7jvO8EX5TDKjUYhVrCQQNC5TJhfs15tgEOl0uKNkKC4HIuUEJme2XjMfwIPergMk
+         +fsfAmmLUhVaqGaGvH5UEB43RYnsCwpwDmeXRBJLe8YahD2OtxrkZQH6b1UVwkk9RauY
+         a0ZVwpjMulZsM4BMiRLMst4QPLM6WTd1S4fa/ErbuY//EhwIg2RuukgT9SVdjOUP8vWj
+         EY4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=34Jt/TfiYeD4uFz4HncW7pJOJQ4mwCQSoSXEddzbE5k=;
+        b=uCzGuAC6GYUBxKU0f96DFoIXw+n6oH9dRM71uK5vMkE6stfJHoo7H3n01u6Xvxu8Vx
+         /ULAUOJi9JsHZDi8/X7WK7CIJpI2XFzPLeNEhEls6C0wpepVOsePFDnR5fVu8tRBWpAF
+         pvYxWIGzb/Jpf5jbPl53+s6PCyJwOkjemwQ/GS04myujT5ywXxxa7+x78vFqI0yxqCoH
+         fwn1kGeW6h1m/KKac7BlwIDlQIO3QCFrNI9+vKxRmYLr6GJrZfcjW7/PW+w9NkDMoaAQ
+         MQghNbOQgDRdxjA8kF8Udf4/Z+Jb8VXbNSw/QqLecOSXXafLD0eLVQkvfwg02NQ1HYFA
+         PZDQ==
+X-Gm-Message-State: AOUpUlGgu950b2zolRFD1CerLpqiyTJKlTN0MgRWe5FNcqKo0FQq8LAS
+        oOE2/WU6DUepYh7N5TeCFhw=
+X-Google-Smtp-Source: AAOMgpf89htX4JGi4EIh6hJ8eFyYte0+pLeeqQWRIUI7IdzTF/1//fj380d4Onrr6p0M1vWvlmvUEw==
+X-Received: by 2002:a37:c9da:: with SMTP id m87-v6mr15370792qkl.431.1532438760427;
+        Tue, 24 Jul 2018 06:26:00 -0700 (PDT)
+Received: from master-laptop.pgwipeout.duckdns.org (111.sub-174-204-1.myvzw.com. [174.204.1.111])
+        by smtp.gmail.com with ESMTPSA id e20-v6sm16543346qkh.32.2018.07.24.06.25.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 06:25:59 -0700 (PDT)
+From:   Peter Geis <pgwipeout@gmail.com>
+To:     broonie@kernel.org
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+Subject: [PATCH v3 0/2] Add support for cpcap regulators on Tegra based Xoom devices.
+Date:   Tue, 24 Jul 2018 09:25:39 -0400
+Message-Id: <20180724132541.17039-1-pgwipeout@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Good Morning,
 
-On Tue, Jul 24, 2018 at 03:08:45PM +0200, jacopo mondi wrote:
-> > > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> > > index 341452f..0bd867d 100644
-> > > --- a/drivers/media/i2c/Kconfig
-> > > +++ b/drivers/media/i2c/Kconfig
-> > > @@ -841,6 +841,18 @@ config VIDEO_MT9V032
-> > >  	  This is a Video4Linux2 sensor-level driver for the Micron
-> > >  	  MT9V032 752x480 CMOS sensor.
-> > >
-> > > +config VIDEO_MT9V111
-> > > +	tristate "Aptina MT9V111 sensor support"
-> > > +	depends on I2C && VIDEO_V4L2
-> > > +	depends on MEDIA_CAMERA_SUPPORT
-> > > +	depends on OF
-> >
-> > Why OF? I see no effective OF dependencies in the driver.
-> >
-> 
-> Isn't the driver probing through OF?
+This is revision three of the patch.
+I have changed the device match from Tegra to Xoom as per Dmitry's
+suggestion, to be more accurate.
 
-It may, but the driver is otherwise not technically limited to OF. ACPI
-could be used as well, for instance.
+The CPCAP regulator driver can support various devices, but currently only supports Omap4 devices.
+Adds the sw2 and sw4 voltage tables, which power the Tegra core, and a DT match for the Tegra device.
+Tested on the Motorola Xoom MZ602, but supports the MZ600 (CDMA), MZ602 (LTE), and
+MZ604 (Wifi).
 
-> 
-> > > +	help
-> > > +	  This is a Video4Linux2 sensor-level driver for the Aptina/Micron
-> 
-> I'll change sensor-level to sensor, has you've been doing lately on
-> all other Kconfig entries
+v3:
+Changed the devicetree match from Tegra to Xoom.
 
-Ack.
+v2:
+Stopped reinventing the wheel, using git email now.
+Rebased against regulator for-next branch.
+
+v1:
+Fix conversion of tabulation to spaces.
+
+Peter Geis (2):
+  Add sw2_sw4 voltage table to cpcap regulator.
+  Add support for CPCAP regulators on Motorola Xoom devices.
+
+ .../bindings/regulator/cpcap-regulator.txt    |   1 +
+ drivers/regulator/cpcap-regulator.c           | 103 ++++++++++++++++++
+ 2 files changed, 104 insertions(+)
 
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+2.17.1
+
