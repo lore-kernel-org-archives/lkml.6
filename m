@@ -6,50 +6,46 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAC0C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2328C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE5F620852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:42:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE5F620852
+	by mail.kernel.org (Postfix) with ESMTP id 747EA20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:42:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747EA20852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388559AbeGXPsv (ORCPT
+        id S2388591AbeGXPtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:48:51 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36143 "EHLO mail.bootlin.com"
+        Tue, 24 Jul 2018 11:49:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36159 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388430AbeGXPsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:48:51 -0400
+        id S2388373AbeGXPtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:49:18 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8343220730; Tue, 24 Jul 2018 16:42:01 +0200 (CEST)
+        id 03E0220935; Tue, 24 Jul 2018 16:42:28 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5075E206A6;
-        Tue, 24 Jul 2018 16:41:51 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 16:41:51 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id CB14420730;
+        Tue, 24 Jul 2018 16:42:17 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 16:42:18 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 3/3] arm64: allwinner: dts: h6: add
- Wi-Fi support for Pine H64 model A/B
-Message-ID: <20180724144151.myyg7slocsfjjsfi@flea>
-References: <20180724011551.49603-1-icenowy@aosc.io>
- <20180724011551.49603-4-icenowy@aosc.io>
- <CAGb2v67zR-Q9n7L6CaFKDUJFHFEC_h8-RYxkdyeyJb_GbNmkJw@mail.gmail.com>
- <CEA43CB7-1DA6-4983-BF18-82C4A48FB92B@aosc.io>
- <CAGb2v64Qae4O430kP30DQNhp0Dt774OHt0nMe35ckp8X=CTFLg@mail.gmail.com>
- <AC678B03-19B7-4110-B333-72188CE71296@aosc.io>
- <CAGb2v656oPmAX=_y88b05xqrona3HFtU-VmNQhHxK_n-4gD+aw@mail.gmail.com>
+To:     Emmanuel Vadot <manu@bidouilliste.com>
+Cc:     Emmanuel Vadot <manu@freebsd.org>, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org, wens@csie.org,
+        robh+dt@kernel.org, srinivas.kandagatla@linaro.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 5/5] arm64: dts: allwinner: h5: Add SID for H5
+Message-ID: <20180724144218.jdvgrcqkz2kmohqx@flea>
+References: <20180724101522.68165-1-manu@freebsd.org>
+ <20180724101522.68165-5-manu@freebsd.org>
+ <20180724130004.ynaiabshexrrbvo4@flea>
+ <20180724153432.e398bddfe63e51e8dcebfc46@bidouilliste.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fhazolum5rz6spmk"
+        protocol="application/pgp-signature"; boundary="brs6vm3kqygfnudn"
 Content-Disposition: inline
-In-Reply-To: <CAGb2v656oPmAX=_y88b05xqrona3HFtU-VmNQhHxK_n-4gD+aw@mail.gmail.com>
+In-Reply-To: <20180724153432.e398bddfe63e51e8dcebfc46@bidouilliste.com>
 User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -57,94 +53,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---fhazolum5rz6spmk
-Content-Type: text/plain; charset=utf-8
+--brs6vm3kqygfnudn
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 24, 2018 at 10:37:51AM +0800, Chen-Yu Tsai wrote:
-> On Tue, Jul 24, 2018 at 10:28 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> >
-> >
-> > =E4=BA=8E 2018=E5=B9=B47=E6=9C=8824=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=
-=8810:26:02, Chen-Yu Tsai <wens@csie.org> =E5=86=99=E5=88=B0:
-> >>On Tue, Jul 24, 2018 at 10:23 AM, Icenowy Zheng <icenowy@aosc.io>
-> >>wrote:
-> >>>
-> >>>
-> >>> =E4=BA=8E 2018=E5=B9=B47=E6=9C=8824=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=
-=8D=8810:21:59, Chen-Yu Tsai <wens@csie.org> =E5=86=99=E5=88=B0:
-> >>>>On Tue, Jul 24, 2018 at 9:15 AM, Icenowy Zheng <icenowy@aosc.io>
-> >>wrote:
-> >>>>> The Pine H64 model A has a Wi-Fi module connector and the model B
-> >>has
-> >>>>an
-> >>>>> on-board RTL8723BS Wi-Fi module.
-> >>>>>
-> >>>>> Add support for them. For model A, as it's not defaultly present,
-> >>>>keep
-> >>>>> it disabled now.
-> >>>>
-> >>>>Nope. Pine64 actually has two WiFi/BT modules. And they require
-> >>>>different
-> >>>>device tree snippets for both the WiFi and BT side. This is better
-> >>>>resolved
-> >>>>with device tree overlays.
-> >>>>
-> >>>>I have both, though I've yet found time to work on them.
-> >>>
-> >>> I have also both.
-> >>>
-> >>> The skeleton here can get the Wi-Fi of both to work.
-> >>
-> >>Cool. Then I can put away my RTL module for now. :)
-> >
-> > P.S. SDIO is auto detectable, and for BCM chips, the OOB interrupt
-> > is only a bonus function and it can fall back to standard in-band
-> > interrupt (which doesn't need special binding, and is currently
-> > used by mainline r8723bs driver.)
+On Tue, Jul 24, 2018 at 03:34:32PM +0200, Emmanuel Vadot wrote:
+> On Tue, 24 Jul 2018 15:00:04 +0200
+> Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >=20
-> Correct. With BT you'll have serdev device nodes with different
-> compatibles. Then you'll have to resort to overlays, and you'd probably
-> end up adding WiFi OOB interrupt bits as well.
+> > On Tue, Jul 24, 2018 at 12:15:22PM +0200, Emmanuel Vadot wrote:
+> > > The SID controller on H5 look the same as the one present in the A64.
+> > > But in case we find some difference one day at a compatible string
+> > > of it's own and a fallback to the A64 one.
+> > >=20
+> > > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+> > > ---
+> > >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm6=
+4/boot/dts/allwinner/sun50i-h5.dtsi
+> > > index 62d646baac3c..28183bf77164 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> > > @@ -129,3 +129,8 @@
+> > >  		     <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+> > >  	compatible =3D "allwinner,sun50i-h5-pinctrl";
+> > >  };
+> > > +
+> > > +&sid {
+> > > +	compatible =3D "allwinner,sun50i-h5-sid",
+> > > +		     "allwinner,sun50i-a64-sid";
+> > > +};
+> >=20
+> > This is still a bit pointless, please remove the common node.
 >=20
-> So the question remaining is: should we enable the MMC part, along
-> with power sequencing and regulator supplies, by default? Thinking
-> more about it, I'm actually OK with it. The board connectors are
-> clearly marked as being for a WiFi+BT module. The whole space on
-> the board is surrounded by a box in silkscreen. Sorry for the
-> initial nack.
->=20
-> Maxime, any thoughts?
+>  You mean directly declare sid controller in the SoC dtsi and not
+> have a common node in sunxi-h3-h5.dtsi ?
 
-If there's a need for an overlay anyway, there's no real reason to
-enable it by default, especially if not everything is there.
-
-Maxime
+Yep
 
 --=20
 Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---fhazolum5rz6spmk
+--brs6vm3kqygfnudn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltXOq4ACgkQ0rTAlCFN
-r3SIrg//XVODv2+vLg3T9F4oCqaEy9wgJHKNryVNxe9yQ/EkIL5GjZkPvRsvaTz5
-AvW+PtUP03WcxjarG3B9183vTgeWczvXdaKJE6yabbZ5O/byYKAnD3DynvDNwm3G
-1Le/NlM8ugTz7fRJ1pF0ermWtm/MkRD6Bg1+Uqhe6GaITAjkgMLw5WeDQ3x2S1VS
-DXk/KuO4CnJWXmMOil6/befh4xml0QeKiIpGdWyCtUBSPqlHONKNWJVxpB858Wk7
-Rh0r8bw7F6lnOA0QYkjANJKfWgerw3+WtmbPxssXQpooD33fT2hlUIII+OjL0l1e
-uAO0yUL8GtM8qxgrgZnkfLCuvcImbse4tvhAvqf/J2GjjLYCMcpfbwntyv9Qbkhn
-vIJcV8DtOa7zQAK6Z2i3xiUYWjJD8UZNOQ3ImLr/StmCYL6D3g4Ys37L6Gex2mhY
-tsGC+/YjM3oiENlYF1bVXNFUEy4j6JVQxWrIuMGIgoVSjXRknbKm1554OjwqvALy
-BgfFbpJsqORqq1PyW2uKTUPY6gaBUaEwb785WOcJuE88r9uR6KFWT8JrZi9pp4H0
-eLJocGgZKZGQRUfxRylNBvHKPGNo+GVdSH7cxgzQS/mGoj1+q5gSV/W+MEJIq9lm
-gtckHs0j1LXXsQR2/KH/s312EIWSVfni9pXzxuL4NpUexLdh4dw=
-=ytpg
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltXOskACgkQ0rTAlCFN
+r3S92A/7BqeShOU5I3OcS+OPLhKF42tICmDuPhTESquJZmySeJtbX18zY8prwi86
+oYsBlOzJm4pcYCQnUJnVlLbQmraIAJfRTqdg6U5gmC39y2QoFzvKKzByoSNJOESC
+GLkhYfNyjz+0UGnkDo3fsS2rvn4XcPvPddDpWgZLP62kSowxbf2xOr0iD+/HcI4Z
+wcnLKQMa3Uuz/0czpF0FRvhakpQ8HeiiecRkfVsy6AaJEtnqVrj6CET/aR+E0wGo
+XnNWnSr0TNldIfsmf0SSvEeQ5q3PaScqdQ+3pgwpmVo5taA/h/0plMfGTRFlE4Ob
+Ofhxs7IgL9qxHkDB4r0iwxKXvEmA36Bxcropk66YgNPLi9PoNluZsyd/bmGsvst4
+uvCEDyZ0MKoqvgBwmSMiv/KRcQ3fJKK4iJE1kIeCWHychG+pMV+L8S7CZOwQn05+
+eSLN5lQqh1p/N0OCoEMFQlArnAun1AcUjVtJlOJhrebjZvAKFsX8Imz1i6nqOEze
+VtU5385ED4Xvhig9VDn8Tlb9q1CwRS/6KF/LXqNxWvPcB98Bpa/81YLefPC/VRWc
+20hTdeKzMJe/Tqez7jxjp7owit3UXoPGtvebE7JSjPx6IJ/FNG0LwoQYM56dI8Dl
+sJJZsl6ld6szaNhwMuSktma1SMBEvYHwJjqKql8F+t4F2a5R/pg=
+=8aZK
 -----END PGP SIGNATURE-----
 
---fhazolum5rz6spmk--
+--brs6vm3kqygfnudn--
