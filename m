@@ -6,112 +6,109 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FBBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E51BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18DCB20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:47:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18DCB20856
+	by mail.kernel.org (Postfix) with ESMTP id 242E520880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:50:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242E520880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbeGYA4B (ORCPT
+        id S2388480AbeGYA7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 20:56:01 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37832 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728154AbeGYAz7 (ORCPT
+        Tue, 24 Jul 2018 20:59:40 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34023 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727729AbeGYA7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 20:55:59 -0400
-Received: by mail-pf1-f193.google.com with SMTP id a26-v6so1224747pfo.4
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 16:47:06 -0700 (PDT)
+        Tue, 24 Jul 2018 20:59:40 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y5-v6so3975036pgv.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 16:50:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=k3gcbvn8mw2hRJRDyRUzU879qvsdG7D3H9+KZ2b2FUQ=;
-        b=MVdsDc2xiCMYsRlv3upZpWXB2b+trm6dxhm64OAdGew13bzlDxuxKMaB5xmi0BfxgE
-         JOXoEF4uEqX35mExnV/SFUu7Qq2Ss+x3De3NsQm47myyhG6tYOh6MFTyF5P8u0hUhdok
-         +7NHxuo9IjWaoYojJhJT7bA0rV+mdKxTvd1bizt6zvI+n9gb3uSRnRNnMpGXU503TgLY
-         B626uvtpsUQcbzwsb+FTMip3EyvGxAjRNYHylIBG8DMyJa2g7Jy79Vy+UpSMpsXYuQLM
-         q9ooth2o2aFKUYCfkW+LfRSxvib/mDxfCtYBPABAG0PQNz5jrbhuVIqm3K8mei9Pqeva
-         Nn0A==
-X-Gm-Message-State: AOUpUlGhEDvR2ZK6s0sXEroabCzDDDwIQWfb4fr4xT/WhAGiPvuepIWA
-        5+EvZHJpmlhUvYhRoo9PmMbA7g==
-X-Google-Smtp-Source: AAOMgpfaN21mCYdFng4NMmn3XokDlrkROoWlFu14gh0nlmHt0TSF3n/Y6z42AT96FJYhIBvSxaDfhA==
-X-Received: by 2002:a63:bf08:: with SMTP id v8-v6mr17757113pgf.3.1532476025890;
-        Tue, 24 Jul 2018 16:47:05 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Exi7HMPcV1G1oRW8v/W+zZ9QH0uoOn9Qtr09/+QpU80=;
+        b=MfdDFQMaFe3hc0mQX38eOMa8l2MRe0MG+mj7ZbnsGIhC53XvegOSd++amioPAEhfZV
+         xAo+vzI1LQvZ6YFhpu9aWKR/UYjBTSMjVNylYLX7ovlf4c/uSvSEDeQwq77BvZlOg6cT
+         JQycjjLVDoOzPS1FGLrOYKZ/GVkX1L8oBaBA849qKnoGiEYwAjFuNCThtMY83O1A4cZ4
+         Ra/SM3WuLXSaDXCPrLXjGzq8A09Q6xU5/Aut5X6pqfPppyNwBnmILutNBBA7ecOcrVTU
+         h04cBZXSEN2rdVvwMUQObMCYfd5ywErpL5eTCXwMehCvWJ+tOEwDydStcIlOqL5dNzti
+         Ca4g==
+X-Gm-Message-State: AOUpUlFooiqJmjO8EuRBf6G/eMXyIlBd+b9PJ2WcJgNzkB53KHB+qbDY
+        yHt/2eLeeaS+mWzzooa3n9qN0A==
+X-Google-Smtp-Source: AAOMgpcfsX1qzT2g7KZbUa2Pud9l+KrxKXDHYDPtCYgfi0MfPYfKViSyJ7OoDtldHnml5YgoyzALAg==
+X-Received: by 2002:a62:e00a:: with SMTP id f10-v6mr19737599pfh.208.1532476245663;
+        Tue, 24 Jul 2018 16:50:45 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id 12-v6sm17267970pfx.128.2018.07.24.16.47.04
+        by smtp.gmail.com with ESMTPSA id x65-v6sm7788035pfk.140.2018.07.24.16.50.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 16:47:05 -0700 (PDT)
+        Tue, 24 Jul 2018 16:50:44 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Cc:     linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        David Collins <collinsd@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v5 2/3] arm64: dts: qcom: pm8998: Add spmi-temp-alarm node
-Date:   Tue, 24 Jul 2018 16:46:35 -0700
-Message-Id: <20180724234636.57137-2-mka@chromium.org>
+Subject: [PATCH] dt-bindings: thermal: qcom-spmi-temp-alarm: Improve thermal zone in example
+Date:   Tue, 24 Jul 2018 16:50:35 -0700
+Message-Id: <20180724235035.58146-1-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
-In-Reply-To: <20180724234636.57137-1-mka@chromium.org>
-References: <20180724234636.57137-1-mka@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the spmi-temp-alarm node to pm8998 based on the examples in the
-bindings.
+The current example for a thermal zone isn't very useful as reference
+since it would result in a hardware shutdown at 145°C, instead of
+allowing the system to try to shutdown gracefully. Without an ADC
+channel a maximum of two trip points is useful in practice for this
+sensor, with temperatures corresponding to the stage 1 and stage 2
+'hardware trip points'. A critical trip point at stage 2 may allow the
+system to shutdown before a hardware shutdown at stage 3 kicks in. It
+should be noted though that by default the chip performs a 'partial
+shutdown' when the temperature reaches stage 2, which may prevent an
+orderly shutdown. The 'partial shutdown' can be disabled by software.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
-Changes in v5:
-- added tag 'Reviewed-by: Douglas Anderson <dianders@chromium.org>'
+ .../bindings/thermal/qcom-spmi-temp-alarm.txt         | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-Changes in v4:
-- none
-
-Changes in v3:
-- changed node name from 'qcom,temp-alarm@2400' to 'temp-alarm@2400'
-- removed controller register length value from 'reg'
-
-Changes in v2:
-- none
----
- arch/arm64/boot/dts/qcom/pm8998.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-index 92bed1e7d4bb..7eea94701b23 100644
---- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-@@ -11,6 +11,13 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt b/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt
+index 290ec06fa33a..cabf813595e5 100644
+--- a/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt
++++ b/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt
+@@ -36,19 +36,14 @@ Example:
+ 			thermal-sensors = <&pm8941_temp>;
  
-+		pm8998_temp: temp-alarm@2400 {
-+			compatible = "qcom,spmi-temp-alarm";
-+			reg = <0x2400>;
-+			interrupts = <0x0 0x24 0x0 IRQ_TYPE_EDGE_RISING>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
- 		pm8998_gpio: gpios@c000 {
- 			compatible = "qcom,pm8998-gpio", "qcom,spmi-gpio";
- 			reg = <0xc000>;
+ 			trips {
+-				passive {
+-					temperature = <1050000>;
++				stage1 {
++					temperature = <105000>;
+ 					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-				alert {
++				stage2 {
+ 					temperature = <125000>;
+ 					hysteresis = <2000>;
+-					type = "hot";
+-				};
+-				crit {
+-					temperature = <145000>;
+-					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
 -- 
 2.18.0.233.g985f88cf7e-goog
 
