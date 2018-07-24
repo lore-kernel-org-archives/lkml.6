@@ -2,189 +2,128 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE1EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DD2C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A64C20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:13:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A64C20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 419C820844
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:13:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 419C820844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388374AbeGXOT7 convert rfc822-to-8bit (ORCPT
+        id S2388443AbeGXOUN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:19:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:32819 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388265AbeGXOT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:19:58 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F174920737; Tue, 24 Jul 2018 15:13:29 +0200 (CEST)
-Received: from dell-desktop.home (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A0992203D9;
-        Tue, 24 Jul 2018 15:13:19 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 15:13:19 +0200
-From:   =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To:     =?UTF-8?B?T25kxZllag==?= Jirman <megous@megous.com>
-Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, linux-input@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] Input: edt-ft5x06 - Add support for regulator
-Message-ID: <20180724151319.3139c5ae@dell-desktop.home>
-In-Reply-To: <20180718224645.ns7nvqxvqc6huxcz@core>
-References: <20180718182719.29663-1-mylene.josserand@bootlin.com>
-        <20180718182719.29663-2-mylene.josserand@bootlin.com>
-        <20180718224645.ns7nvqxvqc6huxcz@core>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 24 Jul 2018 10:20:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57094 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388265AbeGXOUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:20:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 917F3ACFC;
+        Tue, 24 Jul 2018 13:13:44 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 15:13:43 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
+        <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
+Message-ID: <20180724131343.GK28386@dhcp22.suse.cz>
+References: <20180720123422.10127-1-david@redhat.com>
+ <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
+ <20180723123043.GD31229@dhcp22.suse.cz>
+ <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
+ <20180724072536.GB28386@dhcp22.suse.cz>
+ <8eb22489-fa6b-9825-bc63-07867a40d59b@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8eb22489-fa6b-9825-bc63-07867a40d59b@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-Thank you for your review.
-
-On Thu, 19 Jul 2018 00:46:45 +0200
-Ondřej Jirman <megous@megous.com> wrote:
-
-> Hello Mylène,
-> 
-> On Wed, Jul 18, 2018 at 08:27:17PM +0200, Mylène Josserand wrote:
-> > Add the support of regulator to use it as VCC source.
+On Tue 24-07-18 14:17:12, David Hildenbrand wrote:
+> On 24.07.2018 09:25, Michal Hocko wrote:
+> > On Mon 23-07-18 19:20:43, David Hildenbrand wrote:
+> >> On 23.07.2018 14:30, Michal Hocko wrote:
+> >>> On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
+> >>>> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
+> >>>>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
+> >>>>> So reserved pages might be access by dump tools although nobody except
+> >>>>> the owner should touch them.
+> >>>>
+> >>>> Are you sure about that? Or maybe I understand wrong. Maybe it changed
+> >>>> recently, but IIRC pages that are backing memmap (struct pages) are also
+> >>>> PG_reserved. And you definitely do want those in the dump.
+> >>>
+> >>> You are right. reserve_bootmem_region will make all early bootmem
+> >>> allocations (including those backing memmaps) PageReserved. I have asked
+> >>> several times but I haven't seen a satisfactory answer yet. Why do we
+> >>> even care for kdump about those. If they are reserved the nobody should
+> >>> really look at those specific struct pages and manipulate them. Kdump
+> >>> tools are using a kernel interface to read the content. If the specific
+> >>> content is backed by a non-existing memory then they should simply not
+> >>> return anything.
+> >>>
+> >>
+> >> "new kernel" provides an interface to read memory from "old kernel".
+> >>
+> >> The new kernel has no idea about
+> >> - which memory was added/online in the old kernel
+> >> - where struct pages of the old kernel are and what their content is
+> >> - which memory is save to touch and which not
+> >>
+> >> Dump tools figure all that out by interpreting the VMCORE. They e.g.
+> >> identify "struct pages" and see if they should be dumped. The "new
+> >> kernel" only allows to read that memory. It cannot hinder to crash the
+> >> system (e.g. if a dump tool would try to read a hwpoison page).
+> >>
+> >> So how should the "new kernel" know if a page can be touched or not?
 > > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > ---
-> >  .../bindings/input/touchscreen/edt-ft5x06.txt      |  1 +
-> >  drivers/input/touchscreen/edt-ft5x06.c             | 29 ++++++++++++++++++++++
-> >  2 files changed, 30 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> > index 025cf8c9324a..48e975b9c1aa 100644
-> > --- a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> > +++ b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> > @@ -30,6 +30,7 @@ Required properties:
-> >  Optional properties:
-> >   - reset-gpios: GPIO specification for the RESET input
-> >   - wake-gpios:  GPIO specification for the WAKE input
-> > + - vcc-supply:  Regulator that supplies the touchscreen
-> >  
-> >   - pinctrl-names: should be "default"
-> >   - pinctrl-0:   a phandle pointing to the pin settings for the
-> > diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-> > index 1e18ca0d1b4e..aa94494b06b5 100644
-> > --- a/drivers/input/touchscreen/edt-ft5x06.c
-> > +++ b/drivers/input/touchscreen/edt-ft5x06.c
-> > @@ -39,6 +39,7 @@
-> >  #include <linux/input/mt.h>
-> >  #include <linux/input/touchscreen.h>
-> >  #include <linux/of_device.h>
-> > +#include <linux/regulator/consumer.h>
-> >  
-> >  #define WORK_REGISTER_THRESHOLD		0x00
-> >  #define WORK_REGISTER_REPORT_RATE	0x08
-> > @@ -91,6 +92,7 @@ struct edt_ft5x06_ts_data {
-> >  	struct touchscreen_properties prop;
-> >  	u16 num_x;
-> >  	u16 num_y;
-> > +	struct regulator *vcc;
-> >  
-> >  	struct gpio_desc *reset_gpio;
-> >  	struct gpio_desc *wake_gpio;
-> > @@ -991,6 +993,22 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
-> >  
-> >  	tsdata->max_support_points = chip_data->max_support_points;
-> >  
-> > +	tsdata->vcc = devm_regulator_get(&client->dev, "vcc");
-> > +	if (IS_ERR(tsdata->vcc)) {
-> > +		error = PTR_ERR(tsdata->vcc);
-> > +		if (error != -EPROBE_DEFER)
-> > +			dev_err(&client->dev, "failed to request regulator: %d\n",
-> > +				error);
-> > +		return error;
-> > +	}
-> > +
-> > +	error = regulator_enable(tsdata->vcc);
-> > +	if (error < 0) {
-> > +		dev_err(&client->dev, "failed to enable vcc: %d\n",
-> > +			error);
-> > +		return error;
-> > +	}
-> > +
-> >  	tsdata->reset_gpio = devm_gpiod_get_optional(&client->dev,
-> >  						     "reset", GPIOD_OUT_HIGH);
-> >  	if (IS_ERR(tsdata->reset_gpio)) {
-> > @@ -1120,20 +1138,31 @@ static int edt_ft5x06_ts_remove(struct i2c_client *client)
-> >  static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
-> >  {
-> >  	struct i2c_client *client = to_i2c_client(dev);
-> > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
-> >  
-> >  	if (device_may_wakeup(dev))
-> >  		enable_irq_wake(client->irq);
-> >  
-> > +	regulator_disable(tsdata->vcc);
-> > +  
+> > I am sorry I am not familiar with kdump much. But from what I remember
+> > it reads from /proc/vmcore and implementation of this interface should
+> > simply return EINVAL or alike when you try to dump inaccessible memory
+> > range.
 > 
-> How will the touchscreen wakeup the system with interrupt if you power it off
-> on suspend? Perhaps guard this with device_may_wakeup() too? 
-
-True, thank you for pointing it out.
-
+> Oh, and BTW, while something like -EINVAL could work, we usually don't
+> want to try to read certain pages at all (e.g. ballooned pages -
+> accessing the page might work but involves quite some overhead in the
+> hypervisor).
 > 
-> >  	return 0;
-> >  }
-> >  
-> >  static int __maybe_unused edt_ft5x06_ts_resume(struct device *dev)
-> >  {
-> >  	struct i2c_client *client = to_i2c_client(dev);
-> > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
-> > +	int ret;
-> >  
-> >  	if (device_may_wakeup(dev))
-> >  		disable_irq_wake(client->irq);
-> >  
-> > +	ret = regulator_enable(tsdata->vcc);
-> > +	if (ret < 0) {
-> > +		dev_err(dev, "failed to enable vcc: %d\n", ret);
-> > +		return ret;
-> > +	}
-> > +  
-> 
-> Ditto.
+> So we should either handle this in dump tools (reserved + ...?) or while
+> doing the read similar to XEN (is_ram_page()).
 
-ack
+Yes, I think this is the proper way. Just test for PageOnline
+in read_from_oldmem/copy_oldmem_page. Btw. we already page
+pfn_to_online_page which performs the per-section online/offline
+status. This should be extendable to consider your new PageOffline
+state.
+ 
+> I wonder if we could convert the early allocated memory (PG_reserved) at
+> some point (buddy initialized) into ordinary "simply allocated" memory.
 
-> 
-> Regards,
->   o.
-> 
-> >  	return 0;
-> >  }
-> >  
-> > -- 
-> > 2.11.0
-> > 
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel  
-
-
-Best regards,
-
+I do not think so. There is good reason why we keep them reserved. There
+are many pfn walkers that simply shouldn't touch those pages. Maybe we
+can achieve a page reserve type for all usages but that will be a larger
+project I am afraid.
 -- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Michal Hocko
+SUSE Labs
