@@ -2,109 +2,158 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 845A1C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B145FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3377C20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:02:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DE5920874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:03:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tUOVOQWV";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="sTLlM4I8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3377C20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pVjz2f0m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DE5920874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388497AbeGXSJY (ORCPT
+        id S2388555AbeGXSKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:09:24 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:36889 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388432AbeGXSJY (ORCPT
+        Tue, 24 Jul 2018 14:10:53 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38780 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388432AbeGXSKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:09:24 -0400
-Received: by mail-qt0-f195.google.com with SMTP id n6-v6so4835057qtl.4;
-        Tue, 24 Jul 2018 10:01:59 -0700 (PDT)
+        Tue, 24 Jul 2018 14:10:52 -0400
+Received: by mail-pg1-f195.google.com with SMTP id k3-v6so3322879pgq.5;
+        Tue, 24 Jul 2018 10:03:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=MKfAIw3yQbP7cyBV9BvWXN6wLtKZ0EwjNpYu7wLR6Ww=;
-        b=tUOVOQWVfkv3QekSUftTdmwSH2Xqke0lD9+CNZdtRYTd5fclGv0JyWJZXn+/xgVBGt
-         LkTkyzcCbK8AsUQOnpgy4G99oZKInjK9fHuN2Z10mDiQBqVKtZgMAyONYC2V+bxArzG4
-         8cC8Tyf9UKXaz9iqlulGr8jQ+r2KgrKkV7nzMt/SYFY2repWQ2xAumqAyIwm4/f946Ks
-         LBKe72r3dw8CsyGziY3lN4ckjptDcB7Ny6dhd3mC/x6ZLMmvV10+IzoG0qHnW0qUvyqc
-         YZyQL8zxN8PVC46PBwuxWrCM2iMPlSUoGKJ4w7eMhEK+GcIiyf/fXI2Tb17HAoGk+/2J
-         HSiA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=MKfAIw3yQbP7cyBV9BvWXN6wLtKZ0EwjNpYu7wLR6Ww=;
-        b=sTLlM4I8ab1VkHXkc/cjNHaBOU3h4BeFQqAh5q4DBJcxNRe4wXNfXi0a+O5DT8f6oO
-         EMmhI2MkRU5HQ0nSfCJUqTFopGiYORpptRPN6kD6KDOcCKtGgu3BDlfqSO4vjsQA/gbJ
-         vfYSKeO33kpehFePKV+s0k2gfEZE4sgI72OhDMcS9k+WLqMIsxo8x9it6pCH5T37ih+4
-         vgYFYvNI8czhSOzw+ayyJwzEcNUEFIe9a3MjRX5hfsiymgViU7bcgNvfo8G/WBBZwWNR
-         CAgfZDfoRVpD60lT6mOtkjlcArF5TN+oevekjGyB99/9WEFhZBrevTGOcxvwm2YfGPEC
-         46Lg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=xtaium+WK7Nbnd7Bg090kq36jPUhUXtTSaiOcKpjdPo=;
+        b=pVjz2f0m0vC3uFLmFu3OM8naq3ZNGp2BCvo8xxVfQo3je03aefEVMgLkVPM37eHWMS
+         AV98lTJQ+xYKGoLFwwf1N74eoFVIi3jDj8No3CRO4jylBr7mxOm+StE93QHz1B7+hOje
+         l1hCoMQJDutrDOP8CjcnaCJ1jFT/CD6AAF74i8/AUNlKi7e5yASQPCu9IWKXJKy55Gz4
+         dVwd5IzR/fAJmqjaUHxWC78M2YX7FrvPWFWPmamZmVfC6ELIuK1X1fQ6U5mSRthYt0t8
+         HOGfGozaBvhD76y5NM0k2Fz26eCy+FsThnUuiuHbHk27Mnca9qnFWxI4qfVCcEqlvKVA
+         rgoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=MKfAIw3yQbP7cyBV9BvWXN6wLtKZ0EwjNpYu7wLR6Ww=;
-        b=ACI5c8qM/F9cEgnkbbtuG8dPkrC8jFhZsJA92ymwt0YoZd7UTLcRf/LWF6qsEQ3NEd
-         Cu8yCcJMZR8GVyg594r7datHxAPld7DDC5xAzcc9T3/UVYyiTXP/xQWlyQPHN2px/JKA
-         cy1SlnO5nRsY3LEt+/QxqGbhDQvk4vrVkwZBoMXldH447S1dBPb6xtlLp155k+15ASLi
-         oJJ7mqfrgYxGEW08tV4VJoDg+6cO3usnNBOf46plER8iacoAL9Q+9i1FjMDiHzQ9czli
-         r7XomBS7Z8xUMlVbeMmWXylnBNm0epLcwDY6p66R3Tvp6C6P8dNmWZk+POQ8YcBUdDKO
-         dKCA==
-X-Gm-Message-State: AOUpUlGsXzI8Bc2gdqfU3VA5JjEKXmOEHaXkBVp2MJnCnUXtXerE7KIv
-        R7SdUB/CFt7A0BClXi/oceg0Ov33lgJsR+Wjkes=
-X-Google-Smtp-Source: AAOMgpfKHfx3QP1Qvw9skcuPX6Kixq1j0Os9naLKbuBi3SshX0OGhyZy5MtmeGLd3ZCZSoJpWL2XEJ7UyfbLm28hEp4=
-X-Received: by 2002:ac8:2cd1:: with SMTP id 17-v6mr17184268qtx.360.1532451718764;
- Tue, 24 Jul 2018 10:01:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=xtaium+WK7Nbnd7Bg090kq36jPUhUXtTSaiOcKpjdPo=;
+        b=s8oenf0ZQir9lAIbGgN4hYpFCoIN29w5kfFTy0lQJCAzclNjAjN6RIy0/4ezg202ja
+         Ac9npOQaKXPDdg/ZVs5vg4dYSYcOb55uQ89ARKW7gBCjrqftp49hrhZxPYMcJovxetM5
+         NpBDUJuTG0e8T/FnR//nZ4ieyJBTX2PzKZCiUQqRWobs0dtlAUePhlJ7jYKesIhh/3TA
+         X8jghW68RJsv1JxO7GolBipl3NSlDoovmam1EfiJWwSE75S7v7hZ3taNtqku4Q2ku3sv
+         BdEPcfxwYc3YBHpIDr7AVrEyYVisZZly9tSwTxDH0IWbjwgO6bpJs6NRoBGuSuR0KD/h
+         2bOQ==
+X-Gm-Message-State: AOUpUlEk/4Qs65YNpgQLyQvMJaAARSy+ZuiOFyfk+7UvSR7okRQGWw42
+        Ue5qm63eAPlqgsycKB9+Vq4=
+X-Google-Smtp-Source: AAOMgpeNK2XEuklGSrwuISXxl/72NahJQP2lNPce9AYc9tPOwYJuIa1a0t9NnMc7yhXnh+B7zxRWGA==
+X-Received: by 2002:a63:4002:: with SMTP id n2-v6mr16821232pga.285.1532451807659;
+        Tue, 24 Jul 2018 10:03:27 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id j1-v6sm39502195pfk.125.2018.07.24.10.03.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 10:03:26 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter Geis <pgwipeout@gmail.com>
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "mperttunen@nvidia.com" <mperttunen@nvidia.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
+Date:   Tue, 24 Jul 2018 20:03:18 +0300
+Message-ID: <2665137.5yJaStjver@dimapc>
+In-Reply-To: <79afd852-af93-dfa1-0d65-11be7507f81f@gmail.com>
+References: <20180724104309.21741-1-marcel@ziswiler.com> <4715215.NZcU7pUVUy@dimapc> <79afd852-af93-dfa1-0d65-11be7507f81f@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:aed:3fc6:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 10:01:57
- -0700 (PDT)
-In-Reply-To: <20180719140745.4503-1-msys.mizuma@gmail.com>
-References: <20180719140745.4503-1-msys.mizuma@gmail.com>
-From:   Tony Luck <tony.luck@intel.com>
-Date:   Tue, 24 Jul 2018 10:01:57 -0700
-X-Google-Sender-Auth: e4356SG3luQKgzv0MthVjqZlHJ8
-Message-ID: <CA+8MBbJSox7YsfoL=90yiLp8_oHFEjkN3-nk95rGbUmk58R0Gw@mail.gmail.com>
-Subject: Re: [PATCH] EDAC, sb_edac: Fix out of bound in PCI multi segment env
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linux Edac Mailing List <linux-edac@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 7:07 AM, Masayoshi Mizuma <msys.mizuma@gmail.com> wrote:
-> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
->
-> KASAN reported the following slab-out-of-bounds when sb_edac
-> module was loaded on Broadwell machine which has two PCI segments.
+On Tuesday, 24 July 2018 18:47:41 MSK Peter Geis wrote:
+> On 07/24/2018 10:48 AM, Dmitry Osipenko wrote:
+> > On Tuesday, 24 July 2018 17:45:01 MSK Marcel Ziswiler wrote:
+> >> On Tue, 2018-07-24 at 17:31 +0300, Dmitry Osipenko wrote:
+> >>> On Tuesday, 24 July 2018 17:16:33 MSK Marcel Ziswiler wrote:
+> >>>> On Tue, 2018-07-24 at 15:44 +0300, Dmitry Osipenko wrote:
+> >>>>> On Tuesday, 24 July 2018 15:24:34 MSK Marcel Ziswiler wrote:
+> >>>>>> Sorry, I meant to write "minor revamp" in the subject line here
+> >>>>>> as
+> >>>>>> Apalis TK1 was already in quite good a shape but this are still
+> >>>>>> some
+> >>>>>> worthy improvements (;-p).
+> >>>>> 
+> >>>>>> On Tue, 2018-07-24 at 12:42 +0200, Marcel Ziswiler wrote:
+> >>>>> Marcel,
+> >>>>> 
+> >>>>> All your emails that are sent from "toradex.com" are treated as
+> >>>>> spam
+> >>>>> by Gmail
+> >>>>> because "This message has a from address in toradex.com but has
+> >>>>> failed
+> >>>>> toradex.com's required tests for authentication.", is there
+> >>>>> anything
+> >>>>> you could
+> >>>>> do to fix that?
+> >>>> 
+> >>>> Hi Dmitry
+> >>>> 
+> >>>> Hm, unfortunately, Toradex was an M$ only shop when I joined more
+> >>>> then
+> >>>> 7 years ago and so far I was unable to convince our IT to switch to
+> >>>> some grown up email system. Therefore, I am stuck with Exchange,
+> >>>> Office
+> >>>> 365 or whatever M$ nowadays seem to call it. Anyway, I really
+> >>>> thought
+> >>>> sending from Android or Evolution via their resp. Exchange
+> >>>> connectors
+> >>>> would properly do SPF, DKIM and even DMARC. I just confirmed this
+> >>>> when
+> >>>> sending something to my gmail address and doing "Show original".
+> >>>> 
+> >>>> Since Linus himself pointed out any of my patches ending up in his
+> >>>> spam
+> >>>> folder I do send them via my private email which while not having
+> >>>> any
+> >>>> advanced security configured should still be valid. Moving it to a
+> >>>> fully secure configuration including DNSSEC and stuff is still
+> >>>> pending
+> >>>> on my side.
+> >>>> 
+> >>>> Can you please tell me which exact email it is that you got this
+> >>>> reported on so I may further investigate what is going on?
+> >>> 
+> >>> This email from you looks okay. Unfortunately all of your previous
+> >>> emails from
+> >>> "toradex.com" were getting into the spam folder.
+> >> 
+> >> You sure they were from "toradex.com"? The patches should have been
+> >> coming from "ziswiler.com" resp. "perfora.net".
+> > 
+> > The patches from "ziswiler.com" are fine, only your emails specifically
+> > from "toradex.com" had an issue. Looks like you've resolved it now.
+> 
+> Dmitry,
+> Gmail normally suspends flagging emails as spam from addresses you
+> respond to.
+> It may pick up again though, so I would add toradex.com to your allow list.
 
-Although you found this with KASAN as an out of bounds array reference,
-the real problem is that the sb_edac.c driver didn't know about systems
-with segmented PCI busses.
+Yes, probably I could add a custom filter for the domain name. But It is not 
+really a problem for me, I just wanted to point Marcel at it.
 
-So the Subject: for the e-mail (and thus the commit message) should
-be:
 
-[PATCH] EDAC, sb_edac: Add support for systems with segmented PCI busses
 
-Otherwise this looks fine.
 
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-
--Tony
