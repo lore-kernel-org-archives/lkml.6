@@ -2,332 +2,172 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA85C28CF6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA177C6778F
 	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBB4320852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:46:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EgiXL2ut"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB4320852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F02720880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:46:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F02720880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388851AbeGXXz3 (ORCPT
+        id S2388888AbeGXXza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 24 Jul 2018 19:55:30 -0400
+Received: from foss.arm.com ([217.140.101.70]:58680 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388679AbeGXXz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Jul 2018 19:55:29 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46383 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388479AbeGXXz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:55:29 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u24-v6so1189517pfn.13
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 15:46:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=GzGVy7APnjBkq3bC65L+G6LChGTLaZHf9aWjvjtrwu4=;
-        b=EgiXL2utxPOWKtH7BDpX7ZEQ5CZzyb7CTvMvu9bb6hIPvtlvh6hKhotE+2HyCIOGTK
-         bRzIUgqHgzqCEZhpUxLxI+pj9eUCJTYhymftdbODKGyHj1R7IJya1Xa2FA8c8xfbexM+
-         FJKYa3l6som+CGM1qBVq2682BBZ7E+gIu9+tkar0py9yhKkf0+ych7ISR3uf0uxOuc9x
-         y7XwTMU5LZcpXTAMe7FdEP/st1rie9rIIesUcaBOiwkzA5ToZD2BLgeNO12mJW35Lp1J
-         qbjYRnOR9TQXNPW7NKqb3M6zQMiAweYshq9MgiVQu8xmc+T/GKGVxtIIebAsc1Ro7ThA
-         vYig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=GzGVy7APnjBkq3bC65L+G6LChGTLaZHf9aWjvjtrwu4=;
-        b=QdLQkQdC21eJ02o5jepNXpkjLJbguHdGSfoFGK1TmDHqJrB7ZkwcWj0fgdF5V3vXGE
-         hYM8875utPbCEZbEhm1VsCxOchpHGC20Y5pcSlSGtnQbyk00+w/pmC8q3xzIUuXSrtWh
-         XGq83ke7bSRTJfExQHUkK3sR53ruuQzJ3mFdY2DBbd94LIgGD1A/8TVcXnSnubejfgJZ
-         kMmFZC46W5f3RtnRSgsPJ467HhNQnqm5OxN4nQFz68MKnKz8LjUVNpCl/3PFl0sXBsUx
-         ahT2b5DWSsfhkfe6JyurHD8dsbo2B9olYmFvtOujT1YAuGK+6S3bu9UJGvZBKAmHRZw5
-         JcTA==
-X-Gm-Message-State: AOUpUlEieR3VylQAAhd1ACJLUSTCPqp71XtZrZepgzmGxBIa9OoEzK9z
-        7mRPbE6QkmjRs1hrHzaXn7CYPQ==
-X-Google-Smtp-Source: AAOMgpfv/e6THL7CNyCf9XzlcnKwVkVKJZ+iPoIGX98oKlWidykNqkPnUuqOnwMtgH3Z4bZkS0+BqA==
-X-Received: by 2002:a63:5c7:: with SMTP id 190-v6mr17538515pgf.385.1532472407442;
-        Tue, 24 Jul 2018 15:46:47 -0700 (PDT)
-Received: from shakeelb.mtv.corp.google.com ([2620:15c:2cb:201:3a5f:3a4f:fa44:6b63])
-        by smtp.gmail.com with ESMTPSA id k26-v6sm32721310pfb.167.2018.07.24.15.46.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4CDC7A9;
+        Tue, 24 Jul 2018 15:46:48 -0700 (PDT)
+Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A69C33F5B3;
         Tue, 24 Jul 2018 15:46:46 -0700 (PDT)
-From:   Shakeel Butt <shakeelb@google.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Greg Thelen <gthelen@google.com>,
-        Bruce Merry <bmerry@ska.ac.za>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, Shakeel Butt <shakeelb@google.com>
-Subject: [PATCH] memcg: reduce memcg tree traversals for stats collection
-Date:   Tue, 24 Jul 2018 15:46:35 -0700
-Message-Id: <20180724224635.143944-1-shakeelb@google.com>
-X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
+Subject: Re: [PATCH v3 6/6] iommu/arm-smmu-v3: add bootup option
+ "iommu_strict_mode"
+To:     Zhen Lei <thunder.leizhen@huawei.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
+ <1531376312-2192-7-git-send-email-thunder.leizhen@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <33053c8f-3ac3-e1d6-e260-fd36c4af9312@arm.com>
+Date:   Tue, 24 Jul 2018 23:46:49 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1531376312-2192-7-git-send-email-thunder.leizhen@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently cgroup-v1's memcg_stat_show traverses the memcg tree ~17 times
-to collect the stats while cgroup-v2's memory_stat_show traverses the
-memcg tree thrice. On a large machine, a couple thousand memcgs is very
-normal and if the churn is high and memcgs stick around during to
-several reasons, tens of thousands of nodes in memcg tree can exist.
-This patch has refactored and shared the stat collection code between
-cgroup-v1 and cgroup-v2 and has reduced the tree traversal to just one.
+On 2018-07-12 7:18 AM, Zhen Lei wrote:
+> Because the non-strict mode introduces a vulnerability window, so add a
+> bootup option to make the manager can choose which mode to be used. The
+> default mode is IOMMU_STRICT.
+> 
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> ---
+>   Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++
+>   drivers/iommu/arm-smmu-v3.c                     | 32 ++++++++++++++++++++++---
+>   2 files changed, 41 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index efc7aa7..0cc80bc 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1720,6 +1720,18 @@
+>   		nobypass	[PPC/POWERNV]
+>   			Disable IOMMU bypass, using IOMMU for PCI devices.
+>   
+> +	iommu_strict_mode=	[arm-smmu-v3]
 
-I ran a simple benchmark which reads the root_mem_cgroup's stat file
-1000 times in the presense of 2500 memcgs on cgroup-v1. The results are:
+If anything this should belong to iommu-dma, as that's where the actual 
+decision of whether to use a flush queue or not happens. Also it would 
+be nice to stick to the iommu.* option namespace in the hope of 
+maintaining some consistency.
 
-Without the patch:
-$ time ./read-root-stat-1000-times
+> +		0 - strict mode
+> +		    Make sure all related TLBs to be invalidated before the
+> +		    memory released.
+> +		1 - non-strict mode
+> +		    Put off TLBs invalidation and release memory first. This mode
+> +		    introduces a vlunerability window, an untrusted device can
+> +		    access the reused memory because the TLBs may still valid.
+> +		    Please take full consideration before choosing this mode.
+> +		    Note that, VFIO is always use strict mode.
+> +		others - strict mode
+> +
+>   	iommu.passthrough=
+>   			[ARM64] Configure DMA to bypass the IOMMU by default.
+>   			Format: { "0" | "1" }
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 4a198a0..9b72fc4 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -631,6 +631,24 @@ struct arm_smmu_option_prop {
+>   	{ 0, NULL},
+>   };
+>   
+> +static u32 iommu_strict_mode __read_mostly = IOMMU_STRICT;
+> +
+> +static int __init setup_iommu_strict_mode(char *str)
+> +{
+> +	u32 strict_mode = IOMMU_STRICT;
+> +
+> +	get_option(&str, &strict_mode);
+> +	if (strict_mode == IOMMU_NON_STRICT) {
+> +		iommu_strict_mode = strict_mode;
+> +		pr_warn("WARNING: iommu non-strict mode is chose.\n"
+> +			"It's good for scatter-gather performance but lacks full isolation\n");
+> +		add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
+> +	}
+> +
+> +	return 0;
+> +}
+> +early_param("iommu_strict_mode", setup_iommu_strict_mode);
+> +
+>   static inline void __iomem *arm_smmu_page1_fixup(unsigned long offset,
+>   						 struct arm_smmu_device *smmu)
+>   {
+> @@ -1441,7 +1459,7 @@ static bool arm_smmu_capable(enum iommu_cap cap)
+>   	case IOMMU_CAP_NOEXEC:
+>   		return true;
+>   	case IOMMU_CAP_NON_STRICT:
+> -		return true;
+> +		return (iommu_strict_mode == IOMMU_NON_STRICT) ? true : false;
 
-real    0m1.663s
-user    0m0.000s
-sys     0m1.660s
+Ugh. The "completely redundant ternany" idiom hurts my soul :(
 
-With the patch:
-$ time ./read-root-stat-1000-times
+Robin.
 
-real    0m0.468s
-user    0m0.000s
-sys     0m0.467s
-
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
----
- mm/memcontrol.c | 150 +++++++++++++++++++++++-------------------------
- 1 file changed, 73 insertions(+), 77 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index a5869b9d5194..d90993ef1d7d 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3122,29 +3122,34 @@ static int mem_cgroup_hierarchy_write(struct cgroup_subsys_state *css,
- 	return retval;
- }
- 
--static void tree_stat(struct mem_cgroup *memcg, unsigned long *stat)
--{
--	struct mem_cgroup *iter;
--	int i;
--
--	memset(stat, 0, sizeof(*stat) * MEMCG_NR_STAT);
--
--	for_each_mem_cgroup_tree(iter, memcg) {
--		for (i = 0; i < MEMCG_NR_STAT; i++)
--			stat[i] += memcg_page_state(iter, i);
--	}
--}
-+struct accumulated_stats {
-+	unsigned long stat[MEMCG_NR_STAT];
-+	unsigned long events[NR_VM_EVENT_ITEMS];
-+	unsigned long lru_pages[NR_LRU_LISTS];
-+	const unsigned int *stats_array;
-+	const unsigned int *events_array;
-+	int stats_size;
-+	int events_size;
-+};
- 
--static void tree_events(struct mem_cgroup *memcg, unsigned long *events)
-+static void accumulate_memcg_tree(struct mem_cgroup *memcg,
-+				  struct accumulated_stats *acc)
- {
--	struct mem_cgroup *iter;
-+	struct mem_cgroup *mi;
- 	int i;
- 
--	memset(events, 0, sizeof(*events) * NR_VM_EVENT_ITEMS);
-+	for_each_mem_cgroup_tree(mi, memcg) {
-+		for (i = 0; i < acc->stats_size; i++)
-+			acc->stat[i] += memcg_page_state(mi,
-+				acc->stats_array ? acc->stats_array[i] : i);
- 
--	for_each_mem_cgroup_tree(iter, memcg) {
--		for (i = 0; i < NR_VM_EVENT_ITEMS; i++)
--			events[i] += memcg_sum_events(iter, i);
-+		for (i = 0; i < acc->events_size; i++)
-+			acc->events[i] += memcg_sum_events(mi,
-+				acc->events_array ? acc->events_array[i] : i);
-+
-+		for (i = 0; i < NR_LRU_LISTS; i++)
-+			acc->lru_pages[i] +=
-+				mem_cgroup_nr_lru_pages(mi, BIT(i));
- 	}
- }
- 
-@@ -3555,6 +3560,7 @@ static int memcg_stat_show(struct seq_file *m, void *v)
- 	unsigned long memory, memsw;
- 	struct mem_cgroup *mi;
- 	unsigned int i;
-+	struct accumulated_stats acc;
- 
- 	BUILD_BUG_ON(ARRAY_SIZE(memcg1_stat_names) != ARRAY_SIZE(memcg1_stats));
- 	BUILD_BUG_ON(ARRAY_SIZE(mem_cgroup_lru_names) != NR_LRU_LISTS);
-@@ -3587,32 +3593,27 @@ static int memcg_stat_show(struct seq_file *m, void *v)
- 		seq_printf(m, "hierarchical_memsw_limit %llu\n",
- 			   (u64)memsw * PAGE_SIZE);
- 
--	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
--		unsigned long long val = 0;
-+	memset(&acc, 0, sizeof(acc));
-+	acc.stats_size = ARRAY_SIZE(memcg1_stats);
-+	acc.stats_array = memcg1_stats;
-+	acc.events_size = ARRAY_SIZE(memcg1_events);
-+	acc.events_array = memcg1_events;
-+	accumulate_memcg_tree(memcg, &acc);
- 
-+	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
- 		if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
- 			continue;
--		for_each_mem_cgroup_tree(mi, memcg)
--			val += memcg_page_state(mi, memcg1_stats[i]) *
--			PAGE_SIZE;
--		seq_printf(m, "total_%s %llu\n", memcg1_stat_names[i], val);
-+		seq_printf(m, "total_%s %llu\n", memcg1_stat_names[i],
-+			   (u64)acc.stat[i] * PAGE_SIZE);
- 	}
- 
--	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++) {
--		unsigned long long val = 0;
--
--		for_each_mem_cgroup_tree(mi, memcg)
--			val += memcg_sum_events(mi, memcg1_events[i]);
--		seq_printf(m, "total_%s %llu\n", memcg1_event_names[i], val);
--	}
--
--	for (i = 0; i < NR_LRU_LISTS; i++) {
--		unsigned long long val = 0;
-+	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++)
-+		seq_printf(m, "total_%s %llu\n", memcg1_event_names[i],
-+			   (u64)acc.events[i]);
- 
--		for_each_mem_cgroup_tree(mi, memcg)
--			val += mem_cgroup_nr_lru_pages(mi, BIT(i)) * PAGE_SIZE;
--		seq_printf(m, "total_%s %llu\n", mem_cgroup_lru_names[i], val);
--	}
-+	for (i = 0; i < NR_LRU_LISTS; i++)
-+		seq_printf(m, "total_%s %llu\n", mem_cgroup_lru_names[i],
-+			   (u64)acc.lru_pages[i] * PAGE_SIZE);
- 
- #ifdef CONFIG_DEBUG_VM
- 	{
-@@ -5737,8 +5738,7 @@ static int memory_events_show(struct seq_file *m, void *v)
- static int memory_stat_show(struct seq_file *m, void *v)
- {
- 	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
--	unsigned long stat[MEMCG_NR_STAT];
--	unsigned long events[NR_VM_EVENT_ITEMS];
-+	struct accumulated_stats acc;
- 	int i;
- 
- 	/*
-@@ -5752,66 +5752,62 @@ static int memory_stat_show(struct seq_file *m, void *v)
- 	 * Current memory state:
- 	 */
- 
--	tree_stat(memcg, stat);
--	tree_events(memcg, events);
-+	memset(&acc, 0, sizeof(acc));
-+	acc.stats_size = MEMCG_NR_STAT;
-+	acc.events_size = NR_VM_EVENT_ITEMS;
-+	accumulate_memcg_tree(memcg, &acc);
- 
- 	seq_printf(m, "anon %llu\n",
--		   (u64)stat[MEMCG_RSS] * PAGE_SIZE);
-+		   (u64)acc.stat[MEMCG_RSS] * PAGE_SIZE);
- 	seq_printf(m, "file %llu\n",
--		   (u64)stat[MEMCG_CACHE] * PAGE_SIZE);
-+		   (u64)acc.stat[MEMCG_CACHE] * PAGE_SIZE);
- 	seq_printf(m, "kernel_stack %llu\n",
--		   (u64)stat[MEMCG_KERNEL_STACK_KB] * 1024);
-+		   (u64)acc.stat[MEMCG_KERNEL_STACK_KB] * 1024);
- 	seq_printf(m, "slab %llu\n",
--		   (u64)(stat[NR_SLAB_RECLAIMABLE] +
--			 stat[NR_SLAB_UNRECLAIMABLE]) * PAGE_SIZE);
-+		   (u64)(acc.stat[NR_SLAB_RECLAIMABLE] +
-+			 acc.stat[NR_SLAB_UNRECLAIMABLE]) * PAGE_SIZE);
- 	seq_printf(m, "sock %llu\n",
--		   (u64)stat[MEMCG_SOCK] * PAGE_SIZE);
-+		   (u64)acc.stat[MEMCG_SOCK] * PAGE_SIZE);
- 
- 	seq_printf(m, "shmem %llu\n",
--		   (u64)stat[NR_SHMEM] * PAGE_SIZE);
-+		   (u64)acc.stat[NR_SHMEM] * PAGE_SIZE);
- 	seq_printf(m, "file_mapped %llu\n",
--		   (u64)stat[NR_FILE_MAPPED] * PAGE_SIZE);
-+		   (u64)acc.stat[NR_FILE_MAPPED] * PAGE_SIZE);
- 	seq_printf(m, "file_dirty %llu\n",
--		   (u64)stat[NR_FILE_DIRTY] * PAGE_SIZE);
-+		   (u64)acc.stat[NR_FILE_DIRTY] * PAGE_SIZE);
- 	seq_printf(m, "file_writeback %llu\n",
--		   (u64)stat[NR_WRITEBACK] * PAGE_SIZE);
-+		   (u64)acc.stat[NR_WRITEBACK] * PAGE_SIZE);
- 
--	for (i = 0; i < NR_LRU_LISTS; i++) {
--		struct mem_cgroup *mi;
--		unsigned long val = 0;
--
--		for_each_mem_cgroup_tree(mi, memcg)
--			val += mem_cgroup_nr_lru_pages(mi, BIT(i));
--		seq_printf(m, "%s %llu\n",
--			   mem_cgroup_lru_names[i], (u64)val * PAGE_SIZE);
--	}
-+	for (i = 0; i < NR_LRU_LISTS; i++)
-+		seq_printf(m, "%s %llu\n", mem_cgroup_lru_names[i],
-+			   (u64)acc.lru_pages[i] * PAGE_SIZE);
- 
- 	seq_printf(m, "slab_reclaimable %llu\n",
--		   (u64)stat[NR_SLAB_RECLAIMABLE] * PAGE_SIZE);
-+		   (u64)acc.stat[NR_SLAB_RECLAIMABLE] * PAGE_SIZE);
- 	seq_printf(m, "slab_unreclaimable %llu\n",
--		   (u64)stat[NR_SLAB_UNRECLAIMABLE] * PAGE_SIZE);
-+		   (u64)acc.stat[NR_SLAB_UNRECLAIMABLE] * PAGE_SIZE);
- 
- 	/* Accumulated memory events */
- 
--	seq_printf(m, "pgfault %lu\n", events[PGFAULT]);
--	seq_printf(m, "pgmajfault %lu\n", events[PGMAJFAULT]);
-+	seq_printf(m, "pgfault %lu\n", acc.events[PGFAULT]);
-+	seq_printf(m, "pgmajfault %lu\n", acc.events[PGMAJFAULT]);
- 
--	seq_printf(m, "pgrefill %lu\n", events[PGREFILL]);
--	seq_printf(m, "pgscan %lu\n", events[PGSCAN_KSWAPD] +
--		   events[PGSCAN_DIRECT]);
--	seq_printf(m, "pgsteal %lu\n", events[PGSTEAL_KSWAPD] +
--		   events[PGSTEAL_DIRECT]);
--	seq_printf(m, "pgactivate %lu\n", events[PGACTIVATE]);
--	seq_printf(m, "pgdeactivate %lu\n", events[PGDEACTIVATE]);
--	seq_printf(m, "pglazyfree %lu\n", events[PGLAZYFREE]);
--	seq_printf(m, "pglazyfreed %lu\n", events[PGLAZYFREED]);
-+	seq_printf(m, "pgrefill %lu\n", acc.events[PGREFILL]);
-+	seq_printf(m, "pgscan %lu\n", acc.events[PGSCAN_KSWAPD] +
-+		   acc.events[PGSCAN_DIRECT]);
-+	seq_printf(m, "pgsteal %lu\n", acc.events[PGSTEAL_KSWAPD] +
-+		   acc.events[PGSTEAL_DIRECT]);
-+	seq_printf(m, "pgactivate %lu\n", acc.events[PGACTIVATE]);
-+	seq_printf(m, "pgdeactivate %lu\n", acc.events[PGDEACTIVATE]);
-+	seq_printf(m, "pglazyfree %lu\n", acc.events[PGLAZYFREE]);
-+	seq_printf(m, "pglazyfreed %lu\n", acc.events[PGLAZYFREED]);
- 
- 	seq_printf(m, "workingset_refault %lu\n",
--		   stat[WORKINGSET_REFAULT]);
-+		   acc.stat[WORKINGSET_REFAULT]);
- 	seq_printf(m, "workingset_activate %lu\n",
--		   stat[WORKINGSET_ACTIVATE]);
-+		   acc.stat[WORKINGSET_ACTIVATE]);
- 	seq_printf(m, "workingset_nodereclaim %lu\n",
--		   stat[WORKINGSET_NODERECLAIM]);
-+		   acc.stat[WORKINGSET_NODERECLAIM]);
- 
- 	return 0;
- }
--- 
-2.18.0.233.g985f88cf7e-goog
-
+>   	default:
+>   		return false;
+>   	}
+> @@ -1750,6 +1768,14 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
+>   	return ret;
+>   }
+>   
+> +static u32 arm_smmu_strict_mode(struct iommu_domain *domain)
+> +{
+> +	if (iommu_strict_mode == IOMMU_NON_STRICT)
+> +		return IOMMU_DOMAIN_STRICT_MODE(domain);
+> +
+> +	return IOMMU_STRICT;
+> +}
+> +
+>   static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>   			phys_addr_t paddr, size_t size, int prot)
+>   {
+> @@ -1769,7 +1795,7 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>   	if (!ops)
+>   		return 0;
+>   
+> -	return ops->unmap(ops, iova | IOMMU_DOMAIN_STRICT_MODE(domain), size);
+> +	return ops->unmap(ops, iova | arm_smmu_strict_mode(domain), size);
+>   }
+>   
+>   static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
+> @@ -1784,7 +1810,7 @@ static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+>   {
+>   	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
+>   
+> -	if (smmu && (IOMMU_DOMAIN_STRICT_MODE(domain) == IOMMU_STRICT))
+> +	if (smmu && (arm_smmu_strict_mode(domain) == IOMMU_STRICT))
+>   		__arm_smmu_tlb_sync(smmu);
+>   }
+>   
+> 
