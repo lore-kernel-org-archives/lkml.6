@@ -2,220 +2,88 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF95C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C3CC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453AA20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1998620874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:34:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="em7lmiyn";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="l6IUqx4R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453AA20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Sis/4XH+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1998620874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388557AbeGXSkv (ORCPT
+        id S2388502AbeGXSlj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:40:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58696 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388382AbeGXSkv (ORCPT
+        Tue, 24 Jul 2018 14:41:39 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:38476 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388415AbeGXSli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:40:51 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D0CD2602D7; Tue, 24 Jul 2018 17:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532453598;
-        bh=BQRmyQoXi/vOkgEuc/NDe3ZFaW85b+ys9LeDXuAx8F4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=em7lmiynNB8ibHnsKYeYppQTMlwP3rM3SniMdzjbfIixyBUCCVhi1cJRILigo3Z54
-         /9lXOtI2tJ4ZdMcSYWKtUybLG6M/SoI2jE9kXpOk6WYvpX18/qHYoe3OX1QVx5Ld+Z
-         KQMav0K+uqFqGFFyfVDHB5Wdg/JsC1djBne/mrc8=
-Received: from [192.168.43.138] (unknown [27.59.45.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: architt@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 92CB8602D7;
-        Tue, 24 Jul 2018 17:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532453597;
-        bh=BQRmyQoXi/vOkgEuc/NDe3ZFaW85b+ys9LeDXuAx8F4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=l6IUqx4R32PfrqcmEHQmlltLVw9/SkhQ7p8cITr9PtTFb2Sa7ddh1Igc5WGiM4Mo4
-         Sx0tj2661U3OMtloAcDRC+qZegPxoS64Sz8wiijoeO320QtiOGD2qR4VmTeDCHr26q
-         YIvSwZhhI1HIKo7YFsF7+UwNwCeMU4ZuEMidHXOA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 92CB8602D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH v2] drm/msm/display: negative x/y in cursor move
-To:     Carsten Behling <carsten.behling@googlemail.com>
-Cc:     Carsten Behling <carsten.behling@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Sean Paul <seanpaul@chromium.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Steve Kowalik <steven@wedontsleep.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <201807170504.KBRX6Bew%fengguang.wu@intel.com>
- <20180716230314.3527-1-carsten.behling@gmail.com>
-From:   Archit Taneja <architt@codeaurora.org>
-Message-ID: <99e72f0c-e753-cff9-9a58-50d919d472a5@codeaurora.org>
-Date:   Tue, 24 Jul 2018 23:03:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 24 Jul 2018 14:41:38 -0400
+Received: by mail-io0-f194.google.com with SMTP id v26-v6so4093803iog.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 10:34:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=upOJO3BLOmG4LVjRJ/v80tcHTlYkB1OVWAohGSMHlDI=;
+        b=Sis/4XH+v2ps76g/cmr/5upvNRzHRrioMJtff7fsiJevDshRsfG8N9wN4WPggtXfor
+         Zf9vVwONGQvHGXNjVegpRpvMDBiQ65Q5dKJTz7zxxP5rfuU3gB7AnGxG2SKqB32QhdzB
+         5hRS0pB7NR3BtqNyX+6BIF+lEe8iCCaXGTAOw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=upOJO3BLOmG4LVjRJ/v80tcHTlYkB1OVWAohGSMHlDI=;
+        b=kbC3z6HkzGR7N1HCs55A82FcKM+7VElZyMhycQBmun3clcS2UlYJ0QqJsLl/G1PbJ/
+         e3SW+jwLlc4784gdsxf1hC39KuZGWTv7ZVCWBnvXFNMX87YBx3kNaCe4w/sUWCifnN7J
+         m+vbw5IcqJyWppGZx5klEQQP5GPmMyQFUV/gvpjxzy6YK+oG8y7eXHX5CUIaeWlUhwTi
+         uaYJymuIuxiQir0xUMt+Xfjm4aMhRihkYBgI/8udDzLRIYgRonrLvv5l2yka1BXxQoIW
+         wuR0L4vlhQbTzWuKpUFs5OygQ6YQvfpAAFdgkeBXMZF0k+Qz8Rr1XHZWpcRtoHWceymv
+         TE0w==
+X-Gm-Message-State: AOUpUlE6VOGQkcnuT4jlAaCPa2isi0nXPkp1/PImWzBOdd/C0ZDDYp7f
+        j4HhvNybqLjTrQbMuBdXuUQ8KfmOP0vxBGDfQZM=
+X-Google-Smtp-Source: AAOMgpfZDe1/yuLe9IXV4Yd/mfbjVPcbKddiMVfiVP4Nt7MfdMc8VcEhOs59PcNeJMVrWYWf9D0JNM48tFBnFf4mo1s=
+X-Received: by 2002:a6b:f612:: with SMTP id n18-v6mr14930900ioh.259.1532453645906;
+ Tue, 24 Jul 2018 10:34:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180716230314.3527-1-carsten.behling@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180724121139.62570-1-kirill.shutemov@linux.intel.com>
+In-Reply-To: <20180724121139.62570-1-kirill.shutemov@linux.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 24 Jul 2018 10:33:55 -0700
+Message-ID: <CA+55aFwwY0UUYtyohfd-fnhpd=G3EYTtirfmQHXJ3n7C_PCSJA@mail.gmail.com>
+Subject: Re: [PATCHv3 0/3] Fix crash due to vma_is_anonymous() false-positives
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Jul 24, 2018 at 5:11 AM Kirill A. Shutemov
+<kirill.shutemov@linux.intel.com> wrote:
+>
+> Fix crash found by syzkaller.
+>
+> Build on top of Linus' changes in 4.18-rc6.
+>
+> Andrew, could you please drop mm-drop-unneeded-vm_ops-checks-v2.patch for
+> now. Infiniband drivers have to be fixed first.
 
-On Tuesday 17 July 2018 04:33 AM, Carsten Behling wrote:
-> modesetting X11 driver may provide negative x/y cordinates in
-> mdp5_crtc_cursor_move call when rotation is enabled.
-> 
-> Cursor buffer can overlap down to its negative width/height.
-> 
-> ROI has to be recalculated for negative x/y indicating using the
-> lower/right corner of the cursor buffer and hotspot must be set
-> in MDP5_LM_CURSOR_XY_SRC_Y MDP5_LM_CURSOR_XY_SRC_X.
+Ack, these look good to me.
 
-Thanks for the patch. Could you tell how to reproduce this issue
-on a db410c?
+We still need to have the rdma people fix up their vma mis-use, but
+that's a related, but independent issue.
 
-I was playing with xrandr's --rotate and --reflect options to get
-a rotated output, but wasn't able to generate negative x/y
-co-ordinates. I'm using linaro's debian userspace, running lxqt.
-
-Thanks,
-Archit
-
-> 
-> Signed-off-by: Carsten Behling <carsten.behling@gmail.com>
-> ---
-> Changes in v2:
-> - fixed format specifier in debug message
-> 
->   drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 51 ++++++++++++++++++++++++++-----
->   1 file changed, 43 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> index 10271359789e..a7f4a6688fec 100644
-> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> @@ -65,7 +65,7 @@ struct mdp5_crtc {
->   		struct drm_gem_object *scanout_bo;
->   		uint64_t iova;
->   		uint32_t width, height;
-> -		uint32_t x, y;
-> +		int x, y;
->   	} cursor;
->   };
->   #define to_mdp5_crtc(x) container_of(x, struct mdp5_crtc, base)
-> @@ -760,20 +760,31 @@ static void get_roi(struct drm_crtc *crtc, uint32_t *roi_w, uint32_t *roi_h)
->   	 * Cursor Region Of Interest (ROI) is a plane read from cursor
->   	 * buffer to render. The ROI region is determined by the visibility of
->   	 * the cursor point. In the default Cursor image the cursor point will
-> -	 * be at the top left of the cursor image, unless it is specified
-> -	 * otherwise using hotspot feature.
-> +	 * be at the top left of the cursor image.
->   	 *
-> +	 * Without rotation:
->   	 * If the cursor point reaches the right (xres - x < cursor.width) or
->   	 * bottom (yres - y < cursor.height) boundary of the screen, then ROI
->   	 * width and ROI height need to be evaluated to crop the cursor image
->   	 * accordingly.
->   	 * (xres-x) will be new cursor width when x > (xres - cursor.width)
->   	 * (yres-y) will be new cursor height when y > (yres - cursor.height)
-> +	 *
-> +	 * With rotation:
-> +	 * We get negative x and/or y coordinates.
-> +	 * (cursor.width - abs(x)) will be new cursor width when x < 0
-> +	 * (cursor.height - abs(y)) will be new cursor width when y < 0
->   	 */
-> -	*roi_w = min(mdp5_crtc->cursor.width, xres -
-> +	if (mdp5_crtc->cursor.x >= 0)
-> +		*roi_w = min(mdp5_crtc->cursor.width, xres -
->   			mdp5_crtc->cursor.x);
-> -	*roi_h = min(mdp5_crtc->cursor.height, yres -
-> +	else
-> +		*roi_w = mdp5_crtc->cursor.width - abs(mdp5_crtc->cursor.x);
-> +	if (mdp5_crtc->cursor.y >= 0)
-> +		*roi_h = min(mdp5_crtc->cursor.height, yres -
->   			mdp5_crtc->cursor.y);
-> +	else
-> +		*roi_h = mdp5_crtc->cursor.height - abs(mdp5_crtc->cursor.y);
->   }
->   
->   static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
-> @@ -783,7 +794,7 @@ static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
->   	struct mdp5_kms *mdp5_kms = get_kms(crtc);
->   	const enum mdp5_cursor_alpha cur_alpha = CURSOR_ALPHA_PER_PIXEL;
->   	uint32_t blendcfg, stride;
-> -	uint32_t x, y, width, height;
-> +	uint32_t x, y, src_x, src_y, width, height;
->   	uint32_t roi_w, roi_h;
->   	int lm;
->   
-> @@ -800,6 +811,26 @@ static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
->   
->   	get_roi(crtc, &roi_w, &roi_h);
->   
-> +	/* If cusror buffer overlaps due to rotation on the
-> +	 * upper or left screen border the pixel offset inside
-> +	 * the cursor buffer of the ROI is the positive overlap
-> +	 * distance.
-> +	 */
-> +	if (mdp5_crtc->cursor.x < 0) {
-> +		src_x = abs(mdp5_crtc->cursor.x);
-> +		x = 0;
-> +	} else {
-> +		src_x = 0;
-> +	}
-> +	if (mdp5_crtc->cursor.y < 0) {
-> +		src_y = abs(mdp5_crtc->cursor.y);
-> +		y = 0;
-> +	} else {
-> +		src_y = 0;
-> +	}
-> +	DBG("%s: x=%u, y=%u roi_w=%u roi_h=%u src_x=%u src_y=%u",
-> +		crtc->name, x, y, roi_w, roi_h, src_x, src_y);
-> +
->   	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_STRIDE(lm), stride);
->   	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_FORMAT(lm),
->   			MDP5_LM_CURSOR_FORMAT_FORMAT(CURSOR_FMT_ARGB8888));
-> @@ -812,6 +843,9 @@ static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
->   	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_START_XY(lm),
->   			MDP5_LM_CURSOR_START_XY_Y_START(y) |
->   			MDP5_LM_CURSOR_START_XY_X_START(x));
-> +	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_XY(lm),
-> +			MDP5_LM_CURSOR_XY_SRC_Y(src_y) |
-> +			MDP5_LM_CURSOR_XY_SRC_X(src_x));
->   	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_BASE_ADDR(lm),
->   			mdp5_crtc->cursor.iova);
->   
-> @@ -932,8 +966,9 @@ static int mdp5_crtc_cursor_move(struct drm_crtc *crtc, int x, int y)
->   	if (unlikely(!crtc->state->enable))
->   		return 0;
->   
-> -	mdp5_crtc->cursor.x = x = max(x, 0);
-> -	mdp5_crtc->cursor.y = y = max(y, 0);
-> +	/* accept negative x/y coordinates up to maximum cursor overlap */
-> +	mdp5_crtc->cursor.x = x = max(x, -(int)mdp5_crtc->cursor.width);
-> +	mdp5_crtc->cursor.y = y = max(y, -(int)mdp5_crtc->cursor.height);
->   
->   	get_roi(crtc, &roi_w, &roi_h);
->   
-> 
+             Linus
