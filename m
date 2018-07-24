@@ -2,319 +2,232 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5536C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 04:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 110DAC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 04:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6976A20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 04:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44F320875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 04:27:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CEKF+k0j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6976A20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MfGfn396"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44F320875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388481AbeGXFW6 (ORCPT
+        id S2388479AbeGXFbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 01:22:58 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:32815 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388090AbeGXFW5 (ORCPT
+        Tue, 24 Jul 2018 01:31:10 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36873 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388236AbeGXFbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 01:22:57 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s12-v6so2380929ljj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 21:18:27 -0700 (PDT)
+        Tue, 24 Jul 2018 01:31:09 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 31-v6so1156924plc.4;
+        Mon, 23 Jul 2018 21:26:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=1ZWlzAyF0kUM2FHxk14iBcjZQwJ0aHzFYfUNO7CAsbw=;
-        b=CEKF+k0jQJ/R3trJvwslcbOi42RXXncArTlf0qGHXO+d0FAl9ojdhPvhJTGCyawk8I
-         /+Ks6AtQcbHIo6Z1VTKQkgvEeuI646M047oFsQDe+chfJomRY6vyzsklQkHwZmsbJuK+
-         2ic4HfWnHZ2IT7e59Nyv3MsZv8LSjyzNaADyg=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6lTIw9y1GXBJmo2GmyDvhhRu707mLcJa8v3k4TNTwkM=;
+        b=MfGfn396n1kDEmGZ5av/vd1862PdIMKGfulm1ffguCGZZaiZ9IEraiYgfGGXVq2kWo
+         MKbU24eaat52zv6tOpYV8AfzX2edhVQEbs7KQQFWmoIma/uLtzRc/Q4rKjgI8pnJBeSR
+         p3Pietsr0JgBzrMuOHemeAwExlASt4pPqzTKAcIHLuFUyy9cch4a8t45ufF2etRD/hoZ
+         7AArJyzDpD4e3G5Oj/lRHtHewPhrWUb+hjtW5DiWGV5zc31nCaWXVF3bRqoGRybibSWx
+         NQ/+SdW9ApljxzGLviC8k2STv+/84+PqxUhIgPEH3/NPaIMvIOFI144U7P9bwuU3+o5t
+         ZzNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=1ZWlzAyF0kUM2FHxk14iBcjZQwJ0aHzFYfUNO7CAsbw=;
-        b=t1ayFVhgdgUDYKMGJ7lmgM5uiZH9YlDLlF5RPgpFvUK3A8Dv1znvx+ykd9LUu3Iuv/
-         sIGQNVin32jeCFTIjVjkLcWaVJnSUTsksE3j04VRVEmTU9RnXsKiRvBQ2skBj9MvZ+vM
-         HxgGu6KlQLfXoMfsAPU50m7lF5MDgLUlo2CsDSJ6fpIe9nYjoMAp4SWgtFklcLOgSFop
-         TJvEG0yPR9ot4UDBk65ykM0gXQKktUKxm0GIYft6BImQxFLNIHS2LPcfMJ+EGKXYpi0k
-         6t7+mVIEFLx6I1KdbxrxvtBw4W3GdCQd/ryZjot/SJKv4Jsl0CYs0FsXYFA99NPBv4Cm
-         45wA==
-X-Gm-Message-State: AOUpUlF8paWmcAHNVXyN9mbmpNdRfmFzjaO7Fnnd9aOaXAUWuDYtFUrc
-        zhOc5aGRq8BKVVorL6TW9SWS5XAeYdKbl6j/YWQ5mw==
-X-Google-Smtp-Source: AAOMgpcVbc2mjbKWeyWyeY0c6VCqZoTJVSR/WpWGfTHcWEj8ymFZe3A16vwdVg7SjGydcatdu7TjqVrAHkpkP1f5I10=
-X-Received: by 2002:a2e:7113:: with SMTP id m19-v6mr10270334ljc.66.1532405907216;
- Mon, 23 Jul 2018 21:18:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6lTIw9y1GXBJmo2GmyDvhhRu707mLcJa8v3k4TNTwkM=;
+        b=L/4G5giX0572Q+tQX3UD3X0kJUXz/FGkaTf7PgUVj7anDpn134c0qXc6B7TjoqL3ag
+         BhwBFmEIAtt7qXUStp+0q0trx13rJfnzMy6umL4EFOP7aGpWNznE2CXQevnzQkkkMkkJ
+         nf/zzp1a3f9obf2Fs7+jKvkKUcSK3V+JtAI3QNbUpZAFyZyWIBYSHP2Sn1iCMS2eV415
+         5HDDgpLwT92f5+0jjMy3Qz05UxRkAHtBCK6qDFKn/eWyhgQk803l2NhUoC0ItIHtSpxQ
+         iDzTF1oAyFXXKWdVeKv++raKYTwZ/qQ2GJ7uxuPepIHEi4XHtZX6MSViYz1/oyOUtMqd
+         ggtQ==
+X-Gm-Message-State: AOUpUlHvqzJ0JnMLOxGVjF+Ewmy27fijBTxIu4melRJSPQpBj9pgcPnF
+        2u8MiD8mnYajXqMhI0aad34=
+X-Google-Smtp-Source: AAOMgpd3PRKR/6yXVonjfsO7QuE1LIFNZLZrg1Xmpu7EIHTigUVXmzpNuBFxSjVoyMDJuFVsHLGlcQ==
+X-Received: by 2002:a17:902:bd4b:: with SMTP id b11-v6mr15031912plx.243.1532406399670;
+        Mon, 23 Jul 2018 21:26:39 -0700 (PDT)
+Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net. [67.185.97.198])
+        by smtp.gmail.com with ESMTPSA id u1-v6sm20753390pgk.25.2018.07.23.21.26.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 21:26:39 -0700 (PDT)
+Date:   Mon, 23 Jul 2018 21:26:37 -0700
+From:   Eric Biggers <ebiggers3@gmail.com>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v4 1/3] lib: add crc64 calculation routines
+Message-ID: <20180724042637.GA1944@sol.localdomain>
+References: <20180718165545.1622-1-colyli@suse.de>
+ <20180718165545.1622-2-colyli@suse.de>
 MIME-Version: 1.0
-Received: by 2002:a2e:20a7:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 21:18:26
- -0700 (PDT)
-In-Reply-To: <344dca0a-bdb1-7b4d-37d4-e6ebca05bf4f@ideasonboard.com>
-References: <20180627103408.33003-1-keiichiw@chromium.org> <344dca0a-bdb1-7b4d-37d4-e6ebca05bf4f@ideasonboard.com>
-From:   Keiichi Watanabe <keiichiw@chromium.org>
-Date:   Tue, 24 Jul 2018 13:18:26 +0900
-Message-ID: <CAD90VcaDMAy0GYpgU4bF0thEf77kQECd5om+hnFCUeCZcb47Hg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
-To:     kieran.bingham@ideasonboard.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718165545.1622-2-colyli@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+On Thu, Jul 19, 2018 at 12:55:43AM +0800, Coly Li wrote:
+> This patch adds the re-write crc64 calculation routines for Linux kernel.
+> The CRC64 polynomical arithmetic follows ECMA-182 specification, inspired
 
-How is it going?
-I would appreciate if you could review this patch.
+"polynomical" => "polynomial".  Same everywhere else in the patches.
 
-Best regards,
-Keiichi
+> + * crc64table[256] is the lookup table of a table-driver 64-bit CRC
 
-On Thu, Jun 28, 2018 at 2:21 AM, Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
-> Hi Keiichi,
->
-> I just wanted to reply here quickly to say this is a really interesting
-> development.
->
-> I would like to review and test it properly; however I am now on holiday
-> until at least the 9th July and so I won't be able to look until after
-> that date.
->
-> I didn't want you to be left hanging though :-)
->
-> Ping me if you haven't heard anything by the 20th or so. Of course if
-> anyone else gets round to testing and reviewing then that's great too.
->
-> Regards
-> --
-> Kieran
->
->
->
-> On 27/06/18 11:34, Keiichi Watanabe wrote:
->> On some platforms with non-coherent DMA (e.g. ARM), USB drivers use
->> uncached memory allocation methods. In such situations, it sometimes
->> takes a long time to access URB buffers.  This can be a cause of video
->> flickering problems if a resolution is high and a USB controller has
->> a very tight time limit. (e.g. dwc2) To avoid this problem, we copy
->> header data from (uncached) URB buffer into (cached) local buffer.
->>
->> This change should make the elapsed time of the interrupt handler
->> shorter on platforms with non-coherent DMA. We measured the elapsed
->> time of each callback of uvc_video_complete without/with this patch
->> while capturing Full HD video in
->> https://webrtc.github.io/samples/src/content/getusermedia/resolution/.
->> I tested it on the top of Kieran Bingham's Asynchronous UVC series
->> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html.
->> The test device was Jerry Chromebook (RK3288) with Logitech Brio 4K.
->> I collected data for 5 seconds. (There were around 480 callbacks in
->> this case.) The following result shows that this patch makes
->> uvc_video_complete about 2x faster.
->>
->>            | average | median  | min     | max     | standard deviation
->> w/o caching| 45319ns | 40250ns | 33834ns | 142625ns| 16611ns
->> w/  caching| 20620ns | 19250ns | 12250ns | 56583ns | 6285ns
->>
->> In addition, we confirmed that this patch doesn't make it worse on
->> coherent DMA architecture by performing the same measurements on a
->> Broadwell Chromebox with the same camera.
->>
->>            | average | median  | min     | max     | standard deviation
->> w/o caching| 21026ns | 21424ns | 12263ns | 23956ns | 1932ns
->> w/  caching| 20728ns | 20398ns |  8922ns | 45120ns | 3368ns
->>
->> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
->> ---
->>
->> After applying 6 patches in
->> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html,
->> I measured elapsed time by adding the following code to
->> /drivers/media/usb/uvc/uvc_video.c
->>
->> @@ -XXXX,6 +XXXX,9 @@ static void uvc_video_complete(struct urb *urb)
->>         struct uvc_video_queue *queue = &stream->queue;
->>       struct uvc_buffer *buf = NULL;
->>       int ret;
->> +     ktime_t start, end;
->> +     int elapsed_time;
->> +     start = ktime_get();
->>       switch (urb->status) {
->>       case 0:
->>
->> @@ -XXXX,6 +XXXX,10 @@ static void uvc_video_complete(struct urb *urb)
->>
->>       INIT_WORK(&uvc_urb->work, uvc_video_copy_data_work);
->>       queue_work(stream->async_wq, &uvc_urb->work);
->> +
->> +     end = ktime_get();
->> +     elapsed_time = ktime_to_ns(ktime_sub(end, start));
->> +     pr_err("elapsed time: %d ns", elapsed_time);
->>  }
->>
->>  /*
->>
->>
->>  drivers/media/usb/uvc/uvc_video.c | 92 +++++++++++++++----------------
->>  1 file changed, 43 insertions(+), 49 deletions(-)
->> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
->> index a88b2e51a666..ff2eddc55530 100644
->> --- a/drivers/media/usb/uvc/uvc_video.c
->> +++ b/drivers/media/usb/uvc/uvc_video.c
->> @@ -391,36 +391,15 @@ static inline ktime_t uvc_video_get_time(void)
->>
->>  static void
->>  uvc_video_clock_decode(struct uvc_streaming *stream, struct uvc_buffer *buf,
->> -                    const u8 *data, int len)
->> +                    const u8 *data, int len, unsigned int header_size,
->> +                    bool has_pts, bool has_scr)
->>  {
->>       struct uvc_clock_sample *sample;
->> -     unsigned int header_size;
->> -     bool has_pts = false;
->> -     bool has_scr = false;
->>       unsigned long flags;
->>       ktime_t time;
->>       u16 host_sof;
->>       u16 dev_sof;
->>
->> -     switch (data[1] & (UVC_STREAM_PTS | UVC_STREAM_SCR)) {
->> -     case UVC_STREAM_PTS | UVC_STREAM_SCR:
->> -             header_size = 12;
->> -             has_pts = true;
->> -             has_scr = true;
->> -             break;
->> -     case UVC_STREAM_PTS:
->> -             header_size = 6;
->> -             has_pts = true;
->> -             break;
->> -     case UVC_STREAM_SCR:
->> -             header_size = 8;
->> -             has_scr = true;
->> -             break;
->> -     default:
->> -             header_size = 2;
->> -             break;
->> -     }
->> -
->>       /* Check for invalid headers. */
->>       if (len < header_size)
->>               return;
->> @@ -717,11 +696,10 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
->>   */
->>
->>  static void uvc_video_stats_decode(struct uvc_streaming *stream,
->> -             const u8 *data, int len)
->> +                                const u8 *data, int len,
->> +                                unsigned int header_size, bool has_pts,
->> +                                bool has_scr)
->>  {
->> -     unsigned int header_size;
->> -     bool has_pts = false;
->> -     bool has_scr = false;
->>       u16 uninitialized_var(scr_sof);
->>       u32 uninitialized_var(scr_stc);
->>       u32 uninitialized_var(pts);
->> @@ -730,25 +708,6 @@ static void uvc_video_stats_decode(struct uvc_streaming *stream,
->>           stream->stats.frame.nb_packets == 0)
->>               stream->stats.stream.start_ts = ktime_get();
->>
->> -     switch (data[1] & (UVC_STREAM_PTS | UVC_STREAM_SCR)) {
->> -     case UVC_STREAM_PTS | UVC_STREAM_SCR:
->> -             header_size = 12;
->> -             has_pts = true;
->> -             has_scr = true;
->> -             break;
->> -     case UVC_STREAM_PTS:
->> -             header_size = 6;
->> -             has_pts = true;
->> -             break;
->> -     case UVC_STREAM_SCR:
->> -             header_size = 8;
->> -             has_scr = true;
->> -             break;
->> -     default:
->> -             header_size = 2;
->> -             break;
->> -     }
->> -
->>       /* Check for invalid headers. */
->>       if (len < header_size || data[0] < header_size) {
->>               stream->stats.frame.nb_invalid++;
->> @@ -957,10 +916,41 @@ static void uvc_video_stats_stop(struct uvc_streaming *stream)
->>   * to be called with a NULL buf parameter. uvc_video_decode_data and
->>   * uvc_video_decode_end will never be called with a NULL buffer.
->>   */
->> +static void uvc_video_decode_header_size(const u8 *data, int *header_size,
->> +                                      bool *has_pts, bool *has_scr)
->> +{
->> +     switch (data[1] & (UVC_STREAM_PTS | UVC_STREAM_SCR)) {
->> +     case UVC_STREAM_PTS | UVC_STREAM_SCR:
->> +             *header_size = 12;
->> +             *has_pts = true;
->> +             *has_scr = true;
->> +             break;
->> +     case UVC_STREAM_PTS:
->> +             *header_size = 6;
->> +             *has_pts = true;
->> +             break;
->> +     case UVC_STREAM_SCR:
->> +             *header_size = 8;
->> +             *has_scr = true;
->> +             break;
->> +     default:
->> +             *header_size = 2;
->> +     }
->> +}
->> +
->>  static int uvc_video_decode_start(struct uvc_streaming *stream,
->> -             struct uvc_buffer *buf, const u8 *data, int len)
->> +                               struct uvc_buffer *buf, const u8 *urb_data,
->> +                               int len)
->>  {
->>       u8 fid;
->> +     u8 data[12];
->> +     unsigned int header_size;
->> +     bool has_pts = false, has_scr = false;
->> +
->> +     /* Cache the header since urb_data is uncached memory. The size of
->> +      * header is at most 12 bytes.
->> +      */
->> +     memcpy(data, urb_data, min(len, 12));
->>
->>       /* Sanity checks:
->>        * - packet must be at least 2 bytes long
->> @@ -983,8 +973,12 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
->>                       uvc_video_stats_update(stream);
->>       }
->>
->> -     uvc_video_clock_decode(stream, buf, data, len);
->> -     uvc_video_stats_decode(stream, data, len);
->> +     uvc_video_decode_header_size(data, &header_size, &has_pts, &has_scr);
->> +
->> +     uvc_video_clock_decode(stream, buf, data, len, header_size, has_pts,
->> +                            has_scr);
->> +     uvc_video_stats_decode(stream, data, len, header_size, has_pts,
->> +                            has_scr);
->>
->>       /* Store the payload FID bit and return immediately when the buffer is
->>        * NULL.
->> --
->> 2.18.0.rc2.346.g013aa6912e-goog
->>
->
-> --
-> Regards
-> --
-> Kieran
+"table-driver" => "table-driven"
+
+> + * calculation, which is generated by gen_crc64table.c in kernel build
+> + * time. The polynomial of crc64 arithmetic is from ECMA-182 specification
+> + * as well, which is defined as,
+> + *
+> + * x^64 + x^62 + x^57 + x^55 + x^54 + x^53 + x^52 + x^47 + x^46 + x^45 +
+> + * x^40 + x^39 + x^38 + x^37 + x^35 + x^33 + x^32 + x^31 + x^29 + x^27 +
+> + * x^24 + x^23 + x^22 + x^21 + x^19 + x^17 + x^13 + x^12 + x^10 + x^9 +
+> + * x^7 + x^4 + x + 1
+> + *
+> + * Copyright 2018 SUSE Linux.
+> + *   Author: Coly Li <colyli@suse.de>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/types.h>
+> +#include "crc64table.h"
+> +
+> +MODULE_DESCRIPTION("CRC64 calculations");
+> +MODULE_LICENSE("GPL v2");
+> +
+> +/**
+> + * crc64_be - Calculate bitwise big-endian ECMA-182 CRC64
+> + * @crc: seed value for computation. 0 for a new CRC computing, or the
+> + *	previous crc64 value if computing incrementally.
+
+"0 or (u64)~0 for a new CRC calculation".  Both conventions are common in CRCs.
+In fact the all-ones convention is generally considered better, because it
+causes leading zeroes in the data to affect the checksum.
+
+> + * @p: pointer to buffer over which CRC64 is run
+> + * @len: length of buffer @p
+> + */
+> +u64 __pure crc64_be(u64 crc, const void *p, size_t len)
+> +{
+> +	size_t i, t;
+> +
+> +	const unsigned char *_p = p;
+> +
+> +	for (i = 0; i < len; i++) {
+> +		t = ((crc >> 56) ^ (*_p++)) & 0xFF;
+> +		crc = crc64table[t] ^ (crc << 8);
+> +	}
+> +
+> +	return crc;
+> +}
+> +EXPORT_SYMBOL_GPL(crc64_be);
+> diff --git a/lib/gen_crc64table.c b/lib/gen_crc64table.c
+> new file mode 100644
+> index 000000000000..8296b0c3ea30
+> --- /dev/null
+> +++ b/lib/gen_crc64table.c
+> @@ -0,0 +1,68 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Generate lookup table for the talbe-driven CRC64 calculation.
+
+"talbe-driven" => "table-driven"
+
+> + *
+> + * gen_crc64table is executed in kernel build time and generates
+> + * lib/crc64table.h. This header is included by lib/crc64.c for
+> + * the table-driver CRC64 calculation.
+
+"table-driver" => "table-driven"
+
+> + *
+> + * See lib/crc64.c for more information about which specification
+> + * and polynomical arithmetic that gen_crc64table.c follows to
+> + * generate the lookup table.
+> + *
+> + * Copyright 2018 SUSE Linux.
+> + *   Author: Coly Li <colyli@suse.de>
+> + */
+> +#include <inttypes.h>
+> +#include <stdio.h>
+> +
+> +#include <linux/swab.h>
+> +
+> +#define CRC64_ECMA182_POLY 0x42F0E1EBA9EA3693ULL
+> +
+> +static int64_t crc64_table[256] = {0};
+
+This really should be uint64_t, not int64_t.
+
+> +
+> +static void generate_crc64_table(void)
+> +{
+> +	uint64_t i, j, c, crc;
+> +
+> +	for (i = 0; i < 256; i++) {
+> +		crc = 0;
+> +		c = i << 56;
+> +
+> +		for (j = 0; j < 8; j++) {
+> +			if ((crc ^ c) & 0x8000000000000000ULL)
+> +				crc = (crc << 1) ^ CRC64_ECMA182_POLY;
+> +			else
+> +				crc <<= 1;
+> +			c <<= 1;
+> +		}
+> +
+> +		crc64_table[i] = crc;
+> +	}
+> +}
+> +
+> +static void print_crc64_table(void)
+> +{
+> +	int i;
+> +
+> +	printf("/* this file is generated - do not edit */\n\n");
+> +	printf("#include <linux/types.h>\n");
+> +	printf("#include <linux/cache.h>\n\n");
+> +	printf("static const u64 ____cacheline_aligned crc64table[256] = {\n");
+> +	for (i = 0; i < 256; i++) {
+> +		printf("\t0x%016" PRIx64 "ULL", crc64_table[i]);
+> +		if (i & 0x1)
+> +			printf(",\n");
+> +		else
+> +			printf(", ");
+> +	}
+> +	printf("};\n");
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	generate_crc64_table();
+> +	print_crc64_table();
+> +	return 0;
+> +}
+> -- 
+> 2.17.1
+> 
+
+- Eric
