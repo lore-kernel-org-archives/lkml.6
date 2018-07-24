@@ -2,114 +2,120 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A2DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0113C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36B5120856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B5120856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D65320875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:26:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D65320875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388456AbeGXIao (ORCPT
+        id S2388476AbeGXIbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 04:30:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54640 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388390AbeGXIao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 04:30:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CCC4AACBF;
-        Tue, 24 Jul 2018 07:25:37 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 09:25:36 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
-        <marcandre.lureau@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Petr Tesarik <ptesarik@suse.cz>
-Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
-Message-ID: <20180724072536.GB28386@dhcp22.suse.cz>
-References: <20180720123422.10127-1-david@redhat.com>
- <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
- <20180723123043.GD31229@dhcp22.suse.cz>
- <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
+        Tue, 24 Jul 2018 04:31:43 -0400
+Received: from sauhun.de ([88.99.104.3]:54538 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388394AbeGXIbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 04:31:43 -0400
+Received: from localhost (p54B3332A.dip0.t-ipconnect.de [84.179.51.42])
+        by pokefinder.org (Postfix) with ESMTPSA id D9CF3634593;
+        Tue, 24 Jul 2018 09:26:37 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 09:26:37 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Phil Reid <preid@electromag.com.au>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel@pengutronix.de,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFT 1/6] i2c: designware: use open drain for recovery GPIO
+Message-ID: <20180724072637.smhlrx4kpyh6hvwa@ninjato>
+References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
+ <20180713210920.3648-2-wsa+renesas@sang-engineering.com>
+ <daaf702b-642f-e0fd-6a2e-7f0f817efba3@electromag.com.au>
+ <20180717090920.zy6lkeqlcewhrfs5@ninjato>
+ <b8d7c7aa-dbde-3037-4a1b-691bcf045131@electromag.com.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ofht27vhe5ktigiu"
 Content-Disposition: inline
-In-Reply-To: <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <b8d7c7aa-dbde-3037-4a1b-691bcf045131@electromag.com.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-07-18 19:20:43, David Hildenbrand wrote:
-> On 23.07.2018 14:30, Michal Hocko wrote:
-> > On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
-> >> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
-> >>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
-> >>> So reserved pages might be access by dump tools although nobody except
-> >>> the owner should touch them.
-> >>
-> >> Are you sure about that? Or maybe I understand wrong. Maybe it changed
-> >> recently, but IIRC pages that are backing memmap (struct pages) are also
-> >> PG_reserved. And you definitely do want those in the dump.
-> > 
-> > You are right. reserve_bootmem_region will make all early bootmem
-> > allocations (including those backing memmaps) PageReserved. I have asked
-> > several times but I haven't seen a satisfactory answer yet. Why do we
-> > even care for kdump about those. If they are reserved the nobody should
-> > really look at those specific struct pages and manipulate them. Kdump
-> > tools are using a kernel interface to read the content. If the specific
-> > content is backed by a non-existing memory then they should simply not
-> > return anything.
-> > 
-> 
-> "new kernel" provides an interface to read memory from "old kernel".
-> 
-> The new kernel has no idea about
-> - which memory was added/online in the old kernel
-> - where struct pages of the old kernel are and what their content is
-> - which memory is save to touch and which not
-> 
-> Dump tools figure all that out by interpreting the VMCORE. They e.g.
-> identify "struct pages" and see if they should be dumped. The "new
-> kernel" only allows to read that memory. It cannot hinder to crash the
-> system (e.g. if a dump tool would try to read a hwpoison page).
-> 
-> So how should the "new kernel" know if a page can be touched or not?
 
-I am sorry I am not familiar with kdump much. But from what I remember
-it reads from /proc/vmcore and implementation of this interface should
-simply return EINVAL or alike when you try to dump inaccessible memory
-range.
- 
-> The *only* way would be to have an interface to the hypervisor where we
-> "sense" if a memory location is safe to touch. I remember that xen or
-> hyper-v does that - they fake a zero page in that case, after querying
-> the hypervisor. But this does not sound like a clean approach to me,
-> especially es we need yet another hypervisor interface to sense for
-> memory provided via "some" device.
-> 
-> If we can find a way to just tag pages as "don't touch", it would be the
-> easiest and cleanest solution in my opinion.
+--ofht27vhe5ktigiu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If only we could have much more spare room in struct pages...
--- 
-Michal Hocko
-SUSE Labs
+Hi Phil,
+
+> > So, it is not possible to read SCL status then? Hmm, currently a working
+> > get_scl is required...
+=2E..
+> > Well, I don't know much about this IP core and how/where it is used. I
+> > just wonder what happens if another user comes along using an
+> > open-drain GPIO. Is that possible?
+> >=20
+> > I assume it is the same with SDA? Non open-drain? Output only?
+> >=20
+>=20
+> Just had a closer look at how it's setup here.
+> Maybe the following helps.
+
+Thanks for the detailed explanation. I am just afraid it is a litle too
+detailed for me. I am not sure if I can read it correctly:
+
+When you read the SCL/SDA GPIO, does it return the true state of the
+SCL/SDA line or does it just reflect the value it was set to output?
+
+> There's no concept of HiZ internally in the FPGA.
+
+Which probably means SDA is to be treated the same as SCL -> push/pull.
+
+> If there was some kinda of OpenDrain gpio driver that modelled a FET
+> driven by a push pull GPIO I guess it could be made to work.
+
+Still, that sounds quite unlikely to me, so we can for now assume that
+all designware users will have push/pull?
+
+Disclaimer: I have zero experience with this core, I don't know how hard
+it is to modify or which versions are out there.
+
+Thanks for your help,
+
+   Wolfram
+
+
+--ofht27vhe5ktigiu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltW1KkACgkQFA3kzBSg
+KbYqQA/7BLzkFJlpp83m/0LTH8LUFT1nWqSkrPjWGUw5PF91E91L4NNfHUHQLazy
+jDKPrnTqnCz3WPMHrPHeRWRXZXCdv6s172wI2ubd8Xt1mH1T2fwu4X1g4yvVfDZj
+xnF+Y0v9A/KVFTaM29rJo9pq6PAvJOip8haW3yC29+kF9tIJjBxkcJim0cZ4m7Yr
+WVK37EzDI6x2FRfGWG2cy5bxUCRldCnDEmrkXS37X2PPjB4I81gZKh2T1bTfP4ac
+VWwYMcNXfGpnNNBBB7ZftSdAq16hXCxIg/xyoM/xzfOxCMLWaEGeOJTQvzYyUkN1
+PkZ1TO2fTa2GyB1zfCvIIRFZxNiUmuNvIWFG7a81q1pkIpfd45GznplnyW95elji
+LkkcwBu0UL7vdEKXWsnF0qjqArKy/NtbSIMTRQHXc7Pazu1hlQkVhwVhFKBsrIFS
+0ylIQg4+eK5WMLGSuZgpfLw3GQascmbPb53Cny18O9lV20Cx4d3qrXdCefMFH3Df
+AF8XbcWELKzvVtrMrg1p9QtflCBYOx+Dq/tUzrDKU1Ufumamf9YBTPGkv4LMXJ0Y
+L7mqscD9RYZYn1RKAS5QB6cagz5i7dPrivreTyDPG4SdLHCqU4F4LAuhI/g/Aaxa
+muLCmtzU6y1vKOdgF3odUucqZeFKP2Nla0KzIJc3ubpnlfvwKTc=
+=1srA
+-----END PGP SIGNATURE-----
+
+--ofht27vhe5ktigiu--
