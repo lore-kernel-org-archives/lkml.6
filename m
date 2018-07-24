@@ -2,943 +2,151 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD5FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D331ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9070220856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:04:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0BF520856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:04:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="QiUDwPIW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9070220856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YG/90KcM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0BF520856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388389AbeGXNKV (ORCPT
+        id S2388455AbeGXNKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 09:10:21 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46774 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388288AbeGXNKV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 09:10:21 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h14-v6so3856708wrw.13
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 05:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2y8Hz5yLBksU/VQq2JFRbZ3e3KilmLWWJeJV9UpLXpQ=;
-        b=QiUDwPIW85TVz0dBa2bPvI44OXbZpPAPP7U5nAsh5dHmZEJ85Urxg+YxtZzTITVbwJ
-         Hhmt+F/FDS6GD8aMJpOWSesyQWxGMWq4s94w0Rn60+UVytdi6WGFD6P4Y9lK8Yiiwn+4
-         78zwupXR4tnaR+EEubvFa/noPUdmsIKwmEyBqc47G/9NXWAJMg8yEunL4M8ebwYbgbY5
-         QxYDcDFpyqwMvsEcVqNmAcfmaU6VYsLFqzgWM5zkdyQ4SISL3B5g8tVH7LBmDSExyEtB
-         1wE6ZCcgNn+Bm/vZa8mtLw1jnq7AWK3/6cyVKILLrW+P4qGAPFaVZCQ21WaTqzV03FCc
-         dPuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2y8Hz5yLBksU/VQq2JFRbZ3e3KilmLWWJeJV9UpLXpQ=;
-        b=MpBxpjoxprJGdwzsLVmBnA7Ggh89vzuOg+q4AN+PogWa6bE+BHVn0pTfgub7/0OmnV
-         bRqu8Dk6/QC+jNg/HOAd/FtMeL3iN2YizaeskFGDJQQ873m0/rVs0Yk+00TUqjUBTzvQ
-         J66LvgaznnthVK0UG76kceUb0rTFDeR/oR+jfkdRWxl3GM+6nh5OVevCAg/wzAJkp4dq
-         JD1mfsWk0GQbRc/tzrmu9+NirOqapcG+Xa8dJerwsiklB+nHikO5qHhH3L1FhYy5rQv0
-         h7eWnZ48LgNlQnDIoVkEChDT4fojY8y+hJayzgPbs/r1rzsKOzTVIPmOcrOajSqzhXPQ
-         KYPQ==
-X-Gm-Message-State: AOUpUlG7UgF0hsiedELf7cU5B7yd9qjSoehTYuWoi31b9NSLSXOWhCiz
-        OOTL8AEFBro/HPYasELbCZUDzg==
-X-Google-Smtp-Source: AAOMgpd8GS3ZPLgRmVpRdayq7lBe7ppDUUgnGjL/emHPEfoKPsqVr5OwwxGExS4Qz0zo2j+Ba1bFjQ==
-X-Received: by 2002:adf:8405:: with SMTP id 5-v6mr11843398wrf.167.1532433848844;
-        Tue, 24 Jul 2018 05:04:08 -0700 (PDT)
-Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l14-v6sm28957929wrw.65.2018.07.24.05.04.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 05:04:08 -0700 (PDT)
-Subject: Re: [PATCH 2/2] clk: meson-gxbb: Add video clocks
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1532079581-978-1-git-send-email-narmstrong@baylibre.com>
- <1532079581-978-3-git-send-email-narmstrong@baylibre.com>
- <CAFBinCAsfJ+5xgFM3mDAPU18N=1VFzjQZNQc5R_Ri5=BsMAKYA@mail.gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <520a75d8-9c20-7ed0-f416-0bbb408075a5@baylibre.com>
-Date:   Tue, 24 Jul 2018 14:04:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAFBinCAsfJ+5xgFM3mDAPU18N=1VFzjQZNQc5R_Ri5=BsMAKYA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 24 Jul 2018 09:10:31 -0400
+Received: from mail-eopbgr20084.outbound.protection.outlook.com ([40.107.2.84]:19612
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388172AbeGXNKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 09:10:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1UcflPHAko9pBGUutXXYZydKqIriOG1X5nxXX6NQotk=;
+ b=YG/90KcMCpMBNo7yc0BKwqIRiEnSBRJr4BCSmLHBpgjAIVpdd1S7gRxvr1Gab7j+p/nOPhDqeHCrE9VKyAT+0dfzQe35hfcNsR/+ITE5dsUimk86GLpIZc+6qYX16B+K2MJjK0qYVXYxNIiOWv9Z142mgaJWhEkE19wO/Q7qgo0=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB4881.eurprd04.prod.outlook.com (20.176.215.202) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.21; Tue, 24 Jul 2018 12:04:15 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c96b:d6f5:db75:1273]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c96b:d6f5:db75:1273%4]) with mapi id 15.20.0973.022; Tue, 24 Jul 2018
+ 12:04:15 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 3/3] PCI: imx: Initial imx7d pm support
+Thread-Topic: [PATCH v2 3/3] PCI: imx: Initial imx7d pm support
+Thread-Index: AQHUICflRr18LcyxG0i6IDU6xEAg0aSckWaAgAAyIICAAWjogIAAICIA
+Date:   Tue, 24 Jul 2018 12:04:15 +0000
+Message-ID: <24ba42f6028a90836c73317af1f9e9be2d27ba03.camel@nxp.com>
+References: <cover.1532090446.git.leonard.crestez@nxp.com>
+         <e42a6bb8ff0ddd6eaa31fe381875425a3730a73f.1532090446.git.leonard.crestez@nxp.com>
+         <1532338685.3163.93.camel@pengutronix.de>
+         <e8be199b2d5559001a93abb52ba46c283e4454a9.camel@nxp.com>
+         <1532426953.32306.5.camel@pengutronix.de>
+In-Reply-To: <1532426953.32306.5.camel@pengutronix.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.1-2 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4881;6:DfNLao2NrmlKtFy2Vo7gsY1R9lRRpg6C0Qew3Mo8Zm18Uw/rU+Hpi3z+Tz4BrvD9nYu2w+/M523Y961xv5JLep1PGlH482EhJde85jOugckBeslPQ5qV8Vf5piVi3fSVsZF9ePVywX3giAK2fZkG9tR85gvDOpzKHv2oktP95q8RWWQKmu0RmXW44ZsOIwiJNJ75VH1F/RME2r5dzQTGUiNh2Q5WKyuoYnTwh/hLZ8VMZ5o0dcVPCOHh9he5cGUwtM5szFhgiyLhPemprQTL7Jm/DH0GZNj1fZVKOLHa/pLuvsoWDfVlgWQt4nxuPzsTfW9g8FP7msr4mqBasnTZ2OFz/jb4n26XnxBuKjHwi1ZTyf5daYF0oc/5fKN+LOPZqn/lxBYThJNOP5i83F554Mu1XX9C3n3dRHAPDF+qfrRK7AHoklxDBB7KJ8nl7+8li9R9An+MOvbTcw57qsdEfg==;5:AGPUrZWjenHDBM941ILWxCVSFL2B9WhXjwMwA/eNZkn5ZtClmBEg4fBB6NGkLRykuqkgdHPmifIkJoW6TdEuBHsp7Y3YPkbXYw6bqRvLAgMMaRr3E1CtTINFbH7JVYRzupoNlS+NYlsVwfjk+6c0hNpO1T8ZZiMZ6TFs/vBIKx8=;7:7lSl6CBl6Aj/RcQM44z7PPhU6zT5qfi+T7KYiLD1xADOZHaa9UK8nNEVeAYiW+QTqiEcPuJZXVuT1RjiLsxVIH5U0BLpGNolxKgM8yxvGYZMgT/5Fys9KyOGALf349hkiF1er+btnxES6fceJm3vIqxUfUqQ0REkFFAc2chBZiHl+uKTmjttmqCLkeB0ZlcoDRvL+QD+zH8a+WMbhJ1BZENvT+DpmJLk17cpgXeJx2xVkpcN7IObBxdbCT0vfZh9
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e5984474-47da-4614-012d-08d5f15d93c6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4881;
+x-ms-traffictypediagnostic: AM0PR04MB4881:
+x-microsoft-antispam-prvs: <AM0PR04MB4881C64C88495446F47D76F2EE550@AM0PR04MB4881.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4881;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4881;
+x-forefront-prvs: 0743E8D0A6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(366004)(136003)(39860400002)(199004)(189003)(44832011)(7416002)(229853002)(2900100001)(36756003)(5660300001)(105586002)(6116002)(305945005)(66066001)(50226002)(106356001)(3846002)(6512007)(6486002)(68736007)(53936002)(6436002)(4326008)(39060400002)(25786009)(97736004)(6246003)(118296001)(478600001)(26005)(6506007)(81166006)(8936002)(76176011)(7736002)(2906002)(14454004)(8676002)(81156014)(186003)(11346002)(86362001)(446003)(102836004)(99286004)(5250100002)(256004)(14444005)(476003)(316002)(2616005)(93886005)(110136005)(486006)(2501003)(54906003)(6636002)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4881;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: KazkPOyTQNZX4tFwwf5RlpsfAPw2O3V7BFMJPT9PBObC35dlAOFw1hpUa522eTDC7mHw8ojnkhTIGq7+e73OE4WwtOccAi+SAIFjDujDERK59yb+nZUiQgz7+bvKFEIjPGSFVyPMK1IOdD1zsXyvUoAmGtoxhhVcvc19cW+HSH7xC6tb+CWpPy/LlGSAxs/iet0T9WCYkJls11EyFrNcvmVg1yeekSt0ZuJOcVcKIHMG20d5RWjrvRv9mE7BSq2xorpSVlTVz60E+n9U5PHHV33wtwSf0yeuMKRtuNsdVm8Z+famJxy4ukxd4BFl1jjWMeft1We84H04P6FT9UBz0w2m+XaPsblJkPFprVcMv4g=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B58E1A02811C6547A9D6F61DEAE10E21@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5984474-47da-4614-012d-08d5f15d93c6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2018 12:04:15.5335
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4881
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/07/2018 21:00, Martin Blumenstingl wrote:
-> Hi Neil,
-> 
-> On Fri, Jul 20, 2018 at 11:40 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->>
->> Add the clocks entries used in the video clock path, the clock path
->> is doubled to permit having different synchronized clocks for different
->> parts of the video pipeline.
-> maybe you can add the comment about CLK_GET_RATE_NOCACHE here as well
-
-Yes
-
-> 
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/clk/meson/gxbb.c              | 667 ++++++++++++++++++++++++++++++++++
->>  drivers/clk/meson/gxbb.h              |  24 +-
->>  include/dt-bindings/clock/gxbb-clkc.h |  17 +
->>  3 files changed, 706 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
->> index f79ea33..5fabedf 100644
->> --- a/drivers/clk/meson/gxbb.c
->> +++ b/drivers/clk/meson/gxbb.c
->> @@ -1508,6 +1508,570 @@ static struct clk_regmap gxbb_vapb = {
->>         },
->>  };
->>
->> +/* Video Clocks */
->> +
->> +static struct clk_regmap gxbb_vid_pll_div = {
->> +       .data = &(struct meson_vid_pll_div_data){
->> +               .val = {
->> +                       .reg_off = HHI_VID_PLL_CLK_DIV,
->> +                       .shift   = 0,
->> +                       .width   = 15,
->> +               },
->> +               .sel = {
->> +                       .reg_off = HHI_VID_PLL_CLK_DIV,
->> +                       .shift   = 16,
->> +                       .width   = 2,
->> +               },
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vid_pll_div",
->> +               .ops = &meson_vid_pll_div_ro_ops,
->> +               .parent_names = (const char *[]){ "hdmi_pll" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +static u32 mux_table_vid_pll[] = { 0, 1 };
-> you can drop this mux table
-
-Yep
-
-> 
->> +const char *gxbb_vid_pll_parent_names[] = { "vid_pll_div", "hdmi_pll" };
->> +
->> +static struct clk_regmap gxbb_vid_pll_sel = {
->> +       .data = &(struct clk_regmap_mux_data){
->> +               .offset = HHI_VID_PLL_CLK_DIV,
->> +               .mask = 0x1,
->> +               .shift = 18,
->> +               .table = mux_table_vid_pll,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vid_pll_sel",
->> +               .ops = &clk_regmap_mux_ops,
->> +               /*
->> +                * bit 18 selects from 2 possible parents:
->> +                * vid_pll_div or hdmi_pll
->> +                */
->> +               .parent_names = gxbb_vid_pll_parent_names,
->> +               .num_parents = ARRAY_SIZE(gxbb_vid_pll_parent_names),
->> +               .flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vid_pll = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_PLL_CLK_DIV,
->> +               .bit_idx = 19,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vid_pll",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vid_pll_sel" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static u32 mux_table_vclk[] = { 0, 1, 2, 3, 4, 5, 6 };
-> you can drop this mux table
-
-Yep
-
-> 
->> +const char *gxbb_vclk_parent_names[] = {
->> +       "vid_pll", "fclk_div4", "fclk_div3", "fclk_div5", "vid_pll",
->> +       "fclk_div7", "mpll1",
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk_sel = {
->> +       .data = &(struct clk_regmap_mux_data){
->> +               .offset = HHI_VID_CLK_CNTL,
->> +               .mask = 0x7,
->> +               .shift = 16,
->> +               .table = mux_table_vclk,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk_sel",
->> +               .ops = &clk_regmap_mux_ops,
->> +               /*
->> +                * bits 16:18 selects from 8 possible parents:
->> +                * vid_pll, fclk_div4, fclk_div3, fclk_div5,
->> +                * vid_pll, fclk_div7, mp1
->> +                */
->> +               .parent_names = gxbb_vclk_parent_names,
->> +               .num_parents = ARRAY_SIZE(gxbb_vclk_parent_names),
->> +               .flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk2_sel = {
->> +       .data = &(struct clk_regmap_mux_data){
->> +               .offset = HHI_VIID_CLK_CNTL,
->> +               .mask = 0x7,
->> +               .shift = 16,
->> +               .table = mux_table_vclk,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk2_sel",
->> +               .ops = &clk_regmap_mux_ops,
->> +               /*
->> +                * bits 16:18 selects from 8 possible parents:
->> +                * vid_pll, fclk_div4, fclk_div3, fclk_div5,
->> +                * vid_pll, fclk_div7, mp1
->> +                */
->> +               .parent_names = gxbb_vclk_parent_names,
->> +               .num_parents = ARRAY_SIZE(gxbb_vclk_parent_names),
->> +               .flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk_input = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_DIV,
->> +               .bit_idx = 16,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk_input",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk_sel" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk2_input = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VIID_CLK_DIV,
->> +               .bit_idx = 16,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk2_input",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk2_sel" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk_div = {
->> +       .data = &(struct clk_regmap_div_data){
->> +               .offset = HHI_VID_CLK_DIV,
->> +               .shift = 0,
->> +               .width = 8,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk_div",
->> +               .ops = &clk_regmap_divider_ops,
->> +               .parent_names = (const char *[]){ "vclk_input" },
->> +               .num_parents = 1,
->> +               .flags = CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk2_div = {
->> +       .data = &(struct clk_regmap_div_data){
->> +               .offset = HHI_VIID_CLK_DIV,
->> +               .shift = 0,
->> +               .width = 8,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk2_div",
->> +               .ops = &clk_regmap_divider_ops,
->> +               .parent_names = (const char *[]){ "vclk2_input" },
->> +               .num_parents = 1,
->> +               .flags = CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL,
->> +               .bit_idx = 19,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk_div" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk2 = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VIID_CLK_CNTL,
->> +               .bit_idx = 19,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk2",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk2_div" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk_div1 = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL,
->> +               .bit_idx = 0,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk_div1",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk_div2_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL,
->> +               .bit_idx = 1,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk_div2_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk_div4_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL,
->> +               .bit_idx = 2,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk_div4_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk_div6_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL,
->> +               .bit_idx = 3,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk_div6_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk_div12_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL,
->> +               .bit_idx = 4,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk_div12_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk2_div1 = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VIID_CLK_CNTL,
->> +               .bit_idx = 0,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk2_div1",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk2" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk2_div2_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VIID_CLK_CNTL,
->> +               .bit_idx = 1,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk2_div2_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk2" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk2_div4_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VIID_CLK_CNTL,
->> +               .bit_idx = 2,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk2_div4_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk2" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk2_div6_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VIID_CLK_CNTL,
->> +               .bit_idx = 3,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk2_div6_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk2" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_vclk2_div12_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VIID_CLK_CNTL,
->> +               .bit_idx = 4,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "vclk2_div12_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "vclk2" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor gxbb_vclk_div2 = {
->> +       .mult = 1,
->> +       .div = 2,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk_div2",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "vclk_div2_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor gxbb_vclk_div4 = {
->> +       .mult = 1,
->> +       .div = 4,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk_div4",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "vclk_div4_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor gxbb_vclk_div6 = {
->> +       .mult = 1,
->> +       .div = 6,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk_div6",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "vclk_div6_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor gxbb_vclk_div12 = {
->> +       .mult = 1,
->> +       .div = 12,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk_div12",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "vclk_div12_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor gxbb_vclk2_div2 = {
->> +       .mult = 1,
->> +       .div = 2,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk2_div2",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "vclk2_div2_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor gxbb_vclk2_div4 = {
->> +       .mult = 1,
->> +       .div = 4,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk2_div4",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "vclk2_div4_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor gxbb_vclk2_div6 = {
->> +       .mult = 1,
->> +       .div = 6,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk2_div6",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "vclk2_div6_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor gxbb_vclk2_div12 = {
->> +       .mult = 1,
->> +       .div = 12,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "vclk2_div12",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "vclk2_div12_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static u32 mux_table_cts_sel[] = { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12 };
->> +const char *gxbb_cts_parent_names[] = {
->> +       "vclk_div1", "vclk_div2", "vclk_div4", "vclk_div6",
->> +       "vclk_div12", "vclk2_div1", "vclk2_div2", "vclk2_div4",
->> +       "vclk2_div6", "vclk2_div12"
->> +};
->> +
->> +static struct clk_regmap gxbb_cts_enci_sel = {
->> +       .data = &(struct clk_regmap_mux_data){
->> +               .offset = HHI_VID_CLK_DIV,
->> +               .mask = 0xf,
->> +               .shift = 28,
->> +               .table = mux_table_cts_sel,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cts_enci_sel",
->> +               .ops = &clk_regmap_mux_ops,
->> +               .parent_names = gxbb_cts_parent_names,
->> +               .num_parents = ARRAY_SIZE(gxbb_cts_parent_names),
->> +               .flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_cts_encp_sel = {
->> +       .data = &(struct clk_regmap_mux_data){
->> +               .offset = HHI_VID_CLK_DIV,
->> +               .mask = 0xf,
->> +               .shift = 20,
->> +               .table = mux_table_cts_sel,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cts_encp_sel",
->> +               .ops = &clk_regmap_mux_ops,
->> +               .parent_names = gxbb_cts_parent_names,
->> +               .num_parents = ARRAY_SIZE(gxbb_cts_parent_names),
->> +               .flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_cts_vdac_sel = {
->> +       .data = &(struct clk_regmap_mux_data){
->> +               .offset = HHI_VIID_CLK_DIV,
->> +               .mask = 0xf,
->> +               .shift = 28,
->> +               .table = mux_table_cts_sel,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cts_vdac_sel",
->> +               .ops = &clk_regmap_mux_ops,
->> +               .parent_names = gxbb_cts_parent_names,
->> +               .num_parents = ARRAY_SIZE(gxbb_cts_parent_names),
->> +               .flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +/* TOFIX: add support for cts_tcon */
->> +static u32 mux_table_hdmi_tx_sel[] = { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12 };
->> +const char *gxbb_cts_hdmi_tx_parent_names[] = {
->> +       "vclk_div1", "vclk_div2", "vclk_div4", "vclk_div6",
->> +       "vclk_div12", "vclk2_div1", "vclk2_div2", "vclk2_div4",
->> +       "vclk2_div6", "vclk2_div12"
->> +};
->> +
->> +static struct clk_regmap gxbb_hdmi_tx_sel = {
->> +       .data = &(struct clk_regmap_mux_data){
->> +               .offset = HHI_HDMI_CLK_CNTL,
->> +               .mask = 0xf,
->> +               .shift = 16,
->> +               .table = mux_table_hdmi_tx_sel,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "hdmi_tx_sel",
->> +               .ops = &clk_regmap_mux_ops,
->> +               /*
->> +                * bits 31:28 selects from 12 possible parents:
->> +                * vclk_div1, vclk_div2, vclk_div4, vclk_div6, vclk_div12
->> +                * vclk2_div1, vclk2_div2, vclk2_div4, vclk2_div6, vclk2_div12,
->> +                * cts_tcon
->> +                */
->> +               .parent_names = gxbb_cts_hdmi_tx_parent_names,
->> +               .num_parents = ARRAY_SIZE(gxbb_cts_hdmi_tx_parent_names),
->> +               .flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_cts_enci = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL2,
->> +               .bit_idx = 0,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "cts_enci",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "cts_enci_sel" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_cts_encp = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL2,
->> +               .bit_idx = 2,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "cts_encp",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "cts_encp_sel" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_cts_vdac = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL2,
->> +               .bit_idx = 4,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "cts_vdac",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "cts_vdac_sel" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap gxbb_hdmi_tx = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_VID_CLK_CNTL2,
->> +               .bit_idx = 5,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "hdmi_tx",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "hdmi_tx_sel" },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->>  /* VDEC clocks */
->>
->>  static const char * const gxbb_vdec_parent_names[] = {
->> @@ -1919,6 +2483,43 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
->>                 [CLKID_HDMI_PLL_OD2]        = &gxbb_hdmi_pll_od2.hw,
->>                 [CLKID_SYS_PLL_DCO]         = &gxbb_sys_pll_dco.hw,
->>                 [CLKID_GP0_PLL_DCO]         = &gxbb_gp0_pll_dco.hw,
->> +               [CLKID_VID_PLL_DIV]         = &gxbb_vid_pll_div.hw,
->> +               [CLKID_VID_PLL_SEL]         = &gxbb_vid_pll_sel.hw,
->> +               [CLKID_VID_PLL]             = &gxbb_vid_pll.hw,
->> +               [CLKID_VCLK_SEL]            = &gxbb_vclk_sel.hw,
->> +               [CLKID_VCLK2_SEL]           = &gxbb_vclk2_sel.hw,
->> +               [CLKID_VCLK_INPUT]          = &gxbb_vclk_input.hw,
->> +               [CLKID_VCLK2_INPUT]         = &gxbb_vclk2_input.hw,
->> +               [CLKID_VCLK_DIV]            = &gxbb_vclk_div.hw,
->> +               [CLKID_VCLK2_DIV]           = &gxbb_vclk2_div.hw,
->> +               [CLKID_VCLK]                = &gxbb_vclk.hw,
->> +               [CLKID_VCLK2]               = &gxbb_vclk2.hw,
->> +               [CLKID_VCLK_DIV1]           = &gxbb_vclk_div1.hw,
->> +               [CLKID_VCLK_DIV2_EN]        = &gxbb_vclk_div2_en.hw,
->> +               [CLKID_VCLK_DIV2]           = &gxbb_vclk_div2.hw,
->> +               [CLKID_VCLK_DIV4_EN]        = &gxbb_vclk_div4_en.hw,
->> +               [CLKID_VCLK_DIV4]           = &gxbb_vclk_div4.hw,
->> +               [CLKID_VCLK_DIV6_EN]        = &gxbb_vclk_div6_en.hw,
->> +               [CLKID_VCLK_DIV6]           = &gxbb_vclk_div6.hw,
->> +               [CLKID_VCLK_DIV12_EN]       = &gxbb_vclk_div12_en.hw,
->> +               [CLKID_VCLK_DIV12]          = &gxbb_vclk_div12.hw,
->> +               [CLKID_VCLK2_DIV1]          = &gxbb_vclk2_div1.hw,
->> +               [CLKID_VCLK2_DIV2_EN]       = &gxbb_vclk2_div2_en.hw,
->> +               [CLKID_VCLK2_DIV2]          = &gxbb_vclk2_div2.hw,
->> +               [CLKID_VCLK2_DIV4_EN]       = &gxbb_vclk2_div4_en.hw,
->> +               [CLKID_VCLK2_DIV4]          = &gxbb_vclk2_div4.hw,
->> +               [CLKID_VCLK2_DIV6_EN]       = &gxbb_vclk2_div6_en.hw,
->> +               [CLKID_VCLK2_DIV6]          = &gxbb_vclk2_div6.hw,
->> +               [CLKID_VCLK2_DIV12_EN]      = &gxbb_vclk2_div12_en.hw,
->> +               [CLKID_VCLK2_DIV12]         = &gxbb_vclk2_div12.hw,
->> +               [CLKID_CTS_ENCI_SEL]        = &gxbb_cts_enci_sel.hw,
->> +               [CLKID_CTS_ENCP_SEL]        = &gxbb_cts_encp_sel.hw,
->> +               [CLKID_CTS_VDAC_SEL]        = &gxbb_cts_vdac_sel.hw,
->> +               [CLKID_HDMI_TX_SEL]         = &gxbb_hdmi_tx_sel.hw,
->> +               [CLKID_CTS_ENCI]            = &gxbb_cts_enci.hw,
->> +               [CLKID_CTS_ENCP]            = &gxbb_cts_encp.hw,
->> +               [CLKID_CTS_VDAC]            = &gxbb_cts_vdac.hw,
->> +               [CLKID_HDMI_TX]             = &gxbb_hdmi_tx.hw,
->>                 [NR_CLKS]                   = NULL,
->>         },
->>         .num = NR_CLKS,
->> @@ -2090,6 +2691,43 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
->>                 [CLKID_HDMI_PLL_OD2]        = &gxl_hdmi_pll_od2.hw,
->>                 [CLKID_SYS_PLL_DCO]         = &gxbb_sys_pll_dco.hw,
->>                 [CLKID_GP0_PLL_DCO]         = &gxl_gp0_pll_dco.hw,
->> +               [CLKID_VID_PLL_DIV]         = &gxbb_vid_pll_div.hw,
->> +               [CLKID_VID_PLL_SEL]         = &gxbb_vid_pll_sel.hw,
->> +               [CLKID_VID_PLL]             = &gxbb_vid_pll.hw,
->> +               [CLKID_VCLK_SEL]            = &gxbb_vclk_sel.hw,
->> +               [CLKID_VCLK2_SEL]           = &gxbb_vclk2_sel.hw,
->> +               [CLKID_VCLK_INPUT]          = &gxbb_vclk_input.hw,
->> +               [CLKID_VCLK2_INPUT]         = &gxbb_vclk2_input.hw,
->> +               [CLKID_VCLK_DIV]            = &gxbb_vclk_div.hw,
->> +               [CLKID_VCLK2_DIV]           = &gxbb_vclk2_div.hw,
->> +               [CLKID_VCLK]                = &gxbb_vclk.hw,
->> +               [CLKID_VCLK2]               = &gxbb_vclk2.hw,
->> +               [CLKID_VCLK_DIV1]           = &gxbb_vclk_div1.hw,
->> +               [CLKID_VCLK_DIV2_EN]        = &gxbb_vclk_div2_en.hw,
->> +               [CLKID_VCLK_DIV2]           = &gxbb_vclk_div2.hw,
->> +               [CLKID_VCLK_DIV4_EN]        = &gxbb_vclk_div4_en.hw,
->> +               [CLKID_VCLK_DIV4]           = &gxbb_vclk_div4.hw,
->> +               [CLKID_VCLK_DIV6_EN]        = &gxbb_vclk_div6_en.hw,
->> +               [CLKID_VCLK_DIV6]           = &gxbb_vclk_div6.hw,
->> +               [CLKID_VCLK_DIV12_EN]       = &gxbb_vclk_div12_en.hw,
->> +               [CLKID_VCLK_DIV12]          = &gxbb_vclk_div12.hw,
->> +               [CLKID_VCLK2_DIV1]          = &gxbb_vclk2_div1.hw,
->> +               [CLKID_VCLK2_DIV2_EN]       = &gxbb_vclk2_div2_en.hw,
->> +               [CLKID_VCLK2_DIV2]          = &gxbb_vclk2_div2.hw,
->> +               [CLKID_VCLK2_DIV4_EN]       = &gxbb_vclk2_div4_en.hw,
->> +               [CLKID_VCLK2_DIV4]          = &gxbb_vclk2_div4.hw,
->> +               [CLKID_VCLK2_DIV6_EN]       = &gxbb_vclk2_div6_en.hw,
->> +               [CLKID_VCLK2_DIV6]          = &gxbb_vclk2_div6.hw,
->> +               [CLKID_VCLK2_DIV12_EN]      = &gxbb_vclk2_div12_en.hw,
->> +               [CLKID_VCLK2_DIV12]         = &gxbb_vclk2_div12.hw,
->> +               [CLKID_CTS_ENCI_SEL]        = &gxbb_cts_enci_sel.hw,
->> +               [CLKID_CTS_ENCP_SEL]        = &gxbb_cts_encp_sel.hw,
->> +               [CLKID_CTS_VDAC_SEL]        = &gxbb_cts_vdac_sel.hw,
->> +               [CLKID_HDMI_TX_SEL]         = &gxbb_hdmi_tx_sel.hw,
->> +               [CLKID_CTS_ENCI]            = &gxbb_cts_enci.hw,
->> +               [CLKID_CTS_ENCP]            = &gxbb_cts_encp.hw,
->> +               [CLKID_CTS_VDAC]            = &gxbb_cts_vdac.hw,
->> +               [CLKID_HDMI_TX]             = &gxbb_hdmi_tx.hw,
->>                 [NR_CLKS]                   = NULL,
->>         },
->>         .num = NR_CLKS,
->> @@ -2265,6 +2903,35 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
->>         &gxbb_hdmi_pll_dco,
->>         &gxbb_sys_pll_dco,
->>         &gxbb_gp0_pll,
->> +       &gxbb_vid_pll,
->> +       &gxbb_vid_pll_sel,
->> +       &gxbb_vid_pll_div,
->> +       &gxbb_vclk,
->> +       &gxbb_vclk_sel,
->> +       &gxbb_vclk_div,
->> +       &gxbb_vclk_input,
->> +       &gxbb_vclk_div1,
->> +       &gxbb_vclk_div2_en,
->> +       &gxbb_vclk_div4_en,
->> +       &gxbb_vclk_div6_en,
->> +       &gxbb_vclk_div12_en,
->> +       &gxbb_vclk2,
->> +       &gxbb_vclk2_sel,
->> +       &gxbb_vclk2_div,
->> +       &gxbb_vclk2_input,
->> +       &gxbb_vclk2_div1,
->> +       &gxbb_vclk2_div2_en,
->> +       &gxbb_vclk2_div4_en,
->> +       &gxbb_vclk2_div6_en,
->> +       &gxbb_vclk2_div12_en,
->> +       &gxbb_cts_enci,
->> +       &gxbb_cts_enci_sel,
->> +       &gxbb_cts_encp,
->> +       &gxbb_cts_encp_sel,
->> +       &gxbb_cts_vdac,
->> +       &gxbb_cts_vdac_sel,
->> +       &gxbb_hdmi_tx,
->> +       &gxbb_hdmi_tx_sel,
->>  };
->>
->>  struct clkc_data {
->> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
->> index 72bc077..171b7d8 100644
->> --- a/drivers/clk/meson/gxbb.h
->> +++ b/drivers/clk/meson/gxbb.h
->> @@ -165,8 +165,28 @@
->>  #define CLKID_HDMI_PLL_OD2       163
->>  #define CLKID_SYS_PLL_DCO        164
->>  #define CLKID_GP0_PLL_DCO        165
->> -
->> -#define NR_CLKS                          166
->> +#define CLKID_VID_PLL_SEL        167
->> +#define CLKID_VID_PLL_DIV        168
->> +#define CLKID_VCLK_SEL           169
->> +#define CLKID_VCLK2_SEL                  170
->> +#define CLKID_VCLK_INPUT         171
->> +#define CLKID_VCLK2_INPUT        172
->> +#define CLKID_VCLK_DIV           173
->> +#define CLKID_VCLK2_DIV                  174
->> +#define CLKID_VCLK_DIV2_EN       177
->> +#define CLKID_VCLK_DIV4_EN       178
->> +#define CLKID_VCLK_DIV6_EN       179
->> +#define CLKID_VCLK_DIV12_EN      180
->> +#define CLKID_VCLK2_DIV2_EN      181
->> +#define CLKID_VCLK2_DIV4_EN      182
->> +#define CLKID_VCLK2_DIV6_EN      183
->> +#define CLKID_VCLK2_DIV12_EN     184
->> +#define CLKID_CTS_ENCI_SEL       195
->> +#define CLKID_CTS_ENCP_SEL       196
->> +#define CLKID_CTS_VDAC_SEL       197
->> +#define CLKID_HDMI_TX_SEL        198
->> +
->> +#define NR_CLKS                          203
->>
->>  /* include the CLKIDs that have been made part of the DT binding */
->>  #include <dt-bindings/clock/gxbb-clkc.h>
->> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
->> index 3979d48..9f7b99e 100644
->> --- a/include/dt-bindings/clock/gxbb-clkc.h
->> +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> shouldn't this go into a separate patch?
-> 
->> @@ -128,5 +128,22 @@
->>  #define CLKID_VDEC_1           153
->>  #define CLKID_VDEC_HEVC                156
->>  #define CLKID_GEN_CLK          159
->> +#define CLKID_VID_PLL          166
->> +#define CLKID_VCLK             175
->> +#define CLKID_VCLK2            176
->> +#define CLKID_VCLK_DIV1                185
->> +#define CLKID_VCLK_DIV2                186
->> +#define CLKID_VCLK_DIV4                187
->> +#define CLKID_VCLK_DIV6                188
->> +#define CLKID_VCLK_DIV12       189
->> +#define CLKID_VCLK2_DIV1       190
->> +#define CLKID_VCLK2_DIV2       191
->> +#define CLKID_VCLK2_DIV4       192
->> +#define CLKID_VCLK2_DIV6       193
->> +#define CLKID_VCLK2_DIV12      194
-> at first I was confused why you need to export all the dividers,
-> instead of simply calling clk_set_rate with "parent_rate (taken vom
-> VCLK or VCLK2) divided by N"
-> then I noticed that the four muxes below can use VCLK *or* VCLK2
-> dividers as input (as far as I remember this is different on Meson8b:
-> there the muxes below take either the VCLK dividers or the VCLK2
-> dividers as input, but not both)
-
-Ok, I need to be sure both hdmi and enci/encp takes clock from the
-same vclk tree, and in some HDMI mode you need to have a x2 clock
-to cts_enci/encp from the same 1x clock to cts_htmi.
-
-So I will need to manually setup the parents to make sure CCF doesn't
-make a random choice.
-
-Then I'll be able to do a set_rate on vclk to setup the proper PLL rate.
-
-> 
->> +#define CLKID_CTS_ENCI         199
->> +#define CLKID_CTS_ENCP         200
->> +#define CLKID_CTS_VDAC         201
->> +#define CLKID_HDMI_TX          202
-> is my assumption correct that you need to choose a specific input
-> clock (VCLK or VCLK2) for a specific use-case (ENCI, ENCP, VDAC,
-> HDMI_TX)?
-> let's say HDMI uses VLKC2 as input (I'm not sure if it really does):
-> could you skip the VCLK_DIV_* parents in the HDMI_TX clock definition
-> - or does the selection of a specific parent clock (VCLK or VCLK2)
-> depend on the output rate?
-
-HDMI takes vclk2 (why ? I'll keep this path since it's always used by the
-vendor code), and CBVS takes vclk.
-I suspect they tried to make is possible to have CVBS and HDMI output
-work at the same time using the VPP2 instance. But no idea how it works.
-
-As I sais before, you need to feed a x2 factor to hdmi and enci/encp for
-some modes, and I can't let CCF decide since they must take the same
-clock path (VCLK or VCLK2, not both).
-
-> 
-> 
-> Regards
-> Martin
-> 
-
-Neil
+T24gVHVlLCAyMDE4LTA3LTI0IGF0IDEyOjA5ICswMjAwLCBMdWNhcyBTdGFjaCB3cm90ZToNCj4g
+QW0gTW9udGFnLCBkZW4gMjMuMDcuMjAxOCwgMTI6MzcgKzAwMDAgc2NocmllYiBMZW9uYXJkIENy
+ZXN0ZXo6DQo+ID4gT24gTW9uLCAyMDE4LTA3LTIzIGF0IDExOjM4ICswMjAwLCBMdWNhcyBTdGFj
+aCB3cm90ZToNCj4gPiA+IEFtIEZyZWl0YWcsIGRlbiAyMC4wNy4yMDE4LCAxNTo0NyArMDMwMCBz
+Y2hyaWViIExlb25hcmQgQ3Jlc3RlejoNCj4gPiA+ID4gT24gaW14N2QgdGhlIHBjaWUtcGh5IHBv
+d2VyIGRvbWFpbiBpcyB0dXJuZWQgb2ZmIGluIHN1c3BlbmQgYW5kIHRoaXMgY2FuDQo+ID4gPiA+
+IG1ha2UgdGhlIHN5c3RlbSBoYW5nIGFmdGVyIHJlc3VtZSB3aGVuIGF0dGVtcHRpbmcgYW55IHJl
+YWQgZnJvbSBQQ0kuDQo+ID4gPiA+IA0KPiA+ID4gPiBGaXggdGhpcyBieSBhZGRpbmcgbWluaW1h
+bCBzdXNwZW5kL3Jlc3VtZSBjb2RlIGZyb20gdGhlIG54cCBpbnRlcm5hbA0KPiA+ID4gPiB0cmVl
+LiBUaGlzIHdpbGwgcHJlcGFyZSBmb3IgcG93ZXJpbmcgZG93biBvbiBzdXNwZW5kIGFuZCByZXNl
+dCB0aGUgYmxvY2sNCj4gPiA+ID4gb24gcmVzdW1lLg0KPiA+ID4gPiANCj4gPiA+ID4gQ29kZSBp
+cyBvbmx5IGZvciBpbXg3ZCBidXQgYSB2ZXJ5IHNpbWlsYXIgc2VxdWVuY2UgY2FuIGJlIHVzZWQg
+Zm9yDQo+ID4gPiA+IG90aGVyIHNvY3MuDQo+ID4gPiA+IA0KPiA+ID4gPiArc3RhdGljIHZvaWQg
+aW14Nl9wY2llX2x0c3NtX2Rpc2FibGUoc3RydWN0IGRldmljZSAqZGV2KQ0KPiA+ID4gPiArew0K
+PiA+ID4gPiArCXN0cnVjdCBpbXg2X3BjaWUgKmlteDZfcGNpZSA9IGRldl9nZXRfZHJ2ZGF0YShk
+ZXYpOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsJc3dpdGNoIChpbXg2X3BjaWUtPnZhcmlhbnQpIHsN
+Cj4gPiA+ID4gKwljYXNlIElNWDZROg0KPiA+ID4gPiArCWNhc2UgSU1YNlNYOg0KPiA+ID4gPiAr
+CWNhc2UgSU1YNlFQOg0KPiA+ID4gPiArCQlyZWdtYXBfdXBkYXRlX2JpdHMoaW14Nl9wY2llLT5p
+b211eGNfZ3ByLCBJT01VWENfR1BSMTIsDQo+ID4gPiA+ICsJCQkJICAgSU1YNlFfR1BSMTJfUENJ
+RV9DVExfMiwgMCk7DQo+ID4gPiANCj4gPiA+IEhhcyB0aGlzIGJlZW4gdGVzdGVkIG9uIGkuTVg2
+PyBMVFNTTSBkaXNhYmxlIHJlcXVpcmVzIGEgbW9yZSBjb21wbGV4DQo+ID4gPiBzZXF1ZW5jZSBv
+biB0aGlzIFNvQyB0byBhdm9pZCBoYW5naW5nIHRoZSBzeXN0ZW0uIFNlZSBjb21taXQNCj4gPiA+
+IDNlM2U0MDZlMzgwNyAiUENJOiBpbXg2OiBQdXQgTFRTU00gaW4gIkRldGVjdCIgc3RhdGUgYmVm
+b3JlIGRpc2FibGluZw0KPiA+ID4gaXQiLg0KPiA+IA0KPiA+IFRoaXMgcGF0Y2ggb25seSBlbmFi
+bGVzIHN1c3BlbmQvcmVzdW1lIGZvciBpbXg3ZCB3aXRoIG90aGVyIFNPQ3MgdG8NCj4gPiBmb2xs
+b3cgbGF0ZXIuIFRoZSBsdHNzbV9kaXNhYmxlIGZ1bmN0aW9uIGlzIGp1c3Qgc3ltbWV0cmljIHdp
+dGgNCj4gPiBsdHNzbV9lbmFibGUuDQo+ID4gDQo+ID4gVGhlIDZRIHBhcnRzIGFyZSBhZmZlY3Rl
+ZCBieSBlcnJhdGEgIkVSUjAwNTcyMyBQQ0llOiBQQ0llIGRvZXMgbm90DQo+ID4gc3VwcG9ydCBM
+MiBwb3dlciBkb3duIFtpLk1YIDZEdWFsLzZRdWFkIE9ubHldIi4NCj4gPiANCj4gPiBUaGlzIGRl
+c2lnbiBlcnJvciBzZWVtcyB0byBoYXZlIHRoZSBzYW1lIHJvb3QgY2F1c2UgYXMgeW91ciBwcm9i
+bGVtIChubw0KPiA+IGRlZGljYXRlZCByZXNldCBjb250cm9sKSBzbyB0aGlzIHdvcmtzIG91dCBx
+dWl0ZSBuaWNlbHk6IHRoZSBzb2x1dGlvbg0KPiA+IGlzIHRvIG5ldmVyIHBvd2VyIGRvd24gcGNp
+IG9uIGFmZmVjdGVkIGNoaXBzLg0KPiANCj4gSSBkb24ndCBxdWl0ZSBsaWtlIGNvZGUgdGhhdCBs
+b29rcyBsaWtlIGl0IGlzIGRvaW5nIHRoZSByaWdodCB0aGluZywNCj4gYnV0IHRoZW4gZG9lc24n
+dC4gQ2FuIHdlIGF0IGxlYXN0IGVtaXQgYSB3YXJuaW5nIHRoYXQgdGhlcmUgbWlnaHQgYmUNCj4g
+ZHJhZ29ucyBpZiBhbnlvbmUgdHJpZXMgdG8gY2FsbCB0aGlzIG9uIGkuTVg2Pw0KDQpCdXQgdGhl
+IGZ1bmN0aW9uIHdpbGwgaW5kZWVkIHRvZ2dsZSB0aGUgcmlnaHQgYml0cyB0byBpbml0aWF0ZSBs
+dHNzbQ0KZGlzYWJsaW5nLiBJZiB0aGlzIGlzIG5vdCB1c2VmdWwgb3IgY2FuJ3QgYmUgdXNlZCBy
+aWdodCB0aGVuIGl0J3MgdGhlDQpjYWxsZXIncyBwcm9ibGVtIDopDQoNCkkgY2FuIGFkZCBhIGRl
+ZmF1bHQ6IGNsYXVzZSB0byB0aGUgc3dpdGNoIHdoaWNoIHJldHVybnMgLUVOT1NZUyBhbmQgbGV0
+DQpJTVg2USBmYWxsIHRoYXQgd2F5LCB3b3VsZCB0aGF0IGJlIE9LPyBUaGlzIHdvdWxkIGFsc28g
+aGVscCB3aGVuIGFkZGluZw0KbmV3IHZhcmlhbnRzLg==
