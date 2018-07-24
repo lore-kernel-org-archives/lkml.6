@@ -2,99 +2,133 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88021C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663E0C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F5520874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:48:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="af0dstl4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F5520874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 2B8C120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:49:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B8C120874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388430AbeGXOzP (ORCPT
+        id S2388460AbeGXOzs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:55:15 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:38849 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388352AbeGXOzP (ORCPT
+        Tue, 24 Jul 2018 10:55:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43212 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388366AbeGXOzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:55:15 -0400
-Received: by mail-qk0-f193.google.com with SMTP id 126-v6so2614186qke.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 06:48:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=4/yA7SBlDxU4yNm78hFF9zoLhzv38sjKXYoYRcp1Lcs=;
-        b=af0dstl4+mRhnCRvmT5oXNnnkERxyUoOWfQWOOVGMu2pi0ANWK9NtIj0GXgHAyLzBi
-         jKQ2oXA0nE3wauf1rvX1v6iYzd0/gQPC5PiWgbAJBdIeqvIzZ4ZNqArqFqWVatim+Ost
-         hIuxAw3OB9WQB4UmU7UPo043ale9LqBa9KvRaEdcwgGvtA/hXndimoZnBIQMqxOccmID
-         8eYRP8XJgcZ7H9yQXRZIsEPdFD8SqN/PjeSCt8nSFeY1HJXSsGpNBPrH738MS5wFamrl
-         j9rvlk+ejpPAK6mdW44Xqk1nbIZz4Kfq0TNMWec89V2pEw/GHYQCUrtGuflTf3RYyfhz
-         S+6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=4/yA7SBlDxU4yNm78hFF9zoLhzv38sjKXYoYRcp1Lcs=;
-        b=Gb3f1/9vqtrrTtTNaQsF1XwDk6xpBUViKmnNBgRrO4i7v4HXwHKXzGtCVySeiFX6ki
-         JwoHFT6eYGnzy//XKaOF714nVbK4B5iCmG9ECbeW9QdH67jYN7HD61U6sTTN/1TGgxxt
-         NrRYc+q54sJtvKxXaSmwYFIqobSJHyjT2+q+ceCXzDfmHnP5Gjps1ldXxqk9ApXgh1uY
-         c366m8RIsl8PzLSWgK0gf8A3cFhWenbNxQdyj0baMFshDL1sDcBbE0lxqVWbkL69CfzF
-         vAYpq4idfU5yhxqGkOUEEbFO6JWfEj/Hda51/0aGFH7U1eGU7nBc42VTiPKOHIEBYGY8
-         Bgxg==
-X-Gm-Message-State: AOUpUlEJKbpruPoXpD7U4N/jyDOMUrnPEXiu8gw3Xx8QFJ7+yE3JO0PF
-        bYVxXe4qR1D2DtEAN/6FYNHJKKaTWZ/E/rZYsEY=
-X-Google-Smtp-Source: AAOMgpffE9PUWnRLMOguAWoui6oqlfSOQptYgMh9RYOmJ2wYlP94ic//ep4mhvk+3unfQuCiHm/CZvP1JO2YjZhFckM=
-X-Received: by 2002:a37:2a65:: with SMTP id q98-v6mr15244998qkh.174.1532440119877;
- Tue, 24 Jul 2018 06:48:39 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 06:48:39
- -0700 (PDT)
-In-Reply-To: <20180724134122.86718-1-acolin@isi.edu>
-References: <20180724134122.86718-1-acolin@isi.edu>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 24 Jul 2018 15:48:39 +0200
-X-Google-Sender-Auth: hGB7nAhchUMXGNhTSopCKVHM0sg
-Message-ID: <CAK8P3a1sA5tw1oZ+vM_BgR3jU2ww0g6_QDn6sxF2SC4PtrP0Sg@mail.gmail.com>
-Subject: Re: [PATCH] arm: enable RapidIO config options in Kconfig
-To:     Alexei Colin <acolin@isi.edu>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Alex Bounine <alex.bou9@gmail.com>,
-        Barry Wood <barry.wood@idt.com>,
-        John Paul Walters <jwalters@isi.edu>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 24 Jul 2018 10:55:48 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6ODmdlJ035932
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:49:13 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ke2yfy20f-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:49:12 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Tue, 24 Jul 2018 14:49:10 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 24 Jul 2018 14:49:08 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6ODn8de30343220
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Jul 2018 13:49:08 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6897F11C04C;
+        Tue, 24 Jul 2018 16:49:22 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2377111C052;
+        Tue, 24 Jul 2018 16:49:22 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 24 Jul 2018 16:49:22 +0100 (BST)
+From:   Thomas Richter <tmricht@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf test: Fix subtest number when showing results
+Date:   Tue, 24 Jul 2018 15:48:58 +0200
+X-Mailer: git-send-email 2.16.4
+X-TM-AS-GCONF: 00
+x-cbid: 18072413-0028-0000-0000-000002DF8D12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072413-0029-0000-0000-000023977360
+Message-Id: <20180724134858.100644-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807240147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 3:41 PM, Alexei Colin <acolin@isi.edu> wrote:
-> ARM SoCs with a PCI bus offer the RapiodIO config menu; SoCs with
-> RapidIO IP blocks but without a PCI bus, need to add "select
-> HAS_RAPIDIO" to the Kconfig entry for that SoC (e.g. ARCH_*).
->
-> HAS_RAPIDIO was chosen over HAVE_RAPIDIO to be consistent with
-> other architectures which already define this flag (powerpc).
->
-> Signed-off-by: Alexei Colin <acolin@isi.edu>
-> ---
->
-> Tested that kernel builds with RapidIO subsystem and switch drivers enabled.
-> Maintainers for RapidIO subsystem CCed.
-> Sending a similar patch to ARM64 maintainers shortly.
+Perf test 40 for example has several subtests numbered 1-4 when
+displaying the start of the subtest. When the subtest results
+are displayed the subtests are numbered 0-3.
 
+Use this command to generate trace output:
+[root@s35lp76 perf]# ./perf test -Fv 40 2>/tmp/bpf1
 
-Could you move CONFIG_RAPIDIO to drivers/rapidio? That
-would avoid repeating it for each of the five architectures, and
-make it more consistent with other subsystems.
+Fix this by adjusting the subtest number when show the
+subtest result.
 
-       Arnd
+Output before:
+[root@s35lp76 perf]# egrep '(^40\.[0-4]| subtest [0-4]:)' /tmp/bpf1
+40.1: Basic BPF filtering                                 :
+BPF filter subtest 0: Ok
+40.2: BPF pinning                                         :
+BPF filter subtest 1: Ok
+40.3: BPF prologue generation                             :
+BPF filter subtest 2: Ok
+40.4: BPF relocation checker                              :
+BPF filter subtest 3: Ok
+[root@s35lp76 perf]#
+
+Output after:
+root@s35lp76 ~]# egrep '(^40\.[0-4]| subtest [0-4]:)' /tmp/bpf1
+40.1: Basic BPF filtering                                 :
+BPF filter subtest 1: Ok
+40.2: BPF pinning                                         :
+BPF filter subtest 2: Ok
+40.3: BPF prologue generation                             :
+BPF filter subtest 3: Ok
+40.4: BPF relocation checker                              :
+BPF filter subtest 4: Ok
+[root@s35lp76 ~]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+---
+ tools/perf/tests/builtin-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index dd850a26d579..4f5de8245b32 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -599,7 +599,7 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
+ 			for (subi = 0; subi < subn; subi++) {
+ 				pr_info("%2d.%1d: %-*s:", i, subi + 1, subw,
+ 					t->subtest.get_desc(subi));
+-				err = test_and_print(t, skip, subi);
++				err = test_and_print(t, skip, subi + 1);
+ 				if (err != TEST_OK && t->subtest.skip_if_fail)
+ 					skip = true;
+ 			}
+-- 
+2.14.3
+
