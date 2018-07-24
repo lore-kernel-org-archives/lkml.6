@@ -7,104 +7,113 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D843AECDE5F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6094ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9393D20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D1D520852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SL/ZyiW0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9393D20875
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SWW0Zp6U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D1D520852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388373AbeGXCq3 (ORCPT
+        id S2388332AbeGXCsx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 22:46:29 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41447 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388267AbeGXCq3 (ORCPT
+        Mon, 23 Jul 2018 22:48:53 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36324 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388267AbeGXCsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 22:46:29 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y10-v6so452488pfn.8;
-        Mon, 23 Jul 2018 18:42:32 -0700 (PDT)
+        Mon, 23 Jul 2018 22:48:52 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d14-v6so456497pfo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 18:44:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=1EYjYgyCmvJ5V7OgwzHMHiRu3AN7mFz2MQ8kepnXbdc=;
-        b=SL/ZyiW0YqLjUoCZFQd2y4wo653LhJjatA1XNreJEgzznAn11XTgyi3xjuCAMXk0XJ
-         cfs0eW6nZBwJ53btPaIfPjYaCwx74lnXOPjOUaT/e5lZ+a5pu7jFvS5Pr37JVDnwpd2f
-         iTJQ8yi8kUEWimXhgGPElR2VjrF1/4KROSbztqrD+vlBzoQZYxsY+zW3pApzKq5ZoM8z
-         f8eg/75gEdnV+wcpXqThYpTGhsagUFbF/CyXPYETGL/Ox6CF44PoZXm7/0RNiepHYOeQ
-         FjVO+p0CCzaAv1zKr/vRaa03sWQbjpbSjlQBSujruVzBg/ZbO0GyaCHHTuOiQ9Su5ZD8
-         Tnjg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XdVS798Ju2Hyug1eNSX0YMXJcbEBDzmh9IAjzKqwFFQ=;
+        b=SWW0Zp6UE5togTYcZFwlnrFh8jrABELquR4ZL6BN+YiwDixgZ+uacEFajQ7F3EMUvH
+         ikB75B9hLyV2dEC9vHJ5PEs128oUNQ24WKCEGnNJTkhTnURkKcpeCESDvXpKKP68bjAB
+         RijhSGUpAosNn2ltOpdsWLbjvFNN0ZshM8U0BsdD/V00jDrantyTWaNX8EpnpaCugbp6
+         YD8I1cTZRnS8kLwPUmpJ+SoNwHtGNZWgNsDxgW3pqoElrxJWsDpQSaIGmleLvXq/Dw+S
+         8qHQ43qpqFNZw4u0QITT3w5j6l0l6Hn6dpMEezFmjTiQqkQozG6OjH+1jGIuMUmAXVND
+         6oxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=1EYjYgyCmvJ5V7OgwzHMHiRu3AN7mFz2MQ8kepnXbdc=;
-        b=nBfLj2ifE4uyV0Qa8Vq4qDdgqZht4sqC+v3sZgwtq4ljDq0daqvlGkRNvDbsCu+9jK
-         8dP3ZddY1azkFUkWoNsbVJDZJADb20GwRhs/6F3w9cw+LK39YLzQxo4QXVEcMzlZOEEh
-         Ip21lnyWw4EB7MqZ103UCKVX2W6N+9W2b+jZlULxKVLL2k8Rbke4WZxXJOkEwHXBmRJz
-         hgfZ3juYFxnKnxnArwBLupUaTbPUHXniRnM0+LeKu4ZTecNH4Q0kiAveRUqeNEEloAfA
-         mAxwgGyvRAKATg+20QDzYQeTTI9Lfv0qteIImDpb6GiD92TIbGMpWnpqWg7m3tUqhoGp
-         zWpQ==
-X-Gm-Message-State: AOUpUlFK07cYinil2K29zlqdy8jxoVkMO6pyVr2Qj+ZihlMF+6aV14sc
-        v7RHT+vUY31fj6iO40yZulmLQS2t
-X-Google-Smtp-Source: AAOMgpdMH65SmdOtoi2nbZVuSnxVrwbl8dLGC9K8KlYsu0ovAvIK44qIYYUrjMMpJYWM/l6PVZ/FRg==
-X-Received: by 2002:a63:9311:: with SMTP id b17-v6mr14412433pge.261.1532396551837;
-        Mon, 23 Jul 2018 18:42:31 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:101.5.211.5? ([2402:f000:1:1501:200:5efe:6505:d305])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm18040178pfl.126.2018.07.23.18.42.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Jul 2018 18:42:31 -0700 (PDT)
-Subject: Re: [PATCH] block: ioprio: Replace GFP_ATOMIC with GFP_KERNEL in
- set_task_ioprio()
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180723022116.6919-1-baijiaju1990@gmail.com>
- <20180723071803.GA30817@infradead.org>
- <8dab79c6-eb75-b013-1f83-3af43a7052cb@I-love.SAKURA.ne.jp>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <00149ccf-71d7-14e9-fb64-9b8b2ca1e74e@gmail.com>
-Date:   Tue, 24 Jul 2018 09:42:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XdVS798Ju2Hyug1eNSX0YMXJcbEBDzmh9IAjzKqwFFQ=;
+        b=b+rrR6auEYMGpotlZ0Cw+CCdvGeSmhTPZPj2BvzKa7e2V9GfStXJiQNosZx/8EMdP3
+         R9EI5EKtxqCv2iZbrZneJsloiixDmmQIyuK7KQm56uD3/MHFpA1N9q+7eIMmdOyuun/E
+         YCtjLD4I7zjCAHFZJGjwghCjf2O3I/4bnOIfEb/BJ3AnxfGJrgiKpZSENb0bimWNx1wq
+         PeptYRRhFBtaKzOt4a9kyRmjGbFf9/8oDdDy71Jjp+tLPngytbWiLppSOAOEVgwLynv0
+         kAs2nwVa8RKTHwmu4DCBsudZ5ekzpaeBbseej2hj/tO2l2cjSaiHGLU0ctmplrxjPcgQ
+         BO6w==
+X-Gm-Message-State: AOUpUlE9opCSZvjBGamfFdKjzc9MB1OowOTE/eaxnqiuYs+LGATPXUlK
+        kBG1Gtq99FWJ96pGuW5nxiePWC/UK9Lg1Yx2F44FssLe
+X-Google-Smtp-Source: AAOMgpeA80nEwV9q46vtg5VbP16JRIUjGUI5pdU3o1ZY8Fu04R903VyuGVDQP3s+QDSopO/U29QaEKw11der3+5oi4s=
+X-Received: by 2002:a62:cd3:: with SMTP id 80-v6mr15750439pfm.184.1532396695052;
+ Mon, 23 Jul 2018 18:44:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8dab79c6-eb75-b013-1f83-3af43a7052cb@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20180719132834.GF18667@krava> <20180719191253.3843-1-xiyou.wangcong@gmail.com>
+ <20180720115217.GQ2494@hirez.programming.kicks-ass.net> <CAM_iQpWVhLZKo9j6COGkvryGrxJq6sEXzh2S-ikza2H3=pAyqw@mail.gmail.com>
+ <CAM_iQpV33dj-_bwYp3QJdPKihR8HyPzKMOpi1Lrqm7VtN3bZ8w@mail.gmail.com>
+In-Reply-To: <CAM_iQpV33dj-_bwYp3QJdPKihR8HyPzKMOpi1Lrqm7VtN3bZ8w@mail.gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Mon, 23 Jul 2018 18:44:43 -0700
+Message-ID: <CAM_iQpXUsVW7a0+_Z_R-k8xGEQBSKd5Oz7j5+z=G1kQHoDfCqQ@mail.gmail.com>
+Subject: Re: [PATCH v2] perf/core: fix a possible deadlock scenario
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018/7/24 5:49, Tetsuo Handa wrote:
-> On 2018/07/23 16:18, Christoph Hellwig wrote:
->> Looks good,
-> Looks bad. :-(
+On Mon, Jul 23, 2018 at 6:35 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
 >
-> SYSCALL_DEFINE3(ioprio_set, int, which, int, who, int, ioprio)
-> {
-> (...snipped...)
-> 	rcu_read_lock();
-> (...snipped...)
-> 	ret = set_task_ioprio(p, ioprio);
-> (...snipped...)
-> 	rcu_read_unlock();
-> (...snipped...)
+> Hi, Peter, Andi
+>
+> While reviewing the deadlock, I find out it looks like we could have the
+> following infinite recursion too:
+>
+> perf_event_account_interrupt()
+> __perf_event_account_interrupt()
+> perf_adjust_period()
+> event->pmu->stop
+> x86_pmu_stop()
+> x86_pmu.disable()
 
-Oops, my tool does not handle SYSCALL_DEFINE3()...
-Sorry for my incorrect report.
+Hmm, x86_pmu_stop() calls __test_and_clear_bit(), so
+we should not call x86_pmu.disable() twice here.
 
 
-Best wishes,
-Jia-Ju Bai
 
+> intel_pmu_disable_event()
+> intel_pmu_pebs_disable()
+> intel_pmu_drain_pebs_buffer()
+> intel_pmu_drain_pebs_nhm()
+> <repeat....>
+>
+> This time is pure hardware events, attr.freq must be non-zero.
+>
+> And, we could enter this infinite recursion in NMI handler too:
+>
+> intel_pmu_handle_irq()
+> perf_event_overflow()
+> __perf_event_overflow()
+> __perf_event_account_interrupt()
+> ....
+>
+> Or this is impossible too?
+>
+> Thanks!
