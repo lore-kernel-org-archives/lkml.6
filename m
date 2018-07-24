@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE95ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC5DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D789D20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37EE820880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mnr4qui8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D789D20874
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rxg/05+D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37EE820880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388584AbeGXRui (ORCPT
+        id S2388614AbeGXRup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:50:38 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35659 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388330AbeGXRuh (ORCPT
+        Tue, 24 Jul 2018 13:50:45 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40717 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388589AbeGXRup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:50:37 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e6-v6so3289602pgv.2;
-        Tue, 24 Jul 2018 09:43:18 -0700 (PDT)
+        Tue, 24 Jul 2018 13:50:45 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x5-v6so3290196pgp.7;
+        Tue, 24 Jul 2018 09:43:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UhBtfyk6EpvGULLmrb67ektbatVXeOakArBXKH6UOYo=;
-        b=Mnr4qui8T1KxSW8AKioa99ShJWNt0VIw9UqzWbZx0Ad1ZYTxEDfPZUh7i3IiiR4CXU
-         gEQ19TKoVGIBI7ZeQsf8+eiU5xxn6C0dBlOMqJdndQ5eQexU3N3Eg2EOFqyKoUxAhbvi
-         gxa6NdMTm7SB0S14Rne9bwrbFDTHxPWSFoTzP4Yx7O+E7N3qYzgKkYzk1gg6qeb43o7z
-         ryoFgqqvAzC+G06Dopdmmb7eY4kME9iyEj4xjkcqRb45z+cPFvsNKNzY4Y46kaUW4wLK
-         4i/Ke6dTBjz1xqXd0bNLSDxbksJlPOQIkt/HWbdSP/CyvhVeAWMzmkUDyv04EFfBjS5h
-         zwpw==
+        bh=rVKbXczfv+RzlB+yL++j1SAXIAyX+n3XTuzqDXSqkC8=;
+        b=Rxg/05+DX3fkEH3YnbJem119nSPsl2lCB4u51FsphXrqDbQ/M3ltVH7mcMCdd1tRIi
+         6wUB+SAib6Oe1uUvM8j4S5YbGq3J789yK9zz3goZMIJ9QpTZzIb2oDO+uPutOpQwKP3S
+         kYTOaxSm6EobXzKITxWhl8fqHWtSEXtxr6NbKbUO9xICTKRAi4ECh2BxaiG8Vny9+v2m
+         Xydxj+QS45Jl+FSlT2X1rqc5/2nwhdIsmfx+ah34QwHZQ9VQVRhILcoqrFFST+Ff35vp
+         cYfSXCrie9apEaJ5ViqRT2HLVqKc2hdZisDSsf89tTlIDXLg4dfhpsEF2QHcRUNuz6fI
+         p6Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=UhBtfyk6EpvGULLmrb67ektbatVXeOakArBXKH6UOYo=;
-        b=BzgVW8/WfPZW729hEHJ1u6X0gJ53uQ95I57HVl7vvNvqijbJWKXFmLh/TSUp/a3ItK
-         kNLnxF+Ro6btO0q3ZLQ9Xb/0oWK0x3JRVYbKD8PXkzsDysXUOgo1zTMDw3Kv7HT259c4
-         uoKxkgW2pjmlDnUNjXiC13C+j7pHHc3ShvRjKzsh3LL5t5APbKwxgX6SeflGZUpDZwEP
-         E66FzVE/0Nq1ZfoyBMcoaGAh5E2YFSsyxHMFQ4E3Af9qjAvNLDMUavUltZau0nGLYhbm
-         UBkKF98eV93jPT7q7TYWexK/Bi5VCrY4tI3q+9yjrspvjVyBJMtOdl67jrH1LpdeYRYj
-         cKMQ==
-X-Gm-Message-State: AOUpUlGLrdKe3BBvyYcxW4ZWljkvcOxcOVqJm1K+AaA69tu/EvNR/6Za
-        YvDWlIehD4b3b5PlRhUuZaE=
-X-Google-Smtp-Source: AAOMgpdKl2emy59XBbr6arJw19eh6+l8Bp/xKw3nRuy6xXFTLM16OxqjVnzukVakftL6jI5XIN70KA==
-X-Received: by 2002:a63:be4a:: with SMTP id g10-v6mr16797195pgo.378.1532450598724;
-        Tue, 24 Jul 2018 09:43:18 -0700 (PDT)
+        bh=rVKbXczfv+RzlB+yL++j1SAXIAyX+n3XTuzqDXSqkC8=;
+        b=oAkyRy7OO5VonP3mH7Tto1Yd9yyHxyXFYPwv1eKVSQEAAPt5wEeHhuaWq+bOf2Zf1c
+         ZcfZduagbvLMmI2sGvrKeYG+J4aWDc/DRuHXqYTCvaMfX6O+XRLEGcgoWujuy+QOSv4u
+         URQQB3oRi9+bM6gNFjVOv6LcG17h1qetsMFtH2sARzteKL0+btQQ2qv5kDOlcawZo9Rp
+         pQMxQsjPm6l0CdKawcKBynw2+V/8CDBPQ5ntWyqzRuZnaXqL3E6hCezRvEMHwIN8xmJo
+         /xgwU2muD1U+D4Uj8rSRhS3aRu/8OlbXOszmJQXWN+DtH8ajh7BMswne6hOdzqBhPCoR
+         7aIQ==
+X-Gm-Message-State: AOUpUlFeVjU0FhsDk5MMta2S3XOlYUAxtL+xpB/IftbOR8SuvsQOxYSW
+        H231TvC/6jYyRZ50YRAVhtU=
+X-Google-Smtp-Source: AAOMgpd45o51qzDC4G+Bk5V2sg7+aAE/kKgs98p+JK4GZRa5MKfQY8whjd0n/H+S/hpzo8p/yoyU0g==
+X-Received: by 2002:a65:6211:: with SMTP id d17-v6mr17444092pgv.450.1532450606002;
+        Tue, 24 Jul 2018 09:43:26 -0700 (PDT)
 Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id j1-v6sm39410536pfk.125.2018.07.24.09.43.11
+        by smtp.gmail.com with ESMTPSA id j1-v6sm39410536pfk.125.2018.07.24.09.43.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 09:43:18 -0700 (PDT)
+        Tue, 24 Jul 2018 09:43:25 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -68,9 +68,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/8] dt: bindings: Move tegra20-emc binding to memory-controllers directory
-Date:   Tue, 24 Jul 2018 19:42:16 +0300
-Message-Id: <20180724164221.3307-4-digetx@gmail.com>
+Subject: [PATCH v5 4/8] ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+Date:   Tue, 24 Jul 2018 19:42:17 +0300
+Message-Id: <20180724164221.3307-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
 References: <20180724164221.3307-1-digetx@gmail.com>
@@ -79,20 +79,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move tegra20-emc binding to the memory-controllers directory for
-consistency with the other Tegra memory bindings.
+Add interrupt entry into the EMC DT node.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- .../{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt      | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (100%)
+ arch/arm/boot/dts/tegra20.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-rename to Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 15b73bd377f0..9eb4163a4390 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -632,6 +632,7 @@
+ 	memory-controller@7000f400 {
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f400 0x200>;
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
 -- 
 2.18.0
 
