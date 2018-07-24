@@ -6,142 +6,99 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98090C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D24ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54AD3205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54AD3205F4
+	by mail.kernel.org (Postfix) with ESMTP id 51A2F205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51A2F205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388707AbeGXMNR (ORCPT
+        id S2388602AbeGXMNM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:13:17 -0400
-Received: from foss.arm.com ([217.140.101.70]:48492 "EHLO foss.arm.com"
+        Tue, 24 Jul 2018 08:13:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:48448 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388585AbeGXMNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:13:16 -0400
+        id S2388296AbeGXMNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 08:13:11 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F0E215B2;
-        Tue, 24 Jul 2018 04:07:21 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C80AF80D;
+        Tue, 24 Jul 2018 04:07:16 -0700 (PDT)
 Received: from e112298-lin.Emea.Arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 217963F237;
-        Tue, 24 Jul 2018 04:07:19 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7315F3F237;
+        Tue, 24 Jul 2018 04:07:15 -0700 (PDT)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, peterz@infradead.org, marc.zyngier@arm.com,
         ricardo.neri-calderon@linux.intel.com, mingo@kernel.org,
         Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH 3/4] genirq: Provide NMI handlers
-Date:   Tue, 24 Jul 2018 12:07:06 +0100
-Message-Id: <1532430427-57151-4-git-send-email-julien.thierry@arm.com>
+Subject: [PATCH 0/4] Provide core API for NMIs
+Date:   Tue, 24 Jul 2018 12:07:03 +0100
+Message-Id: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
-References: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide flow handlers that are NMI safe for interrupts and percpu_devid
-interrupts.
+Hi,
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
----
- include/linux/irq.h |  3 +++
- kernel/irq/chip.c   | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+This patch series provides a way for irqchips to define some IRQs as NMIs.
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 0d71f63..88cbad3 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -600,6 +600,9 @@ static inline int irq_set_parent(int irq, int parent_irq)
- extern void handle_bad_irq(struct irq_desc *desc);
- extern void handle_nested_irq(unsigned int irq);
- 
-+extern void handle_fasteoi_nmi(struct irq_desc *desc);
-+extern void handle_percpu_devid_fasteoi_nmi(struct irq_desc *desc);
-+
- extern int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg);
- extern int irq_chip_pm_get(struct irq_data *data);
- extern int irq_chip_pm_put(struct irq_data *data);
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index a2b3d9d..c332c17 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -730,6 +730,37 @@ void handle_fasteoi_irq(struct irq_desc *desc)
- EXPORT_SYMBOL_GPL(handle_fasteoi_irq);
- 
- /**
-+ *	handle_fasteoi_nmi - irq handler for NMI interrupt lines
-+ *	@desc:	the interrupt description structure for this irq
-+ *
-+ *	A simple NMI-safe handler, considering the restrictions
-+ *	from request_nmi.
-+ *
-+ *	Only a single callback will be issued to the chip: an ->eoi()
-+ *	call when the interrupt has been serviced. This enables support
-+ *	for modern forms of interrupt handlers, which handle the flow
-+ *	details in hardware, transparently.
-+ */
-+void handle_fasteoi_nmi(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct irqaction *action = desc->action;
-+	unsigned int irq = irq_desc_get_irq(desc);
-+	irqreturn_t res;
-+
-+	trace_irq_handler_entry(irq, action);
-+	/*
-+	 * NMIs cannot be shared, there is only one action.
-+	 */
-+	res = action->handler(irq, action->dev_id);
-+	trace_irq_handler_exit(irq, action, res);
-+
-+	if (chip->irq_eoi)
-+		chip->irq_eoi(&desc->irq_data);
-+}
-+EXPORT_SYMBOL_GPL(handle_fasteoi_nmi);
-+
-+/**
-  *	handle_edge_irq - edge type IRQ handler
-  *	@desc:	the interrupt description structure for this irq
-  *
-@@ -908,6 +939,29 @@ void handle_percpu_devid_irq(struct irq_desc *desc)
- 		chip->irq_eoi(&desc->irq_data);
- }
- 
-+/**
-+ * handle_percpu_devid_fasteoi_nmi - Per CPU local NMI handler with per cpu
-+ *				     dev ids
-+ * @desc:	the interrupt description structure for this irq
-+ *
-+ * Similar to handle_fasteoi_nmi, but handling the dev_id cookie
-+ * as a percpu pointer.
-+ */
-+void handle_percpu_devid_fasteoi_nmi(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct irqaction *action = desc->action;
-+	unsigned int irq = irq_desc_get_irq(desc);
-+	irqreturn_t res;
-+
-+	trace_irq_handler_entry(irq, action);
-+	res = action->handler(irq, raw_cpu_ptr(action->percpu_dev_id));
-+	trace_irq_handler_exit(irq, action, res);
-+
-+	if (chip->irq_eoi)
-+		chip->irq_eoi(&desc->irq_data);
-+}
-+
- static void
- __irq_do_set_handler(struct irq_desc *desc, irq_flow_handler_t handle,
- 		     int is_chained, const char *name)
--- 
+For this to be possible, the irqchip must:
+- be a root irqchip
+- not require bus locking
+- have the NMI support flag
+
+Once these conditions are met, interrupt lines can be requested as NMIs.
+These lines must not be shared and the IRQ handling must not be threaded.
+Callbacks are added to the irqchip in order to set up (clean up) the
+necessary resources for NMIs before enabling (before releasing) the
+corresponding interrupt line.
+
+For reference, see the examples of the support provided by GICv3 [1] and
+for the request and management of an NMI in the arm_pmu driver [2]. (These
+are not on the list yet as I'd like the focus of the discussion to be on
+the API for now)
+
+This work was motivated by a discussion on Ricardo Neri's patch [3]
+
+Patches 1 & 2 provide functions necessary to request and manage NMIs.
+Patches 3 & 4 provide functions for NMI handling.
+
+Changes since RFC[4]:
+- Rebased to v4.18-rc6
+- Remove disable_nmi, one should call disable_nmi_nosync instead
+- Remove code related to affinity balancing from NMI functions
+- Require PERCPU configuration for NMIs
+
+[1] http://www.linux-arm.org/git?p=linux-jt.git;a=commitdiff;h=be1beaf15fe840c8a430b9a8191a5b33877f3c0f
+[2] http://www.linux-arm.org/git?p=linux-jt.git;a=commitdiff;h=cc35056203445a38b1343fc23d6f3a7b2d707603
+[3] https://patchwork.kernel.org/patch/10461381/
+[4] https://lkml.org/lkml/2018/7/9/768
+
+Thanks,
+
+Julien
+
+-->
+
+Julien Thierry (4):
+  genirq: Provide basic NMI management for interrupt lines
+  genirq: Provide NMI management for percpu_devid interrupts
+  genirq: Provide NMI handlers
+  irqdesc: Add domain handler for NMIs
+
+ include/linux/interrupt.h |  18 +++
+ include/linux/irq.h       |  10 ++
+ include/linux/irqdesc.h   |   3 +
+ kernel/irq/chip.c         |  54 +++++++
+ kernel/irq/debugfs.c      |   6 +-
+ kernel/irq/internals.h    |   1 +
+ kernel/irq/irqdesc.c      |  33 ++++
+ kernel/irq/manage.c       | 377 +++++++++++++++++++++++++++++++++++++++++++++-
+ 8 files changed, 499 insertions(+), 3 deletions(-)
+
+--
 1.9.1
-
