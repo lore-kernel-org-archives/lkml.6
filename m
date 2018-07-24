@@ -2,192 +2,103 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB34C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29794C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B93320856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:10:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B93320856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id D022A20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:11:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxdW1GGG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D022A20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388364AbeGXMQi (ORCPT
+        id S2388460AbeGXMRr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:16:38 -0400
-Received: from mx.socionext.com ([202.248.49.38]:43866 "EHLO mx.socionext.com"
+        Tue, 24 Jul 2018 08:17:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388241AbeGXMQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:16:37 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 24 Jul 2018 20:10:40 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 8253718011F;
-        Tue, 24 Jul 2018 20:10:40 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 24 Jul 2018 20:10:40 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 1A3AE403AB;
-        Tue, 24 Jul 2018 20:10:40 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id D9AF1120453;
-        Tue, 24 Jul 2018 20:10:39 +0900 (JST)
-Date:   Tue, 24 Jul 2018 20:10:39 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: phy: add DT bindings for UniPhier USB3 PHY driver
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <CAL_JsqKjC3J16uk2GTQyTquMbvO5Aw6kr4BfdNLAfZHD3MuBgQ@mail.gmail.com>
-References: <20180717195531.8587.4A936039@socionext.com> <CAL_JsqKjC3J16uk2GTQyTquMbvO5Aw6kr4BfdNLAfZHD3MuBgQ@mail.gmail.com>
-Message-Id: <20180724201039.F6E6.4A936039@socionext.com>
+        id S2388241AbeGXMRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 08:17:47 -0400
+Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com [74.125.82.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC21320882;
+        Tue, 24 Jul 2018 11:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532430711;
+        bh=eMVrwzgIBHouClke94neqAhscAmgbKbg45ZCwVnq93M=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=PxdW1GGGWnkuh6K+yGjNCTQdQvRHG/6y74vpBFYb9JsYiaNwcbAEXwyNmEr53cftQ
+         3ugnk2x4iZosk2Y0mNxTvxnjXsssxcXBagRQpI1jk49iVWUn4hHZXAIAA+k/2d5uXd
+         0Cv/437rMVU511azwgZRDLWaN3R9etVOhqMGt3Vo=
+Received: by mail-wm0-f53.google.com with SMTP id s9-v6so2122073wmh.3;
+        Tue, 24 Jul 2018 04:11:50 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGj+gVSb5fbQqXbmGH27ZmO4Z291vRvWGjrm67VE1m5nXUY7GSc
+        ULM5T4b49Q3HtFcrTST6FfnrgjQtQ+6ksDH7FUQ=
+X-Google-Smtp-Source: AAOMgpclJrfuo6eRe1eGfPiQiqgNIkiiDXxwjqhEaNxg2ccVBLth0WX2J6WFjbrsNCdIdJi0Q2zRwrnRrpeoc+3YX/A=
+X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr1784489wmm.117.1532430709171;
+ Tue, 24 Jul 2018 04:11:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 04:11:48
+ -0700 (PDT)
+In-Reply-To: <5ef968e1cb2a473cad97f6bfead369ca@AcuMS.aculab.com>
+References: <20180723162020.6221-1-krzk@kernel.org> <5ef968e1cb2a473cad97f6bfead369ca@AcuMS.aculab.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 24 Jul 2018 13:11:48 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdveQeg_M42v69m9vBEz2SaJE0_BZNRUqGLt4Ve+ZLYSg@mail.gmail.com>
+Message-ID: <CAJKOXPdveQeg_M42v69m9vBEz2SaJE0_BZNRUqGLt4Ve+ZLYSg@mail.gmail.com>
+Subject: Re: [PATCH] net: ethernet: fs-enet: Use generic CRC32 implementation
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers3@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On 24 July 2018 at 13:05, David Laight <David.Laight@aculab.com> wrote:
+> From: Krzysztof Kozlowski
+>> Sent: 23 July 2018 17:20
+>> Use generic kernel CRC32 implementation because it:
+>> 1. Should be faster (uses lookup tables),
+>
+> Are you sure?
+> The lookup tables are unlikely to be in the data cache and
+> the 6 cache misses kill performance.
+> (Not that it particularly matters when setting up multicast hash tables).
 
-On Tue, 17 Jul 2018 08:16:23 -0600 <robh@kernel.org> wrote:
+Good point, so this statement should be rather "Could be faster"... I
+did not run any performance tests so this is not backed up by any
+data.
 
-> On Tue, Jul 17, 2018 at 4:55 AM Kunihiko Hayashi
-> <hayashi.kunihiko@socionext.com> wrote:
-> >
-> > Hi Rob,
-> > Thank you for your comments.
-> >
-> > On Mon, 16 Jul 2018 14:50:49 -0600 <robh@kernel.org> wrote:
-> >
-> > > On Fri, Jun 29, 2018 at 05:38:58PM +0900, Kunihiko Hayashi wrote:
-> > > > Add DT bindings for PHY interface built into USB3 controller
-> > > > implemented in UniPhier SoCs.
-> > > >
-> > > > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > > > ---
-> > > >  .../devicetree/bindings/phy/uniphier-usb3-phy.txt  | 118 +++++++++++++++++++++
-> 
-> [...]
-> 
-> > > > +Optional properties:
-> > > > +- phy-supply: A phandle to the regulator for USB VBUS.
-> > >
-> > > The phy actually needs Vbus or you just want to control Vbus from the
-> > > phy driver?
-> >
-> > To enable each USB port correspond with phy, we must enable Vbus for each port.
-> > However, the host driver doesn't have the way to control regulators directly,
-> > then I think it is reasonable to control Vbus by using phy regulator.
-> 
-> DT should reflect the h/w. If Vbus rail is powering the phy then it
-> should be in the phy node. If you just happen to want to put Vbus
-> control in the phy driver, that's an OS problem and doesn't belong in
-> DT. In that case, Vbus should be described as part of a USB connector
-> node and any driver can walk the tree or graph and get Vbus regulator.
+I think the main benefit is rather easier code maintenance by removing
+duplicated, custom code.
 
-I think it's difficult to describe port nodes related to connectors that
-has vbus regulator.
+>> 2. Removes duplicated CRC generation code,
+>> 3. Uses well-proven algorithm instead of coding it one more time.
+> ...
+>>
+>> Not tested on hardware.
+>
+> Have you verified that the old and new functions give the
+> same result for a few mac addresses?
+> It is very easy to use the wrong bits in crc calculations
+> or generate the output in the wrong bit order.
 
-This controller has a glue layer, that consists of "reset", "regulator",
-and "phy", and there are their respective drivers and their own nodes,
-but no glue layer driver [1].
+I copied the original code and new one onto a different driver and run
+this in a loop for thousands of data input (although not all possible
+MAC combinations). The output was the same. I agree however that real
+testing would be important.
 
-[1] https://www.spinics.net/lists/linux-usb/msg165060.html
-
-For example, when the glue layer node has each port that includes vbus,
-we will describe like that:
-
---------------------------------
-usb {
-	...
-	resets = <&usb_reset>;
-	phys = <&usb_phy0>, <&usb_phy1>;
-};
-
-usb-glue {
-	usb_reset: reset {
-		...
-	};
-	usb_vbus0: regulator {
-		...
-	};
-	usb_vbus1: regulator {
-		...
-	};
-	usb_phy0: phy {
-		...
-	};
-	usb_phy1: phy {
-		...
-	};
-
-	ports {
-		port@0 {
-			...
-			vbus-supply = <&usb_vbus0>;
-		};
-		port@1 {
-			...
-			vbus-supply = <&usb_vbus1>;
-		};
-	};
-};
---------------------------------
-
-However, there is no driver that can walk the tree to get vbus regulator,
-and we can't describe that the vbus and phy are related.
-
-In this controller, each port with vbus corresponds to each phy,
-and we need to enable the phy and control the vbus.
-
-For the above reasons, and since vbus is not phy's power,
-I think it's reasonable to add "vbus-supply" only instead of "phy-supply"
-in the phy node like sun4i-usb-phy, rockchip-usb-phy, etc.
-
---------------------------------
-usb {
-	...
-	resets = <&usb_reset>;
-	phys = <&usb_phy0>, <&usb_phy1>;
-};
-
-usb-glue {
-	usb_reset: reset {
-		...
-	};
-	usb_vbus0: regulator {
-		...
-	};
-	usb_vbus1: regulator {
-		...
-	};
-	usb_phy0: phy {
-		...
-		vbus-supply = <&usb_vbus0>;
-	};
-	usb_phy1: phy {
-		...
-		vbus-supply = <&usb_vbus1>;
-	};
-};
---------------------------------
-
-Thank you,
-
----
-Best Regards,
-Kunihiko Hayashi
-
-
+Best regards,
+Krzysztof
