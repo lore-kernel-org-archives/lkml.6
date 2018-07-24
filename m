@@ -2,88 +2,77 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C3CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035D2C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1998620874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:34:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Sis/4XH+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1998620874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id AEBA220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:35:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBA220874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388502AbeGXSlj (ORCPT
+        id S2388476AbeGXSmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:41:39 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:38476 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388415AbeGXSli (ORCPT
+        Tue, 24 Jul 2018 14:42:37 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:57796 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388403AbeGXSmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:41:38 -0400
-Received: by mail-io0-f194.google.com with SMTP id v26-v6so4093803iog.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 10:34:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=upOJO3BLOmG4LVjRJ/v80tcHTlYkB1OVWAohGSMHlDI=;
-        b=Sis/4XH+v2ps76g/cmr/5upvNRzHRrioMJtff7fsiJevDshRsfG8N9wN4WPggtXfor
-         Zf9vVwONGQvHGXNjVegpRpvMDBiQ65Q5dKJTz7zxxP5rfuU3gB7AnGxG2SKqB32QhdzB
-         5hRS0pB7NR3BtqNyX+6BIF+lEe8iCCaXGTAOw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=upOJO3BLOmG4LVjRJ/v80tcHTlYkB1OVWAohGSMHlDI=;
-        b=kbC3z6HkzGR7N1HCs55A82FcKM+7VElZyMhycQBmun3clcS2UlYJ0QqJsLl/G1PbJ/
-         e3SW+jwLlc4784gdsxf1hC39KuZGWTv7ZVCWBnvXFNMX87YBx3kNaCe4w/sUWCifnN7J
-         m+vbw5IcqJyWppGZx5klEQQP5GPmMyQFUV/gvpjxzy6YK+oG8y7eXHX5CUIaeWlUhwTi
-         uaYJymuIuxiQir0xUMt+Xfjm4aMhRihkYBgI/8udDzLRIYgRonrLvv5l2yka1BXxQoIW
-         wuR0L4vlhQbTzWuKpUFs5OygQ6YQvfpAAFdgkeBXMZF0k+Qz8Rr1XHZWpcRtoHWceymv
-         TE0w==
-X-Gm-Message-State: AOUpUlE6VOGQkcnuT4jlAaCPa2isi0nXPkp1/PImWzBOdd/C0ZDDYp7f
-        j4HhvNybqLjTrQbMuBdXuUQ8KfmOP0vxBGDfQZM=
-X-Google-Smtp-Source: AAOMgpfZDe1/yuLe9IXV4Yd/mfbjVPcbKddiMVfiVP4Nt7MfdMc8VcEhOs59PcNeJMVrWYWf9D0JNM48tFBnFf4mo1s=
-X-Received: by 2002:a6b:f612:: with SMTP id n18-v6mr14930900ioh.259.1532453645906;
- Tue, 24 Jul 2018 10:34:05 -0700 (PDT)
+        Tue, 24 Jul 2018 14:42:36 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 41ZlqV2yd1z1qx8t;
+        Tue, 24 Jul 2018 19:35:02 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 41ZlqV2X1xz1tLPL;
+        Tue, 24 Jul 2018 19:35:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id Xho6Ls0XH1BU; Tue, 24 Jul 2018 19:35:01 +0200 (CEST)
+X-Auth-Info: gGLywVnJoJk6I6WNLs559Xwf440VvVKFokM3HaTq5t5S3SKsb2rljeHLtTUMmeH4
+Received: from igel.home (ppp-188-174-155-150.dynamic.mnet-online.de [188.174.155.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 24 Jul 2018 19:35:01 +0200 (CEST)
+Received: by igel.home (Postfix, from userid 1000)
+        id 02E2A2C129B; Tue, 24 Jul 2018 19:35:00 +0200 (CEST)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org
+Subject: Re: m68k allmodconfig build errors
+References: <28ebe45d-3dbd-2a82-f537-b0725f7a2bcf@infradead.org>
+        <878t66idai.fsf@igel.home>
+        <94dc0357-10d4-c3dc-ef2a-9643f08d2a09@infradead.org>
+X-Yow:  Maybe we could paint GOLDIE HAWN a rich PRUSSIAN BLUE--
+Date:   Tue, 24 Jul 2018 19:35:00 +0200
+In-Reply-To: <94dc0357-10d4-c3dc-ef2a-9643f08d2a09@infradead.org> (Randy
+        Dunlap's message of "Mon, 23 Jul 2018 18:52:27 -0700")
+Message-ID: <87sh48r0zf.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20180724121139.62570-1-kirill.shutemov@linux.intel.com>
-In-Reply-To: <20180724121139.62570-1-kirill.shutemov@linux.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 24 Jul 2018 10:33:55 -0700
-Message-ID: <CA+55aFwwY0UUYtyohfd-fnhpd=G3EYTtirfmQHXJ3n7C_PCSJA@mail.gmail.com>
-Subject: Re: [PATCHv3 0/3] Fix crash due to vma_is_anonymous() false-positives
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 5:11 AM Kirill A. Shutemov
-<kirill.shutemov@linux.intel.com> wrote:
->
-> Fix crash found by syzkaller.
->
-> Build on top of Linus' changes in 4.18-rc6.
->
-> Andrew, could you please drop mm-drop-unneeded-vm_ops-checks-v2.patch for
-> now. Infiniband drivers have to be fixed first.
+On Jul 23 2018, Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Ack, these look good to me.
+> I don't see that all of these string compare fields are null-terminated.
 
-We still need to have the rdma people fix up their vma mis-use, but
-that's a related, but independent issue.
+That gcc has converted the strncmp calls to strcmp is a pretty strong
+evidence that they are.
 
-             Linus
+Andreas.
+
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
