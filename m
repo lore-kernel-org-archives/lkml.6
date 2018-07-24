@@ -2,710 +2,160 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08566C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 407B4C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D8472064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0E5120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:46:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbzscXl9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D8472064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B/wYF+rY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E5120874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388694AbeGXRvS (ORCPT
+        id S2388454AbeGXRx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:51:18 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:44871 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388333AbeGXRvS (ORCPT
+        Tue, 24 Jul 2018 13:53:59 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44775 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388393AbeGXRx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:51:18 -0400
-Received: by mail-pl0-f65.google.com with SMTP id m16-v6so2012558pls.11;
-        Tue, 24 Jul 2018 09:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KujdazEonh8hoTE6UrQ09RC6Ad/DxZja9GU4lfdq6P4=;
-        b=CbzscXl95oQSlQDl44ZF2jOOx9qCKnclni6H4v+/tIruHncfcsQi+pRVIFq2I1Gdr4
-         QeJw/oTWu6swOEdA+u9bCum8XdT+5hUmzD2KLy9Wqr8p3N7iZM/9+9bHUe211dAGo3vH
-         U2Hy3m4w/YRUWh3MQx3gIsfMEc4vyxiRD7YnRQJdH2DPxxgZBy/pCukATXiYH567jV/2
-         pQMFEsEgsy+8Xa5NEE+Simh6MBAs8OkgwZSW9XOgnd26VmKPyhLYTK16swvsd6P/ChTO
-         SK2XEn8FDY0jUT1Zq2czhn12JH2Rqe50isA73yjtoZntnXYnOYcqnlYNWE5tjZSLGauE
-         lQOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=KujdazEonh8hoTE6UrQ09RC6Ad/DxZja9GU4lfdq6P4=;
-        b=VdQlvoi1gKC9w96BOYTTNd9pOXLN5nCnDVFiHdT/qdfGkr3eBOiWaMEZwG6uTOpcwt
-         ZBsgO5fOm6W2ZL1QpALRCuF6dsTSPWgc2ICehUJbcIOQCEYh/bLl5bt0fvT3RGPZBzL3
-         UcKN0Q1KMuBkU6Dz4NP55Ra8+wabmW+lkTyZz3oYxqtRG86NfGKcVdfpkoz3VJuopZg5
-         6aNhocTvF4B67PPDKl2w4P3APnreZGdVzZauz/KrxsJ6VH3ONvcfBo3D+Mzds8GMfeVk
-         GfegRvXJ504e5F+ej02m5pTXlZjtn2as6mN1ipsXNEaRcrNFMMrP8zePzxR3Za9PCPLL
-         AzRA==
-X-Gm-Message-State: AOUpUlHEEVKnKG5Gd7oWlw+mq7fGAqq/U5TOIAgrSWN3dg9k+G2K5OR7
-        syoW6qFwrv67tKROt0FiclQ=
-X-Google-Smtp-Source: AAOMgper6jQEyqw6Ks4A9KQPNQcjW7sKwgiIlMb2u6kYBipq8cKtUd9EuhoFoZq9hqZsUz9jL+0lxg==
-X-Received: by 2002:a17:902:e28b:: with SMTP id cf11-v6mr17833623plb.86.1532450637436;
-        Tue, 24 Jul 2018 09:43:57 -0700 (PDT)
-Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id j1-v6sm39410536pfk.125.2018.07.24.09.43.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 09:43:57 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 8/8] memory: tegra: Introduce Tegra20 EMC driver
-Date:   Tue, 24 Jul 2018 19:42:21 +0300
-Message-Id: <20180724164221.3307-9-digetx@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
-References: <20180724164221.3307-1-digetx@gmail.com>
+        Tue, 24 Jul 2018 13:53:59 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180724164638euoutp01c93b0b3a3a8293b804522817f7d3cb07~EW_GwV-xm0632206322euoutp01e;
+        Tue, 24 Jul 2018 16:46:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180724164638euoutp01c93b0b3a3a8293b804522817f7d3cb07~EW_GwV-xm0632206322euoutp01e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1532450798;
+        bh=oTf1fp35ARp3WjIU6MUfq8QBxq+aw94UauzYApDUKGw=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=B/wYF+rY5Q8J+wAedeCwj0G+yPjiGp1CnKWuCxxHKlPgDIchB++7rYYHnf4d8ad1G
+         i6zb3DYsPnLiZ1FhgGE5EoXM0eU4iUVupx+Q15mgm8x8EPQHFbopfb+sLat25xeGXW
+         DLO4JUZkd3DezWT+Vkjk1MshLB61DZnU7PUF+SU4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180724164637eucas1p208cf56428e124299d024e642827f2197~EW_GNTMG-3060930609eucas1p2x;
+        Tue, 24 Jul 2018 16:46:37 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 73.AB.61560.DE7575B5; Tue, 24
+        Jul 2018 17:46:37 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180724164636eucas1p2e7075066269c718fda82f64308be9540~EW_FbXzKi0613106131eucas1p2t;
+        Tue, 24 Jul 2018 16:46:36 +0000 (GMT)
+X-AuditID: cbfec7f5-1edff7000002f078-5a-5b5757edcbfe
+Received: from eusync4.samsung.com ( [203.254.199.214]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0C.CA.04183.CE7575B5; Tue, 24
+        Jul 2018 17:46:36 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync4.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PCD00DECQLOG300@eusync4.samsung.com>; Tue, 24 Jul
+        2018 17:46:36 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: thermal: samsung: Add SPDX license
+ identifier
+Date:   Tue, 24 Jul 2018 18:46:35 +0200
+Message-id: <2442216.oppRSGRAaL@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180718200250.6478-1-krzk@kernel.org>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduzned234eHRBu/6uSzmHznHajH/yjVW
+        i/7Hr5ktzp/fwG6x6TGQe3nXHDaLz71HGC1mnN/HZLH0+kUmi9a9R9gtnjzsY3Pg9lgzbw2j
+        x85Zd9k9Fu95yeSxaVUnm8fmJfUenzfJBbBFcdmkpOZklqUW6dslcGVMPvKPreAJb8XSyb9Y
+        GhincXcxcnJICJhIvLp8mKmLkYtDSGAFo8T3h4vZIJzPjBI3z31l6WLkAKs6/68OIr6MUaL/
+        2xRWkG4hgd+MEm/aikFsNgEriYntqxhBbBEBTYnrf7+zgjQwC1xjkuh+to0NJCEsECjxavYN
+        dhCbRUBVYmv3OiYQmxeoofNTH1hcVMBLYsu+drA4J9Dip69WMkLUCEr8mHyPBcRmFpCX2Ld/
+        KiuErSNx9tg6RpBlEgK32SSuTt/FAvGbi8TsqY/YIWxhiVfHt0DZMhKXJ3ezQDRMB/rg11Io
+        Zz2jxJozx5ggqqwlDh+/CLWCT2LStunMkLDglehoE4Io8ZA4eP0IOyRc2hklXs34xjyBUWYW
+        kmtnIbl2FpJrFzAyr2IUTy0tzk1PLTbOSy3XK07MLS7NS9dLzs/dxAhMIaf/Hf+6g3Hfn6RD
+        jAIcjEo8vB/swqOFWBPLiitzDzFKcDArifCaBgKFeFMSK6tSi/Lji0pzUosPMUpzsCiJ88Zp
+        1EUJCaQnlqRmp6YWpBbBZJk4OKUaGHcebZ/IwZ77M/Tz55QQO9HLbe9eL+adHq+2xTPwhb9d
+        W3yfSt7G38qcPuZn56f8UnZ6MHtSk7Gm9/Xoo67XM2YqhP09f5PHzO77V1atrvbzBk4cL0yW
+        3OGS2TJRW3ejE6f+NknT/MyIlRNMI5SmfxKJ/nD6ybsN6Vw/ZZLWLgyUKrAt43p8T4mlOCPR
+        UIu5qDgRADe7nEUdAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t/xa7pvwsOjDfpPiVrMP3KO1WL+lWus
+        Fv2PXzNbnD+/gd1i02Mg9/KuOWwWn3uPMFrMOL+PyWLp9YtMFq17j7BbPHnYx+bA7bFm3hpG
+        j52z7rJ7LN7zkslj06pONo/NS+o9Pm+SC2CL4rJJSc3JLEst0rdL4MqYfOQfW8ET3oqlk3+x
+        NDBO4+5i5OCQEDCROP+vrouRi0NIYAmjxPwvXSwQzl9GiZbp/xi7GDk52ASsJCa2rwKzRQQ0
+        Ja7//c4KUsQscI1J4vGO92wgCWEBf4mOPe/AilgEVCW2dq9jArF5gRo6P/Wxg9iiAl4SW/a1
+        g8U5gTY/fbWSEWJbJ6PE66dz2CEaBCV+TL7HAmIzC8hL7Ns/lRXC1pJYv/M40wRG/llIymYh
+        KZuFpGwBI/MqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwPDfduznlh2MXe+CDzEKcDAq8fB6
+        OIZHC7EmlhVX5h5ilOBgVhLhNQ0ECvGmJFZWpRblxxeV5qQWH2KU5mBREuc9b1AZJSSQnliS
+        mp2aWpBaBJNl4uCUamD0TbWvUsp/vHCKgWRQz+rFNp/3yDq3qj8T4N7TsYejj6lMkt17n5Bf
+        qtOpLkfv799OXT4vr7R7YZ5cQMer3W7TnoTOm3FeuYP79H/5CUpr7x+S9ZuQsCN+3rk1yzwU
+        3yTpSdY86evx1Fyq8Ndn61n7kKn19UICtWIz3Y/nbKq503z7oOVrl+9KLMUZiYZazEXFiQCI
+        ePLFewIAAA==
+X-CMS-MailID: 20180724164636eucas1p2e7075066269c718fda82f64308be9540
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180718200318epcas3p16aed6c1725d6c1e63ea6b1ad209c5756
+References: <CGME20180718200318epcas3p16aed6c1725d6c1e63ea6b1ad209c5756@epcas3p1.samsung.com>
+        <20180718200250.6478-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce driver for the External Memory Controller (EMC) found on Tegra20
-chips, which controls the external DRAM on the board. The purpose of this
-driver is to program memory timing for external memory on the EMC clock
-rate change.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/memory/tegra/Kconfig       |  10 +
- drivers/memory/tegra/Makefile      |   1 +
- drivers/memory/tegra/tegra20-emc.c | 575 +++++++++++++++++++++++++++++
- 3 files changed, 586 insertions(+)
- create mode 100644 drivers/memory/tegra/tegra20-emc.c
+Hi,
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index 6d74e499e18d..34e0b70f5c5f 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -6,6 +6,16 @@ config TEGRA_MC
- 	  This driver supports the Memory Controller (MC) hardware found on
- 	  NVIDIA Tegra SoCs.
- 
-+config TEGRA20_EMC
-+	bool "NVIDIA Tegra20 External Memory Controller driver"
-+	default y
-+	depends on ARCH_TEGRA_2x_SOC
-+	help
-+	  This driver is for the External Memory Controller (EMC) found on
-+	  Tegra20 chips. The EMC controls the external DRAM on the board.
-+	  This driver is required to change memory timings / clock rate for
-+	  external memory.
-+
- config TEGRA124_EMC
- 	bool "NVIDIA Tegra124 External Memory Controller driver"
- 	default y
-diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-index 94ab16ba075b..3971a6b7c487 100644
---- a/drivers/memory/tegra/Makefile
-+++ b/drivers/memory/tegra/Makefile
-@@ -10,5 +10,6 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
- 
- obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
- 
-+obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
- obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
- obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-new file mode 100644
-index 000000000000..0fa839a577c8
---- /dev/null
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -0,0 +1,575 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Tegra20 External Memory Controller driver
-+ *
-+ * Author: Dmitry Osipenko <digetx@gmail.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/completion.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/sort.h>
-+#include <linux/types.h>
-+
-+#include <soc/tegra/fuse.h>
-+
-+#define EMC_INTSTATUS				0x000
-+#define EMC_INTMASK				0x004
-+#define EMC_TIMING_CONTROL			0x028
-+#define EMC_RC					0x02c
-+#define EMC_RFC					0x030
-+#define EMC_RAS					0x034
-+#define EMC_RP					0x038
-+#define EMC_R2W					0x03c
-+#define EMC_W2R					0x040
-+#define EMC_R2P					0x044
-+#define EMC_W2P					0x048
-+#define EMC_RD_RCD				0x04c
-+#define EMC_WR_RCD				0x050
-+#define EMC_RRD					0x054
-+#define EMC_REXT				0x058
-+#define EMC_WDV					0x05c
-+#define EMC_QUSE				0x060
-+#define EMC_QRST				0x064
-+#define EMC_QSAFE				0x068
-+#define EMC_RDV					0x06c
-+#define EMC_REFRESH				0x070
-+#define EMC_BURST_REFRESH_NUM			0x074
-+#define EMC_PDEX2WR				0x078
-+#define EMC_PDEX2RD				0x07c
-+#define EMC_PCHG2PDEN				0x080
-+#define EMC_ACT2PDEN				0x084
-+#define EMC_AR2PDEN				0x088
-+#define EMC_RW2PDEN				0x08c
-+#define EMC_TXSR				0x090
-+#define EMC_TCKE				0x094
-+#define EMC_TFAW				0x098
-+#define EMC_TRPAB				0x09c
-+#define EMC_TCLKSTABLE				0x0a0
-+#define EMC_TCLKSTOP				0x0a4
-+#define EMC_TREFBW				0x0a8
-+#define EMC_QUSE_EXTRA				0x0ac
-+#define EMC_ODT_WRITE				0x0b0
-+#define EMC_ODT_READ				0x0b4
-+#define EMC_FBIO_CFG5				0x104
-+#define EMC_FBIO_CFG6				0x114
-+#define EMC_AUTO_CAL_INTERVAL			0x2a8
-+#define EMC_CFG_2				0x2b8
-+#define EMC_CFG_DIG_DLL				0x2bc
-+#define EMC_DLL_XFORM_DQS			0x2c0
-+#define EMC_DLL_XFORM_QUSE			0x2c4
-+#define EMC_ZCAL_REF_CNT			0x2e0
-+#define EMC_ZCAL_WAIT_CNT			0x2e4
-+#define EMC_CFG_CLKTRIM_0			0x2d0
-+#define EMC_CFG_CLKTRIM_1			0x2d4
-+#define EMC_CFG_CLKTRIM_2			0x2d8
-+
-+#define EMC_CLKCHANGE_REQ_ENABLE		BIT(0)
-+#define EMC_CLKCHANGE_PD_ENABLE			BIT(1)
-+#define EMC_CLKCHANGE_SR_ENABLE			BIT(2)
-+
-+#define EMC_TIMING_UPDATE			BIT(0)
-+
-+#define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
-+
-+static const u16 emc_timing_registers[] = {
-+	EMC_RC,
-+	EMC_RFC,
-+	EMC_RAS,
-+	EMC_RP,
-+	EMC_R2W,
-+	EMC_W2R,
-+	EMC_R2P,
-+	EMC_W2P,
-+	EMC_RD_RCD,
-+	EMC_WR_RCD,
-+	EMC_RRD,
-+	EMC_REXT,
-+	EMC_WDV,
-+	EMC_QUSE,
-+	EMC_QRST,
-+	EMC_QSAFE,
-+	EMC_RDV,
-+	EMC_REFRESH,
-+	EMC_BURST_REFRESH_NUM,
-+	EMC_PDEX2WR,
-+	EMC_PDEX2RD,
-+	EMC_PCHG2PDEN,
-+	EMC_ACT2PDEN,
-+	EMC_AR2PDEN,
-+	EMC_RW2PDEN,
-+	EMC_TXSR,
-+	EMC_TCKE,
-+	EMC_TFAW,
-+	EMC_TRPAB,
-+	EMC_TCLKSTABLE,
-+	EMC_TCLKSTOP,
-+	EMC_TREFBW,
-+	EMC_QUSE_EXTRA,
-+	EMC_FBIO_CFG6,
-+	EMC_ODT_WRITE,
-+	EMC_ODT_READ,
-+	EMC_FBIO_CFG5,
-+	EMC_CFG_DIG_DLL,
-+	EMC_DLL_XFORM_DQS,
-+	EMC_DLL_XFORM_QUSE,
-+	EMC_ZCAL_REF_CNT,
-+	EMC_ZCAL_WAIT_CNT,
-+	EMC_AUTO_CAL_INTERVAL,
-+	EMC_CFG_CLKTRIM_0,
-+	EMC_CFG_CLKTRIM_1,
-+	EMC_CFG_CLKTRIM_2,
-+};
-+
-+struct emc_timing {
-+	unsigned long rate;
-+	u32 data[ARRAY_SIZE(emc_timing_registers)];
-+};
-+
-+struct tegra_emc {
-+	struct device *dev;
-+	struct completion clk_handshake_complete;
-+	struct notifier_block clk_nb;
-+	struct clk *backup_clk;
-+	struct clk *emc_mux;
-+	struct clk *pll_m;
-+	struct clk *clk;
-+	void __iomem *regs;
-+
-+	struct emc_timing *timings;
-+	unsigned int num_timings;
-+};
-+
-+static irqreturn_t tegra_emc_isr(int irq, void *data)
-+{
-+	struct tegra_emc *emc = data;
-+	u32 intmask = EMC_CLKCHANGE_COMPLETE_INT;
-+	u32 status;
-+
-+	status = readl_relaxed(emc->regs + EMC_INTSTATUS) & intmask;
-+	if (!status)
-+		return IRQ_NONE;
-+
-+	/* clear interrupts */
-+	writel_relaxed(status, emc->regs + EMC_INTSTATUS);
-+
-+	/* notify about EMC-CAR handshake completion */
-+	complete(&emc->clk_handshake_complete);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static struct emc_timing *tegra_emc_find_timing(struct tegra_emc *emc,
-+						unsigned long rate)
-+{
-+	struct emc_timing *timing = NULL;
-+	unsigned int i;
-+
-+	for (i = 0; i < emc->num_timings; i++) {
-+		if (emc->timings[i].rate >= rate) {
-+			timing = &emc->timings[i];
-+			break;
-+		}
-+	}
-+
-+	if (!timing) {
-+		dev_err(emc->dev, "no timing for rate %lu\n", rate);
-+		return NULL;
-+	}
-+
-+	return timing;
-+}
-+
-+static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
-+{
-+	struct emc_timing *timing = tegra_emc_find_timing(emc, rate);
-+	unsigned int i;
-+
-+	if (!timing)
-+		return -EINVAL;
-+
-+	dev_dbg(emc->dev, "%s: using timing rate %lu for requested rate %lu\n",
-+		__func__, timing->rate, rate);
-+
-+	/* program shadow registers */
-+	for (i = 0; i < ARRAY_SIZE(timing->data); i++)
-+		writel_relaxed(timing->data[i],
-+			       emc->regs + emc_timing_registers[i]);
-+
-+	/* wait until programming has settled */
-+	readl_relaxed(emc->regs + emc_timing_registers[0]);
-+
-+	reinit_completion(&emc->clk_handshake_complete);
-+
-+	return 0;
-+}
-+
-+static int emc_complete_timing_change(struct tegra_emc *emc, bool flush)
-+{
-+	long timeout;
-+
-+	dev_dbg(emc->dev, "%s: flush %d\n", __func__, flush);
-+
-+	if (flush) {
-+		/* manually initiate memory timing update */
-+		writel_relaxed(EMC_TIMING_UPDATE,
-+			       emc->regs + EMC_TIMING_CONTROL);
-+		return 0;
-+	}
-+
-+	timeout = wait_for_completion_timeout(&emc->clk_handshake_complete,
-+					      usecs_to_jiffies(100));
-+	if (timeout == 0) {
-+		dev_err(emc->dev, "EMC-CAR handshake failed\n");
-+		return -EIO;
-+	} else if (timeout < 0) {
-+		dev_err(emc->dev, "failed to wait for EMC-CAR handshake: %ld\n",
-+			timeout);
-+		return timeout;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_emc_clk_change_notify(struct notifier_block *nb,
-+				       unsigned long msg, void *data)
-+{
-+	struct tegra_emc *emc = container_of(nb, struct tegra_emc, clk_nb);
-+	struct clk_notifier_data *cnd = data;
-+	int err;
-+
-+	switch (msg) {
-+	case PRE_RATE_CHANGE:
-+		err = emc_prepare_timing_change(emc, cnd->new_rate);
-+		break;
-+
-+	case ABORT_RATE_CHANGE:
-+		err = emc_prepare_timing_change(emc, cnd->old_rate);
-+		if (err)
-+			break;
-+
-+		err = emc_complete_timing_change(emc, true);
-+		break;
-+
-+	case POST_RATE_CHANGE:
-+		err = emc_complete_timing_change(emc, false);
-+		break;
-+
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+
-+	return notifier_from_errno(err);
-+}
-+
-+static int load_one_timing_from_dt(struct tegra_emc *emc,
-+				   struct emc_timing *timing,
-+				   struct device_node *node)
-+{
-+	u32 rate;
-+	int err;
-+
-+	if (!of_device_is_compatible(node, "nvidia,tegra20-emc-table")) {
-+		dev_err(emc->dev, "incompatible DT node: %pOF\n", node);
-+		return -EINVAL;
-+	}
-+
-+	err = of_property_read_u32(node, "clock-frequency", &rate);
-+	if (err) {
-+		dev_err(emc->dev, "timing %pOF: failed to read rate: %d\n",
-+			node, err);
-+		return err;
-+	}
-+
-+	err = of_property_read_u32_array(node, "nvidia,emc-registers",
-+					 timing->data,
-+					 ARRAY_SIZE(emc_timing_registers));
-+	if (err) {
-+		dev_err(emc->dev,
-+			"timing %pOF: failed to read emc timing data: %d\n",
-+			node, err);
-+		return err;
-+	}
-+
-+	/*
-+	 * The EMC clock rate is twice the bus rate, and the bus rate is
-+	 * measured in kHz.
-+	 */
-+	timing->rate = rate * 2 * 1000;
-+
-+	dev_dbg(emc->dev, "%s: %pOF: EMC rate %lu\n",
-+		__func__, node, timing->rate);
-+
-+	return 0;
-+}
-+
-+static int cmp_timings(const void *_a, const void *_b)
-+{
-+	const struct emc_timing *a = _a;
-+	const struct emc_timing *b = _b;
-+
-+	if (a->rate < b->rate)
-+		return -1;
-+
-+	if (a->rate > b->rate)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
-+					  struct device_node *node)
-+{
-+	struct device_node *child;
-+	struct emc_timing *timing;
-+	int child_count;
-+	int err;
-+
-+	child_count = of_get_child_count(node);
-+	if (!child_count) {
-+		dev_err(emc->dev, "no memory timings in DT node: %pOF\n", node);
-+		return -EINVAL;
-+	}
-+
-+	emc->timings = devm_kcalloc(emc->dev, child_count, sizeof(*timing),
-+				    GFP_KERNEL);
-+	if (!emc->timings)
-+		return -ENOMEM;
-+
-+	emc->num_timings = child_count;
-+	timing = emc->timings;
-+
-+	for_each_child_of_node(node, child) {
-+		err = load_one_timing_from_dt(emc, timing++, child);
-+		if (err) {
-+			of_node_put(child);
-+			return err;
-+		}
-+	}
-+
-+	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
-+	     NULL);
-+
-+	return 0;
-+}
-+
-+static struct device_node *
-+tegra_emc_find_node_by_ram_code(struct device *dev)
-+{
-+	struct device_node *np;
-+	u32 value, ram_code;
-+	int err;
-+
-+	if (!of_property_read_bool(dev->of_node, "nvidia,use-ram-code"))
-+		return of_node_get(dev->of_node);
-+
-+	ram_code = tegra_read_ram_code();
-+
-+	for (np = of_find_node_by_name(dev->of_node, "emc-tables"); np;
-+	     np = of_find_node_by_name(np, "emc-tables")) {
-+		err = of_property_read_u32(np, "nvidia,ram-code", &value);
-+		if (err || value != ram_code) {
-+			of_node_put(np);
-+			continue;
-+		}
-+
-+		return np;
-+	}
-+
-+	dev_err(dev, "no memory timings for RAM code %u found in device tree\n",
-+		ram_code);
-+
-+	return NULL;
-+}
-+
-+static int emc_setup_hw(struct tegra_emc *emc)
-+{
-+	u32 emc_cfg;
-+
-+	emc_cfg = readl_relaxed(emc->regs + EMC_CFG_2);
-+
-+	/*
-+	 * Depending on a memory type, DRAM should enter either self-refresh
-+	 * or power-down state on EMC clock change.
-+	 */
-+	if (!(emc_cfg & EMC_CLKCHANGE_PD_ENABLE) &&
-+	    !(emc_cfg & EMC_CLKCHANGE_SR_ENABLE))
-+	{
-+		dev_err(emc->dev,
-+			"bootloader didn't specify DRAM auto-suspend mode\n");
-+		return -EINVAL;
-+	}
-+
-+	/* allow EMC and CAR to handshake on PLL divider/source changes */
-+	emc_cfg |= EMC_CLKCHANGE_REQ_ENABLE;
-+	writel_relaxed(emc_cfg, emc->regs + EMC_CFG_2);
-+
-+	/* initialize interrupt */
-+	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTMASK);
-+	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTSTATUS);
-+
-+	return 0;
-+}
-+
-+static int emc_init(struct tegra_emc *emc, unsigned long rate)
-+{
-+	int err, ret;
-+
-+	err = clk_set_parent(emc->emc_mux, emc->backup_clk);
-+	if (err) {
-+		dev_err(emc->dev,
-+			"failed to reparent to backup source: %d\n", err);
-+		return err;
-+	}
-+
-+	ret = clk_set_rate(emc->pll_m, rate);
-+	if (ret)
-+		dev_err(emc->dev,
-+			"failed to change pll_m rate: %d\n", ret);
-+
-+	err = clk_set_parent(emc->emc_mux, emc->pll_m);
-+	if (err) {
-+		dev_err(emc->dev,
-+			"failed to reparent to pll_m: %d\n", err);
-+		return err;
-+	}
-+
-+	return ret;
-+}
-+
-+static int tegra_emc_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np;
-+	struct tegra_emc *emc;
-+	struct resource *res;
-+	int irq, err;
-+
-+	/* driver has nothing to do in a case of memory timing absence */
-+	if (of_get_child_count(pdev->dev.of_node) == 0) {
-+		dev_info(&pdev->dev,
-+			 "EMC device tree node doesn't have memory timings\n");
-+		return 0;
-+	}
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "interrupt not specified\n");
-+		dev_err(&pdev->dev, "please update your device tree\n");
-+		return irq;
-+	}
-+
-+	np = tegra_emc_find_node_by_ram_code(&pdev->dev);
-+	if (!np)
-+		return -EINVAL;
-+
-+	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
-+	if (!emc) {
-+		of_node_put(np);
-+		return -ENOMEM;
-+	}
-+
-+	init_completion(&emc->clk_handshake_complete);
-+	emc->clk_nb.notifier_call = tegra_emc_clk_change_notify;
-+	emc->dev = &pdev->dev;
-+
-+	err = tegra_emc_load_timings_from_dt(emc, np);
-+	of_node_put(np);
-+	if (err)
-+		return err;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	emc->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(emc->regs))
-+		return PTR_ERR(emc->regs);
-+
-+	err = emc_setup_hw(emc);
-+	if (err)
-+		return err;
-+
-+	err = devm_request_irq(&pdev->dev, irq, tegra_emc_isr, 0,
-+			       dev_name(&pdev->dev), emc);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n", irq, err);
-+		return err;
-+	}
-+
-+	emc->clk = devm_clk_get(&pdev->dev, "emc");
-+	if (IS_ERR(emc->clk)) {
-+		err = PTR_ERR(emc->clk);
-+		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
-+		return err;
-+	}
-+
-+	emc->pll_m = clk_get_sys(NULL, "pll_m");
-+	if (IS_ERR(emc->pll_m)) {
-+		err = PTR_ERR(emc->pll_m);
-+		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
-+		return err;
-+	}
-+
-+	emc->backup_clk = clk_get_sys(NULL, "pll_p");
-+	if (IS_ERR(emc->backup_clk)) {
-+		err = PTR_ERR(emc->backup_clk);
-+		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
-+		goto put_pll_m;
-+	}
-+
-+	emc->emc_mux = clk_get_parent(emc->clk);
-+	if (IS_ERR(emc->emc_mux)) {
-+		err = PTR_ERR(emc->emc_mux);
-+		dev_err(&pdev->dev, "failed to get emc_mux clock: %d\n", err);
-+		goto put_backup;
-+	}
-+
-+	err = clk_notifier_register(emc->clk, &emc->clk_nb);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
-+			err);
-+		goto put_backup;
-+	}
-+
-+	/* set DRAM clock rate to maximum */
-+	err = emc_init(emc, emc->timings[emc->num_timings - 1].rate);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to initialize EMC clock rate: %d\n",
-+			err);
-+		goto unreg_notifier;
-+	}
-+
-+	return 0;
-+
-+unreg_notifier:
-+	clk_notifier_unregister(emc->clk, &emc->clk_nb);
-+put_backup:
-+	clk_put(emc->backup_clk);
-+put_pll_m:
-+	clk_put(emc->pll_m);
-+
-+	return err;
-+}
-+
-+static const struct of_device_id tegra_emc_of_match[] = {
-+	{ .compatible = "nvidia,tegra20-emc", },
-+	{},
-+};
-+
-+static struct platform_driver tegra_emc_driver = {
-+	.probe = tegra_emc_probe,
-+	.driver = {
-+		.name = "tegra20-emc",
-+		.of_match_table = tegra_emc_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+
-+static int __init tegra_emc_init(void)
-+{
-+	return platform_driver_register(&tegra_emc_driver);
-+}
-+subsys_initcall(tegra_emc_init);
--- 
-2.18.0
+On Wednesday, July 18, 2018 10:02:50 PM Krzysztof Kozlowski wrote:
+> Replace GPL license statement with SPDX license identifier (GPL-2.0+).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  include/dt-bindings/thermal/thermal_exynos.h | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
+> 
+> diff --git a/include/dt-bindings/thermal/thermal_exynos.h b/include/dt-bindings/thermal/thermal_exynos.h
+> index 0646500bca69..642e4e7f4084 100644
+> --- a/include/dt-bindings/thermal/thermal_exynos.h
+> +++ b/include/dt-bindings/thermal/thermal_exynos.h
+> @@ -1,19 +1,9 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+
+This code should be GPL-2.0 only, original license statement is most
+likely result of using wrong file as the source of copy-paste. So I
+would like to have the license fixed first before doing conversion to
+SPDX.
+
+>  /*
+>   * thermal_exynos.h - Samsung EXYNOS TMU device tree definitions
+>   *
+>   *  Copyright (C) 2014 Samsung Electronics
+>   *  Lukasz Majewski <l.majewski@samsung.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+>   */
+>  
+>  #ifndef _EXYNOS_THERMAL_TMU_DT_H
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
