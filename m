@@ -6,96 +6,121 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BE3C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09C6ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7845820874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:41:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7845820874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 7297F20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:41:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7297F20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=diehl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388336AbeGXMrI (ORCPT
+        id S2388365AbeGXMrO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:47:08 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:55059 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388256AbeGXMrI (ORCPT
+        Tue, 24 Jul 2018 08:47:14 -0400
+Received: from enterprise03.smtp.diehl.com ([193.201.238.214]:31107 "EHLO
+        enterprise03.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388256AbeGXMrN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:47:08 -0400
-Received: from [IPv6:2001:983:e9a7:1:242d:c895:d0ca:e9e7] ([IPv6:2001:983:e9a7:1:242d:c895:d0ca:e9e7])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id hvgcfGbJioj71hvgdfJvyX; Tue, 24 Jul 2018 13:41:03 +0200
-Subject: Re: [PATCH v3 00/35] Qualcomm Camera Subsystem driver - 8x96 support
-To:     Todor Tomov <todor.tomov@linaro.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        laurent.pinchart+renesas@ideasonboard.com,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <717da3cd-7afe-9aeb-352a-898e12f2b1bc@xs4all.nl>
-Date:   Tue, 24 Jul 2018 13:41:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 24 Jul 2018 08:47:13 -0400
+X-Greylist: delayed 587 seconds by postgrey-1.27 at vger.kernel.org; Tue, 24 Jul 2018 08:47:11 EDT
+X-$ESA-Groupmapping: true
+X-IronPort-AV: E=Sophos;i="5.51,397,1526335200"; 
+   d="scan'208";a="1739768"
+From:   Denis OSTERLAND <denis.osterland@diehl.com>
+To:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Denis OSTERLAND <denis.osterland@diehl.com>
+Subject: [PATCH v5 5/5] rtc: isl1219: add device tree docu
+Thread-Topic: [PATCH v5 5/5] rtc: isl1219: add device tree docu
+Thread-Index: AQHUI0HYWBw2NLUC4U+pSoYH+IFvBg==
+Date:   Tue, 24 Jul 2018 11:31:22 +0000
+Message-ID: <20180724095437.6016-6-Denis.Osterland@diehl.com>
+References: <20180724095437.6016-1-Denis.Osterland@diehl.com>
+In-Reply-To: <20180724095437.6016-1-Denis.Osterland@diehl.com>
+Accept-Language: de-DE, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
 MIME-Version: 1.0
-In-Reply-To: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
-Content-Type: text/plain; charset=utf-8
+X-TrailerSkip: 1
+X-GBS-PROC: byQFdw3ukCM+zy1/poiPc3S+cPOwesVRp3YOtqJ1nLGzDTCHgOUEK+Oxjt5YvNJU
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfL856udXQ4ot+CCC69EhCxwDLhgMdYvvx0TvZ9lXyfMghRRSQ5E0ylwolb+8gXU35GJ4/Y9ecX1Ss7kIug4G/OmYt/QABxpFEWjnhm1uoTbDtVr/m2KC
- zEpde7bgLNuzRd1UBhsdIb8tddLtk39rWIByZlYOPKbvnqH3N6mOp/dfoG6gwV000GmeOOcglIuaMnHZTrHJ4AL0IaVWwBMrLVRagNZe8nDJ6ZvkzYBd5lol
- Kyj5ebqKkF0I0nXwBQIhpatRFFXX37ZSheaVIJaqCLz6OdYJWJdFdVJ4IpprpgNSSoK6RQrbO44JjFVMoROjdKDTfKPZH8erFb5N7F/xVPhuLvr+Cgr+U2HU
- dyDDpCoVWW0bfy6o8+zooQoCJJkleqFu3K8co19/SZI7ZbZRVXqw+HwibHe1P9hALV4lV+uUoEdpHZd2rIC349ue1PAHfgOZTSJiQixSWxcWLv/0b3ZGrmd1
- jJqWXDcOFatHH12w
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/07/18 13:02, Todor Tomov wrote:
-> Changelog v3:
-> - split patch 08 to device tree binding patch and driver patch and
->   improve commit message.
-> 
-> --------------------------------------------------------------------------------
-> 
-> This patchset adds support for the Qualcomm Camera Subsystem found
-> on Qualcomm MSM8996 and APQ8096 SoC to the existing driver which
-> used to support MSM8916 and APQ8016.
-> 
-> The camera subsystem hardware on 8x96 is similar to 8x16 but
-> supports more cameras and features. More details are added in the
-> driver document by the last patch.
-> 
-> The first 3 patches are dependencies which have already been on
-> the mainling list but I'm adding them here for completeness.
-> 
-> The following 12 patches add general updates and fixes to the driver.
-> Then the rest add the support for the new hardware.
-> 
-> The driver is tested on Dragonboard 410c (APQ8016) and Dragonboard 820c
-> (APQ8096) with OV5645 camera sensors. media-ctl [1], yavta [2] and
-> GStreamer were used for testing.
-> 
-> [1] https://git.linuxtv.org//v4l-utils.git
-> [2] http://git.ideasonboard.org/yavta.git
-> 
-> --------------------------------------------------------------------------------
+From: Denis Osterland <Denis.Osterland@diehl.com>
 
-When running sparse I get these warnings:
+The devicetree documentation for the ISL1219 device tree
+binding is added with an short example. It is not a trivial
+device, because it supports two interrupt sources.
 
-camss/camss-csiphy-2ph-1-0.c:170:28: warning: symbol 'csiphy_ops_2ph_1_0' was not declared. Should it be static?
-camss/camss-csiphy-3ph-1-0.c:250:28: warning: symbol 'csiphy_ops_3ph_1_0' was not declared. Should it be static?
-camss/camss-vfe-4-1.c:976:25: warning: symbol 'vfe_ops_4_1' was not declared. Should it be static?
-camss/camss-vfe-4-7.c:1098:25: warning: symbol 'vfe_ops_4_7' was not declared. Should it be static?
+Signed-off-by: Denis Osterland <Denis.Osterland@diehl.com>
+---
+ .../devicetree/bindings/rtc/isil,isl1219.txt  | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/isil,isl1219.txt
 
-checkpatch.pl complains about this as well.
+diff --git a/Documentation/devicetree/bindings/rtc/isil,isl1219.txt b/Documentation/devicetree/bindings/rtc/isil,isl1219.txt
+new file mode 100644
+index 000000000000..c3efd48e91c2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/isil,isl1219.txt
+@@ -0,0 +1,29 @@
++Intersil ISL1219 I2C RTC/Alarm chip with event in
++
++ISL1219 has additional pins EVIN and #EVDET for tamper detection.
++
++Required properties supported by the device:
++
++ - "compatible": must be "isil,isl1219"
++ - "reg": I2C bus address of the device
++
++Optional properties:
++
++ - "interrupt-names": list which may contains "irq" and "evdet"
++ - "interrupts": list of interrupts for "irq" and "evdet"
++ - "isil,ev-evienb": if present EV.EVIENB bit is set to the specified
++                     value for proper operation.
++
++
++Example isl1219 node with #IRQ pin connected to SoC gpio1 pin12
++ and #EVDET pin connected to SoC gpio2 pin 24:
++
++	isl1219: rtc@68 {
++		compatible = "isil,isl1219";
++		reg = <0x68>;
++		interrupt-names = "irq", "evdet";
++		interrupts-extended = <&gpio1 12 IRQ_TYPE_EDGE_FALLING>,
++			<&gpio2 24 IRQ_TYPE_EDGE_FALLING>;
++		isil,ev-evienb = <1>;
++	};
++
+-- 
+2.18.0
 
-There are externs in vfe.c, but those should probably be moved to camss-vfe.h.
 
-It should solves both checkpatch and sparse.
 
-Regards,
+Diehl Connectivity Solutions GmbH
+Geschäftsführung: Horst Leonberger
+Sitz der Gesellschaft: Nürnberg - Registergericht: Amtsgericht
+Nürnberg: HRB 32315
+___________________________________________________________________________________________________
 
-	Hans
+Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
+Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhalten haben. Bitte loeschen Sie in diesem Fall die Nachricht.
+Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung und/oder Publikation dieser E-Mail ist strengstens untersagt.
+The contents of the above mentioned e-mail is not legally binding. This e-mail contains confidential and/or legally protected information. Please inform us if you have received this e-mail by
+mistake and delete it in such a case. Each unauthorized reproduction, disclosure, alteration, distribution and/or publication of this e-mail is strictly prohibited. 
