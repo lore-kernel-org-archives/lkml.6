@@ -6,153 +6,167 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C76ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 665C0ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07E8D20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:14:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07E8D20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 22A5F20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:14:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A5F20880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388560AbeGXRVx (ORCPT
+        id S2388598AbeGXRVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:21:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39383 "EHLO mail.bootlin.com"
+        Tue, 24 Jul 2018 13:21:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58100 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388289AbeGXRVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388334AbeGXRVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Jul 2018 13:21:53 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 39AC220733; Tue, 24 Jul 2018 18:14:38 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 73211203D9;
-        Tue, 24 Jul 2018 18:14:37 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 18:14:37 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Przemyslaw Gaj <pgaj@cadence.com>
-Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
-Message-ID: <20180724181437.1d1b27a8@bbrezillon>
-In-Reply-To: <CAK8P3a17t=_o04GsowS2RnTwKKVxt8KuJtT36N=Ea-SOq7fTow@mail.gmail.com>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
-        <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
-        <20180720101206.tv7nsoanwo5ftnia@ninjato>
-        <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
-        <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
-        <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
-        <20180720151751.242d4809@bbrezillon>
-        <CAK8P3a14_6uf9VLYU0YnmFp0Q=DZBKc0cAesBh0opanGDZMFRA@mail.gmail.com>
-        <20180724162806.318a92c6@bbrezillon>
-        <CAK8P3a3YQbiiJMTHTVh63fOvtA1sa0J5Eb4z7xbnpBPwUDkqxg@mail.gmail.com>
-        <CAMuHMdXif_iufXx0Y+UJjKs9TNLfrTONoFvUSyrpkfaT0=ydRQ@mail.gmail.com>
-        <CAK8P3a0jc1k9weTNbqSJXkCSFefus9OPyU5_v5=mTFxiDd0q5Q@mail.gmail.com>
-        <CAMuHMdXJ_FGXXwNx8h0ZfskJGRWES1xLuTQpD59Vw1Smp6FTRg@mail.gmail.com>
-        <CAK8P3a17t=_o04GsowS2RnTwKKVxt8KuJtT36N=Ea-SOq7fTow@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 697743082152;
+        Tue, 24 Jul 2018 16:14:41 +0000 (UTC)
+Received: from gimli.home (ovpn-116-105.phx2.redhat.com [10.3.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 60EE05B681;
+        Tue, 24 Jul 2018 16:14:40 +0000 (UTC)
+Subject: [PATCH v3 2/3] PCI: Samsung SM961/PM961 NVMe disable before FLR
+ quirk
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     linux-pci@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Date:   Tue, 24 Jul 2018 10:14:40 -0600
+Message-ID: <20180724161440.2729.89835.stgit@gimli.home>
+In-Reply-To: <20180724160440.2729.75178.stgit@gimli.home>
+References: <20180724160440.2729.75178.stgit@gimli.home>
+User-Agent: StGit/0.18-102-gdf9f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 24 Jul 2018 16:14:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 17:58:29 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+The Samsung SM961/PM961 (960 EVO) sometimes fails to return from FLR
+with the PCI config space reading back as -1.  A reproducible instance
+of this behavior is resolved by clearing the enable bit in the NVMe
+configuration register and waiting for the ready status to clear
+(disabling the NVMe controller) prior to FLR.
 
-> On Tue, Jul 24, 2018 at 5:46 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > Hi Arnd,
-> >
-> > On Tue, Jul 24, 2018 at 5:40 PM Arnd Bergmann <arnd@arndb.de> wrote:  
-> >> On Tue, Jul 24, 2018 at 5:15 PM, Geert Uytterhoeven
-> >> <geert@linux-m68k.org> wrote:  
-> >> > On Tue, Jul 24, 2018 at 5:05 PM Arnd Bergmann <arnd@arndb.de> wrote:  
-> >>  
-> >> >> That's not the case I was describing here, I was thinking of what
-> >> >> Wolfram described with the Renesas SoC that has two i2c masters
-> >> >> multiplexed through the pinmux layer. I would assume that we
-> >> >> can still do the same thing in i3c by shutting down the current
-> >> >> master without a handover, and reprobing everything from scratch.  
-> >> >
-> >> > The major disadvantage of reprobing is that it may cause visual disturbances
-> >> > when i2c slaves are involved with e.g. the display pipeline (think HDMI encoders
-> >> > etc.).  
-> >>
-> >> Do you mean we should reuse the device pointer and association with
-> >> the driver even when we switch out the i3c master using the pinmux?
-> >>
-> >> Or do you mean we need to be prepared for driving a single
-> >> slave through multiple masters over the lifetime of that device,
-> >> but using the i3c master handover protocol?
-> >> In the second case, how do we decide which master to use
-> >> for accessing a device for a given request?  
-> >
-> > I'll have to defer to Wolfram. He's the i2c and muxing expert.  
-> 
-> On i2c, we only have the first case, and Wolfram said that it
-> intentionally does the reprobe to avoid the problems we discussed.
-> The question is what to do about this if it happens again on i3c.
-> Peter seemed to think that it was possibly something we might
-> have to handle, while Boris said that it wouldn't be because it's
-> not coverered by the i3c spec.
-> 
-> The second case is the one that started the discussion, and
-> this is where I said I'd prefer to associate each slave with at
-> most one master at boot time, while the current v6 patch
-> is prepared for having one slave be accessed alternatingly
-> by multiple masters using the master handover, though so
-> far nobody has been able to describe exactly how we'd pick
-> which master is active at what point,
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+---
+ drivers/pci/quirks.c |   83 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-Even if it's not yet implemented, I have everything in place to figure
-this out (see the ->cur_master field in the i3c_bus object). Now,
-what's missing is a list of possible masters attached to an i3c device
-so that the framework can pick the most appropriate one at runtime and
-initiate mastership handover if required (if the selected master is not
-the currently active one).
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index e72c8742aafa..3899cdd2514b 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -28,6 +28,7 @@
+ #include <linux/platform_data/x86/apple.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/switchtec.h>
++#include <linux/nvme.h>
+ #include <asm/dma.h>	/* isa_dma_bridge_buggy */
+ #include "pci.h"
+ 
+@@ -3669,6 +3670,87 @@ static int reset_chelsio_generic_dev(struct pci_dev *dev, int probe)
+ #define PCI_DEVICE_ID_INTEL_IVB_M_VGA      0x0156
+ #define PCI_DEVICE_ID_INTEL_IVB_M2_VGA     0x0166
+ 
++/*
++ * The Samsung SM961/PM961 controller can sometimes enter a fatal state after
++ * FLR where config space reads from the device return -1.  We seem to be
++ * able to avoid this condition if we disable the NVMe controller prior to
++ * FLR.  This quirk is generic for any NVMe class device requiring similar
++ * assistance to quiesce the device prior to FLR.
++ *
++ * NVMe specification: https://nvmexpress.org/resources/specifications/
++ * Revision 1.0e:
++ *    Chapter 2: Required and optional PCI config registers
++ *    Chapter 3: NVMe control registers
++ *    Chapter 7.3: Reset behavior
++ */
++static int nvme_disable_and_flr(struct pci_dev *dev, int probe)
++{
++	void __iomem *bar;
++	u16 cmd;
++	u32 cfg;
++
++	if (dev->class != PCI_CLASS_STORAGE_EXPRESS ||
++	    !pcie_has_flr(dev) || !pci_resource_start(dev, 0))
++		return -ENOTTY;
++
++	if (probe)
++		return 0;
++
++	bar = pci_iomap(dev, 0, NVME_REG_CC + sizeof(cfg));
++	if (!bar)
++		return -ENOTTY;
++
++	pci_read_config_word(dev, PCI_COMMAND, &cmd);
++	pci_write_config_word(dev, PCI_COMMAND, cmd | PCI_COMMAND_MEMORY);
++
++	cfg = readl(bar + NVME_REG_CC);
++
++	/* Disable controller if enabled */
++	if (cfg & NVME_CC_ENABLE) {
++		u64 cap = readq(bar + NVME_REG_CAP);
++		unsigned long timeout;
++
++		/*
++		 * Per nvme_disable_ctrl() skip shutdown notification as it
++		 * could complete commands to the admin queue.  We only intend
++		 * to quiesce the device before reset.
++		 */
++		cfg &= ~(NVME_CC_SHN_MASK | NVME_CC_ENABLE);
++
++		writel(cfg, bar + NVME_REG_CC);
++
++		/*
++		 * Some controllers require an additional delay here, see
++		 * NVME_QUIRK_DELAY_BEFORE_CHK_RDY.  None of those are yet
++		 * supported by this quirk.
++		 */
++
++		/* Cap register provides max timeout in 500ms increments */
++		timeout = ((NVME_CAP_TIMEOUT(cap) + 1) * HZ / 2) + jiffies;
++
++		for (;;) {
++			u32 status = readl(bar + NVME_REG_CSTS);
++
++			/* Ready status becomes zero on disable complete */
++			if (!(status & NVME_CSTS_RDY))
++				break;
++
++			msleep(100);
++
++			if (time_after(jiffies, timeout)) {
++				pci_warn(dev, "Timeout waiting for NVMe ready status to clear after disable\n");
++				break;
++			}
++		}
++	}
++
++	pci_iounmap(dev, bar);
++
++	pcie_flr(dev);
++
++	return 0;
++}
++
+ static const struct pci_dev_reset_methods pci_dev_reset_methods[] = {
+ 	{ PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82599_SFP_VF,
+ 		 reset_intel_82599_sfp_virtfn },
+@@ -3676,6 +3758,7 @@ static const struct pci_dev_reset_methods pci_dev_reset_methods[] = {
+ 		reset_ivb_igd },
+ 	{ PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_IVB_M2_VGA,
+ 		reset_ivb_igd },
++	{ PCI_VENDOR_ID_SAMSUNG, 0xa804, nvme_disable_and_flr },
+ 	{ PCI_VENDOR_ID_CHELSIO, PCI_ANY_ID,
+ 		reset_chelsio_generic_dev },
+ 	{ 0 }
 
-The selection logic should look like this:
-
-	if (active_master supports requested feature)
-		use active master
-	else
-		pick an inactive one that has relevant caps and initiate
-		mastership handover (+ update bus->cur_master) 
-
-> or what specific scenario
-> would require it.
-
-I think I described a scenario (masters having different
-capabilities all connected to the same bus), though I don't know how
-likely this use case is :-/.
