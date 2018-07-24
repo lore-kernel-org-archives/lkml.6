@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4377AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38178C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07C0D20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:34:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07C0D20852
+	by mail.kernel.org (Postfix) with ESMTP id F03F820874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F03F820874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388704AbeGXPle (ORCPT
+        id S2388722AbeGXPli (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:41:34 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17793 "EHLO
+        Tue, 24 Jul 2018 11:41:38 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17804 "EHLO
         hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388373AbeGXPle (ORCPT
+        with ESMTP id S2388373AbeGXPlh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:41:34 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b5738ff0000>; Tue, 24 Jul 2018 07:34:39 -0700
+        Tue, 24 Jul 2018 11:41:37 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b5739030000>; Tue, 24 Jul 2018 07:34:43 -0700
 Received: from HQMAIL106.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 24 Jul 2018 07:34:43 -0700
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 24 Jul 2018 07:34:51 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 24 Jul 2018 07:34:43 -0700
-Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL106.nvidia.com
+        by hqpgpgate101.nvidia.com on Tue, 24 Jul 2018 07:34:51 -0700
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL106.nvidia.com
  (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 24 Jul
- 2018 14:34:47 +0000
-Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL112.nvidia.com
- (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 24 Jul
- 2018 14:34:47 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Tue, 24 Jul 2018 14:34:47 +0000
+ 2018 14:34:50 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 24 Jul
+ 2018 14:34:50 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Tue, 24 Jul 2018 14:34:50 +0000
 Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b5739040000>; Tue, 24 Jul 2018 07:34:46 -0700
+        id <B5b5739070000>; Tue, 24 Jul 2018 07:34:49 -0700
 From:   Aapo Vienamo <avienamo@nvidia.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -52,9 +52,9 @@ To:     Ulf Hansson <ulf.hansson@linaro.org>,
 CC:     <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 08/10] arm64: dts: tegra210: Add sdmmc pad auto calibration offsets
-Date:   Tue, 24 Jul 2018 17:34:24 +0300
-Message-ID: <1532442865-6391-7-git-send-email-avienamo@nvidia.com>
+Subject: [PATCH 09/10] mmc: tegra: Perform pad calibration after voltage switch
+Date:   Tue, 24 Jul 2018 17:34:25 +0300
+Message-ID: <1532442865-6391-8-git-send-email-avienamo@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532442865-6391-1-git-send-email-avienamo@nvidia.com>
 References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
@@ -67,57 +67,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the calibration offset properties used for automatic pad drive
-strength calibration.
+Run the automatic pad calibration after voltage switching if
+tegra_host->pad_calib_required is set.
 
 Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/mmc/host/sdhci-tegra.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index bc1918e..467bdfc 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1051,6 +1051,10 @@
- 		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
- 		pinctrl-0 = <&sdmmc1_3v3>;
- 		pinctrl-1 = <&sdmmc1_1v8>;
-+		pad-autocal-pull-up-offset-3v3 = <0x00>;
-+		pad-autocal-pull-down-offset-3v3 = <0x7d>;
-+		pad-autocal-pull-up-offset-1v8 = <0x7b>;
-+		pad-autocal-pull-down-offset-1v8 = <0x7b>;
- 		status = "disabled";
- 	};
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 78781bd..529aa4e7 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -537,6 +537,8 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+ 						   struct mmc_ios *ios)
+ {
+ 	struct sdhci_host *host = mmc_priv(mmc);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+ 	int ret = 0;
  
-@@ -1062,6 +1066,8 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 9>;
- 		reset-names = "sdhci";
-+		pad-autocal-pull-up-offset-1v8 = <0x05>;
-+		pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		status = "disabled";
- 	};
+ 	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+@@ -551,6 +553,9 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+ 		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
+ 	}
  
-@@ -1076,6 +1082,10 @@
- 		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
- 		pinctrl-0 = <&sdmmc3_3v3>;
- 		pinctrl-1 = <&sdmmc3_1v8>;
-+		pad-autocal-pull-up-offset-3v3 = <0x00>;
-+		pad-autocal-pull-down-offset-3v3 = <0x7d>;
-+		pad-autocal-pull-up-offset-1v8 = <0x7b>;
-+		pad-autocal-pull-down-offset-1v8 = <0x7b>;
- 		status = "disabled";
- 	};
- 
-@@ -1087,6 +1097,8 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 15>;
- 		reset-names = "sdhci";
-+		pad-autocal-pull-up-offset-1v8 = <0x05>;
-+		pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		status = "disabled";
- 	};
++	if (tegra_host->pad_calib_required)
++		tegra_sdhci_pad_autocalib(host);
++
+ 	return ret;
+ }
  
 -- 
 2.7.4
