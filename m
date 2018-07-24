@@ -2,119 +2,107 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE17C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BFCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71F0420856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:54:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71F0420856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 0417D20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:56:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0417D20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388897AbeGYADL (ORCPT
+        id S2388882AbeGYAEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 20:03:11 -0400
-Received: from anholt.net ([50.246.234.109]:38410 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388758AbeGYADL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 20:03:11 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 0897310A1504;
-        Tue, 24 Jul 2018 15:54:29 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id awSiCECw7zgo; Tue, 24 Jul 2018 15:54:27 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id B924810A053F;
-        Tue, 24 Jul 2018 15:54:27 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 35CFD2FE4641; Tue, 24 Jul 2018 15:54:27 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH] drm/v3d: Fix a use-after-free race accessing the scheduler's fences.
-Date:   Tue, 24 Jul 2018 15:54:27 -0700
-Message-Id: <20180724225427.1407-1-eric@anholt.net>
-X-Mailer: git-send-email 2.18.0
+        Tue, 24 Jul 2018 20:04:48 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:47700 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388587AbeGYAEs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 20:04:48 -0400
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6OMtumR005166;
+        Wed, 25 Jul 2018 07:55:56 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Wed, 25 Jul 2018 07:55:56 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6OMtuUK005163
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 25 Jul 2018 07:55:56 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [patch v4] mm, oom: fix unnecessary killing of additional
+ processes
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <alpine.DEB.2.21.1806211434420.51095@chino.kir.corp.google.com>
+ <d19d44c3-c8cf-70a1-9b15-c98df233d5f0@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807181317540.49359@chino.kir.corp.google.com>
+ <a78fb992-ad59-0cdb-3c38-8284b2245f21@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807200133310.119737@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1807201314230.231119@chino.kir.corp.google.com>
+ <ca34b123-5c81-569f-85ea-4851bc569962@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807201505550.38399@chino.kir.corp.google.com>
+ <f8d24892-b05e-73a8-36d5-4fe278f84c44@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807241444370.206335@chino.kir.corp.google.com>
+ <05dbc69a-1c26-adec-15c6-f7192f8d2ae0@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1807241549420.215249@chino.kir.corp.google.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <f2e09fbf-700c-19d6-7dd8-42683507b5d1@i-love.sakura.ne.jp>
+Date:   Wed, 25 Jul 2018 07:55:51 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1807241549420.215249@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Once we push the job, the scheduler could run it and free it.  So, if
-we want to reference their fences, we need to grab them before then.
-I haven't seen this happen in many days of conformance test runtime,
-but let's still close the race.
+On 2018/07/25 7:51, David Rientjes wrote:
+> On Wed, 25 Jul 2018, Tetsuo Handa wrote:
+> 
+>>>> You might worry about situations where __oom_reap_task_mm() is a no-op.
+>>>> But that is not always true. There is no point with emitting
+>>>>
+>>>>   pr_info("oom_reaper: unable to reap pid:%d (%s)\n", ...);
+>>>>   debug_show_all_locks();
+>>>>
+>>>> noise and doing
+>>>>
+>>>>   set_bit(MMF_OOM_SKIP, &mm->flags);
+>>>>
+>>>> because exit_mmap() will not release oom_lock until __oom_reap_task_mm()
+>>>> completes. That is, except extra noise, there is no difference with
+>>>> current behavior which sets set_bit(MMF_OOM_SKIP, &mm->flags) after
+>>>> returning from __oom_reap_task_mm().
+>>>>
+>>>
+>>> v5 has restructured how exit_mmap() serializes its unmapping with the oom 
+>>> reaper.  It sets MMF_OOM_SKIP while holding mm->mmap_sem.
+>>>
+>>
+>> I think that v5 is still wrong. exit_mmap() keeps mmap_sem held for write does
+>> not prevent oom_reap_task() from emitting the noise and setting MMF_OOM_SKIP
+>> after timeout. Since your purpose is to wait for release of memory which could
+>> not be reclaimed by __oom_reap_task_mm(), what if __oom_reap_task_mm() was no-op and
+>> exit_mmap() was preempted immediately after returning from __oom_reap_task_mm() ?
+>>
+> 
+> If exit_mmap() gets preempted indefinitely before it can free any memory, 
+> we are better off oom killing another process.  The purpose of the timeout 
+> is to give an oom victim an amount of time to free its memory and exit 
+> before selecting another victim.
+> 
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
----
- drivers/gpu/drm/v3d/v3d_drv.h | 5 +++++
- drivers/gpu/drm/v3d/v3d_gem.c | 8 ++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-index 5042573e97f4..83c55ab6e1c0 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.h
-+++ b/drivers/gpu/drm/v3d/v3d_drv.h
-@@ -204,6 +204,11 @@ struct v3d_exec_info {
- 	 */
- 	struct dma_fence *bin_done_fence;
- 
-+	/* Fence for when the scheduler considers the render to be
-+	 * done, for when the BOs reservations should be complete.
-+	 */
-+	struct dma_fence *render_done_fence;
-+
- 	struct kref refcount;
- 
- 	/* This is the array of BOs that were looked up at the start of exec. */
-diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-index e1fcbb4cd0ae..c98fbfbdb68e 100644
---- a/drivers/gpu/drm/v3d/v3d_gem.c
-+++ b/drivers/gpu/drm/v3d/v3d_gem.c
-@@ -209,7 +209,7 @@ v3d_flush_caches(struct v3d_dev *v3d)
- static void
- v3d_attach_object_fences(struct v3d_exec_info *exec)
- {
--	struct dma_fence *out_fence = &exec->render.base.s_fence->finished;
-+	struct dma_fence *out_fence = exec->render_done_fence;
- 	struct v3d_bo *bo;
- 	int i;
- 
-@@ -409,6 +409,7 @@ v3d_exec_cleanup(struct kref *ref)
- 	dma_fence_put(exec->render.done_fence);
- 
- 	dma_fence_put(exec->bin_done_fence);
-+	dma_fence_put(exec->render_done_fence);
- 
- 	for (i = 0; i < exec->bo_count; i++)
- 		drm_gem_object_put_unlocked(&exec->bo[i]->base);
-@@ -574,6 +575,9 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 	if (ret)
- 		goto fail_unreserve;
- 
-+	exec->render_done_fence =
-+		dma_fence_get(&exec->render.base.s_fence->finished);
-+
- 	kref_get(&exec->refcount); /* put by scheduler job completion */
- 	drm_sched_entity_push_job(&exec->render.base,
- 				  &v3d_priv->sched_entity[V3D_RENDER]);
-@@ -587,7 +591,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 	sync_out = drm_syncobj_find(file_priv, args->out_sync);
- 	if (sync_out) {
- 		drm_syncobj_replace_fence(sync_out,
--					  &exec->render.base.s_fence->finished);
-+					  exec->render_done_fence);
- 		drm_syncobj_put(sync_out);
- 	}
- 
--- 
-2.18.0
-
+There is no point with emitting the noise.
