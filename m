@@ -2,627 +2,128 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8796DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E5AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1098C20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A42320856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:07:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="csPRibyn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1098C20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="flnBXnGj";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LIHH1bvA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A42320856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388790AbeGXXPa (ORCPT
+        id S2388822AbeGXXPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:15:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60358 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388488AbeGXXP3 (ORCPT
+        Tue, 24 Jul 2018 19:15:52 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:38396 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388488AbeGXXPw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:15:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jEsZmeKxUC/egDRgFxclwnPtcstw/fEg7CDfQOnktrc=; b=csPRibyn3B3Dmk7eNQr9DvMjl
-        lJniYCweQBVycKLPM1gAPs2Mn/wqq5xq8qZoNNXrZqCxyOw/iV2h87BNRec68fi4bulbZW8dgPqB0
-        TNdqSDHwHckeeV9iizow4Cttgwm9kI12jWAFL+abOjEaf3Q0dNEAx6fWlgOniX8HHJSB0NTXmzfwJ
-        kRjciCLmpYCI3mtMtn/gP7F2lB8msS0ZUjVO2rMrkC42nX7EGFOg9DJXnLyJsLZoK/v3/3EJnOdTk
-        oZ+Tbd9aJaVvHgz3+A3ItrWLCSasK9LqJoA4PC1X5GsLqBjq7fM8ksS1qwQHmQ/Vy+01xOf94MLNG
-        8efNCSTVA==;
-Received: from 177.41.135.13.dynamic.adsl.gvt.net.br ([177.41.135.13] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fi5SJ-0007wt-Sp; Tue, 24 Jul 2018 22:06:56 +0000
-Date:   Tue, 24 Jul 2018 19:06:52 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] media: staging: tegra-vde: Replace debug messages
- with trace points
-Message-ID: <20180724190652.2befcaf6@coco.lan>
-In-Reply-To: <20180707162049.20407-1-digetx@gmail.com>
-References: <20180707162049.20407-1-digetx@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 24 Jul 2018 19:15:52 -0400
+Received: by mail-yb0-f194.google.com with SMTP id i9-v6so2254822ybo.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 15:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=P/ed/Q2I/hcC2QpcSTynFKeNq+wbtnVj2KKaTP2e++U=;
+        b=flnBXnGjVMDtKZs+lp4NfdX9QmZGYUSr/GKTM9S32/3XjeQafL+vEZL4xFJYBIXz+f
+         E5HOg9J9IcWYYb3JfLpdgicqVvDE+pIKsrruTs/72JQ8xLP7QG+PvhvU5iIx57dS3CBB
+         2BFrmbPYnCVbgG/xXsCAgTFQ00hYY3o3kpnWsbES0wQ0q+Dt87tw4Ir8eesWZiWFWPGW
+         FdtT6PIfRNpPAuhbhJYttGiEMuC/fw7ybxBeJAphcqPOSh+q0uKVrb5Yiw7uqbrC0l17
+         RYQBDxGFKvdM0b/FrqXpQiQoc/LSHxwvz6x/8nKD2BpDc0D1ZRH2D2jGkHUhgUHn3cr5
+         C1Tg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=P/ed/Q2I/hcC2QpcSTynFKeNq+wbtnVj2KKaTP2e++U=;
+        b=LIHH1bvApzZUPtbudniwBV0JQEQgsMQmAAqEsE/4JhNBVZ4R1QuVeJmKstPX+rTAnz
+         HI4TM16+H+EnqDTLhtDbDjXXs3vcZjSsjWdFoCkH1nH5pefHVbqGrhaq7Y651zVX8S2G
+         DoWc7JM5HqYzF+VB80DcQsyTITBPBTum8QSO8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=P/ed/Q2I/hcC2QpcSTynFKeNq+wbtnVj2KKaTP2e++U=;
+        b=fMOxV7YzTWIkSlAHEn0XseppDb3U49ODpCNhxBUWaPdvSxQ2+BbhTgxjXAEcSgRkP9
+         mZuQwz3e4YnzrmDsACWa3Ui7F8QnfSAqzK4suFnBXzTNN7Sxi02JdDaiWZe5zEMGKQiJ
+         qke/GrCOTCvViccsDskE7nXR7kTtZDQbU2ZkROZMUG5hu62/3AQmahPZgvNjhgtgfoxw
+         ZWr8BOBjuCywnXy89L0w7nn1UVdEvoiFoni92SlPwRrzEUkvFB4AKviZh4asSypfhISU
+         +L+F6X4gHD0dCq34FhdYkXS0RHAXn6ciB19jZuAmm5yxEle5uygbV99Kaq51obOtfTe1
+         EEgQ==
+X-Gm-Message-State: AOUpUlGoRE6GmqFnSNfbvA/aQngd1O+L/ZQeimtF/ikiHWFbBiUr22Wz
+        /Mhwkt6Xz7V8yMjqPn8l3GwPZTCUv/9BK9r1btHe/g==
+X-Google-Smtp-Source: AAOMgpeEHMTckbJU0EyK6zIg2qrgbHVLRxGOWZIllLd7ydiMXLQcH8KizyzcynvdMeVfWS9JwurPT1KFjqwHXRKqWqI=
+X-Received: by 2002:a25:ce8e:: with SMTP id x136-v6mr10089013ybe.118.1532470038751;
+ Tue, 24 Jul 2018 15:07:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 15:07:18
+ -0700 (PDT)
+In-Reply-To: <20180724200214.95975-1-zsm@chromium.org>
+References: <20180724200214.95975-1-zsm@chromium.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 24 Jul 2018 15:07:18 -0700
+X-Google-Sender-Auth: RL0mpwQfeCs01T-rQmROI7HhA2A
+Message-ID: <CAGXu5jJ7jS=ChfVF1oRJsGu-bSXK_WvTs94f_dQ9ud9Bt81-WA@mail.gmail.com>
+Subject: Re: [PATCH] tracefs: Annotate tracefs_ops with __ro_after_init
+To:     Zubin Mithra <zsm@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sat,  7 Jul 2018 19:20:49 +0300
-Dmitry Osipenko <digetx@gmail.com> escreveu:
+Adding Steven (maintainer) and Al (fs) to CC...
 
-> Trace points are much more efficient than debug messages for extensive
-> tracing and could be conveniently enabled / disabled dynamically, hence
-> let's replace debug messages with the trace points.
+On Tue, Jul 24, 2018 at 1:02 PM, Zubin Mithra <zsm@chromium.org> wrote:
+> tracefs_ops is initialized inside tracefs_create_instance_dir and not
+> modified after. tracefs_create_instance_dir allows for initialization
+> only once, and is called from create_trace_instances(marked __init),
+> which is called from tracer_init_tracefs(marked __init).
+>
+> Signed-off-by: Zubin Mithra <zsm@chromium.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-This patch require some work:
+Who's tree should this go through?
 
-$ make ARCH=i386  CF=-D__CHECK_ENDIAN__ CONFIG_DEBUG_SECTION_MISMATCH=y C=1 W=1 CHECK='compile_checks' M=drivers/staging/media
+Thanks!
 
-./include/linux/slab.h:631:13: error: undefined identifier '__builtin_mul_overflow'
-./include/linux/slab.h:631:13: warning: call with no type!
-fixdep: error opening file: drivers/staging/media/tegra-vde/trace.h: No such file or directory
+-Kees
 
-
-
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/staging/media/tegra-vde/tegra-vde.c | 221 +++++++++++---------
->  drivers/staging/media/tegra-vde/trace.h     | 101 +++++++++
->  2 files changed, 227 insertions(+), 95 deletions(-)
->  create mode 100644 drivers/staging/media/tegra-vde/trace.h
-> 
-> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
-> index 6f06061a40d9..3f71b46d287b 100644
-> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
-> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-> @@ -24,6 +24,8 @@
->  
->  #include <soc/tegra/pmc.h>
->  
-> +#define CREATE_TRACE_POINTS
-> +#include "trace.h"
->  #include "uapi.h"
->  
->  #define ICMDQUE_WR		0x00
-> @@ -35,14 +37,6 @@
->  #define BSE_ICMDQUE_EMPTY	BIT(3)
->  #define BSE_DMA_BUSY		BIT(23)
->  
-> -#define VDE_WR(__data, __addr)				\
-> -do {							\
-> -	dev_dbg(vde->miscdev.parent,			\
-> -		"%s: %d: 0x%08X => " #__addr ")\n",	\
-> -		__func__, __LINE__, (u32)(__data));	\
-> -	writel_relaxed(__data, __addr);			\
-> -} while (0)
-> -
->  struct video_frame {
->  	struct dma_buf_attachment *y_dmabuf_attachment;
->  	struct dma_buf_attachment *cb_dmabuf_attachment;
-> @@ -81,12 +75,63 @@ struct tegra_vde {
->  	u32 *iram;
->  };
->  
-> +static __maybe_unused
-> +char const *tegra_vde_reg_base_name(struct tegra_vde *vde, void __iomem *base)
-> +{
-> +	if (vde->sxe == base)
-> +		return "SXE";
-> +
-> +	if (vde->bsev == base)
-> +		return "BSEV";
-> +
-> +	if (vde->mbe == base)
-> +		return "MBE";
-> +
-> +	if (vde->ppe == base)
-> +		return "PPE";
-> +
-> +	if (vde->mce == base)
-> +		return "MCE";
-> +
-> +	if (vde->tfe == base)
-> +		return "TFE";
-> +
-> +	if (vde->ppb == base)
-> +		return "PPB";
-> +
-> +	if (vde->vdma == base)
-> +		return "VDMA";
-> +
-> +	if (vde->frameid == base)
-> +		return "FRAMEID";
-> +
-> +	return "???";
-> +}
-> +
-> +static void tegra_vde_writel(struct tegra_vde *vde,
-> +			     u32 value, void __iomem *base, u32 offset)
-> +{
-> +	trace_vde_writel(vde, base, offset, value);
-> +
-> +	writel_relaxed(value, base + offset);
-> +}
-> +
-> +static u32 tegra_vde_readl(struct tegra_vde *vde,
-> +			   void __iomem *base, u32 offset)
-> +{
-> +	u32 value = readl_relaxed(base + offset);
-> +
-> +	trace_vde_readl(vde, base, offset, value);
-> +
-> +	return value;
-> +}
-> +
->  static void tegra_vde_set_bits(struct tegra_vde *vde,
-> -			       u32 mask, void __iomem *regs)
-> +			       u32 mask, void __iomem *base, u32 offset)
+>  fs/tracefs/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+> index bea8ad876bf9..20e965873f27 100644
+> --- a/fs/tracefs/inode.c
+> +++ b/fs/tracefs/inode.c
+> @@ -53,7 +53,7 @@ static const struct file_operations tracefs_file_operations = {
+>  static struct tracefs_dir_ops {
+>         int (*mkdir)(const char *name);
+>         int (*rmdir)(const char *name);
+> -} tracefs_ops;
+> +} tracefs_ops __ro_after_init;
+>
+>  static char *get_dname(struct dentry *dentry)
 >  {
-> -	u32 value = readl_relaxed(regs);
-> +	u32 value = tegra_vde_readl(vde, base, offset);
->  
-> -	VDE_WR(value | mask, regs);
-> +	tegra_vde_writel(vde, value | mask, base, offset);
->  }
->  
->  static int tegra_vde_wait_mbe(struct tegra_vde *vde)
-> @@ -107,8 +152,8 @@ static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
->  	unsigned int idx;
->  	int err;
->  
-> -	VDE_WR(0xD0000000 | (0 << 23), vde->mbe + 0x80);
-> -	VDE_WR(0xD0200000 | (0 << 23), vde->mbe + 0x80);
-> +	tegra_vde_writel(vde, 0xD0000000 | (0 << 23), vde->mbe, 0x80);
-> +	tegra_vde_writel(vde, 0xD0200000 | (0 << 23), vde->mbe, 0x80);
->  
->  	err = tegra_vde_wait_mbe(vde);
->  	if (err)
-> @@ -118,8 +163,10 @@ static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
->  		return 0;
->  
->  	for (idx = 0, frame_idx = 1; idx < refs_nb; idx++, frame_idx++) {
-> -		VDE_WR(0xD0000000 | (frame_idx << 23), vde->mbe + 0x80);
-> -		VDE_WR(0xD0200000 | (frame_idx << 23), vde->mbe + 0x80);
-> +		tegra_vde_writel(vde, 0xD0000000 | (frame_idx << 23),
-> +				 vde->mbe, 0x80);
-> +		tegra_vde_writel(vde, 0xD0200000 | (frame_idx << 23),
-> +				 vde->mbe, 0x80);
->  
->  		frame_idx_enb_mask |= frame_idx << (6 * (idx % 4));
->  
-> @@ -128,7 +175,7 @@ static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
->  			value |= (idx >> 2) << 24;
->  			value |= frame_idx_enb_mask;
->  
-> -			VDE_WR(value, vde->mbe + 0x80);
-> +			tegra_vde_writel(vde, value, vde->mbe, 0x80);
->  
->  			err = tegra_vde_wait_mbe(vde);
->  			if (err)
-> @@ -143,8 +190,10 @@ static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
->  
->  static void tegra_vde_mbe_set_0xa_reg(struct tegra_vde *vde, int reg, u32 val)
->  {
-> -	VDE_WR(0xA0000000 | (reg << 24) | (val & 0xFFFF), vde->mbe + 0x80);
-> -	VDE_WR(0xA0000000 | ((reg + 1) << 24) | (val >> 16), vde->mbe + 0x80);
-> +	tegra_vde_writel(vde, 0xA0000000 | (reg << 24) | (val & 0xFFFF),
-> +			 vde->mbe, 0x80);
-> +	tegra_vde_writel(vde, 0xA0000000 | ((reg + 1) << 24) | (val >> 16),
-> +			 vde->mbe, 0x80);
->  }
->  
->  static int tegra_vde_wait_bsev(struct tegra_vde *vde, bool wait_dma)
-> @@ -183,7 +232,7 @@ static int tegra_vde_wait_bsev(struct tegra_vde *vde, bool wait_dma)
->  static int tegra_vde_push_to_bsev_icmdqueue(struct tegra_vde *vde,
->  					    u32 value, bool wait_dma)
->  {
-> -	VDE_WR(value, vde->bsev + ICMDQUE_WR);
-> +	tegra_vde_writel(vde, value, vde->bsev, ICMDQUE_WR);
->  
->  	return tegra_vde_wait_bsev(vde, wait_dma);
->  }
-> @@ -199,11 +248,11 @@ static void tegra_vde_setup_frameid(struct tegra_vde *vde,
->  	u32 value1 = frame ? ((mbs_width << 16) | mbs_height) : 0;
->  	u32 value2 = frame ? ((((mbs_width + 1) >> 1) << 6) | 1) : 0;
->  
-> -	VDE_WR(y_addr  >> 8, vde->frameid + 0x000 + frameid * 4);
-> -	VDE_WR(cb_addr >> 8, vde->frameid + 0x100 + frameid * 4);
-> -	VDE_WR(cr_addr >> 8, vde->frameid + 0x180 + frameid * 4);
-> -	VDE_WR(value1,       vde->frameid + 0x080 + frameid * 4);
-> -	VDE_WR(value2,       vde->frameid + 0x280 + frameid * 4);
-> +	tegra_vde_writel(vde, y_addr  >> 8, vde->frameid, 0x000 + frameid * 4);
-> +	tegra_vde_writel(vde, cb_addr >> 8, vde->frameid, 0x100 + frameid * 4);
-> +	tegra_vde_writel(vde, cr_addr >> 8, vde->frameid, 0x180 + frameid * 4);
-> +	tegra_vde_writel(vde, value1,       vde->frameid, 0x080 + frameid * 4);
-> +	tegra_vde_writel(vde, value2,       vde->frameid, 0x280 + frameid * 4);
->  }
->  
->  static void tegra_setup_frameidx(struct tegra_vde *vde,
-> @@ -228,8 +277,7 @@ static void tegra_vde_setup_iram_entry(struct tegra_vde *vde,
->  {
->  	u32 *iram_tables = vde->iram;
->  
-> -	dev_dbg(vde->miscdev.parent, "IRAM table %u: row %u: 0x%08X 0x%08X\n",
-> -		table, row, value1, value2);
-> +	trace_vde_setup_iram_entry(table, row, value1, value2);
->  
->  	iram_tables[0x20 * table + row * 2] = value1;
->  	iram_tables[0x20 * table + row * 2 + 1] = value2;
-> @@ -245,10 +293,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
->  	int with_later_poc_nb;
->  	unsigned int i, k;
->  
-> -	dev_dbg(vde->miscdev.parent, "DPB: Frame 0: frame_num = %d\n",
-> -		dpb_frames[0].frame_num);
-> -
-> -	dev_dbg(vde->miscdev.parent, "REF L0:\n");
-> +	trace_vde_ref_l0(dpb_frames[0].frame_num);
->  
->  	for (i = 0; i < 16; i++) {
->  		if (i < ref_frames_nb) {
-> @@ -260,11 +305,6 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
->  			value |= !(frame->flags & FLAG_B_FRAME) << 25;
->  			value |= 1 << 24;
->  			value |= frame->frame_num;
-> -
-> -			dev_dbg(vde->miscdev.parent,
-> -				"\tFrame %d: frame_num = %d B_frame = %d\n",
-> -				i + 1, frame->frame_num,
-> -				(frame->flags & FLAG_B_FRAME));
->  		} else {
->  			aux_addr = 0x6ADEAD00;
->  			value = 0;
-> @@ -284,9 +324,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
->  
->  	with_later_poc_nb = ref_frames_nb - with_earlier_poc_nb;
->  
-> -	dev_dbg(vde->miscdev.parent,
-> -		"REF L1: with_later_poc_nb %d with_earlier_poc_nb %d\n",
-> -		 with_later_poc_nb, with_earlier_poc_nb);
-> +	trace_vde_ref_l1(with_later_poc_nb, with_earlier_poc_nb);
->  
->  	for (i = 0, k = with_earlier_poc_nb; i < with_later_poc_nb; i++, k++) {
->  		frame = &dpb_frames[k + 1];
-> @@ -298,10 +336,6 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
->  		value |= 1 << 24;
->  		value |= frame->frame_num;
->  
-> -		dev_dbg(vde->miscdev.parent,
-> -			"\tFrame %d: frame_num = %d\n",
-> -			k + 1, frame->frame_num);
-> -
->  		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
->  	}
->  
-> @@ -315,10 +349,6 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
->  		value |= 1 << 24;
->  		value |= frame->frame_num;
->  
-> -		dev_dbg(vde->miscdev.parent,
-> -			"\tFrame %d: frame_num = %d\n",
-> -			k + 1, frame->frame_num);
-> -
->  		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
->  	}
->  }
-> @@ -334,32 +364,32 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
->  	u32 value;
->  	int err;
->  
-> -	tegra_vde_set_bits(vde, 0x000A, vde->sxe + 0xF0);
-> -	tegra_vde_set_bits(vde, 0x000B, vde->bsev + CMDQUE_CONTROL);
-> -	tegra_vde_set_bits(vde, 0x8002, vde->mbe + 0x50);
-> -	tegra_vde_set_bits(vde, 0x000A, vde->mbe + 0xA0);
-> -	tegra_vde_set_bits(vde, 0x000A, vde->ppe + 0x14);
-> -	tegra_vde_set_bits(vde, 0x000A, vde->ppe + 0x28);
-> -	tegra_vde_set_bits(vde, 0x0A00, vde->mce + 0x08);
-> -	tegra_vde_set_bits(vde, 0x000A, vde->tfe + 0x00);
-> -	tegra_vde_set_bits(vde, 0x0005, vde->vdma + 0x04);
-> -
-> -	VDE_WR(0x00000000, vde->vdma + 0x1C);
-> -	VDE_WR(0x00000000, vde->vdma + 0x00);
-> -	VDE_WR(0x00000007, vde->vdma + 0x04);
-> -	VDE_WR(0x00000007, vde->frameid + 0x200);
-> -	VDE_WR(0x00000005, vde->tfe + 0x04);
-> -	VDE_WR(0x00000000, vde->mbe + 0x84);
-> -	VDE_WR(0x00000010, vde->sxe + 0x08);
-> -	VDE_WR(0x00000150, vde->sxe + 0x54);
-> -	VDE_WR(0x0000054C, vde->sxe + 0x58);
-> -	VDE_WR(0x00000E34, vde->sxe + 0x5C);
-> -	VDE_WR(0x063C063C, vde->mce + 0x10);
-> -	VDE_WR(0x0003FC00, vde->bsev + INTR_STATUS);
-> -	VDE_WR(0x0000150D, vde->bsev + BSE_CONFIG);
-> -	VDE_WR(0x00000100, vde->bsev + BSE_INT_ENB);
-> -	VDE_WR(0x00000000, vde->bsev + 0x98);
-> -	VDE_WR(0x00000060, vde->bsev + 0x9C);
-> +	tegra_vde_set_bits(vde, 0x000A, vde->sxe, 0xF0);
-> +	tegra_vde_set_bits(vde, 0x000B, vde->bsev, CMDQUE_CONTROL);
-> +	tegra_vde_set_bits(vde, 0x8002, vde->mbe, 0x50);
-> +	tegra_vde_set_bits(vde, 0x000A, vde->mbe, 0xA0);
-> +	tegra_vde_set_bits(vde, 0x000A, vde->ppe, 0x14);
-> +	tegra_vde_set_bits(vde, 0x000A, vde->ppe, 0x28);
-> +	tegra_vde_set_bits(vde, 0x0A00, vde->mce, 0x08);
-> +	tegra_vde_set_bits(vde, 0x000A, vde->tfe, 0x00);
-> +	tegra_vde_set_bits(vde, 0x0005, vde->vdma, 0x04);
-> +
-> +	tegra_vde_writel(vde, 0x00000000, vde->vdma, 0x1C);
-> +	tegra_vde_writel(vde, 0x00000000, vde->vdma, 0x00);
-> +	tegra_vde_writel(vde, 0x00000007, vde->vdma, 0x04);
-> +	tegra_vde_writel(vde, 0x00000007, vde->frameid, 0x200);
-> +	tegra_vde_writel(vde, 0x00000005, vde->tfe, 0x04);
-> +	tegra_vde_writel(vde, 0x00000000, vde->mbe, 0x84);
-> +	tegra_vde_writel(vde, 0x00000010, vde->sxe, 0x08);
-> +	tegra_vde_writel(vde, 0x00000150, vde->sxe, 0x54);
-> +	tegra_vde_writel(vde, 0x0000054C, vde->sxe, 0x58);
-> +	tegra_vde_writel(vde, 0x00000E34, vde->sxe, 0x5C);
-> +	tegra_vde_writel(vde, 0x063C063C, vde->mce, 0x10);
-> +	tegra_vde_writel(vde, 0x0003FC00, vde->bsev, INTR_STATUS);
-> +	tegra_vde_writel(vde, 0x0000150D, vde->bsev, BSE_CONFIG);
-> +	tegra_vde_writel(vde, 0x00000100, vde->bsev, BSE_INT_ENB);
-> +	tegra_vde_writel(vde, 0x00000000, vde->bsev, 0x98);
-> +	tegra_vde_writel(vde, 0x00000060, vde->bsev, 0x9C);
->  
->  	memset(vde->iram + 128, 0, macroblocks_nb / 2);
->  
-> @@ -376,13 +406,13 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
->  	 */
->  	wmb();
->  
-> -	VDE_WR(0x00000000, vde->bsev + 0x8C);
-> -	VDE_WR(bitstream_data_addr + bitstream_data_size,
-> -	       vde->bsev + 0x54);
-> +	tegra_vde_writel(vde, 0x00000000, vde->bsev, 0x8C);
-> +	tegra_vde_writel(vde, bitstream_data_addr + bitstream_data_size,
-> +			 vde->bsev, 0x54);
->  
->  	value = ctx->pic_width_in_mbs << 11 | ctx->pic_height_in_mbs << 3;
->  
-> -	VDE_WR(value, vde->bsev + 0x88);
-> +	tegra_vde_writel(vde, value, vde->bsev, 0x88);
->  
->  	err = tegra_vde_wait_bsev(vde, false);
->  	if (err)
-> @@ -417,7 +447,7 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
->  	value |= ctx->pic_width_in_mbs << 11;
->  	value |= ctx->pic_height_in_mbs << 3;
->  
-> -	VDE_WR(value, vde->sxe + 0x10);
-> +	tegra_vde_writel(vde, value, vde->sxe, 0x10);
->  
->  	value = !ctx->baseline_profile << 17;
->  	value |= ctx->level_idc << 13;
-> @@ -425,54 +455,54 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
->  	value |= ctx->pic_order_cnt_type << 5;
->  	value |= ctx->log2_max_frame_num;
->  
-> -	VDE_WR(value, vde->sxe + 0x40);
-> +	tegra_vde_writel(vde, value, vde->sxe, 0x40);
->  
->  	value = ctx->pic_init_qp << 25;
->  	value |= !!(ctx->deblocking_filter_control_present_flag) << 2;
->  	value |= !!ctx->pic_order_present_flag;
->  
-> -	VDE_WR(value, vde->sxe + 0x44);
-> +	tegra_vde_writel(vde, value, vde->sxe, 0x44);
->  
->  	value = ctx->chroma_qp_index_offset;
->  	value |= ctx->num_ref_idx_l0_active_minus1 << 5;
->  	value |= ctx->num_ref_idx_l1_active_minus1 << 10;
->  	value |= !!ctx->constrained_intra_pred_flag << 15;
->  
-> -	VDE_WR(value, vde->sxe + 0x48);
-> +	tegra_vde_writel(vde, value, vde->sxe, 0x48);
->  
->  	value = 0x0C000000;
->  	value |= !!(dpb_frames[0].flags & FLAG_B_FRAME) << 24;
->  
-> -	VDE_WR(value, vde->sxe + 0x4C);
-> +	tegra_vde_writel(vde, value, vde->sxe, 0x4C);
->  
->  	value = 0x03800000;
->  	value |= bitstream_data_size & GENMASK(19, 15);
->  
-> -	VDE_WR(value, vde->sxe + 0x68);
-> +	tegra_vde_writel(vde, value, vde->sxe, 0x68);
->  
-> -	VDE_WR(bitstream_data_addr, vde->sxe + 0x6C);
-> +	tegra_vde_writel(vde, bitstream_data_addr, vde->sxe, 0x6C);
->  
->  	value = 0x10000005;
->  	value |= ctx->pic_width_in_mbs << 11;
->  	value |= ctx->pic_height_in_mbs << 3;
->  
-> -	VDE_WR(value, vde->mbe + 0x80);
-> +	tegra_vde_writel(vde, value, vde->mbe, 0x80);
->  
->  	value = 0x26800000;
->  	value |= ctx->level_idc << 4;
->  	value |= !ctx->baseline_profile << 1;
->  	value |= !!ctx->direct_8x8_inference_flag;
->  
-> -	VDE_WR(value, vde->mbe + 0x80);
-> +	tegra_vde_writel(vde, value, vde->mbe, 0x80);
->  
-> -	VDE_WR(0xF4000001, vde->mbe + 0x80);
-> -	VDE_WR(0x20000000, vde->mbe + 0x80);
-> -	VDE_WR(0xF4000101, vde->mbe + 0x80);
-> +	tegra_vde_writel(vde, 0xF4000001, vde->mbe, 0x80);
-> +	tegra_vde_writel(vde, 0x20000000, vde->mbe, 0x80);
-> +	tegra_vde_writel(vde, 0xF4000101, vde->mbe, 0x80);
->  
->  	value = 0x20000000;
->  	value |= ctx->chroma_qp_index_offset << 8;
->  
-> -	VDE_WR(value, vde->mbe + 0x80);
-> +	tegra_vde_writel(vde, value, vde->mbe, 0x80);
->  
->  	err = tegra_vde_setup_mbe_frame_idx(vde,
->  					    ctx->dpb_frames_nb - 1,
-> @@ -494,7 +524,7 @@ static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
->  	if (!ctx->baseline_profile)
->  		value |= !!(dpb_frames[0].flags & FLAG_REFERENCE) << 1;
->  
-> -	VDE_WR(value, vde->mbe + 0x80);
-> +	tegra_vde_writel(vde, value, vde->mbe, 0x80);
->  
->  	err = tegra_vde_wait_mbe(vde);
->  	if (err) {
-> @@ -510,8 +540,9 @@ static void tegra_vde_decode_frame(struct tegra_vde *vde,
->  {
->  	reinit_completion(&vde->decode_completion);
->  
-> -	VDE_WR(0x00000001, vde->bsev + 0x8C);
-> -	VDE_WR(0x20000000 | (macroblocks_nb - 1), vde->sxe + 0x00);
-> +	tegra_vde_writel(vde, 0x00000001, vde->bsev, 0x8C);
-> +	tegra_vde_writel(vde, 0x20000000 | (macroblocks_nb - 1),
-> +			 vde->sxe, 0x00);
->  }
->  
->  static void tegra_vde_detach_and_put_dmabuf(struct dma_buf_attachment *a,
-> @@ -883,8 +914,8 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
->  	timeout = wait_for_completion_interruptible_timeout(
->  			&vde->decode_completion, msecs_to_jiffies(1000));
->  	if (timeout == 0) {
-> -		bsev_ptr = readl_relaxed(vde->bsev + 0x10);
-> -		macroblocks_nb = readl_relaxed(vde->sxe + 0xC8) & 0x1FFF;
-> +		bsev_ptr = tegra_vde_readl(vde, vde->bsev, 0x10);
-> +		macroblocks_nb = tegra_vde_readl(vde, vde->sxe, 0xC8) & 0x1FFF;
->  		read_bytes = bsev_ptr ? bsev_ptr - bitstream_data_addr : 0;
->  
->  		dev_err(dev, "Decoding failed: read 0x%X bytes, %u macroblocks parsed\n",
-> @@ -962,7 +993,7 @@ static irqreturn_t tegra_vde_isr(int irq, void *data)
->  	if (completion_done(&vde->decode_completion))
->  		return IRQ_NONE;
->  
-> -	tegra_vde_set_bits(vde, 0, vde->frameid + 0x208);
-> +	tegra_vde_set_bits(vde, 0, vde->frameid, 0x208);
->  	complete(&vde->decode_completion);
->  
->  	return IRQ_HANDLED;
-> diff --git a/drivers/staging/media/tegra-vde/trace.h b/drivers/staging/media/tegra-vde/trace.h
-> new file mode 100644
-> index 000000000000..9fef8c0f6a9b
-> --- /dev/null
-> +++ b/drivers/staging/media/tegra-vde/trace.h
-> @@ -0,0 +1,101 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM tegra_vde
-> +
-> +#if !defined(TEGRA_VDE_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define TEGRA_VDE_TRACE_H
-> +
-> +#include <linux/tracepoint.h>
-> +
-> +struct tegra_vde;
-> +
-> +static char const *tegra_vde_reg_base_name(struct tegra_vde *vde,
-> +					   void __iomem *base);
-> +
-> +DECLARE_EVENT_CLASS(register_access,
-> +	TP_PROTO(struct tegra_vde *vde, void __iomem *base,
-> +		 u32 offset, u32 value),
-> +	TP_ARGS(vde, base, offset, value),
-> +	TP_STRUCT__entry(
-> +		__field(struct tegra_vde *, vde)
-> +		__field(void __iomem *, base)
-> +		__field(u32, offset)
-> +		__field(u32, value)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->vde = vde;
-> +		__entry->base = base;
-> +		__entry->offset = offset;
-> +		__entry->value = value;
-> +	),
-> +	TP_printk("%s:0x%03x 0x%08x",
-> +		  tegra_vde_reg_base_name(__entry->vde, __entry->base),
-> +		  __entry->offset, __entry->value)
-> +);
-> +
-> +DEFINE_EVENT(register_access, vde_writel,
-> +	TP_PROTO(struct tegra_vde *vde, void __iomem *base,
-> +		 u32 offset, u32 value),
-> +	TP_ARGS(vde, base, offset, value));
-> +DEFINE_EVENT(register_access, vde_readl,
-> +	TP_PROTO(struct tegra_vde *vde, void __iomem *base,
-> +		 u32 offset, u32 value),
-> +	TP_ARGS(vde, base, offset, value));
-> +
-> +TRACE_EVENT(vde_setup_iram_entry,
-> +	TP_PROTO(unsigned int table, unsigned int row, u32 value, u32 aux_addr),
-> +	TP_ARGS(table, row, value, aux_addr),
-> +	TP_STRUCT__entry(
-> +		__field(unsigned int, table)
-> +		__field(unsigned int, row)
-> +		__field(u32, value)
-> +		__field(u32, aux_addr)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->table = table;
-> +		__entry->row = row;
-> +		__entry->value = value;
-> +		__entry->aux_addr = aux_addr;
-> +	),
-> +	TP_printk("[%u][%u] = { 0x%08x (flags = \"%s\", frame_num = %u); 0x%08x }",
-> +		  __entry->table, __entry->row, __entry->value,
-> +		  __print_flags(__entry->value, " ", { (1 << 25), "B" }),
-> +		  __entry->value & 0x7FFFFF, __entry->aux_addr)
-> +);
-> +
-> +TRACE_EVENT(vde_ref_l0,
-> +	TP_PROTO(unsigned int frame_num),
-> +	TP_ARGS(frame_num),
-> +	TP_STRUCT__entry(
-> +		__field(unsigned int, frame_num)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->frame_num = frame_num;
-> +	),
-> +	TP_printk("REF L0: DPB: Frame 0: frame_num = %u", __entry->frame_num)
-> +);
-> +
-> +TRACE_EVENT(vde_ref_l1,
-> +	TP_PROTO(unsigned int with_later_poc_nb,
-> +		 unsigned int with_earlier_poc_nb),
-> +	TP_ARGS(with_later_poc_nb, with_earlier_poc_nb),
-> +	TP_STRUCT__entry(
-> +		__field(unsigned int, with_later_poc_nb)
-> +		__field(unsigned int, with_earlier_poc_nb)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->with_later_poc_nb = with_later_poc_nb;
-> +		__entry->with_earlier_poc_nb = with_earlier_poc_nb;
-> +	),
-> +	TP_printk("REF L1: with_later_poc_nb %u, with_earlier_poc_nb %u",
-> +		  __entry->with_later_poc_nb, __entry->with_earlier_poc_nb)
-> +);
-> +
-> +#endif /* TEGRA_VDE_TRACE_H */
-> +
-> +/* This part must be outside protection */
-> +#undef TRACE_INCLUDE_PATH
-> +#define TRACE_INCLUDE_PATH ../../drivers/staging/media/tegra-vde
-> +#define TRACE_INCLUDE_FILE trace
-> +#include <trace/define_trace.h>
+> --
+> 2.18.0.233.g985f88cf7e-goog
+>
 
 
 
-Thanks,
-Mauro
+-- 
+Kees Cook
+Pixel Security
