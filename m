@@ -2,120 +2,145 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F47ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BE2C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F2220856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EED99205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:17:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjM9wBQS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F2220856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="a9XE5xp/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EED99205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388588AbeGXJRf (ORCPT
+        id S2388596AbeGXJWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 05:17:35 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:36234 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388346AbeGXJRf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 05:17:35 -0400
-Received: by mail-qk0-f195.google.com with SMTP id a132-v6so2095685qkg.3;
-        Tue, 24 Jul 2018 01:12:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to;
-        bh=SO3D86iPlRAml+RVRGhV2rbTcWlABf9xdX7ksS4owRo=;
-        b=IjM9wBQSNdTPJU55cO8gO/0E9KXyoeWysnHC97Mdsg/ID8EB1ec7qkr7iF86uh/SMw
-         OVRrU/hFG7syblLSW7Hrqz773yg+dfpF8Rlm+cq9X74gaq2i3zbzlpApbF8pHzsFf5zC
-         XuJ7lxG8vIVHmlKdZFijeiTsciRPMlgQFb4MGshnElDj4ocV9MGk4RXE1dAGcmJUH84u
-         eyDv73Mz2sc0VgL+6297k6+cwTxeN8WCCex/0zd7qer6HGgF+orWHsMs7V3SsaMPcZez
-         S5NKIrAUNtRFVgb7shxwz+naKrdMUsV85BWTFr/xodLodo57jKfvGJm37vWnn4EIORza
-         RqBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to;
-        bh=SO3D86iPlRAml+RVRGhV2rbTcWlABf9xdX7ksS4owRo=;
-        b=VB5gQxPfiPQrtj/SItBI9ObvERz/OMmghXnUqNJCPUKN1dyZH8dKfvgXGIq9IfOIFp
-         8Mydwom3lte8d9HEoNG7neY4Jm0u2TGmmApLAZRPab5GsojDHAcyj002ZdqDwTz3U39y
-         hBQC7h51gQKDz8hEAQkG8IoX6wv9Uwl06v5jAzhFFM5Z/GZ/ahL+1OZsil3uQnfN0Kq4
-         gXXS0sG14zKNCOGOFDraB9KQmWIE7TLrUxtxsXDNO5RLLZSOjKE+VA5qBeiJB5L25cHA
-         9ge6d13FMiRtFyk/rSGvlxgqxb4LtCIiZ1Bkl/d4/l0HXsMBJOkhTMZtU418ktJ32QVP
-         wHhw==
-X-Gm-Message-State: AOUpUlFbWt2/SLAxrdfm25lIzfviSO+DzHwTWpzdot88WuZkpfw9/qGd
-        6ECu9jf9smQQhp0ZI/kmjfYPiNWj5tVQsOXCyWI=
-X-Google-Smtp-Source: AAOMgpdJnj1WFv5LQFZA6NslsWz6CqwDN8FNY4czz4pnHzFSAMpKRxIdS1JcbGHZdzQaNmveQvQafOfIOMyWQ2nNmBE=
-X-Received: by 2002:a37:2a65:: with SMTP id q98-v6mr14275439qkh.174.1532419938570;
- Tue, 24 Jul 2018 01:12:18 -0700 (PDT)
+        Tue, 24 Jul 2018 05:22:33 -0400
+Received: from mail-hk2apc01on0124.outbound.protection.outlook.com ([104.47.124.124]:26912
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388383AbeGXJWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 05:22:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S0jF1Axhq1uEgqsixELHtMmqB8hu0Lw/BN1/lx2rV7k=;
+ b=a9XE5xp/JFm7UULFw9PERtxpNfkBnRaYwax9idhi1aZqY2oGp8VpHfr++lDQ1z+C4Qd7RSExb29CwOySJgILc9OS88uf46sPkSezxXDFLtGSDVEp1VB8fjNKN0bhOf5GW1JVZlRXQvCD1MHL8LGbPQQCe2ReU6vy+cyPd+gzGps=
+Received: from SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM (10.170.136.145) by
+ SG2P15301MB0015.APCP153.PROD.OUTLOOK.COM (10.170.135.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.1; Tue, 24 Jul 2018 08:17:08 +0000
+Received: from SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM
+ ([fe80::f916:a637:8730:be25]) by SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM
+ ([fe80::f916:a637:8730:be25%4]) with mapi id 15.20.1017.000; Tue, 24 Jul 2018
+ 08:17:08 +0000
+From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
+CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] KVM/MMU: Combine flushing remote tlb in mmu_set_spte()
+Thread-Topic: [PATCH] KVM/MMU: Combine flushing remote tlb in mmu_set_spte()
+Thread-Index: AQHUIya2sfSO0xmUGUuqak4mr618Fw==
+Date:   Tue, 24 Jul 2018 08:17:07 +0000
+Message-ID: <1532420205-29930-1-git-send-email-Tianyu.Lan@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tianyu.Lan@microsoft.com; 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SG2P15301MB0015;6:fS0jsWcoNrUUam17rNqT2DB8OGT/RN40FSNqdaMeExxbT8uI/09DgrKbAEK+mJWTFd6ZJkWS+p7O3/xgCUXU6hHN70EXvJ8SA3GQZ71ykpv7RDIkOeR4kXKtzknEd91Flo+VmjozMrwDJjiJV85hDit5gjDHKl6EFQ3XFOr/r6H7XxIIcobB3AvzdLmTyKZzUw9cS/1Few9GpdCSFZdpJ10xQuBT5AAsmqPs4NCAAnWADs5UhmuFtOGMlmHDTjWJiQK//0NXHrMMU0CkGTGguFOIgDx5aHJ41euCY7ss2Njy7hK9a6mCUi+PT+FLyNO7TsNaUma1OI3QtPl+X7soHTRZ9MPxCk2lTDj/sqRakHiAdHJdr0O84erAKepRhUAcBK4k5ncgU0ntuDcxTXEXMJtx1FHc4pZTbP2fxb2SRwPfEg6Ikpg0g6xqU6phmB6n9IjrSdIGxRdJjKRGWeDzgQ==;5:sjfvf8AvudryW6ILKRf+pP+nJJSt/MccF9XnhiMJNTwKCU2fLojmLkxNy2DOaLaoUaXFJqSLt5tjIyM9Iudi5hhmhOfzk5jH8rxDm0FLcCUPfwe67WYz4UCATzkLpll4vzWbYqbiWdZWKkSpBjOmh8kktWF2ga5MF9Oo4MTxLzo=;7:DsExfmdGHrP5tegYpxfWP6RnPnwgaSc6kVjOJnFb4UI2WQRx4xSD8e6qaDgTToppR/F+o9QaGJx8vOuJizNF6zmcHvFPvDiXW6mlGzDXH3LTg8rIXDWF/h1MQtEIa1G0HUuIj4ey4g7gq7J91A4xQyBZVgwRNB8xGzCb9iqfNwnAeI277os8JW0aTsEelkJusHB7+FmGkcRQMYJL2o/qStRfliHZlaHecc5dIF65zqA1V1CMsLYd3lZ7HYJxn0em
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 31684082-bfe5-4075-6f3e-08d5f13dd932
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(2017052603328)(7193020);SRVR:SG2P15301MB0015;
+x-ms-traffictypediagnostic: SG2P15301MB0015:
+x-microsoft-antispam-prvs: <SG2P15301MB0015C25EEE294C3D5D3AA57192550@SG2P15301MB0015.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:SG2P15301MB0015;BCL:0;PCL:0;RULEID:;SRVR:SG2P15301MB0015;
+x-forefront-prvs: 0743E8D0A6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(396003)(376002)(346002)(199004)(189003)(8936002)(10290500003)(5660300001)(102836004)(2906002)(1857600001)(14454004)(26005)(478600001)(25786009)(99286004)(256004)(1671002)(8676002)(72206003)(53936002)(6116002)(105586002)(6486002)(68736007)(6506007)(81156014)(97736004)(54906003)(22452003)(316002)(3846002)(59246006)(36756003)(4326008)(2616005)(486006)(6512007)(476003)(10090500001)(5250100002)(106356001)(109986005)(81166006)(7736002)(66066001)(2900100001)(86612001)(14444005)(305945005)(6436002)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:SG2P15301MB0015;H:SG2P15301MB0093.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: weBWPTcNc8LnMFvVlLiO5kMJQqB+9LpjqwKoIhH7pEGkuj+cqStv5R2fvMf5LGOpUflnii5KgYkWwqVXsV9U7dhoZknYkiwwm3VRXtntWEK0k18WLbyqQcUMZXa9eqyf2qDRqRUwcS5bbcNAoY+g8Nr1hBo0o9RcMPLRAg9G0cwupKQPMkeiot2w37IaFTJXtLctBgnA8Ge+7DlfD1gW0LMQGuFDHSWDrNEkkV7Jl0cu2x98yjuehGd5xj9kiFmNabXVM+ARk3fjoW2Tmt/kWv9cL/MhsYiCvvtsTnKTXDYK5r6ZVNIZcF/u4eCjo9d1QJ2ZMjCcvN5czJIX+IAgQAuHG8UvAwA9ceqlyXQpu7g=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 01:12:18
- -0700 (PDT)
-In-Reply-To: <20180724002630.GV11258@linaro.org>
-References: <20180724090545.2270d975@canb.auug.org.au> <20180724002630.GV11258@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 24 Jul 2018 10:12:18 +0200
-X-Google-Sender-Auth: dnuCful06YdQLCsid-vYtjiv56Q
-Message-ID: <CAK8P3a0bOYPtsCb8_etWtFCsnjB-xkMPFiy7iBubThi0b-LtVg@mail.gmail.com>
-Subject: Re: linux-next: build warning after merge of the arm64 tree
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31684082-bfe5-4075-6f3e-08d5f13dd932
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2018 08:17:07.7549
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2P15301MB0015
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 2:26 AM, AKASHI Takahiro
-<takahiro.akashi@linaro.org> wrote:
-> On Tue, Jul 24, 2018 at 09:05:45AM +1000, Stephen Rothwell wrote:
->> Hi all,
->>
->> After merging the arm64 tree, today's linux-next build (x86_64
->> allmodconfig) produced this warning:
->
-> Where can I find this specific branch?
->
->> drivers/acpi/Kconfig:6:error: recursive dependency detected!
->> drivers/acpi/Kconfig:6:       symbol ACPI depends on EFI
->
-> My patch created an additional dependency like:
->   menu ACPI
->     ...
->     depends on IA64 || X86 || (ARM64 && EFI)
->
->> arch/x86/Kconfig:1920:        symbol EFI depends on ACPI
->
-> So I don't understand why this change makes a warning on x86_64 build.
-> Is this a real recursive dependency?
+mmu_set_spte() flushes remote tlbs for drop_parent_pte/drop_spte()
+and set_spte() separately. This may introduce redundant flush. This
+patch is to combine these flushes and check flush request after
+calling set_spte().
 
-On x86, we have
+Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+---
+ arch/x86/kvm/mmu.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-config EFI
-        bool "EFI runtime service support"
-        depends on ACPI
-
-Kconfig cannot know that CONFIG_ARM64 is never set on x86, while
-X86 is always set. So to Kconfig it it appears like a recursive
-dependency.
-
-The best workaround I can see is to have an intermediate symbol
-on ARM64 that is invisible to Kconfig on x86, like
-
-config ARCH_SUPPORTS_ACPI
-        def_bool EFI
-
-and then have ACPI depend on that.
-
-       Arnd
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 22a7984..8f21632 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -2901,6 +2901,7 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, u64 *s=
+ptep, unsigned pte_access,
+ 	int rmap_count;
+ 	int set_spte_ret;
+ 	int ret =3D RET_PF_RETRY;
++	bool flush =3D false;
+=20
+ 	pgprintk("%s: spte %llx write_fault %d gfn %llx\n", __func__,
+ 		 *sptep, write_fault, gfn);
+@@ -2917,12 +2918,12 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, u64 =
+*sptep, unsigned pte_access,
+=20
+ 			child =3D page_header(pte & PT64_BASE_ADDR_MASK);
+ 			drop_parent_pte(child, sptep);
+-			kvm_flush_remote_tlbs(vcpu->kvm);
++			flush =3D true;
+ 		} else if (pfn !=3D spte_to_pfn(*sptep)) {
+ 			pgprintk("hfn old %llx new %llx\n",
+ 				 spte_to_pfn(*sptep), pfn);
+ 			drop_spte(vcpu->kvm, sptep);
+-			kvm_flush_remote_tlbs(vcpu->kvm);
++			flush =3D true;
+ 		} else
+ 			was_rmapped =3D 1;
+ 	}
+@@ -2934,7 +2935,7 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, u64 *s=
+ptep, unsigned pte_access,
+ 			ret =3D RET_PF_EMULATE;
+ 		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
+ 	}
+-	if (set_spte_ret & SET_SPTE_NEED_REMOTE_TLB_FLUSH)
++	if (set_spte_ret & SET_SPTE_NEED_REMOTE_TLB_FLUSH || flush)
+ 		kvm_flush_remote_tlbs(vcpu->kvm);
+=20
+ 	if (unlikely(is_mmio_spte(*sptep)))
+--=20
+2.7.4
