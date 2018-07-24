@@ -2,113 +2,106 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBF2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB80C6778F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CFAB20685
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:55:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CFAB20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id E33EB20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:55:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uxdT4kbG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E33EB20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388883AbeGXWDm (ORCPT
+        id S2388907AbeGXWDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:03:42 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:46400 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S2388640AbeGXWDm (ORCPT
+        Tue, 24 Jul 2018 18:03:52 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42971 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388640AbeGXWDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:03:42 -0400
-Received: (qmail 24302 invoked by uid 2102); 24 Jul 2018 16:55:24 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 24 Jul 2018 16:55:24 -0400
-Date:   Tue, 24 Jul 2018 16:55:24 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-cc:     Tomasz Figa <tfiga@chromium.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Steven Rostedt <rostedt@goodmis.org>, <mingo@redhat.com>,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        <keiichiw@chromium.org>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-In-Reply-To: <CAJs94EahjbkJRWKR=2QeD=tOMR=kznwXbQgTbKvSuTg4jBk1ew@mail.gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1807241652550.1311-100000@iolanthe.rowland.org>
+        Tue, 24 Jul 2018 18:03:51 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y4-v6so3702435pgp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 13:55:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=okBAlDaxM0DNqW7zvcq7HlrqbxW7pHlut6qsdwTqoyk=;
+        b=uxdT4kbGdTtAvJ75Nx4Uy4Gs4UPePCI9Ha0khp8C4ZP6fll5CyFVvR+wCteneUJXy/
+         Im3svmPSqS67CLvbBmQ+6grwETAKbPlDznYttjZKLmqQikspi+1KLSHFxwlrblHpiLQ4
+         SwYmgmfKmknGbWkPnRrUyqHgj5fZlDSoTGvKelLHSr4zqQbRQZK2RdGA/x9RivL2OJI4
+         W1H/P7iN2GoPnG9BBDZRtCYc2khgIy9hTe47+mIJD/AtA0YwLUQdUoHDkudTXwY3/JCm
+         33Wiowd/K7L0fAIGNUv78alTKx2DMJoAgKq7bj7gppmk9/34hw65ha5UEka1KWBM5YTf
+         qzgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=okBAlDaxM0DNqW7zvcq7HlrqbxW7pHlut6qsdwTqoyk=;
+        b=OuwGASXcUkPJfJqDKi3UxHbqph6xahtzYNigj8s0BuBMoswqfLo6LSxqNrkbbWXUOq
+         a5gQVl1J8Sp0kw3gUkKG2Vt56guyRtBiOmkiEcEsdlNjsFHac82O7xh3jB+Qm9HOoNZZ
+         +5FI+flloaC2aYQSlH9gjOF7lRjR9vEyzJquK2miz3MqqOj1CGy7Kldv1LcJ8+Vrtl9U
+         U7TQ6wqfZ7kiRAhQ6DZTsYYwjEfvUWKC57X0aGGYh4Pgr1qdpF2Qkru7aC4GRTgErMeX
+         0GyKO4vwAwcvTklo6/EYC7qu319KuLABS9KJ/rv+5Skd0aLLHRNiD2C/6WFce+FS1JVe
+         Lq8A==
+X-Gm-Message-State: AOUpUlG1oLYPE0hiGVMTKHaV6nPe4an7Zz/VTw0nS54N2/MUkxv0rDek
+        zTyKSuKBWqG1vG9mT6vMweZtCOg7W/Y=
+X-Google-Smtp-Source: AAOMgpcgt5sD63Bvc5e6WpgeMpMJTSrKFadmQq4Gxy1eqZ5iDdeqiOLAUa1Ygn4yJ7Kk8EXW9It01g==
+X-Received: by 2002:a63:8c51:: with SMTP id q17-v6mr18229002pgn.236.1532465734584;
+        Tue, 24 Jul 2018 13:55:34 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id l84-v6sm19409007pfg.3.2018.07.24.13.55.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 13:55:33 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 13:55:33 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] mm, oom: remove oom_lock from oom_reaper
+In-Reply-To: <20180719075922.13784-1-mhocko@kernel.org>
+Message-ID: <alpine.DEB.2.21.1807241355200.191886@chino.kir.corp.google.com>
+References: <20180719075922.13784-1-mhocko@kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018, Matwey V. Kornilov wrote:
+On Thu, 19 Jul 2018, Michal Hocko wrote:
 
-> 2018-07-23 21:57 GMT+03:00 Alan Stern <stern@rowland.harvard.edu>:
-> > On Mon, 23 Jul 2018, Matwey V. Kornilov wrote:
-> >
-> >> I've tried to strategies:
-> >>
-> >> 1) Use dma_unmap and dma_map inside the handler (I suppose this is
-> >> similar to how USB core does when there is no URB_NO_TRANSFER_DMA_MAP)
-> >
-> > Yes.
-> >
-> >> 2) Use sync_cpu and sync_device inside the handler (and dma_map only
-> >> once at memory allocation)
-> >>
-> >> It is interesting that dma_unmap/dma_map pair leads to the lower
-> >> overhead (+1us) than sync_cpu/sync_device (+2us) at x86_64 platform.
-> >> At armv7l platform using dma_unmap/dma_map  leads to ~50 usec in the
-> >> handler, and sync_cpu/sync_device - ~65 usec.
-> >>
-> >> However, I am not sure is it mandatory to call
-> >> dma_sync_single_for_device for FROM_DEVICE direction?
-> >
-> > According to Documentation/DMA-API-HOWTO.txt, the CPU should not write
-> > to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() is
-> > not needed.
+> From: Michal Hocko <mhocko@suse.com>
 > 
-> Well, I measured the following at armv7l. The handler execution time
-> (URB_NO_TRANSFER_DMA_MAP is used for all cases):
+> oom_reaper used to rely on the oom_lock since e2fe14564d33 ("oom_reaper:
+> close race with exiting task"). We do not really need the lock anymore
+> though. 212925802454 ("mm: oom: let oom_reap_task and exit_mmap run
+> concurrently") has removed serialization with the exit path based on the
+> mm reference count and so we do not really rely on the oom_lock anymore.
 > 
-> 1) coherent DMA: ~3000 usec (pwc is not functional)
-> 2) explicit dma_unmap and dma_map in the handler: ~52 usec
-> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~56 usec
+> Tetsuo was arguing that at least MMF_OOM_SKIP should be set under the
+> lock to prevent from races when the page allocator didn't manage to get
+> the freed (reaped) memory in __alloc_pages_may_oom but it sees the flag
+> later on and move on to another victim. Although this is possible in
+> principle let's wait for it to actually happen in real life before we
+> make the locking more complex again.
 > 
-> So, I suppose that unfortunately Tomasz suggestion doesn't work. There
-> is no performance improvement when dma_sync_single is used.
+> Therefore remove the oom_lock for oom_reaper paths (both exit_mmap and
+> oom_reap_task_mm). The reaper serializes with exit_mmap by mmap_sem +
+> MMF_OOM_SKIP flag. There is no synchronization with out_of_memory path
+> now.
 > 
-> At x86_64 the following happens:
-> 
-> 1) coherent DMA: ~2 usec
-> 2) explicit dma_unmap and dma_map in the handler: ~3.5 usec
-> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~4 usec
-> 
-> So, whats to do next? Personally, I think that DMA streaming API
-> introduces not so great overhead.
-> Does anybody happy with turning to streaming DMA or I'll introduce
-> module-level switch as Ezequiel suggested?
+> Suggested-by: David Rientjes <rientjes@google.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-How about using the dma_unmap and dma_map calls in the USB core?  If 
-they add the same overhead as putting them in the handler, I think it 
-would be acceptable for x86_64.
-
-It certainly is odd that the dma_sync_single APIs take longer than 
-simply mapping and unmapping.
-
-Alan Stern
-
+Acked-by: David Rientjes <rientjes@google.com>
